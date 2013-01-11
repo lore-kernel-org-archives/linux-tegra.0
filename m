@@ -1,98 +1,150 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 09/14] ARM: tegra: Move pmc.h to include/mach
-Date: Fri, 11 Jan 2013 05:08:23 +0100
-Message-ID: <20130111040823.GE28094@avionic-0098.adnet.avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH 12/14] ARM: tegra: tec: Add PCIe support
+Date: Fri, 11 Jan 2013 05:34:37 +0100
+Message-ID: <20130111043437.GF28094@avionic-0098.adnet.avionic-design.de>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <1357764194-12677-10-git-send-email-thierry.reding@avionic-design.de>
- <50EF598B.2030307@wwwdotorg.org>
+ <1357764194-12677-13-git-send-email-thierry.reding@avionic-design.de>
+ <50EF5B46.8010806@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0209851283092697008=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <50EF598B.2030307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rMWmSaSbD7nr+du9"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <50EF5B46.8010806@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0209851283092697008==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="o0ZfoUVt4BxPQnbU"
-Content-Disposition: inline
-
-
---o0ZfoUVt4BxPQnbU
+--rMWmSaSbD7nr+du9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 10, 2013 at 05:15:07PM -0700, Stephen Warren wrote:
+On Thu, Jan 10, 2013 at 05:22:30PM -0700, Stephen Warren wrote:
 > On 01/09/2013 01:43 PM, Thierry Reding wrote:
-> > In preparation for moving the PCIe driver into the drivers/pci/host
-> > directory, this header, which contains prototypes that are required by
-> > the PCIe driver, needs to be moved to a globally visible location.
-> >=20
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > ---
-> > Note that eventually the code in pmc.c and powergate.c should probably
-> > be split out into a separate driver. The PMC registers are also directly
-> > accessed from tegra20_clocks.c and tegra30_clocks.c, so that it might be
-> > required to provide that functionality through the new driver as well.
-> > ---
-> >  arch/arm/mach-tegra/common.c           |  2 +-
-> >  arch/arm/mach-tegra/include/mach/pmc.h | 24 ++++++++++++++++++++++++
-> >  arch/arm/mach-tegra/pmc.h              | 24 ------------------------
+> > Enable the first PCIe root port which is connected to an FPGA on the
+> > Tamonten Evaluation Carrier and add device nodes for each of the PCI
+> > endpoints available in the standard configuration.
 >=20
-> On IRC, we'd talked about putting the public functionality in
-> include/linux/tegra-pmc.h so that we wouldn't add to include/mach, which
-> would make it harder to make Tegra support ARM multi-platform. Perhaps
-> that IRC discussion happened after you posted this series?
+> > diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegr=
+a20-tec.dts
+>=20
+> > +	pcie-controller {
+> > +		vdd-supply =3D <&pci_vdd_reg>;
+> > +		pex-clk-supply =3D <&pci_clk_reg>;
+> > +		status =3D "okay";
+>=20
+> Sorry this is also really picky. I'd prefer properties that exist in
+> /include/d files and are overidden here to appear first, followed by new
+> properties. In other words, move the status property to be first. I
+> believe/hope all the other (Tegra) .dts files follow this convention.
 
-I'm not sure, it's equally possible that I just forgot. Will fix it up.
+Okay, I'll fix that.
+
+> > +		pci@1,0 {
+> > +			bus-range =3D <0x01 0x0a>;
+> > +			status =3D "okay";
+> > +
+> > +			pci@0,0 {
+> > +				reg =3D <0x010000 0 0 0 0>;
+>=20
+> Hmm. The unit address in that node name doesn't match the address in the
+> reg property, although I suppose there's nothing we can do about it
+> since those formats are both defined by the standard PCI binding?
+
+That's the standard encoding for unit addresses for PCI devices. The
+first cell in the reg property encodes bus/device/function (amongst
+other things) and the node name is supposed to be pci@<dev>,<fn>.
+
+> What do the numbers "0,0" represent here; device/function? Is the same
+> true for the "0,0" in the child nodes?
+
+Yes, exactly.
+
+> > +				bus-range =3D <0x02 0x0a>;
+> > +
+> > +				compatible =3D "plda,pcie";
+>=20
+> Are there DT binding documents for all these devices; plda,pcie,
+> ad,pcie, ad,pcie-test, etc.?
+
+No. To be honest I don't quite know how to handle this. For the PLDA
+things aren't so bad since it has a proper PCI ID, but the other cores
+don't since they are custom IP or taken from opencores.org and made
+available via PCIe. We're still in the process of obtaining our own PCI
+vendor ID so that these can be properly assigned.
+
+Also, as you have guessed, most of these are not required. I just wanted
+to include them here for completeness (and maybe reference in case
+somebody else, myself included, needs a working example to base other
+work on).
+
+> > +				pci@4,0 {
+> > +					reg =3D <0x022000 0 0 0 0>;
+> > +					bus-range =3D <0x07 0x07>;
+> > +
+> > +					compatible =3D "ad,pcie";
+> > +					device_type =3D "pci";
+> > +
+> > +					#address-cells =3D <3>;
+> > +					#size-cells =3D <2>;
+> > +
+> > +					pci@0,0 {
+> > +						compatible =3D "opencores,uart";
+> > +						reg =3D <0x070000 0 0 0 0>;
+> > +					};
+> > +				};
+>=20
+> Do you need to include a node for the UART; I can see you need to for
+> the SPI/I2C controllers so you can instantiate the appropriate devices
+> on non-probe-able buses, but I think you can just let regular PCI device
+> probing find the UART, Ethernet MAC, etc., can't you?
+
+Yes, that's correct. Only SPI and I2C actually require these nodes. I'm
+not sure if the PCI binding requires all nodes to be present or not.
+Other examples I've seen (e.g. arch/x86/platform/ce4100/falconfalls.dts)
+contain nodes for everything, most of which don't seem to be necessary
+for things to work.
+
+One other thing that I've seen is the usage of the more standard pci*
+values for the compatible property. None of them are very descriptive
+which is why I used a vendor,device type of value instead.
+
+Going over the PCI binding again, however, it looks like there's no
+requirement to make the node name pci@dev,fn and pci can be anything.
+Making it uart@0,0 and then adjusting the compatible value to be as the
+binding requires could be an option. In that case I suppose even the
+bindings documentation shouldn't be necessary.
+
+That doesn't cover the nodes where non-standard properties are needed
+(I2C and SPI), which do need binding documents. I wouldn't know how to
+name them, though. I'm not sure going with the current convention would
+be any good since it'll be hard to find the right document if you have
+to look it up by matching vendor and device IDs or PCI class.
 
 Thierry
 
---o0ZfoUVt4BxPQnbU
+--rMWmSaSbD7nr+du9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ75A3AAoJEN0jrNd/PrOhUdAP/jx4poxyVjj6V33Sz/v8nlnQ
-1U4BlJxgUTOrRfu1h5bgGRRRyRszW8Umdlb8YYJzSwgivam1DMuVyylxuSbseP+T
-rokEN5r7XKpzZ4M26HGeOWZN9xi8eQyGyESUN2lPrXjtCYmVleGrOWoWMNtmGiZg
-DaA67Jn0a4bqa6IpKOgxvG5Hu7HqgaJXLW87Ht/kCvWIJPM+vkDSM76fygQYwXj1
-0h7/zX0yOJlW/yENJA/1CZzaE5CR8xmzcyB2EtmelTLhLpTi0L9rnPvbua1dKyO4
-15sQ/6VeHScjKNYh7jNQtTIdouwwLFRUbvdM9dXaxfeKuuW2fSBvci54WbApeXGI
-vmGR1iXaF1ObcxDFjBcKkS/UWyU8fU/Tx/CuXRen690wTAZt4irsb0NR8kH432BA
-QbfrBYV1b8ytLrnTvqaNMHJHCy3A1FiSJ28ywUyC8daWtWQBTbFa9M3Dh0KaOuNq
-1HdIzn7C1YzUgSUJsO5uaWNt3XOMGfJvds1RCFpqAhXvQLklfZA/Nv/Gx4uET62N
-BxMUjsqE0oiQzZ+xGnHFH6JbT9M99n7EGAZJ2BG40iUX9TWSoOEqum3zABHCPZ41
-ZbsJ5FN+MMd7scYeV5fQY0Fl+JCEbzzS4XNH7RUrl0/ulTWQgEGZ7SXdZaf3ZnDf
-aXb7TNK63K0pUTsgpniV
-=ykwn
+iQIcBAEBAgAGBQJQ75ZdAAoJEN0jrNd/PrOhqLwP/jlhfvEttlemxr+BN6dQq33Q
+pnmmTFXKC8nV+Igo9yTlUWOxvIdz/9kLvgC3YdqT8VLJbZvPKAXDp/RyJ6tYn4LV
+VckkcH1ssxUjeYnyff5i+8x0pjP4XwS0EKubZPXYgl934SWZr0h6N8yzQFJ8zX3W
+vydrJj0iHgzmQEsnjZ7WG6WhwclAFz6e5bUe2Ra5R6yCPqIpKD9ceLp7gcVpFYt9
+BFrg60uBZp5wq0/zyPmwrylugQZZBrSdhwAiMcIpEygLpRyOw27L/5vxfzAQ4kd5
+8MB9PEKRTTsFkiFf/xuDdCJ3ppVdxZ0/aEyVwucH/D42cAb7SbzHkk8LHDE7auDX
+i42yG9GEYjzZkVQ+cIG45zz8Ke6VZzwMVzunuvWLUqyDAR9dIk+5G+S2V+yhq4yv
+hJ+QIfwmcu0SZbCLpHpq9UiqDaGPRB907jyq1NdMJMTHz4rrUagesPNzZJH2ApRc
+P9HDWubUjYI/4CLOsTpNShoJAMWq6p9vyQmzQoepubAEcdV7Kx0H7kZJdpM+x3Kp
+ty7r5sM9wdU+Eogn4jB2HUXBmr4Z5napV+ZlD2siGtq4N2yScw1a7K+QzEsKsM2s
+A+36wmjuOy3zzwvBd+XrCgivF1gU7qgG2B+BkQtHjRORqtDT4WpAAPyCMyURkjFH
+hRYo3V/CcibTyNeadZh5
+=rtWB
 -----END PGP SIGNATURE-----
 
---o0ZfoUVt4BxPQnbU--
-
---===============0209851283092697008==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============0209851283092697008==--
+--rMWmSaSbD7nr+du9--
