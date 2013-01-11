@@ -1,73 +1,32 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Fri, 11 Jan 2013 13:34:36 -0700
-Message-ID: <50F0775C.5050204@wwwdotorg.org>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de> <50EF616E.7040609@wwwdotorg.org> <20130111035246.GB28094@avionic-0098.adnet.avionic-design.de>
+Subject: Re: [PATCH v4 6/9] clk: tegra: add clock support for tegra20
+Date: Fri, 11 Jan 2013 13:54:07 -0700
+Message-ID: <50F07BEF.1080208@wwwdotorg.org>
+References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com> <1357890387-23245-7-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130111035246.GB28094@avionic-0098.adnet.avionic-design.de>
+In-Reply-To: <1357890387-23245-7-git-send-email-pgaikwad@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/10/2013 08:52 PM, Thierry Reding wrote:
-> On Thu, Jan 10, 2013 at 05:48:46PM -0700, Stephen Warren wrote:
->> On 01/09/2013 01:43 PM, Thierry Reding wrote:
->>> Move the PCIe driver from arch/arm/mach-tegra into the
->>> drivers/pci/host directory. The motivation is to collect
->>> various host controller drivers in the same location in order
->>> to facilitate refactoring.
->>> 
->>> The Tegra PCIe driver has been largely rewritten, both in order
->>> to turn it into a proper platform driver and to add MSI (based
->>> on code by Krishna Kishore <kthota@nvidia.com>) as well as
->>> device tree support.
->> 
->>> diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c
->>> b/arch/arm/mach-tegra/board-dt-tegra20.c
+On 01/11/2013 12:46 AM, Prashant Gaikwad wrote:
+> Add tegra20 clock support based on common clock framework.
 
->>> +static int tegra_pcie_enable_controller(struct tegra_pcie
->>> *pcie) +{ +	unsigned int timeout; +	unsigned long value; + +	/*
->>> enable dual controller and both ports */ +	value =
->>> afi_readl(pcie, AFI_PCIE_CONFIG); +	value &=
->>> ~(AFI_PCIE_CONFIG_PCIEC0_DISABLE_DEVICE | +
->>> AFI_PCIE_CONFIG_PCIEC1_DISABLE_DEVICE | +
->>> AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK); +	value |=
->>> AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_DUAL; +	afi_writel(pcie,
->>> value, AFI_PCIE_CONFIG);
->> 
->> Eventually, we should probably derive the port enables from the
->> state of the root port DT nodes, so that we can disable some and
->> presumably save a little power. Also, I notice that the
->> nvidia,num-lanes property isn't implemented yet. Still, we can
->> probably take care of this later.
-> 
-> Yes, the plan was to eventually derive the disable bits from the
-> port status and setup the XBAR_CONFIG field based on the
-> combination of nvidia,num-lanes properties.
-> 
-> I assume we should simply fail if the configuration specified by 
-> nvidia,num-lanes is invalid?
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
 
-Makes sense to me.
+> +static void tegra20_pll_init(void)
 
->>> +static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
->> 
->>> +	pcie->vdd_supply = devm_regulator_get(pcie->dev, "vdd"); +	if
->>> (IS_ERR(pcie->vdd_supply)) +		return
->>> PTR_ERR(pcie->vdd_supply); + +	pcie->pex_clk_supply =
->>> devm_regulator_get(pcie->dev, "pex-clk"); +	if
->>> (IS_ERR(pcie->pex_clk_supply)) +		return
->>> PTR_ERR(pcie->pex_clk_supply);
->> 
->> Oh, I guess the regulator_get() calls are already strict.
-> 
-> Yeah, I think they can't return NULL, right? In that case I can
-> just drop the extra checks in tegra_pcie_power_{on,off}().
+> +	/* PLLE */
+> +	clk = tegra_clk_plle("pll_e", "pll_ref", clk_base, NULL,
+> +			     0, 1000000000, &pll_e_params,
+> +			     0, pll_e_freq_table, NULL);
 
-It looks like NULL can be returned if !CONFIG_REGULATOR. The comment
-in the dummy implementation implies that drivers should treat a NULL
-value as valid regulator in most cases.
+That 1000000000 (1GHz) needs to be 100000000 (100MHz). I can fix that up
+when applying this.
+
+With that change, everything I tested with this version of the series
+works:-)
