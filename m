@@ -1,42 +1,119 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V4 0/4] input: keyboard: tegra: cleanups and DT supports
-Date: Fri, 11 Jan 2013 10:17:34 +0530
-Message-ID: <50EF9966.1010500@nvidia.com>
-References: <1357470900-12619-1-git-send-email-ldewangan@nvidia.com> <50EAFD36.9070909@wwwdotorg.org> <50EE603B.7080702@nvidia.com> <20130110174456.GA2797@core.coreip.homeip.net>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Fri, 11 Jan 2013 15:20:29 +0800
+Message-ID: <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+	 <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+	 <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20130110174456.GA2797@core.coreip.homeip.net>
-Sender: linux-doc-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20121205105010.GA12999-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 10 January 2013 11:14 PM, Dmitry Torokhov wrote:
-> Hi Laxman,
->
-> On Thu, Jan 10, 2013 at 12:01:23PM +0530, Laxman Dewangan wrote:
->> Hi Dmitry,
->>
->> On Monday 07 January 2013 10:22 PM, Stephen Warren wrote:
->>> On 01/06/2013 04:14 AM, Laxman Dewangan wrote:
->>>> This patch series:
->>>>   - fix build warning,
->>>>   - use devm_* for allocation,
->>>>   - make column/rows configuration through DT and
->>>>   - remove the rarely used  key mapping table.
->>> The series,
->>> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->>>
->> If you are fine with this series then can it be apply please? I can
->> handle if there is any comment on this series to close this.
->>
-> The patches are applied with minor edits to the 3rd and 4th (there was
-> no point in having a separate keymap setup function anymore).
->
+Hi Lorenzo,
 
-Thanks for taking care. I looked the final change from your git and the 
-changes are  fine.
+On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
+> On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
+> > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > When the secondary CPU requests to enter powered-down state, it saves
+> > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > powered-down state too. If the secondary CPU be woken up before CPU0
+> > entering powered-down state, then it needs to restore its CPU states
+> > and waits for next chance.
+> >
+> > Be aware of that, you may see the legacy power state "LP2" in the code
+> > which is exactly the same meaning of "CPU power down".
+> >
+> > Based on the work by:
+> > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > +
+> > +#ifdef CONFIG_PM_SLEEP
+> > +/*
+> > + * tegra_pen_lock
+> > + *
+> > + * spinlock implementation with no atomic test-and-set and no coherence
+> > + * using Peterson's algorithm on strongly-ordered registers
+> > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
+> > + *
+> > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
+> > + * on cpu 0:
+> > + * SCRATCH38 = r2 = flag[0]
+> > + * SCRATCH39 = r3 = flag[1]
+> > + * on cpu1:
+> > + * SCRATCH39 = r2 = flag[1]
+> > + * SCRATCH38 = r3 = flag[0]
+> > + *
+> > + * must be called with MMU on
+> > + * corrupts r0-r3, r12
+> > + */
+> > +ENTRY(tegra_pen_lock)
+> > +       mov32   r3, TEGRA_PMC_VIRT
+> > +       cpu_id  r0
+> > +       add     r1, r3, #PMC_SCRATCH37
+> > +       cmp     r0, #0
+> > +       addeq   r2, r3, #PMC_SCRATCH38
+> > +       addeq   r3, r3, #PMC_SCRATCH39
+> > +       addne   r2, r3, #PMC_SCRATCH39
+> > +       addne   r3, r3, #PMC_SCRATCH38
+> > +
+> > +       mov     r12, #1
+> > +       str     r12, [r2]               @ flag[cpu] = 1
+> > +       dsb
+> > +       str     r12, [r1]               @ !turn = cpu
+> > +1:     dsb
+> > +       ldr     r12, [r3]
+> > +       cmp     r12, #1                 @ flag[!cpu] == 1?
+> > +       ldreq   r12, [r1]
+> > +       cmpeq   r12, r0                 @ !turn == cpu?
+> > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
+> > +
+> > +       mov     pc, lr                  @ locked
+> > +ENDPROC(tegra_pen_lock)
+> > +
+> > +ENTRY(tegra_pen_unlock)
+> > +       dsb
+> > +       mov32   r3, TEGRA_PMC_VIRT
+> > +       cpu_id  r0
+> > +       cmp     r0, #0
+> > +       addeq   r2, r3, #PMC_SCRATCH38
+> > +       addne   r2, r3, #PMC_SCRATCH39
+> > +       mov     r12, #0
+> > +       str     r12, [r2]
+> > +       mov     pc, lr
+> > +ENDPROC(tegra_pen_unlock)
+> 
+> There is an ongoing work to make this locking scheme for MMU/coherency off
+> paths ARM generic, and we do not want to merge yet another platform specific
+> locking mechanism. I will point you to the patchset when it hits LAK.
+> 
+
+You did mention there is an ARM generic locking scheme for MMU/coherency
+off case before. Do you mean the patch below?
+
+https://patchwork.kernel.org/patch/1957911/
+https://patchwork.kernel.org/patch/1957901/
+
+I gave it a review today. Looks it can't fit our usage for CPU idle
+powered-down mode on Tegra20.
+
+The generic mechanism only can be used when CPUs in non coherent world.
+But our usage needs the mechanism could be used in both coherent and non
+coherent case. OK. The case is we need to sync the status about the CPU1
+was ready to power down. In this case, the CPU0 is still in coherent
+world but the CPU1 isn't. So we need the locking scheme could be still
+safe in this situation.
+
+And the proposed scheme looks only for b.L system?
+
 Thanks,
-Laxman
+Joseph
