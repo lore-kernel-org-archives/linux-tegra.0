@@ -1,53 +1,62 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1'/2] ARM: tegra20: Add cpu node
-Date: Fri, 11 Jan 2013 15:26:55 +0200
-Message-ID: <1357910815-31603-1-git-send-email-hdoyu@nvidia.com>
-References: <1357909914-28994-2-git-send-email-hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/3] ARM: DT: tegra: add DT entry for KBC controller
+Date: Fri, 11 Jan 2013 19:03:03 +0530
+Message-ID: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357909914-28994-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add cpu node for tegra20.
+NVIDIA's Tegra SoCs have the matrix keyboard controller which
+supports 16x8 type of matrix. The number of rows and columns
+are configurable.
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add DT entry for KBC controller.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Update: To be honest, T20 doesn't have four cores but two:)
----
- arch/arm/boot/dts/tegra20.dtsi |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/boot/dts/tegra20.dtsi |    7 +++++++
+ arch/arm/boot/dts/tegra30.dtsi |    7 +++++++
+ 2 files changed, 14 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 6e13d13..10dfb83 100644
+index fe35c72..133d00d 100644
 --- a/arch/arm/boot/dts/tegra20.dtsi
 +++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -430,6 +430,23 @@
+@@ -352,6 +352,13 @@
  		status = "disabled";
  	};
  
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <1>;
-+		};
++	kbc {
++		compatible = "nvidia,tegra20-kbc";
++		reg = <0x7000e200 0x100>;
++		interrupts = <0 85 0x04>;
++		status = "disabled";
 +	};
 +
- 	pmu {
- 		compatible = "arm,cortex-a9-pmu";
- 		interrupts = <0 56 0x04
+ 	pmc {
+ 		compatible = "nvidia,tegra20-pmc";
+ 		reg = <0x7000e400 0x400>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index f534a50..d060e46 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -368,6 +368,13 @@
+ 		status = "disabled";
+ 	};
+ 
++	kbc {
++		compatible = "nvidia,tegra30-kbc", "nvidia,tegra20-kbc";
++		reg = <0x7000e200 0x100>;
++		interrupts = <0 85 0x04>;
++		status = "disabled";
++	};
++
+ 	pmc {
+ 		compatible = "nvidia,tegra20-pmc", "nvidia,tegra30-pmc";
+ 		reg = <0x7000e400 0x400>;
 -- 
-1.7.9.5
+1.7.1.1
