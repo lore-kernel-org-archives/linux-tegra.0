@@ -1,204 +1,103 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Fri, 11 Jan 2013 04:52:46 +0100
-Message-ID: <20130111035246.GB28094@avionic-0098.adnet.avionic-design.de>
+Subject: Re: [PATCH 01/14] of/pci: Provide support for parsing PCI DT ranges
+ property
+Date: Fri, 11 Jan 2013 05:02:10 +0100
+Message-ID: <20130111040210.GC28094@avionic-0098.adnet.avionic-design.de>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
- <50EF616E.7040609@wwwdotorg.org>
+ <1357764194-12677-2-git-send-email-thierry.reding@avionic-design.de>
+ <50EF5798.6040405@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+	protocol="application/pgp-signature"; boundary="ZmUaFz6apKcXQszQ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50EF616E.7040609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50EF5798.6040405-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---hHWLQfXTYDoKhP50
+--ZmUaFz6apKcXQszQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 10, 2013 at 05:48:46PM -0700, Stephen Warren wrote:
+On Thu, Jan 10, 2013 at 05:06:48PM -0700, Stephen Warren wrote:
 > On 01/09/2013 01:43 PM, Thierry Reding wrote:
-> > Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
-> > directory. The motivation is to collect various host controller drivers
-> > in the same location in order to facilitate refactoring.
+> > From: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
 > >=20
-> > The Tegra PCIe driver has been largely rewritten, both in order to turn
-> > it into a proper platform driver and to add MSI (based on code by
-> > Krishna Kishore <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>) as well as device tree support.
+> > DT bindings for PCI host bridges often use the ranges property to descr=
+ibe
+> > memory and IO ranges - this binding tends to be the same across archite=
+ctures
+> > yet several parsing implementations exist, e.g. arch/mips/pci/pci.c,
+> > arch/powerpc/kernel/pci-common.c, arch/sparc/kernel/pci.c and
+> > arch/microblaze/pci/pci-common.c (clone of PPC). Some of these duplicate
+> > functionality provided by drivers/of/address.c.
+> >=20
+> > This patch provides a common iterator-based parser for the ranges prope=
+rty, it
+> > is hoped this will reduce DT representation differences between archite=
+ctures
+> > and that architectures will migrate in part to this new parser.
+> ...
 >=20
-> > diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-teg=
-ra/board-dt-tegra20.c
+> > diff --git a/drivers/of/address.c b/drivers/of/address.c
 >=20
-> >  static void __init trimslice_init(void)
-> >  {
-> >  #ifdef CONFIG_TEGRA_PCI
-> > -	int ret;
-> > -
-> > -	ret =3D tegra_pcie_init(true, true);
-> > -	if (ret)
-> > -		pr_err("tegra_pci_init() failed: %d\n", ret);
-> > +	platform_device_register(&tegra_pcie_device);
+> > +const __be32 *of_pci_process_ranges(struct device_node *node,
 >=20
-> That struct doesn't actually exist anywhere; only an extern definition
-> is added (and that extern definition isn't removed by patch 14 either).
-
-Right, this shouldn't be there. In fact TEGRA_PCI is removed by this
-patch, so I should go over the code more carefully again.
-
-> > diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
->=20
-> > +config PCI_TEGRA
-> > +	bool "NVIDIA Tegra PCIe controller"
-> > +	depends on ARCH_TEGRA_2x_SOC
->=20
-> Perhaps depend on ARCH_TEGRA; that will save churn once this is ported
-> to Tegra30, and shouldn't cause any problems before then.
-
-Okay, I can do that.
-
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->=20
-> > +#define AFI_INTR_CODE		0xb8
-> > +#define  AFI_INTR_CODE_MASK	0xf
-> > +#define  AFI_INTR_MASTER_ABORT	4
-> > +#define  AFI_INTR_LEGACY	6
->=20
-> Adding defines for at least some other codes here, would help further
-> below ...
->=20
-> > +static irqreturn_t tegra_pcie_isr(int irq, void *arg)
->=20
-> > +	if (code =3D=3D AFI_INTR_MASTER_ABORT) {
-> > +		dev_dbg(pcie->dev, "%s, signature: %08x\n", err_msg[code],
-> > +			signature);
-> > +	} else
-> > +		dev_err(pcie->dev, "%s, signature: %08x\n", err_msg[code],
-> > +			signature);
+> > +	while (from + np <=3D end) {
+> > +		u64 cpu_addr, size;
 > > +
-> > +	if (code =3D=3D 3 || code =3D=3D 4 || code =3D=3D 7) {
->=20
-> ... i.e. here.
-
-Will do.
-
->=20
-> > +		u32 fpci =3D afi_readl(pcie, AFI_UPPER_FPCI_ADDRESS) & 0xff;
-> > +		u64 address =3D (u64)fpci << 32 | (signature & 0xfffffffc);
-> > +		dev_dbg(pcie->dev, "  FPCI address: %10llx\n", address);
->=20
-> I'd suggest making that dev_err(), or at least something higher than
-> debug, since the message indicating the error happened is dev_err(), so
-> the complete details may as well be available since they're small.
-
-I can make it conditional on !AFI_INTR_MASTER_ABORT to match the
-previous output. Or rather move it into the branches above.
-
-> > +static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
-> > +{
-> > +	unsigned int timeout;
-> > +	unsigned long value;
+> > +		cpu_addr =3D of_translate_address(node, from + na);
+> > +		size =3D of_read_number(from + na + pna, ns);
+> > +		res->flags =3D bus->get_flags(from);
+> > +		from +=3D np;
 > > +
-> > +	/* enable dual controller and both ports */
-> > +	value =3D afi_readl(pcie, AFI_PCIE_CONFIG);
-> > +	value &=3D ~(AFI_PCIE_CONFIG_PCIEC0_DISABLE_DEVICE |
-> > +		   AFI_PCIE_CONFIG_PCIEC1_DISABLE_DEVICE |
-> > +		   AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_MASK);
-> > +	value |=3D AFI_PCIE_CONFIG_SM2TMS0_XBAR_CONFIG_DUAL;
-> > +	afi_writel(pcie, value, AFI_PCIE_CONFIG);
+> > +		if (cpu_addr =3D=3D OF_BAD_ADDR || size =3D=3D 0)
+> > +			continue;
 >=20
-> Eventually, we should probably derive the port enables from the state of
-> the root port DT nodes, so that we can disable some and presumably save
-> a little power. Also, I notice that the nvidia,num-lanes property isn't
-> implemented yet. Still, we can probably take care of this later.
+> Hmmm. That seems to just ignore bad entries in the ranges property. Is
+> that really the right thing to do? At least printing a diagnostic might
+> be a good idea, even if the code does just soldier on in the hope
+> everything still works.
 
-Yes, the plan was to eventually derive the disable bits from the port
-status and setup the XBAR_CONFIG field based on the combination of
-nvidia,num-lanes properties.
+That's true. However, erroring out here wouln't be useful either since a
+NULL return value is used to mark the end of the iteration and the
+caller would have to assume that no more ranges are present. Maybe
+that's better than continuing anyway, even if a message is printed.
 
-I assume we should simply fail if the configuration specified by
-nvidia,num-lanes is invalid?
+Alternatively, the of_pci_process_ranges() could be changed to return an
+ERR_PTR() encoded errno. This is one case where it makes a lot of sense.
+I have a feeling that Grant won't like that very much, though.
 
-> > +static void tegra_pcie_power_off(struct tegra_pcie *pcie)
->=20
-> > +	if (!IS_ERR_OR_NULL(pcie->pex_clk_supply)) {
->=20
-> Hmm. I think we should make supplies mandatory; it doesn't make sense
-> for regulator support to be disabled on Tegra, and where a specific
-> board doesn't actually have a regulator, you're supposed to provide a
-> dummy fixed regulator so the driver doesn't have to care.
->=20
-> The same comment obviously applies to tegra_pcie_power_on() and wherever
-> regulator_get() happens.
+Another possibility would be to change away from an iterator-based
+approach and return an integer for the number of ranges and negative
+error code on failure while returning an allocated array of resources
+through an output parameter.
 
-Okay, I'll fix that.
-
-> > +static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
->=20
-> > +	pcie->vdd_supply =3D devm_regulator_get(pcie->dev, "vdd");
-> > +	if (IS_ERR(pcie->vdd_supply))
-> > +		return PTR_ERR(pcie->vdd_supply);
-> > +
-> > +	pcie->pex_clk_supply =3D devm_regulator_get(pcie->dev, "pex-clk");
-> > +	if (IS_ERR(pcie->pex_clk_supply))
-> > +		return PTR_ERR(pcie->pex_clk_supply);
->=20
-> Oh, I guess the regulator_get() calls are already strict.
-
-Yeah, I think they can't return NULL, right? In that case I can just
-drop the extra checks in tegra_pcie_power_{on,off}().
-
-> > +static int tegra_pcie_add_port(struct tegra_pcie *pcie, struct device_=
-node *np)
->=20
-> > +	port =3D devm_kzalloc(pcie->dev, sizeof(*port), GFP_KERNEL);
-> > +	if (!port)
-> > +		return -ENOMEM;
-> > +
-> > +	INIT_LIST_HEAD(&port->list);
-> > +	port->index =3D index;
-> > +	port->pcie =3D pcie;
-> > +
-> > +	port->base =3D devm_request_and_ioremap(pcie->dev, &regs);
-> > +	if (!port->base)
-> > +		return -EADDRNOTAVAIL;
-> > +
-> > +	if (!tegra_pcie_port_check_link(port)) {
-> > +		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
->=20
-> Perhaps devm_kfree(port)? Not a big leak, but equally if you don't, it's
-> an unreferenced memory block.
-
-I suppose I should do devm_iounmap() and devm_release_mem_region() as
-well.
-
-Thanks for reviewing!
 Thierry
 
---hHWLQfXTYDoKhP50
+--ZmUaFz6apKcXQszQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ74yOAAoJEN0jrNd/PrOhmK8P/AwZxUIN1cnwe6eHZlEB5owu
-yd4xrGsPRsk2WP08LZlpGBbaRDWTmTuS0j2KDnncH1C+31CSTi6p0UzzE7PTfyKv
-oeF3ECJeamq4BTDw/+ryuvGP2Kk+acszUbScx1DCw+/+GiY4lWapSYpQCwinQp5S
-AIA3R4i7hzAQWeFwdFfKPvOb0o9HrsRFG/IhZm85Kld6Sr07H7G8BkzaPu1dMm8t
-oJGnBe/Qh8ub3fA9xuczLOmkFukl57XH8SlfnOyhoMnEQlrNamB/YA+IXcTp+eIG
-njqla+giXK24iabvqQZz9sJhLkNQcUYHdUSckSIz7dk4isMgNv8xUhVl7FK6ZlNe
-P7iYq0sTF3YIRyu4kHiZjVHL6bzx5jS2hGtzSRn0rTC12xpIt0YHpneS775dTl1T
-5gM/6Le0IHR1H752o7A/OsvhjqOvuv4Lw6OobkzDvbkCgrX7Zz+R1z2ckN+96jjN
-AxhXOG65WS6LdOgCxy7+K8nplCv4LpKjpRtDBe57T+BZ30GrJ9NFKsjvqRnoR62r
-URGoMxrLyekzEDShaxfULJ6OpPfxOVao8ZaLO8LRzH+JtQY7ksiXS9x7iqysFqzw
-Z4O+L38Oje/3UqHH/E2MVinU/ZLa8OGAJu5ibfBbeneLPK4D3uD8YUlrztumLe1d
-57J+EMGmOb5lLIKfQvJ5
-=Y7Y5
+iQIcBAEBAgAGBQJQ747CAAoJEN0jrNd/PrOh/bQP/0IiT1xF+Klj+SSKlmrwUhEX
+dgfuEscTyb+N1OHfVfvwDxRaRq0z2z+cwHdF/gjehUuwDkWBomvjonoPpauNs4uj
+h4Rv3wvx0skXscKOxJgNB6vNbIAnoKgzBlJ13Z20AtxdqkncdTC8ZW/dRHCuW9W8
+Cpv33q0Utl706pHpVAw/0KMlq3zrRYQz42cIYeSrMxwzaWlFAexk5HcEwem2/pUW
+1/1Y6EhHO3FAS7IhQyLnnjVWlR89Gd9DzvYeCndLnP9lXfQ2FyKm83hKq8QqGpVN
+g+54HeYMMGeQn2u4M9c+BJqUt7q8eiRnCMlZN0W02UI/9Vhq+znh6cAGGDruBXzZ
+atkaJOxM997lYzBDgZA5u8AjS9O+n35UWNpyDgKoSJ05E7SuSBh/tBJuu1XVRu4z
+ueE/HERCWFon2QodEYUk5iNvt+NDM66nrfxXh9BIOd045Al8eXdHQ4dhslLXS8Sz
+qHC3dwoNKozfIHWrq4vAat+ERW79s1WgOf/NPLwpugdn56/wGCXJEQdblEDK/6Mj
+BtgE7VlX88knrMx0i8CXeMsCJIwyZds4WhZNRJ1ao4F+e+Tjc15zDZb0geq047+j
+aCrHplrXuK9iKzWAHFmMuabYjGDyhsAKx8Ii7GACCO9CisJIz+tgT6sJZU6ypajw
+65VE+KSnz/gVtV2KSnc+
+=eyXO
 -----END PGP SIGNATURE-----
 
---hHWLQfXTYDoKhP50--
+--ZmUaFz6apKcXQszQ--
