@@ -1,128 +1,57 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 10/10] clk: tegra30: remove unused TEGRA_CLK_DUPLICATE()s
-Date: Fri, 11 Jan 2013 14:01:20 -0700
-Message-ID: <50F07DA0.6000806@wwwdotorg.org>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com> <1357891289-23500-10-git-send-email-pgaikwad@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V3] staging: nvec: remove use of clk_get_sys
+Date: Fri, 11 Jan 2013 14:03:54 -0700
+Message-ID: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357891289-23500-10-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/11/2013 01:01 AM, Prashant Gaikwad wrote:
-> With device tree support added for Tegra clocks look up is done from
-> device tree, remove unused TEGRA_CLK_DUPLICATE()s.
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Cc'ing in the drivers/clk maintainer as an FYI and for Acks; this patch
-needs to go through the Tegra tree due to dependencies.
+As clock information is added to device tree clock can be looked up
+using clk_get. Remove use of clk_get_sys.
 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra30.c |   70 ---------------------------------------
->  1 files changed, 0 insertions(+), 70 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 987312c..6d1ff86 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1642,41 +1642,6 @@ static void __init tegra30_periph_clk_init(void)
->  	clk_register_clkdev(clk, "emc", NULL);
->  	clks[emc] = clk;
->  
-> -	/* i2c1-fast */
-> -	clk = clk_register_fixed_factor(NULL, "i2c1-fast", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.0");
-> -
-> -	/* i2c2-fast */
-> -	clk = clk_register_fixed_factor(NULL, "i2c2-fast", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.1");
-> -
-> -	/* i2c3-fast */
-> -	clk = clk_register_fixed_factor(NULL, "i2c3-fast", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.2");
-> -
-> -	/* i2c4-fast */
-> -	clk = clk_register_fixed_factor(NULL, "i2c4-fast", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.3");
-> -
-> -	/* i2c5-fast */
-> -	clk = clk_register_fixed_factor(NULL, "i2c5-fast", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.5");
-> -
-> -	/* dsi1-fixed */
-> -	clk = clk_register_fixed_factor(NULL, "dsi1-fixed", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "dsi-fixed", "tegradc.0");
-> -
-> -	/* dsi2-fixed */
-> -	clk = clk_register_fixed_factor(NULL, "dsi2-fixed", "pll_p_out3",
-> -					CLK_SET_RATE_PARENT, 1, 1);
-> -	clk_register_clkdev(clk, "dsi-fixed", "tegradc.1");
-> -
->  	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
->  		data = &tegra_periph_clk_list[i];
->  		clk = tegra_clk_periph(data->name, data->parent_names,
-> @@ -1935,19 +1900,9 @@ static __initdata struct tegra_clk_init_table init_table[] = {
->   * table under two names.
->   */
->  static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
-> -	TEGRA_CLK_DUPLICATE(uarta,  "serial8250.0", NULL),
-> -	TEGRA_CLK_DUPLICATE(uartb,  "serial8250.1", NULL),
-> -	TEGRA_CLK_DUPLICATE(uartc,  "serial8250.2", NULL),
-> -	TEGRA_CLK_DUPLICATE(uartd,  "serial8250.3", NULL),
-> -	TEGRA_CLK_DUPLICATE(uarte,  "serial8250.4", NULL),
->  	TEGRA_CLK_DUPLICATE(usbd, "utmip-pad", NULL),
->  	TEGRA_CLK_DUPLICATE(usbd, "tegra-ehci.0", NULL),
->  	TEGRA_CLK_DUPLICATE(usbd, "tegra-otg", NULL),
-> -	TEGRA_CLK_DUPLICATE(pll_p, "tegradc.0", "parent"),
-> -	TEGRA_CLK_DUPLICATE(pll_p, "tegradc.1", "parent"),
-> -	TEGRA_CLK_DUPLICATE(pll_d2_out0, "hdmi", "parent"),
-> -	TEGRA_CLK_DUPLICATE(dsib, "tegradc.0", "dsib"),
-> -	TEGRA_CLK_DUPLICATE(dsia, "tegradc.1", "dsia"),
->  	TEGRA_CLK_DUPLICATE(bsev, "tegra-avp", "bsev"),
->  	TEGRA_CLK_DUPLICATE(bsev, "nvavp", "bsev"),
->  	TEGRA_CLK_DUPLICATE(vde, "tegra-aes", "vde"),
-> @@ -1956,33 +1911,8 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
->  	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
->  	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
->  	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
-> -	TEGRA_CLK_DUPLICATE(i2c1, "tegra-i2c-slave.0", NULL),
-> -	TEGRA_CLK_DUPLICATE(i2c2, "tegra-i2c-slave.1", NULL),
-> -	TEGRA_CLK_DUPLICATE(i2c3, "tegra-i2c-slave.2", NULL),
-> -	TEGRA_CLK_DUPLICATE(i2c4, "tegra-i2c-slave.3", NULL),
-> -	TEGRA_CLK_DUPLICATE(i2c5, "tegra-i2c-slave.4", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc1, "spi_slave_tegra.0", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc2, "spi_slave_tegra.1", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc3, "spi_slave_tegra.2", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc4, "spi_slave_tegra.3", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc5, "spi_slave_tegra.4", NULL),
-> -	TEGRA_CLK_DUPLICATE(sbc6, "spi_slave_tegra.5", NULL),
->  	TEGRA_CLK_DUPLICATE(twd, "smp_twd", NULL),
->  	TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
-> -	TEGRA_CLK_DUPLICATE(i2s0, NULL, "i2s0"),
-> -	TEGRA_CLK_DUPLICATE(i2s1, NULL, "i2s1"),
-> -	TEGRA_CLK_DUPLICATE(i2s2, NULL, "i2s2"),
-> -	TEGRA_CLK_DUPLICATE(i2s3, NULL, "i2s3"),
-> -	TEGRA_CLK_DUPLICATE(i2s4, NULL, "i2s4"),
-> -	TEGRA_CLK_DUPLICATE(dam0, NULL, "dam0"),
-> -	TEGRA_CLK_DUPLICATE(dam1, NULL, "dam1"),
-> -	TEGRA_CLK_DUPLICATE(dam2, NULL, "dam2"),
-> -	TEGRA_CLK_DUPLICATE(spdif_in, NULL, "spdif_in"),
-> -	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.0", "fast-clk"),
-> -	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.1", "fast-clk"),
-> -	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.2", "fast-clk"),
-> -	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.3", "fast-clk"),
-> -	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.4", "fast-clk"),
->  	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
->  };
->  
-> 
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[swarren: updated TODO file to remove entry that requested this change]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Note: This patch needs to go through the Tegra tree due to dependencies
+on the clock driver rework there.
+
+v3: Added update to TODO file
+
+ drivers/staging/nvec/TODO   |    4 ----
+ drivers/staging/nvec/nvec.c |    2 +-
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/staging/nvec/TODO b/drivers/staging/nvec/TODO
+index f950ab8..e5ae42a 100644
+--- a/drivers/staging/nvec/TODO
++++ b/drivers/staging/nvec/TODO
+@@ -1,9 +1,5 @@
+ ToDo list (incomplete, unordered)
+ 	- add compile as module support
+-	- fix clk usage
+-	  should not be using clk_get_sys(), but clk_get(&pdev->dev, conn)
+-	  where conn is either NULL if the device only has one clock, or
+-	  the device specific name if it has multiple clocks.
+ 	- move half of the nvec init stuff to i2c-tegra.c
+ 	- move event handling to nvec_events
+ 	- finish suspend/resume support
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index d51615b..9417941 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -770,7 +770,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	i2c_clk = clk_get_sys("tegra-i2c.2", "div-clk");
++	i2c_clk = clk_get(&pdev->dev, "div-clk");
+ 	if (IS_ERR(i2c_clk)) {
+ 		dev_err(nvec->dev, "failed to get controller clock\n");
+ 		return -ENODEV;
+-- 
+1.7.10.4
