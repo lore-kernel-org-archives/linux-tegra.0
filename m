@@ -1,35 +1,63 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/2] ARM: tegra: Add cpu node in device tree
-Date: Fri, 11 Jan 2013 15:11:52 +0200
-Message-ID: <1357909914-28994-1-git-send-email-hdoyu@nvidia.com>
+Subject: [PATCH 2/2] ARM: tegra30: Add cpu node
+Date: Fri, 11 Jan 2013 15:11:54 +0200
+Message-ID: <1357909914-28994-3-git-send-email-hdoyu@nvidia.com>
+References: <1357909914-28994-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1357909914-28994-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Add cpu node for tegra30.
 
-From the discussion(*1) of CPU core# detection, DT cpu node will be
-the only way to do it right. So we need to add cpu nodes on the
-existing Tegra SoCs(T20/T30) first in order to remove the existing A9
-SCU detection later, where DT cpu# detection fails, we would consider
-a single cpu core avalable.
-
-Tested only with T30.
-
-Hiroshi Doyu (2):
-  ARM: tegra20: Add cpu node
-  ARM: tegra30: Add cpu node
-
- arch/arm/boot/dts/tegra20.dtsi |   29 +++++++++++++++++++++++++++++
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
  arch/arm/boot/dts/tegra30.dtsi |   29 +++++++++++++++++++++++++++++
- 2 files changed, 58 insertions(+)
+ 1 file changed, 29 insertions(+)
 
-*1:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/140209.html
-
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 5b02ff0..df3214f 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -467,6 +467,35 @@
+ 		status = "disabled";
+ 	};
+ 
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <0>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <1>;
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <2>;
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a9";
++			reg = <3>;
++		};
++	};
++
+ 	pmu {
+ 		compatible = "arm,cortex-a9-pmu";
+ 		interrupts = <0 144 0x04
 -- 
 1.7.9.5
