@@ -1,119 +1,127 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
- for secondary CPU
-Date: Fri, 11 Jan 2013 15:20:29 +0800
-Message-ID: <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
-References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
-	 <1354701715-24150-3-git-send-email-josephl@nvidia.com>
-	 <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
+From: Prashant Gaikwad <pgaikwad@nvidia.com>
+Subject: [PATCH v4 0/9] Migrate Tegra to common clock framework
+Date: Fri, 11 Jan 2013 13:16:18 +0530
+Message-ID: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20121205105010.GA12999-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, mturquette@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lorenzo,
+This patchset does following:
+1. Decompose single tegra clock structure into multiple clocks.
+2. Try to use standard clock types supported by common clock framework.
+3. Use dynamic initialization.
+4. Move all clock code to drivers/clk/tegra from mach-tegra.
+5. Add device tree support for Tegra20 and Tegra30 clocks.
+6. Remove all legacy clock code from mach-tegra.
 
-On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
-> On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
-> > The powered-down state of Tegra20 requires power gating both CPU cores.
-> > When the secondary CPU requests to enter powered-down state, it saves
-> > its own contexts and then enters WFI. The Tegra20 had a limition to
-> > power down both CPU cores. The secondary CPU must waits for CPU0 in
-> > powered-down state too. If the secondary CPU be woken up before CPU0
-> > entering powered-down state, then it needs to restore its CPU states
-> > and waits for next chance.
-> >
-> > Be aware of that, you may see the legacy power state "LP2" in the code
-> > which is exactly the same meaning of "CPU power down".
-> >
-> > Based on the work by:
-> > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > +
-> > +#ifdef CONFIG_PM_SLEEP
-> > +/*
-> > + * tegra_pen_lock
-> > + *
-> > + * spinlock implementation with no atomic test-and-set and no coherence
-> > + * using Peterson's algorithm on strongly-ordered registers
-> > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
-> > + *
-> > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
-> > + * on cpu 0:
-> > + * SCRATCH38 = r2 = flag[0]
-> > + * SCRATCH39 = r3 = flag[1]
-> > + * on cpu1:
-> > + * SCRATCH39 = r2 = flag[1]
-> > + * SCRATCH38 = r3 = flag[0]
-> > + *
-> > + * must be called with MMU on
-> > + * corrupts r0-r3, r12
-> > + */
-> > +ENTRY(tegra_pen_lock)
-> > +       mov32   r3, TEGRA_PMC_VIRT
-> > +       cpu_id  r0
-> > +       add     r1, r3, #PMC_SCRATCH37
-> > +       cmp     r0, #0
-> > +       addeq   r2, r3, #PMC_SCRATCH38
-> > +       addeq   r3, r3, #PMC_SCRATCH39
-> > +       addne   r2, r3, #PMC_SCRATCH39
-> > +       addne   r3, r3, #PMC_SCRATCH38
-> > +
-> > +       mov     r12, #1
-> > +       str     r12, [r2]               @ flag[cpu] = 1
-> > +       dsb
-> > +       str     r12, [r1]               @ !turn = cpu
-> > +1:     dsb
-> > +       ldr     r12, [r3]
-> > +       cmp     r12, #1                 @ flag[!cpu] == 1?
-> > +       ldreq   r12, [r1]
-> > +       cmpeq   r12, r0                 @ !turn == cpu?
-> > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
-> > +
-> > +       mov     pc, lr                  @ locked
-> > +ENDPROC(tegra_pen_lock)
-> > +
-> > +ENTRY(tegra_pen_unlock)
-> > +       dsb
-> > +       mov32   r3, TEGRA_PMC_VIRT
-> > +       cpu_id  r0
-> > +       cmp     r0, #0
-> > +       addeq   r2, r3, #PMC_SCRATCH38
-> > +       addne   r2, r3, #PMC_SCRATCH39
-> > +       mov     r12, #0
-> > +       str     r12, [r2]
-> > +       mov     pc, lr
-> > +ENDPROC(tegra_pen_unlock)
-> 
-> There is an ongoing work to make this locking scheme for MMU/coherency off
-> paths ARM generic, and we do not want to merge yet another platform specific
-> locking mechanism. I will point you to the patchset when it hits LAK.
-> 
+Tested on Tegra30 (Cardhu) and Tegra20 (Ventana).
 
-You did mention there is an ARM generic locking scheme for MMU/coherency
-off case before. Do you mean the patch below?
+This patch series is rebased on Tegra's for-3.9/soc and for-3.9/cleanup branch.
 
-https://patchwork.kernel.org/patch/1957911/
-https://patchwork.kernel.org/patch/1957901/
+Changes from V3:
+Fixed issued reported by Stephen Warren.
 
-I gave it a review today. Looks it can't fit our usage for CPU idle
-powered-down mode on Tegra20.
+Changes from v2:
+Removed APB MISC node.
+Fixed some issues reported by Joseph Lo.
+Added function to read chip id revision register.
 
-The generic mechanism only can be used when CPUs in non coherent world.
-But our usage needs the mechanism could be used in both coherent and non
-coherent case. OK. The case is we need to sync the status about the CPU1
-was ready to power down. In this case, the CPU0 is still in coherent
-world but the CPU1 isn't. So we need the locking scheme could be still
-safe in this situation.
+Changes from v1:
+Rebased on linux-next for 20121224.
 
-And the proposed scheme looks only for b.L system?
+Prashant Gaikwad (8):
+  ARM: tegra: Add function to read chipid
+  clk: tegra: Add tegra specific clocks
+  arm: tegra: Move tegra_cpu_car.h to linux/clk/tegra.h
+  ARM: Tegra: Define Tegra30 CAR binding
+  clk: tegra: add clock support for tegra20
+  clk: tegra: add clock support for tegra30
+  arm: tegra: Migrate to new clock code
+  arm: tegra: Remove legacy clock code
 
-Thanks,
-Joseph
+Stephen Warren (1):
+  ARM: tegra: Define Tegra20 CAR binding
+
+ .../bindings/clock/nvidia,tegra20-car.txt          |  205 ++
+ .../bindings/clock/nvidia,tegra30-car.txt          |  262 ++
+ arch/arm/boot/dts/tegra20.dtsi                     |    6 +
+ arch/arm/boot/dts/tegra30.dtsi                     |    6 +
+ arch/arm/mach-tegra/Makefile                       |    5 -
+ arch/arm/mach-tegra/board-dt-tegra20.c             |   30 -
+ arch/arm/mach-tegra/board-dt-tegra30.c             |   31 -
+ arch/arm/mach-tegra/clock.c                        |  166 --
+ arch/arm/mach-tegra/clock.h                        |  153 --
+ arch/arm/mach-tegra/common.c                       |   44 +-
+ arch/arm/mach-tegra/cpu-tegra.c                    |    2 +-
+ arch/arm/mach-tegra/cpuidle-tegra30.c              |    2 +-
+ arch/arm/mach-tegra/fuse.c                         |    8 +-
+ arch/arm/mach-tegra/hotplug.c                      |    2 +-
+ arch/arm/mach-tegra/include/mach/clk.h             |   44 -
+ arch/arm/mach-tegra/pcie.c                         |    2 +-
+ arch/arm/mach-tegra/platsmp.c                      |    2 +-
+ arch/arm/mach-tegra/pm.c                           |    2 +-
+ arch/arm/mach-tegra/powergate.c                    |    2 +-
+ arch/arm/mach-tegra/tegra20_clocks.c               | 1623 -------------
+ arch/arm/mach-tegra/tegra20_clocks.h               |   42 -
+ arch/arm/mach-tegra/tegra20_clocks_data.c          | 1143 ---------
+ arch/arm/mach-tegra/tegra30_clocks.c               | 2506 --------------------
+ arch/arm/mach-tegra/tegra30_clocks.h               |   54 -
+ arch/arm/mach-tegra/tegra30_clocks_data.c          | 1425 -----------
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/tegra/Makefile                         |   11 +
+ drivers/clk/tegra/clk-audio-sync.c                 |   89 +
+ drivers/clk/tegra/clk-divider.c                    |  188 ++
+ drivers/clk/tegra/clk-periph-gate.c                |  182 ++
+ drivers/clk/tegra/clk-periph.c                     |  228 ++
+ drivers/clk/tegra/clk-pll-out.c                    |  124 +
+ drivers/clk/tegra/clk-pll.c                        |  676 ++++++
+ drivers/clk/tegra/clk-super.c                      |  154 ++
+ drivers/clk/tegra/clk-tegra20.c                    | 1255 ++++++++++
+ drivers/clk/tegra/clk-tegra30.c                    | 2041 ++++++++++++++++
+ drivers/clk/tegra/clk.c                            |   85 +
+ drivers/clk/tegra/clk.h                            |  488 ++++
+ drivers/dma/tegra20-apb-dma.c                      |    2 +-
+ drivers/gpu/drm/tegra/dc.c                         |    3 +-
+ drivers/gpu/drm/tegra/drm.c                        |    1 -
+ drivers/gpu/drm/tegra/hdmi.c                       |    3 +-
+ drivers/i2c/busses/i2c-tegra.c                     |    3 +-
+ drivers/input/keyboard/tegra-kbc.c                 |    2 +-
+ drivers/spi/spi-tegra20-sflash.c                   |    2 +-
+ drivers/spi/spi-tegra20-slink.c                    |    2 +-
+ drivers/staging/nvec/nvec.c                        |    3 +-
+ .../tegra_cpu_car.h => include/linux/clk/tegra.h   |   13 +-
+ include/linux/tegra-soc.h                          |   22 +
+ sound/soc/tegra/tegra30_ahub.c                     |    2 +-
+ 50 files changed, 6056 insertions(+), 7291 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+ delete mode 100644 arch/arm/mach-tegra/clock.c
+ delete mode 100644 arch/arm/mach-tegra/clock.h
+ delete mode 100644 arch/arm/mach-tegra/include/mach/clk.h
+ delete mode 100644 arch/arm/mach-tegra/tegra20_clocks.c
+ delete mode 100644 arch/arm/mach-tegra/tegra20_clocks.h
+ delete mode 100644 arch/arm/mach-tegra/tegra20_clocks_data.c
+ delete mode 100644 arch/arm/mach-tegra/tegra30_clocks.c
+ delete mode 100644 arch/arm/mach-tegra/tegra30_clocks.h
+ delete mode 100644 arch/arm/mach-tegra/tegra30_clocks_data.c
+ create mode 100644 drivers/clk/tegra/Makefile
+ create mode 100644 drivers/clk/tegra/clk-audio-sync.c
+ create mode 100644 drivers/clk/tegra/clk-divider.c
+ create mode 100644 drivers/clk/tegra/clk-periph-gate.c
+ create mode 100644 drivers/clk/tegra/clk-periph.c
+ create mode 100644 drivers/clk/tegra/clk-pll-out.c
+ create mode 100644 drivers/clk/tegra/clk-pll.c
+ create mode 100644 drivers/clk/tegra/clk-super.c
+ create mode 100644 drivers/clk/tegra/clk-tegra20.c
+ create mode 100644 drivers/clk/tegra/clk-tegra30.c
+ create mode 100644 drivers/clk/tegra/clk.c
+ create mode 100644 drivers/clk/tegra/clk.h
+ rename arch/arm/mach-tegra/tegra_cpu_car.h => include/linux/clk/tegra.h (91%)
+ create mode 100644 include/linux/tegra-soc.h
+
+-- 
+1.7.4.1
