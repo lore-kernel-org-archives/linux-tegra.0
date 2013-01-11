@@ -1,43 +1,138 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 7/9] clk: tegra: add clock support for tegra30
-Date: Fri, 11 Jan 2013 14:17:25 +0200
-Message-ID: <20130111141725.ce3177ad04fc700186dc694d@nvidia.com>
-References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com>
-	<1357890387-23245-8-git-send-email-pgaikwad@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state for
+ secondary CPU
+Date: Fri, 11 Jan 2013 12:24:17 +0000
+Message-ID: <20130111122417.GE30538@e102568-lin.cambridge.arm.com>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+ <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+ <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
+ <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357890387-23245-8-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1357888829.2034.39.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 11 Jan 2013 08:46:25 +0100
-Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-> Add tegra30 clock support based on common clock framework.
+On Fri, Jan 11, 2013 at 07:20:29AM +0000, Joseph Lo wrote:
+> Hi Lorenzo,
 > 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-.......
-> +static void __init tegra30_pll_init(void)
-> +{
-> +       struct clk *clk;
-> +
-> +       /* PLLC */
-> +       clk = tegra_clk_pll("pll_c", "pll_ref", clk_base, pmc_base, 0,
-> +                           0, &pll_c_params,
-> +                           TEGRA_PLL_HAS_CPCON | TEGRA_PLL_USE_LOCK,
-> +                           pll_c_freq_table, NULL);
-> +       clk_register_clkdev(clk, "pll_c", NULL);
-> +       clks[pll_c] = clk;
+> On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
+> > On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
+> > > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > > When the secondary CPU requests to enter powered-down state, it saves
+> > > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > > powered-down state too. If the secondary CPU be woken up before CPU0
+> > > entering powered-down state, then it needs to restore its CPU states
+> > > and waits for next chance.
+> > >
+> > > Be aware of that, you may see the legacy power state "LP2" in the code
+> > > which is exactly the same meaning of "CPU power down".
+> > >
+> > > Based on the work by:
+> > > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> > > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >
+> > > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > +
+> > > +#ifdef CONFIG_PM_SLEEP
+> > > +/*
+> > > + * tegra_pen_lock
+> > > + *
+> > > + * spinlock implementation with no atomic test-and-set and no coherence
+> > > + * using Peterson's algorithm on strongly-ordered registers
+> > > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
+> > > + *
+> > > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
+> > > + * on cpu 0:
+> > > + * SCRATCH38 = r2 = flag[0]
+> > > + * SCRATCH39 = r3 = flag[1]
+> > > + * on cpu1:
+> > > + * SCRATCH39 = r2 = flag[1]
+> > > + * SCRATCH38 = r3 = flag[0]
+> > > + *
+> > > + * must be called with MMU on
+> > > + * corrupts r0-r3, r12
+> > > + */
+> > > +ENTRY(tegra_pen_lock)
+> > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > +       cpu_id  r0
+> > > +       add     r1, r3, #PMC_SCRATCH37
+> > > +       cmp     r0, #0
+> > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > +       addeq   r3, r3, #PMC_SCRATCH39
+> > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > +       addne   r3, r3, #PMC_SCRATCH38
+> > > +
+> > > +       mov     r12, #1
+> > > +       str     r12, [r2]               @ flag[cpu] = 1
+> > > +       dsb
+> > > +       str     r12, [r1]               @ !turn = cpu
+> > > +1:     dsb
+> > > +       ldr     r12, [r3]
+> > > +       cmp     r12, #1                 @ flag[!cpu] == 1?
+> > > +       ldreq   r12, [r1]
+> > > +       cmpeq   r12, r0                 @ !turn == cpu?
+> > > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
+> > > +
+> > > +       mov     pc, lr                  @ locked
+> > > +ENDPROC(tegra_pen_lock)
+> > > +
+> > > +ENTRY(tegra_pen_unlock)
+> > > +       dsb
+> > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > +       cpu_id  r0
+> > > +       cmp     r0, #0
+> > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > +       mov     r12, #0
+> > > +       str     r12, [r2]
+> > > +       mov     pc, lr
+> > > +ENDPROC(tegra_pen_unlock)
+> > 
+> > There is an ongoing work to make this locking scheme for MMU/coherency off
+> > paths ARM generic, and we do not want to merge yet another platform specific
+> > locking mechanism. I will point you to the patchset when it hits LAK.
+> > 
+> 
+> You did mention there is an ARM generic locking scheme for MMU/coherency
+> off case before. Do you mean the patch below?
+> 
+> https://patchwork.kernel.org/patch/1957911/
+> https://patchwork.kernel.org/patch/1957901/
 
-Just I noticed that there are quite many same itegration of:
+Those are used for first-man election when multiple CPUs come out of
+idle at once.
 
-	clk_register_clkdev(clk, <ID name>, ?);
-	clks[<ID>] = clk;
+You should have a look at the entire series and in particular:
 
-ID == <ID name>
+https://patchwork.kernel.org/patch/1957891/
+https://patchwork.kernel.org/patch/1957951/
 
-Can any macro/func do the above at once?
+> I gave it a review today. Looks it can't fit our usage for CPU idle
+> powered-down mode on Tegra20.
+> 
+> The generic mechanism only can be used when CPUs in non coherent world.
+> But our usage needs the mechanism could be used in both coherent and non
+> coherent case. OK. The case is we need to sync the status about the CPU1
+> was ready to power down. In this case, the CPU0 is still in coherent
+> world but the CPU1 isn't. So we need the locking scheme could be still
+> safe in this situation.
+
+I know, I implemented something of that sort for an A9 based development
+platform, that's why I pointed you to this new patchset.
+
+Have a look at the series, it should do what you want.
+
+> And the proposed scheme looks only for b.L system?
+
+No it works also for single cluster systems. Please have a look and let
+me know if you have any questions or comment on the thread so that
+authors can help you understand the code.
+
+Lorenzo
