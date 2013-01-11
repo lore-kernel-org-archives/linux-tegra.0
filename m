@@ -1,57 +1,93 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2 06/10] ASoC: tegra: remove auxdata
-Date: Fri, 11 Jan 2013 21:05:09 +0000
-Message-ID: <20130111210509.GB8677@opensource.wolfsonmicro.com>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
- <1357891289-23500-6-git-send-email-pgaikwad@nvidia.com>
- <50F07D30.9020102@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
+Date: Fri, 11 Jan 2013 14:35:28 -0700
+Message-ID: <50F085A0.4090100@wwwdotorg.org>
+References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com><1357890387-23245-3-git-send-email-pgaikwad@nvidia.com> <20130111.134820.1392079432650652356.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Pd0ReVV5GZGQvF3a"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50F07D30.9020102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130111.134820.1392079432650652356.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/11/2013 04:48 AM, Hiroshi Doyu wrote:
+> Hi Prahant,
+> 
+> Some nit-pick/cosmetic comments inlined...
 
---Pd0ReVV5GZGQvF3a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FYI, Prashant is on vacation for the next week or two, so I'll take over
+this series to clean up any last review comments.
 
-On Fri, Jan 11, 2013 at 01:59:28PM -0700, Stephen Warren wrote:
-> On 01/11/2013 01:01 AM, Prashant Gaikwad wrote:
-> > Configlink clock information is added to device tree. Get the clocks
-> > using device node. Remove AUXDATA.
->=20
-> Cc'ing in the ASoC maintainers as an FYI and for Acks; this patch needs
-> to go through the Tegra tree due to dependencies.
+> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
+> 
+>> Add tegra specific clocks, pll, pll_out, peripheral,
+>> frac_divider, super.
 
-Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+(it's a good idea to quote as little text as possible; paging through
+the whole patch to find your comments was slightly painful).
 
---Pd0ReVV5GZGQvF3a
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+>> +struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
+>> +                                 unsigned long max_rate)
+>> +{
+>> +       struct tegra_clk_sync_source *sync;
+>> +       struct clk_init_data init;
+>> +       struct clk *clk;
+>> +
+>> +       sync = kzalloc(sizeof(struct tegra_clk_sync_source), GFP_KERNEL);
+>> +       if (!sync) {
+>> +               pr_err("%s: could not allocate sync source clk\n", __func__);
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +
+>> +       sync->rate = rate;
+>> +       sync->max_rate = max_rate;
+>> +
+>> +       init.ops = &tegra_clk_sync_source_ops;
+>> +       init.name = name;
+>> +       init.flags = CLK_IS_ROOT;
+>> +       init.parent_names = NULL;
+>> +       init.num_parents = 0;
+>> +
+>> +       sync->hw.init = &init;
+>> +
+>> +       clk = clk_register(NULL, &sync->hw);
+> 
+> The above usage of "init" from stack may be a bit
+> unfamilier. I can guess that its content is copied in clk_register()
+> but it's originally defined in stack. So I just prefer to writing this
+> as below. It may be somewhat explict that we know init is from stack.
 
-iQIcBAEBAgAGBQJQ8H5mAAoJELSic+t+oim9y7wP+wfkFvYWL5c3wxi5cTL2RY08
-wDbfTIjQz02icWMasqrKpfS3xhEvt/jSKyd6YQ53BqE8PfEYDz2d+UVDYRgy8NpD
-JNcn+VdB/JycFBSh7IrEM0KDpkktn4yXIsA/7VQSUCprv9eI4IeloYKmyOVnJf01
-nGq8BKjAFpBoOCpbAyphpPsT5Kfkz6vJOocHl0RbcVLSmDZ+tuNMX1QwDImSCDQN
-NhaPyGQi4GUMHfT2JolCZev7GnFhiz2YpJAze7CNekgI0de4rsj5+5pPFftVqGHA
-YD7J/qOdmvhzXfqlCsvI85qvConNo06S03jxL0ba7Lv9KrOxuhoyRgJr2EkrPldT
-OrCSqhRcH5bcv3taajVxUgVHLN16xPgZAsBjIY6x5S5KNm4sIUPLmUPSFYcw0Tt5
-H7DJHhdgTMGAtAe0T4XcRY6JeH7Cwup1p7hgqEUzPnjevEZkpCL7qKWr6av+/kA2
-q8WuJTe7GsDwJTDPn3Ngg508j0nRSqpkkcdp1+uFaiVy+Ma7EmtxbkrfjUKfgbip
-79KTs6O6RpCHgOYlbNk2BGnSHsPOGjMCbzNXUjkjf2/Ccn/ZZi6t4zBkaEgD+twu
-vI3wjBLurdVB2bF642GvRwa5/YKnpHI08d7qOloLBjnhE1WUXWxkto5UgoOcn0Cs
-ngn0pZFvv5INJliNmGTX
-=on54
------END PGP SIGNATURE-----
+The issue you mention is more about whether "init" is copied from the
+stack or not; simplying changing the initialization to:
 
---Pd0ReVV5GZGQvF3a--
+> struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
+>                                  unsigned long max_rate)
+> {
+>         struct tegra_clk_sync_source *sync;
+>         struct clk_init_data init = {
+>                 .ops = &tegra_clk_sync_source_ops;
+>                 .name = name;
+>                 .flags = CLK_IS_ROOT;
+>                 .parent_names = NULL;
+>                 .num_parents = 0;
+>         };
+
+... doesn't really address that, although it's a perfectly reasonable
+change.
+
+To address the copying issue, why not just add a comment:
+
+       /*
+        * This data pointed at by this field is copied by
+        * clk_register(), so a pointer to the stack is OK.
+        */
+       sync->hw.init = &init;
+
+       clk = clk_register(NULL, &sync->hw);
+
+I'll make the other changes you suggested.
