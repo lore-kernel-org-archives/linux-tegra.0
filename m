@@ -1,7 +1,7 @@
 From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH v4 1/9] ARM: tegra: Add function to read chipid
-Date: Fri, 11 Jan 2013 13:16:19 +0530
-Message-ID: <1357890387-23245-2-git-send-email-pgaikwad@nvidia.com>
+Subject: [PATCH v4 5/9] ARM: Tegra: Define Tegra30 CAR binding
+Date: Fri, 11 Jan 2013 13:16:23 +0530
+Message-ID: <1357890387-23245-6-git-send-email-pgaikwad@nvidia.com>
 References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,77 +12,300 @@ To: swarren@wwwdotorg.org, mturquette@linaro.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add function to read chip id from APB MISC registers. This function
-will also get called from clock driver to flush write operations on
-apb bus.
+The device tree binding models Tegra30 CAR (Clock And Reset)
+as a single monolithic clock provider.
 
 Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 ---
- arch/arm/mach-tegra/fuse.c |    8 +++++++-
- include/linux/tegra-soc.h  |   22 ++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 1 deletions(-)
- create mode 100644 include/linux/tegra-soc.h
+ .../bindings/clock/nvidia,tegra30-car.txt          |  262 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi                     |    6 +
+ 2 files changed, 268 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
 
-diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-index 8121742..f7db078 100644
---- a/arch/arm/mach-tegra/fuse.c
-+++ b/arch/arm/mach-tegra/fuse.c
-@@ -20,6 +20,7 @@
- #include <linux/kernel.h>
- #include <linux/io.h>
- #include <linux/export.h>
-+#include <linux/tegra-soc.h>
- 
- #include "fuse.h"
- #include "iomap.h"
-@@ -105,6 +106,11 @@ static void tegra_get_process_id(void)
- 	tegra_core_process_id = (reg >> 12) & 3;
- }
- 
-+u32 tegra_read_chipid(void)
-+{
-+	return readl_relaxed(IO_ADDRESS(TEGRA_APB_MISC_BASE) + 0x804);
-+}
-+
- void tegra_init_fuse(void)
- {
- 	u32 id;
-@@ -119,7 +125,7 @@ void tegra_init_fuse(void)
- 	reg = tegra_apb_readl(TEGRA_APB_MISC_BASE + STRAP_OPT);
- 	tegra_bct_strapping = (reg & RAM_ID_MASK) >> RAM_CODE_SHIFT;
- 
--	id = readl_relaxed(IO_ADDRESS(TEGRA_APB_MISC_BASE) + 0x804);
-+	id = tegra_read_chipid();
- 	tegra_chip_id = (id >> 8) & 0xff;
- 
- 	switch (tegra_chip_id) {
-diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
 new file mode 100644
-index 0000000..95f611d
+index 0000000..121d203
 --- /dev/null
-+++ b/include/linux/tegra-soc.h
-@@ -0,0 +1,22 @@
-+/*
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+@@ -0,0 +1,262 @@
++NVIDIA Tegra30 Clock And Reset Controller
 +
-+#ifndef __LINUX_TEGRA_SOC_H_
-+#define __LINUX_TEGRA_SOC_H_
++This binding uses the common clock binding:
++Documentation/devicetree/bindings/clock/clock-bindings.txt
 +
-+u32 tegra_read_chipid(void);
++The CAR (Clock And Reset) Controller on Tegra is the HW module responsible
++for muxing and gating Tegra's clocks, and setting their rates.
 +
-+#endif /* __LINUX_TEGRA_SOC_H_ */
++Required properties :
++- compatible : Should be "nvidia,tegra30-car"
++- reg : Should contain CAR registers location and length
++- clocks : Should contain phandle and clock specifiers for two clocks:
++  the 32 KHz "32k_in", and the board-specific oscillator "osc".
++- #clock-cells : Should be 1.
++  In clock consumers, this cell represents the clock ID exposed by the CAR.
++
++  The first 130 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
++  registers. These IDs often match those in the CAR's RST_DEVICES registers,
++  but not in all cases. Some bits in CLK_OUT_ENB affect multiple clocks. In
++  this case, those clocks are assigned IDs above 160 in order to highlight
++  this issue. Implementations that interpret these clock IDs as bit values
++  within the CLK_OUT_ENB or RST_DEVICES registers should be careful to
++  explicitly handle these special cases.
++
++  The balance of the clocks controlled by the CAR are assigned IDs of 160 and
++  above.
++
++  0	cpu
++  1	unassigned
++  2	unassigned
++  3	unassigned
++  4	rtc
++  5	timer
++  6	uarta
++  7	unassigned	(register bit affects uartb and vfir)
++  8	gpio
++  9	sdmmc2
++  10	unassigned	(register bit affects spdif_in and spdif_out)
++  11	i2s1
++  12	i2c1
++  13	ndflash
++  14	sdmmc1
++  15	sdmmc4
++  16	unassigned
++  17	pwm
++  18	i2s2
++  19	epp
++  20	unassigned	(register bit affects vi and vi_sensor)
++  21	2d
++  22	usbd
++  23	isp
++  24	3d
++  25	unassigned
++  26	disp2
++  27	disp1
++  28	host1x
++  29	vcp
++  30	i2s0
++  31	cop_cache
++
++  32	mc
++  33	ahbdma
++  34	apbdma
++  35	unassigned
++  36	kbc
++  37	statmon
++  38	pmc
++  39	unassigned	(register bit affects fuse and fuse_burn)
++  40	kfuse
++  41	sbc1
++  42	nor
++  43	unassigned
++  44	sbc2
++  45	unassigned
++  46	sbc3
++  47	i2c5
++  48	dsia
++  49	unassigned	(register bit affects cve and tvo)
++  50	mipi
++  51	hdmi
++  52	csi
++  53	tvdac
++  54	i2c2
++  55	uartc
++  56	unassigned
++  57	emc
++  58	usb2
++  59	usb3
++  60	mpe
++  61	vde
++  62	bsea
++  63	bsev
++
++  64	speedo
++  65	uartd
++  66	uarte
++  67	i2c3
++  68	sbc4
++  69	sdmmc3
++  70	pcie
++  71	owr
++  72	afi
++  73	csite
++  74	pciex
++  75	avpucq
++  76	la
++  77	unassigned
++  78	unassigned
++  79	dtv
++  80	ndspeed
++  81	i2cslow
++  82	dsib
++  83	unassigned
++  84	irama
++  85	iramb
++  86	iramc
++  87	iramd
++  88	cram2
++  89	unassigned
++  90	audio_2x	a/k/a audio_2x_sync_clk
++  91	unassigned
++  92	csus
++  93	cdev2
++  94	cdev1
++  95	unassigned
++
++  96	cpu_g
++  97	cpu_lp
++  98	3d2
++  99	mselect
++  100	tsensor
++  101	i2s3
++  102	i2s4
++  103	i2c4
++  104	sbc5
++  105	sbc6
++  106	d_audio
++  107	apbif
++  108	dam0
++  109	dam1
++  110	dam2
++  111	hda2codec_2x
++  112	atomics
++  113	audio0_2x
++  114	audio1_2x
++  115	audio2_2x
++  116	audio3_2x
++  117	audio4_2x
++  118	audio5_2x
++  119	actmon
++  120	extern1
++  121	extern2
++  122	extern3
++  123	sata_oob
++  124	sata
++  125	hda
++  127	se
++  128	hda2hdmi
++  129	sata_cold
++
++  160	uartb
++  161	vfir
++  162	spdif_in
++  163	spdif_out
++  164	vi
++  165	vi_sensor
++  166	fuse
++  167	fuse_burn
++  168	cve
++  169	tvo
++
++  170	clk_32k
++  171	clk_m
++  172	clk_m_div2
++  173	clk_m_div4
++  174	pll_ref
++  175	pll_c
++  176	pll_c_out1
++  177	pll_m
++  178	pll_m_out1
++  179	pll_p
++  180	pll_p_out1
++  181	pll_p_out2
++  182	pll_p_out3
++  183	pll_p_out4
++  184	pll_a
++  185	pll_a_out0
++  186	pll_d
++  187	pll_d_out0
++  188	pll_d2
++  189	pll_d2_out0
++  190	pll_u
++  191	pll_x
++  192	pll_x_out0
++  193	pll_e
++  194	spdif_in_sync
++  195	i2s0_sync
++  196	i2s1_sync
++  197	i2s2_sync
++  198	i2s3_sync
++  199	i2s4_sync
++  200	vimclk
++  201	audio0
++  202	audio1
++  203	audio2
++  204	audio3
++  205	audio4
++  206	audio5
++  207	clk_out_1 (extern1)
++  208	clk_out_2 (extern2)
++  209	clk_out_3 (extern3)
++  210	sclk
++  211	blink
++  212	cclk_g
++  213	cclk_lp
++  214	twd
++  215	cml0
++  216	cml1
++  217	hclk
++  218	pclk
++
++Example SoC include file:
++
++/ {
++	tegra_car: clock {
++		compatible = "nvidia,tegra30-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	usb@c5004000 {
++		clocks = <&tegra_car 58>; /* usb2 */
++	};
++};
++
++Example board file:
++
++/ {
++	clocks {
++		compatible = "simple-bug";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		osc: clock@0 {
++			compatible = "fixed-clock";
++			reg = <0>;
++			#clock-cells = <0>;
++			clock-frequency = <12000000>;
++		};
++
++		clk_32k: clock@1 {
++			compatible = "fixed-clock";
++			reg = <1>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
++	&tegra_car {
++		clocks = <&clk_32k> <&osc>;
++	};
++};
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 529fdb8..6765646 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -125,6 +125,12 @@
+ 			      0 122 0x04>;
+ 	};
+ 
++	tegra_car: clock {
++		compatible = "nvidia,tegra30-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
++	};
++
+ 	apbdma: dma {
+ 		compatible = "nvidia,tegra30-apbdma", "nvidia,tegra20-apbdma";
+ 		reg = <0x6000a000 0x1400>;
 -- 
 1.7.4.1
