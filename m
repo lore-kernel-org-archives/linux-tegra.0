@@ -1,124 +1,134 @@
 From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 10/10] clk: tegra30: remove unused TEGRA_CLK_DUPLICATE()s
-Date: Fri, 11 Jan 2013 13:31:29 +0530
-Message-ID: <1357891289-23500-10-git-send-email-pgaikwad@nvidia.com>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
+Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
+Date: Fri, 11 Jan 2013 13:40:03 +0530
+Message-ID: <50EFC8DB.6090903@nvidia.com>
+References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org> <50EC8947.4080704@wwwdotorg.org> <50ED4DA9.3090406@nvidia.com> <50EDAA39.3040609@wwwdotorg.org> <50EDD693.2060905@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357891289-23500-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50EDD693.2060905-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-With device tree support added for Tegra clocks look up is done from
-device tree, remove unused TEGRA_CLK_DUPLICATE()s.
+On Thursday 10 January 2013 02:14 AM, Stephen Warren wrote:
+> On 01/09/2013 10:34 AM, Stephen Warren wrote:
+>> On 01/09/2013 03:59 AM, Prashant Gaikwad wrote:
+>>> On Wednesday 09 January 2013 02:31 AM, Stephen Warren wrote:
+>>>> On 01/08/2013 11:49 AM, Stephen Warren wrote:
+>>>>> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
+>>>>>> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
+>>>>>>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
+>>>>>>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
+>>>>>>>>> This patchset does following:
+>>>>>>>>> 1. Decompose single tegra clock structure into multiple clocks.
+>>>>>>>>> 2. Try to use standard clock types supported by common clock
+>>>>>>>>> framework.
+>>>>>>>>> 3. Use dynamic initialization.
+>>>>>>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
+>>>>>>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
+>>>>>>>>> 6. Remove all legacy clock code from mach-tegra.
+>>>>>>>> I think there are bugs here. I applied all your clock patches on
+>>>>>>>> top of
+>>>>>>>> Tegra's for-next (see list below), and found that the following don't
+>>>>>>>> work on Springbank:
+>>>>>>>>
+>>>>>>>> * HDMI display
+>>>>>>>> * Audio playback
+>>>>>>>> * WiFi
+>>>>>>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@
+>>>>>>> instead...)
+>>>>>>>
+>>>>>>> Prashant, some updated testing results based off the "dev/ccf" branch
+>>>>>>> you sent me on our internal git server:
+>>>>> ...
+>>>>>> I have updated the internal branch with all the above mentioned fixes.
+>>>> ...
+>>>>> The remaining item is the display issue on Tegra30, which I'll go look
+>>>>> at now.
+>>>> The USB3 clock, which isn't used by any drivers on Tegra30, and hence
+>>>> was disabled at boot, was set up incorrectly and ended up mapping to the
+>>>> disp1 clock, and hence turned off the display. The following fixes it:
+>>> Stephen, thanks for the fix!! I have included this and PLLE fix; updated
+>>> internal branch.
+>> Almost everything works great now.
+> I noticed a couple more issues.
+>
+> First, the clock rate rounding behaviour changes with your patch series
+> for at least the I2C clocks.
+>
+> With I2C, you specify how fast you want the bus to go. The bus shouldn't
+> run any faster than that since the rate matches the max specification
+> for the attached devices. So the clock framework should pick the
+> smallest divider that yields a clock that doesn't exceed the request
+> from clk_set_rate(). However, the new code seems to pick the smallest
+> divider that yields at least the requested clock. I can certainly see
+> that other clocks (say memory, CPU, or other internal
+> performance-related clocks) might want to round the other way though.
+>
+> The I2C driver sets its module clock to 8 times the desired bus rate.
+> This yields a request of:
+>
+> desired bus rate: 100 KHz
+> desired clock rate: 800 KHz
+> actual clock rate before your change: 800 KHz
+> actual clock rate after your change: 800 KHz
+> -> OK
+>
+> desired bus rate: 400 KHz
+> desired clock rate: 3.2 MHz
+> actual clock rate before your change: 3 MHz (so 375 KHz bus rate, OK)
+> actual clock rate after your change: 4 MHZ (so 500 KHz bus rate, BAD)
+>
+> desired bus rate: 80 KHz (Toshiba AC100's nvec/I2C slave driver)
+> desired clock rate: 640 KHz
+> actual clock rate before your change: ~632 KHz (so ~79 KHz bus rate, OK)
+> actual clock rate after your change: ~706 KHz (so ~88 KHz bus rate, BAD)
+>
+> Can this be fixed?
 
-Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra30.c |   70 ---------------------------------------
- 1 files changed, 0 insertions(+), 70 deletions(-)
+Fixed in latest patches.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 987312c..6d1ff86 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1642,41 +1642,6 @@ static void __init tegra30_periph_clk_init(void)
- 	clk_register_clkdev(clk, "emc", NULL);
- 	clks[emc] = clk;
- 
--	/* i2c1-fast */
--	clk = clk_register_fixed_factor(NULL, "i2c1-fast", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.0");
--
--	/* i2c2-fast */
--	clk = clk_register_fixed_factor(NULL, "i2c2-fast", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.1");
--
--	/* i2c3-fast */
--	clk = clk_register_fixed_factor(NULL, "i2c3-fast", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.2");
--
--	/* i2c4-fast */
--	clk = clk_register_fixed_factor(NULL, "i2c4-fast", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.3");
--
--	/* i2c5-fast */
--	clk = clk_register_fixed_factor(NULL, "i2c5-fast", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "fast-clk", "tegra-i2c.5");
--
--	/* dsi1-fixed */
--	clk = clk_register_fixed_factor(NULL, "dsi1-fixed", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "dsi-fixed", "tegradc.0");
--
--	/* dsi2-fixed */
--	clk = clk_register_fixed_factor(NULL, "dsi2-fixed", "pll_p_out3",
--					CLK_SET_RATE_PARENT, 1, 1);
--	clk_register_clkdev(clk, "dsi-fixed", "tegradc.1");
--
- 	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
- 		data = &tegra_periph_clk_list[i];
- 		clk = tegra_clk_periph(data->name, data->parent_names,
-@@ -1935,19 +1900,9 @@ static __initdata struct tegra_clk_init_table init_table[] = {
-  * table under two names.
-  */
- static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
--	TEGRA_CLK_DUPLICATE(uarta,  "serial8250.0", NULL),
--	TEGRA_CLK_DUPLICATE(uartb,  "serial8250.1", NULL),
--	TEGRA_CLK_DUPLICATE(uartc,  "serial8250.2", NULL),
--	TEGRA_CLK_DUPLICATE(uartd,  "serial8250.3", NULL),
--	TEGRA_CLK_DUPLICATE(uarte,  "serial8250.4", NULL),
- 	TEGRA_CLK_DUPLICATE(usbd, "utmip-pad", NULL),
- 	TEGRA_CLK_DUPLICATE(usbd, "tegra-ehci.0", NULL),
- 	TEGRA_CLK_DUPLICATE(usbd, "tegra-otg", NULL),
--	TEGRA_CLK_DUPLICATE(pll_p, "tegradc.0", "parent"),
--	TEGRA_CLK_DUPLICATE(pll_p, "tegradc.1", "parent"),
--	TEGRA_CLK_DUPLICATE(pll_d2_out0, "hdmi", "parent"),
--	TEGRA_CLK_DUPLICATE(dsib, "tegradc.0", "dsib"),
--	TEGRA_CLK_DUPLICATE(dsia, "tegradc.1", "dsia"),
- 	TEGRA_CLK_DUPLICATE(bsev, "tegra-avp", "bsev"),
- 	TEGRA_CLK_DUPLICATE(bsev, "nvavp", "bsev"),
- 	TEGRA_CLK_DUPLICATE(vde, "tegra-aes", "vde"),
-@@ -1956,33 +1911,8 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
- 	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
- 	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
- 	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
--	TEGRA_CLK_DUPLICATE(i2c1, "tegra-i2c-slave.0", NULL),
--	TEGRA_CLK_DUPLICATE(i2c2, "tegra-i2c-slave.1", NULL),
--	TEGRA_CLK_DUPLICATE(i2c3, "tegra-i2c-slave.2", NULL),
--	TEGRA_CLK_DUPLICATE(i2c4, "tegra-i2c-slave.3", NULL),
--	TEGRA_CLK_DUPLICATE(i2c5, "tegra-i2c-slave.4", NULL),
--	TEGRA_CLK_DUPLICATE(sbc1, "spi_slave_tegra.0", NULL),
--	TEGRA_CLK_DUPLICATE(sbc2, "spi_slave_tegra.1", NULL),
--	TEGRA_CLK_DUPLICATE(sbc3, "spi_slave_tegra.2", NULL),
--	TEGRA_CLK_DUPLICATE(sbc4, "spi_slave_tegra.3", NULL),
--	TEGRA_CLK_DUPLICATE(sbc5, "spi_slave_tegra.4", NULL),
--	TEGRA_CLK_DUPLICATE(sbc6, "spi_slave_tegra.5", NULL),
- 	TEGRA_CLK_DUPLICATE(twd, "smp_twd", NULL),
- 	TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
--	TEGRA_CLK_DUPLICATE(i2s0, NULL, "i2s0"),
--	TEGRA_CLK_DUPLICATE(i2s1, NULL, "i2s1"),
--	TEGRA_CLK_DUPLICATE(i2s2, NULL, "i2s2"),
--	TEGRA_CLK_DUPLICATE(i2s3, NULL, "i2s3"),
--	TEGRA_CLK_DUPLICATE(i2s4, NULL, "i2s4"),
--	TEGRA_CLK_DUPLICATE(dam0, NULL, "dam0"),
--	TEGRA_CLK_DUPLICATE(dam1, NULL, "dam1"),
--	TEGRA_CLK_DUPLICATE(dam2, NULL, "dam2"),
--	TEGRA_CLK_DUPLICATE(spdif_in, NULL, "spdif_in"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.0", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.1", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.2", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.3", "fast-clk"),
--	TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.4", "fast-clk"),
- 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
- };
- 
--- 
-1.7.4.1
+> Second, the Toshiba AC100 uses an alternative driver for the I2C HW,
+> since it operates in I2C slave mode. So, the DT node for that driver
+> needs to include the clocks properties so the driver can get the clocks
+> through DT:
+>
+>> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+>> index edef66c..6495425 100644
+>> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+>> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+>> @@ -278,6 +278,8 @@
+>>                  clock-frequency = <50000>;
+>>                  request-gpios = <&gpio 170 0>; /* gpio PV2 */
+>>                  slave-addr = <138>;
+>> +               clocks = <&tegra_car 67>, <&tegra_car 124>;
+>> +               clock-names = "div-clk", "fast-clk";
+>>          };
+>>   
+>>          i2c@7000d000 {
+> Your changes don't actually cause the driver to break though, since it
+> abuses clk_get_sys() to retrieve clocks under a different driver name,
+> which matches what the clock driver provides. However, I think you
+> should also include the following patch at the end of your series to fix
+> this up, so the clock looking happens through device tree:
+>
+>> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+>> index d8826ed..6d44076 100644
+>> --- a/drivers/staging/nvec/nvec.c
+>> +++ b/drivers/staging/nvec/nvec.c
+>> @@ -770,7 +770,7 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+>>                  return -ENODEV;
+>>          }
+>>   
+>> -       i2c_clk = clk_get_sys("tegra-i2c.2", "div-clk");
+>> +       i2c_clk = clk_get(&pdev->dev, "div-clk");
+>>          if (IS_ERR(i2c_clk)) {
+>>                  dev_err(nvec->dev, "failed to get controller clock\n");
+>>                  return -ENODEV;
+
+Included in the latest patches sent.
+
+> Thanks.
