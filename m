@@ -1,68 +1,101 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 0/9] Migrate Tegra to common clock framework
-Date: Fri, 11 Jan 2013 13:42:08 +0530
-Message-ID: <50EFC958.2090900@nvidia.com>
-References: <1357292453-28418-1-git-send-email-pgaikwad@nvidia.com> <50E70FE5.9010001@wwwdotorg.org> <50EB6403.5090300@wwwdotorg.org> <50EC1CD3.3070308@nvidia.com> <50EC6A37.4000206@wwwdotorg.org> <50EC8947.4080704@wwwdotorg.org> <50ED4DA9.3090406@nvidia.com> <50EDAA39.3040609@wwwdotorg.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [v2 3/9] ARM: tegra: # of CPU cores detection w/ & w/o
+ HAVE_ARM_SCU
+Date: Fri, 11 Jan 2013 10:11:34 +0000
+Message-ID: <20130111101134.GC30538@e102568-lin.cambridge.arm.com>
+References: <20130108171103.GA7417@e102568-lin.cambridge.arm.com>
+ <20130109.134641.1582472136842052082.hdoyu@nvidia.com>
+ <20130109151700.GB22147@e102568-lin.cambridge.arm.com>
+ <20130110.145813.1159140334089730421.hdoyu@nvidia.com>
+ <50EEF235.7070200@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50EDAA39.3040609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50EEF235.7070200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 09 January 2013 11:04 PM, Stephen Warren wrote:
-> On 01/09/2013 03:59 AM, Prashant Gaikwad wrote:
->> On Wednesday 09 January 2013 02:31 AM, Stephen Warren wrote:
->>> On 01/08/2013 11:49 AM, Stephen Warren wrote:
->>>> On 01/08/2013 06:19 AM, Prashant Gaikwad wrote:
->>>>> On Tuesday 08 January 2013 05:40 AM, Stephen Warren wrote:
->>>>>> On 01/04/2013 10:22 AM, Stephen Warren wrote:
->>>>>>> On 01/04/2013 02:40 AM, Prashant Gaikwad wrote:
->>>>>>>> This patchset does following:
->>>>>>>> 1. Decompose single tegra clock structure into multiple clocks.
->>>>>>>> 2. Try to use standard clock types supported by common clock
->>>>>>>> framework.
->>>>>>>> 3. Use dynamic initialization.
->>>>>>>> 4. Move all clock code to drivers/clk/tegra from mach-tegra.
->>>>>>>> 5. Add device tree support for Tegra20 and Tegra30 clocks.
->>>>>>>> 6. Remove all legacy clock code from mach-tegra.
->>>>>>> I think there are bugs here. I applied all your clock patches on
->>>>>>> top of
->>>>>>> Tegra's for-next (see list below), and found that the following don't
->>>>>>> work on Springbank:
->>>>>>>
->>>>>>> * HDMI display
->>>>>>> * Audio playback
->>>>>>> * WiFi
->>>>>> (BTW, I stopped Cc'ing linux-kernel@, but added linux-tegra@
->>>>>> instead...)
->>>>>>
->>>>>> Prashant, some updated testing results based off the "dev/ccf" branch
->>>>>> you sent me on our internal git server:
->>>> ...
->>>>> I have updated the internal branch with all the above mentioned fixes.
->>> ...
->>>> The remaining item is the display issue on Tegra30, which I'll go look
->>>> at now.
->>> The USB3 clock, which isn't used by any drivers on Tegra30, and hence
->>> was disabled at boot, was set up incorrectly and ended up mapping to the
->>> disp1 clock, and hence turned off the display. The following fixes it:
->> Stephen, thanks for the fix!! I have included this and PLLE fix; updated
->> internal branch.
-> Almost everything works great now.
+On Thu, Jan 10, 2013 at 04:54:13PM +0000, Stephen Warren wrote:
+> On 01/10/2013 05:58 AM, Hiroshi Doyu wrote:
+> > Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 9 Jan 2013 16:17:00 +0100:
+> ...
+> > With your "[PATCH] ARM: kernel: DT cpu map validity check helper
+> > function", my original patch gets as below. I think that the following
+> > "smp_detect_ncores()" function may be so generic that it could be
+> > moved in some common place than platform?
+> > 
+> > From f5f2a43952ce75fe061b3808b994c3ceb07f1af1 Mon Sep 17 00:00:00 2001
+> > From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > Date: Mon, 26 Nov 2012 12:25:14 +0200
+> > Subject: [PATCH 1/1] ARM: tegra: # of CPU cores detection w/ & w/o
+> >  HAVE_ARM_SCU
+> > 
+> > The method to detect the number of CPU cores on Cortex-A9 MPCore and
+> > Cortex-A15 MPCore is different. On Cortex-A9 MPCore we can get this
+> > information from the Snoop Control Unit(SCU). On Cortex-A15 MPCore we
+> > have to read it from the system coprocessor(CP15), because the SCU on
+> > Cortex-A15 MPCore does not have software readable registers. This
+> > patch selects the correct method at runtime based on the CPU ID.
+> 
+> > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> 
+> > +static int __init smp_detect_ncores(void)
+> > +{
+> > +	unsigned int ncores, mpidr;
+> > +	u32 l2ctlr;
+> > +	phys_addr_t pa;
+> > +
+> > +	mpidr = read_cpuid_mpidr();
+> > +	switch (mpidr) {
+> > +	case ARM_CPU_PART_CORTEX_A15:
+> > +		asm("mrc p15, 1, %0, c9, c0, 2\n" : "=r" (l2ctlr));
+> > +		ncores = ((l2ctlr >> 24) & 3) + 1;
+> > +		break;
+> > +	case ARM_CPU_PART_CORTEX_A9:
+> > +		/* Get SCU physical base */
+> > +		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
+> > +		scu_base = IO_ADDRESS(pa);
+> > +		ncores = scu_get_core_count(scu_base);
+> > +		break;
+> > +	default:
+> > +		pr_warn("Unsupported mpidr\n");
+> > +		ncores = 1;
+> > +		break;
+> > +	}
+> > +
+> > +	return ncores;
+> > +}
+> 
+> Why not just remove that function...
+> 
+> >  /*
+> >   * Initialise the CPU possible map early - this describes the CPUs
+> >   * which may be present or become present in the system.
+> >   */
+> >  static void __init tegra_smp_init_cpus(void)
+> >  {
+> > -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> > -
+> > -	if (ncores > nr_cpu_ids) {
+> > -		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
+> > -			ncores, nr_cpu_ids);
+> > -		ncores = nr_cpu_ids;
+> > +	if (!arm_dt_cpu_map_valid()) {
+> > +		unsigned int i, ncores;
+> > +
+> > +		ncores = smp_detect_ncores();
+> 
+> And just say "ncores = 1" here?
+> 
+> For Tegra, it's trivial to simply put the patch adding the required DT
+> nodes before this patch, and then there's no need for any
+> backwards-compatibility, since the nodes are guaranteed to be there.
 
-Great!!
+If you are willing to accept that your code proposal is perfectly fine by me.
 
-> However, I don't see any fix for the PLLE issue in the code; if there is
-> one it certainly doesn't work. Applying my previous hack makes it work.
-
-There is some difference between Tegra20 and Tegra30 PLLE implementation.
-Fixed in latest patches sent.
-
-> FYI, the branch I tested with is at
-> git://nv-tegra.nvidia.com/user/swarren/linux-2.6 test-ccf-rework-2
->
-> It's rebased onto the latest Tegra for-next.
+Thanks,
+Lorenzo
