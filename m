@@ -1,43 +1,43 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 0/2] ARM: tegra: Add cpu node in device tree
-Date: Fri, 11 Jan 2013 14:44:49 +0000
-Message-ID: <20130111144449.GF30538@e102568-lin.cambridge.arm.com>
-References: <1357909914-28994-1-git-send-email-hdoyu@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Fri, 11 Jan 2013 15:36:14 +0000
+Message-ID: <201301111536.14799.arnd@arndb.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <50EF54B6.6010100@wwwdotorg.org> <20130111034015.GA28094@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357909914-28994-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20130111034015.GA28094-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 11, 2013 at 01:11:52PM +0000, Hiroshi Doyu wrote:
-> Hi,
+On Friday 11 January 2013, Thierry Reding wrote:
+> Right, it'll need #ifdefs around the arch_{setup,teardown}_msi_irq(). Or
+> select PCI_MSI unconditionally. Once this is merged I was going to post
+> a patch that enables PCI_MSI in tegra_defconfig anyway. But it might be
+> better to keep it optional anyway since the remainder of the code copes
+> with it properly.
 > 
-> From the discussion(*1) of CPU core# detection, DT cpu node will be
-> the only way to do it right. So we need to add cpu nodes on the
-> existing Tegra SoCs(T20/T30) first in order to remove the existing A9
-> SCU detection later, where DT cpu# detection fails, we would consider
-> a single cpu core avalable.
-> 
-> Tested only with T30.
-> 
-> Hiroshi Doyu (2):
->   ARM: tegra20: Add cpu node
->   ARM: tegra30: Add cpu node
-> 
->  arch/arm/boot/dts/tegra20.dtsi |   29 +++++++++++++++++++++++++++++
->  arch/arm/boot/dts/tegra30.dtsi |   29 +++++++++++++++++++++++++++++
->  2 files changed, 58 insertions(+)
-> 
-> *1:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/140209.html
-Looks ok, but you should copy devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org for
-any set DT related.
+Actually, we need something better than that. You cannot define
+arch_setup_msi_irq in a tegra specific pci host driver, because that
+will seriously mess up other platforms in multiplatform configurations
+by giving a link error when they also define this function, or with a
+run-time error when they don't support it.
 
-FWIW on the series:
+I think what we should do here is fix it the right way by adding
+a pci host specific callback rather than an architecture specific
+callback in drivers/pci/msi.c. There is already a default version
+of arch_setup_msi_irqs (with s), and we can probably do the
+same for arch_setup_msi_irq (without s) to fall back to the
+arch version for most architectures.
+Most architectures (at least powerpc, sparc, ia64 and x86) already
+multiplex the msi handlers internally, but ARM does not because
+there is only one implementation (iop33x) at the moment.
 
-Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+We can add a generix multiplex and then move architectures over to
+use it.
+
+	Arnd
