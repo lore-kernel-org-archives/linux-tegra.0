@@ -1,30 +1,47 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH V3] staging: nvec: remove use of clk_get_sys
-Date: Fri, 11 Jan 2013 16:43:50 -0800
-Message-ID: <20130112004350.GB2578@kroah.com>
-References: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] arm: tegra: Add new DT property to USB node.
+Date: Fri, 11 Jan 2013 17:43:52 -0700
+Message-ID: <50F0B1C8.400@wwwdotorg.org>
+References: <50CF89AF.3000308@wwwdotorg.org> <Pine.LNX.4.44L0.1212171704060.1409-100000@iolanthe.rowland.org> <20130112001414.GA21909@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1357938234-16570-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20130112001414.GA21909@kroah.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Venu Byravarasu <vbyravarasu@nvidia.com>, Felipe Balbi <balbi@ti.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, rob@landley.net, linux@arm.linux.org.uk, sjg@chromium.org, olof@lixom.net, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 11, 2013 at 02:03:54PM -0700, Stephen Warren wrote:
-> From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 01/11/2013 05:14 PM, Greg KH wrote:
+> On Mon, Dec 17, 2012 at 05:04:41PM -0500, Alan Stern wrote:
+>> On Mon, 17 Dec 2012, Stephen Warren wrote:
+>>
+>>> On 12/13/2012 11:59 PM, Venu Byravarasu wrote:
+>>>> As Tegra USB host driver is using instance number for resetting
+>>>> PORT0 twice, adding a new DT property for handling this.
+>>>
+>>> Alan, Greg, Felip,e
+>>>
+>>> This series looks fine to me.
+>>>
+>>> I'd like to take all the Tegra-related USB patches through the Tegra
+>>> tree for 3.9 if possible (so I'm looking for your acks here). I believe
+>>> Venu plans to significantly clean up the EHCI/PHY driver split for
+>>> Tegra, rework the drivers, and add support for Tegra30 in addition to
+>>> Tegra20. Some of this requires changes to some Tegra board files and
+>>> device trees to maintain "git bisect" I don't know for sure yet, but I
+>>> believe that rework may also end up conflicting with other clock-related
+>>> rework that will show up for Tegra in 3.9. Are you OK with this? I'll
+>>> certainly look for your review/acks on the patches before picking them
+>>> up though.
+>>
+>> Regarding the changes to drivers/usb/host/ehci-tegra.c:
+>>
+>> Acked-by: Alan Stern <stern@rowland.harvard.edu>
 > 
-> As clock information is added to device tree clock can be looked up
-> using clk_get. Remove use of clk_get_sys.
-> 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [swarren: updated TODO file to remove entry that requested this change]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Note: This patch needs to go through the Tegra tree due to dependencies
-> on the clock driver rework there.
+> That's fine with me as well, feel free to think that I have now dropped
+> all tegra-related patches from my queue, you can take them all :)
 
-Fine with me:
-	Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Thanks, applied to Tegra's for-3.9/usb branch.
+
