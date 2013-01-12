@@ -1,65 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Fri, 11 Jan 2013 16:39:20 -0700
-Message-ID: <50F0A2A8.3080401@wwwdotorg.org>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <20130111232438.GN23505@n2100.arm.linux.org.uk> <50F09FCB.70809@wwwdotorg.org> <20130111233615.GO23505@n2100.arm.linux.org.uk>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm: tegra: Add new DT property to USB node.
+Date: Fri, 11 Jan 2013 16:14:14 -0800
+Message-ID: <20130112001414.GA21909@kroah.com>
+References: <50CF89AF.3000308@wwwdotorg.org>
+ <Pine.LNX.4.44L0.1212171704060.1409-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130111233615.GO23505-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1212171704060.1409-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/11/2013 04:36 PM, Russell King - ARM Linux wrote:
-> On Fri, Jan 11, 2013 at 04:27:07PM -0700, Stephen Warren wrote:
->> On 01/11/2013 04:24 PM, Russell King - ARM Linux wrote:
->>> On Fri, Jan 11, 2013 at 04:09:59PM -0700, Stephen Warren wrote:
->>>> On 01/11/2013 06:33 AM, Laxman Dewangan wrote:
->>>>> 	kbc->clk = clk_get(&pdev->dev, NULL);
->>>>> 	if (IS_ERR(kbc->clk)) {
->>>>> 		dev_err(&pdev->dev, "failed to get keyboard clock\n");
->>>>> 		err = PTR_ERR(kbc->clk);
->>>>> 		goto err_iounmap;
->>>>> 	}
->>>>
->>>> Should that check be if (!kbc-clk) instead? Or does the common clock
->>>> framework require if (IS_ERR_OR_NULL(kbc->clk)); hopefully not since
->>>> IS_ERR_OR_NULL shouldn't be used any more.
->>>
->>> /**
->>>  * clk_get - lookup and obtain a reference to a clock producer.
->>>  * @dev: device for clock "consumer"
->>>  * @id: clock consumer ID
->>>  *
->>>  * Returns a struct clk corresponding to the clock producer, or
->>>    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>  * valid IS_ERR() condition containing errno.  ...
->>>    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>
->>> Or, put another way:
->>>
->>> 	If (!IS_ERR(clk))
->>> 		The_Clock_Is_Valid();
->>> 	Else
->>> 		The_Clock_Is_Invalid();
->>> 		The_Error = PTR_ERR(clk);
->>
->> OK, but that doesn't appear to be what happened in practice.
+On Mon, Dec 17, 2012 at 05:04:41PM -0500, Alan Stern wrote:
+> On Mon, 17 Dec 2012, Stephen Warren wrote:
 > 
-> It's what I've been saying each time I see an abuse, the problem is
-> people don't care to read the documentation provided let alone
-> understand the interfaces.
+> > On 12/13/2012 11:59 PM, Venu Byravarasu wrote:
+> > > As Tegra USB host driver is using instance number for resetting
+> > > PORT0 twice, adding a new DT property for handling this.
+> > 
+> > Alan, Greg, Felip,e
+> > 
+> > This series looks fine to me.
+> > 
+> > I'd like to take all the Tegra-related USB patches through the Tegra
+> > tree for 3.9 if possible (so I'm looking for your acks here). I believe
+> > Venu plans to significantly clean up the EHCI/PHY driver split for
+> > Tegra, rework the drivers, and add support for Tegra30 in addition to
+> > Tegra20. Some of this requires changes to some Tegra board files and
+> > device trees to maintain "git bisect" I don't know for sure yet, but I
+> > believe that rework may also end up conflicting with other clock-related
+> > rework that will show up for Tegra in 3.9. Are you OK with this? I'll
+> > certainly look for your review/acks on the patches before picking them
+> > up though.
 > 
-> That's precisely why IS_ERR_OR_NULL() is to be removed.  One less
-> thing for someone to throw a dart at as a selection method to use.
-> Or maybe roll a dice.  Or whatever way they do seem to choose.
-> (Whatever that is, it's not based on any sound engineering practice
-> I can make out.)
+> Regarding the changes to drivers/usb/host/ehci-tegra.c:
+> 
+> Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 
-For the record, I did mention that IS_ERR_OR_NULL() should not be the
-solution here. And the point of my email to Laxman was that he should go
-figure out the answer to my question, which would entail reading the
-documentation/code/...
+That's fine with me as well, feel free to think that I have now dropped
+all tegra-related patches from my queue, you can take them all :)
+
+thanks,
+
+greg k-h
