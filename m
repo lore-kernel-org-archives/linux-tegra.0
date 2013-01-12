@@ -1,138 +1,35 @@
-From: Nicolas Pitre <nico@fluxnic.net>
-Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state for
- secondary CPU
-Date: Sat, 12 Jan 2013 12:33:07 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1301121227390.6300@xanadu.home>
-References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
- <1354701715-24150-3-git-send-email-josephl@nvidia.com>
- <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
- <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
+From: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+Subject: Re: [PATCH V3] staging: nvec: remove use of clk_get_sys
+Date: Sat, 12 Jan 2013 20:41:05 +0100
+Message-ID: <20130112194105.GA12392@jak-linux.org>
+References: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1357938234-16570-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 11 Jan 2013, Joseph Lo wrote:
-
-> Hi Lorenzo,
+On Fri, Jan 11, 2013 at 02:03:54PM -0700, Stephen Warren wrote:
+> From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
-> > On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
-> > > The powered-down state of Tegra20 requires power gating both CPU cores.
-> > > When the secondary CPU requests to enter powered-down state, it saves
-> > > its own contexts and then enters WFI. The Tegra20 had a limition to
-> > > power down both CPU cores. The secondary CPU must waits for CPU0 in
-> > > powered-down state too. If the secondary CPU be woken up before CPU0
-> > > entering powered-down state, then it needs to restore its CPU states
-> > > and waits for next chance.
-> > >
-> > > Be aware of that, you may see the legacy power state "LP2" in the code
-> > > which is exactly the same meaning of "CPU power down".
-> > >
-> > > Based on the work by:
-> > > Colin Cross <ccross@android.com>
-> > > Gary King <gking@nvidia.com>
-> > >
-> > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > > +
-> > > +#ifdef CONFIG_PM_SLEEP
-> > > +/*
-> > > + * tegra_pen_lock
-> > > + *
-> > > + * spinlock implementation with no atomic test-and-set and no coherence
-> > > + * using Peterson's algorithm on strongly-ordered registers
-> > > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
-> > > + *
-> > > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
-> > > + * on cpu 0:
-> > > + * SCRATCH38 = r2 = flag[0]
-> > > + * SCRATCH39 = r3 = flag[1]
-> > > + * on cpu1:
-> > > + * SCRATCH39 = r2 = flag[1]
-> > > + * SCRATCH38 = r3 = flag[0]
-> > > + *
-> > > + * must be called with MMU on
-> > > + * corrupts r0-r3, r12
-> > > + */
-> > > +ENTRY(tegra_pen_lock)
-> > > +       mov32   r3, TEGRA_PMC_VIRT
-> > > +       cpu_id  r0
-> > > +       add     r1, r3, #PMC_SCRATCH37
-> > > +       cmp     r0, #0
-> > > +       addeq   r2, r3, #PMC_SCRATCH38
-> > > +       addeq   r3, r3, #PMC_SCRATCH39
-> > > +       addne   r2, r3, #PMC_SCRATCH39
-> > > +       addne   r3, r3, #PMC_SCRATCH38
-> > > +
-> > > +       mov     r12, #1
-> > > +       str     r12, [r2]               @ flag[cpu] = 1
-> > > +       dsb
-> > > +       str     r12, [r1]               @ !turn = cpu
-> > > +1:     dsb
-> > > +       ldr     r12, [r3]
-> > > +       cmp     r12, #1                 @ flag[!cpu] == 1?
-> > > +       ldreq   r12, [r1]
-> > > +       cmpeq   r12, r0                 @ !turn == cpu?
-> > > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
-> > > +
-> > > +       mov     pc, lr                  @ locked
-> > > +ENDPROC(tegra_pen_lock)
-> > > +
-> > > +ENTRY(tegra_pen_unlock)
-> > > +       dsb
-> > > +       mov32   r3, TEGRA_PMC_VIRT
-> > > +       cpu_id  r0
-> > > +       cmp     r0, #0
-> > > +       addeq   r2, r3, #PMC_SCRATCH38
-> > > +       addne   r2, r3, #PMC_SCRATCH39
-> > > +       mov     r12, #0
-> > > +       str     r12, [r2]
-> > > +       mov     pc, lr
-> > > +ENDPROC(tegra_pen_unlock)
-> > 
-> > There is an ongoing work to make this locking scheme for MMU/coherency off
-> > paths ARM generic, and we do not want to merge yet another platform specific
-> > locking mechanism. I will point you to the patchset when it hits LAK.
-> > 
+> As clock information is added to device tree clock can be looked up
+> using clk_get. Remove use of clk_get_sys.
 > 
-> You did mention there is an ARM generic locking scheme for MMU/coherency
-> off case before. Do you mean the patch below?
-> 
-> https://patchwork.kernel.org/patch/1957911/
-> https://patchwork.kernel.org/patch/1957901/
-> 
-> I gave it a review today. Looks it can't fit our usage for CPU idle
-> powered-down mode on Tegra20.
-> 
-> The generic mechanism only can be used when CPUs in non coherent world.
-> But our usage needs the mechanism could be used in both coherent and non
-> coherent case. OK. The case is we need to sync the status about the CPU1
-> was ready to power down. In this case, the CPU0 is still in coherent
-> world but the CPU1 isn't. So we need the locking scheme could be still
-> safe in this situation.
+> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [swarren: updated TODO file to remove entry that requested this change]
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Note: This patch needs to go through the Tegra tree due to dependencies
+> on the clock driver rework there.
 
-Those patches above are dealing with CPUs coming back up.  If you look 
-at the rest of the series, especially the DCSCB one providing real usage 
-example, you'll see that we do have a mix of coherent and non-coherent 
-states that need to coordinate amongst themselves.
+Looks fine to me, and one thing less on TODO is always good.
 
-> And the proposed scheme looks only for b.L system?
+Acked-by: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+-- 
+Julian Andres Klode  - Debian Developer, Ubuntu Member
 
-It was initiated for b.L hence the name, but that is applicable to other 
-systems as well.
-
-
-Nicolas
+See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
