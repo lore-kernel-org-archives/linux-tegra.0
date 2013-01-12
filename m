@@ -1,122 +1,138 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Sat, 12 Jan 2013 13:36:40 +0100
-Message-ID: <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <50EF54B6.6010100@wwwdotorg.org>
- <20130111034015.GA28094@avionic-0098.adnet.avionic-design.de>
- <201301111536.14799.arnd@arndb.de>
- <20130111154516.GA25335@avionic-0098.adnet.avionic-design.de>
+From: Nicolas Pitre <nico@fluxnic.net>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state for
+ secondary CPU
+Date: Sat, 12 Jan 2013 12:33:07 -0500 (EST)
+Message-ID: <alpine.LFD.2.02.1301121227390.6300@xanadu.home>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+ <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+ <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
+ <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4247010504394466139=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130111154516.GA25335-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 11 Jan 2013, Joseph Lo wrote:
 
---===============4247010504394466139==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Content-Disposition: inline
+> Hi Lorenzo,
+> 
+> On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
+> > On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
+> > > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > > When the secondary CPU requests to enter powered-down state, it saves
+> > > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > > powered-down state too. If the secondary CPU be woken up before CPU0
+> > > entering powered-down state, then it needs to restore its CPU states
+> > > and waits for next chance.
+> > >
+> > > Be aware of that, you may see the legacy power state "LP2" in the code
+> > > which is exactly the same meaning of "CPU power down".
+> > >
+> > > Based on the work by:
+> > > Colin Cross <ccross@android.com>
+> > > Gary King <gking@nvidia.com>
+> > >
+> > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> > > +
+> > > +#ifdef CONFIG_PM_SLEEP
+> > > +/*
+> > > + * tegra_pen_lock
+> > > + *
+> > > + * spinlock implementation with no atomic test-and-set and no coherence
+> > > + * using Peterson's algorithm on strongly-ordered registers
+> > > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
+> > > + *
+> > > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
+> > > + * on cpu 0:
+> > > + * SCRATCH38 = r2 = flag[0]
+> > > + * SCRATCH39 = r3 = flag[1]
+> > > + * on cpu1:
+> > > + * SCRATCH39 = r2 = flag[1]
+> > > + * SCRATCH38 = r3 = flag[0]
+> > > + *
+> > > + * must be called with MMU on
+> > > + * corrupts r0-r3, r12
+> > > + */
+> > > +ENTRY(tegra_pen_lock)
+> > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > +       cpu_id  r0
+> > > +       add     r1, r3, #PMC_SCRATCH37
+> > > +       cmp     r0, #0
+> > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > +       addeq   r3, r3, #PMC_SCRATCH39
+> > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > +       addne   r3, r3, #PMC_SCRATCH38
+> > > +
+> > > +       mov     r12, #1
+> > > +       str     r12, [r2]               @ flag[cpu] = 1
+> > > +       dsb
+> > > +       str     r12, [r1]               @ !turn = cpu
+> > > +1:     dsb
+> > > +       ldr     r12, [r3]
+> > > +       cmp     r12, #1                 @ flag[!cpu] == 1?
+> > > +       ldreq   r12, [r1]
+> > > +       cmpeq   r12, r0                 @ !turn == cpu?
+> > > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
+> > > +
+> > > +       mov     pc, lr                  @ locked
+> > > +ENDPROC(tegra_pen_lock)
+> > > +
+> > > +ENTRY(tegra_pen_unlock)
+> > > +       dsb
+> > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > +       cpu_id  r0
+> > > +       cmp     r0, #0
+> > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > +       mov     r12, #0
+> > > +       str     r12, [r2]
+> > > +       mov     pc, lr
+> > > +ENDPROC(tegra_pen_unlock)
+> > 
+> > There is an ongoing work to make this locking scheme for MMU/coherency off
+> > paths ARM generic, and we do not want to merge yet another platform specific
+> > locking mechanism. I will point you to the patchset when it hits LAK.
+> > 
+> 
+> You did mention there is an ARM generic locking scheme for MMU/coherency
+> off case before. Do you mean the patch below?
+> 
+> https://patchwork.kernel.org/patch/1957911/
+> https://patchwork.kernel.org/patch/1957901/
+> 
+> I gave it a review today. Looks it can't fit our usage for CPU idle
+> powered-down mode on Tegra20.
+> 
+> The generic mechanism only can be used when CPUs in non coherent world.
+> But our usage needs the mechanism could be used in both coherent and non
+> coherent case. OK. The case is we need to sync the status about the CPU1
+> was ready to power down. In this case, the CPU0 is still in coherent
+> world but the CPU1 isn't. So we need the locking scheme could be still
+> safe in this situation.
+
+Those patches above are dealing with CPUs coming back up.  If you look 
+at the rest of the series, especially the DCSCB one providing real usage 
+example, you'll see that we do have a mix of coherent and non-coherent 
+states that need to coordinate amongst themselves.
+
+> And the proposed scheme looks only for b.L system?
+
+It was initiated for b.L hence the name, but that is applicable to other 
+systems as well.
 
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 11, 2013 at 04:45:16PM +0100, Thierry Reding wrote:
-> On Fri, Jan 11, 2013 at 03:36:14PM +0000, Arnd Bergmann wrote:
-> > On Friday 11 January 2013, Thierry Reding wrote:
-> > > Right, it'll need #ifdefs around the arch_{setup,teardown}_msi_irq().=
- Or
-> > > select PCI_MSI unconditionally. Once this is merged I was going to po=
-st
-> > > a patch that enables PCI_MSI in tegra_defconfig anyway. But it might =
-be
-> > > better to keep it optional anyway since the remainder of the code cop=
-es
-> > > with it properly.
-> > >=20
-> > Actually, we need something better than that. You cannot define
-> > arch_setup_msi_irq in a tegra specific pci host driver, because that
-> > will seriously mess up other platforms in multiplatform configurations
-> > by giving a link error when they also define this function, or with a
-> > run-time error when they don't support it.
-> >=20
-> > I think what we should do here is fix it the right way by adding
-> > a pci host specific callback rather than an architecture specific
-> > callback in drivers/pci/msi.c. There is already a default version
-> > of arch_setup_msi_irqs (with s), and we can probably do the
-> > same for arch_setup_msi_irq (without s) to fall back to the
-> > arch version for most architectures.
-> > Most architectures (at least powerpc, sparc, ia64 and x86) already
-> > multiplex the msi handlers internally, but ARM does not because
-> > there is only one implementation (iop33x) at the moment.
-> >=20
-> > We can add a generix multiplex and then move architectures over to
-> > use it.
->=20
-> I already hinted at that in one of the other subthreads. Having such a
-> multiplex would also allow the driver to be built as a module. I had
-> already thought about this when I was working on an earlier version of
-> these patches. Basically these would be two ops attached to the host
-> bridge, and the generic arch_setup_msi_irq() could then look that up
-> given the struct pci_dev that is passed to it and call this new per-
-> host bridge .setup_msi_irq().
-
-struct pci_ops looks like a good place to put these. They'll be
-available from each struct pci_bus, so should be easy to call from
-arch_setup_msi_irq().
-
-Any objections?
-
-Thierry
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ8VjXAAoJEN0jrNd/PrOhFWsQAIIvLUhTrpqlNwFmzOoZiyRc
-pZzCDmOrad/vwXbThJuzn9752yAoN3YAE9tnGGlnCrc4YcptmrHZYfItYMUYZPe5
-lcLaj9M5v6lOpLZMBlUiRcKftPK/5DK3xd+wZsFUVKSewY+Pu1Jbd58AIpmPSZpA
-yOaIbme9ugbDO+TsJDQ70TLHX3wAmC+gyoSwT5JW21K4I0Ch7Ga7DpPl8XzpgGv5
-N7lNCT7fe+qkvmg8/5ONL34FPYP/qgE7mX+uxSrd2aop0PNDU9YDNmeZ4TmgLX5s
-aqFLMEivpJ/ALNbKlDqvCb2DesXKnT3fZpLFuZG4P6I881hxkU1a14ddB52zc3jH
-CJ/BLkX2r8lYUR7Z0H3FoR8/q1J/zbmEfVTobF5aC0XGUZnibs4j9YlZRUmgj7jw
-ZAHpba8/1uUt3VicgQawNF5xG2ct2qGKDj3XONHWwlpZzfvCcCVav73Uqbko8rVg
-7wkIxdEgNKeP9O9f1Z1uH6Ypg3dxWKnN4A3uq5GRUT8sORWBYytbopdO096AuCXA
-wmAYwHPLjCExTYI2M1jQuA+9WEuMJa2dF+/ofTqqUakhMERHVyjNvJNxYeC43+Jv
-8ezg3JzlLohRQ9gQJRQKQfbL0KJbEfFvzGb/9CAc9zTJPvWKmlqn5ruCouAQFyyl
-dxpC/IfYKv7nMfybBxN5
-=9Fax
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
-
---===============4247010504394466139==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============4247010504394466139==--
+Nicolas
