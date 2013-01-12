@@ -1,65 +1,35 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Sat, 12 Jan 2013 16:36:43 +0530
-Message-ID: <50F143C3.3060900@nvidia.com>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <20130111232438.GN23505@n2100.arm.linux.org.uk> <50F09FCB.70809@wwwdotorg.org> <20130111233615.GO23505@n2100.arm.linux.org.uk> <50F0A2A8.3080401@wwwdotorg.org> <50F13C34.3020808@nvidia.com> <20130112104730.GQ23505@n2100.arm.linux.org.uk>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH V3] staging: nvec: remove use of clk_get_sys
+Date: Sat, 12 Jan 2013 13:03:25 +0100
+Message-ID: <15435010.GC4ZDSCtd5@ax5200p>
+References: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org> <20130112004350.GB2578@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130112104730.GQ23505@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130112004350.GB2578-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 12 January 2013 04:17 PM, Russell King - ARM Linux wrote:
-> On Sat, Jan 12, 2013 at 04:04:28PM +0530, Laxman Dewangan wrote:
->> Going through clock driver, the clk_get() should return error pointer or
->> valid pointer, atleast not NULL.
-> No.  clk_get() will return whatever value the 'clk' pointer found in
-> the clk_lookup structure contains.  Or it will return an error pointer.
->
-> This topic has had enough discussion in the past that I'll say: go and
-> look up in the archives emails from me on this subject.  I've been very
-> clear over the years about this.
->
->> Probably our clock driver is returning to NULL and hence issue is
->> becasue whole world, it  check for IS_ERR or !IS_ERR() and null clk
->> pointer treated as !IS_ERR().
-> Probably not.  As far as _drivers_ go, either the clk cookie is an error
-> (IS_ERR() is true) _OR_ it is valid to be passed back into the clock API.
-> You will find statements from me in the past to that: whatever clk_get()
-> returns which is _not_ an error must be accepted by the rest of the clk
-> API.
+On Friday 11 January 2013 16:43:50 Greg Kroah-Hartman wrote:
+> On Fri, Jan 11, 2013 at 02:03:54PM -0700, Stephen Warren wrote:
+> > From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > As clock information is added to device tree clock can be looked up
+> > using clk_get. Remove use of clk_get_sys.
+> > 
+> > Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > [swarren: updated TODO file to remove entry that requested this change]
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Note: This patch needs to go through the Tegra tree due to dependencies
+> > on the clock driver rework there.
+> 
+> Fine with me:
+> 	Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 
-Ok, Should we document that after clk_get(), we should check for 
-IS_ERR() only for validation. The way you explain earlier.
-Documentation does not have this.
-/**
-         struct clk *clk;
-         clk = clk_get(NULL, "my_gateable_clk");
+and me too:
 
-         clk_prepare(clk);
-         clk_enable(clk);
-**/
-
-The clk.h explain this:
-  * Returns a struct clk corresponding to the clock producer, or
-  * valid IS_ERR() condition containing errno.
-
-
-The IS_ERR() return false for the null pointer. So as per you, it should 
-be valid if the IS_ERR() false for returned pointer and hence NULL 
-pointer should be valid for the clock driver.
-
-Now we need to change the tegra_periph_reset_*() to accept the null pointer.
-
-
-> Drivers never dereference the returned clk, so why should they care about
-> anything other than "is it an error" given by IS_ERR().  (notice the lack
-> of question mark, that's not a question to be answered.)
-
-The issue is that information is getting passed to other part fo driver 
-where it is dereferencing the pointer. Probably we need to work on the 
-reset part also to move as part of clock driver to avoid this crash.
+Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
