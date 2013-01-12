@@ -1,35 +1,43 @@
-From: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
-Subject: Re: [PATCH V3] staging: nvec: remove use of clk_get_sys
-Date: Sat, 12 Jan 2013 20:41:05 +0100
-Message-ID: <20130112194105.GA12392@jak-linux.org>
-References: <1357938234-16570-1-git-send-email-swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Sat, 12 Jan 2013 21:12:25 +0000
+Message-ID: <201301122112.25772.arnd@arndb.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <20130111154516.GA25335@avionic-0098.adnet.avionic-design.de> <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1357938234-16570-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 11, 2013 at 02:03:54PM -0700, Stephen Warren wrote:
-> From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Saturday 12 January 2013, Thierry Reding wrote:
+> > I already hinted at that in one of the other subthreads. Having such a
+> > multiplex would also allow the driver to be built as a module. I had
+> > already thought about this when I was working on an earlier version of
+> > these patches. Basically these would be two ops attached to the host
+> > bridge, and the generic arch_setup_msi_irq() could then look that up
+> > given the struct pci_dev that is passed to it and call this new per-
+> > host bridge .setup_msi_irq().
 > 
-> As clock information is added to device tree clock can be looked up
-> using clk_get. Remove use of clk_get_sys.
+> struct pci_ops looks like a good place to put these. They'll be
+> available from each struct pci_bus, so should be easy to call from
+> arch_setup_msi_irq().
 > 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [swarren: updated TODO file to remove entry that requested this change]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Note: This patch needs to go through the Tegra tree due to dependencies
-> on the clock driver rework there.
+> Any objections?
+> 
 
-Looks fine to me, and one thing less on TODO is always good.
+struct pci_ops has a long history of being specifically about
+config space read/write operations, so on the one hand it does
+not feel like the right place to put interrupt specific operations,
+but on the other hand, the name sounds appropriate and I cannot
+think of any other place to put this, so it's fine with me.
 
-Acked-by: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
--- 
-Julian Andres Klode  - Debian Developer, Ubuntu Member
+The only alternative I can think of is to introduce a new
+structure next to it in struct pci_bus, but that feels a bit
+pointless. Maybe Bjorn has a preference one way or the other.
 
-See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
+	Arnd
