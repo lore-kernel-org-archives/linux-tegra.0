@@ -1,80 +1,51 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Sun, 13 Jan 2013 10:58:06 +0100
-Message-ID: <20130113095806.GA31966@avionic-0098.adnet.avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130111154516.GA25335@avionic-0098.adnet.avionic-design.de>
- <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
- <201301122112.25772.arnd@arndb.de>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] ASoC: tegra: add ac97 host driver
+Date: Mon, 14 Jan 2013 08:21:47 +0900
+Message-ID: <20130113232146.GM5041@opensource.wolfsonmicro.com>
+References: <1357348725-32139-1-git-send-email-dev@lynxeye.de>
+ <1357348725-32139-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="DheUW4aQn8WJk6WR"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <201301122112.25772.arnd@arndb.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org
+In-Reply-To: <1357348725-32139-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---C7zPtVaVf+AK4Oqc
+--DheUW4aQn8WJk6WR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jan 12, 2013 at 09:12:25PM +0000, Arnd Bergmann wrote:
-> On Saturday 12 January 2013, Thierry Reding wrote:
-> > > I already hinted at that in one of the other subthreads. Having such a
-> > > multiplex would also allow the driver to be built as a module. I had
-> > > already thought about this when I was working on an earlier version of
-> > > these patches. Basically these would be two ops attached to the host
-> > > bridge, and the generic arch_setup_msi_irq() could then look that up
-> > > given the struct pci_dev that is passed to it and call this new per-
-> > > host bridge .setup_msi_irq().
-> >=20
-> > struct pci_ops looks like a good place to put these. They'll be
-> > available from each struct pci_bus, so should be easy to call from
-> > arch_setup_msi_irq().
-> >=20
-> > Any objections?
-> >=20
->=20
-> struct pci_ops has a long history of being specifically about
-> config space read/write operations, so on the one hand it does
-> not feel like the right place to put interrupt specific operations,
-> but on the other hand, the name sounds appropriate and I cannot
-> think of any other place to put this, so it's fine with me.
->=20
-> The only alternative I can think of is to introduce a new
-> structure next to it in struct pci_bus, but that feels a bit
-> pointless. Maybe Bjorn has a preference one way or the other.
+On Sat, Jan 05, 2013 at 02:18:43AM +0100, Lucas Stach wrote:
 
-The name pci_ops is certainly generic enough. Also the comment above the
-structure declaration says "Low-level architecture-dependent routines",
-which applies to the MSI functions as well.
+> This adds the driver for the Tegra 2x AC97 host controller.
 
-Thierry
+Applied, thanks.
 
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature
+--DheUW4aQn8WJk6WR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ8oUuAAoJEN0jrNd/PrOh4rEQALfqOrL0OPHE/+YrdqpIq6A/
-ZXfhGd3dlplQUI44GPrIx+U4fPLbmE5pa3e1/ZhUMqXuSJ5a5Ps9d7wrR7Plnkpf
-6ecscHJ+jcJWrDH+CGPfofYsn745WPlYHU3oBFvaHr4ZPraDqLCKOuYldj0ZQgOj
-JzQf/zICnZ/dl0QW9ygvbUI6UIWiByPsDDlK4rMwFHuaB8XHGOy4oYk5XboMlxHJ
-Wr6+nasApwgKOq0QoDCAPTpT6Rc6N95nHX9/eOvm4H4eBb8UT/1WoZo//nKlXmc2
-XAxPmghJ2bTlCd7oJKfIvrS2Ae7QYfYpOQX+3DQXovC/jJfedBC7StASo/ZfO26G
-ciFjmHksOxcdN922CUrWdGg6hOvaprEUGKNt6KBwTWGHpyqxSgjAqQutUw24IZ9O
-blmaiI3hl1fg5bRThsyVwOMu1cT6uNGh63h2CZJbX0pPS1ohnAU75CHNnIKXbv8Y
-CjK1w/LruU6x55c6bonwHvnMGopMilcnYi1JHIkuik2+8pRzJlCi2D/D4zvIv2ew
-tskNSePxjeRSjeV/160EH2GCsBFUAs6eaaC7e/r6FicYRXUjGtyGY/7Py3Cx3Tno
-nPU4UyKjqmV0Uf8gF6SURmZUwgCvZafFgcmF67rNqGK+lqaZqes7cE5OaeGW87kV
-aow/6ojMlxL4WloM/g+i
-=Pkxr
+iQIcBAEBAgAGBQJQ80GDAAoJELSic+t+oim93HoP/jOXdXsAhjltgTY9AhrXdfhj
+dDBzTRcPZMGx1z7hsFV1dro9WG7EVZAhB+eL4H35UlTo58f/3UpIL1Za/2Ed21TD
+gnj8x5b9wUVTorJMlml7Kfrlbr6lOJKAYGFu5s0ELG02RvU6XiO1oaR7+Kc/hacM
+PfRb+Ye4XX9LHvxEfO8fdMZWASjeuBCzpmKuGX38VGZAoH99ukur20qFMhwMWfjq
+30Y/Y5k4XhxGkbRVldLysYB7T3xGmYkyWh5w7Vw/lPjiIb6G4l7GJ1ybyFAXoyNn
+82NjPZZSw+0bspulcFlLJxq+4b4He68o0H/RcbIbSG4o3wOwRt1HluEv9E4acg5f
+YHmL2tHVaAtVOsBre4IILMjKIhHwxp0DiG6jbbQwipK1Mi/HRdvoSUroc+erjF0t
+s8sy4jqpEzeJm6ntYz/EDBZv3pBP1WASa1jNuEtkIQ283R6BOjcoFpalp0IdwVmm
+noahQ0SjnK3HumwhiAkE1ANF7JK2Xu0PzNVLC/jq2aBkyHhDAnF7jlpMIDSmU7gI
+UC9Qqvrb24d2a8xFt8e4HUyuslshjBFZN+zPvp1PPPr9Z7QeG7bX8J//j9DmFqGt
+VBwjzzbQPuj7Y5/EoVHYKtuwuN1z8aSSjxW7NtpC0IyXCyZe7ozylsFhIYUWqB9G
+0qUi8WnWjBDSCr0MC4xh
+=HZ39
 -----END PGP SIGNATURE-----
 
---C7zPtVaVf+AK4Oqc--
+--DheUW4aQn8WJk6WR--
