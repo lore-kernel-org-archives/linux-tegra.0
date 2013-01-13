@@ -1,55 +1,68 @@
 From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ASoC: tegra:  add ac97 host controller to device
- tree
-Date: Mon, 14 Jan 2013 08:22:23 +0900
-Message-ID: <20130113232222.GN5041@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 3/3] ASoC: tegra: add tegra machine driver using
+ wm9712 codec
+Date: Mon, 14 Jan 2013 08:26:42 +0900
+Message-ID: <20130113232640.GO5041@opensource.wolfsonmicro.com>
 References: <1357348725-32139-1-git-send-email-dev@lynxeye.de>
- <1357348725-32139-3-git-send-email-dev@lynxeye.de>
- <50EC99A1.4080402@wwwdotorg.org>
+ <1357348725-32139-4-git-send-email-dev@lynxeye.de>
+ <50EC9B01.6010203@wwwdotorg.org>
+ <1357685553.2884.33.camel@astat>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7fwXp2o0gOrkU5lS"
+	protocol="application/pgp-signature"; boundary="jx/LfW4V5TfZLeq7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <50EC99A1.4080402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1357685553.2884.33.camel@astat>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---7fwXp2o0gOrkU5lS
+--jx/LfW4V5TfZLeq7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jan 08, 2013 at 03:11:45PM -0700, Stephen Warren wrote:
-> On 01/04/2013 06:18 PM, Lucas Stach wrote:
-> > Add default entry for the AC97 host controller.
+On Tue, Jan 08, 2013 at 11:52:33PM +0100, Lucas Stach wrote:
+> Am Dienstag, den 08.01.2013, 15:17 -0700 schrieb Stephen Warren:
 
-> This looks fine. I assume I'll take this through the Tegra tree.
+> > Hmmm. I thought that could be auto-instantiated based on probing the
+> > AC'97 bus for whatever was there?
 
-Makes sense to me.
+> AC97 is in principle probeable by reading the first regs of the codec,
+> but all the infrastructure to do proper hotplugging on the AC97 bus is
+> missing in the kernel. As I didn't want to be the one to add all this
+> infrastructure to a dying audio platform, I opted to do the same thing
+> as all the other platform using AC97 and instantiate the codec from the
+> machine driver.
 
---7fwXp2o0gOrkU5lS
+That's about the size of it, yes.  We should write the device tree as
+though we'd got better infrastructure here since this isn't something
+that ought to be required but right now this is how you do AC'97 in
+ASoC.  It'd be really nice if someone had the time to work on the AC'97
+infrastructure here but I'd not hold my breath given that it's rarely
+used in new designs.
+
+--jx/LfW4V5TfZLeq7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ80GnAAoJELSic+t+oim9lv4P/0UeQB/YBBFWCMXZQkiLSzNv
-GDtIEv2LUihnmktcMRnrQ83ChRpRIlrrdfQ9YoCu4fPoRzRzUJUOL9IJlossUKAR
-OPwO+Mm4XypYh4A0LEHqyGzzeEcXx4ru+Sjk/NR5Bny4FAq7pwhO02/tBBGVkkP8
-IwI3ShQhWCgbO6XaDa6ON+Y8P/kPzD0RwW3OFduspUUIvbz7b1+uzf1aLYqApOE/
-+ZRw45syjaxfvwWWfTzFWFdezQeDStqRvZrMTAA2ISGuDcbgZ/jCODlfbt8pXT6N
-WLwebXQch2pqvHMZ3eZPQJBMRaZccYMNcuAWswCpmrZ8MVlR5xJvfdV0MjrvCzZp
-FfXd2uyaMdSS68VkFfUVkao72tx8iS4wOaWKmoCNexQk/yffpDIH/+B2vOXDdN/Z
-l4hrSx7O6wO+NwcTTo/0xGLCQQlxUb5UlChBO5J8AhRcnI8gMwV3OVRk2SSYJOFf
-iNQjzH27KEIomCZtT66xKamZc2JDG3J7H3AwFZAXEoB6Iv0WZjVnZvHE5n9VQe6q
-zW8fSxAbMV+1KTfuqudk5X/i4imaY4SBj3k2DHjWuUnjH9a1mCDGCvGodC8jzdNE
-2uA+oyZKU1ItuSDCLDYnyRZaZolWhyYV1A6pqpFbW3qO+DgAc9V7KtH1A4gOyFxU
-muWJz/12s0k5PS4Z054y
-=fOzZ
+iQIcBAEBAgAGBQJQ80KiAAoJELSic+t+oim9uboP+gPnW+AF507svnC/b3Yq0CYz
+h/p//H8DjQwRT3xBH4zgDnUVbbd3ddFvySZqpGfOPqPRbpGy/k/1OxoR13giV41N
++FrVs8vC4AlYDAQ5W8y3rUgmmCj0N7SfCHhR0SiOe+zxZJI6uwFqlrS1nNY5DnpL
+pLmAZMkbAOKZJgW0HDQt48NZPkHxlxUXhLq7Kf79bSQRzBLMFSntiuZwEl9oNVAE
+4TDxp1VwrFnW5gIUcoivfU6NKOapPnSlG6DJlZxI0IY14beqynq39SUgw/5zgba+
+P0a6hAPVHl8NVkHDfGsA7FaarU2xjKGK5XLQ0p8UcRcp+CNtPcDP1vw3uTTArU9f
+AEcLAp4hxm4FfOP2evfRewHmtXs6anWi0ld+Z7t4iToBBcktU6P0HzXeMTSJD2WV
+YzpN74geCx/h6SfkUker1gftzgfOzlSTbPq+g++BhRIer6b3bcJSOH7uBYS/b9QC
+J/q1vwt/D+hTPofNPcVwCFPLkLWUq7Wct6XOFyAqujDFFb8xKx7sEsg2igwP79A0
+3JNgi4o6y5zf14gC3iS5vX94rfYSmi+6XrFiV8l3c3WbsvXNcxu8N02PBS3nc68A
+rvKaIHbBpeOf7/rD9D11KIdh8gnvVDTYwIDDYMp10tSyhMVsYZTD7r7PSEw8sHRK
+7LyMdWqKzdacMoheL9Nh
+=Udym
 -----END PGP SIGNATURE-----
 
---7fwXp2o0gOrkU5lS--
+--jx/LfW4V5TfZLeq7--
