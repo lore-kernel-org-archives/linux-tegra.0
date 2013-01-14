@@ -1,143 +1,80 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 10/10] clk: tegra30: remove unused
- TEGRA_CLK_DUPLICATE()s
-Date: Mon, 14 Jan 2013 12:58:13 -0800
-Message-ID: <20130114205813.23734.19743@quantum>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
- <1357891289-23500-10-git-send-email-pgaikwad@nvidia.com>
- <50F07DA0.6000806@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
+Date: Mon, 14 Jan 2013 15:09:16 -0700
+Message-ID: <50F4820C.2050806@wwwdotorg.org>
+References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <50F134C9.1040203@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <50F07DA0.6000806@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <50F134C9.1040203@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-01-11 13:01:20)
-> On 01/11/2013 01:01 AM, Prashant Gaikwad wrote:
-> > With device tree support added for Tegra clocks look up is done from
-> > device tree, remove unused TEGRA_CLK_DUPLICATE()s.
+On 01/12/2013 03:02 AM, Laxman Dewangan wrote:
+> On Saturday 12 January 2013 04:39 AM, Stephen Warren wrote:
+>> On 01/11/2013 06:33 AM, Laxman Dewangan wrote:
+>>> Enable tegra based keyboard controller and populate the key matrix for
+>>> seaboard. The key matrix was originally on driver code which is removed
+>>> to have clean driver. The key mapping is now passed through dts file.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> ---
+>>> Requesting for testing on seaboard.
+>>> I generated this patch as Stephen suggested to have one patch for dt
+>>> file
+>>> entry for keys on seaboard.
 > 
-> Cc'ing in the drivers/clk maintainer as an FYI and for Acks; this patch
-> needs to go through the Tegra tree due to dependencies.
+> Thanks for testing.
+
+>> Oh, and the KBC clock is marked TEGRA_PERIPH_NO_RESET for Tegra30, and
+>> also for Tegra20 in the ChromeOS kernel; why is the driver trying to
+>> assert reset on a clock that doesn't support it?
+>
+> This is something our kbc controller reset and clock design.
+> KBC controller is on Always Power ON domain so that it can work even
+> when system is in sleep.
+> The KBC clock is enabled through two places, PMC control register and
+> CAR register set.
+> KBC controller is only reset through PMC control register.
+> This is not well implemented either on our downstream or in mainline.
+> Sometime back I tried to implement it in downstream but was having lots
+> of comment and not able to complete this. Possibly we will talk
+> internally that how can we implement this.
+
+I guess there's little point in the KBC driver calling the Tegra clock
+reset APIs then. Still, since the code is already there and it's not
+doing any harm, I guess it's fine to leave it there; if we ever enhance
+the clock driver to implement reset for those clocks via the PMC, it
+will all just magically work.
+
+>> Once I hacked around the above issues, the driver doesn't work very well
+>> at all. There is a *long* delay between when I press a key and when it
+>> shows up (e.g. echo'd to the HDMI console). When I release the key the
+>> same keypress is generated twice. Or perhaps it's a repeat, but since
+>> it's *always* 2 extra keypresses and I doubt I always hold my finger on
+>> the key the exact same amount of time, I think it's key release that
+>> does this not repeat. I assume this would repro on any board, so you
+>> won't need Seaboard to debug it. Harmony is able to read the keyboard
+>> using the KBC.
+>>
+>> Even with the above, I was able to validate that the keymap in the
+>> Seaboard .dts file looks reasonable.
+>>
+>> However, please fix the KBC driver...
 > 
+> I did not see any issue with the 3x3 matrix. I think all these about is
+> to tuning debaunce and other parameter also. Another thing is that to
+> make sure that all pinmuxes are properly configured.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+OK, I'll go look at some downstream kernels for Seaboard and see if the
+debounce etc. parameters all match up.
 
-> > Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
-> > ---
-> >  drivers/clk/tegra/clk-tegra30.c |   70 ---------------------------------------
-> >  1 files changed, 0 insertions(+), 70 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> > index 987312c..6d1ff86 100644
-> > --- a/drivers/clk/tegra/clk-tegra30.c
-> > +++ b/drivers/clk/tegra/clk-tegra30.c
-> > @@ -1642,41 +1642,6 @@ static void __init tegra30_periph_clk_init(void)
-> >       clk_register_clkdev(clk, "emc", NULL);
-> >       clks[emc] = clk;
-> >  
-> > -     /* i2c1-fast */
-> > -     clk = clk_register_fixed_factor(NULL, "i2c1-fast", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "fast-clk", "tegra-i2c.0");
-> > -
-> > -     /* i2c2-fast */
-> > -     clk = clk_register_fixed_factor(NULL, "i2c2-fast", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "fast-clk", "tegra-i2c.1");
-> > -
-> > -     /* i2c3-fast */
-> > -     clk = clk_register_fixed_factor(NULL, "i2c3-fast", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "fast-clk", "tegra-i2c.2");
-> > -
-> > -     /* i2c4-fast */
-> > -     clk = clk_register_fixed_factor(NULL, "i2c4-fast", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "fast-clk", "tegra-i2c.3");
-> > -
-> > -     /* i2c5-fast */
-> > -     clk = clk_register_fixed_factor(NULL, "i2c5-fast", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "fast-clk", "tegra-i2c.5");
-> > -
-> > -     /* dsi1-fixed */
-> > -     clk = clk_register_fixed_factor(NULL, "dsi1-fixed", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "dsi-fixed", "tegradc.0");
-> > -
-> > -     /* dsi2-fixed */
-> > -     clk = clk_register_fixed_factor(NULL, "dsi2-fixed", "pll_p_out3",
-> > -                                     CLK_SET_RATE_PARENT, 1, 1);
-> > -     clk_register_clkdev(clk, "dsi-fixed", "tegradc.1");
-> > -
-> >       for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
-> >               data = &tegra_periph_clk_list[i];
-> >               clk = tegra_clk_periph(data->name, data->parent_names,
-> > @@ -1935,19 +1900,9 @@ static __initdata struct tegra_clk_init_table init_table[] = {
-> >   * table under two names.
-> >   */
-> >  static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
-> > -     TEGRA_CLK_DUPLICATE(uarta,  "serial8250.0", NULL),
-> > -     TEGRA_CLK_DUPLICATE(uartb,  "serial8250.1", NULL),
-> > -     TEGRA_CLK_DUPLICATE(uartc,  "serial8250.2", NULL),
-> > -     TEGRA_CLK_DUPLICATE(uartd,  "serial8250.3", NULL),
-> > -     TEGRA_CLK_DUPLICATE(uarte,  "serial8250.4", NULL),
-> >       TEGRA_CLK_DUPLICATE(usbd, "utmip-pad", NULL),
-> >       TEGRA_CLK_DUPLICATE(usbd, "tegra-ehci.0", NULL),
-> >       TEGRA_CLK_DUPLICATE(usbd, "tegra-otg", NULL),
-> > -     TEGRA_CLK_DUPLICATE(pll_p, "tegradc.0", "parent"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p, "tegradc.1", "parent"),
-> > -     TEGRA_CLK_DUPLICATE(pll_d2_out0, "hdmi", "parent"),
-> > -     TEGRA_CLK_DUPLICATE(dsib, "tegradc.0", "dsib"),
-> > -     TEGRA_CLK_DUPLICATE(dsia, "tegradc.1", "dsia"),
-> >       TEGRA_CLK_DUPLICATE(bsev, "tegra-avp", "bsev"),
-> >       TEGRA_CLK_DUPLICATE(bsev, "nvavp", "bsev"),
-> >       TEGRA_CLK_DUPLICATE(vde, "tegra-aes", "vde"),
-> > @@ -1956,33 +1911,8 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
-> >       TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
-> >       TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
-> >       TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
-> > -     TEGRA_CLK_DUPLICATE(i2c1, "tegra-i2c-slave.0", NULL),
-> > -     TEGRA_CLK_DUPLICATE(i2c2, "tegra-i2c-slave.1", NULL),
-> > -     TEGRA_CLK_DUPLICATE(i2c3, "tegra-i2c-slave.2", NULL),
-> > -     TEGRA_CLK_DUPLICATE(i2c4, "tegra-i2c-slave.3", NULL),
-> > -     TEGRA_CLK_DUPLICATE(i2c5, "tegra-i2c-slave.4", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc1, "spi_slave_tegra.0", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc2, "spi_slave_tegra.1", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc3, "spi_slave_tegra.2", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc4, "spi_slave_tegra.3", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc5, "spi_slave_tegra.4", NULL),
-> > -     TEGRA_CLK_DUPLICATE(sbc6, "spi_slave_tegra.5", NULL),
-> >       TEGRA_CLK_DUPLICATE(twd, "smp_twd", NULL),
-> >       TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
-> > -     TEGRA_CLK_DUPLICATE(i2s0, NULL, "i2s0"),
-> > -     TEGRA_CLK_DUPLICATE(i2s1, NULL, "i2s1"),
-> > -     TEGRA_CLK_DUPLICATE(i2s2, NULL, "i2s2"),
-> > -     TEGRA_CLK_DUPLICATE(i2s3, NULL, "i2s3"),
-> > -     TEGRA_CLK_DUPLICATE(i2s4, NULL, "i2s4"),
-> > -     TEGRA_CLK_DUPLICATE(dam0, NULL, "dam0"),
-> > -     TEGRA_CLK_DUPLICATE(dam1, NULL, "dam1"),
-> > -     TEGRA_CLK_DUPLICATE(dam2, NULL, "dam2"),
-> > -     TEGRA_CLK_DUPLICATE(spdif_in, NULL, "spdif_in"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.0", "fast-clk"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.1", "fast-clk"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.2", "fast-clk"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.3", "fast-clk"),
-> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.4", "fast-clk"),
-> >       TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
-> >  };
-> >  
-> >
+> However, again I will try to enable kbc on harmony and run it.
+
+That would be extremely useful; I worry that if you tested it on
+Tegra114, that means using a downstream kernel only, and also whether
+there are any HW differences between SoC versions. That's quite a lot of
+variables that could explain the issues I'm seeing.
