@@ -1,55 +1,26 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Mon, 14 Jan 2013 16:55:51 +0000
-Message-ID: <20130114165551.GJ23505@n2100.arm.linux.org.uk>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <20130111232438.GN23505@n2100.arm.linux.org.uk> <50F09FCB.70809@wwwdotorg.org> <20130111233615.GO23505@n2100.arm.linux.org.uk> <50F0A2A8.3080401@wwwdotorg.org> <50F13C34.3020808@nvidia.com> <50F43640.7060308@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] ASoC: tegra:  add ac97 host controller to device
+ tree
+Date: Mon, 14 Jan 2013 10:00:48 -0700
+Message-ID: <50F439C0.4080603@wwwdotorg.org>
+References: <1357348725-32139-1-git-send-email-dev@lynxeye.de> <1357348725-32139-3-git-send-email-dev@lynxeye.de> <50EC99A1.4080402@wwwdotorg.org> <20130113232222.GN5041@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50F43640.7060308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130113232222.GN5041-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 14, 2013 at 09:45:52AM -0700, Stephen Warren wrote:
-> On 01/12/2013 03:34 AM, Laxman Dewangan wrote:
-> ...
-> > Which is the tree on which Prashant changes are applied. I can debug
-> > from that tree.
+On 01/13/2013 04:22 PM, Mark Brown wrote:
+> On Tue, Jan 08, 2013 at 03:11:45PM -0700, Stephen Warren wrote:
+>> On 01/04/2013 06:18 PM, Lucas Stach wrote:
+>>> Add default entry for the AC97 host controller.
 > 
-> git://nv-tegra.nvidia.com/user/swarren/linux-2.6 test-ccf-rework-v4
+>> This looks fine. I assume I'll take this through the Tegra tree.
 > 
-> But as I said in some other email in response to Prashant, I'll go and
-> find out why the clk driver is returning NULL.
+> Makes sense to me.
 
-Exactly - the rule is, the rest of the clk API should accept as valid
-anything which clk_get() produces _for that implementation_ which
-IS_ERR() is not equal to 1.
-
-What that means is:
-- if a platform's clk_get() never returns NULL, then the rest of the clk
-  API need not test for that value.
-
-  (If a NULL pointer is passed to one of the clk API functions, crashing
-  _is_ _okay_.  Consider what memset(NULL, 0, 4096) would do from the
-  kernel - it doesn't test for a NULL pointer just because it can - it
-  crashes so you can debug why it was passed a NULL pointer.)
-
-- if a platform's clk_get() does return NULL, then the rest of the clk
-  API is expected to deal with a NULL pointer in a way that does _not_
-  result in the system crashing.
-
-Or, to put it another way:
-
-	clk = clk_get(...);
-	if (IS_ERR(clk))
-		return PTR_ERR(clk);
-
-	clk_foo(clk);
-
-for all possible return values of clk_get() that an implementation
-_actually_ _intentionally_ returns[*] should never cause an oops.
-
-[*] - bugs excluded.  No bugs were squashed in the creation of this email.
+Thanks, applied to Tegra's for-3.9/dt branch.
