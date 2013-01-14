@@ -1,163 +1,119 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
-Date: Mon, 14 Jan 2013 17:06:00 +0100
-Message-ID: <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358179560-26799-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
+ allocation
+Date: Mon, 14 Jan 2013 08:16:44 -0800
+Message-ID: <20130114161644.GC14721@kroah.com>
+References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
+ <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
+ <20130105080658.GA1315@core.coreip.homeip.net>
+ <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
+ <20130106195748.GA28212@core.coreip.homeip.net>
+ <20130109070745.GA12782@avionic-0098.adnet.avionic-design.de>
+ <20130109091939.GA4369@core.coreip.homeip.net>
+ <20130109092352.GA28037@avionic-0098.adnet.avionic-design.de>
+ <20130114154959.GA25049@avionic-0098.adnet.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130114154959.GA25049@avionic-0098.adnet.avionic-design.de>
+Sender: linux-input-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-All the necessary support bits like .mode_set_base() and VBLANK are now
-available, so page-flipping case easily be implemented on top.
+On Mon, Jan 14, 2013 at 04:49:59PM +0100, Thierry Reding wrote:
+> On Wed, Jan 09, 2013 at 10:23:52AM +0100, Thierry Reding wrote:
+> > On Wed, Jan 09, 2013 at 01:19:39AM -0800, Dmitry Torokhov wrote:
+> > > On Wed, Jan 09, 2013 at 08:07:45AM +0100, Thierry Reding wrote:
+> > > > On Sun, Jan 06, 2013 at 11:57:48AM -0800, Dmitry Torokhov wrote:
+> > > > > On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
+> > > > > > On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wrote:
+> > > > > > > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan wrote:
+> > > > > > [...]
+> > > > > > > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+> > > > > > > >  	spin_lock_init(&kbc->lock);
+> > > > > > > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long)kbc);
+> > > > > > > >  
+> > > > > > > > -	res = request_mem_region(res->start, resource_size(res), pdev->name);
+> > > > > > > > -	if (!res) {
+> > > > > > > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
+> > > > > > > > -		err = -EBUSY;
+> > > > > > > > -		goto err_free_mem;
+> > > > > > > > -	}
+> > > > > > > > -
+> > > > > > > > -	kbc->mmio = ioremap(res->start, resource_size(res));
+> > > > > > > > +	kbc->mmio = devm_request_and_ioremap(&pdev->dev, res);
+> > > > > > > >  	if (!kbc->mmio) {
+> > > > > > > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+> > > > > > > > -		err = -ENXIO;
+> > > > > > > > -		goto err_free_mem_region;
+> > > > > > > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap address\n");
+> > > > > > > > +		return -EADDRNOTAVAIL;
+> > > > > > > 
+> > > > > > > Erm, no, -EBUSY please.
+> > > > > > 
+> > > > > > EADDRNOTAVAIL is the canonical error for devm_request_and_ioremap()
+> > > > > > failure. The kerneldoc comment in lib/devres.c even gives a short
+> > > > > > example that uses this error code.
+> > > > > 
+> > > > > I am sorry, but I do not consider a function that was added a little
+> > > > > over a year ago as a canon. If you look at the uses of EADDRNOTAVAIL it
+> > > > > is used predominantly in networking code to indicate that attempted
+> > > > > _network_ address is not available.
+> > > > 
+> > > > EBUSY might be misleading, though. devm_request_and_ioremap() can fail
+> > > > in both the request_mem_region() and ioremap() calls. Furthermore it'd
+> > > > be good to settle on a consistent error-code instead of doing it
+> > > > differently depending on subsystem and/or driver. Currently the various
+> > > > error codes used are:
+> > > > 
+> > > > 	EBUSY, EADDRNOTAVAIL, ENXIO, ENOMEM, ENODEV, ENOENT, EINVAL,
+> > > > 	EIO, EFAULT, EADDRINUSE
+> > > > 
+> > > > Also if we can settle on one error code we should follow up with a patch
+> > > > to make it consistent across the tree and also update that kerneldoc
+> > > > comment. I volunteer to do that if nobody else steps up. I'm also Cc'ing
+> > > > Wolfram (the original author), maybe he has some thoughts on this.
+> > > > 
+> > > 
+> > > If you going to change all drivers make devm_request_and_ioremap()
+> > > return ERR_PTR()-encoded errors and then we can differentiate what
+> > > part of it failed.
+> > 
+> > Yeah, that thought also crossed my mind. I'll give other people some
+> > time to comment before hurling myself into preparing patches.
+> 
+> I've prepared a patch that changes devm_request_and_ioremap() to return
+> ERR_PTR()-encoded errors and adjusts all callers. As you can imagine it
+> is a bit on the huge side. scripts/get_maintainer.pl lists 156 people
+> and mailing lists. I've gone through the list, and as far as I can tell
+> everyone on that list is actually affected by the patch, so there's not
+> much potential for tuning it down.
+> 
+> There is also the issue of whose tree this should go into. Unfortunately
+> the patch can't be broken down into smaller chunks because it changes
+> how the devm_request_and_ioremap() function's return value is handled in
+> an incompatible way, so it won't be possible to gradually phase this in.
+> Furthermore I can imagine that until the end of the release cycle new
+> code may be added on which the same transformations need to be done. I
+> have a semantic patch to do the bulk of the work, but quite a bit of
+> coordination will be required.
+> 
+> I'm adding Arnd and Greg on Cc, maybe they can advise on how best to
+> handle this kind of patch.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c  | 72 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/drm.c |  9 ++++++
- drivers/gpu/drm/tegra/drm.h |  5 ++++
- 3 files changed, 86 insertions(+)
+You should provide a "wrapper" function that does the correct return
+value, convert drivers over to it, and then, when everyone is changed,
+drop the old call.  To change 156 different drivers all at once, in a
+way that is not detectable by the compiler breaking the build, is not a
+good thing to do at all.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 3aa7ccc..ce4e14a 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -161,7 +161,78 @@ void tegra_dc_disable_vblank(struct tegra_dc *dc)
- 	spin_unlock_irqrestore(&dc->lock, flags);
- }
- 
-+static void tegra_dc_finish_page_flip(struct tegra_dc *dc)
-+{
-+	struct drm_pending_vblank_event *event;
-+	struct drm_device *drm = dc->base.dev;
-+	unsigned long flags;
-+	struct timeval now;
-+
-+	spin_lock_irqsave(&drm->event_lock, flags);
-+	event = dc->event;
-+	dc->event = NULL;
-+	spin_unlock_irqrestore(&drm->event_lock, flags);
-+
-+	if (!event)
-+		return;
-+
-+	event->event.sequence = drm_vblank_count_and_time(drm, dc->pipe, &now);
-+	event->event.tv_sec = now.tv_sec;
-+	event->event.tv_usec = now.tv_usec;
-+
-+	spin_lock_irqsave(&drm->event_lock, flags);
-+	list_add_tail(&event->base.link, &event->base.file_priv->event_list);
-+	wake_up_interruptible(&event->base.file_priv->event_wait);
-+	spin_unlock_irqrestore(&drm->event_lock, flags);
-+
-+	drm_vblank_put(drm, dc->pipe);
-+}
-+
-+void tegra_dc_cancel_page_flip(struct drm_crtc *crtc, struct drm_file *file)
-+{
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+	struct drm_device *drm = crtc->dev;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&drm->event_lock, flags);
-+
-+	if (dc->event && dc->event->base.file_priv == file) {
-+		dc->event->base.destroy(&dc->event->base);
-+		drm_vblank_put(drm, dc->pipe);
-+		dc->event = NULL;
-+	}
-+
-+	spin_unlock_irqrestore(&drm->event_lock, flags);
-+}
-+
-+static int tegra_dc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
-+			      struct drm_pending_vblank_event *event)
-+{
-+	struct tegra_framebuffer *newfb = to_tegra_fb(fb);
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+	struct drm_device *drm = crtc->dev;
-+	unsigned long flags;
-+
-+	if (dc->event)
-+		return -EBUSY;
-+
-+	tegra_dc_set_base(dc, 0, 0, newfb);
-+
-+	if (event) {
-+		event->pipe = dc->pipe;
-+
-+		spin_lock_irqsave(&drm->event_lock, flags);
-+		dc->event = event;
-+		spin_unlock_irqrestore(&drm->event_lock, flags);
-+
-+		drm_vblank_get(drm, dc->pipe);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct drm_crtc_funcs tegra_crtc_funcs = {
-+	.page_flip = tegra_dc_page_flip,
- 	.set_config = drm_crtc_helper_set_config,
- 	.destroy = drm_crtc_cleanup,
- };
-@@ -556,6 +627,7 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 		dev_dbg(dc->dev, "%s(): vertical blank\n", __func__);
- 		*/
- 		drm_handle_vblank(dc->base.dev, dc->pipe);
-+		tegra_dc_finish_page_flip(dc);
- 	}
- 
- 	if (status & (WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT)) {
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 62f8121..7bab784 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -129,11 +129,20 @@ static void tegra_drm_disable_vblank(struct drm_device *drm, int pipe)
- 		tegra_dc_disable_vblank(dc);
- }
- 
-+static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *file)
-+{
-+	struct drm_crtc *crtc;
-+
-+	list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
-+		tegra_dc_cancel_page_flip(crtc, file);
-+}
-+
- struct drm_driver tegra_drm_driver = {
- 	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
- 	.load = tegra_drm_load,
- 	.unload = tegra_drm_unload,
- 	.open = tegra_drm_open,
-+	.preclose = tegra_drm_preclose,
- 	.lastclose = tegra_drm_lastclose,
- 
- 	.get_vblank_counter = drm_vblank_count,
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index ca742b2..1f1cb37 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -100,6 +100,9 @@ struct tegra_dc {
- 	struct drm_info_list *debugfs_files;
- 	struct drm_minor *minor;
- 	struct dentry *debugfs;
-+
-+	/* page-flip handling */
-+	struct drm_pending_vblank_event *event;
- };
- 
- static inline struct tegra_dc *host1x_client_to_dc(struct host1x_client *client)
-@@ -149,6 +152,8 @@ extern int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 				 const struct tegra_dc_window *window);
- extern void tegra_dc_enable_vblank(struct tegra_dc *dc);
- extern void tegra_dc_disable_vblank(struct tegra_dc *dc);
-+extern void tegra_dc_cancel_page_flip(struct drm_crtc *crtc,
-+				      struct drm_file *file);
- 
- struct tegra_output_ops {
- 	int (*enable)(struct tegra_output *output);
--- 
-1.8.1
+By doing it in this manner, it will take longer, but you can push the
+patches through the different maintainer's trees.  If they are slow,
+I'll be glad to take the remaining patches in my driver-core tree to do
+the final bits.
+
+Hope this helps,
+
+greg k-h
