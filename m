@@ -1,29 +1,55 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Mon, 14 Jan 2013 09:45:52 -0700
-Message-ID: <50F43640.7060308@wwwdotorg.org>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <20130111232438.GN23505@n2100.arm.linux.org.uk> <50F09FCB.70809@wwwdotorg.org> <20130111233615.GO23505@n2100.arm.linux.org.uk> <50F0A2A8.3080401@wwwdotorg.org> <50F13C34.3020808@nvidia.com>
+Date: Mon, 14 Jan 2013 16:55:51 +0000
+Message-ID: <20130114165551.GJ23505@n2100.arm.linux.org.uk>
+References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <20130111232438.GN23505@n2100.arm.linux.org.uk> <50F09FCB.70809@wwwdotorg.org> <20130111233615.GO23505@n2100.arm.linux.org.uk> <50F0A2A8.3080401@wwwdotorg.org> <50F13C34.3020808@nvidia.com> <50F43640.7060308@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F13C34.3020808-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50F43640.7060308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/12/2013 03:34 AM, Laxman Dewangan wrote:
-...
-> Which is the tree on which Prashant changes are applied. I can debug
-> from that tree.
+On Mon, Jan 14, 2013 at 09:45:52AM -0700, Stephen Warren wrote:
+> On 01/12/2013 03:34 AM, Laxman Dewangan wrote:
+> ...
+> > Which is the tree on which Prashant changes are applied. I can debug
+> > from that tree.
+> 
+> git://nv-tegra.nvidia.com/user/swarren/linux-2.6 test-ccf-rework-v4
+> 
+> But as I said in some other email in response to Prashant, I'll go and
+> find out why the clk driver is returning NULL.
 
-git://nv-tegra.nvidia.com/user/swarren/linux-2.6 test-ccf-rework-v4
+Exactly - the rule is, the rest of the clk API should accept as valid
+anything which clk_get() produces _for that implementation_ which
+IS_ERR() is not equal to 1.
 
-But as I said in some other email in response to Prashant, I'll go and
-find out why the clk driver is returning NULL.
+What that means is:
+- if a platform's clk_get() never returns NULL, then the rest of the clk
+  API need not test for that value.
 
-(Russell, while the clk API definition may allow NULL to be a legal clk
-value, the actual implementation on Tegra at least doesn't consider NULL
-to be a legal clk value, so it shouldn't be returned in the first
-place). There's no issue here in the comprehension of the clk API.
+  (If a NULL pointer is passed to one of the clk API functions, crashing
+  _is_ _okay_.  Consider what memset(NULL, 0, 4096) would do from the
+  kernel - it doesn't test for a NULL pointer just because it can - it
+  crashes so you can debug why it was passed a NULL pointer.)
+
+- if a platform's clk_get() does return NULL, then the rest of the clk
+  API is expected to deal with a NULL pointer in a way that does _not_
+  result in the system crashing.
+
+Or, to put it another way:
+
+	clk = clk_get(...);
+	if (IS_ERR(clk))
+		return PTR_ERR(clk);
+
+	clk_foo(clk);
+
+for all possible return values of clk_get() that an implementation
+_actually_ _intentionally_ returns[*] should never cause an oops.
+
+[*] - bugs excluded.  No bugs were squashed in the creation of this email.
