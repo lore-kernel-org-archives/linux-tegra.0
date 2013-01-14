@@ -1,84 +1,102 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH v2 3/5] drm/tegra: Implement .mode_set_base()
-Date: Mon, 14 Jan 2013 18:14:39 +0100
-Message-ID: <1358183679.1524.11.camel@tellur>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
-	 <1358179560-26799-4-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: swap cache-/interrupt-ctrlr nodes in DT
+Date: Mon, 14 Jan 2013 10:21:39 -0700
+Message-ID: <1358184099-7249-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358179560-26799-4-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 14.01.2013, 17:05 +0100 schrieb Thierry Reding:
-> The sequence for replacing the scanout buffer is much shorter than a
-> full mode change operation so implementing this callback considerably
-> speeds up cases where only a new framebuffer is to be scanned out.
-> 
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Aside from the small comment:
-Reviewed-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index 157e962..8dd7d8a 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -116,6 +116,25 @@ static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
->  	return 0;
->  }
->  
-> +static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
-> +			     struct tegra_framebuffer *fb)
-> +{
-> +	unsigned long value;
-> +
-> +	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
-> +
-> +	value = fb->base.offsets[0] + y * fb->base.pitches[0] +
-> +		x * fb->base.bits_per_pixel / 8;
-> +
-> +	tegra_dc_writel(dc, fb->obj->paddr + value, DC_WINBUF_START_ADDR);
-> +
-> +	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
-> +	value |= GENERAL_UPDATE | WIN_A_UPDATE;
-> +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-Make this two separate writes.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +
-> +	return 0;
-> +}
-> +
->  static const struct drm_crtc_funcs tegra_crtc_funcs = {
->  	.set_config = drm_crtc_helper_set_config,
->  	.destroy = drm_crtc_cleanup,
-> @@ -404,6 +423,15 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
->  	return 0;
->  }
->  
-> +static int tegra_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
-> +				    struct drm_framebuffer *old_fb)
-> +{
-> +	struct tegra_framebuffer *fb = to_tegra_fb(crtc->fb);
-> +	struct tegra_dc *dc = to_tegra_dc(crtc);
-> +
-> +	return tegra_dc_set_base(dc, x, y, fb);
-> +}
-> +
->  static void tegra_crtc_prepare(struct drm_crtc *crtc)
->  {
->  	struct tegra_dc *dc = to_tegra_dc(crtc);
-> @@ -483,6 +511,7 @@ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
->  	.dpms = tegra_crtc_dpms,
->  	.mode_fixup = tegra_crtc_mode_fixup,
->  	.mode_set = tegra_crtc_mode_set,
-> +	.mode_set_base = tegra_crtc_mode_set_base,
->  	.prepare = tegra_crtc_prepare,
->  	.commit = tegra_crtc_commit,
->  	.load_lut = tegra_crtc_load_lut,
+This ensures nodes are sorted in order of reg address. This makes it
+easier to compare against e.g. the U-Boot device trees, and is simply
+consistent and clean.
+
+While we're at it, remove the unit address from the cache-controller
+node name, since it's unique without it.
+
+Reported-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I intend to apply this immediately since it's trivial.
+
+ arch/arm/boot/dts/tegra20.dtsi |   18 +++++++++---------
+ arch/arm/boot/dts/tegra30.dtsi |   18 +++++++++---------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 1ddbefd..dcd220c 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -105,15 +105,6 @@
+ 		interrupts = <1 13 0x304>;
+ 	};
+ 
+-	cache-controller@50043000 {
+-		compatible = "arm,pl310-cache";
+-		reg = <0x50043000 0x1000>;
+-		arm,data-latency = <5 5 2>;
+-		arm,tag-latency = <4 4 2>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+ 	intc: interrupt-controller {
+ 		compatible = "arm,cortex-a9-gic";
+ 		reg = <0x50041000 0x1000
+@@ -122,6 +113,15 @@
+ 		#interrupt-cells = <3>;
+ 	};
+ 
++	cache-controller {
++		compatible = "arm,pl310-cache";
++		reg = <0x50043000 0x1000>;
++		arm,data-latency = <5 5 2>;
++		arm,tag-latency = <4 4 2>;
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	timer@60005000 {
+ 		compatible = "nvidia,tegra20-timer";
+ 		reg = <0x60005000 0x60>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index dc6dc51..63a0d9b 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -105,15 +105,6 @@
+ 		interrupts = <1 13 0xf04>;
+ 	};
+ 
+-	cache-controller@50043000 {
+-		compatible = "arm,pl310-cache";
+-		reg = <0x50043000 0x1000>;
+-		arm,data-latency = <6 6 2>;
+-		arm,tag-latency = <5 5 2>;
+-		cache-unified;
+-		cache-level = <2>;
+-	};
+-
+ 	intc: interrupt-controller {
+ 		compatible = "arm,cortex-a9-gic";
+ 		reg = <0x50041000 0x1000
+@@ -122,6 +113,15 @@
+ 		#interrupt-cells = <3>;
+ 	};
+ 
++	cache-controller {
++		compatible = "arm,pl310-cache";
++		reg = <0x50043000 0x1000>;
++		arm,data-latency = <6 6 2>;
++		arm,tag-latency = <5 5 2>;
++		cache-unified;
++		cache-level = <2>;
++	};
++
+ 	timer@60005000 {
+ 		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
+ 		reg = <0x60005000 0x400>;
+-- 
+1.7.10.4
