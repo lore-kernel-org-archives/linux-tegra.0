@@ -1,102 +1,32 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: swap cache-/interrupt-ctrlr nodes in DT
-Date: Mon, 14 Jan 2013 10:21:39 -0700
-Message-ID: <1358184099-7249-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/3] ASoC: tegra:  add ac97 host controller to device
+ tree
+Date: Mon, 14 Jan 2013 10:22:44 -0700
+Message-ID: <50F43EE4.70705@wwwdotorg.org>
+References: <1357348725-32139-1-git-send-email-dev@lynxeye.de> <1357348725-32139-3-git-send-email-dev@lynxeye.de> <50EC99A1.4080402@wwwdotorg.org> <20130113232222.GN5041@opensource.wolfsonmicro.com> <50F439C0.4080603@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50F439C0.4080603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 01/14/2013 10:00 AM, Stephen Warren wrote:
+> On 01/13/2013 04:22 PM, Mark Brown wrote:
+>> On Tue, Jan 08, 2013 at 03:11:45PM -0700, Stephen Warren wrote:
+>>> On 01/04/2013 06:18 PM, Lucas Stach wrote:
+>>>> Add default entry for the AC97 host controller.
+>>
+>>> This looks fine. I assume I'll take this through the Tegra tree.
+>>
+>> Makes sense to me.
+> 
+> Thanks, applied to Tegra's for-3.9/dt branch.
 
-This ensures nodes are sorted in order of reg address. This makes it
-easier to compare against e.g. the U-Boot device trees, and is simply
-consistent and clean.
-
-While we're at it, remove the unit address from the cache-controller
-node name, since it's unique without it.
-
-Reported-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I intend to apply this immediately since it's trivial.
-
- arch/arm/boot/dts/tegra20.dtsi |   18 +++++++++---------
- arch/arm/boot/dts/tegra30.dtsi |   18 +++++++++---------
- 2 files changed, 18 insertions(+), 18 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 1ddbefd..dcd220c 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -105,15 +105,6 @@
- 		interrupts = <1 13 0x304>;
- 	};
- 
--	cache-controller@50043000 {
--		compatible = "arm,pl310-cache";
--		reg = <0x50043000 0x1000>;
--		arm,data-latency = <5 5 2>;
--		arm,tag-latency = <4 4 2>;
--		cache-unified;
--		cache-level = <2>;
--	};
--
- 	intc: interrupt-controller {
- 		compatible = "arm,cortex-a9-gic";
- 		reg = <0x50041000 0x1000
-@@ -122,6 +113,15 @@
- 		#interrupt-cells = <3>;
- 	};
- 
-+	cache-controller {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x50043000 0x1000>;
-+		arm,data-latency = <5 5 2>;
-+		arm,tag-latency = <4 4 2>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	timer@60005000 {
- 		compatible = "nvidia,tegra20-timer";
- 		reg = <0x60005000 0x60>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index dc6dc51..63a0d9b 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -105,15 +105,6 @@
- 		interrupts = <1 13 0xf04>;
- 	};
- 
--	cache-controller@50043000 {
--		compatible = "arm,pl310-cache";
--		reg = <0x50043000 0x1000>;
--		arm,data-latency = <6 6 2>;
--		arm,tag-latency = <5 5 2>;
--		cache-unified;
--		cache-level = <2>;
--	};
--
- 	intc: interrupt-controller {
- 		compatible = "arm,cortex-a9-gic";
- 		reg = <0x50041000 0x1000
-@@ -122,6 +113,15 @@
- 		#interrupt-cells = <3>;
- 	};
- 
-+	cache-controller {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x50043000 0x1000>;
-+		arm,data-latency = <6 6 2>;
-+		arm,tag-latency = <5 5 2>;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
- 	timer@60005000 {
- 		compatible = "nvidia,tegra30-timer", "nvidia,tegra20-timer";
- 		reg = <0x60005000 0x400>;
--- 
-1.7.10.4
+I had to make a small modification to the patch; I commented out the
+clocks property for now since the CAR node isn't yet present. It will be
+soon once the common clock framework patches are merged, and then I'll
+revert the change I made.
