@@ -1,80 +1,171 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Mon, 14 Jan 2013 15:09:16 -0700
-Message-ID: <50F4820C.2050806@wwwdotorg.org>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <50F134C9.1040203@nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
+ allocation
+Date: Mon, 14 Jan 2013 23:15:51 +0100
+Message-ID: <20130114221551.GA30020@avionic-0098.adnet.avionic-design.de>
+References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
+ <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
+ <20130105080658.GA1315@core.coreip.homeip.net>
+ <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
+ <20130106195748.GA28212@core.coreip.homeip.net>
+ <20130109070745.GA12782@avionic-0098.adnet.avionic-design.de>
+ <20130109091939.GA4369@core.coreip.homeip.net>
+ <20130109092352.GA28037@avionic-0098.adnet.avionic-design.de>
+ <20130114154959.GA25049@avionic-0098.adnet.avionic-design.de>
+ <20130114161644.GC14721@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <50F134C9.1040203@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130114161644.GC14721@kroah.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/12/2013 03:02 AM, Laxman Dewangan wrote:
-> On Saturday 12 January 2013 04:39 AM, Stephen Warren wrote:
->> On 01/11/2013 06:33 AM, Laxman Dewangan wrote:
->>> Enable tegra based keyboard controller and populate the key matrix for
->>> seaboard. The key matrix was originally on driver code which is removed
->>> to have clean driver. The key mapping is now passed through dts file.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>> ---
->>> Requesting for testing on seaboard.
->>> I generated this patch as Stephen suggested to have one patch for dt
->>> file
->>> entry for keys on seaboard.
-> 
-> Thanks for testing.
 
->> Oh, and the KBC clock is marked TEGRA_PERIPH_NO_RESET for Tegra30, and
->> also for Tegra20 in the ChromeOS kernel; why is the driver trying to
->> assert reset on a clock that doesn't support it?
->
-> This is something our kbc controller reset and clock design.
-> KBC controller is on Always Power ON domain so that it can work even
-> when system is in sleep.
-> The KBC clock is enabled through two places, PMC control register and
-> CAR register set.
-> KBC controller is only reset through PMC control register.
-> This is not well implemented either on our downstream or in mainline.
-> Sometime back I tried to implement it in downstream but was having lots
-> of comment and not able to complete this. Possibly we will talk
-> internally that how can we implement this.
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I guess there's little point in the KBC driver calling the Tegra clock
-reset APIs then. Still, since the code is already there and it's not
-doing any harm, I guess it's fine to leave it there; if we ever enhance
-the clock driver to implement reset for those clocks via the PMC, it
-will all just magically work.
+On Mon, Jan 14, 2013 at 08:16:44AM -0800, Greg Kroah-Hartman wrote:
+> On Mon, Jan 14, 2013 at 04:49:59PM +0100, Thierry Reding wrote:
+> > On Wed, Jan 09, 2013 at 10:23:52AM +0100, Thierry Reding wrote:
+> > > On Wed, Jan 09, 2013 at 01:19:39AM -0800, Dmitry Torokhov wrote:
+> > > > On Wed, Jan 09, 2013 at 08:07:45AM +0100, Thierry Reding wrote:
+> > > > > On Sun, Jan 06, 2013 at 11:57:48AM -0800, Dmitry Torokhov wrote:
+> > > > > > On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
+> > > > > > > On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wro=
+te:
+> > > > > > > > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan w=
+rote:
+> > > > > > > [...]
+> > > > > > > > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct p=
+latform_device *pdev)
+> > > > > > > > >  	spin_lock_init(&kbc->lock);
+> > > > > > > > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (uns=
+igned long)kbc);
+> > > > > > > > > =20
+> > > > > > > > > -	res =3D request_mem_region(res->start, resource_size(re=
+s), pdev->name);
+> > > > > > > > > -	if (!res) {
+> > > > > > > > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
+> > > > > > > > > -		err =3D -EBUSY;
+> > > > > > > > > -		goto err_free_mem;
+> > > > > > > > > -	}
+> > > > > > > > > -
+> > > > > > > > > -	kbc->mmio =3D ioremap(res->start, resource_size(res));
+> > > > > > > > > +	kbc->mmio =3D devm_request_and_ioremap(&pdev->dev, res);
+> > > > > > > > >  	if (!kbc->mmio) {
+> > > > > > > > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+> > > > > > > > > -		err =3D -ENXIO;
+> > > > > > > > > -		goto err_free_mem_region;
+> > > > > > > > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap ad=
+dress\n");
+> > > > > > > > > +		return -EADDRNOTAVAIL;
+> > > > > > > >=20
+> > > > > > > > Erm, no, -EBUSY please.
+> > > > > > >=20
+> > > > > > > EADDRNOTAVAIL is the canonical error for devm_request_and_ior=
+emap()
+> > > > > > > failure. The kerneldoc comment in lib/devres.c even gives a s=
+hort
+> > > > > > > example that uses this error code.
+> > > > > >=20
+> > > > > > I am sorry, but I do not consider a function that was added a l=
+ittle
+> > > > > > over a year ago as a canon. If you look at the uses of EADDRNOT=
+AVAIL it
+> > > > > > is used predominantly in networking code to indicate that attem=
+pted
+> > > > > > _network_ address is not available.
+> > > > >=20
+> > > > > EBUSY might be misleading, though. devm_request_and_ioremap() can=
+ fail
+> > > > > in both the request_mem_region() and ioremap() calls. Furthermore=
+ it'd
+> > > > > be good to settle on a consistent error-code instead of doing it
+> > > > > differently depending on subsystem and/or driver. Currently the v=
+arious
+> > > > > error codes used are:
+> > > > >=20
+> > > > > 	EBUSY, EADDRNOTAVAIL, ENXIO, ENOMEM, ENODEV, ENOENT, EINVAL,
+> > > > > 	EIO, EFAULT, EADDRINUSE
+> > > > >=20
+> > > > > Also if we can settle on one error code we should follow up with =
+a patch
+> > > > > to make it consistent across the tree and also update that kernel=
+doc
+> > > > > comment. I volunteer to do that if nobody else steps up. I'm also=
+ Cc'ing
+> > > > > Wolfram (the original author), maybe he has some thoughts on this.
+> > > > >=20
+> > > >=20
+> > > > If you going to change all drivers make devm_request_and_ioremap()
+> > > > return ERR_PTR()-encoded errors and then we can differentiate what
+> > > > part of it failed.
+> > >=20
+> > > Yeah, that thought also crossed my mind. I'll give other people some
+> > > time to comment before hurling myself into preparing patches.
+> >=20
+> > I've prepared a patch that changes devm_request_and_ioremap() to return
+> > ERR_PTR()-encoded errors and adjusts all callers. As you can imagine it
+> > is a bit on the huge side. scripts/get_maintainer.pl lists 156 people
+> > and mailing lists. I've gone through the list, and as far as I can tell
+> > everyone on that list is actually affected by the patch, so there's not
+> > much potential for tuning it down.
+> >=20
+> > There is also the issue of whose tree this should go into. Unfortunately
+> > the patch can't be broken down into smaller chunks because it changes
+> > how the devm_request_and_ioremap() function's return value is handled in
+> > an incompatible way, so it won't be possible to gradually phase this in.
+> > Furthermore I can imagine that until the end of the release cycle new
+> > code may be added on which the same transformations need to be done. I
+> > have a semantic patch to do the bulk of the work, but quite a bit of
+> > coordination will be required.
+> >=20
+> > I'm adding Arnd and Greg on Cc, maybe they can advise on how best to
+> > handle this kind of patch.
+>=20
+> You should provide a "wrapper" function that does the correct return
+> value, convert drivers over to it, and then, when everyone is changed,
+> drop the old call.  To change 156 different drivers all at once, in a
+> way that is not detectable by the compiler breaking the build, is not a
+> good thing to do at all.
+>=20
+> By doing it in this manner, it will take longer, but you can push the
+> patches through the different maintainer's trees.  If they are slow,
+> I'll be glad to take the remaining patches in my driver-core tree to do
+> the final bits.
 
->> Once I hacked around the above issues, the driver doesn't work very well
->> at all. There is a *long* delay between when I press a key and when it
->> shows up (e.g. echo'd to the HDMI console). When I release the key the
->> same keypress is generated twice. Or perhaps it's a repeat, but since
->> it's *always* 2 extra keypresses and I doubt I always hold my finger on
->> the key the exact same amount of time, I think it's key release that
->> does this not repeat. I assume this would repro on any board, so you
->> won't need Seaboard to debug it. Harmony is able to read the keyboard
->> using the KBC.
->>
->> Even with the above, I was able to validate that the keymap in the
->> Seaboard .dts file looks reasonable.
->>
->> However, please fix the KBC driver...
-> 
-> I did not see any issue with the 3x3 matrix. I think all these about is
-> to tuning debaunce and other parameter also. Another thing is that to
-> make sure that all pinmuxes are properly configured.
+It certainly sounds like a less complicated way to do it. But it also
+involves adding a function with a made up name and drop a function with
+a perfectly good name instead. I wouldn't even know what name to choose
+for the new API.
 
-OK, I'll go look at some downstream kernels for Seaboard and see if the
-debounce etc. parameters all match up.
+Thierry
 
-> However, again I will try to enable kbc on harmony and run it.
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature
 
-That would be extremely useful; I worry that if you tested it on
-Tegra114, that means using a downstream kernel only, and also whether
-there are any HW differences between SoC versions. That's quite a lot of
-variables that could explain the issues I'm seeing.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ9IOXAAoJEN0jrNd/PrOhpzIP/1nnZVmPvoVuQmLXjf0NZ7rf
+5WIrjY9B5LSpCr1vqt2KIPAoYuOwM6PPTU2jmk7yl0TV2ZMzAj4l7ooTPQqrGhYy
+3Q9jwdrO2MLPRT2jW+/6c4UFBbK0M++gLw5AWBkDNPlocAyd2LlqJQIcJZBekfaI
+UNeZnVGaXCd8oHDKQeYzzet+LG486eBjX3HwxlnsCHyLSjA/HM/x4UG10EvM3+qA
+2xmUFuEKfIvqVEeQg1zNIyXeHnU47rMb9LmpANyau1rjE9EZtvgyBt9fDhutpEcj
+cg9SQWjQakZ67tTz3WP9NBKFaWXi7gMZiyw448E1LM+NABM+qTmzQCDHTDoenCyq
+PxLeMOhctSBSHva9uT2hoOycFOS8hLR0twKWxwpakSAQqMv6S/NRZnnsiWDftmeT
+pKgjwQb6XkSNT+01lAA044+Lnhn7Lk4JGN2uE0bXiq4zO1n0Iknyp9BwWWzmInEM
+6S+fTfelg5npfm02NgvzLDY9sVCqyqZYNQzNvpVsd2kHpEugAd+eAAwaOna8Troh
+zM6FWeLtp0YP3NceFsNn4txDdbi9G6UANiKiMPdspglOSSp7ldN+60JG25SKF1Wy
+0YO2a3kynWVGRi5njTAArt0LdHmYqLvHeuJKTvrQ3sDBEaXiKhLhspqveNqO9JGz
+Qx3E80c9Yj6B66x9jmeY
+=1of4
+-----END PGP SIGNATURE-----
+
+--AqsLC8rIMeq19msA--
