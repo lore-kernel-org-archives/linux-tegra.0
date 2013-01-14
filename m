@@ -1,75 +1,48 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] clk: tegra: ensure all provided clock values are valid cookies
-Date: Mon, 14 Jan 2013 11:16:40 -0700
-Message-ID: <1358187400-6824-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] clk: tegra: use _clk_pll_disable from _program_pll
+Date: Mon, 14 Jan 2013 11:36:12 -0700
+Message-ID: <1358188572-13005-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra's clock implementation uses pointers as the clock cookies, and
-hence chooses to make NULL an invalid clock cookie. However, there are
-gaps in the assigned device tree clock IDs, and hence the array mapping
-DT clock ID contains entries with NULL values (uninitialized BSS) unless
-explicit action is taken. This patch enhances the Tegra clock code to
-detect this case and explicitly initialize those lookup table entries to
-an error value. This prevents clk_get() from ever returning NULL. Hence,
-Tegra's clock APIs don't have to check the clock cookie they're passed
-for NULL.
+_program_pll() was dropping the PLL's lock and calling clk_pll_disable().
+clk_pll_disable() does nothing but acquire the same lock and call
+_clk_pll_disable(). So, remove the lock manipulation code, and just call
+_clk_pll_disable() directly instead.
 
+Reported-by: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Mike, this also will need to go through the Tegra tree; just looking for
 any review/ack from you. Thanks.
 
- drivers/clk/tegra/clk-tegra20.c |    5 ++++-
- drivers/clk/tegra/clk-tegra30.c |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-pll.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 5847b5e..e59ac14 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1243,12 +1243,15 @@ void __init tegra20_clock_init(struct device_node *np)
- 	tegra20_audio_clk_init();
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 474ce1f..9f9bb73 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -339,14 +339,8 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	state = clk_pll_is_enabled(hw);
  
- 
--	for (i = 0; i < ARRAY_SIZE(clks); i++)
-+	for (i = 0; i < ARRAY_SIZE(clks); i++) {
- 		if (IS_ERR(clks[i])) {
- 			pr_err("Tegra20 clk %d: register failed with %ld\n",
- 			       i, PTR_ERR(clks[i]));
- 			BUG();
- 		}
-+		if (!clks[i])
-+			clks[i] = ERR_PTR(-EINVAL);
-+	}
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, clk_max);
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 987312c..9c0b2ee 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -2022,12 +2022,15 @@ void __init tegra30_clock_init(struct device_node *np)
- 	tegra30_audio_clk_init();
- 	tegra30_pmc_clk_init();
- 
--	for (i = 0; i < ARRAY_SIZE(clks); i++)
-+	for (i = 0; i < ARRAY_SIZE(clks); i++) {
- 		if (IS_ERR(clks[i])) {
- 			pr_err("Tegra30 clk %d: register failed with %ld\n",
- 			       i, PTR_ERR(clks[i]));
- 			BUG();
- 		}
-+		if (!clks[i])
-+			clks[i] = ERR_PTR(-EINVAL);
-+	}
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, clk_max);
+ 	if (state) {
+-		if (pll->lock)
+-			spin_unlock_irqrestore(pll->lock, flags);
+-
+-		clk_pll_disable(hw);
++		_clk_pll_disable(hw);
+ 		val &= ~(PLL_BASE_BYPASS | PLL_BASE_ENABLE);
+-
+-		if (pll->lock)
+-			spin_lock_irqsave(pll->lock, flags);
+ 	}
+ 	pll_writel_base(val, pll);
  
 -- 
 1.7.10.4
