@@ -1,42 +1,77 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 0/5] drm/tegra: Miscellaneous enhancements
-Date: Mon, 14 Jan 2013 17:05:55 +0100
-Message-ID: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v2 3/5] drm/tegra: Implement .mode_set_base()
+Date: Mon, 14 Jan 2013 17:05:58 +0100
+Message-ID: <1358179560-26799-4-git-send-email-thierry.reding@avionic-design.de>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358179560-26799-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-[Rebased on v3.8-rc3 to avoid a conflict in drivers/gpu/drm/tegra/drm.h]
+The sequence for replacing the scanout buffer is much shorter than a
+full mode change operation so implementing this callback considerably
+speeds up cases where only a new framebuffer is to be scanned out.
 
-Hi,
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-This patch series introduces a number of useful features for the Tegra
-DRM driver. The first patch allows VBLANK support to be used in drivers
-that don't or can't use DRIVER_HAVE_IRQ for interrupt support.
-
-Patch 2 adds support for the additional two planes available on Tegra
-hardware, while patch 3 implement .mode_set_base() to allow for some
-nice speed up when changing the framebuffer without actually changing
-the resolution. Patch 4 adds VBLANK support and finally patch 5 builds
-on it to provide the page-flipping IOCTL.
-
-Thierry
-
-Thierry Reding (5):
-  drm: Allow vblank support without DRIVER_HAVE_IRQ
-  drm/tegra: Add plane support
-  drm/tegra: Implement .mode_set_base()
-  drm/tegra: Implement VBLANK support
-  drm/tegra: Implement page-flipping support
-
- drivers/gpu/drm/drm_irq.c   |   5 +-
- drivers/gpu/drm/tegra/dc.c  | 475 ++++++++++++++++++++++++++++++++++----------
- drivers/gpu/drm/tegra/dc.h  |   2 +-
- drivers/gpu/drm/tegra/drm.c |  53 +++++
- drivers/gpu/drm/tegra/drm.h |  37 ++++
- 5 files changed, 461 insertions(+), 111 deletions(-)
-
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index 157e962..8dd7d8a 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -116,6 +116,25 @@ static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
+ 	return 0;
+ }
+ 
++static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
++			     struct tegra_framebuffer *fb)
++{
++	unsigned long value;
++
++	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
++
++	value = fb->base.offsets[0] + y * fb->base.pitches[0] +
++		x * fb->base.bits_per_pixel / 8;
++
++	tegra_dc_writel(dc, fb->obj->paddr + value, DC_WINBUF_START_ADDR);
++
++	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
++	value |= GENERAL_UPDATE | WIN_A_UPDATE;
++	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
++
++	return 0;
++}
++
+ static const struct drm_crtc_funcs tegra_crtc_funcs = {
+ 	.set_config = drm_crtc_helper_set_config,
+ 	.destroy = drm_crtc_cleanup,
+@@ -404,6 +423,15 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
+ 	return 0;
+ }
+ 
++static int tegra_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
++				    struct drm_framebuffer *old_fb)
++{
++	struct tegra_framebuffer *fb = to_tegra_fb(crtc->fb);
++	struct tegra_dc *dc = to_tegra_dc(crtc);
++
++	return tegra_dc_set_base(dc, x, y, fb);
++}
++
+ static void tegra_crtc_prepare(struct drm_crtc *crtc)
+ {
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
+@@ -483,6 +511,7 @@ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
+ 	.dpms = tegra_crtc_dpms,
+ 	.mode_fixup = tegra_crtc_mode_fixup,
+ 	.mode_set = tegra_crtc_mode_set,
++	.mode_set_base = tegra_crtc_mode_set_base,
+ 	.prepare = tegra_crtc_prepare,
+ 	.commit = tegra_crtc_commit,
+ 	.load_lut = tegra_crtc_load_lut,
 -- 
 1.8.1
