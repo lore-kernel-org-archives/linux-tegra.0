@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH 2/5] drm/tegra: Add plane support
-Date: Mon, 14 Jan 2013 16:55:29 +0100
-Message-ID: <1358178932-25505-3-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH 4/5] drm/tegra: Implement VBLANK support
+Date: Mon, 14 Jan 2013 16:55:31 +0100
+Message-ID: <1358178932-25505-5-git-send-email-thierry.reding@avionic-design.de>
 References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1358178932-25505-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,462 +10,221 @@ To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the B and C planes which support RGB and YUV pixel
-formats and can be used as overlays or hardware cursor.
+Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+special in this case because it doesn't use the generic IRQ support
+provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+interrupt handler for each display controller.
+
+While at it, clean up the way that interrupts are enabled to ensure
+that the VBLANK interrupt only gets enabled when required.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c  | 321 +++++++++++++++++++++++++++++++-------------
- drivers/gpu/drm/tegra/dc.h  |   2 +-
- drivers/gpu/drm/tegra/drm.h |  29 ++++
- 3 files changed, 259 insertions(+), 93 deletions(-)
+ drivers/gpu/drm/tegra/dc.c  | 55 +++++++++++++++++++++++++++++++--------------
+ drivers/gpu/drm/tegra/drm.c | 44 ++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/drm.h |  3 +++
+ 3 files changed, 85 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 656b2e3..157e962 100644
+index 8dd7d8a..3aa7ccc 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -18,19 +18,104 @@
- #include "drm.h"
- #include "dc.h"
+@@ -135,6 +135,32 @@ static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+ 	return 0;
+ }
  
--struct tegra_dc_window {
--	fixed20_12 x;
--	fixed20_12 y;
--	fixed20_12 w;
--	fixed20_12 h;
--	unsigned int outx;
--	unsigned int outy;
--	unsigned int outw;
--	unsigned int outh;
--	unsigned int stride;
--	unsigned int fmt;
-+struct tegra_plane {
-+	struct drm_plane base;
-+	unsigned int index;
- };
- 
-+static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
++void tegra_dc_enable_vblank(struct tegra_dc *dc)
 +{
-+	return container_of(plane, struct tegra_plane, base);
++	unsigned long value, flags;
++
++	spin_lock_irqsave(&dc->lock, flags);
++
++	value = tegra_dc_readl(dc, DC_CMD_INT_MASK);
++	value |= VBLANK_INT;
++	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
++
++	spin_unlock_irqrestore(&dc->lock, flags);
 +}
 +
-+static int tegra_plane_update(struct drm_plane *plane, struct drm_crtc *crtc,
-+			      struct drm_framebuffer *fb, int crtc_x,
-+			      int crtc_y, unsigned int crtc_w,
-+			      unsigned int crtc_h, uint32_t src_x,
-+			      uint32_t src_y, uint32_t src_w, uint32_t src_h)
++void tegra_dc_disable_vblank(struct tegra_dc *dc)
 +{
-+	unsigned long base = tegra_framebuffer_base(fb);
-+	struct tegra_plane *p = to_tegra_plane(plane);
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+	struct tegra_dc_window window;
++	unsigned long value, flags;
 +
-+	memset(&window, 0, sizeof(window));
-+	window.src.x = src_x >> 16;
-+	window.src.y = src_y >> 16;
-+	window.src.w = src_w >> 16;
-+	window.src.h = src_h >> 16;
-+	window.dst.x = crtc_x;
-+	window.dst.y = crtc_y;
-+	window.dst.w = crtc_w;
-+	window.dst.h = crtc_h;
-+	window.format = tegra_dc_format(fb->pixel_format);
-+	window.bits_per_pixel = fb->bits_per_pixel;
-+	window.stride = fb->pitches[0];
-+	window.base = base;
++	spin_lock_irqsave(&dc->lock, flags);
 +
-+	return tegra_dc_setup_window(dc, p->index + 1, &window);
-+}
++	value = tegra_dc_readl(dc, DC_CMD_INT_MASK);
++	value &= ~VBLANK_INT;
++	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
 +
-+static int tegra_plane_disable(struct drm_plane *plane)
-+{
-+	struct tegra_dc *dc = to_tegra_dc(plane->crtc);
-+	struct tegra_plane *p = to_tegra_plane(plane);
-+	unsigned int index = p->index + 1;
-+	unsigned long value;
-+
-+	value = WINDOW_A_SELECT << index;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
-+
-+	value = tegra_dc_readl(dc, DC_WIN_WIN_OPTIONS);
-+	value &= ~WIN_ENABLE;
-+	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
-+
-+	value = (WIN_A_ACT_REQ << index) | (WIN_A_UPDATE << index);
-+	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-+
-+	return 0;
-+}
-+
-+static void tegra_plane_destroy(struct drm_plane *plane)
-+{
-+	drm_plane_cleanup(plane);
-+}
-+
-+static const struct drm_plane_funcs tegra_plane_funcs = {
-+	.update_plane = tegra_plane_update,
-+	.disable_plane = tegra_plane_disable,
-+	.destroy = tegra_plane_destroy,
-+};
-+
-+static const uint32_t plane_formats[] = {
-+	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_YUV422,
-+};
-+
-+static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
-+{
-+	unsigned int i;
-+	int err = 0;
-+
-+	for (i = 0; i < 2; i++) {
-+		struct tegra_plane *plane;
-+
-+		plane = devm_kzalloc(drm->dev, sizeof(*plane), GFP_KERNEL);
-+		if (!plane)
-+			return -ENOMEM;
-+
-+		plane->index = i;
-+
-+		err = drm_plane_init(drm, &plane->base, 1 << dc->pipe,
-+				     &tegra_plane_funcs, plane_formats,
-+				     ARRAY_SIZE(plane_formats), false);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	return 0;
++	spin_unlock_irqrestore(&dc->lock, flags);
 +}
 +
  static const struct drm_crtc_funcs tegra_crtc_funcs = {
  	.set_config = drm_crtc_helper_set_config,
  	.destroy = drm_crtc_cleanup,
-@@ -47,10 +132,11 @@ static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
- 	return true;
+@@ -375,6 +401,8 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
+ 	unsigned long div, value;
+ 	int err;
+ 
++	drm_vblank_pre_modeset(crtc->dev, dc->pipe);
++
+ 	err = tegra_crtc_setup_clk(crtc, mode, &div);
+ 	if (err) {
+ 		dev_err(dc->dev, "failed to setup clock for CRTC: %d\n", err);
+@@ -476,31 +504,23 @@ static void tegra_crtc_prepare(struct drm_crtc *crtc)
+ 	tegra_dc_writel(dc, value, DC_DISP_DISP_MEM_HIGH_PRIORITY_TIMER);
+ 
+ 	value = VBLANK_INT | WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT;
+-	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
+-
+-	value = VBLANK_INT | WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT;
+ 	tegra_dc_writel(dc, value, DC_CMD_INT_ENABLE);
++
++	value = WIN_A_UF_INT | WIN_B_UF_INT | WIN_C_UF_INT;
++	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
  }
  
--static inline u32 compute_dda_inc(fixed20_12 inf, unsigned int out, bool v,
-+static inline u32 compute_dda_inc(unsigned int in, unsigned int out, bool v,
- 				  unsigned int bpp)
+ static void tegra_crtc_commit(struct drm_crtc *crtc)
  {
- 	fixed20_12 outf = dfixed_init(out);
-+	fixed20_12 inf = dfixed_init(in);
- 	u32 dda_inc;
- 	int max;
+ 	struct tegra_dc *dc = to_tegra_dc(crtc);
+-	unsigned long update_mask;
+ 	unsigned long value;
  
-@@ -80,9 +166,10 @@ static inline u32 compute_dda_inc(fixed20_12 inf, unsigned int out, bool v,
- 	return dda_inc;
+-	update_mask = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+-
+-	tegra_dc_writel(dc, update_mask << 8, DC_CMD_STATE_CONTROL);
+-
+-	value = tegra_dc_readl(dc, DC_CMD_INT_ENABLE);
+-	value |= FRAME_END_INT;
+-	tegra_dc_writel(dc, value, DC_CMD_INT_ENABLE);
++	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ |
++		GENERAL_UPDATE | WIN_A_UPDATE;
+ 
+-	value = tegra_dc_readl(dc, DC_CMD_INT_MASK);
+-	value |= FRAME_END_INT;
+-	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
++	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+ 
+-	tegra_dc_writel(dc, update_mask, DC_CMD_STATE_CONTROL);
++	drm_vblank_post_modeset(crtc->dev, dc->pipe);
  }
  
--static inline u32 compute_initial_dda(fixed20_12 in)
-+static inline u32 compute_initial_dda(unsigned int in)
+ static void tegra_crtc_load_lut(struct drm_crtc *crtc)
+@@ -517,7 +537,7 @@ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
+ 	.load_lut = tegra_crtc_load_lut,
+ };
+ 
+-static irqreturn_t tegra_drm_irq(int irq, void *data)
++static irqreturn_t tegra_dc_irq(int irq, void *data)
  {
--	return dfixed_frac(in);
-+	fixed20_12 inf = dfixed_init(in);
-+	return dfixed_frac(inf);
- }
+ 	struct tegra_dc *dc = data;
+ 	unsigned long status;
+@@ -862,7 +882,7 @@ static int tegra_dc_drm_init(struct host1x_client *client,
+ 			dev_err(dc->dev, "debugfs setup failed: %d\n", err);
+ 	}
  
- static int tegra_dc_set_timings(struct tegra_dc *dc,
-@@ -153,6 +240,111 @@ static int tegra_crtc_setup_clk(struct drm_crtc *crtc,
- 	return 0;
- }
+-	err = devm_request_irq(dc->dev, dc->irq, tegra_drm_irq, 0,
++	err = devm_request_irq(dc->dev, dc->irq, tegra_dc_irq, 0,
+ 			       dev_name(dc->dev), dc);
+ 	if (err < 0) {
+ 		dev_err(dc->dev, "failed to request IRQ#%u: %d\n", dc->irq,
+@@ -911,6 +931,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	if (!dc)
+ 		return -ENOMEM;
  
-+int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
-+			  const struct tegra_dc_window *window)
++	spin_lock_init(&dc->lock);
+ 	INIT_LIST_HEAD(&dc->list);
+ 	dc->dev = &pdev->dev;
+ 
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 3a503c9..62f8121 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -40,6 +40,10 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 	if (err < 0)
+ 		return err;
+ 
++	err = drm_vblank_init(drm, drm->mode_config.num_crtc);
++	if (err < 0)
++		return err;
++
+ 	err = tegra_drm_fb_init(drm);
+ 	if (err < 0)
+ 		return err;
+@@ -89,6 +93,42 @@ static const struct file_operations tegra_drm_fops = {
+ 	.llseek = noop_llseek,
+ };
+ 
++static struct drm_crtc *tegra_crtc_from_pipe(struct drm_device *drm, int pipe)
 +{
-+	unsigned h_offset, v_offset, h_size, v_size, h_dda, v_dda, bpp;
-+	unsigned long value;
++	struct drm_crtc *crtc;
 +
-+	bpp = window->bits_per_pixel / 8;
++	list_for_each_entry(crtc, &drm->mode_config.crtc_list, head) {
++		struct tegra_dc *dc = to_tegra_dc(crtc);
 +
-+	value = WINDOW_A_SELECT << index;
-+	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
-+
-+	tegra_dc_writel(dc, window->format, DC_WIN_COLOR_DEPTH);
-+	tegra_dc_writel(dc, 0, DC_WIN_BYTE_SWAP);
-+
-+	value = V_POSITION(window->dst.y) | H_POSITION(window->dst.x);
-+	tegra_dc_writel(dc, value, DC_WIN_POSITION);
-+
-+	value = V_SIZE(window->dst.h) | H_SIZE(window->dst.w);
-+	tegra_dc_writel(dc, value, DC_WIN_SIZE);
-+
-+	h_offset = window->src.x * bpp;
-+	v_offset = window->src.y;
-+	h_size = window->src.w * bpp;
-+	v_size = window->src.h;
-+
-+	value = V_PRESCALED_SIZE(v_size) | H_PRESCALED_SIZE(h_size);
-+	tegra_dc_writel(dc, value, DC_WIN_PRESCALED_SIZE);
-+
-+	h_dda = compute_dda_inc(window->src.w, window->dst.w, false, bpp);
-+	v_dda = compute_dda_inc(window->src.h, window->dst.h, true, bpp);
-+
-+	value = V_DDA_INC(v_dda) | H_DDA_INC(h_dda);
-+	tegra_dc_writel(dc, value, DC_WIN_DDA_INC);
-+
-+	h_dda = compute_initial_dda(window->src.x);
-+	v_dda = compute_initial_dda(window->src.y);
-+
-+	tegra_dc_writel(dc, h_dda, DC_WIN_H_INITIAL_DDA);
-+	tegra_dc_writel(dc, v_dda, DC_WIN_V_INITIAL_DDA);
-+
-+	tegra_dc_writel(dc, 0, DC_WIN_UV_BUF_STRIDE);
-+	tegra_dc_writel(dc, 0, DC_WIN_BUF_STRIDE);
-+
-+	tegra_dc_writel(dc, window->base, DC_WINBUF_START_ADDR);
-+	tegra_dc_writel(dc, window->stride, DC_WIN_LINE_STRIDE);
-+	tegra_dc_writel(dc, h_offset, DC_WINBUF_ADDR_H_OFFSET);
-+	tegra_dc_writel(dc, v_offset, DC_WINBUF_ADDR_V_OFFSET);
-+
-+	value = WIN_ENABLE;
-+
-+	if (bpp < 24)
-+		value |= COLOR_EXPAND;
-+
-+	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
-+
-+	/*
-+	 * Disable blending and assume Window A is the bottom-most window,
-+	 * Window C is the top-most window and Window B is in the middle.
-+	 */
-+	tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_NOKEY);
-+	tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_1WIN);
-+
-+	switch (index) {
-+	case 0:
-+		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_X);
-+		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_Y);
-+		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_3WIN_XY);
-+		break;
-+
-+	case 1:
-+		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_X);
-+		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_2WIN_Y);
-+		tegra_dc_writel(dc, 0x000000, DC_WIN_BLEND_3WIN_XY);
-+		break;
-+
-+	case 2:
-+		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_X);
-+		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_2WIN_Y);
-+		tegra_dc_writel(dc, 0xffff00, DC_WIN_BLEND_3WIN_XY);
-+		break;
++		if (dc->pipe == pipe)
++			return crtc;
 +	}
 +
-+	value = (WIN_A_ACT_REQ << index) | (WIN_A_UPDATE << index);
-+	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
++	return NULL;
++}
++
++static int tegra_drm_enable_vblank(struct drm_device *drm, int pipe)
++{
++	struct drm_crtc *crtc = tegra_crtc_from_pipe(drm, pipe);
++	struct tegra_dc *dc = to_tegra_dc(crtc);
++
++	if (!crtc)
++		return -ENODEV;
++
++	tegra_dc_enable_vblank(dc);
 +
 +	return 0;
 +}
 +
-+unsigned int tegra_dc_format(uint32_t format)
++static void tegra_drm_disable_vblank(struct drm_device *drm, int pipe)
 +{
-+	switch (format) {
-+	case DRM_FORMAT_XRGB8888:
-+		return WIN_COLOR_DEPTH_B8G8R8A8;
++	struct drm_crtc *crtc = tegra_crtc_from_pipe(drm, pipe);
++	struct tegra_dc *dc = to_tegra_dc(crtc);
 +
-+	case DRM_FORMAT_RGB565:
-+		return WIN_COLOR_DEPTH_B5G6R5;
-+
-+	default:
-+		break;
-+	}
-+
-+	WARN(1, "unsupported pixel format %u, using default\n", format);
-+	return WIN_COLOR_DEPTH_B8G8R8A8;
++	if (crtc)
++		tegra_dc_disable_vblank(dc);
 +}
 +
- static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 			       struct drm_display_mode *mode,
- 			       struct drm_display_mode *adjusted,
-@@ -160,8 +352,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- {
- 	struct tegra_framebuffer *fb = to_tegra_fb(crtc->fb);
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
--	unsigned int h_dda, v_dda, bpp;
--	struct tegra_dc_window win;
-+	struct tegra_dc_window window;
- 	unsigned long div, value;
- 	int err;
+ struct drm_driver tegra_drm_driver = {
+ 	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
+ 	.load = tegra_drm_load,
+@@ -96,6 +136,10 @@ struct drm_driver tegra_drm_driver = {
+ 	.open = tegra_drm_open,
+ 	.lastclose = tegra_drm_lastclose,
  
-@@ -192,81 +383,23 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	tegra_dc_writel(dc, value, DC_DISP_DISP_CLOCK_CONTROL);
- 
- 	/* setup window parameters */
--	memset(&win, 0, sizeof(win));
--	win.x.full = dfixed_const(0);
--	win.y.full = dfixed_const(0);
--	win.w.full = dfixed_const(mode->hdisplay);
--	win.h.full = dfixed_const(mode->vdisplay);
--	win.outx = 0;
--	win.outy = 0;
--	win.outw = mode->hdisplay;
--	win.outh = mode->vdisplay;
--
--	switch (crtc->fb->pixel_format) {
--	case DRM_FORMAT_XRGB8888:
--		win.fmt = WIN_COLOR_DEPTH_B8G8R8A8;
--		break;
--
--	case DRM_FORMAT_RGB565:
--		win.fmt = WIN_COLOR_DEPTH_B5G6R5;
--		break;
--
--	default:
--		win.fmt = WIN_COLOR_DEPTH_B8G8R8A8;
--		WARN_ON(1);
--		break;
--	}
--
--	bpp = crtc->fb->bits_per_pixel / 8;
--	win.stride = crtc->fb->pitches[0];
--
--	/* program window registers */
--	value = WINDOW_A_SELECT;
--	tegra_dc_writel(dc, value, DC_CMD_DISPLAY_WINDOW_HEADER);
--
--	tegra_dc_writel(dc, win.fmt, DC_WIN_COLOR_DEPTH);
--	tegra_dc_writel(dc, 0, DC_WIN_BYTE_SWAP);
--
--	value = V_POSITION(win.outy) | H_POSITION(win.outx);
--	tegra_dc_writel(dc, value, DC_WIN_POSITION);
--
--	value = V_SIZE(win.outh) | H_SIZE(win.outw);
--	tegra_dc_writel(dc, value, DC_WIN_SIZE);
--
--	value = V_PRESCALED_SIZE(dfixed_trunc(win.h)) |
--		H_PRESCALED_SIZE(dfixed_trunc(win.w) * bpp);
--	tegra_dc_writel(dc, value, DC_WIN_PRESCALED_SIZE);
--
--	h_dda = compute_dda_inc(win.w, win.outw, false, bpp);
--	v_dda = compute_dda_inc(win.h, win.outh, true, bpp);
--
--	value = V_DDA_INC(v_dda) | H_DDA_INC(h_dda);
--	tegra_dc_writel(dc, value, DC_WIN_DDA_INC);
--
--	h_dda = compute_initial_dda(win.x);
--	v_dda = compute_initial_dda(win.y);
--
--	tegra_dc_writel(dc, h_dda, DC_WIN_H_INITIAL_DDA);
--	tegra_dc_writel(dc, v_dda, DC_WIN_V_INITIAL_DDA);
--
--	tegra_dc_writel(dc, 0, DC_WIN_UV_BUF_STRIDE);
--	tegra_dc_writel(dc, 0, DC_WIN_BUF_STRIDE);
--
--	tegra_dc_writel(dc, fb->obj->paddr, DC_WINBUF_START_ADDR);
--	tegra_dc_writel(dc, win.stride, DC_WIN_LINE_STRIDE);
--	tegra_dc_writel(dc, dfixed_trunc(win.x) * bpp,
--			DC_WINBUF_ADDR_H_OFFSET);
--	tegra_dc_writel(dc, dfixed_trunc(win.y), DC_WINBUF_ADDR_V_OFFSET);
--
--	value = WIN_ENABLE;
--
--	if (bpp < 24)
--		value |= COLOR_EXPAND;
--
--	tegra_dc_writel(dc, value, DC_WIN_WIN_OPTIONS);
--
--	tegra_dc_writel(dc, 0xff00, DC_WIN_BLEND_NOKEY);
--	tegra_dc_writel(dc, 0xff00, DC_WIN_BLEND_1WIN);
-+	memset(&window, 0, sizeof(window));
-+	window.src.x = 0;
-+	window.src.y = 0;
-+	window.src.w = mode->hdisplay;
-+	window.src.h = mode->vdisplay;
-+	window.dst.x = 0;
-+	window.dst.y = 0;
-+	window.dst.w = mode->hdisplay;
-+	window.dst.h = mode->vdisplay;
-+	window.format = tegra_dc_format(crtc->fb->pixel_format);
-+	window.bits_per_pixel = crtc->fb->bits_per_pixel;
-+	window.stride = crtc->fb->pitches[0];
-+	window.base = fb->obj->paddr;
++	.get_vblank_counter = drm_vblank_count,
++	.enable_vblank = tegra_drm_enable_vblank,
++	.disable_vblank = tegra_drm_disable_vblank,
 +
-+	err = tegra_dc_setup_window(dc, 0, &window);
-+	if (err < 0)
-+		dev_err(dc->dev, "failed to enable root plane\n");
- 
- 	return 0;
- }
-@@ -588,7 +721,7 @@ static int tegra_dc_show_regs(struct seq_file *s, void *data)
- 	DUMP_REG(DC_WIN_BLEND_1WIN);
- 	DUMP_REG(DC_WIN_BLEND_2WIN_X);
- 	DUMP_REG(DC_WIN_BLEND_2WIN_Y);
--	DUMP_REG(DC_WIN_BLEND32WIN_XY);
-+	DUMP_REG(DC_WIN_BLEND_3WIN_XY);
- 	DUMP_REG(DC_WIN_HP_FETCH_CONTROL);
- 	DUMP_REG(DC_WINBUF_START_ADDR);
- 	DUMP_REG(DC_WINBUF_START_ADDR_NS);
-@@ -690,6 +823,10 @@ static int tegra_dc_drm_init(struct host1x_client *client,
- 		return err;
- 	}
- 
-+	err = tegra_dc_add_planes(drm, dc);
-+	if (err < 0)
-+		return err;
-+
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_dc_debugfs_init(dc, drm->primary);
- 		if (err < 0)
-diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 99977b5..ccfc220 100644
---- a/drivers/gpu/drm/tegra/dc.h
-+++ b/drivers/gpu/drm/tegra/dc.h
-@@ -359,7 +359,7 @@
- #define DC_WIN_BLEND_1WIN			0x710
- #define DC_WIN_BLEND_2WIN_X			0x711
- #define DC_WIN_BLEND_2WIN_Y			0x712
--#define DC_WIN_BLEND32WIN_XY			0x713
-+#define DC_WIN_BLEND_3WIN_XY			0x713
- 
- #define DC_WIN_HP_FETCH_CONTROL			0x714
- 
+ 	.gem_free_object = drm_gem_cma_free_object,
+ 	.gem_vm_ops = &drm_gem_cma_vm_ops,
+ 	.dumb_create = drm_gem_cma_dumb_create,
 diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 056a6d9..d7ab6bc 100644
+index d7ab6bc..bb5e9d3 100644
 --- a/drivers/gpu/drm/tegra/drm.h
 +++ b/drivers/gpu/drm/tegra/drm.h
-@@ -31,6 +31,11 @@ static inline struct tegra_framebuffer *to_tegra_fb(struct drm_framebuffer *fb)
- 	return container_of(fb, struct tegra_framebuffer, base);
- }
+@@ -83,6 +83,7 @@ struct tegra_output;
  
-+static inline unsigned long tegra_framebuffer_base(struct drm_framebuffer *fb)
-+{
-+	return to_tegra_fb(fb)->obj->paddr;
-+}
-+
- struct host1x {
- 	struct drm_device *drm;
+ struct tegra_dc {
+ 	struct host1x_client client;
++	spinlock_t lock;
+ 
+ 	struct host1x *host1x;
  	struct device *dev;
-@@ -121,6 +126,30 @@ static inline unsigned long tegra_dc_readl(struct tegra_dc *dc,
- 	return readl(dc->regs + (reg << 2));
- }
+@@ -149,6 +150,8 @@ struct tegra_dc_window {
+ extern unsigned int tegra_dc_format(uint32_t format);
+ extern int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 				 const struct tegra_dc_window *window);
++extern void tegra_dc_enable_vblank(struct tegra_dc *dc);
++extern void tegra_dc_disable_vblank(struct tegra_dc *dc);
  
-+struct tegra_dc_window {
-+	struct {
-+		unsigned int x;
-+		unsigned int y;
-+		unsigned int w;
-+		unsigned int h;
-+	} src;
-+	struct {
-+		unsigned int x;
-+		unsigned int y;
-+		unsigned int w;
-+		unsigned int h;
-+	} dst;
-+	unsigned int bits_per_pixel;
-+	unsigned int format;
-+	unsigned int stride;
-+	unsigned long base;
-+};
-+
-+/* from dc.c */
-+extern unsigned int tegra_dc_format(uint32_t format);
-+extern int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
-+				 const struct tegra_dc_window *window);
-+
  struct display {
  	unsigned int width;
- 	unsigned int height;
 -- 
 1.8.1
