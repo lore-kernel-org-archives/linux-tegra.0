@@ -1,131 +1,58 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCH 4/4] ARM: tegra: Set SCU base address dynamically from DT
-Date: Mon, 14 Jan 2013 11:43:30 +0100
-Message-ID: <20130114.124330.851549576173829665.hdoyu@nvidia.com>
-References: <1355725087-11363-1-git-send-email-hdoyu@nvidia.com><1355725087-11363-4-git-send-email-hdoyu@nvidia.com><50CF258E.2080207@gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: Use DT /cpu node to detect number of CPU
+ core
+Date: Mon, 14 Jan 2013 12:35:35 +0000
+Message-ID: <20130114123535.GB21142@e102568-lin.cambridge.arm.com>
+References: <1358149970-28156-1-git-send-email-hdoyu@nvidia.com>
+ <1358149970-28156-2-git-send-email-hdoyu@nvidia.com>
+ <20130114092720.GX23505@n2100.arm.linux.org.uk>
+ <20130114.114925.1476619399284636466.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <50CF258E.2080207@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: "robherring2@gmail.com" <robherring2@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob@landley.net" <rob@landley.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130114.114925.1476619399284636466.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Rob Herring <robherring2@gmail.com> wrote @ Mon, 17 Dec 2012 15:00:46 +0100:
-
-> On 12/17/2012 12:18 AM, Hiroshi Doyu wrote:
-> > Set Snoop Control Unit(SCU) register base address dynamically from DT.
+On Mon, Jan 14, 2013 at 09:49:25AM +0000, Hiroshi Doyu wrote:
+> Hi Russell,
+> 
+> Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote @ Mon, 14 Jan 2013 10:27:20 +0100:
+> 
+> > On Mon, Jan 14, 2013 at 09:52:50AM +0200, Hiroshi Doyu wrote:
+> > > +	if (!arm_dt_cpu_map_valid())
+> > > +		set_cpu_possible(0, true);
 > > 
-> > Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-> > ---
-> >  arch/arm/mach-tegra/platsmp.c |   23 ++++++++++++++++++++---
-> >  1 file changed, 20 insertions(+), 3 deletions(-)
+> > You don't need to do any of this (and, therefore, I don't think you even
+> > need the first patch.)
 > > 
-> > diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-> > index 1b926df..45c0b79 100644
-> > --- a/arch/arm/mach-tegra/platsmp.c
-> > +++ b/arch/arm/mach-tegra/platsmp.c
-> > @@ -18,6 +18,8 @@
-> >  #include <linux/jiffies.h>
-> >  #include <linux/smp.h>
-> >  #include <linux/io.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> >  
-> >  #include <asm/cacheflush.h>
-> >  #include <asm/hardware/gic.h>
-> > @@ -36,7 +38,7 @@
-> >  
-> >  extern void tegra_secondary_startup(void);
-> >  
-> > -static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
-> > +static void __iomem *scu_base;
-> >  
-> >  #define EVP_CPU_RESET_VECTOR \
-> >  	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
-> > @@ -143,14 +145,28 @@ done:
-> >  	return status;
-> >  }
-> >  
-> > +static const struct of_device_id cortex_a9_scu_match[] __initconst = {
-> > +	{ .compatible = "arm,cortex-a9-scu", },
-> > +	{}
-> > +};
-> > +
-> >  /*
-> >   * Initialise the CPU possible map early - this describes the CPUs
-> >   * which may be present or become present in the system.
-> >   */
-> >  static void __init tegra_smp_init_cpus(void)
-> >  {
-> > -	unsigned int i, ncores = scu_get_core_count(scu_base);
-> > +	struct device_node *np;
-> > +	unsigned int i, ncores = 1;
-> > +
-> > +	np = of_find_matching_node(NULL, cortex_a9_scu_match);
-> > +	if (!np)
-> > +		return;
-> > +	scu_base = of_iomap(np, 0);
+> > The generic boot code will set CPU0 as possible, present and online.  Think
+> > about it: you're booting on that very CPU so it better be possible, present
+> > and online.  If it isn't, what CPU is executing your code?
+> > 
+> > arm_dt_init_cpu_maps() will only ever set _additional_ CPUs in the possible
+> > map.
+> > 
+> > Ergo, by the time the above code is run, CPU0 will already be marked as
+> > possible.  Therefore, the above code and arm_dt_cpu_map_valid() is not
+> > required.
 > 
-> Did you actually test this? Unless something changed, ioremap does not
-> work this early. The only reason to have it mapped this early is to get
-> the core count, but that doesn't work on A15 or A7. So we really need to
-> get core count/mask in a standard way. At least some work to get core
-> count from DT went into 3.8.
+> Right.
 > 
-> BTW, you can get the scu address on the A9 by reading cp15 register:
-> 
-> 	/* Get SCU base */
-> 	asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (base));
-> 
-> It's still probably good to have the DT node, but the reg property can
-> be optional in this case.
-> 
-> We need to move away from having the DT matching code within the
-> platforms. This should all be moved to the scu code in a scu_of_init
-> function that could be called from common code.
+> In Tegra, we've decided to not use SCU based detection at all any more
+> and to continue with a single core even when DT cpu detection
+> fails. For Tegra, "arm_dt_cpu_map_valid()" is not necessary. For other
+> SoCs, this would be necessary when they want to detect again with
+> SCU.
 
-If we can get SCU base address from CP15, do we still need SCU entry
-in DT? If not, the following would be the only API to get SCU base?
+Correct. I will keep my patch around and repost it if and when we want other
+platforms to rely on legacy HW number of cores count discovery.
 
-From 9bbecb50759f39d9c762977145407ea4f8a4d5ac Mon Sep 17 00:00:00 2001
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Date: Mon, 14 Jan 2013 12:35:33 +0200
-Subject: [PATCH 1/1] ARM: Add API to detect SCU base address from CP15
+Given that's going to be temporary legacy code anyway, I hope we won't need it
+at all.
 
-Add API to detect SCU base address from CP15.
-
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
----
- arch/arm/include/asm/smp_scu.h |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm/include/asm/smp_scu.h b/arch/arm/include/asm/smp_scu.h
-index 4eb6d00..6015ede 100644
---- a/arch/arm/include/asm/smp_scu.h
-+++ b/arch/arm/include/asm/smp_scu.h
-@@ -6,6 +6,20 @@
- #define SCU_PM_POWEROFF	3
- 
- #ifndef __ASSEMBLER__
-+static inline phys_addr_t scu_get_base(void)
-+{
-+	phys_addr_t pa;
-+	unsigned long part_number = read_cpuid_part_number();
-+
-+	switch (part_number) {
-+	case ARM_CPU_PART_CORTEX_A9:
-+		/* Get SCU physical base */
-+		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
-+		return pa;
-+	default:
-+		return 0;
-+	}
-+}
- unsigned int scu_get_core_count(void __iomem *);
- void scu_enable(void __iomem *);
- int scu_power_mode(void __iomem *, unsigned int);
--- 
-1.7.9.5
+Lorenzo
