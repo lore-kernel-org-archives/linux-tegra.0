@@ -1,25 +1,76 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH v2 01/10] spi: tegra: Do not use clock name to get clock
-Date: Mon, 14 Jan 2013 20:17:26 +0000
-Message-ID: <20130114201726.C11F73E249D@localhost>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com> <50F07CF4.2090502@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F07CF4.2090502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 09/10] clk: tegra20: remove unused
+ TEGRA_CLK_DUPLICATE()s
+Date: Mon, 14 Jan 2013 12:56:02 -0800
+Message-ID: <20130114205602.23734.72506@quantum>
+References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com>
+ <1357891289-23500-9-git-send-email-pgaikwad@nvidia.com>
+ <50F07D87.4000405@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <50F07D87.4000405@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 11 Jan 2013 13:58:28 -0700, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+Quoting Stephen Warren (2013-01-11 13:00:55)
 > On 01/11/2013 01:01 AM, Prashant Gaikwad wrote:
-> > Since Tegra spi devices do not have multiple clocks, no need to use
-> > clock name to get the clock.
+> > With device tree support added for Tegra clocks look up is done from
+> > device tree, remove unused TEGRA_CLK_DUPLICATE()s.
 > 
-> Cc'ing in the SPI maintainers as an FYI and for Acks; this patch needs
-> to go through the Tegra tree due to dependencies.
+> Cc'ing in the drivers/clk maintainer as an FYI and for Acks; this patch
+> needs to go through the Tegra tree due to dependencies.
+> 
 
-Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Acked-by: Mike Turquette <mturquette@linaro.org>
 
-No problem merging it via the Tegra tree.
-
-g.
+> > Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/clk-tegra20.c |   17 -----------------
+> >  1 files changed, 0 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> > index 4875261..9383b85 100644
+> > --- a/drivers/clk/tegra/clk-tegra20.c
+> > +++ b/drivers/clk/tegra/clk-tegra20.c
+> > @@ -1174,28 +1174,11 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+> >   * table under two names.
+> >   */
+> >  static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+> > -     TEGRA_CLK_DUPLICATE(uarta,  "serial8250.0", NULL),
+> > -     TEGRA_CLK_DUPLICATE(uartb,  "serial8250.1", NULL),
+> > -     TEGRA_CLK_DUPLICATE(uartc,  "serial8250.2", NULL),
+> > -     TEGRA_CLK_DUPLICATE(uartd,  "serial8250.3", NULL),
+> > -     TEGRA_CLK_DUPLICATE(uarte,  "serial8250.4", NULL),
+> >       TEGRA_CLK_DUPLICATE(usbd,   "utmip-pad",    NULL),
+> >       TEGRA_CLK_DUPLICATE(usbd,   "tegra-ehci.0", NULL),
+> >       TEGRA_CLK_DUPLICATE(usbd,   "tegra-otg",    NULL),
+> > -     TEGRA_CLK_DUPLICATE(pll_p,   "tegradc.0",    "parent"),
+> > -     TEGRA_CLK_DUPLICATE(pll_p,   "tegradc.1",    "parent"),
+> > -     TEGRA_CLK_DUPLICATE(pll_d_out0,   "hdmi",    "parent"),
+> > -     TEGRA_CLK_DUPLICATE(gr2d,   "tegra_grhost", "gr2d"),
+> > -     TEGRA_CLK_DUPLICATE(gr3d,   "tegra_grhost", "gr3d"),
+> > -     TEGRA_CLK_DUPLICATE(epp,    "tegra_grhost", "epp"),
+> > -     TEGRA_CLK_DUPLICATE(mpe,    "tegra_grhost", "mpe"),
+> > -     TEGRA_CLK_DUPLICATE(vde,    "tegra-aes",    "vde"),
+> >       TEGRA_CLK_DUPLICATE(cclk,   NULL,           "cpu"),
+> >       TEGRA_CLK_DUPLICATE(twd,    "smp_twd",      NULL),
+> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.0", "fast-clk"),
+> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.1", "fast-clk"),
+> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.2", "fast-clk"),
+> > -     TEGRA_CLK_DUPLICATE(pll_p_out3, "tegra-i2c.3", "fast-clk"),
+> >       TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* Must be the last entry */
+> >  };
+> >  
+> >
