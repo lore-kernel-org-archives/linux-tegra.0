@@ -1,92 +1,33 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] ARM: kernel: DT cpu map validity check helper function
-Date: Mon, 14 Jan 2013 09:52:49 +0200
-Message-ID: <1358149970-28156-1-git-send-email-hdoyu@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: Use DT /cpu node to detect number of
+	CPU core
+Date: Mon, 14 Jan 2013 09:27:20 +0000
+Message-ID: <20130114092720.GX23505@n2100.arm.linux.org.uk>
+References: <1358149970-28156-1-git-send-email-hdoyu@nvidia.com> <1358149970-28156-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1358149970-28156-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+On Mon, Jan 14, 2013 at 09:52:50AM +0200, Hiroshi Doyu wrote:
+> +	if (!arm_dt_cpu_map_valid())
+> +		set_cpu_possible(0, true);
 
-Since the introduction of /cpu nodes bindings for ARM and the
-corresponding parse function arm_dt_init_cpu_maps(), the cpu_logical_map
-and the number of possible CPUs are set according to the DT /cpu
-nodes entries. Currently most of the existing ARM SMP platforms detect the
-number of cores through HW probing in their .smp_init_cpus functions and set
-the possible CPU mask accordingly.
-This method should be upgraded so that the CPU counting mechanism will be
-based on DT, keeping legacy HW probing mechanism as a fall back solution.
+You don't need to do any of this (and, therefore, I don't think you even
+need the first patch.)
 
-In order to implement this fall back solution mechanism, the ARM DT code
-should provide a helper function to platforms to check if the cpu map
-has been properly initialized through DT. If the check fails the
-platform will resort to legacy HW based cores counting mechanism.
+The generic boot code will set CPU0 as possible, present and online.  Think
+about it: you're booting on that very CPU so it better be possible, present
+and online.  If it isn't, what CPU is executing your code?
 
-This patch implements a helper function that platforms can call to check
-whether DT based cpu map initialization and cores count were completed
-successfully.
+arm_dt_init_cpu_maps() will only ever set _additional_ CPUs in the possible
+map.
 
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
----
- arch/arm/include/asm/prom.h |   10 ++++++++++
- arch/arm/kernel/devtree.c   |    6 ++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/arch/arm/include/asm/prom.h b/arch/arm/include/asm/prom.h
-index a219227..487614a 100644
---- a/arch/arm/include/asm/prom.h
-+++ b/arch/arm/include/asm/prom.h
-@@ -18,6 +18,15 @@
- extern struct machine_desc *setup_machine_fdt(unsigned int dt_phys);
- extern void arm_dt_memblock_reserve(void);
- extern void __init arm_dt_init_cpu_maps(void);
-+/*
-+ * Return true if cpu map initialization has been
-+ * carried out correctly from DT
-+ */
-+static inline bool __init arm_dt_cpu_map_valid(void)
-+{
-+	extern bool valid_dt_cpu_map;
-+	return valid_dt_cpu_map;
-+}
- 
- #else /* CONFIG_OF */
- 
-@@ -28,6 +37,7 @@ static inline struct machine_desc *setup_machine_fdt(unsigned int dt_phys)
- 
- static inline void arm_dt_memblock_reserve(void) { }
- static inline void arm_dt_init_cpu_maps(void) { }
-+static inline bool __init arm_dt_cpu_map_valid(void) { return false; }
- 
- #endif /* CONFIG_OF */
- #endif /* ASMARM_PROM_H */
-diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-index 70f1bde..4d8d1ec 100644
---- a/arch/arm/kernel/devtree.c
-+++ b/arch/arm/kernel/devtree.c
-@@ -64,6 +64,11 @@ void __init arm_dt_memblock_reserve(void)
- }
- 
- /*
-+ * Export DT cpu map validity flag to platforms
-+ */
-+bool valid_dt_cpu_map __initdata;
-+
-+/*
-  * arm_dt_init_cpu_maps - Function retrieves cpu nodes from the device tree
-  * and builds the cpu logical map array containing MPIDR values related to
-  * logical cpus
-@@ -158,6 +163,7 @@ void __init arm_dt_init_cpu_maps(void)
- 	 * a reg property, the DT CPU list can be considered valid and the
- 	 * logical map created in smp_setup_processor_id() can be overridden
- 	 */
-+	valid_dt_cpu_map = true;
- 	for (i = 0; i < cpuidx; i++) {
- 		set_cpu_possible(i, true);
- 		cpu_logical_map(i) = tmp_map[i];
--- 
-1.7.9.5
+Ergo, by the time the above code is run, CPU0 will already be marked as
+possible.  Therefore, the above code and arm_dt_cpu_map_valid() is not
+required.
