@@ -1,32 +1,75 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ASoC: tegra:  add ac97 host controller to device
- tree
-Date: Mon, 14 Jan 2013 10:22:44 -0700
-Message-ID: <50F43EE4.70705@wwwdotorg.org>
-References: <1357348725-32139-1-git-send-email-dev@lynxeye.de> <1357348725-32139-3-git-send-email-dev@lynxeye.de> <50EC99A1.4080402@wwwdotorg.org> <20130113232222.GN5041@opensource.wolfsonmicro.com> <50F439C0.4080603@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] clk: tegra: ensure all provided clock values are valid cookies
+Date: Mon, 14 Jan 2013 11:16:40 -0700
+Message-ID: <1358187400-6824-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F439C0.4080603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/14/2013 10:00 AM, Stephen Warren wrote:
-> On 01/13/2013 04:22 PM, Mark Brown wrote:
->> On Tue, Jan 08, 2013 at 03:11:45PM -0700, Stephen Warren wrote:
->>> On 01/04/2013 06:18 PM, Lucas Stach wrote:
->>>> Add default entry for the AC97 host controller.
->>
->>> This looks fine. I assume I'll take this through the Tegra tree.
->>
->> Makes sense to me.
-> 
-> Thanks, applied to Tegra's for-3.9/dt branch.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I had to make a small modification to the patch; I commented out the
-clocks property for now since the CAR node isn't yet present. It will be
-soon once the common clock framework patches are merged, and then I'll
-revert the change I made.
+Tegra's clock implementation uses pointers as the clock cookies, and
+hence chooses to make NULL an invalid clock cookie. However, there are
+gaps in the assigned device tree clock IDs, and hence the array mapping
+DT clock ID contains entries with NULL values (uninitialized BSS) unless
+explicit action is taken. This patch enhances the Tegra clock code to
+detect this case and explicitly initialize those lookup table entries to
+an error value. This prevents clk_get() from ever returning NULL. Hence,
+Tegra's clock APIs don't have to check the clock cookie they're passed
+for NULL.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Mike, this also will need to go through the Tegra tree; just looking for
+any review/ack from you. Thanks.
+
+ drivers/clk/tegra/clk-tegra20.c |    5 ++++-
+ drivers/clk/tegra/clk-tegra30.c |    5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 5847b5e..e59ac14 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1243,12 +1243,15 @@ void __init tegra20_clock_init(struct device_node *np)
+ 	tegra20_audio_clk_init();
+ 
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks); i++)
++	for (i = 0; i < ARRAY_SIZE(clks); i++) {
+ 		if (IS_ERR(clks[i])) {
+ 			pr_err("Tegra20 clk %d: register failed with %ld\n",
+ 			       i, PTR_ERR(clks[i]));
+ 			BUG();
+ 		}
++		if (!clks[i])
++			clks[i] = ERR_PTR(-EINVAL);
++	}
+ 
+ 	tegra_init_dup_clks(tegra_clk_duplicates, clks, clk_max);
+ 
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 987312c..9c0b2ee 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -2022,12 +2022,15 @@ void __init tegra30_clock_init(struct device_node *np)
+ 	tegra30_audio_clk_init();
+ 	tegra30_pmc_clk_init();
+ 
+-	for (i = 0; i < ARRAY_SIZE(clks); i++)
++	for (i = 0; i < ARRAY_SIZE(clks); i++) {
+ 		if (IS_ERR(clks[i])) {
+ 			pr_err("Tegra30 clk %d: register failed with %ld\n",
+ 			       i, PTR_ERR(clks[i]));
+ 			BUG();
+ 		}
++		if (!clks[i])
++			clks[i] = ERR_PTR(-EINVAL);
++	}
+ 
+ 	tegra_init_dup_clks(tegra_clk_duplicates, clks, clk_max);
+ 
+-- 
+1.7.10.4
