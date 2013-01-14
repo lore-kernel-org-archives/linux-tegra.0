@@ -1,101 +1,106 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: Use DT /cpu node to detect number of
- CPU core
-Date: Mon, 14 Jan 2013 10:49:25 +0100
-Message-ID: <20130114.114925.1476619399284636466.hdoyu@nvidia.com>
-References: <1358149970-28156-1-git-send-email-hdoyu@nvidia.com><1358149970-28156-2-git-send-email-hdoyu@nvidia.com><20130114092720.GX23505@n2100.arm.linux.org.uk>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 00/16] big.LITTLE low-level CPU and cluster power
+ management
+Date: Mon, 14 Jan 2013 17:56:32 +0800
+Message-ID: <1358157392.19304.243.camel@jlo-ubuntu-64.nvidia.com>
+References: <1357777251-13541-1-git-send-email-nicolas.pitre@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130114092720.GX23505-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <1357777251-13541-1-git-send-email-nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Russell,
+Hi Nicolas,
 
-Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote @ Mon, 14 Jan 2013 10:27:20 +0100:
-
-> On Mon, Jan 14, 2013 at 09:52:50AM +0200, Hiroshi Doyu wrote:
-> > +	if (!arm_dt_cpu_map_valid())
-> > +		set_cpu_possible(0, true);
+On Thu, 2013-01-10 at 08:20 +0800, Nicolas Pitre wrote:
+> This is the initial public posting of the initial support for big.LITTLE.
+> Included here is the code required to safely power up and down CPUs in a
+> b.L system, whether this is via CPU hotplug, a cpuidle driver or the
+> Linaro b.L in-kernel switcher[*] on top of this.  Only  SMP secondary
+> boot and CPU hotplug support is included at this time.  Getting to this
+> point already represents a significcant chunk of code as illustrated by
+> the diffstat below.
 > 
-> You don't need to do any of this (and, therefore, I don't think you even
-> need the first patch.)
+> This work was presented at Linaro Connect in Copenhagen by Dave Martin and
+> myself.  The presentation slides are available here:
 > 
-> The generic boot code will set CPU0 as possible, present and online.  Think
-> about it: you're booting on that very CPU so it better be possible, present
-> and online.  If it isn't, what CPU is executing your code?
+> http://www.linaro.org/documents/download/f3569407bb1fb8bde0d6da80e285b832508f92f57223c
 > 
-> arm_dt_init_cpu_maps() will only ever set _additional_ CPUs in the possible
-> map.
+> The code is now stable on both Fast Models as well as Virtual Express TC2
+> and ready for public review.
 > 
-> Ergo, by the time the above code is run, CPU0 will already be marked as
-> possible.  Therefore, the above code and arm_dt_cpu_map_valid() is not
-> required.
+> Platform support is included for Fast Models implementing the
+> Cortex-A15x4-A7x4 and Cortex-A15x1-A7x1 configurations.  To allow
+> successful compilation, I also included a preliminary version of the
+> CCI400 driver from Lorenzo Pieralisi.
+> 
+> Support for actual hardware such as Vexpress TC2 should come later,
+> once the basic infrastructure from this series is merged.  A few DT
+> bindings are used but not yet documented.
+> 
+> This series is made of the following parts:
+> 
+> Low-level support code:
+> [PATCH 01/16] ARM: b.L: secondary kernel entry code
+> [PATCH 02/16] ARM: b.L: introduce the CPU/cluster power API
+> [PATCH 03/16] ARM: b.L: introduce helpers for platform coherency
+> [PATCH 04/16] ARM: b.L: Add baremetal voting mutexes
+> [PATCH 05/16] ARM: bL_head: vlock-based first man election
+> 
+> Adaptation layer to hook with the generic kernel infrastructure:
+> [PATCH 06/16] ARM: b.L: generic SMP secondary bringup and hotplug
+> [PATCH 07/16] ARM: bL_platsmp.c: close the kernel entry gate before
+> [PATCH 08/16] ARM: bL_platsmp.c: make sure the GIC interface of a
+> [PATCH 09/16] ARM: vexpress: Select the correct SMP operations at
+> 
+> Fast Models support:
+> [PATCH 10/16] ARM: vexpress: introduce DCSCB support
+> [PATCH 11/16] ARM: vexpress/dcscb: add CPU use counts to the power
+> [PATCH 12/16] ARM: vexpress/dcscb: do not hardcode number of CPUs
+> [PATCH 13/16] drivers: misc: add ARM CCI support
+> [PATCH 14/16] ARM: TC2: ensure powerdown-time data is flushed from
+> [PATCH 15/16] ARM: vexpress/dcscb: handle platform coherency
+> [PATCH 16/16] ARM: vexpress/dcscb: probe via device tree
+> 
 
-Right.
+Thanks for introducing this series.
+I am taking a look at this series. It introduced an algorithm for
+syncing and avoid racing when syncing the power status of clusters and
+CPUs. Do you think these codes could have a chance to become a generic
+framework?
 
-In Tegra, we've decided to not use SCU based detection at all any more
-and to continue with a single core even when DT cpu detection
-fails. For Tegra, "arm_dt_cpu_map_valid()" is not necessary. For other
-SoCs, this would be necessary when they want to detect again with
-SCU.
+The Tegra chip series had a similar design for CPU clusters and it had
+limitation that the CPU0 always needs to be the last CPU to be shut down
+before cluster power down as well. I believe it can also get benefits of
+this works. We indeed need a similar algorithm to sync CPUs power status
+before cluster power down and switching.
 
-Now this original Tegra patch would be independet of the 1st patch as
-below:
+The "bL_entry.c", "bL_entry.S", "bL_entry.h", "vlock.h" and "vlock.S"
+looks have a chance to be a common framework for ARM platform even if it
+just support one cluster. Because some systems had the limitations for
+cluster power down. That's why the coupled cpuidle been introduced. And
+this framework could be enabled automatically if platform dependent or
+by menuconfig.
 
-From 36061aff7a772524a1d1785884889619042d4445 Mon Sep 17 00:00:00 2001
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Mon, 26 Nov 2012 12:25:14 +0200
-Subject: [PATCH 1/1] ARM: tegra: Use DT /cpu node to detect number of CPU
- core
+For ex,
+	select CPUS_CLUSTERS_POWER_SYNC_FRAMEWORK if SMP && CPU_PM
 
-SCU based detection only works with Cortex-A9 MP and it doesn't
-support ones with multiple clusters. The only way to detect number of
-CPU core correctly is with DT /cpu node.
+How do you think of this suggestion?
 
-Tegra SoCs decided to use DT detection as the only way and to not use
-SCU based detection at all. Even if DT /cpu node based detection
-fails, it continues with a single core
+BTW, some questions...
+1. The "bL_entry_point" looks like a first run function when CPUs just
+power up, then jumping to original reset vector that it should be
+called. Do you think this should be a function and be called by reset
+handler? Or in your design, this should be called as soon as possible
+when the CPU power be resumed?
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Based on the discussion:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/140608.html
----
- arch/arm/mach-tegra/platsmp.c |   15 ---------------
- 1 file changed, 15 deletions(-)
+2. Does the Last_man mechanism should implement in platform specific
+code to check something like cpu_online_status and if there is a
+limitation for the specific last CPU to be powered down?
 
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 6867030..689ee4b 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -177,23 +177,8 @@ done:
- 	return status;
- }
- 
--/*
-- * Initialise the CPU possible map early - this describes the CPUs
-- * which may be present or become present in the system.
-- */
- static void __init tegra_smp_init_cpus(void)
- {
--	unsigned int i, ncores = scu_get_core_count(scu_base);
--
--	if (ncores > nr_cpu_ids) {
--		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
--			ncores, nr_cpu_ids);
--		ncores = nr_cpu_ids;
--	}
--
--	for (i = 0; i < ncores; i++)
--		set_cpu_possible(i, true);
--
- 	set_smp_cross_call(gic_raise_softirq);
- }
- 
--- 
-1.7.9.5
+Thanks,
+Joseph
