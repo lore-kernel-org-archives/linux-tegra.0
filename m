@@ -1,26 +1,90 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource allocation
-Date: Mon, 14 Jan 2013 22:24:11 +0000
-Message-ID: <201301142224.11243.arnd@arndb.de>
-References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com> <20130114161644.GC14721@kroah.com> <20130114221551.GA30020@avionic-0098.adnet.avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
+Date: Mon, 14 Jan 2013 15:32:27 -0700
+Message-ID: <50F4877B.2090409@wwwdotorg.org>
+References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <50F134C9.1040203@nvidia.com> <50F4820C.2050806@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130114221551.GA30020-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <50F4820C.2050806-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 14 January 2013, Thierry Reding wrote:
-> It certainly sounds like a less complicated way to do it. But it also
-> involves adding a function with a made up name and drop a function with
-> a perfectly good name instead. I wouldn't even know what name to choose
-> for the new API.
+On 01/14/2013 03:09 PM, Stephen Warren wrote:
+> On 01/12/2013 03:02 AM, Laxman Dewangan wrote:
+>> On Saturday 12 January 2013 04:39 AM, Stephen Warren wrote:
+>>> On 01/11/2013 06:33 AM, Laxman Dewangan wrote:
+>>>> Enable tegra based keyboard controller and populate the key matrix for
+>>>> seaboard. The key matrix was originally on driver code which is removed
+>>>> to have clean driver. The key mapping is now passed through dts file.
+>>>>
+>>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> ---
+>>>> Requesting for testing on seaboard.
+>>>> I generated this patch as Stephen suggested to have one patch for dt
+>>>> file
+>>>> entry for keys on seaboard.
+>>
+>> Thanks for testing.
+
+>>> Once I hacked around the above issues, the driver doesn't work very well
+>>> at all. There is a *long* delay between when I press a key and when it
+>>> shows up (e.g. echo'd to the HDMI console). When I release the key the
+>>> same keypress is generated twice. Or perhaps it's a repeat, but since
+>>> it's *always* 2 extra keypresses and I doubt I always hold my finger on
+>>> the key the exact same amount of time, I think it's key release that
+>>> does this not repeat. I assume this would repro on any board, so you
+>>> won't need Seaboard to debug it. Harmony is able to read the keyboard
+>>> using the KBC.
+>>>
+>>> Even with the above, I was able to validate that the keymap in the
+>>> Seaboard .dts file looks reasonable.
+>>>
+>>> However, please fix the KBC driver...
+>>
+>> I did not see any issue with the 3x3 matrix. I think all these about is
+>> to tuning debaunce and other parameter also. Another thing is that to
+>> make sure that all pinmuxes are properly configured.
 > 
+> OK, I'll go look at some downstream kernels for Seaboard and see if the
+> debounce etc. parameters all match up.
 
-How about devm_ioremap_resource()? Sounds equally fitting, and is shorter.
+How odd. The problems were indeed solved by using the downstream
+debounce/... timings. It's odd that using a shorter debounce time leads
+to /not/ generating spurious keypress events; perhaps the HW is buggy
+for the extremely large debounce value that you chose.
 
-	Arnd
+I also noticed that one entry in the keymap had a typo.
+
+Can you please roll the patch below into yours:
+
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
+b/arch/arm/boot/dts/tegra20-seaboard.dts
+index b22522d..2e87330 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -614,8 +614,9 @@
+
+        kbc {
+                status = "okay";
+-               nvidia,debounce-delay-ms = <640>;
+-               nvidia,repeat-delay-ms = <1>;
++               nvidia,debounce-delay-ms = <32>;
++               nvidia,repeat-delay-ms = <160>;
++               nvidia,ghost-filter;
+                nvidia,kbc-row-pins = <0 1 2 3 4 5 6 7 8 9 10 11 12 13
+14 15>;
+                nvidia,kbc-col-pins = <16 17 18 19 20 21 22 23>;
+                linux,keymap = <0x00020011      /* KEY_W */
+@@ -672,7 +673,7 @@
+                                0x0805002A      /* KEY_LEFTSHIFT */
+
+                                0x09050061      /* KEY_RIGHTCTRL */
+-                               0x0907001B      /* KEY_LEFTCTRL */
++                               0x0907001D      /* KEY_LEFTCTRL */
+
+                                0x0B00001A      /* KEY_LEFTBRACE */
+                                0x0B010019      /* KEY_P */
