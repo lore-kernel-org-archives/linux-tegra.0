@@ -1,128 +1,143 @@
-From: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/16] big.LITTLE low-level CPU and cluster power
- management
-Date: Mon, 14 Jan 2013 09:05:25 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1301140849020.6300@xanadu.home>
-References: <1357777251-13541-1-git-send-email-nicolas.pitre@linaro.org> <1358157392.19304.243.camel@jlo-ubuntu-64.nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
+ allocation
+Date: Mon, 14 Jan 2013 16:49:59 +0100
+Message-ID: <20130114154959.GA25049@avionic-0098.adnet.avionic-design.de>
+References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
+ <1357371910-3164-3-git-send-email-ldewangan@nvidia.com>
+ <20130105080658.GA1315@core.coreip.homeip.net>
+ <20130106192739.GA11566@avionic-0098.adnet.avionic-design.de>
+ <20130106195748.GA28212@core.coreip.homeip.net>
+ <20130109070745.GA12782@avionic-0098.adnet.avionic-design.de>
+ <20130109091939.GA4369@core.coreip.homeip.net>
+ <20130109092352.GA28037@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358157392.19304.243.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130109092352.GA28037@avionic-0098.adnet.avionic-design.de>
+Sender: linux-doc-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 14 Jan 2013, Joseph Lo wrote:
 
-> Hi Nicolas,
-> 
-> On Thu, 2013-01-10 at 08:20 +0800, Nicolas Pitre wrote:
-> > This is the initial public posting of the initial support for big.LITTLE.
-> > Included here is the code required to safely power up and down CPUs in a
-> > b.L system, whether this is via CPU hotplug, a cpuidle driver or the
-> > Linaro b.L in-kernel switcher[*] on top of this.  Only  SMP secondary
-> > boot and CPU hotplug support is included at this time.  Getting to this
-> > point already represents a significcant chunk of code as illustrated by
-> > the diffstat below.
-> > 
-> > This work was presented at Linaro Connect in Copenhagen by Dave Martin and
-> > myself.  The presentation slides are available here:
-> > 
-> > http://www.linaro.org/documents/download/f3569407bb1fb8bde0d6da80e285b832508f92f57223c
-> > 
-> > The code is now stable on both Fast Models as well as Virtual Express TC2
-> > and ready for public review.
-> > 
-> > Platform support is included for Fast Models implementing the
-> > Cortex-A15x4-A7x4 and Cortex-A15x1-A7x1 configurations.  To allow
-> > successful compilation, I also included a preliminary version of the
-> > CCI400 driver from Lorenzo Pieralisi.
-> > 
-> > Support for actual hardware such as Vexpress TC2 should come later,
-> > once the basic infrastructure from this series is merged.  A few DT
-> > bindings are used but not yet documented.
-> > 
-> > This series is made of the following parts:
-> > 
-> > Low-level support code:
-> > [PATCH 01/16] ARM: b.L: secondary kernel entry code
-> > [PATCH 02/16] ARM: b.L: introduce the CPU/cluster power API
-> > [PATCH 03/16] ARM: b.L: introduce helpers for platform coherency
-> > [PATCH 04/16] ARM: b.L: Add baremetal voting mutexes
-> > [PATCH 05/16] ARM: bL_head: vlock-based first man election
-> > 
-> > Adaptation layer to hook with the generic kernel infrastructure:
-> > [PATCH 06/16] ARM: b.L: generic SMP secondary bringup and hotplug
-> > [PATCH 07/16] ARM: bL_platsmp.c: close the kernel entry gate before
-> > [PATCH 08/16] ARM: bL_platsmp.c: make sure the GIC interface of a
-> > [PATCH 09/16] ARM: vexpress: Select the correct SMP operations at
-> > 
-> > Fast Models support:
-> > [PATCH 10/16] ARM: vexpress: introduce DCSCB support
-> > [PATCH 11/16] ARM: vexpress/dcscb: add CPU use counts to the power
-> > [PATCH 12/16] ARM: vexpress/dcscb: do not hardcode number of CPUs
-> > [PATCH 13/16] drivers: misc: add ARM CCI support
-> > [PATCH 14/16] ARM: TC2: ensure powerdown-time data is flushed from
-> > [PATCH 15/16] ARM: vexpress/dcscb: handle platform coherency
-> > [PATCH 16/16] ARM: vexpress/dcscb: probe via device tree
-> > 
-> 
-> Thanks for introducing this series.
-> I am taking a look at this series. It introduced an algorithm for
-> syncing and avoid racing when syncing the power status of clusters and
-> CPUs. Do you think these codes could have a chance to become a generic
-> framework?
+--tThc/1wpZn/ma/RB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes.  As I mentioned before, the bL_ prefix is implied only by the fact 
-that big.LITTLE was the motivation for creating this code.
+On Wed, Jan 09, 2013 at 10:23:52AM +0100, Thierry Reding wrote:
+> On Wed, Jan 09, 2013 at 01:19:39AM -0800, Dmitry Torokhov wrote:
+> > On Wed, Jan 09, 2013 at 08:07:45AM +0100, Thierry Reding wrote:
+> > > On Sun, Jan 06, 2013 at 11:57:48AM -0800, Dmitry Torokhov wrote:
+> > > > On Sun, Jan 06, 2013 at 08:27:39PM +0100, Thierry Reding wrote:
+> > > > > On Sat, Jan 05, 2013 at 12:06:58AM -0800, Dmitry Torokhov wrote:
+> > > > > > On Sat, Jan 05, 2013 at 01:15:08PM +0530, Laxman Dewangan wrote:
+> > > > > [...]
+> > > > > > > @@ -735,25 +738,16 @@ static int tegra_kbc_probe(struct platf=
+orm_device *pdev)
+> > > > > > >  	spin_lock_init(&kbc->lock);
+> > > > > > >  	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigne=
+d long)kbc);
+> > > > > > > =20
+> > > > > > > -	res =3D request_mem_region(res->start, resource_size(res), =
+pdev->name);
+> > > > > > > -	if (!res) {
+> > > > > > > -		dev_err(&pdev->dev, "failed to request I/O memory\n");
+> > > > > > > -		err =3D -EBUSY;
+> > > > > > > -		goto err_free_mem;
+> > > > > > > -	}
+> > > > > > > -
+> > > > > > > -	kbc->mmio =3D ioremap(res->start, resource_size(res));
+> > > > > > > +	kbc->mmio =3D devm_request_and_ioremap(&pdev->dev, res);
+> > > > > > >  	if (!kbc->mmio) {
+> > > > > > > -		dev_err(&pdev->dev, "failed to remap I/O memory\n");
+> > > > > > > -		err =3D -ENXIO;
+> > > > > > > -		goto err_free_mem_region;
+> > > > > > > +		dev_err(&pdev->dev, "Cannot request memregion/iomap addres=
+s\n");
+> > > > > > > +		return -EADDRNOTAVAIL;
+> > > > > >=20
+> > > > > > Erm, no, -EBUSY please.
+> > > > >=20
+> > > > > EADDRNOTAVAIL is the canonical error for devm_request_and_ioremap=
+()
+> > > > > failure. The kerneldoc comment in lib/devres.c even gives a short
+> > > > > example that uses this error code.
+> > > >=20
+> > > > I am sorry, but I do not consider a function that was added a little
+> > > > over a year ago as a canon. If you look at the uses of EADDRNOTAVAI=
+L it
+> > > > is used predominantly in networking code to indicate that attempted
+> > > > _network_ address is not available.
+> > >=20
+> > > EBUSY might be misleading, though. devm_request_and_ioremap() can fail
+> > > in both the request_mem_region() and ioremap() calls. Furthermore it'd
+> > > be good to settle on a consistent error-code instead of doing it
+> > > differently depending on subsystem and/or driver. Currently the vario=
+us
+> > > error codes used are:
+> > >=20
+> > > 	EBUSY, EADDRNOTAVAIL, ENXIO, ENOMEM, ENODEV, ENOENT, EINVAL,
+> > > 	EIO, EFAULT, EADDRINUSE
+> > >=20
+> > > Also if we can settle on one error code we should follow up with a pa=
+tch
+> > > to make it consistent across the tree and also update that kerneldoc
+> > > comment. I volunteer to do that if nobody else steps up. I'm also Cc'=
+ing
+> > > Wolfram (the original author), maybe he has some thoughts on this.
+> > >=20
+> >=20
+> > If you going to change all drivers make devm_request_and_ioremap()
+> > return ERR_PTR()-encoded errors and then we can differentiate what
+> > part of it failed.
+>=20
+> Yeah, that thought also crossed my mind. I'll give other people some
+> time to comment before hurling myself into preparing patches.
 
-> The Tegra chip series had a similar design for CPU clusters and it 
-had
-> limitation that the CPU0 always needs to be the last CPU to be shut down
-> before cluster power down as well. I believe it can also get benefits of
-> this works. We indeed need a similar algorithm to sync CPUs power status
-> before cluster power down and switching.
-> 
-> The "bL_entry.c", "bL_entry.S", "bL_entry.h", "vlock.h" and "vlock.S"
-> looks have a chance to be a common framework for ARM platform even if it
-> just support one cluster. Because some systems had the limitations for
-> cluster power down. That's why the coupled cpuidle been introduced. And
-> this framework could be enabled automatically if platform dependent or
-> by menuconfig.
+I've prepared a patch that changes devm_request_and_ioremap() to return
+ERR_PTR()-encoded errors and adjusts all callers. As you can imagine it
+is a bit on the huge side. scripts/get_maintainer.pl lists 156 people
+and mailing lists. I've gone through the list, and as far as I can tell
+everyone on that list is actually affected by the patch, so there's not
+much potential for tuning it down.
 
-Absolutely.
+There is also the issue of whose tree this should go into. Unfortunately
+the patch can't be broken down into smaller chunks because it changes
+how the devm_request_and_ioremap() function's return value is handled in
+an incompatible way, so it won't be possible to gradually phase this in.
+Furthermore I can imagine that until the end of the release cycle new
+code may be added on which the same transformations need to be done. I
+have a semantic patch to do the bulk of the work, but quite a bit of
+coordination will be required.
 
+I'm adding Arnd and Greg on Cc, maybe they can advise on how best to
+handle this kind of patch.
 
-> For ex,
-> 	select CPUS_CLUSTERS_POWER_SYNC_FRAMEWORK if SMP && CPU_PM
-> 
-> How do you think of this suggestion?
+Thierry
 
-I'd prefer a more concise name though.
+--tThc/1wpZn/ma/RB
+Content-Type: application/pgp-signature
 
-> BTW, some questions...
-> 1. The "bL_entry_point" looks like a first run function when CPUs just
-> power up, then jumping to original reset vector that it should be
-> called. Do you think this should be a function and be called by reset
-> handler? Or in your design, this should be called as soon as possible
-> when the CPU power be resumed?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-This should be called as soon as possible.
+iQIcBAEBAgAGBQJQ9CknAAoJEN0jrNd/PrOhh0kP/2DM6RgWVZ+2DSN62B0yZdrp
+ZdAKkJyYXc2jAMtWJkI1hB6gddfkOGOcgCI5bVwimG08QVaSPi5Y65NLJHXjxfJr
+YnswsEP6+Xmo/UvUCoBHEhx41kNbUu7zIfZz15GHIa3ZHb2y3ZWpSZdLOLh8E8bb
+Z8PBhuwKAfYUqGOFbcz0DFJKnZypWtPO5leY2PH4WJO1KhtFou6FOp7HXdtYHxbT
+Cn5aGvHrG//g11aeqk1oq/gYKmiyopotRHw11AjARLzXdoc0zIIQLu5v5I0lrwV1
+dNZjhNZYl2Z9y0wwJguoMPdk1F9AkpDLebgKCr3JB5amm61AhP/XwQ9fYjFXuXyh
+t0PtOfwAq5yZUFyxGHFuEkxllRfCXbPHe/wfGZCl7usCiSBKm88AoUfpdkOTBZeC
+jPHr404Ymazwxx9BYNG0StFf7N9UkBMAydVbJxYt3Ru8HFROecqrQ+fPCvVD/Bxf
+/rg5Iw1rWXFRxSvH+ybnPW6aHq75ksbI8EDLKOB9CJsEMFtvU7OEimpcnTCLSLda
+q/KqBaWuD3PiStCetDgL1GV7QFAYh/Azxfsw0h8zzd6nD9w2L3wYtnzbV96dDDxG
+Si8xPf0oD+zAa+iddY9zL+NpBRC4AmDniYvq+8prxQKEo+c8J5pFx4LEVNZkCAVI
+wffnk8NAesxGL0ADiO21
+=l2O0
+-----END PGP SIGNATURE-----
 
-> 2. Does the Last_man mechanism should implement in platform specific
-> code to check something like cpu_online_status and if there is a
-> limitation for the specific last CPU to be powered down?
-
-The selection of the last man is accomplished using a platform specific 
-mechanism.  By the time this has to be done, the CPU is already dead as 
-far as the Linux kernel is concerned, and therefore the generic CPU map 
-is not reliable.  In the DCSCB case we simply look at the hardware reset 
-register being modified to directly determine the last man.  On TC2 (not 
-yet posted) we have to keep a local map of online CPUs.
-
-In your case, the selection of the last man would simply be forced on 
-CPU0.
-
-
-Nicolas
+--tThc/1wpZn/ma/RB--
