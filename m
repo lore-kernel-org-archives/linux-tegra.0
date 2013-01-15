@@ -1,90 +1,77 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH RFT 3/3] ARM: tegra: dts: seaboard: enable keyboard
-Date: Mon, 14 Jan 2013 15:32:27 -0700
-Message-ID: <50F4877B.2090409@wwwdotorg.org>
-References: <1357911185-11048-1-git-send-email-ldewangan@nvidia.com> <1357911185-11048-3-git-send-email-ldewangan@nvidia.com> <50F09BC7.90607@wwwdotorg.org> <50F134C9.1040203@nvidia.com> <50F4820C.2050806@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 00/16] big.LITTLE low-level CPU and cluster power
+ management
+Date: Tue, 15 Jan 2013 10:44:08 +0800
+Message-ID: <1358217848.8513.14.camel@jlo-ubuntu-64.nvidia.com>
+References: <1357777251-13541-1-git-send-email-nicolas.pitre@linaro.org>
+	 <1358157392.19304.243.camel@jlo-ubuntu-64.nvidia.com>
+	 <alpine.LFD.2.02.1301140849020.6300@xanadu.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F4820C.2050806-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <alpine.LFD.2.02.1301140849020.6300-QuJgVwGFrdf/9pzu0YdTqQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/14/2013 03:09 PM, Stephen Warren wrote:
-> On 01/12/2013 03:02 AM, Laxman Dewangan wrote:
->> On Saturday 12 January 2013 04:39 AM, Stephen Warren wrote:
->>> On 01/11/2013 06:33 AM, Laxman Dewangan wrote:
->>>> Enable tegra based keyboard controller and populate the key matrix for
->>>> seaboard. The key matrix was originally on driver code which is removed
->>>> to have clean driver. The key mapping is now passed through dts file.
->>>>
->>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> ---
->>>> Requesting for testing on seaboard.
->>>> I generated this patch as Stephen suggested to have one patch for dt
->>>> file
->>>> entry for keys on seaboard.
->>
->> Thanks for testing.
-
->>> Once I hacked around the above issues, the driver doesn't work very well
->>> at all. There is a *long* delay between when I press a key and when it
->>> shows up (e.g. echo'd to the HDMI console). When I release the key the
->>> same keypress is generated twice. Or perhaps it's a repeat, but since
->>> it's *always* 2 extra keypresses and I doubt I always hold my finger on
->>> the key the exact same amount of time, I think it's key release that
->>> does this not repeat. I assume this would repro on any board, so you
->>> won't need Seaboard to debug it. Harmony is able to read the keyboard
->>> using the KBC.
->>>
->>> Even with the above, I was able to validate that the keymap in the
->>> Seaboard .dts file looks reasonable.
->>>
->>> However, please fix the KBC driver...
->>
->> I did not see any issue with the 3x3 matrix. I think all these about is
->> to tuning debaunce and other parameter also. Another thing is that to
->> make sure that all pinmuxes are properly configured.
+On Mon, 2013-01-14 at 22:05 +0800, Nicolas Pitre wrote:
+> On Mon, 14 Jan 2013, Joseph Lo wrote:
 > 
-> OK, I'll go look at some downstream kernels for Seaboard and see if the
-> debounce etc. parameters all match up.
+> > Hi Nicolas,
+> > 
+> > On Thu, 2013-01-10 at 08:20 +0800, Nicolas Pitre wrote:
+> > > This is the initial public posting of the initial support for big.LITTLE.
+> > > Included here is the code required to safely power up and down CPUs in a
+> > > b.L system, whether this is via CPU hotplug, a cpuidle driver or the
+> > > Linaro b.L in-kernel switcher[*] on top of this.  Only  SMP secondary
+> > > boot and CPU hotplug support is included at this time.  Getting to this
+> > > point already represents a significcant chunk of code as illustrated by
+> > > the diffstat below.
+> > > 
+> > > 
+> > 
+> > Thanks for introducing this series.
+> > I am taking a look at this series. It introduced an algorithm for
+> > syncing and avoid racing when syncing the power status of clusters and
+> > CPUs. Do you think these codes could have a chance to become a generic
+> > framework?
+> 
+> Yes.  As I mentioned before, the bL_ prefix is implied only by the fact 
+> that big.LITTLE was the motivation for creating this code.
+> 
+> > The Tegra chip series had a similar design for CPU clusters and it 
+> had
+> > limitation that the CPU0 always needs to be the last CPU to be shut down
+> > before cluster power down as well. I believe it can also get benefits of
+> > this works. We indeed need a similar algorithm to sync CPUs power status
+> > before cluster power down and switching.
+> > 
+> > The "bL_entry.c", "bL_entry.S", "bL_entry.h", "vlock.h" and "vlock.S"
+> > looks have a chance to be a common framework for ARM platform even if it
+> > just support one cluster. Because some systems had the limitations for
+> > cluster power down. That's why the coupled cpuidle been introduced. And
+> > this framework could be enabled automatically if platform dependent or
+> > by menuconfig.
+> 
+> Absolutely.
+> 
+So do you have a plan to make it become a generic framework in this
+series or later work?
 
-How odd. The problems were indeed solved by using the downstream
-debounce/... timings. It's odd that using a shorter debounce time leads
-to /not/ generating spurious keypress events; perhaps the HW is buggy
-for the extremely large debounce value that you chose.
+(And I will add some common power sync wrapper functions that based on
+this framework for all Tegra series.)
 
-I also noticed that one entry in the keymap had a typo.
+> 
+> > For ex,
+> > 	select CPUS_CLUSTERS_POWER_SYNC_FRAMEWORK if SMP && CPU_PM
+> > 
+> > How do you think of this suggestion?
+> 
+> I'd prefer a more concise name though.
+> 
+Sure. :-)
 
-Can you please roll the patch below into yours:
-
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-b/arch/arm/boot/dts/tegra20-seaboard.dts
-index b22522d..2e87330 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -614,8 +614,9 @@
-
-        kbc {
-                status = "okay";
--               nvidia,debounce-delay-ms = <640>;
--               nvidia,repeat-delay-ms = <1>;
-+               nvidia,debounce-delay-ms = <32>;
-+               nvidia,repeat-delay-ms = <160>;
-+               nvidia,ghost-filter;
-                nvidia,kbc-row-pins = <0 1 2 3 4 5 6 7 8 9 10 11 12 13
-14 15>;
-                nvidia,kbc-col-pins = <16 17 18 19 20 21 22 23>;
-                linux,keymap = <0x00020011      /* KEY_W */
-@@ -672,7 +673,7 @@
-                                0x0805002A      /* KEY_LEFTSHIFT */
-
-                                0x09050061      /* KEY_RIGHTCTRL */
--                               0x0907001B      /* KEY_LEFTCTRL */
-+                               0x0907001D      /* KEY_LEFTCTRL */
-
-                                0x0B00001A      /* KEY_LEFTBRACE */
-                                0x0B010019      /* KEY_P */
+Thanks,
+Joseph
