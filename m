@@ -1,78 +1,41 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v3 0/9] ARM: Initial support for Tegra 114 SoC
-Date: Tue, 15 Jan 2013 10:13:09 +0200
-Message-ID: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com>
+Subject: [v3 2/9] HACK: ARM: tegra: Use CLK_IGNORE_UNUSED for Tegra 114 SoC
+Date: Tue, 15 Jan 2013 10:13:11 +0200
+Message-ID: <1358237598-32413-3-git-send-email-hdoyu@nvidia.com>
+References: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358237598-32413-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Use CLK_IGNORE_UNUSED for the Tegra 114 SoC to ensure
+clk_disable_unused() is not called. Otherwise the system will die,
+because the usecount of the clocks is incorrect. This patch will be
+reverted once the Tegra 114 clocks are implemented.
 
-This patchset adds initial support for NVIDIA's new Tegra 114 SoC
-(T114) based on the ARM Cortex-A15 MP. It has the minimal support to
-allow the kernel to boot up into shell console. This can be used as a
-basis for adding other device drivers for this SoC. Currently there
-are 2 evaluation boards available, "Dalmore" and "Pluto".
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+NOTE: Will be updated once the latest ccf is merged.
+---
+ arch/arm/mach-tegra/tegra30_clocks_data.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-For those who want to try:
-
-  $ make ARCH=arm tegra_defconfig
-  $ scripts/config -e ARCH_TEGRA_114_SOC -d DRM -d SUSPEND \
-    	-d PM_RUNTIME -d CPU_FREQ -d CPU_IDLE -d HOTPLUG_CPU
-  $ make ARCH=arm menuconfig # if needed to configure more
-  $ make ARCH=arm all -j9
-
-You may also want to enable CONFIG_ARM_APPENDED_DTB and
-CONFIG_ARM_ATAG_DTB_COMPAT if the bootloader doesn't support DT yet.
-
-Verified that this single image booted up with "Dalmore(T114)",
-"Pluto(T114)" and "Cardhu(T30)". For "Cardhu(T30)" with this single
-image, SPI driver doesn't seem to afford the above configuration , it
-hangs at boot-up. With SPI disabled, it's ok.
-
-v3:
-Rebased against next-20130115.
-Dropped TSC/arch timer patch.
-Use /cpus entry in DT to detect cpu core #.
-
-v2:
-Rebased against the latest Stephen Warren's linux-next_common
-Add /cpus entry in DT
-Add comment to initialize TSC only in secure mode.
-
-
-Hiroshi Doyu (9):
-  ARM: tegra: fuse: Add chipid TEGRA114 0x35
-  HACK: ARM: tegra: Use CLK_IGNORE_UNUSED for Tegra 114 SoC
-  ARM: tegra: Use DT /cpu node to detect number of CPU core
-  ARM: Add API to detect SCU base address from CP15
-  ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
-  ARM: dt: tegra114: Add new SoC base, Tegra 114 SoC
-  ARM: dt: tegra114: Add new board, Dalmore
-  ARM: dt: tegra114: Add new board, Pluto
-  ARM: tegra: Add initial support for Tegra 114 SoC.
-
- arch/arm/boot/dts/Makefile                |    4 +-
- arch/arm/boot/dts/tegra114-dalmore.dts    |   21 ++++++
- arch/arm/boot/dts/tegra114-pluto.dts      |   21 ++++++
- arch/arm/boot/dts/tegra114.dtsi           |  116 +++++++++++++++++++++++++++++
- arch/arm/include/asm/smp_scu.h            |   17 +++++
- arch/arm/mach-tegra/Kconfig               |   10 +++
- arch/arm/mach-tegra/Makefile              |    1 +
- arch/arm/mach-tegra/board-dt-tegra114.c   |   48 ++++++++++++
- arch/arm/mach-tegra/common.c              |    1 +
- arch/arm/mach-tegra/fuse.h                |    1 +
- arch/arm/mach-tegra/platsmp.c             |   22 ++----
- arch/arm/mach-tegra/tegra30_clocks_data.c |    2 +
- 12 files changed, 246 insertions(+), 18 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra114-dalmore.dts
- create mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
- create mode 100644 arch/arm/boot/dts/tegra114.dtsi
- create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
-
+diff --git a/arch/arm/mach-tegra/tegra30_clocks_data.c b/arch/arm/mach-tegra/tegra30_clocks_data.c
+index 741d264..dba507c 100644
+--- a/arch/arm/mach-tegra/tegra30_clocks_data.c
++++ b/arch/arm/mach-tegra/tegra30_clocks_data.c
+@@ -1384,6 +1384,8 @@ static void tegra30_init_one_clock(struct clk *c)
+ 	if (!clk->lookup.dev_id && !clk->lookup.con_id)
+ 		clk->lookup.con_id = c->name;
+ 	clk->lookup.clk = c;
++	if (tegra_chip_id == TEGRA114) /* FIXME: Implement T114 clocks */
++		c->flags |= CLK_IGNORE_UNUSED;
+ 	clkdev_add(&clk->lookup);
+ 	tegra_clk_add(c);
+ }
 -- 
 1.7.9.5
