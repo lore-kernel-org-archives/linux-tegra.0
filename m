@@ -1,85 +1,191 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 2/5] drm/tegra: Add plane support
-Date: Tue, 15 Jan 2013 12:19:22 +0100
-Message-ID: <20130115111922.GA18119@avionic-0098.adnet.avionic-design.de>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
- <1358179560-26799-3-git-send-email-thierry.reding@avionic-design.de>
- <1358183024.1524.8.camel@tellur>
+From: Terje Bergstrom <tbergstrom@nvidia.com>
+Subject: [PATCHv5 0/8] Support for Tegra 2D hardware
+Date: Tue, 15 Jan 2013 13:26:14 +0200
+Message-ID: <1358249182-17486-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1358183024.1524.8.camel@tellur>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: amerilainen@nvidia.com, airlied@linux.ie, thierry.reding@avionic-design.de
+Cc: linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
+This set of patches adds support for Tegra20 and Tegra30 host1x and
+2D. It is based on linux-next-20130114.
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The fifth version merges DRM and host1x drivers into one driver. This
+allowed moving include/linux/host1x.h back into the driver and removed
+the need for a dummy platform device. This version also uses the code
+from tegradrm driver almost as is, so there are a lot less actual code
+changes.
 
-On Mon, Jan 14, 2013 at 06:03:44PM +0100, Lucas Stach wrote:
-> Am Montag, den 14.01.2013, 17:05 +0100 schrieb Thierry Reding:
-[...]
-> > +	value =3D (WIN_A_ACT_REQ << index) | (WIN_A_UPDATE << index);
-> > +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-> This should be two separate writes to the register. I don't know how
-> relevant this is on real HW, but the TRM states: "Restrictions: ACT_REQ
-> cannot be programmed at the same time the corresponding "UPDATE" is
-> programmed."
->=20
-> Better be safe than sorry and split it up.
+This patch set does not have the host1x allocator, but it uses CMA
+helpers for memory management.
 
-It doesn't seem to make a difference, but I can split it up anyway.
+host1x is the driver that controls host1x hardware. It supports
+host1x command channels, synchronization, and memory management. It
+is sectioned into logical driver under drivers/gpu/host1x and
+physical driver under drivers/host1x/hw. The physical driver is
+compiled with the hardware headers of the particular host1x version.
 
-[...]
-> > +	/*
-> > +	 * Disable blending and assume Window A is the bottom-most window,
-> > +	 * Window C is the top-most window and Window B is in the middle.
-> > +	 */
-> I would like to see the root window using WIN_C, so we only loose the
-> least capable plane (WIN_A: no filtering or YUV conversion) when using a
-> plane for the hardware cursor. Maybe you can fold this in, otherwise
-> I'll send a patch on top of this series.
+The hardware units are described (briefly) in the Tegra2 TRM. Wiki
+page https://gitorious.org/linux-tegra-drm/pages/Host1xIntroduction
+also contains a short description of the functionality.
 
-On the other hand, doing so will loose a perfectly good video overlay
-plane.
+The patch set merges tegradrm into host1x and adds 2D driver, which
+uses host1x channels and sync points. The patch set also adds user
+space API to tegradrm for accessing host1x and 2D.
 
-[...]
-> > +	value =3D (WIN_A_ACT_REQ << index) | (WIN_A_UPDATE << index);
-> > +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-> Same comment as above.
+Terje Bergstrom (8):
+  gpu: host1x: Add host1x driver
+  gpu: host1x: Add syncpoint wait and interrupts
+  gpu: host1x: Add channel support
+  gpu: host1x: Add debug support
+  drm: tegra: Move drm to live under host1x
+  gpu: host1x: Remove second host1x driver
+  ARM: tegra: Add board data and 2D clocks
+  drm: tegra: Add gr2d device
 
-Done. I'll fold a similar change into the .mode_set_base() patch and
-will also add a patch that converts the remaining occurrences in
-tegra_crtc_commit().
+ arch/arm/mach-tegra/board-dt-tegra20.c      |    1 +
+ arch/arm/mach-tegra/board-dt-tegra30.c      |    1 +
+ arch/arm/mach-tegra/tegra20_clocks_data.c   |    2 +-
+ arch/arm/mach-tegra/tegra30_clocks_data.c   |    1 +
+ drivers/gpu/Makefile                        |    1 +
+ drivers/gpu/drm/Kconfig                     |    2 -
+ drivers/gpu/drm/Makefile                    |    1 -
+ drivers/gpu/drm/tegra/Kconfig               |   23 -
+ drivers/gpu/drm/tegra/Makefile              |    7 -
+ drivers/gpu/drm/tegra/dc.c                  |  833 -----------------
+ drivers/gpu/drm/tegra/dc.h                  |  388 --------
+ drivers/gpu/drm/tegra/drm.c                 |  115 ---
+ drivers/gpu/drm/tegra/drm.h                 |  216 -----
+ drivers/gpu/drm/tegra/fb.c                  |   56 --
+ drivers/gpu/drm/tegra/hdmi.c                | 1321 --------------------------
+ drivers/gpu/drm/tegra/hdmi.h                |  575 ------------
+ drivers/gpu/drm/tegra/host1x.c              |  327 -------
+ drivers/gpu/drm/tegra/output.c              |  272 ------
+ drivers/gpu/drm/tegra/rgb.c                 |  228 -----
+ drivers/gpu/host1x/Kconfig                  |   32 +
+ drivers/gpu/host1x/Makefile                 |   22 +
+ drivers/gpu/host1x/cdma.c                   |  473 ++++++++++
+ drivers/gpu/host1x/cdma.h                   |  107 +++
+ drivers/gpu/host1x/channel.c                |  140 +++
+ drivers/gpu/host1x/channel.h                |   58 ++
+ drivers/gpu/host1x/cma.c                    |  116 +++
+ drivers/gpu/host1x/cma.h                    |   43 +
+ drivers/gpu/host1x/debug.c                  |  215 +++++
+ drivers/gpu/host1x/debug.h                  |   50 +
+ drivers/gpu/host1x/dev.c                    |  251 +++++
+ drivers/gpu/host1x/dev.h                    |  170 ++++
+ drivers/gpu/host1x/drm/Kconfig              |   23 +
+ drivers/gpu/host1x/drm/dc.c                 |  836 +++++++++++++++++
+ drivers/gpu/host1x/drm/dc.h                 |  388 ++++++++
+ drivers/gpu/host1x/drm/drm.c                |  548 +++++++++++
+ drivers/gpu/host1x/drm/drm.h                |  241 +++++
+ drivers/gpu/host1x/drm/fb.c                 |   56 ++
+ drivers/gpu/host1x/drm/gr2d.c               |  325 +++++++
+ drivers/gpu/host1x/drm/hdmi.c               | 1324 +++++++++++++++++++++++++++
+ drivers/gpu/host1x/drm/hdmi.h               |  575 ++++++++++++
+ drivers/gpu/host1x/drm/host1x.c             |  327 +++++++
+ drivers/gpu/host1x/drm/output.c             |  272 ++++++
+ drivers/gpu/host1x/drm/rgb.c                |  228 +++++
+ drivers/gpu/host1x/host1x.h                 |   29 +
+ drivers/gpu/host1x/host1x_client.h          |   34 +
+ drivers/gpu/host1x/hw/Makefile              |    6 +
+ drivers/gpu/host1x/hw/cdma_hw.c             |  478 ++++++++++
+ drivers/gpu/host1x/hw/cdma_hw.h             |   37 +
+ drivers/gpu/host1x/hw/channel_hw.c          |  148 +++
+ drivers/gpu/host1x/hw/debug_hw.c            |  400 ++++++++
+ drivers/gpu/host1x/hw/host1x01.c            |   45 +
+ drivers/gpu/host1x/hw/host1x01.h            |   25 +
+ drivers/gpu/host1x/hw/host1x01_hardware.h   |  150 +++
+ drivers/gpu/host1x/hw/hw_host1x01_channel.h |  120 +++
+ drivers/gpu/host1x/hw/hw_host1x01_sync.h    |  241 +++++
+ drivers/gpu/host1x/hw/hw_host1x01_uclass.h  |  168 ++++
+ drivers/gpu/host1x/hw/intr_hw.c             |  178 ++++
+ drivers/gpu/host1x/hw/syncpt_hw.c           |  157 ++++
+ drivers/gpu/host1x/intr.c                   |  383 ++++++++
+ drivers/gpu/host1x/intr.h                   |  109 +++
+ drivers/gpu/host1x/job.c                    |  612 +++++++++++++
+ drivers/gpu/host1x/job.h                    |  164 ++++
+ drivers/gpu/host1x/memmgr.c                 |  173 ++++
+ drivers/gpu/host1x/memmgr.h                 |   72 ++
+ drivers/gpu/host1x/syncpt.c                 |  399 ++++++++
+ drivers/gpu/host1x/syncpt.h                 |  165 ++++
+ drivers/video/Kconfig                       |    2 +
+ include/drm/tegra_drm.h                     |  131 +++
+ include/trace/events/host1x.h               |  272 ++++++
+ 69 files changed, 11523 insertions(+), 4365 deletions(-)
+ delete mode 100644 drivers/gpu/drm/tegra/Kconfig
+ delete mode 100644 drivers/gpu/drm/tegra/Makefile
+ delete mode 100644 drivers/gpu/drm/tegra/dc.c
+ delete mode 100644 drivers/gpu/drm/tegra/dc.h
+ delete mode 100644 drivers/gpu/drm/tegra/drm.c
+ delete mode 100644 drivers/gpu/drm/tegra/drm.h
+ delete mode 100644 drivers/gpu/drm/tegra/fb.c
+ delete mode 100644 drivers/gpu/drm/tegra/hdmi.c
+ delete mode 100644 drivers/gpu/drm/tegra/hdmi.h
+ delete mode 100644 drivers/gpu/drm/tegra/host1x.c
+ delete mode 100644 drivers/gpu/drm/tegra/output.c
+ delete mode 100644 drivers/gpu/drm/tegra/rgb.c
+ create mode 100644 drivers/gpu/host1x/Kconfig
+ create mode 100644 drivers/gpu/host1x/Makefile
+ create mode 100644 drivers/gpu/host1x/cdma.c
+ create mode 100644 drivers/gpu/host1x/cdma.h
+ create mode 100644 drivers/gpu/host1x/channel.c
+ create mode 100644 drivers/gpu/host1x/channel.h
+ create mode 100644 drivers/gpu/host1x/cma.c
+ create mode 100644 drivers/gpu/host1x/cma.h
+ create mode 100644 drivers/gpu/host1x/debug.c
+ create mode 100644 drivers/gpu/host1x/debug.h
+ create mode 100644 drivers/gpu/host1x/dev.c
+ create mode 100644 drivers/gpu/host1x/dev.h
+ create mode 100644 drivers/gpu/host1x/drm/Kconfig
+ create mode 100644 drivers/gpu/host1x/drm/dc.c
+ create mode 100644 drivers/gpu/host1x/drm/dc.h
+ create mode 100644 drivers/gpu/host1x/drm/drm.c
+ create mode 100644 drivers/gpu/host1x/drm/drm.h
+ create mode 100644 drivers/gpu/host1x/drm/fb.c
+ create mode 100644 drivers/gpu/host1x/drm/gr2d.c
+ create mode 100644 drivers/gpu/host1x/drm/hdmi.c
+ create mode 100644 drivers/gpu/host1x/drm/hdmi.h
+ create mode 100644 drivers/gpu/host1x/drm/host1x.c
+ create mode 100644 drivers/gpu/host1x/drm/output.c
+ create mode 100644 drivers/gpu/host1x/drm/rgb.c
+ create mode 100644 drivers/gpu/host1x/host1x.h
+ create mode 100644 drivers/gpu/host1x/host1x_client.h
+ create mode 100644 drivers/gpu/host1x/hw/Makefile
+ create mode 100644 drivers/gpu/host1x/hw/cdma_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/cdma_hw.h
+ create mode 100644 drivers/gpu/host1x/hw/channel_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_channel.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_uclass.h
+ create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
+ create mode 100644 drivers/gpu/host1x/intr.c
+ create mode 100644 drivers/gpu/host1x/intr.h
+ create mode 100644 drivers/gpu/host1x/job.c
+ create mode 100644 drivers/gpu/host1x/job.h
+ create mode 100644 drivers/gpu/host1x/memmgr.c
+ create mode 100644 drivers/gpu/host1x/memmgr.h
+ create mode 100644 drivers/gpu/host1x/syncpt.c
+ create mode 100644 drivers/gpu/host1x/syncpt.h
+ create mode 100644 include/drm/tegra_drm.h
+ create mode 100644 include/trace/events/host1x.h
 
-Thanks,
-Thierry
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ9Ts6AAoJEN0jrNd/PrOhFXwQAIqINbtzq28snX9yBm+S/8tk
-79P53Kivvk27zSmEdPqoH7hVbCBd2o763p8tm9SjmCI5f5ml4uSZlka+lQB3QG24
-RLUSjANl/eL6chg5MuGr5FbjsAdN10CcpaOLySAi1xWlZmhj/aF+9Q/gj18KKngv
-7kzs9Mv4ZkWMq7tzbD1BtDZAWkakHLRBA5Kj5BOK6CFQ+F7wUrXy4j9W3L0rQsjU
-fGRWJtVyl1oWgOedEDQS/Eg2w24CEDtJJcdmidOyFvzOWFeA/t6Unk0zGLgqbzmA
-0TwLZ47YxFm3CYS/dfLKxTak07Wr0gIgFYHibM7JHeF0tmZZNdvo/tDzjJfVQtsy
-mcGTp4cQW994+Iho5v/mG1YgsBrBLpRh2nKqPVcw2lh33X4jiaAs2OIj7rcovRPQ
-V+o69GWDFtcpw/OaledyEEL6dMFmN1BhVUrCidktg3P/ExuFzkvU3Q0l2d5Tc5eE
-Ckqr+EEM0x/9+S5VfCjiXaKZ4fnZf+t6paUjQgve6M3KnMJeoPfpUBCa+cKch/NP
-1MU7UhLQbjYBDS2WTRNwlUwzPv0dG2gWDmVnELpl14XVMS9UJVcUOQjUDpVyP3MV
-OGhoSZILXdSxkuxluNbMCnkXib4KMm6D046r9Uf31y3LCwdn4a1pggKsMu9xbq8M
-e2DpWn8UnJUHOMfHvjQd
-=ZuZr
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
+-- 
+1.7.9.5
