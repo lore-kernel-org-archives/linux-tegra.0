@@ -1,61 +1,33 @@
-From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
- allocation
-Date: Tue, 15 Jan 2013 13:32:48 +0100
-Message-ID: <20130115123248.GB2625@pengutronix.de>
-References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
- <20130114161644.GC14721@kroah.com>
- <20130114221551.GA30020@avionic-0098.adnet.avionic-design.de>
- <201301142224.11243.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Tue, 15 Jan 2013 12:44:12 +0000
+Message-ID: <201301151244.12767.arnd@arndb.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <20130114095706.GA23467@arm.com> <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bCsyhTFzCvuiizWE"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201301142224.11243.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Andrew Murray <andrew.murray@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday 15 January 2013, Thierry Reding wrote:
+> I'm not sure I follow you're reasoning here. Is it possible to use MSIs
+> without PCI? If not then I think there's little sense in keeping the
+> implementations separate.
 
---bCsyhTFzCvuiizWE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Conceptually, you can use MSI for any device, but the Linux interfaces
+for MSI are tied to PCI. If you use an MSI controller for a non-PCI
+device, it would probably just appear as a regular interrupt controller.
 
-On Mon, Jan 14, 2013 at 10:24:11PM +0000, Arnd Bergmann wrote:
-> On Monday 14 January 2013, Thierry Reding wrote:
-> > It certainly sounds like a less complicated way to do it. But it also
-> > involves adding a function with a made up name and drop a function with
-> > a perfectly good name instead. I wouldn't even know what name to choose
-> > for the new API.
-> >=20
->=20
-> How about devm_ioremap_resource()? Sounds equally fitting, and is shorter.
+> Furthermore, if MSI controller and PCI host bridge are separate entities
+> how do you look up the MSI controller given a PCI device?
 
-2 cents, I wrote back then:
+The host bridge can contain a pointer ot the MSI controller. You can
+have multiple host bridges sharing a single MSI controller or you
+can have separate ones for each host.
 
-* the new function is not named 'devm_ioremap_resource' because it does mor=
-e than
-  just ioremap, namely request_mem_region. I didn't want to create implicit
-  knowledge here.
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---bCsyhTFzCvuiizWE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAlD1THAACgkQD27XaX1/VRsbUQCeO3T9fGRUTenwPGNdf2Wfow+S
-2yQAnjkdp45Tk8czgujiurdGGiEEMDvr
-=LQve
------END PGP SIGNATURE-----
-
---bCsyhTFzCvuiizWE--
+	Arnd
