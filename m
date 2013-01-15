@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v3 4/9] ARM: Add API to detect SCU base address from CP15
-Date: Tue, 15 Jan 2013 10:13:13 +0200
-Message-ID: <1358237598-32413-5-git-send-email-hdoyu@nvidia.com>
+Subject: [v3 5/9] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
+Date: Tue, 15 Jan 2013 10:13:14 +0200
+Message-ID: <1358237598-32413-6-git-send-email-hdoyu@nvidia.com>
 References: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,40 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add API to detect SCU base address from CP15.
+Skip scu_enable(scu_base) if CPU is not Cortex A9.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/include/asm/smp_scu.h |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/arm/mach-tegra/platsmp.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/smp_scu.h b/arch/arm/include/asm/smp_scu.h
-index 4eb6d00..f619eef 100644
---- a/arch/arm/include/asm/smp_scu.h
-+++ b/arch/arm/include/asm/smp_scu.h
-@@ -6,6 +6,23 @@
- #define SCU_PM_POWEROFF	3
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index 689ee4b..e329e93 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -38,7 +38,6 @@
+ extern void tegra_secondary_startup(void);
  
- #ifndef __ASSEMBLER__
+ static cpumask_t tegra_cpu_init_mask;
+-static void __iomem *scu_base = IO_ADDRESS(TEGRA_ARM_PERIF_BASE);
+ 
+ #define EVP_CPU_RESET_VECTOR \
+ 	(IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE) + 0x100)
+@@ -184,10 +183,14 @@ static void __init tegra_smp_init_cpus(void)
+ 
+ static void __init tegra_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	phys_addr_t base;
 +
-+#include <asm/cputype.h>
-+
-+static inline phys_addr_t scu_get_base(void)
-+{
-+	phys_addr_t pa;
-+	unsigned long part_number = read_cpuid_part_number();
-+
-+	switch (part_number) {
-+	case ARM_CPU_PART_CORTEX_A9:
-+		/* Get SCU physical base */
-+		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
-+		return pa;
-+	default:
-+		return 0;
-+	}
-+}
- unsigned int scu_get_core_count(void __iomem *);
- void scu_enable(void __iomem *);
- int scu_power_mode(void __iomem *, unsigned int);
+ 	/* Always mark the boot CPU (CPU0) as initialized. */
+ 	cpumask_set_cpu(0, &tegra_cpu_init_mask);
+ 
+-	scu_enable(scu_base);
++	base = scu_get_base();
++	if (base)
++		scu_enable(IO_ADDRESS(base));
+ }
+ 
+ struct smp_operations tegra_smp_ops __initdata = {
 -- 
 1.7.9.5
