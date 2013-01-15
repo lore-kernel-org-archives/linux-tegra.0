@@ -1,77 +1,149 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 00/16] big.LITTLE low-level CPU and cluster power
- management
-Date: Tue, 15 Jan 2013 10:44:08 +0800
-Message-ID: <1358217848.8513.14.camel@jlo-ubuntu-64.nvidia.com>
-References: <1357777251-13541-1-git-send-email-nicolas.pitre@linaro.org>
-	 <1358157392.19304.243.camel@jlo-ubuntu-64.nvidia.com>
-	 <alpine.LFD.2.02.1301140849020.6300@xanadu.home>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Tue, 15 Jan 2013 11:00:44 +0800
+Message-ID: <1358218844.8513.30.camel@jlo-ubuntu-64.nvidia.com>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+	 <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+	 <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
+	 <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
+	 <20130111122417.GE30538@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.LFD.2.02.1301140849020.6300-QuJgVwGFrdf/9pzu0YdTqQ@public.gmane.org>
+In-Reply-To: <20130111122417.GE30538-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-01-14 at 22:05 +0800, Nicolas Pitre wrote:
-> On Mon, 14 Jan 2013, Joseph Lo wrote:
-> 
-> > Hi Nicolas,
-> > 
-> > On Thu, 2013-01-10 at 08:20 +0800, Nicolas Pitre wrote:
-> > > This is the initial public posting of the initial support for big.LITTLE.
-> > > Included here is the code required to safely power up and down CPUs in a
-> > > b.L system, whether this is via CPU hotplug, a cpuidle driver or the
-> > > Linaro b.L in-kernel switcher[*] on top of this.  Only  SMP secondary
-> > > boot and CPU hotplug support is included at this time.  Getting to this
-> > > point already represents a significcant chunk of code as illustrated by
-> > > the diffstat below.
+On Fri, 2013-01-11 at 20:24 +0800, Lorenzo Pieralisi wrote:
+> On Fri, Jan 11, 2013 at 07:20:29AM +0000, Joseph Lo wrote:
+> > On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
+> > > On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
+> > > > The powered-down state of Tegra20 requires power gating both CPU cores.
+> > > > When the secondary CPU requests to enter powered-down state, it saves
+> > > > its own contexts and then enters WFI. The Tegra20 had a limition to
+> > > > power down both CPU cores. The secondary CPU must waits for CPU0 in
+> > > > powered-down state too. If the secondary CPU be woken up before CPU0
+> > > > entering powered-down state, then it needs to restore its CPU states
+> > > > and waits for next chance.
+> > > >
+> > > > Be aware of that, you may see the legacy power state "LP2" in the code
+> > > > which is exactly the same meaning of "CPU power down".
+> > > >
+> > > > Based on the work by:
+> > > > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> > > > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > >
+> > > > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > +
+> > > > +#ifdef CONFIG_PM_SLEEP
+> > > > +/*
+> > > > + * tegra_pen_lock
+> > > > + *
+> > > > + * spinlock implementation with no atomic test-and-set and no coherence
+> > > > + * using Peterson's algorithm on strongly-ordered registers
+> > > > + * used to synchronize a cpu waking up from wfi with entering lp2 on idle
+> > > > + *
+> > > > + * SCRATCH37 = r1 = !turn (inverted from Peterson's algorithm)
+> > > > + * on cpu 0:
+> > > > + * SCRATCH38 = r2 = flag[0]
+> > > > + * SCRATCH39 = r3 = flag[1]
+> > > > + * on cpu1:
+> > > > + * SCRATCH39 = r2 = flag[1]
+> > > > + * SCRATCH38 = r3 = flag[0]
+> > > > + *
+> > > > + * must be called with MMU on
+> > > > + * corrupts r0-r3, r12
+> > > > + */
+> > > > +ENTRY(tegra_pen_lock)
+> > > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > > +       cpu_id  r0
+> > > > +       add     r1, r3, #PMC_SCRATCH37
+> > > > +       cmp     r0, #0
+> > > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > > +       addeq   r3, r3, #PMC_SCRATCH39
+> > > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > > +       addne   r3, r3, #PMC_SCRATCH38
+> > > > +
+> > > > +       mov     r12, #1
+> > > > +       str     r12, [r2]               @ flag[cpu] = 1
+> > > > +       dsb
+> > > > +       str     r12, [r1]               @ !turn = cpu
+> > > > +1:     dsb
+> > > > +       ldr     r12, [r3]
+> > > > +       cmp     r12, #1                 @ flag[!cpu] == 1?
+> > > > +       ldreq   r12, [r1]
+> > > > +       cmpeq   r12, r0                 @ !turn == cpu?
+> > > > +       beq     1b                      @ while !turn == cpu && flag[!cpu] == 1
+> > > > +
+> > > > +       mov     pc, lr                  @ locked
+> > > > +ENDPROC(tegra_pen_lock)
+> > > > +
+> > > > +ENTRY(tegra_pen_unlock)
+> > > > +       dsb
+> > > > +       mov32   r3, TEGRA_PMC_VIRT
+> > > > +       cpu_id  r0
+> > > > +       cmp     r0, #0
+> > > > +       addeq   r2, r3, #PMC_SCRATCH38
+> > > > +       addne   r2, r3, #PMC_SCRATCH39
+> > > > +       mov     r12, #0
+> > > > +       str     r12, [r2]
+> > > > +       mov     pc, lr
+> > > > +ENDPROC(tegra_pen_unlock)
 > > > 
+> > > There is an ongoing work to make this locking scheme for MMU/coherency off
+> > > paths ARM generic, and we do not want to merge yet another platform specific
+> > > locking mechanism. I will point you to the patchset when it hits LAK.
 > > > 
 > > 
-> > Thanks for introducing this series.
-> > I am taking a look at this series. It introduced an algorithm for
-> > syncing and avoid racing when syncing the power status of clusters and
-> > CPUs. Do you think these codes could have a chance to become a generic
-> > framework?
-> 
-> Yes.  As I mentioned before, the bL_ prefix is implied only by the fact 
-> that big.LITTLE was the motivation for creating this code.
-> 
-> > The Tegra chip series had a similar design for CPU clusters and it 
-> had
-> > limitation that the CPU0 always needs to be the last CPU to be shut down
-> > before cluster power down as well. I believe it can also get benefits of
-> > this works. We indeed need a similar algorithm to sync CPUs power status
-> > before cluster power down and switching.
+> > You did mention there is an ARM generic locking scheme for MMU/coherency
+> > off case before. Do you mean the patch below?
 > > 
-> > The "bL_entry.c", "bL_entry.S", "bL_entry.h", "vlock.h" and "vlock.S"
-> > looks have a chance to be a common framework for ARM platform even if it
-> > just support one cluster. Because some systems had the limitations for
-> > cluster power down. That's why the coupled cpuidle been introduced. And
-> > this framework could be enabled automatically if platform dependent or
-> > by menuconfig.
+> > https://patchwork.kernel.org/patch/1957911/
+> > https://patchwork.kernel.org/patch/1957901/
 > 
-> Absolutely.
+> Those are used for first-man election when multiple CPUs come out of
+> idle at once.
 > 
-So do you have a plan to make it become a generic framework in this
-series or later work?
-
-(And I will add some common power sync wrapper functions that based on
-this framework for all Tegra series.)
-
+> You should have a look at the entire series and in particular:
 > 
-> > For ex,
-> > 	select CPUS_CLUSTERS_POWER_SYNC_FRAMEWORK if SMP && CPU_PM
+> https://patchwork.kernel.org/patch/1957891/
+> https://patchwork.kernel.org/patch/1957951/
+> 
+> > I gave it a review today. Looks it can't fit our usage for CPU idle
+> > powered-down mode on Tegra20.
 > > 
-> > How do you think of this suggestion?
+> > The generic mechanism only can be used when CPUs in non coherent world.
+> > But our usage needs the mechanism could be used in both coherent and non
+> > coherent case. OK. The case is we need to sync the status about the CPU1
+> > was ready to power down. In this case, the CPU0 is still in coherent
+> > world but the CPU1 isn't. So we need the locking scheme could be still
+> > safe in this situation.
 > 
-> I'd prefer a more concise name though.
+> I know, I implemented something of that sort for an A9 based development
+> platform, that's why I pointed you to this new patchset.
 > 
-Sure. :-)
+> Have a look at the series, it should do what you want.
+> 
+Hi Lorenzo,
+
+May I upstream this stuff first? I can promise to you I will re-work a
+common CPUs and cluster power sync wrappers (platform_power_ops) for all
+Tegra series that based on the generic framework. Because we didn't have
+this work in Tegra tree yet and we indeed need it for supporting cluster
+power down and switching.
+
+But it need lots of time for re-work, testing and verification. And I
+have lots of patches that need the function of cpu suspend that be
+introduced in this patch series to support platform suspend for Tegra.
+
+So I am asking the permission here for upstream this series first and I
+will continue the job to come out a common CPUs and cluster power sync
+wrappers for Tegra that we indeed need it to support cluster power down
+and switching.
 
 Thanks,
 Joseph
