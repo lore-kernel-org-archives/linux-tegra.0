@@ -1,50 +1,31 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2 2/5] drm/tegra: Add plane support
-Date: Tue, 15 Jan 2013 13:35:32 +0200
-Message-ID: <20130115113532.GC3503@intel.com>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
- <1358179560-26799-3-git-send-email-thierry.reding@avionic-design.de>
- <50F526FF.1010101@gmail.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC v2 6/8] gpu: drm: tegra: Remove redundant host1x
+Date: Tue, 15 Jan 2013 13:41:03 +0200
+Message-ID: <50F5404F.50904@nvidia.com>
+References: <50CAC2AC.1010704@nvidia.com> <50CB5205.1030303@wwwdotorg.org> <50CB850F.9090704@nvidia.com> <20121216121603.GA31780@avionic-0098.adnet.avionic-design.de> <50D2D792.1050401@nvidia.com> <50D34775.5010606@wwwdotorg.org> <50D42486.7080901@nvidia.com> <50D4D25B.7030506@wwwdotorg.org> <50E6AA69.4030001@nvidia.com> <50E73AA2.7090500@wwwdotorg.org> <20130115113049.GB18119@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50F526FF.1010101-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20130115113049.GB18119-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 15, 2013 at 05:53:03PM +0800, Mark Zhang wrote:
-> On 01/15/2013 12:05 AM, Thierry Reding wrote:
-> > Add support for the B and C planes which support RGB and YUV pixel
-> > formats and can be used as overlays or hardware cursor.
->=20
-> I think "hardware cursor" has specific meaning for Tegra(e.g: Tegra30
-> has a 32x32 24bpp or 64x64 2bpp hardware cursor). So you may change i=
-t
-> to "hardware accelerated cursor"?
->=20
-> >=20
-> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > ---
-> [...]
-> > +
-> > +static const uint32_t plane_formats[] =3D {
-> > +	DRM_FORMAT_XRGB8888,
-> > +	DRM_FORMAT_YUV422,
->=20
-> I haven't found something related with YUV format in this patch set. =
-=46or
-> example, "tegra_dc_format" also doesn't take YUV into consideration. =
-So
-> remove this line.
+On 15.01.2013 13:30, Thierry Reding wrote:
+> Sorry for not getting back to you on this earlier. I just remembered
+> this thread when I saw Terje's latest patch series.
+> 
+> I agree that having everything in one location will make things a lot
+> easier, even if it means we have to add the tegra-drm driver to a new
+> location. In the long run I think this will pay off, though.
+> 
+> That said, I see that Terje has chosen this approach in his latest
+> series, so it's all good.
 
-Also note that YUV422 is a planar format. And since it's not the most
-common 4:2:2 format, my first guess would be that it's probably not
-what you wanted. YUYV or UYVY is more likely the one you're after.
+*whew* Thanks Thierry. I'm not entirely sure that drivers/gpu/host1x is
+the correct location, though - host1x looks pretty lonely there. If
+anybody has a strong opinion about the location, I'm willing to adjust.
 
---=20
-Ville Syrj=E4l=E4
-Intel OTC
+Terje
