@@ -1,88 +1,176 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
- allocation
-Date: Tue, 15 Jan 2013 07:44:18 +0100
-Message-ID: <20130115064418.GA31561@avionic-0098.adnet.avionic-design.de>
-References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
- <20130114161644.GC14721@kroah.com>
- <20130114221551.GA30020@avionic-0098.adnet.avionic-design.de>
- <201301142224.11243.arnd@arndb.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 3/3 RFT] ARM: tegra: dts: seaboard: enable keyboard
+Date: Tue, 15 Jan 2013 12:54:49 +0530
+Message-ID: <1358234689-18126-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8218566189502329644=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <201301142224.11243.arnd-r2nGTMty4D4@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Enable tegra based keyboard controller and populate the key matrix for
+seaboard. The key matrix was originally on driver code which is removed
+to have clean driver. The key mapping is now passed through dts file.
 
---===============8218566189502329644==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
-Content-Disposition: inline
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Added the configuration of kbc parameter as suggested by Stephen and
+corrected type for LEFTCTRL.
 
+ arch/arm/boot/dts/tegra20-seaboard.dts |  139 ++++++++++++++++++++++++++++++++
+ 1 files changed, 139 insertions(+), 0 deletions(-)
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jan 14, 2013 at 10:24:11PM +0000, Arnd Bergmann wrote:
-> On Monday 14 January 2013, Thierry Reding wrote:
-> > It certainly sounds like a less complicated way to do it. But it also
-> > involves adding a function with a made up name and drop a function with
-> > a perfectly good name instead. I wouldn't even know what name to choose
-> > for the new API.
-> >=20
->=20
-> How about devm_ioremap_resource()? Sounds equally fitting, and is shorter.
-
-Yes, that sounds good. Thanks for the suggestion.
-
-Thierry
-
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ9PrCAAoJEN0jrNd/PrOh8EUQAINqNe6OAwnG8+v2YacerpeP
-jpM0W7ng9kly+Jh7wPl2MpBEzDoKAp9AvmPmOuPZVaLBhVikJB0pB/cQgtERlLxA
-KJgtdEepQb5RInvaZ3lMO07W/OlsZyP3F16e4GO5MEN3VN93QqFgWACRl8U+52aM
-yEbUu6cHImAsxEeWTiLzAJJpTqTmvj0+BN15W4jirVJKWG6dyp6QQP0QyWONro/a
-FEH0UygwPMAz8Mv5eL3p8of87Xt07A4NMAjfTSOpLVIilX3ElJkKsKfr5IbHD+nX
-r8UODa6sM4LD1c1w0TM5so1DpsVE+YEdm6PbCOeqLa3zqJ3gpkm/psrd9Dwp6ThG
-P0FZUrjDcGucznVzRY9LuU5etPd9oLcdMsF65J6k4wXgaAFQ92lQ2yC97H6p7q2j
-k+YdPIPz8jKouwlpywHvLvmcjZv4tO8r/L5dVuT77uinWN8ZNFjfFbRylgbrLPxb
-OfVF1sBokC6kGTAww71VaNURxOFt28QkGEkr8juCO83eZR2Ms4/NQxmLHggoGPf/
-GDdDX81LW2tXRK5AFPFduXOsxt+Fek/E7R0B0EyFY6u+JLVeLhj2htZz2LOh/JHF
-hbU9kZaO44C16wx4/4XhnGsLUxhPGw0MS1aVF/EmKiq4op9QxR2BO0xpDM3i6H45
-piEnYv4jP0kNIUbOhlJm
-=n2WD
------END PGP SIGNATURE-----
-
---LZvS9be/3tNcYl/X--
-
---===============8218566189502329644==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============8218566189502329644==--
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index f9e3ad4..2e87330 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -612,6 +612,145 @@
+ 		};
+ 	};
+ 
++	kbc {
++		status = "okay";
++		nvidia,debounce-delay-ms = <32>;
++		nvidia,repeat-delay-ms = <160>;
++		nvidia,ghost-filter;
++		nvidia,kbc-row-pins = <0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15>;
++		nvidia,kbc-col-pins = <16 17 18 19 20 21 22 23>;
++		linux,keymap = <0x00020011	/* KEY_W */
++				0x0003001F	/* KEY_S */
++				0x0004001E	/* KEY_A */
++				0x0005002C	/* KEY_Z */
++				0x000701d0	/* KEY_FN */
++
++				0x0107007D	/* KEY_LEFTMETA */
++				0x02060064 	/* KEY_RIGHTALT */
++				0x02070038	/* KEY_LEFTALT */
++
++				0x03000006	/* KEY_5 */
++				0x03010005	/* KEY_4 */
++				0x03020013	/* KEY_R */
++				0x03030012	/* KEY_E */
++				0x03040021	/* KEY_F */
++				0x03050020	/* KEY_D */
++				0x0306002D	/* KEY_X */
++
++				0x04000008	/* KEY_7 */
++				0x04010007	/* KEY_6 */
++				0x04020014	/* KEY_T */
++				0x04030023	/* KEY_H */
++				0x04040022	/* KEY_G */
++				0x0405002F	/* KEY_V */
++				0x0406002E	/* KEY_C */
++				0x04070039	/* KEY_SPACE */
++
++				0x0500000A	/* KEY_9 */
++				0x05010009	/* KEY_8 */
++				0x05020016	/* KEY_U */
++				0x05030015	/* KEY_Y */
++				0x05040024	/* KEY_J */
++				0x05050031	/* KEY_N */
++				0x05060030	/* KEY_B */
++				0x0507002B	/* KEY_BACKSLASH */
++
++				0x0600000C	/* KEY_MINUS */
++				0x0601000B	/* KEY_0 */
++				0x06020018	/* KEY_O */
++				0x06030017	/* KEY_I */
++				0x06040026	/* KEY_L */
++				0x06050025	/* KEY_K */
++				0x06060033	/* KEY_COMMA */
++				0x06070032	/* KEY_M */
++
++				0x0701000D	/* KEY_EQUAL */
++				0x0702001B	/* KEY_RIGHTBRACE */
++				0x0703001C	/* KEY_ENTER */
++				0x0707008B	/* KEY_MENU */
++
++				0x08040036	/* KEY_RIGHTSHIFT */
++				0x0805002A	/* KEY_LEFTSHIFT */
++
++				0x09050061	/* KEY_RIGHTCTRL */
++				0x0907001D	/* KEY_LEFTCTRL */
++
++				0x0B00001A	/* KEY_LEFTBRACE */
++				0x0B010019	/* KEY_P */
++				0x0B020028	/* KEY_APOSTROPHE */
++				0x0B030027	/* KEY_SEMICOLON */
++				0x0B040035	/* KEY_SLASH */
++				0x0B050034	/* KEY_DOT */
++
++				0x0C000044	/* KEY_F10 */
++				0x0C010043	/* KEY_F9 */
++				0x0C02000E	/* KEY_BACKSPACE */
++				0x0C030004	/* KEY_3 */
++				0x0C040003	/* KEY_2 */
++				0x0C050067	/* KEY_UP */
++				0x0C0600D2	/* KEY_PRINT */
++				0x0C070077	/* KEY_PAUSE */
++
++				0x0D00006E	/* KEY_INSERT */
++				0x0D01006F	/* KEY_DELETE */
++				0x0D030068	/* KEY_PAGEUP  */
++				0x0D04006D	/* KEY_PAGEDOWN */
++				0x0D05006A	/* KEY_RIGHT */
++				0x0D06006C	/* KEY_DOWN */
++				0x0D070069	/* KEY_LEFT */
++
++				0x0E000057	/* KEY_F11 */
++				0x0E010058	/* KEY_F12 */
++				0x0E020042	/* KEY_F8 */
++				0x0E030010	/* KEY_Q */
++				0x0E04003E	/* KEY_F4 */
++				0x0E05003D	/* KEY_F3 */
++				0x0E060002	/* KEY_1 */1
++				0x0E070041	/* KEY_F7 */
++
++				0x0F000001	/* KEY_ESC */
++				0x0F010029	/* KEY_GRAVE */
++				0x0F02003F	/* KEY_F5 */
++				0x0F03000F	/* KEY_TAB */
++				0x0F04003B	/* KEY_F1 */
++				0x0F05003C	/* KEY_F2 */
++				0x0F06003A	/* KEY_CAPSLOCK */
++				0x0F070040	/* KEY_F6 */
++
++				/* Software Handled Function Keys */
++				0x14000047	/* KEY_KP7 */
++
++				0x15000049	/* KEY_KP9 */
++				0x15010048	/* KEY_KP8 */
++				0x1502004B	/* KEY_KP4 */
++				0x1504004F	/* KEY_KP1 */
++
++				0x1601004E	/* KEY_KPSLASH */
++				0x1602004D	/* KEY_KP6 */
++				0x1603004C	/* KEY_KP5 */
++				0x16040051	/* KEY_KP3 */
++				0x16050050	/* KEY_KP2 */
++				0x16070052	/* KEY_KP0 */
++
++				0x1B010037	/* KEY_KPASTERISK */
++				0x1B03004A	/* KEY_KPMINUS */
++				0x1B04004E	/* KEY_KPPLUS */
++				0x1B050053	/* KEY_KPDOT */
++
++				0x1C050073	/* KEY_VOLUMEUP */
++
++				0x1D030066	/* KEY_HOME */
++				0x1D04006B	/* KEY_END */
++				0x1D0500E0	/* KEY_BRIGHTNESSDOWN */
++				0x1D060072	/* KEY_VOLUMEDOWN */
++				0x1D0700E1	/* KEY_BRIGHTNESSUP */
++
++				0x1E000045	/* KEY_NUMLOCK */
++				0x1E010046	/* KEY_SCROLLLOCK */
++				0x1E020071	/* KEY_MUTE */
++
++				0x1F04008A>;	/* KEY_HELP */
++	};
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+-- 
+1.7.1.1
