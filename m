@@ -1,123 +1,61 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Tue, 15 Jan 2013 13:08:55 +0100
-Message-ID: <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130111154516.GA25335@avionic-0098.adnet.avionic-design.de>
- <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
- <201301122112.25772.arnd@arndb.de>
- <20130113095806.GA31966@avionic-0098.adnet.avionic-design.de>
- <20130114095706.GA23467@arm.com>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] input: keyboard: tegra: use devm_* for resource
+ allocation
+Date: Tue, 15 Jan 2013 13:32:48 +0100
+Message-ID: <20130115123248.GB2625@pengutronix.de>
+References: <1357371910-3164-1-git-send-email-ldewangan@nvidia.com>
+ <20130114161644.GC14721@kroah.com>
+ <20130114221551.GA30020@avionic-0098.adnet.avionic-design.de>
+ <201301142224.11243.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+	protocol="application/pgp-signature"; boundary="bCsyhTFzCvuiizWE"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20130114095706.GA23467-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <201301142224.11243.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---zYM0uCDKw75PZbzx
+--bCsyhTFzCvuiizWE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 14, 2013 at 09:57:07AM +0000, Andrew Murray wrote:
-> On Sun, Jan 13, 2013 at 09:58:06AM +0000, Thierry Reding wrote:
-> > On Sat, Jan 12, 2013 at 09:12:25PM +0000, Arnd Bergmann wrote:
-> > > On Saturday 12 January 2013, Thierry Reding wrote:
-> > > > > I already hinted at that in one of the other subthreads. Having s=
-uch a
-> > > > > multiplex would also allow the driver to be built as a module. I =
-had
-> > > > > already thought about this when I was working on an earlier versi=
-on of
-> > > > > these patches. Basically these would be two ops attached to the h=
-ost
-> > > > > bridge, and the generic arch_setup_msi_irq() could then look that=
- up
-> > > > > given the struct pci_dev that is passed to it and call this new p=
-er-
-> > > > > host bridge .setup_msi_irq().
-> > > >=20
-> > > > struct pci_ops looks like a good place to put these. They'll be
-> > > > available from each struct pci_bus, so should be easy to call from
-> > > > arch_setup_msi_irq().
-> > > >=20
-> > > > Any objections?
-> > > >=20
-> > >=20
-> > > struct pci_ops has a long history of being specifically about
-> > > config space read/write operations, so on the one hand it does
-> > > not feel like the right place to put interrupt specific operations,
-> > > but on the other hand, the name sounds appropriate and I cannot
-> > > think of any other place to put this, so it's fine with me.
-> > >=20
-> > > The only alternative I can think of is to introduce a new
-> > > structure next to it in struct pci_bus, but that feels a bit
-> > > pointless. Maybe Bjorn has a preference one way or the other.
+On Mon, Jan 14, 2013 at 10:24:11PM +0000, Arnd Bergmann wrote:
+> On Monday 14 January 2013, Thierry Reding wrote:
+> > It certainly sounds like a less complicated way to do it. But it also
+> > involves adding a function with a made up name and drop a function with
+> > a perfectly good name instead. I wouldn't even know what name to choose
+> > for the new API.
 > >=20
-> > The name pci_ops is certainly generic enough. Also the comment above the
-> > structure declaration says "Low-level architecture-dependent routines",
-> > which applies to the MSI functions as well.
 >=20
-> I've previously looked into this. It seems that architectures handle this
-> in different ways, some use vector tables, others use a multiplex and oth=
-ers
-> just let the end user implement the callback directly.
->=20
-> I've made an attempt to find a more common way. Though my implementation,=
- which
-> I will try to share later today for reference provides a registration fun=
-ction
-> in drivers/pci/msi.c to provide implementations of the
-> (setup|teardown)_msi_irq(s) ops. This seems slightly better than the curr=
-ent
-> approach and doesn't break existing users - but is still ugly.
->=20
-> At present the PCI and MSI frameworks are largely uncoupled from each oth=
-er and
-> so I was keen to not pollute PCI structures (e.g. pci_ops) with MSI ops. =
-Just
-> because most PCI host bridges also provide MSI support I don't think ther=
-e is a
-> reason why they should always come as a pair or be provided by the same c=
-hip.
->=20
-> Perhaps the solution is to support MSI controller drivers and a means to
-> associate them with PCI host controller drivers?
+> How about devm_ioremap_resource()? Sounds equally fitting, and is shorter.
 
-I'm not sure I follow you're reasoning here. Is it possible to use MSIs
-without PCI? If not then I think there's little sense in keeping the
-implementations separate.
+2 cents, I wrote back then:
 
-Furthermore, if MSI controller and PCI host bridge are separate entities
-how do you look up the MSI controller given a PCI device?
+* the new function is not named 'devm_ioremap_resource' because it does mor=
+e than
+  just ioremap, namely request_mem_region. I didn't want to create implicit
+  knowledge here.
 
-Thierry
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature
+--bCsyhTFzCvuiizWE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ9UbXAAoJEN0jrNd/PrOhPUMQAKNhspoQI51u1sXnZ0ln3ibR
-FLBRqTURtkSryRPqcuc+trnITfOMi7McsACOGsPVRzU3NwZpxrH+vENZuIWEtMjP
-pt++wG60l2oiOBVKkumxD/qDS/q7FBPC+0eD6vaXq5Nk8zG/NDSzvgCY0EY7kfnD
-rgNXAFhHZTGN3srxM7ZVc3IkMZt43Q5F5yaCiy1GOhR9dnpUK/taOwo821rcx+Tf
-0agNyrafnD3nfP51cAIzjAWIeaPt467L0xU3O1byrh+BnOufwlMhUQmMOrgXtmf4
-XQBg0Al9JCS382heYvArCIcj/UI2EILtMdJp9V567vQ3dIA1k0pQ7IiZRez3zjFW
-3uhzUrI2W2MFR/kBOVkf3LoWxx+L+ja0Ur70KOR5BtH/tp4qAQmkWy2HJMh7WmL9
-UlvSsmNqL5FkU470tv7+uPDgJYmhVnWUhn/e2CskagT60ngfmvGo3s5xGDKMKWUt
-aGL36UR1G0xWzJTC2dgfggMfvWV0fq+HXRMe5wF7wW5ftxqnW2t8V8Q+gjLF/+k1
-faCMJld6ueA0h0sz0zVKlacBgo0ocT5Q8KxlMFnTSsvizvmHe5MYIxXDGb6zC8gL
-jZfF+VeG4WXtMTl/eO3UbOi5lEg/rH1PVbGMSW0Tg65BBEGGldMu0l2DIsMsyBCd
-Fv0lXQVkotmB8gKfpzss
-=0RFY
+iEYEARECAAYFAlD1THAACgkQD27XaX1/VRsbUQCeO3T9fGRUTenwPGNdf2Wfow+S
+2yQAnjkdp45Tk8czgujiurdGGiEEMDvr
+=LQve
 -----END PGP SIGNATURE-----
 
---zYM0uCDKw75PZbzx--
+--bCsyhTFzCvuiizWE--
