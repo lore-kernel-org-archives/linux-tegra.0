@@ -1,77 +1,114 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
-Date: Tue, 15 Jan 2013 21:17:05 +0100
-Message-ID: <20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
-References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
- <1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
- <CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Tue, 15 Jan 2013 22:14:41 +0100
+Message-ID: <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130114095706.GA23467@arm.com>
+ <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
+ <201301151244.12767.arnd@arndb.de> <20130115154038.GA11241@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============4171163522720820654=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130115154038.GA11241-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
+Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---liOOAslEiF7prFVr
+--===============4171163522720820654==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Disposition: inline
+
+
+--sdtB3X0nJg68CQEu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 15, 2013 at 06:53:19PM +0100, Daniel Vetter wrote:
-> On Mon, Jan 14, 2013 at 4:55 PM, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > +static void tegra_drm_preclose(struct drm_device *drm, struct drm_file=
- *file)
-> > +{
-> > +       struct drm_crtc *crtc;
-> > +
-> > +       list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
-> > +               tegra_dc_cancel_page_flip(crtc, file);
-> > +}
-> > +
+On Tue, Jan 15, 2013 at 03:40:38PM +0000, Andrew Murray wrote:
+> On Tue, Jan 15, 2013 at 12:44:12PM +0000, Arnd Bergmann wrote:
+> > On Tuesday 15 January 2013, Thierry Reding wrote:
+> > > I'm not sure I follow you're reasoning here. Is it possible to use MS=
+Is
+> > > without PCI? If not then I think there's little sense in keeping the
+> > > implementations separate.
+> >=20
+> > Conceptually, you can use MSI for any device, but the Linux interfaces
+> > for MSI are tied to PCI. If you use an MSI controller for a non-PCI
+> > device, it would probably just appear as a regular interrupt controller.
+> >=20
+> > > Furthermore, if MSI controller and PCI host bridge are separate entit=
+ies
+> > > how do you look up the MSI controller given a PCI device?
+> >=20
+> > The host bridge can contain a pointer ot the MSI controller. You can
+> > have multiple host bridges sharing a single MSI controller or you
+> > can have separate ones for each host.
 >=20
-> Why that? If userspace dies while a flip is outstanding, it's imo ok
-> to execute it - otherwise there might be an accounting mismatch if the
-> hw still scans out the old fb, but drm believes the new one is used.
-> Or do I miss something?
+> Yes and I hoped this relationship would be described by a device tree pha=
+ndle
+> as is done for relating devices to their interrupt-parent (where device t=
+rees
+> are used). This would provide (arguably unnecessarily) greater flexibilit=
+y,
+> e.g. if you have two PCI/MSI controller pairs, the MSIs only offer limite=
+d MSIs
+> and you only use one PCI fabric - you could service different parts of the
+> fabric by different MSI controllers (assuming you relate MSI controllers =
+to
+> part of the fabric and that you'd want to). Perhaps there would be benefi=
+ts for
+> virtualisation as well?
 
-I looked at the shmobile driver for inspiration and they do this as
-well. Doing so seemed reasonable since there'd be no file to deliver the
-event to.
-
-> The reason I've skimmed through the patches is to check for
-> implications with my modeset locking rework. Review on that would be
-> highly appreciated ...
-
-I'm not sure how suited I am for review given my limited experience, but
-I'll see if I can make some time to take a look.
+Is there actually hardware that supports this? I assumed that the MSI
+controller would have to be tightly coupled to the PCI host bridge in
+order to raise an interrupt when an MSI is received via PCI.
 
 Thierry
 
---liOOAslEiF7prFVr
+--sdtB3X0nJg68CQEu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ9blBAAoJEN0jrNd/PrOhER0P+wQ/jZLBJrOgt0Y3OrmTz9DR
-HTEhXhyoG/BmrTMllk7IgypnpkVsXEe6v2P4XpvaHDUz6ImcXRPl+6mbyM6eKwFA
-9XzQGMnv+YImam/KBMk0wUnZiAE//q0jHMXQ/yKtSUDGU/9k0uGLEVfVxhZEMnE1
-JWOJ69vQRftmrUiNBWwLMny0ZpeI5kYUXoATo6LWc8l/aHQlwJRwDxo9jPSZIngf
-0w3oicqZOtLtZFtSlEEGkl/fBhDs6CZPiHZniS+ZNaPDZzvefkpXCsAWlhBDW8c/
-TDmzCa4VEFA+BiMla13LddxW3KhDzpzT+yc6DE37BtloMeD0C/ZobW/F88lT4/tZ
-S3bH7aqIhTDvRa+SyGov55iy/c8RXMF9dlAjMvpbj5UreKuF2Mjb5520Qtnb+zdr
-a0pa0HkTq9m/o3vwH7NAP154/rBr2whdElMxz4fqbLFFCp5V27LBPfhyGX3B+nab
-oOOknhs9HepzDrKaCQZqpCMM8/TadyiBffHDJYSg3uHHy8/QMX+0/mi72MdqQyqg
-DN7ZX/PpMVwNFzvRL8TTZ+wCxNW/5t50hT799kiA/YUM48X00eNh/qlj8t3jgXvm
-5jb7Ity1KfiEilKPZYlkX7qaoD3fljRoroNfRZoiJ67nPAf5Js3oMx47NNi0jGO7
-C2pLeckBzpvd5SjG407j
-=asQo
+iQIcBAEBAgAGBQJQ9cbBAAoJEN0jrNd/PrOhtl4P/jFRPjJMBYsIefiaxa04+iqT
+3x9QHWpfSoQabBZedImODOBW//x/WY95wzU1svRNSn9KRP57HNoI1dSetfx7dsxv
+UWJ5lklcJjfBCgj7m2WyG9V9Oh1YrZYJ006pie/Qi5i4YsVuLwAbXc5HyhwHHBzZ
+/Xm3QRPqAyXHY/mWLdqRDMMC0EntcfK6VxiM7vGyhYlFDu/0Vok7leXUXu1KB4/c
+yDVHB7miuzYAqX4BhrCk2Qvyt2vB7+EU40ZNOahWOJA0IYY9PcAHN36/WB6JKxFu
+6my0R/Hl9XqsLim6e8nEbE6oglNnDgSITjKD+GHrQ7Jk+crhUyLBWbJpRpDVCI3Z
+TqKhJgaHB5nOal4aCy3rCWx9Bzg6IT+LN3xGjLtzx3OxwCbDAdDjTO9knF4FEu3h
+QlRMcx0Nm/vKmXE8GSeDBvjbDIoz6fAILZoIhDYG7cAcjeshDuUYLa9ZKJDxrsZU
+VlVI51jMty+wLcAY9yVL3TYo/pPH96Iw4xNPC7gGSFe/QELh7coynxeEOjGxcC1C
+BuuJrVP3iN1ozDsdU4N5sBqJMnn2yiuIHxznScPifa/9TK44OcmDffKUFOOYOXTV
+raEZJjmFfCQqQf7FWdQcgK7KEYLB+5rAPhJxw+kdA5D5y8t6IFBTPn1faIf9e2XE
+SQaQ+rKu8bPN9+wyPtr3
+=JrIc
 -----END PGP SIGNATURE-----
 
---liOOAslEiF7prFVr--
+--sdtB3X0nJg68CQEu--
+
+--===============4171163522720820654==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============4171163522720820654==--
