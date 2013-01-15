@@ -1,7 +1,7 @@
 From: Terje Bergstrom <tbergstrom@nvidia.com>
-Subject: [PATCHv5,RESEND 1/8] gpu: host1x: Add host1x driver
-Date: Tue, 15 Jan 2013 13:43:57 +0200
-Message-ID: <1358250244-9678-2-git-send-email-tbergstrom@nvidia.com>
+Subject: [PATCHv5,RESEND 2/8] gpu: host1x: Add syncpoint wait and interrupts
+Date: Tue, 15 Jan 2013 13:43:58 +0200
+Message-ID: <1358250244-9678-3-git-send-email-tbergstrom@nvidia.com>
 References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,81 +12,429 @@ To: amerilainen@nvidia.com, airlied@linux.ie, thierry.reding@avionic-design.de
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add host1x, the driver for host1x and its client unit 2D.
+Add support for sync point interrupts, and sync point wait. Sync
+point wait used interrupts for unblocking wait.
 
 Signed-off-by: Terje Bergstrom <tbergstrom@nvidia.com>
 ---
- drivers/gpu/Makefile                      |    1 +
- drivers/gpu/host1x/Kconfig                |    6 +
- drivers/gpu/host1x/Makefile               |    8 ++
- drivers/gpu/host1x/dev.c                  |  161 +++++++++++++++++++++
- drivers/gpu/host1x/dev.h                  |   73 ++++++++++
- drivers/gpu/host1x/hw/Makefile            |    6 +
- drivers/gpu/host1x/hw/host1x01.c          |   35 +++++
- drivers/gpu/host1x/hw/host1x01.h          |   25 ++++
- drivers/gpu/host1x/hw/host1x01_hardware.h |   26 ++++
- drivers/gpu/host1x/hw/hw_host1x01_sync.h  |   72 ++++++++++
- drivers/gpu/host1x/hw/syncpt_hw.c         |  146 +++++++++++++++++++
- drivers/gpu/host1x/syncpt.c               |  217 +++++++++++++++++++++++++++++
- drivers/gpu/host1x/syncpt.h               |  153 ++++++++++++++++++++
- drivers/video/Kconfig                     |    2 +
- include/trace/events/host1x.h             |   61 ++++++++
- 15 files changed, 992 insertions(+)
- create mode 100644 drivers/gpu/host1x/Kconfig
- create mode 100644 drivers/gpu/host1x/Makefile
- create mode 100644 drivers/gpu/host1x/dev.c
- create mode 100644 drivers/gpu/host1x/dev.h
- create mode 100644 drivers/gpu/host1x/hw/Makefile
- create mode 100644 drivers/gpu/host1x/hw/host1x01.c
- create mode 100644 drivers/gpu/host1x/hw/host1x01.h
- create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
- create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
- create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
- create mode 100644 drivers/gpu/host1x/syncpt.c
- create mode 100644 drivers/gpu/host1x/syncpt.h
- create mode 100644 include/trace/events/host1x.h
+ drivers/gpu/host1x/Makefile              |    1 +
+ drivers/gpu/host1x/dev.c                 |   21 +-
+ drivers/gpu/host1x/dev.h                 |   17 +-
+ drivers/gpu/host1x/hw/host1x01.c         |    2 +
+ drivers/gpu/host1x/hw/hw_host1x01_sync.h |   42 ++++
+ drivers/gpu/host1x/hw/intr_hw.c          |  178 +++++++++++++++
+ drivers/gpu/host1x/intr.c                |  356 ++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/intr.h                |  103 +++++++++
+ drivers/gpu/host1x/syncpt.c              |  163 ++++++++++++++
+ drivers/gpu/host1x/syncpt.h              |    5 +
+ 10 files changed, 883 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
+ create mode 100644 drivers/gpu/host1x/intr.c
+ create mode 100644 drivers/gpu/host1x/intr.h
 
-diff --git a/drivers/gpu/Makefile b/drivers/gpu/Makefile
-index cc92778..7e227097 100644
---- a/drivers/gpu/Makefile
-+++ b/drivers/gpu/Makefile
-@@ -1 +1,2 @@
- obj-y			+= drm/ vga/ stub/
-+obj-$(CONFIG_TEGRA_HOST1X)	+= host1x/
-diff --git a/drivers/gpu/host1x/Kconfig b/drivers/gpu/host1x/Kconfig
-new file mode 100644
-index 0000000..e89fb2b
---- /dev/null
-+++ b/drivers/gpu/host1x/Kconfig
-@@ -0,0 +1,6 @@
-+config TEGRA_HOST1X
-+	tristate "Tegra host1x driver"
-+	help
-+	  Driver for the Tegra host1x hardware.
-+
-+	  Required for enabling tegradrm.
 diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-new file mode 100644
-index 0000000..363e6ab
---- /dev/null
+index 363e6ab..5ef47ff 100644
+--- a/drivers/gpu/host1x/Makefile
 +++ b/drivers/gpu/host1x/Makefile
-@@ -0,0 +1,8 @@
-+ccflags-y = -Idrivers/gpu/host1x
-+
-+host1x-y = \
-+	syncpt.o \
-+	dev.o \
-+	hw/host1x01.o
-+
-+obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
+@@ -3,6 +3,7 @@ ccflags-y = -Idrivers/gpu/host1x
+ host1x-y = \
+ 	syncpt.o \
+ 	dev.o \
++	intr.o \
+ 	hw/host1x01.o
+ 
+ obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
 diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-new file mode 100644
-index 0000000..cd2b1ef
---- /dev/null
+index cd2b1ef..7f9f389 100644
+--- a/drivers/gpu/host1x/dev.c
 +++ b/drivers/gpu/host1x/dev.c
-@@ -0,0 +1,161 @@
+@@ -24,6 +24,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include "dev.h"
++#include "intr.h"
+ #include "hw/host1x01.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -95,7 +96,6 @@ static int host1x_probe(struct platform_device *dev)
+ 
+ 	/* set common host1x device data */
+ 	platform_set_drvdata(dev, host);
+-
+ 	host->regs = devm_request_and_ioremap(&dev->dev, regs);
+ 	if (!host->regs) {
+ 		dev_err(&dev->dev, "failed to remap host registers\n");
+@@ -109,28 +109,40 @@ static int host1x_probe(struct platform_device *dev)
+ 	}
+ 
+ 	err = host1x_syncpt_init(host);
+-	if (err)
++	if (err) {
++		dev_err(&dev->dev, "failed to init sync points");
+ 		return err;
++	}
++
++	err = host1x_intr_init(&host->intr, syncpt_irq);
++	if (err) {
++		dev_err(&dev->dev, "failed to init irq");
++		goto fail_deinit_syncpt;
++	}
+ 
+ 	host->clk = devm_clk_get(&dev->dev, NULL);
+ 	if (IS_ERR(host->clk)) {
+ 		dev_err(&dev->dev, "failed to get clock\n");
+ 		err = PTR_ERR(host->clk);
+-		goto fail_deinit_syncpt;
++		goto fail_deinit_intr;
+ 	}
+ 
+ 	err = clk_prepare_enable(host->clk);
+ 	if (err < 0) {
+ 		dev_err(&dev->dev, "failed to enable clock\n");
+-		goto fail_deinit_syncpt;
++		goto fail_deinit_intr;
+ 	}
+ 
+ 	host1x_syncpt_reset(host);
+ 
++	host1x_intr_start(&host->intr, clk_get_rate(host->clk));
++
+ 	dev_info(&dev->dev, "initialized\n");
+ 
+ 	return 0;
+ 
++fail_deinit_intr:
++	host1x_intr_deinit(&host->intr);
+ fail_deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
+ 	return err;
+@@ -139,6 +151,7 @@ fail_deinit_syncpt:
+ static int __exit host1x_remove(struct platform_device *dev)
+ {
+ 	struct host1x *host = platform_get_drvdata(dev);
++	host1x_intr_deinit(&host->intr);
+ 	host1x_syncpt_deinit(host);
+ 	clk_disable_unprepare(host->clk);
+ 	return 0;
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index d8f5979..8376092 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -17,11 +17,12 @@
+ #ifndef HOST1X_DEV_H
+ #define HOST1X_DEV_H
+ 
++#include <linux/platform_device.h>
+ #include "syncpt.h"
++#include "intr.h"
+ 
+ struct host1x;
+ struct host1x_syncpt;
+-struct platform_device;
+ 
+ struct host1x_syncpt_ops {
+ 	void (*reset)(struct host1x_syncpt *);
+@@ -34,6 +35,18 @@ struct host1x_syncpt_ops {
+ 	const char * (*name)(struct host1x_syncpt *);
+ };
+ 
++struct host1x_intr_ops {
++	void (*init_host_sync)(struct host1x_intr *);
++	void (*set_host_clocks_per_usec)(
++		struct host1x_intr *, u32 clocks);
++	void (*set_syncpt_threshold)(
++		struct host1x_intr *, u32 id, u32 thresh);
++	void (*enable_syncpt_intr)(struct host1x_intr *, u32 id);
++	void (*disable_syncpt_intr)(struct host1x_intr *, u32 id);
++	void (*disable_all_syncpt_intrs)(struct host1x_intr *);
++	int (*free_syncpt_irq)(struct host1x_intr *);
++};
++
+ struct host1x_device_info {
+ 	int	nb_channels;		/* host1x: num channels supported */
+ 	int	nb_pts;			/* host1x: num syncpoints supported */
+@@ -46,11 +59,13 @@ struct host1x_device_info {
+ struct host1x {
+ 	void __iomem *regs;
+ 	struct host1x_syncpt *syncpt;
++	struct host1x_intr intr;
+ 	struct platform_device *dev;
+ 	struct host1x_device_info info;
+ 	struct clk *clk;
+ 
+ 	struct host1x_syncpt_ops syncpt_op;
++	struct host1x_intr_ops intr_op;
+ 
+ 	struct dentry *debugfs;
+ };
+diff --git a/drivers/gpu/host1x/hw/host1x01.c b/drivers/gpu/host1x/hw/host1x01.c
+index ea6e604..3d633a3 100644
+--- a/drivers/gpu/host1x/hw/host1x01.c
++++ b/drivers/gpu/host1x/hw/host1x01.c
+@@ -26,10 +26,12 @@
+ #include "hw/host1x01_hardware.h"
+ 
+ #include "hw/syncpt_hw.c"
++#include "hw/intr_hw.c"
+ 
+ int host1x01_init(struct host1x *host)
+ {
+ 	host->syncpt_op = host1x_syncpt_ops;
++	host->intr_op = host1x_intr_ops;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/host1x/hw/hw_host1x01_sync.h b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
+index b12c1a4..5da9afb 100644
+--- a/drivers/gpu/host1x/hw/hw_host1x01_sync.h
++++ b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
+@@ -51,12 +51,54 @@
+ #ifndef __hw_host1x01_sync_h__
+ #define __hw_host1x01_sync_h__
+ 
++static inline u32 host1x_sync_syncpt_thresh_cpu0_int_status_r(void)
++{
++	return 0x40;
++}
++#define HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS \
++	host1x_sync_syncpt_thresh_cpu0_int_status_r()
++static inline u32 host1x_sync_syncpt_thresh_int_disable_r(void)
++{
++	return 0x60;
++}
++#define HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE \
++	host1x_sync_syncpt_thresh_int_disable_r()
++static inline u32 host1x_sync_syncpt_thresh_int_enable_cpu0_r(void)
++{
++	return 0x68;
++}
++#define HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0 \
++	host1x_sync_syncpt_thresh_int_enable_cpu0_r()
++static inline u32 host1x_sync_usec_clk_r(void)
++{
++	return 0x1a4;
++}
++#define HOST1X_SYNC_USEC_CLK \
++	host1x_sync_usec_clk_r()
++static inline u32 host1x_sync_ctxsw_timeout_cfg_r(void)
++{
++	return 0x1a8;
++}
++#define HOST1X_SYNC_CTXSW_TIMEOUT_CFG \
++	host1x_sync_ctxsw_timeout_cfg_r()
++static inline u32 host1x_sync_ip_busy_timeout_r(void)
++{
++	return 0x1bc;
++}
++#define HOST1X_SYNC_IP_BUSY_TIMEOUT \
++	host1x_sync_ip_busy_timeout_r()
+ static inline u32 host1x_sync_syncpt_0_r(void)
+ {
+ 	return 0x400;
+ }
+ #define HOST1X_SYNC_SYNCPT_0 \
+ 	host1x_sync_syncpt_0_r()
++static inline u32 host1x_sync_syncpt_int_thresh_0_r(void)
++{
++	return 0x500;
++}
++#define HOST1X_SYNC_SYNCPT_INT_THRESH_0 \
++	host1x_sync_syncpt_int_thresh_0_r()
+ static inline u32 host1x_sync_syncpt_base_0_r(void)
+ {
+ 	return 0x600;
+diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
+new file mode 100644
+index 0000000..12488e2
+--- /dev/null
++++ b/drivers/gpu/host1x/hw/intr_hw.c
+@@ -0,0 +1,178 @@
 +/*
-+ * Tegra host1x driver
++ * Tegra host1x Interrupt Management
++ *
++ * Copyright (C) 2010 Google, Inc.
++ * Copyright (c) 2010-2013, NVIDIA Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/io.h>
++#include <asm/mach/irq.h>
++
++#include "intr.h"
++#include "dev.h"
++
++/* Spacing between sync registers */
++#define REGISTER_STRIDE 4
++
++static void host1x_intr_syncpt_thresh_isr(struct host1x_intr_syncpt *syncpt);
++
++static void syncpt_thresh_cascade_fn(struct work_struct *work)
++{
++	struct host1x_intr_syncpt *sp =
++		container_of(work, struct host1x_intr_syncpt, work);
++	host1x_syncpt_thresh_fn(sp);
++}
++
++static irqreturn_t syncpt_thresh_cascade_isr(int irq, void *dev_id)
++{
++	struct host1x *host1x = dev_id;
++	struct host1x_intr *intr = &host1x->intr;
++	unsigned long reg;
++	int i, id;
++
++	for (i = 0; i < host1x->info.nb_pts / BITS_PER_LONG; i++) {
++		reg = host1x_sync_readl(host1x,
++				HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS +
++				i * REGISTER_STRIDE);
++		for_each_set_bit(id, &reg, BITS_PER_LONG) {
++			struct host1x_intr_syncpt *sp =
++				intr->syncpt + (i * BITS_PER_LONG + id);
++			host1x_intr_syncpt_thresh_isr(sp);
++			queue_work(intr->wq, &sp->work);
++		}
++	}
++
++	return IRQ_HANDLED;
++}
++
++static void host1x_intr_init_host_sync(struct host1x_intr *intr)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	int i, err;
++
++	host1x_sync_writel(host1x, 0xffffffffUL,
++		HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE);
++	host1x_sync_writel(host1x, 0xffffffffUL,
++		HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS);
++
++	for (i = 0; i < host1x->info.nb_pts; i++)
++		INIT_WORK(&intr->syncpt[i].work, syncpt_thresh_cascade_fn);
++
++	err = devm_request_irq(&host1x->dev->dev, intr->syncpt_irq,
++				syncpt_thresh_cascade_isr,
++				IRQF_SHARED, "host1x_syncpt", host1x);
++	WARN_ON(IS_ERR_VALUE(err));
++
++	/* disable the ip_busy_timeout. this prevents write drops */
++	host1x_sync_writel(host1x, 0, HOST1X_SYNC_IP_BUSY_TIMEOUT);
++
++	/*
++	 * increase the auto-ack timout to the maximum value. 2d will hang
++	 * otherwise on Tegra2.
++	 */
++	host1x_sync_writel(host1x, 0xff, HOST1X_SYNC_CTXSW_TIMEOUT_CFG);
++}
++
++static void host1x_intr_set_host_clocks_per_usec(struct host1x_intr *intr,
++		u32 cpm)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	/* write microsecond clock register */
++	host1x_sync_writel(host1x, cpm, HOST1X_SYNC_USEC_CLK);
++}
++
++static void host1x_intr_set_syncpt_threshold(struct host1x_intr *intr,
++	u32 id, u32 thresh)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	host1x_sync_writel(host1x, thresh,
++		HOST1X_SYNC_SYNCPT_INT_THRESH_0 + id * REGISTER_STRIDE);
++}
++
++static void host1x_intr_enable_syncpt_intr(struct host1x_intr *intr, u32 id)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++
++	host1x_sync_writel(host1x, BIT_MASK(id),
++			HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0 +
++			BIT_WORD(id) * REGISTER_STRIDE);
++}
++
++static void host1x_intr_disable_syncpt_intr(struct host1x_intr *intr, u32 id)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++
++	host1x_sync_writel(host1x, BIT_MASK(id),
++			HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE +
++			BIT_WORD(id) * REGISTER_STRIDE);
++
++	host1x_sync_writel(host1x, BIT_MASK(id),
++		HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS +
++		BIT_WORD(id) * REGISTER_STRIDE);
++}
++
++static void host1x_intr_disable_all_syncpt_intrs(struct host1x_intr *intr)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	u32 reg;
++
++	for (reg = 0; reg <= BIT_WORD(host1x->info.nb_pts) * REGISTER_STRIDE;
++			reg += REGISTER_STRIDE) {
++		host1x_sync_writel(host1x, 0xffffffffu,
++				HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE +
++				reg);
++
++		host1x_sync_writel(host1x, 0xffffffffu,
++			HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS + reg);
++	}
++}
++
++/*
++ * Sync point threshold interrupt service function
++ * Handles sync point threshold triggers, in interrupt context
++ */
++static void host1x_intr_syncpt_thresh_isr(struct host1x_intr_syncpt *syncpt)
++{
++	unsigned int id = syncpt->id;
++	struct host1x_intr *intr = intr_syncpt_to_intr(syncpt);
++	struct host1x *host1x = intr_to_host1x(intr);
++	u32 reg = BIT_WORD(id) * REGISTER_STRIDE;
++
++	host1x_sync_writel(host1x, BIT_MASK(id),
++		HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE + reg);
++	host1x_sync_writel(host1x, BIT_MASK(id),
++		HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS + reg);
++}
++
++static int host1x_free_syncpt_irq(struct host1x_intr *intr)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++
++	devm_free_irq(&host1x->dev->dev, intr->syncpt_irq, host1x);
++	flush_workqueue(intr->wq);
++	return 0;
++}
++
++static const struct host1x_intr_ops host1x_intr_ops = {
++	.init_host_sync = host1x_intr_init_host_sync,
++	.set_host_clocks_per_usec = host1x_intr_set_host_clocks_per_usec,
++	.set_syncpt_threshold = host1x_intr_set_syncpt_threshold,
++	.enable_syncpt_intr = host1x_intr_enable_syncpt_intr,
++	.disable_syncpt_intr = host1x_intr_disable_syncpt_intr,
++	.disable_all_syncpt_intrs = host1x_intr_disable_all_syncpt_intrs,
++	.free_syncpt_irq = host1x_free_syncpt_irq,
++};
+diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
+new file mode 100644
+index 0000000..26099b8
+--- /dev/null
++++ b/drivers/gpu/host1x/intr.c
+@@ -0,0 +1,356 @@
++/*
++ * Tegra host1x Interrupt Management
 + *
 + * Copyright (c) 2010-2013, NVIDIA Corporation.
 + *
@@ -103,1035 +451,659 @@ index 0000000..cd2b1ef
 + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/list.h>
++#include "intr.h"
++#include <linux/interrupt.h>
 +#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
++#include <linux/irq.h>
 +#include "dev.h"
-+#include "hw/host1x01.h"
 +
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/host1x.h>
++/* Wait list management */
 +
-+#define DRIVER_NAME		"tegra-host1x"
-+
-+void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r)
-+{
-+	void __iomem *sync_regs = host1x->regs + host1x->info.sync_offset;
-+
-+	writel(v, sync_regs + r);
-+}
-+
-+u32 host1x_sync_readl(struct host1x *host1x, u32 r)
-+{
-+	void __iomem *sync_regs = host1x->regs + host1x->info.sync_offset;
-+
-+	return readl(sync_regs + r);
-+}
-+
-+static struct host1x_device_info host1x_info = {
-+	.nb_channels	= 8,
-+	.nb_pts		= 32,
-+	.nb_mlocks	= 16,
-+	.nb_bases	= 8,
-+	.init		= host1x01_init,
-+	.sync_offset	= 0x3000,
++struct host1x_waitlist {
++	struct list_head list;
++	struct kref refcount;
++	u32 thresh;
++	enum host1x_intr_action action;
++	atomic_t state;
++	void *data;
++	int count;
 +};
 +
-+static struct of_device_id host1x_match[] = {
-+	{ .compatible = "nvidia,tegra30-host1x", .data = &host1x_info, },
-+	{ .compatible = "nvidia,tegra20-host1x", .data = &host1x_info, },
-+	{ },
++enum waitlist_state {
++	WLS_PENDING,
++	WLS_REMOVED,
++	WLS_CANCELLED,
++	WLS_HANDLED
 +};
 +
-+static int host1x_probe(struct platform_device *dev)
++static void waiter_release(struct kref *kref)
 +{
-+	struct host1x *host;
-+	struct resource *regs;
-+	int syncpt_irq;
-+	int err;
-+	const struct of_device_id *devid =
-+		of_match_device(host1x_match, &dev->dev);
++	kfree(container_of(kref, struct host1x_waitlist, refcount));
++}
 +
-+	if (!devid)
++/*
++ * add a waiter to a waiter queue, sorted by threshold
++ * returns true if it was added at the head of the queue
++ */
++static bool add_waiter_to_queue(struct host1x_waitlist *waiter,
++				struct list_head *queue)
++{
++	struct host1x_waitlist *pos;
++	u32 thresh = waiter->thresh;
++
++	list_for_each_entry_reverse(pos, queue, list)
++		if ((s32)(pos->thresh - thresh) <= 0) {
++			list_add(&waiter->list, &pos->list);
++			return false;
++		}
++
++	list_add(&waiter->list, queue);
++	return true;
++}
++
++/*
++ * run through a waiter queue for a single sync point ID
++ * and gather all completed waiters into lists by actions
++ */
++static void remove_completed_waiters(struct list_head *head, u32 sync,
++			struct list_head completed[HOST1X_INTR_ACTION_COUNT])
++{
++	struct list_head *dest;
++	struct host1x_waitlist *waiter, *next;
++
++	list_for_each_entry_safe(waiter, next, head, list) {
++		if ((s32)(waiter->thresh - sync) > 0)
++			break;
++
++		dest = completed + waiter->action;
++
++		/* PENDING->REMOVED or CANCELLED->HANDLED */
++		if (atomic_inc_return(&waiter->state) == WLS_HANDLED || !dest) {
++			list_del(&waiter->list);
++			kref_put(&waiter->refcount, waiter_release);
++		} else {
++			list_move_tail(&waiter->list, dest);
++		}
++	}
++}
++
++static void reset_threshold_interrupt(struct host1x_intr *intr,
++			       struct list_head *head,
++			       unsigned int id)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	u32 thresh = list_first_entry(head,
++				struct host1x_waitlist, list)->thresh;
++
++	host1x->intr_op.set_syncpt_threshold(intr, id, thresh);
++	host1x->intr_op.enable_syncpt_intr(intr, id);
++}
++
++static void action_wakeup(struct host1x_waitlist *waiter)
++{
++	wait_queue_head_t *wq = waiter->data;
++
++	wake_up(wq);
++}
++
++static void action_wakeup_interruptible(struct host1x_waitlist *waiter)
++{
++	wait_queue_head_t *wq = waiter->data;
++
++	wake_up_interruptible(wq);
++}
++
++typedef void (*action_handler)(struct host1x_waitlist *waiter);
++
++static action_handler action_handlers[HOST1X_INTR_ACTION_COUNT] = {
++	action_wakeup,
++	action_wakeup_interruptible,
++};
++
++static void run_handlers(struct list_head completed[HOST1X_INTR_ACTION_COUNT])
++{
++	struct list_head *head = completed;
++	int i;
++
++	for (i = 0; i < HOST1X_INTR_ACTION_COUNT; ++i, ++head) {
++		action_handler handler = action_handlers[i];
++		struct host1x_waitlist *waiter, *next;
++
++		list_for_each_entry_safe(waiter, next, head, list) {
++			list_del(&waiter->list);
++			handler(waiter);
++			WARN_ON(atomic_xchg(&waiter->state, WLS_HANDLED)
++					!= WLS_REMOVED);
++			kref_put(&waiter->refcount, waiter_release);
++		}
++	}
++}
++
++/*
++ * Remove & handle all waiters that have completed for the given syncpt
++ */
++static int process_wait_list(struct host1x_intr *intr,
++			     struct host1x_intr_syncpt *syncpt,
++			     u32 threshold)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	struct list_head completed[HOST1X_INTR_ACTION_COUNT];
++	unsigned int i;
++	int empty;
++
++	for (i = 0; i < HOST1X_INTR_ACTION_COUNT; ++i)
++		INIT_LIST_HEAD(completed + i);
++
++	spin_lock(&syncpt->lock);
++
++	remove_completed_waiters(&syncpt->wait_head, threshold, completed);
++
++	empty = list_empty(&syncpt->wait_head);
++	if (empty)
++		host1x->intr_op.disable_syncpt_intr(intr, syncpt->id);
++	else
++		reset_threshold_interrupt(intr, &syncpt->wait_head,
++					  syncpt->id);
++
++	spin_unlock(&syncpt->lock);
++
++	run_handlers(completed);
++
++	return empty;
++}
++
++/*
++ * Sync point threshold interrupt service thread function
++ * Handles sync point threshold triggers, in thread context
++ */
++irqreturn_t host1x_syncpt_thresh_fn(void *dev_id)
++{
++	struct host1x_intr_syncpt *syncpt = dev_id;
++	unsigned int id = syncpt->id;
++	struct host1x_intr *intr = intr_syncpt_to_intr(syncpt);
++	struct host1x *host1x = intr_to_host1x(intr);
++
++	(void)process_wait_list(intr, syncpt,
++				host1x_syncpt_load_min(host1x->syncpt + id));
++
++	return IRQ_HANDLED;
++}
++
++int host1x_intr_add_action(struct host1x_intr *intr, u32 id, u32 thresh,
++			enum host1x_intr_action action, void *data,
++			void *_waiter,
++			void **ref)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	struct host1x_waitlist *waiter = _waiter;
++	struct host1x_intr_syncpt *syncpt;
++	int queue_was_empty;
++
++	if (waiter == NULL) {
++		pr_warn("%s: NULL waiter\n", __func__);
 +		return -EINVAL;
-+
-+	regs = platform_get_resource(dev, IORESOURCE_MEM, 0);
-+	if (!regs) {
-+		dev_err(&dev->dev, "missing regs\n");
-+		return -ENXIO;
 +	}
 +
-+	syncpt_irq = platform_get_irq(dev, 0);
-+	if (IS_ERR_VALUE(syncpt_irq)) {
-+		dev_err(&dev->dev, "missing irq\n");
-+		return -ENXIO;
++	/* initialize a new waiter */
++	INIT_LIST_HEAD(&waiter->list);
++	kref_init(&waiter->refcount);
++	if (ref)
++		kref_get(&waiter->refcount);
++	waiter->thresh = thresh;
++	waiter->action = action;
++	atomic_set(&waiter->state, WLS_PENDING);
++	waiter->data = data;
++	waiter->count = 1;
++
++	syncpt = intr->syncpt + id;
++
++	spin_lock(&syncpt->lock);
++
++	queue_was_empty = list_empty(&syncpt->wait_head);
++
++	if (add_waiter_to_queue(waiter, &syncpt->wait_head)) {
++		/* added at head of list - new threshold value */
++		host1x->intr_op.set_syncpt_threshold(intr, id, thresh);
++
++		/* added as first waiter - enable interrupt */
++		if (queue_was_empty)
++			host1x->intr_op.enable_syncpt_intr(intr, id);
 +	}
 +
-+	host = devm_kzalloc(&dev->dev, sizeof(*host), GFP_KERNEL);
-+	if (!host) {
-+		dev_err(&dev->dev, "failed to alloc host1x\n");
++	spin_unlock(&syncpt->lock);
++
++	if (ref)
++		*ref = waiter;
++	return 0;
++}
++
++void *host1x_intr_alloc_waiter(void)
++{
++	return kzalloc(sizeof(struct host1x_waitlist), GFP_KERNEL);
++}
++
++void host1x_intr_put_ref(struct host1x_intr *intr, u32 id, void *ref)
++{
++	struct host1x_waitlist *waiter = ref;
++	struct host1x_intr_syncpt *syncpt;
++	struct host1x *host1x = intr_to_host1x(intr);
++
++	while (atomic_cmpxchg(&waiter->state,
++				WLS_PENDING, WLS_CANCELLED) == WLS_REMOVED)
++		schedule();
++
++	syncpt = intr->syncpt + id;
++	(void)process_wait_list(intr, syncpt,
++				host1x_syncpt_load_min(host1x->syncpt + id));
++
++	kref_put(&waiter->refcount, waiter_release);
++}
++
++int host1x_intr_init(struct host1x_intr *intr, u32 irq_sync)
++{
++	unsigned int id;
++	struct host1x *host1x = intr_to_host1x(intr);
++	u32 nb_pts = host1x_syncpt_nb_pts(host1x);
++
++	intr->syncpt = devm_kzalloc(&host1x->dev->dev,
++			sizeof(struct host1x_intr_syncpt) *
++			host1x->info.nb_pts,
++			GFP_KERNEL);
++
++	if (!host1x->intr.syncpt)
 +		return -ENOMEM;
++
++	mutex_init(&intr->mutex);
++	intr->syncpt_irq = irq_sync;
++	intr->wq = create_workqueue("host_syncpt");
++	if (!intr->wq)
++		return -ENOMEM;
++
++	for (id = 0; id < nb_pts; ++id) {
++		struct host1x_intr_syncpt *syncpt = &intr->syncpt[id];
++
++		syncpt->intr = &host1x->intr;
++		syncpt->id = id;
++		spin_lock_init(&syncpt->lock);
++		INIT_LIST_HEAD(&syncpt->wait_head);
++		snprintf(syncpt->thresh_irq_name,
++			sizeof(syncpt->thresh_irq_name),
++			"host1x_sp_%02d", id);
 +	}
-+
-+	host->dev = dev;
-+	memcpy(&host->info, devid->data, sizeof(struct host1x_device_info));
-+
-+	/* set common host1x device data */
-+	platform_set_drvdata(dev, host);
-+
-+	host->regs = devm_request_and_ioremap(&dev->dev, regs);
-+	if (!host->regs) {
-+		dev_err(&dev->dev, "failed to remap host registers\n");
-+		return -ENXIO;
-+	}
-+
-+	if (host->info.init) {
-+		err = host->info.init(host);
-+		if (err)
-+			return err;
-+	}
-+
-+	err = host1x_syncpt_init(host);
-+	if (err)
-+		return err;
-+
-+	host->clk = devm_clk_get(&dev->dev, NULL);
-+	if (IS_ERR(host->clk)) {
-+		dev_err(&dev->dev, "failed to get clock\n");
-+		err = PTR_ERR(host->clk);
-+		goto fail_deinit_syncpt;
-+	}
-+
-+	err = clk_prepare_enable(host->clk);
-+	if (err < 0) {
-+		dev_err(&dev->dev, "failed to enable clock\n");
-+		goto fail_deinit_syncpt;
-+	}
-+
-+	host1x_syncpt_reset(host);
-+
-+	dev_info(&dev->dev, "initialized\n");
 +
 +	return 0;
++}
 +
-+fail_deinit_syncpt:
-+	host1x_syncpt_deinit(host);
++void host1x_intr_deinit(struct host1x_intr *intr)
++{
++	host1x_intr_stop(intr);
++	destroy_workqueue(intr->wq);
++}
++
++void host1x_intr_start(struct host1x_intr *intr, u32 hz)
++{
++	struct host1x *host1x = intr_to_host1x(intr);
++	mutex_lock(&intr->mutex);
++
++	host1x->intr_op.init_host_sync(intr);
++	host1x->intr_op.set_host_clocks_per_usec(intr,
++			DIV_ROUND_UP(hz, 1000000));
++
++	mutex_unlock(&intr->mutex);
++}
++
++void host1x_intr_stop(struct host1x_intr *intr)
++{
++	unsigned int id;
++	struct host1x *host1x = intr_to_host1x(intr);
++	struct host1x_intr_syncpt *syncpt;
++	u32 nb_pts = host1x_syncpt_nb_pts(intr_to_host1x(intr));
++
++	mutex_lock(&intr->mutex);
++
++	host1x->intr_op.disable_all_syncpt_intrs(intr);
++
++	for (id = 0, syncpt = intr->syncpt;
++	     id < nb_pts;
++	     ++id, ++syncpt) {
++		struct host1x_waitlist *waiter, *next;
++		list_for_each_entry_safe(waiter, next,
++				&syncpt->wait_head, list) {
++			if (atomic_cmpxchg(&waiter->state,
++						WLS_CANCELLED, WLS_HANDLED)
++				== WLS_CANCELLED) {
++				list_del(&waiter->list);
++				kref_put(&waiter->refcount, waiter_release);
++			}
++		}
++
++		if (!list_empty(&syncpt->wait_head)) {  /* output diagnostics */
++			mutex_unlock(&intr->mutex);
++			pr_warn("%s cannot stop syncpt intr id=%d\n",
++					__func__, id);
++			return;
++		}
++	}
++
++	host1x->intr_op.free_syncpt_irq(intr);
++
++	mutex_unlock(&intr->mutex);
++}
+diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
+new file mode 100644
+index 0000000..679a7b4
+--- /dev/null
++++ b/drivers/gpu/host1x/intr.h
+@@ -0,0 +1,103 @@
++/*
++ * Tegra host1x Interrupt Management
++ *
++ * Copyright (c) 2010-2013, NVIDIA Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef __HOST1X_INTR_H
++#define __HOST1X_INTR_H
++
++#include <linux/interrupt.h>
++#include <linux/workqueue.h>
++
++enum host1x_intr_action {
++	/*
++	 * Wake up a  task.
++	 * 'data' points to a wait_queue_head_t
++	 */
++	HOST1X_INTR_ACTION_WAKEUP,
++
++	/*
++	 * Wake up a interruptible task.
++	 * 'data' points to a wait_queue_head_t
++	 */
++	HOST1X_INTR_ACTION_WAKEUP_INTERRUPTIBLE,
++
++	HOST1X_INTR_ACTION_COUNT
++};
++
++struct host1x_intr;
++
++struct host1x_intr_syncpt {
++	struct host1x_intr *intr;
++	u8 id;
++	spinlock_t lock;
++	struct list_head wait_head;
++	char thresh_irq_name[12];
++	struct work_struct work;
++};
++
++struct host1x_intr {
++	struct host1x_intr_syncpt *syncpt;
++	struct mutex mutex;
++	int syncpt_irq;
++	struct workqueue_struct *wq;
++};
++#define intr_to_host1x(x) container_of(x, struct host1x, intr)
++#define intr_syncpt_to_intr(is) (is->intr)
++
++/*
++ * Schedule an action to be taken when a sync point reaches the given threshold.
++ *
++ * @id the sync point
++ * @thresh the threshold
++ * @action the action to take
++ * @data a pointer to extra data depending on action, see above
++ * @waiter waiter allocated with host1x_intr_alloc_waiter - assumes ownership
++ * @ref must be passed if cancellation is possible, else NULL
++ *
++ * This is a non-blocking api.
++ */
++int host1x_intr_add_action(struct host1x_intr *intr, u32 id, u32 thresh,
++			enum host1x_intr_action action, void *data,
++			void *waiter,
++			void **ref);
++
++/*
++ * Allocate a waiter.
++ */
++void *host1x_intr_alloc_waiter(void);
++
++/*
++ * Unreference an action submitted to host1x_intr_add_action().
++ * You must call this if you passed non-NULL as ref.
++ * @ref the ref returned from host1x_intr_add_action()
++ */
++void host1x_intr_put_ref(struct host1x_intr *intr, u32 id, void *ref);
++
++/* Initialize host1x sync point interrupt */
++int host1x_intr_init(struct host1x_intr *intr, u32 irq_sync);
++
++/* Deinitialize host1x sync point interrupt */
++void host1x_intr_deinit(struct host1x_intr *intr);
++
++/* Enable host1x sync point interrupt */
++void host1x_intr_start(struct host1x_intr *intr, u32 hz);
++
++/* Disable host1x sync point interrupt */
++void host1x_intr_stop(struct host1x_intr *intr);
++
++irqreturn_t host1x_syncpt_thresh_fn(void *dev_id);
++#endif
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index b45651f..32e2b42 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -22,9 +22,12 @@
+ #include <linux/module.h>
+ #include "syncpt.h"
+ #include "dev.h"
++#include "intr.h"
+ #include <trace/events/host1x.h>
+ 
+ #define MAX_SYNCPT_LENGTH	5
++#define SYNCPT_CHECK_PERIOD (2 * HZ)
++#define MAX_STUCK_CHECK_COUNT 15
+ 
+ static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
+ 		struct platform_device *pdev,
+@@ -119,6 +122,166 @@ void host1x_syncpt_incr(struct host1x_syncpt *sp)
+ 	host1x_syncpt_cpu_incr(sp);
+ }
+ 
++/*
++ * Updated sync point form hardware, and returns true if syncpoint is expired,
++ * false if we may need to wait
++ */
++static bool syncpt_load_min_is_expired(
++	struct host1x_syncpt *sp,
++	u32 thresh)
++{
++	sp->dev->syncpt_op.load_min(sp);
++	return host1x_syncpt_is_expired(sp, thresh);
++}
++
++/*
++ * Main entrypoint for syncpoint value waits.
++ */
++int host1x_syncpt_wait(struct host1x_syncpt *sp,
++			u32 thresh, long timeout, u32 *value)
++{
++	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
++	void *ref;
++	void *waiter;
++	int err = 0, check_count = 0;
++	u32 val;
++
++	if (value)
++		*value = 0;
++
++	/* first check cache */
++	if (host1x_syncpt_is_expired(sp, thresh)) {
++		if (value)
++			*value = host1x_syncpt_read_min(sp);
++		return 0;
++	}
++
++	/* try to read from register */
++	val = sp->dev->syncpt_op.load_min(sp);
++	if (host1x_syncpt_is_expired(sp, thresh)) {
++		if (value)
++			*value = val;
++		goto done;
++	}
++
++	if (!timeout) {
++		err = -EAGAIN;
++		goto done;
++	}
++
++	/* schedule a wakeup when the syncpoint value is reached */
++	waiter = host1x_intr_alloc_waiter();
++	if (!waiter) {
++		err = -ENOMEM;
++		goto done;
++	}
++
++	err = host1x_intr_add_action(&(sp->dev->intr), sp->id, thresh,
++				HOST1X_INTR_ACTION_WAKEUP_INTERRUPTIBLE, &wq,
++				waiter,
++				&ref);
++	if (err)
++		goto done;
++
++	err = -EAGAIN;
++	/* Caller-specified timeout may be impractically low */
++	if (timeout < 0)
++		timeout = LONG_MAX;
++
++	/* wait for the syncpoint, or timeout, or signal */
++	while (timeout) {
++		long check = min_t(long, SYNCPT_CHECK_PERIOD, timeout);
++		int remain = wait_event_interruptible_timeout(wq,
++				syncpt_load_min_is_expired(sp, thresh),
++				check);
++		if (remain > 0 || host1x_syncpt_is_expired(sp, thresh)) {
++			if (value)
++				*value = host1x_syncpt_read_min(sp);
++			err = 0;
++			break;
++		}
++		if (remain < 0) {
++			err = remain;
++			break;
++		}
++		timeout -= check;
++		if (timeout && check_count <= MAX_STUCK_CHECK_COUNT) {
++			dev_warn(&sp->dev->dev->dev,
++				"%s: syncpoint id %d (%s) stuck waiting %d, timeout=%ld\n",
++				 current->comm, sp->id, sp->name,
++				 thresh, timeout);
++			sp->dev->syncpt_op.debug(sp);
++			check_count++;
++		}
++	}
++	host1x_intr_put_ref(&(sp->dev->intr), sp->id, ref);
++
++done:
 +	return err;
 +}
-+
-+static int __exit host1x_remove(struct platform_device *dev)
-+{
-+	struct host1x *host = platform_get_drvdata(dev);
-+	host1x_syncpt_deinit(host);
-+	clk_disable_unprepare(host->clk);
-+	return 0;
-+}
-+
-+static struct platform_driver platform_driver = {
-+	.probe = host1x_probe,
-+	.remove = __exit_p(host1x_remove),
-+	.driver = {
-+		.owner = THIS_MODULE,
-+		.name = DRIVER_NAME,
-+		.of_match_table = host1x_match,
-+	},
-+};
-+
-+module_platform_driver(platform_driver);
-+
-+MODULE_AUTHOR("Terje Bergstrom <tbergstrom@nvidia.com>");
-+MODULE_DESCRIPTION("Host1x driver for Tegra products");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-new file mode 100644
-index 0000000..d8f5979
---- /dev/null
-+++ b/drivers/gpu/host1x/dev.h
-@@ -0,0 +1,73 @@
-+/*
-+ * Copyright (c) 2012-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef HOST1X_DEV_H
-+#define HOST1X_DEV_H
-+
-+#include "syncpt.h"
-+
-+struct host1x;
-+struct host1x_syncpt;
-+struct platform_device;
-+
-+struct host1x_syncpt_ops {
-+	void (*reset)(struct host1x_syncpt *);
-+	void (*reset_wait_base)(struct host1x_syncpt *);
-+	void (*read_wait_base)(struct host1x_syncpt *);
-+	u32 (*load_min)(struct host1x_syncpt *);
-+	void (*cpu_incr)(struct host1x_syncpt *);
-+	int (*patch_wait)(struct host1x_syncpt *, void *patch_addr);
-+	void (*debug)(struct host1x_syncpt *);
-+	const char * (*name)(struct host1x_syncpt *);
-+};
-+
-+struct host1x_device_info {
-+	int	nb_channels;		/* host1x: num channels supported */
-+	int	nb_pts;			/* host1x: num syncpoints supported */
-+	int	nb_bases;		/* host1x: num syncpoints supported */
-+	int	nb_mlocks;		/* host1x: number of mlocks */
-+	int	(*init)(struct host1x *); /* initialize per SoC ops */
-+	int	sync_offset;
-+};
-+
-+struct host1x {
-+	void __iomem *regs;
-+	struct host1x_syncpt *syncpt;
-+	struct platform_device *dev;
-+	struct host1x_device_info info;
-+	struct clk *clk;
-+
-+	struct host1x_syncpt_ops syncpt_op;
-+
-+	struct dentry *debugfs;
-+};
-+
-+static inline
-+struct host1x *host1x_get_host(struct platform_device *_dev)
-+{
-+	struct platform_device *pdev;
-+
-+	if (_dev->dev.parent) {
-+		pdev = to_platform_device(_dev->dev.parent);
-+		return platform_get_drvdata(pdev);
-+	} else
-+		return platform_get_drvdata(_dev);
-+}
-+
-+void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
-+u32 host1x_sync_readl(struct host1x *host1x, u32 r);
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/Makefile b/drivers/gpu/host1x/hw/Makefile
-new file mode 100644
-index 0000000..9b50863
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/Makefile
-@@ -0,0 +1,6 @@
-+ccflags-y = -Idrivers/gpu/host1x
-+
-+host1x-hw-objs  = \
-+	host1x01.o
-+
-+obj-$(CONFIG_TEGRA_HOST1X) += host1x-hw.o
-diff --git a/drivers/gpu/host1x/hw/host1x01.c b/drivers/gpu/host1x/hw/host1x01.c
-new file mode 100644
-index 0000000..ea6e604
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x01.c
-@@ -0,0 +1,35 @@
-+/*
-+ * Host1x init for T20 and T30 Architecture Chips
-+ *
-+ * Copyright (c) 2011-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+
-+#include "hw/host1x01.h"
-+#include "dev.h"
-+#include "hw/host1x01_hardware.h"
-+
-+#include "hw/syncpt_hw.c"
-+
-+int host1x01_init(struct host1x *host)
-+{
-+	host->syncpt_op = host1x_syncpt_ops;
-+
-+	return 0;
-+}
-diff --git a/drivers/gpu/host1x/hw/host1x01.h b/drivers/gpu/host1x/hw/host1x01.h
-new file mode 100644
-index 0000000..6ec30051
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x01.h
-@@ -0,0 +1,25 @@
-+/*
-+ * Host1x init for T20 and T30 Architecture Chips
-+ *
-+ * Copyright (c) 2011-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#ifndef HOST1X_HOST1X01_H
-+#define HOST1X_HOST1X01_H
-+
-+struct host1x;
-+
-+int host1x01_init(struct host1x *);
-+
-+#endif /* HOST1X_HOST1X01_H_ */
-diff --git a/drivers/gpu/host1x/hw/host1x01_hardware.h b/drivers/gpu/host1x/hw/host1x01_hardware.h
-new file mode 100644
-index 0000000..c1d5324
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/host1x01_hardware.h
-@@ -0,0 +1,26 @@
-+/*
-+ * Tegra host1x Register Offsets for Tegra20 and Tegra30
-+ *
-+ * Copyright (c) 2010-2013 NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __HOST1X_HOST1X01_HARDWARE_H
-+#define __HOST1X_HOST1X01_HARDWARE_H
-+
-+#include <linux/types.h>
-+#include <linux/bitops.h>
-+#include "hw_host1x01_sync.h"
-+
-+#endif
-diff --git a/drivers/gpu/host1x/hw/hw_host1x01_sync.h b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
-new file mode 100644
-index 0000000..b12c1a4
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
-@@ -0,0 +1,72 @@
-+/*
-+ * Copyright (c) 2012-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+
-+ /*
-+  * Function naming determines intended use:
-+  *
-+  *     <x>_r(void) : Returns the offset for register <x>.
-+  *
-+  *     <x>_w(void) : Returns the word offset for word (4 byte) element <x>.
-+  *
-+  *     <x>_<y>_s(void) : Returns size of field <y> of register <x> in bits.
-+  *
-+  *     <x>_<y>_f(u32 v) : Returns a value based on 'v' which has been shifted
-+  *         and masked to place it at field <y> of register <x>.  This value
-+  *         can be |'d with others to produce a full register value for
-+  *         register <x>.
-+  *
-+  *     <x>_<y>_m(void) : Returns a mask for field <y> of register <x>.  This
-+  *         value can be ~'d and then &'d to clear the value of field <y> for
-+  *         register <x>.
-+  *
-+  *     <x>_<y>_<z>_f(void) : Returns the constant value <z> after being shifted
-+  *         to place it at field <y> of register <x>.  This value can be |'d
-+  *         with others to produce a full register value for <x>.
-+  *
-+  *     <x>_<y>_v(u32 r) : Returns the value of field <y> from a full register
-+  *         <x> value 'r' after being shifted to place its LSB at bit 0.
-+  *         This value is suitable for direct comparison with other unshifted
-+  *         values appropriate for use in field <y> of register <x>.
-+  *
-+  *     <x>_<y>_<z>_v(void) : Returns the constant value for <z> defined for
-+  *         field <y> of register <x>.  This value is suitable for direct
-+  *         comparison with unshifted values appropriate for use in field <y>
-+  *         of register <x>.
-+  */
-+
-+#ifndef __hw_host1x01_sync_h__
-+#define __hw_host1x01_sync_h__
-+
-+static inline u32 host1x_sync_syncpt_0_r(void)
-+{
-+	return 0x400;
-+}
-+#define HOST1X_SYNC_SYNCPT_0 \
-+	host1x_sync_syncpt_0_r()
-+static inline u32 host1x_sync_syncpt_base_0_r(void)
-+{
-+	return 0x600;
-+}
-+#define HOST1X_SYNC_SYNCPT_BASE_0 \
-+	host1x_sync_syncpt_base_0_r()
-+static inline u32 host1x_sync_syncpt_cpu_incr_r(void)
-+{
-+	return 0x700;
-+}
-+#define HOST1X_SYNC_SYNCPT_CPU_INCR \
-+	host1x_sync_syncpt_cpu_incr_r()
-+#endif /* __hw_host1x01_sync_h__ */
-diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
-new file mode 100644
-index 0000000..16e3ada
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/syncpt_hw.c
-@@ -0,0 +1,146 @@
-+/*
-+ * Tegra host1x Syncpoints
-+ *
-+ * Copyright (c) 2010-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/io.h>
-+#include "syncpt.h"
-+#include "dev.h"
++EXPORT_SYMBOL(host1x_syncpt_wait);
 +
 +/*
-+ * Write the current syncpoint value back to hw.
++ * Returns true if syncpoint is expired, false if we may need to wait
 + */
-+static void syncpt_reset(struct host1x_syncpt *sp)
++bool host1x_syncpt_is_expired(
++	struct host1x_syncpt *sp,
++	u32 thresh)
 +{
-+	struct host1x *dev = sp->dev;
-+	int min = host1x_syncpt_read_min(sp);
-+	host1x_sync_writel(dev, min, HOST1X_SYNC_SYNCPT_0 + sp->id * 4);
++	u32 current_val;
++	u32 future_val;
++	smp_rmb();
++	current_val = (u32)atomic_read(&sp->min_val);
++	future_val = (u32)atomic_read(&sp->max_val);
++
++	/* Note the use of unsigned arithmetic here (mod 1<<32).
++	 *
++	 * c = current_val = min_val	= the current value of the syncpoint.
++	 * t = thresh			= the value we are checking
++	 * f = future_val  = max_val	= the value c will reach when all
++	 *				  outstanding increments have completed.
++	 *
++	 * Note that c always chases f until it reaches f.
++	 *
++	 * Dtf = (f - t)
++	 * Dtc = (c - t)
++	 *
++	 *  Consider all cases:
++	 *
++	 *	A) .....c..t..f.....	Dtf < Dtc	need to wait
++	 *	B) .....c.....f..t..	Dtf > Dtc	expired
++	 *	C) ..t..c.....f.....	Dtf > Dtc	expired	   (Dct very large)
++	 *
++	 *  Any case where f==c: always expired (for any t).	Dtf == Dcf
++	 *  Any case where t==c: always expired (for any f).	Dtf >= Dtc (because Dtc==0)
++	 *  Any case where t==f!=c: always wait.		Dtf <  Dtc (because Dtf==0,
++	 *							Dtc!=0)
++	 *
++	 *  Other cases:
++	 *
++	 *	A) .....t..f..c.....	Dtf < Dtc	need to wait
++	 *	A) .....f..c..t.....	Dtf < Dtc	need to wait
++	 *	A) .....f..t..c.....	Dtf > Dtc	expired
++	 *
++	 *   So:
++	 *	   Dtf >= Dtc implies EXPIRED	(return true)
++	 *	   Dtf <  Dtc implies WAIT	(return false)
++	 *
++	 * Note: If t is expired then we *cannot* wait on it. We would wait
++	 * forever (hang the system).
++	 *
++	 * Note: do NOT get clever and remove the -thresh from both sides. It
++	 * is NOT the same.
++	 *
++	 * If future valueis zero, we have a client managed sync point. In that
++	 * case we do a direct comparison.
++	 */
++	if (!host1x_syncpt_client_managed(sp))
++		return future_val - thresh >= current_val - thresh;
++	else
++		return (s32)(current_val - thresh) >= 0;
 +}
 +
-+/*
-+ * Write the current waitbase value back to hw.
-+ */
-+static void syncpt_reset_wait_base(struct host1x_syncpt *sp)
-+{
-+	struct host1x *dev = sp->dev;
-+	host1x_sync_writel(dev, sp->base_val,
-+			HOST1X_SYNC_SYNCPT_BASE_0 + sp->id * 4);
-+}
-+
-+/*
-+ * Read waitbase value from hw.
-+ */
-+static void syncpt_read_wait_base(struct host1x_syncpt *sp)
-+{
-+	struct host1x *dev = sp->dev;
-+	sp->base_val = host1x_sync_readl(dev,
-+				HOST1X_SYNC_SYNCPT_BASE_0 + sp->id * 4);
-+}
-+
-+/*
-+ * Updates the last value read from hardware.
-+ * (was host1x_syncpt_load_min)
-+ */
-+static u32 syncpt_load_min(struct host1x_syncpt *sp)
-+{
-+	struct host1x *dev = sp->dev;
-+	u32 old, live;
-+
-+	do {
-+		old = host1x_syncpt_read_min(sp);
-+		live = host1x_sync_readl(dev,
-+				HOST1X_SYNC_SYNCPT_0 + sp->id * 4);
-+	} while ((u32)atomic_cmpxchg(&sp->min_val, old, live) != old);
-+
-+	if (!host1x_syncpt_check_max(sp, live))
-+		dev_err(&dev->dev->dev,
-+				"%s failed: id=%u, min=%d, max=%d\n",
-+				__func__,
-+				sp->id,
-+				host1x_syncpt_read_min(sp),
-+				host1x_syncpt_read_max(sp));
-+
-+	return live;
-+}
-+
-+/*
-+ * Write a cpu syncpoint increment to the hardware, without touching
-+ * the cache. Caller is responsible for host being powered.
-+ */
-+static void syncpt_cpu_incr(struct host1x_syncpt *sp)
-+{
-+	struct host1x *dev = sp->dev;
-+	u32 reg_offset = sp->id / 32;
-+
-+	if (!host1x_syncpt_client_managed(sp)
-+			&& host1x_syncpt_min_eq_max(sp)) {
-+		dev_err(&dev->dev->dev,
-+			"Trying to increment syncpoint id %d beyond max\n",
-+			sp->id);
-+		return;
-+	}
-+	host1x_sync_writel(dev, BIT_MASK(sp->id),
-+			HOST1X_SYNC_SYNCPT_CPU_INCR + reg_offset * 4);
-+	wmb();
-+}
-+
-+static const char *syncpt_name(struct host1x_syncpt *sp)
-+{
-+	struct host1x_device_info *info = &sp->dev->info;
-+	const char *name = NULL;
-+
-+	if (sp->id < info->nb_pts)
-+		name = sp->name;
-+
-+	return name ? name : "";
-+}
-+
-+static void syncpt_debug(struct host1x_syncpt *sp)
-+{
-+	u32 i;
-+	for (i = 0; i < host1x_syncpt_nb_pts(sp->dev); i++) {
-+		u32 max = host1x_syncpt_read_max(sp);
-+		u32 min = host1x_syncpt_load_min(sp);
-+		if (!max && !min)
-+			continue;
-+		dev_info(&sp->dev->dev->dev,
-+			"id %d (%s) min %d max %d\n",
-+			i, sp->name,
-+			min, max);
-+
-+	}
-+
-+	for (i = 0; i < host1x_syncpt_nb_bases(sp->dev); i++) {
-+		u32 base_val;
-+		host1x_syncpt_read_wait_base(sp);
-+		base_val = sp->base_val;
-+		if (base_val)
-+			dev_info(&sp->dev->dev->dev,
-+					"waitbase id %d val %d\n",
-+					i, base_val);
-+
-+	}
-+}
-+
-+static const struct host1x_syncpt_ops host1x_syncpt_ops = {
-+	.reset = syncpt_reset,
-+	.reset_wait_base = syncpt_reset_wait_base,
-+	.read_wait_base = syncpt_read_wait_base,
-+	.load_min = syncpt_load_min,
-+	.cpu_incr = syncpt_cpu_incr,
-+	.debug = syncpt_debug,
-+	.name = syncpt_name,
-+};
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-new file mode 100644
-index 0000000..b45651f
---- /dev/null
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -0,0 +1,217 @@
-+/*
-+ * Tegra host1x Syncpoints
-+ *
-+ * Copyright (c) 2010-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/stat.h>
-+#include <linux/module.h>
-+#include "syncpt.h"
-+#include "dev.h"
-+#include <trace/events/host1x.h>
-+
-+#define MAX_SYNCPT_LENGTH	5
-+
-+static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
-+		struct platform_device *pdev,
-+		int client_managed);
-+
-+u32 host1x_syncpt_id(struct host1x_syncpt *sp)
-+{
-+	return sp->id;
-+}
-+
-+/*
-+ * Updates the value sent to hardware.
-+ */
-+u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs)
-+{
-+	return (u32)atomic_add_return(incrs, &sp->max_val);
-+}
-+
-+/*
-+ * Resets syncpoint and waitbase values to sw shadows
-+ */
-+void host1x_syncpt_reset(struct host1x *dev)
-+{
-+	struct host1x_syncpt *sp_base = dev->syncpt;
-+	u32 i;
-+
-+	for (i = 0; i < host1x_syncpt_nb_pts(dev); i++)
-+		dev->syncpt_op.reset(sp_base + i);
-+	for (i = 0; i < host1x_syncpt_nb_bases(dev); i++)
-+		dev->syncpt_op.reset_wait_base(sp_base + i);
-+	wmb();
-+}
-+
-+/*
-+ * Updates sw shadow state for client managed registers
-+ */
-+void host1x_syncpt_save(struct host1x *dev)
-+{
-+	struct host1x_syncpt *sp_base = dev->syncpt;
-+	u32 i;
-+
-+	for (i = 0; i < host1x_syncpt_nb_pts(dev); i++) {
-+		if (host1x_syncpt_client_managed(sp_base + i))
-+			dev->syncpt_op.load_min(sp_base + i);
-+		else
-+			WARN_ON(!host1x_syncpt_min_eq_max(sp_base + i));
-+	}
-+
-+	for (i = 0; i < host1x_syncpt_nb_bases(dev); i++)
-+		dev->syncpt_op.read_wait_base(sp_base + i);
-+}
-+
-+/*
-+ * Updates the last value read from hardware.
-+ */
-+u32 host1x_syncpt_load_min(struct host1x_syncpt *sp)
-+{
-+	u32 val;
-+	val = sp->dev->syncpt_op.load_min(sp);
-+	trace_host1x_syncpt_load_min(sp->id, val);
-+
-+	return val;
-+}
-+
-+/*
-+ * Get the current syncpoint base
-+ */
-+u32 host1x_syncpt_read_wait_base(struct host1x_syncpt *sp)
-+{
-+	u32 val;
-+	sp->dev->syncpt_op.read_wait_base(sp);
-+	val = sp->base_val;
-+	return val;
-+}
-+
-+/*
-+ * Write a cpu syncpoint increment to the hardware, without touching
-+ * the cache. Caller is responsible for host being powered.
-+ */
-+void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp)
-+{
-+	sp->dev->syncpt_op.cpu_incr(sp);
-+}
-+
-+/*
-+ * Increment syncpoint value from cpu, updating cache
-+ */
-+void host1x_syncpt_incr(struct host1x_syncpt *sp)
-+{
-+	if (host1x_syncpt_client_managed(sp))
-+		host1x_syncpt_incr_max(sp, 1);
-+	host1x_syncpt_cpu_incr(sp);
-+}
-+
-+void host1x_syncpt_debug(struct host1x_syncpt *sp)
-+{
-+	sp->dev->syncpt_op.debug(sp);
-+}
-+
-+int host1x_syncpt_init(struct host1x *host)
-+{
-+	struct host1x_syncpt *syncpt, *sp;
-+	int i;
-+
-+	syncpt = sp = devm_kzalloc(&host->dev->dev,
-+			sizeof(struct host1x_syncpt) * host->info.nb_pts,
-+			GFP_KERNEL);
-+	if (!syncpt)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < host->info.nb_pts; ++i, ++sp) {
-+		sp->id = i;
-+		sp->dev = host;
-+	}
-+
-+	host->syncpt = syncpt;
-+
-+	return 0;
-+}
-+
-+static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
-+		struct platform_device *pdev,
-+		int client_managed)
-+{
-+	int i;
-+	struct host1x_syncpt *sp = host->syncpt;
-+	char *name;
-+
-+	for (i = 0; i < host->info.nb_pts && sp->name; i++, sp++)
-+		;
-+	if (sp->pdev)
-+		return NULL;
-+
-+	name = kasprintf(GFP_KERNEL, "%02d-%s", sp->id,
-+			pdev ? dev_name(&pdev->dev) : NULL);
-+	if (!name)
-+		return NULL;
-+
-+	sp->pdev = pdev;
-+	sp->name = name;
-+	sp->client_managed = client_managed;
-+
-+	return sp;
-+}
-+
-+struct host1x_syncpt *host1x_syncpt_alloc(struct platform_device *pdev,
-+		int client_managed)
-+{
-+	struct host1x *host = host1x_get_host(pdev);
-+	return _host1x_syncpt_alloc(host, pdev, client_managed);
-+}
-+
-+void host1x_syncpt_free(struct host1x_syncpt *sp)
-+{
-+	if (!sp)
-+		return;
-+
-+	kfree(sp->name);
-+	sp->pdev = NULL;
-+	sp->name = NULL;
-+	sp->client_managed = 0;
-+}
-+
-+void host1x_syncpt_deinit(struct host1x *host)
-+{
-+	int i;
-+	struct host1x_syncpt *sp = host->syncpt;
-+	for (i = 0; i < host->info.nb_pts; i++, sp++)
-+		kfree(sp->name);
-+}
-+
-+int host1x_syncpt_nb_pts(struct host1x *dev)
-+{
-+	return dev->info.nb_pts;
-+}
-+
-+int host1x_syncpt_nb_bases(struct host1x *dev)
-+{
-+	return dev->info.nb_bases;
-+}
-+
-+int host1x_syncpt_nb_mlocks(struct host1x *dev)
-+{
-+	return dev->info.nb_mlocks;
-+}
-+
-+struct host1x_syncpt *host1x_syncpt_get(struct host1x *dev, u32 id)
-+{
-+	return dev->syncpt + id;
-+}
+ void host1x_syncpt_debug(struct host1x_syncpt *sp)
+ {
+ 	sp->dev->syncpt_op.debug(sp);
 diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-new file mode 100644
-index 0000000..d9b9b0a
---- /dev/null
+index d9b9b0a..b46d044 100644
+--- a/drivers/gpu/host1x/syncpt.h
 +++ b/drivers/gpu/host1x/syncpt.h
-@@ -0,0 +1,153 @@
-+/*
-+ * Tegra host1x Syncpoints
-+ *
-+ * Copyright (c) 2010-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#ifndef __HOST1X_SYNCPT_H
-+#define __HOST1X_SYNCPT_H
-+
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/atomic.h>
-+
-+struct host1x;
-+
-+#define NVSYNCPT_INVALID			(-1)
-+
-+struct host1x_syncpt {
-+	int id;
-+	atomic_t min_val;
-+	atomic_t max_val;
-+	u32 base_val;
-+	const char *name;
-+	int client_managed;
-+	struct host1x *dev;
-+	struct platform_device *pdev;
-+};
-+
-+/* Initialize sync point array  */
-+int host1x_syncpt_init(struct host1x *);
-+
-+/*  Free sync point array */
-+void host1x_syncpt_deinit(struct host1x *);
-+
-+/*
-+ * Read max. It indicates how many operations there are in queue, either in
-+ * channel or in a software thread.
-+ * */
-+static inline u32 host1x_syncpt_read_max(struct host1x_syncpt *sp)
-+{
-+	smp_rmb();
-+	return (u32)atomic_read(&sp->max_val);
-+}
-+
-+/*
-+ * Read min, which is a shadow of the current sync point value in hardware.
-+ */
-+static inline u32 host1x_syncpt_read_min(struct host1x_syncpt *sp)
-+{
-+	smp_rmb();
-+	return (u32)atomic_read(&sp->min_val);
-+}
-+
-+/* Return number of sync point supported. */
-+int host1x_syncpt_nb_pts(struct host1x *dev);
-+
-+/* Return number of wait bases supported. */
-+int host1x_syncpt_nb_bases(struct host1x *dev);
-+
-+/* Return number of mlocks supported. */
-+int host1x_syncpt_nb_mlocks(struct host1x *dev);
-+
-+/*
-+ * Check sync point sanity. If max is larger than min, there have too many
-+ * sync point increments.
-+ *
-+ * Client managed sync point are not tracked.
-+ * */
-+static inline bool host1x_syncpt_check_max(struct host1x_syncpt *sp, u32 real)
-+{
-+	u32 max;
-+	if (sp->client_managed)
-+		return true;
-+	max = host1x_syncpt_read_max(sp);
-+	return (s32)(max - real) >= 0;
-+}
-+
-+/* Return true if sync point is client managed. */
-+static inline int host1x_syncpt_client_managed(struct host1x_syncpt *sp)
-+{
-+	return sp->client_managed;
-+}
-+
-+/*
-+ * Returns true if syncpoint min == max, which means that there are no
-+ * outstanding operations.
-+ */
-+static inline bool host1x_syncpt_min_eq_max(struct host1x_syncpt *sp)
-+{
-+	int min, max;
-+	smp_rmb();
-+	min = atomic_read(&sp->min_val);
-+	max = atomic_read(&sp->max_val);
-+	return (min == max);
-+}
-+
-+/* Return pointer to struct denoting sync point id. */
-+struct host1x_syncpt *host1x_syncpt_get(struct host1x *dev, u32 id);
-+
-+/* Request incrementing a sync point. */
-+void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp);
-+
-+/* Load current value from hardware to the shadow register. */
-+u32 host1x_syncpt_load_min(struct host1x_syncpt *sp);
-+
-+/* Save host1x sync point state into shadow registers. */
-+void host1x_syncpt_save(struct host1x *dev);
-+
-+/* Reset host1x sync point state from shadow registers. */
-+void host1x_syncpt_reset(struct host1x *dev);
-+
-+/* Read current wait base value into shadow register and return it. */
-+u32 host1x_syncpt_read_wait_base(struct host1x_syncpt *sp);
-+
-+/* Increment sync point and its max. */
-+void host1x_syncpt_incr(struct host1x_syncpt *sp);
-+
-+/* Indicate future operations by incrementing the sync point max. */
-+u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
-+
-+/* Do a debug dump of sync point values. */
-+void host1x_syncpt_debug(struct host1x_syncpt *sp);
-+
-+/* Check if sync point id is valid. */
-+static inline int host1x_syncpt_is_valid(struct host1x_syncpt *sp)
-+{
-+	return sp->id != NVSYNCPT_INVALID &&
-+		sp->id < host1x_syncpt_nb_pts(sp->dev);
-+}
-+
-+/* Return id of the sync point */
-+u32 host1x_syncpt_id(struct host1x_syncpt *sp);
-+
-+/* Allocate a sync point for a device. */
-+struct host1x_syncpt *host1x_syncpt_alloc(struct platform_device *pdev,
-+		int client_managed);
-+
-+/* Free a sync point. */
-+void host1x_syncpt_free(struct host1x_syncpt *sp);
-+
-+#endif
-diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-index e7068c5..776ddba 100644
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@ -21,6 +21,8 @@ source "drivers/gpu/vga/Kconfig"
+@@ -114,6 +114,7 @@ void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp);
  
- source "drivers/gpu/drm/Kconfig"
+ /* Load current value from hardware to the shadow register. */
+ u32 host1x_syncpt_load_min(struct host1x_syncpt *sp);
++bool host1x_syncpt_is_expired(struct host1x_syncpt *sp, u32 thresh);
  
-+source "drivers/gpu/host1x/Kconfig"
-+
- source "drivers/gpu/stub/Kconfig"
+ /* Save host1x sync point state into shadow registers. */
+ void host1x_syncpt_save(struct host1x *dev);
+@@ -133,6 +134,10 @@ u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
+ /* Do a debug dump of sync point values. */
+ void host1x_syncpt_debug(struct host1x_syncpt *sp);
  
- config VGASTATE
-diff --git a/include/trace/events/host1x.h b/include/trace/events/host1x.h
-new file mode 100644
-index 0000000..3c14cac
---- /dev/null
-+++ b/include/trace/events/host1x.h
-@@ -0,0 +1,61 @@
-+/*
-+ * include/trace/events/host1x.h
-+ *
-+ * Nvhost event logging to ftrace.
-+ *
-+ * Copyright (c) 2010-2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License along
-+ * with this program; if not, write to the Free Software Foundation, Inc.,
-+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ */
++/* Wait until sync point reaches a threshold value, or a timeout. */
++int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh,
++			long timeout, u32 *value);
 +
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM host1x
-+
-+#if !defined(_TRACE_HOST1X_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_HOST1X_H
-+
-+#include <linux/ktime.h>
-+#include <linux/tracepoint.h>
-+
-+DECLARE_EVENT_CLASS(host1x,
-+	TP_PROTO(const char *name),
-+	TP_ARGS(name),
-+	TP_STRUCT__entry(__field(const char *, name)),
-+	TP_fast_assign(__entry->name = name;),
-+	TP_printk("name=%s", __entry->name)
-+);
-+
-+TRACE_EVENT(host1x_syncpt_load_min,
-+	TP_PROTO(u32 id, u32 val),
-+
-+	TP_ARGS(id, val),
-+
-+	TP_STRUCT__entry(
-+		__field(u32, id)
-+		__field(u32, val)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->id = id;
-+		__entry->val = val;
-+	),
-+
-+	TP_printk("id=%d, val=%d", __entry->id, __entry->val)
-+);
-+
-+#endif /*  _TRACE_HOST1X_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+ /* Check if sync point id is valid. */
+ static inline int host1x_syncpt_is_valid(struct host1x_syncpt *sp)
+ {
 -- 
 1.7.9.5
