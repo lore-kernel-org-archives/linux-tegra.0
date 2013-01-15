@@ -1,85 +1,123 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v2 2/5] drm/tegra: Add plane support
-Date: Tue, 15 Jan 2013 12:50:49 +0100
-Message-ID: <20130115115049.GA4220@avionic-0098.adnet.avionic-design.de>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
- <1358179560-26799-3-git-send-email-thierry.reding@avionic-design.de>
- <50F526FF.1010101@gmail.com>
- <20130115113532.GC3503@intel.com>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Tue, 15 Jan 2013 13:08:55 +0100
+Message-ID: <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130111154516.GA25335@avionic-0098.adnet.avionic-design.de>
+ <20130112123640.GA22505@avionic-0098.adnet.avionic-design.de>
+ <201301122112.25772.arnd@arndb.de>
+ <20130113095806.GA31966@avionic-0098.adnet.avionic-design.de>
+ <20130114095706.GA23467@arm.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20130115113532.GC3503-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20130114095706.GA23467-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=utf-8
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 15, 2013 at 01:35:32PM +0200, Ville Syrj=C3=A4l=C3=A4 wrote:
-> On Tue, Jan 15, 2013 at 05:53:03PM +0800, Mark Zhang wrote:
-> > On 01/15/2013 12:05 AM, Thierry Reding wrote:
-> > > Add support for the B and C planes which support RGB and YUV pixel
-> > > formats and can be used as overlays or hardware cursor.
-> >=20
-> > I think "hardware cursor" has specific meaning for Tegra(e.g: Tegra30
-> > has a 32x32 24bpp or 64x64 2bpp hardware cursor). So you may change it
-> > to "hardware accelerated cursor"?
-> >=20
+On Mon, Jan 14, 2013 at 09:57:07AM +0000, Andrew Murray wrote:
+> On Sun, Jan 13, 2013 at 09:58:06AM +0000, Thierry Reding wrote:
+> > On Sat, Jan 12, 2013 at 09:12:25PM +0000, Arnd Bergmann wrote:
+> > > On Saturday 12 January 2013, Thierry Reding wrote:
+> > > > > I already hinted at that in one of the other subthreads. Having s=
+uch a
+> > > > > multiplex would also allow the driver to be built as a module. I =
+had
+> > > > > already thought about this when I was working on an earlier versi=
+on of
+> > > > > these patches. Basically these would be two ops attached to the h=
+ost
+> > > > > bridge, and the generic arch_setup_msi_irq() could then look that=
+ up
+> > > > > given the struct pci_dev that is passed to it and call this new p=
+er-
+> > > > > host bridge .setup_msi_irq().
+> > > >=20
+> > > > struct pci_ops looks like a good place to put these. They'll be
+> > > > available from each struct pci_bus, so should be easy to call from
+> > > > arch_setup_msi_irq().
+> > > >=20
+> > > > Any objections?
+> > > >=20
 > > >=20
-> > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> > > ---
-> > [...]
-> > > +
-> > > +static const uint32_t plane_formats[] =3D {
-> > > +	DRM_FORMAT_XRGB8888,
-> > > +	DRM_FORMAT_YUV422,
+> > > struct pci_ops has a long history of being specifically about
+> > > config space read/write operations, so on the one hand it does
+> > > not feel like the right place to put interrupt specific operations,
+> > > but on the other hand, the name sounds appropriate and I cannot
+> > > think of any other place to put this, so it's fine with me.
+> > >=20
+> > > The only alternative I can think of is to introduce a new
+> > > structure next to it in struct pci_bus, but that feels a bit
+> > > pointless. Maybe Bjorn has a preference one way or the other.
 > >=20
-> > I haven't found something related with YUV format in this patch set. For
-> > example, "tegra_dc_format" also doesn't take YUV into consideration. So
-> > remove this line.
+> > The name pci_ops is certainly generic enough. Also the comment above the
+> > structure declaration says "Low-level architecture-dependent routines",
+> > which applies to the MSI functions as well.
 >=20
-> Also note that YUV422 is a planar format. And since it's not the most
-> common 4:2:2 format, my first guess would be that it's probably not
-> what you wanted. YUYV or UYVY is more likely the one you're after.
+> I've previously looked into this. It seems that architectures handle this
+> in different ways, some use vector tables, others use a multiplex and oth=
+ers
+> just let the end user implement the callback directly.
+>=20
+> I've made an attempt to find a more common way. Though my implementation,=
+ which
+> I will try to share later today for reference provides a registration fun=
+ction
+> in drivers/pci/msi.c to provide implementations of the
+> (setup|teardown)_msi_irq(s) ops. This seems slightly better than the curr=
+ent
+> approach and doesn't break existing users - but is still ugly.
+>=20
+> At present the PCI and MSI frameworks are largely uncoupled from each oth=
+er and
+> so I was keen to not pollute PCI structures (e.g. pci_ops) with MSI ops. =
+Just
+> because most PCI host bridges also provide MSI support I don't think ther=
+e is a
+> reason why they should always come as a pair or be provided by the same c=
+hip.
+>=20
+> Perhaps the solution is to support MSI controller drivers and a means to
+> associate them with PCI host controller drivers?
 
-Yes, I copied it from the TRM, which has YUV422 listed as non-planar
-format (it has YUV422, which is the planar variant). It isn't very
-specific about which variant YUV422 really is, though.
+I'm not sure I follow you're reasoning here. Is it possible to use MSIs
+without PCI? If not then I think there's little sense in keeping the
+implementations separate.
 
-As Mark said, the window setup code can't handle planar formats yet
-and tegra_dc_format() doesn't convert between DRM and Tegra formats
-other than 32-bit and 16-bit RGB either, so maybe I should just drop
-it instead.
+Furthermore, if MSI controller and PCI host bridge are separate entities
+how do you look up the MSI controller given a PCI device?
 
 Thierry
 
---n8g4imXOkfNTN/H1
+--zYM0uCDKw75PZbzx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ9UKZAAoJEN0jrNd/PrOhil4P/2qoshmOuPjNc44WH3owL6Vx
-KDl4jTmohu13vB+KSbXWVl06pCsWGB1b0jRXXMiA5U9J+5b3YV9toRWEBEVq9cpC
-0mz0SSmIfTTxVZE9eb91kAQaWS/JwJuIKUeJXHXeWyN+Mpi3E2WQwudVmO/G6viv
-2y7UvTSPpP1UErmM00Eb2XXrBiNEVqhBvhzGuR5EnYlDH8kCJBgVo/0JplnBcswV
-cAAFNcW10hybhndl6fbkg57h5GjZ3j/f8sNeSWXxOf2MI1iyE6WiFa89YULQuWfe
-/azYXGknsKKcNikwyZJHDULowhnpFWWLUdatpgLSDfe5zN8pKnJEBr5K3cHvZpHe
-ojqpocin70nuHCyxJ2o95FsiC+XX2D1TOXzH2Djwm1aGyybCQYnb0xdpdHk0q3ZR
-0dvwb0tJjJ8S5wV9NcSJcP9jxkYwk0Ownui62TiLMCsfzlMY6hbZlAyD0MWQR6qt
-0Ogbv2Y8aAb6jEgfzhgDNOktQe3uP8/yjtRwX4Q+MOKu538LzyJNZxNSKnCsoO4u
-vmUEr40Afo47I+xYBCsQi1gqZ7+ag2lT/a9ISbOk7lkHgaV57Q4KlgoqITppDGq6
-ydz/jQwseVunbnqXLO3XxHvdof/hUEQt1qEWQpWYHM4eDMshYWqRfiOJOZeOckiL
-GiP0n6ws07jCpqBO4Hq4
-=se/G
+iQIcBAEBAgAGBQJQ9UbXAAoJEN0jrNd/PrOhPUMQAKNhspoQI51u1sXnZ0ln3ibR
+FLBRqTURtkSryRPqcuc+trnITfOMi7McsACOGsPVRzU3NwZpxrH+vENZuIWEtMjP
+pt++wG60l2oiOBVKkumxD/qDS/q7FBPC+0eD6vaXq5Nk8zG/NDSzvgCY0EY7kfnD
+rgNXAFhHZTGN3srxM7ZVc3IkMZt43Q5F5yaCiy1GOhR9dnpUK/taOwo821rcx+Tf
+0agNyrafnD3nfP51cAIzjAWIeaPt467L0xU3O1byrh+BnOufwlMhUQmMOrgXtmf4
+XQBg0Al9JCS382heYvArCIcj/UI2EILtMdJp9V567vQ3dIA1k0pQ7IiZRez3zjFW
+3uhzUrI2W2MFR/kBOVkf3LoWxx+L+ja0Ur70KOR5BtH/tp4qAQmkWy2HJMh7WmL9
+UlvSsmNqL5FkU470tv7+uPDgJYmhVnWUhn/e2CskagT60ngfmvGo3s5xGDKMKWUt
+aGL36UR1G0xWzJTC2dgfggMfvWV0fq+HXRMe5wF7wW5ftxqnW2t8V8Q+gjLF/+k1
+faCMJld6ueA0h0sz0zVKlacBgo0ocT5Q8KxlMFnTSsvizvmHe5MYIxXDGb6zC8gL
+jZfF+VeG4WXtMTl/eO3UbOi5lEg/rH1PVbGMSW0Tg65BBEGGldMu0l2DIsMsyBCd
+Fv0lXQVkotmB8gKfpzss
+=0RFY
 -----END PGP SIGNATURE-----
 
---n8g4imXOkfNTN/H1--
+--zYM0uCDKw75PZbzx--
