@@ -1,24 +1,69 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/4] arm: tegra: Add DT nodes for Tegra USB PHY
-Date: Wed, 16 Jan 2013 14:49:22 -0700
-Message-ID: <50F72062.7060404@wwwdotorg.org>
-References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com> <1358343022-28919-2-git-send-email-vbyravarasu@nvidia.com>
+Subject: Re: [PATCH 4/4] usb: Add APIs to access host registers from Tegra
+ PHY
+Date: Wed, 16 Jan 2013 14:56:07 -0700
+Message-ID: <50F721F7.2030907@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1301161004380.1704-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1358343022-28919-2-git-send-email-vbyravarasu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Venu Byravarasu <vbyravarasu@nvidia.com>
-Cc: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1301161004380.1704-100000@iolanthe.rowland.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Venu Byravarasu <vbyravarasu@nvidia.com>, gregkh@linuxfoundation.org, balbi@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 06:30 AM, Venu Byravarasu wrote:
-> Add DT nodes for Tegra USB PHY along with related documentation.
-> Also added a phandle property to controller DT node, for referring
-> to connected PHY instance.
+On 01/16/2013 08:08 AM, Alan Stern wrote:
+> On Wed, 16 Jan 2013, Venu Byravarasu wrote:
+> 
+>> As Tegra PHY driver needs to access one of the Host registers,
+>> added few APIs.
 
-Just a quick reminder to Greg, Felipe, Alan: Once this series passes
-review, I'll need to take it through the Tegra tree. (Sorry if I'm
-belabouring that point). This patch in particular will interact with the
-common clock framework changes that will very soon be in the Tegra tree.
+>> --- a/drivers/usb/host/ehci-tegra.c
+>> +++ b/drivers/usb/host/ehci-tegra.c
+
+>> +void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
+>> +{
+>> +	unsigned long val;
+>> +	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+>> +	void __iomem *base = hcd->regs;
+>> +	u32 wake = USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
+>> +
+>> +	val = readl(base + USB_PORTSC1);
+>> +	if (enable)
+>> +		val |= wake;
+>> +	else
+>> +		val &= ~wake;
+>> +	writel(val, base + USB_PORTSC1);
+>> +}
+> 
+> Here and below, this sort of code is highly questionable.  You
+> evidently don't realize that some of the bits in the PORTSC registers
+> are R/WC.  This means writing a 1 to these bits will clear them.  
+> 
+> Consequently it is almost always wrong to read a PORTSC register and
+> then write back the same (or a slightly modified) value.
+
+Sorry I'm not familiar with USB... Are the bits being manipulated here
+(i.e. USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN)
+standardized USBisms, or some custom Tegra stuff?
+
+Anyway, is the solution here to do:
+
+val = readl(addr)
+
+// i.e. add the following line:
+val &= ~(all write-to-clear bits);
+
+if (enable) val |= wake; else val &= ~wake;
+
+writel(val, addr)
+
+... or is there more broken than just that?
+
+Also note that the driver is already doing exactly what is in these new
+functions; the code is just being split out so that only the EHCI driver
+touches EHCI registers, and the PHY driver only touches PHY registers.
+Still, I'll admit it's a good time to fix any mistakes in this part of
+the code.
