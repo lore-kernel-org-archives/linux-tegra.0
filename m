@@ -1,43 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for
- powered-down mode
-Date: Wed, 16 Jan 2013 14:31:13 -0700
-Message-ID: <50F71C21.20904@wwwdotorg.org>
-References: <1358323873-30525-1-git-send-email-josephl@nvidia.com> <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/5] Minor bugfixes for Tegra kernels
+Date: Wed, 16 Jan 2013 14:45:00 -0700
+Message-ID: <50F71F5C.6020209@wwwdotorg.org>
+References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1358366173-56861-1-git-send-email-jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 11:55 AM, Colin Cross wrote:
-> On Wed, Jan 16, 2013 at 12:11 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
->> core to go into this mode before other core. The coupled cpuidle framework
->> can help to sync the MPCore to coupled state then go into "powered-down"
->> idle mode together. The driver can just assume the MPCore come into
->> "powered-down" mode at the same time. No need to take care if the CPU_0
->> goes into this mode along and only can put it into safe idle mode (WFI).
->>
->> The powered-down state of Tegra20 requires power gating both CPU cores.
->> When the secondary CPU requests to enter powered-down state, it saves
->> its own contexts and then enters WFI for waiting CPU0 in the same state.
->> When the CPU0 requests powered-down state, it attempts to put the secondary
->> CPU into reset to prevent it from waking up. Then power down both CPUs
->> together and power off the cpu rail.
->>
->> Be aware of that, you may see the legacy power state "LP2" in the code
+On 01/16/2013 12:56 PM, Jeremy C. Andrus wrote:
+> From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+> 
+> In the course of my research here at Columbia University, I have been
+> doing some kernel development on the Google Nexus 7 device. I took the
+> time to address most of the compile-time warnings while building the
+> Tegra kernel tree using the cross-compiler shipped with Android
+> (gcc-4.7), and in doing so I came across a few minor issues.
+> 
+> This RFC series addresses several minor bugs that I was able to fix
+> while suppressing compile warnings. Not knowing exactly where
+> to send the patches, I decided to send them primarily to the Tegra
+> list serv in hopes that they will find their way to the correct place.
+> 
+> All 5 patches apply cleanly the kernel/tegra repository hosted by
+> Google. I used the commit hash referenced in the Android device tree
+> git logs as my HEAD revision: 22b4fcde206e96f57bf0a111403fc3d75532918a
+> I belive that this is the revision which corresponds to the prebuilt
+> kernel provided in the Jelly Bean release.
 
-Colin, since you only raised a few small issues on this series, does
-that mean you're OK with it once those issues are fixed?
+I honestly don't know where you should send these patches. I've CC'd
+Colin Cross who works on Android in case he can clue us in. I assume
+there's a Gerrit instance somewhere for Android that you need to push
+these into...
 
-Joseph, we'll be merging Tegra114 in the near future. How will this
-patch series affect Tegra114? Will the cpuidle driver simply fail to
-register on Tegra114 (which would be fine until we explicitly add
-support), or would we need to disable cpuidle in Kconfig to get a
-working Tegra114 kernel. Does this patch series affect the answer to the
-previous question? Thanks.
+Laxman, can you please check if any of these patches should be applied
+to our internal/downstream kernels?
+
+Jeremy, do patches 3 or 4 need to be applied to the mainline kernel? It
+may be useful for you to resend those directly to the relevant upstream
+subsystem maintainers, after rebasing them onto the latest upstream
+code. See Documentation/SubmittingPatches in the mainline kernel.
+
+Thanks for the contributions!
