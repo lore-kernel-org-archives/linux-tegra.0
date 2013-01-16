@@ -1,7 +1,7 @@
 From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
-Subject: [RFC PATCH 4/5] input: lid: Fix init function ignores sysfs retval
-Date: Wed, 16 Jan 2013 14:56:12 -0500
-Message-ID: <1358366173-56861-5-git-send-email-jeremya@cs.columbia.edu>
+Subject: [RFC PATCH 3/5] power: smb347: Fix stack corruption
+Date: Wed, 16 Jan 2013 14:56:11 -0500
+Message-ID: <1358366173-56861-4-git-send-email-jeremya@cs.columbia.edu>
 References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1358366173-56861-1-git-send-email-jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
@@ -12,33 +12,30 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
 
-Don't ignore the sysfs_create_group return value in the lid_init()
-function. This suppresses a compiler warning and results in more robust
-code for free :-)
+Stack array variables declared in smb347_reg_show() were one element too
+short. This patch increases the arrays to their proper size.
 
 Signed-off-by: Jeremy C. Andrus <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
 
-Change-Id: I2fef38736d39fbd5f60ef5a658f14d917122b942
+Change-Id: I1db786a473cf176899050eb671309af463a9878d
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- drivers/input/lid.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/power/smb347-charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/lid.c b/drivers/input/lid.c
-index 1d27609..26e3d64 100644
---- a/drivers/input/lid.c
-+++ b/drivers/input/lid.c
-@@ -163,7 +163,9 @@ static int __init lid_init(void)
-                 return -ENOMEM;
-         }
+diff --git a/drivers/power/smb347-charger.c b/drivers/power/smb347-charger.c
+index ff3d233..504c5c6 100755
+--- a/drivers/power/smb347-charger.c
++++ b/drivers/power/smb347-charger.c
+@@ -1016,7 +1016,7 @@ static void dockin_isr_work_function(struct work_struct *dat)
+ static ssize_t smb347_reg_show(struct device *dev, struct device_attribute *attr, char *buf)
+ {
+ 	struct i2c_client *client = charger->client;
+-	uint8_t config_reg[14], cmd_reg[1], status_reg[10];
++	uint8_t config_reg[14], cmd_reg[2], status_reg[11];
+ 	int i, ret = 0;
  
--	sysfs_create_group((struct kobject*)&lid_dev->dev.kobj, &lid_attr_group);
-+	err_code = sysfs_create_group((struct kobject*)&lid_dev->dev.kobj, &lid_attr_group);
-+	if (err_code != 0)
-+		return err_code;
- 
- 	err_code = lid_input_device_create();
- 	if(err_code != 0)
+ 	ret += i2c_smbus_read_i2c_block_data(client, smb347_CHARGE, 15, config_reg)
 -- 
 1.8.1
