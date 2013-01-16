@@ -1,35 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v4 5/9] ARM: Tegra: Define Tegra30 CAR binding
-Date: Wed, 16 Jan 2013 10:30:35 -0700
-Message-ID: <50F6E3BB.5060007@wwwdotorg.org>
-References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com> <1357890387-23245-6-git-send-email-pgaikwad@nvidia.com> <20130116132856.2896df94f553f78273c4574c@nvidia.com>
+Subject: Re: [PATCH 1/2] ARM: tegra: config: enable SERIAL_TEGRA
+Date: Wed, 16 Jan 2013 10:57:30 -0700
+Message-ID: <50F6EA0A.4080904@wwwdotorg.org>
+References: <1358341572-8154-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130116132856.2896df94f553f78273c4574c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1358341572-8154-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 04:28 AM, Hiroshi Doyu wrote:
-> On Fri, 11 Jan 2013 08:46:23 +0100
-> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
->> The device tree binding models Tegra30 CAR (Clock And Reset)
->> as a single monolithic clock provider.
+On 01/16/2013 06:06 AM, Laxman Dewangan wrote:
+> Enable high speed serial driver for tegra platform.
 
->> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+Thanks, I've applied patch 1 to Tegra's for-3.9/defconfig branch and
+patch 2 to Tegra's for-3.9/dt branch.
 
->> +Example board file:
->> +
->> +/ {
->> +       clocks {
->> +               compatible = "simple-bug";
-> 
-> typo, 's/simple-bug/simple-bus/' ?
+Just as an FYI, the dt branch is merged into my for-next branch, and
+sent upstream, before the defconfig branch, so your patch order was
+reversed relative to that, but it's not an issue here.
 
-It was rather accurate though; a simple bug:-)
-
-I've squashed the fix into the patch.
+Question: How do I test this; do I just fire up bluez(?) and point it at
+the UARTC serial port, or is there more to it?
