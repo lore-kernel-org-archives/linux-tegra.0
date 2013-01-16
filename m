@@ -1,105 +1,164 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
-Date: Wed, 16 Jan 2013 11:01:49 +0100
-Message-ID: <20130116100149.GA13628@avionic-0098.adnet.avionic-design.de>
-References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
- <1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
- <CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
- <20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
- <CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw@mail.gmail.com>
+Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
+Date: Wed, 16 Jan 2013 11:18:22 +0100
+Message-ID: <20130116101822.GA17706@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130109231758.GA27065@obsidianresearch.com>
+ <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de>
+ <201301100917.19577.arnd@arndb.de>
+ <20130110102544.GA5546@avionic-0098.adnet.avionic-design.de>
+ <20130110182007.GA28004@obsidianresearch.com>
+ <20130110185505.GA22944@avionic-0098.adnet.avionic-design.de>
+ <20130110190327.GA23110@avionic-0098.adnet.avionic-design.de>
+ <20130110192417.GA18478@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============4728084380536866641=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130110192417.GA18478-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---azLHFNyN32YCQGCU
+--===============4728084380536866641==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Disposition: inline
+
+
+--82I3+IH0IqGh5yIs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 16, 2013 at 10:43:15AM +0100, Daniel Vetter wrote:
-> On Tue, Jan 15, 2013 at 9:17 PM, Thierry Reding
-> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > On Tue, Jan 15, 2013 at 06:53:19PM +0100, Daniel Vetter wrote:
-> >> On Mon, Jan 14, 2013 at 4:55 PM, Thierry Reding
-> >> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> >> > +static void tegra_drm_preclose(struct drm_device *drm, struct drm_f=
-ile *file)
-> >> > +{
-> >> > +       struct drm_crtc *crtc;
-> >> > +
-> >> > +       list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
-> >> > +               tegra_dc_cancel_page_flip(crtc, file);
-> >> > +}
-> >> > +
-> >>
-> >> Why that? If userspace dies while a flip is outstanding, it's imo ok
-> >> to execute it - otherwise there might be an accounting mismatch if the
-> >> hw still scans out the old fb, but drm believes the new one is used.
-> >> Or do I miss something?
-> >
-> > I looked at the shmobile driver for inspiration and they do this as
-> > well. Doing so seemed reasonable since there'd be no file to deliver the
-> > event to.
+On Thu, Jan 10, 2013 at 12:24:17PM -0700, Jason Gunthorpe wrote:
+> On Thu, Jan 10, 2013 at 08:03:27PM +0100, Thierry Reding wrote:
 >=20
-> Hm, is the code in drm_events_release not good enough? And if it's
-> buggy, we need to fix it. Also adding Laurent to figure out why he
-> added that code in shmob ...
-
-drm_events_release() should be enough to clean up the events, but I
-suspect the reason why Laurent put that code in was that the drm_crtc
-private data still has a reference to the event and needs to clear it.
-Otherwise the next page flip won't be scheduled because .page_flip()
-would return -EBUSY.
-
-However, it seems like {tegra_dc,shmob_drm_crtc}_cancel_page_flip()
-could both be simplified a lot and just set their event to NULL. Then
-again, maybe keeping a separate reference isn't all that useful. Maybe
-the better thing to do here is iterate over the list of pending VBLANK
-events in *_finish_page_flip() and process each of them? That would
-allow more than one user-space process to queue page flips.
-
-> >> The reason I've skimmed through the patches is to check for
-> >> implications with my modeset locking rework. Review on that would be
-> >> highly appreciated ...
-> >
-> > I'm not sure how suited I am for review given my limited experience, but
-> > I'll see if I can make some time to take a look.
+> > > > You'd piece a mapping together, each bus requires 16 64k mappings, a
+> > > > simple 2d array of busnr*16 of pointers would do the trick. A more
+> > > > clever solution would be to allocate contiguous virtual memory and
+> > > > split that up..
+> =20
+> > > Oh, I see. I'm not very familiar with the internals of remapping, so
+> > > I'll need to do some more reading. Thanks for the hints.
+> >=20
+> > I forgot to ask. What's the advantage of having a contiguous virtual
+> > memory area and splitting it up versus remapping each chunk separately?
 >=20
-> The commit message should nicely explain why I've picked the design
-> and the various implications for drivers. So just checking whether
-> anything collides with your upcoming stuff would be good ...
+> Not alot, really, but it saves you from the pointer array and
+> associated overhead. IIRC it is fairly easy to do in the kernel.
+>=20
+> Arnd's version is good too, but you would be restricted to aligned
+> powers of two for the bus number range in the DT, which is probably
+> not that big a deal either?
 
-Okay, I'll take a closer look.
+I've been trying to make this work, but this implementation always
+triggers a BUG_ON() in lib/ioremap.c, line 27:
 
-Thierry
+	27 		BUG_ON(!pte_none(*pte));
 
---azLHFNyN32YCQGCU
+which seems to indicate that the page is already mapped, right?
+
+Below is the relevant code:
+
+struct tegra_pcie_bus {
+	struct vm_struct *area;
+	struct list_head list;
+	unsigned int nr;
+};
+
+static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+						   unsigned int busnr)
+{
+	unsigned long flags =3D VM_READ | VM_WRITE | VM_IO | VM_PFNMAP |
+			      VM_DONTEXPAND | VM_DONTDUMP;
+	phys_addr_t cs =3D pcie->cs->start;
+	struct tegra_pcie_bus *bus;
+	struct vm_struct *vm;
+	unsigned int i;
+	int err;
+
+	bus =3D devm_kzalloc(pcie->dev, sizeof(*bus), GFP_KERNEL);
+	if (!bus)
+		return ERR_PTR(-ENOMEM);
+
+	INIT_LIST_HEAD(&bus->list);
+	bus->nr =3D busnr;
+
+	bus->area =3D get_vm_area(SZ_1M, VM_IOREMAP);
+	if (!bus->area) {
+		err =3D -ENOMEM;
+		goto free;
+	}
+
+	for (i =3D 0; i < 16; i++) {
+		unsigned long virt =3D (unsigned long)bus->area->addr +
+				     i * SZ_64K;
+		phys_addr_t phys =3D cs + busnr * SZ_64K + i * SZ_1M;
+
+		err =3D ioremap_page_range(virt, virt + SZ_64K - 1, phys,
+					 vm_get_page_prot(flags));
+		if (err < 0) {
+			dev_err(pcie->dev, "ioremap_page_range() failed: %d\n",
+				err);
+			goto unmap;
+		}
+	}
+
+	return bus;
+
+unmap:
+	vunmap(bus->area->addr);
+	free_vm_area(bus->area);
+free:
+	devm_kfree(pcie->dev, bus);
+	return ERR_PTR(err);
+}
+
+Anybody see what's wrong with that?
+
+--82I3+IH0IqGh5yIs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ9nqNAAoJEN0jrNd/PrOh+7cP/jCQ9F9Wi4LRJCJQvxdC3Mrs
-4MaLAHwnPnNVaZRdv8in6oNw+8wS0LDzMvtdh+1TQiNbub/IiEE+OqZZQ9KS+04w
-L40oFNeJJXy7mgmVGLAcx5Duk+G8nSa932aSP3vrGX14meltRizV6SGZc9rEiOCK
-iuqC7IE3ApsTDfZxp+Mqek6p1WmPI/d2kcASGOLRzgR7xzIE6lQloCt5iaHa8JQ1
-N/iFep5szRlMP98pcg9hB1ZAjyV012wDiiD1cHvTYQTEiC1hb8Kj8TgGT6N1c9b3
-1A7qcttg1UoBLHFlfax9qYeWEMr3a7dnkeCZ5/gFOSdKl9phV+JXnAv7oQMMZ8ed
-dfnQBbB9kGqf+l3PclVLn7qpRNdgdjPKE6PD8RvZrgmJCT7Ypu2Ji5WJ2W29KRUE
-1Gm9scZd5Bxk/imqk279gaNwCXZj54yBdkqu6quCl+Ddc0u+rzDj0MJTD5I34tEs
-wffjeuZls4uN+76Mr0qIg1wlr0RByJ8xwM47Z2LJCXJAY1fb4/jwPF4DUrFEL25p
-b0lMrLh3XryFfbsApjwTNu/1jq7cJr4nHuLaUVuJh7ZbieBO3VMTWqlW6Djro05U
-/hGEkoiQOGePq1kCF6kk3ezuI++In7PoP5wFebF7egbZf7Id7+4Ce8Lz3RnA7tnS
-b0r7wHMPuRAjF/oTY8hs
-=TyBE
+iQIcBAEBAgAGBQJQ9n5tAAoJEN0jrNd/PrOhUlQP/RUVN/UfOSvzFvZTgmNnopVr
+uBS3wbP1GjJT+aMYih9UQyZMuyKfuiZrivc3pdcADdzxyrnNJ4nrHX/Ovsvbu274
+na483q/qLqwUCuU7oDg+0ntFC7XxPJadt2/vITq/MzhMRMy9V3cNBQAk+ga4NK/U
+WbZ4iX2sMsnJ6wQfFuLavOnXHivdGfgLZ2DaofoTb++TjlzO1bm5zh2rJ9Tc8VyM
+Umo93ebyGERRv/IsNGEfb3ZZ7QhyLcHsBDoow1XFfvja4poCumKNMHFz8bbiLK5w
+MOvEBoy/q+vwo7ZL3i3/YCxKxUoLQ/+dq6SbmXjDjVTjjiLWXH3t0lhkODoHsrWH
+YsiqBIK4bnDS6qNUGWYM8HlTzOHmhhIobkeT+Do/gA0P1gvsoKsh+YpfBiqVof27
+M9YDteY1M4pypSw6GctkDPwPTkSM1qCUpFXidvpya7jyrlMpncEG/NiYgEcGsNJP
+eyYJ+ky0CznzcuNukcGMa+NOt5eCZzBJnBmNoOU41M1kljZ06/AJKKOI8jsddf3q
+nZVDhxnavMXi7uagRpiQjc48oLdEVV2SdBtpVdLIQiHplme8EJj2sQ5c7/XY8WTd
+yVDcA3WWkdezFGWxya6C5sbsd2PI/G7qvg19h8GLQgC+CGS1ctRdYr/soLYBrMMT
+xIWtdPiPzIl1NqC6TT/S
+=z/1p
 -----END PGP SIGNATURE-----
 
---azLHFNyN32YCQGCU--
+--82I3+IH0IqGh5yIs--
+
+--===============4728084380536866641==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============4728084380536866641==--
