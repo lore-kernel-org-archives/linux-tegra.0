@@ -1,106 +1,59 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
-Date: Wed, 16 Jan 2013 09:19:06 +0100
-Message-ID: <20130116.101906.399662310268585658.hdoyu@nvidia.com>
-References: <1357890387-23245-3-git-send-email-pgaikwad@nvidia.com><20130111.134820.1392079432650652356.hdoyu@nvidia.com><50F085A0.4090100@wwwdotorg.org>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
+Date: Wed, 16 Jan 2013 10:43:15 +0100
+Message-ID: <CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw@mail.gmail.com>
+References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
+	<1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
+	<CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
+	<20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F085A0.4090100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130115201705.GA25976-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Fri, 11 Jan 2013 22:35:28 +0100:
+On Tue, Jan 15, 2013 at 9:17 PM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> On Tue, Jan 15, 2013 at 06:53:19PM +0100, Daniel Vetter wrote:
+>> On Mon, Jan 14, 2013 at 4:55 PM, Thierry Reding
+>> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>> > +static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *file)
+>> > +{
+>> > +       struct drm_crtc *crtc;
+>> > +
+>> > +       list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
+>> > +               tegra_dc_cancel_page_flip(crtc, file);
+>> > +}
+>> > +
+>>
+>> Why that? If userspace dies while a flip is outstanding, it's imo ok
+>> to execute it - otherwise there might be an accounting mismatch if the
+>> hw still scans out the old fb, but drm believes the new one is used.
+>> Or do I miss something?
+>
+> I looked at the shmobile driver for inspiration and they do this as
+> well. Doing so seemed reasonable since there'd be no file to deliver the
+> event to.
 
-> On 01/11/2013 04:48 AM, Hiroshi Doyu wrote:
-> > Hi Prahant,
-> > 
-> > Some nit-pick/cosmetic comments inlined...
-> 
-> FYI, Prashant is on vacation for the next week or two, so I'll take over
-> this series to clean up any last review comments.
-> 
-> > Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
-> > 
-> >> Add tegra specific clocks, pll, pll_out, peripheral,
-> >> frac_divider, super.
-> 
-> (it's a good idea to quote as little text as possible; paging through
-> the whole patch to find your comments was slightly painful).
-> 
-> >> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-> 
-> >> +struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
-> >> +                                 unsigned long max_rate)
-> >> +{
-> >> +       struct tegra_clk_sync_source *sync;
-> >> +       struct clk_init_data init;
-> >> +       struct clk *clk;
-> >> +
-> >> +       sync = kzalloc(sizeof(struct tegra_clk_sync_source), GFP_KERNEL);
-> >> +       if (!sync) {
-> >> +               pr_err("%s: could not allocate sync source clk\n", __func__);
-> >> +               return ERR_PTR(-ENOMEM);
-> >> +       }
-> >> +
-> >> +       sync->rate = rate;
-> >> +       sync->max_rate = max_rate;
-> >> +
-> >> +       init.ops = &tegra_clk_sync_source_ops;
-> >> +       init.name = name;
-> >> +       init.flags = CLK_IS_ROOT;
-> >> +       init.parent_names = NULL;
-> >> +       init.num_parents = 0;
-> >> +
-> >> +       sync->hw.init = &init;
-> >> +
-> >> +       clk = clk_register(NULL, &sync->hw);
-> > 
-> > The above usage of "init" from stack may be a bit
-> > unfamilier. I can guess that its content is copied in clk_register()
-> > but it's originally defined in stack. So I just prefer to writing this
-> > as below. It may be somewhat explict that we know init is from stack.
-> 
-> The issue you mention is more about whether "init" is copied from the
-> stack or not; simplying changing the initialization to:
-> 
-> > struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
-> >                                  unsigned long max_rate)
-> > {
-> >         struct tegra_clk_sync_source *sync;
-> >         struct clk_init_data init = {
-> >                 .ops = &tegra_clk_sync_source_ops;
-> >                 .name = name;
-> >                 .flags = CLK_IS_ROOT;
-> >                 .parent_names = NULL;
-> >                 .num_parents = 0;
-> >         };
+Hm, is the code in drm_events_release not good enough? And if it's
+buggy, we need to fix it. Also adding Laurent to figure out why he
+added that code in shmob ...
 
-Also since "init" is allocated from stack, members are expected to be
-initialized *zero*. The last 2 lines are not necessary in the above.
+>> The reason I've skimmed through the patches is to check for
+>> implications with my modeset locking rework. Review on that would be
+>> highly appreciated ...
+>
+> I'm not sure how suited I am for review given my limited experience, but
+> I'll see if I can make some time to take a look.
 
-         struct clk_init_data init = {
-                 .ops = &tegra_clk_sync_source_ops;
-                 .name = name;
-                 .flags = CLK_IS_ROOT;
-         };
-
-> ... doesn't really address that, although it's a perfectly reasonable
-> change.
-> 
-> To address the copying issue, why not just add a comment:
-
-OK
-
->        /*
->         * This data pointed at by this field is copied by
->         * clk_register(), so a pointer to the stack is OK.
->         */
->        sync->hw.init = &init;
-> 
->        clk = clk_register(NULL, &sync->hw);
-> 
-> I'll make the other changes you suggested.
+The commit message should nicely explain why I've picked the design
+and the various implications for drivers. So just checking whether
+anything collides with your upcoming stuff would be good ...
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
