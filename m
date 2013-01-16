@@ -1,265 +1,63 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] usb: Add APIs to access host registers from Tegra PHY
-Date: Wed, 16 Jan 2013 19:00:22 +0530
-Message-ID: <1358343022-28919-5-git-send-email-vbyravarasu@nvidia.com>
-References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com>
+From: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
+Date: Wed, 16 Jan 2013 07:31:25 -0600
+Message-ID: <CAF6AEGtPC2NS74jszX6kbcqMmHcd4Fhsk5bVuYjk43gQN1kv+g@mail.gmail.com>
+References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
+	<1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
+	<CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
+	<20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
+	<CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw@mail.gmail.com>
+	<20130116100149.GA13628@avionic-0098.adnet.avionic-design.de>
+	<CAKMK7uFQKwvEN0j-L=g1UwTzVvtYyqyyBaH8apQnqWPa2sq5vQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358343022-28919-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKMK7uFQKwvEN0j-L=g1UwTzVvtYyqyyBaH8apQnqWPa2sq5vQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-As Tegra PHY driver needs to access one of the Host registers,
-added few APIs.
+On Wed, Jan 16, 2013 at 6:36 AM, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org> wrote:
+> On Wed, Jan 16, 2013 at 11:01 AM, Thierry Reding
+> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>> drm_events_release() should be enough to clean up the events, but I
+>> suspect the reason why Laurent put that code in was that the drm_crtc
+>> private data still has a reference to the event and needs to clear it.
+>> Otherwise the next page flip won't be scheduled because .page_flip()
+>> would return -EBUSY.
+>
+> Hm, indeed we seem to have a nice bug in most drivers there :(
+>
+>> However, it seems like {tegra_dc,shmob_drm_crtc}_cancel_page_flip()
+>> could both be simplified a lot and just set their event to NULL. Then
+>> again, maybe keeping a separate reference isn't all that useful. Maybe
+>> the better thing to do here is iterate over the list of pending VBLANK
+>> events in *_finish_page_flip() and process each of them? That would
+>> allow more than one user-space process to queue page flips.
+>
+> I think we need a slightly more generally useful solution, since most
+> drivers are currently broken. I've read a bit through the code, but
+> short of refcounting drm events and adding event->file_priv checks at
+> relevent places I don't see a sane solution ... And even that one is
+> rather invasive. Do you have an idea? Imo doing the cleanup in each
+> driver will be rather error-prone, and since usually kms clients wait
+> for flips to complete, also guaranteed to be little tested.
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/usb/host/ehci-tegra.c     |   71 ++++++++++++++++++++++++++++++++++++-
- drivers/usb/phy/tegra_usb_phy.c   |   51 +++++++--------------------
- include/linux/usb/tegra_usb_phy.h |    6 +++
- 3 files changed, 89 insertions(+), 39 deletions(-)
+I suppose we could move the *pending_vblank_event to 'struct
+drm_crtc'.. I think probably all/most drivers need the same thing
+anyway.  If a driver needs to do something special, it could just
+never set crtc->pending_vblank_event and instead do it's own cleanup.
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 55a9cde..5299b01 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -2,7 +2,7 @@
-  * EHCI-compliant USB host controller driver for NVIDIA Tegra SoCs
-  *
-  * Copyright (C) 2010 Google, Inc.
-- * Copyright (C) 2009 NVIDIA Corporation
-+ * Copyright (C) 2009 - 2013 NVIDIA Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms of the GNU General Public License as published by the
-@@ -33,6 +33,20 @@
- #define TEGRA_USB2_BASE			0xC5004000
- #define TEGRA_USB3_BASE			0xC5008000
- 
-+/* PORTSC registers */
-+#define USB_PORTSC1			0x184
-+#define USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
-+#define USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
-+#define USB_PORTSC1_PHCD	(1 << 23)
-+#define USB_PORTSC1_WKOC	(1 << 22)
-+#define USB_PORTSC1_WKDS	(1 << 21)
-+#define USB_PORTSC1_WKCN	(1 << 20)
-+#define USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
-+#define USB_PORTSC1_PP		(1 << 12)
-+#define USB_PORTSC1_SUSP	(1 << 7)
-+#define USB_PORTSC1_PE		(1 << 2)
-+#define USB_PORTSC1_CCS		(1 << 0)
-+
- #define TEGRA_USB_DMA_ALIGN 32
- 
- struct tegra_ehci_hcd {
-@@ -605,6 +619,50 @@ static const struct dev_pm_ops tegra_ehci_pm_ops = {
- 
- #endif
- 
-+void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
-+{
-+	unsigned long val;
-+	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
-+	void __iomem *base = hcd->regs;
-+	u32 wake = USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
-+
-+	val = readl(base + USB_PORTSC1);
-+	if (enable)
-+		val |= wake;
-+	else
-+		val &= ~wake;
-+	writel(val, base + USB_PORTSC1);
-+}
-+EXPORT_SYMBOL_GPL(tegra_ehci_set_wakeon_events);
-+
-+void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
-+{
-+	unsigned long val;
-+	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
-+	void __iomem *base = hcd->regs;
-+
-+	val = readl(base + USB_PORTSC1);
-+	val &= ~USB_PORTSC1_PTS(3);
-+	val |= USB_PORTSC1_PTS(pts_val & 3);
-+	writel(val, base + USB_PORTSC1);
-+}
-+EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
-+
-+void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
-+{
-+	unsigned long val;
-+	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
-+	void __iomem *base = hcd->regs;
-+
-+	val = readl(base + USB_PORTSC1);
-+	if (enable)
-+		val |= USB_PORTSC1_PHCD;
-+	else
-+		val &= ~USB_PORTSC1_PHCD;
-+	writel(val, base + USB_PORTSC1);
-+}
-+EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
-+
- static u64 tegra_ehci_dma_mask = DMA_BIT_MASK(32);
- 
- static int tegra_ehci_probe(struct platform_device *pdev)
-@@ -616,6 +674,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	int err = 0;
- 	int irq;
- 	int instance = pdev->id;
-+	struct usb_phy *u_phy;
- 
- 	pdata = pdev->dev.platform_data;
- 	if (!pdata) {
-@@ -718,6 +777,16 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 
- 	usb_phy_init(&tegra->phy->u_phy);
- 
-+	hcd->phy = u_phy = &tegra->phy->u_phy;
-+	u_phy->otg = devm_kzalloc(&pdev->dev, sizeof(struct usb_otg),
-+			     GFP_KERNEL);
-+	if (!u_phy->otg) {
-+		dev_err(&pdev->dev, "Failed to alloc memory for otg\n");
-+		err = -ENOMEM;
-+		goto fail_io;
-+	}
-+	u_phy->otg->host = hcd_to_bus(hcd);
-+
- 	err = usb_phy_set_suspend(&tegra->phy->u_phy, 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to power on the phy\n");
-diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
-index ce1ff2a..f3b73b3 100644
---- a/drivers/usb/phy/tegra_usb_phy.c
-+++ b/drivers/usb/phy/tegra_usb_phy.c
-@@ -36,19 +36,6 @@
- 
- #define ULPI_VIEWPORT		0x170
- 
--#define USB_PORTSC1		0x184
--#define   USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
--#define   USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
--#define   USB_PORTSC1_PHCD	(1 << 23)
--#define   USB_PORTSC1_WKOC	(1 << 22)
--#define   USB_PORTSC1_WKDS	(1 << 21)
--#define   USB_PORTSC1_WKCN	(1 << 20)
--#define   USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
--#define   USB_PORTSC1_PP	(1 << 12)
--#define   USB_PORTSC1_SUSP	(1 << 7)
--#define   USB_PORTSC1_PE	(1 << 2)
--#define   USB_PORTSC1_CCS	(1 << 0)
--
- #define USB_SUSP_CTRL		0x400
- #define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
- #define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
-@@ -311,11 +298,8 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		val = readl(base + USB_SUSP_CTRL);
- 		val &= ~USB_SUSP_SET;
- 		writel(val, base + USB_SUSP_CTRL);
--	} else {
--		val = readl(base + USB_PORTSC1);
--		val |= USB_PORTSC1_PHCD;
--		writel(val, base + USB_PORTSC1);
--	}
-+	} else
-+		tegra_ehci_set_phcd(&phy->u_phy, true);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
- 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
-@@ -336,11 +320,8 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- 		val = readl(base + USB_SUSP_CTRL);
- 		val &= ~USB_SUSP_CLR;
- 		writel(val, base + USB_SUSP_CTRL);
--	} else {
--		val = readl(base + USB_PORTSC1);
--		val &= ~USB_PORTSC1_PHCD;
--		writel(val, base + USB_PORTSC1);
--	}
-+	} else
-+		tegra_ehci_set_phcd(&phy->u_phy, false);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
- 						     USB_PHY_CLK_VALID))
-@@ -462,11 +443,8 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 
- 	utmi_phy_clk_enable(phy);
- 
--	if (!phy->is_legacy_phy) {
--		val = readl(base + USB_PORTSC1);
--		val &= ~USB_PORTSC1_PTS(~0);
--		writel(val, base + USB_PORTSC1);
--	}
-+	if (!phy->is_legacy_phy)
-+		tegra_ehci_set_pts(&phy->u_phy, 0);
- 
- 	return 0;
- }
-@@ -611,10 +589,7 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 		return ret;
- 	}
- 
--	val = readl(base + USB_PORTSC1);
--	val |= USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
--	writel(val, base + USB_PORTSC1);
--
-+	tegra_ehci_set_wakeon_events(&phy->u_phy, true);
- 	val = readl(base + USB_SUSP_CTRL);
- 	val |= USB_SUSP_CLR;
- 	writel(val, base + USB_SUSP_CTRL);
-@@ -629,17 +604,12 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 
- static int ulpi_phy_power_off(struct tegra_usb_phy *phy)
- {
--	unsigned long val;
--	void __iomem *base = phy->regs;
- 	struct tegra_ulpi_config *config = phy->config;
- 
- 	/* Clear WKCN/WKDS/WKOC wake-on events that can cause the USB
- 	 * Controller to immediately bring the ULPI PHY out of low power
- 	 */
--	val = readl(base + USB_PORTSC1);
--	val &= ~(USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN);
--	writel(val, base + USB_PORTSC1);
--
-+	tegra_ehci_set_wakeon_events(&phy->u_phy, false);
- 	clk_disable(phy->clk);
- 	return gpio_direction_output(config->reset_gpio, 0);
- }
-@@ -742,6 +712,11 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
- 	phy->dev = dev;
- 	phy->is_legacy_phy =
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
-+	err = of_property_match_string(np, "phy_type", "ulpi");
-+	if (err < 0)
-+		phy->is_ulpi_phy = false;
-+	else
-+		phy->is_ulpi_phy = true;
- 
- 	if (!phy->config) {
- 		if (phy->is_ulpi_phy) {
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index a6a89d4..d5f695b 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -75,4 +75,10 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 
- void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy);
- 
-+void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable);
-+
-+void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
-+
-+void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
-+
- #endif /* __TEGRA_USB_PHY_H */
--- 
-1.7.0.4
+BR,
+-R
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
