@@ -1,33 +1,34 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/2] ARM: tegra: config: enable SERIAL_TEGRA
-Date: Wed, 16 Jan 2013 18:36:11 +0530
-Message-ID: <1358341572-8154-1-git-send-email-ldewangan@nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: [PATCH 0/4] usb: Supporting patches for registering Tegra USB PHY as a platform driver
+Date: Wed, 16 Jan 2013 19:00:18 +0530
+Message-ID: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable high speed serial driver for tegra platform.
+As part of registering tegra USB PHY as platform driver, prepared
+patches to add separate DT nodes describing Tegra USB PHY properties.
+Modified instance number based processing to make use of the added
+DT properties. As PHY will be registered as separate driver, removed
+ehci register access from PHY driver and added APIs to ehci driver for
+this purpose.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- arch/arm/configs/tegra_defconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Venu Byravarasu (4):
+  arm: tegra: Add DT nodes for Tegra USB PHY
+  USB: PHY: Get rid of instance number to differentiate legacy
+    controller
+  USB: PHY: Tegra: Get rid of instance number to differentiate PHY type
+  usb: Add APIs to access host registers from Tegra PHY
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a7827fd..4c5cc08 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -112,6 +112,7 @@ CONFIG_INPUT_MPU3050=y
- # CONFIG_DEVKMEM is not set
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-+CONFIG_SERIAL_TEGRA=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C=y
--- 
-1.7.1.1
+ .../bindings/usb/nvidia,tegra20-ehci.txt           |    1 +
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |   14 +++
+ arch/arm/boot/dts/tegra20.dtsi                     |   22 +++++
+ drivers/usb/host/ehci-tegra.c                      |   71 ++++++++++++++-
+ drivers/usb/phy/tegra_usb_phy.c                    |  100 +++++++-------------
+ include/linux/usb/tegra_usb_phy.h                  |    8 ++
+ 6 files changed, 149 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
