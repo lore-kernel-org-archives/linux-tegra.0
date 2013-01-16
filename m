@@ -1,30 +1,46 @@
 From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 03/10] ARM: dt: tegra30: Add clock information
-Date: Wed, 16 Jan 2013 10:01:15 +0200
-Message-ID: <50F65E4B.8040409@nvidia.com>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com> <1357891289-23500-3-git-send-email-pgaikwad@nvidia.com>
+Subject: Re: [PATCHv5 7/8] ARM: tegra: Add board data and 2D clocks
+Date: Wed, 16 Jan 2013 10:10:09 +0200
+Message-ID: <50F66061.20509@nvidia.com>
+References: <1358249182-17486-1-git-send-email-tbergstrom@nvidia.com> <1358249182-17486-8-git-send-email-tbergstrom@nvidia.com> <50F5A3A6.7000801@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357891289-23500-3-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <50F5A3A6.7000801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.01.2013 10:01, Prashant Gaikwad wrote:
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 6765646..c3e129a 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
->  		gr3d {
->  			compatible = "nvidia,tegra30-gr3d";
->  			reg = <0x54180000 0x00040000>;
-> +			clocks = <&tegra_car 24>;
->  		};
+On 15.01.2013 20:44, Stephen Warren wrote:
+> On 01/15/2013 04:26 AM, Terje Bergstrom wrote:
+>> Add a driver alias gr2d for Tegra 2D device, and assign a duplicate
+>> of 2D clock to that driver alias.
+> 
+> FYI on this one patch - it won't be applied to the Tegra tree until
+> after Prashant's common clock framework changes are applied. As such, it
+> will need some rework once those patches are applied, or perhaps won't
+> even be relevant any more; see below.
 
-In Tegra3, 3D has two clocks. I believe you'd need to add <&tegra_car
-98> here.
+It looks like I need to just drop the patch 7(8 "ARM: tegra: Add board
+data and 2D clocks" and change the 2D code to access the clock without a
+name. Do you agree?
+
+I'll roll this into the next patch version once I've gathered more comments.
+
+diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+index dc7d6c6..a1c5f5c 100644
+--- a/drivers/gpu/host1x/drm/gr2d.c
++++ b/drivers/gpu/host1x/drm/gr2d.c
+@@ -259,7 +259,7 @@ static int gr2d_probe(struct platform_device *dev)
+        if (!gr2d)
+                return -ENOMEM;
+
+-       gr2d->clk = devm_clk_get(&dev->dev, "gr2d");
++       gr2d->clk = devm_clk_get(&dev->dev, NULL);
+        if (IS_ERR(gr2d->clk)) {
+                dev_err(&dev->dev, "cannot get clock\n");
+                return PTR_ERR(gr2d->clk);
 
 Terje
