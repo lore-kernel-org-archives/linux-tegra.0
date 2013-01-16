@@ -1,19 +1,65 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 05/14] lib: Add I/O map cache implementation
-Date: Wed, 16 Jan 2013 11:25:56 +0000
-Message-ID: <20130116112556.GR23505@n2100.arm.linux.org.uk>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <20130109231758.GA27065@obsidianresearch.com> <20130110071937.GG15212@avionic-0098.adnet.avionic-design.de> <201301100917.19577.arnd@arndb.de> <20130110102544.GA5546@avionic-0098.adnet.avionic-design.de> <20130110182007.GA28004@obsidianresearch.com> <20130110185505.GA22944@avionic-0098.adnet.avionic-design.de> <20130110190327.GA23110@avionic-0098.adnet.avionic-design.de> <20130110192417.GA18478@obsidianresearch.com> <20130116101822.GA17706@avionic-0098.adnet.avionic-design.de>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 5/9] ARM: Tegra: Define Tegra30 CAR binding
+Date: Wed, 16 Jan 2013 13:28:56 +0200
+Message-ID: <20130116132856.2896df94f553f78273c4574c@nvidia.com>
+References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com>
+	<1357890387-23245-6-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130116101822.GA17706-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <1357890387-23245-6-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 16, 2013 at 11:18:22AM +0100, Thierry Reding wrote:
-> 		err = ioremap_page_range(virt, virt + SZ_64K - 1, phys,
+On Fri, 11 Jan 2013 08:46:23 +0100
+Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-Why -1 here?
+> The device tree binding models Tegra30 CAR (Clock And Reset)
+> as a single monolithic clock provider.
+> 
+> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/clock/nvidia,tegra30-car.txt          |  262 ++++++++++++++++++++
+>  arch/arm/boot/dts/tegra30.dtsi                     |    6 +
+>  2 files changed, 268 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+> new file mode 100644
+> index 0000000..121d203
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra30-car.txt
+> @@ -0,0 +1,262 @@
+> +NVIDIA Tegra30 Clock And Reset Controller
+> +
+> +This binding uses the common clock binding:
+......
+> +  215  cml0
+> +  216  cml1
+> +  217  hclk
+> +  218  pclk
+> +
+> +Example SoC include file:
+> +
+> +/ {
+> +       tegra_car: clock {
+> +               compatible = "nvidia,tegra30-car";
+> +               reg = <0x60006000 0x1000>;
+> +               #clock-cells = <1>;
+> +       };
+> +
+> +       usb@c5004000 {
+> +               clocks = <&tegra_car 58>; /* usb2 */
+> +       };
+> +};
+> +
+> +Example board file:
+> +
+> +/ {
+> +       clocks {
+> +               compatible = "simple-bug";
+
+typo, 's/simple-bug/simple-bus/' ?
