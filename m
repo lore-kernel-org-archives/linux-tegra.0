@@ -1,50 +1,79 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
-Date: Wed, 16 Jan 2013 11:44:35 -0700
-Message-ID: <50F6F513.1030806@wwwdotorg.org>
-References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com><1357890387-23245-3-git-send-email-pgaikwad@nvidia.com> <20130116.143151.1531468192773974887.hdoyu@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] drm: constify edid handling functions
+Date: Wed, 16 Jan 2013 19:45:40 +0100
+Message-ID: <20130116184540.GB28660@avionic-0098.adnet.avionic-design.de>
+References: <1358347002-10999-1-git-send-email-dev@lynxeye.de>
+ <20130116152355.GA965@avionic-0098.adnet.avionic-design.de>
+ <1358352210.3157.8.camel@tellur>
+ <87fw21qctl.fsf@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130116.143151.1531468192773974887.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <87fw21qctl.fsf-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 05:31 AM, Hiroshi Doyu wrote:
-> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
-> ...
->> +struct clk *tegra_clk_periph(const char *name, const char **parent_names,
->> +                            int num_parents, struct tegra_clk_periph *periph,
->> +                            void __iomem *clk_base, u32 offset)
-...
->> +struct clk *tegra_clk_periph_nodiv(const char *name, const char **parent_names,
->> +                             int num_parents, struct tegra_clk_periph *periph,
->> +                             void __iomem *clk_base, u32 offset)
-...
->
-> The above two functions are almost duplicate, can we take the common part from them?
 
-Sure, that looks reasonable.
+--oLBj+sq0vYjzfsbl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> struct clk *__tegra_clk_periph(const char *name, const char **parent_names,
-> 			    int num_parents, struct tegra_clk_periph *periph,
-> 			    void __iomem *clk_base, u32 offset, int div)
+On Wed, Jan 16, 2013 at 07:04:22PM +0200, Jani Nikula wrote:
+> On Wed, 16 Jan 2013, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
+> > Am Mittwoch, den 16.01.2013, 16:23 +0100 schrieb Thierry Reding:
+> >> On Wed, Jan 16, 2013 at 03:36:41PM +0100, Lucas Stach wrote:
+> >> [...]
+> >> > @@ -705,7 +705,7 @@ static int standard_timing_level(struct edid *ed=
+id)
+> >> >   * monitors fill with ascii space (0x20) instead.
+> >> >   */
+> >> >  static int
+> >> > -bad_std_timing(u8 a, u8 b)
+> >> > +bad_std_timing(const u8 a, const u8 b)
+> >> >  {
+> >> >  	return (a =3D=3D 0x00 && b =3D=3D 0x00) ||
+> >> >  	       (a =3D=3D 0x01 && b =3D=3D 0x01) ||
+> >>=20
+> >> Was this intended to go in here?
+>=20
+> [...]
+>=20
+> > Yes, probably I should have been a bit more elaborate in the commit
+> > message. Both hunks are intentional, as I looked at how those functions
+> > in the environment of the edid handling funcs are used and added const
+> > where appropriate, not just strictly to the struct edid pointer.
+>=20
+> Please, let's not start constifying non-pointer parameters and local
+> variables.
 
->        periph->divider.reg = clk_base + offset;
+I agree. I don't think there's any advantage in making a and b const.
 
-That will also need to be conditional.
+Thierry
 
->        periph->divider.hw.clk = div ? NULL : clk;
+--oLBj+sq0vYjzfsbl
+Content-Type: application/pgp-signature
 
-And that test is inverted.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-> static inline struct clk *tegra_clk_periph(const char *name, const char **parent_names,
-> 			    int num_parents, struct tegra_clk_periph *periph,
-> 			    void __iomem *clk_base, u32 offset)
+iQIcBAEBAgAGBQJQ9vVUAAoJEN0jrNd/PrOhwWIP/3Z6TSM2V8lxmB6BBvfZnszq
+tWIMXH0W/s7oKlEU3Hap50/UhlJxto9M9KxuAfci23Nt6CrsG18tdMDBlWZlQV+m
+QUXlJ9C3PReTluVnQ8Uh7EXN1qivKpnuPZ6Bcr8pi/mYM0FP6Ln99JxOjbB2dPzG
+WeC5d+swPNYpq4FZOcTzjyluwJjGvDzgnSaS09QE8ZcgrE5PUaxd7VFXD7oQHCwu
+nlTfV+dMxBBKgW7zi/lMJ8ZvXYvpsY5kcZKyovdc/6JMbrxbf3hqDtdYnZK7MSO7
+eXSRevyY20vqs9ouRVFJHICgFq8Ge85YpLnNHA6tlhOIcNE/gLXr9OL9dQYI3WFt
+YCmdrnOwsPx7DoHUV4OCRREZrkBoqsPdDfyORZ/l5fZaF0vihcSoWYnMHTgIVDTo
+5BrR1TjX0dZQgCHEJeI8lppVDYXxAi7CLOe1VY7S12CXjYdz4YbO9aHwI54hwyAS
+malBmhHxr0UK1rXrOr2EMTP+02FvuJz0qfI1rKQrEjjDhiQal3ygK4CLFEfkCTKd
+me4vxHkLV1y8er8Fl4eSI3Pvnnh3YjWB+VIgpDsn7SwcbGHmy0NFXIAnOr/Xx8KF
+LCbcv+ts026B6uQfDkEvU6vkXTp/bkBYeN2RmKLZtkykDCs84HWFQ/zg8PldNYe8
+fJyofrXazCGt6Q6VJPsC
+=enzy
+-----END PGP SIGNATURE-----
 
-I'd rather just make these regular functions in the .c file; otherwise
-they have to go into the header file, which means prototyping
-__tegra_clk_periph() there and it just gets messy.
+--oLBj+sq0vYjzfsbl--
