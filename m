@@ -1,35 +1,29 @@
-From: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/16] big.LITTLE low-level CPU and cluster power
- management
-Date: Wed, 16 Jan 2013 16:18:39 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1301161614390.6300@xanadu.home>
-References: <1357777251-13541-1-git-send-email-nicolas.pitre@linaro.org> <1358157392.19304.243.camel@jlo-ubuntu-64.nvidia.com> <alpine.LFD.2.02.1301140849020.6300@xanadu.home> <1358217848.8513.14.camel@jlo-ubuntu-64.nvidia.com> <alpine.LFD.2.02.1301151140550.6300@xanadu.home>
- <20130116160242.GB31318@arm.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 7/6] iommu/tegra: smmu: Add dependency on ARCH_TEGRA_114_SOC
+Date: Wed, 16 Jan 2013 14:18:55 -0700
+Message-ID: <50F7193F.3090905@wwwdotorg.org>
+References: <1358237848-968-1-git-send-email-hdoyu@nvidia.com> <1358256149-28700-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130116160242.GB31318-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1358256149-28700-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 16 Jan 2013, Catalin Marinas wrote:
+On 01/15/2013 06:22 AM, Hiroshi Doyu wrote:
+> TEGRA_IOMMU_SMMU depends on ARCH_TEGRA_114_SOC too.
 
-> On Tue, Jan 15, 2013 at 04:44:23PM +0000, Nicolas Pitre wrote:
-> > On Tue, 15 Jan 2013, Joseph Lo wrote:
-> > > So do you have a plan to make it become a generic framework in this
-> > > series or later work?
-> > 
-> > It is already generic, except for the name.  In other words, you could 
-> > start using this code already.
-> > 
-> > I'm still debating a good substitute for the bL_ prefix in this series 
-> > to give it the appearance of generic code.
-> 
-> mc_?
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
 
-Bah.   :-/
+>  config TEGRA_IOMMU_SMMU
+>  	bool "Tegra SMMU IOMMU Support"
+> -	depends on ARCH_TEGRA_3x_SOC && TEGRA_AHB
+> +	depends on (ARCH_TEGRA_114_SOC || ARCH_TEGRA_3x_SOC) && TEGRA_AHB
 
-
-Nicolas
+I think instead of listing out each SoC version individually, just
+depend on ARCH_TEGRA. This will mean the SMMU driver can be enabled in a
+Tegra20-only kernel, but that's not a big deal, and it means we won't
+have to keep editing this Kconfig entry every time we add a new chip.
