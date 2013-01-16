@@ -1,136 +1,265 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: [PATCH 3/4] USB: PHY: Tegra: Get rid of instance number to differentiate PHY type
-Date: Wed, 16 Jan 2013 19:00:21 +0530
-Message-ID: <1358343022-28919-4-git-send-email-vbyravarasu@nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 4/4] usb: Add APIs to access host registers from Tegra PHY
+Date: Wed, 16 Jan 2013 19:00:22 +0530
+Message-ID: <1358343022-28919-5-git-send-email-vbyravarasu@nvidia.com>
 References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358343022-28919-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra20 USB has 3 PHY instances:
-Instance 1 and 3 are UTMI. Instance 2 is ULPI.
+As Tegra PHY driver needs to access one of the Host registers,
+added few APIs.
 
-As instance number was used to differentiate ULPI from UTMI,
-used DT param to get this info and processed accordingly.
-
-Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/usb/phy/tegra_usb_phy.c   |   23 +++++++++--------------
- include/linux/usb/tegra_usb_phy.h |    1 +
- 2 files changed, 10 insertions(+), 14 deletions(-)
+ drivers/usb/host/ehci-tegra.c     |   71 ++++++++++++++++++++++++++++++++++++-
+ drivers/usb/phy/tegra_usb_phy.c   |   51 +++++++--------------------
+ include/linux/usb/tegra_usb_phy.h |    6 +++
+ 3 files changed, 89 insertions(+), 39 deletions(-)
 
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 55a9cde..5299b01 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -2,7 +2,7 @@
+  * EHCI-compliant USB host controller driver for NVIDIA Tegra SoCs
+  *
+  * Copyright (C) 2010 Google, Inc.
+- * Copyright (C) 2009 NVIDIA Corporation
++ * Copyright (C) 2009 - 2013 NVIDIA Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms of the GNU General Public License as published by the
+@@ -33,6 +33,20 @@
+ #define TEGRA_USB2_BASE			0xC5004000
+ #define TEGRA_USB3_BASE			0xC5008000
+ 
++/* PORTSC registers */
++#define USB_PORTSC1			0x184
++#define USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
++#define USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
++#define USB_PORTSC1_PHCD	(1 << 23)
++#define USB_PORTSC1_WKOC	(1 << 22)
++#define USB_PORTSC1_WKDS	(1 << 21)
++#define USB_PORTSC1_WKCN	(1 << 20)
++#define USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
++#define USB_PORTSC1_PP		(1 << 12)
++#define USB_PORTSC1_SUSP	(1 << 7)
++#define USB_PORTSC1_PE		(1 << 2)
++#define USB_PORTSC1_CCS		(1 << 0)
++
+ #define TEGRA_USB_DMA_ALIGN 32
+ 
+ struct tegra_ehci_hcd {
+@@ -605,6 +619,50 @@ static const struct dev_pm_ops tegra_ehci_pm_ops = {
+ 
+ #endif
+ 
++void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
++{
++	unsigned long val;
++	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
++	void __iomem *base = hcd->regs;
++	u32 wake = USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
++
++	val = readl(base + USB_PORTSC1);
++	if (enable)
++		val |= wake;
++	else
++		val &= ~wake;
++	writel(val, base + USB_PORTSC1);
++}
++EXPORT_SYMBOL_GPL(tegra_ehci_set_wakeon_events);
++
++void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
++{
++	unsigned long val;
++	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
++	void __iomem *base = hcd->regs;
++
++	val = readl(base + USB_PORTSC1);
++	val &= ~USB_PORTSC1_PTS(3);
++	val |= USB_PORTSC1_PTS(pts_val & 3);
++	writel(val, base + USB_PORTSC1);
++}
++EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
++
++void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
++{
++	unsigned long val;
++	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
++	void __iomem *base = hcd->regs;
++
++	val = readl(base + USB_PORTSC1);
++	if (enable)
++		val |= USB_PORTSC1_PHCD;
++	else
++		val &= ~USB_PORTSC1_PHCD;
++	writel(val, base + USB_PORTSC1);
++}
++EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
++
+ static u64 tegra_ehci_dma_mask = DMA_BIT_MASK(32);
+ 
+ static int tegra_ehci_probe(struct platform_device *pdev)
+@@ -616,6 +674,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	int err = 0;
+ 	int irq;
+ 	int instance = pdev->id;
++	struct usb_phy *u_phy;
+ 
+ 	pdata = pdev->dev.platform_data;
+ 	if (!pdata) {
+@@ -718,6 +777,16 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ 	usb_phy_init(&tegra->phy->u_phy);
+ 
++	hcd->phy = u_phy = &tegra->phy->u_phy;
++	u_phy->otg = devm_kzalloc(&pdev->dev, sizeof(struct usb_otg),
++			     GFP_KERNEL);
++	if (!u_phy->otg) {
++		dev_err(&pdev->dev, "Failed to alloc memory for otg\n");
++		err = -ENOMEM;
++		goto fail_io;
++	}
++	u_phy->otg->host = hcd_to_bus(hcd);
++
+ 	err = usb_phy_set_suspend(&tegra->phy->u_phy, 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to power on the phy\n");
 diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
-index 79280fe..ce1ff2a 100644
+index ce1ff2a..f3b73b3 100644
 --- a/drivers/usb/phy/tegra_usb_phy.c
 +++ b/drivers/usb/phy/tegra_usb_phy.c
-@@ -209,11 +209,6 @@ static struct tegra_utmip_config utmip_default[] = {
- 	},
- };
+@@ -36,19 +36,6 @@
  
--static inline bool phy_is_ulpi(struct tegra_usb_phy *phy)
--{
--	return (phy->instance == 1);
--}
+ #define ULPI_VIEWPORT		0x170
+ 
+-#define USB_PORTSC1		0x184
+-#define   USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
+-#define   USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
+-#define   USB_PORTSC1_PHCD	(1 << 23)
+-#define   USB_PORTSC1_WKOC	(1 << 22)
+-#define   USB_PORTSC1_WKDS	(1 << 21)
+-#define   USB_PORTSC1_WKCN	(1 << 20)
+-#define   USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
+-#define   USB_PORTSC1_PP	(1 << 12)
+-#define   USB_PORTSC1_SUSP	(1 << 7)
+-#define   USB_PORTSC1_PE	(1 << 2)
+-#define   USB_PORTSC1_CCS	(1 << 0)
 -
- static int utmip_pad_open(struct tegra_usb_phy *phy)
- {
- 	phy->pad_clk = clk_get_sys("utmip-pad", NULL);
-@@ -655,7 +650,7 @@ static int	tegra_phy_init(struct usb_phy *x)
- 	struct tegra_ulpi_config *ulpi_config;
- 	int err;
+ #define USB_SUSP_CTRL		0x400
+ #define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
+ #define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
+@@ -311,11 +298,8 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ 		val = readl(base + USB_SUSP_CTRL);
+ 		val &= ~USB_SUSP_SET;
+ 		writel(val, base + USB_SUSP_CTRL);
+-	} else {
+-		val = readl(base + USB_PORTSC1);
+-		val |= USB_PORTSC1_PHCD;
+-		writel(val, base + USB_PORTSC1);
+-	}
++	} else
++		tegra_ehci_set_phcd(&phy->u_phy, true);
  
--	if (phy_is_ulpi(phy)) {
-+	if (phy->is_ulpi_phy) {
- 		ulpi_config = phy->config;
- 		phy->clk = clk_get_sys(NULL, ulpi_config->clk);
- 		if (IS_ERR(phy->clk)) {
-@@ -693,7 +688,7 @@ static void tegra_usb_phy_close(struct usb_phy *x)
- {
- 	struct tegra_usb_phy *phy = container_of(x, struct tegra_usb_phy, u_phy);
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
+ 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
+@@ -336,11 +320,8 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+ 		val = readl(base + USB_SUSP_CTRL);
+ 		val &= ~USB_SUSP_CLR;
+ 		writel(val, base + USB_SUSP_CTRL);
+-	} else {
+-		val = readl(base + USB_PORTSC1);
+-		val &= ~USB_PORTSC1_PHCD;
+-		writel(val, base + USB_PORTSC1);
+-	}
++	} else
++		tegra_ehci_set_phcd(&phy->u_phy, false);
  
--	if (phy_is_ulpi(phy))
-+	if (phy->is_ulpi_phy)
- 		clk_put(phy->clk);
- 	else
- 		utmip_pad_close(phy);
-@@ -704,7 +699,7 @@ static void tegra_usb_phy_close(struct usb_phy *x)
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
+ 						     USB_PHY_CLK_VALID))
+@@ -462,11 +443,8 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
  
- static int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
- {
--	if (phy_is_ulpi(phy))
-+	if (phy->is_ulpi_phy)
- 		return ulpi_phy_power_on(phy);
- 	else
- 		return utmi_phy_power_on(phy);
-@@ -712,7 +707,7 @@ static int tegra_usb_phy_power_on(struct tegra_usb_phy *phy)
+ 	utmi_phy_clk_enable(phy);
  
- static int tegra_usb_phy_power_off(struct tegra_usb_phy *phy)
+-	if (!phy->is_legacy_phy) {
+-		val = readl(base + USB_PORTSC1);
+-		val &= ~USB_PORTSC1_PTS(~0);
+-		writel(val, base + USB_PORTSC1);
+-	}
++	if (!phy->is_legacy_phy)
++		tegra_ehci_set_pts(&phy->u_phy, 0);
+ 
+ 	return 0;
+ }
+@@ -611,10 +589,7 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 		return ret;
+ 	}
+ 
+-	val = readl(base + USB_PORTSC1);
+-	val |= USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
+-	writel(val, base + USB_PORTSC1);
+-
++	tegra_ehci_set_wakeon_events(&phy->u_phy, true);
+ 	val = readl(base + USB_SUSP_CTRL);
+ 	val |= USB_SUSP_CLR;
+ 	writel(val, base + USB_SUSP_CTRL);
+@@ -629,17 +604,12 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 
+ static int ulpi_phy_power_off(struct tegra_usb_phy *phy)
  {
--	if (phy_is_ulpi(phy))
-+	if (phy->is_ulpi_phy)
- 		return ulpi_phy_power_off(phy);
- 	else
- 		return utmi_phy_power_off(phy);
-@@ -749,7 +744,7 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+-	unsigned long val;
+-	void __iomem *base = phy->regs;
+ 	struct tegra_ulpi_config *config = phy->config;
+ 
+ 	/* Clear WKCN/WKDS/WKOC wake-on events that can cause the USB
+ 	 * Controller to immediately bring the ULPI PHY out of low power
+ 	 */
+-	val = readl(base + USB_PORTSC1);
+-	val &= ~(USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN);
+-	writel(val, base + USB_PORTSC1);
+-
++	tegra_ehci_set_wakeon_events(&phy->u_phy, false);
+ 	clk_disable(phy->clk);
+ 	return gpio_direction_output(config->reset_gpio, 0);
+ }
+@@ -742,6 +712,11 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+ 	phy->dev = dev;
+ 	phy->is_legacy_phy =
  		of_property_read_bool(np, "nvidia,has-legacy-mode");
++	err = of_property_match_string(np, "phy_type", "ulpi");
++	if (err < 0)
++		phy->is_ulpi_phy = false;
++	else
++		phy->is_ulpi_phy = true;
  
  	if (!phy->config) {
--		if (phy_is_ulpi(phy)) {
-+		if (phy->is_ulpi_phy) {
- 			pr_err("%s: ulpi phy configuration missing", __func__);
- 			err = -EINVAL;
- 			goto err0;
-@@ -796,14 +791,14 @@ EXPORT_SYMBOL_GPL(tegra_usb_phy_open);
- 
- void tegra_usb_phy_preresume(struct tegra_usb_phy *phy)
- {
--	if (!phy_is_ulpi(phy))
-+	if (!phy->is_ulpi_phy)
- 		utmi_phy_preresume(phy);
- }
- EXPORT_SYMBOL_GPL(tegra_usb_phy_preresume);
- 
- void tegra_usb_phy_postresume(struct tegra_usb_phy *phy)
- {
--	if (!phy_is_ulpi(phy))
-+	if (!phy->is_ulpi_phy)
- 		utmi_phy_postresume(phy);
- }
- EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
-@@ -811,14 +806,14 @@ EXPORT_SYMBOL_GPL(tegra_usb_phy_postresume);
- void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 				 enum tegra_usb_phy_port_speed port_speed)
- {
--	if (!phy_is_ulpi(phy))
-+	if (!phy->is_ulpi_phy)
- 		utmi_phy_restore_start(phy, port_speed);
- }
- EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_start);
- 
- void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy)
- {
--	if (!phy_is_ulpi(phy))
-+	if (!phy->is_ulpi_phy)
- 		utmi_phy_restore_end(phy);
- }
- EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
+ 		if (phy->is_ulpi_phy) {
 diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index f03e157..a6a89d4 100644
+index a6a89d4..d5f695b 100644
 --- a/include/linux/usb/tegra_usb_phy.h
 +++ b/include/linux/usb/tegra_usb_phy.h
-@@ -60,6 +60,7 @@ struct tegra_usb_phy {
- 	struct usb_phy u_phy;
- 	struct device *dev;
- 	bool is_legacy_phy;
-+	bool is_ulpi_phy;
- };
+@@ -75,4 +75,10 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
  
- struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+ void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy);
+ 
++void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable);
++
++void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
++
++void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
++
+ #endif /* __TEGRA_USB_PHY_H */
 -- 
 1.7.0.4
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
