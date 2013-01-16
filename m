@@ -1,28 +1,37 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Wed, 16 Jan 2013 14:00:26 +0000
-Message-ID: <201301161400.26587.arnd@arndb.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <20130115154038.GA11241@arm.com> <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Andrew Murray <andrew.murray@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH v2 2/2] drm: tegra: check HDMI sink capability
+Date: Wed, 16 Jan 2013 15:36:42 +0100
+Message-ID: <1358347002-10999-2-git-send-email-dev@lynxeye.de>
+References: <1358347002-10999-1-git-send-email-dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358347002-10999-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 15 January 2013, Thierry Reding wrote:
-> Is there actually hardware that supports this? I assumed that the MSI
-> controller would have to be tightly coupled to the PCI host bridge in
-> order to raise an interrupt when an MSI is received via PCI.
+Check if sink is HDMI capable when enabling an output. This disables
+HDMI audio/infoframes if we are talking to a plain DVI sink. All things
+except this check are already in place.
 
-No, as long as it's guaranteed that the MSI notification won't arrive
-at the CPU before any inbound DMA data before it, the MSI controller
-can be anywhere. Typically, the MSI controller is actually closer to
-the CPU core than to the PCI bridge. On X86, I believe the MSI address
-is on normally on the the "local APIC" on each CPU.
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/hdmi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-	Arnd
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index e060c7e..3405313 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -660,6 +660,9 @@ static int tegra_output_hdmi_enable(struct tegra_output *output)
+ 	usleep_range(1000, 2000);
+ 	tegra_periph_reset_deassert(hdmi->clk);
+ 
++	/* if the connected sink is not HDMI capable fall back to plain DVI */
++	hdmi->dvi = !drm_detect_hdmi_monitor(output->edid);
++
+ 	tegra_dc_writel(dc, VSYNC_H_POSITION(1),
+ 			DC_DISP_DISP_TIMING_OPTIONS);
+ 	tegra_dc_writel(dc, DITHER_CONTROL_DISABLE | BASE_COLOR_SIZE888,
+-- 
+1.8.0.2
