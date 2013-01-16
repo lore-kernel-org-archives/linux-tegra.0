@@ -1,61 +1,38 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: Re: [PATCH v2 1/2] drm: constify edid handling functions
-Date: Wed, 16 Jan 2013 17:03:30 +0100
-Message-ID: <1358352210.3157.8.camel@tellur>
-References: <1358347002-10999-1-git-send-email-dev@lynxeye.de>
-	<20130116152355.GA965@avionic-0098.adnet.avionic-design.de>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Wed, 16 Jan 2013 16:17:16 +0000
+Message-ID: <20130116161716.GA10630@arm.com>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130115154038.GA11241@arm.com>
+ <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
+ <201301161400.26587.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <20130116152355.GA965@avionic-0098.adnet.avionic-design.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201301161400.26587.arnd@arndb.de>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 16.01.2013, 16:23 +0100 schrieb Thierry Reding:
-> On Wed, Jan 16, 2013 at 03:36:41PM +0100, Lucas Stach wrote:
-> [...]
-> > @@ -705,7 +705,7 @@ static int standard_timing_level(struct edid *edid)
-> >   * monitors fill with ascii space (0x20) instead.
-> >   */
-> >  static int
-> > -bad_std_timing(u8 a, u8 b)
-> > +bad_std_timing(const u8 a, const u8 b)
-> >  {
-> >  	return (a == 0x00 && b == 0x00) ||
-> >  	       (a == 0x01 && b == 0x01) ||
+On Wed, Jan 16, 2013 at 02:00:26PM +0000, Arnd Bergmann wrote:
+> On Tuesday 15 January 2013, Thierry Reding wrote:
+> > Is there actually hardware that supports this? I assumed that the MSI
+> > controller would have to be tightly coupled to the PCI host bridge in
+> > order to raise an interrupt when an MSI is received via PCI.
 > 
-> Was this intended to go in here?
-> 
-> > @@ -721,8 +721,8 @@ bad_std_timing(u8 a, u8 b)
-> >   * and convert them into a real mode using CVT/GTF/DMT.
-> >   */
-> >  static struct drm_display_mode *
-> > -drm_mode_std(struct drm_connector *connector, struct edid *edid,
-> > -	     struct std_timing *t, int revision)
-> > +drm_mode_std(struct drm_connector *connector, const struct edid *edid,
-> > +	     const struct std_timing *t, int revision)
-> >  {
-> >  	struct drm_device *dev = connector->dev;
-> >  	struct drm_display_mode *m, *mode = NULL;
-> 
-> I know I'm being picky, but you're constifying the t parameter here as
-> well without saying so in the commit message.
-> 
-Yes, probably I should have been a bit more elaborate in the commit
-message. Both hunks are intentional, as I looked at how those functions
-in the environment of the edid handling funcs are used and added const
-where appropriate, not just strictly to the struct edid pointer.
+> No, as long as it's guaranteed that the MSI notification won't arrive
+> at the CPU before any inbound DMA data before it, the MSI controller
+> can be anywhere. Typically, the MSI controller is actually closer to
+> the CPU core than to the PCI bridge. On X86, I believe the MSI address
+> is on normally on the the "local APIC" on each CPU.
 
-Regards,
-Lucas
+MSIs are indistinguishable from other memory-write transactions originating
+from the RC other than the address they target. Anything that can capture
+that write in the address space (even a page fault) could be an MSI controller
+and call interrupt handlers. And so the RC / MSI controllers don't need to
+be aware of each other.
+
+Andrew Murray
