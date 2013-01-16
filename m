@@ -1,114 +1,88 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Tue, 15 Jan 2013 22:14:41 +0100
-Message-ID: <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130114095706.GA23467@arm.com>
- <20130115120855.GA5637@avionic-0098.adnet.avionic-design.de>
- <201301151244.12767.arnd@arndb.de> <20130115154038.GA11241@arm.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/6] ARM: tegra20: cpuidle: add powered-down state
+ for secondary CPU
+Date: Wed, 16 Jan 2013 11:17:17 +0800
+Message-ID: <1358306237.8826.7.camel@jlo-ubuntu-64.nvidia.com>
+References: <1354701715-24150-1-git-send-email-josephl@nvidia.com>
+	 <1354701715-24150-3-git-send-email-josephl@nvidia.com>
+	 <20121205105010.GA12999@e102568-lin.cambridge.arm.com>
+	 <1357888829.2034.39.camel@jlo-ubuntu-64.nvidia.com>
+	 <20130111122417.GE30538@e102568-lin.cambridge.arm.com>
+	 <1358218844.8513.30.camel@jlo-ubuntu-64.nvidia.com>
+	 <20130115113427.GC26424@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4171163522720820654=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <20130115154038.GA11241-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130115113427.GC26424-7AyDDHkRsp3ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 2013-01-15 at 19:34 +0800, Lorenzo Pieralisi wrote:
+> On Tue, Jan 15, 2013 at 03:00:44AM +0000, Joseph Lo wrote:
+> > On Fri, 2013-01-11 at 20:24 +0800, Lorenzo Pieralisi wrote:
+> > > On Fri, Jan 11, 2013 at 07:20:29AM +0000, Joseph Lo wrote:
+> > > > On Wed, 2012-12-05 at 18:50 +0800, Lorenzo Pieralisi wrote:
+> > > > > On Wed, Dec 05, 2012 at 10:01:49AM +0000, Joseph Lo wrote:
+> > > > You did mention there is an ARM generic locking scheme for MMU/coherency
+> > > > off case before. Do you mean the patch below?
+> > > > 
+> > > > https://patchwork.kernel.org/patch/1957911/
+> > > > https://patchwork.kernel.org/patch/1957901/
+> > > 
+> > > Those are used for first-man election when multiple CPUs come out of
+> > > idle at once.
+> > > 
+> > > You should have a look at the entire series and in particular:
+> > > 
+> > > https://patchwork.kernel.org/patch/1957891/
+> > > https://patchwork.kernel.org/patch/1957951/
+> > > 
+> > > > I gave it a review today. Looks it can't fit our usage for CPU idle
+> > > > powered-down mode on Tegra20.
+> > > > 
+> > > > The generic mechanism only can be used when CPUs in non coherent world.
+> > > > But our usage needs the mechanism could be used in both coherent and non
+> > > > coherent case. OK. The case is we need to sync the status about the CPU1
+> > > > was ready to power down. In this case, the CPU0 is still in coherent
+> > > > world but the CPU1 isn't. So we need the locking scheme could be still
+> > > > safe in this situation.
+> > > 
+> > > I know, I implemented something of that sort for an A9 based development
+> > > platform, that's why I pointed you to this new patchset.
+> > > 
+> > > Have a look at the series, it should do what you want.
+> > > 
+> > Hi Lorenzo,
+> > 
+> > May I upstream this stuff first? I can promise to you I will re-work a
+> > common CPUs and cluster power sync wrappers (platform_power_ops) for all
+> > Tegra series that based on the generic framework. Because we didn't have
+> > this work in Tegra tree yet and we indeed need it for supporting cluster
+> > power down and switching.
+> > 
+> > But it need lots of time for re-work, testing and verification. And I
+> > have lots of patches that need the function of cpu suspend that be
+> > introduced in this patch series to support platform suspend for Tegra.
+> > 
+> > So I am asking the permission here for upstream this series first and I
+> > will continue the job to come out a common CPUs and cluster power sync
+> > wrappers for Tegra that we indeed need it to support cluster power down
+> > and switching.
+> 
+> I understand that and you should not ask me permission :-) since I am
+> not a maintainer. I just wanted to save you some effort, you will end
+> up rewriting the whole thing anyway IMHO and I think the power API would
+> have saved you time if it were there before.
+> 
+I think we are always taking care the comments from the community. And
+it's really worth for us to reconsider the code design and re-use the
+common framework to reduce the effort.
+> 
+> If you need help to integrate the power API please do ask questions.
+> 
+Thanks again.
 
---===============4171163522720820654==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
-Content-Disposition: inline
-
-
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 15, 2013 at 03:40:38PM +0000, Andrew Murray wrote:
-> On Tue, Jan 15, 2013 at 12:44:12PM +0000, Arnd Bergmann wrote:
-> > On Tuesday 15 January 2013, Thierry Reding wrote:
-> > > I'm not sure I follow you're reasoning here. Is it possible to use MS=
-Is
-> > > without PCI? If not then I think there's little sense in keeping the
-> > > implementations separate.
-> >=20
-> > Conceptually, you can use MSI for any device, but the Linux interfaces
-> > for MSI are tied to PCI. If you use an MSI controller for a non-PCI
-> > device, it would probably just appear as a regular interrupt controller.
-> >=20
-> > > Furthermore, if MSI controller and PCI host bridge are separate entit=
-ies
-> > > how do you look up the MSI controller given a PCI device?
-> >=20
-> > The host bridge can contain a pointer ot the MSI controller. You can
-> > have multiple host bridges sharing a single MSI controller or you
-> > can have separate ones for each host.
->=20
-> Yes and I hoped this relationship would be described by a device tree pha=
-ndle
-> as is done for relating devices to their interrupt-parent (where device t=
-rees
-> are used). This would provide (arguably unnecessarily) greater flexibilit=
-y,
-> e.g. if you have two PCI/MSI controller pairs, the MSIs only offer limite=
-d MSIs
-> and you only use one PCI fabric - you could service different parts of the
-> fabric by different MSI controllers (assuming you relate MSI controllers =
-to
-> part of the fabric and that you'd want to). Perhaps there would be benefi=
-ts for
-> virtualisation as well?
-
-Is there actually hardware that supports this? I assumed that the MSI
-controller would have to be tightly coupled to the PCI host bridge in
-order to raise an interrupt when an MSI is received via PCI.
-
-Thierry
-
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ9cbBAAoJEN0jrNd/PrOhtl4P/jFRPjJMBYsIefiaxa04+iqT
-3x9QHWpfSoQabBZedImODOBW//x/WY95wzU1svRNSn9KRP57HNoI1dSetfx7dsxv
-UWJ5lklcJjfBCgj7m2WyG9V9Oh1YrZYJ006pie/Qi5i4YsVuLwAbXc5HyhwHHBzZ
-/Xm3QRPqAyXHY/mWLdqRDMMC0EntcfK6VxiM7vGyhYlFDu/0Vok7leXUXu1KB4/c
-yDVHB7miuzYAqX4BhrCk2Qvyt2vB7+EU40ZNOahWOJA0IYY9PcAHN36/WB6JKxFu
-6my0R/Hl9XqsLim6e8nEbE6oglNnDgSITjKD+GHrQ7Jk+crhUyLBWbJpRpDVCI3Z
-TqKhJgaHB5nOal4aCy3rCWx9Bzg6IT+LN3xGjLtzx3OxwCbDAdDjTO9knF4FEu3h
-QlRMcx0Nm/vKmXE8GSeDBvjbDIoz6fAILZoIhDYG7cAcjeshDuUYLa9ZKJDxrsZU
-VlVI51jMty+wLcAY9yVL3TYo/pPH96Iw4xNPC7gGSFe/QELh7coynxeEOjGxcC1C
-BuuJrVP3iN1ozDsdU4N5sBqJMnn2yiuIHxznScPifa/9TK44OcmDffKUFOOYOXTV
-raEZJjmFfCQqQf7FWdQcgK7KEYLB+5rAPhJxw+kdA5D5y8t6IFBTPn1faIf9e2XE
-SQaQ+rKu8bPN9+wyPtr3
-=JrIc
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
-
---===============4171163522720820654==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============4171163522720820654==--
+Joseph
