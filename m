@@ -1,29 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 7/6] iommu/tegra: smmu: Add dependency on ARCH_TEGRA_114_SOC
-Date: Wed, 16 Jan 2013 14:18:55 -0700
-Message-ID: <50F7193F.3090905@wwwdotorg.org>
-References: <1358237848-968-1-git-send-email-hdoyu@nvidia.com> <1358256149-28700-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH V4 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle for
+ powered-down mode
+Date: Wed, 16 Jan 2013 14:31:13 -0700
+Message-ID: <50F71C21.20904@wwwdotorg.org>
+References: <1358323873-30525-1-git-send-email-josephl@nvidia.com> <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358256149-28700-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/15/2013 06:22 AM, Hiroshi Doyu wrote:
-> TEGRA_IOMMU_SMMU depends on ARCH_TEGRA_114_SOC too.
+On 01/16/2013 11:55 AM, Colin Cross wrote:
+> On Wed, Jan 16, 2013 at 12:11 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
+>> core to go into this mode before other core. The coupled cpuidle framework
+>> can help to sync the MPCore to coupled state then go into "powered-down"
+>> idle mode together. The driver can just assume the MPCore come into
+>> "powered-down" mode at the same time. No need to take care if the CPU_0
+>> goes into this mode along and only can put it into safe idle mode (WFI).
+>>
+>> The powered-down state of Tegra20 requires power gating both CPU cores.
+>> When the secondary CPU requests to enter powered-down state, it saves
+>> its own contexts and then enters WFI for waiting CPU0 in the same state.
+>> When the CPU0 requests powered-down state, it attempts to put the secondary
+>> CPU into reset to prevent it from waking up. Then power down both CPUs
+>> together and power off the cpu rail.
+>>
+>> Be aware of that, you may see the legacy power state "LP2" in the code
 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+Colin, since you only raised a few small issues on this series, does
+that mean you're OK with it once those issues are fixed?
 
->  config TEGRA_IOMMU_SMMU
->  	bool "Tegra SMMU IOMMU Support"
-> -	depends on ARCH_TEGRA_3x_SOC && TEGRA_AHB
-> +	depends on (ARCH_TEGRA_114_SOC || ARCH_TEGRA_3x_SOC) && TEGRA_AHB
-
-I think instead of listing out each SoC version individually, just
-depend on ARCH_TEGRA. This will mean the SMMU driver can be enabled in a
-Tegra20-only kernel, but that's not a big deal, and it means we won't
-have to keep editing this Kconfig entry every time we add a new chip.
+Joseph, we'll be merging Tegra114 in the near future. How will this
+patch series affect Tegra114? Will the cpuidle driver simply fail to
+register on Tegra114 (which would be fine until we explicitly add
+support), or would we need to disable cpuidle in Kconfig to get a
+working Tegra114 kernel. Does this patch series affect the answer to the
+previous question? Thanks.
