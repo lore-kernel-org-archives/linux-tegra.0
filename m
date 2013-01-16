@@ -1,7 +1,7 @@
 From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
-Subject: [RFC PATCH 1/5] arm: tegra: Fix build under Android cross-compiler
-Date: Wed, 16 Jan 2013 14:56:09 -0500
-Message-ID: <1358366173-56861-2-git-send-email-jeremya@cs.columbia.edu>
+Subject: [RFC PATCH 4/5] input: lid: Fix init function ignores sysfs retval
+Date: Wed, 16 Jan 2013 14:56:12 -0500
+Message-ID: <1358366173-56861-5-git-send-email-jeremya@cs.columbia.edu>
 References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1358366173-56861-1-git-send-email-jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
@@ -12,38 +12,33 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
 
-This patch explicitly enables ARM security extensions in sleep.S.
-This fixes kernel builds with Android provided ARM cross-compilers
-which do not assume the presence of the security extensions.
+Don't ignore the sysfs_create_group return value in the lid_init()
+function. This suppresses a compiler warning and results in more robust
+code for free :-)
 
 Signed-off-by: Jeremy C. Andrus <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
 
-Change-Id: Id079d54ad0cecf9145b9d51aaeebf4e6a22e80a2
+Change-Id: I2fef38736d39fbd5f60ef5a658f14d917122b942
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 ---
- arch/arm/mach-tegra/sleep.S | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/input/lid.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index 18b8799..4e898b8 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -50,6 +50,15 @@
- #define TEGRA_CLK_RESET_VIRT	(TEGRA_CLK_RESET_BASE - IO_PPSB_PHYS + IO_PPSB_VIRT)
+diff --git a/drivers/input/lid.c b/drivers/input/lid.c
+index 1d27609..26e3d64 100644
+--- a/drivers/input/lid.c
++++ b/drivers/input/lid.c
+@@ -163,7 +163,9 @@ static int __init lid_init(void)
+                 return -ENOMEM;
+         }
  
- /*
-+ * ARM security extensions are required when compiling TRUSTED_FOUNDATIONS code,
-+ * and this explicit arch_extension line fixes the build on compilers where the
-+ * as-instr Makefile function fails. The Android cross-compiler is an example.
-+ */
-+#ifdef CONFIG_TRUSTED_FOUNDATIONS
-+.arch_extension sec
-+#endif
-+
-+/*
-  * tegra_pen_lock
-  *
-  * spinlock implementation with no atomic test-and-set and no coherence
+-	sysfs_create_group((struct kobject*)&lid_dev->dev.kobj, &lid_attr_group);
++	err_code = sysfs_create_group((struct kobject*)&lid_dev->dev.kobj, &lid_attr_group);
++	if (err_code != 0)
++		return err_code;
+ 
+ 	err_code = lid_input_device_create();
+ 	if(err_code != 0)
 -- 
 1.8.1
