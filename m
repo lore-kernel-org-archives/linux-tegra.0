@@ -1,57 +1,105 @@
-From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
-Subject: [RFC PATCH 5/5] input: touchscreen: Fix rmi4 sysfs and driver removal
-Date: Wed, 16 Jan 2013 14:56:13 -0500
-Message-ID: <1358366173-56861-6-git-send-email-jeremya@cs.columbia.edu>
-References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
+Date: Wed, 16 Jan 2013 13:11:24 -0700
+Message-ID: <50F7096C.7020803@wwwdotorg.org>
+References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com><1357890387-23245-3-git-send-email-pgaikwad@nvidia.com> <20130116.171242.2189136612266237422.hdoyu@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358366173-56861-1-git-send-email-jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+In-Reply-To: <20130116.171242.2189136612266237422.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+On 01/16/2013 08:12 AM, Hiroshi Doyu wrote:
+> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
+> 
+> ....
+>> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
 
-The "InternalLimits" sysfs entry used the "Limit_Register_Count" show
-function. This has been changed to the correct "InternalLimits" function.
+>> +#define to_clk_sync_source(_hw)                                        \
+>> +       container_of(_hw, struct tegra_clk_sync_source, hw)
+> 
+> Can we define "struct tegra_clk_sync_source" here if there's no need
+> to expose this structure out?
 
-The rmi_f09_remove function tries to kfree u8 values which could never
-hold memory pointers. I have removed the offending code, but would
-appreciate feedback from one more knowledgeable than myself.
+In some cases, yes. However, some of the clock structs and ops variables
+are re-used by multiple clock types in different files. For example,
+struct tegra_clk_periph aggregates a struct tegra_clk_frac_div and a
+struct tegra_clk_periph_gate. That means that at least some of the types
+and ops variables must be declared in clk.h (or some header anyway). As
+such, I'd rather just have all the types and ops variables declared
+there for consistency.
 
-Signed-off-by: Jeremy C. Andrus <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+>> +static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                               unsigned long parent_rate)
+>> +{
+>> +       struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
+>> +       int div;
+>> +       unsigned long flags = 0;
+> 
+> nit, is "flags" not needed to initialize here?
 
-Change-Id: I54ca675af8eae19f7dfb3494d531baaab0281dfb
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
----
- drivers/input/touchscreen/rmi4/rmi_f09.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+It avoids a compiler warning; the compiler doesn't that the if condition
+that guards the path that uses flags is the same condition as the path
+that initializes it. Or, it may be related to the fact that
+spin_lock_irqsave() writes to the value through a pointer parameter, and
+the compiler doesn't know it's an out-only parameter.
 
-diff --git a/drivers/input/touchscreen/rmi4/rmi_f09.c b/drivers/input/touchscreen/rmi4/rmi_f09.c
-index 0ec980d..f1f0d01 100644
---- a/drivers/input/touchscreen/rmi4/rmi_f09.c
-+++ b/drivers/input/touchscreen/rmi4/rmi_f09.c
-@@ -107,7 +107,7 @@ static struct device_attribute attrs[] = {
- 	__ATTR(HostTestEn, RMI_RW_ATTR,
- 	       rmi_f09_HostTestEn_show, rmi_f09_HostTestEn_store),
- 	__ATTR(InternalLimits, RMI_RO_ATTR,
--	       rmi_f09_Limit_Register_Count_show, rmi_store_error),
-+	       rmi_f09_InternalLimits_show, rmi_store_error),
- 	__ATTR(Result_Register_Count, RMI_RO_ATTR,
- 	       rmi_f09_Result_Register_Count_show, rmi_store_error),
- };
-@@ -169,11 +169,6 @@ error_exit:
- 
- static void rmi_f09_remove(struct rmi_function_container *fc)
- {
--	struct rmi_fn_09_data *data = fc->data;
--	if (data) {
--		kfree(data->query.Limit_Register_Count);
--		kfree(data->query.f09_bist_query1);
--	}
- 	kfree(fc->data);
- }
- 
--- 
-1.8.1
+>> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+
+>> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+
+>> +#define to_clk_periph_gate(_hw)                                        \
+>> +       container_of(_hw, struct tegra_clk_periph_gate, hw)
+> 
+> For consistency, put "to_clk_periph_gate(_hw)" in "clk.h", then this
+> can be used in clk-periph.c as well.
+
+Sure. I moved all "to_clk_*()" macros to clk.h for consistency, since
+the types are all there anyway.
+
+>> +struct clk *tegra_clk_periph_gate(const char *name, const char *parent_name,
+...
+>> +       gate = kzalloc(sizeof(struct tegra_clk_periph_gate), GFP_KERNEL);
+> 
+>        gate = kzalloc(sizeof(*gate), GFP_KERNEL) ?
+
+I've already fixed all those up locally.
+
+>> diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
+
+>> +struct clk *tegra_clk_periph(const char *name, const char **parent_names,
+>> +                            int num_parents, struct tegra_clk_periph *periph,
+>> +                            void __iomem *clk_base, u32 offset)
+>> +{
+>> +       struct clk *clk;
+>> +       struct clk_init_data init;
+>> +
+>> +       init.name = name;
+>> +       init.ops = &tegra_clk_periph_ops;
+>> +       init.flags = 0;
+> 
+> struct members in stack are expected to initialize 0.
+
+Stack variables aren't initialized in C. In this case, since the
+individual fields are being assigned via statements rather than an
+initializer, everything has to be done explicitly.
+
+>> diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+
+>> +#define pll_out_enb(p) (BIT(p->enb_bit_idx))
+>> +#define pll_out_rst(p) (BIT(p->rst_bit_idx))
+> 
+> I don't see much benefit from the above macros.
+
+Meh. Do you feel strongly about this? I'm not really inclined to got
+through and change these; there are a bunch of similar things in other
+files, and it feels like it'd just be churn.
+
+Anything I didn't explicitly say no to, I have implemented.
+
+A /lot/ more of the original patch was quoted that was really necessary
+to make your comments; it made wading through the email a little tiresome.
