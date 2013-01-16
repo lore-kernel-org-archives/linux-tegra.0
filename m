@@ -1,102 +1,82 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
-Date: Wed, 16 Jan 2013 11:04:08 -0700
-Message-ID: <50F6EB98.5090607@wwwdotorg.org>
-References: <1357890387-23245-3-git-send-email-pgaikwad@nvidia.com><20130111.134820.1392079432650652356.hdoyu@nvidia.com><50F085A0.4090100@wwwdotorg.org> <20130116.101906.399662310268585658.hdoyu@nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Wed, 16 Jan 2013 19:31:01 +0100
+Message-ID: <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130115154038.GA11241@arm.com>
+ <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
+ <201301161400.26587.arnd@arndb.de>
+ <20130116161716.GA10630@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130116.101906.399662310268585658.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130116161716.GA10630@arm.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Andrew Murray <andrew.murray@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 01:19 AM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Fri, 11 Jan 2013 22:35:28 +0100:
-> 
->> On 01/11/2013 04:48 AM, Hiroshi Doyu wrote:
->>> Hi Prahant,
->>>
->>> Some nit-pick/cosmetic comments inlined...
->>
->> FYI, Prashant is on vacation for the next week or two, so I'll take over
->> this series to clean up any last review comments.
->>
->>> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
->>>
->>>> Add tegra specific clocks, pll, pll_out, peripheral,
->>>> frac_divider, super.
->>
->> (it's a good idea to quote as little text as possible; paging through
->> the whole patch to find your comments was slightly painful).
->>
->>>> diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
->>
->>>> +struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
->>>> +                                 unsigned long max_rate)
->>>> +{
->>>> +       struct tegra_clk_sync_source *sync;
->>>> +       struct clk_init_data init;
->>>> +       struct clk *clk;
->>>> +
->>>> +       sync = kzalloc(sizeof(struct tegra_clk_sync_source), GFP_KERNEL);
->>>> +       if (!sync) {
->>>> +               pr_err("%s: could not allocate sync source clk\n", __func__);
->>>> +               return ERR_PTR(-ENOMEM);
->>>> +       }
->>>> +
->>>> +       sync->rate = rate;
->>>> +       sync->max_rate = max_rate;
->>>> +
->>>> +       init.ops = &tegra_clk_sync_source_ops;
->>>> +       init.name = name;
->>>> +       init.flags = CLK_IS_ROOT;
->>>> +       init.parent_names = NULL;
->>>> +       init.num_parents = 0;
->>>> +
->>>> +       sync->hw.init = &init;
->>>> +
->>>> +       clk = clk_register(NULL, &sync->hw);
->>>
->>> The above usage of "init" from stack may be a bit
->>> unfamilier. I can guess that its content is copied in clk_register()
->>> but it's originally defined in stack. So I just prefer to writing this
->>> as below. It may be somewhat explict that we know init is from stack.
->>
->> The issue you mention is more about whether "init" is copied from the
->> stack or not; simplying changing the initialization to:
->>
->>> struct clk *tegra_clk_sync_source(const char *name, unsigned long rate,
->>>                                  unsigned long max_rate)
->>> {
->>>         struct tegra_clk_sync_source *sync;
->>>         struct clk_init_data init = {
->>>                 .ops = &tegra_clk_sync_source_ops;
->>>                 .name = name;
->>>                 .flags = CLK_IS_ROOT;
->>>                 .parent_names = NULL;
->>>                 .num_parents = 0;
->>>         };
-> 
-> Also since "init" is allocated from stack, members are expected to be
-> initialized *zero*. The last 2 lines are not necessary in the above.
-> 
->          struct clk_init_data init = {
->                  .ops = &tegra_clk_sync_source_ops;
->                  .name = name;
->                  .flags = CLK_IS_ROOT;
->          };
 
-Variables on the stack aren't initialized the zero without an explicit
-assignment.
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The reason why those last two lines aren't strictly necessary, is
-because the whole of the "init" struct is being initialized due to
-assignment to the struct, and omitting an explicit value for any of the
-fields means that the field's value will be zero. The same would be true
-for a global struct initialization (as opposed to BSS).
+On Wed, Jan 16, 2013 at 04:17:16PM +0000, Andrew Murray wrote:
+> On Wed, Jan 16, 2013 at 02:00:26PM +0000, Arnd Bergmann wrote:
+> > On Tuesday 15 January 2013, Thierry Reding wrote:
+> > > Is there actually hardware that supports this? I assumed that the MSI
+> > > controller would have to be tightly coupled to the PCI host bridge in
+> > > order to raise an interrupt when an MSI is received via PCI.
+> >=20
+> > No, as long as it's guaranteed that the MSI notification won't arrive
+> > at the CPU before any inbound DMA data before it, the MSI controller
+> > can be anywhere. Typically, the MSI controller is actually closer to
+> > the CPU core than to the PCI bridge. On X86, I believe the MSI address
+> > is on normally on the the "local APIC" on each CPU.
+>=20
+> MSIs are indistinguishable from other memory-write transactions originati=
+ng
+> from the RC other than the address they target. Anything that can capture
+> that write in the address space (even a page fault) could be an MSI contr=
+oller
+> and call interrupt handlers. And so the RC / MSI controllers don't need to
+> be aware of each other.
 
-Either way though, I'm inclined to leave the initialization in; there's
-little harm being explicit.
+Alright, putting the functions into pci_ops doesn't sound like a very
+good idea then. Or perhaps it would make sense for hardware where the
+root complex and the MSI controller are handled by the same driver.
+Basically it could be done as a shortcut and if those are not filled
+in, the drivers could still opt to look up an MSI controller from a
+phandle specified in DT.
+
+Even another alternative would be to keep the functions within the
+struct pci_ops and use generic ones if an external MSI controller is
+used. Just tossing around ideas.
+
+Thierry
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ9vHlAAoJEN0jrNd/PrOhZNgP/j1W2PffGWmvDtMdurQ29Vp1
+ddGd2AxrNmpr69zaRcX6+Sr0RD98UR/kLcMpGFn8JMF3OcNaqjiIHgSer1I2QYlu
+UNdWU71yzqlcp2cHW1pqpjElDaiE/IT9PnAdfFgAdFcTAwACZvBmAZrxoooSEi9b
+mfkp5bwVU/Mjdg5N293V2bPI872mdWON143CmHG6UYQRvU2yJoRul15WKRvzvupR
+NWUQcVM4R/QHNAhwJh7dDbcX2HWzZCjXArRUk7tdHY0rE7ZNRLezM3Np0YqFM+2d
+f/mW9FVLQj/++6JK0+gjSzbgHF15fa1NjySr+OWh9vIWNPF4z43KvFv4wEWkNdNi
+n/tFq151CLfMjrzWJ8x4c3+/Up2jKRbsq4IA4vLoltza1A+tnlbtTiC/wJ2yIaqA
+4vICiIDb6P4uEF7XWIEAFB0VWO6YmSTb++ZSK7BNj37EIDGTyAdOMbgJGLmCCG+I
+MtIOGKu5XB6o6Va2YA8470VPzGp8Yhzudh5PoPaomGVDTIH/Cnky+JXECvt9v7zS
+MulwDh98I1V+w9L0KzspsGaoe6rh3z26xBvFRBwLdvylG8/HhWtWibst4m23reIu
+NfJskqkTnlPOIAeH4o0bmoTm4kjJDNmzuf39Wj0maufY7r3AQ2v42z/v7AyLwPDi
+6XmBE127Ae6ZkvjkfQ06
+=bdya
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
