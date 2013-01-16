@@ -1,147 +1,48 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
-Date: Wed, 16 Jan 2013 13:31:51 +0100
-Message-ID: <20130116.143151.1531468192773974887.hdoyu@nvidia.com>
-References: <1357890387-23245-1-git-send-email-pgaikwad@nvidia.com><1357890387-23245-3-git-send-email-pgaikwad@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
+Date: Wed, 16 Jan 2013 13:36:17 +0100
+Message-ID: <CAKMK7uFQKwvEN0j-L=g1UwTzVvtYyqyyBaH8apQnqWPa2sq5vQ@mail.gmail.com>
+References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
+	<1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
+	<CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
+	<20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
+	<CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw@mail.gmail.com>
+	<20130116100149.GA13628@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1357890387-23245-3-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130116100149.GA13628-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 11 Jan 2013 08:46:20 +0100:
-...
-> +const struct clk_ops tegra_clk_periph_ops = {
-> +       .get_parent = clk_periph_get_parent,
-> +       .set_parent = clk_periph_set_parent,
-> +       .recalc_rate = clk_periph_recalc_rate,
-> +       .round_rate = clk_periph_round_rate,
-> +       .set_rate = clk_periph_set_rate,
-> +       .is_enabled = clk_periph_is_enabled,
-> +       .enable = clk_periph_enable,
-> +       .disable = clk_periph_disable,
-> +};
-> +
-> +const struct clk_ops tegra_clk_periph_nodiv_ops = {
-> +       .get_parent = clk_periph_get_parent,
-> +       .set_parent = clk_periph_set_parent,
-> +       .is_enabled = clk_periph_is_enabled,
-> +       .enable = clk_periph_enable,
-> +       .disable = clk_periph_disable,
-> +};
-> +
-> +struct clk *tegra_clk_periph(const char *name, const char **parent_names,
-> +                            int num_parents, struct tegra_clk_periph *periph,
-> +                            void __iomem *clk_base, u32 offset)
-> +{
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +
-> +       init.name = name;
-> +       init.ops = &tegra_clk_periph_ops;
-> +       init.flags = 0;
-> +       init.parent_names = parent_names;
-> +       init.num_parents = num_parents;
-> +
-> +       periph->hw.init = &init;
-> +       periph->magic = TEGRA_CLK_PERIPH_MAGIC;
-> +       periph->mux.reg = clk_base + offset;
-> +       periph->divider.reg = clk_base + offset;
-> +       periph->gate.clk_base = clk_base;
-> +
-> +       clk = clk_register(NULL, &periph->hw);
-> +       if (IS_ERR(clk))
-> +               return clk;
-> +
-> +       periph->mux.hw.clk = clk;
-> +       periph->divider.hw.clk = clk;
-> +       periph->gate.hw.clk = clk;
-> +
-> +       return clk;
-> +}
-> +
-> +struct clk *tegra_clk_periph_nodiv(const char *name, const char **parent_names,
-> +                             int num_parents, struct tegra_clk_periph *periph,
-> +                             void __iomem *clk_base, u32 offset)
-> +{
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +
-> +       init.name = name;
-> +       init.ops = &tegra_clk_periph_nodiv_ops;
-> +       init.flags = CLK_SET_RATE_PARENT;
-> +       init.parent_names = parent_names;
-> +       init.num_parents = num_parents;
-> +
-> +       periph->hw.init = &init;
-> +       periph->magic = TEGRA_CLK_PERIPH_MAGIC;
-> +       periph->mux.reg = clk_base + offset;
-> +       periph->gate.clk_base = clk_base;
-> +
-> +       clk = clk_register(NULL, &periph->hw);
-> +       if (IS_ERR(clk))
-> +               return clk;
-> +
-> +       periph->mux.hw.clk = clk;
-> +       periph->gate.hw.clk = clk;
-> +
-> +       return clk;
-> +}
+On Wed, Jan 16, 2013 at 11:01 AM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> drm_events_release() should be enough to clean up the events, but I
+> suspect the reason why Laurent put that code in was that the drm_crtc
+> private data still has a reference to the event and needs to clear it.
+> Otherwise the next page flip won't be scheduled because .page_flip()
+> would return -EBUSY.
 
-The above two functions are almost duplicate, can we take the common part from them?
+Hm, indeed we seem to have a nice bug in most drivers there :(
 
-const struct clk_ops tegra_clk_periph_nodiv_ops = {
-       .get_parent = clk_periph_get_parent,
-       .set_parent = clk_periph_set_parent,
-       .is_enabled = clk_periph_is_enabled,
-       .enable = clk_periph_enable,
-       .disable = clk_periph_disable,
-};
+> However, it seems like {tegra_dc,shmob_drm_crtc}_cancel_page_flip()
+> could both be simplified a lot and just set their event to NULL. Then
+> again, maybe keeping a separate reference isn't all that useful. Maybe
+> the better thing to do here is iterate over the list of pending VBLANK
+> events in *_finish_page_flip() and process each of them? That would
+> allow more than one user-space process to queue page flips.
 
-struct clk *__tegra_clk_periph(const char *name, const char **parent_names,
-			    int num_parents, struct tegra_clk_periph *periph,
-			    void __iomem *clk_base, u32 offset, int div)
-{
-       struct clk *clk;
-       struct clk_init_data init;
-
-       init.name = name;
-       init.parent_names = parent_names;
-       init.num_parents = num_parents;
-       init.ops = div ? &tegra_clk_periph_ops : &tegra_clk_periph_nodiv_ops
-       init.flags = div ? 0 :　CLK_SET_RATE_PARENT;
-
-       periph->hw.init = &init;
-       periph->magic = TEGRA_CLK_PERIPH_MAGIC;
-       periph->mux.reg = clk_base + offset;
-       periph->divider.reg = clk_base + offset;
-       periph->gate.clk_base = clk_base;
-
-       clk = clk_register(NULL, &periph->hw);
-       if (IS_ERR(clk))
-	       return clk;
-
-       periph->mux.hw.clk = clk;
-       periph->divider.hw.clk = div ? NULL : clk;
-       periph->gate.hw.clk = clk;
-
-       return clk;
-}
-
-static inline struct clk *tegra_clk_periph(const char *name, const char **parent_names,
-			    int num_parents, struct tegra_clk_periph *periph,
-			    void __iomem *clk_base, u32 offset)
-{
-	return __tegra_clk_periph(name, parent_names, num_parents, periph, clk_base, offset, 1);
-}
-
-static inline struct clk *tegra_clk_periph_nodiv(const char *name, const char **parent_names,
-			     int num_parents, struct tegra_clk_periph *periph,
-			     void __iomem *clk_base, u32 offset, )
-{
-	return __tegra_clk_periph(name, parent_names, num_parents, periph, clk_base, offset, 0);
-}
+I think we need a slightly more generally useful solution, since most
+drivers are currently broken. I've read a bit through the code, but
+short of refcounting drm events and adding event->file_priv checks at
+relevent places I don't see a sane solution ... And even that one is
+rather invasive. Do you have an idea? Imo doing the cleanup in each
+driver will be rather error-prone, and since usually kms clients wait
+for flips to complete, also guaranteed to be little tested.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
