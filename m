@@ -1,163 +1,71 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 Subject: Re: [PATCH v2 4/4] usb: Add APIs to access host registers from Tegra
  PHY
-Date: Thu, 17 Jan 2013 15:50:43 +0200
-Message-ID: <20130117135043.GU18978@arwen.pp.htv.fi>
+Date: Thu, 17 Jan 2013 10:15:21 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1301171012500.1339-100000@iolanthe.rowland.org>
 References: <1358411292-12288-1-git-send-email-vbyravarasu@nvidia.com>
- <20130117090255.GD10814@arwen.pp.htv.fi>
- <D958900912E20642BCBC71664EFECE3E6E1A6F0F97@BGMAIL02.nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GVLQrlG8+/jMfW4X"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E1A6F0F97-QZ+emBqkIFBDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1358411292-12288-1-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: gregkh@linuxfoundation.org, balbi@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
---GVLQrlG8+/jMfW4X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 17 Jan 2013, Venu Byravarasu wrote:
 
-Hi,
+> As Tegra PHY driver need to access one of the Host registers,
+> added few APIs to ehci tegra driver.
+> 
+> Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+> ---
+> delta from v1:
+> Taken care of RWC bits, while accessing PORTSC register.
+> 
+>  drivers/usb/host/ehci-tegra.c     |   70 ++++++++++++++++++++++++++++++++++++-
+>  drivers/usb/phy/tegra_usb_phy.c   |   51 +++++++--------------------
+>  include/linux/usb/tegra_usb_phy.h |    6 +++
+>  3 files changed, 88 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index 55a9cde..6bbf66a 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+> @@ -2,7 +2,7 @@
+>   * EHCI-compliant USB host controller driver for NVIDIA Tegra SoCs
+>   *
+>   * Copyright (C) 2010 Google, Inc.
+> - * Copyright (C) 2009 NVIDIA Corporation
+> + * Copyright (C) 2009 - 2013 NVIDIA Corporation
+>   *
+>   * This program is free software; you can redistribute it and/or modify it
+>   * under the terms of the GNU General Public License as published by the
+> @@ -33,6 +33,16 @@
+>  #define TEGRA_USB2_BASE			0xC5004000
+>  #define TEGRA_USB3_BASE			0xC5008000
+>  
+> +/* PORTSC registers */
+> +#define USB_PORTSC1			0x184
+> +#define USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
+> +#define USB_PORTSC1_PHCD	(1 << 23)
+> +#define USB_PORTSC1_WKOC	(1 << 22)
+> +#define USB_PORTSC1_WKDS	(1 << 21)
+> +#define USB_PORTSC1_WKCN	(1 << 20)
+> +#define USB_PORTSC1_PEC		(1 << 3)
+> +#define USB_PORTSC1_CSC		(1 << 1)
 
-On Thu, Jan 17, 2013 at 06:07:56PM +0530, Venu Byravarasu wrote:
-> > > @@ -605,6 +615,53 @@ static const struct dev_pm_ops
-> > tegra_ehci_pm_ops =3D {
-> > >
-> > >  #endif
-> > >
-> > > +/* Bits of PORTSC1, which will get cleared by writing 1 into them */
-> > > +#define TEGRA_PORTSC_RWC_BITS (USB_PORTSC1_CSC |
-> > USB_PORTSC1_PEC)
-> > > +
-> > > +void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
-> > > +{
-> > > +	unsigned long val;
-> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
-> > > +	void __iomem *base =3D hcd->regs;
-> > > +	u32 wake =3D USB_PORTSC1_WKOC | USB_PORTSC1_WKDS |
-> > USB_PORTSC1_WKCN;
-> > > +
-> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
-> > > +	if (enable)
-> > > +		val |=3D wake;
-> > > +	else
-> > > +		val &=3D ~wake;
-> > > +	writel(val, base + USB_PORTSC1);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_wakeon_events);
-> > > +
-> > > +void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
-> > > +{
-> > > +	unsigned long val;
-> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
-> > > +	void __iomem *base =3D hcd->regs;
-> > > +
-> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
-> > > +	val &=3D ~USB_PORTSC1_PTS(3);
-> > > +	val |=3D USB_PORTSC1_PTS(pts_val & 3);
-> > > +	writel(val, base + USB_PORTSC1);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
-> > > +
-> > > +void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
-> > > +{
-> > > +	unsigned long val;
-> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
-> > > +	void __iomem *base =3D hcd->regs;
-> > > +
-> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
-> > > +	if (enable)
-> > > +		val |=3D USB_PORTSC1_PHCD;
-> > > +	else
-> > > +		val &=3D ~USB_PORTSC1_PHCD;
-> > > +	writel(val, base + USB_PORTSC1);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
-> >=20
-> > NAK to these three functions, you need to use whatever the PHY API
-> > provides you, if it misses something, let's see how we can add those as
-> > generic calls.
-> >=20
-> > In fact, I wonder why do you want PHY driver to access Host address
-> > space. Why don't you let your host driver handle the above ?
->=20
-> Tegra20 SOC contains 3 instances of USB controllers.
+Why redefine these values when they are already defined in 
+include/linux/usb/ehci_defs.h?
 
-fair enough.
+> @@ -605,6 +615,53 @@ static const struct dev_pm_ops tegra_ehci_pm_ops = {
+>  
+>  #endif
+>  
+> +/* Bits of PORTSC1, which will get cleared by writing 1 into them */
+> +#define TEGRA_PORTSC_RWC_BITS (USB_PORTSC1_CSC | USB_PORTSC1_PEC)
 
-> Some of these controllers can be configured to use different varieties
-> of PHYs e.g. instance 3 can be configured to use either UTMI or ICUSB
-> PHYs.
+Likewise for this.  Not to mention that you forgot to include the 
+overcurrent-change bit.
 
-just like OMAP...
-
-> Bits 31 & 30 from PORTSC register were allocated by our SOC designers
-> to inform the host controller about the PHY type to be used.=20
-
-Wow, that's something you should never do. PORTSC register belongs to
-the EHCI controller and those bits are reserved for future use and they
-*MUST* return zero. I wouldn't be surprised if current EHCI driver
-assumes those bits will be zero and/or makes sure they're set to zero
-when writing to PORTSC register.
-
-What if after configuring those two bits, ehci-hcd.ko clears them by
-accident ? Your platform won't work.
-
-> As type of PHY is a property related to PHY DT nodes, PHY driver will get=
- this info.
-> (Will remove phy_type from controller DT node soon, after all patches get=
- merged.)
-> However as PORTSC register is in controller domain, added tegra_ehci_set_=
-pts() API
->  to serve the purpose.
->=20
-> As per Tegra USB PHY design, need to wait for PHY clock to stabilize once=
- we
-> set/clear PHCD bit. Hence this is being accessed from PHY driver. To serv=
-e this
-> purpose added tegra_ehci_set_phcd().
->=20
-> On further analysis, seems tegra_ehci_set_wakeon_events() can be
-> removed.
->=20
-> If you are okay with above explanation, I can send updated patch for
-> review.
-
-not sure I want to sign-off such a patch. I understand it's how your HW
-was done, but this shouldn't have been done, really.
-
-Alan, what do you think ? Are you ok with PHY driver overwritting PORTSC
-register ?
-
---=20
-balbi
-
---GVLQrlG8+/jMfW4X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ+AGyAAoJEIaOsuA1yqREAREP/RLTuMtTept+X+1fxO4h75X4
-wYKJaYOfBctBOoI0+v2vgFzBM/GhF/aNMo7PA6PXwh+Wg9gYWNSGeMx25F/R+gDh
-NLWmbg/oEQRtxOwrCPrqf2nUwoFjvI/Gf0WbEYwgIeeTxI2WByVQ1L+EEEqSqgeN
-4OisIw0YbB1JP6/D87eQYNCi8uws4hoT9QPLuCT7CJzetXGTvrLq5/gaTGSfTnMS
-+ASEULQbIu4/qC/4LAcrHe68pj7uZVxoH2BzsO7eTOtIvbDvL6KSWbpX0WtSMCQU
-WlBRJTm+WMqFM0kN24PM3qkNqL7L9GYAwdEh1vFmU358fFV0hd7Xkwvzf9y/6U07
-RyGBZGNKzgPI+uSwP1RlcNqsP0V0wYrM/+LJShInTCIbHRYjaBxSdwcIbsRAYw2h
-sR9kVp3J7lVNpbIWo1G22ZzLO8Kb70VmAZFX3RV6v6wajAK9Iutmd06kU2laxHyx
-/5okO0F8FCktxjdOhGeEUljtBpql6ksHvErYo/1My1J/2dxeJ3Y0TkSyVpxITLBI
-K/sZxKgSvmEEcrGrycTiXHXNfQxSzkuCVWtxnD+T2cgphoAU4fGPY4bCzf6SsDpV
-o+KP1gZJqKuf2Nu6Tr2YE20K1UYbzLIqPp8aCv7yT55vYzpIkad8OisQTBT6nCMJ
-Da5Jz5UxvAvTUPOOp5hh
-=Z9Eg
------END PGP SIGNATURE-----
-
---GVLQrlG8+/jMfW4X--
+Alan Stern
