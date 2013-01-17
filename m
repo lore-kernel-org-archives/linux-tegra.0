@@ -1,45 +1,155 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: tegra: add support for rcv-sel and drive type
-Date: Thu, 17 Jan 2013 10:58:44 +0100
-Message-ID: <CACRpkdZTbkeEGnoYcn4VoDd+Nz_JtBUP3V8fA1qbE2ndEk0g7Q@mail.gmail.com>
-References: <1357387375-25919-1-git-send-email-ldewangan@nvidia.com>
- <CACRpkdYe0MPC=jiOgzd0zRkiAFas21O80MiR8dp9UdmwptDfmw@mail.gmail.com>
- <50F7B801.4020704@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <50F7B801.4020704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH 2/2] ARM: DT: tegra: Add Toradex Iris carrier board with T20 512MB COM
+Date: Thu, 17 Jan 2013 12:59:21 +0100
+Message-ID: <1358423961-24318-2-git-send-email-dev@lynxeye.de>
+References: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358423961-24318-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 17, 2013 at 9:36 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Thursday 17 January 2013 02:00 PM, Linus Walleij wrote:
+This adds the device tree for the Toradex Iris carrier board used
+together with a Colibri T20 512MB COM.
 
->> Stephen, can you look at this patch?
->>
->> Authors: you need Stephen's ACK on this.
->
-> Stephen have already given his reviewed by on thi series and I posted V2
-> version of taking care his comment.
-> Stephen's comment was in
-> Re: [PATCH 2/2] pinctrl: tegra114: add pinctrl driver for NVIDIA's Tegra114
-> SoC
->
-> Can you please review the v2 version of this series?
+The Iris has the following features, in brackets the current status:
+- DVI and VGA output through DVI-I connector (DVI-D enabled and tested)
+- LVDS output
+- 1 USB host port (enabled and tested)
+- 1 USB OTG port (enabled)
+- 100 MBit Ethernet (enabled and tested)
+- 5 UART ports  (2 on 10way headers enabled and tested)
+- 1 MicroSD Slot (enabled and tested)
+- Audio connectors (enabled, only HP out and Line-in tested)
+- i2c RTC
+- GPIO connector (enabled, only sparsely tested)
+- external i2c bus
+- 4 PWM out
+- analog in
 
-Sure I'll get to it. Walking the INBOX in reverse order...
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+ Documentation/devicetree/bindings/arm/tegra.txt |  1 +
+ arch/arm/boot/dts/Makefile                      |  1 +
+ arch/arm/boot/dts/tegra20-iris-512.dts          | 88 +++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 arch/arm/boot/dts/tegra20-iris-512.dts
 
-Thanks,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+index ccd4ef4..ed9c853 100644
+--- a/Documentation/devicetree/bindings/arm/tegra.txt
++++ b/Documentation/devicetree/bindings/arm/tegra.txt
+@@ -31,3 +31,4 @@ board-specific compatible values:
+   nvidia,ventana
+   nvidia,whistler
+   toradex,colibri_t20-512
++  toradex,iris
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5c13de2..b756c51 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -134,6 +134,7 @@ dtb-$(CONFIG_ARCH_SPEAR6XX)+= spear600-evb.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun4i-a10-cubieboard.dtb \
+ 	sun5i-a13-olinuxino.dtb
+ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
++	tegra20-iris-512.dtb \
+ 	tegra20-medcom-wide.dtb \
+ 	tegra20-paz00.dtb \
+ 	tegra20-plutux.dtb \
+diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris-512.dts
+new file mode 100644
+index 0000000..22959a1
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra20-iris-512.dts
+@@ -0,0 +1,88 @@
++/dts-v1/;
++
++/include/ "tegra20-colibri-512.dtsi"
++
++/ {
++	model = "Toradex Colibri T20 512MB on Iris";
++	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
++
++	host1x {
++		hdmi {
++			status = "okay";
++		};
++	};
++
++	pinmux {
++		state_default: pinmux {
++			hdint {
++				nvidia,tristate = <0>;
++			};
++
++			i2cddc {
++				nvidia,tristate = <0>;
++			};
++
++			sdio4 {
++				nvidia,tristate = <0>;
++			};
++
++			uarta {
++				nvidia,tristate = <0>;
++			};
++
++			uartd {
++				nvidia,tristate = <0>;
++			};
++		};
++	};
++
++	usb@c5000000 {
++		status = "okay";
++	};
++
++	usb@c5008000 {
++		status = "okay";
++	};
++
++	serial@70006000 {
++		status = "okay";
++	};
++
++	serial@70006300 {
++		status = "okay";
++	};
++
++	i2c_ddc: i2c@7000c400 {
++		status = "okay";
++	};
++
++	sdhci@c8000600 {
++		status = "okay";
++		bus-width = <4>;
++	};
++
++	board_regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		
++		usb_host_vbus {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "usb_host_vbus";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-boot-on;
++			regulator-always-on;
++			gpio = <&gpio 178 0>;
++		};
++
++		vcc_sd_reg: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "vcc_sd";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++		};
++	};
++};
+-- 
+1.8.0.2
