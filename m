@@ -1,551 +1,173 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH 1/2] ARM: DT: tegra: Add Colibri T20 512MB COM
-Date: Thu, 17 Jan 2013 12:59:20 +0100
-Message-ID: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v2 4/4] usb: Add APIs to access host registers from
+ Tegra PHY
+Date: Thu, 17 Jan 2013 18:07:56 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E1A6F0F97@BGMAIL02.nvidia.com>
+References: <1358411292-12288-1-git-send-email-vbyravarasu@nvidia.com>
+ <20130117090255.GD10814@arwen.pp.htv.fi>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130117090255.GD10814-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This adds the device tree include file for the Toradex Colibri T20
-Computer on Module (COM). It's only valid for the 512MB RAM version of
-the module, as the 256MB version needs different EMC tables and flash
-configuration. To make this clear the suffix -512 was added to the board
-compatible string.
+> -----Original Message-----
+> From: Felipe Balbi [mailto:balbi-l0cyMroinI0@public.gmane.org]
+> Sent: Thursday, January 17, 2013 2:33 PM
+> To: Venu Byravarasu
+> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: Re: [PATCH v2 4/4] usb: Add APIs to access host registers from Tegra
+> PHY
+> 
+> * PGP Signed by an unknown key
+> 
+> Hi,
+> 
+> On Thu, Jan 17, 2013 at 01:58:12PM +0530, Venu Byravarasu wrote:
+> > As Tegra PHY driver need to access one of the Host registers,
+> > added few APIs to ehci tegra driver.
+> >
+> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Stephen is this another of those patches you're gonna take care of
+> yourself ?
+> 
+> > ---
+> > delta from v1:
+> > Taken care of RWC bits, while accessing PORTSC register.
+> >
+> >  drivers/usb/host/ehci-tegra.c     |   70
+> ++++++++++++++++++++++++++++++++++++-
+> >  drivers/usb/phy/tegra_usb_phy.c   |   51 +++++++--------------------
+> >  include/linux/usb/tegra_usb_phy.h |    6 +++
+> >  3 files changed, 88 insertions(+), 39 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> > index 55a9cde..6bbf66a 100644
+> > --- a/drivers/usb/host/ehci-tegra.c
+> > +++ b/drivers/usb/host/ehci-tegra.c
+> > @@ -2,7 +2,7 @@
+> >   * EHCI-compliant USB host controller driver for NVIDIA Tegra SoCs
+> >   *
+> >   * Copyright (C) 2010 Google, Inc.
+> > - * Copyright (C) 2009 NVIDIA Corporation
+> > + * Copyright (C) 2009 - 2013 NVIDIA Corporation
+> >   *
+> >   * This program is free software; you can redistribute it and/or modify it
+> >   * under the terms of the GNU General Public License as published by the
+> > @@ -33,6 +33,16 @@
+> >  #define TEGRA_USB2_BASE			0xC5004000
+> >  #define TEGRA_USB3_BASE			0xC5008000
+> >
+> > +/* PORTSC registers */
+> > +#define USB_PORTSC1			0x184
+> > +#define USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
+> > +#define USB_PORTSC1_PHCD	(1 << 23)
+> > +#define USB_PORTSC1_WKOC	(1 << 22)
+> > +#define USB_PORTSC1_WKDS	(1 << 21)
+> > +#define USB_PORTSC1_WKCN	(1 << 20)
+> > +#define USB_PORTSC1_PEC		(1 << 3)
+> > +#define USB_PORTSC1_CSC		(1 << 1)
+> 
+> please prepend this with TEGRA_ just as other defines.
 
-The Colibri T20 uses a Tegra2 SoC and has onboard USB Ethernet and AC97
-sound.
+Sure, will add it. 
 
-Still some things like onboard NAND support missing, but should be a
-good base for further development.
+> 
+> > +
+> >  #define TEGRA_USB_DMA_ALIGN 32
+> >
+> >  struct tegra_ehci_hcd {
+> > @@ -605,6 +615,53 @@ static const struct dev_pm_ops
+> tegra_ehci_pm_ops = {
+> >
+> >  #endif
+> >
+> > +/* Bits of PORTSC1, which will get cleared by writing 1 into them */
+> > +#define TEGRA_PORTSC_RWC_BITS (USB_PORTSC1_CSC |
+> USB_PORTSC1_PEC)
+> > +
+> > +void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
+> > +{
+> > +	unsigned long val;
+> > +	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+> > +	void __iomem *base = hcd->regs;
+> > +	u32 wake = USB_PORTSC1_WKOC | USB_PORTSC1_WKDS |
+> USB_PORTSC1_WKCN;
+> > +
+> > +	val = readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > +	if (enable)
+> > +		val |= wake;
+> > +	else
+> > +		val &= ~wake;
+> > +	writel(val, base + USB_PORTSC1);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tegra_ehci_set_wakeon_events);
+> > +
+> > +void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
+> > +{
+> > +	unsigned long val;
+> > +	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+> > +	void __iomem *base = hcd->regs;
+> > +
+> > +	val = readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > +	val &= ~USB_PORTSC1_PTS(3);
+> > +	val |= USB_PORTSC1_PTS(pts_val & 3);
+> > +	writel(val, base + USB_PORTSC1);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
+> > +
+> > +void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
+> > +{
+> > +	unsigned long val;
+> > +	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+> > +	void __iomem *base = hcd->regs;
+> > +
+> > +	val = readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > +	if (enable)
+> > +		val |= USB_PORTSC1_PHCD;
+> > +	else
+> > +		val &= ~USB_PORTSC1_PHCD;
+> > +	writel(val, base + USB_PORTSC1);
+> > +}
+> > +EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
+> 
+> NAK to these three functions, you need to use whatever the PHY API
+> provides you, if it misses something, let's see how we can add those as
+> generic calls.
+> 
+> In fact, I wonder why do you want PHY driver to access Host address
+> space. Why don't you let your host driver handle the above ?
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
- Documentation/devicetree/bindings/arm/tegra.txt |   1 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi      | 505 ++++++++++++++++++++++++
- 2 files changed, 506 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra20-colibri-512.dtsi
+Tegra20 SOC contains 3 instances of USB controllers.
+Some of these controllers can be configured to use different varieties
+of PHYs e.g. instance 3 can be configured to use either UTMI or ICUSB PHYs.
+Bits 31 & 30 from PORTSC register were allocated by our SOC designers
+to inform the host controller about the PHY type to be used. 
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-index a5d3353..ccd4ef4 100644
---- a/Documentation/devicetree/bindings/arm/tegra.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra.txt
-@@ -30,3 +30,4 @@ board-specific compatible values:
-   nvidia,seaboard
-   nvidia,ventana
-   nvidia,whistler
-+  toradex,colibri_t20-512
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-new file mode 100644
-index 0000000..334ff02
---- /dev/null
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -0,0 +1,505 @@
-+/include/ "tegra20.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri T20 512MB";
-+	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
-+
-+	memory {
-+		reg = <0x00000000 0x20000000>;
-+	};
-+
-+	host1x {
-+		hdmi {
-+			vdd-supply = <&hdmi_vdd_reg>;
-+			pll-supply = <&hdmi_pll_reg>;
-+
-+			nvidia,ddc-i2c-bus = <&i2c_ddc>;
-+			nvidia,hpd-gpio = <&gpio 111 0>; /* PN7 */
-+		};
-+	};
-+
-+	pinmux {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&state_default>;
-+
-+		state_default: pinmux {
-+			audio_refclk {
-+				nvidia,pins = "cdev1";
-+				nvidia,function = "plla_out";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			crt {
-+				nvidia,pins = "crtp";
-+				nvidia,function = "crt";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			dap3 {
-+				nvidia,pins = "dap3";
-+				nvidia,function = "dap3";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			displaya {
-+				nvidia,pins = "ld0", "ld1", "ld2", "ld3",
-+					"ld4", "ld5", "ld6", "ld7", "ld8",
-+					"ld9", "ld10", "ld11", "ld12", "ld13",
-+					"ld14", "ld15", "ld16", "ld17",
-+					"lhs", "lpw0", "lpw2", "lsc0",
-+					"lsc1", "lsck", "lsda", "lspi", "lvs";
-+				nvidia,function = "displaya";
-+				nvidia,tristate = <1>;
-+			};
-+			gpio_dte {
-+				nvidia,pins = "dte";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			gpio_gmi {
-+				nvidia,pins = "ata", "atc", "atd", "ate",
-+					"dap1", "dap2", "dap4", "gpu", "irrx",
-+					"irtx", "spia", "spib", "spic";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			gpio_pta {
-+				nvidia,pins = "pta";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			gpio_uac {
-+				nvidia,pins = "uac";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			hdint {
-+				nvidia,pins = "hdint";
-+				nvidia,function = "hdmi";
-+				nvidia,tristate = <1>;
-+			};
-+			i2c1 {
-+				nvidia,pins = "rm";
-+				nvidia,function = "i2c1";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			i2c3 {
-+				nvidia,pins = "dtf";
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			i2cddc {
-+				nvidia,pins = "ddc";
-+				nvidia,function = "i2c2";
-+				nvidia,pull = <2>;
-+				nvidia,tristate = <1>;
-+			};
-+			i2cp {
-+				nvidia,pins = "i2cp";
-+				nvidia,function = "i2cp";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			irda {
-+				nvidia,pins = "uad";
-+				nvidia,function = "irda";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			nand {
-+				nvidia,pins = "kbca", "kbcc", "kbcd",
-+					"kbce", "kbcf";
-+				nvidia,function = "nand";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			owc {
-+				nvidia,pins = "owc";
-+				nvidia,function = "owr";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			pmc {
-+				nvidia,pins = "pmc";
-+				nvidia,function = "pwr_on";
-+				nvidia,tristate = <0>;
-+			};
-+			pwm {
-+				nvidia,pins = "sdb", "sdc", "sdd";
-+				nvidia,function = "pwm";
-+				nvidia,tristate = <1>;
-+			};
-+			sdio4 {
-+				nvidia,pins = "atb", "gma", "gme";
-+				nvidia,function = "sdio4";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			spi1 {
-+				nvidia,pins = "spid", "spie", "spif";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			spi4 {
-+				nvidia,pins = "slxa", "slxc", "slxd", "slxk";
-+				nvidia,function = "spi4";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			uarta {
-+				nvidia,pins = "sdio1";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			uartd {
-+				nvidia,pins = "gmc";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			ulpi {
-+				nvidia,pins = "uaa", "uab", "uda";
-+				nvidia,function = "ulpi";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			ulpi_refclk {
-+				nvidia,pins = "cdev2";
-+				nvidia,function = "pllp_out4";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			usb_gpio {
-+				nvidia,pins = "spig", "spih";
-+				nvidia,function = "spi2_alt";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <0>;
-+			};
-+			vi {
-+				nvidia,pins = "dta", "dtb", "dtc", "dtd";
-+				nvidia,function = "vi";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+			vi_sc {
-+				nvidia,pins = "csus";
-+				nvidia,function = "vi_sensor_clk";
-+				nvidia,pull = <0>;
-+				nvidia,tristate = <1>;
-+			};
-+		};
-+	};
-+
-+	i2c@7000c000 {
-+		clock-frequency = <400000>;
-+	};
-+
-+	i2c_ddc: i2c@7000c400 {
-+		clock-frequency = <100000>;
-+	};
-+
-+	i2c@7000c500 {
-+		clock-frequency = <400000>;
-+	};
-+
-+	i2c@7000d000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		pmic: tps6586x@34 {
-+			compatible = "ti,tps6586x";
-+			reg = <0x34>;
-+			interrupts = <0 86 0x4>;
-+
-+			ti,system-power-controller;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			sys-supply = <&vdd_5v0_reg>;
-+			vin-sm0-supply = <&sys_reg>;
-+			vin-sm1-supply = <&sys_reg>;
-+			vin-sm2-supply = <&sys_reg>;
-+			vinldo01-supply = <&sm2_reg>;
-+			vinldo23-supply = <&sm2_reg>;
-+			vinldo4-supply = <&sm2_reg>;
-+			vinldo678-supply = <&sm2_reg>;
-+			vinldo9-supply = <&sm2_reg>;
-+
-+			regulators {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				sys_reg: regulator@0 {
-+					reg = <0>;
-+					regulator-compatible = "sys";
-+					regulator-name = "vdd_sys";
-+					regulator-always-on;
-+				};
-+
-+				regulator@1 {
-+					reg = <1>;
-+					regulator-compatible = "sm0";
-+					regulator-name = "vdd_sm0,vdd_core";
-+					regulator-min-microvolt = <1275000>;
-+					regulator-max-microvolt = <1275000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@2 {
-+					reg = <2>;
-+					regulator-compatible = "sm1";
-+					regulator-name = "vdd_sm1,vdd_cpu";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				sm2_reg: regulator@3 {
-+					reg = <3>;
-+					regulator-compatible = "sm2";
-+					regulator-name = "vdd_sm2,vin_ldo*";
-+					regulator-min-microvolt = <3700000>;
-+					regulator-max-microvolt = <3700000>;
-+					regulator-always-on;
-+				};
-+
-+				/* LDO0 is not connected to anything */
-+
-+				regulator@5 {
-+					reg = <5>;
-+					regulator-compatible = "ldo1";
-+					regulator-name = "vdd_ldo1,avdd_pll*";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <1100000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@6 {
-+					reg = <6>;
-+					regulator-compatible = "ldo2";
-+					regulator-name = "vdd_ldo2,vdd_rtc";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+				};
-+
-+				/* LDO3 is not connected to anything */
-+
-+				regulator@8 {
-+					reg = <8>;
-+					regulator-compatible = "ldo4";
-+					regulator-name = "vdd_ldo4,avdd_osc,vddio_sys";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo5_reg: regulator@9 {
-+					reg = <9>;
-+					regulator-compatible = "ldo5";
-+					regulator-name = "vdd_ldo5,vcore_mmc,vdd_fuse";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@10 {
-+					reg = <10>;
-+					regulator-compatible = "ldo6";
-+					regulator-name = "vdd_ldo6,avdd_vdac,vddio_vi,vddio_cam";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				hdmi_vdd_reg: regulator@11 {
-+					reg = <11>;
-+					regulator-compatible = "ldo7";
-+					regulator-name = "vdd_ldo7,avdd_hdmi";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				hdmi_pll_reg: regulator@12 {
-+					reg = <12>;
-+					regulator-compatible = "ldo8";
-+					regulator-name = "vdd_ldo8,avdd_hdmi_pll";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				regulator@13 {
-+					reg = <13>;
-+					regulator-compatible = "ldo9";
-+					regulator-name = "vdd_ldo9,avdd_2v85,vdd_ddr_rx";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+				};
-+
-+				regulator@14 {
-+					reg = <14>;
-+					regulator-compatible = "ldo_rtc";
-+					regulator-name = "vdd_rtc_out,vdd_cell";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+			};
-+		};
-+
-+		temperature-sensor@4c {
-+			compatible = "national,lm95245";
-+			reg = <0x4c>;
-+		};
-+	};
-+
-+	memory-controller@7000f400 {
-+		emc-table@83250 {
-+			reg = <83250>;
-+			compatible = "nvidia,tegra20-emc-table";
-+			clock-frequency = <83250>;
-+			nvidia,emc-registers =  < 0x00000005 0x00000011
-+				0x00000004 0x00000002 0x00000004 0x00000004
-+				0x00000001 0x0000000a 0x00000002 0x00000002
-+				0x00000001 0x00000001 0x00000003 0x00000004
-+				0x00000003 0x00000009 0x0000000c 0x0000025f
-+				0x00000000 0x00000003 0x00000003 0x00000002
-+				0x00000002 0x00000001 0x00000008 0x000000c8
-+				0x00000003 0x00000005 0x00000003 0x0000000c
-+				0x00000002 0x00000000 0x00000000 0x00000002
-+				0x00000000 0x00000000 0x00000083 0x00520006
-+				0x00000010 0x00000008 0x00000000 0x00000000
-+				0x00000000 0x00000000 0x00000000 0x00000000 >;
-+		};
-+		emc-table@133200 {
-+			reg = <133200>;
-+			compatible = "nvidia,tegra20-emc-table";
-+			clock-frequency = <133200>;
-+			nvidia,emc-registers =  < 0x00000008 0x00000019
-+				0x00000006 0x00000002 0x00000004 0x00000004
-+				0x00000001 0x0000000a 0x00000002 0x00000002
-+				0x00000002 0x00000001 0x00000003 0x00000004
-+				0x00000003 0x00000009 0x0000000c 0x0000039f
-+				0x00000000 0x00000003 0x00000003 0x00000002
-+				0x00000002 0x00000001 0x00000008 0x000000c8
-+				0x00000003 0x00000007 0x00000003 0x0000000c
-+				0x00000002 0x00000000 0x00000000 0x00000002
-+				0x00000000 0x00000000 0x00000083 0x00510006
-+				0x00000010 0x00000008 0x00000000 0x00000000
-+				0x00000000 0x00000000 0x00000000 0x00000000 >;
-+		};
-+		emc-table@166500 {
-+			reg = <166500>;
-+			compatible = "nvidia,tegra20-emc-table";
-+			clock-frequency = <166500>;
-+			nvidia,emc-registers =  < 0x0000000a 0x00000021
-+				0x00000008 0x00000003 0x00000004 0x00000004
-+				0x00000002 0x0000000a 0x00000003 0x00000003
-+				0x00000002 0x00000001 0x00000003 0x00000004
-+				0x00000003 0x00000009 0x0000000c 0x000004df
-+				0x00000000 0x00000003 0x00000003 0x00000003
-+				0x00000003 0x00000001 0x00000009 0x000000c8
-+				0x00000003 0x00000009 0x00000004 0x0000000c
-+				0x00000002 0x00000000 0x00000000 0x00000002
-+				0x00000000 0x00000000 0x00000083 0x004f0006
-+				0x00000010 0x00000008 0x00000000 0x00000000
-+				0x00000000 0x00000000 0x00000000 0x00000000 >;
-+		};
-+		emc-table@333000 {
-+			reg = <333000>;
-+			compatible = "nvidia,tegra20-emc-table";
-+			clock-frequency = <333000>;
-+			nvidia,emc-registers =  < 0x00000014 0x00000041
-+				0x0000000f 0x00000005 0x00000004 0x00000005
-+				0x00000003 0x0000000a 0x00000005 0x00000005
-+				0x00000004 0x00000001 0x00000003 0x00000004
-+				0x00000003 0x00000009 0x0000000c 0x000009ff
-+				0x00000000 0x00000003 0x00000003 0x00000005
-+				0x00000005 0x00000001 0x0000000e 0x000000c8
-+				0x00000003 0x00000011 0x00000006 0x0000000c
-+				0x00000002 0x00000000 0x00000000 0x00000002
-+				0x00000000 0x00000000 0x00000083 0x00380006
-+				0x00000010 0x00000008 0x00000000 0x00000000
-+				0x00000000 0x00000000 0x00000000 0x00000000 >;
-+		};
-+	};
-+
-+	ac97: ac97 {
-+		status = "okay";
-+		nvidia,codec-reset-gpio = <&gpio 168 0>; /* gpio PV0 */
-+		nvidia,codec-sync-gpio = <&gpio 120 0>; /* gpio PP0 */
-+	};
-+
-+	serial@70006000 {
-+		clock-frequency = <216000000>;
-+	};
-+
-+	serial@70006300 {
-+		clock-frequency = <216000000>;
-+	};
-+
-+	usb@c5000000 {
-+		dr_mode = "otg";
-+	};
-+
-+	usb@c5004000 {
-+		status = "okay";
-+		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-+	};
-+
-+	sdhci@c8000600 {
-+		cd-gpios = <&gpio 23 0>; /* gpio PC7 */
-+		vmmc-supply = <&ldo5_reg>;
-+		vqmmc-supply = <&vcc_sd_reg>;
-+	};
-+
-+	sound {
-+		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
-+			         "nvidia,tegra-audio-wm9712";
-+		nvidia,model = "Colibri T20 AC97 Audio";
-+
-+		nvidia,audio-routing =
-+			"Headphone", "HPOUTL",
-+			"Headphone", "HPOUTR",
-+			"LineIn", "LINEINL",
-+			"LineIn", "LINEINR",
-+			"Mic", "MIC1";
-+
-+		nvidia,ac97-controller = <&ac97>;
-+	};
-+
-+	com_regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vdd_5v0_reg: com_reg0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vdd_5v0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		int_usb_reg: com_reg1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "usb2_vbus";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			enable-active-high;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			gpio = <&gpio 217 0>;
-+		};
-+	};
-+};
--- 
-1.8.0.2
+As type of PHY is a property related to PHY DT nodes, PHY driver will get this info.
+(Will remove phy_type from controller DT node soon, after all patches get merged.)
+However as PORTSC register is in controller domain, added tegra_ehci_set_pts() API
+ to serve the purpose.
+
+As per Tegra USB PHY design, need to wait for PHY clock to stabilize once we
+set/clear PHCD bit. Hence this is being accessed from PHY driver. To serve this
+purpose added tegra_ehci_set_phcd().
+
+On further analysis, seems tegra_ehci_set_wakeon_events() can be removed.
+
+If you are okay with above explanation, I can send updated patch for review.
+
+> 
+> --
+> balbi
+> 
+> * Unknown Key
+> * 0x35CAA444
