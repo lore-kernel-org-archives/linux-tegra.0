@@ -1,92 +1,45 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 1/3] clk: tegra: add Tegra specific clocks
-Date: Thu, 17 Jan 2013 11:45:53 +0200
-Message-ID: <20130117094553.GD4118@tbergstrom-lnx.Nvidia.com>
-References: <1358369575-7325-1-git-send-email-swarren@wwwdotorg.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: add support for rcv-sel and drive type
+Date: Thu, 17 Jan 2013 10:58:44 +0100
+Message-ID: <CACRpkdZTbkeEGnoYcn4VoDd+Nz_JtBUP3V8fA1qbE2ndEk0g7Q@mail.gmail.com>
+References: <1357387375-25919-1-git-send-email-ldewangan@nvidia.com>
+ <CACRpkdYe0MPC=jiOgzd0zRkiAFas21O80MiR8dp9UdmwptDfmw@mail.gmail.com>
+ <50F7B801.4020704@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1358369575-7325-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <50F7B801.4020704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> +static struct clk *_tegra_clk_register_pll(const char *name,
-> +               const char *parent_name, void __iomem *clk_base,
-> +               void __iomem *pmc, unsigned long flags,
-> +               unsigned long fixed_rate,
-> +               struct tegra_clk_pll_params *pll_params, u8 pll_flags,
-> +               struct tegra_clk_pll_freq_table *freq_table, spinlock_t *lock,
-> +               bool plle)
-> +{
-> +       struct tegra_clk_pll *pll;
-> +       struct clk *clk;
-> +       struct clk_init_data init;
-> +
-> +       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> +       if (!pll)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name = name;
-> +       init.ops = plle ? &tegra_clk_plle_ops : &tegra_clk_pll_ops;
-> +       init.flags = flags;
-> +       init.parent_names = (parent_name ? &parent_name : NULL);
-> +       init.num_parents = (parent_name ? 1 : 0);
-> +
-> +       pll->clk_base = clk_base;
-> +       pll->pmc = pmc;
-> +
-> +       pll->freq_table = freq_table;
-> +       pll->params = pll_params;
-> +       pll->fixed_rate = fixed_rate;
-> +       pll->flags = pll_flags;
-> +       pll->lock = lock;
-> +
-> +       pll->divp_shift = PLL_BASE_DIVP_SHIFT;
-> +       pll->divp_width = PLL_BASE_DIVP_WIDTH;
-> +       pll->divn_shift = PLL_BASE_DIVN_SHIFT;
-> +       pll->divn_width = PLL_BASE_DIVN_WIDTH;
-> +       pll->divm_shift = PLL_BASE_DIVM_SHIFT;
-> +       pll->divm_width = PLL_BASE_DIVM_WIDTH;
-> +
-> +       /* Data in .init is copied by clk_register(), so stack variable OK */
-> +       pll->hw.init = &init;
-> +
-> +       clk = clk_register(NULL, &pll->hw);
-> +       if (IS_ERR(clk))
-> +               kfree(pll);
-> +
-> +       return clk;
-> +}
-> +
-> +struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
-> +               void __iomem *clk_base, void __iomem *pmc,
-> +               unsigned long flags, unsigned long fixed_rate,
-> +               struct tegra_clk_pll_params *pll_params, u8 pll_flags,
-> +               struct tegra_clk_pll_freq_table *freq_table, spinlock_t *lock)
-> +{
-> +       return _tegra_clk_register_pll(name, parent_name, clk_base, pmc,
-> +                       flags, fixed_rate, pll_params, pll_flags, freq_table,
-> +                       lock, false);
-> +}
-> +
-> +struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
-> +               void __iomem *clk_base, void __iomem *pmc,
-> +               unsigned long flags, unsigned long fixed_rate,
-> +               struct tegra_clk_pll_params *pll_params, u8 pll_flags,
-> +               struct tegra_clk_pll_freq_table *freq_table, spinlock_t *lock)
-> +{
-> +       return _tegra_clk_register_pll(name, parent_name, clk_base, pmc,
-> +                       flags, fixed_rate, pll_params, pll_flags, freq_table,
-> +                       lock, true);
-> +}
+On Thu, Jan 17, 2013 at 9:36 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Thursday 17 January 2013 02:00 PM, Linus Walleij wrote:
 
-For Tegra114 I will need to introduce more new PLL types. So instead of using
-a boolean plle, maybe just pass a pointer to the relevant struct clk_ops? This
-will make extension for Tegra114 easier.
+>> Stephen, can you look at this patch?
+>>
+>> Authors: you need Stephen's ACK on this.
+>
+> Stephen have already given his reviewed by on thi series and I posted V2
+> version of taking care his comment.
+> Stephen's comment was in
+> Re: [PATCH 2/2] pinctrl: tegra114: add pinctrl driver for NVIDIA's Tegra114
+> SoC
+>
+> Can you please review the v2 version of this series?
 
-Cheers,
+Sure I'll get to it. Walking the INBOX in reverse order...
 
-Peter.
+Thanks,
+Linus Walleij
