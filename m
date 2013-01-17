@@ -1,47 +1,49 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Thu, 17 Jan 2013 15:42:36 +0000
-Message-ID: <20130117154236.GA25943@arm.com>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130115154038.GA11241@arm.com>
- <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
- <201301161400.26587.arnd@arndb.de>
- <20130116161716.GA10630@arm.com>
- <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V5 1/3] clk: tegra: add Tegra specific clocks
+Date: Thu, 17 Jan 2013 17:53:07 +0200
+Message-ID: <20130117155307.GF4118@tbergstrom-lnx.Nvidia.com>
+References: <1358369575-7325-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+In-Reply-To: <1358369575-7325-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 16, 2013 at 06:31:01PM +0000, Thierry Reding wrote:
-> Alright, putting the functions into pci_ops doesn't sound like a very
-> good idea then. Or perhaps it would make sense for hardware where the
-> root complex and the MSI controller are handled by the same driver.
-> Basically it could be done as a shortcut and if those are not filled
-> in, the drivers could still opt to look up an MSI controller from a
-> phandle specified in DT.
+On Wed, Jan 16, 2013 at 09:52:53PM +0100, Stephen Warren wrote:
+> From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Even another alternative would be to keep the functions within the
-> struct pci_ops and use generic ones if an external MSI controller is
-> used. Just tossing around ideas.
+> Add Tegra specific clocks, pll, pll_out, peripheral, frac_divider, super.
+> 
+> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [swarren: alloc sizeof(*foo) not sizeof(struct foo), add comments re:
+> storing pointers to stack variables, make a timeout loop more idiomatic,
+> use _clk_pll_disable() not clk_disable_pll() from _program_pll() to
+> avoid redundant lock operations, unified tegra_clk_periph() and
+> tegra_clk_periph_nodiv(), unified tegra_clk_pll{,e}, rename all clock
+> registration functions so they don't have the same name as the clock
+> structs.]
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I think an ideal solution would be for additional logic in drivers/msi.c
-(e.g. in functions like msi_capability_init) to determine (based on the
-passed in pci_dev) which MSI controller ops to use. I'm not sure the best
-way to implement an association between an MSI controller and PCI busses
-(I believe arch/sparc does something like this - perhaps there will be
-inspiration there).
+...
 
-As you've pointed out, most RCs will have their own MSI controllers - so
-it should be easy to register and associate both together.
+> +static int clk_plle_enable(struct clk_hw *hw)
+> +{
+> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+> +       unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
+> +       struct tegra_clk_pll_freq_table sel;
+> +       u32 val;
+> +       int err;
+> +
+> +       if (_get_table_rate(hw, &sel, pll->fixed_rate, input_rate))
+> +               return -EBUSY;
+> +
 
-I've submitted my previous work on MSI controller registration, but it
-doesn't quite solve this problem - perhaps it can be a starting point?
+I think -EINVAL would be more appropriate here?
 
-Andrew Murray
+Cheers,
+
+Peter.
