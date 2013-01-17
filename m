@@ -1,47 +1,39 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: config: enable SERIAL_TEGRA
-Date: Thu, 17 Jan 2013 09:27:24 -0700
-Message-ID: <50F8266C.5030605@wwwdotorg.org>
-References: <1358341572-8154-1-git-send-email-ldewangan@nvidia.com> <50F6EA0A.4080904@wwwdotorg.org> <50F78030.6080305@nvidia.com>
+Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
+Date: Thu, 17 Jan 2013 09:35:18 -0700
+Message-ID: <50F82846.2030008@wwwdotorg.org>
+References: <1357890387-23245-3-git-send-email-pgaikwad@nvidia.com><20130116.171242.2189136612266237422.hdoyu@nvidia.com><50F7096C.7020803@wwwdotorg.org> <20130117.070327.1625310713330263780.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F78030.6080305-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130117.070327.1625310713330263780.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 09:38 PM, Laxman Dewangan wrote:
-> On Wednesday 16 January 2013 11:27 PM, Stephen Warren wrote:
->> On 01/16/2013 06:06 AM, Laxman Dewangan wrote:
->>> Enable high speed serial driver for tegra platform.
->> Thanks, I've applied patch 1 to Tegra's for-3.9/defconfig branch and
->> patch 2 to Tegra's for-3.9/dt branch.
+On 01/16/2013 10:03 PM, Hiroshi Doyu wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 16 Jan 2013 21:11:24 +0100:
+> 
+>>>> +static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>>>> +                               unsigned long parent_rate)
+>>>> +{
+>>>> +       struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
+>>>> +       int div;
+>>>> +       unsigned long flags = 0;
+>>>
+>>> nit, is "flags" not needed to initialize here?
 >>
->> Just as an FYI, the dt branch is merged into my for-next branch, and
->> sent upstream, before the defconfig branch, so your patch order was
->> reversed relative to that, but it's not an issue here.
+>> It avoids a compiler warning; the compiler doesn't that the if condition
+>> that guards the path that uses flags is the same condition as the path
+>> that initializes it. Or, it may be related to the fact that
+>> spin_lock_irqsave() writes to the value through a pointer parameter, and
+>> the compiler doesn't know it's an out-only parameter.
 > 
-> Thanks for applying it. There is no issue on the reversing the sequence.
+> It might be better to append the special comment /* GCC */[1] on that line.
 > 
-> 
->> Question: How do I test this; do I just fire up bluez(?) and point it at
->> the UARTC serial port, or is there more to it?
-> 
-> I tested this in may pieces, not with the bluez.
-> I tested this in downstream with linux-next dma, this new serial driver,
-> some hacks in the board files with bluetooth.
-> 
-> Then I tested this again on linux-next with some hacks in board-dt filew
-> with invoking  the driver from cardhu dts file. In this I tested driver
-> registration, basic write is wokring or not with some register
-> dump/interrupt, Not checked data integrity as not connected the serial
-> sniffer. The idea is that nothing should be crash in linux-next. The
-> basic driver code is already tested with bluetooth.
+> [1] https://lwn.net/Articles/529954/
 
-Well, my question was more about what user-space tools/configuration/...
-do I need to bring up Bluetooth to test this? I assume that now both the
-driver and DT patches are in linux-next, I shouldn't have to touch the
-kernel at all to make this work?
+I note that patch hasn't actually been merged though, so I think I'll
+avoid doing that for now.
