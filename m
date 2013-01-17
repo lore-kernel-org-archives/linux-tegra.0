@@ -1,152 +1,89 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Thu, 17 Jan 2013 21:30:10 +0100
-Message-ID: <20130117203010.GA24584@avionic-0098.adnet.avionic-design.de>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130115154038.GA11241@arm.com>
- <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
- <201301161400.26587.arnd@arndb.de>
- <20130116161716.GA10630@arm.com>
- <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
- <20130117154236.GA25943@arm.com>
- <20130117160501.GC2186@avionic-0098.adnet.avionic-design.de>
- <20130117162218.GA29016@arm.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Colibri T20 512MB COM
+Date: Thu, 17 Jan 2013 13:55:15 -0700
+Message-ID: <50F86533.9010000@wwwdotorg.org>
+References: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130117162218.GA29016-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1358423961-24318-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/17/2013 04:59 AM, Lucas Stach wrote:
+> This adds the device tree include file for the Toradex Colibri T20
+> Computer on Module (COM). It's only valid for the 512MB RAM version of
+> the module, as the 256MB version needs different EMC tables and flash
+> configuration. To make this clear the suffix -512 was added to the board
+> compatible string.
+> 
+> The Colibri T20 uses a Tegra2 SoC and has onboard USB Ethernet and AC97
+> sound.
+> 
+> Still some things like onboard NAND support missing, but should be a
+> good base for further development.
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
 
-On Thu, Jan 17, 2013 at 04:22:18PM +0000, Andrew Murray wrote:
-> On Thu, Jan 17, 2013 at 04:05:02PM +0000, Thierry Reding wrote:
-> > On Thu, Jan 17, 2013 at 03:42:36PM +0000, Andrew Murray wrote:
-> > > On Wed, Jan 16, 2013 at 06:31:01PM +0000, Thierry Reding wrote:
-> > > > Alright, putting the functions into pci_ops doesn't sound like a ve=
-ry
-> > > > good idea then. Or perhaps it would make sense for hardware where t=
-he
-> > > > root complex and the MSI controller are handled by the same driver.
-> > > > Basically it could be done as a shortcut and if those are not filled
-> > > > in, the drivers could still opt to look up an MSI controller from a
-> > > > phandle specified in DT.
-> > > >=20
-> > > > Even another alternative would be to keep the functions within the
-> > > > struct pci_ops and use generic ones if an external MSI controller is
-> > > > used. Just tossing around ideas.
-> > >=20
-> > > I think an ideal solution would be for additional logic in drivers/ms=
-i.c
-> > > (e.g. in functions like msi_capability_init) to determine (based on t=
-he
-> > > passed in pci_dev) which MSI controller ops to use. I'm not sure the =
-best
-> > > way to implement an association between an MSI controller and PCI bus=
-ses
-> > > (I believe arch/sparc does something like this - perhaps there will be
-> > > inspiration there).
-> > >=20
-> > > As you've pointed out, most RCs will have their own MSI controllers -=
- so
-> > > it should be easy to register and associate both together.
-> > >=20
-> > > I've submitted my previous work on MSI controller registration, but it
-> > > doesn't quite solve this problem - perhaps it can be a starting point?
-> >=20
-> > We basically have two cases:
-> >=20
-> >   - The PCI host bridge contains registers for MSI support. In that case
-> >     it makes little sense to uncouple the MSI implementation from the
-> >     host bridge driver.
-> >=20
-> >   - An MSI controller exists outside of the PCI host bridge. The PCI
-> >     host bridge would in that case have to lookup an MSI controller (via
-> >     DT phandle or some other method).
-> >=20
-> > In either of those cases, does it make sense to use the MSI support
-> > outside the scope of the PCI infrastructure? That is, would devices
-> > other than PCI devices be able to generate an MSI?
->=20
-> I've come around to your way of thinking. Your approach sounds good for
-> registration of MSI ops - let the RC host driver do it (it probably has i=
-ts
-> own), or use a helper for following a phandle to get ops that are not part
-> of the driver. MSIs won't be used outside of PCI devices.
->=20
-> Though existing drivers will use MSI framework functions to request MSIs,=
- that
-> will result in callbacks to the arch_setup_msi_irqs type functions. These
-> functions would need to be updated to find these new ops if they exist, i=
-=2Ee. by
-> traversing the pci_dev structure up to the RC and finding a suitable stru=
-cture.
->=20
-> Perhaps the msi ops could live alongside pci_ops in the pci_bus structure=
-=2E This
-> way when traversing up the buses from the provided pci_dev - the first bu=
-s with
-> msi ops populated would be used?
->=20
-> If no ops are found, the standard arch callbacks can be called - thus pre=
-serving
-> exiting functionality.
+> +		temperature-sensor@4c {
+> +			compatible = "national,lm95245";
 
-Yes, what you describe is exactly what I had in mind. I've been thinking
-about a possible implementation and there may be some details that could
-prove difficult to resolve. For instance, we likely need to pass context
-around for the MSI ops, or else make sure that they can find the context
-=66rom the struct pci_dev or by traversing upwards from it.
+You should probably add that compatible value to
+Documentation/devicetree/bindings/i2c/trivial-devices.txt.
 
-I think for the case where the MSI hardware is controlled by the same
-driver as the PCI host bridge, doing this is easy because the context
-could be part of the PCI host bridge context, which in case of Tegra is
-stored in struct pci_bus' sysdata field (which is actually an ARM struct
-pci_sys_data and in turn stores a pointer to the struct tegra_pcie in
-the .private_data field). Other drivers often just use a global variable
-assuming that there will only ever be a single instance of the PCI host
-bridge.
+> +	i2c@7000c000 {
+> +		clock-frequency = <400000>;
+> +	};
+> +
+> +	i2c_ddc: i2c@7000c400 {
+> +		clock-frequency = <100000>;
+> +	};
+> +
+> +	i2c@7000c500 {
+> +		clock-frequency = <400000>;
+> +	};
 
-If the MSI controller is external to the PCI host bridge, things get a
-little more complicated. The easiest way would probably be to store the
-context along with the PCI host bridge context and use simple wrappers
-around the actual implementations to retrieve the PHB context and pass
-the attached MSI context.
+> +	serial@70006000 {
+> +		clock-frequency = <216000000>;
+> +	};
+> +
+> +	serial@70006300 {
+> +		clock-frequency = <216000000>;
+> +	};
+> +
+> +	usb@c5000000 {
+> +		dr_mode = "otg";
+> +	};
+> +
+> +	usb@c5004000 {
+> +		status = "okay";
+> +		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
+> +	};
+> +
+> +	sdhci@c8000600 {
+> +		cd-gpios = <&gpio 23 0>; /* gpio PC7 */
+> +		vmmc-supply = <&ldo5_reg>;
+> +		vqmmc-supply = <&vcc_sd_reg>;
+> +	};
 
-Maybe this could even be made more generic by adding a struct msi_ops *
-along with a struct msi_chip * in struct pci_bus. Perhaps I should try
-and code something up to make things more concrete.
+I assume that all of those nodes are meant to have status="okay"?
 
-Thierry
+Oh, I see those are in the top-level board .dts file. You may as well
+put all the properties there; stuff like the GPIOs and regulators at
+least would be purely specific to the individual board, and not the COM.
 
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature
+I guess we should really move the serial node's clock-frequency property
+in the SoC .dtsi files.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+> +	com_regulators {
 
-iQIcBAEBAgAGBQJQ+F9SAAoJEN0jrNd/PrOhyQkP+wTfHO/r3EvHjV6NFm2t2p9d
-v4FQJYigdq8AjiylEO+Aj6wqaNsQKT3+vpJMMw84rB4Z3XvhJuL6HAQ5AfvegbGC
-wxMxIfxDjmLWe6fNou+3ypDG7QLJdNbKWuIlBMyQ/+3Q+v5js2pedb4wGk004hsV
-P+iK1QoK64E9Ef18Kv9vODyjR6g0aYz0i3HyW2mSHe4DSR+dB2Gvs7f4dSSUo03l
-PfgPA88BisX57/qJmxKO0OvvzmwV1TUkxp90b9moBxry5VPUFygS0zMjefw04Y1C
-nr37tYbJfehnJf22y0mvg/ygBvR8gYUAEoNSXwEjt7irFJ2y/Ciag94iXvSh5N+a
-RIj6wgSaXGyB7bNGOSq2YWlNYMqAt0Ak327CMRAJfwEOAIP544nk5Qex2JIjrdD3
-Nv2bB4sYaOASm2jYDT/5RnYvSAwYIUDIP4g4a0gTq73JX4SHDEYOTNI8TK3ohzUY
-W00f81qLeiD0eDba2+Q8ZYxGRQ2vweOSy4LqF7Q7IoqHTmaF9Wo23nnpz1rEUIiB
-+uMWntqK1gdC81GmsuZoLDv81nJSiFKJm4VVe+d9qj/SGPxgUe93AWKygviPoWRz
-chOMuvtwj1QN2Hf+6gOBdxmKfL8SuC2DbvIZe9o5ZU03Q9De5gl1r84ZdeApLz4x
-XhygdIv5bEZMPb50qbDt
-=E+hm
------END PGP SIGNATURE-----
+I think just call that "regulators"; the final board .dts file can
+easily add more sub-nodes to this node, so there's no need to try and
+avoid any naming conflict here. See Cardhu as an example.
 
---azLHFNyN32YCQGCU--
+> +		vdd_5v0_reg: com_reg0 {
+
+Those should be named regulator@0, regulator@1, etc.
