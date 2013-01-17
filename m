@@ -1,36 +1,89 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 4/4] usb: Add APIs to access host registers from Tegra
- PHY
-Date: Thu, 17 Jan 2013 15:18:43 -0700
-Message-ID: <50F878C3.9030002@wwwdotorg.org>
-References: <1358411292-12288-1-git-send-email-vbyravarasu@nvidia.com> <20130117090255.GD10814@arwen.pp.htv.fi>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Colibri T20 512MB COM
+Date: Thu, 17 Jan 2013 23:28:41 +0100
+Message-ID: <1358461721.18489.23.camel@tellur>
+References: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
+	  <50F86533.9010000@wwwdotorg.org> <1358458144.18489.14.camel@tellur>
+	 <50F877A3.5030107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130117090255.GD10814@arwen.pp.htv.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Venu Byravarasu <vbyravarasu@nvidia.com>, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50F877A3.5030107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/17/2013 02:02 AM, Felipe Balbi wrote:
-> Hi,
+Am Donnerstag, den 17.01.2013, 15:13 -0700 schrieb Stephen Warren:
+> On 01/17/2013 02:29 PM, Lucas Stach wrote:
+> > Am Donnerstag, den 17.01.2013, 13:55 -0700 schrieb Stephen Warren:
+> >> On 01/17/2013 04:59 AM, Lucas Stach wrote:
+> >>> This adds the device tree include file for the Toradex Colibri T20
+> >>> Computer on Module (COM). It's only valid for the 512MB RAM version of
+> >>> the module, as the 256MB version needs different EMC tables and flash
+> >>> configuration. To make this clear the suffix -512 was added to the board
+> >>> compatible string.
+> >>>
+> >>> The Colibri T20 uses a Tegra2 SoC and has onboard USB Ethernet and AC97
+> >>> sound.
+> >>>
+> >>> Still some things like onboard NAND support missing, but should be a
+> >>> good base for further development.
+> >>> +
+> >>> +	sdhci@c8000600 {
+> >>> +		cd-gpios = <&gpio 23 0>; /* gpio PC7 */
+> >>> +		vmmc-supply = <&ldo5_reg>;
+> >>> +		vqmmc-supply = <&vcc_sd_reg>;
+> >>> +	};
+> >>
+> >> I assume that all of those nodes are meant to have status="okay"?
+> >>
+> >> Oh, I see those are in the top-level board .dts file. You may as well
+> >> put all the properties there; stuff like the GPIOs and regulators at
+> >> least would be purely specific to the individual board, and not the COM.
+> >
+> > I would like to keep everything that is defined by the COM to reside in
+> > the COM dtsi. You are right that the regulator in this case is board
+> > specific and should be moved to the board file, I missed this while
+> > splitting things out. But at least the GPIO is defined by the fixed COM
+> > pinout.
 > 
-> On Thu, Jan 17, 2013 at 01:58:12PM +0530, Venu Byravarasu wrote:
->> As Tegra PHY driver need to access one of the Host registers, 
->> added few APIs to ehci tegra driver.
->> 
->> Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+> If these are really defined by the COM itself, it does indeed make sense
+> for the COM .dtsi file to define those properties. But, I have a hard
+> time understanding how the COM design can force the carrier module into
+> using a particular GPIO for the SD controller CD functionality; couldn't
+> the carrier use any GPIO passed through the COM<->carrier connector for
+> any purpose?
 > 
-> Stephen is this another of those patches you're gonna take care of 
-> yourself ?
+It's not a GPIO anymore as soon as it hits the COM<->carrier connector.
+The connector pin assignment is strictly specified. There are a lot of
+freely assignable GPIOs on the connector, everything related to a
+specific function is not part of this.
 
-Yes; in kernel 3.9, I believe I need to take any significant Tegra
-EHCI or PHY patches through the Tegra tree due to the need to change
-the Tegra device trees in lock-step with some of the code changes, and
-other Tegra-related changes also changing the USB-related nodes in
-device tree e.g. to add clocks properties.
+The Colibri specification dictates which pin to use if you want to
+realize a SDcard CD. This is done so that modules and carrier boards are
+interchangeable. In fact you can just as well run a new Colibri T30
+module on a years old carrier designed for the ColibriPXA series of
+modules.
 
-Hopefully we get enough USB patches into 3.9 that the dependencies are
-then removed, and we can revert back to the usual merging path in 3.10...
+> >>> +	com_regulators {
+> >>
+> >> I think just call that "regulators"; the final board .dts file can
+> >> easily add more sub-nodes to this node, so there's no need to try and
+> >> avoid any naming conflict here. See Cardhu as an example.
+> >
+> > I don't really see the benefit of merging those nodes. They are separate
+> > regulators, some are located on the COM, others on the carrier board. So
+> > I would like to keep them in separate nodes, unless you have strong
+> > feelings to change this.
+> 
+> The issue here is that if we don't do this, we end up with wierd node
+> names; plain "regulators" is a fairly canonical name for what the name
+> contains, and purely indicates the type of the node. "com_regulators" is
+> unusual, and starts to encode identity into the node name itself, which
+> is something not usually done in the node name (differentiation between
+> identities is usually done using the unit address; "@nnn"),
+
+Hm, ok. Keeping some space in between module and carrier regulator
+addresses should do as well.
