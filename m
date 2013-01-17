@@ -1,44 +1,63 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 03/10] ARM: dt: tegra30: Add clock information
-Date: Thu, 17 Jan 2013 08:33:41 +0200
-Message-ID: <50F79B45.4070105@nvidia.com>
-References: <1357891289-23500-1-git-send-email-pgaikwad@nvidia.com> <1357891289-23500-3-git-send-email-pgaikwad@nvidia.com> <50F65E4B.8040409@nvidia.com> <50F6E32F.80602@wwwdotorg.org>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
+Date: Thu, 17 Jan 2013 14:33:47 +0800
+Message-ID: <50F79B4B.1050505@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F6E32F.80602-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1358179560-26799-6-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16.01.2013 19:28, Stephen Warren wrote:
-> On 01/16/2013 01:01 AM, Terje Bergstr=F6m wrote:
->> In Tegra3, 3D has two clocks. I believe you'd need to add <&tegra_ca=
-r
->> 98> here.
->=20
-> Thanks. I've squashed the following into the patch. Do those clock na=
-mes
-> make sense to you?
->=20
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra=
-30.dtsi
-> index b9709ae..c26d75b 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -54,7 +54,8 @@
->                 gr3d {
->                         compatible =3D "nvidia,tegra30-gr3d";
->                         reg =3D <0x54180000 0x00040000>;
-> -                       clocks =3D <&tegra_car 24>;
-> +                       clocks =3D <&tegra_car 24 &tegra_car 98>;
-> +                       clock-names =3D "3d", "3d2";
->                 };
->=20
->                 dc@54200000 {
+On 01/15/2013 12:06 AM, Thierry Reding wrote:
+> All the necessary support bits like .mode_set_base() and VBLANK are now
+> available, so page-flipping case easily be implemented on top.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+[...]
+> +
+> +static int tegra_dc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
+> +			      struct drm_pending_vblank_event *event)
+> +{
+> +	struct tegra_framebuffer *newfb = to_tegra_fb(fb);
+> +	struct tegra_dc *dc = to_tegra_dc(crtc);
+> +	struct drm_device *drm = crtc->dev;
+> +	unsigned long flags;
+> +
+> +	if (dc->event)
+> +		return -EBUSY;
+> +
+> +	tegra_dc_set_base(dc, 0, 0, newfb);
 
-Yep, this looks right.
+"tegra_dc_set_base" only updates the frame buffer start address to dc
+registers. I think this is not enough because it's possible that this
+new FB may trigger a full modeset while not just a fb change. For
+example, the "bpp" of the new FB differs from current setting in dc
+register.
 
-Terje
+So I suggest to trigger a full modeset here(although it's slower than fb
+change) or maybe you can explain why the FB change is enough.
+
+Mark
+> +
+> +	if (event) {
+> +		event->pipe = dc->pipe;
+> +
+> +		spin_lock_irqsave(&drm->event_lock, flags);
+> +		dc->event = event;
+> +		spin_unlock_irqrestore(&drm->event_lock, flags);
+> +
+> +		drm_vblank_get(drm, dc->pipe);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+[...]
+>  struct tegra_output_ops {
+>  	int (*enable)(struct tegra_output *output);
+> 
