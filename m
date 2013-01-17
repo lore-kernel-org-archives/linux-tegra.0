@@ -1,82 +1,47 @@
-From: Andrew Murray <andrew.murray@arm.com>
-Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Thu, 17 Jan 2013 16:22:18 +0000
-Message-ID: <20130117162218.GA29016@arm.com>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130115154038.GA11241@arm.com>
- <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
- <201301161400.26587.arnd@arndb.de>
- <20130116161716.GA10630@arm.com>
- <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
- <20130117154236.GA25943@arm.com>
- <20130117160501.GC2186@avionic-0098.adnet.avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: config: enable SERIAL_TEGRA
+Date: Thu, 17 Jan 2013 09:27:24 -0700
+Message-ID: <50F8266C.5030605@wwwdotorg.org>
+References: <1358341572-8154-1-git-send-email-ldewangan@nvidia.com> <50F6EA0A.4080904@wwwdotorg.org> <50F78030.6080305@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130117160501.GC2186@avionic-0098.adnet.avionic-design.de>
-Content-Disposition: inline
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <50F78030.6080305-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 17, 2013 at 04:05:02PM +0000, Thierry Reding wrote:
-> On Thu, Jan 17, 2013 at 03:42:36PM +0000, Andrew Murray wrote:
-> > On Wed, Jan 16, 2013 at 06:31:01PM +0000, Thierry Reding wrote:
-> > > Alright, putting the functions into pci_ops doesn't sound like a very
-> > > good idea then. Or perhaps it would make sense for hardware where the
-> > > root complex and the MSI controller are handled by the same driver.
-> > > Basically it could be done as a shortcut and if those are not filled
-> > > in, the drivers could still opt to look up an MSI controller from a
-> > > phandle specified in DT.
-> > > 
-> > > Even another alternative would be to keep the functions within the
-> > > struct pci_ops and use generic ones if an external MSI controller is
-> > > used. Just tossing around ideas.
-> > 
-> > I think an ideal solution would be for additional logic in drivers/msi.c
-> > (e.g. in functions like msi_capability_init) to determine (based on the
-> > passed in pci_dev) which MSI controller ops to use. I'm not sure the best
-> > way to implement an association between an MSI controller and PCI busses
-> > (I believe arch/sparc does something like this - perhaps there will be
-> > inspiration there).
-> > 
-> > As you've pointed out, most RCs will have their own MSI controllers - so
-> > it should be easy to register and associate both together.
-> > 
-> > I've submitted my previous work on MSI controller registration, but it
-> > doesn't quite solve this problem - perhaps it can be a starting point?
+On 01/16/2013 09:38 PM, Laxman Dewangan wrote:
+> On Wednesday 16 January 2013 11:27 PM, Stephen Warren wrote:
+>> On 01/16/2013 06:06 AM, Laxman Dewangan wrote:
+>>> Enable high speed serial driver for tegra platform.
+>> Thanks, I've applied patch 1 to Tegra's for-3.9/defconfig branch and
+>> patch 2 to Tegra's for-3.9/dt branch.
+>>
+>> Just as an FYI, the dt branch is merged into my for-next branch, and
+>> sent upstream, before the defconfig branch, so your patch order was
+>> reversed relative to that, but it's not an issue here.
 > 
-> We basically have two cases:
+> Thanks for applying it. There is no issue on the reversing the sequence.
 > 
->   - The PCI host bridge contains registers for MSI support. In that case
->     it makes little sense to uncouple the MSI implementation from the
->     host bridge driver.
 > 
->   - An MSI controller exists outside of the PCI host bridge. The PCI
->     host bridge would in that case have to lookup an MSI controller (via
->     DT phandle or some other method).
+>> Question: How do I test this; do I just fire up bluez(?) and point it at
+>> the UARTC serial port, or is there more to it?
 > 
-> In either of those cases, does it make sense to use the MSI support
-> outside the scope of the PCI infrastructure? That is, would devices
-> other than PCI devices be able to generate an MSI?
+> I tested this in may pieces, not with the bluez.
+> I tested this in downstream with linux-next dma, this new serial driver,
+> some hacks in the board files with bluetooth.
+> 
+> Then I tested this again on linux-next with some hacks in board-dt filew
+> with invoking  the driver from cardhu dts file. In this I tested driver
+> registration, basic write is wokring or not with some register
+> dump/interrupt, Not checked data integrity as not connected the serial
+> sniffer. The idea is that nothing should be crash in linux-next. The
+> basic driver code is already tested with bluetooth.
 
-I've come around to your way of thinking. Your approach sounds good for
-registration of MSI ops - let the RC host driver do it (it probably has its
-own), or use a helper for following a phandle to get ops that are not part
-of the driver. MSIs won't be used outside of PCI devices.
-
-Though existing drivers will use MSI framework functions to request MSIs, that
-will result in callbacks to the arch_setup_msi_irqs type functions. These
-functions would need to be updated to find these new ops if they exist, i.e. by
-traversing the pci_dev structure up to the RC and finding a suitable structure.
-
-Perhaps the msi ops could live alongside pci_ops in the pci_bus structure. This
-way when traversing up the buses from the provided pci_dev - the first bus with
-msi ops populated would be used?
-
-If no ops are found, the standard arch callbacks can be called - thus preserving
-exiting functionality.
-
-Andrew Murray
+Well, my question was more about what user-space tools/configuration/...
+do I need to bring up Bluetooth to test this? I assume that now both the
+driver and DT patches are in linux-next, I shouldn't have to touch the
+kernel at all to make this work?
