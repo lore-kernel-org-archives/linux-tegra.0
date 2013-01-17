@@ -1,320 +1,61 @@
-From: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-Subject: [PATCH RFC] Provide MSI controller registration mechanism
-Date: Thu, 17 Jan 2013 15:21:28 +0000
-Message-ID: <20130117152128.GA25960@arm.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] usb: Add APIs to access host registers from Tegra
+ PHY
+Date: Thu, 17 Jan 2013 10:21:53 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1301171016550.1339-100000@iolanthe.rowland.org>
+References: <20130117135043.GU18978@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20130117135043.GU18978-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This was my initial attempt at providing an architecture agnostic MSI
-controller. Whilst it does not do anything to allow multiple MSI controllers on
-a platform as has been recently discussed, it can prevent linker errors when
-building multiplatform kernels.
----
-Implementing MSI controller support for devices that can be supported across
-multiple architectures is made difficult due to the inconsistent handling of
-MSIs across the architectures. This would lead to unnecessary conditional code
-in an architecture agnostic MSI driver.
+On Thu, 17 Jan 2013, Felipe Balbi wrote:
 
-At present each MSI supporting architecture implements MSI callbacks
-(include/linux/msi.h). In some architectures (arm, mips, tile) the callbacks
-are implemented directly for each end user (SoC), e.g.
-arch/arm/mach-iop13xx/msi.c, arch/mips/pci/pci-xlr.c, arch/tile/kernel/pci_gx.c.
-In these scenarios where multiple MSI controllers exist (e.g. mips) it would be
-impossible to produce a kernel image with support for multiple targets due to
-multiple implementations of the callbacks (linker errors).
+> > Bits 31 & 30 from PORTSC register were allocated by our SOC designers
+> > to inform the host controller about the PHY type to be used. 
+> 
+> Wow, that's something you should never do. PORTSC register belongs to
+> the EHCI controller and those bits are reserved for future use and they
+> *MUST* return zero. I wouldn't be surprised if current EHCI driver
+> assumes those bits will be zero and/or makes sure they're set to zero
+> when writing to PORTSC register.
 
-In other architectures (ia64, x86, powerpc) the callbacks are abstracted
-through machine vector tables (e.g. arch/ia64/include/asm/machvec.h,
-arch/powerpc/include/asm/machdep.h) - this approach allows for a form of
-registration for end-users (in the case of powerpc: /platforms/*/*msi.c,
-/platforms/powernv/pci.c, /sysdev/fsl_msi.c, /sysdev/*msi.c). Where multiple
-controllers exist, run-time warnings may appear or the latest registered wins.
+In fact, those bits _have_ been assigned an official purpose in the 
+EHCI-1.1 addendum.  Presumably the Tegra hardware only supports 
+EHCI-1.0.
 
-This patch provides for registration of MSI support in a common way. It is
-hoped that further development of this mechansim will allow for multiple MSI
-controllers serving different PCI domains and/or host-bridges.
+> What if after configuring those two bits, ehci-hcd.ko clears them by
+> accident ? Your platform won't work.
 
-In the case of sparc it appears as though the MSI implementation used depends
-on the requesting PCI device's host bridge controller. As such multiple MSI
-controllers can co-exist and as such sparc will not immediately benefit from
-this patch.
+That won't happen; ehci-hcd is careful to preserve the values of PORTSC
+register bits it doesn't use.  But this still isn't a good idea.
 
-This patch preserves the existing arch_ callback mechanism such that MSI support
-will not break where this registration mechanism is not used - though it is
-hoped that architectures will transition to this new mechanism and the old
-callbacks can be deprecated.
+> > As type of PHY is a property related to PHY DT nodes, PHY driver will get this info.
+> > (Will remove phy_type from controller DT node soon, after all patches get merged.)
+> > However as PORTSC register is in controller domain, added tegra_ehci_set_pts() API
+> >  to serve the purpose.
+> > 
+> > As per Tegra USB PHY design, need to wait for PHY clock to stabilize once we
+> > set/clear PHCD bit. Hence this is being accessed from PHY driver. To serve this
+> > purpose added tegra_ehci_set_phcd().
+> > 
+> > On further analysis, seems tegra_ehci_set_wakeon_events() can be
+> > removed.
+> > 
+> > If you are okay with above explanation, I can send updated patch for
+> > review.
+> 
+> not sure I want to sign-off such a patch. I understand it's how your HW
+> was done, but this shouldn't have been done, really.
+> 
+> Alan, what do you think ? Are you ok with PHY driver overwritting PORTSC
+> register ?
 
-The existing mechanism resulted in linker errors when arch_setup_msi_irq /
-arch_teardown_msi_irq were not defined or defined multiple times - this no
-longer occurs and a WARN is issued instead.
+It's okay provided it is done correctly -- i.e., in a way that won't 
+interfere with the normal EHCI operation.
 
-Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
----
- drivers/pci/msi.c   |  113 +++++++++++++++++++++++++++++++++++++++++++--------
- include/linux/msi.h |   16 +++++++-
- 2 files changed, 111 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index a825d78..352d4fe 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -25,9 +25,21 @@
- #include "msi.h"
- 
- static int pci_msi_enable = 1;
-+static struct msi_controller *ops;
- 
- /* Arch hooks */
- 
-+static int __arch_msi_check_device(struct pci_dev *dev, int nvec, int type)
-+{
-+	if (!ops)
-+		return arch_msi_check_device(dev, nvec, type);
-+
-+	if (ops->msi_check_device)
-+		return ops->msi_check_device(dev, nvec, type);
-+
-+	return 0;
-+}
-+
- #ifndef arch_msi_check_device
- int arch_msi_check_device(struct pci_dev *dev, int nvec, int type)
- {
-@@ -35,12 +47,44 @@ int arch_msi_check_device(struct pci_dev *dev, int nvec, int type)
- }
- #endif
- 
-+int __weak arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc)
-+{
-+	WARN_ON_ONCE(1);
-+	return 1;
-+}
-+
-+static int __arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc)
-+{
-+	if (!ops)
-+		return arch_setup_msi_irq(dev, desc);
-+
-+	if (ops->setup_msi_irq)
-+		return ops->setup_msi_irq(dev, desc);
-+
-+	WARN_ON_ONCE(1);
-+	return 1;
-+}
-+
-+void __weak arch_teardown_msi_irq(unsigned int irq)
-+{
-+	WARN_ON_ONCE(1);
-+}
-+
-+static void __arch_teardown_msi_irq(unsigned int irq)
-+{
-+	if (!ops)
-+		return arch_teardown_msi_irq(irq);
-+
-+	if (ops->teardown_msi_irq)
-+		return ops->teardown_msi_irq(irq);
-+
-+	WARN_ON_ONCE(1);
-+}
-+
- #ifndef arch_setup_msi_irqs
- # define arch_setup_msi_irqs default_setup_msi_irqs
--# define HAVE_DEFAULT_MSI_SETUP_IRQS
- #endif
- 
--#ifdef HAVE_DEFAULT_MSI_SETUP_IRQS
- int default_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
- {
- 	struct msi_desc *entry;
-@@ -54,7 +98,7 @@ int default_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
- 		return 1;
- 
- 	list_for_each_entry(entry, &dev->msi_list, list) {
--		ret = arch_setup_msi_irq(dev, entry);
-+		ret = __arch_setup_msi_irq(dev, entry);
- 		if (ret < 0)
- 			return ret;
- 		if (ret > 0)
-@@ -63,14 +107,22 @@ int default_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
- 
- 	return 0;
- }
--#endif
-+
-+static int __arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
-+{
-+	if (!ops)
-+		return arch_setup_msi_irqs(dev, nvec, type);
-+
-+	if (ops->setup_msi_irqs)
-+		return ops->setup_msi_irqs(dev, nvec, type);
-+
-+	return default_setup_msi_irqs(dev, nvec, type);
-+}
- 
- #ifndef arch_teardown_msi_irqs
- # define arch_teardown_msi_irqs default_teardown_msi_irqs
--# define HAVE_DEFAULT_MSI_TEARDOWN_IRQS
- #endif
- 
--#ifdef HAVE_DEFAULT_MSI_TEARDOWN_IRQS
- void default_teardown_msi_irqs(struct pci_dev *dev)
- {
- 	struct msi_desc *entry;
-@@ -81,17 +133,25 @@ void default_teardown_msi_irqs(struct pci_dev *dev)
- 			continue;
- 		nvec = 1 << entry->msi_attrib.multiple;
- 		for (i = 0; i < nvec; i++)
--			arch_teardown_msi_irq(entry->irq + i);
-+			__arch_teardown_msi_irq(entry->irq + i);
- 	}
- }
--#endif
-+
-+static void __arch_teardown_msi_irqs(struct pci_dev *dev)
-+{
-+	if (!ops)
-+		return arch_teardown_msi_irqs(dev);
-+
-+	if (ops->teardown_msi_irqs)
-+		return ops->teardown_msi_irqs(dev);
-+
-+	default_teardown_msi_irqs(dev);
-+}
- 
- #ifndef arch_restore_msi_irqs
- # define arch_restore_msi_irqs default_restore_msi_irqs
--# define HAVE_DEFAULT_MSI_RESTORE_IRQS
- #endif
- 
--#ifdef HAVE_DEFAULT_MSI_RESTORE_IRQS
- void default_restore_msi_irqs(struct pci_dev *dev, int irq)
- {
- 	struct msi_desc *entry;
-@@ -109,7 +169,26 @@ void default_restore_msi_irqs(struct pci_dev *dev, int irq)
- 	if (entry)
- 		write_msi_msg(irq, &entry->msg);
- }
--#endif
-+
-+static void __arch_restore_msi_irqs(struct pci_dev *dev, int irq)
-+{
-+	if (!ops)
-+		return arch_restore_msi_irqs(dev, irq);
-+
-+	if (ops->restore_msi_irqs)
-+		return ops->restore_msi_irqs(dev, irq);
-+
-+	default_restore_msi_irqs(dev, irq);
-+}
-+
-+int pci_register_msi_controller(struct msi_controller *controller)
-+{
-+	WARN_ON(ops);
-+	ops = controller;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pci_register_msi_controller);
- 
- static void msi_set_enable(struct pci_dev *dev, int pos, int enable)
- {
-@@ -341,7 +420,7 @@ static void free_msi_irqs(struct pci_dev *dev)
- 			BUG_ON(irq_has_action(entry->irq + i));
- 	}
- 
--	arch_teardown_msi_irqs(dev);
-+	__arch_teardown_msi_irqs(dev);
- 
- 	list_for_each_entry_safe(entry, tmp, &dev->msi_list, list) {
- 		if (entry->msi_attrib.is_msix) {
-@@ -397,7 +476,7 @@ static void __pci_restore_msi_state(struct pci_dev *dev)
- 
- 	pci_intx_for_msi(dev, 0);
- 	msi_set_enable(dev, pos, 0);
--	arch_restore_msi_irqs(dev, dev->irq);
-+	__arch_restore_msi_irqs(dev, dev->irq);
- 
- 	pci_read_config_word(dev, pos + PCI_MSI_FLAGS, &control);
- 	msi_mask_irq(entry, msi_capable_mask(control), entry->masked);
-@@ -425,7 +504,7 @@ static void __pci_restore_msix_state(struct pci_dev *dev)
- 	pci_write_config_word(dev, pos + PCI_MSIX_FLAGS, control);
- 
- 	list_for_each_entry(entry, &dev->msi_list, list) {
--		arch_restore_msi_irqs(dev, entry->irq);
-+		__arch_restore_msi_irqs(dev, entry->irq);
- 		msix_mask_irq(entry, entry->masked);
- 	}
- 
-@@ -576,7 +655,7 @@ static int msi_capability_init(struct pci_dev *dev, int nvec)
- 	list_add_tail(&entry->list, &dev->msi_list);
- 
- 	/* Configure MSI capability structure */
--	ret = arch_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSI);
-+	ret = __arch_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSI);
- 	if (ret) {
- 		msi_mask_irq(entry, mask, ~mask);
- 		free_msi_irqs(dev);
-@@ -696,7 +775,7 @@ static int msix_capability_init(struct pci_dev *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = arch_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSIX);
-+	ret = __arch_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSIX);
- 	if (ret)
- 		goto error;
- 
-@@ -785,7 +864,7 @@ static int pci_msi_check_device(struct pci_dev *dev, int nvec, int type)
- 		if (bus->bus_flags & PCI_BUS_FLAGS_NO_MSI)
- 			return -EINVAL;
- 
--	ret = arch_msi_check_device(dev, nvec, type);
-+	ret = __arch_msi_check_device(dev, nvec, type);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index ce93a34..f98c7f0 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -49,14 +49,28 @@ struct msi_desc {
- 	struct kobject kobj;
- };
- 
-+struct msi_controller {
-+	int (*setup_msi_irq)(struct pci_dev *dev, struct msi_desc *desc);
-+	void (*teardown_msi_irq)(unsigned int irq);
-+	int (*setup_msi_irqs)(struct pci_dev *dev, int nvec, int type);
-+	void (*teardown_msi_irqs)(struct pci_dev *dev);
-+	int (*msi_check_device)(struct pci_dev *dev, int nvec, int type);
-+	void (*restore_msi_irqs)(struct pci_dev *dev, int irq);
-+};
-+
-+/* Registration of MSI controller operations */
-+int pci_register_msi_controller(struct msi_controller *);
-+
- /*
-  * The arch hook for setup up msi irqs
-+ * These calls are deprecated and pci_register_msi_controller should be used
-+ * instead.
-  */
- int arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc);
- void arch_teardown_msi_irq(unsigned int irq);
- extern int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type);
- extern void arch_teardown_msi_irqs(struct pci_dev *dev);
- extern int arch_msi_check_device(struct pci_dev* dev, int nvec, int type);
--
-+void arch_restore_msi_irqs(struct pci_dev *dev, int irq);
- 
- #endif /* LINUX_MSI_H */
--- 
-1.7.0.4
+Alan Stern
