@@ -1,149 +1,88 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 5/5] ARM: tegra20: cpuidle: apply coupled cpuidle
- for powered-down mode
-Date: Thu, 17 Jan 2013 10:05:32 +0800
-Message-ID: <1358388332.1667.7.camel@jlo-ubuntu-64.nvidia.com>
-References: <1358323873-30525-1-git-send-email-josephl@nvidia.com>
-	 <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Jeremy Andrus <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+Subject: Re: [RFC PATCH 0/5] Minor bugfixes for Tegra kernels
+Date: Wed, 16 Jan 2013 21:07:45 -0500
+Message-ID: <1024EDB1-9A14-4308-8245-7EFB98ADBD0E@cs.columbia.edu>
+References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu> <50F71F5C.6020209@wwwdotorg.org>
+Mime-Version: 1.0 (Mac OS X Mail 6.2 \(1499\))
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRTmGVrjnKa_z+zonGypU+U4r2iE=D-Zfvyoq8chY68QKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <50F71F5C.6020209-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-01-17 at 02:55 +0800, Colin Cross wrote:
-> On Wed, Jan 16, 2013 at 12:11 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > The "powered-down" cpuidle mode of Tegra20 needs the CPU0 be the last one
-> > core to go into this mode before other core. The coupled cpuidle framework
-> > can help to sync the MPCore to coupled state then go into "powered-down"
-> > idle mode together. The driver can just assume the MPCore come into
-> > "powered-down" mode at the same time. No need to take care if the CPU_0
-> > goes into this mode along and only can put it into safe idle mode (WFI).
-> >
-> > The powered-down state of Tegra20 requires power gating both CPU cores.
-> > When the secondary CPU requests to enter powered-down state, it saves
-> > its own contexts and then enters WFI for waiting CPU0 in the same state.
-> > When the CPU0 requests powered-down state, it attempts to put the secondary
-> > CPU into reset to prevent it from waking up. Then power down both CPUs
-> > together and power off the cpu rail.
-> >
-> > Be aware of that, you may see the legacy power state "LP2" in the code
-> > which is exactly the same meaning of "CPU power down".
-> >
-> > Based on the work by:
-> > Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-> > Gary King <gking-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V4:
-> > * rename the function to "tegra20_wake_cpu1_from_reset"
-> > * make the coupled cpuidle can be disabled if SMP is disabled
-> > V3:
-> > * sqash last two patch in previous version to support coupled cpuidle
-> >   directly
-> > V2:
-> > * refine the cpu control function that dedicate for CPU_1
-> > * rename "tegra_cpu_pllp" to "tegra_switch_cpu_to_pllp"
-> > ---
-> 
-> <snip>
-> 
-> > diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > index 50f984d..63ab9c2 100644
-> > --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> > +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> 
-> <snip>
-> 
-> > @@ -87,20 +176,31 @@ static inline bool tegra20_idle_enter_lp2_cpu_1(struct cpuidle_device *dev,
-> >  }
-> >  #endif
-> >
-> > -static int tegra20_idle_lp2(struct cpuidle_device *dev,
-> > -                           struct cpuidle_driver *drv,
-> > -                           int index)
-> > +static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
-> > +                                   struct cpuidle_driver *drv,
-> > +                                   int index)
-> >  {
-> >         u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
-> >         bool entered_lp2 = false;
-> >
-> > +       if (tegra_pending_sgi())
-> > +               atomic_inc(&abort_flag);
-> Minor nit, this doesn't need to be atomic.  You could just use
-> abort_flag = true, or ACCESS_ONCE(abort_flag) = true.  Each cpu will
-> either not touch this variable or write 1 to it, so there is no
-> read/modify/write race.
-> 
-Thanks for your remind. There is a reason I don't use a boolean flag
-here. The SGI register was per CPU register. Different CPU may get
-different content of the register depend on there is a SGI pending or
-not. That's why I don't use a boolean flag that may be overwritten by
-the other CPU here.
+On Jan 16, 2013, at 4:45 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wro=
+te:
 
-So I think I can just modify as follows and remove atomic operation.
+> On 01/16/2013 12:56 PM, Jeremy C. Andrus wrote:
+>> From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
+>>=20
+>> In the course of my research here at Columbia University, I have bee=
+n
+>> doing some kernel development on the Google Nexus 7 device. I took t=
+he
+>> time to address most of the compile-time warnings while building the
+>> Tegra kernel tree using the cross-compiler shipped with Android
+>> (gcc-4.7), and in doing so I came across a few minor issues.
+>>=20
+>> This RFC series addresses several minor bugs that I was able to fix
+>> while suppressing compile warnings. Not knowing exactly where
+>> to send the patches, I decided to send them primarily to the Tegra
+>> list serv in hopes that they will find their way to the correct plac=
+e.
+>>=20
+>> All 5 patches apply cleanly the kernel/tegra repository hosted by
+>> Google. I used the commit hash referenced in the Android device tree
+>> git logs as my HEAD revision: 22b4fcde206e96f57bf0a111403fc3d7553291=
+8a
+>> I belive that this is the revision which corresponds to the prebuilt
+>> kernel provided in the Jelly Bean release.
+>=20
+> I honestly don't know where you should send these patches. I've CC'd
+> Colin Cross who works on Android in case he can clue us in. I assume
+> there's a Gerrit instance somewhere for Android that you need to push
+> these into...
+>=20
+> Laxman, can you please check if any of these patches should be applie=
+d
+> to our internal/downstream kernels?
 
-	if (tegra_pending_sgi())
-		abort_flag++;
+The first patch actually fixed my build! When using the prebuilt toolch=
+ains
+provided by google (as per Android build instructions), the build faile=
+d on
+arch/arm/mach-tegra/sleep.S. This seems to be because the Makefile
+function $(call as-instr,=85) didn't function properly. I would think t=
+hat some
+sort of fix to make the Tegra tree build-able using Android toolchains
+would be appropriate here...
 
-	if (abort_flag > 0)
-		abort coupled cpuidle;
+> Jeremy, do patches 3 or 4 need to be applied to the mainline kernel? =
+It
+> may be useful for you to resend those directly to the relevant upstre=
+am
+> subsystem maintainers, after rebasing them onto the latest upstream
+> code. See Documentation/SubmittingPatches in the mainline kernel.
 
-> > +
-> > +       cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
-> > +
-> > +       if (atomic_read(&abort_flag) > 0) {
-> > +               cpuidle_coupled_parallel_barrier(dev, &abort_barrier);
-> > +               atomic_set(&abort_flag, 0);     /* clean flag for next coming */
-> > +               return -EINTR;
-> > +       }
-> > +
-> >         local_fiq_disable();
-> >
-> >         tegra_set_cpu_in_lp2(cpu);
-> >         cpu_pm_enter();
-> >
-> >         if (cpu == 0)
-> > -               cpu_do_idle();
-> > +               entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
-> >         else
-> >                 entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
-> >
-> > @@ -122,6 +222,10 @@ int __init tegra20_cpuidle_init(void)
-> >         struct cpuidle_device *dev;
-> >         struct cpuidle_driver *drv = &tegra_idle_driver;
-> >
-> > +#ifdef CONFIG_PM_SLEEP
-> > +       tegra_tear_down_cpu = tegra20_tear_down_cpu;
-> > +#endif
-> > +
-> >         drv->state_count = ARRAY_SIZE(tegra_idle_states);
-> >         memcpy(drv->states, tegra_idle_states,
-> >                         drv->state_count * sizeof(drv->states[0]));
-> > @@ -135,6 +239,9 @@ int __init tegra20_cpuidle_init(void)
-> >         for_each_possible_cpu(cpu) {
-> >                 dev = &per_cpu(tegra_idle_device, cpu);
-> >                 dev->cpu = cpu;
-> > +#ifdef CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED
-> > +               dev->coupled_cpus = *cpu_online_mask;
-> I think this should be cpu_possible_mask instead of cpu_online_mask.
-> coupled.c already makes sure that only online cpus are considered by
-> the synchronization code.  If cpuidle were compiled as a module and
-> loaded after offlining a cpu, you would hit the WARN_ON in
-> cpuidle_coupled_register_device when onlining a cpu.
-> 
-Fair enough to me.
+OK. I will send those patches out to subsystem maintainers (assuming th=
+at
+they are not already fixed).=20
 
-Thanks,
-Joseph
+> Thanks for the contributions!
 
-> > +#endif
-> >
-> >                 dev->state_count = drv->state_count;
-> >                 ret = cpuidle_register_device(dev);
+
+You're welcome! This was my first experience with git-format-patch, and
+it was kind of fun to re-contribute in a small way.
+
+I actually have another set of patches that fix all the build warnings.=
+ Is
+there a repo / branch that I should rebase these on and then send them
+out? It was definitely worth the effort to eliminate all the warnings -=
+ it
+made it a lot easier to spot my own mistakes :-)
+
+Best,
+
+        -Jeremy
