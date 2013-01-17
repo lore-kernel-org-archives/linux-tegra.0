@@ -1,41 +1,34 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: config: enable SERIAL_TEGRA
-Date: Thu, 17 Jan 2013 10:08:08 +0530
-Message-ID: <50F78030.6080305@nvidia.com>
-References: <1358341572-8154-1-git-send-email-ldewangan@nvidia.com> <50F6EA0A.4080904@wwwdotorg.org>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
+Date: Thu, 17 Jan 2013 12:49:07 +0800
+Message-ID: <50F782C3.5000305@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>  <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de>  <50F68AB2.4030408@gmail.com> <1358337215.3157.3.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F6EA0A.4080904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1358337215.3157.3.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 16 January 2013 11:27 PM, Stephen Warren wrote:
-> On 01/16/2013 06:06 AM, Laxman Dewangan wrote:
->> Enable high speed serial driver for tegra platform.
-> Thanks, I've applied patch 1 to Tegra's for-3.9/defconfig branch and
-> patch 2 to Tegra's for-3.9/dt branch.
+On 01/16/2013 07:53 PM, Lucas Stach wrote:
+> Am Mittwoch, den 16.01.2013, 19:10 +0800 schrieb Mark Zhang:
+>> I'm testing the pageflip & vblank change on cardhu. Seems the HDMI
+>> doesn't work(LVDS only is OK). I'll let you know if I get something.
+>>
+> Just to provide another data point: I'm running this series and don't
+> see any failures with DVI output. Though I'm only run a single output,
+> not some dual-head config.
 >
-> Just as an FYI, the dt branch is merged into my for-next branch, and
-> sent upstream, before the defconfig branch, so your patch order was
-> reversed relative to that, but it's not an issue here.
 
-Thanks for applying it. There is no issue on the reversing the sequence.
+Yes. HDMI only is OK. I met some problems when the LVDS & HDMI are
+enabled at the same time.
 
-
-> Question: How do I test this; do I just fire up bluez(?) and point it at
-> the UARTC serial port, or is there more to it?
-
-I tested this in may pieces, not with the bluez.
-I tested this in downstream with linux-next dma, this new serial driver, 
-some hacks in the board files with bluetooth.
-
-Then I tested this again on linux-next with some hacks in board-dt filew 
-with invoking  the driver from cardhu dts file. In this I tested driver 
-registration, basic write is wokring or not with some register 
-dump/interrupt, Not checked data integrity as not connected the serial 
-sniffer. The idea is that nothing should be crash in linux-next. The 
-basic driver code is already tested with bluetooth.
+Mark
+> Even vbltest from libdrm/tests works and shows correct refresh rate.
+> 
+> Regards,
+> Lucas
+> 
