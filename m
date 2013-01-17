@@ -1,102 +1,49 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Colibri T20 512MB COM
-Date: Thu, 17 Jan 2013 22:29:04 +0100
-Message-ID: <1358458144.18489.14.camel@tellur>
-References: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
-	 <50F86533.9010000@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V5 1/3] clk: tegra: add Tegra specific clocks
+Date: Thu, 17 Jan 2013 14:53:34 -0700
+Message-ID: <50F872DE.9060109@wwwdotorg.org>
+References: <1358369575-7325-1-git-send-email-swarren@wwwdotorg.org> <20130117155307.GF4118@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F86533.9010000-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130117155307.GF4118-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 17.01.2013, 13:55 -0700 schrieb Stephen Warren:
-> On 01/17/2013 04:59 AM, Lucas Stach wrote:
-> > This adds the device tree include file for the Toradex Colibri T20
-> > Computer on Module (COM). It's only valid for the 512MB RAM version of
-> > the module, as the 256MB version needs different EMC tables and flash
-> > configuration. To make this clear the suffix -512 was added to the board
-> > compatible string.
-> > 
-> > The Colibri T20 uses a Tegra2 SoC and has onboard USB Ethernet and AC97
-> > sound.
-> > 
-> > Still some things like onboard NAND support missing, but should be a
-> > good base for further development.
+On 01/17/2013 08:53 AM, Peter De Schrijver wrote:
+> On Wed, Jan 16, 2013 at 09:52:53PM +0100, Stephen Warren wrote:
+>> From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Add Tegra specific clocks, pll, pll_out, peripheral, frac_divider, super.
+>>
+>> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> [swarren: alloc sizeof(*foo) not sizeof(struct foo), add comments re:
+>> storing pointers to stack variables, make a timeout loop more idiomatic,
+>> use _clk_pll_disable() not clk_disable_pll() from _program_pll() to
+>> avoid redundant lock operations, unified tegra_clk_periph() and
+>> tegra_clk_periph_nodiv(), unified tegra_clk_pll{,e}, rename all clock
+>> registration functions so they don't have the same name as the clock
+>> structs.]
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> > diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> ...
 > 
-> > +		temperature-sensor@4c {
-> > +			compatible = "national,lm95245";
+>> +static int clk_plle_enable(struct clk_hw *hw)
+>> +{
+>> +       struct tegra_clk_pll *pll = to_clk_pll(hw);
+>> +       unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
+>> +       struct tegra_clk_pll_freq_table sel;
+>> +       u32 val;
+>> +       int err;
+>> +
+>> +       if (_get_table_rate(hw, &sel, pll->fixed_rate, input_rate))
+>> +               return -EBUSY;
+>> +
 > 
-> You should probably add that compatible value to
-> Documentation/devicetree/bindings/i2c/trivial-devices.txt.
-> 
-Yep, will send a separate patch for this.
+> I think -EINVAL would be more appropriate here?
 
-> > +	i2c@7000c000 {
-> > +		clock-frequency = <400000>;
-> > +	};
-> > +
-> > +	i2c_ddc: i2c@7000c400 {
-> > +		clock-frequency = <100000>;
-> > +	};
-> > +
-> > +	i2c@7000c500 {
-> > +		clock-frequency = <400000>;
-> > +	};
-> 
-> > +	serial@70006000 {
-> > +		clock-frequency = <216000000>;
-> > +	};
-> > +
-> > +	serial@70006300 {
-> > +		clock-frequency = <216000000>;
-> > +	};
-> > +
-> > +	usb@c5000000 {
-> > +		dr_mode = "otg";
-> > +	};
-> > +
-> > +	usb@c5004000 {
-> > +		status = "okay";
-> > +		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-> > +	};
-> > +
-> > +	sdhci@c8000600 {
-> > +		cd-gpios = <&gpio 23 0>; /* gpio PC7 */
-> > +		vmmc-supply = <&ldo5_reg>;
-> > +		vqmmc-supply = <&vcc_sd_reg>;
-> > +	};
-> 
-> I assume that all of those nodes are meant to have status="okay"?
-> 
-> Oh, I see those are in the top-level board .dts file. You may as well
-> put all the properties there; stuff like the GPIOs and regulators at
-> least would be purely specific to the individual board, and not the COM.
-> 
-I would like to keep everything that is defined by the COM to reside in
-the COM dtsi. You are right that the regulator in this case is board
-specific and should be moved to the board file, I missed this while
-splitting things out. But at least the GPIO is defined by the fixed COM
-pinout.
-
-> I guess we should really move the serial node's clock-frequency property
-> in the SoC .dtsi files.
-> 
-Might be a nice cleanup.
-
-> > +	com_regulators {
-> 
-> I think just call that "regulators"; the final board .dts file can
-> easily add more sub-nodes to this node, so there's no need to try and
-> avoid any naming conflict here. See Cardhu as an example.
-> 
-I don't really see the benefit of merging those nodes. They are separate
-regulators, some are located on the COM, others on the carrier board. So
-I would like to keep them in separate nodes, unless you have strong
-feelings to change this.
+Yes. I fixed this and the PLL function parameters you mentioned in your
+other email.
