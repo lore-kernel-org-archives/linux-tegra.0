@@ -1,130 +1,111 @@
-From: Jeremy Andrus <jchristian.andrus-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 0/5] Minor bugfixes for Tegra kernels
-Date: Thu, 17 Jan 2013 00:35:54 -0500
-Message-ID: <409F0C97-CED0-4BB0-BD5C-6256122D0970@gmail.com>
-References: <1358366173-56861-1-git-send-email-jeremya@cs.columbia.edu> <50F71F5C.6020209@wwwdotorg.org> <1024EDB1-9A14-4308-8245-7EFB98ADBD0E@cs.columbia.edu> <CAMbhsRTc4m-4pRF9+w=6ekueQiwaa8N1vOaX2vggd0Pi_MqAFQ@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 6.2 \(1499\))
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 3/5] drm/tegra: Implement .mode_set_base()
+Date: Thu, 17 Jan 2013 14:10:47 +0800
+Message-ID: <50F795E7.2080206@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-4-git-send-email-thierry.reding@avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMbhsRTc4m-4pRF9+w=6ekueQiwaa8N1vOaX2vggd0Pi_MqAFQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1358179560-26799-4-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Jeremy Andrus <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/15/2013 12:05 AM, Thierry Reding wrote:
+> The sequence for replacing the scanout buffer is much shorter than a
+> full mode change operation so implementing this callback considerably
+> speeds up cases where only a new framebuffer is to be scanned out.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/dc.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 157e962..8dd7d8a 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -116,6 +116,25 @@ static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
+>  	return 0;
+>  }
+>  
+> +static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+> +			     struct tegra_framebuffer *fb)
+> +{
+> +	unsigned long value;
+> +
+> +	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
+> +
+> +	value = fb->base.offsets[0] + y * fb->base.pitches[0] +
+> +		x * fb->base.bits_per_pixel / 8;
+> +
+> +	tegra_dc_writel(dc, fb->obj->paddr + value, DC_WINBUF_START_ADDR);
+> +
 
-On Jan 16, 2013, at 9:37 PM, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org> wrote:
+Add one line here:
 
-> On Wed, Jan 16, 2013 at 6:07 PM, Jeremy Andrus <jeremya-eQaUEPhvms5yEmSbqHaMZw@public.gmane.org=
-du> wrote:
->> On Jan 16, 2013, at 4:45 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> =
-wrote:
->>=20
->>> On 01/16/2013 12:56 PM, Jeremy C. Andrus wrote:
->>>> From: "Jeremy C. Andrus" <jeremya-eQaUEPhvms7ENvBUuze7eA@public.gmane.org>
->>>>=20
->>>> In the course of my research here at Columbia University, I have b=
-een
->>>> doing some kernel development on the Google Nexus 7 device. I took=
- the
->>>> time to address most of the compile-time warnings while building t=
-he
->>>> Tegra kernel tree using the cross-compiler shipped with Android
->>>> (gcc-4.7), and in doing so I came across a few minor issues.
->>>>=20
->>>> This RFC series addresses several minor bugs that I was able to fi=
-x
->>>> while suppressing compile warnings. Not knowing exactly where
->>>> to send the patches, I decided to send them primarily to the Tegra
->>>> list serv in hopes that they will find their way to the correct pl=
-ace.
->>>>=20
->>>> All 5 patches apply cleanly the kernel/tegra repository hosted by
->>>> Google. I used the commit hash referenced in the Android device tr=
-ee
->>>> git logs as my HEAD revision: 22b4fcde206e96f57bf0a111403fc3d75532=
-918a
->>>> I belive that this is the revision which corresponds to the prebui=
-lt
->>>> kernel provided in the Jelly Bean release.
->>>=20
->>> I honestly don't know where you should send these patches. I've CC'=
-d
->>> Colin Cross who works on Android in case he can clue us in. I assum=
-e
->>> there's a Gerrit instance somewhere for Android that you need to pu=
-sh
->>> these into...
->>>=20
->>> Laxman, can you please check if any of these patches should be appl=
-ied
->>> to our internal/downstream kernels?
->>=20
->> The first patch actually fixed my build! When using the prebuilt too=
-lchains
->> provided by google (as per Android build instructions), the build fa=
-iled on
->> arch/arm/mach-tegra/sleep.S. This seems to be because the Makefile
->> function $(call as-instr,=85) didn't function properly. I would thin=
-k that some
->> sort of fix to make the Tegra tree build-able using Android toolchai=
-ns
->> would be appropriate here...
->=20
-> I don't think this has anything to do with Android except that the
-> toolchain shipped with Android moved to a newer version of binutils.
-> The as-instr in the Makefile should work fine and I believe is the
-> preferable solution over adding the arch_extension to sleep.S, maybe
-> it has a typo?
+tegra_dc_writel(dc, fb->base.pitches[0], DC_WIN_LINE_STRIDE);
 
-I can take a look. I would agree that a Makefile solution slightly more=
- clean.
-Unfortunately, the tree available from Google which corresponds to the
-Jelly Bean release won't build with the Android toolchain. I tried both=
- the gcc-4.6
-and gcc-4.7 prebuilts. It seems like the define in the file isn't a hor=
-rible solution
-though - the code obviously requires the extension...
+I mentioned in previous mail that the page-flip doesn't work well while
+multiple heads attached(in my test case, LVDS & HDMI are enabled). And I
+found out that this is because we didn't update the line stride
+according to the new FB.
 
+But ideally, I think we don't need to update the line stride setting.
+The reason that we need it here is: We set a "incorrect" line stride
+intentionally when multiple-head is enabled.
 
->>> Jeremy, do patches 3 or 4 need to be applied to the mainline kernel=
-? It
->>> may be useful for you to resend those directly to the relevant upst=
-ream
->>> subsystem maintainers, after rebasing them onto the latest upstream
->>> code. See Documentation/SubmittingPatches in the mainline kernel.
->>=20
->> OK. I will send those patches out to subsystem maintainers (assuming=
- that
->> they are not already fixed).
->>=20
->>> Thanks for the contributions!
->>=20
->>=20
->> You're welcome! This was my first experience with git-format-patch, =
-and
->> it was kind of fun to re-contribute in a small way.
->>=20
->> I actually have another set of patches that fix all the build warnin=
-gs. Is
->> there a repo / branch that I should rebase these on and then send th=
-em
->> out? It was definitely worth the effort to eliminate all the warning=
-s - it
->> made it a lot easier to spot my own mistakes :-)
->>=20
->> Best,
->>=20
->>        -Jeremy
->>=20
+I use a Tegra30 cardhu board for testing. The LVDS panel works on
+1366x768 while the resolution of the HDMI is 1080p. The size of the FB
+created during KMS is 1080p. To make the LVDS & HDMI show correct, we
+set the dc0's(connected with LVDS) line stride to 7680(1920x4). So the
+final result is, the LVDS panel shows the (0,0)/(1366,768) portion in a
+1080p FB.
 
---=20
---------------------------------------------------
-Jeremy C. Andrus
+But the video mode of the LVDS which reported to user space is still
+1366x768. So the userspace program creates 2 FBs based on that and ask
+drm driver to flip them. So we need to update the line stride here.
 
-e: jchristian.andrus-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-w: http://jeremya.com/
-l: New York, NY
-p: 616,439,0522
---------------------------------------------------
+Actually, I think we need to find a better solution when multi-head is
+enabled. For example, create a large FB and make two dcs display the
+different part of it(just like the XRANDR's extension mode). Or maybe we
+can take a look at other drm drivers for inspiration.
+
+Mark
+> +	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+> +	value |= GENERAL_UPDATE | WIN_A_UPDATE;
+> +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct drm_crtc_funcs tegra_crtc_funcs = {
+>  	.set_config = drm_crtc_helper_set_config,
+>  	.destroy = drm_crtc_cleanup,
+> @@ -404,6 +423,15 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
+>  	return 0;
+>  }
+>  
+> +static int tegra_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+> +				    struct drm_framebuffer *old_fb)
+> +{
+> +	struct tegra_framebuffer *fb = to_tegra_fb(crtc->fb);
+> +	struct tegra_dc *dc = to_tegra_dc(crtc);
+> +
+> +	return tegra_dc_set_base(dc, x, y, fb);
+> +}
+> +
+>  static void tegra_crtc_prepare(struct drm_crtc *crtc)
+>  {
+>  	struct tegra_dc *dc = to_tegra_dc(crtc);
+> @@ -483,6 +511,7 @@ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
+>  	.dpms = tegra_crtc_dpms,
+>  	.mode_fixup = tegra_crtc_mode_fixup,
+>  	.mode_set = tegra_crtc_mode_set,
+> +	.mode_set_base = tegra_crtc_mode_set_base,
+>  	.prepare = tegra_crtc_prepare,
+>  	.commit = tegra_crtc_commit,
+>  	.load_lut = tegra_crtc_load_lut,
+> 
