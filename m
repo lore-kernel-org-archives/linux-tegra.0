@@ -1,34 +1,35 @@
-From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
-Date: Thu, 17 Jan 2013 12:49:07 +0800
-Message-ID: <50F782C3.5000305@gmail.com>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>  <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de>  <50F68AB2.4030408@gmail.com> <1358337215.3157.3.camel@tellur>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 2/9] clk: tegra: Add tegra specific clocks
+Date: Thu, 17 Jan 2013 06:03:27 +0100
+Message-ID: <20130117.070327.1625310713330263780.hdoyu@nvidia.com>
+References: <1357890387-23245-3-git-send-email-pgaikwad@nvidia.com><20130116.171242.2189136612266237422.hdoyu@nvidia.com><50F7096C.7020803@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358337215.3157.3.camel@tellur>
+In-Reply-To: <50F7096C.7020803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/16/2013 07:53 PM, Lucas Stach wrote:
-> Am Mittwoch, den 16.01.2013, 19:10 +0800 schrieb Mark Zhang:
->> I'm testing the pageflip & vblank change on cardhu. Seems the HDMI
->> doesn't work(LVDS only is OK). I'll let you know if I get something.
->>
-> Just to provide another data point: I'm running this series and don't
-> see any failures with DVI output. Though I'm only run a single output,
-> not some dual-head config.
->
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 16 Jan 2013 21:11:24 +0100:
 
-Yes. HDMI only is OK. I met some problems when the LVDS & HDMI are
-enabled at the same time.
+> >> +static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> >> +                               unsigned long parent_rate)
+> >> +{
+> >> +       struct tegra_clk_frac_div *divider = to_clk_frac_div(hw);
+> >> +       int div;
+> >> +       unsigned long flags = 0;
+> > 
+> > nit, is "flags" not needed to initialize here?
+> 
+> It avoids a compiler warning; the compiler doesn't that the if condition
+> that guards the path that uses flags is the same condition as the path
+> that initializes it. Or, it may be related to the fact that
+> spin_lock_irqsave() writes to the value through a pointer parameter, and
+> the compiler doesn't know it's an out-only parameter.
 
-Mark
-> Even vbltest from libdrm/tests works and shows correct refresh rate.
-> 
-> Regards,
-> Lucas
-> 
+It might be better to append the special comment /* GCC */[1] on that line.
+
+[1] https://lwn.net/Articles/529954/
