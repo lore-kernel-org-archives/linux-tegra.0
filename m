@@ -1,115 +1,163 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH] serial: tegra: Switch to using struct tty_port
-Date: Thu, 17 Jan 2013 14:31:45 +0100
-Message-ID: <1358429505-31746-1-git-send-email-thierry.reding@avionic-design.de>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 4/4] usb: Add APIs to access host registers from Tegra
+ PHY
+Date: Thu, 17 Jan 2013 15:50:43 +0200
+Message-ID: <20130117135043.GU18978@arwen.pp.htv.fi>
+References: <1358411292-12288-1-git-send-email-vbyravarasu@nvidia.com>
+ <20130117090255.GD10814@arwen.pp.htv.fi>
+ <D958900912E20642BCBC71664EFECE3E6E1A6F0F97@BGMAIL02.nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GVLQrlG8+/jMfW4X"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E1A6F0F97-QZ+emBqkIFBDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Many of the tty functions were converted to use a struct tty_port
-instead of a struct tty_struct. Update the Tegra driver accordingly to
-avoid build breakage.
+--GVLQrlG8+/jMfW4X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- drivers/tty/serial/serial-tegra.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+Hi,
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index cc4072f..30d6ff6 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -504,7 +504,7 @@ static void tegra_uart_handle_tx_pio(struct tegra_uart_port *tup)
- }
- 
- static void tegra_uart_handle_rx_pio(struct tegra_uart_port *tup,
--		struct tty_struct *tty)
-+		struct tty_port *tty)
- {
- 	do {
- 		char flag = TTY_NORMAL;
-@@ -527,7 +527,7 @@ static void tegra_uart_handle_rx_pio(struct tegra_uart_port *tup,
- }
- 
- static void tegra_uart_copy_rx_to_tty(struct tegra_uart_port *tup,
--		struct tty_struct *tty, int count)
-+		struct tty_port *tty, int count)
- {
- 	int copied;
- 
-@@ -554,6 +554,7 @@ static void tegra_uart_rx_dma_complete(void *args)
- 	struct uart_port *u = &tup->uport;
- 	int count = tup->rx_bytes_requested;
- 	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
-+	struct tty_port *port = &u->state->port;
- 	unsigned long flags;
- 
- 	async_tx_ack(tup->rx_dma_desc);
-@@ -565,11 +566,11 @@ static void tegra_uart_rx_dma_complete(void *args)
- 
- 	/* If we are here, DMA is stopped */
- 	if (count)
--		tegra_uart_copy_rx_to_tty(tup, tty, count);
-+		tegra_uart_copy_rx_to_tty(tup, port, count);
- 
--	tegra_uart_handle_rx_pio(tup, tty);
-+	tegra_uart_handle_rx_pio(tup, port);
- 	if (tty) {
--		tty_flip_buffer_push(tty);
-+		tty_flip_buffer_push(port);
- 		tty_kref_put(tty);
- 	}
- 	tegra_uart_start_rx_dma(tup);
-@@ -585,6 +586,7 @@ static void tegra_uart_handle_rx_dma(struct tegra_uart_port *tup)
- {
- 	struct dma_tx_state state;
- 	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
-+	struct tty_port *port = &tup->uport.state->port;
- 	int count;
- 
- 	/* Deactivate flow control to stop sender */
-@@ -597,11 +599,11 @@ static void tegra_uart_handle_rx_dma(struct tegra_uart_port *tup)
- 
- 	/* If we are here, DMA is stopped */
- 	if (count)
--		tegra_uart_copy_rx_to_tty(tup, tty, count);
-+		tegra_uart_copy_rx_to_tty(tup, port, count);
- 
--	tegra_uart_handle_rx_pio(tup, tty);
-+	tegra_uart_handle_rx_pio(tup, port);
- 	if (tty) {
--		tty_flip_buffer_push(tty);
-+		tty_flip_buffer_push(port);
- 		tty_kref_put(tty);
- 	}
- 	tegra_uart_start_rx_dma(tup);
-@@ -724,6 +726,7 @@ static void tegra_uart_stop_rx(struct uart_port *u)
- {
- 	struct tegra_uart_port *tup = to_tegra_uport(u);
- 	struct tty_struct *tty = tty_port_tty_get(&tup->uport.state->port);
-+	struct tty_port *port = &u->state->port;
- 	struct dma_tx_state state;
- 	unsigned long ier;
- 	int count;
-@@ -747,13 +750,13 @@ static void tegra_uart_stop_rx(struct uart_port *u)
- 		dmaengine_tx_status(tup->rx_dma_chan, tup->rx_cookie, &state);
- 		async_tx_ack(tup->rx_dma_desc);
- 		count = tup->rx_bytes_requested - state.residue;
--		tegra_uart_copy_rx_to_tty(tup, tty, count);
--		tegra_uart_handle_rx_pio(tup, tty);
-+		tegra_uart_copy_rx_to_tty(tup, port, count);
-+		tegra_uart_handle_rx_pio(tup, port);
- 	} else {
--		tegra_uart_handle_rx_pio(tup, tty);
-+		tegra_uart_handle_rx_pio(tup, port);
- 	}
- 	if (tty) {
--		tty_flip_buffer_push(tty);
-+		tty_flip_buffer_push(port);
- 		tty_kref_put(tty);
- 	}
- 	return;
--- 
-1.8.1.1
+On Thu, Jan 17, 2013 at 06:07:56PM +0530, Venu Byravarasu wrote:
+> > > @@ -605,6 +615,53 @@ static const struct dev_pm_ops
+> > tegra_ehci_pm_ops =3D {
+> > >
+> > >  #endif
+> > >
+> > > +/* Bits of PORTSC1, which will get cleared by writing 1 into them */
+> > > +#define TEGRA_PORTSC_RWC_BITS (USB_PORTSC1_CSC |
+> > USB_PORTSC1_PEC)
+> > > +
+> > > +void tegra_ehci_set_wakeon_events(struct usb_phy *x, bool enable)
+> > > +{
+> > > +	unsigned long val;
+> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
+> > > +	void __iomem *base =3D hcd->regs;
+> > > +	u32 wake =3D USB_PORTSC1_WKOC | USB_PORTSC1_WKDS |
+> > USB_PORTSC1_WKCN;
+> > > +
+> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > > +	if (enable)
+> > > +		val |=3D wake;
+> > > +	else
+> > > +		val &=3D ~wake;
+> > > +	writel(val, base + USB_PORTSC1);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_wakeon_events);
+> > > +
+> > > +void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
+> > > +{
+> > > +	unsigned long val;
+> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
+> > > +	void __iomem *base =3D hcd->regs;
+> > > +
+> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > > +	val &=3D ~USB_PORTSC1_PTS(3);
+> > > +	val |=3D USB_PORTSC1_PTS(pts_val & 3);
+> > > +	writel(val, base + USB_PORTSC1);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
+> > > +
+> > > +void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
+> > > +{
+> > > +	unsigned long val;
+> > > +	struct usb_hcd *hcd =3D bus_to_hcd(x->otg->host);
+> > > +	void __iomem *base =3D hcd->regs;
+> > > +
+> > > +	val =3D readl(base + USB_PORTSC1) & ~TEGRA_PORTSC_RWC_BITS;
+> > > +	if (enable)
+> > > +		val |=3D USB_PORTSC1_PHCD;
+> > > +	else
+> > > +		val &=3D ~USB_PORTSC1_PHCD;
+> > > +	writel(val, base + USB_PORTSC1);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
+> >=20
+> > NAK to these three functions, you need to use whatever the PHY API
+> > provides you, if it misses something, let's see how we can add those as
+> > generic calls.
+> >=20
+> > In fact, I wonder why do you want PHY driver to access Host address
+> > space. Why don't you let your host driver handle the above ?
+>=20
+> Tegra20 SOC contains 3 instances of USB controllers.
+
+fair enough.
+
+> Some of these controllers can be configured to use different varieties
+> of PHYs e.g. instance 3 can be configured to use either UTMI or ICUSB
+> PHYs.
+
+just like OMAP...
+
+> Bits 31 & 30 from PORTSC register were allocated by our SOC designers
+> to inform the host controller about the PHY type to be used.=20
+
+Wow, that's something you should never do. PORTSC register belongs to
+the EHCI controller and those bits are reserved for future use and they
+*MUST* return zero. I wouldn't be surprised if current EHCI driver
+assumes those bits will be zero and/or makes sure they're set to zero
+when writing to PORTSC register.
+
+What if after configuring those two bits, ehci-hcd.ko clears them by
+accident ? Your platform won't work.
+
+> As type of PHY is a property related to PHY DT nodes, PHY driver will get=
+ this info.
+> (Will remove phy_type from controller DT node soon, after all patches get=
+ merged.)
+> However as PORTSC register is in controller domain, added tegra_ehci_set_=
+pts() API
+>  to serve the purpose.
+>=20
+> As per Tegra USB PHY design, need to wait for PHY clock to stabilize once=
+ we
+> set/clear PHCD bit. Hence this is being accessed from PHY driver. To serv=
+e this
+> purpose added tegra_ehci_set_phcd().
+>=20
+> On further analysis, seems tegra_ehci_set_wakeon_events() can be
+> removed.
+>=20
+> If you are okay with above explanation, I can send updated patch for
+> review.
+
+not sure I want to sign-off such a patch. I understand it's how your HW
+was done, but this shouldn't have been done, really.
+
+Alan, what do you think ? Are you ok with PHY driver overwritting PORTSC
+register ?
+
+--=20
+balbi
+
+--GVLQrlG8+/jMfW4X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ+AGyAAoJEIaOsuA1yqREAREP/RLTuMtTept+X+1fxO4h75X4
+wYKJaYOfBctBOoI0+v2vgFzBM/GhF/aNMo7PA6PXwh+Wg9gYWNSGeMx25F/R+gDh
+NLWmbg/oEQRtxOwrCPrqf2nUwoFjvI/Gf0WbEYwgIeeTxI2WByVQ1L+EEEqSqgeN
+4OisIw0YbB1JP6/D87eQYNCi8uws4hoT9QPLuCT7CJzetXGTvrLq5/gaTGSfTnMS
++ASEULQbIu4/qC/4LAcrHe68pj7uZVxoH2BzsO7eTOtIvbDvL6KSWbpX0WtSMCQU
+WlBRJTm+WMqFM0kN24PM3qkNqL7L9GYAwdEh1vFmU358fFV0hd7Xkwvzf9y/6U07
+RyGBZGNKzgPI+uSwP1RlcNqsP0V0wYrM/+LJShInTCIbHRYjaBxSdwcIbsRAYw2h
+sR9kVp3J7lVNpbIWo1G22ZzLO8Kb70VmAZFX3RV6v6wajAK9Iutmd06kU2laxHyx
+/5okO0F8FCktxjdOhGeEUljtBpql6ksHvErYo/1My1J/2dxeJ3Y0TkSyVpxITLBI
+K/sZxKgSvmEEcrGrycTiXHXNfQxSzkuCVWtxnD+T2cgphoAU4fGPY4bCzf6SsDpV
+o+KP1gZJqKuf2Nu6Tr2YE20K1UYbzLIqPp8aCv7yT55vYzpIkad8OisQTBT6nCMJ
+Da5Jz5UxvAvTUPOOp5hh
+=Z9Eg
+-----END PGP SIGNATURE-----
+
+--GVLQrlG8+/jMfW4X--
