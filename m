@@ -1,31 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: Add API to detect SCU base address from CP15
-Date: Fri, 18 Jan 2013 09:53:45 -0700
-Message-ID: <50F97E19.8070607@wwwdotorg.org>
-References: <1358506755-13705-1-git-send-email-hdoyu@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/4] USB: PHY: Tegra: Get rid of instance number to differentiate
+ PHY type
+Date: Fri, 18 Jan 2013 10:04:09 -0700
+Message-ID: <50F98089.6040008@wwwdotorg.org>
+References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com> <1358343022-28919-4-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358506755-13705-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1358343022-28919-4-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/18/2013 03:59 AM, Hiroshi Doyu wrote:
-> Add API to detect SCU base address from CP15.
+On 01/16/2013 06:30 AM, Venu Byravarasu wrote:
+> Tegra20 USB has 3 PHY instances:
+> Instance 1 and 3 are UTMI. Instance 2 is ULPI.
+> 
+> As instance number was used to differentiate ULPI from UTMI,
+> used DT param to get this info and processed accordingly.
 
-So this patch appears to be a dependency for the Tegra114 series from
-Hiroshi. As such, I need to get it into the Tegra tree somehow.
+> diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+> index f03e157..a6a89d4 100644
+> --- a/include/linux/usb/tegra_usb_phy.h
+> +++ b/include/linux/usb/tegra_usb_phy.h
+> @@ -60,6 +60,7 @@ struct tegra_usb_phy {
+>  	struct usb_phy u_phy;
+>  	struct device *dev;
+>  	bool is_legacy_phy;
+> +	bool is_ulpi_phy;
+>  };
 
-What I'd like to propose is that I put this one patch in a topic branch
-based on v3.8-rcN, send a pull request to arm-soc containing that
-branch, and then merge the branch into the Tegra tree. This will allow
-anyone else to use the patch in code destined for 3.9.
-
-Or, if nobody else wants to use this function, I could just apply it
-directly to the Tegra tree.
-
-But either way, I'd need an ack from a core ARM maintainer in order to
-apply this (well, v2 once it's posted).
+I see the code that uses this new field, but it doesn't appear to be set
+anywhere...
