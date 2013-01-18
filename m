@@ -1,250 +1,72 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 4/4] usb: Add APIs to access host registers from Tegra PHY
-Date: Fri, 18 Jan 2013 11:45:37 +0530
-Message-ID: <1358489737-32273-1-git-send-email-vbyravarasu@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] serial: tegra: Switch to using struct tty_port
+Date: Fri, 18 Jan 2013 09:37:56 +0100
+Message-ID: <20130118083756.GA3303@avionic-0098.adnet.avionic-design.de>
+References: <1358429505-31746-1-git-send-email-thierry.reding@avionic-design.de>
+ <50F82FE7.9090403@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <50F82FE7.9090403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-As Tegra PHY driver needs to access one of the Host registers,
-added few APIs.
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-delta from v2:
-Renamed USB_PORTSC1 to TEGRA_USB_PORTSC1.
-Removed tegra_ehci_set_wakeon_events() and its references.
-Used standard defines for accessing PORTSC fields defined in ehci_def.h
-Included OCC bit of PORTSC as part of TEGRA_PORTSC1_RWC_BITS.
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-delta from v1:
-Taken care of RWC bits, while accessing PORTSC register.
+On Thu, Jan 17, 2013 at 10:07:51AM -0700, Stephen Warren wrote:
+> On 01/17/2013 06:31 AM, Thierry Reding wrote:
+> > Many of the tty functions were converted to use a struct tty_port
+> > instead of a struct tty_struct. Update the Tegra driver accordingly to
+> > avoid build breakage.
+>=20
+> I tested that this does indeed fix the build warnings. I didn't test the
+> resultant driver.
 
+I wonder if this would have been caught earlier if it had errored out
+instead of outputting lots of warnings. Looking at the gcc documentation
+there doesn't seem to be a way to turn this kind of warning into an
+error. That would leave -Werror as the only option to have the compiler
+abort on this kind of warning.
 
- drivers/usb/host/ehci-tegra.c     |   51 ++++++++++++++++++++++++++++++++++-
- drivers/usb/phy/tegra_usb_phy.c   |   52 ++++++++-----------------------------
- include/linux/usb/tegra_usb_phy.h |    4 +++
- 3 files changed, 64 insertions(+), 43 deletions(-)
+Globally enabling -Werror might not be a good idea and I'm sure it must
+have been discussed in the past (even though Google doesn't show any
+references). In this particular case the warnings are actually severe
+errors and are very likely to cause buggy behaviour so it would be good
+to catch them at compile time. Warnings are unfortunately quite easy to
+ignore.
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 55a9cde..1f596fb 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -2,7 +2,7 @@
-  * EHCI-compliant USB host controller driver for NVIDIA Tegra SoCs
-  *
-  * Copyright (C) 2010 Google, Inc.
-- * Copyright (C) 2009 NVIDIA Corporation
-+ * Copyright (C) 2009 - 2013 NVIDIA Corporation
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms of the GNU General Public License as published by the
-@@ -26,13 +26,18 @@
- #include <linux/of.h>
- #include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
--
-+#include <linux/usb/ehci_def.h>
- #include <linux/usb/tegra_usb_phy.h>
- 
- #define TEGRA_USB_BASE			0xC5000000
- #define TEGRA_USB2_BASE			0xC5004000
- #define TEGRA_USB3_BASE			0xC5008000
- 
-+/* PORTSC registers */
-+#define TEGRA_USB_PORTSC1			0x184
-+#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
-+#define TEGRA_USB_PORTSC1_PHCD	(1 << 23)
-+
- #define TEGRA_USB_DMA_ALIGN 32
- 
- struct tegra_ehci_hcd {
-@@ -605,6 +610,37 @@ static const struct dev_pm_ops tegra_ehci_pm_ops = {
- 
- #endif
- 
-+/* Bits of PORTSC1, which will get cleared by writing 1 into them */
-+#define TEGRA_PORTSC1_RWC_BITS (PORT_CSC | PORT_PEC | PORT_OCC)
-+
-+void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
-+{
-+	unsigned long val;
-+	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
-+	void __iomem *base = hcd->regs;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	val &= ~TEGRA_USB_PORTSC1_PTS(3);
-+	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
-+
-+void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
-+{
-+	unsigned long val;
-+	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
-+	void __iomem *base = hcd->regs;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	if (enable)
-+		val |= TEGRA_USB_PORTSC1_PHCD;
-+	else
-+		val &= ~TEGRA_USB_PORTSC1_PHCD;
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
-+
- static u64 tegra_ehci_dma_mask = DMA_BIT_MASK(32);
- 
- static int tegra_ehci_probe(struct platform_device *pdev)
-@@ -616,6 +652,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	int err = 0;
- 	int irq;
- 	int instance = pdev->id;
-+	struct usb_phy *u_phy;
- 
- 	pdata = pdev->dev.platform_data;
- 	if (!pdata) {
-@@ -718,6 +755,16 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 
- 	usb_phy_init(&tegra->phy->u_phy);
- 
-+	hcd->phy = u_phy = &tegra->phy->u_phy;
-+	u_phy->otg = devm_kzalloc(&pdev->dev, sizeof(struct usb_otg),
-+			     GFP_KERNEL);
-+	if (!u_phy->otg) {
-+		dev_err(&pdev->dev, "Failed to alloc memory for otg\n");
-+		err = -ENOMEM;
-+		goto fail_io;
-+	}
-+	u_phy->otg->host = hcd_to_bus(hcd);
-+
- 	err = usb_phy_set_suspend(&tegra->phy->u_phy, 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to power on the phy\n");
-diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
-index ce1ff2a..d465704 100644
---- a/drivers/usb/phy/tegra_usb_phy.c
-+++ b/drivers/usb/phy/tegra_usb_phy.c
-@@ -36,19 +36,6 @@
- 
- #define ULPI_VIEWPORT		0x170
- 
--#define USB_PORTSC1		0x184
--#define   USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
--#define   USB_PORTSC1_PSPD(x)	(((x) & 0x3) << 26)
--#define   USB_PORTSC1_PHCD	(1 << 23)
--#define   USB_PORTSC1_WKOC	(1 << 22)
--#define   USB_PORTSC1_WKDS	(1 << 21)
--#define   USB_PORTSC1_WKCN	(1 << 20)
--#define   USB_PORTSC1_PTC(x)	(((x) & 0xf) << 16)
--#define   USB_PORTSC1_PP	(1 << 12)
--#define   USB_PORTSC1_SUSP	(1 << 7)
--#define   USB_PORTSC1_PE	(1 << 2)
--#define   USB_PORTSC1_CCS	(1 << 0)
--
- #define USB_SUSP_CTRL		0x400
- #define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
- #define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
-@@ -311,11 +298,8 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		val = readl(base + USB_SUSP_CTRL);
- 		val &= ~USB_SUSP_SET;
- 		writel(val, base + USB_SUSP_CTRL);
--	} else {
--		val = readl(base + USB_PORTSC1);
--		val |= USB_PORTSC1_PHCD;
--		writel(val, base + USB_PORTSC1);
--	}
-+	} else
-+		tegra_ehci_set_phcd(&phy->u_phy, true);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
- 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
-@@ -336,11 +320,8 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- 		val = readl(base + USB_SUSP_CTRL);
- 		val &= ~USB_SUSP_CLR;
- 		writel(val, base + USB_SUSP_CTRL);
--	} else {
--		val = readl(base + USB_PORTSC1);
--		val &= ~USB_PORTSC1_PHCD;
--		writel(val, base + USB_PORTSC1);
--	}
-+	} else
-+		tegra_ehci_set_phcd(&phy->u_phy, false);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
- 						     USB_PHY_CLK_VALID))
-@@ -462,11 +443,8 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 
- 	utmi_phy_clk_enable(phy);
- 
--	if (!phy->is_legacy_phy) {
--		val = readl(base + USB_PORTSC1);
--		val &= ~USB_PORTSC1_PTS(~0);
--		writel(val, base + USB_PORTSC1);
--	}
-+	if (!phy->is_legacy_phy)
-+		tegra_ehci_set_pts(&phy->u_phy, 0);
- 
- 	return 0;
- }
-@@ -611,10 +589,6 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 		return ret;
- 	}
- 
--	val = readl(base + USB_PORTSC1);
--	val |= USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN;
--	writel(val, base + USB_PORTSC1);
--
- 	val = readl(base + USB_SUSP_CTRL);
- 	val |= USB_SUSP_CLR;
- 	writel(val, base + USB_SUSP_CTRL);
-@@ -629,17 +603,8 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 
- static int ulpi_phy_power_off(struct tegra_usb_phy *phy)
- {
--	unsigned long val;
--	void __iomem *base = phy->regs;
- 	struct tegra_ulpi_config *config = phy->config;
- 
--	/* Clear WKCN/WKDS/WKOC wake-on events that can cause the USB
--	 * Controller to immediately bring the ULPI PHY out of low power
--	 */
--	val = readl(base + USB_PORTSC1);
--	val &= ~(USB_PORTSC1_WKOC | USB_PORTSC1_WKDS | USB_PORTSC1_WKCN);
--	writel(val, base + USB_PORTSC1);
--
- 	clk_disable(phy->clk);
- 	return gpio_direction_output(config->reset_gpio, 0);
- }
-@@ -742,6 +707,11 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
- 	phy->dev = dev;
- 	phy->is_legacy_phy =
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
-+	err = of_property_match_string(np, "phy_type", "ulpi");
-+	if (err < 0)
-+		phy->is_ulpi_phy = false;
-+	else
-+		phy->is_ulpi_phy = true;
- 
- 	if (!phy->config) {
- 		if (phy->is_ulpi_phy) {
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index a6a89d4..9259d46 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -75,4 +75,8 @@ void tegra_ehci_phy_restore_start(struct tegra_usb_phy *phy,
- 
- void tegra_ehci_phy_restore_end(struct tegra_usb_phy *phy);
- 
-+void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
-+
-+void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
-+
- #endif /* __TEGRA_USB_PHY_H */
--- 
-1.7.0.4
+I know I can always use EXTRA_CFLAGS to change this for local builds,
+but maybe getting more people to do this would be worthwhile.
+
+Thierry
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ+QnkAAoJEN0jrNd/PrOhHY4QALU+sRVVUzalMJ/fULEV+qor
+Y6fDFwcgfRReLoUs5mM5SNgFApJc3rS39O9gtZRYuJLeUmmT7VmPw4QZpeB4UNqM
+9wLtWzKUOZydDYy/pbg3FNBFCLMvBP3QeX9SrqnsUKtSfjaQk+GlOFWXU2hKZVxt
+iG3QgJYciKfHV/c6XWGe8d+VJID7aZdie60TDfm+VkfPkfipMtJYRLt3cx/nbMHX
+22cvToW50dgJ8QCR/a3R4um8asTTyN1jOrwTB08OQ2tB1VI+EGZwgenZewVkm/cf
+EyJnilA7y3F27W1jiZ6LGbtJxaQA3cPi9oqJqLGM5KwcKmjfumXIVDya5sJ19cX8
+B8toKCHVpEDls/HEuq6783CbJ+iHRY2wHxCkPrePOVwv52F4pgLAps4RQy4Zt3Wh
+6j/SDvp1id0vjwWXkhNHITgWeIyG+fPljo695qPzs7vfQF4GEfvtMxhSD3XX3te5
+9ZfNSDeB+MY1kLM2h7g2tfzkzAygcK1d2bpvE493hTOV84XooDqL/42jZRdcOm5v
+LsF/g2CuWl6LO57bVq+LXrEiOVkUIccWQ6RRQ7zaTdeHecm+DXW53bGdOt+enQgt
+Pt9od/TDywBTE8HzPKlfhYgQD255r+UcnWb4J7tAfsPq1YrEPWV018qcI0+M2/yO
+mkdU9ouMKHY6AUfCV0be
+=BSNT
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
