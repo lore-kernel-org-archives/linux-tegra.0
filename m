@@ -1,120 +1,152 @@
 From: Andrew Murray <andrew.murray@arm.com>
 Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
-Date: Fri, 18 Jan 2013 09:18:47 +0000
-Message-ID: <20130118091847.GA7171@arm.com>
+Date: Fri, 18 Jan 2013 09:56:20 +0000
+Message-ID: <20130118095620.GA7552@arm.com>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <20130115154038.GA11241@arm.com>
- <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
- <201301161400.26587.arnd@arndb.de>
- <20130116161716.GA10630@arm.com>
- <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
- <20130117154236.GA25943@arm.com>
- <20130117160501.GC2186@avionic-0098.adnet.avionic-design.de>
- <20130117162218.GA29016@arm.com>
- <20130117203010.GA24584@avionic-0098.adnet.avionic-design.de>
+ <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=WINDOWS-1252
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130117203010.GA24584@avionic-0098.adnet.avionic-design.de>
+In-Reply-To: <1357764194-12677-11-git-send-email-thierry.reding@avionic-design.de>
 Content-Disposition: inline
 Sender: linux-pci-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@avionic-design.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 17, 2013 at 08:30:10PM +0000, Thierry Reding wrote:
-> On Thu, Jan 17, 2013 at 04:22:18PM +0000, Andrew Murray wrote:
-> > On Thu, Jan 17, 2013 at 04:05:02PM +0000, Thierry Reding wrote:
-> > > On Thu, Jan 17, 2013 at 03:42:36PM +0000, Andrew Murray wrote:
-> > > > On Wed, Jan 16, 2013 at 06:31:01PM +0000, Thierry Reding wrote:
-> > > > > Alright, putting the functions into pci_ops doesn't sound like a very
-> > > > > good idea then. Or perhaps it would make sense for hardware where the
-> > > > > root complex and the MSI controller are handled by the same driver.
-> > > > > Basically it could be done as a shortcut and if those are not filled
-> > > > > in, the drivers could still opt to look up an MSI controller from a
-> > > > > phandle specified in DT.
-> > > > > 
-> > > > > Even another alternative would be to keep the functions within the
-> > > > > struct pci_ops and use generic ones if an external MSI controller is
-> > > > > used. Just tossing around ideas.
-> > > > 
-> > > > I think an ideal solution would be for additional logic in drivers/msi.c
-> > > > (e.g. in functions like msi_capability_init) to determine (based on the
-> > > > passed in pci_dev) which MSI controller ops to use. I'm not sure the best
-> > > > way to implement an association between an MSI controller and PCI busses
-> > > > (I believe arch/sparc does something like this - perhaps there will be
-> > > > inspiration there).
-> > > > 
-> > > > As you've pointed out, most RCs will have their own MSI controllers - so
-> > > > it should be easy to register and associate both together.
-> > > > 
-> > > > I've submitted my previous work on MSI controller registration, but it
-> > > > doesn't quite solve this problem - perhaps it can be a starting point?
-> > > 
-> > > We basically have two cases:
-> > > 
-> > >   - The PCI host bridge contains registers for MSI support. In that case
-> > >     it makes little sense to uncouple the MSI implementation from the
-> > >     host bridge driver.
-> > > 
-> > >   - An MSI controller exists outside of the PCI host bridge. The PCI
-> > >     host bridge would in that case have to lookup an MSI controller (via
-> > >     DT phandle or some other method).
-> > > 
-> > > In either of those cases, does it make sense to use the MSI support
-> > > outside the scope of the PCI infrastructure? That is, would devices
-> > > other than PCI devices be able to generate an MSI?
-> > 
-> > I've come around to your way of thinking. Your approach sounds good for
-> > registration of MSI ops - let the RC host driver do it (it probably has its
-> > own), or use a helper for following a phandle to get ops that are not part
-> > of the driver. MSIs won't be used outside of PCI devices.
-> > 
-> > Though existing drivers will use MSI framework functions to request MSIs, that
-> > will result in callbacks to the arch_setup_msi_irqs type functions. These
-> > functions would need to be updated to find these new ops if they exist, i.e. by
-> > traversing the pci_dev structure up to the RC and finding a suitable structure.
-> > 
-> > Perhaps the msi ops could live alongside pci_ops in the pci_bus structure. This
-> > way when traversing up the buses from the provided pci_dev - the first bus with
-> > msi ops populated would be used?
-> > 
-> > If no ops are found, the standard arch callbacks can be called - thus preserving
-> > exiting functionality.
+On Wed, Jan 09, 2013 at 08:43:10PM +0000, Thierry Reding wrote:
+> Move the PCIe driver from arch/arm/mach-tegra into the drivers/pci/host
+> directory. The motivation is to collect various host controller drivers
+> in the same location in order to facilitate refactoring.
 > 
-> Yes, what you describe is exactly what I had in mind. I've been thinking
-> about a possible implementation and there may be some details that could
-> prove difficult to resolve. For instance, we likely need to pass context
-> around for the MSI ops, or else make sure that they can find the context
-> from the struct pci_dev or by traversing upwards from it.
+> The Tegra PCIe driver has been largely rewritten, both in order to turn
+> it into a proper platform driver and to add MSI (based on code by
+> Krishna Kishore <kthota@nvidia.com>) as well as device tree support.
 > 
-> I think for the case where the MSI hardware is controlled by the same
-> driver as the PCI host bridge, doing this is easy because the context
-> could be part of the PCI host bridge context, which in case of Tegra is
-> stored in struct pci_bus' sysdata field (which is actually an ARM struct
-> pci_sys_data and in turn stores a pointer to the struct tegra_pcie in
-> the .private_data field). Other drivers often just use a global variable
-> assuming that there will only ever be a single instance of the PCI host
-> bridge.
+> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 
-Yes.
+[snip]
 
-> If the MSI controller is external to the PCI host bridge, things get a
-> little more complicated. The easiest way would probably be to store the
-> context along with the PCI host bridge context and use simple wrappers
-> around the actual implementations to retrieve the PHB context and pass
-> the attached MSI context.
+> +static int tegra_pcie_enable(struct tegra_pcie *pcie)
+> +{
+> +       struct hw_pci hw;
+> +
+> +       memset(&hw, 0, sizeof(hw));
+> +
+> +       hw.nr_controllers = 1;
+> +       hw.private_data = (void **)&pcie;
+> +       hw.setup = tegra_pcie_setup;
+> +       hw.scan = tegra_pcie_scan_bus;
+> +       hw.map_irq = tegra_pcie_map_irq;
+> +
+> +       pci_common_init(&hw);
+> +
+> +       return 0;
+> +}
 
-This would be nice, but may not be necessary. The MSI controller could use
-a global (file-scope) variable to hold context gained from its probe and
-assume it will be the only instance of that MSI controller.
+[snip]
 
-> 
-> Maybe this could even be made more generic by adding a struct msi_ops *
-> along with a struct msi_chip * in struct pci_bus. Perhaps I should try
-> and code something up to make things more concrete.
+> +static int tegra_pcie_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *port;
+> +       struct tegra_pcie *pcie;
+> +       int err;
+> +
+> +       pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
+> +       if (!pcie)
+> +               return -ENOMEM;
+> +
+> +       INIT_LIST_HEAD(&pcie->ports);
+> +       pcie->dev = &pdev->dev;
+> +
+> +       err = tegra_pcie_parse_dt(pcie);
+> +       if (err < 0)
+> +               return err;
+> +
+> +       pcibios_min_mem = 0;
+> +
+> +       err = tegra_pcie_get_resources(pcie);
+> +       if (err < 0) {
+> +               dev_err(&pdev->dev, "failed to request resources: %d\n", err);
+> +               return err;
+> +       }
+> +
+> +       err = tegra_pcie_enable_controller(pcie);
+> +       if (err)
+> +               goto put_resources;
+> +
+> +       /* probe root ports */
+> +       for_each_child_of_node(pdev->dev.of_node, port) {
+> +               if (!of_device_is_available(port))
+> +                       continue;
+> +
+> +               err = tegra_pcie_add_port(pcie, port);
+> +               if (err < 0) {
+> +                       dev_err(&pdev->dev, "failed to add port %s: %d\n",
+> +                               port->name, err);
+> +               }
+> +       }
+> +
+> +       /* setup the AFI address translations */
+> +       tegra_pcie_setup_translations(pcie);
+> +
+> +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +               err = tegra_pcie_enable_msi(pcie);
+> +               if (err < 0) {
+> +                       dev_err(&pdev->dev,
+> +                               "failed to enable MSI support: %d\n",
+> +                               err);
+> +                       goto put_resources;
+> +               }
+> +       }
+> +
+> +       err = tegra_pcie_enable(pcie);
+> +       if (err < 0) {
+> +               dev_err(&pdev->dev, "failed to enable PCIe ports: %d\n", err);
+> +               goto disable_msi;
+> +       }
+> +
+> +       platform_set_drvdata(pdev, pcie);
+> +       return 0;
+> +
+> +disable_msi:
+> +       if (IS_ENABLED(CONFIG_PCI_MSI))
+> +               tegra_pcie_disable_msi(pcie);
+> +put_resources:
+> +       tegra_pcie_put_resources(pcie);
+> +       return err;
+> +}
+> +
 
-This would be the most complete way to handle this.
+[snip]
+
+> +
+> +static const struct of_device_id tegra_pcie_of_match[] = {
+> +       { .compatible = "nvidia,tegra20-pcie", },
+> +       { },
+> +};
+> +
+> +static struct platform_driver tegra_pcie_driver = {
+> +       .driver = {
+> +               .name = "tegra-pcie",
+> +               .owner = THIS_MODULE,
+> +               .of_match_table = tegra_pcie_of_match,
+> +       },
+> +       .probe = tegra_pcie_probe,
+> +       .remove = tegra_pcie_remove,
+> +};
+> +module_platform_driver(tegra_pcie_driver);
+
+If you have multiple 'nvidia,tegra20-pcie's in your DT then you will end up
+with multiple calls to tegra_pcie_probe/tegra_pcie_enable/pci_common_init.
+
+However pci_common_init/pcibios_init_hw assumes it will only ever be called
+once, and will thus result in trying to create multiple busses with the same
+bus number. (The first root bus it creates is always zero provided you haven't
+implemented hw->scan).
+
+I have a patch for this if you want to fold it into your series? (I see you've
+made changes to bios32 for per-controller data).
 
 Andrew Murray
