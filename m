@@ -1,44 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/4] USB: PHY: Tegra: Get rid of instance number to differentiate
- PHY type
-Date: Fri, 18 Jan 2013 10:07:46 -0700
-Message-ID: <50F98162.3040401@wwwdotorg.org>
-References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com> <1358343022-28919-4-git-send-email-vbyravarasu@nvidia.com> <50F98089.6040008@wwwdotorg.org>
+Subject: Re: [PATCH v3 4/4] usb: Add APIs to access host registers from Tegra
+ PHY
+Date: Fri, 18 Jan 2013 10:28:38 -0700
+Message-ID: <50F98646.6040209@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1301181029350.1988-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F98089.6040008-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1301181029350.1988-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/18/2013 10:04 AM, Stephen Warren wrote:
-> On 01/16/2013 06:30 AM, Venu Byravarasu wrote:
->> Tegra20 USB has 3 PHY instances:
->> Instance 1 and 3 are UTMI. Instance 2 is ULPI.
+On 01/18/2013 08:30 AM, Alan Stern wrote:
+> On Fri, 18 Jan 2013, Venu Byravarasu wrote:
+> 
+>> As Tegra PHY driver needs to access one of the Host registers,
+>> added few APIs.
 >>
->> As instance number was used to differentiate ULPI from UTMI,
->> used DT param to get this info and processed accordingly.
+>> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> delta from v2:
+>> Renamed USB_PORTSC1 to TEGRA_USB_PORTSC1.
+>> Removed tegra_ehci_set_wakeon_events() and its references.
+>> Used standard defines for accessing PORTSC fields defined in ehci_def.h
+>> Included OCC bit of PORTSC as part of TEGRA_PORTSC1_RWC_BITS.
+>>
+>> delta from v1:
+>> Taken care of RWC bits, while accessing PORTSC register.
 > 
->> diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
->> index f03e157..a6a89d4 100644
->> --- a/include/linux/usb/tegra_usb_phy.h
->> +++ b/include/linux/usb/tegra_usb_phy.h
->> @@ -60,6 +60,7 @@ struct tegra_usb_phy {
->>  	struct usb_phy u_phy;
->>  	struct device *dev;
->>  	bool is_legacy_phy;
->> +	bool is_ulpi_phy;
->>  };
-> 
-> I see the code that uses this new field, but it doesn't appear to be set
-> anywhere...
+> Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 
-Oh, I see that code ended up being part of patch 4. Can you please
-repost the series with that chunk moved into patch 3 where it belongs?
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Felipe, you said on a previous version that you weren't sure if you
+could ack this since it means the PHY driver is touching EHCI
+registers... I don't think we really have much choice w.r.t. what the
+driver is doing, since it's driven purely by HW design. Is this updated
+patched at least OK for you not to NAK it, and hence I can apply it? Thanks.
