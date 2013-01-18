@@ -1,55 +1,96 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] serial: tegra: Switch to using struct tty_port
-Date: Fri, 18 Jan 2013 21:19:28 +0530
-Message-ID: <50F96F08.7090705@nvidia.com>
-References: <1358429505-31746-1-git-send-email-thierry.reding@avionic-design.de> <50F82FE7.9090403@wwwdotorg.org> <20130118083756.GA3303@avionic-0098.adnet.avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 4/6] iommu/tegra: smmu: Support variable MMIO range
+Date: Fri, 18 Jan 2013 09:44:13 -0700
+Message-ID: <50F97BDD.8010502@wwwdotorg.org>
+References: <1358237848-968-1-git-send-email-hdoyu@nvidia.com><1358237848-968-4-git-send-email-hdoyu@nvidia.com><50F717B8.6050800@wwwdotorg.org> <20130118.110546.1909336134474854222.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130118083756.GA3303-RM9K5IK7kjIyiCvfTdI0JKcOhU4Rzj621B7CTYaBSLdn68oJJulU0Q@public.gmane.org>
+In-Reply-To: <20130118.110546.1909336134474854222.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 18 January 2013 02:07 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Thu, Jan 17, 2013 at 10:07:51AM -0700, Stephen Warren wrote:
->> On 01/17/2013 06:31 AM, Thierry Reding wrote:
->>> Many of the tty functions were converted to use a struct tty_port
->>> instead of a struct tty_struct. Update the Tegra driver accordingly to
->>> avoid build breakage.
->> I tested that this does indeed fix the build warnings. I didn't test the
->> resultant driver.
-> I wonder if this would have been caught earlier if it had errored out
-> instead of outputting lots of warnings. Looking at the gcc documentation
-> there doesn't seem to be a way to turn this kind of warning into an
-> error. That would leave -Werror as the only option to have the compiler
-> abort on this kind of warning.
->
-> Globally enabling -Werror might not be a good idea and I'm sure it must
-> have been discussed in the past (even though Google doesn't show any
-> references). In this particular case the warnings are actually severe
-> errors and are very likely to cause buggy behaviour so it would be good
-> to catch them at compile time. Warnings are unfortunately quite easy to
-> ignore.
->
-> I know I can always use EXTRA_CFLAGS to change this for local builds,
-> but maybe getting more people to do this would be worthwhile.
->
+On 01/18/2013 02:05 AM, Hiroshi Doyu wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 16 Jan 2013 22:12:24 +0100:
+> 
+>> On 01/15/2013 01:17 AM, Hiroshi Doyu wrote:
+>>> There are 3 SMMU MMIO register blocks. They may get bigger as new
+>>> Tegra SoC comes. This patch enables to support variable size of those
+>>> register blocks.
+>>
+>> Why would the register blocks move around? In the HW, there's one single
+>> chunk of memory containing all the SMMU registers, and we simply carve
+>> out a few holes since some unrelated registers are stuck in the middle,
+>> thus leaving us with 3 register ranges. If the size of those carved out
+>> chunks changes, then doesn't that mean all the registers moved around
+>> within the single chunk, and hence all the register offsets in the
+>> driver become invalid?
+> 
+> Presently there are 3 register blocks. In the future chips over some
+> generations, some of register block "size" can be extended to the end
+> and also more new register blocks will be added, which is expected at
+> most a few blocks.
 
-There was no issue when patch created. The change happen in the api with 
-same time when patch created and so become out of sync.
+> Usually the starting address of each block won't change.
 
-API changed with commit on 1/16. Serial driver also get added on 1/16.
+I would hope that was guaranteed; the only reason to move one of the
+ranges would be a HW design change, and if there is a HW design change,
+HW should take that opportunity to fix the interleaved register mess
+instead of making it worse, and hence we could just have a single
+register range after that point.
 
-Author: Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>  2013-01-03 20:23:06
-Committer: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> 2013-01-16 
-12:00:15
+> Ideally SMMU register blocks should be in one block, but it
+> was a bit too late to change this design(or H/W). Considering this
+> situation, in this driver, number of register blocks should be
+> allocated dynamically, based on the info from DT. Its range checks
+> should be done in the accessors as below(*1) if necessary. This way
+> may sacrifice some perf because a new accessor prevents compiler
+> optimization of register offset calculation, but I think that SMMU
+> register accesses are not so frequent and it's acceptable in order to
+> unify "tegra-smmu" over Tegra SoCs.
+> 
+> *1:
+> 
+>  /*
+>   *	SMMU register accessors
+>   */
+>  static inline u32 smmu_read(struct smmu_device *smmu, size_t offs)
+>  {
+>  	void __iommu *addr = smmu->regbase + offs;
+>  #ifdef DEBUG
+>  	int i;
+> 
+>  	for (i = 0; i < smmu->num_regblks; i++) {
+>  		BUG_ON(addr < smmu->reg[i].start);
+>  		if (addr <= smmu->reg[i].end)
+>  			break;
+>  	}
+>  #endfi
+>  	return readl(addr);
+>  }
 
-Follows: v3.8-rc3
-Precedes: next-20130117
+Yes, that kind of checking looks much better if this is all going to be
+dynamic.
 
-     TTY: switch tty_flip_buffer_push
+I would suggest enabling the checking all the time rather than hiding it
+inside an ifdef; how many people build that file with DEBUG enabled?
+
+Or perhaps you could check each register in probe() somehow.
+
+> Even the checks if "offs" is in some of register blocks could be
+> ifdef'ed out with DEBUG. "smmu->regbase" can be calculated in probe()
+> as below. I don't think that we don't need to access "mc" DT entry to
+> get this address. since "smmu"'s 1st reg block always starts at 0x10.
+> 
+>   /* same as "mc"'s 1st reg block */
+>   smmu->regbase = smmu->reg[0] & PAGE_MASK;
+
+I don't see regbase in the existing driver or your patch. Are you
+proposing to simply make readl/writel add the offset onto a base address
+that's calculated like that? That may not work in general; if the SMMU
+register ranges cross a page boundary, and the various separate ranges
+end up getting mapped to non-contiguous virtual addresses, using a
+single base address won't work.
