@@ -1,55 +1,229 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 4/4] usb: Add APIs to access host registers from Tegra
- PHY
-Date: Fri, 18 Jan 2013 11:20:04 -0700
-Message-ID: <50F99254.7030505@wwwdotorg.org>
-References: <Pine.LNX.4.44L0.1301181029350.1988-100000@iolanthe.rowland.org> <50F98646.6040209@wwwdotorg.org> <20130118175811.GD1035@arwen.pp.htv.fi>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 2/4] USB: PHY: Get rid of instance number to
+ differentiate legacy controller
+Date: Fri, 18 Jan 2013 20:34:16 +0200
+Message-ID: <20130118183416.GA1776@arwen.pp.htv.fi>
+References: <1358343022-28919-1-git-send-email-vbyravarasu@nvidia.com>
+ <1358343022-28919-3-git-send-email-vbyravarasu@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130118175811.GD1035@arwen.pp.htv.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Alan Stern <stern@rowland.harvard.edu>, Venu Byravarasu <vbyravarasu@nvidia.com>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1358343022-28919-3-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/18/2013 10:58 AM, Felipe Balbi wrote:
-> On Fri, Jan 18, 2013 at 10:28:38AM -0700, Stephen Warren wrote:
->> On 01/18/2013 08:30 AM, Alan Stern wrote:
->>> On Fri, 18 Jan 2013, Venu Byravarasu wrote:
->>> 
->>>> As Tegra PHY driver needs to access one of the Host
->>>> registers, added few APIs.
->>>> 
->>>> Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com> --- 
->>>> delta from v2: Renamed USB_PORTSC1 to TEGRA_USB_PORTSC1. 
->>>> Removed tegra_ehci_set_wakeon_events() and its references. 
->>>> Used standard defines for accessing PORTSC fields defined in
->>>> ehci_def.h Included OCC bit of PORTSC as part of
->>>> TEGRA_PORTSC1_RWC_BITS.
->>>> 
->>>> delta from v1: Taken care of RWC bits, while accessing PORTSC
->>>> register.
->>> 
->>> Acked-by: Alan Stern <stern@rowland.harvard.edu>
->> 
->> Felipe, you said on a previous version that you weren't sure if
->> you could ack this since it means the PHY driver is touching
->> EHCI registers... I don't think we really have much choice w.r.t.
->> what the driver is doing, since it's driven purely by HW design.
->> Is this updated patched at least OK for you not to NAK it, and
->> hence I can apply it? Thanks.
-> 
-> Sure I will not block it, please go ahead and apply it through your
-> tree ;-)
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Great, thanks very much.
+On Wed, Jan 16, 2013 at 07:00:20PM +0530, Venu Byravarasu wrote:
+> Tegra20 USB has 3 PHY instances. Instance 0 is based on
+> legacy PHY interface and other two are standard interfaces.
+>=20
+> As instance number was used to differentiate legacy from
+> standard interfaces, used DT param to get this info and
+> processed accordingly.
+>=20
+> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Are patch 2/4 and 3/4 OK; could you Ack them since they touch USB PHY
-code?
+Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 
-I guess in the interests of moving this USB rework forward, I'll
-actually fix up the issue with assigning phy->is_ulpi_phy while I
-apply the patches, just by moving that one chunk of code from patch 4
-to patch 3.
+> ---
+>  drivers/usb/phy/tegra_usb_phy.c   |   32 +++++++++++++++-----------------
+>  include/linux/usb/tegra_usb_phy.h |    1 +
+>  2 files changed, 16 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_=
+phy.c
+> index 3059384..79280fe 100644
+> --- a/drivers/usb/phy/tegra_usb_phy.c
+> +++ b/drivers/usb/phy/tegra_usb_phy.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/gpio.h>
+> +#include <linux/of.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/usb/otg.h>
+>  #include <linux/usb/ulpi.h>
+> @@ -221,7 +222,7 @@ static int utmip_pad_open(struct tegra_usb_phy *phy)
+>  		return PTR_ERR(phy->pad_clk);
+>  	}
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		phy->pad_regs =3D phy->regs;
+>  	} else {
+>  		phy->pad_regs =3D ioremap(TEGRA_USB_BASE, TEGRA_USB_SIZE);
+> @@ -236,7 +237,7 @@ static int utmip_pad_open(struct tegra_usb_phy *phy)
+> =20
+>  static void utmip_pad_close(struct tegra_usb_phy *phy)
+>  {
+> -	if (phy->instance !=3D 0)
+> +	if (!phy->is_legacy_phy)
+>  		iounmap(phy->pad_regs);
+>  	clk_put(phy->pad_clk);
+>  }
+> @@ -305,7 +306,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy=
+ *phy)
+>  	unsigned long val;
+>  	void __iomem *base =3D phy->regs;
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		val =3D readl(base + USB_SUSP_CTRL);
+>  		val |=3D USB_SUSP_SET;
+>  		writel(val, base + USB_SUSP_CTRL);
+> @@ -315,9 +316,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy=
+ *phy)
+>  		val =3D readl(base + USB_SUSP_CTRL);
+>  		val &=3D ~USB_SUSP_SET;
+>  		writel(val, base + USB_SUSP_CTRL);
+> -	}
+> -
+> -	if (phy->instance =3D=3D 2) {
+> +	} else {
+>  		val =3D readl(base + USB_PORTSC1);
+>  		val |=3D USB_PORTSC1_PHCD;
+>  		writel(val, base + USB_PORTSC1);
+> @@ -332,7 +331,7 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy =
+*phy)
+>  	unsigned long val;
+>  	void __iomem *base =3D phy->regs;
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		val =3D readl(base + USB_SUSP_CTRL);
+>  		val |=3D USB_SUSP_CLR;
+>  		writel(val, base + USB_SUSP_CTRL);
+> @@ -342,9 +341,7 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy =
+*phy)
+>  		val =3D readl(base + USB_SUSP_CTRL);
+>  		val &=3D ~USB_SUSP_CLR;
+>  		writel(val, base + USB_SUSP_CTRL);
+> -	}
+> -
+> -	if (phy->instance =3D=3D 2) {
+> +	} else {
+>  		val =3D readl(base + USB_PORTSC1);
+>  		val &=3D ~USB_PORTSC1_PHCD;
+>  		writel(val, base + USB_PORTSC1);
+> @@ -365,7 +362,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *ph=
+y)
+>  	val |=3D UTMIP_RESET;
+>  	writel(val, base + USB_SUSP_CTRL);
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		val =3D readl(base + USB1_LEGACY_CTRL);
+>  		val |=3D USB1_NO_LEGACY_MODE;
+>  		writel(val, base + USB1_LEGACY_CTRL);
+> @@ -440,16 +437,14 @@ static int utmi_phy_power_on(struct tegra_usb_phy *=
+phy)
+>  	val |=3D UTMIP_BIAS_PDTRK_COUNT(0x5);
+>  	writel(val, base + UTMIP_BIAS_CFG1);
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		val =3D readl(base + UTMIP_SPARE_CFG0);
+>  		if (phy->mode =3D=3D TEGRA_USB_PHY_MODE_DEVICE)
+>  			val &=3D ~FUSE_SETUP_SEL;
+>  		else
+>  			val |=3D FUSE_SETUP_SEL;
+>  		writel(val, base + UTMIP_SPARE_CFG0);
+> -	}
+> -
+> -	if (phy->instance =3D=3D 2) {
+> +	} else {
+>  		val =3D readl(base + USB_SUSP_CTRL);
+>  		val |=3D UTMIP_PHY_ENABLE;
+>  		writel(val, base + USB_SUSP_CTRL);
+> @@ -459,7 +454,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *ph=
+y)
+>  	val &=3D ~UTMIP_RESET;
+>  	writel(val, base + USB_SUSP_CTRL);
+> =20
+> -	if (phy->instance =3D=3D 0) {
+> +	if (phy->is_legacy_phy) {
+>  		val =3D readl(base + USB1_LEGACY_CTRL);
+>  		val &=3D ~USB1_VBUS_SENSE_CTL_MASK;
+>  		val |=3D USB1_VBUS_SENSE_CTL_A_SESS_VLD;
+> @@ -472,7 +467,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *ph=
+y)
+> =20
+>  	utmi_phy_clk_enable(phy);
+> =20
+> -	if (phy->instance =3D=3D 2) {
+> +	if (!phy->is_legacy_phy) {
+>  		val =3D readl(base + USB_PORTSC1);
+>  		val &=3D ~USB_PORTSC1_PTS(~0);
+>  		writel(val, base + USB_PORTSC1);
+> @@ -739,6 +734,7 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct devic=
+e *dev, int instance,
+>  	unsigned long parent_rate;
+>  	int i;
+>  	int err;
+> +	struct device_node *np =3D dev->of_node;
+> =20
+>  	phy =3D kzalloc(sizeof(struct tegra_usb_phy), GFP_KERNEL);
+>  	if (!phy)
+> @@ -749,6 +745,8 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct devic=
+e *dev, int instance,
+>  	phy->config =3D config;
+>  	phy->mode =3D phy_mode;
+>  	phy->dev =3D dev;
+> +	phy->is_legacy_phy =3D
+> +		of_property_read_bool(np, "nvidia,has-legacy-mode");
+> =20
+>  	if (!phy->config) {
+>  		if (phy_is_ulpi(phy)) {
+> diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_=
+usb_phy.h
+> index 34e6355..f03e157 100644
+> --- a/include/linux/usb/tegra_usb_phy.h
+> +++ b/include/linux/usb/tegra_usb_phy.h
+> @@ -59,6 +59,7 @@ struct tegra_usb_phy {
+>  	struct usb_phy *ulpi;
+>  	struct usb_phy u_phy;
+>  	struct device *dev;
+> +	bool is_legacy_phy;
+>  };
+> =20
+>  struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instanc=
+e,
+> --=20
+> 1.7.0.4
+>=20
+
+--=20
+balbi
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQ+ZWoAAoJEIaOsuA1yqREG00QAKLFUfh8YPFLYFafhinl3ccP
+rq8Hr7ExCa8AxD1jYLMw8CC9QUx2EcES/A5HY2/3gGFVvDI4vdLCP+dXQbq0lXUH
+exlqoC1R4wIPons9P2V4ORJLmEBL3v5Rq2yIp2DwEapTwic+LFEIgRM3e1bSvYhe
+dG4anJuH/+Rw7cECGCi2KPAhaA/dX4kqXbTo8+YPUuRxRWOkIkRMw44bfKsx86Se
+8KO1MfhyIuKRtp2H6AqNecHaTY3gP03rnayc0ajBoH/qrXdibGkmVDEMnegk3tZ3
+vh6NBrq0SeW6hWWOwitmO/l2wxftWg4ZoneE+oS29fLZ9gmAI6W9sqgyRTSpIkht
+ImfOFZADbb4ZgItJ2ZtDqoAMYEYSZ5KJpmV774PTkmv6N/1p+l8/wwUYhHoUjmTy
+yNTNfXN67381onMX6Ep/+aXNorOZzlHZToSI159MyK9i8PZyA4DY9Knwi2TSbR+d
+TWAG4ESMCt3RSRmFCYfxSEETPx8Y9mYFf3zCGekT3oqGineTL+P7cjPN4CM0YZ3g
+AVnRgflRpIVC1iSCDGM/Wund53Jxsfs5k4FuyLjyEsJpFslaPB+e+NmZOU/E9KhF
+rqmWg6JrTa/4n8U1N05R1Mu6rv3IB4d8M9SC8itg3LDhz97Js1PThsAFiqw79u8S
+qwho8VHXU6esCrr1MJSC
+=m1mu
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
