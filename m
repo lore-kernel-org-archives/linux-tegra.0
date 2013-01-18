@@ -1,57 +1,71 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RESEND][v3 4/9] ARM: Add API to detect SCU base address from CP15
-Date: Fri, 18 Jan 2013 11:54:40 +0100
-Message-ID: <20130118.125440.65456178743324707.hdoyu@nvidia.com>
-References: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com>
+From: Andrew Murray <Andrew.Murray@arm.com>
+Subject: [PATCH RFC 1/2] Implementation of pci_fixup_irqs for descendants
+ of a specified bus
+Date: Fri, 18 Jan 2013 11:37:42 +0000
+Message-ID: <20130118113742.GA9006@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358237598-32413-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Cc: "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add API to detect SCU base address from CP15.
-
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Continuing from discussion with Thierry (lkml.org/lkml/2013/1/18/107) perhaps
+this will be useful to fold into your patchset. 
 ---
-NOTE:
-This wasn't delivered to linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, resending....
+This patch provides pci_bus_fixup_irqs which performs the same
+function as pci_fixup_irqs but only to descendants of the specified
+bus.
 
-For usage: http://patchwork.ozlabs.org/patch/212013/
+This can reduce unnecessary fixing up of device irqs when new buses
+are added.
+
+Signed-off-by: Andrew Murray <Andrew.Murray@arm.com>
+Signed-off-by: Liviu Dudau <Liviu.Dudau@arm.com>
 ---
- arch/arm/include/asm/smp_scu.h |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/pci/setup-irq.c |   15 +++++++++++++++
+ include/linux/pci.h     |    3 +++
+ 2 files changed, 18 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/include/asm/smp_scu.h b/arch/arm/include/asm/smp_scu.h
-index 4eb6d00..f619eef 100644
---- a/arch/arm/include/asm/smp_scu.h
-+++ b/arch/arm/include/asm/smp_scu.h
-@@ -6,6 +6,23 @@
- #define SCU_PM_POWEROFF	3
- 
- #ifndef __ASSEMBLER__
+diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
+index eb219a1..ea91874 100644
+--- a/drivers/pci/setup-irq.c
++++ b/drivers/pci/setup-irq.c
+@@ -62,3 +62,18 @@ pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
+ 	for_each_pci_dev(dev)
+ 		pdev_fixup_irq(dev, swizzle, map_irq);
+ }
 +
-+#include <asm/cputype.h>
-+
-+static inline phys_addr_t scu_get_base(void)
++void __init
++pci_bus_fixup_irqs(struct pci_bus *bus,
++		u8 (*swizzle)(struct pci_dev *, u8 *),
++		int (*map_irq)(const struct pci_dev *, u8, u8))
 +{
-+	phys_addr_t pa;
-+	unsigned long part_number = read_cpuid_part_number();
++	struct pci_dev *dev;
 +
-+	switch (part_number) {
-+	case ARM_CPU_PART_CORTEX_A9:
-+		/* Get SCU physical base */
-+		asm("mrc p15, 4, %0, c15, c0, 0" : "=r" (pa));
-+		return pa;
-+	default:
-+		return 0;
++	list_for_each_entry(dev, &bus->devices, bus_list) {
++		pdev_fixup_irq(dev, swizzle, map_irq);
++
++		if (dev->subordinate)
++			pci_bus_fixup_irqs(dev->subordinate, swizzle, map_irq);
 +	}
 +}
- unsigned int scu_get_core_count(void __iomem *);
- void scu_enable(void __iomem *);
- int scu_power_mode(void __iomem *, unsigned int);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 5faa831..1b3c2eb 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -953,6 +953,9 @@ void pdev_enable_device(struct pci_dev *);
+ int pci_enable_resources(struct pci_dev *, int mask);
+ void pci_fixup_irqs(u8 (*)(struct pci_dev *, u8 *),
+ 		    int (*)(const struct pci_dev *, u8, u8));
++void pci_bus_fixup_irqs(struct pci_bus *bus,
++		u8 (*swizzle)(struct pci_dev *, u8 *),
++		int (*map_irq)(const struct pci_dev *, u8, u8));
+ #define HAVE_PCI_REQ_REGIONS	2
+ int __must_check pci_request_regions(struct pci_dev *, const char *);
+ int __must_check pci_request_regions_exclusive(struct pci_dev *, const char *);
 -- 
-1.7.9.5
+1.7.0.4
