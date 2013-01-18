@@ -1,89 +1,81 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: DT: tegra: Add Colibri T20 512MB COM
-Date: Thu, 17 Jan 2013 23:28:41 +0100
-Message-ID: <1358461721.18489.23.camel@tellur>
-References: <1358423961-24318-1-git-send-email-dev@lynxeye.de>
-	  <50F86533.9010000@wwwdotorg.org> <1358458144.18489.14.camel@tellur>
-	 <50F877A3.5030107@wwwdotorg.org>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/5] drm/tegra: Add plane support
+Date: Fri, 18 Jan 2013 11:59:06 +0800
+Message-ID: <50F8C88A.9070700@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>  <1358179560-26799-3-git-send-email-thierry.reding@avionic-design.de>  <50F526FF.1010101@gmail.com> <1358247034.1524.17.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50F877A3.5030107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1358247034.1524.17.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, den 17.01.2013, 15:13 -0700 schrieb Stephen Warren:
-> On 01/17/2013 02:29 PM, Lucas Stach wrote:
-> > Am Donnerstag, den 17.01.2013, 13:55 -0700 schrieb Stephen Warren:
-> >> On 01/17/2013 04:59 AM, Lucas Stach wrote:
-> >>> This adds the device tree include file for the Toradex Colibri T20
-> >>> Computer on Module (COM). It's only valid for the 512MB RAM version of
-> >>> the module, as the 256MB version needs different EMC tables and flash
-> >>> configuration. To make this clear the suffix -512 was added to the board
-> >>> compatible string.
-> >>>
-> >>> The Colibri T20 uses a Tegra2 SoC and has onboard USB Ethernet and AC97
-> >>> sound.
-> >>>
-> >>> Still some things like onboard NAND support missing, but should be a
-> >>> good base for further development.
-> >>> +
-> >>> +	sdhci@c8000600 {
-> >>> +		cd-gpios = <&gpio 23 0>; /* gpio PC7 */
-> >>> +		vmmc-supply = <&ldo5_reg>;
-> >>> +		vqmmc-supply = <&vcc_sd_reg>;
-> >>> +	};
-> >>
-> >> I assume that all of those nodes are meant to have status="okay"?
-> >>
-> >> Oh, I see those are in the top-level board .dts file. You may as well
-> >> put all the properties there; stuff like the GPIOs and regulators at
-> >> least would be purely specific to the individual board, and not the COM.
-> >
-> > I would like to keep everything that is defined by the COM to reside in
-> > the COM dtsi. You are right that the regulator in this case is board
-> > specific and should be moved to the board file, I missed this while
-> > splitting things out. But at least the GPIO is defined by the fixed COM
-> > pinout.
+On 01/15/2013 06:50 PM, Lucas Stach wrote:
+> Am Dienstag, den 15.01.2013, 17:53 +0800 schrieb Mark Zhang:
+>> On 01/15/2013 12:05 AM, Thierry Reding wrote:
+>>> Add support for the B and C planes which support RGB and YUV pixel
+>>> formats and can be used as overlays or hardware cursor.
+>>
+>> I think "hardware cursor" has specific meaning for Tegra(e.g: Tegra30
+>> has a 32x32 24bpp or 64x64 2bpp hardware cursor). So you may change it
+>> to "hardware accelerated cursor"?
+>>
+> According to the TRM no Tegra has ARGB hardware cursor support, but only
+> 2-color. So we talked about doing the hardware cursor by using a plane.
+> If the TRM is wrong in this regard and we can get a ARGB cursor on Tegra
+> 3 it would be nice to know.
 > 
-> If these are really defined by the COM itself, it does indeed make sense
-> for the COM .dtsi file to define those properties. But, I have a hard
-> time understanding how the COM design can force the carrier module into
-> using a particular GPIO for the SD controller CD functionality; couldn't
-> the carrier use any GPIO passed through the COM<->carrier connector for
-> any purpose?
+
+Lucas, yes, TRM says "Hardware cursor is supported for 32x32 or for
+64x64 2-bpp cursor.", but just as you can see, we can set cursor's
+foreground & background color by register "DC_DISP_CURSOR_FOREGROUND_0
+" & "DC_DISP_CURSOR_BACKGROUND_0".
+
+So I asked the expert in nvidia and here is the explanation of the
+hardware cursor:
+
+"each pixel in the cursor is encoded by 2 bits.
+only 3 values are used per pixel: transparent, foreground, background.
+
+when pixel is transparent - no pixel is displayed. (also known as a mask)
+when pixel is foreground - color of pixel is 24-bit value in
+DC_DISP_CURSOR_FOREGROUND_0.
+when pixel is background - color of pixel is 24-bit value in
+DC_DISP_CURSOR_BACKGROUND_0.
+
+So I would still phrase it as a 2-bit cursor. It's a palette with 2
+colors plus a 1-bit alpha. The palette entries are 24-bit."
+
+Mark
+>>>
+>>> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>>> ---
+>> [...]
+>>> +};
+>>> +
+>>> +static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
+>>> +{
+>>> +	unsigned int i;
+>>> +	int err = 0;
+>>> +
+>>> +	for (i = 0; i < 2; i++) {
+>>> +		struct tegra_plane *plane;
+>>> +
+>>> +		plane = devm_kzalloc(drm->dev, sizeof(*plane), GFP_KERNEL);
+>>> +		if (!plane)
+>>> +			return -ENOMEM;
+>>> +
+>>> +		plane->index = i;
+>>
+>> I suggest to change this line to: "plane->index = i + 1;". This makes
+>> the plane's index be consistent with Tegra's windows number. And also we
+>> don't need to worry about passing "plane->index + 1" to some functions
+>> which need to know which window is operating on.
+>>
+> Again, if we make WIN_C the root window, we can keep the plane index
+> assignment as is and get rid of the "index + 1" passing.
 > 
-It's not a GPIO anymore as soon as it hits the COM<->carrier connector.
-The connector pin assignment is strictly specified. There are a lot of
-freely assignable GPIOs on the connector, everything related to a
-specific function is not part of this.
-
-The Colibri specification dictates which pin to use if you want to
-realize a SDcard CD. This is done so that modules and carrier boards are
-interchangeable. In fact you can just as well run a new Colibri T30
-module on a years old carrier designed for the ColibriPXA series of
-modules.
-
-> >>> +	com_regulators {
-> >>
-> >> I think just call that "regulators"; the final board .dts file can
-> >> easily add more sub-nodes to this node, so there's no need to try and
-> >> avoid any naming conflict here. See Cardhu as an example.
-> >
-> > I don't really see the benefit of merging those nodes. They are separate
-> > regulators, some are located on the COM, others on the carrier board. So
-> > I would like to keep them in separate nodes, unless you have strong
-> > feelings to change this.
 > 
-> The issue here is that if we don't do this, we end up with wierd node
-> names; plain "regulators" is a fairly canonical name for what the name
-> contains, and purely indicates the type of the node. "com_regulators" is
-> unusual, and starts to encode identity into the node name itself, which
-> is something not usually done in the node name (differentiation between
-> identities is usually done using the unit address; "@nnn"),
-
-Hm, ok. Keeping some space in between module and carrier regulator
-addresses should do as well.
