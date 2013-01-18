@@ -1,30 +1,47 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH RFC 2/2] Improve bios32 support for DT PCI host bridge
-	controllers
-Date: Fri, 18 Jan 2013 11:43:40 +0000
-Message-ID: <20130118114340.GD23505@n2100.arm.linux.org.uk>
-References: <20130118114019.GA9034@arm.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] pinctrl: tegra: add support for rcv-sel and drive type
+Date: Fri, 18 Jan 2013 16:13:36 +0100
+Message-ID: <CACRpkdbw-=ut2-4_aM3QeY48P+pExnc2Y85hihMvuFR2f=LXUg@mail.gmail.com>
+References: <1357630357-7309-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130118114019.GA9034-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <1357630357-7309-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 18, 2013 at 11:40:19AM +0000, Andrew Murray wrote:
->  static void __init pcibios_init_hw(struct hw_pci *hw, struct list_head *head)
->  {
->  	struct pci_sys_data *sys = NULL;
-> +	static int busnr;
->  	int ret;
-> -	int nr, busnr;
-> -
-> -	for (nr = busnr = 0; nr < hw->nr_controllers; nr++) {
-> +	int nr;
-> +	for (nr = 0; nr < hw->nr_controllers; nr++) {
+On Tue, Jan 8, 2013 at 8:32 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-Please try to retain the originally formatting.  There should be a blank
-line between "int nr;" and "for...".
+> From: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> NVIDIA's Tegra114 added two more configuration parameter in pinmux i.e.
+> rcv-sel and drive type.
+>
+> rcv-sel: Select between High and Normal VIL/VIH receivers.
+>         RCVR_SEL=1: High VIL/VIH
+>         RCVR_SEL=0: Normal VIL/VIH
+>
+> drv_type: Ouptput drive type:
+>         33-50 ohm driver: 0x1
+>         66-100ohm driver: 0x0
+>
+> Add support of these parameters to be configure from DTS file.
+>
+> Tegra20 and Tegra30 does not support this configuration and hence initialize their
+> pinmux structure with reg = -1.
+>
+> Originally written by Pritesh Raithatha.
+> Changes by ldewangan:
+>         - remove drvtype_width as it is always 2.
+>         - Better describe the change.
+>
+> Signed-off-by: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Patch applied, thanks!
+
+Yours,
+Linus Walleij
