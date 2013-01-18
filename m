@@ -1,72 +1,71 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] serial: tegra: Switch to using struct tty_port
-Date: Fri, 18 Jan 2013 09:37:56 +0100
-Message-ID: <20130118083756.GA3303@avionic-0098.adnet.avionic-design.de>
-References: <1358429505-31746-1-git-send-email-thierry.reding@avionic-design.de>
- <50F82FE7.9090403@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/6] iommu/tegra: smmu: Support variable MMIO range
+Date: Fri, 18 Jan 2013 10:05:46 +0100
+Message-ID: <20130118.110546.1909336134474854222.hdoyu@nvidia.com>
+References: <1358237848-968-1-git-send-email-hdoyu@nvidia.com><1358237848-968-4-git-send-email-hdoyu@nvidia.com><50F717B8.6050800@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <50F82FE7.9090403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50F717B8.6050800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alan Cox <alan-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 16 Jan 2013 22:12:24 +0100:
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 01/15/2013 01:17 AM, Hiroshi Doyu wrote:
+> > There are 3 SMMU MMIO register blocks. They may get bigger as new
+> > Tegra SoC comes. This patch enables to support variable size of those
+> > register blocks.
+>
+> Why would the register blocks move around? In the HW, there's one single
+> chunk of memory containing all the SMMU registers, and we simply carve
+> out a few holes since some unrelated registers are stuck in the middle,
+> thus leaving us with 3 register ranges. If the size of those carved out
+> chunks changes, then doesn't that mean all the registers moved around
+> within the single chunk, and hence all the register offsets in the
+> driver become invalid?
 
-On Thu, Jan 17, 2013 at 10:07:51AM -0700, Stephen Warren wrote:
-> On 01/17/2013 06:31 AM, Thierry Reding wrote:
-> > Many of the tty functions were converted to use a struct tty_port
-> > instead of a struct tty_struct. Update the Tegra driver accordingly to
-> > avoid build breakage.
->=20
-> I tested that this does indeed fix the build warnings. I didn't test the
-> resultant driver.
+Presently there are 3 register blocks. In the future chips over some
+generations, some of register block "size" can be extended to the end
+and also more new register blocks will be added, which is expected at
+most a few blocks. Usually the starting address of each block won't
+change. Ideally SMMU register blocks should be in one block, but it
+was a bit too late to change this design(or H/W). Considering this
+situation, in this driver, number of register blocks should be
+allocated dynamically, based on the info from DT. Its range checks
+should be done in the accessors as below(*1) if necessary. This way
+may sacrifice some perf because a new accessor prevents compiler
+optimization of register offset calculation, but I think that SMMU
+register accesses are not so frequent and it's acceptable in order to
+unify "tegra-smmu" over Tegra SoCs.
 
-I wonder if this would have been caught earlier if it had errored out
-instead of outputting lots of warnings. Looking at the gcc documentation
-there doesn't seem to be a way to turn this kind of warning into an
-error. That would leave -Werror as the only option to have the compiler
-abort on this kind of warning.
+*1:
 
-Globally enabling -Werror might not be a good idea and I'm sure it must
-have been discussed in the past (even though Google doesn't show any
-references). In this particular case the warnings are actually severe
-errors and are very likely to cause buggy behaviour so it would be good
-to catch them at compile time. Warnings are unfortunately quite easy to
-ignore.
+ /*
+  *	SMMU register accessors
+  */
+ static inline u32 smmu_read(struct smmu_device *smmu, size_t offs)
+ {
+ 	void __iommu *addr = smmu->regbase + offs;
+ #ifdef DEBUG
+ 	int i;
 
-I know I can always use EXTRA_CFLAGS to change this for local builds,
-but maybe getting more people to do this would be worthwhile.
+ 	for (i = 0; i < smmu->num_regblks; i++) {
+ 		BUG_ON(addr < smmu->reg[i].start);
+ 		if (addr <= smmu->reg[i].end)
+ 			break;
+ 	}
+ #endfi
+ 	return readl(addr);
+ }
 
-Thierry
+Even the checks if "offs" is in some of register blocks could be
+ifdef'ed out with DEBUG. "smmu->regbase" can be calculated in probe()
+as below. I don't think that we don't need to access "mc" DT entry to
+get this address. since "smmu"'s 1st reg block always starts at 0x10.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQ+QnkAAoJEN0jrNd/PrOhHY4QALU+sRVVUzalMJ/fULEV+qor
-Y6fDFwcgfRReLoUs5mM5SNgFApJc3rS39O9gtZRYuJLeUmmT7VmPw4QZpeB4UNqM
-9wLtWzKUOZydDYy/pbg3FNBFCLMvBP3QeX9SrqnsUKtSfjaQk+GlOFWXU2hKZVxt
-iG3QgJYciKfHV/c6XWGe8d+VJID7aZdie60TDfm+VkfPkfipMtJYRLt3cx/nbMHX
-22cvToW50dgJ8QCR/a3R4um8asTTyN1jOrwTB08OQ2tB1VI+EGZwgenZewVkm/cf
-EyJnilA7y3F27W1jiZ6LGbtJxaQA3cPi9oqJqLGM5KwcKmjfumXIVDya5sJ19cX8
-B8toKCHVpEDls/HEuq6783CbJ+iHRY2wHxCkPrePOVwv52F4pgLAps4RQy4Zt3Wh
-6j/SDvp1id0vjwWXkhNHITgWeIyG+fPljo695qPzs7vfQF4GEfvtMxhSD3XX3te5
-9ZfNSDeB+MY1kLM2h7g2tfzkzAygcK1d2bpvE493hTOV84XooDqL/42jZRdcOm5v
-LsF/g2CuWl6LO57bVq+LXrEiOVkUIccWQ6RRQ7zaTdeHecm+DXW53bGdOt+enQgt
-Pt9od/TDywBTE8HzPKlfhYgQD255r+UcnWb4J7tAfsPq1YrEPWV018qcI0+M2/yO
-mkdU9ouMKHY6AUfCV0be
-=BSNT
------END PGP SIGNATURE-----
-
---fUYQa+Pmc3FrFX/N--
+  /* same as "mc"'s 1st reg block */
+  smmu->regbase = smmu->reg[0] & PAGE_MASK;
