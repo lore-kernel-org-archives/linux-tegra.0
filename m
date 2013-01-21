@@ -1,135 +1,71 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra114: cpuidle: add ARM_CPUIDLE_WFI_STATE support
-Date: Mon, 21 Jan 2013 17:49:06 +0800
-Message-ID: <1358761746-13118-1-git-send-email-josephl@nvidia.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [v3 3/9] ARM: tegra: Use DT /cpu node to detect number of CPU
+ core
+Date: Mon, 21 Jan 2013 12:35:58 +0000
+Message-ID: <20130121123558.GA27211@e102568-lin.cambridge.arm.com>
+References: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com>
+ <1358237598-32413-4-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358237598-32413-4-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding the generic ARM_CPUIDLE_WFI_STATE support for Tegra114.
+On Tue, Jan 15, 2013 at 08:13:12AM +0000, Hiroshi Doyu wrote:
+> SCU based detection only works with Cortex-A9 MP and it doesn't
+> support ones with multiple clusters. The only way to detect number of
+> CPU core correctly is with DT /cpu node.
+> 
+> Tegra SoCs decided to use DT detection as the only way and to not use
+> SCU based detection at all. Even if DT /cpu node based detection
+> fails, it continues with a single core
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Makefile           |  3 ++
- arch/arm/mach-tegra/cpuidle-tegra114.c | 61 ++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/cpuidle.c          |  3 ++
- arch/arm/mach-tegra/cpuidle.h          |  6 ++++
- 4 files changed, 73 insertions(+)
- create mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
+Please add missing punctuation, reword the commit log to make it clearer.
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Based on the discussion:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/140608.html
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/platsmp.c |   15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index 6867030..689ee4b 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -177,23 +177,8 @@ done:
+>  	return status;
+>  }
+>  
+> -/*
+> - * Initialise the CPU possible map early - this describes the CPUs
+> - * which may be present or become present in the system.
+> - */
+>  static void __init tegra_smp_init_cpus(void)
+>  {
+> -	unsigned int i, ncores = scu_get_core_count(scu_base);
+> -
+> -	if (ncores > nr_cpu_ids) {
+> -		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
+> -			ncores, nr_cpu_ids);
+> -		ncores = nr_cpu_ids;
+> -	}
+> -
+> -	for (i = 0; i < ncores; i++)
+> -		set_cpu_possible(i, true);
+> -
+>  	set_smp_cross_call(gic_raise_softirq);
+>  }
+>  
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 219c2ed..1335aac 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -34,6 +34,9 @@ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-dt-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= board-dt-tegra114.o
-+ifeq ($(CONFIG_CPU_IDLE),y)
-+obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= cpuidle-tegra114.o
-+endif
- 
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
- 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-new file mode 100644
-index 0000000..0f4e8c4
---- /dev/null
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -0,0 +1,61 @@
-+/*
-+ * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/cpuidle.h>
-+
-+#include <asm/cpuidle.h>
-+
-+static struct cpuidle_driver tegra_idle_driver = {
-+	.name = "tegra_idle",
-+	.owner = THIS_MODULE,
-+	.en_core_tk_irqen = 1,
-+	.state_count = 1,
-+	.states = {
-+		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
-+	},
-+};
-+
-+static DEFINE_PER_CPU(struct cpuidle_device, tegra_idle_device);
-+
-+int __init tegra114_cpuidle_init(void)
-+{
-+	int ret;
-+	unsigned int cpu;
-+	struct cpuidle_device *dev;
-+	struct cpuidle_driver *drv = &tegra_idle_driver;
-+
-+	ret = cpuidle_register_driver(&tegra_idle_driver);
-+	if (ret) {
-+		pr_err("CPUidle driver registration failed\n");
-+		return ret;
-+	}
-+
-+	for_each_possible_cpu(cpu) {
-+		dev = &per_cpu(tegra_idle_device, cpu);
-+		dev->cpu = cpu;
-+
-+		dev->state_count = drv->state_count;
-+		ret = cpuidle_register_device(dev);
-+		if (ret) {
-+			pr_err("CPU%u: CPUidle device registration failed\n",
-+				cpu);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
-index d065139..4b744c4 100644
---- a/arch/arm/mach-tegra/cpuidle.c
-+++ b/arch/arm/mach-tegra/cpuidle.c
-@@ -38,6 +38,9 @@ static int __init tegra_cpuidle_init(void)
- 	case TEGRA30:
- 		ret = tegra30_cpuidle_init();
- 		break;
-+	case TEGRA114:
-+		ret = tegra114_cpuidle_init();
-+		break;
- 	default:
- 		ret = -ENODEV;
- 		break;
-diff --git a/arch/arm/mach-tegra/cpuidle.h b/arch/arm/mach-tegra/cpuidle.h
-index 496204d..d733f75 100644
---- a/arch/arm/mach-tegra/cpuidle.h
-+++ b/arch/arm/mach-tegra/cpuidle.h
-@@ -29,4 +29,10 @@ int tegra30_cpuidle_init(void);
- static inline int tegra30_cpuidle_init(void) { return -ENODEV; }
- #endif
- 
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+int tegra114_cpuidle_init(void);
-+#else
-+static inline int tegra114_cpuidle_init(void) { return -ENODEV; }
-+#endif
-+
- #endif
--- 
-1.8.0.3
+As discussed,
+
+Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
