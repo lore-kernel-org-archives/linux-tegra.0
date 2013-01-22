@@ -1,47 +1,74 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
-Date: Tue, 22 Jan 2013 09:04:46 -0800
-Message-ID: <CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com>
-References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com>
-	<1358833924-24535-2-git-send-email-hdoyu@nvidia.com>
-	<50FE2CA8.20100@ti.com>
-	<50FEC503.2080602@wwwdotorg.org>
+From: Mario Kleiner <mario.kleiner.de-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
+Date: Tue, 22 Jan 2013 18:27:24 +0100
+Message-ID: <50FECBFC.8080307@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de> <50FE4E4F.6080506@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <50FEC503.2080602-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <50FE4E4F.6080506-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jan 22, 2013 at 8:57 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 01/21/2013 11:07 PM, Santosh Shilimkar wrote:
->> On Tuesday 22 January 2013 11:22 AM, Hiroshi Doyu wrote:
->>> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
->>>
->>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->> Looks fine. I will also update OMAP code with the new
->> interface. Thanks.
+On 22.01.13 09:31, Terje Bergstr=F6m wrote:
+> On 14.01.2013 18:06, Thierry Reding wrote:
+>> +static int tegra_dc_page_flip(struct drm_crtc *crtc, struct drm_fra=
+mebuffer *fb,
+>> +			      struct drm_pending_vblank_event *event)
+>> +{
+>> +	struct tegra_framebuffer *newfb =3D to_tegra_fb(fb);
+>> +	struct tegra_dc *dc =3D to_tegra_dc(crtc);
+>> +	struct drm_device *drm =3D crtc->dev;
+>> +	unsigned long flags;
+>> +
+>> +	if (dc->event)
+>> +		return -EBUSY;
+
+Hi
+
+I haven't read the Tegra programming manual or played with this, so=20
+maybe i'm wrong for some reason, but i think there is a race here=20
+between actual pageflip completion - latching newfb into the scanout=20
+base register and the completion routine that gets called from the=20
+vblank irq handler.
+
+If this code gets called close to vblank or inside vblank, couldn't it=20
+happen that tegra_dc_set_base() programs a pageflip that gets executed=20
+immediately - the new fb gets latched into the crtc, but the=20
+corresponding vblank irq handler for the vblank of flip completion runs=
+=20
+before the "if (event)" block can set dc->event =3D event;? Or vblank=20
+irq's are off because drm_vblank_get() is only called at the end of the=
+=20
+routine? In both cases the completion routine would miss the correct=20
+vblank and only timestamp and emit the completion event 1 vblank after=20
+actual flip completion.
+
+In that case it would be better to place tegra_dc_set_base() after the=20
+"if (event)" block and have some check inside the flip completion=20
+routine to make sure the pageflip completion event is only emitted if=20
+the scanout is really already latched with the newfb.
+
+thanks,
+-mario
+
+>> +
+>> +	tegra_dc_set_base(dc, 0, 0, newfb);
+>> +
+>> +	if (event) {
+>> +		event->pipe =3D dc->pipe;
+>> +
+>> +		spin_lock_irqsave(&drm->event_lock, flags);
+>> +		dc->event =3D event;
+>> +		spin_unlock_irqrestore(&drm->event_lock, flags);
+>> +
+>> +		drm_vblank_get(drm, dc->pipe);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
 >
-> OK, so patch 1/2 at least needs to get into a stable arm-soc branch
-> then. Unless there are violent objections, I'll forward patch 1/2 to
-> arm-soc and request it be added into a branch so that Tegra and OMAP can
-> both merge it into their branches as a dependency. I guess patch 2/2
-> could also be included; I don't think it has any complex dependencies
-> that'd prevent that, and would help to show how patch 1/2 gets used.
->
-> Hiroshi, is this series the only dependency you need for your Tegra114
-> series? So, I could merge your Tegra114 series once this series is applied?
-
-For something like this, it might make more sense for us to just apply
-the patches for OMAP on top, i.e. we'll pull the short branch from
-you, and then we can just apply patches (with maintainer acks) on top,
-instead of doing a bunch of single-patch pulls.
-
-Since Russell had comments on it earlier, I'd like him to give a nod
-that he's happy with it too.
-
-
--Olof
