@@ -1,53 +1,77 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: tegra: add KBC clock for Tegra20
-Date: Tue, 22 Jan 2013 10:54:32 -0800
-Message-ID: <20130122185432.24671.78856@quantum>
-References: <1357946262-25823-1-git-send-email-swarren@wwwdotorg.org>
- <20130122182340.24671.64241@quantum> <50FED9BD.5060907@wwwdotorg.org>
+From: Mario Kleiner <mario.kleiner.de-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 4/5] drm/tegra: Implement VBLANK support
+Date: Tue, 22 Jan 2013 20:20:33 +0100
+Message-ID: <50FEE681.7020208@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-5-git-send-email-thierry.reding@avionic-design.de> <50FECE63.7090009@tuebingen.mpg.de> <1358879999.1540.22.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <50FED9BD.5060907@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358879999.1540.22.camel@tellur>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-01-22 10:26:05)
-> On 01/22/2013 11:23 AM, Mike Turquette wrote:
-> > Quoting Stephen Warren (2013-01-11 15:17:42)
-> >> From: Stephen Warren <swarren@nvidia.com>
-> >>
-> >> This clock has been missing from all our upstream clock drivers. Add it
-> >> by copying the tegra_clk_periph_gate() call from Tegra30; the data
-> >> matches what's in the ChromeOS kernel for this clock.
-> >>
-> >> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> >> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> >> ---
-> >> Mike, I'd need to apply this to the Tegra tree as part of the common
-> >> clock framework conversion.
-> >>
-> > 
-> > Is this patch going to be rolled into patch 6/9 of the larger tegra ccf
-> > series?
-> 
-> In the latest Tegra CCF series that I posted, I've rolled all these
-> small fixes in already.
+On 22.01.13 19:39, Lucas Stach wrote:
+> Am Dienstag, den 22.01.2013, 18:37 +0100 schrieb Mario Kleiner:
+>> On 14.01.13 17:05, Thierry Reding wrote:
+>>> Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+>>> special in this case because it doesn't use the generic IRQ support
+>>> provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+>>> interrupt handler for each display controller.
+>>>
+>>> While at it, clean up the way that interrupts are enabled to ensure
+>>> that the VBLANK interrupt only gets enabled when required.
+>>>
+>>> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>>
+>> ... snip ...
+>>
+>>>    struct drm_driver tegra_drm_driver = {
+>>>    	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
+>>>    	.load = tegra_drm_load,
+>>> @@ -96,6 +136,10 @@ struct drm_driver tegra_drm_driver = {
+>>>    	.open = tegra_drm_open,
+>>>    	.lastclose = tegra_drm_lastclose,
+>>>
+>>> +	.get_vblank_counter = drm_vblank_count,
+>>
+>> -> .get_vblank_counter = drm_vblank_count is a no-op.
+>>
+>> .get_vblank_counter() is supposed to return some real hardware vblank
+>> counter value to reinitialize the software vblank counter at vbl irq
+>> enable time. That software counter gets queried via drm_vblank_count().
+>> If you hook this up to drm_vblank_count() it essentially returns a
+>> constant, frozen vblank count, it has the same effect as returning zero
+>> or any other constant value -- You lose all vblank counter increments
+>> during vblank irq off time. The same problem is present in nouveau-kms.
+>>
+>> I think it would be better to either implement a real hw counter query,
+>> or some function with a /* TODO: Implement me properly */ comment which
+>> returns zero, so it is clear something is missing here.
+>>
+> I've looked this up in the TRM a while ago as I know we have the same
+> problem in nouveau, but it seems there is no HW vblank counter on Tegra.
+>
+> Mario, you know a fair bit more about this than I do, what is the
+> preferred way of handling this if we are sure we are not able to
+> implement anything meaningful here? Just return 0?
+>
 
-Right, I just realized that there is a V6 but it has only the three
-patches affecting drivers/clk/* instead of the larger nine patch series.
-Scanning my inbox I mistakenly thought those were unrelated series.
+I think 0 would be better, just to make it clear to readers of the 
+source code that this function is basically unimplemented. For 
+correctness it doesn't matter what you return, drm_vblank_count() is ok 
+as well.
 
-Regards,
-Mike
+If we wanted, we could probably implement a good enough emulated 
+hw-vblank counter, at least on nouveau? If there is some on-chip clock 
+register that is driven by the same hardware oscillator as the crtc's so 
+it doesn't drift, we could store the clock time in the vblank_disable() 
+hook, and some measured duration of a video refresh, wrt. that clock. 
+Then in .get_vblank_counter() calculate how many vblanks have elapsed 
+from (current_clock_time - vblank_off_clock_time) / frame_duration and 
+increment our own private software vblank counter. Something along that 
+line...
+
+-mario
