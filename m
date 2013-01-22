@@ -1,72 +1,45 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: tegra: use _clk_pll_disable from _program_pll
-Date: Tue, 22 Jan 2013 10:31:42 -0800
-Message-ID: <20130122183142.24671.75933@quantum>
-References: <1358188572-13005-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex
+ A9
+Date: Tue, 22 Jan 2013 11:35:55 -0700
+Message-ID: <50FEDC0B.7050604@wwwdotorg.org>
+References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com> <1358833924-24535-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1358188572-13005-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Sivaram Nair <sivaramn@nvidia.com>, linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1358833924-24535-2-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>, Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, arnd@arndb.de, olof@lixom.net, santosh.shilimkar@ti.com, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-01-14 10:36:12)
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> _program_pll() was dropping the PLL's lock and calling clk_pll_disable().
-> clk_pll_disable() does nothing but acquire the same lock and call
-> _clk_pll_disable(). So, remove the lock manipulation code, and just call
-> _clk_pll_disable() directly instead.
-> 
-> Reported-by: Sivaram Nair <sivaramn@nvidia.com>
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
-> Mike, this also will need to go through the Tegra tree; just looking for
-> any review/ack from you. Thanks.
-> 
+On 01/21/2013 10:52 PM, Hiroshi Doyu wrote:
+> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
 
-Stephen,
+Will, is your for-next/perf branch stable; can I pull it into a branch
+destined for arm-soc? Background below:
 
-This change looks good to me, but should it not be rolled into the tegra
-CCF series?  Several patches on top of that series have surfaced; do you
-plan on posting a V6?
+Uggh.
 
-Regards,
-Mike
+This patch (2/2) depends on "ARM: tegra: Use DT /cpu node to detect
+number of CPU core" from your Tegra114 series, since that patch removes
+the other use of scu_base, thus allowing this patch to remove that variable.
 
->  drivers/clk/tegra/clk-pll.c |    8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 474ce1f..9f9bb73 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -339,14 +339,8 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->         state = clk_pll_is_enabled(hw);
->  
->         if (state) {
-> -               if (pll->lock)
-> -                       spin_unlock_irqrestore(pll->lock, flags);
-> -
-> -               clk_pll_disable(hw);
-> +               _clk_pll_disable(hw);
->                 val &= ~(PLL_BASE_BYPASS | PLL_BASE_ENABLE);
-> -
-> -               if (pll->lock)
-> -                       spin_lock_irqsave(pll->lock, flags);
->         }
->         pll_writel_base(val, pll);
->  
-> -- 
-> 1.7.10.4
+Then, that patch depends on "ARM: Define CPU part numbers and
+implementors" from Will Deacon's ARM perf tree at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git for-next/perf
+
+That means that in order to put this series into arm-soc, we would have
+to pull in Will's perf branch first, then the following Tegra patches,
+the latter two of which are already in Tegra's for-next, so I'd have to
+pull them out:
+
+0bb7bd9 ARM: tegra: Use DT /cpu node to detect number of CPU core
+a8f5f25 ARM: tegra: Add CPU nodes to Tegra30 device tree
+9975516 ARM: tegra: Add CPU nodes to Tegra20 device tree
+
+Hiroshi, it would be extremely useful if you could explicitly specify
+the dependencies of your series when posting them; it took me a long
+time and a lot of searching to track all the dependencies down. :-(
