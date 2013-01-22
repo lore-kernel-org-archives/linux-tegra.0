@@ -1,35 +1,53 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex
- A9
-Date: Tue, 22 Jan 2013 11:49:59 -0700
-Message-ID: <50FEDF57.1060204@wwwdotorg.org>
-References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com> <1358833924-24535-2-git-send-email-hdoyu@nvidia.com> <50FEDC0B.7050604@wwwdotorg.org> <20130122184633.GI2153@mudshark.cambridge.arm.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: tegra: add KBC clock for Tegra20
+Date: Tue, 22 Jan 2013 10:54:32 -0800
+Message-ID: <20130122185432.24671.78856@quantum>
+References: <1357946262-25823-1-git-send-email-swarren@wwwdotorg.org>
+ <20130122182340.24671.64241@quantum> <50FED9BD.5060907@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130122184633.GI2153@mudshark.cambridge.arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Russell King <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "olof@lixom.net" <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <50FED9BD.5060907@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/22/2013 11:46 AM, Will Deacon wrote:
-> Hi Stephan,
+Quoting Stephen Warren (2013-01-22 10:26:05)
+> On 01/22/2013 11:23 AM, Mike Turquette wrote:
+> > Quoting Stephen Warren (2013-01-11 15:17:42)
+> >> From: Stephen Warren <swarren@nvidia.com>
+> >>
+> >> This clock has been missing from all our upstream clock drivers. Add it
+> >> by copying the tegra_clk_periph_gate() call from Tegra30; the data
+> >> matches what's in the ChromeOS kernel for this clock.
+> >>
+> >> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> >> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> >> ---
+> >> Mike, I'd need to apply this to the Tegra tree as part of the common
+> >> clock framework conversion.
+> >>
+> > 
+> > Is this patch going to be rolled into patch 6/9 of the larger tegra ccf
+> > series?
 > 
-> On Tue, Jan 22, 2013 at 06:35:55PM +0000, Stephen Warren wrote:
->> On 01/21/2013 10:52 PM, Hiroshi Doyu wrote:
->>> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
->>
->> Will, is your for-next/perf branch stable; can I pull it into a branch
->> destined for arm-soc? Background below:
-> 
-> I'm going to send a pull request to Russell tomorrow using my for-rmk/perf
-> branch, so *that* is stable. You might, however, want to wait for Russell to
-> push that out because it's also needed for kvm and, as such, will need to
-> be published anyway.
-> 
-> Sound ok?
+> In the latest Tegra CCF series that I posted, I've rolled all these
+> small fixes in already.
 
-I'm assuming rmk's branch will be a stable base, so that sounds great,
-thanks.
+Right, I just realized that there is a V6 but it has only the three
+patches affecting drivers/clk/* instead of the larger nine patch series.
+Scanning my inbox I mistakenly thought those were unrelated series.
+
+Regards,
+Mike
