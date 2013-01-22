@@ -1,164 +1,103 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 2/3] tegra: pwm-backlight: add tegra pwm-bl driver
-Date: Tue, 22 Jan 2013 08:06:30 +0100
-Message-ID: <20130122070630.GA14728@avionic-0098.adnet.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 0/3] pwm-backlight: add subdrivers & Tegra support
+Date: Tue, 22 Jan 2013 08:17:26 +0100
+Message-ID: <20130122071726.GB14728@avionic-0098.adnet.avionic-design.de>
 References: <1358591420-7790-1-git-send-email-acourbot@nvidia.com>
- <1358591420-7790-3-git-send-email-acourbot@nvidia.com>
- <50FD7EF9.1010205@wwwdotorg.org>
- <12033649.LY58cllSHv@percival>
+ <20130121074928.GE15508@avionic-0098.adnet.avionic-design.de>
+ <6871054.sK10m5bePf@percival>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <12033649.LY58cllSHv@percival>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>, "gnurou@gmail.com" <gnurou@gmail.com>
+In-Reply-To: <6871054.sK10m5bePf@percival>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---X1bOJ3K7DJ5YkBrT
+--s2ZSL+KKDSLx8OML
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 22, 2013 at 12:24:34PM +0900, Alex Courbot wrote:
-> On Tuesday 22 January 2013 01:46:33 Stephen Warren wrote:
-> > >  arch/arm/boot/dts/tegra20-ventana.dts  |  18 +++-
-> > >  arch/arm/configs/tegra_defconfig       |   1 +
-> > >  drivers/video/backlight/Kconfig        |   7 ++
-> > >  drivers/video/backlight/pwm_bl.c       |   3 +
-> > >  drivers/video/backlight/pwm_bl_tegra.c | 159
-> > >  +++++++++++++++++++++++++++++++++
-> > This should be at least 3 separate patches: (1) Driver code (2) Ventana
-> > .dts file (3) Tegra defconfig.
+On Mon, Jan 21, 2013 at 05:18:11PM +0900, Alex Courbot wrote:
+> Hi Thierry,
 >=20
-> Will do that.
->=20
-> > If this is Ventana-specific, this should have a vendor prefix; "nvidia,"
-> > would be appropriate.
+> On Monday 21 January 2013 15:49:28 Thierry Reding wrote:
+> > Eventually this should all be covered by the CDF, but since that's not
+> > ready yet we want something ad-hoc to get the hardware supported. As
+> > such I would like to see this go into some sort of minimalistic, Tegra-
+> > specific display/panel framework. I'd prefer to keep the pwm-backlight
+> > driver as simple and generic as possible, that is, a driver for a PWM-
+> > controlled backlight.
 > >=20
-> > But, why is this Ventana-specific; surely it's at most panel-specific,
-> > or perhaps even generic across any/most LCD panels?
->=20
-> Yes, we could use the panel model here instead. Not sure how many other p=
-anels=20
-> follow the same powering sequence though.
->=20
-> Making it Ventana-specific would have allowed to group all Tegra board su=
-pport=20
-> into the same driver, and considering that probably not many devices use =
-the=20
-> same panels as we do this seemed to make sense at first.
->=20
-> > > +		power-supply =3D <&vdd_bl_reg>;
+> > Another advantage of moving this into a sort of display framework is
+> > that it may help in defining the requirements for a CDF and that moving
+> > the code to the CDF should be easier once it is done.
 > >=20
-> > "power" doesn't seem like a good regulator name; power to what? Is this
-> > for the backlight, since I see there's a panel-supply below?
+> > Last but not least, abstracting away the panel allows other things such
+> > as physical dimensions and display modes to be properly encapsulated. I
+> > think that power-on/off timing requirements for panels also belong to
+> > this set since they are usually specific to a given panel.
 > >=20
-> > > +		panel-supply =3D <&vdd_pnl_reg>;
-> > >=20
-> > > +		bl-gpio =3D <&gpio 28 0>;
-> > > +		bl-panel =3D <&gpio 10 0>;
-> >=20
-> > GPIO names usually have "gpios" in their name, so I assume those should
-> > be bl-enable-gpios, panel-enable-gpios?
+> > Maybe adding these drivers to tegra-drm for now would be a good option.
+> > That way the corresponding glue can be added without a need for inter-
+> > tree dependencies.
 >=20
-> Indeed, even though there is only one gpio here. Maybe we could group the=
-m=20
-> into a single property and retrieve them by index - that's what the DT GP=
-IO=20
-> APIs seem to be designed for initially.
->=20
-> > > +static struct pwm_backlight_subdriver pwm_backlight_ventana_subdrive=
-r =3D {
-> > > +	.name =3D "pwm-backlight-ventana",
-> > > +	.init =3D init_ventana,
-> > > +	.exit =3D exit_ventana,
-> > > +	.notify =3D notify_ventana,
-> > > +	.notify_after =3D notify_after_ventana,
-> > > +};
-> >=20
-> > It seems like all of that code should be completely generic.
->=20
-> Sorry, I don't get your point here - could you elaborate?
->=20
-> > Rather than invent some new registration mechanism, if we need
-> > board-/panel-/...-specific drivers, it'd be better to make each of those
-> > specific drivers a full platform device in an of itself (i.e. regular
-> > Linux platform device/driver, have its own probe(), etc.), and have
-> > those specific drivers call into the base PWM backlight code, treating
-> > it like a utility API.
->=20
-> That's what would make the most sense indeed, but would require some extr=
-a=20
-> changes in pwm-backlight and might go against Thierry's wish to keep it=
+> IIRC (because that was a while ago already) having a Tegra-only display=
 =20
-> simple. On the other hand I totally agree this would be more elegant. Eve=
-ry=20
-> pwm-backlight based driver would just need to invoke pwm_bl's probe/remov=
-e=20
-> function from its own. Thierry, would that be an acceptable alternative t=
-o the=20
-> sub-driver thing despite the slightly deeper changes this involves?
+> framework is exactly what we wanted to avoid in the first place. This ser=
+ies=20
+> does nothing but leverage the callbacks mechanism that already exists in =
+pwm-
+> backlight and make it available to DT systems. If we start making a Tegra-
+> specific solution, then other architectures will have to reinvent the whe=
+el=20
+> again. I really don't think we want to go that way.
+>=20
+> These patches only makes slight changes to pwm_bl.c and do not extend its=
+=20
+> capabilities. I agree that a suitable solution will require the CDF, but =
+by=20
+> the meantime, let's go for the practical route instead of repeating the s=
+ame=20
+> mistakes (i.e. architecture-specific frameworks) again.
+>=20
+> There are certainly better ways to do this, but I'm not convinced at all =
+that=20
+> a Tegra-only solution is one of them.
 
-I'm confused. Why would you want to call into pwm_bl directly? If we're
-going to split this up into separate platform devices, why not look up a
-given backlight device and use the backlight API on that? The pieces of
-the puzzle are all there: you can use of_find_backlight_by_node() to
-obtain a backlight device from a device tree node, so I'd expect the DT
-to look something like this:
+Well, your proposal is a Tegra-only solution as well. Anything we come
+up with now will be Tegra-only because it will eventually be integrated
+with the CDF.
 
-	backlight: backlight {
-		compatible =3D "pwm-backlight";
-		...
-	};
-
-	panel: panel {
-		compatible =3D "...";
-		...
-		backlight =3D <&backlight>;
-		...
-	};
-
-After that you can wire it up with host1x using something like:
-
-	host1x {
-		dc@54200000 {
-			rgb {
-				status =3D "okay";
-
-				nvidia,panel =3D <&panel>;
-			};
-		};
-	};
-
-Maybe with such a binding, we should move the various display-timings
-properties to the panel node as well and have an API to retrieve them
-for use by tegra-drm.
+Trying to come up with something generic would be counter-productive.
+CDF *is* the generic solution. All we would be doing is add a competing
+framework.
 
 Thierry
 
---X1bOJ3K7DJ5YkBrT
+--s2ZSL+KKDSLx8OML
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJQ/jp2AAoJEN0jrNd/PrOhuJ0P/3FXlrooWOtNLXz6tqyW80tg
-TV9NDNjR0IpvjVLXE6Voy9nWM189BqD85sc3F+b9Pq58043mJtYAC+r5zA/pdy+D
-DQa/klfor5/Y+kLlJ25lWTYOWvVxiBJZ8reE5O95fco+kCRI6msGjAJKDIsbhEHj
-72urT3yrVJXt5ncbcx0OWHUNlmLByWhGBx+9pzzE7aKu3X07l1P95p3Tzbbdac7V
-/AafmpPdW6GeGQnRmnizmUz00PHFFYjPz3fvuAUfGSu/01a5qujJWRtVP3OA3qVc
-uWolzYzbSvwJ+CE7SErMIDpWSHPCWqI2W+r6Zx/QuN5xaYddQpBiRmibLg3zfFgC
-KuLmpxCcdiW1RxUucUE8Jctneh7DW306Mg6m/Qw99QXxH1RvDJUPTVOUKWDArnbh
-LEskfX/WhAF8w5s3ZmGNfpfJVf8lfuYFeVeujFiXFTwkhyOSlSaJDgF9qpiN337h
-Xukeku6Hx4vnzmUO5u2cxvkyRGZPcynlfjnWstLU7pBqWmqdhHTuJS7xHVvj7tsY
-4uJ9BrkVIzTvFQTPMFVXKYIwA7zd8vYaMZQ+KXuD4rRfh2PDMPLZgzXKeCsweBL3
-QlRYmTnzGYg6CyIo9xc4WZCqxS086vI7h/n08xIho7NYssEtvHp5iKanaNMpgAbz
-xqg9vM5eT56NQuwaHceg
-=vpbr
+iQIcBAEBAgAGBQJQ/j0GAAoJEN0jrNd/PrOhOuQQAK5hPcg/D4s2hP5Sltz9NBlr
+1QypTElCABBHL3nBwsZodzdav7ohF0yOEO8g7XoI0IZWGNnTjwhgYcUMtcA3CU8Q
+7eU4LbBxvC42jBTV+V2/6BpwAvp4nmwV7L0N1r1uaWo52tHvu3SD1WLoa5flAfcm
+Pjn2EBEt7Xt4RNsZTfo+nHi0QdnFAYHmSzuDEQVAytnLN8A/5l/eIg/d3wErneHf
+fBosH42LdlpI6Y/Um5BWssaHnYSkEDCEkPp/UImzScDOrmVzlig+t4i3oii9o/kC
+aHDVcbN7i9MbvG+3Xmrv0MLJuSgfrGZ7pGVbPtzlSIVkR1w2PLcZIrZCnwo3DV90
+wVOtBE6os7+MvHufnit2r9qQOK7fM5PsW2YxRPh1JZsKF87r6wtCwtbjkMHMNXcX
+bkAY9tQ9OMPl67wQw9WQS1TRO6ahX9/jY9TBzaFKeMoLN0FpZHNOs30I0ZItNREo
+8atYe5TyUEn4RMSVDtK4cdWVjL+lE85huwRB3dI0A/7ODSCVgA5yqfYjhwK3cQ5y
+KeQ/gCCD9nCiI3FzZ1HO8S4ga5b68FQDTF/Rme39/VOh5bVy/NBaz4bFKoelQ5G8
+JD8H/754TEy3vPEQktEorXBqzoeP3M+AFwhdnYwYdu/ukgeUZxgxhlhCfajEz6V0
+z3GE3hxLn9NwCZQVfvXS
+=y55v
 -----END PGP SIGNATURE-----
 
---X1bOJ3K7DJ5YkBrT--
+--s2ZSL+KKDSLx8OML--
