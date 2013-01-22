@@ -1,40 +1,67 @@
-From: Jon Mayo <jon-MQ+mZzckBGs@public.gmane.org>
-Subject: Re: [PATCH 4/5] drm/tegra: Implement VBLANK support
-Date: Tue, 22 Jan 2013 10:21:40 -0800
-Message-ID: <CADWT_cPtdmSF+_ybe70ZY_z5idzr0KQe94r57ok-Hf-V22wixA@mail.gmail.com>
-References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
-	<1358178932-25505-5-git-send-email-thierry.reding@avionic-design.de>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: tegra: add KBC clock for Tegra20
+Date: Tue, 22 Jan 2013 10:23:40 -0800
+Message-ID: <20130122182340.24671.64241@quantum>
+References: <1357946262-25823-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358178932-25505-5-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1357946262-25823-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 14, 2013 at 7:55 AM, Thierry Reding
-<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
-> special in this case because it doesn't use the generic IRQ support
-> provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
-> interrupt handler for each display controller.
->
-> While at it, clean up the way that interrupts are enabled to ensure
-> that the VBLANK interrupt only gets enabled when required.
->
-> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Quoting Stephen Warren (2013-01-11 15:17:42)
+> From: Stephen Warren <swarren@nvidia.com>
+> 
+> This clock has been missing from all our upstream clock drivers. Add it
+> by copying the tegra_clk_periph_gate() call from Tegra30; the data
+> matches what's in the ChromeOS kernel for this clock.
+> 
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
+> Mike, I'd need to apply this to the Tegra tree as part of the common
+> clock framework conversion.
+> 
 
-Sorry Thierry, but is this a useful feature? Are applications really
-making use of it? Because it means that that an IRQ will have to
-trigger every 16.67ms when it is taken, which means the device can't
-sleep. (probably OK because it should go back to idle when the app
-lets go of the vblank). But worse, for one-shot panels there is no
-continuous vblank. I've been doing weird hacks to run a timer when the
-smart panel is idle to trick applications into thinking they have a
-vblank pulse. But really I think the whole feature of a vblank pulse
-is pretty lame and I wish it would die. Were you going to use it for
-something specific, or just adding it for completeness?
+Is this patch going to be rolled into patch 6/9 of the larger tegra ccf
+series?
 
-- Jon
+Thanks,
+Mike
+
+>  drivers/clk/tegra/clk-tegra20.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index f40b6f7..5847b5e 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -896,6 +896,13 @@ static void __init tegra20_periph_clk_init(void)
+>         clk_register_clkdev(clk, NULL, "timer");
+>         clks[timer] = clk;
+>  
+> +       /* kbc */
+> +       clk = tegra_clk_periph_gate("kbc", "clk_32k", TEGRA_PERIPH_NO_RESET |
+> +                                   TEGRA_PERIPH_ON_APB, clk_base, 0,
+> +                                   36, &periph_h_regs, periph_clk_enb_refcnt);
+> +       clk_register_clkdev(clk, NULL, "tegra-kbc");
+> +       clks[kbc] = clk;
+> +
+>         /* csus */
+>         clk = tegra_clk_periph_gate("csus", "clk_m", TEGRA_PERIPH_NO_RESET,
+>                                     clk_base, 0, 92, &periph_u_regs,
+> -- 
+> 1.7.10.4
