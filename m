@@ -1,44 +1,35 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex
- A9
-Date: Wed, 23 Jan 2013 16:39:28 +0530
-Message-ID: <50FFC4E8.70509@ti.com>
-References: <50FEC503.2080602@wwwdotorg.org><CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com><50FFA620.50008@ti.com> <20130123.125851.1450151123804323961.hdoyu@nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH 1/2] usb: host: tegra: don't touch EMC clock
+Date: Wed, 23 Jan 2013 10:23:13 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1301231022560.2045-100000@iolanthe.rowland.org>
+References: <1358900903-27654-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130123.125851.1450151123804323961.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358900903-27654-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 23 January 2013 04:28 PM, Hiroshi Doyu wrote:
-> Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org> wrote @ Wed, 23 Jan 2013 09:58:08 +0100:
->
->> On Tuesday 22 January 2013 10:34 PM, Olof Johansson wrote:
->>> On Tue, Jan 22, 2013 at 8:57 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>> On 01/21/2013 11:07 PM, Santosh Shilimkar wrote:
->>>>> On Tuesday 22 January 2013 11:22 AM, Hiroshi Doyu wrote:
->>>>>> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
+On Tue, 22 Jan 2013, Stephen Warren wrote:
 
-[..]
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Clock "emc" is for the External Memory Controller. The USB driver has no
+> business touching this clock directly. Remove the code that does so.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Greg, Alan, I'd like to take this patch through the Tegra tree to avoid
+> any merge conflicts with the Tegra USB changes that have  recently
+> happened there.
 
->> Btw, I noticed the build error with patch 1/1. Since I wasn't using
->> the first interface in OMAP code, I just bypassed it for testing.
->> I might be missing some dependent patch which added
->> read_cpuid_part_number().
->
-> The following one, which is in "next-20130123", is also necessary.
->
-> commit 59530adc3f1b802c275f0197fc3ac72dc014267a
-> Author: Christoffer Dall <c.dall-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-> Date:   Tue Dec 18 04:06:37 2012 +0000
->
->      ARM: Define CPU part numbers and implementors
->
-Thanks for the pointer Hiroshi.
+It's okay with me.
 
-Regards,
-Santosh
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
