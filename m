@@ -1,35 +1,48 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 1/2] usb: host: tegra: don't touch EMC clock
-Date: Wed, 23 Jan 2013 10:23:13 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1301231022560.2045-100000@iolanthe.rowland.org>
-References: <1358900903-27654-1-git-send-email-swarren@wwwdotorg.org>
+Date: Wed, 23 Jan 2013 09:17:14 -0700
+Message-ID: <51000D0A.4010007@wwwdotorg.org>
+References: <1358900903-27654-1-git-send-email-swarren@wwwdotorg.org>  <D958900912E20642BCBC71664EFECE3E6E1B13B855@BGMAIL02.nvidia.com> <1358934326.1540.32.camel@tellur>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358900903-27654-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358934326.1540.32.camel@tellur>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venkat Moganty <vmoganty-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 22 Jan 2013, Stephen Warren wrote:
-
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 01/23/2013 02:45 AM, Lucas Stach wrote:
+> Am Mittwoch, den 23.01.2013, 12:25 +0530 schrieb Venu Byravarasu:
+>>> -----Original Message-----
+>>> From: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-tegra-
+>>> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Stephen Warren
+>>> Sent: Wednesday, January 23, 2013 5:58 AM
+>>> To: Alan Stern; Greg Kroah-Hartman; Stephen Warren
+>>> Cc: Venu Byravarasu; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-
+>>> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Stephen Warren
+>>> Subject: [PATCH 1/2] usb: host: tegra: don't touch EMC clock
+>>>
+>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> Clock "emc" is for the External Memory Controller. The USB driver has no
+>>> business touching this clock directly. Remove the code that does so.
+>>
+>> Stephen,
+>> This was primarily done to make sure that EMC is set to a minimum
+>> frequency, below which data errors may occur during USB transfers.
+>> If we plan to remove this, how should we make sure that the EMC
+>> is programmed for the required frequency during USB transfers?
+>
+> You could use something like the API I added in "ARM: tegra: add EMC
+> clock scaling API". This needs some rework and I looked into integrating
+> this with the DEVFREQ framework, but I don't think it fits too well.
 > 
-> Clock "emc" is for the External Memory Controller. The USB driver has no
-> business touching this clock directly. Remove the code that does so.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Greg, Alan, I'd like to take this patch through the Tegra tree to avoid
-> any merge conflicts with the Tegra USB changes that have  recently
-> happened there.
+> Bandwidth requirements should always be communicated to the EMC driver
+> and not described by clock rates.
 
-It's okay with me.
+I agree.
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Besides, on some boards there's an EMC scaling table defined already, so
+the EMC driver is simply overriding the value the USB driver selects anyway.
