@@ -1,46 +1,68 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 1/2] usb: host: tegra: don't touch EMC clock
-Date: Wed, 23 Jan 2013 10:45:26 +0100
-Message-ID: <1358934326.1540.32.camel@tellur>
-References: <1358900903-27654-1-git-send-email-swarren@wwwdotorg.org>
-	 <D958900912E20642BCBC71664EFECE3E6E1B13B855@BGMAIL02.nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH 2/3] tegra: pwm-backlight: add tegra pwm-bl driver
+Date: Wed, 23 Jan 2013 18:45:39 +0900
+Message-ID: <2178053.V0UsGT5PW9@percival>
+References: <1358591420-7790-1-git-send-email-acourbot@nvidia.com> <12033649.LY58cllSHv@percival> <20130122070630.GA14728@avionic-0098.adnet.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E1B13B855-QZ+emBqkIFBDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venkat Moganty <vmoganty-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130122070630.GA14728@avionic-0098.adnet.avionic-design.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>, "gnurou@gmail.com" <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 23.01.2013, 12:25 +0530 schrieb Venu Byravarasu:
-> > -----Original Message-----
-> > From: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-tegra-
-> > owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Stephen Warren
-> > Sent: Wednesday, January 23, 2013 5:58 AM
-> > To: Alan Stern; Greg Kroah-Hartman; Stephen Warren
-> > Cc: Venu Byravarasu; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-
-> > kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Stephen Warren
-> > Subject: [PATCH 1/2] usb: host: tegra: don't touch EMC clock
-> > 
-> > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Clock "emc" is for the External Memory Controller. The USB driver has no
-> > business touching this clock directly. Remove the code that does so.
+> I'm confused. Why would you want to call into pwm_bl directly? If we're
+> going to split this up into separate platform devices, why not look up a
+> given backlight device and use the backlight API on that? The pieces of
+> the puzzle are all there: you can use of_find_backlight_by_node() to
+> obtain a backlight device from a device tree node, so I'd expect the DT
+> to look something like this:
 > 
-> Stephen,
-> This was primarily done to make sure that EMC is set to a minimum
-> frequency, below which data errors may occur during USB transfers.
-> If we plan to remove this, how should we make sure that the EMC
-> is programmed for the required frequency during USB transfers?
->  
-You could use something like the API I added in "ARM: tegra: add EMC
-clock scaling API". This needs some rework and I looked into integrating
-this with the DEVFREQ framework, but I don't think it fits too well.
+> 	backlight: backlight {
+> 		compatible = "pwm-backlight";
+> 		...
+> 	};
 
-Bandwidth requirements should always be communicated to the EMC driver
-and not described by clock rates.
+This would still prevent any power control from the backlight driver. I.e. if 
+someone sets the brightness to 0 through sysfs, we cannot power the backlight 
+off as pwm-backlight cannot control more than the PWM without platform 
+callbacks. Backlight could only be powered off as a result of a fb blank event.
 
-Regards,
-Lucas
+> 	panel: panel {
+> 		compatible = "...";
+> 		...
+> 		backlight = <&backlight>;
+> 		...
+> 	};
+
+So all the power control of both the panel and backlight would be performed 
+from this device's driver. How would it plug into tegra-drm? I would see 
+tegra_panel as a new member of the tegra_output structure, with one callback 
+invoked from tegra_encoder_dpms(). Does that look sane?
+
+> After that you can wire it up with host1x using something like:
+> 
+> 	host1x {
+> 		dc@54200000 {
+> 			rgb {
+> 				status = "okay";
+> 
+> 				nvidia,panel = <&panel>;
+> 			};
+> 		};
+> 	};
+
+Indeed. So if we do that, the DRM DPMS functions would take care of the 
+panel/backlight powering and the backlight driver will control the PWM after 
+this, through the FB notifier. This is a little bit different from the "official" 
+power sequence, but I just tested controlling the PWM at the very end of the 
+sequence and it works just as well. If you think this looks better I don't 
+mind doing it that way, it is actually a good excuse for me to dive into the 
+DRM code.
+
+Anyway, this will only be a temporary solution, CDF is the only way to do this 
+right.
+
+Alex.
