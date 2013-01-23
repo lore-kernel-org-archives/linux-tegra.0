@@ -1,39 +1,58 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] tegra: pwm-backlight: add tegra pwm-bl driver
-Date: Wed, 23 Jan 2013 19:29:16 +0900
-Message-ID: <3208798.X7kqxH1FjQ@percival>
-References: <1358591420-7790-1-git-send-email-acourbot@nvidia.com> <1358591420-7790-3-git-send-email-acourbot@nvidia.com> <CAL1wa8d2BS3RxdsdUyCqF20ZKe46jUZcfUKitnpP9Lgb9aB5hw@mail.gmail.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
+Date: Wed, 23 Jan 2013 11:58:51 +0100
+Message-ID: <20130123.125851.1450151123804323961.hdoyu@nvidia.com>
+References: <50FEC503.2080602@wwwdotorg.org><CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com><50FFA620.50008@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1wa8d2BS3RxdsdUyCqF20ZKe46jUZcfUKitnpP9Lgb9aB5hw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <50FFA620.50008-l0cyMroinI0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leela Krishna Amudala <leelakrishna.a-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: "santosh.shilimkar-l0cyMroinI0@public.gmane.org" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 23 January 2013 18:15:30 Leela Krishna Amudala wrote:
-> > +       pwm_backlight_set_subdriver_data(dev, data);
+Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org> wrote @ Wed, 23 Jan 2013 09:58:08 +0100:
+
+> On Tuesday 22 January 2013 10:34 PM, Olof Johansson wrote:
+> > On Tue, Jan 22, 2013 at 8:57 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> >> On 01/21/2013 11:07 PM, Santosh Shilimkar wrote:
+> >>> On Tuesday 22 January 2013 11:22 AM, Hiroshi Doyu wrote:
+> >>>> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
+> >>>>
+> >>>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>> ---
+> >>> Looks fine. I will also update OMAP code with the new
+> >>> interface. Thanks.
+> >>
+> >> OK, so patch 1/2 at least needs to get into a stable arm-soc branch
+> >> then. Unless there are violent objections, I'll forward patch 1/2 to
+> >> arm-soc and request it be added into a branch so that Tegra and OMAP can
+> >> both merge it into their branches as a dependency. I guess patch 2/2
+> >> could also be included; I don't think it has any complex dependencies
+> >> that'd prevent that, and would help to show how patch 1/2 gets used.
+> >>
+> >> Hiroshi, is this series the only dependency you need for your Tegra114
+> >> series? So, I could merge your Tegra114 series once this series is applied?
+> >
+> > For something like this, it might make more sense for us to just apply
+> > the patches for OMAP on top, i.e. we'll pull the short branch from
+> > you, and then we can just apply patches (with maintainer acks) on top,
+> > instead of doing a bunch of single-patch pulls.
+> >
+> In case you decide to apply patches, you can use patch in the end
+> of the email for OMAP. Attached the same in case mailer damages it.
 > 
-> Here you are passing ventana_bl_data pointer as input and in the
-> pwm_backlight_get_subdriver_data() function you are assigning the
-> received driver data to backlight_device pointer. As both are two
-> different structures with different structure fields in it. There can
-> be a chance for a crash.
+> Btw, I noticed the build error with patch 1/1. Since I wasn't using
+> the first interface in OMAP code, I just bypassed it for testing.
+> I might be missing some dependent patch which added
+> read_cpuid_part_number().
 
-That's because the following happens later in pwm_backlight_probe():
+The following one, which is in "next-20130123", is also necessary.
 
-	pb->subdriver_data = dev_get_drvdata(&pdev->dev);
-	...
-	bl = backlight_device_register(dev_name(&pdev->dev), &pdev->dev, pb,
-				       &pwm_backlight_ops, &props);
-	...
-	platform_set_drvdata(pdev, bl);
+commit 59530adc3f1b802c275f0197fc3ac72dc014267a
+Author: Christoffer Dall <c.dall-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+Date:   Tue Dec 18 04:06:37 2012 +0000
 
-So from then on the result of dev_get_drvdata() is indeed an instance of 
-backlight_device from which we can retrieve the subdriver data. I'm not really 
-proud of this. But fortunately it seems like we are going to do things 
-differently.
-
-Alex.
+    ARM: Define CPU part numbers and implementors
