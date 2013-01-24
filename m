@@ -1,116 +1,95 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] arm: tegra: dt: Add reset GPIO information to PHY DT node
-Date: Thu, 24 Jan 2013 15:46:46 +0530
-Message-ID: <1359022606-13359-1-git-send-email-vbyravarasu@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: [v4 0/6] ARM: Initial support for Tegra114 SoC
+Date: Thu, 24 Jan 2013 13:10:20 +0200
+Message-ID: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-tegra@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-As reset GPIO information is PHY specific detail, adding
-it to PHY DT node.
+Hi,
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../bindings/usb/nvidia,tegra20-usb-phy.txt        |    3 +++
- arch/arm/boot/dts/tegra20-harmony.dts              |    4 ++++
- arch/arm/boot/dts/tegra20-paz00.dts                |    4 ++++
- arch/arm/boot/dts/tegra20-seaboard.dts             |    4 ++++
- arch/arm/boot/dts/tegra20-trimslice.dts            |    4 ++++
- arch/arm/boot/dts/tegra20-ventana.dts              |    4 ++++
- 6 files changed, 23 insertions(+), 0 deletions(-)
+This patchset adds initial support for NVIDIA's new Tegra114 SoC
+(T114) based on the ARM Cortex-A15 MP. This has the minimal support to
+allow the kernel to boot up into shell console. This can be used as a
+basis for adding other device drivers for this SoC. Currently there
+are 2 evaluation boards available, "Dalmore" and "Pluto".
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-index 84a4c12..6bdaba2 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-@@ -7,6 +7,9 @@ Required properties :
-  - reg : Address and length of the register set for the USB PHY interface.
-  - phy_type : Should be one of "ulpi" or "utmi".
- 
-+Required properties for phy_type == ulpi:
-+  - nvidia,phy-reset-gpio : The GPIO used to reset the PHY.
-+
- Optional properties:
-   - nvidia,has-legacy-mode : boolean indicates whether this controller can
-     operate in legacy mode (as APX 2500 / 2600). In legacy mode some
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 96f4ccd..61d027f 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -431,6 +431,10 @@
- 		status = "okay";
- 	};
- 
-+	usb-phy@c5004400 {
-+		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-+	};
-+
- 	sdhci@c8000200 {
- 		status = "okay";
- 		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index e4034b6..54d6fce 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -430,6 +430,10 @@
- 		status = "okay";
- 	};
- 
-+	usb-phy@c5004400 {
-+		nvidia,phy-reset-gpio = <&gpio 168 0>; /* gpio PV0 */
-+	};
-+
- 	sdhci@c8000000 {
- 		status = "okay";
- 		cd-gpios = <&gpio 173 0>; /* gpio PV5 */
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 0b48359..37b3a57 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -572,6 +572,10 @@
- 		status = "okay";
- 	};
- 
-+	usb-phy@c5004400 {
-+		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-+	};
-+
- 	sdhci@c8000000 {
- 		status = "okay";
- 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index adf6024..5d79e4f 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -314,6 +314,10 @@
- 		status = "okay";
- 	};
- 
-+	usb-phy@c5004400 {
-+		nvidia,phy-reset-gpio = <&gpio 168 0>; /* gpio PV0 */
-+	};
-+
- 	sdhci@c8000000 {
- 		status = "okay";
- 		bus-width = <4>;
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 5b15c30..425c890 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -508,6 +508,10 @@
- 		status = "okay";
- 	};
- 
-+	usb-phy@c5004400 {
-+		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
-+	};
-+
- 	sdhci@c8000000 {
- 		status = "okay";
- 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
--- 
-1.7.0.4
+For those who want to try:
+
+  $ make ARCH=arm tegra_defconfig
+  $ scripts/config -e ARCH_TEGRA_114_SOC -d SMP -d DRM -d SUSPEND \
+    	-d PM_RUNTIME -d CPU_FREQ -d CPU_IDLE -d HOTPLUG_CPU
+  $ make ARCH=arm menuconfig # if needed to configure more
+  $ make ARCH=arm all -j9
+
+You may also want to enable CONFIG_ARM_APPENDED_DTB and
+CONFIG_ARM_ATAG_DTB_COMPAT if the bootloader doesn't support DT yet.
+
+Verified that this single image booted up with "Dalmore(T114)",
+"Pluto(T114)" and "Cardhu(T30)". For "Cardhu(T30)" with this single
+image, SPI driver doesn't seem to afford the above configuration , it
+hangs at boot-up. With SPI disabled, it's ok.
+
+The following changes since commit ac8963ed5d41573c724ce6c1e17f5182d476f2e6:
+
+  ARM: tegra: Add CPU nodes to Tegra30 device tree (2013-01-23 10:16:18 -0700)
+
+are available in the git repository at:
+
+  git://nv-tegra.nvidia.com/user/hdoyu/linux.git tegra114-base
+
+for you to fetch changes up to ce08503daaffdffd00e8ebdea8c425d68f287efb:
+
+  ARM: tegra: Add initial support for Tegra114 SoC. (2013-01-24 10:10:12 +0200)
+
+----------------------------------------------------------------
+v4:
+Rebased onto Stephen's for-3.9/soc(inc. CCF)
+Removed SCU related pathces.
+
+v3:
+Rebased onto next-20130115.
+Dropped TSC/arch timer patch.
+Use /cpus entry in DT to detect cpu core #.
+
+v2:
+Rebased against the latest Stephen Warren's linux-next_common
+Add /cpus entry in DT
+Add comment to initialize TSC only in secure mode.
+
+Hiroshi Doyu (6):
+      ARM: tegra: Use DT /cpu node to detect number of CPU core
+      ARM: tegra: fuse: Add chip ID Tegra114 0x35
+      ARM: dt: tegra114: Add new SoC base, Tegra114 SoC
+      ARM: dt: tegra114: Add new board, Dalmore
+      ARM: dt: tegra114: Add new board, Pluto
+      ARM: tegra: Add initial support for Tegra114 SoC.
+
+ arch/arm/boot/dts/Makefile              |    4 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts  |   21 ++++++
+ arch/arm/boot/dts/tegra114-pluto.dts    |   21 ++++++
+ arch/arm/boot/dts/tegra114.dtsi         |  114 +++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Kconfig             |   10 +++
+ arch/arm/mach-tegra/Makefile            |    1 +
+ arch/arm/mach-tegra/board-dt-tegra114.c |   48 +++++++++++++
+ arch/arm/mach-tegra/common.c            |    1 +
+ arch/arm/mach-tegra/fuse.h              |    1 +
+ arch/arm/mach-tegra/platsmp.c           |   15 ----
+ 10 files changed, 220 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra114-dalmore.dts
+ create mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
+ create mode 100644 arch/arm/boot/dts/tegra114.dtsi
+ create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
