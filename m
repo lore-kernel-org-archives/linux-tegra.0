@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [v4 1/6] ARM: tegra: Use DT /cpu node to detect number of CPU core
-Date: Thu, 24 Jan 2013 13:10:21 +0200
-Message-ID: <1359025829-22306-2-git-send-email-hdoyu@nvidia.com>
+Subject: [v4 5/6] ARM: dt: tegra114: Add new board, Pluto
+Date: Thu, 24 Jan 2013 13:10:25 +0200
+Message-ID: <1359025829-22306-6-git-send-email-hdoyu@nvidia.com>
 References: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,46 +12,55 @@ To: linux-tegra@vger.kernel.org
 Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra SoCs does not use SCU based to detect CPU core numbers but they
-use DT /cpu node. If it's not provided or failed, it continues as a
-single core.
+Add a new evaluation board, Pluto for Tegra 114 family.
 
 Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
-Reviewed-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 ---
-Based on the discussion:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/140608.html
----
- arch/arm/mach-tegra/platsmp.c |   15 ---------------
- 1 file changed, 15 deletions(-)
+ arch/arm/boot/dts/Makefile           |    3 ++-
+ arch/arm/boot/dts/tegra114-pluto.dts |   21 +++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
 
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 3ec7fc4..ee847896 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -177,23 +177,8 @@ done:
- 	return status;
- }
- 
--/*
-- * Initialise the CPU possible map early - this describes the CPUs
-- * which may be present or become present in the system.
-- */
- static void __init tegra_smp_init_cpus(void)
- {
--	unsigned int i, ncores = scu_get_core_count(scu_base);
--
--	if (ncores > nr_cpu_ids) {
--		pr_warn("SMP: %u cores greater than maximum (%u), clipping\n",
--			ncores, nr_cpu_ids);
--		ncores = nr_cpu_ids;
--	}
--
--	for (i = 0; i < ncores; i++)
--		set_cpu_possible(i, true);
--
- 	set_smp_cross_call(gic_raise_softirq);
- }
- 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 88ea9fc..b53f18f 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -144,7 +144,8 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra20-whistler.dtb \
+ 	tegra30-cardhu-a02.dtb \
+ 	tegra30-cardhu-a04.dtb \
+-	tegra114-dalmore.dtb
++	tegra114-dalmore.dtb \
++	tegra114-pluto.dtb
+ dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2p-ca5s.dtb \
+ 	vexpress-v2p-ca9.dtb \
+ 	vexpress-v2p-ca15-tc1.dtb \
+diff --git a/arch/arm/boot/dts/tegra114-pluto.dts b/arch/arm/boot/dts/tegra114-pluto.dts
+new file mode 100644
+index 0000000..9bea8f5
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra114-pluto.dts
+@@ -0,0 +1,21 @@
++/dts-v1/;
++
++/include/ "tegra114.dtsi"
++
++/ {
++	model = "NVIDIA Tegra114 Pluto evaluation board";
++	compatible = "nvidia,pluto", "nvidia,tegra114";
++
++	memory {
++		reg = <0x80000000 0x40000000>;
++	};
++
++	serial@70006300 {
++		status = "okay";
++		clock-frequency = <408000000>;
++	};
++
++	pmc {
++		nvidia,invert-interrupt;
++	};
++};
 -- 
 1.7.9.5
