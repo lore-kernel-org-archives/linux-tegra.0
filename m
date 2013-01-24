@@ -1,95 +1,66 @@
 From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [v4 0/6] ARM: Initial support for Tegra114 SoC
-Date: Thu, 24 Jan 2013 13:10:20 +0200
-Message-ID: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
+Subject: [v4 4/6] ARM: dt: tegra114: Add new board, Dalmore
+Date: Thu, 24 Jan 2013 13:10:24 +0200
+Message-ID: <1359025829-22306-5-git-send-email-hdoyu@nvidia.com>
+References: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Add a new evaluation board, Dalmore for Tegra 114 family.
 
-This patchset adds initial support for NVIDIA's new Tegra114 SoC
-(T114) based on the ARM Cortex-A15 MP. This has the minimal support to
-allow the kernel to boot up into shell console. This can be used as a
-basis for adding other device drivers for this SoC. Currently there
-are 2 evaluation boards available, "Dalmore" and "Pluto".
-
-For those who want to try:
-
-  $ make ARCH=arm tegra_defconfig
-  $ scripts/config -e ARCH_TEGRA_114_SOC -d SMP -d DRM -d SUSPEND \
-    	-d PM_RUNTIME -d CPU_FREQ -d CPU_IDLE -d HOTPLUG_CPU
-  $ make ARCH=arm menuconfig # if needed to configure more
-  $ make ARCH=arm all -j9
-
-You may also want to enable CONFIG_ARM_APPENDED_DTB and
-CONFIG_ARM_ATAG_DTB_COMPAT if the bootloader doesn't support DT yet.
-
-Verified that this single image booted up with "Dalmore(T114)",
-"Pluto(T114)" and "Cardhu(T30)". For "Cardhu(T30)" with this single
-image, SPI driver doesn't seem to afford the above configuration , it
-hangs at boot-up. With SPI disabled, it's ok.
-
-The following changes since commit ac8963ed5d41573c724ce6c1e17f5182d476f2e6:
-
-  ARM: tegra: Add CPU nodes to Tegra30 device tree (2013-01-23 10:16:18 -0700)
-
-are available in the git repository at:
-
-  git://nv-tegra.nvidia.com/user/hdoyu/linux.git tegra114-base
-
-for you to fetch changes up to ce08503daaffdffd00e8ebdea8c425d68f287efb:
-
-  ARM: tegra: Add initial support for Tegra114 SoC. (2013-01-24 10:10:12 +0200)
-
-----------------------------------------------------------------
-v4:
-Rebased onto Stephen's for-3.9/soc(inc. CCF)
-Removed SCU related pathces.
-
-v3:
-Rebased onto next-20130115.
-Dropped TSC/arch timer patch.
-Use /cpus entry in DT to detect cpu core #.
-
-v2:
-Rebased against the latest Stephen Warren's linux-next_common
-Add /cpus entry in DT
-Add comment to initialize TSC only in secure mode.
-
-Hiroshi Doyu (6):
-      ARM: tegra: Use DT /cpu node to detect number of CPU core
-      ARM: tegra: fuse: Add chip ID Tegra114 0x35
-      ARM: dt: tegra114: Add new SoC base, Tegra114 SoC
-      ARM: dt: tegra114: Add new board, Dalmore
-      ARM: dt: tegra114: Add new board, Pluto
-      ARM: tegra: Add initial support for Tegra114 SoC.
-
- arch/arm/boot/dts/Makefile              |    4 +-
- arch/arm/boot/dts/tegra114-dalmore.dts  |   21 ++++++
- arch/arm/boot/dts/tegra114-pluto.dts    |   21 ++++++
- arch/arm/boot/dts/tegra114.dtsi         |  114 +++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/Kconfig             |   10 +++
- arch/arm/mach-tegra/Makefile            |    1 +
- arch/arm/mach-tegra/board-dt-tegra114.c |   48 +++++++++++++
- arch/arm/mach-tegra/common.c            |    1 +
- arch/arm/mach-tegra/fuse.h              |    1 +
- arch/arm/mach-tegra/platsmp.c           |   15 ----
- 10 files changed, 220 insertions(+), 16 deletions(-)
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+---
+ arch/arm/boot/dts/Makefile             |    3 ++-
+ arch/arm/boot/dts/tegra114-dalmore.dts |   21 +++++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
  create mode 100644 arch/arm/boot/dts/tegra114-dalmore.dts
- create mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
- create mode 100644 arch/arm/boot/dts/tegra114.dtsi
- create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index e44da40..88ea9fc 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -143,7 +143,8 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra20-ventana.dtb \
+ 	tegra20-whistler.dtb \
+ 	tegra30-cardhu-a02.dtb \
+-	tegra30-cardhu-a04.dtb
++	tegra30-cardhu-a04.dtb \
++	tegra114-dalmore.dtb
+ dtb-$(CONFIG_ARCH_VEXPRESS) += vexpress-v2p-ca5s.dtb \
+ 	vexpress-v2p-ca9.dtb \
+ 	vexpress-v2p-ca15-tc1.dtb \
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+new file mode 100644
+index 0000000..a30aca6
+--- /dev/null
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -0,0 +1,21 @@
++/dts-v1/;
++
++/include/ "tegra114.dtsi"
++
++/ {
++	model = "NVIDIA Tegra114 Dalmore evaluation board";
++	compatible = "nvidia,dalmore", "nvidia,tegra114";
++
++	memory {
++		reg = <0x80000000 0x40000000>;
++	};
++
++	serial@70006300 {
++		status = "okay";
++		clock-frequency = <408000000>;
++	};
++
++	pmc {
++		nvidia,invert-interrupt;
++	};
++};
+-- 
+1.7.9.5
