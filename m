@@ -1,88 +1,62 @@
-From: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex
- A9
-Date: Thu, 24 Jan 2013 11:26:27 +0530
-Message-ID: <5100CD0B.4080504@ti.com>
-References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com> <1358833924-24535-2-git-send-email-hdoyu@nvidia.com> <50FE2CA8.20100@ti.com> <50FEC503.2080602@wwwdotorg.org> <CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com> <50FFA620.50008@ti.com> <5100C0F7.9080101@wwwdotorg.org>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] tegra: pwm-backlight: add tegra pwm-bl driver
+Date: Thu, 24 Jan 2013 15:10:08 +0900
+Message-ID: <3533873.vHaQr9T5V0@percival>
+References: <1358591420-7790-1-git-send-email-acourbot@nvidia.com> <20130122070630.GA14728@avionic-0098.adnet.avionic-design.de> <2178053.V0UsGT5PW9@percival>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5100C0F7.9080101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <2178053.V0UsGT5PW9@percival>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen,
+On Wednesday 23 January 2013 17:45:39 Alex Courbot wrote:
+> > I'm confused. Why would you want to call into pwm_bl directly? If we're
+> > going to split this up into separate platform devices, why not look up a
+> > given backlight device and use the backlight API on that? The pieces of
+> > the puzzle are all there: you can use of_find_backlight_by_node() to
+> > obtain a backlight device from a device tree node, so I'd expect the DT
+> > to look something like this:
+> > 	backlight: backlight {
+> > 	
+> > 		compatible = "pwm-backlight";
+> > 		...
+> > 	
+> > 	};
+> 
+> This would still prevent any power control from the backlight driver. I.e.
+> if someone sets the brightness to 0 through sysfs, we cannot power the
+> backlight off as pwm-backlight cannot control more than the PWM without
+> platform callbacks. Backlight could only be powered off as a result of a fb
+> blank event.
 
-On Thursday 24 January 2013 10:34 AM, Stephen Warren wrote:
-> On 01/23/2013 01:58 AM, Santosh Shilimkar wrote:
->> On Tuesday 22 January 2013 10:34 PM, Olof Johansson wrote:
->>> On Tue, Jan 22, 2013 at 8:57 AM, Stephen Warren
->>> <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>> On 01/21/2013 11:07 PM, Santosh Shilimkar wrote:
->>>>> On Tuesday 22 January 2013 11:22 AM, Hiroshi Doyu wrote:
->>>>>> Skip scu_enable(scu_base) if CPU is not Cortex A9 with SCU.
->>>>>>
->>>>>> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>> ---
->>>>> Looks fine. I will also update OMAP code with the new
->>>>> interface. Thanks.
->>>>
->>>> OK, so patch 1/2 at least needs to get into a stable arm-soc branch
->>>> then. Unless there are violent objections, I'll forward patch 1/2 to
->>>> arm-soc and request it be added into a branch so that Tegra and OMAP can
->>>> both merge it into their branches as a dependency. I guess patch 2/2
->>>> could also be included; I don't think it has any complex dependencies
->>>> that'd prevent that, and would help to show how patch 1/2 gets used.
->>>>
->>>> Hiroshi, is this series the only dependency you need for your Tegra114
->>>> series? So, I could merge your Tegra114 series once this series is
->>>> applied?
->>>
->>> For something like this, it might make more sense for us to just apply
->>> the patches for OMAP on top, i.e. we'll pull the short branch from
->>> you, and then we can just apply patches (with maintainer acks) on top,
->>> instead of doing a bunch of single-patch pulls.
->>
->> In case you decide to apply patches, you can use patch in the end
->> of the email for OMAP. Attached the same in case mailer damages it.
->>
->> Btw, I noticed the build error with patch 1/1. Since I wasn't using
->> the first interface in OMAP code, I just bypassed it for testing.
->> I might be missing some dependent patch which added
->> read_cpuid_part_number().
->
-> Thanks for the OMAP patch. I have pushed a couple of temporary and
-> non-stable branches to:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
->
-> Branch scu-base-rework contains just the SCU base address patches. After
-> the few things listed below, I'll rename this branch and send a pull
-> request to arm-soc.
->
-> 1) Olof asked that Russell Ack or otherwise OK Hiroshi's latest versions
-> of the following two patches since he commented on previous versions:
->
-> ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
-> ARM: Add API to detect SCU base address from CP15
->
-> 2) Lorenzo's last comment on "ARM: tegra: Use DT /cpu node to detect
-> number of CPU core" was:
->
-> Please add missing punctuation, reword the commit log to make it clearer.
->
-> ... so that patch needs a reworded commit log.
->
-> 3) This branch needs testing on both Tegra30 and OMAP (I'm away from the
-> office at the moment and can only test on Tegra20 here),
->
-Tested 'scu-base-rework' branch on OMAP and it works just fine. I
-noticed that the OMAP patch subject got line wrapped. Can you
-please fix that before sending pull request ?
-Thanks for picking up the patch.
+In order to solve this, how about adding a backlight notifier call chain to 
+broadcast backlight events in a fashion similar to what is done in 
+fbmem/fbcon? Then backlight_update_status() could send events like 
+BACKLIGHT_EARLY_EVENT_UPDATE and BACKLIGHT_EVENT_UPDATE to which panel drivers 
+could subscribe in order to power the backlight up and down as needed.
 
-Regards,
-Santosh
+Then as the backlight is mentioned in the panel's DT node,
+
+>       panel: panel {
+>               compatible = "...";
+>               ...
+>               backlight = <&backlight>;
+>               ...
+>       };
+
+the panel's driver could listen to backlight-related events and do its stuff 
+transparently, without changing anything to the backlight drivers. This would 
+be a good way to replace pwm-backlight's callbacks for platforms that use the 
+DT, and would also be applicable to any backlight class device.
+
+Generally speaking, having a mean to monitor backlights state in the kernel 
+does not seem too crazy, especially since we already have a way to notify user 
+space through backlight_generate_event().
+
+Richard, does that sound ok to you?
+
+Alex.
