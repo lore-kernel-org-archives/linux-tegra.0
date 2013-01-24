@@ -1,7 +1,7 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v4 6/6] ARM: tegra: Add initial support for Tegra114 SoC.
-Date: Thu, 24 Jan 2013 13:10:26 +0200
-Message-ID: <1359025829-22306-7-git-send-email-hdoyu@nvidia.com>
+Subject: [v4 2/6] ARM: tegra: fuse: Add chip ID Tegra114 0x35
+Date: Thu, 24 Jan 2013 13:10:22 +0200
+Message-ID: <1359025829-22306-3-git-send-email-hdoyu@nvidia.com>
 References: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,115 +12,24 @@ To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add new Tegra 114 SoC support.
+Add tegra_chip_id TEGRA114 0x35
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig             |   10 +++++++
- arch/arm/mach-tegra/Makefile            |    1 +
- arch/arm/mach-tegra/board-dt-tegra114.c |   48 +++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/common.c            |    1 +
- 4 files changed, 60 insertions(+)
- create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
+ arch/arm/mach-tegra/fuse.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index abc688f..eada60f 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -45,6 +45,16 @@ config ARCH_TEGRA_3x_SOC
- 	  Support for NVIDIA Tegra T30 processor family, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
+index ff1383d..da78434 100644
+--- a/arch/arm/mach-tegra/fuse.h
++++ b/arch/arm/mach-tegra/fuse.h
+@@ -37,6 +37,7 @@ enum tegra_revision {
  
-+config ARCH_TEGRA_114_SOC
-+	bool "Enable support for Tegra114 family"
-+	select ARM_GIC
-+	select CPU_V7
-+	select ARM_L1_CACHE_SHIFT_6
-+	select ARM_ARCH_TIMER
-+	help
-+	  Support for NVIDIA Tegra T114 processor family, based on the
-+	  ARM CortexA15MP CPU
-+
- config TEGRA_PCI
- 	bool "PCI Express support"
- 	depends on ARCH_TEGRA_2x_SOC
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 432f2a5..e1eaf30 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+ #define TEGRA20		0x20
+ #define TEGRA30		0x30
++#define TEGRA114	0x35
  
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-dt-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
-+obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= board-dt-tegra114.o
- 
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
- 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra114.c b/arch/arm/mach-tegra/board-dt-tegra114.c
-new file mode 100644
-index 0000000..3ed17ce
---- /dev/null
-+++ b/arch/arm/mach-tegra/board-dt-tegra114.c
-@@ -0,0 +1,48 @@
-+/*
-+ * NVIDIA Tegra114 device tree board support
-+ *
-+ * Copyright (C) 2013 NVIDIA Corporation
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/clocksource.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/hardware/gic.h>
-+
-+#include "board.h"
-+#include "common.h"
-+
-+static void __init tegra114_dt_init(void)
-+{
-+	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-+}
-+
-+static const char * const tegra114_dt_board_compat[] = {
-+	"nvidia,tegra114",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
-+	.smp		= smp_ops(tegra_smp_ops),
-+	.map_io		= tegra_map_common_io,
-+	.init_early	= tegra30_init_early,
-+	.init_irq	= tegra_dt_init_irq,
-+	.handle_irq	= gic_handle_irq,
-+	.init_time	= clocksource_of_init,
-+	.init_machine	= tegra114_dt_init,
-+	.init_late	= tegra_init_late,
-+	.restart	= tegra_assert_system_reset,
-+	.dt_compat	= tegra114_dt_board_compat,
-+MACHINE_END
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 87dd69c..2f13513 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -59,6 +59,7 @@ u32 tegra_uart_config[4] = {
- 
- #ifdef CONFIG_OF
- static const struct of_device_id tegra_dt_irq_match[] __initconst = {
-+	{ .compatible = "arm,cortex-a15-gic", .data = gic_of_init },
- 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init },
- 	{ }
- };
+ extern int tegra_sku_id;
+ extern int tegra_cpu_process_id;
 -- 
 1.7.9.5
