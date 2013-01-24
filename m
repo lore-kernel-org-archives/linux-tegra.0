@@ -1,32 +1,27 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
-Date: Thu, 24 Jan 2013 07:42:06 +0100
-Message-ID: <20130124.084206.122831115046505200.hdoyu@nvidia.com>
-References: <CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com><50FFA620.50008@ti.com><5100C0F7.9080101@wwwdotorg.org>
+From: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: add support for Tegra114 SoC
+Date: Thu, 24 Jan 2013 08:28:04 +0100
+Message-ID: <20130124072804.GL8364@nekote.pengutronix.de>
+References: <1357387486-25966-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5100C0F7.9080101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1357387486-25966-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "santosh.shilimkar-l0cyMroinI0@public.gmane.org" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 24 Jan 2013 06:04:55 +0100:
-
-> Branch scu-base-rework contains just the SCU base address patches. After
-> the few things listed below, I'll rename this branch and send a pull
-> request to arm-soc.
+On Sat, Jan 05, 2013 at 05:34:46PM +0530, Laxman Dewangan wrote:
+> NVIDIA's Tegra114 has following enhanced feature in i2c controller:
+> - Enable/disable control for per packet transfer complete interrupt.
+>   Earlier SoCs could not disable this.
+> - Single clock source for standard/fast and HS mode clock speed.
+>   The clock divisor for fast/standard mode is added into the i2c
+>   controller to meet the HS and standard/fast mode of clock speed
+>   from single source.
 > 
-....
-> 2) Lorenzo's last comment on "ARM: tegra: Use DT /cpu node to detect
-> number of CPU core" was:
-> 
-> Please add missing punctuation, reword the commit log to make it clearer.
-> 
-> ... so that patch needs a reworded commit log.
+> Add support for the above feature to make it functional on T114 SOCs.
 
-I fixed. I'll send this[1] as a part of the "Tegra114 series(v4)" today.
-
-[1] ARM: tegra: Use DT /cpu node to detect number of CPU core
+Thanks, applied to next.
