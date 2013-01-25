@@ -1,44 +1,39 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH v2 03/11] mmc: provide a standard MMC device-tree
- binding parser centrally
-Date: Fri, 25 Jan 2013 14:32:17 +0800
-Message-ID: <1359095537.25175.32.camel@jlo-ubuntu-64.nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: fix compile error when disable CPU_IDLE
+Date: Fri, 25 Jan 2013 14:38:32 +0800
+Message-ID: <1359095912-32455-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: g.liakhovetski@gmx.de
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Guennadi,
+The "sleep.S" file has many functions that be shared by different module
+currently. Not just for CPU idle driver. Make it build as default now.
 
-> MMC defines a number of standard DT bindings. Having each driver parse
-> them individually adds code redundancy and is error prone. Provide a
-> standard function to unify the parsing. After all drivers are
-converted
-> to using it instead of their own parsers, this function can be
-integrated
-> into mmc_alloc_host().
->
-> Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Reported-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I saw you introducing the "mmc_of_parse" API here. It looks pretty
-similar to the "sdhci_get_of_property" that under
-"drivers/mmc/host/sdhci-pltfm.c". Does this function can be enhanced in
-"sdhci_get_of_property" or replaced it? Or its use for different DT
-property bindings, one is for mmc (you introduced here), the other is
-for sdhci. Just curious, how do I determine which one should I use in
-the sdhci/mmc host driver?
-
-And after this one "[PATCH/RFC] mmc: add DT bindings for more MMC
-capability flags", some of the properties parsing were overlap and some
-were not. If the host driver uses the standard property but it was being
-separated to these two different of_parse function, I need to call both
-of them. Sorry, I am not sure the sdhci and mmc do have different
-specific properties and should separate to two different functions.
-
-Thanks,
-Joseph
-
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 432f2a5..200faf2 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -6,10 +6,9 @@ obj-y					+= pmc.o
+ obj-y					+= flowctrl.o
+ obj-y					+= powergate.o
+ obj-y					+= apbio.o
+-obj-y					+= pm.o
++obj-y					+= pm.o sleep.o
+ obj-y					+= reset.o reset-handler.o
+ obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
+-obj-$(CONFIG_CPU_IDLE)			+= sleep.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra20_speedo.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
+ obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= sleep-tegra20.o
+-- 
+1.8.0.3
