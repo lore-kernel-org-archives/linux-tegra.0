@@ -1,39 +1,75 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix compile error when disable CPU_IDLE
-Date: Fri, 25 Jan 2013 14:38:32 +0800
-Message-ID: <1359095912-32455-1-git-send-email-josephl@nvidia.com>
+From: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH v2 03/11] mmc: provide a standard MMC device-tree binding
+ parser centrally
+Date: Fri, 25 Jan 2013 08:55:54 +0100 (CET)
+Message-ID: <Pine.LNX.4.64.1301250848560.17518@axis700.grange>
+References: <1359095537.25175.32.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1359095537.25175.32.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The "sleep.S" file has many functions that be shared by different module
-currently. Not just for CPU idle driver. Make it build as default now.
+Hi Joseph
 
-Reported-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, 25 Jan 2013, Joseph Lo wrote:
+
+> Hi Guennadi,
+> 
+> > MMC defines a number of standard DT bindings. Having each driver parse
+> > them individually adds code redundancy and is error prone. Provide a
+> > standard function to unify the parsing. After all drivers are
+> converted
+> > to using it instead of their own parsers, this function can be
+> integrated
+> > into mmc_alloc_host().
+> >
+> > Signed-off-by: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
+> 
+> I saw you introducing the "mmc_of_parse" API here. It looks pretty
+> similar to the "sdhci_get_of_property" that under
+> "drivers/mmc/host/sdhci-pltfm.c".
+
+Yes, several drivers have their own functions to parse MMC DT bindings, 
+whereas, I think, a common helper function can be used to parse generic 
+MMC bindings.
+
+> Does this function can be enhanced in
+> "sdhci_get_of_property" or replaced it?
+
+The goal is to make all MMC host drivers, running on DT-enabled systems, 
+use the new mmc_of_parse() function and, additionally, their own parser 
+for any their host-specific properties. As I wrote in the patch commit 
+message, if we get all drivers converted to use it, it can be later 
+integrated into mmc_alloc_host().
+
+> Or its use for different DT
+> property bindings, one is for mmc (you introduced here), the other is
+> for sdhci. Just curious, how do I determine which one should I use in
+> the sdhci/mmc host driver?
+
+The best would be to (1) convert SDHCI core to use mmc_of_parse(), (2) 
+have all SDHCI implementations use that feature either implicitly, having 
+SDHCI core call it automatically during its initialisation, or explicitly, 
+during their own probing.
+
+> And after this one "[PATCH/RFC] mmc: add DT bindings for more MMC
+> capability flags", some of the properties parsing were overlap and some
+> were not. If the host driver uses the standard property but it was being
+> separated to these two different of_parse function, I need to call both
+> of them. Sorry, I am not sure the sdhci and mmc do have different
+> specific properties and should separate to two different functions.
+
+As I said, SDHCI (and other host drivers) should be converted to use 
+mmc_of_parse() in addition to their own vendor-specific DT property 
+parsing.
+
+Thanks
+Guennadi
 ---
- arch/arm/mach-tegra/Makefile | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 432f2a5..200faf2 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -6,10 +6,9 @@ obj-y					+= pmc.o
- obj-y					+= flowctrl.o
- obj-y					+= powergate.o
- obj-y					+= apbio.o
--obj-y					+= pm.o
-+obj-y					+= pm.o sleep.o
- obj-y					+= reset.o reset-handler.o
- obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
--obj-$(CONFIG_CPU_IDLE)			+= sleep.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra20_speedo.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra2_emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= sleep-tegra20.o
--- 
-1.8.0.3
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
