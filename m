@@ -1,20 +1,23 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v3 1/2] ARM: Add API to detect SCU base address from CP15
-Date: Mon, 28 Jan 2013 11:03:42 -0700
-Message-ID: <5106BD7E.6020805@wwwdotorg.org>
-References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [v4 1/6] ARM: tegra: Use DT /cpu node to detect number of CPU
+ core
+Date: Mon, 28 Jan 2013 11:04:19 -0700
+Message-ID: <5106BDA3.8090009@wwwdotorg.org>
+References: <1359025829-22306-1-git-send-email-hdoyu@nvidia.com> <1359025829-22306-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1358833924-24535-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, santosh.shilimkar-l0cyMroinI0@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1359025829-22306-2-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Jason Cooper <jason@lakedaemon.net>, Shawn Guo <shawn.guo@linaro.org>, Andrew Lunn <andrew@lunn.ch>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/21/2013 10:52 PM, Hiroshi Doyu wrote:
-> Add API to detect SCU base address from CP15.
+On 01/24/2013 04:10 AM, Hiroshi Doyu wrote:
+> Tegra SoCs does not use SCU based to detect CPU core numbers but they
+> use DT /cpu node. If it's not provided or failed, it continues as a
+> single core.
 
-I've applied these 2 patches and Santosh's OMAP followup to Tegra's
-for-3.9/scu-base-rework branch.
+I've applied patch 1 to Tegra's for-3.9/scu-base-rework branch, and
+patches 2-6 to Tegra's for-3.9/soc-t114 branch.
