@@ -1,32 +1,20 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
-Date: Mon, 28 Jan 2013 14:47:59 +0000
-Message-ID: <20130128144759.GK23505@n2100.arm.linux.org.uk>
-References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com> <1358833924-24535-2-git-send-email-hdoyu@nvidia.com> <50FE2CA8.20100@ti.com> <50FEC503.2080602@wwwdotorg.org> <CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com> <20130128091855.9e89d6da79bf5a264449ea5e@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v3 1/2] ARM: Add API to detect SCU base address from CP15
+Date: Mon, 28 Jan 2013 11:03:42 -0700
+Message-ID: <5106BD7E.6020805@wwwdotorg.org>
+References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130128091855.9e89d6da79bf5a264449ea5e@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@wwwdotorg.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "arnd@arndb.de" <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358833924-24535-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, santosh.shilimkar-l0cyMroinI0@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 28, 2013 at 09:18:55AM +0200, Hiroshi Doyu wrote:
-> Hi Russell,
-> 
-> On Tue, 22 Jan 2013 18:04:46 +0100
-> Olof Johansson <olof@lixom.net> wrote:
-> 
-> > Since Russell had comments on it earlier, I'd like him to give a nod
-> > that he's happy with it too.
-> 
-> Is this ok for you?
-> 
-> The original patch is:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/143552.html
+On 01/21/2013 10:52 PM, Hiroshi Doyu wrote:
+> Add API to detect SCU base address from CP15.
 
-Yes, this version is much better, thanks.
-
-Acked-by: Russell King <rmk+kernel@arm.linux.org.uk>
+I've applied these 2 patches and Santosh's OMAP followup to Tegra's
+for-3.9/scu-base-rework branch.
