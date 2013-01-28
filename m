@@ -1,66 +1,31 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH 1/2] clk: tegra: remove USB from clk init table
-Date: Sun, 27 Jan 2013 23:17:34 +0100
-Message-ID: <1359325055-5160-1-git-send-email-dev@lynxeye.de>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v3 2/2] ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
+Date: Mon, 28 Jan 2013 09:18:55 +0200
+Message-ID: <20130128091855.9e89d6da79bf5a264449ea5e@nvidia.com>
+References: <1358833924-24535-1-git-send-email-hdoyu@nvidia.com>
+	<1358833924-24535-2-git-send-email-hdoyu@nvidia.com>
+	<50FE2CA8.20100@ti.com>
+	<50FEC503.2080602@wwwdotorg.org>
+	<CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMgtaCkiv285TU_vbAokN5M2MrANQ9piDcyXu5YMmbQq3A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The USB clocks are just clock gates, so no need to set a specific clock.
-In fact trying to set a specific clock is just a NOP if the requested
-clockrate is the same as those of the parent (clk_m) or will trigger a
-WARN_ON() if rates don't match up.
+Hi Russell,
 
-As we are not setting a specific rate, nor activating the clocks at
-init, there is no point in keeping the the usb entries in the clock init
-table.
+On Tue, 22 Jan 2013 18:04:46 +0100
+Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
-Trace produced by system with 13MHz clk_m:
+> Since Russell had comments on it earlier, I'd like him to give a nod
+> that he's happy with it too.
 
-tegra_init_from_table: Failed to set rate 12000000 of usbd
-------------[ cut here ]------------
-WARNING: at drivers/clk/tegra/clk.c:64
-tegra_init_from_table+0xc0/0x158()
-Modules linked in:
-[<c0013a84>] (unwind_backtrace+0x0/0xf8) from
-[<c0021a24>](warn_slowpath_common+0x4c/0x64)
-[<c0021a24>] (warn_slowpath_common+0x4c/0x64) from [<c0021a58>]
-(warn_slowpath_null+0x1c/0x24)
-[<c0021a58>] (warn_slowpath_null+0x1c/0x24) from [<c069343c>]
-(tegra_init_from_table+0xc0/0x158)
-[<c069343c>] (tegra_init_from_table+0xc0/0x158) from [<c0694878>]
-(tegra20_clock_init+0x1398/0x13d4)
-[<c0694878>] (tegra20_clock_init+0x1398/0x13d4) from [<c0693298>]
-(of_clk_init+0x30/0x58)
-[<c0693298>] (of_clk_init+0x30/0x58) from [<c0681e5c>]
-(tegra_dt_init_irq+0x8/0x1c)
-[<c0681e5c>] (tegra_dt_init_irq+0x8/0x1c) from [<c067d334>]
-(init_IRQ+0x14/0x1c)
-[<c067d334>] (init_IRQ+0x14/0x1c) from [<c067b6b4>]
-(start_kernel+0x1a0/0x2f8)
-[<c067b6b4>] (start_kernel+0x1a0/0x2f8) from [<0000807c>] (0x807c)
----[ end trace 1b75b31a2719ed1c ]---
----
- drivers/clk/tegra/clk-tegra20.c | 3 ---
- 1 file changed, 3 deletions(-)
+Is this ok for you?
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 5d41569..f08cffc 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1253,9 +1253,6 @@ static __initdata struct tegra_clk_init_table init_table[] = {
- 	{cclk, clk_max, 0, 1},
- 	{uarta, pll_p, 0, 1},
- 	{uartd, pll_p, 0, 1},
--	{usbd, clk_max, 12000000, 0},
--	{usb2, clk_max, 12000000, 0},
--	{usb3, clk_max, 12000000, 0},
- 	{pll_a, clk_max, 56448000, 1},
- 	{pll_a_out0, clk_max, 11289600, 1},
- 	{cdev1, clk_max, 0, 1},
--- 
-1.8.1
+The original patch is:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-January/143552.html
