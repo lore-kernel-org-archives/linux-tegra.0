@@ -1,51 +1,45 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 2/7] ARM: DT: tegra114: add GPIO DT entry
-Date: Tue, 29 Jan 2013 18:26:18 +0530
-Message-ID: <1359464183-6255-3-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 4/7] ARM: DT: tegra114: add pinmux DT entry
+Date: Tue, 29 Jan 2013 18:26:20 +0530
+Message-ID: <1359464183-6255-5-git-send-email-ldewangan@nvidia.com>
 References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: swarren@wwwdotorg.org
-Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra114 has the GPIO controllers with 8 GPIO bank and each bank
-supports 32 pins.
-
-Add DT entry for GPIO controller. Tegra114 GPIO controller is
-compatible with Tegra30 GPIO controller driver.
+Add DT entry for pinmux and drive configuration addresses.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi |   17 +++++++++++++++++
- 1 files changed, 17 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 96a8235..9ce1a68 100644
+index 74f6a77..210b4a7 100644
 --- a/arch/arm/boot/dts/tegra114.dtsi
 +++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -37,6 +37,23 @@
- 		reg = <0x6000c004 0x14c>;
+@@ -91,6 +91,12 @@
+ 		interrupt-controller;
  	};
  
-+	gpio: gpio {
-+		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
-+		reg = <0x6000d000 0x1000>;
-+		interrupts = <0 32 0x04
-+			      0 33 0x04
-+			      0 34 0x04
-+			      0 35 0x04
-+			      0 55 0x04
-+			      0 87 0x04
-+			      0 89 0x04
-+			      0 125 0x04>;
-+		#gpio-cells = <2>;
-+		gpio-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
++	pinmux: pinmux {
++		compatible = "nvidia,tegra114-pinmux";
++		reg = <0x70000868 0x148		/* Pad control registers */
++		       0x70003000 0x40c>;	/* Mux registers */
 +	};
 +
  	serial@70006000 {
