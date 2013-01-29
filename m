@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/7] ARM: tegra114: select PINCTRL for Tegra114 SoC
-Date: Tue, 29 Jan 2013 18:26:17 +0530
-Message-ID: <1359464183-6255-2-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 7/7] ARM: DT: tegra114: add KBC controller DT entry
+Date: Tue, 29 Jan 2013 18:26:23 +0530
+Message-ID: <1359464183-6255-8-git-send-email-ldewangan@nvidia.com>
 References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,26 +12,34 @@ To: swarren@wwwdotorg.org
 Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Select PINCTRL and PINCTRL_TEGRA114 for enabling Tegra114 pincontrol
-driver for Tegra114 SoC.
+NVIDIA's Tegra114 SoCs have the matrix keyboard controller which
+supports 11x8 type of matrix. The number of rows and columns
+are configurable.
+
+Add DT entry for KBC controller.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- arch/arm/mach-tegra/Kconfig |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index eada60f..bde8197 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -51,6 +51,8 @@ config ARCH_TEGRA_114_SOC
- 	select CPU_V7
- 	select ARM_L1_CACHE_SHIFT_6
- 	select ARM_ARCH_TIMER
-+	select PINCTRL
-+	select PINCTRL_TEGRA114
- 	help
- 	  Support for NVIDIA Tegra T114 processor family, based on the
- 	  ARM CortexA15MP CPU
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 17fd061..73a49f5 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -199,6 +199,13 @@
+ 		interrupts = <0 2 0x04>;
+ 	};
+ 
++	kbc {
++		compatible = "nvidia,tegra20-kbc";
++		reg = <0x7000e200 0x100>;
++		interrupts = <0 85 0x04>;
++		status = "disabled";
++	};
++
+ 	pmc {
+ 		compatible = "nvidia,tegra114-pmc", "nvidia,tegra30-pmc";
+ 		reg = <0x7000e400 0x400>;
 -- 
 1.7.1.1
