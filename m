@@ -1,145 +1,60 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 1/1] iommu/tegra: smmu: Support variable MMIO ranges/blocks
-Date: Tue, 29 Jan 2013 10:34:10 +0200
-Message-ID: <1359448450-24894-1-git-send-email-hdoyu@nvidia.com>
-References: <50FD752A.6060706@wwwdotorg.org>
+Subject: [v2 1/1] ARM: dma-mapping: Call arm_dma_set_mask() if no ->set_dma_mask()
+Date: Tue, 29 Jan 2013 14:27:18 +0200
+Message-ID: <1359462438-21006-1-git-send-email-hdoyu@nvidia.com>
+References: <5107B301.2060802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <50FD752A.6060706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5107B301.2060802-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Presently SMMU registers are located in discontiguous 3 blocks. They
-are interleaved by MC registers. Ideally SMMU register blocks should
-be in an independent one block, but it is too late to change this H/W
-design. In the future Tegra chips over some generations, it is
-expected that some of register block "size" can be extended towards
-the end and also more new register blocks will be added at most a few
-blocks. The starting address of each existing block won't change. This
-patch allocates multiple number of register blocks dynamically based
-on the info passed from DT. Those ranges are verified in the
-accessors{read,write}. This may sacrifice some performance because a
-new accessors prevents compiler optimization of a fixed size register
-offset calculation. Since SMMU register accesses are not so frequent,
-this would be acceptable. This patch is necessary to unify
-"tegra-smmu.ko" over some Tegra SoC generations.
+struct dma_map_ops iommu_ops doesn't have ->set_dma_mask, which causes
+crash when dma_set_mask() is called from some driver.
 
 Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/iommu/tegra-smmu.c |   61 ++++++++++++++++++++++++++------------------
- 1 file changed, 36 insertions(+), 25 deletions(-)
+ arch/arm/include/asm/dma-mapping.h |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index fc17889..e62f735 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -293,7 +293,11 @@ struct smmu_debugfs_info {
-  * Per SMMU device - IOMMU device
-  */
- struct smmu_device {
--	void __iomem	*regs[NUM_SMMU_REG_BANKS];
-+	void __iomem	*regbase;	/* register offset base */
-+	void __iomem	**regs;		/* register block start address array */
-+	void __iomem	**rege;		/* register block end address array */
-+	int		nregs;		/* number of register blocks */
-+
- 	unsigned long	iovmm_base;	/* remappable base address */
- 	unsigned long	page_count;	/* total remappable size */
- 	spinlock_t	lock;
-@@ -325,35 +329,33 @@ static struct smmu_device *smmu_handle; /* unique for a system */
-  */
- static inline u32 smmu_read(struct smmu_device *smmu, size_t offs)
+diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+index 5b579b9..63cc49c 100644
+--- a/arch/arm/include/asm/dma-mapping.h
++++ b/arch/arm/include/asm/dma-mapping.h
+@@ -14,6 +14,7 @@
+ #define DMA_ERROR_CODE	(~0)
+ extern struct dma_map_ops arm_dma_ops;
+ extern struct dma_map_ops arm_coherent_dma_ops;
++extern int arm_dma_set_mask(struct device *dev, u64 dma_mask);
+ 
+ static inline struct dma_map_ops *get_dma_ops(struct device *dev)
  {
--	BUG_ON(offs < 0x10);
--	if (offs < 0x3c)
--		return readl(smmu->regs[0] + offs - 0x10);
--	BUG_ON(offs < 0x1f0);
--	if (offs < 0x200)
--		return readl(smmu->regs[1] + offs - 0x1f0);
--	BUG_ON(offs < 0x228);
--	if (offs < 0x284)
--		return readl(smmu->regs[2] + offs - 0x228);
-+	int i;
+@@ -32,7 +33,13 @@ static inline void set_dma_ops(struct device *dev, struct dma_map_ops *ops)
+ 
+ static inline int dma_set_mask(struct device *dev, u64 mask)
+ {
+-	return get_dma_ops(dev)->set_dma_mask(dev, mask);
++	struct dma_map_ops *ops = get_dma_ops(dev);
++	BUG_ON(!ops);
 +
-+	for (i = 0; i < smmu->nregs; i++) {
-+		void __iomem *addr = smmu->regbase + offs;
++	if (ops->set_dma_mask)
++		return ops->set_dma_mask(dev, mask);
 +
-+		BUG_ON(addr < smmu->regs[i]);
-+		if (addr <= smmu->rege[i])
-+			return readl(addr);
-+	}
-+
- 	BUG();
++	return arm_dma_set_mask(dev, mask);
  }
  
- static inline void smmu_write(struct smmu_device *smmu, u32 val, size_t offs)
- {
--	BUG_ON(offs < 0x10);
--	if (offs < 0x3c) {
--		writel(val, smmu->regs[0] + offs - 0x10);
--		return;
--	}
--	BUG_ON(offs < 0x1f0);
--	if (offs < 0x200) {
--		writel(val, smmu->regs[1] + offs - 0x1f0);
--		return;
--	}
--	BUG_ON(offs < 0x228);
--	if (offs < 0x284) {
--		writel(val, smmu->regs[2] + offs - 0x228);
--		return;
-+	int i;
-+
-+	for (i = 0; i < smmu->nregs; i++) {
-+		void __iomem *addr = smmu->regbase + offs;
-+
-+		BUG_ON(addr < smmu->regs[i]);
-+		if (addr <= smmu->rege[i]) {
-+			writel(val, addr);
-+			return;
-+		}
- 	}
-+
- 	BUG();
- }
+ #ifdef __arch_page_to_dma
+@@ -112,8 +119,6 @@ static inline void dma_free_noncoherent(struct device *dev, size_t size,
  
-@@ -1170,7 +1172,13 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
+ extern int dma_supported(struct device *dev, u64 mask);
  
--	for (i = 0; i < ARRAY_SIZE(smmu->regs); i++) {
-+	smmu->nregs = pdev->num_resources;
-+	smmu->regs = devm_kzalloc(dev, 2 * smmu->nregs * sizeof(*smmu->regs),
-+				  GFP_KERNEL);
-+	smmu->rege = smmu->regs + smmu->nregs;
-+	if (!smmu->regs)
-+		return -ENOMEM;
-+	for (i = 0; i < smmu->nregs; i++) {
- 		struct resource *res;
- 
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-@@ -1179,7 +1187,10 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 		smmu->regs[i] = devm_request_and_ioremap(&pdev->dev, res);
- 		if (!smmu->regs[i])
- 			return -EBUSY;
-+		smmu->rege[i] = smmu->regs[i] + resource_size(res);
- 	}
-+	/* Same as "mc" 1st regiter block start address */
-+	smmu->regbase = (void __iomem *)((u32)smmu->regs[0] & ~PAGE_MASK);
- 
- 	err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base, &size);
- 	if (err)
+-extern int arm_dma_set_mask(struct device *dev, u64 dma_mask);
+-
+ /**
+  * arm_dma_alloc - allocate consistent memory for DMA
+  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
 -- 
 1.7.9.5
