@@ -1,93 +1,74 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 5/7] ARM: DT: tegra114: Add i2c controller DT entry
-Date: Tue, 29 Jan 2013 18:26:21 +0530
-Message-ID: <1359464183-6255-6-git-send-email-ldewangan@nvidia.com>
-References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
+From: Andrew Murray <andrew.murray@arm.com>
+Subject: Re: [PATCH 10/14] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Tue, 29 Jan 2013 13:31:40 +0000
+Message-ID: <20130129133140.GA24193@arm.com>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <20130115154038.GA11241@arm.com>
+ <20130115211441.GA13139@avionic-0098.adnet.avionic-design.de>
+ <201301161400.26587.arnd@arndb.de>
+ <20130116161716.GA10630@arm.com>
+ <20130116183101.GA28660@avionic-0098.adnet.avionic-design.de>
+ <20130117154236.GA25943@arm.com>
+ <20130117160501.GC2186@avionic-0098.adnet.avionic-design.de>
+ <20130117162218.GA29016@arm.com>
+ <20130122192901.GE30647@obsidianresearch.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130122192901.GE30647@obsidianresearch.com>
+Content-Disposition: inline
+Sender: linux-pci-owner@vger.kernel.org
+To: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Cc: Thierry Reding <thierry.reding@avionic-design.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra114 has 5 i2c controllers. These controllers have
-additional feature/configurations to make it functional over
-Tegra30's i2c controller driver.
+On Tue, Jan 22, 2013 at 07:29:01PM +0000, Jason Gunthorpe wrote:
+> On Thu, Jan 17, 2013 at 04:22:18PM +0000, Andrew Murray wrote:
+> 
+> > > In either of those cases, does it make sense to use the MSI support
+> > > outside the scope of the PCI infrastructure? That is, would devices
+> > > other than PCI devices be able to generate an MSI?
+> > 
+> > I've come around to your way of thinking. Your approach sounds good for
+> > registration of MSI ops - let the RC host driver do it (it probably has its
+> > own), or use a helper for following a phandle to get ops that are not part
+> > of the driver. MSIs won't be used outside of PCI devices.
+> 
+> Here is a bit of additional info on some MSI stuff..
+> 
+> This can be pretty complex. For instance on hyper transport systems
+> the PCI to HT bridge has an MSI controller that maps between PCI and
+> HT MSI formats, that mapping is configurable, so technically each
+> brige could be considered a MSI controller. Typically the mapping
+> controllers are all setup the same so there is not much problem with
+> this. However *native* HT devices can (which are super rare) can use a
+> different MSI format than PCI devices. From a linux perspective HT is
+> just a variant of PCI.
+>  
+> On x86 the MSI is delivered to the CPU APIC complex which converts it
+> into a vectored interrupt - part of the value of MSI is that the MSI
+> data can vector the interrupt to a specific CPU, or group of CPUs or
+> whatever.
+> 
+> Presumably SMP ARMs will evolve similar MSI based interrupt vectoring
+> capabilities, and presumably on-chip, non-PCI peripherals will evolve
+> options to use MSI as well (ie multi-queue ethernet). So it might be
+> worth giving some thought to how things could migrate in that
+> direction someday.
+> 
+> I have a bit hacky MSI driver for Kirkwood, this work you have to
+> generalize the interface could let me actually upstream it :) The MSI
+> is built using the Host2CPU doorbell registers, so it is entirely
+> unrelated to the PCI-E RC driver.
+> 
+> However, my use of the MSI driver on kirkwood is to assign MSIs to a
+> PCI-E device via non-standard registers, more like an on chip
+> peripheral. This is because the Host2CPU doorbell doesn't fit 100%
+> perfectly with the standard PCI MSI stuff, and the hardware has funny
+> needs.. So an 'allocate a MSI interrupt' API would be snazzy too :)
 
-Add DT entry for i2c controllers and make it compatible with
-"nvidia,tegra114-i2c".
+Thanks for this. I believe Thierry may be working on improving the MSI
+API - so perhaps we can see where that takes us.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- arch/arm/boot/dts/tegra114.dtsi |   45 +++++++++++++++++++++++++++++++++++++++
- 1 files changed, 45 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 210b4a7..74d18b2 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -129,6 +129,51 @@
- 		status = "disabled";
- 	};
- 
-+	i2c@7000c000 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000c000 0x100>;
-+		interrupts = <0 38 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	i2c@7000c400 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000c400 0x100>;
-+		interrupts = <0 84 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	i2c@7000c500 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000c500 0x100>;
-+		interrupts = <0 92 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	i2c@7000c700 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000c700 0x100>;
-+		interrupts = <0 120 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
-+	i2c@7000d000 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000d000 0x100>;
-+		interrupts = <0 53 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	rtc {
- 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x7000e000 0x100>;
--- 
-1.7.1.1
+Andrew Murray
