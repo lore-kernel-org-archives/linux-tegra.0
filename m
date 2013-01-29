@@ -1,39 +1,34 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] clk: tegra: add ac97 controller clock
-Date: Mon, 28 Jan 2013 14:17:55 -0700
-Message-ID: <5106EB03.6080606@wwwdotorg.org>
-References: <1359325055-5160-1-git-send-email-dev@lynxeye.de>  <1359325055-5160-2-git-send-email-dev@lynxeye.de>  <5106CE6D.9030008@wwwdotorg.org> <1359401144.1558.11.camel@tellur>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/3] ARM: dt: tegra30: Rename "smmu" to "iommu"
+Date: Tue, 29 Jan 2013 10:30:29 +0200
+Message-ID: <1359448231-24546-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1359401144.1558.11.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/28/2013 12:25 PM, Lucas Stach wrote:
-> Am Montag, den 28.01.2013, 12:15 -0700 schrieb Stephen Warren:
->> On 01/27/2013 03:17 PM, Lucas Stach wrote:
->>> AC97 controller clock is hardwired to pll_a_out0.
->>
->> One more comment here; don't you need to add this clock into
->> audio_parents[]?
->>
-> Yeah it's documented that AC97 can be used as audio_sync_clock, but for
-> one I haven't tested this
+Use functional name for DT entry instead of h/w name.
 
-I expect there are quite a few of the clock driver table entries that
-aren't tested. I still think we should add them though, once the clocks
-they refer to actually exist.
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra30.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> and also ac97 clock == pll_a_out0, so you can
-> just as well use the pll out in that case.
-
-I suspect that "ac97 clock == pll_a_out0" isn't categorically true; it's
-quite possible that the TRM simply doesn't document the mux
-register/field for the ac97 clock since the ac97 module is considered
-deprecated. The diagram at the end of section 5.2.3 "Audio Clocks"
-certainly implies that all of the i2s*, spdifout, and ac97 clocks have
-the same structure.
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 2de8b91..c5db29d 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -406,7 +406,7 @@
+ 		interrupts = <0 77 0x04>;
+ 	};
+ 
+-	smmu {
++	iommu {
+ 		compatible = "nvidia,tegra30-smmu";
+ 		reg = <0x7000f010 0x02c
+ 		       0x7000f1f0 0x010
+-- 
+1.7.9.5
