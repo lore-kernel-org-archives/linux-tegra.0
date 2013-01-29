@@ -1,20 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: dt: tegra30: Rename "smmu" to "iommu"
-Date: Tue, 29 Jan 2013 11:00:56 -0700
-Message-ID: <51080E58.7060908@wwwdotorg.org>
-References: <1359448231-24546-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH 6/7] ARM: DT: tegra114:add aliases and DMA requestor for
+ serial controller
+Date: Tue, 29 Jan 2013 11:10:15 -0700
+Message-ID: <51081087.5040801@wwwdotorg.org>
+References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com> <1359464183-6255-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1359448231-24546-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1359464183-6255-7-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/29/2013 01:30 AM, Hiroshi Doyu wrote:
-> Use functional name for DT entry instead of h/w name.
+On 01/29/2013 05:56 AM, Laxman Dewangan wrote:
+> Add APB DMA requestor and serial aliases for serial controller.
+> There will be two serial driver i.e. 8250 based simple serial driver
+> and APB DMA based serial driver for higher baudrate and performace.
+> 
+> The simple serial driver get enabled with compatible nvidia,tegra20-uart
+> and APB DMA based driver will get enabled with compatible
+> nvidia,tegra30-hsuart.
 
-Applied patches 1, 2 to Tegra's for-3.9/dt branch, and squashed patch 3
-into Tegra's for-3.9/soc-t114 branch.
+I also can't apply this patch yet since it depends on the APB DMA DT
+node which as I mentioned I'm not apply yet.
