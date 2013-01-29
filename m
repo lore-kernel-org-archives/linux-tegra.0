@@ -1,99 +1,72 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 6/7] ARM: DT: tegra114:add aliases and DMA requestor for serial controller
-Date: Tue, 29 Jan 2013 18:26:22 +0530
-Message-ID: <1359464183-6255-7-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 3/7] ARM: DT: tegra114: add APB DMA controller DT entry
+Date: Tue, 29 Jan 2013 18:26:19 +0530
+Message-ID: <1359464183-6255-4-git-send-email-ldewangan@nvidia.com>
 References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1359464183-6255-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add APB DMA requestor and serial aliases for serial controller.
-There will be two serial driver i.e. 8250 based simple serial driver
-and APB DMA based serial driver for higher baudrate and performace.
+NVIDIA's Tegra114 has 32 channels APB DMA controller. Add DT entry for
+APB DMA controllers and make it compatible with "nvidia,tegra114-apbdma".
 
-The simple serial driver get enabled with compatible nvidia,tegra20-uart
-and APB DMA based driver will get enabled with compatible
-nvidia,tegra30-hsuart.
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi |   27 +++++++++++++++++++++++----
- 1 files changed, 23 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |   37 +++++++++++++++++++++++++++++++++++++
+ 1 files changed, 37 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 74d18b2..17fd061 100644
+index 9ce1a68..74f6a77 100644
 --- a/arch/arm/boot/dts/tegra114.dtsi
 +++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -4,6 +4,13 @@
- 	compatible = "nvidia,tegra114";
- 	interrupt-parent = <&gic>;
+@@ -37,6 +37,43 @@
+ 		reg = <0x6000c004 0x14c>;
+ 	};
  
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartb;
-+		serial2 = &uartc;
-+		serial3 = &uartd;
++	apbdma: dma {
++		compatible = "nvidia,tegra114-apbdma";
++		reg = <0x6000a000 0x1400>;
++		interrupts = <0 104 0x04
++			      0 105 0x04
++			      0 106 0x04
++			      0 107 0x04
++			      0 108 0x04
++			      0 109 0x04
++			      0 110 0x04
++			      0 111 0x04
++			      0 112 0x04
++			      0 113 0x04
++			      0 114 0x04
++			      0 115 0x04
++			      0 116 0x04
++			      0 117 0x04
++			      0 118 0x04
++			      0 119 0x04
++			      0 128 0x04
++			      0 129 0x04
++			      0 130 0x04
++			      0 131 0x04
++			      0 132 0x04
++			      0 133 0x04
++			      0 134 0x04
++			      0 135 0x04
++			      0 136 0x04
++			      0 137 0x04
++			      0 138 0x04
++			      0 139 0x04
++			      0 140 0x04
++			      0 141 0x04
++			      0 142 0x04
++			      0 143 0x04>;
 +	};
 +
- 	gic: interrupt-controller {
- 		compatible = "arm,cortex-a15-gic";
- 		#interrupt-cells = <3>;
-@@ -97,35 +104,47 @@
- 		       0x70003000 0x40c>;	/* Mux registers */
- 	};
- 
--	serial@70006000 {
-+	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra30-uart", "nvidia,tegra20-uart" and to enable
-+	 * the APB DMA based serial driver, the comptible is
-+	 * "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart".
-+	 */
-+	uarta: serial@70006000 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 8>;
- 		status = "disabled";
- 	};
- 
--	serial@70006040 {
-+	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 9>;
- 		status = "disabled";
- 	};
- 
--	serial@70006200 {
-+	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 10>;
- 		status = "disabled";
- 	};
- 
--	serial@70006300 {
-+	uartd: serial@70006300 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 19>;
- 		status = "disabled";
- 	};
- 
+ 	gpio: gpio {
+ 		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
+ 		reg = <0x6000d000 0x1000>;
 -- 
 1.7.1.1
