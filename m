@@ -1,283 +1,48 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 1/4] video: panel: add CLAA101WA01A panel support
-Date: Wed, 30 Jan 2013 12:02:16 +0900
-Message-ID: <1359514939-15653-2-git-send-email-acourbot@nvidia.com>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [arm-tegra:for-3.9/arm-timer-rework 11/12] arch/arm/mach-imx/imx31-dt.c:36:2:
+ warning: initialization from incompatible pointer type
+Date: Tue, 29 Jan 2013 20:47:28 -0700
+Message-ID: <510897D0.2010001@wwwdotorg.org>
+References: <51081b3d.Rfc8JxYDG0uLRpnk%fengguang.wu@intel.com> <51081F64.8040604@wwwdotorg.org> <20130130013524.GA11967@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1359514939-15653-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Mark Zhang <markz@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130130013524.GA11967@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Fengguang Wu <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Sascha Hauer (s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org)" <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the Chunghwa CLAA101WA01A display panel.
+On 01/29/2013 06:35 PM, Fengguang Wu wrote:
+> On Tue, Jan 29, 2013 at 12:13:40PM -0700, Stephen Warren wrote:
+>> On 01/29/2013 11:55 AM, kbuild test robot wrote:
+>>> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.9/arm-timer-rework
+>>> head:   ae278a935f086775e8ae31a8ec9f7224ea25ea3c
+>>> commit: 6bb27d7349db51b50c40534710fe164ca0d58902 [11/12] ARM: delete struct sys_timer
+>>> config: make ARCH=arm imx_v6_v7_defconfig
+>>>
+>>> All warnings:
+>>>
+>>>>> arch/arm/mach-imx/imx31-dt.c:36:2: warning: initialization from incompatible pointer type [enabled by default]
+>>>>> arch/arm/mach-imx/imx31-dt.c:36:2: warning: (near initialization for '__mach_desc_IMX31_DT.init_time') [enabled by default]
+>>
+>> I don't see this warning with gcc-4.5.3, and the warning above doesn't
+>> seem to match the code below at line 36 either. Was the source tree
+>> corrupt somehow?
+> 
+> Stephen, I can reproduce the problem with gcc-4.6.3, but at a
+> different line number (weird):
+> 
+> /c/wfg/sound/arch/arm/mach-imx/imx31-dt.c:51:2: warning: initialization from incompatible pointer type [enabled by default]
+> /c/wfg/sound/arch/arm/mach-imx/imx31-dt.c:51:2: warning: (near initialization for '__mach_desc_IMX31_DT.init_time') [enabled by
+> default]
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- .../video/display/chunghwa,claa101wa01a.txt        |   8 +
- drivers/video/display/Kconfig                      |   8 +
- drivers/video/display/Makefile                     |   1 +
- drivers/video/display/panel-claa101wa01a.c         | 209 +++++++++++++++++++++
- 4 files changed, 226 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/display/chunghwa,claa101wa01a.txt
- create mode 100644 drivers/video/display/panel-claa101wa01a.c
+OK, I've reproduced the problem now, and is indeed real. I'll whip up a
+patch.
 
-diff --git a/Documentation/devicetree/bindings/video/display/chunghwa,claa101wa01a.txt b/Documentation/devicetree/bindings/video/display/chunghwa,claa101wa01a.txt
-new file mode 100644
-index 0000000..cfdc7fd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/display/chunghwa,claa101wa01a.txt
-@@ -0,0 +1,8 @@
-+Chunghwa CLAA101WA01A Display Panel
-+
-+Required properties:
-+- compatible: "chunghwa,claa101wa01a"
-+- pnl-supply: regulator controlling power supply to the panel
-+- bl-supply: regulator controlling power supply to the backlight
-+- pnl-enable-gpios: GPIO that enables the panel
-+- bl-enable-gpios: GPIO that enables the backlight
-diff --git a/drivers/video/display/Kconfig b/drivers/video/display/Kconfig
-index 9ca2e60..6902abb 100644
---- a/drivers/video/display/Kconfig
-+++ b/drivers/video/display/Kconfig
-@@ -32,4 +32,12 @@ config DISPLAY_PANEL_R61517
- 
- 	  If you are in doubt, say N.
- 
-+config DISPLAY_PANEL_CLAA101WA01A
-+	tristate "Chunghwa CLAA101WA01A Display Panel"
-+	select BACKLIGHT_PWM
-+	---help---
-+	  Support for the Chunghwa CLAA101WA01A Display Panel.
-+
-+	  If you are in doubt, say N.
-+
- endif # DISPLAY_CORE
-diff --git a/drivers/video/display/Makefile b/drivers/video/display/Makefile
-index ec557a1..19084a2 100644
---- a/drivers/video/display/Makefile
-+++ b/drivers/video/display/Makefile
-@@ -2,3 +2,4 @@ obj-$(CONFIG_DISPLAY_CORE) += display-core.o
- obj-$(CONFIG_DISPLAY_PANEL_DPI) += panel-dpi.o
- obj-$(CONFIG_DISPLAY_PANEL_R61505) += panel-r61505.o
- obj-$(CONFIG_DISPLAY_PANEL_R61517) += panel-r61517.o
-+obj-$(CONFIG_DISPLAY_PANEL_CLAA101WA01A) += panel-claa101wa01a.o
-diff --git a/drivers/video/display/panel-claa101wa01a.c b/drivers/video/display/panel-claa101wa01a.c
-new file mode 100644
-index 0000000..93ae86b
---- /dev/null
-+++ b/drivers/video/display/panel-claa101wa01a.c
-@@ -0,0 +1,209 @@
-+/*
-+ * CLAA101WA01A Display Panel
-+ *
-+ * Copyright (C) 2013 NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+
-+#include <video/display.h>
-+
-+#define CLAA101WA01A_WIDTH	223
-+#define CLAA101WA01A_HEIGHT	125
-+
-+struct panel_claa101 {
-+	struct display_entity entity;
-+	struct regulator *vdd_pnl;
-+	struct regulator *vdd_bl;
-+	/* Enable GPIOs */
-+	int pnl_enable;
-+	int bl_enable;
-+};
-+
-+#define to_panel_claa101(p)	container_of(p, struct panel_claa101, entity)
-+
-+static int panel_claa101_set_state(struct display_entity *entity,
-+				   enum display_entity_state state)
-+{
-+	struct panel_claa101 *panel = to_panel_claa101(entity);
-+
-+	/* OFF and STANDBY are equivalent to us */
-+	if (state == DISPLAY_ENTITY_STATE_STANDBY)
-+		state = DISPLAY_ENTITY_STATE_OFF;
-+
-+	switch (state) {
-+	case DISPLAY_ENTITY_STATE_OFF:
-+	case DISPLAY_ENTITY_STATE_STANDBY:
-+		if (entity->source)
-+			display_entity_set_stream(entity->source,
-+						 DISPLAY_ENTITY_STREAM_STOPPED);
-+
-+		/* TODO error checking? */
-+		gpio_set_value_cansleep(panel->bl_enable, 0);
-+		usleep_range(10000, 10000);
-+		regulator_disable(panel->vdd_bl);
-+		usleep_range(200000, 200000);
-+		gpio_set_value_cansleep(panel->pnl_enable, 0);
-+		regulator_disable(panel->vdd_pnl);
-+		break;
-+
-+	case DISPLAY_ENTITY_STATE_ON:
-+		regulator_enable(panel->vdd_pnl);
-+		gpio_set_value_cansleep(panel->pnl_enable, 1);
-+		usleep_range(200000, 200000);
-+		regulator_enable(panel->vdd_bl);
-+		usleep_range(10000, 10000);
-+		gpio_set_value_cansleep(panel->bl_enable, 1);
-+
-+		if (entity->source)
-+			display_entity_set_stream(entity->source,
-+					      DISPLAY_ENTITY_STREAM_CONTINUOUS);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int panel_claa101_get_modes(struct display_entity *entity,
-+				   const struct videomode **modes)
-+{
-+	/* TODO get modes from EDID? */
-+	return 0;
-+}
-+
-+static int panel_claa101_get_size(struct display_entity *entity,
-+				  unsigned int *width, unsigned int *height)
-+{
-+	*width = CLAA101WA01A_WIDTH;
-+	*height = CLAA101WA01A_HEIGHT;
-+
-+	return 0;
-+}
-+
-+static int panel_claa101_get_params(struct display_entity *entity,
-+				 struct display_entity_interface_params *params)
-+{
-+	return 0;
-+}
-+
-+static const struct display_entity_control_ops panel_claa101_control_ops = {
-+	.set_state = panel_claa101_set_state,
-+	.get_modes = panel_claa101_get_modes,
-+	.get_size = panel_claa101_get_size,
-+	.get_params = panel_claa101_get_params,
-+};
-+
-+static int __init panel_claa101_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct panel_claa101 *panel;
-+	int err;
-+
-+	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
-+	if (!panel)
-+		return -ENOMEM;
-+
-+	panel->vdd_pnl = devm_regulator_get(dev, "pnl");
-+	if (IS_ERR(panel->vdd_pnl)) {
-+		dev_err(dev, "cannot get vdd regulator\n");
-+		return PTR_ERR(panel->vdd_pnl);
-+	}
-+
-+	panel->vdd_bl = devm_regulator_get(dev, "bl");
-+	if (IS_ERR(panel->vdd_bl)) {
-+		dev_err(dev, "cannot get bl regulator\n");
-+		return PTR_ERR(panel->vdd_bl);
-+	}
-+
-+	err = of_get_named_gpio(dev->of_node, "pnl-enable-gpios", 0);
-+	if (err < 0) {
-+		dev_err(dev, "cannot find panel enable GPIO!\n");
-+		return err;
-+	}
-+	panel->pnl_enable = err;
-+	err = devm_gpio_request_one(dev, panel->pnl_enable,
-+				    GPIOF_DIR_OUT | GPIOF_INIT_LOW, "panel");
-+	if (err < 0) {
-+		dev_err(dev, "cannot acquire panel enable GPIO!\n");
-+		return err;
-+	}
-+
-+	err = of_get_named_gpio(dev->of_node, "bl-enable-gpios", 0);
-+	if (err < 0) {
-+		dev_err(dev, "cannot find backlight enable GPIO!\n");
-+		return err;
-+	}
-+	panel->bl_enable = err;
-+	err = devm_gpio_request_one(dev, panel->bl_enable,
-+				   GPIOF_DIR_OUT | GPIOF_INIT_LOW, "backlight");
-+	if (err < 0) {
-+		dev_err(dev, "cannot acquire backlight enable GPIO!\n");
-+		return err;
-+	}
-+
-+	panel->entity.dev = dev;
-+	panel->entity.ops.ctrl = &panel_claa101_control_ops;
-+	err = display_entity_register(&panel->entity);
-+	if (err < 0)
-+		return err;
-+
-+	platform_set_drvdata(pdev, panel);
-+
-+	dev_info(dev, "%s successful\n", __func__);
-+
-+	return 0;
-+}
-+
-+static int __exit panel_claa101_remove(struct platform_device *pdev)
-+{
-+	struct panel_claa101 *panel = platform_get_drvdata(pdev);
-+
-+	display_entity_unregister(&panel->entity);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_OF
-+static struct of_device_id panel_claa101_of_match[] = {
-+	{ .compatible = "chunghwa,claa101wa01a", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, pwm_backlight_of_match);
-+#else
-+#endif
-+
-+static const struct dev_pm_ops panel_claa101_dev_pm_ops = {
-+};
-+
-+static struct platform_driver panel_claa101_driver = {
-+	.probe = panel_claa101_probe,
-+	.remove = panel_claa101_remove,
-+	.driver = {
-+		.name = "panel_claa101wa01a",
-+		.owner = THIS_MODULE,
-+#ifdef CONFIG_PM
-+		.pm = &panel_claa101_dev_pm_ops,
-+#endif
-+#ifdef CONFIG_OF
-+		.of_match_table	= of_match_ptr(panel_claa101_of_match),
-+#endif
-+	},
-+};
-+
-+module_platform_driver(panel_claa101_driver);
-+
-+MODULE_AUTHOR("Alexandre Courbot <acourbot@nvidia.com>");
-+MODULE_DESCRIPTION("Chunghwa CLAA101WA01A Display Panel");
-+MODULE_LICENSE("GPL");
--- 
-1.8.1.1
+The very very odd thing is that imx31-dt.c is only compiled if
+CONFIG_MACH_IMX31_DT, and imx_v6_v7_defconfig doesn't specify a value
+for that option, so it's disabled when I "make imx_v6_v7_defconfig". If
+I manually enable the option via "make menuconfig", then I do see this
+problem.
