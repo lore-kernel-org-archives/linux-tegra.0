@@ -1,36 +1,160 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/7] ARM: DT: tegra114: add APB DMA controller DT entry
-Date: Tue, 29 Jan 2013 21:01:29 -0700
-Message-ID: <51089B19.8060204@wwwdotorg.org>
-References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com> <1359464183-6255-4-git-send-email-ldewangan@nvidia.com> <510809FC.2080806@wwwdotorg.org> <5108998B.4040809@nvidia.com>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 3/4] drm: tegra: use the Common Display Framework
+Date: Wed, 30 Jan 2013 14:50:00 +0800
+Message-ID: <5108C298.1000500@gmail.com>
+References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-4-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5108998B.4040809-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1359514939-15653-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/29/2013 08:54 PM, Laxman Dewangan wrote:
-> On Tuesday 29 January 2013 11:12 PM, Stephen Warren wrote:
->> On 01/29/2013 05:56 AM, Laxman Dewangan wrote:
->>> NVIDIA's Tegra114 has 32 channels APB DMA controller. Add DT entry for
->>> APB DMA controllers and make it compatible with
->>> "nvidia,tegra114-apbdma".
->> The APB DMA controller node needs a clocks property. The same goes for
->> I2C and KBC. I'd like to avoid merging those 3 patches until the
->> Tegra114 clock patches are present, since the nodes won't be useful
->> until then anyway. I expect the clock patches will be merged in 3.10.
+On 01/30/2013 11:02 AM, Alexandre Courbot wrote:
+> Make the tegra-drm driver use the Common Display Framework, letting it
+> control the panel state according to the DPMS status.
 > 
-> I think clock patches can be posted on top of this as Peter is working.
-> Although, the driver will fail in clk_get() but still I think this can
-> be apply to populate the dts file with controller specific information.
+> A "nvidia,panel" property is added to the output node of the Tegra DC
+> that references the panel connected to a given output.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+[...]
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index 741b5dc..5e63c56 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_gem_cma_helper.h>
+>  #include <drm/drm_fb_cma_helper.h>
+>  #include <drm/drm_fixed.h>
+> +#include <video/display.h>
+>  
+>  struct tegra_framebuffer {
+>  	struct drm_framebuffer base;
+> @@ -147,6 +148,9 @@ struct tegra_output {
+>  
+>  	struct drm_encoder encoder;
+>  	struct drm_connector connector;
+> +	struct display_entity this;
+> +	struct display_entity *output;
 
-While it would be physically possible for me to apply these patches now
-and rely on Peter to add the clocks properties later, there's no point
-in doing so, since as you say the drivers won't work with just these
-patches. There will be less churn if we simply wait for the Tegra114
-clock driver first, and then apply patches to add complete and working
-DT nodes for all the devices.
+Could you pick up a somewhat meaningful name? You know, there are too
+many variables with name "drm/connector/output/encoder"... :)
+
+> +	struct display_entity_notifier display_notifier;
+>  };
+>  
+[...]
+> +static int display_notify_callback(struct display_entity_notifier *notifier,
+> +				   struct display_entity *entity, int event)
+> +{
+> +	struct tegra_output *output = display_notifier_to_output(notifier);
+> +	struct device_node *pnode;
+> +
+> +	switch (event) {
+> +	case DISPLAY_ENTITY_NOTIFIER_CONNECT:
+> +		if (output->output)
+> +			break;
+> +
+> +		pnode = of_parse_phandle(output->of_node, "nvidia,panel", 0);
+> +		if (!pnode)
+> +			break;
+> +
+> +		if (entity->dev && entity->dev->of_node == pnode) {
+> +			dev_dbg(output->dev, "connecting panel\n");
+> +			output->output = display_entity_get(entity);
+> +			display_entity_connect(&output->this, output->output);
+> +		}
+> +		of_node_put(pnode);
+> +
+> +		break;
+> +
+> +	case DISPLAY_ENTITY_NOTIFIER_DISCONNECT:
+> +		if (!output->output || output->output != entity)
+> +			break;
+> +
+> +		dev_dbg(output->dev, "disconnecting panel\n");
+> +		display_entity_disconnect(&output->this, output->output);
+> +		output->output = NULL;
+> +		display_entity_put(&output->this);
+
+No "display_entity_get" for "output->this", so I don't think we need
+"display_entity_put" here. If you register this entity with "release"
+callback and you wanna release "output->this", call the "release"
+function manually.
+
+Only when you have "display_entity_get", use "display_entity_put" to
+release.
+
+> +
+> +		break;
+> +
+> +	default:
+> +		dev_dbg(output->dev, "unhandled display event\n");
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+[...]
+>  int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>  {
+>  	int connector, encoder, err;
+> @@ -250,6 +341,23 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>  
+>  	output->encoder.possible_crtcs = 0x3;
+>  
+> +	/* register display entity */
+> +	memset(&output->this, 0, sizeof(output->this));
+> +	output->this.dev = drm->dev;
+
+Use "output->dev" here. Actually the device you wanna register it to
+display entity is the "encoder"(in drm terms), not "drm->dev". If we use
+"drm->dev" here, we will have all same device for all encoders(HDMI,
+DSI...).
+
+> +	output->this.ops.video = &tegra_output_video_ops;
+> +	err = display_entity_register(&output->this);
+> +	if (err) {
+> +		dev_err(output->dev, "cannot register display entity\n");
+> +		return err;
+> +	}
+> +
+> +	/* register display notifier */
+> +	output->display_notifier.dev = NULL;
+
+Set "display_notifier.dev" to NULL makes we have to compare with every
+display entity, just like what you do in "display_notify_callback":
+
+entity->dev && entity->dev->of_node == pnode
+
+So can we get the "struct device *" of panel here? Seems currently the
+"of" framework doesn't allow "device_node -> device".
+
+> +	output->display_notifier.notify = display_notify_callback;
+> +	err = display_entity_register_notifier(&output->display_notifier);
+> +	if (err)
+> +		return err;
+> +
+>  	return 0;
+>  
+>  free_hpd:
+> @@ -260,6 +368,12 @@ free_hpd:
+>  
+>  int tegra_output_exit(struct tegra_output *output)
+>  {
+> +	if (output->output)
+> +		display_entity_put(output->output);
+> +
+> +	display_entity_unregister_notifier(&output->display_notifier);
+> +	display_entity_unregister(&output->this);
+> +
+>  	if (gpio_is_valid(output->hpd_gpio)) {
+>  		free_irq(output->hpd_irq, output);
+>  		gpio_free(output->hpd_gpio);
+> 
