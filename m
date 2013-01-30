@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 4/8] ARM: tegra: cpuidle enhancements
-Date: Wed, 30 Jan 2013 14:42:35 -0700
-Message-ID: <1359582159-28816-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 6/8] ARM: tegra: add Tegra114 SoC support
+Date: Wed, 30 Jan 2013 14:42:37 -0700
+Message-ID: <1359582159-28816-6-git-send-email-swarren@wwwdotorg.org>
 References: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1359582159-28816-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,45 +10,68 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This pull request implements a new "LP2" cpuidle state for Tegra20,
-which makes use of the couple cpuidle feature.
+This pull request adds initial support for the Tegra114 SoC, which
+integrates a quad-core ARM Cortex-A15 CPU. I'm proud to observe that we
+posted the initial versions of these patches before the final official
+announcement of this chip.
 
-It is based on (most of) the previous pull request, with tag
-tegra-for-3.9-soc-usb.
+These patches are enough to boot with a UART-based console, support the
+Dalmore and Pluto reference/evaluation boards, instantiate the GPIO and
+pinctrl drivers, and enable a cpuidle state. As yet, no clocks or
+storage devices are supported, but patches for those will follow shortly.
+
+This pull request is based on (most of) the previous pull request with
+tag tegra-for-3.9-soc-cpuidle, followed by a merge of the previous pull
+request with tag tegra-for-3.9-scu-base-rework.
 
 ----------------------------------------------------------------
 
-The following changes since commit 9304512151b0933c454f0842cdb19bec23422bc5:
+The following changes since commit ee059485175b21079d3639f167980d354afb3d4b:
 
-  usb: host: tegra: don't touch EMC clock
+  Merge branch 'for-3.9/scu-base-rework' into for-3.9/soc-t114
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-soc-cpuidle
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-soc-t114
 
-for you to fetch changes up to 1d328606c66b9bb1c0552f585943d596f37ae3b9:
+for you to fetch changes up to 031b77afc374cf1b86dbcda5dfa6e1bbb989836c:
 
-  ARM: tegra20: cpuidle: apply coupled cpuidle for powered-down mode
+  ARM: DT: tegra114: add pinmux DT entry
 
 ----------------------------------------------------------------
 
-Joseph Lo (5):
-      ARM: tegra: add pending SGI checking API
-      ARM: tegra20: cpuidle: add powered-down state for secondary CPU
-      clk: tegra20: Implementing CPU low-power function for tegra_cpu_car_ops
-      ARM: tegra20: flowctrl: add support for cpu_suspend_enter/exit
-      ARM: tegra20: cpuidle: apply coupled cpuidle for powered-down mode
+Hiroshi Doyu (7):
+      ARM: tegra: fuse: Add chip ID Tegra114 0x35
+      ARM: dt: tegra114: Add new SoC base, Tegra114 SoC
+      ARM: dt: tegra114: Add new board, Dalmore
+      ARM: dt: tegra114: Add new board, Pluto
+      ARM: tegra: Add initial support for Tegra114 SoC.
+      ARM: tegra: add AHB entry to Tegra114 DT
+      ARM: tegra: Add SMMU entry to Tegra114 DT
 
- arch/arm/mach-tegra/Kconfig           |    1 +
- arch/arm/mach-tegra/cpuidle-tegra20.c |  197 ++++++++++++++++++++++++++-
- arch/arm/mach-tegra/flowctrl.c        |   38 +++++-
- arch/arm/mach-tegra/flowctrl.h        |    4 +
- arch/arm/mach-tegra/irq.c             |   15 +++
- arch/arm/mach-tegra/irq.h             |   22 +++
- arch/arm/mach-tegra/pm.c              |    3 +
- arch/arm/mach-tegra/sleep-tegra20.S   |  200 ++++++++++++++++++++++++++++
- arch/arm/mach-tegra/sleep.S           |   19 +++
- arch/arm/mach-tegra/sleep.h           |   26 ++++
- drivers/clk/tegra/clk-tegra20.c       |   93 +++++++++++++
- 11 files changed, 609 insertions(+), 9 deletions(-)
- create mode 100644 arch/arm/mach-tegra/irq.h
+Joseph Lo (1):
+      ARM: tegra: add Tegra114 ARM_CPUIDLE_WFI_STATE support
+
+Laxman Dewangan (3):
+      ARM: tegra114: select PINCTRL for Tegra114 SoC
+      ARM: DT: tegra114: add GPIO DT entry
+      ARM: DT: tegra114: add pinmux DT entry
+
+ arch/arm/boot/dts/Makefile              |    4 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts  |   21 ++++
+ arch/arm/boot/dts/tegra114-pluto.dts    |   21 ++++
+ arch/arm/boot/dts/tegra114.dtsi         |  153 ++++++++++++++++++++++++++
+ arch/arm/mach-tegra/Kconfig             |   12 ++
+ arch/arm/mach-tegra/Makefile            |    4 +
+ arch/arm/mach-tegra/board-dt-tegra114.c |   48 ++++++++
+ arch/arm/mach-tegra/common.c            |    1 +
+ arch/arm/mach-tegra/cpuidle-tegra114.c  |   61 ++++++++++
+ arch/arm/mach-tegra/cpuidle.c           |    3 +
+ arch/arm/mach-tegra/cpuidle.h           |    6 +
+ arch/arm/mach-tegra/fuse.h              |    1 +
+ 12 files changed, 334 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/tegra114-dalmore.dts
+ create mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
+ create mode 100644 arch/arm/boot/dts/tegra114.dtsi
+ create mode 100644 arch/arm/mach-tegra/board-dt-tegra114.c
+ create mode 100644 arch/arm/mach-tegra/cpuidle-tegra114.c
