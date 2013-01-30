@@ -1,152 +1,71 @@
-From: Mark Zhang <nvmarkzhang@gmail.com>
-Subject: Re: [RFC 1/4] video: panel: add CLAA101WA01A panel support
-Date: Wed, 30 Jan 2013 15:20:33 +0800
-Message-ID: <5108C9C1.1090707@gmail.com>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-2-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [RFC 3/4] drm: tegra: use the Common Display Framework
+Date: Wed, 30 Jan 2013 08:24:06 +0100
+Message-ID: <20130130072406.GA17128@avionic-0098.mockup.avionic-design.de>
+References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com>
+ <1359514939-15653-4-git-send-email-acourbot@nvidia.com>
+ <5108C298.1000500@gmail.com>
+ <5108C55C.30104@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1359514939-15653-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Mark Zhang <markz@nvidia.com>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, gnurou@gmail.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5108C55C.30104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/30/2013 11:02 AM, Alexandre Courbot wrote:
-> Add support for the Chunghwa CLAA101WA01A display panel.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-[...]
-> +
-> +#include <video/display.h>
-> +
-> +#define CLAA101WA01A_WIDTH	223
-> +#define CLAA101WA01A_HEIGHT	125
 
-If I remember correct, the physical size of the panel can be fetched in
-EDID. If this is correct, we don't have to hard-code here.
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +struct panel_claa101 {
-> +	struct display_entity entity;
-> +	struct regulator *vdd_pnl;
-> +	struct regulator *vdd_bl;
-> +	/* Enable GPIOs */
-> +	int pnl_enable;
-> +	int bl_enable;
-> +};
-> +
-> +#define to_panel_claa101(p)	container_of(p, struct panel_claa101, entity)
-> +
-> +static int panel_claa101_set_state(struct display_entity *entity,
-> +				   enum display_entity_state state)
-> +{
-> +	struct panel_claa101 *panel = to_panel_claa101(entity);
-> +
-> +	/* OFF and STANDBY are equivalent to us */
-> +	if (state == DISPLAY_ENTITY_STATE_STANDBY)
-> +		state = DISPLAY_ENTITY_STATE_OFF;
+On Wed, Jan 30, 2013 at 04:01:48PM +0900, Alex Courbot wrote:
+> On 01/30/2013 03:50 PM, Mark Zhang wrote:
+> >>@@ -147,6 +148,9 @@ struct tegra_output {
+> >>
+> >>  	struct drm_encoder encoder;
+> >>  	struct drm_connector connector;
+> >>+	struct display_entity this;
+> >>+	struct display_entity *output;
+> >
+> >Could you pick up a somewhat meaningful name? You know, there are too
+> >many variables with name "drm/connector/output/encoder"... :)
+>=20
+> Well, it's supposed to be abstract. From the CDF point of view it
+> could be anything besides a panel. I know this makes it an output of
+> an output, but I can't think of anything better right now.
 
-Do we need this? The "switch" below handles the same thing already.
+How about renaming "this" to stream to match with what the output is in
+CDF speak. And the output's output is the panel, right? Why not just
+call it that? Even if it isn't directly connected to a panel entity but
+has indeed a whole pipeline in between, for tegra-drm it is still a
+panel.
 
-> +
-> +	switch (state) {
-> +	case DISPLAY_ENTITY_STATE_OFF:
-> +	case DISPLAY_ENTITY_STATE_STANDBY:
-> +		if (entity->source)
-> +			display_entity_set_stream(entity->source,
-> +						 DISPLAY_ENTITY_STREAM_STOPPED);
-> +
-> +		/* TODO error checking? */
-> +		gpio_set_value_cansleep(panel->bl_enable, 0);
-> +		usleep_range(10000, 10000);
-> +		regulator_disable(panel->vdd_bl);
-> +		usleep_range(200000, 200000);
-> +		gpio_set_value_cansleep(panel->pnl_enable, 0);
-> +		regulator_disable(panel->vdd_pnl);
-> +		break;
-> +
-> +	case DISPLAY_ENTITY_STATE_ON:
-> +		regulator_enable(panel->vdd_pnl);
-> +		gpio_set_value_cansleep(panel->pnl_enable, 1);
-> +		usleep_range(200000, 200000);
-> +		regulator_enable(panel->vdd_bl);
-> +		usleep_range(10000, 10000);
-> +		gpio_set_value_cansleep(panel->bl_enable, 1);
-> +
-> +		if (entity->source)
-> +			display_entity_set_stream(entity->source,
-> +					      DISPLAY_ENTITY_STREAM_CONTINUOUS);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int panel_claa101_get_modes(struct display_entity *entity,
-> +				   const struct videomode **modes)
-> +{
-> +	/* TODO get modes from EDID? */
+Thierry
 
-Why not move the "nvidia,ddc" from encoder's DT to panel's DT? In that
-case, you can get EDID here. I know drm has some helpers to fetch EDID
-but I recall there are some other functions which has no drm
-dependencies which may be suitable for you.
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature
 
-> +	return 0;
-> +}
-[...]
-> +
-> +static int __exit panel_claa101_remove(struct platform_device *pdev)
-> +{
-> +	struct panel_claa101 *panel = platform_get_drvdata(pdev);
-> +
-> +	display_entity_unregister(&panel->entity);
-> +
-> +	return 0;
-> +}
-> +
-> +#ifdef CONFIG_OF
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-We don't need this kind of "ifdef" in upstream kernel.
+iQIcBAEBAgAGBQJRCMqWAAoJEN0jrNd/PrOhezMQAJkU6eHl9u7E/Ok5OjHxq7aZ
+8K+Gmt/DTlSHw0JuVGkd4FzoFGkfx2XFYGyny9uy9cz1zIjpNkJDTMDbLHqc1RM7
+BS11WFvvZlQXXGB+b8l0MzGfeksQObbEIyPVxAT9Z70E6t/aW/89g9kikJ5FuOo1
+8IILt2c2N2HbFITmqHDEiGTb4D5MSsLrc/0wG9kqz5hGZPEwerWV7ggNiSH9D03+
+ZFiRKOdDaS2tOY0Cg1m3i72b8qrj6dsAFKx7GdXOPHjuwWBfjsKOD9iRhffgPzrJ
+/AiYEPWNYnfirF85XDQ0nsB3HTEzmViTHHZBLseTfOnJRb6YLClG7B73hILb+7f3
+AfbeHpM+Ck8c8aGvUnD4GpM5J+N4HnRMI5bn0pWcewrASGOYItLorLSBDwb1vUxv
+Thbp3pE0xbgAsdbv/lFQZHY1v+JlAfiMKzXISF1pg0OWShCjnsVv7j6eenrN7Bm1
+RlJH79q89Ana+d3hPfsdA1B20chuRXxT+i+zMR3z8f9DSsGgQwW/t6Pp59cO0XRM
+bmIh9WVP5aZ7sYRMetPbDPQa+gwThJRa2Ex8meEK5a8N9BQkK/HImDbvPmeOiffn
+vky5bQZCjByMpzh7LYBKJQ7epE63mLPq8oHhF4DJ4j0jBKlr9NrBLdGbuqPL9AwT
+4po7D0NFMR7YuaCrJeCu
+=wg57
+-----END PGP SIGNATURE-----
 
-> +static struct of_device_id panel_claa101_of_match[] = {
-> +	{ .compatible = "chunghwa,claa101wa01a", },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, pwm_backlight_of_match);
-
-What does this mean? Why we need this?
-
-> +#else
-> +#endif
-> +
-> +static const struct dev_pm_ops panel_claa101_dev_pm_ops = {
-> +};
-> +
-> +static struct platform_driver panel_claa101_driver = {
-> +	.probe = panel_claa101_probe,
-> +	.remove = panel_claa101_remove,
-> +	.driver = {
-> +		.name = "panel_claa101wa01a",
-> +		.owner = THIS_MODULE,
-> +#ifdef CONFIG_PM
-> +		.pm = &panel_claa101_dev_pm_ops,
-
-If you haven't implemented this in this patch set, I suggest removing this.
-
-> +#endif
-> +#ifdef CONFIG_OF
-> +		.of_match_table	= of_match_ptr(panel_claa101_of_match),
-> +#endif
-> +	},
-> +};
-> +
-> +module_platform_driver(panel_claa101_driver);
-> +
-> +MODULE_AUTHOR("Alexandre Courbot <acourbot@nvidia.com>");
-> +MODULE_DESCRIPTION("Chunghwa CLAA101WA01A Display Panel");
-> +MODULE_LICENSE("GPL");
-> 
+--xHFwDpU9dbj6ez1V--
