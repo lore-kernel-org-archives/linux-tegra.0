@@ -1,84 +1,57 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 1/8] ARM: tegra: cleanup
-Date: Wed, 30 Jan 2013 14:42:32 -0700
-Message-ID: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 5/8] ARM: tegra: SCU base rework
+Date: Wed, 30 Jan 2013 14:42:36 -0700
+Message-ID: <1359582159-28816-5-git-send-email-swarren@wwwdotorg.org>
+References: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1359582159-28816-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This pull request contains various cleanup and minor changes to core
-Tegra code:
-* Tegra clocksource driver is moved to drivers/clocksource.
-* Various typos, warning cleanup, statics cleanup, section mismatch
-  fixes, etc.
-* Various small fixes/cleanups for CPU/hotplug/SMP code.
+Tegra currently relies on the SCU to determine the number of CPU
+cores, and also hard-codes the SCU physical address.
 
-This pull request is based on a merge of v3.8-rc3 and at least part of
-arm-soc's timer/cleanup branch.
+This series adds a /cpus node to the Tegra device tree, and updates
+the code to rely solely on that to determine the CPU count. A new
+API is introduced to query for the existence of SCU registers, and the
+SCU register address. Tegra and OMAP2 are converted to use these new
+APIs.
+
+This pull request is based on a merge of v3.8-rc3, and arm-soc's
+depends/rmk-perf branch.
 
 ----------------------------------------------------------------
 
-The following changes since commit f3dab3989b4282e448cba0f0708934276dcb413a:
+The following changes since commit 5681f76576af872ced97e8c58ccab3c84a6627e6:
 
-  Merge remote-tracking branch 'korg_arm-soc/timer/cleanup' into for-3.9/cleanup
+  Merge remote-tracking branch 'korg_arm-soc/depends/rmk-perf' into for-3.9/scu-base-rework
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-cleanup
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-scu-base-rework
 
-for you to fetch changes up to 24e30c9417230b359bf6dfeb923e90138df7c112:
+for you to fetch changes up to 80d9375617f7544f7475e7f07003a08930559d43:
 
-  ARM: tegra: fix compile error when disable CPU_IDLE
+  ARM: OMAP: Make use of available scu_a9_get_base() interface
 
 ----------------------------------------------------------------
 
-Hiroshi Doyu (2):
-      clocksource: tegra: cosmetic: Fix error message
-      ARM: tegra: Make variables static
+Hiroshi Doyu (5):
+      ARM: tegra: Add CPU nodes to Tegra20 device tree
+      ARM: tegra: Add CPU nodes to Tegra30 device tree
+      ARM: tegra: Use DT /cpu node to detect number of CPU core
+      ARM: Add API to detect SCU base address from CP15
+      ARM: tegra: Skip scu_enable(scu_base) if not Cortex A9
 
-Joseph Lo (7):
-      ARM: tegra30: fix power up sequence for boot_secondary
-      ARM: tegra: update the cache maintenance order for CPU shutdown
-      ARM: tegra: moving the clock gating procedure to tegra_cpu_kill
-      ARM: tegra: clean up the CPUINIT section
-      ARM: tegra: make device can run on UP
-      ARM: tegra30: make the wait time of CPU power up to proportional to HZ
-      ARM: tegra: fix compile error when disable CPU_IDLE
+Santosh Shilimkar (1):
+      ARM: OMAP: Make use of available scu_a9_get_base() interface
 
-Richard Zhao (1):
-      ARM: tegra: cpufreq: move clk_get/put out of function tegra_cpu_init/exit
-
-Stephen Warren (2):
-      ARM: tegra: move timer.c to drivers/clocksource/
-      ARM: tegra: fix Kconfig warnings when !SMP
-
- arch/arm/Kconfig                                |    1 +
- arch/arm/mach-tegra/Kconfig                     |    4 +-
- arch/arm/mach-tegra/Makefile                    |    6 +-
- arch/arm/mach-tegra/apbio.c                     |    2 +-
- arch/arm/mach-tegra/board-dt-tegra20.c          |   13 +-
- arch/arm/mach-tegra/board-dt-tegra30.c          |    5 +-
- arch/arm/mach-tegra/board.h                     |    1 -
- arch/arm/mach-tegra/common.c                    |    3 +
- arch/arm/mach-tegra/common.h                    |    1 +
- arch/arm/mach-tegra/cpu-tegra.c                 |   40 +--
- arch/arm/mach-tegra/cpuidle-tegra30.c           |    6 +-
- arch/arm/mach-tegra/flowctrl.c                  |    4 +-
- arch/arm/mach-tegra/headsmp.S                   |  221 ----------------
- arch/arm/mach-tegra/hotplug.c                   |   21 +-
- arch/arm/mach-tegra/platsmp.c                   |   43 +++-
- arch/arm/mach-tegra/pm.c                        |    4 +-
- arch/arm/mach-tegra/reset-handler.S             |  239 ++++++++++++++++++
- arch/arm/mach-tegra/reset.c                     |    2 +-
- arch/arm/mach-tegra/sleep-tegra20.S             |    3 -
- arch/arm/mach-tegra/sleep-tegra30.S             |    3 -
- arch/arm/mach-tegra/sleep.S                     |    4 +-
- arch/arm/mach-tegra/sleep.h                     |    1 +
- arch/arm/mach-tegra/tegra30_clocks_data.c       |    6 +-
- drivers/clocksource/Makefile                    |    1 +
- .../clocksource/tegra20_timer.c                 |    9 +-
- 25 files changed, 352 insertions(+), 291 deletions(-)
- create mode 100644 arch/arm/mach-tegra/reset-handler.S
- rename arch/arm/mach-tegra/timer.c => drivers/clocksource/tegra20_timer.c (97%)
+ arch/arm/boot/dts/tegra20.dtsi |   17 +++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi |   29 +++++++++++++++++++++++++++++
+ arch/arm/include/asm/smp_scu.h |   17 +++++++++++++++++
+ arch/arm/mach-omap2/omap-smp.c |    2 +-
+ arch/arm/mach-omap2/omap44xx.h |    1 -
+ arch/arm/mach-tegra/platsmp.c  |   20 ++------------------
+ 6 files changed, 66 insertions(+), 20 deletions(-)
