@@ -1,78 +1,84 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/8] ARM: tegra: USB driver cleanup
-Date: Wed, 30 Jan 2013 14:42:34 -0700
-Message-ID: <1359582159-28816-3-git-send-email-swarren@wwwdotorg.org>
-References: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 1/8] ARM: tegra: cleanup
+Date: Wed, 30 Jan 2013 14:42:32 -0700
+Message-ID: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1359582159-28816-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra USB driver has a number of issues:
+This pull request contains various cleanup and minor changes to core
+Tegra code:
+* Tegra clocksource driver is moved to drivers/clocksource.
+* Various typos, warning cleanup, statics cleanup, section mismatch
+  fixes, etc.
+* Various small fixes/cleanups for CPU/hotplug/SMP code.
 
-1) The PHY driver isn't a true platform device, and doesn't implement
-   the standard USB PHY API.
-
-2) struct device instance numbers were used to make decisions in the
-   driver, rather than being parameterized by DT or platform data.
-
-This pull request solves issue (2), and lays the groundwork for solving
-issue (1). The work on issue (1) involved introducing new DT nodes for
-the USB PHYs, which in turn interacted with the Tegra common clock
-framework changes, due to the move of clock lookups into device tree.
-Hence, these USB driver changes are taken through the Tegra tree with
-acks from USB maintainers.
-
-This pull request is based on the previous pull request, with tag
-tegra-for-3.9-soc-ccf.
+This pull request is based on a merge of v3.8-rc3 and at least part of
+arm-soc's timer/cleanup branch.
 
 ----------------------------------------------------------------
 
-The following changes since commit ef3ffe5a0458606c488def757bb7f6dd013c2db5:
+The following changes since commit f3dab3989b4282e448cba0f0708934276dcb413a:
 
-  clk: tegra30: remove unused TEGRA_CLK_DUPLICATE()s
+  Merge remote-tracking branch 'korg_arm-soc/timer/cleanup' into for-3.9/cleanup
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-soc-usb
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.9-cleanup
 
-for you to fetch changes up to ab137d04db5a4b32250ce5ef1b288ce6cf06adf6:
+for you to fetch changes up to 24e30c9417230b359bf6dfeb923e90138df7c112:
 
-  usb: host: tegra: make use of PHY pointer of HCD
+  ARM: tegra: fix compile error when disable CPU_IDLE
 
 ----------------------------------------------------------------
 
+Hiroshi Doyu (2):
+      clocksource: tegra: cosmetic: Fix error message
+      ARM: tegra: Make variables static
+
+Joseph Lo (7):
+      ARM: tegra30: fix power up sequence for boot_secondary
+      ARM: tegra: update the cache maintenance order for CPU shutdown
+      ARM: tegra: moving the clock gating procedure to tegra_cpu_kill
+      ARM: tegra: clean up the CPUINIT section
+      ARM: tegra: make device can run on UP
+      ARM: tegra30: make the wait time of CPU power up to proportional to HZ
+      ARM: tegra: fix compile error when disable CPU_IDLE
+
+Richard Zhao (1):
+      ARM: tegra: cpufreq: move clk_get/put out of function tegra_cpu_init/exit
+
 Stephen Warren (2):
-      ARM: tegra: add clocks properties to USB PHY nodes
-      usb: host: tegra: don't touch EMC clock
+      ARM: tegra: move timer.c to drivers/clocksource/
+      ARM: tegra: fix Kconfig warnings when !SMP
 
-Venu Byravarasu (11):
-      ARM: tegra: remove USB address related macros from iomap.h
-      usb: phy: use kzalloc to allocate struct tegra_usb_phy
-      ARM: tegra: Add new DT property to USB node.
-      usb: host: tegra: Resetting PORT0 based on information received via DT.
-      usb: phy: remove unused APIs from Tegra PHY.
-      ARM: tegra: add DT nodes for Tegra USB PHY
-      USB: PHY: tegra: get rid of instance number to differentiate legacy controller
-      USB: PHY: tegra: Get rid of instance number to differentiate PHY type
-      usb: add APIs to access host registers from Tegra PHY
-      ARM: tegra: Add reset GPIO information to PHY DT node
-      usb: host: tegra: make use of PHY pointer of HCD
-
- .../bindings/usb/nvidia,tegra20-ehci.txt        |    3 +
- .../bindings/usb/nvidia,tegra20-usb-phy.txt     |   17 +++
- arch/arm/boot/dts/tegra20-harmony.dts           |    4 +
- arch/arm/boot/dts/tegra20-paz00.dts             |    4 +
- arch/arm/boot/dts/tegra20-seaboard.dts          |    4 +
- arch/arm/boot/dts/tegra20-trimslice.dts         |    4 +
- arch/arm/boot/dts/tegra20-ventana.dts           |    4 +
- arch/arm/boot/dts/tegra20.dtsi                  |   29 ++++
- arch/arm/mach-tegra/board-dt-tegra20.c          |    6 +-
- arch/arm/mach-tegra/iomap.h                     |    9 --
- drivers/usb/host/ehci-tegra.c                   |   97 ++++++++-----
- drivers/usb/phy/tegra_usb_phy.c                 |  132 ++++++------------
- include/linux/usb/tegra_usb_phy.h               |   16 ++-
- 13 files changed, 191 insertions(+), 138 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+ arch/arm/Kconfig                                |    1 +
+ arch/arm/mach-tegra/Kconfig                     |    4 +-
+ arch/arm/mach-tegra/Makefile                    |    6 +-
+ arch/arm/mach-tegra/apbio.c                     |    2 +-
+ arch/arm/mach-tegra/board-dt-tegra20.c          |   13 +-
+ arch/arm/mach-tegra/board-dt-tegra30.c          |    5 +-
+ arch/arm/mach-tegra/board.h                     |    1 -
+ arch/arm/mach-tegra/common.c                    |    3 +
+ arch/arm/mach-tegra/common.h                    |    1 +
+ arch/arm/mach-tegra/cpu-tegra.c                 |   40 +--
+ arch/arm/mach-tegra/cpuidle-tegra30.c           |    6 +-
+ arch/arm/mach-tegra/flowctrl.c                  |    4 +-
+ arch/arm/mach-tegra/headsmp.S                   |  221 ----------------
+ arch/arm/mach-tegra/hotplug.c                   |   21 +-
+ arch/arm/mach-tegra/platsmp.c                   |   43 +++-
+ arch/arm/mach-tegra/pm.c                        |    4 +-
+ arch/arm/mach-tegra/reset-handler.S             |  239 ++++++++++++++++++
+ arch/arm/mach-tegra/reset.c                     |    2 +-
+ arch/arm/mach-tegra/sleep-tegra20.S             |    3 -
+ arch/arm/mach-tegra/sleep-tegra30.S             |    3 -
+ arch/arm/mach-tegra/sleep.S                     |    4 +-
+ arch/arm/mach-tegra/sleep.h                     |    1 +
+ arch/arm/mach-tegra/tegra30_clocks_data.c       |    6 +-
+ drivers/clocksource/Makefile                    |    1 +
+ .../clocksource/tegra20_timer.c                 |    9 +-
+ 25 files changed, 352 insertions(+), 291 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/reset-handler.S
+ rename arch/arm/mach-tegra/timer.c => drivers/clocksource/tegra20_timer.c (97%)
