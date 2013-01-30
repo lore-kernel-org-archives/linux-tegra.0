@@ -1,48 +1,28 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [arm-tegra:for-3.9/arm-timer-rework 11/12] arch/arm/mach-imx/imx31-dt.c:36:2:
- warning: initialization from incompatible pointer type
-Date: Tue, 29 Jan 2013 20:47:28 -0700
-Message-ID: <510897D0.2010001@wwwdotorg.org>
-References: <51081b3d.Rfc8JxYDG0uLRpnk%fengguang.wu@intel.com> <51081F64.8040604@wwwdotorg.org> <20130130013524.GA11967@localhost>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/7] ARM: DT: tegra114: add APB DMA controller DT entry
+Date: Wed, 30 Jan 2013 09:24:51 +0530
+Message-ID: <5108998B.4040809@nvidia.com>
+References: <1359464183-6255-1-git-send-email-ldewangan@nvidia.com> <1359464183-6255-4-git-send-email-ldewangan@nvidia.com> <510809FC.2080806@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130130013524.GA11967@localhost>
+In-Reply-To: <510809FC.2080806-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Fengguang Wu <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Sascha Hauer (s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org)" <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/29/2013 06:35 PM, Fengguang Wu wrote:
-> On Tue, Jan 29, 2013 at 12:13:40PM -0700, Stephen Warren wrote:
->> On 01/29/2013 11:55 AM, kbuild test robot wrote:
->>> tree:   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git for-3.9/arm-timer-rework
->>> head:   ae278a935f086775e8ae31a8ec9f7224ea25ea3c
->>> commit: 6bb27d7349db51b50c40534710fe164ca0d58902 [11/12] ARM: delete struct sys_timer
->>> config: make ARCH=arm imx_v6_v7_defconfig
->>>
->>> All warnings:
->>>
->>>>> arch/arm/mach-imx/imx31-dt.c:36:2: warning: initialization from incompatible pointer type [enabled by default]
->>>>> arch/arm/mach-imx/imx31-dt.c:36:2: warning: (near initialization for '__mach_desc_IMX31_DT.init_time') [enabled by default]
->>
->> I don't see this warning with gcc-4.5.3, and the warning above doesn't
->> seem to match the code below at line 36 either. Was the source tree
->> corrupt somehow?
-> 
-> Stephen, I can reproduce the problem with gcc-4.6.3, but at a
-> different line number (weird):
-> 
-> /c/wfg/sound/arch/arm/mach-imx/imx31-dt.c:51:2: warning: initialization from incompatible pointer type [enabled by default]
-> /c/wfg/sound/arch/arm/mach-imx/imx31-dt.c:51:2: warning: (near initialization for '__mach_desc_IMX31_DT.init_time') [enabled by
-> default]
+On Tuesday 29 January 2013 11:12 PM, Stephen Warren wrote:
+> On 01/29/2013 05:56 AM, Laxman Dewangan wrote:
+>> NVIDIA's Tegra114 has 32 channels APB DMA controller. Add DT entry for
+>> APB DMA controllers and make it compatible with "nvidia,tegra114-apbdma".
+> The APB DMA controller node needs a clocks property. The same goes for
+> I2C and KBC. I'd like to avoid merging those 3 patches until the
+> Tegra114 clock patches are present, since the nodes won't be useful
+> until then anyway. I expect the clock patches will be merged in 3.10.
+>
 
-OK, I've reproduced the problem now, and is indeed real. I'll whip up a
-patch.
-
-The very very odd thing is that imx31-dt.c is only compiled if
-CONFIG_MACH_IMX31_DT, and imx_v6_v7_defconfig doesn't specify a value
-for that option, so it's disabled when I "make imx_v6_v7_defconfig". If
-I manually enable the option via "make menuconfig", then I do see this
-problem.
+I think clock patches can be posted on top of this as Peter is working. 
+Although, the driver will fail in clk_get() but still I think this can 
+be apply to populate the dts file with controller specific information.
