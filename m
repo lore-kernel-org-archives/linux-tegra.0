@@ -1,113 +1,73 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
-Date: Wed, 30 Jan 2013 12:19:21 +0100
-Message-ID: <20130130111921.GA12033@avionic-0098.mockup.avionic-design.de>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 4/5] drm/tegra: Implement VBLANK support
+Date: Wed, 30 Jan 2013 13:36:03 +0100
+Message-ID: <CAKMK7uHo9inMzKXqpnH9+H7Tm+nnChGUXE+mGA51L0fNrwoX0Q@mail.gmail.com>
 References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
- <1358178932-25505-6-git-send-email-thierry.reding@avionic-design.de>
- <CAKMK7uFMa-QwyZJo6QaxAAbpGeNvoNp_T19wF_uA1hr1d2KHog@mail.gmail.com>
- <20130115201705.GA25976@avionic-0098.adnet.avionic-design.de>
- <CAKMK7uEV_w5rfoUv3xdTdYra+UOCnirf5GUK+2L2pxifUxFVmw@mail.gmail.com>
- <20130116100149.GA13628@avionic-0098.adnet.avionic-design.de>
- <CAKMK7uFQKwvEN0j-L=g1UwTzVvtYyqyyBaH8apQnqWPa2sq5vQ@mail.gmail.com>
- <20130130093247.GB21322@avionic-0098.mockup.avionic-design.de>
- <20130130094240.GT9135@intel.com>
- <20130130111436.GA11202@avionic-0098.mockup.avionic-design.de>
+	<1358178932-25505-5-git-send-email-thierry.reding@avionic-design.de>
+	<CADWT_cPtdmSF+_ybe70ZY_z5idzr0KQe94r57ok-Hf-V22wixA@mail.gmail.com>
+	<20130130083453.GA21322@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130130111436.GA11202-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20130130083453.GA21322-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Jon Mayo <jon-MQ+mZzckBGs@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Jan 30, 2013 at 9:34 AM, Thierry Reding
+<thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+> On Tue, Jan 22, 2013 at 10:21:40AM -0800, Jon Mayo wrote:
+>> On Mon, Jan 14, 2013 at 7:55 AM, Thierry Reding
+>> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>> > Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+>> > special in this case because it doesn't use the generic IRQ support
+>> > provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+>> > interrupt handler for each display controller.
+>> >
+>> > While at it, clean up the way that interrupts are enabled to ensure
+>> > that the VBLANK interrupt only gets enabled when required.
+>> >
+>> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>> > ---
+>>
+>> Sorry Thierry, but is this a useful feature? Are applications really
+>> making use of it? Because it means that that an IRQ will have to
+>> trigger every 16.67ms when it is taken, which means the device can't
+>> sleep. (probably OK because it should go back to idle when the app
+>> lets go of the vblank). But worse, for one-shot panels there is no
+>> continuous vblank. I've been doing weird hacks to run a timer when the
+>> smart panel is idle to trick applications into thinking they have a
+>> vblank pulse. But really I think the whole feature of a vblank pulse
+>> is pretty lame and I wish it would die. Were you going to use it for
+>> something specific, or just adding it for completeness?
+>
+> This is mainly added for completeness. I know that on Tegra we can do a
+> lot better by using syncpoints, but applications such as Weston (in
+> general applications that use the generic DRM API) rely on this to sync
+> rendering with VBLANK.
+>
+> I don't think there's another way to achieve the same thing. And as you
+> already mentioned, this is only enabled when an application actively
+> uses it, in which case the device won't sleep anyway.
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think driving animations with the vblank signal is nice, but we
+kinda only need that with the pageflip support. Unfortunately the
+current drm code is a bit a mess in that area, so pageflips force you
+to enable the vblank interrupt for otherwise the timestamp'ed pageflip
+completion events won't work.
 
-On Wed, Jan 30, 2013 at 12:14:36PM +0100, Thierry Reding wrote:
-> On Wed, Jan 30, 2013 at 11:42:40AM +0200, Ville Syrj=C3=A4l=C3=A4 wrote:
-> > On Wed, Jan 30, 2013 at 10:32:47AM +0100, Thierry Reding wrote:
-> > > On Wed, Jan 16, 2013 at 01:36:17PM +0100, Daniel Vetter wrote:
-> > > > On Wed, Jan 16, 2013 at 11:01 AM, Thierry Reding
-> > > > <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
-> > > > > drm_events_release() should be enough to clean up the events, but=
- I
-> > > > > suspect the reason why Laurent put that code in was that the drm_=
-crtc
-> > > > > private data still has a reference to the event and needs to clea=
-r it.
-> > > > > Otherwise the next page flip won't be scheduled because .page_fli=
-p()
-> > > > > would return -EBUSY.
-> > > >=20
-> > > > Hm, indeed we seem to have a nice bug in most drivers there :(
-> > >=20
-> > > I think I may just recently have run into this bug on Intel hardware.
-> > > Although perhaps I just used this wrongly.
-> > >=20
-> > > Just for the fun of it I wanted to implement Conway's Game of Life on
-> > > top of DRM/KMS. So I use two dumb buffer objects to alternately render
-> > > to. Then I wanted to use page-flipping to synchronize with VBLANK.
-> > >=20
-> > > So the sequence is basically:
-> > >=20
-> > > 	while (!done) {
-> > > 		grid_tick(grid);
-> > > 		grid_draw(grid, screen);
-> > > 		screen_flip(screen);
-> > > 		grid_swap(grid);
-> > > 	}
-> > >=20
-> > > Where screen_flip() chooses the framebuffer and passes it to
-> > > drmModePageFlip() like so:
-> > >=20
-> > > 	int fb =3D screen->fb[screen->current];
-> > >=20
-> > > 	drmModePageFlip(screen->fd, screen->crtc, fb,
-> > > 			DRM_MODE_PAGE_FLIP_EVENT, screen);
-> > >=20
-> > > This runs for about 3 seconds and then hangs, so the display is no
-> > > longer updated. I've also verified that the same happens on Radeon.
-> > > But maybe I am mistaken and this isn't the proper programming sequenc=
-e?
-> >=20
-> > You asked for page flip events. Do you actually handle them in your cod=
-e?
->=20
-> Duh. No I wasn't =3D) I suppose some queue must be running full if the
-> event isn't handled by calling drmHandleEvent(). Okay, this now works
-> properly with page-flipping.
+Recent intel hw has pageflip timestamp registers, so we don't really
+need that. And I guess other hw is similar. So we probably should
+clean up and untangle the infrastructure a bit around the drm vblank
+support code.
 
-Just in case anybody's interested, the code is here:
-
-	https://gitorious.org/thierryreding/kmslife
-
-Thierry
-
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRCQG5AAoJEN0jrNd/PrOhTlsQAJssqV4Ph/FjFeok2MCymg/a
-45vU5EHermt4M9VciD3Rednd7hwwW7ujNE4mOE1zukpRVMoQ2X9zSYjx92OvKX8x
-ITi3YpjLLQe+q5A5lITSjqGkaGjWt4IwTHM0IQZRgBWC4YUnBVMGf5zf0TGhfnMT
-3IA7oPi4xyxsu4DfjPrdfuX7QEF3d/wT7uuyyQHL0mF86B1JEAGpE8nC9kggq4oI
-u3HAVOXhJwlrGoW8EfXNgCjq/tEfqi/zwIwenyqXNrfFSRs/XRep1k/uS+UFfO8/
-SjTsOXlut/cl6+NoqOiE6uqJjbuSXaAqJiFLTwVqAk1laLyrVncilG+R31r6djlP
-/JhMsCMlzko4nFWeRm5jgjX5Smhp9zzvLo2AkClUDbg8T5rrx52unavjTZMnkYO6
-ROA+xACD1Al6mcGmod/tv5qeDl0QoEkaclspowGSMyZMePmS6S099gz+8rONQD9o
-Ihn2xx1IK8RN/NELUqACIOIK/GZ7HjUSKFdMIM1HybKseuhuc5ZWkdggX5zAtz/F
-RFW1tcl2xNmd6trOFhIpiOH9CqQW3z0Mam1mytzF+aXsnTmaPhHB63oOT4C9gONr
-nBijhpNmy9gFJpw8Nagu+c40lKQv8AyLYjUbZwK0R/uoGeUUG9/Iu41vYxtYZ5jc
-LIxwkYgtTgf7JtvRxokc
-=gvJJ
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
+Another issue is that the vblank ioctl itself doesn't deal with
+modeset crtc ids, so adding a new interface for that would be good.
+Otoh most kms clients don't really use it, but only care about
+pageflips.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
