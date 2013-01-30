@@ -1,55 +1,38 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [RFC 0/4] Use the Common Display Framework in tegra-drm
-Date: Wed, 30 Jan 2013 09:38:09 +0100
-Message-ID: <20130130083809.GU1906@pengutronix.de>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com>
- <20130130074020.GA17547@avionic-0098.mockup.avionic-design.de>
- <5108D865.3070301@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] clk: tegra: remove USB from clk init table
+Date: Wed, 30 Jan 2013 11:32:42 +0200
+Message-ID: <20130130093241.GB2364@tbergstrom-lnx.Nvidia.com>
+References: <1359325055-5160-1-git-send-email-dev@lynxeye.de>
+ <5106C583.7010204@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5108D865.3070301@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Thierry Reding <thierry.reding@avionic-design.de>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Stephen Warren <swarren@wwwdotorg.org>, Mark Zhang <markz@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
+In-Reply-To: <5106C583.7010204-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 30, 2013 at 05:23:01PM +0900, Alex Courbot wrote:
-> On 01/30/2013 04:40 PM, Thierry Reding wrote:
-> >Thanks *a lot* for taking care of this Alexandre! From a quick look at
-> >the patches they seem generally fine. I'll go over them in a bit more
-> >detail though.
+On Mon, Jan 28, 2013 at 07:37:55PM +0100, Stephen Warren wrote:
+> On 01/27/2013 03:17 PM, Lucas Stach wrote:
+> > The USB clocks are just clock gates, so no need to set a specific clock.
+> > In fact trying to set a specific clock is just a NOP if the requested
+> > clockrate is the same as those of the parent (clk_m) or will trigger a
+> > WARN_ON() if rates don't match up.
+> > 
+> > As we are not setting a specific rate, nor activating the clocks at
+> > init, there is no point in keeping the the usb entries in the clock init
+> > table.
 > 
-> Glad you like it better than my previous attempts at controlling
-> Tegra's panels and backlights. ;)
+> I'm not convinced here; aren't the USB clocks supposed to be driven by
+> PLL U?
 > 
-> >>1) The CDF has a get_modes() hook, but this is already implemented by
-> >>tegra_connector_get_modes(). Ideally everything should be moved to the CDF hook,
-> >>but Tegra's implementation uses DRM functions to retrieve the EDID and CDF
-> >>should, AFAIK, remain DRM-agnostic.
-> >
-> >Maybe a good option would be to just not implement get_modes() if the
-> >same information can be retrieved via EDID. That is, the DRM driver
-> >could just go and fetch EDID when the nvidia,ddc-i2c-bus is available
-> >(or parse the nvidia,edid blob) and only rely on CDF otherwise.
-> 
-> Since EDID information is per-panel I'd intuitively say it should be
-> provided by the panel driver.
+> Prashant, Peter, Venu, can you please comment here.
 
-Hm. If you know from the devicetree that you have a CLAA101WA01A then
-you won't need EDID data at all. If instead you have EDID data you don't
-have to put the information that this is a CLAA101WA01A into devicetree.
+According to our downstream code, they are indeed just clockgates with clk_m
+as the parent. I couldn't find any confirmation in the TRM though.
 
-I think the next thing that will happen is that you want to use the EDID
-data to 1) pick display timings 2) pick the right power sequence that
-fits the panel found in EDID. You can't archieve 2) by hardcoding the
-panel in the devicetree.
+Cheers,
 
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Peter.
