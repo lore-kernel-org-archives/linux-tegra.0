@@ -1,52 +1,37 @@
 From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC 1/4] video: panel: add CLAA101WA01A panel support
-Date: Wed, 30 Jan 2013 16:27:11 +0900
-Message-ID: <5108CB4F.7000103@nvidia.com>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-2-git-send-email-acourbot@nvidia.com> <5108C9C1.1090707@gmail.com>
+Subject: Re: [RFC 3/4] drm: tegra: use the Common Display Framework
+Date: Wed, 30 Jan 2013 16:30:45 +0900
+Message-ID: <5108CC25.7080709@nvidia.com>
+References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-4-git-send-email-acourbot@nvidia.com> <5108C298.1000500@gmail.com> <5108C55C.30104@nvidia.com> <20130130072406.GA17128@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5108C9C1.1090707-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20130130072406.GA17128-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/30/2013 04:20 PM, Mark Zhang wrote:
->> +	/* OFF and STANDBY are equivalent to us */
->> +	if (state == DISPLAY_ENTITY_STATE_STANDBY)
->> +		state = DISPLAY_ENTITY_STATE_OFF;
+On 01/30/2013 04:24 PM, Thierry Reding wrote:
+>>> Could you pick up a somewhat meaningful name? You know, there are too
+>>> many variables with name "drm/connector/output/encoder"... :)
+>>
+>> Well, it's supposed to be abstract. From the CDF point of view it
+>> could be anything besides a panel. I know this makes it an output of
+>> an output, but I can't think of anything better right now.
 >
-> Do we need this? The "switch" below handles the same thing already.
+> How about renaming "this" to stream to match with what the output is in
+> CDF speak.
 
-Indeed, I have rewritten this part actually.
+Good idea.
 
->> +static int panel_claa101_get_modes(struct display_entity *entity,
->> +				   const struct videomode **modes)
->> +{
->> +	/* TODO get modes from EDID? */
->
-> Why not move the "nvidia,ddc" from encoder's DT to panel's DT? In that
-> case, you can get EDID here. I know drm has some helpers to fetch EDID
-> but I recall there are some other functions which has no drm
-> dependencies which may be suitable for you.
+> And the output's output is the panel, right? Why not just
+> call it that? Even if it isn't directly connected to a panel entity but
+> has indeed a whole pipeline in between, for tegra-drm it is still a
+> panel.
 
-I explained this in the cover letter - I'm not sure we want to have a 
-dependency on DRM here, as CDF entities could also be connected to other 
-subsystems. That's something we need to figure out. But yes, ultimately 
-this should be the place where EDID is retrieved.
-
->> +static struct of_device_id panel_claa101_of_match[] = {
->> +	{ .compatible = "chunghwa,claa101wa01a", },
->> +	{ },
->> +};
->> +MODULE_DEVICE_TABLE(of, pwm_backlight_of_match);
->
-> What does this mean? Why we need this?
-
-Well, now you know where I copy my code from. :)
-
+Makes sense indeed. Besides the DT refer it as "panel" already.
 
 Thanks,
 Alex.
