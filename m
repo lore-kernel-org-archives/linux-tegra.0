@@ -1,86 +1,152 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [RFC 3/4] drm: tegra: use the Common Display Framework
-Date: Wed, 30 Jan 2013 16:01:48 +0900
-Message-ID: <5108C55C.30104@nvidia.com>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-4-git-send-email-acourbot@nvidia.com> <5108C298.1000500@gmail.com>
+From: Mark Zhang <nvmarkzhang@gmail.com>
+Subject: Re: [RFC 1/4] video: panel: add CLAA101WA01A panel support
+Date: Wed, 30 Jan 2013 15:20:33 +0800
+Message-ID: <5108C9C1.1090707@gmail.com>
+References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5108C298.1000500@gmail.com>
+In-Reply-To: <1359514939-15653-2-git-send-email-acourbot@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Zhang <nvmarkzhang@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Mark Zhang <markz@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Mark Zhang <markz@nvidia.com>, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-tegra@vger.kernel.org, gnurou@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/30/2013 03:50 PM, Mark Zhang wrote:
->> @@ -147,6 +148,9 @@ struct tegra_output {
->>
->>   	struct drm_encoder encoder;
->>   	struct drm_connector connector;
->> +	struct display_entity this;
->> +	struct display_entity *output;
->
-> Could you pick up a somewhat meaningful name? You know, there are too
-> many variables with name "drm/connector/output/encoder"... :)
+On 01/30/2013 11:02 AM, Alexandre Courbot wrote:
+> Add support for the Chunghwa CLAA101WA01A display panel.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+[...]
+> +
+> +#include <video/display.h>
+> +
+> +#define CLAA101WA01A_WIDTH	223
+> +#define CLAA101WA01A_HEIGHT	125
 
-Well, it's supposed to be abstract. From the CDF point of view it could 
-be anything besides a panel. I know this makes it an output of an 
-output, but I can't think of anything better right now.
+If I remember correct, the physical size of the panel can be fetched in
+EDID. If this is correct, we don't have to hard-code here.
 
->> +		if (entity->dev && entity->dev->of_node == pnode) {
->> +			dev_dbg(output->dev, "connecting panel\n");
->> +			output->output = display_entity_get(entity);
->> +			display_entity_connect(&output->this, output->output);
->> +		}
->> +		of_node_put(pnode);
->> +
->> +		break;
->> +
->> +	case DISPLAY_ENTITY_NOTIFIER_DISCONNECT:
->> +		if (!output->output || output->output != entity)
->> +			break;
->> +
->> +		dev_dbg(output->dev, "disconnecting panel\n");
->> +		display_entity_disconnect(&output->this, output->output);
->> +		output->output = NULL;
->> +		display_entity_put(&output->this);
->
-> No "display_entity_get" for "output->this", so I don't think we need
-> "display_entity_put" here. If you register this entity with "release"
-> callback and you wanna release "output->this", call the "release"
-> function manually.
+> +
+> +struct panel_claa101 {
+> +	struct display_entity entity;
+> +	struct regulator *vdd_pnl;
+> +	struct regulator *vdd_bl;
+> +	/* Enable GPIOs */
+> +	int pnl_enable;
+> +	int bl_enable;
+> +};
+> +
+> +#define to_panel_claa101(p)	container_of(p, struct panel_claa101, entity)
+> +
+> +static int panel_claa101_set_state(struct display_entity *entity,
+> +				   enum display_entity_state state)
+> +{
+> +	struct panel_claa101 *panel = to_panel_claa101(entity);
+> +
+> +	/* OFF and STANDBY are equivalent to us */
+> +	if (state == DISPLAY_ENTITY_STATE_STANDBY)
+> +		state = DISPLAY_ENTITY_STATE_OFF;
 
-Oh, this was supposed to be called on output->output actually, to 
-balance the display_entity_get() of the connect event. Thanks for 
-catching this.
+Do we need this? The "switch" below handles the same thing already.
 
->> +	/* register display entity */
->> +	memset(&output->this, 0, sizeof(output->this));
->> +	output->this.dev = drm->dev;
->
-> Use "output->dev" here. Actually the device you wanna register it to
-> display entity is the "encoder"(in drm terms), not "drm->dev". If we use
-> "drm->dev" here, we will have all same device for all encoders(HDMI,
-> DSI...).
+> +
+> +	switch (state) {
+> +	case DISPLAY_ENTITY_STATE_OFF:
+> +	case DISPLAY_ENTITY_STATE_STANDBY:
+> +		if (entity->source)
+> +			display_entity_set_stream(entity->source,
+> +						 DISPLAY_ENTITY_STREAM_STOPPED);
+> +
+> +		/* TODO error checking? */
+> +		gpio_set_value_cansleep(panel->bl_enable, 0);
+> +		usleep_range(10000, 10000);
+> +		regulator_disable(panel->vdd_bl);
+> +		usleep_range(200000, 200000);
+> +		gpio_set_value_cansleep(panel->pnl_enable, 0);
+> +		regulator_disable(panel->vdd_pnl);
+> +		break;
+> +
+> +	case DISPLAY_ENTITY_STATE_ON:
+> +		regulator_enable(panel->vdd_pnl);
+> +		gpio_set_value_cansleep(panel->pnl_enable, 1);
+> +		usleep_range(200000, 200000);
+> +		regulator_enable(panel->vdd_bl);
+> +		usleep_range(10000, 10000);
+> +		gpio_set_value_cansleep(panel->bl_enable, 1);
+> +
+> +		if (entity->source)
+> +			display_entity_set_stream(entity->source,
+> +					      DISPLAY_ENTITY_STREAM_CONTINUOUS);
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int panel_claa101_get_modes(struct display_entity *entity,
+> +				   const struct videomode **modes)
+> +{
+> +	/* TODO get modes from EDID? */
 
-Yes, that's absolutely right.
+Why not move the "nvidia,ddc" from encoder's DT to panel's DT? In that
+case, you can get EDID here. I know drm has some helpers to fetch EDID
+but I recall there are some other functions which has no drm
+dependencies which may be suitable for you.
 
->> +	/* register display notifier */
->> +	output->display_notifier.dev = NULL;
->
-> Set "display_notifier.dev" to NULL makes we have to compare with every
-> display entity, just like what you do in "display_notify_callback":
->
-> entity->dev && entity->dev->of_node == pnode
->
-> So can we get the "struct device *" of panel here? Seems currently the
-> "of" framework doesn't allow "device_node -> device".
+> +	return 0;
+> +}
+[...]
+> +
+> +static int __exit panel_claa101_remove(struct platform_device *pdev)
+> +{
+> +	struct panel_claa101 *panel = platform_get_drvdata(pdev);
+> +
+> +	display_entity_unregister(&panel->entity);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_OF
 
-Nope. AFAICT the device might not be instanciated at this point. We 
-become aware of it for the first time in the callback function. We also 
-don't want to defer probing until the panel is parsed first, since the 
-panel might also depend on resources of the display device.
+We don't need this kind of "ifdef" in upstream kernel.
 
-Thanks,
-Alex.
+> +static struct of_device_id panel_claa101_of_match[] = {
+> +	{ .compatible = "chunghwa,claa101wa01a", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, pwm_backlight_of_match);
+
+What does this mean? Why we need this?
+
+> +#else
+> +#endif
+> +
+> +static const struct dev_pm_ops panel_claa101_dev_pm_ops = {
+> +};
+> +
+> +static struct platform_driver panel_claa101_driver = {
+> +	.probe = panel_claa101_probe,
+> +	.remove = panel_claa101_remove,
+> +	.driver = {
+> +		.name = "panel_claa101wa01a",
+> +		.owner = THIS_MODULE,
+> +#ifdef CONFIG_PM
+> +		.pm = &panel_claa101_dev_pm_ops,
+
+If you haven't implemented this in this patch set, I suggest removing this.
+
+> +#endif
+> +#ifdef CONFIG_OF
+> +		.of_match_table	= of_match_ptr(panel_claa101_of_match),
+> +#endif
+> +	},
+> +};
+> +
+> +module_platform_driver(panel_claa101_driver);
+> +
+> +MODULE_AUTHOR("Alexandre Courbot <acourbot@nvidia.com>");
+> +MODULE_DESCRIPTION("Chunghwa CLAA101WA01A Display Panel");
+> +MODULE_LICENSE("GPL");
+> 
