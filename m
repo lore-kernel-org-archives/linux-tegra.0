@@ -1,40 +1,25 @@
 From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on ARCH_TEGRA
-Date: Thu, 31 Jan 2013 12:43:08 +0200
-Message-ID: <1359628988-3678-1-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [v3 1/9] ARM: tegra: fuse: Add chipid TEGRA114 0x35
+Date: Thu, 31 Jan 2013 17:39:23 +0100
+Message-ID: <20130131.183923.1519748289174551961.hdoyu@nvidia.com>
+References: <1358237598-32413-1-git-send-email-hdoyu@nvidia.com><1358237598-32413-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1358237598-32413-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Theoretically TEGRA_IOMMU_SMMU depends on ARCH_TEGRA_3x_SOC and
-ARCH_TEGRA_114_SOC only. This patch allows a Tegra20 only kernel to
-enable SMMU(Tegra20 doesn't have a SMMU), which could avoid editing
-this Kconfig entry every time we add a new chip later.
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Tue, 15 Jan 2013 09:13:10 +0100:
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v1:
-http://lists.linuxfoundation.org/pipermail/iommu/2013-January/005051.html
----
- drivers/iommu/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Add tegra_chip_id TEGRA114 0x35
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/fuse.h |    1 +
+>  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index e39f9db..3f0b15a1 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -158,7 +158,7 @@ config TEGRA_IOMMU_GART
- 
- config TEGRA_IOMMU_SMMU
- 	bool "Tegra SMMU IOMMU Support"
--	depends on ARCH_TEGRA_3x_SOC && TEGRA_AHB
-+	depends on ARCH_TEGRA && TEGRA_AHB
- 	select IOMMU_API
- 	help
- 	  Enables support for remapping discontiguous physical memory
--- 
-1.7.9.5
+Please ignore this series. The later version has been already queued for v3.9.
