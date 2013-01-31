@@ -1,49 +1,135 @@
-From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 1/4] video: panel: add CLAA101WA01A panel support
-Date: Thu, 31 Jan 2013 15:30:52 +0800
-Message-ID: <510A1DAC.1070106@gmail.com>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-2-git-send-email-acourbot@nvidia.com> <5108C9C1.1090707@gmail.com> <51098064.7030902@wwwdotorg.org> <5109EA2A.8020204@gmail.com> <CAAVeFuJf9Ww7g8Q9RAG9Na1SZq2-n2MMxcAEBek52ZVG7RpL7g@mail.gmail.com> <5109F916.8080404@gmail.com> <CAAVeFuL_a1aAEDCFdhjMzZG40QuK3dcZqsWqfVpwmQbZsfiHRg@mail.gmail.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [v3 1/1] iommu/tegra: smmu: Support variable MMIO ranges/blocks
+Date: Thu, 31 Jan 2013 10:14:10 +0200
+Message-ID: <1359620050-28727-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuL_a1aAEDCFdhjMzZG40QuK3dcZqsWqfVpwmQbZsfiHRg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/31/2013 02:36 PM, Alexandre Courbot wrote:
-> On Thu, Jan 31, 2013 at 1:54 PM, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Display controller don't know whether the panel has EDID EEPROM but the
->> panel driver knows. So why we need to make display controller queries
->> EDID blindly? Since panel driver knows about all "video modes/panel
->> size" stuffs, why not we let it handle all these things?
-> 
-> The DC actually does know whether the connected panel supports EDID -
-> in this case, the output node will have a property for the DDC bus,
-> e.g.
-> 
->         nvidia,ddc-i2c-bus = <&lcd_ddc>;
-> 
-> If no DDC bus is specified or if transfer fails, the DC driver can
-> still query the panel driver for hardcoded modes.
-> 
+Presently SMMU registers are located in discontiguous 3 blocks. They
+are interleaved by MC registers. Ideally SMMU register blocks should
+be in an independent one block, but it is too late to change this H/W
+design. In the future Tegra chips over some generations, it is
+expected that some of register block "size" can be extended towards
+the end and also more new register blocks will be added at most a few
+blocks. The starting address of each existing block won't change. This
+patch allocates multiple number of register blocks dynamically based
+on the info passed from DT. Those ranges are verified in the
+accessors{read,write}. This may sacrifice some performance because a
+new accessors prevents compiler optimization of a fixed size register
+offset calculation. Since SMMU register accesses are not so frequent,
+this would be acceptable. This patch is necessary to unify
+"tegra-smmu.ko" over some Tegra SoC generations.
 
-Strictly speaking, according to my understanding, "nvidia,ddc-i2c-bus"
-means tegra has a hardware ddc channel, this doesn't mean we can get the
-EDID from this DDC surely.
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/iommu/tegra-smmu.c |   61 ++++++++++++++++++++++++++------------------
+ 1 file changed, 36 insertions(+), 25 deletions(-)
 
-> Also passing a function pointer to get_modes() does not relief the DC
-> driver from probing for the DDC bus. You will still have to handle
-> both conditions (DDC bus present or not), the check will just be moved
-> into your callback function.
-> 
-
-Yes. But panel driver decides whether the DDC probing is needed. If the
-panel has an EEPROM, it can call the function which display controller
-provides to do a DDC probing, it not, panel driver just ignores this
-function pointer and return the hardcoded modes directly.
-
-> Alex.
-> 
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 25c1210..024a7e1 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -293,7 +293,11 @@ struct smmu_debugfs_info {
+  * Per SMMU device - IOMMU device
+  */
+ struct smmu_device {
+-	void __iomem	*regs[NUM_SMMU_REG_BANKS];
++	void __iomem	*regbase;	/* register offset base */
++	void __iomem	**regs;		/* register block start address array */
++	void __iomem	**rege;		/* register block end address array */
++	int		nregs;		/* number of register blocks */
++
+ 	unsigned long	iovmm_base;	/* remappable base address */
+ 	unsigned long	page_count;	/* total remappable size */
+ 	spinlock_t	lock;
+@@ -325,35 +329,33 @@ static struct smmu_device *smmu_handle; /* unique for a system */
+  */
+ static inline u32 smmu_read(struct smmu_device *smmu, size_t offs)
+ {
+-	BUG_ON(offs < 0x10);
+-	if (offs < 0x3c)
+-		return readl(smmu->regs[0] + offs - 0x10);
+-	BUG_ON(offs < 0x1f0);
+-	if (offs < 0x200)
+-		return readl(smmu->regs[1] + offs - 0x1f0);
+-	BUG_ON(offs < 0x228);
+-	if (offs < 0x284)
+-		return readl(smmu->regs[2] + offs - 0x228);
++	int i;
++
++	for (i = 0; i < smmu->nregs; i++) {
++		void __iomem *addr = smmu->regbase + offs;
++
++		BUG_ON(addr < smmu->regs[i]);
++		if (addr <= smmu->rege[i])
++			return readl(addr);
++	}
++
+ 	BUG();
+ }
+ 
+ static inline void smmu_write(struct smmu_device *smmu, u32 val, size_t offs)
+ {
+-	BUG_ON(offs < 0x10);
+-	if (offs < 0x3c) {
+-		writel(val, smmu->regs[0] + offs - 0x10);
+-		return;
+-	}
+-	BUG_ON(offs < 0x1f0);
+-	if (offs < 0x200) {
+-		writel(val, smmu->regs[1] + offs - 0x1f0);
+-		return;
+-	}
+-	BUG_ON(offs < 0x228);
+-	if (offs < 0x284) {
+-		writel(val, smmu->regs[2] + offs - 0x228);
+-		return;
++	int i;
++
++	for (i = 0; i < smmu->nregs; i++) {
++		void __iomem *addr = smmu->regbase + offs;
++
++		BUG_ON(addr < smmu->regs[i]);
++		if (addr <= smmu->rege[i]) {
++			writel(val, addr);
++			return;
++		}
+ 	}
++
+ 	BUG();
+ }
+ 
+@@ -1170,7 +1172,13 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(smmu->regs); i++) {
++	smmu->nregs = pdev->num_resources;
++	smmu->regs = devm_kzalloc(dev, 2 * smmu->nregs * sizeof(*smmu->regs),
++				  GFP_KERNEL);
++	smmu->rege = smmu->regs + smmu->nregs;
++	if (!smmu->regs)
++		return -ENOMEM;
++	for (i = 0; i < smmu->nregs; i++) {
+ 		struct resource *res;
+ 
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+@@ -1179,7 +1187,10 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 		smmu->regs[i] = devm_request_and_ioremap(&pdev->dev, res);
+ 		if (!smmu->regs[i])
+ 			return -EBUSY;
++		smmu->rege[i] = smmu->regs[i] + resource_size(res);
+ 	}
++	/* Same as "mc" 1st regiter block start address */
++	smmu->regbase = (void __iomem *)((u32)smmu->regs[0] & ~PAGE_MASK);
+ 
+ 	err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base, &size);
+ 	if (err)
+-- 
+1.7.9.5
