@@ -1,39 +1,73 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 1/4] video: panel: add CLAA101WA01A panel support
-Date: Thu, 31 Jan 2013 10:25:07 -0700
-Message-ID: <510AA8F3.3020703@wwwdotorg.org>
-References: <1359514939-15653-1-git-send-email-acourbot@nvidia.com> <1359514939-15653-2-git-send-email-acourbot@nvidia.com> <5108C9C1.1090707@gmail.com> <51098064.7030902@wwwdotorg.org> <5109EA2A.8020204@gmail.com> <CAAVeFuJf9Ww7g8Q9RAG9Na1SZq2-n2MMxcAEBek52ZVG7RpL7g@mail.gmail.com> <5109F916.8080404@gmail.com> <CAAVeFuL_a1aAEDCFdhjMzZG40QuK3dcZqsWqfVpwmQbZsfiHRg@mail.gmail.com> <510A1DAC.1070106@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] tty: of_serial: unexport tegra_serial_handle_break
+Date: Thu, 31 Jan 2013 12:01:53 -0700
+Message-ID: <1359658913-9828-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <510A1DAC.1070106-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>
+Cc: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/31/2013 12:30 AM, Mark Zhang wrote:
-> On 01/31/2013 02:36 PM, Alexandre Courbot wrote:
->> On Thu, Jan 31, 2013 at 1:54 PM, Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> Display controller don't know whether the panel has EDID EEPROM but the
->>> panel driver knows. So why we need to make display controller queries
->>> EDID blindly? Since panel driver knows about all "video modes/panel
->>> size" stuffs, why not we let it handle all these things?
->>
->> The DC actually does know whether the connected panel supports EDID -
->> in this case, the output node will have a property for the DDC bus,
->> e.g.
->>
->>         nvidia,ddc-i2c-bus = <&lcd_ddc>;
->>
->> If no DDC bus is specified or if transfer fails, the DC driver can
->> still query the panel driver for hardcoded modes.
-> 
-> Strictly speaking, according to my understanding, "nvidia,ddc-i2c-bus"
-> means tegra has a hardware ddc channel, this doesn't mean we can get the
-> EDID from this DDC surely.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Having a DDC bus by definition means that the EDID can be queried
-through it. If you can't query the EDID, there is no DDC bus, and hence
-that property is not present in the DT.
+Tegra is only booted through device-tree now; there are no board files
+left that use this function. Hence, don't export it. Move the static
+inline definition into of_serial.c, so we can delete of_serial.h too.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/tty/serial/of_serial.c |    7 ++++---
+ include/linux/of_serial.h      |   17 -----------------
+ 2 files changed, 4 insertions(+), 20 deletions(-)
+ delete mode 100644 include/linux/of_serial.h
+
+diff --git a/drivers/tty/serial/of_serial.c b/drivers/tty/serial/of_serial.c
+index e7cae1c..d587460 100644
+--- a/drivers/tty/serial/of_serial.c
++++ b/drivers/tty/serial/of_serial.c
+@@ -18,7 +18,6 @@
+ #include <linux/serial_reg.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+-#include <linux/of_serial.h>
+ #include <linux/of_platform.h>
+ #include <linux/nwpserial.h>
+ #include <linux/clk.h>
+@@ -45,8 +44,10 @@ void tegra_serial_handle_break(struct uart_port *p)
+ 		udelay(1);
+ 	} while (1);
+ }
+-/* FIXME remove this export when tegra finishes conversion to open firmware */
+-EXPORT_SYMBOL_GPL(tegra_serial_handle_break);
++#else
++static inline void tegra_serial_handle_break(struct uart_port *port)
++{
++}
+ #endif
+ 
+ /*
+diff --git a/include/linux/of_serial.h b/include/linux/of_serial.h
+deleted file mode 100644
+index 4a73ed8..0000000
+--- a/include/linux/of_serial.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-#ifndef __LINUX_OF_SERIAL_H
+-#define __LINUX_OF_SERIAL_H
+-
+-/*
+- * FIXME remove this file when tegra finishes conversion to open firmware,
+- * expectation is that all quirks will then be self-contained in
+- * drivers/tty/serial/of_serial.c.
+- */
+-#ifdef CONFIG_ARCH_TEGRA
+-extern void tegra_serial_handle_break(struct uart_port *port);
+-#else
+-static inline void tegra_serial_handle_break(struct uart_port *port)
+-{
+-}
+-#endif
+-
+-#endif /* __LINUX_OF_SERIAL */
+-- 
+1.7.10.4
