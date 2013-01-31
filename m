@@ -1,87 +1,92 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH RFC 1/2] Implementation of pci_fixup_irqs for descendants
- of a specified bus
-Date: Wed, 30 Jan 2013 17:24:14 -0700
-Message-ID: <CAErSpo7Oyx41Qy80YcZNpSe7CatzLZ4Lai0--YRGJ0NZ1zQTRA@mail.gmail.com>
-References: <20130118113742.GA9006@arm.com>
+From: Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>
+Subject: Re: [PATCH 4/5] drm/tegra: Implement VBLANK support
+Date: Thu, 31 Jan 2013 03:06:25 +0100
+Message-ID: <5109D1A1.9010207@tuebingen.mpg.de>
+References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de> <1358178932-25505-5-git-send-email-thierry.reding@avionic-design.de> <CADWT_cPtdmSF+_ybe70ZY_z5idzr0KQe94r57ok-Hf-V22wixA@mail.gmail.com> <20130130083453.GA21322@avionic-0098.mockup.avionic-design.de> <CAKMK7uHo9inMzKXqpnH9+H7Tm+nnChGUXE+mGA51L0fNrwoX0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130118113742.GA9006-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <CAKMK7uHo9inMzKXqpnH9+H7Tm+nnChGUXE+mGA51L0fNrwoX0Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Mayo <jon-MQ+mZzckBGs@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 18, 2013 at 4:37 AM, Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org> wrote:
-> Continuing from discussion with Thierry (lkml.org/lkml/2013/1/18/107) perhaps
-> this will be useful to fold into your patchset.
-> ---
-> This patch provides pci_bus_fixup_irqs which performs the same
-> function as pci_fixup_irqs but only to descendants of the specified
-> bus.
-
-I think pci_fixup_irqs() is a broken design to begin with because it
-is only called once at boot-time and it iterates over all the devices
-we've found so far.  Any hot-added devices never get the fixups.
-
-Adding pci_bus_fixup_irqs() addresses part of that, by adding a way to
-fixup a subset of devices, e.g., maybe it could be done for hot-added
-things.
-
-But I think it would be better to do a more extensive refactoring and
-do the IRQ fixups directly somewhere in the pci_device_add() path.
-That way we can do it a device at a time, for every device (present at
-boot and hot-added later), and before any drivers claim the device.
-
-> This can reduce unnecessary fixing up of device irqs when new buses
-> are added.
+On 30.01.13 13:36, Daniel Vetter wrote:
+> On Wed, Jan 30, 2013 at 9:34 AM, Thierry Reding
+> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>> On Tue, Jan 22, 2013 at 10:21:40AM -0800, Jon Mayo wrote:
+>>> On Mon, Jan 14, 2013 at 7:55 AM, Thierry Reding
+>>> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
+>>>> Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+>>>> special in this case because it doesn't use the generic IRQ support
+>>>> provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+>>>> interrupt handler for each display controller.
+>>>>
+>>>> While at it, clean up the way that interrupts are enabled to ensure
+>>>> that the VBLANK interrupt only gets enabled when required.
+>>>>
+>>>> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>>>> ---
+>>>
+>>> Sorry Thierry, but is this a useful feature? Are applications really
+>>> making use of it? Because it means that that an IRQ will have to
+>>> trigger every 16.67ms when it is taken, which means the device can't
+>>> sleep. (probably OK because it should go back to idle when the app
+>>> lets go of the vblank). But worse, for one-shot panels there is no
+>>> continuous vblank. I've been doing weird hacks to run a timer when the
+>>> smart panel is idle to trick applications into thinking they have a
+>>> vblank pulse. But really I think the whole feature of a vblank pulse
+>>> is pretty lame and I wish it would die. Were you going to use it for
+>>> something specific, or just adding it for completeness?
+>>
+>> This is mainly added for completeness. I know that on Tegra we can do a
+>> lot better by using syncpoints, but applications such as Weston (in
+>> general applications that use the generic DRM API) rely on this to sync
+>> rendering with VBLANK.
+>>
+>> I don't think there's another way to achieve the same thing. And as you
+>> already mentioned, this is only enabled when an application actively
+>> uses it, in which case the device won't sleep anyway.
 >
-> Signed-off-by: Andrew Murray <Andrew.Murray-5wv7dgnIgG8@public.gmane.org>
-> Signed-off-by: Liviu Dudau <Liviu.Dudau-5wv7dgnIgG8@public.gmane.org>
-> ---
->  drivers/pci/setup-irq.c |   15 +++++++++++++++
->  include/linux/pci.h     |    3 +++
->  2 files changed, 18 insertions(+), 0 deletions(-)
+> I think driving animations with the vblank signal is nice, but we
+> kinda only need that with the pageflip support. Unfortunately the
+> current drm code is a bit a mess in that area, so pageflips force you
+> to enable the vblank interrupt for otherwise the timestamp'ed pageflip
+> completion events won't work.
 >
-> diff --git a/drivers/pci/setup-irq.c b/drivers/pci/setup-irq.c
-> index eb219a1..ea91874 100644
-> --- a/drivers/pci/setup-irq.c
-> +++ b/drivers/pci/setup-irq.c
-> @@ -62,3 +62,18 @@ pci_fixup_irqs(u8 (*swizzle)(struct pci_dev *, u8 *),
->         for_each_pci_dev(dev)
->                 pdev_fixup_irq(dev, swizzle, map_irq);
->  }
-> +
-> +void __init
-> +pci_bus_fixup_irqs(struct pci_bus *bus,
-> +               u8 (*swizzle)(struct pci_dev *, u8 *),
-> +               int (*map_irq)(const struct pci_dev *, u8, u8))
-> +{
-> +       struct pci_dev *dev;
-> +
-> +       list_for_each_entry(dev, &bus->devices, bus_list) {
-> +               pdev_fixup_irq(dev, swizzle, map_irq);
-> +
-> +               if (dev->subordinate)
-> +                       pci_bus_fixup_irqs(dev->subordinate, swizzle, map_irq);
-> +       }
-> +}
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 5faa831..1b3c2eb 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -953,6 +953,9 @@ void pdev_enable_device(struct pci_dev *);
->  int pci_enable_resources(struct pci_dev *, int mask);
->  void pci_fixup_irqs(u8 (*)(struct pci_dev *, u8 *),
->                     int (*)(const struct pci_dev *, u8, u8));
-> +void pci_bus_fixup_irqs(struct pci_bus *bus,
-> +               u8 (*swizzle)(struct pci_dev *, u8 *),
-> +               int (*map_irq)(const struct pci_dev *, u8, u8));
->  #define HAVE_PCI_REQ_REGIONS   2
->  int __must_check pci_request_regions(struct pci_dev *, const char *);
->  int __must_check pci_request_regions_exclusive(struct pci_dev *, const char *);
-> --
-> 1.7.0.4
+
+Extensions like SGI_video_sync, OML_sync_control, INTEL_swap_events 
+expose vblank counts and related functionality for synchronizing to the 
+vblank and some applications really use and need them in addition to the 
+pageflip timestamps, so you need a running reliable vblank counter to 
+support these. Some scienctific/medical applications need to also 
+synchronize things like audio playback or capture, or triggering of 
+special research equipment (fMRI/MEG/EEG brain scanners and recordign 
+equipment, eye trackers, TMS brain stimulators etc.) to the vblank of a 
+completed or future bufferswap, with sometimes better than 1 msec 
+precision, sometimes ahead of the event.
+
+That we can't timestamp non-pageflipped swaps precisely/reliably is a 
+limitation, not a feature for such uses.
+
+> Recent intel hw has pageflip timestamp registers, so we don't really
+> need that. And I guess other hw is similar. So we probably should
+> clean up and untangle the infrastructure a bit around the drm vblank
+> support code.
+
+At least AMD hw as of a while ago didn't, older intel hw didn't (afaik), 
+and NVidia i don't know. You'd also need hw vblank timestamps and 
+counters independent of page-flip completion to not regress existing 
+important functionality if you want to get rid of the irq based method.
+
+-mario
+
 >
+> Another issue is that the vblank ioctl itself doesn't deal with
+> modeset crtc ids, so adding a new interface for that would be good.
+> Otoh most kms clients don't really use it, but only care about
+> pageflips.
+> -Daniel
 >
