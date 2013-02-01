@@ -1,13 +1,13 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [PATCH v5 00/10] Tegra114 clockframework
-Date: Fri, 1 Feb 2013 12:16:42 +0200
-Message-ID: <1359713860-16631-1-git-send-email-pdeschrijver@nvidia.com>
+Date: Fri, 1 Feb 2013 12:18:29 +0200
+Message-ID: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: "moderated list:OPEN FIRMWARE AND..." <devicetree-discuss@lists.ozlabs.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:TEGRA SUPPORT" <linux-tegra@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 This is the fifth version of the Tegra114 clockframework. It is based on the
@@ -76,4 +76,3 @@ Peter De Schrijver (10):
  11 files changed, 3481 insertions(+), 282 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
  create mode 100644 drivers/clk/tegra/clk-tegra114.c
-
