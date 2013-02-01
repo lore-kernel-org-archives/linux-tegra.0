@@ -1,59 +1,79 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [GIT PULL 5/8] ARM: tegra: SCU base rework
-Date: Thu, 31 Jan 2013 21:46:10 -0700
-Message-ID: <510B4892.3050900@wwwdotorg.org>
-References: <1359582159-28816-1-git-send-email-swarren@wwwdotorg.org> <1359582159-28816-5-git-send-email-swarren@wwwdotorg.org> <20130201043222.GC5844@quad.lixom.net> <CAOesGMjjgz7Am7-D_fQHqgLX=G+Wc_LKL-GYMHd1-NzVC-DUfA@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v5 00/10] Tegra114 clockframework
+Date: Fri, 1 Feb 2013 12:16:42 +0200
+Message-ID: <1359713860-16631-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMjjgz7Am7-D_fQHqgLX=G+Wc_LKL-GYMHd1-NzVC-DUfA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: pdeschrijver@nvidia.com
+Cc: "moderated list:OPEN FIRMWARE AND..." <devicetree-discuss@lists.ozlabs.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "open list:TEGRA SUPPORT" <linux-tegra@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/31/2013 09:35 PM, Olof Johansson wrote:
-> On Thu, Jan 31, 2013 at 8:32 PM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->> On Wed, Jan 30, 2013 at 02:42:36PM -0700, Stephen Warren wrote:
->>> Tegra currently relies on the SCU to determine the number of CPU
->>> cores, and also hard-codes the SCU physical address.
->>>
->>> This series adds a /cpus node to the Tegra device tree, and updates
->>> the code to rely solely on that to determine the CPU count. A new
->>> API is introduced to query for the existence of SCU registers, and the
->>> SCU register address. Tegra and OMAP2 are converted to use these new
->>> APIs.
->>>
->>> This pull request is based on a merge of v3.8-rc3, and arm-soc's
->>> depends/rmk-perf branch.
->>
->> This one looks like it should also be based on your cleanup, since it has
->> conflicts with it. Please rebase accordingly.
-> 
-> By the way, just in case this looks like a random request...
-> 
-> A few merge conflicts between independent topic branches is not a big
-> deal; we can deal with those.
-> 
-> What's somewhat annoying though, is when a previous cleanup branch
-> conflicts with later features. So, please base features on top of
-> cleanups accordingly.
+This is the fifth version of the Tegra114 clockframework. It is based on the
+for-next branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git and
+http://www.spinics.net/lists/arm-kernel/msg220452.html.
 
-Hmm. And here I was thinking that I was basing branches on top of
-each-other too much given your previous comments about merge conflicts
-being OK!
+It has been boottested on Pluto.
 
-In case it helps, the following commit in linux-next shows the conflict
-resolution:
+Changes from v4:
 
-ee05948 Merge branch 'for-3.9/scu-base-rework' into for-3.9/soc-t114
+* Split the new PLL types patch into smaller patches
+* Fix some bugs in the PLL patches
 
-I guess I missed this because I didn't merge for-3.9/scu-base-rework
-into my for-next on its own, but only as part of for-3.9/soc-t114,
-within which I had resolved the conflict as above.
+Changes from v3:
 
-So, you could just skip this pull request, and it'll be pulled in when
-you merge for-3.9/soc-t114.
+* Merge with for-next branch
+* Provide empty tegra_cpu_car_ops to make SMP boot not crash
 
-It that doesn't work for you, I can do the rebase tomorrow morning.
+Changes from v2:
+
+* Added missing PLLs
+* Added bindings to tegra114.dtsi
+* Moved the table patch for clk-mux.c to 'clk: add table lookup to mux'
+* Bugfixes
+
+Changes from v1:
+
+* Remove SATA and PCIe clocks. They don't appear in the internal TRM, so I
+  assume they don't exist.
+* Rebase on top of Hiroshi's latest Tegra114 patches
+* More generic mux code. This is necessary for the AHUB and DAM clocks.
+
+TODO:
+
+* Remove clk_register_clkdev() where possible
+* PLL clock init functions are incomplete and/or need refactoring
+* Superclocks are missing
+* The audio clocks are almost the same then Tegra30. Refactor the code to
+  avoid duplication.
+* Should blink and blink_override be clocks?
+
+Peter De Schrijver (10):
+  clk: tegra: Refactor PLL programming code
+  clk: tegra: Add TEGRA_PLL_BYPASS flag
+  clk: tegra: Add PLL post divider table
+  clk: tegra: Add new fields and PLL types for Tegra114
+  clk: tegra: Add flags to tegra_clk_periph()
+  clk: tegra: Workaround for Tegra114 MSENC problem
+  ARM: tegra: Define Tegra114 CAR binding
+  ARM: dt: Add references to tegra_car clocks
+  clk: tegra: Implement clocks for Tegra114
+  clk: tegra: devicetree match for nvidia,tegra114-car
+
+ .../bindings/clock/nvidia,tegra114-car.txt         |  311 +++
+ arch/arm/boot/dts/tegra114.dtsi                    |    7 +-
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-periph-gate.c                |    9 +
+ drivers/clk/tegra/clk-periph.c                     |   11 +-
+ drivers/clk/tegra/clk-pll.c                        |  940 +++++++++-
+ drivers/clk/tegra/clk-tegra114.c                   | 2002 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  153 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  243 ++--
+ drivers/clk/tegra/clk.c                            |    1 +
+ drivers/clk/tegra/clk.h                            |   85 +-
+ 11 files changed, 3481 insertions(+), 282 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
+
