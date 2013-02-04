@@ -1,169 +1,105 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCHv5,RESEND 4/8] gpu: host1x: Add debug support
-Date: Mon, 4 Feb 2013 12:03:39 +0100
-Message-ID: <20130204110339.GA28134@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCHv5,RESEND 5/8] drm: tegra: Move drm to live under host1x
+Date: Mon, 4 Feb 2013 12:08:04 +0100
+Message-ID: <20130204110804.GA595@avionic-0098.mockup.avionic-design.de>
 References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
- <1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
+ <1358250244-9678-6-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: amerilainen@nvidia.com, airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1358250244-9678-6-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---bg08WKrSYDhXBjb5
+--Dxnq1zWXvFF0Q93v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 15, 2013 at 01:44:00PM +0200, Terje Bergstrom wrote:
-> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+On Tue, Jan 15, 2013 at 01:44:01PM +0200, Terje Bergstrom wrote:
 [...]
-> +static pid_t host1x_debug_null_kickoff_pid;
-> +unsigned int host1x_debug_trace_cmdbuf;
+> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+> index 697d49a..ffc8bf1 100644
+> --- a/drivers/gpu/host1x/Makefile
+> +++ b/drivers/gpu/host1x/Makefile
+> @@ -12,4 +12,10 @@ host1x-y =3D \
+>  	hw/host1x01.o
+> =20
+>  host1x-$(CONFIG_TEGRA_HOST1X_CMA) +=3D cma.o
 > +
-> +static pid_t host1x_debug_force_timeout_pid;
-> +static u32 host1x_debug_force_timeout_val;
-> +static u32 host1x_debug_force_timeout_channel;
+> +ccflags-y +=3D -Iinclude/drm
+> +ccflags-$(CONFIG_DRM_TEGRA_DEBUG) +=3D -DDEBUG
+> +
+> +host1x-$(CONFIG_DRM_TEGRA) +=3D drm/drm.o drm/fb.o drm/dc.o drm/host1x.o
+> +host1x-$(CONFIG_DRM_TEGRA) +=3D drm/output.o drm/rgb.o drm/hdmi.o
+>  obj-$(CONFIG_TEGRA_HOST1X) +=3D host1x.o
 
-Please group static and non-static variables.
+Can this be moved into a separate Makefile in the drm subdirectory?
 
-> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+> diff --git a/drivers/gpu/host1x/host1x_client.h b/drivers/gpu/host1x/host=
+1x_client.h
 [...]
-> +struct output {
-> +	void (*fn)(void *ctx, const char *str, size_t len);
-> +	void *ctx;
-> +	char buf[256];
-> +};
-
-Do we really need this kind of abstraction? There really should be only
-one location where debug information is obtained, so I don't see a need
-for this.
-
-> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-[...]
->  struct host1x_syncpt_ops {
->  	void (*reset)(struct host1x_syncpt *);
->  	void (*reset_wait_base)(struct host1x_syncpt *);
-> @@ -117,6 +133,7 @@ struct host1x {
->  	struct host1x_channel_ops channel_op;
->  	struct host1x_cdma_ops cdma_op;
->  	struct host1x_pushbuffer_ops cdma_pb_op;
-> +	struct host1x_debug_ops debug_op;
->  	struct host1x_syncpt_ops syncpt_op;
->  	struct host1x_intr_ops intr_op;
-
-Again, better to pass in a const pointer to the ops structure.
-
-> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-
-> +static int show_channel_command(struct output *o, u32 addr, u32 val, int *count)
-> +{
-> +	unsigned mask;
-> +	unsigned subop;
+> new file mode 100644
+> index 0000000..fdd2920
+> --- /dev/null
+> +++ b/drivers/gpu/host1x/host1x_client.h
+> @@ -0,0 +1,25 @@
+> +/*
+> + * Copyright (c) 2013, NVIDIA Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify =
+it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
+ for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
 > +
-> +	switch (val >> 28) {
-> +	case 0x0:
-
-These can easily be derived by looking at the debug output, but it may
-still make sense to assign symbolic names to them.
-
-> +static void show_channel_word(struct output *o, int *state, int *count,
-> +		u32 addr, u32 val, struct host1x_cdma *cdma)
-> +{
-> +	static int start_count, dont_print;
-
-What if two processes read debug information at the same time?
-
-> +static void do_show_channel_gather(struct output *o,
-> +		phys_addr_t phys_addr,
-> +		u32 words, struct host1x_cdma *cdma,
-> +		phys_addr_t pin_addr, u32 *map_addr)
-> +{
-> +	/* Map dmaget cursor to corresponding mem handle */
-> +	u32 offset;
-> +	int state, count, i;
+> +#ifndef HOST1X_CLIENT_H
+> +#define HOST1X_CLIENT_H
 > +
-> +	offset = phys_addr - pin_addr;
-> +	/*
-> +	 * Sometimes we're given different hardware address to the same
-> +	 * page - in these cases the offset will get an invalid number and
-> +	 * we just have to bail out.
-> +	 */
-
-Why's that?
-
-> +	map_addr = host1x_memmgr_mmap(mem);
-> +	if (!map_addr) {
-> +		host1x_debug_output(o, "[could not mmap]\n");
-> +		return;
-> +	}
+> +struct platform_device;
 > +
-> +	/* Get base address from mem */
-> +	sgt = host1x_memmgr_pin(mem);
-> +	if (IS_ERR(sgt)) {
-> +		host1x_debug_output(o, "[couldn't pin]\n");
-> +		host1x_memmgr_munmap(mem, map_addr);
-> +		return;
-> +	}
-
-Maybe you should stick with one of "could not" or "couldn't". Makes it
-easier to search for.
-
-> +static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
-> +{
-> +	struct host1x_job *job;
+> +void host1x_set_drm_data(struct platform_device *pdev, void *data);
+> +void *host1x_get_drm_data(struct platform_device *pdev);
 > +
-> +	list_for_each_entry(job, &cdma->sync_queue, list) {
-> +		int i;
-> +		host1x_debug_output(o,
-> +				"\n%p: JOB, syncpt_id=%d, syncpt_val=%d,"
-> +				" first_get=%08x, timeout=%d"
-> +				" num_slots=%d, num_handles=%d\n",
-> +				job,
-> +				job->syncpt_id,
-> +				job->syncpt_end,
-> +				job->first_get,
-> +				job->timeout,
-> +				job->num_slots,
-> +				job->num_unpins);
+> +#endif
 
-This could go on fewer lines.
-
-> +static void host1x_debug_show_channel_cdma(struct host1x *m,
-> +	struct host1x_channel *ch, struct output *o, int chid)
-> +{
-[...]
-> +	switch (cbstat) {
-> +	case 0x00010008:
-
-Again, symbolic names would be nice.
+These aren't defined or used yet.
 
 Thierry
 
---bg08WKrSYDhXBjb5
+--Dxnq1zWXvFF0Q93v
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRD5WLAAoJEN0jrNd/PrOh9HIQAMFPQ8d/R6pvnKWOn1a1zJ1O
-iAF73s3xcTtzQB1magCT3gnpGbvLcn4mW0oAN9fv+pE44lbMhOlnunEMNHVEuOsh
-A6bALC0TImbUXn0lsWw9tc9WEvofSVfFlrj1MHEPZ87Rq662wT8eEg+5lFGRwj9D
-VN4HzsQxVKzbQyhWyGehwSD7eSrjp1aWq0jdMmrwGxhj6pLyuhWJ0HFA28Z91J2b
-gEeJP93N1bOqtEWFpu+E2T7j4XEUcqoRD53nAQADNZaTa0ORij6CKz1zxomw5HR4
-3AvQWfbi74RvxKYP9TxlZUcv+mh64Uk7zn9YbGTogQMb+BV5IXwLKLyM+0PFhrnl
-hN/urvTvFUycvc+ge+pAh+8+zeoJLbroc+fcyJ4YtzjUJEVsQ1/rTcZsY6FOhF+V
-Am7blg3X0jGE/6nr8vvth3B7mHsC40wGgvrlPyWCRFf8tbE9xkSsO1yOeNLjcD8c
-55QwipkI11tHdCTAzRfWNbap59LZq2p6rjzUOC6CUGI2HCF3FbLG4Onlw51qYXE6
-VwU6WyejSG1YEAQ/Y2bRGTEVTbxGnmJpaMotbBSJwnhwcvgVN9bQQhmUDD5UZVpv
-tdwCctkhmoTxCQIIMtGu2OGwXOrIWQU5NVyYqms9o2j2//Vq2m+DPAmHqpc10nLD
-2JkYPcbb6lqlaQeHgmbc
-=8Viw
+iQIcBAEBAgAGBQJRD5aUAAoJEN0jrNd/PrOhKaYP/1935u+Jh8WXS/aXQQ8rn1PL
+4NSOlIST1cebnRj4rJwOwh1GSAGM4uwaPKtHg7bS/qVTaTIpX2G7eO6yUybdlygp
+mA4WQw5Kj164RMZiXEIBV62iNFNElQz4oNnONDGg7FDJWcZn3xqirJhqP5jeerly
+JxksCVb4TtPdguAr+sWWrO5Hpw3QksNbr0gfSXgwmN9Tmbgd1mIPEsHY9ok8tUQl
+916SjTk6WCu6rzj3vsKQI/gvGhRwMjACBqyaWcbPjOpzommh9bfNUms4UlbyKNJh
+gY1PWxOs2eF4BA5VcbduYnqJuDqHZ2z+V3tH+vARCoEM8o+83DBRFL4ohxuAO+hn
+ODSUevkUJck7AH5Up+Z4fIzRTDZGNybd8+1HwbNyqnlQTyIptYhLBnoS2oE4M6cm
+u6Q9oiUXoGDFV3SMbn6qDWNeWNnzU9ZFKgbbokHrLIZADhLSSsO1sD5DMTsV+wyC
+z6sttHGVyUW1yhRtf7EoNsx57+cBm1zdMYoruogS3U9M0gJwtqcaiUIiXctny0cC
+cTnIgx5jJxCX3Vbe1DYph2q1NuBMM0ZkB4q77CX2bTDXqTrVNg+OgeFjycWyJd4p
+aNoG8vsFw2OxsTrrwXkF1YFQCVad82HUWOjQYoh2i558oKK3nyfDO6l4PA2hz+hq
+fWpdbtX6peKVBsGkC2tv
+=fpe1
 -----END PGP SIGNATURE-----
 
---bg08WKrSYDhXBjb5--
+--Dxnq1zWXvFF0Q93v--
