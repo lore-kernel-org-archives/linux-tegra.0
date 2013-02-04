@@ -1,35 +1,31 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v5 09/10] clk: tegra: Implement clocks for Tegra114
-Date: Mon, 04 Feb 2013 14:01:09 -0700
-Message-ID: <51102195.9050604@wwwdotorg.org>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com> <1359713962-16822-10-git-send-email-pdeschrijver@nvidia.com> <510F5E87.90801@nvidia.com> <20130204104531.GQ2364@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH v5 07/10] ARM: tegra: Define Tegra114 CAR binding
+Date: Mon, 04 Feb 2013 14:16:44 -0700
+Message-ID: <5110253C.3070005@wwwdotorg.org>
+References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com> <1359713962-16822-8-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20130204104531.GQ2364@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <1359713962-16822-8-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-doc-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/04/2013 03:45 AM, Peter De Schrijver wrote:
-> On Mon, Feb 04, 2013 at 08:08:55AM +0100, Prashant Gaikwad wrote:
+On 02/01/2013 03:18 AM, Peter De Schrijver wrote:
+> The device tree binding models Tegra114 CAR (Clock And Reset) as a single
+> monolithic clock provider.
+...
+> +- #clock-cells : Should be 1.
+> +  In clock consumers, this cell represents the clock ID exposed by the CAR.
+...
+> +  222	pll_u
+> +  223	pll_u_480M
+> +  224	pll_u_60M
+> +  225	pll_u_48M
+> +  226	pll_u_12M
 
->>> +       /* xusb_hs_src */
->>> +       val = readl(clk_base + CLK_SOURCE_XUSB_SS_SRC);
->>> +       val |= BIT(25); /* always select PLLU_60M */
->>> +       writel(val, clk_base + CLK_SOURCE_XUSB_SS_SRC);
->>> +
->>> +       clk = clk_register_fixed_factor(NULL, "xusb_hs_src", "pll_u_60M", 0,
->>> +                                       1, 1);
->>> +       clks[xusb_hs_src] = clk;
->>> +
->>
->> With device tree we can directly use pll_u_60M, no need to register 
->> clock with fixed factor 1.
-> 
-> This is true for now. In the future these clocks will need to be dvfs aware
-> though. I think it makes sense to have a separate clock then?
-
-Why does DVFS-awareness require it to be a different clock/ID?
+I notice here that we have separate clock IDs for the various PLL u
+outputs. We don't have this on Tegra20 or Tegra30, but I wonder if we
+should have them there too?
