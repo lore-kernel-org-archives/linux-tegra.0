@@ -1,42 +1,42 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v5 09/10] clk: tegra: Implement clocks for Tegra114
-Date: Mon, 4 Feb 2013 16:34:01 +0200
-Message-ID: <20130204143401.GW2364@tbergstrom-lnx.Nvidia.com>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
- <1359713962-16822-10-git-send-email-pdeschrijver@nvidia.com>
- <510F5E87.90801@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on
+ ARCH_TEGRA
+Date: Mon, 4 Feb 2013 17:53:01 +0100
+Message-ID: <20130204.185301.977259448309722798.hdoyu@nvidia.com>
+References: <1359628988-3678-1-git-send-email-hdoyu@nvidia.com><20130204.102732.652026294649237107.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <510F5E87.90801@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130204.102732.652026294649237107.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 04, 2013 at 08:08:55AM +0100, Prashant Gaikwad wrote:
-> On Friday 01 February 2013 03:48 PM, Peter De Schrijver wrote:
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 04 Feb 2013 10:27:32 +0200 (EET):
 
-...
-
-> > +       /* xusb_hs_src */
-> > +       val = readl(clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > +       val |= BIT(25); /* always select PLLU_60M */
-> > +       writel(val, clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > +
-> > +       clk = clk_register_fixed_factor(NULL, "xusb_hs_src", "pll_u_60M", 0,
-> > +                                       1, 1);
-> > +       clks[xusb_hs_src] = clk;
-> > +
+> Hi Joerg,
 > 
-> With device tree we can directly use pll_u_60M, no need to register 
-> clock with fixed factor 1.
-> Same comment for dis1-fixed, dsi2-fixed and mipi-cal-fast clocks.
+> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Thu, 31 Jan 2013 11:43:08 +0100:
 > 
+> > Theoretically TEGRA_IOMMU_SMMU depends on ARCH_TEGRA_3x_SOC and
+> > ARCH_TEGRA_114_SOC only. This patch allows a Tegra20 only kernel to
+> > enable SMMU(Tegra20 doesn't have a SMMU), which could avoid editing
+> > this Kconfig entry every time we add a new chip later.
+> 
+> Is there any chance to get this patch merged in v3.9?
+> 
+> Also there's another patch for v3.9:
+>   [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on ARCH_TEGRA
+>   http://lists.linuxfoundation.org/pipermail/iommu/2013-January/005129.html
 
-Does it make sense to have separate DT IDs at all then?
+The above link is pointing this mail wrongly. So the pending patches for v3.9 are:
 
-Cheers,
+ - [v3 1/1] iommu/tegra: smmu: Support variable MMIO ranges/blocks
+   http://lists.linuxfoundation.org/pipermail/iommu/2013-January/005127.html
+ 
+ - [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on ARCH_TEGRA
+   http://lists.linuxfoundation.org/pipermail/iommu/2013-January/005129.html
 
-Peter.
+Joerg, could you take them merged in for v3.9?
