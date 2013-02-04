@@ -1,54 +1,30 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: Re: [PATCH v5 10/10] clk: tegra: devicetree match for nvidia,tegra114-car
-Date: Mon, 4 Feb 2013 12:40:47 +0530
-Message-ID: <510F5EF7.9030201@nvidia.com>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com> <1359713962-16822-11-git-send-email-pdeschrijver@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on
+ ARCH_TEGRA
+Date: Mon, 4 Feb 2013 09:27:32 +0100
+Message-ID: <20130204.102732.652026294649237107.hdoyu@nvidia.com>
+References: <1359628988-3678-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1359713962-16822-11-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1359628988-3678-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 01 February 2013 03:48 PM, Peter De Schrijver wrote:
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
+Hi Joerg,
 
-Reviewed-by: Prashant Gaikwad <pgaikwad@nvidia.com>
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Thu, 31 Jan 2013 11:43:08 +0100:
 
->   drivers/clk/tegra/clk.c |    1 +
->   drivers/clk/tegra/clk.h |    7 +++++++
->   2 files changed, 8 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index a603b9a..a328365 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -76,6 +76,7 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
->   static const struct of_device_id tegra_dt_clk_match[] = {
->   	{ .compatible = "nvidia,tegra20-car", .data = tegra20_clock_init },
->   	{ .compatible = "nvidia,tegra30-car", .data = tegra30_clock_init },
-> +	{ .compatible = "nvidia,tegra114-car", .data = tegra114_clock_init },
->   	{ }
->   };
->   
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 8756d9f..8097850 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -576,4 +576,11 @@ void tegra30_clock_init(struct device_node *np);
->   static inline void tegra30_clock_init(struct device_node *np) {}
->   #endif /* CONFIG_ARCH_TEGRA_3x_SOC */
->   
-> +#ifdef CONFIG_ARCH_TEGRA_114_SOC
-> +void tegra114_clock_init(struct device_node *np);
-> +#else
-> +static inline void tegra114_clock_init(struct device_node *np) {}
-> +#endif /* CONFIG_ARCH_TEGRA114_SOC */
-> +
-> +
->   #endif /* TEGRA_CLK_H */
->
+> Theoretically TEGRA_IOMMU_SMMU depends on ARCH_TEGRA_3x_SOC and
+> ARCH_TEGRA_114_SOC only. This patch allows a Tegra20 only kernel to
+> enable SMMU(Tegra20 doesn't have a SMMU), which could avoid editing
+> this Kconfig entry every time we add a new chip later.
+
+Is there any chance to get this patch merged in v3.9?
+
+Also there's another patch for v3.9:
+  [v2 1/1] iommu/tegra: smmu: Change SMMU's dependency on ARCH_TEGRA
+  http://lists.linuxfoundation.org/pipermail/iommu/2013-January/005129.html
