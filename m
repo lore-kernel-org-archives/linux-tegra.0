@@ -1,146 +1,169 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 09/10] clk: tegra: Implement clocks for Tegra114
-Date: Mon, 4 Feb 2013 12:45:31 +0200
-Message-ID: <20130204104531.GQ2364@tbergstrom-lnx.Nvidia.com>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
- <1359713962-16822-10-git-send-email-pdeschrijver@nvidia.com>
- <510F5E87.90801@nvidia.com>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCHv5,RESEND 4/8] gpu: host1x: Add debug support
+Date: Mon, 4 Feb 2013 12:03:39 +0100
+Message-ID: <20130204110339.GA28134@avionic-0098.mockup.avionic-design.de>
+References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
+ <1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <510F5E87.90801-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Terje Bergstrom <tbergstrom@nvidia.com>
+Cc: amerilainen@nvidia.com, airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 04, 2013 at 08:08:55AM +0100, Prashant Gaikwad wrote:
 
-...
+--bg08WKrSYDhXBjb5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > +#define RST_DEVICES_L                  0x004
-> > +#define RST_DEVICES_H                  0x008
-> > +#define RST_DEVICES_U                  0x00C
-> > +#define RST_DEVICES_V                  0x358
-> > +#define RST_DEVICES_W                  0x35C
-> > +#define RST_DEVICES_X                  0x28C
-> > +#define RST_DEVICES_SET_L              0x300
-> > +#define RST_DEVICES_CLR_L              0x304
-> > +#define RST_DEVICES_SET_H              0x308
-> > +#define RST_DEVICES_CLR_H              0x30c
-> > +#define RST_DEVICES_SET_U              0x310
-> > +#define RST_DEVICES_CLR_U              0x314
-> > +#define RST_DEVICES_SET_V              0x430
-> > +#define RST_DEVICES_CLR_V              0x434
-> > +#define RST_DEVICES_SET_W              0x438
-> > +#define RST_DEVICES_CLR_W              0x43c
-> > +#define RST_DEVICES_NUM                        5
-> 
-> RST_DEVICES_SET/CLR_X?
-> 
+On Tue, Jan 15, 2013 at 01:44:00PM +0200, Terje Bergstrom wrote:
+> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+[...]
+> +static pid_t host1x_debug_null_kickoff_pid;
+> +unsigned int host1x_debug_trace_cmdbuf;
+> +
+> +static pid_t host1x_debug_force_timeout_pid;
+> +static u32 host1x_debug_force_timeout_val;
+> +static u32 host1x_debug_force_timeout_channel;
 
-For all I can see (from the not yet public TRM), this is not actually used?
-So I decided to not mention it here.
+Please group static and non-static variables.
 
-> > +
-> > +#define CLK_OUT_ENB_L                  0x010
-> > +#define CLK_OUT_ENB_H                  0x014
-> > +#define CLK_OUT_ENB_U                  0x018
-> > +#define CLK_OUT_ENB_V                  0x360
-> > +#define CLK_OUT_ENB_W                  0x364
-> > +#define CLK_OUT_ENB_X                  0x280
-> > +#define CLK_OUT_ENB_SET_L              0x320
-> > +#define CLK_OUT_ENB_CLR_L              0x324
-> > +#define CLK_OUT_ENB_SET_H              0x328
-> > +#define CLK_OUT_ENB_CLR_H              0x32c
-> > +#define CLK_OUT_ENB_SET_U              0x330
-> > +#define CLK_OUT_ENB_CLR_U              0x334
-> > +#define CLK_OUT_ENB_SET_V              0x440
-> > +#define CLK_OUT_ENB_CLR_V              0x444
-> > +#define CLK_OUT_ENB_SET_W              0x448
-> > +#define CLK_OUT_ENB_CLR_W              0x44c
-> > +#define CLK_OUT_ENB_SET_X              0x284
-> > +#define CLK_OUT_ENB_CLR_X              0x288
-> > +#define CLK_OUT_ENB_NUM                        6
-> 
-> <snip>
-> 
-> > +
-> > +       /* dsia */
-> > +       clk = clk_register_mux(NULL, "dsia_mux", mux_plld_out0_plld2_out0,
-> > +                              ARRAY_SIZE(mux_plld_out0_plld2_out0), 0,
-> > +                              clk_base + PLLD_BASE, 25, 1, 0, &pll_d_lock);
-> > +       clks[dsia_mux] = clk;
-> > +       clk = tegra_clk_register_periph_gate("dsia", "dsia_mux", 0, clk_base,
-> > +                                   0, 48, &periph_h_regs,
-> > +                                   periph_clk_enb_refcnt);
-> > +       clk_register_clkdev(clk, "dsia", "tegradc.0");
-> > +       clks[dsia] = clk;
-> > +
-> > +       /* dsib */
-> > +       clk = clk_register_mux(NULL, "dsib_mux", mux_plld_out0_plld2_out0,
-> > +                              ARRAY_SIZE(mux_plld_out0_plld2_out0), 0,
-> > +                              clk_base + PLLD2_BASE, 25, 1, 0, &pll_d2_lock);
-> > +       clks[dsib_mux] = clk;
-> > +       clk = tegra_clk_register_periph_gate("dsib", "dsib_mux", 0, clk_base,
-> > +                                   0, 82, &periph_u_regs,
-> > +                                   periph_clk_enb_refcnt);
-> > +       clk_register_clkdev(clk, "dsib", "tegradc.1");
-> > +       clks[dsib] = clk;
-> > +
-> 
-> Can we use periph no div clock here for dsia and dsib?
-> 
+> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+[...]
+> +struct output {
+> +	void (*fn)(void *ctx, const char *str, size_t len);
+> +	void *ctx;
+> +	char buf[256];
+> +};
 
-Will check.
+Do we really need this kind of abstraction? There really should be only
+one location where debug information is obtained, so I don't see a need
+for this.
 
-> > +       /* xusb_hs_src */
-> > +       val = readl(clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > +       val |= BIT(25); /* always select PLLU_60M */
-> > +       writel(val, clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > +
-> > +       clk = clk_register_fixed_factor(NULL, "xusb_hs_src", "pll_u_60M", 0,
-> > +                                       1, 1);
-> > +       clks[xusb_hs_src] = clk;
-> > +
-> 
-> With device tree we can directly use pll_u_60M, no need to register 
-> clock with fixed factor 1.
+> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+[...]
+>  struct host1x_syncpt_ops {
+>  	void (*reset)(struct host1x_syncpt *);
+>  	void (*reset_wait_base)(struct host1x_syncpt *);
+> @@ -117,6 +133,7 @@ struct host1x {
+>  	struct host1x_channel_ops channel_op;
+>  	struct host1x_cdma_ops cdma_op;
+>  	struct host1x_pushbuffer_ops cdma_pb_op;
+> +	struct host1x_debug_ops debug_op;
+>  	struct host1x_syncpt_ops syncpt_op;
+>  	struct host1x_intr_ops intr_op;
 
-This is true for now. In the future these clocks will need to be dvfs aware
-though. I think it makes sense to have a separate clock then?
+Again, better to pass in a const pointer to the ops structure.
 
-> Same comment for dis1-fixed, dsi2-fixed and mipi-cal-fast clocks.
-> 
+> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
 
-Those might not need to become dvfs aware.
+> +static int show_channel_command(struct output *o, u32 addr, u32 val, int *count)
+> +{
+> +	unsigned mask;
+> +	unsigned subop;
+> +
+> +	switch (val >> 28) {
+> +	case 0x0:
 
-> > +       /* xusb_host */
-> > +       clk = tegra_clk_register_periph_gate("xusb_host", "xusb_host_src", 0,
-> > +                                   clk_base, 0, 89, &periph_u_regs,
-> > +                                   periph_clk_enb_refcnt);
-> > +       clk_register_clkdev(clk, "tegra_xhci", "host");
-> > +       clks[xusb_host] = clk;
-> > +
-> > +       /* xusb_ss */
-> > +       clk = tegra_clk_register_periph_gate("xusb_ss", "xusb_ss_src", 0,
-> > +                                   clk_base, 0, 156, &periph_w_regs,
-> > +                                   periph_clk_enb_refcnt);
-> > +       clk_register_clkdev(clk, "tegra_xhci", "ss");
-> > +       clks[xusb_host] = clk;
-> > +
-> > +       /* xusb_dev */
-> > +       clk = tegra_clk_register_periph_gate("xusb_dev", "xusb_dev_src", 0,
-> > +                                   clk_base, 0, 95, &periph_u_regs,
-> > +                                   periph_clk_enb_refcnt);
-> > +       clk_register_clkdev(clk, "tegra_xhci", "dev");
-> 
-> clks[xusb_dev] = clk;
-> 
+These can easily be derived by looking at the debug output, but it may
+still make sense to assign symbolic names to them.
 
-Missing indeed.
+> +static void show_channel_word(struct output *o, int *state, int *count,
+> +		u32 addr, u32 val, struct host1x_cdma *cdma)
+> +{
+> +	static int start_count, dont_print;
 
-Cheers,
+What if two processes read debug information at the same time?
 
-Peter.
+> +static void do_show_channel_gather(struct output *o,
+> +		phys_addr_t phys_addr,
+> +		u32 words, struct host1x_cdma *cdma,
+> +		phys_addr_t pin_addr, u32 *map_addr)
+> +{
+> +	/* Map dmaget cursor to corresponding mem handle */
+> +	u32 offset;
+> +	int state, count, i;
+> +
+> +	offset = phys_addr - pin_addr;
+> +	/*
+> +	 * Sometimes we're given different hardware address to the same
+> +	 * page - in these cases the offset will get an invalid number and
+> +	 * we just have to bail out.
+> +	 */
+
+Why's that?
+
+> +	map_addr = host1x_memmgr_mmap(mem);
+> +	if (!map_addr) {
+> +		host1x_debug_output(o, "[could not mmap]\n");
+> +		return;
+> +	}
+> +
+> +	/* Get base address from mem */
+> +	sgt = host1x_memmgr_pin(mem);
+> +	if (IS_ERR(sgt)) {
+> +		host1x_debug_output(o, "[couldn't pin]\n");
+> +		host1x_memmgr_munmap(mem, map_addr);
+> +		return;
+> +	}
+
+Maybe you should stick with one of "could not" or "couldn't". Makes it
+easier to search for.
+
+> +static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
+> +{
+> +	struct host1x_job *job;
+> +
+> +	list_for_each_entry(job, &cdma->sync_queue, list) {
+> +		int i;
+> +		host1x_debug_output(o,
+> +				"\n%p: JOB, syncpt_id=%d, syncpt_val=%d,"
+> +				" first_get=%08x, timeout=%d"
+> +				" num_slots=%d, num_handles=%d\n",
+> +				job,
+> +				job->syncpt_id,
+> +				job->syncpt_end,
+> +				job->first_get,
+> +				job->timeout,
+> +				job->num_slots,
+> +				job->num_unpins);
+
+This could go on fewer lines.
+
+> +static void host1x_debug_show_channel_cdma(struct host1x *m,
+> +	struct host1x_channel *ch, struct output *o, int chid)
+> +{
+[...]
+> +	switch (cbstat) {
+> +	case 0x00010008:
+
+Again, symbolic names would be nice.
+
+Thierry
+
+--bg08WKrSYDhXBjb5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRD5WLAAoJEN0jrNd/PrOh9HIQAMFPQ8d/R6pvnKWOn1a1zJ1O
+iAF73s3xcTtzQB1magCT3gnpGbvLcn4mW0oAN9fv+pE44lbMhOlnunEMNHVEuOsh
+A6bALC0TImbUXn0lsWw9tc9WEvofSVfFlrj1MHEPZ87Rq662wT8eEg+5lFGRwj9D
+VN4HzsQxVKzbQyhWyGehwSD7eSrjp1aWq0jdMmrwGxhj6pLyuhWJ0HFA28Z91J2b
+gEeJP93N1bOqtEWFpu+E2T7j4XEUcqoRD53nAQADNZaTa0ORij6CKz1zxomw5HR4
+3AvQWfbi74RvxKYP9TxlZUcv+mh64Uk7zn9YbGTogQMb+BV5IXwLKLyM+0PFhrnl
+hN/urvTvFUycvc+ge+pAh+8+zeoJLbroc+fcyJ4YtzjUJEVsQ1/rTcZsY6FOhF+V
+Am7blg3X0jGE/6nr8vvth3B7mHsC40wGgvrlPyWCRFf8tbE9xkSsO1yOeNLjcD8c
+55QwipkI11tHdCTAzRfWNbap59LZq2p6rjzUOC6CUGI2HCF3FbLG4Onlw51qYXE6
+VwU6WyejSG1YEAQ/Y2bRGTEVTbxGnmJpaMotbBSJwnhwcvgVN9bQQhmUDD5UZVpv
+tdwCctkhmoTxCQIIMtGu2OGwXOrIWQU5NVyYqms9o2j2//Vq2m+DPAmHqpc10nLD
+2JkYPcbb6lqlaQeHgmbc
+=8Viw
+-----END PGP SIGNATURE-----
+
+--bg08WKrSYDhXBjb5--
