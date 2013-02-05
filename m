@@ -1,293 +1,205 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 8/8] drm: tegra: Add gr2d device
-Date: Tue, 5 Feb 2013 10:54:04 +0100
-Message-ID: <20130205095403.GF20437@avionic-0098.mockup.avionic-design.de>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
- <1358250244-9678-9-git-send-email-tbergstrom@nvidia.com>
- <20130204125618.GD595@avionic-0098.mockup.avionic-design.de>
- <511095F9.6040607@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] clk: Add composite clock type
+Date: Tue, 5 Feb 2013 11:22:52 +0100
+Message-ID: <20130205.122252.570646990867457667.hdoyu@nvidia.com>
+References: <1359965482-29655-1-git-send-email-pgaikwad@nvidia.com><20130204.113739.2227266298512077917.hdoyu@nvidia.com><5110C3E5.2010503@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <511095F9.6040607-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5110C3E5.2010503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Tue, 5 Feb 2013 09:33:41 +0100:
 
---dgjlcl3Tl+kb3YDk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > The members of "clk_composite_ops" seems to be always assigned
+> > statically. Istead of dynamically allocating/assigning, can't we just
+> > have "clk_composite_ops" statically as below?
+> >
+> > static struct clk_ops clk_composite_ops = {
+> > 	.get_parent = clk_composite_get_parent;
+> > 	.set_parent = clk_composite_set_parent;
+> > 	.recalc_rate = clk_composite_recalc_rate;
+> > 	.round_rate = clk_composite_round_rate;
+> > 	.set_rate = clk_composite_set_rate;
+> > 	.is_enabled = clk_composite_is_enabled;
+> > 	.enable = clk_composite_enable;
+> > 	.disable = clk_composite_disable;
+> > };
+> >
+> > struct clk *clk_register_composite(struct device *dev, const char *name,
+> > 		       const char **parent_names, int num_parents,
+> > 		       struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+> > 		       struct clk_hw *div_hw, const struct clk_ops *div_ops,
+> > 		       struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+> > 		       unsigned long flags)
+> > {
+> > 	.....
+> >
+> > 	init.ops = &clk_composite_ops;
+> 
+> No, clk_ops depends on the clocks you are using. There could be a clock 
+> with mux and gate while another one with mux and div.
 
-On Mon, Feb 04, 2013 at 09:17:45PM -0800, Terje Bergstr=C3=B6m wrote:
-> On 04.02.2013 04:56, Thierry Reding wrote:
-> > On Tue, Jan 15, 2013 at 01:44:04PM +0200, Terje Bergstrom wrote:
-> >> +{
-> >> +     struct host1x *host1x =3D drm->dev_private;
-> >> +     struct tegra_drm_syncpt_read_args *args =3D data;
-> >> +     struct host1x_syncpt *sp =3D
-> >> +             host1x_syncpt_get_bydev(host1x->dev, args->id);
-> >=20
-> > I don't know if we need this, except maybe to work around the problem
-> > that we have two different structures named host1x. The _bydev() suffix
-> > is misleading because all you really do here is obtain the syncpt from
-> > the host1x.
->=20
-> Yeah, it's actually working around the host1x duplicate naming.
-> host1x_syncpt_get takes struct host1x as parameter, but that's different
-> host1x than in this code.
+You are right. What about the following? We don't have to have similar
+copy of clk_composite_ops for each instances.
 
-So maybe a better way would be to rename the DRM host1x after all. If it
-avoids the need for workarounds such as this I think it justifies the
-additional churn.
-
-> > Also, how useful is it to create a context? Looking at the gr2d
-> > implementation for .open_channel(), it will return the same channel to
-> > whichever userspace process requests them. Can you explain why it is
-> > necessary at all? From the name I would have expected some kind of
-> > context switching to take place when different applications submit
-> > requests to the same client, but that doesn't seem to be the case.
->=20
-> Hardware context switching will be a later submit, and it'll actually
-> create a new structure. Hardware context might live longer than the
-> process that created it, so they'll need to be separate.
-
-Why would it live longer than the process? Isn't the whole purpose of
-the context to keep per-process state? What use is that state if the
-process dies?
-
-> We've used the context as a place for storing flags and the reference to
-> hardware context. It'd allow also opening channels to multiple devices,
-> and context would be used in submit to find out the target device. But
-> as hardware context switching is not implemented in this patch set, and
-> neither is support for anything but 2D, it's difficult to justify it.
->=20
-> Perhaps the justification is that this way we can keep the kernel API
-> stable even when we add support for hardware contexts and other clients.
-
-We don't need a stable kernel API. But I guess it is fine to keep it if
-for no other reason to fill the context returned in the ioctl() with
-meaningful data.
-
-> >> diff --git a/drivers/gpu/host1x/drm/drm.h b/drivers/gpu/host1x/drm/drm=
-=2Eh
-> > [...]
-> >> +struct host1x_drm_fpriv {
-> >> +     struct list_head contexts;
-> >>  };
-> >=20
-> > Maybe name this host1x_drm_file. fpriv isn't very specific.
->=20
-> host1x_drm_file sounds a bit odd, because it's not really a file, but a
-> private data pointer stored in driver_priv.
-
-The same is true for struct drm_file, which is stored in struct file's
-=2Eprivate_data field. I find it to be very intuitive if the inheritance
-is reflected in the structure name. struct host1x_drm_file is host1x'
-driver-specific part of struct drm_file.
-
-> >> +static u32 handle_cma_to_host1x(struct drm_device *drm,
-> >> +                             struct drm_file *file_priv, u32 gem_hand=
-le)
-> >> +{
-> >> +     struct drm_gem_object *obj;
-> >> +     struct drm_gem_cma_object *cma_obj;
-> >> +     u32 host1x_handle;
-> >> +
-> >> +     obj =3D drm_gem_object_lookup(drm, file_priv, gem_handle);
-> >> +     if (!obj)
-> >> +             return 0;
-> >> +
-> >> +     cma_obj =3D to_drm_gem_cma_obj(obj);
-> >> +     host1x_handle =3D host1x_memmgr_host1x_id(mem_mgr_type_cma, (u32=
-)cma_obj);
-> >> +     drm_gem_object_unreference(obj);
-> >> +
-> >> +     return host1x_handle;
-> >> +}
-> >=20
-> > I though we had settled in previous reviews on only having a single
-> > allocator and not do the conversion between various types?
->=20
-> I'll need to agree with Lucas on how to handle this. He intended to make
-> a patch to fix this, but he hasn't had time to do that.
->=20
-> But, I'd still like to keep the possibility open to add dma_buf as
-> memory handle type, and fit that into the same API, so there's still a
-> need to have the mem_mgr_type abstraction.
-
-I fail to see how dma_buf would require a separate mem_mgr_type. Can we
-perhaps postpone this to a later point and just go with CMA as the only
-alternative for now until we have an actual working implementation that
-we can use this for?
-
-> >> +static int gr2d_submit(struct host1x_drm_context *context,
-> >> +             struct tegra_drm_submit_args *args,
-> >> +             struct drm_device *drm,
-> >> +             struct drm_file *file_priv)
-> >> +{
-> >> +     struct host1x_job *job;
-> >> +     int num_cmdbufs =3D args->num_cmdbufs;
-> >> +     int num_relocs =3D args->num_relocs;
-> >> +     int num_waitchks =3D args->num_waitchks;
-> >> +     struct tegra_drm_cmdbuf __user *cmdbufs =3D
-> >> +             (void * __user)(uintptr_t)args->cmdbufs;
-> >> +     struct tegra_drm_reloc __user *relocs =3D
-> >> +             (void * __user)(uintptr_t)args->relocs;
-> >> +     struct tegra_drm_waitchk __user *waitchks =3D
-> >> +             (void * __user)(uintptr_t)args->waitchks;
-> >=20
-> > No need for all the uintptr_t casts.
->=20
-> Will try to remove - but I do remember getting compiler warnings without
-> them.
-
-I think you shouldn't even have to cast to void * first. Just cast to
-the target type directly. I don't see why the compiler should complain.
-
-> (...)
-> > Most of this looks very generic. Can't it be split out into separate
-> > functions and reused in other (gr3d) modules?
->=20
-> That's actually how most of this is downstream. I thought to make
-> everything really simple and make it all 2D specific in the first patch
-> set, and split into generic when we add support for another device.
-
-Okay, that's fine then.
-
-> >> +static int gr2d_is_addr_reg(struct platform_device *dev, u32 class, u=
-32 reg)
-> >> +{
-> >> +     int ret;
-> >> +
-> >> +     if (class =3D=3D NV_HOST1X_CLASS_ID)
-> >> +             ret =3D reg =3D=3D 0x2b;
-> >> +     else
-> >> +             switch (reg) {
-> >> +             case 0x1a:
-> >> +             case 0x1b:
-> >> +             case 0x26:
-> >> +             case 0x2b:
-> >> +             case 0x2c:
-> >> +             case 0x2d:
-> >> +             case 0x31:
-> >> +             case 0x32:
-> >> +             case 0x48:
-> >> +             case 0x49:
-> >> +             case 0x4a:
-> >> +             case 0x4b:
-> >> +             case 0x4c:
-> >> +                     ret =3D 1;
-> >> +                     break;
-> >> +             default:
-> >> +                     ret =3D 0;
-> >> +                     break;
-> >> +             }
-> >> +
-> >> +     return ret;
-> >> +}
-> >=20
-> > I should probably bite the bullet and read through the (still) huge
-> > patch 3 to understand exactly why this is needed.
->=20
-> That's the security firewall. It walks through each submit, and ensures
-> that each register write that writes an address, goes through the host1x
-> reloc mechanism. This way user space cannot ask 2D to write to arbitrary
-> memory locations.
-
-I see. Can this be made more generic? Perhaps adding a table of valid
-registers to the device and use a generic function to iterate over that
-instead of having to provide the same function for each client.
-
-> >> +static int __exit gr2d_remove(struct platform_device *dev)
-> >> +{
-> >> +     struct host1x *host1x =3D
-> >> +             host1x_get_drm_data(to_platform_device(dev->dev.parent));
-> >> +     struct gr2d *gr2d =3D platform_get_drvdata(dev);
-> >> +     int err;
-> >> +
-> >> +     err =3D host1x_unregister_client(host1x, &gr2d->client);
-> >> +     if (err < 0) {
-> >> +             dev_err(&dev->dev, "failed to unregister host1x client: =
-%d\n",
-> >> +                     err);
-> >> +             return err;
-> >> +     }
-> >> +
-> >> +     host1x_syncpt_free(gr2d->syncpt);
-> >> +     return 0;
-> >> +}
-> >=20
-> > Isn't this missing a host1x_channel_put() or host1x_free_channel()?
->=20
-> All references should be handled in gr2d_open_channel() and
-> gr2d_close_channel(). I think we'd need to ensure all contexts are
-> closed at this point.
-
-Yes, that'd work as well. Actually I would assume that all contexts
-associated with a given file should be freed when the file is closed.
-That way all of this should work pretty much automatically.
-
-> >> +struct tegra_drm_syncpt_wait_args {
-> >> +     __u32 id;
-> >> +     __u32 thresh;
-> >> +     __s32 timeout;
-> >> +     __u32 value;
-> >> +};
-> >> +
-> >> +#define DRM_TEGRA_NO_TIMEOUT (-1)
-> >=20
-> > Is this the only reason why timeout is signed? If so maybe a better
-> > choice would be __u32 and DRM_TEGRA_NO_TIMEOUT 0xffffffff.
->=20
-> I believe it is so. In fact we'd need to rename it to something like
-> INFINITE_TIMEOUT, because we also have a case of timeout=3D0, which
-> returns immediately, i.e. doesn't have a timeout either.
-
-For timeout =3D=3D 0 I don't think we need a symbolic name. It is pretty
-common for 0 to mean no timeout. But yes, DRM_TEGRA_INFINITE_TIMEOUT
-should be okay.
-
-> >> +struct tegra_drm_syncpt_incr {
-> >> +     __u32 syncpt_id;
-> >> +     __u32 syncpt_incrs;
-> >> +};
-> >=20
-> > Maybe the fields would be better named id and incrs. Though I also
-> > notice that incrs is never used. I guess that's supposed to be used in
-> > the future to allow increments by more than a single value. If so,
-> > perhaps value would be a better name.
->=20
-> It's actually used in the dreaded patch 3, as part of tegra_drm_submit_ar=
-gs.
-
-Okay. The superfluous syncpt_ prefixes should still go away.
-
-Thierry
-
---dgjlcl3Tl+kb3YDk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRENa7AAoJEN0jrNd/PrOhCyEP/A3roS+c/M0mH6QXMy6cm/UV
-eWVBqqLSLTLg2+eBA4iwt7jOdNXysPqodt5GH3KMmb56ZJ9aoTlFLGdPJnuiLJAP
-DzU0+JbPjur6tSJAmGCixcaQdUI5T0Z6O/h/OcHo9o92dSI3AJn2Ir/TsKUISKzj
-yOZig1K0lPGHt8c5HBcjcJEVj1zge3aAoQrvb/qkwMwRLVspWXnskG/I/OTVshEr
-TAiaAJuh0ELG5LOyZc3l+4HDMRuq+GA/hIz8Z+jbDfytsymRBm0jH2dQvgv62pyt
-TJI1/ip7xLGo8TvjEeJD3tcsX9gPKbHnFF92QaV+cKGpi2d88xCvDPW2p6tDxros
-7lPUYDEGqh/36A+oqwkcMRc/DtXIAyjPIglz9YA3vAduoyX10y0e/j3UNoBZnbjt
-OsQvyDKqQh3N1dhfg/VwuxdjjkHXUdHcTWgf3zASz+v7UOfDweptbsHIybUuLDLb
-vkrJCzUWQvZ0jMPCx8Y+khCa7l6aoUsddFgP6bbpxWE9n1Sedh36iClIHaNRJrZh
-ATfzzZ3RhY7HOFOA86g2DaN5v0phQGmRMHN928S2QLwU0aUsOUxkuOarjVhuPCZ/
-r9yfaicJQFqoqZJTDOJo21YG5JOSiLEdfDiGnt0X1PzsswYMnEKsHSSk9F1XrOZn
-uhFTL1wmMlD7CpDuYpSS
-=6/Q0
------END PGP SIGNATURE-----
-
---dgjlcl3Tl+kb3YDk--
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index f30fb4b..8f88805 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -27,6 +27,9 @@ static u8 clk_composite_get_parent(struct clk_hw *hw)
+        const struct clk_ops *mux_ops = composite->mux_ops;
+        struct clk_hw *mux_hw = composite->mux_hw;
+ 
++       if (!mux_hw->clk)
++	       return -EINVAL;
++
+        mux_hw->clk = hw->clk;
+ 
+        return mux_ops->get_parent(mux_hw);
+@@ -38,6 +41,9 @@ static int clk_composite_set_parent(struct clk_hw *hw, u8 index)
+        const struct clk_ops *mux_ops = composite->mux_ops;
+        struct clk_hw *mux_hw = composite->mux_hw;
+ 
++       if (!mux_hw->clk)
++	       return -EINVAL;
++
+        mux_hw->clk = hw->clk;
+ 
+        return mux_ops->set_parent(mux_hw, index);
+@@ -50,6 +56,9 @@ static unsigned long clk_composite_recalc_rate(struct clk_hw *hw,
+        const struct clk_ops *div_ops = composite->div_ops;
+        struct clk_hw *div_hw = composite->div_hw;
+ 
++       if (!div_hw->clk)
++	       return -EINVAL;
++
+        div_hw->clk = hw->clk;
+ 
+        return div_ops->recalc_rate(div_hw, parent_rate);
+@@ -62,6 +71,9 @@ static long clk_composite_round_rate(struct clk_hw *hw, unsigned long rate,
+        const struct clk_ops *div_ops = composite->div_ops;
+        struct clk_hw *div_hw = composite->div_hw;
+ 
++       if (!div_hw->clk)
++	       return -EINVAL;
++
+        div_hw->clk = hw->clk;
+ 
+        return div_ops->round_rate(div_hw, rate, prate);
+@@ -74,6 +86,9 @@ static int clk_composite_set_rate(struct clk_hw *hw, unsigned long rate,
+        const struct clk_ops *div_ops = composite->div_ops;
+        struct clk_hw *div_hw = composite->div_hw;
+ 
++       if (!div_hw->clk)
++	       return -EINVAL;
++
+        div_hw->clk = hw->clk;
+ 
+        return div_ops->set_rate(div_hw, rate, parent_rate);
+@@ -85,6 +100,9 @@ static int clk_composite_is_enabled(struct clk_hw *hw)
+        const struct clk_ops *gate_ops = composite->gate_ops;
+        struct clk_hw *gate_hw = composite->gate_hw;
+ 
++       if (!gate_hw->clk)
++	       return -EINVAL;
++
+        gate_hw->clk = hw->clk;
+ 
+        return gate_ops->is_enabled(gate_hw);
+@@ -96,6 +114,9 @@ static int clk_composite_enable(struct clk_hw *hw)
+        const struct clk_ops *gate_ops = composite->gate_ops;
+        struct clk_hw *gate_hw = composite->gate_hw;
+ 
++       if (!gate_hw->clk)
++	       return -EINVAL;
++
+        gate_hw->clk = hw->clk;
+ 
+        return gate_ops->enable(gate_hw);
+@@ -107,11 +128,25 @@ static void clk_composite_disable(struct clk_hw *hw)
+        const struct clk_ops *gate_ops = composite->gate_ops;
+        struct clk_hw *gate_hw = composite->gate_hw;
+ 
++       if (!gate_hw->clk)
++	       return -EINVAL;
++
+        gate_hw->clk = hw->clk;
+ 
+        gate_ops->disable(gate_hw);
+ }
+ 
++static struct clk_ops clk_composite_ops = {
++	.get_parent = clk_composite_get_parent,
++	.set_parent = clk_composite_set_parent,
++	.recalc_rate = clk_composite_recalc_rate,
++	.round_rate = clk_composite_round_rate,
++	.set_rate = clk_composite_set_rate,
++	.is_enabled = clk_composite_is_enabled,
++	.enable = clk_composite_enable,
++	.disable = clk_composite_disable,
++};
++
+ struct clk *clk_register_composite(struct device *dev, const char *name,
+                        const char **parent_names, int num_parents,
+                        struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+@@ -135,14 +170,6 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+        init.parent_names = parent_names;
+        init.num_parents = num_parents;
+ 
+-       /* allocate the clock ops */
+-       clk_composite_ops = kzalloc(sizeof(*clk_composite_ops), GFP_KERNEL);
+-       if (!clk_composite_ops) {
+-               pr_err("%s: could not allocate clk ops\n", __func__);
+-               kfree(composite);
+-               return ERR_PTR(-ENOMEM);
+-       }
+-
+        if (mux_hw && mux_ops) {
+                if (!mux_ops->get_parent || !mux_ops->set_parent) {
+                        clk = ERR_PTR(-EINVAL);
+@@ -151,8 +178,6 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 
+                composite->mux_hw = mux_hw;
+                composite->mux_ops = mux_ops;
+-               clk_composite_ops->get_parent = clk_composite_get_parent;
+-               clk_composite_ops->set_parent = clk_composite_set_parent;
+        }
+ 
+        if (div_hw && div_ops) {
+@@ -164,9 +189,6 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 
+                composite->div_hw = div_hw;
+                composite->div_ops = div_ops;
+-               clk_composite_ops->recalc_rate = clk_composite_recalc_rate;
+-               clk_composite_ops->round_rate = clk_composite_round_rate;
+-               clk_composite_ops->set_rate = clk_composite_set_rate;
+        }
+ 
+        if (gate_hw && gate_ops) {
+@@ -178,12 +200,9 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+ 
+                composite->gate_hw = gate_hw;
+                composite->gate_ops = gate_ops;
+-               clk_composite_ops->is_enabled = clk_composite_is_enabled;
+-               clk_composite_ops->enable = clk_composite_enable;
+-               clk_composite_ops->disable = clk_composite_disable;
+        }
+ 
+-       init.ops = clk_composite_ops;
++       init.ops = &clk_composite_ops;
+        composite->hw.init = &init;
+ 
+        clk = clk_register(dev, &composite->hw);
+@@ -202,7 +221,6 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
+        return clk;
+ 
+ err:
+-       kfree(clk_composite_ops);
+        kfree(composite);
+        return clk;
+ }
