@@ -1,334 +1,207 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 2/8] gpu: host1x: Add syncpoint wait and
- interrupts
-Date: Tue, 5 Feb 2013 09:42:55 +0100
-Message-ID: <20130205084255.GB20437@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCHv5,RESEND 4/8] gpu: host1x: Add debug support
+Date: Tue, 5 Feb 2013 10:15:56 +0100
+Message-ID: <20130205091555.GC20437@avionic-0098.mockup.avionic-design.de>
 References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
- <1358250244-9678-3-git-send-email-tbergstrom@nvidia.com>
- <20130204103032.GB27443@avionic-0098.mockup.avionic-design.de>
- <51108A94.3060501@nvidia.com>
+	<1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
+	<20130204110339.GA28134@avionic-0098.mockup.avionic-design.de>
+	<51108D75.9030302@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51108A94.3060501-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1639618099=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <51108D75.9030302@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TakKZr9L6Hm6aLOc
+--===============1639618099==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
+Content-Disposition: inline
+
+
+--raC6veAxrt5nqIoY
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 04, 2013 at 08:29:08PM -0800, Terje Bergstr=C3=B6m wrote:
-> On 04.02.2013 02:30, Thierry Reding wrote:
-> >> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-> >> index d8f5979..8376092 100644
-> >> --- a/drivers/gpu/host1x/dev.h
-> >> +++ b/drivers/gpu/host1x/dev.h
-> >> @@ -17,11 +17,12 @@
-> >>  #ifndef HOST1X_DEV_H
-> >>  #define HOST1X_DEV_H
-> >>
-> >> +#include <linux/platform_device.h>
-> >>  #include "syncpt.h"
-> >> +#include "intr.h"
-> >>
-> >>  struct host1x;
-> >>  struct host1x_syncpt;
-> >> -struct platform_device;
+On Mon, Feb 04, 2013 at 08:41:25PM -0800, Terje Bergstr=C3=B6m wrote:
+> On 04.02.2013 03:03, Thierry Reding wrote:
+> > On Tue, Jan 15, 2013 at 01:44:00PM +0200, Terje Bergstrom wrote:
+> >> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+> > [...]
+> >> +struct output {
+> >> +	void (*fn)(void *ctx, const char *str, size_t len);
+> >> +	void *ctx;
+> >> +	char buf[256];
+> >> +};
 > >=20
-> > Why include platform_device.h here?
+> > Do we really need this kind of abstraction? There really should be only
+> > one location where debug information is obtained, so I don't see a need
+> > for this.
 >=20
-> host1x_get_host() actually needs that, so this #include should've also
-> been in previous patch.
+> This is used by debugfs code to direct to debugfs, and
+> nvhost_debug_dump() to send via printk.
 
-No need to if you pass struct device * instead. You might need
-linux/device.h instead, though.
+Yes, that was precisely my point. Why bother providing the same data via
+several output methods. debugfs is good for showing large amounts of
+data such as register dumps or a tabular representation of syncpoints
+for instance.
 
-> >> +     void (*set_syncpt_threshold)(
-> >> +             struct host1x_intr *, u32 id, u32 thresh);
-> >> +     void (*enable_syncpt_intr)(struct host1x_intr *, u32 id);
-> >> +     void (*disable_syncpt_intr)(struct host1x_intr *, u32 id);
-> >> +     void (*disable_all_syncpt_intrs)(struct host1x_intr *);
+If, however, you want to interactively show debug information using
+printk the same format isn't very useful and something more reduced is
+often better.
+
+> >> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/=
+debug_hw.c
 > >=20
-> > Can disable_all_syncpt_intrs() not be implemented generically using the
-> > number of syncpoints as exposed by host1x_device_info and the
-> > .disable_syncpt_intr() function?
->=20
-> disable_all_syncpt_intrs() disables all interrupts in one write (or one
-> per 32 sync points), so it's more efficient.
-
-Yes, I noticed that and failed to remove this comment.
-
+> >> +static int show_channel_command(struct output *o, u32 addr, u32 val, =
+int *count)
 > >> +{
-> >> +     struct host1x_intr_syncpt *sp =3D
-> >> +             container_of(work, struct host1x_intr_syncpt, work);
-> >> +     host1x_syncpt_thresh_fn(sp);
+> >> +	unsigned mask;
+> >> +	unsigned subop;
+> >> +
+> >> +	switch (val >> 28) {
+> >> +	case 0x0:
 > >=20
-> > Couldn't we inline the host1x_syncpt_thresh_fn() implementation here?
-> > Why do we need to go through an external function declaration?
+> > These can easily be derived by looking at the debug output, but it may
+> > still make sense to assign symbolic names to them.
 >=20
-> If I move syncpt_thresh_work() to intr.c from intr_hw.c, I could do
-> that. That'd simplify the interrupt path.
+> I have another suggestion. In downstream I removed the decoding part and
+> I just print out a string of hex. That removes quite a bit bunch of code
+> from kernel. It makes the debug output also more compact.
+>=20
+> It's much easier to write a user space program to decode than maintain
+> it in kernel.
 
-I like simplification. =3D)
+I don't know. I think if you use in-kernel debugging facilities such as
+debugfs or printk, then the output should be self-explanatory. However I
+do see the usefulness of having a binary dump that can be decoded in
+userspace. But I think if we want to go that way we should make that a
+separate interface. USB provides something like that, which can then be
+fed to libpcap or wireshark to capture and analyze USB traffic. If done
+properly you get replay functionality for free. I don't know what infra-
+structure exists to help with implementing something similar.
 
-> >> +static irqreturn_t syncpt_thresh_cascade_isr(int irq, void *dev_id)
+So I think having debugfs output some data about syncpoints or the state
+of channels might be useful to quickly diagnose a certain set of
+problems but for anything more involved maybe a complete binary dump may
+be better.
+
+I'm not sure whether doing this would be acceptable though. Maybe Dave
+or somebody else on the lists can answer that. An alternative way to
+achieve the same would be to hook ioctl() from userspace and not do any
+of it in kernel space.
+
+> >> +static void show_channel_word(struct output *o, int *state, int *coun=
+t,
+> >> +		u32 addr, u32 val, struct host1x_cdma *cdma)
 > >> +{
-> >> +     struct host1x *host1x =3D dev_id;
-> >> +     struct host1x_intr *intr =3D &host1x->intr;
-> >> +     unsigned long reg;
-> >> +     int i, id;
-> >> +
-> >> +     for (i =3D 0; i < host1x->info.nb_pts / BITS_PER_LONG; i++) {
-> >> +             reg =3D host1x_sync_readl(host1x,
-> >> +                             HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATU=
-S +
-> >> +                             i * REGISTER_STRIDE);
-> >> +             for_each_set_bit(id, &reg, BITS_PER_LONG) {
-> >> +                     struct host1x_intr_syncpt *sp =3D
-> >> +                             intr->syncpt + (i * BITS_PER_LONG + id);
-> >> +                     host1x_intr_syncpt_thresh_isr(sp);
+> >> +	static int start_count, dont_print;
 > >=20
-> > Have you considered mimicking the IRQ API and name this something like
-> > host1x_intr_syncpt_thresh_handle() and name the actual ISR just
-> > syncpt_thresh_isr()? Not so important but it makes things a bit clearer
-> > in my opinion.
+> > What if two processes read debug information at the same time?
 >=20
-> This gets a bit confusing, because we have an ISR that calls a function
-> that is also called ISR. I've kept "isr" in names of both to emphasize
-> that this is running in interrupt context. I'm open to renaming these to
-> make it clearer.
->=20
-> Did you refer to chained IRQ handler in linux/irq.h when you mentioned
-> IRQ API as reference for naming?
+> show_channels() acquires cdma.lock, so that shouldn't happen.
 
-What I had in mind was more along the lines of kernel/irq/chip.c, which
-has a bunch of handlers for various types of interrupts, such as
-handle_nested_irq() or handle_simple_irq().
+Okay. Another solution would be to pass around a debug context which
+keeps track of the variables. But if we opt for a more involved dump
+interface as discussed above this will no longer be relevant.
 
-Hence my proposal to rename host1x_intr_syncpt_thresh_isr() to
-host1x_intr_syncpt_handle() because it handles the interrupt from a
-single syncpoint and syncpt_thresh_cascade_isr() to syncpt_thresh_isr()
-to keep it shorter.
-
-Another variant would be host1x_syncpt_irq() for the top-level handler
-and something host1x_handle_syncpt() to handle individual syncpoints. I
-like this one best, but this is pure bike-shedding and there's nothing
-technically wrong with the names you chose, so I can't really object if
-you want to stick to them.
-
-> >> +                     queue_work(intr->wq, &sp->work);
-> >=20
-> > Should the call to queue_work() perhaps be moved into
-> > host1x_intr_syncpt_thresh_isr().
->=20
-> I'm not sure, either way would be ok to me. The current structure allows
-> host1x_intr_syncpt_thresh_isr() to only take one parameter
-> (host1x_intr_syncpt). If we move queue_work, we'd also need to pass
-> host1x_intr.
-
-I think I'd still prefer to have all the code in one function because it
-make subsequent modification easier and less error-prone.
-
-> >> +static void host1x_intr_init_host_sync(struct host1x_intr *intr)
+> >> +static void do_show_channel_gather(struct output *o,
+> >> +		phys_addr_t phys_addr,
+> >> +		u32 words, struct host1x_cdma *cdma,
+> >> +		phys_addr_t pin_addr, u32 *map_addr)
 > >> +{
-> >> +     struct host1x *host1x =3D intr_to_host1x(intr);
-> >> +     int i, err;
+> >> +	/* Map dmaget cursor to corresponding mem handle */
+> >> +	u32 offset;
+> >> +	int state, count, i;
 > >> +
-> >> +     host1x_sync_writel(host1x, 0xffffffffUL,
-> >> +             HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE);
-> >> +     host1x_sync_writel(host1x, 0xffffffffUL,
-> >> +             HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS);
-> >> +
-> >> +     for (i =3D 0; i < host1x->info.nb_pts; i++)
-> >> +             INIT_WORK(&intr->syncpt[i].work, syncpt_thresh_cascade_f=
-n);
-> >> +
-> >> +     err =3D devm_request_irq(&host1x->dev->dev, intr->syncpt_irq,
-> >> +                             syncpt_thresh_cascade_isr,
-> >> +                             IRQF_SHARED, "host1x_syncpt", host1x);
-> >> +     WARN_ON(IS_ERR_VALUE(err));
+> >> +	offset =3D phys_addr - pin_addr;
+> >> +	/*
+> >> +	 * Sometimes we're given different hardware address to the same
+> >> +	 * page - in these cases the offset will get an invalid number and
+> >> +	 * we just have to bail out.
+> >> +	 */
 > >=20
-> > Do we really want to continue in this case?
+> > Why's that?
 >=20
-> Hmm, we'd need to actually return an error code. There's not much the
-> driver can do without syncpt interrupts.
-
-Yeah, in that case I think we should bail out. It's not like we're
-expecting any failures. If the interrupt cannot be requested, something
-must seriously be wrong and we should tell users about it so that it can
-be fixed. Trying to continue on a best effort basis isn't useful here, I
-think.
-
-> >> +int host1x_intr_add_action(struct host1x_intr *intr, u32 id, u32 thre=
-sh,
-> >> +                     enum host1x_intr_action action, void *data,
-> >> +                     void *_waiter,
-> >> +                     void **ref)
-> >=20
-> > Why do you pass in _waiter as void * and not struct host1x_waitlist *?
+> Because of a race - memory might've been unpinned and unmapped from
+> IOMMU and when we re-map (pin), we are given a new address.
 >=20
-> struct host1x_waitlist is defined inside intr.c, so I've chosen to pass
-> void *. I could naturally just forward declare host1x_waitlist in intr.h
-> and change the allocation and add_action to use that.
+> But, I think this comment is a bit stale - we used to dump also old
+> gathers. The latest code only dumps jobs in sync queue, so the race
+> shouldn't happen.
 
-Yes, that's definitely better.
+Okay. In the context of a channel dump interface this may not be
+relevant anymore. Can you think of any issue that wouldn't be detectable
+or debuggable by analyzing a binary dump of the data within a channel?
+I'm asking because at that point we wouldn't be able to access any of
+the in-kernel data structures but would have to rely on the data itself
+for diagnostics. IOMMU virtual addresses won't be available and so on.
 
-> > I think I've said this before. The interface doesn't seem optimal to me
-> > here. Passing in an enumeration to choose which action to perform looks
-> > difficult to work with (not to mention the symbols are rather long and
-> > therefore result in ugly code).
-> >=20
-> > Maybe doing this by passing around a pointer to a handler function would
-> > be nicer. However since I haven't really used this yet, I can't really
-> > tell. So maybe we should just merge the implementation as-is for now. We
-> > can always clean it up later.
->=20
-> We're using the enum also to index into arrays. We do it so that we can
-> remove all the completed waiters from the wait_head, and insert them
-> into lists per action type. This way we can run all actions in priority
-> order: first action_submit_complete, then action_wakeup, and then
-> action_wakeup_interruptible.
->=20
-> Now, we're recently noticed that the priority order is actually wrong.
-> The first priority should be to wake up non-interruptible tasks, then
-> interruptible tasks. Cleaning up memory of completed submits should be
-> lower priority.
->=20
-> I've considered this part as something private to host1x driver and it's
-> not really meant to be called f.ex. from DRM. But, as you seem to have a
-> need to have an asynchronous wait for a fence, we'd need to figure
-> something out for that.
-
-Okay, let's keep it as-is for now and see how it can be improved later
-when we have an actual use-case for using it externally.
-
-> >> +void *host1x_intr_alloc_waiter(void)
-> >> +{
-> >> +     return kzalloc(sizeof(struct host1x_waitlist), GFP_KERNEL);
-> >> +}
-> >=20
-> > I'm not sure why this is separate from host1x_syncpt_wait() since it is
-> > only used inside that function and the waiter returned never leaves the
-> > scope of that function, so it might be better to allocate it directly
-> > in host1x_syncpt_wait() instead.
-> >=20
-> > Actually, it looks like the waiter doesn't ever leave scope, so you may
-> > even want to allocate it on the stack.
->=20
-> In patch 3, at submit time we first allocate waiter, then take
-> submit_lock, write submit to channel, and add the waiter while having
-> the lock. I did this so that I host1x_intr_add_action() can always
-> succeed. Otherwise I'd need to write another code path to handle the
-> case where we wrote a job to channel, but we're not able to add a
-> submit_complete action to it.
-
-Okay. In that case why not allocate it on the stack in the first place
-so you don't have to bother with allocations (and potential failure) at
-all? The variable doesn't leave the function scope, so there shouldn't
-be any issues, right?
-
-Or if that doesn't work it would still be preferable to allocate memory
-in host1x_syncpt_wait() directly instead of going through the wrapper.
-
-> >> +void host1x_intr_put_ref(struct host1x_intr *intr, u32 id, void *ref)
-> >=20
-> > Here again, you pass in the waiter via a void *. Why's that?
->=20
-> host1x_waitlist is hidden inside intr.c.
-
-I don't think that's necessary here. I'd rather have the compiler check
-for types rather than hide the structure.
-
-> >> +int host1x_intr_init(struct host1x_intr *intr, u32 irq_sync)
-> >=20
-> > Maybe you should keep the type of the irq_sync here so that it properly
-> > propagates to the call to devm_request_irq().
->=20
-> I'm not sure what you mean. Do you mean that I should use unsigned int,
-> as that's the type used in devm_request_irq()?
-
-Yes.
-
-> >> +void host1x_intr_stop(struct host1x_intr *intr)
-> >> +{
-> >> +     unsigned int id;
-> >> +     struct host1x *host1x =3D intr_to_host1x(intr);
-> >> +     struct host1x_intr_syncpt *syncpt;
-> >> +     u32 nb_pts =3D host1x_syncpt_nb_pts(intr_to_host1x(intr));
-> >> +
-> >> +     mutex_lock(&intr->mutex);
-> >> +
-> >> +     host1x->intr_op.disable_all_syncpt_intrs(intr);
-> >=20
-> > I haven't commented on this everywhere, but I think this could benefit
-> > from a wrapper that forwards this to the intr_op. The same goes for the
-> > sync_op.
->=20
-> You mean something like "host1x_disable_all_syncpt_intrs"?
-
-Yes. I think that'd be useful for each of the op functions. Perhaps you
-could even pass in a struct host1x * to make calls more uniform.
-
-> >> +/*
-> >> + * Main entrypoint for syncpoint value waits.
-> >> + */
-> >> +int host1x_syncpt_wait(struct host1x_syncpt *sp,
-> >> +                     u32 thresh, long timeout, u32 *value)
+> >> +static void host1x_debug_show_channel_cdma(struct host1x *m,
+> >> +	struct host1x_channel *ch, struct output *o, int chid)
 > >> +{
 > > [...]
-> >> +}
-> >> +EXPORT_SYMBOL(host1x_syncpt_wait);
+> >> +	switch (cbstat) {
+> >> +	case 0x00010008:
 > >=20
-> > This doesn't only seem to be the main entrypoint, but it's basically the
-> > only way to currently wait for syncpoints. One actual use-case where
-> > this might turn out to be a problem is video capturing. The problem is
-> > that using this API you can't very well asynchronously capture frames.
-> > So eventually I think we need a way to allow a generic handler to be
-> > attached to syncpoints so that you can have this handler continuously
-> > invoked after each frame is captured and just pass the buffer back to
-> > userspace.
+> > Again, symbolic names would be nice.
 >=20
-> Yep, so far all asynchronous waits have been done in user space. We
-> would probably allow attaching a handler to a syncpt value, so that we'd
-> call that handler once a value is reached. In effect, similar to a
-> wake_up event that is now added via host1x_intr_add_action, but simpler.
-> That'd mean that the handler needs to be re-added after each frame.
->=20
-> We could also add the handler as persistent if re-adding would be a
-> problem. That'd require some new wiring and I'll have to think how to
-> implement that.
+> I propose I remove the decoding from kernel, and save 200 lines.
 
-Yes, that sounds like what I had in mind. Again, no need to worry about
-it now. We can cross that bridge when we come to it.
+I think it could be more than 200 lines. If all we provide in the kernel
+is some statistics about syncpoint usage or channel state that should be
+a lot less code than we have now.
+
+However that would make it necessary to provide userspace tools that can
+provide the same quality of diagnostics, so I'm not sure if it's doable
+without access to the in-kernel data structures.
 
 Thierry
 
---TakKZr9L6Hm6aLOc
+--raC6veAxrt5nqIoY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJREMYPAAoJEN0jrNd/PrOhPu0QAJTPWFgC7mqZbDpwTQmH9zEj
-1ZSoiMkziacYVbHcvm4Lc4Tu4VYqKy6tN5wSa5P4WD6hpm1Ab2WztbZstgx4fHON
-gfbVEMm5wVy2zPcgGPnKJB+7TJCmnTD+zWHsPL1PLRDbi5h4GsDrXw62AfdPkGNj
-UZf5bYvAR3UOEcpzJa+7XPE2eaDVMXAutezNJmKKUGm33Km+V7a1JI6gP/I+YoS9
-sXa16SOa47b8BgBXSOfFDq/SFLinWoOBgrsTyKEhKl2+zqqgH+yKspx7qdVY0WGS
-D8pD0iZ1SLRuoExA56CoFShQ3V0zgAnyAhzWMh2rfN0dmlZxf1IRNYOFVxkhy+pa
-ZS7LRjgDOyCKQrgoa/UF/EoHwQP3vgeF2pQ1NLj1PNUkMlvlr73mRZDVCEFXJ+l+
-N6PPA6hVAi7ipBFAHAFHgCUMoN5tC6FNu7o0feI1B3qj/JY5/13RRxh46G1sVfIf
-tDhTcAxMDD5GZz8qmCTQsAHO2s50PUSlxpxSfGw4IOi08mL9kfh/l+XPfCB6o1g4
-F7yozLM12oct/iNPCChoXsslB1wrHTVwPNErA8dE2E4dxIW2mdA/l8a0q4i47x7l
-tcH8z7odIkFQpeapWVmWiMjgi6sJ8HULXS4xhgPnbExju9qAq9y2504XGeIEHFFx
-dqATVAi4V70ZlnPkGDjq
-=8kZK
+iQIcBAEBAgAGBQJREM3LAAoJEN0jrNd/PrOhxUoP/ixZUIGbbE68gg+Vq295E/Sb
+Gy7vUt/y/QCd19CJJ7FKBJZs+Wo1HJ3sBm04+t7a52fnjyvyabAgSmcskt0EJqh4
+jSFso5IcmI0rgc6HBYaN3vp8TyQs2yEaSAJO26K0F7oZL+6YUR7qLBW2LAKAn6c2
+Hd8LBCF6q4wtLkS4s/KNu90w4dbTeLVlKXdoJrkg+Q6DSUgoSm7vkid+/ZNmn7ZP
+Rcij+qrIXfdbXlj3OE6uNzQ5lRhrIVvPTmWXoqXzkxxaD6ZO9qrrZe5Mrmdb0CYf
+mK+sX3OTkctKZqAygBrrLIQv0tpnOWtZaGhsSRJ/pVm0NOsIfJ6cG1hTLqOz4bQ4
+mxYqBT86Pkh5iF61MA+RlImh/gnNUVH/up3/NbM2wgjtxR/fKk8SHWldelKG7M69
+gVpB5hj+SyyG4HJfhQXf3r7aki8x+RxBvaSVLKCyEHYGfdTPkymI6ihNx1zwNgOm
+36S2QfAdWzXbCmMIh0YHCrf3ZClZY+er/j5/RgrIGpWX94+Ub/MKFbX0vqCl8JH7
+b37AiLxKFgEQiSXTsUJA96TvBhNk2nYt5l568yMDF+M1dYAxgHSELm91qwsZZqkg
+rw9A/3969kkkm5LWwGIVaUUIyAGq1mzkN68B1ykOifYdUFi5s2s4tRkiehyeLUJI
+C1aceWMdx8AsfKAVzhQq
+=hsgL
 -----END PGP SIGNATURE-----
 
---TakKZr9L6Hm6aLOc--
+--raC6veAxrt5nqIoY--
+
+--===============1639618099==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1639618099==--
