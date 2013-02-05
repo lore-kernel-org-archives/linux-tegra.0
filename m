@@ -1,65 +1,19 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: [PATCH V2] clk: Add composite clock type
-Date: Tue, 05 Feb 2013 11:38:46 +0100
-Message-ID: <1554530.H35cUWvpSY@amdc1227>
-References: <1359965482-29655-1-git-send-email-pgaikwad@nvidia.com>
- <5110C3E5.2010503@nvidia.com>
- <20130205.122252.570646990867457667.hdoyu@nvidia.com>
+Date: Tue, 5 Feb 2013 11:15:22 +0000
+Message-ID: <20130205111522.GJ17786@n2100.arm.linux.org.uk>
+References: <1359965482-29655-1-git-send-email-pgaikwad@nvidia.com> <20130204.113739.2227266298512077917.hdoyu@nvidia.com> <5110C3E5.2010503@nvidia.com> <20130205.122252.570646990867457667.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20130205.122252.570646990867457667.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130205.122252.570646990867457667.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 05 of February 2013 11:22:52 Hiroshi Doyu wrote:
-> Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Tue, 5 Feb 2013 09:33:41 
-+0100:
-> > > The members of "clk_composite_ops" seems to be always assigned
-> > > statically. Istead of dynamically allocating/assigning, can't we
-> > > just
-> > > have "clk_composite_ops" statically as below?
-> > > 
-> > > static struct clk_ops clk_composite_ops = {
-> > > 
-> > > 	.get_parent = clk_composite_get_parent;
-> > > 	.set_parent = clk_composite_set_parent;
-> > > 	.recalc_rate = clk_composite_recalc_rate;
-> > > 	.round_rate = clk_composite_round_rate;
-> > > 	.set_rate = clk_composite_set_rate;
-> > > 	.is_enabled = clk_composite_is_enabled;
-> > > 	.enable = clk_composite_enable;
-> > > 	.disable = clk_composite_disable;
-> > > 
-> > > };
-> > > 
-> > > struct clk *clk_register_composite(struct device *dev, const char
-> > > *name,> > 
-> > > 		       const char **parent_names, int num_parents,
-> > > 		       struct clk_hw *mux_hw, const struct clk_ops 
-*mux_ops,
-> > > 		       struct clk_hw *div_hw, const struct clk_ops 
-*div_ops,
-> > > 		       struct clk_hw *gate_hw, const struct clk_ops 
-*gate_ops,
-> > > 		       unsigned long flags)
-> > > 
-> > > {
-> > > 
-> > > 	.....
-> > > 	
-> > > 	init.ops = &clk_composite_ops;
-> > 
-> > No, clk_ops depends on the clocks you are using. There could be a
-> > clock
-> > with mux and gate while another one with mux and div.
-> 
-> You are right. What about the following? We don't have to have similar
-> copy of clk_composite_ops for each instances.
-> 
+On Tue, Feb 05, 2013 at 11:22:52AM +0100, Hiroshi Doyu wrote:
 > diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
 > index f30fb4b..8f88805 100644
 > --- a/drivers/clk/clk-composite.c
@@ -67,19 +21,23 @@ On Tuesday 05 of February 2013 11:22:52 Hiroshi Doyu wrote:
 > @@ -27,6 +27,9 @@ static u8 clk_composite_get_parent(struct clk_hw *hw)
 >         const struct clk_ops *mux_ops = composite->mux_ops;
 >         struct clk_hw *mux_hw = composite->mux_hw;
-> 
+>  
 > +       if (!mux_hw->clk)
 > +	       return -EINVAL;
 > +
+>         mux_hw->clk = hw->clk;
 
-Or maybe even:
+That just looks totally wrong.
 
-		if (!mux_ops)
+Firstly, according to the hunk, this function has the prototype:
 
-This would be more self-explanatory and save one dereference.
+static u8 clk_composite_get_parent(struct clk_hw *hw)
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
-SW Solution Development, Linux Platform
+What do you think is the effect of passing -EINVAL back as a 'u8' ?
+
+Secondly, the whole "check mux_hw->clk for NULL, and then overwrite it"
+looks really really really wrong.  If it's already set, then why does it
+need to be changed?  If it isn't set, why do you need to error out?
+
+Thirdly, why is a function called "get_parent" modifying anything (isn't
+it supposed to be _get_ing something?
