@@ -1,40 +1,68 @@
-From: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [v3 1/1] iommu/tegra: smmu: Support variable MMIO ranges/blocks
-Date: Tue, 5 Feb 2013 14:19:15 +0100
-Message-ID: <20130205131914.GA2532@8bytes.org>
-References: <20130204.223114.121259250064618894.hdoyu@nvidia.com>
-	<51101BA1.5090208@wwwdotorg.org>
-	<20130204.223921.2367725583637314.hdoyu@nvidia.com>
-	<20130204.225407.2202093543593597795.hdoyu@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 01/10] clk: tegra: Refactor PLL programming code
+Date: Tue, 5 Feb 2013 15:23:55 +0200
+Message-ID: <20130205132355.GD3073@tbergstrom-lnx.Nvidia.com>
+References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
+ <1359713962-16822-2-git-send-email-pdeschrijver@nvidia.com>
+ <510F4FF7.3050502@nvidia.com>
+ <20130204143233.GV2364@tbergstrom-lnx.Nvidia.com>
+ <51109BB3.8000706@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20130204.225407.2202093543593597795.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <51109BB3.8000706-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 04, 2013 at 09:54:07PM +0100, Hiroshi Doyu wrote:
-> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 04 Feb 2013 22:39:21 +0200 (EET):
+On Tue, Feb 05, 2013 at 06:42:11AM +0100, Prashant Gaikwad wrote:
+> On Monday 04 February 2013 08:02 PM, Peter De Schrijver wrote:
+> > On Mon, Feb 04, 2013 at 07:06:47AM +0100, Prashant Gaikwad wrote:
+> >> On Friday 01 February 2013 03:48 PM, Peter De Schrijver wrote:
+> > ...
+> >
+> >>> -static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll,
+> >>> -                                void __iomem *lock_addr, u32 lock_bit_idx)
+> >>> +static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
+> >>>    {
+> >>>           int i;
+> >>> -       u32 val;
+> >>> +       u32 val, lock_bit;
+> >>> +       void __iomem *lock_addr;
+> >>>
+> >>>           if (!(pll->flags & TEGRA_PLL_USE_LOCK)) {
+> >>>                   udelay(pll->params->lock_delay);
+> >>>                   return 0;
+> >>>           }
+> >>>
+> >>> +       lock_addr = pll->clk_base + pll->params->base_reg;
+> >> This will not work for PLLE. Lock bit for PLLE is in misc register.
+> >>
+> >>> +       lock_bit = BIT(pll->params->lock_bit_idx);
+> >>> +
+> >>>           for (i = 0; i < pll->params->lock_delay; i++) {
+> >>>                   val = readl_relaxed(lock_addr);
+> >>> -               if (val & BIT(lock_bit_idx)) {
+> >>> +               if (val & lock_bit) {
+> >> Need to change the lock bit idx parameter for Tegra20 and Tegra30 PLLs
+> >> else this patch will break those.
+> >>
+> > Looking at commit 37c26a906527b8a6a252614ca83d21ad318c4e84 and commit
+> > b08e8c0ecc42afa3a2e1019851af741980dd5a6b, these fields seem correctly
+> > initialized for both Tegra20 and Tegra30? Or am I missing something?
 > 
-> > > Upon reflection, that comment probably isn't correct, since the only way
-> > > to know where each register range begins, relative to the register
-> > > numbers that the driver uses, is to calculate reg_base. So, I think you
-> > > do need reg_base, and Joerg's latest patch seems reasonable.
-> > 
-> > Ok, now it's clear. Joerg, please get yours merged on the top of this.
+> Ohh, I missed to read
 > 
-> Joerg, could you please replace v3 with the attached v4?
+> lock_bit = BIT(pll->params->lock_bit_idx);
+> 
+> 
+> Am I missing something about PLLE lock_addr also?
+> 
 
-Done.
+Ah no indeed... my bad. So we need a lock_addr field.
+
+Cheers,
+
+Peter.
