@@ -1,464 +1,179 @@
 From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 2/8] gpu: host1x: Add syncpoint wait and interrupts
-Date: Mon, 4 Feb 2013 20:29:08 -0800
-Message-ID: <51108A94.3060501@nvidia.com>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-3-git-send-email-tbergstrom@nvidia.com> <20130204103032.GB27443@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCHv5,RESEND 4/8] gpu: host1x: Add debug support
+Date: Mon, 4 Feb 2013 20:41:25 -0800
+Message-ID: <51108D75.9030302@nvidia.com>
+References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-5-git-send-email-tbergstrom@nvidia.com> <20130204110339.GA28134@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130204103032.GB27443-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20130204110339.GA28134-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04.02.2013 02:30, Thierry Reding wrote:
-> On Tue, Jan 15, 2013 at 01:43:58PM +0200, Terje Bergstrom wrote:
+On 04.02.2013 03:03, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jan 15, 2013 at 01:44:00PM +0200, Terje Bergstrom wrote:
+>> diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
 > [...]
->> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> [...]
->> @@ -95,7 +96,6 @@ static int host1x_probe(struct platform_device *dev)
->>
->>       /* set common host1x device data */
->>       platform_set_drvdata(dev, host);
->> -
->>       host->regs = devm_request_and_ioremap(&dev->dev, regs);
->>       if (!host->regs) {
->>               dev_err(&dev->dev, "failed to remap host registers\n");
+>> +static pid_t host1x_debug_null_kickoff_pid;
+>> +unsigned int host1x_debug_trace_cmdbuf;
+>> +
+>> +static pid_t host1x_debug_force_timeout_pid;
+>> +static u32 host1x_debug_force_timeout_val;
+>> +static u32 host1x_debug_force_timeout_channel;
 > 
-> This seems an unrelated (and actually undesirable) change.
-> 
->> @@ -109,28 +109,40 @@ static int host1x_probe(struct platform_device *dev)
->>       }
->>
->>       err = host1x_syncpt_init(host);
->> -     if (err)
->> +     if (err) {
->> +             dev_err(&dev->dev, "failed to init sync points");
->>               return err;
->> +     }
-> 
-> This error message should probably have gone in the previous patch as
-> well.
+> Please group static and non-static variables.
 
-Oops, will move these to previous patch. I'm pretty sure I already fixed
-this once. :-(
+Will do.
+
+> 
+>> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+> [...]
+>> +struct output {
+>> +	void (*fn)(void *ctx, const char *str, size_t len);
+>> +	void *ctx;
+>> +	char buf[256];
+>> +};
+> 
+> Do we really need this kind of abstraction? There really should be only
+> one location where debug information is obtained, so I don't see a need
+> for this.
+
+This is used by debugfs code to direct to debugfs, and
+nvhost_debug_dump() to send via printk.
 
 > 
 >> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
->> index d8f5979..8376092 100644
->> --- a/drivers/gpu/host1x/dev.h
->> +++ b/drivers/gpu/host1x/dev.h
->> @@ -17,11 +17,12 @@
->>  #ifndef HOST1X_DEV_H
->>  #define HOST1X_DEV_H
->>
->> +#include <linux/platform_device.h>
->>  #include "syncpt.h"
->> +#include "intr.h"
->>
->>  struct host1x;
->>  struct host1x_syncpt;
->> -struct platform_device;
+> [...]
+>>  struct host1x_syncpt_ops {
+>>  	void (*reset)(struct host1x_syncpt *);
+>>  	void (*reset_wait_base)(struct host1x_syncpt *);
+>> @@ -117,6 +133,7 @@ struct host1x {
+>>  	struct host1x_channel_ops channel_op;
+>>  	struct host1x_cdma_ops cdma_op;
+>>  	struct host1x_pushbuffer_ops cdma_pb_op;
+>> +	struct host1x_debug_ops debug_op;
+>>  	struct host1x_syncpt_ops syncpt_op;
+>>  	struct host1x_intr_ops intr_op;
 > 
-> Why include platform_device.h here?
-
-host1x_get_host() actually needs that, so this #include should've also
-been in previous patch.
-
-> 
->> @@ -34,6 +35,18 @@ struct host1x_syncpt_ops {
->>       const char * (*name)(struct host1x_syncpt *);
->>  };
->>
->> +struct host1x_intr_ops {
->> +     void (*init_host_sync)(struct host1x_intr *);
->> +     void (*set_host_clocks_per_usec)(
->> +             struct host1x_intr *, u32 clocks);
-> 
-> Could the above two not be combined? The only reason to keep them
-> separate would be if the host1x clock was dynamically changed, but I
-> don't think we support that, right?
-
-I've left this as a placeholder to at some point start supporting host1x
-clock scaling. But I don't think we're going to do that for a while, so
-I could merge them.
-
-> 
->> +     void (*set_syncpt_threshold)(
->> +             struct host1x_intr *, u32 id, u32 thresh);
->> +     void (*enable_syncpt_intr)(struct host1x_intr *, u32 id);
->> +     void (*disable_syncpt_intr)(struct host1x_intr *, u32 id);
->> +     void (*disable_all_syncpt_intrs)(struct host1x_intr *);
-> 
-> Can disable_all_syncpt_intrs() not be implemented generically using the
-> number of syncpoints as exposed by host1x_device_info and the
-> .disable_syncpt_intr() function?
-
-disable_all_syncpt_intrs() disables all interrupts in one write (or one
-per 32 sync points), so it's more efficient.
-
-> 
->> @@ -46,11 +59,13 @@ struct host1x_device_info {
->>  struct host1x {
->>       void __iomem *regs;
->>       struct host1x_syncpt *syncpt;
->> +     struct host1x_intr intr;
->>       struct platform_device *dev;
->>       struct host1x_device_info info;
->>       struct clk *clk;
->>
->>       struct host1x_syncpt_ops syncpt_op;
->> +     struct host1x_intr_ops intr_op;
-> 
-> I think carrying a const pointer to the interrupt operations structure
-> is a better option here.
+> Again, better to pass in a const pointer to the ops structure.
 
 Ok.
 
 > 
->> diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-> [...]
->> +static void host1x_intr_syncpt_thresh_isr(struct host1x_intr_syncpt *syncpt);
+>> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
 > 
-> Can we avoid this forward declaration?
-
-I think we can, if I just move the isr to top of file.
-
-> 
->> +static void syncpt_thresh_cascade_fn(struct work_struct *work)
-> 
-> syncpt_thresh_work()?
-
-Sounds good.
-
-> 
+>> +static int show_channel_command(struct output *o, u32 addr, u32 val, int *count)
 >> +{
->> +     struct host1x_intr_syncpt *sp =
->> +             container_of(work, struct host1x_intr_syncpt, work);
->> +     host1x_syncpt_thresh_fn(sp);
+>> +	unsigned mask;
+>> +	unsigned subop;
+>> +
+>> +	switch (val >> 28) {
+>> +	case 0x0:
 > 
-> Couldn't we inline the host1x_syncpt_thresh_fn() implementation here?
-> Why do we need to go through an external function declaration?
+> These can easily be derived by looking at the debug output, but it may
+> still make sense to assign symbolic names to them.
 
-If I move syncpt_thresh_work() to intr.c from intr_hw.c, I could do
-that. That'd simplify the interrupt path.
+I have another suggestion. In downstream I removed the decoding part and
+I just print out a string of hex. That removes quite a bit bunch of code
+from kernel. It makes the debug output also more compact.
+
+It's much easier to write a user space program to decode than maintain
+it in kernel.
 
 > 
->> +static irqreturn_t syncpt_thresh_cascade_isr(int irq, void *dev_id)
+>> +static void show_channel_word(struct output *o, int *state, int *count,
+>> +		u32 addr, u32 val, struct host1x_cdma *cdma)
 >> +{
->> +     struct host1x *host1x = dev_id;
->> +     struct host1x_intr *intr = &host1x->intr;
->> +     unsigned long reg;
->> +     int i, id;
->> +
->> +     for (i = 0; i < host1x->info.nb_pts / BITS_PER_LONG; i++) {
->> +             reg = host1x_sync_readl(host1x,
->> +                             HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS +
->> +                             i * REGISTER_STRIDE);
->> +             for_each_set_bit(id, &reg, BITS_PER_LONG) {
->> +                     struct host1x_intr_syncpt *sp =
->> +                             intr->syncpt + (i * BITS_PER_LONG + id);
->> +                     host1x_intr_syncpt_thresh_isr(sp);
+>> +	static int start_count, dont_print;
 > 
-> Have you considered mimicking the IRQ API and name this something like
-> host1x_intr_syncpt_thresh_handle() and name the actual ISR just
-> syncpt_thresh_isr()? Not so important but it makes things a bit clearer
-> in my opinion.
+> What if two processes read debug information at the same time?
 
-This gets a bit confusing, because we have an ISR that calls a function
-that is also called ISR. I've kept "isr" in names of both to emphasize
-that this is running in interrupt context. I'm open to renaming these to
-make it clearer.
-
-Did you refer to chained IRQ handler in linux/irq.h when you mentioned
-IRQ API as reference for naming?
+show_channels() acquires cdma.lock, so that shouldn't happen.
 
 > 
->> +                     queue_work(intr->wq, &sp->work);
-> 
-> Should the call to queue_work() perhaps be moved into
-> host1x_intr_syncpt_thresh_isr().
-
-I'm not sure, either way would be ok to me. The current structure allows
-host1x_intr_syncpt_thresh_isr() to only take one parameter
-(host1x_intr_syncpt). If we move queue_work, we'd also need to pass
-host1x_intr.
-
-> 
->> +static void host1x_intr_init_host_sync(struct host1x_intr *intr)
+>> +static void do_show_channel_gather(struct output *o,
+>> +		phys_addr_t phys_addr,
+>> +		u32 words, struct host1x_cdma *cdma,
+>> +		phys_addr_t pin_addr, u32 *map_addr)
 >> +{
->> +     struct host1x *host1x = intr_to_host1x(intr);
->> +     int i, err;
+>> +	/* Map dmaget cursor to corresponding mem handle */
+>> +	u32 offset;
+>> +	int state, count, i;
 >> +
->> +     host1x_sync_writel(host1x, 0xffffffffUL,
->> +             HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE);
->> +     host1x_sync_writel(host1x, 0xffffffffUL,
->> +             HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS);
->> +
->> +     for (i = 0; i < host1x->info.nb_pts; i++)
->> +             INIT_WORK(&intr->syncpt[i].work, syncpt_thresh_cascade_fn);
->> +
->> +     err = devm_request_irq(&host1x->dev->dev, intr->syncpt_irq,
->> +                             syncpt_thresh_cascade_isr,
->> +                             IRQF_SHARED, "host1x_syncpt", host1x);
->> +     WARN_ON(IS_ERR_VALUE(err));
+>> +	offset = phys_addr - pin_addr;
+>> +	/*
+>> +	 * Sometimes we're given different hardware address to the same
+>> +	 * page - in these cases the offset will get an invalid number and
+>> +	 * we just have to bail out.
+>> +	 */
 > 
-> Do we really want to continue in this case?
+> Why's that?
 
-Hmm, we'd need to actually return an error code. There's not much the
-driver can do without syncpt interrupts.
+Because of a race - memory might've been unpinned and unmapped from
+IOMMU and when we re-map (pin), we are given a new address.
+
+But, I think this comment is a bit stale - we used to dump also old
+gathers. The latest code only dumps jobs in sync queue, so the race
+shouldn't happen.
 
 > 
->> +static void host1x_intr_set_syncpt_threshold(struct host1x_intr *intr,
->> +     u32 id, u32 thresh)
+>> +	map_addr = host1x_memmgr_mmap(mem);
+>> +	if (!map_addr) {
+>> +		host1x_debug_output(o, "[could not mmap]\n");
+>> +		return;
+>> +	}
+>> +
+>> +	/* Get base address from mem */
+>> +	sgt = host1x_memmgr_pin(mem);
+>> +	if (IS_ERR(sgt)) {
+>> +		host1x_debug_output(o, "[couldn't pin]\n");
+>> +		host1x_memmgr_munmap(mem, map_addr);
+>> +		return;
+>> +	}
+> 
+> Maybe you should stick with one of "could not" or "couldn't". Makes it
+> easier to search for.
+
+I prefer "could not", so I'll use that.
+
+> 
+>> +static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
 >> +{
->> +     struct host1x *host1x = intr_to_host1x(intr);
->> +     host1x_sync_writel(host1x, thresh,
->> +             HOST1X_SYNC_SYNCPT_INT_THRESH_0 + id * REGISTER_STRIDE);
->> +}
-> 
-> Again, maybe defining the register stride as part of the register
-> definition might be better. I think HOST1X_SYNC_SYNCPT_INT_THRESH(id) is
-> easier to read.
-
-Sounds good.
-
-> 
->> +static void host1x_intr_enable_syncpt_intr(struct host1x_intr *intr, u32 id)
->> +{
->> +     struct host1x *host1x = intr_to_host1x(intr);
+>> +	struct host1x_job *job;
 >> +
->> +     host1x_sync_writel(host1x, BIT_MASK(id),
->> +                     HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0 +
->> +                     BIT_WORD(id) * REGISTER_STRIDE);
->> +}
+>> +	list_for_each_entry(job, &cdma->sync_queue, list) {
+>> +		int i;
+>> +		host1x_debug_output(o,
+>> +				"\n%p: JOB, syncpt_id=%d, syncpt_val=%d,"
+>> +				" first_get=%08x, timeout=%d"
+>> +				" num_slots=%d, num_handles=%d\n",
+>> +				job,
+>> +				job->syncpt_id,
+>> +				job->syncpt_end,
+>> +				job->first_get,
+>> +				job->timeout,
+>> +				job->num_slots,
+>> +				job->num_unpins);
 > 
-> Same here.
+> This could go on fewer lines.
 
-Yep.
-
-> 
->> +static void host1x_intr_disable_syncpt_intr(struct host1x_intr *intr, u32 id)
->> +{
->> +     struct host1x *host1x = intr_to_host1x(intr);
->> +
->> +     host1x_sync_writel(host1x, BIT_MASK(id),
->> +                     HOST1X_SYNC_SYNCPT_THRESH_INT_DISABLE +
->> +                     BIT_WORD(id) * REGISTER_STRIDE);
->> +
->> +     host1x_sync_writel(host1x, BIT_MASK(id),
->> +             HOST1X_SYNC_SYNCPT_THRESH_CPU0_INT_STATUS +
->> +             BIT_WORD(id) * REGISTER_STRIDE);
->> +}
-> 
-> And here.
-
-Yep.
+Yes, will merge.
 
 > 
->> diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-> [...]
->> +#include "intr.h"
->> +#include <linux/interrupt.h>
->> +#include <linux/slab.h>
->> +#include <linux/irq.h>
->> +#include "dev.h"
-> 
-> More funky ordering of includes.
-
-Will fix.
-
-> 
->> +int host1x_intr_add_action(struct host1x_intr *intr, u32 id, u32 thresh,
->> +                     enum host1x_intr_action action, void *data,
->> +                     void *_waiter,
->> +                     void **ref)
-> 
-> Why do you pass in _waiter as void * and not struct host1x_waitlist *?
-
-struct host1x_waitlist is defined inside intr.c, so I've chosen to pass
-void *. I could naturally just forward declare host1x_waitlist in intr.h
-and change the allocation and add_action to use that.
-
-> 
-> I think I've said this before. The interface doesn't seem optimal to me
-> here. Passing in an enumeration to choose which action to perform looks
-> difficult to work with (not to mention the symbols are rather long and
-> therefore result in ugly code).
-> 
-> Maybe doing this by passing around a pointer to a handler function would
-> be nicer. However since I haven't really used this yet, I can't really
-> tell. So maybe we should just merge the implementation as-is for now. We
-> can always clean it up later.
-
-We're using the enum also to index into arrays. We do it so that we can
-remove all the completed waiters from the wait_head, and insert them
-into lists per action type. This way we can run all actions in priority
-order: first action_submit_complete, then action_wakeup, and then
-action_wakeup_interruptible.
-
-Now, we're recently noticed that the priority order is actually wrong.
-The first priority should be to wake up non-interruptible tasks, then
-interruptible tasks. Cleaning up memory of completed submits should be
-lower priority.
-
-I've considered this part as something private to host1x driver and it's
-not really meant to be called f.ex. from DRM. But, as you seem to have a
-need to have an asynchronous wait for a fence, we'd need to figure
-something out for that.
-
-> 
->> +void *host1x_intr_alloc_waiter(void)
->> +{
->> +     return kzalloc(sizeof(struct host1x_waitlist), GFP_KERNEL);
->> +}
-> 
-> I'm not sure why this is separate from host1x_syncpt_wait() since it is
-> only used inside that function and the waiter returned never leaves the
-> scope of that function, so it might be better to allocate it directly
-> in host1x_syncpt_wait() instead.
-> 
-> Actually, it looks like the waiter doesn't ever leave scope, so you may
-> even want to allocate it on the stack.
-
-In patch 3, at submit time we first allocate waiter, then take
-submit_lock, write submit to channel, and add the waiter while having
-the lock. I did this so that I host1x_intr_add_action() can always
-succeed. Otherwise I'd need to write another code path to handle the
-case where we wrote a job to channel, but we're not able to add a
-submit_complete action to it.
-
-> 
->> +void host1x_intr_put_ref(struct host1x_intr *intr, u32 id, void *ref)
-> 
-> Here again, you pass in the waiter via a void *. Why's that?
-
-host1x_waitlist is hidden inside intr.c.
-
-> 
->> +int host1x_intr_init(struct host1x_intr *intr, u32 irq_sync)
-> 
-> Maybe you should keep the type of the irq_sync here so that it properly
-> propagates to the call to devm_request_irq().
-
-I'm not sure what you mean. Do you mean that I should use unsigned int,
-as that's the type used in devm_request_irq()?
-
-> 
->> +{
->> +     unsigned int id;
->> +     struct host1x *host1x = intr_to_host1x(intr);
->> +     u32 nb_pts = host1x_syncpt_nb_pts(host1x);
->> +
->> +     intr->syncpt = devm_kzalloc(&host1x->dev->dev,
->> +                     sizeof(struct host1x_intr_syncpt) *
->> +                     host1x->info.nb_pts,
->> +                     GFP_KERNEL);
->> +
->> +     if (!host1x->intr.syncpt)
-> 
-> The above blank line isn't necessary.
-
-Will remove.
-
-> 
->> +void host1x_intr_stop(struct host1x_intr *intr)
->> +{
->> +     unsigned int id;
->> +     struct host1x *host1x = intr_to_host1x(intr);
->> +     struct host1x_intr_syncpt *syncpt;
->> +     u32 nb_pts = host1x_syncpt_nb_pts(intr_to_host1x(intr));
->> +
->> +     mutex_lock(&intr->mutex);
->> +
->> +     host1x->intr_op.disable_all_syncpt_intrs(intr);
-> 
-> I haven't commented on this everywhere, but I think this could benefit
-> from a wrapper that forwards this to the intr_op. The same goes for the
-> sync_op.
-
-You mean something like "host1x_disable_all_syncpt_intrs"?
-
-> 
->> +     for (id = 0, syncpt = intr->syncpt;
->> +          id < nb_pts;
->> +          ++id, ++syncpt) {
-> 
-> I don't think you need to explicitly keep track of syncpt within the for
-> statement. Instead you could either index intr->syncpt directly or
-> obtain a reference within the loop. It allows the for statement to be
-> written much more canonically.
-
-Yep, will do.
-
-> 
->> diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
-> [...]
->> +#define intr_syncpt_to_intr(is) (is->intr)
-> 
-> This one doesn't buy you anything. It actually uses up more characters
-> so you can just drop it.
-
-True, it's useless. I'll remove.
-
-> 
->> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-> [...]
->> @@ -119,6 +122,166 @@ void host1x_syncpt_incr(struct host1x_syncpt *sp)
->>       host1x_syncpt_cpu_incr(sp);
->>  }
->>
->> +/*
->> + * Updated sync point form hardware, and returns true if syncpoint is expired,
->> + * false if we may need to wait
->> + */
->> +static bool syncpt_load_min_is_expired(
->> +     struct host1x_syncpt *sp,
->> +     u32 thresh)
-> 
-> This can all go on one line.
-
-Ok.
-
-> 
->> +/*
->> + * Main entrypoint for syncpoint value waits.
->> + */
->> +int host1x_syncpt_wait(struct host1x_syncpt *sp,
->> +                     u32 thresh, long timeout, u32 *value)
+>> +static void host1x_debug_show_channel_cdma(struct host1x *m,
+>> +	struct host1x_channel *ch, struct output *o, int chid)
 >> +{
 > [...]
->> +}
->> +EXPORT_SYMBOL(host1x_syncpt_wait);
+>> +	switch (cbstat) {
+>> +	case 0x00010008:
 > 
-> This doesn't only seem to be the main entrypoint, but it's basically the
-> only way to currently wait for syncpoints. One actual use-case where
-> this might turn out to be a problem is video capturing. The problem is
-> that using this API you can't very well asynchronously capture frames.
-> So eventually I think we need a way to allow a generic handler to be
-> attached to syncpoints so that you can have this handler continuously
-> invoked after each frame is captured and just pass the buffer back to
-> userspace.
+> Again, symbolic names would be nice.
 
-Yep, so far all asynchronous waits have been done in user space. We
-would probably allow attaching a handler to a syncpt value, so that we'd
-call that handler once a value is reached. In effect, similar to a
-wake_up event that is now added via host1x_intr_add_action, but simpler.
-That'd mean that the handler needs to be re-added after each frame.
-
-We could also add the handler as persistent if re-adding would be a
-problem. That'd require some new wiring and I'll have to think how to
-implement that.
-
-> 
->> +bool host1x_syncpt_is_expired(
->> +     struct host1x_syncpt *sp,
->> +     u32 thresh)
-> 
-> This can go on one line.
-
-Will join.
+I propose I remove the decoding from kernel, and save 200 lines.
 
 Terje
