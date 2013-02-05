@@ -1,197 +1,73 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 1/8] gpu: host1x: Add host1x driver
-Date: Tue, 5 Feb 2013 08:43:01 +0100
-Message-ID: <20130205074301.GA20437@avionic-0098.mockup.avionic-design.de>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
- <1358250244-9678-2-git-send-email-tbergstrom@nvidia.com>
- <20130204090941.GA27443@avionic-0098.mockup.avionic-design.de>
- <51107CC0.9060900@nvidia.com>
+From: Prashant Gaikwad <pgaikwad@nvidia.com>
+Subject: Re: [PATCH V2] clk: Add composite clock type
+Date: Tue, 5 Feb 2013 14:03:41 +0530
+Message-ID: <5110C3E5.2010503@nvidia.com>
+References: <1359965482-29655-1-git-send-email-pgaikwad@nvidia.com> <20130204.113739.2227266298512077917.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51107CC0.9060900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130204.113739.2227266298512077917.hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "mturquette@linaro.org" <mturquette@linaro.org>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Monday 04 February 2013 03:07 PM, Hiroshi Doyu wrote:
+> Hi Prashant,
+>
+> Prashant Gaikwad <pgaikwad@nvidia.com> wrote @ Mon, 4 Feb 2013 09:11:22 +0100:
+>
+>> +struct clk *clk_register_composite(struct device *dev, const char *name,
+>> +                       const char **parent_names, int num_parents,
+>> +                       struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+>> +                       struct clk_hw *div_hw, const struct clk_ops *div_ops,
+>> +                       struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+>> +                       unsigned long flags)
+>> +{
+>> +       struct clk *clk;
+>> +       struct clk_init_data init;
+>> +       struct clk_composite *composite;
+>> +       struct clk_ops *clk_composite_ops;
+>> +
+>> +       composite = kzalloc(sizeof(*composite), GFP_KERNEL);
+>> +       if (!composite) {
+>> +               pr_err("%s: could not allocate composite clk\n", __func__);
+>> +               return ERR_PTR(-ENOMEM);
+>> +       }
+>> +
+>> +       init.name = name;
+>> +       init.flags = flags | CLK_IS_BASIC;
+>> +       init.parent_names = parent_names;
+>> +       init.num_parents = num_parents;
+>> +
+>> +       /* allocate the clock ops */
+>> +       clk_composite_ops = kzalloc(sizeof(*clk_composite_ops), GFP_KERNEL);
+> The members of "clk_composite_ops" seems to be always assigned
+> statically. Istead of dynamically allocating/assigning, can't we just
+> have "clk_composite_ops" statically as below?
+>
+> static struct clk_ops clk_composite_ops = {
+> 	.get_parent = clk_composite_get_parent;
+> 	.set_parent = clk_composite_set_parent;
+> 	.recalc_rate = clk_composite_recalc_rate;
+> 	.round_rate = clk_composite_round_rate;
+> 	.set_rate = clk_composite_set_rate;
+> 	.is_enabled = clk_composite_is_enabled;
+> 	.enable = clk_composite_enable;
+> 	.disable = clk_composite_disable;
+> };
+>
+> struct clk *clk_register_composite(struct device *dev, const char *name,
+> 		       const char **parent_names, int num_parents,
+> 		       struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+> 		       struct clk_hw *div_hw, const struct clk_ops *div_ops,
+> 		       struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
+> 		       unsigned long flags)
+> {
+> 	.....
+>
+> 	init.ops = &clk_composite_ops;
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 04, 2013 at 07:30:08PM -0800, Terje Bergstr=C3=B6m wrote:
-> On 04.02.2013 01:09, Thierry Reding wrote:
-> > On Tue, Jan 15, 2013 at 01:43:57PM +0200, Terje Bergstrom wrote:
-> >> Add host1x, the driver for host1x and its client unit 2D.
-> >=20
-> > Maybe this could be a bit more verbose. Perhaps describe what host1x is.
->=20
-> Sure. I could just steal the paragraph from Stephen:
->=20
-> The Tegra host1x module is the DMA engine for register access to Tegra's
-> graphics- and multimedia-related modules. The modules served by host1x
-> are referred to as clients. host1x includes some other  functionality,
-> such as synchronization.
-
-Yes, that sound good.
-
-> >> +     err =3D host1x_syncpt_init(host);
-> >> +     if (err)
-> >> +             return err;
-> > [...]
-> >> +     host1x_syncpt_reset(host);
-> >=20
-> > Why separate host1x_syncpt_reset() from host1x_syncpt_init()? I see why
-> > it might be useful to have host1x_syncpt_reset() as a separate function
-> > but couldn't it be called as part of host1x_syncpt_init()?
->=20
-> host1x_syncpt_init() is used for initializing the syncpt structures, and
-> is called in probe. host1x_syncpt_reset() should be called whenever we
-> think hardware state is lost, for example if VDD_CORE was rail gated due
-> to system suspend.
-
-My point was that you could include the call to host1x_syncpt_reset()
-within host1x_syncpt_init(). That will keep unneeded code out of the
-host1x_probe() function. Also you don't want to use the syncpoints
-uninitialized, right?
-
-> >> +#include "hw/syncpt_hw.c"
-> >=20
-> > Why include the source file here? Can't you compile it separately
-> > instead?
->=20
-> It's because we need to compile with the hardware headers of that host1x
-> version, because we haven't been good at keeping compatibility. So
-> host1x01.c #includes version 01 headers, and syncpt_hw.c in this
-> compilation unit gets compiled with that. 02 would include 02 headers,
-> and syncpt_hw.c would get compiled with its register definitions etc.
-
-Okay, fair enough.
-
-> >> + */
-> >> +static u32 syncpt_load_min(struct host1x_syncpt *sp)
-> >> +{
-> >> +     struct host1x *dev =3D sp->dev;
-> >> +     u32 old, live;
-> >> +
-> >> +     do {
-> >> +             old =3D host1x_syncpt_read_min(sp);
-> >> +             live =3D host1x_sync_readl(dev,
-> >> +                             HOST1X_SYNC_SYNCPT_0 + sp->id * 4);
-> >> +     } while ((u32)atomic_cmpxchg(&sp->min_val, old, live) !=3D old);
-> >=20
-> > I think this warrants a comment.
->=20
-> Sure. It just loops in case there's a race writing to min_val.
-
-Oh, I see. That'd make a good comment. Is the cast to (u32) really
-necessary?
-
-> >> +/*
-> >> + * Resets syncpoint and waitbase values to sw shadows
-> >> + */
-> >> +void host1x_syncpt_reset(struct host1x *dev)
-> >=20
-> > Maybe host1x_syncpt_flush() would be a better name given the above
-> > description? Reset does have this hardware reset connotation so my first
-> > intuition had been that this would reset the syncpt value to 0.
->=20
-> Right, it actually reloads values stored in shadow registers back to
-> host1x. Flush doesn't feel like it's conveying the meaning. Would
-> host1x_syncpt_restore() work? That'd match with host1x_syncpt_save(),
-> which just updates all shadow registers from hardware and is used just
-> before host1x loses power.
-
-Save/restore has the disadvantage of the direction not being implicit.
-Save could mean save to hardware or save to software. The same is true
-for restore. However if the direction is clearly defined, save and
-restore work for me.
-
-Maybe the comment could be changed to be more explicit. Something like:
-
-	/*
-	 * Write cached syncpoint and waitbase values to hardware.
-	 */
-
-And for host1x_syncpt_save():
-
-	/*
-	 * For client-managed registers, update the cached syncpoint and
-	 * waitbase values by reading from the registers.
-	 */
-
-> >> +/*
-> >> + * Updates the last value read from hardware.
-> >> + */
-> >> +u32 host1x_syncpt_load_min(struct host1x_syncpt *sp)
-> >> +{
-> >> +     u32 val;
-> >> +     val =3D sp->dev->syncpt_op.load_min(sp);
-> >> +     trace_host1x_syncpt_load_min(sp->id, val);
-> >> +
-> >> +     return val;
-> >> +}
-> >=20
-> > I don't know I understand what this means exactly. Does it read the
-> > value that hardware last incremented? Perhaps this will become clearer
-> > when you add a comment to the syncpt_load_min() implementation.
->=20
-> It just loads the current syncpt value to shadow register. The shadow
-> register is called min, because host1x tracks the range of sync point
-> increments that hardware is still going to do, so min is the lower
-> boundary of the range.
->=20
-> max tells what the sync point is expected to reach for hardware to be
-> considered idle.
->=20
-> host1x will f.ex. nop out waits for sync point values outside the range,
-> because hardware isn't good at handling syncpt value wrapping.
-
-Maybe the function should be called host1x_syncpt_load() if there is no
-equivalent way to load the maximum value (since there is no register to
-read from).
-
-> > Also the syncpoint is not actually allocated here, so maybe
-> > host1x_syncpt_request() would be a better name. As a nice side-effect it
-> > makes the naming more similar to the IRQ API and might be easier to work
-> > with.
->=20
-> I'm not entirely sure about the difference, but isn't the number to be
-> allocated usually passed to a function ending in _request? Allocate
-> would just allocate the next available - as host1x_syncpt_allocate does.
-
-That's certainly true for interrupts. However, if you look at the DMA
-subsystem for example, you can also request an unnamed resource.
-
-The difference is sufficiently subtle that host1x_syncpt_allocate()
-would work for me too, though. I just have a slight preference for
-host1x_syncpt_request().
-
-Thierry
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRELgEAAoJEN0jrNd/PrOhfOkP/1TkBKcgMQUPNb713lY3QdcS
-1PcQlUOBg0ZSOJVwrnkUYGnmak5okpEsuHMRvcQWDyG8xorGG91Bs8Mjg9GbB7lL
-d479Xz72AgpSTW2itTizKgBzmXTuIkEjaIAVM/DwC1JgntDuO+0iVlZQQIcToUkk
-a7u41Apr3TdFXS7flHDtzrsIYhEAQITPxed6pec13+3Q2fh2mdnkYD204ZKcrirr
-a8RQIFIaFTcR+pdu76wiTcKGOJa1GOKyg2traPp01fvFFJLBWnQrGRQRAecOIomh
-80+NuVlbUBBmP8+gQArMaYCgV164SYLIPuvFOrH2M0dB5qiKuTUNR/EprFu8CVuU
-HOM4Tdf0RrSYXrWzk2GC0jY7PPcAiln+ltQzE9pOh8iXo83VcSkcvltR3nW8Ls4w
-dOk8EhdQkjmsPuqczUxrAQRZtkNLaHwbmS9p+BQPYwuahNTIcRTGJtAAzw9xlCm8
-PILRwiDKH7vRIVHZ4bfpurJNtaBByX3mn8VWdl7Ajajeo5c5OJoeWls7R0bxJIDe
-vOQaPW+Ss96wEgBIAeq/XsDMFcnxUrGPnFzuEiKthiJ8H8UfqbRVq3z1l1eqOY15
-vEj2XtfqHJGN3Ql5Bw2RhXXZ1h99+GPlLZsthabORorBnhdOtQ2+gzIWP1CgYql+
-5Y2Sm+rWk5wMwqUJE4Vt
-=HaOX
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+No, clk_ops depends on the clocks you are using. There could be a clock 
+with mux and gate while another one with mux and div.
