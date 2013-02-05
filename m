@@ -1,207 +1,83 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCHv5,RESEND 4/8] gpu: host1x: Add debug support
-Date: Tue, 5 Feb 2013 10:15:56 +0100
-Message-ID: <20130205091555.GC20437@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCHv5,RESEND 5/8] drm: tegra: Move drm to live under host1x
+Date: Tue, 5 Feb 2013 10:26:34 +0100
+Message-ID: <20130205092634.GE20437@avionic-0098.mockup.avionic-design.de>
 References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
-	<1358250244-9678-5-git-send-email-tbergstrom@nvidia.com>
-	<20130204110339.GA28134@avionic-0098.mockup.avionic-design.de>
-	<51108D75.9030302@nvidia.com>
+ <1358250244-9678-6-git-send-email-tbergstrom@nvidia.com>
+ <20130204110804.GA595@avionic-0098.mockup.avionic-design.de>
+ <51108E70.5000602@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1639618099=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <51108D75.9030302@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5oH/S/bF6lOfqCQb"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51108E70.5000602-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1639618099==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
-Content-Disposition: inline
-
-
---raC6veAxrt5nqIoY
+--5oH/S/bF6lOfqCQb
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 04, 2013 at 08:41:25PM -0800, Terje Bergstr=C3=B6m wrote:
-> On 04.02.2013 03:03, Thierry Reding wrote:
-> > On Tue, Jan 15, 2013 at 01:44:00PM +0200, Terje Bergstrom wrote:
-> >> diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+On Mon, Feb 04, 2013 at 08:45:36PM -0800, Terje Bergstr=C3=B6m wrote:
+> On 04.02.2013 03:08, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Tue, Jan 15, 2013 at 01:44:01PM +0200, Terje Bergstrom wrote:
 > > [...]
-> >> +struct output {
-> >> +	void (*fn)(void *ctx, const char *str, size_t len);
-> >> +	void *ctx;
-> >> +	char buf[256];
-> >> +};
-> >=20
-> > Do we really need this kind of abstraction? There really should be only
-> > one location where debug information is obtained, so I don't see a need
-> > for this.
->=20
-> This is used by debugfs code to direct to debugfs, and
-> nvhost_debug_dump() to send via printk.
-
-Yes, that was precisely my point. Why bother providing the same data via
-several output methods. debugfs is good for showing large amounts of
-data such as register dumps or a tabular representation of syncpoints
-for instance.
-
-If, however, you want to interactively show debug information using
-printk the same format isn't very useful and something more reduced is
-often better.
-
-> >> diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/=
-debug_hw.c
-> >=20
-> >> +static int show_channel_command(struct output *o, u32 addr, u32 val, =
-int *count)
-> >> +{
-> >> +	unsigned mask;
-> >> +	unsigned subop;
+> >> diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
+> >> index 697d49a..ffc8bf1 100644
+> >> --- a/drivers/gpu/host1x/Makefile
+> >> +++ b/drivers/gpu/host1x/Makefile
+> >> @@ -12,4 +12,10 @@ host1x-y =3D \
+> >>  	hw/host1x01.o
+> >> =20
+> >>  host1x-$(CONFIG_TEGRA_HOST1X_CMA) +=3D cma.o
 > >> +
-> >> +	switch (val >> 28) {
-> >> +	case 0x0:
-> >=20
-> > These can easily be derived by looking at the debug output, but it may
-> > still make sense to assign symbolic names to them.
->=20
-> I have another suggestion. In downstream I removed the decoding part and
-> I just print out a string of hex. That removes quite a bit bunch of code
-> from kernel. It makes the debug output also more compact.
->=20
-> It's much easier to write a user space program to decode than maintain
-> it in kernel.
-
-I don't know. I think if you use in-kernel debugging facilities such as
-debugfs or printk, then the output should be self-explanatory. However I
-do see the usefulness of having a binary dump that can be decoded in
-userspace. But I think if we want to go that way we should make that a
-separate interface. USB provides something like that, which can then be
-fed to libpcap or wireshark to capture and analyze USB traffic. If done
-properly you get replay functionality for free. I don't know what infra-
-structure exists to help with implementing something similar.
-
-So I think having debugfs output some data about syncpoints or the state
-of channels might be useful to quickly diagnose a certain set of
-problems but for anything more involved maybe a complete binary dump may
-be better.
-
-I'm not sure whether doing this would be acceptable though. Maybe Dave
-or somebody else on the lists can answer that. An alternative way to
-achieve the same would be to hook ioctl() from userspace and not do any
-of it in kernel space.
-
-> >> +static void show_channel_word(struct output *o, int *state, int *coun=
-t,
-> >> +		u32 addr, u32 val, struct host1x_cdma *cdma)
-> >> +{
-> >> +	static int start_count, dont_print;
-> >=20
-> > What if two processes read debug information at the same time?
->=20
-> show_channels() acquires cdma.lock, so that shouldn't happen.
-
-Okay. Another solution would be to pass around a debug context which
-keeps track of the variables. But if we opt for a more involved dump
-interface as discussed above this will no longer be relevant.
-
-> >> +static void do_show_channel_gather(struct output *o,
-> >> +		phys_addr_t phys_addr,
-> >> +		u32 words, struct host1x_cdma *cdma,
-> >> +		phys_addr_t pin_addr, u32 *map_addr)
-> >> +{
-> >> +	/* Map dmaget cursor to corresponding mem handle */
-> >> +	u32 offset;
-> >> +	int state, count, i;
+> >> +ccflags-y +=3D -Iinclude/drm
+> >> +ccflags-$(CONFIG_DRM_TEGRA_DEBUG) +=3D -DDEBUG
 > >> +
-> >> +	offset =3D phys_addr - pin_addr;
-> >> +	/*
-> >> +	 * Sometimes we're given different hardware address to the same
-> >> +	 * page - in these cases the offset will get an invalid number and
-> >> +	 * we just have to bail out.
-> >> +	 */
+> >> +host1x-$(CONFIG_DRM_TEGRA) +=3D drm/drm.o drm/fb.o drm/dc.o drm/host1=
+x.o
+> >> +host1x-$(CONFIG_DRM_TEGRA) +=3D drm/output.o drm/rgb.o drm/hdmi.o
+> >>  obj-$(CONFIG_TEGRA_HOST1X) +=3D host1x.o
 > >=20
-> > Why's that?
+> > Can this be moved into a separate Makefile in the drm subdirectory?
 >=20
-> Because of a race - memory might've been unpinned and unmapped from
-> IOMMU and when we re-map (pin), we are given a new address.
+> I tried, and kernel build helpfully created two .ko files. As having
+> cyclic dependencies between two modules isn't nice, I merged them to
+> same module and that seemed to force merging Makefile.
 >=20
-> But, I think this comment is a bit stale - we used to dump also old
-> gathers. The latest code only dumps jobs in sync queue, so the race
-> shouldn't happen.
+> If anybody has an idea on how to do it otherwise, I'd be happy to keep
+> the Makefiles separate.
 
-Okay. In the context of a channel dump interface this may not be
-relevant anymore. Can you think of any issue that wouldn't be detectable
-or debuggable by analyzing a binary dump of the data within a channel?
-I'm asking because at that point we wouldn't be able to access any of
-the in-kernel data structures but would have to rely on the data itself
-for diagnostics. IOMMU virtual addresses won't be available and so on.
-
-> >> +static void host1x_debug_show_channel_cdma(struct host1x *m,
-> >> +	struct host1x_channel *ch, struct output *o, int chid)
-> >> +{
-> > [...]
-> >> +	switch (cbstat) {
-> >> +	case 0x00010008:
-> >=20
-> > Again, symbolic names would be nice.
->=20
-> I propose I remove the decoding from kernel, and save 200 lines.
-
-I think it could be more than 200 lines. If all we provide in the kernel
-is some statistics about syncpoint usage or channel state that should be
-a lot less code than we have now.
-
-However that would make it necessary to provide userspace tools that can
-provide the same quality of diagnostics, so I'm not sure if it's doable
-without access to the in-kernel data structures.
+Okay, I'll take a look.
 
 Thierry
 
---raC6veAxrt5nqIoY
+--5oH/S/bF6lOfqCQb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJREM3LAAoJEN0jrNd/PrOhxUoP/ixZUIGbbE68gg+Vq295E/Sb
-Gy7vUt/y/QCd19CJJ7FKBJZs+Wo1HJ3sBm04+t7a52fnjyvyabAgSmcskt0EJqh4
-jSFso5IcmI0rgc6HBYaN3vp8TyQs2yEaSAJO26K0F7oZL+6YUR7qLBW2LAKAn6c2
-Hd8LBCF6q4wtLkS4s/KNu90w4dbTeLVlKXdoJrkg+Q6DSUgoSm7vkid+/ZNmn7ZP
-Rcij+qrIXfdbXlj3OE6uNzQ5lRhrIVvPTmWXoqXzkxxaD6ZO9qrrZe5Mrmdb0CYf
-mK+sX3OTkctKZqAygBrrLIQv0tpnOWtZaGhsSRJ/pVm0NOsIfJ6cG1hTLqOz4bQ4
-mxYqBT86Pkh5iF61MA+RlImh/gnNUVH/up3/NbM2wgjtxR/fKk8SHWldelKG7M69
-gVpB5hj+SyyG4HJfhQXf3r7aki8x+RxBvaSVLKCyEHYGfdTPkymI6ihNx1zwNgOm
-36S2QfAdWzXbCmMIh0YHCrf3ZClZY+er/j5/RgrIGpWX94+Ub/MKFbX0vqCl8JH7
-b37AiLxKFgEQiSXTsUJA96TvBhNk2nYt5l568yMDF+M1dYAxgHSELm91qwsZZqkg
-rw9A/3969kkkm5LWwGIVaUUIyAGq1mzkN68B1ykOifYdUFi5s2s4tRkiehyeLUJI
-C1aceWMdx8AsfKAVzhQq
-=hsgL
+iQIcBAEBAgAGBQJRENBKAAoJEN0jrNd/PrOh9EAQAKsBOPm3IjPH5x9X5LDZtpxw
++r9tdFT+qBnTud+k8Q+S2FsuqKqe5FIWuhTH4CWKxt1KfASq9kQpMS82bhM53Nq3
+EkS5EoDhw866ErH2Eirh8BUdc4KecVj0H/qgjhobfVeAQcOX09r3czPK9/s6wNs9
+oAm40Vu+/lTgmADDFltOvh5Bj7CdxY7jwfqtepZfCeVDf2VIaamZO+AQJi9+Fu4C
+VhqLsio7vzZ2Cz8oqr6VAZV9lfND9rZfwNq5x18RIE6JPJ/SJztIEIfvidOnftnK
+COHuuJh5DDLXVwHyULclTiCOgi25ScOPos5ghUZBR2rl3Tm2chnC1f0/EGVyKaw8
+wIE9NDN4aDryzzVPC3s+AktHZxsx66Q4eFblNL3gB4t9hgWAW/9/3raDjTVevbEI
+3I7AN8lQs0Q6Je9/HSiu/1dLCdI4Kf24IO1YBYqm5ClvdOtOCuNzW70J/GUvcszM
+rjOzzz+cre/O4LTCxr4umTsVlVgNkg8KHZKNPyDuhNRuQ7Hdm//LdBTcziYF0OLB
+GUwc6sQZtbUjJMgFZ4WU6R8fAsmUu4CHgdbKTXMbAA7Zy6r+YBBdAK4aU0UyMw/1
+KTqiQ9DGF9zhL96QvSMXRPQAzjmTfoptZ3BPGu28iOXHEwFn973iTOnPXptO8nXV
+aTF26tenUH5ZfrHmo9hV
+=MUHd
 -----END PGP SIGNATURE-----
 
---raC6veAxrt5nqIoY--
-
---===============1639618099==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1639618099==--
+--5oH/S/bF6lOfqCQb--
