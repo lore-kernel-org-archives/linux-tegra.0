@@ -1,109 +1,39 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] clk: Add composite clock type
-Date: Wed, 6 Feb 2013 07:10:48 +0100
-Message-ID: <20130206.081048.71241785637713947.hdoyu@nvidia.com>
-References: <5110C3E5.2010503@nvidia.com><20130205.122252.570646990867457667.hdoyu@nvidia.com><5111C604.8070104@nvidia.com>
+From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 06/14] ARM: pci: Keep pci_common_init() around after init
+Date: Wed, 6 Feb 2013 09:36:42 +0100
+Message-ID: <20130206093642.32c91724@skate>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
+ <1357764194-12677-7-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5111C604.8070104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1357764194-12677-7-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 6 Feb 2013 03:55:00 +0100:
+Dear Thierry Reding,
 
-> >> No, clk_ops depends on the clocks you are using. There could be a clock
-> >> with mux and gate while another one with mux and div.
-> > You are right. What about the following? We don't have to have similar
-> > copy of clk_composite_ops for each instances.
+On Wed,  9 Jan 2013 21:43:06 +0100, Thierry Reding wrote:
+> When using deferred driver probing, PCI host controller drivers may
+> actually require this function after the init stage.
 > 
-> Clock framework takes decision depending on the ops availability and it 
-> does not know if the clock is mux or gate.
-> 
-> For example,
-> 
->                  if (clk->ops->enable) {
->                          ret = clk->ops->enable(clk->hw);
->                          if (ret) {
->                                  __clk_disable(clk->parent);
->                                  return ret;
->                          }
->                  }
-> 
-> in above case if clk_composite does not have gate clock then as per your 
-> suggestion if it returns error value then it will fail and it is wrong.
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-Ok, now I understand. Thank you for explanation.
-
-We always need to allocate clk_composite_ops for each clk_composite,
-right? If so what about having "struct clk_ops ops" in "struct
-clk_composite"?
-
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index f30fb4b..5240e24 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -129,20 +129,13 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
-                pr_err("%s: could not allocate composite clk\n", __func__);
-                return ERR_PTR(-ENOMEM);
-        }
-+       clk_composite_ops = &composite->ops;
- 
-        init.name = name;
-        init.flags = flags | CLK_IS_BASIC;
-        init.parent_names = parent_names;
-        init.num_parents = num_parents;
- 
--       /* allocate the clock ops */
--       clk_composite_ops = kzalloc(sizeof(*clk_composite_ops), GFP_KERNEL);
--       if (!clk_composite_ops) {
--               pr_err("%s: could not allocate clk ops\n", __func__);
--               kfree(composite);
--               return ERR_PTR(-ENOMEM);
--       }
--
-        if (mux_hw && mux_ops) {
-                if (!mux_ops->get_parent || !mux_ops->set_parent) {
-                        clk = ERR_PTR(-EINVAL);
-@@ -202,7 +195,6 @@ struct clk *clk_register_composite(struct device *dev, const char *name,
-        return clk;
- 
- err:
--       kfree(clk_composite_ops);
-        kfree(composite);
-        return clk;
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index f0ac818..bb5d36a 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -346,6 +346,8 @@ struct clk_composite {
-        const struct clk_ops    *mux_ops;
-        const struct clk_ops    *div_ops;
-        const struct clk_ops    *gate_ops;
-+
-+       const struct clk_ops    ops;
- };
- 
- struct clk *clk_register_composite(struct device *dev, const char *name,
-
-
-> > diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-> > index f30fb4b..8f88805 100644
-> > --- a/drivers/clk/clk-composite.c
-> > +++ b/drivers/clk/clk-composite.c
-> > @@ -27,6 +27,9 @@ static u8 clk_composite_get_parent(struct clk_hw *hw)
-> >          const struct clk_ops *mux_ops = composite->mux_ops;
-> >          struct clk_hw *mux_hw = composite->mux_hw;
-> >   
-> > +       if (!mux_hw->clk)
-> > +	       return -EINVAL;
-> > +
-> >          mux_hw->clk = hw->clk;
->
-> It is wrong.
-
-Will the above "mux_hw->clk = hw->clk" be removed from the original?
+Tested-by: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+-- 
+Thomas Petazzoni, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
