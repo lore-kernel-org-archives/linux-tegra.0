@@ -1,61 +1,217 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: xf86-video-opentegra
-Date: Wed, 6 Feb 2013 22:07:16 +0100
-Message-ID: <20130206210716.GA1292@avionic-0098.mockup.avionic-design.de>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv5,RESEND 8/8] drm: tegra: Add gr2d device
+Date: Wed, 6 Feb 2013 13:23:17 -0800
+Message-ID: <5112C9C5.8080205@nvidia.com>
+References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-9-git-send-email-tbergstrom@nvidia.com> <20130204125618.GD595@avionic-0098.mockup.avionic-design.de> <511095F9.6040607@nvidia.com> <20130205095403.GF20437@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20130205095403.GF20437-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: xorg-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 05.02.2013 01:54, Thierry Reding wrote:
+> On Mon, Feb 04, 2013 at 09:17:45PM -0800, Terje Bergstr=C3=B6m wrote:
+>> Yeah, it's actually working around the host1x duplicate naming.
+>> host1x_syncpt_get takes struct host1x as parameter, but that's diffe=
+rent
+>> host1x than in this code.
+>=20
+> So maybe a better way would be to rename the DRM host1x after all. If=
+ it
+> avoids the need for workarounds such as this I think it justifies the
+> additional churn.
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok, I'll include that. Do you have a preference for the name? Something
+like "host1x_drm" might work?
 
-Hi all,
+>>> Also, how useful is it to create a context? Looking at the gr2d
+>>> implementation for .open_channel(), it will return the same channel=
+ to
+>>> whichever userspace process requests them. Can you explain why it i=
+s
+>>> necessary at all? From the name I would have expected some kind of
+>>> context switching to take place when different applications submit
+>>> requests to the same client, but that doesn't seem to be the case.
+>>
+>> Hardware context switching will be a later submit, and it'll actuall=
+y
+>> create a new structure. Hardware context might live longer than the
+>> process that created it, so they'll need to be separate.
+>=20
+> Why would it live longer than the process? Isn't the whole purpose of
+> the context to keep per-process state? What use is that state if the
+> process dies?
 
-I completely forgot to announce this. The previous discussion of this
-resulted in a 2:1 vote in favour of xf86-video-opentegra. So I decided
-to let democracy have its way.
+Hardware context has to be kept alive for as long as there's a job
+running from that process. If an app sends 10 jobs to 2D channel, and
+dies immediately, there's no sane way for host1x to remove the jobs fro=
+m
+queue. The jobs will keep on running and kernel will need to track them=
+=2E
 
-I've pushed the latest version (based on xf86-video-modesetting 0.6.0)
-to gitorious[0] and uploaded a tarball[1] if people prefer that.
+>> Perhaps the justification is that this way we can keep the kernel AP=
+I
+>> stable even when we add support for hardware contexts and other clie=
+nts.
+>=20
+> We don't need a stable kernel API. But I guess it is fine to keep it =
+if
+> for no other reason to fill the context returned in the ioctl() with
+> meaningful data.
 
-One thing I want to propose is to make the driver part of the xorg
-project on freedesktop.org. Given that other DDX drivers are part of the
-same project make it an obvious choice, but if everyone thinks that it's
-a bad idea I'll go and request a git repository for the tegra project
-instead.
+Sorry, I meant stable IOCTL API, so we agree on this.
 
-Thierry
+>> host1x_drm_file sounds a bit odd, because it's not really a file, bu=
+t a
+>> private data pointer stored in driver_priv.
+>=20
+> The same is true for struct drm_file, which is stored in struct file'=
+s
+> .private_data field. I find it to be very intuitive if the inheritanc=
+e
+> is reflected in the structure name. struct host1x_drm_file is host1x'
+> driver-specific part of struct drm_file.
 
-[0]: http://gitorious.org/thierryreding/xf86-video-opentegra
-[1]: http://people.freedesktop.org/~tagr/xf86-video-opentegra-0.6.0.tar.xz
+Ok, makes sense. I'll do that.
 
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature
+> I fail to see how dma_buf would require a separate mem_mgr_type. Can =
+we
+> perhaps postpone this to a later point and just go with CMA as the on=
+ly
+> alternative for now until we have an actual working implementation th=
+at
+> we can use this for?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Each submit refers to a number of buffers. Some of them are the streams=
+,
+some are textures or other input/output buffers. Each of these buffers
+might be passed as a GEM handle, or (when implemented) as a dma_buf fd.
+Thus we need a field to tell host1x which API to call to handle that ha=
+ndle.
 
-iQIcBAEBAgAGBQJREsYEAAoJEN0jrNd/PrOhIuoP/1drHLSKZxub5rAMhiap3b9i
-qBG8ViZBUeDk0Wt+qzB8zV8mdz3a3YiorBw+pYANcL0w11xl5G0YcNCHFp1IRf3u
-/oXqhZEixw4/sB5xdRa4Gfzm+WnxEhAu7FQ77RxyCHDQt1Jn21tnT98OzD6wu2wZ
-EHr/GI1wnN+7EvwBrotnE4v0Twxy6MEVFS3DkZg7ZZHTLkJGhY9L91wSZXAsMGSu
-tLX9iw6FeD1Ch+tht0ByWO9A2KN7rSpwWFmgu7/U6HJcZv4/fVpAua5kjOnsyZfq
-vizi89ab4RnL2NgG2uFvT/O1OnxMFxE2KDbZDLJyZFx5+H0xCwN/nmU0IwcsjqNG
-ej+etA/AzDMS6hcPkSGOka1VNYCLTfi9XJnXKRYDlytfs7BR6od5n93JyL36rPiH
-2B9eC54bTLfLSV8LJWKvGU0xMp9d/nRoFewxSHcew6imdRCOm+ke9GcKspmvmQ8G
-+pauDRDntnQzXyqtiUxfWjcw/ekt8ksXw9DLykylIaNdJZ8RyJ98z4Foyw45Fkwb
-B9J130ib3XoqFuM4INR1oVTq7RN/7xPN4PlzumEsYo5Zh1ZCjGhP60kBlrepZZJr
-xs8CEyKOsz2pdAMgeAYE5Wd7yX/d86b7WjRAs8c3eUVCg25V7mIRF9TRv5lZG4hi
-ybXInkDRSOv2509BD6O5
-=6j5i
------END PGP SIGNATURE-----
+I think we can leave out the code for managing the type until we
+actually have separate memory managers. That'd make GEM handles
+effectively of type 0, as we don't set it.
 
---IS0zKkzwUGydFO0o--
+>=20
+>>>> +static int gr2d_submit(struct host1x_drm_context *context,
+>>>> +             struct tegra_drm_submit_args *args,
+>>>> +             struct drm_device *drm,
+>>>> +             struct drm_file *file_priv)
+>>>> +{
+>>>> +     struct host1x_job *job;
+>>>> +     int num_cmdbufs =3D args->num_cmdbufs;
+>>>> +     int num_relocs =3D args->num_relocs;
+>>>> +     int num_waitchks =3D args->num_waitchks;
+>>>> +     struct tegra_drm_cmdbuf __user *cmdbufs =3D
+>>>> +             (void * __user)(uintptr_t)args->cmdbufs;
+>>>> +     struct tegra_drm_reloc __user *relocs =3D
+>>>> +             (void * __user)(uintptr_t)args->relocs;
+>>>> +     struct tegra_drm_waitchk __user *waitchks =3D
+>>>> +             (void * __user)(uintptr_t)args->waitchks;
+>>>
+>>> No need for all the uintptr_t casts.
+>>
+>> Will try to remove - but I do remember getting compiler warnings wit=
+hout
+>> them.
+>=20
+> I think you shouldn't even have to cast to void * first. Just cast to
+> the target type directly. I don't see why the compiler should complai=
+n.
+
+This is what I get without them:
+
+drivers/gpu/host1x/drm/gr2d.c:108:3: warning: cast to pointer from
+integer of different size [-Wint-to-pointer-cast]
+drivers/gpu/host1x/drm/gr2d.c:110:3: warning: cast to pointer from
+integer of different size [-Wint-to-pointer-cast]
+drivers/gpu/host1x/drm/gr2d.c:112:3: warning: cast to pointer from
+integer of different size [-Wint-to-pointer-c
+
+The problem is that the fields are __u64's and can't be cast directly
+into 32-bit pointers.
+
+>> That's the security firewall. It walks through each submit, and ensu=
+res
+>> that each register write that writes an address, goes through the ho=
+st1x
+>> reloc mechanism. This way user space cannot ask 2D to write to arbit=
+rary
+>> memory locations.
+>=20
+> I see. Can this be made more generic? Perhaps adding a table of valid
+> registers to the device and use a generic function to iterate over th=
+at
+> instead of having to provide the same function for each client.
+
+=46or which one does gcc generate more efficient code? I've thought a
+switch-case statement might get compiled into something more efficient
+than a table lookup.
+
+But the rest of the code is generic - just the one function which
+compares against known address registers is specific to 2D.
+
+>>>> +static int __exit gr2d_remove(struct platform_device *dev)
+>>>> +{
+>>>> +     struct host1x *host1x =3D
+>>>> +             host1x_get_drm_data(to_platform_device(dev->dev.pare=
+nt));
+>>>> +     struct gr2d *gr2d =3D platform_get_drvdata(dev);
+>>>> +     int err;
+>>>> +
+>>>> +     err =3D host1x_unregister_client(host1x, &gr2d->client);
+>>>> +     if (err < 0) {
+>>>> +             dev_err(&dev->dev, "failed to unregister host1x clie=
+nt: %d\n",
+>>>> +                     err);
+>>>> +             return err;
+>>>> +     }
+>>>> +
+>>>> +     host1x_syncpt_free(gr2d->syncpt);
+>>>> +     return 0;
+>>>> +}
+>>>
+>>> Isn't this missing a host1x_channel_put() or host1x_free_channel()?
+>>
+>> All references should be handled in gr2d_open_channel() and
+>> gr2d_close_channel(). I think we'd need to ensure all contexts are
+>> closed at this point.
+>=20
+> Yes, that'd work as well. Actually I would assume that all contexts
+> associated with a given file should be freed when the file is closed.
+> That way all of this should work pretty much automatically.
+
+Naturally they are, so we're actually already good. All contexts get
+closed at file close.
+
+> For timeout =3D=3D 0 I don't think we need a symbolic name. It is pre=
+tty
+> common for 0 to mean no timeout. But yes, DRM_TEGRA_INFINITE_TIMEOUT
+> should be okay.
+
+Ok, will do that.
+
+>>>> +struct tegra_drm_syncpt_incr {
+>>>> +     __u32 syncpt_id;
+>>>> +     __u32 syncpt_incrs;
+>>>> +};
+>>>
+>>> Maybe the fields would be better named id and incrs. Though I also
+>>> notice that incrs is never used. I guess that's supposed to be used=
+ in
+>>> the future to allow increments by more than a single value. If so,
+>>> perhaps value would be a better name.
+>>
+>> It's actually used in the dreaded patch 3, as part of tegra_drm_subm=
+it_args.
+>=20
+> Okay. The superfluous syncpt_ prefixes should still go away.
+
+Sure, forgot to comment, but I'm fine with that.
+
+Terje
