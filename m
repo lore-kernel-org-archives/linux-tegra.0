@@ -1,46 +1,31 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] iommu/tegra: smmu: Fix incorrect mask for regbase
-Date: Wed, 6 Feb 2013 19:38:15 +0200
-Message-ID: <1360172295-21500-1-git-send-email-hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: initialise parent of uart clocks
+Date: Wed, 06 Feb 2013 10:43:41 -0700
+Message-ID: <5112964D.50707@wwwdotorg.org>
+References: <1360147661-5435-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360147661-5435-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This fixes kernel crash because of BUG() in register address
-validation.
+On 02/06/2013 03:47 AM, Laxman Dewangan wrote:
+> Initialise the parent of UARTs to PLLP
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Verified with Tegra 114 based Dalmore board
----
- drivers/iommu/tegra-smmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 4d11069..05a8ddb 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -1192,7 +1192,7 @@ static int tegra_smmu_probe(struct platform_device *pdev)
- 		smmu->rege[i] = smmu->regs[i] + resource_size(res) - 1;
- 	}
- 	/* Same as "mc" 1st regiter block start address */
--	smmu->regbase = (void __iomem *)((u32)smmu->regs[0] & ~PAGE_MASK);
-+	smmu->regbase = (void __iomem *)((u32)smmu->regs[0] & PAGE_MASK);
- 
- 	err = of_get_dma_window(dev->of_node, NULL, 0, NULL, &base, &size);
- 	if (err)
--- 
-1.7.9.5
+> and disabling clock by default.
+
+Hmm. Only the clocks initialized by the new entries you added are marked
+disabled (or rather, not actively enabled; if they're enabled already,
+they won't be disabled). We should treat all UARTs equally. Historically
+we've needed to enable the serial clocks forcibly since the regular
+serial driver didn't call clk_get() or clk_prepare_enable() on any
+clocks, but I notice that it does now, since sometime in kernel 3.8. As
+such, I think you can modify all the UART entries in these tables to
+have the enable/state field set to false (0). Can you try that and check
+that it works for the serial console ports? Thanks.
