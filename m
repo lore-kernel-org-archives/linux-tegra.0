@@ -1,34 +1,24 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 06/14] ARM: pci: Keep pci_common_init() around after init
-Date: Thu, 07 Feb 2013 02:20:05 +0100
-Message-ID: <2957343.pp7RNnqk54@wuerfel>
-References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
- <9348609.HjKCmL9u9S@wuerfel>
- <CACRpkdYGgdMTi0ZeMeCk5UmrndD451Pyz8L_XE=y9SPXfGGdew@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: initialise parent of uart clocks
+Date: Wed, 06 Feb 2013 10:37:00 -0700
+Message-ID: <511294BC.1020808@wwwdotorg.org>
+References: <1360147661-5435-1-git-send-email-ldewangan@nvidia.com> <20130206122239.GH3073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdYGgdMTi0ZeMeCk5UmrndD451Pyz8L_XE=y9SPXfGGdew@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Russell King <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, devicetree-discuss@lists.ozlabs.org, Thierry Reding <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130206122239.GH3073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 06 February 2013 18:07:53 Linus Walleij wrote:
-> However it leaves the question of how much __init, __initdata
-> and __initconst we have littering around. Oh, well, we'll see
-> I guess.
+On 02/06/2013 05:22 AM, Peter De Schrijver wrote:
+> On Wed, Feb 06, 2013 at 11:47:41AM +0100, Laxman Dewangan wrote:
+>> Initialise the parent of UARTs to PLLP and disabling clock by
+>> default.
+>>
+> 
+> I wonder if we should move the parent definitions to DT at some point.
 
-Actually, kbuild is pretty good at warning around the
-bugs there.
-
-	Arnd
+I think that's what Prashant is going to work on next, right?
