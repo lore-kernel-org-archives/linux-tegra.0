@@ -1,121 +1,34 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] ARM: tegra: Fix build error w/ ARCH_TEGRA_114_SOC w/o ARCH_TEGRA_3x_SOC
-Date: Wed, 6 Feb 2013 18:10:30 +0200
-Message-ID: <1360167030-14159-1-git-send-email-hdoyu@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 06/14] ARM: pci: Keep pci_common_init() around after
+	init
+Date: Wed, 6 Feb 2013 16:30:41 +0000
+Message-ID: <20130206163041.GG17833@n2100.arm.linux.org.uk>
+References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de> <1357764194-12677-7-git-send-email-thierry.reding@avionic-design.de> <20130205204147.GA29726@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130205204147.GA29726-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch fixes the build error when ARCH_TEGRA_114_SOC is enabled
-and ARCH_TEGRA_3x_SOC is disabled.
+On Tue, Feb 05, 2013 at 09:41:48PM +0100, Thierry Reding wrote:
+> On Wed, Jan 09, 2013 at 09:43:06PM +0100, Thierry Reding wrote:
+> > When using deferred driver probing, PCI host controller drivers may
+> > actually require this function after the init stage.
+> > 
+> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> > ---
+> >  arch/arm/kernel/bios32.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> Russell,
+> 
+> Can this patch and patch 7 (ARM: pci: Allow passing per-controller
+> private data) of this series be applied for 3.9? Thomas uses them in his
+> Marvell PCIe series as well and it would allow to reduce the complexity
+> of the dependencies.
 
-This provides Tegra114 with its own tegra114_init_early() instead of
-making use of tegra30_init_early() so that T114 build doesn't depend
-on T3x anymore.
-
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/board-dt-tegra114.c |    2 +-
- arch/arm/mach-tegra/board.h             |    2 ++
- arch/arm/mach-tegra/common.c            |   25 +++++++++++++++++--------
- 3 files changed, 20 insertions(+), 9 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/board-dt-tegra114.c b/arch/arm/mach-tegra/board-dt-tegra114.c
-index 72598e2..085d636 100644
---- a/arch/arm/mach-tegra/board-dt-tegra114.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra114.c
-@@ -36,7 +36,7 @@ static const char * const tegra114_dt_board_compat[] = {
- DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.map_io		= tegra_map_common_io,
--	.init_early	= tegra30_init_early,
-+	.init_early	= tegra114_init_early,
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra114_dt_init,
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index da8f5a3..86851c8 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -1,6 +1,7 @@
- /*
-  * arch/arm/mach-tegra/board.h
-  *
-+ * Copyright (c) 2013 NVIDIA Corporation. All rights reserved.
-  * Copyright (C) 2010 Google, Inc.
-  *
-  * Author:
-@@ -27,6 +28,7 @@ void tegra_assert_system_reset(char mode, const char *cmd);
- 
- void __init tegra20_init_early(void);
- void __init tegra30_init_early(void);
-+void __init tegra114_init_early(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
- void __init tegra_dt_init_irq(void);
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 46c0718..5449a3f 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -1,6 +1,7 @@
- /*
-  * arch/arm/mach-tegra/common.c
-  *
-+ * Copyright (c) 2013 NVIDIA Corporation. All rights reserved.
-  * Copyright (C) 2010 Google, Inc.
-  *
-  * Author:
-@@ -93,8 +94,7 @@ static void __init tegra_init_cache(void)
- 
- }
- 
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
--void __init tegra20_init_early(void)
-+static void __init tegra_init_early(void)
- {
- 	tegra_cpu_reset_handler_init();
- 	tegra_apb_io_init();
-@@ -102,22 +102,31 @@ void __init tegra20_init_early(void)
- 	tegra_init_cache();
- 	tegra_pmc_init();
- 	tegra_powergate_init();
-+}
-+
-+#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+void __init tegra20_init_early(void)
-+{
-+	tegra_init_early();
- 	tegra20_hotplug_init();
- }
- #endif
-+
- #ifdef CONFIG_ARCH_TEGRA_3x_SOC
- void __init tegra30_init_early(void)
- {
--	tegra_cpu_reset_handler_init();
--	tegra_apb_io_init();
--	tegra_init_fuse();
--	tegra_init_cache();
--	tegra_pmc_init();
--	tegra_powergate_init();
-+	tegra_init_early();
- 	tegra30_hotplug_init();
- }
- #endif
- 
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+void __init tegra114_init_early(void)
-+{
-+	tegra_init_early();
-+}
-+#endif
-+
- void __init tegra_init_late(void)
- {
- 	tegra_powergate_debugfs_init();
--- 
-1.7.9.5
+It'll need to go into the patch system in that case...
