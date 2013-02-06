@@ -1,73 +1,121 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 01/10] clk: tegra: Refactor PLL programming code
-Date: Wed, 6 Feb 2013 14:32:22 +0200
-Message-ID: <20130206123222.GI3073@tbergstrom-lnx.Nvidia.com>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
- <1359713962-16822-2-git-send-email-pdeschrijver@nvidia.com>
- <510F4FF7.3050502@nvidia.com>
- <20130204143233.GV2364@tbergstrom-lnx.Nvidia.com>
- <51109BB3.8000706@nvidia.com>
- <20130205132355.GD3073@tbergstrom-lnx.Nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra: Fix build error w/ ARCH_TEGRA_114_SOC w/o ARCH_TEGRA_3x_SOC
+Date: Wed, 6 Feb 2013 18:10:30 +0200
+Message-ID: <1360167030-14159-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130205132355.GD3073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 05, 2013 at 02:23:55PM +0100, Peter De Schrijver wrote:
-> On Tue, Feb 05, 2013 at 06:42:11AM +0100, Prashant Gaikwad wrote:
-> > On Monday 04 February 2013 08:02 PM, Peter De Schrijver wrote:
-> > > On Mon, Feb 04, 2013 at 07:06:47AM +0100, Prashant Gaikwad wrote:
-> > >> On Friday 01 February 2013 03:48 PM, Peter De Schrijver wrote:
-> > > ...
-> > >
-> > >>> -static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll,
-> > >>> -                                void __iomem *lock_addr, u32 lock_bit_idx)
-> > >>> +static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
-> > >>>    {
-> > >>>           int i;
-> > >>> -       u32 val;
-> > >>> +       u32 val, lock_bit;
-> > >>> +       void __iomem *lock_addr;
-> > >>>
-> > >>>           if (!(pll->flags & TEGRA_PLL_USE_LOCK)) {
-> > >>>                   udelay(pll->params->lock_delay);
-> > >>>                   return 0;
-> > >>>           }
-> > >>>
-> > >>> +       lock_addr = pll->clk_base + pll->params->base_reg;
-> > >> This will not work for PLLE. Lock bit for PLLE is in misc register.
-> > >>
-> > >>> +       lock_bit = BIT(pll->params->lock_bit_idx);
-> > >>> +
-> > >>>           for (i = 0; i < pll->params->lock_delay; i++) {
-> > >>>                   val = readl_relaxed(lock_addr);
-> > >>> -               if (val & BIT(lock_bit_idx)) {
-> > >>> +               if (val & lock_bit) {
-> > >> Need to change the lock bit idx parameter for Tegra20 and Tegra30 PLLs
-> > >> else this patch will break those.
-> > >>
-> > > Looking at commit 37c26a906527b8a6a252614ca83d21ad318c4e84 and commit
-> > > b08e8c0ecc42afa3a2e1019851af741980dd5a6b, these fields seem correctly
-> > > initialized for both Tegra20 and Tegra30? Or am I missing something?
-> > 
-> > Ohh, I missed to read
-> > 
-> > lock_bit = BIT(pll->params->lock_bit_idx);
-> > 
-> > 
-> > Am I missing something about PLLE lock_addr also?
-> > 
-> 
-> Ah no indeed... my bad. So we need a lock_addr field.
-> 
+This patch fixes the build error when ARCH_TEGRA_114_SOC is enabled
+and ARCH_TEGRA_3x_SOC is disabled.
 
-Or a flag. Flag seems less invasive for now.
+This provides Tegra114 with its own tegra114_init_early() instead of
+making use of tegra30_init_early() so that T114 build doesn't depend
+on T3x anymore.
 
-Cheers,
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-dt-tegra114.c |    2 +-
+ arch/arm/mach-tegra/board.h             |    2 ++
+ arch/arm/mach-tegra/common.c            |   25 +++++++++++++++++--------
+ 3 files changed, 20 insertions(+), 9 deletions(-)
 
-Peter.
+diff --git a/arch/arm/mach-tegra/board-dt-tegra114.c b/arch/arm/mach-tegra/board-dt-tegra114.c
+index 72598e2..085d636 100644
+--- a/arch/arm/mach-tegra/board-dt-tegra114.c
++++ b/arch/arm/mach-tegra/board-dt-tegra114.c
+@@ -36,7 +36,7 @@ static const char * const tegra114_dt_board_compat[] = {
+ DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
+ 	.smp		= smp_ops(tegra_smp_ops),
+ 	.map_io		= tegra_map_common_io,
+-	.init_early	= tegra30_init_early,
++	.init_early	= tegra114_init_early,
+ 	.init_irq	= tegra_dt_init_irq,
+ 	.init_time	= clocksource_of_init,
+ 	.init_machine	= tegra114_dt_init,
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index da8f5a3..86851c8 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -1,6 +1,7 @@
+ /*
+  * arch/arm/mach-tegra/board.h
+  *
++ * Copyright (c) 2013 NVIDIA Corporation. All rights reserved.
+  * Copyright (C) 2010 Google, Inc.
+  *
+  * Author:
+@@ -27,6 +28,7 @@ void tegra_assert_system_reset(char mode, const char *cmd);
+ 
+ void __init tegra20_init_early(void);
+ void __init tegra30_init_early(void);
++void __init tegra114_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+ void __init tegra_dt_init_irq(void);
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 46c0718..5449a3f 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -1,6 +1,7 @@
+ /*
+  * arch/arm/mach-tegra/common.c
+  *
++ * Copyright (c) 2013 NVIDIA Corporation. All rights reserved.
+  * Copyright (C) 2010 Google, Inc.
+  *
+  * Author:
+@@ -93,8 +94,7 @@ static void __init tegra_init_cache(void)
+ 
+ }
+ 
+-#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+-void __init tegra20_init_early(void)
++static void __init tegra_init_early(void)
+ {
+ 	tegra_cpu_reset_handler_init();
+ 	tegra_apb_io_init();
+@@ -102,22 +102,31 @@ void __init tegra20_init_early(void)
+ 	tegra_init_cache();
+ 	tegra_pmc_init();
+ 	tegra_powergate_init();
++}
++
++#ifdef CONFIG_ARCH_TEGRA_2x_SOC
++void __init tegra20_init_early(void)
++{
++	tegra_init_early();
+ 	tegra20_hotplug_init();
+ }
+ #endif
++
+ #ifdef CONFIG_ARCH_TEGRA_3x_SOC
+ void __init tegra30_init_early(void)
+ {
+-	tegra_cpu_reset_handler_init();
+-	tegra_apb_io_init();
+-	tegra_init_fuse();
+-	tegra_init_cache();
+-	tegra_pmc_init();
+-	tegra_powergate_init();
++	tegra_init_early();
+ 	tegra30_hotplug_init();
+ }
+ #endif
+ 
++#ifdef CONFIG_ARCH_TEGRA_114_SOC
++void __init tegra114_init_early(void)
++{
++	tegra_init_early();
++}
++#endif
++
+ void __init tegra_init_late(void)
+ {
+ 	tegra_powergate_debugfs_init();
+-- 
+1.7.9.5
