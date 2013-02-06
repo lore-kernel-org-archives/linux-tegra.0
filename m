@@ -1,24 +1,72 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: initialise parent of uart clocks
-Date: Wed, 6 Feb 2013 14:22:39 +0200
-Message-ID: <20130206122239.GH3073@tbergstrom-lnx.Nvidia.com>
-References: <1360147661-5435-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH v5 01/10] clk: tegra: Refactor PLL programming code
+Date: Wed, 6 Feb 2013 14:32:22 +0200
+Message-ID: <20130206123222.GI3073@tbergstrom-lnx.Nvidia.com>
+References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
+ <1359713962-16822-2-git-send-email-pdeschrijver@nvidia.com>
+ <510F4FF7.3050502@nvidia.com>
+ <20130204143233.GV2364@tbergstrom-lnx.Nvidia.com>
+ <51109BB3.8000706@nvidia.com>
+ <20130205132355.GD3073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1360147661-5435-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130205132355.GD3073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 06, 2013 at 11:47:41AM +0100, Laxman Dewangan wrote:
-> Initialise the parent of UARTs to PLLP and disabling clock by
-> default.
+On Tue, Feb 05, 2013 at 02:23:55PM +0100, Peter De Schrijver wrote:
+> On Tue, Feb 05, 2013 at 06:42:11AM +0100, Prashant Gaikwad wrote:
+> > On Monday 04 February 2013 08:02 PM, Peter De Schrijver wrote:
+> > > On Mon, Feb 04, 2013 at 07:06:47AM +0100, Prashant Gaikwad wrote:
+> > >> On Friday 01 February 2013 03:48 PM, Peter De Schrijver wrote:
+> > > ...
+> > >
+> > >>> -static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll,
+> > >>> -                                void __iomem *lock_addr, u32 lock_bit_idx)
+> > >>> +static int clk_pll_wait_for_lock(struct tegra_clk_pll *pll)
+> > >>>    {
+> > >>>           int i;
+> > >>> -       u32 val;
+> > >>> +       u32 val, lock_bit;
+> > >>> +       void __iomem *lock_addr;
+> > >>>
+> > >>>           if (!(pll->flags & TEGRA_PLL_USE_LOCK)) {
+> > >>>                   udelay(pll->params->lock_delay);
+> > >>>                   return 0;
+> > >>>           }
+> > >>>
+> > >>> +       lock_addr = pll->clk_base + pll->params->base_reg;
+> > >> This will not work for PLLE. Lock bit for PLLE is in misc register.
+> > >>
+> > >>> +       lock_bit = BIT(pll->params->lock_bit_idx);
+> > >>> +
+> > >>>           for (i = 0; i < pll->params->lock_delay; i++) {
+> > >>>                   val = readl_relaxed(lock_addr);
+> > >>> -               if (val & BIT(lock_bit_idx)) {
+> > >>> +               if (val & lock_bit) {
+> > >> Need to change the lock bit idx parameter for Tegra20 and Tegra30 PLLs
+> > >> else this patch will break those.
+> > >>
+> > > Looking at commit 37c26a906527b8a6a252614ca83d21ad318c4e84 and commit
+> > > b08e8c0ecc42afa3a2e1019851af741980dd5a6b, these fields seem correctly
+> > > initialized for both Tegra20 and Tegra30? Or am I missing something?
+> > 
+> > Ohh, I missed to read
+> > 
+> > lock_bit = BIT(pll->params->lock_bit_idx);
+> > 
+> > 
+> > Am I missing something about PLLE lock_addr also?
+> > 
+> 
+> Ah no indeed... my bad. So we need a lock_addr field.
 > 
 
-I wonder if we should move the parent definitions to DT at some point.
+Or a flag. Flag seems less invasive for now.
 
 Cheers,
 
