@@ -1,23 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra30: fix wrong clock index between se to sata_cold
-Date: Thu, 07 Feb 2013 12:14:38 -0700
-Message-ID: <5113FD1E.9020801@wwwdotorg.org>
-References: <1360213631-16893-1-git-send-email-josephl@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 4/4] clocksource: tegra20: use the device_node pointer
+ passed to init
+Date: Thu, 7 Feb 2013 21:05:04 +0100
+Message-ID: <20130207.220504.79003148683176035.hdoyu@nvidia.com>
+References: <1360264144-20714-1-git-send-email-robherring2@gmail.com><1360264144-20714-5-git-send-email-robherring2@gmail.com><511402FC.50807@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360213631-16893-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <511402FC.50807@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "robherring2@gmail.com" <robherring2@gmail.com>, "arm@kernel.org" <arm@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "johnstul@us.ibm.com" <johnstul@us.ibm.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/06/2013 10:07 PM, Joseph Lo wrote:
-> The index of se should be 127. And the previous clock index was 125. So
-> we need to set up the index for se to get the correct index between se
-> to sata_cold.
+Stephen Warren <swarren@wwwdotorg.org> wrote @ Thu, 7 Feb 2013 20:39:40 +0100:
 
-I've applied this to Tegra's for-3.9/soc-ccf-fixes branch, on the
-assumption Mike is OK with it. I'll hold a pull request for his ack, and
-probably for a day or too in case any more clk-related fixes show up.
+> On 02/07/2013 12:09 PM, Rob Herring wrote:
+> > From: Rob Herring <rob.herring@calxeda.com>
+> > 
+> > We've already matched the node, so use the node pointer passed in. The rtc
+> > init was intermingled with the timer init, so split this out to a separate
+> > init function.
+> 
+> The series,
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> 
+> Patches 1,4:
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> 
+> One thing I wonder re: patch 4 - I know someone (I think Hiroshi, now
+> CC'd) planned to refactor drivers/clocksource/tegra20_timer.c to enhance
+> it for Tegra114. I'd like to check with him that the refactoring in this
+> patch won't impede that at all.
+
+Actually this covers RTC part. I'll rework mine for the rest on the
+top of this.
