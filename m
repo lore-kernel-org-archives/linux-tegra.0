@@ -1,217 +1,40 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 8/8] drm: tegra: Add gr2d device
-Date: Wed, 6 Feb 2013 13:23:17 -0800
-Message-ID: <5112C9C5.8080205@nvidia.com>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-9-git-send-email-tbergstrom@nvidia.com> <20130204125618.GD595@avionic-0098.mockup.avionic-design.de> <511095F9.6040607@nvidia.com> <20130205095403.GF20437@avionic-0098.mockup.avionic-design.de>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra30: fix wrong clock index between se to sata_cold
+Date: Thu, 7 Feb 2013 13:07:11 +0800
+Message-ID: <1360213631-16893-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130205095403.GF20437-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.02.2013 01:54, Thierry Reding wrote:
-> On Mon, Feb 04, 2013 at 09:17:45PM -0800, Terje Bergstr=C3=B6m wrote:
->> Yeah, it's actually working around the host1x duplicate naming.
->> host1x_syncpt_get takes struct host1x as parameter, but that's diffe=
-rent
->> host1x than in this code.
->=20
-> So maybe a better way would be to rename the DRM host1x after all. If=
- it
-> avoids the need for workarounds such as this I think it justifies the
-> additional churn.
+The index of se should be 127. And the previous clock index was 125. So
+we need to set up the index for se to get the correct index between se
+to sata_cold.
 
-Ok, I'll include that. Do you have a preference for the name? Something
-like "host1x_drm" might work?
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra30.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->>> Also, how useful is it to create a context? Looking at the gr2d
->>> implementation for .open_channel(), it will return the same channel=
- to
->>> whichever userspace process requests them. Can you explain why it i=
-s
->>> necessary at all? From the name I would have expected some kind of
->>> context switching to take place when different applications submit
->>> requests to the same client, but that doesn't seem to be the case.
->>
->> Hardware context switching will be a later submit, and it'll actuall=
-y
->> create a new structure. Hardware context might live longer than the
->> process that created it, so they'll need to be separate.
->=20
-> Why would it live longer than the process? Isn't the whole purpose of
-> the context to keep per-process state? What use is that state if the
-> process dies?
-
-Hardware context has to be kept alive for as long as there's a job
-running from that process. If an app sends 10 jobs to 2D channel, and
-dies immediately, there's no sane way for host1x to remove the jobs fro=
-m
-queue. The jobs will keep on running and kernel will need to track them=
-=2E
-
->> Perhaps the justification is that this way we can keep the kernel AP=
-I
->> stable even when we add support for hardware contexts and other clie=
-nts.
->=20
-> We don't need a stable kernel API. But I guess it is fine to keep it =
-if
-> for no other reason to fill the context returned in the ioctl() with
-> meaningful data.
-
-Sorry, I meant stable IOCTL API, so we agree on this.
-
->> host1x_drm_file sounds a bit odd, because it's not really a file, bu=
-t a
->> private data pointer stored in driver_priv.
->=20
-> The same is true for struct drm_file, which is stored in struct file'=
-s
-> .private_data field. I find it to be very intuitive if the inheritanc=
-e
-> is reflected in the structure name. struct host1x_drm_file is host1x'
-> driver-specific part of struct drm_file.
-
-Ok, makes sense. I'll do that.
-
-> I fail to see how dma_buf would require a separate mem_mgr_type. Can =
-we
-> perhaps postpone this to a later point and just go with CMA as the on=
-ly
-> alternative for now until we have an actual working implementation th=
-at
-> we can use this for?
-
-Each submit refers to a number of buffers. Some of them are the streams=
-,
-some are textures or other input/output buffers. Each of these buffers
-might be passed as a GEM handle, or (when implemented) as a dma_buf fd.
-Thus we need a field to tell host1x which API to call to handle that ha=
-ndle.
-
-I think we can leave out the code for managing the type until we
-actually have separate memory managers. That'd make GEM handles
-effectively of type 0, as we don't set it.
-
->=20
->>>> +static int gr2d_submit(struct host1x_drm_context *context,
->>>> +             struct tegra_drm_submit_args *args,
->>>> +             struct drm_device *drm,
->>>> +             struct drm_file *file_priv)
->>>> +{
->>>> +     struct host1x_job *job;
->>>> +     int num_cmdbufs =3D args->num_cmdbufs;
->>>> +     int num_relocs =3D args->num_relocs;
->>>> +     int num_waitchks =3D args->num_waitchks;
->>>> +     struct tegra_drm_cmdbuf __user *cmdbufs =3D
->>>> +             (void * __user)(uintptr_t)args->cmdbufs;
->>>> +     struct tegra_drm_reloc __user *relocs =3D
->>>> +             (void * __user)(uintptr_t)args->relocs;
->>>> +     struct tegra_drm_waitchk __user *waitchks =3D
->>>> +             (void * __user)(uintptr_t)args->waitchks;
->>>
->>> No need for all the uintptr_t casts.
->>
->> Will try to remove - but I do remember getting compiler warnings wit=
-hout
->> them.
->=20
-> I think you shouldn't even have to cast to void * first. Just cast to
-> the target type directly. I don't see why the compiler should complai=
-n.
-
-This is what I get without them:
-
-drivers/gpu/host1x/drm/gr2d.c:108:3: warning: cast to pointer from
-integer of different size [-Wint-to-pointer-cast]
-drivers/gpu/host1x/drm/gr2d.c:110:3: warning: cast to pointer from
-integer of different size [-Wint-to-pointer-cast]
-drivers/gpu/host1x/drm/gr2d.c:112:3: warning: cast to pointer from
-integer of different size [-Wint-to-pointer-c
-
-The problem is that the fields are __u64's and can't be cast directly
-into 32-bit pointers.
-
->> That's the security firewall. It walks through each submit, and ensu=
-res
->> that each register write that writes an address, goes through the ho=
-st1x
->> reloc mechanism. This way user space cannot ask 2D to write to arbit=
-rary
->> memory locations.
->=20
-> I see. Can this be made more generic? Perhaps adding a table of valid
-> registers to the device and use a generic function to iterate over th=
-at
-> instead of having to provide the same function for each client.
-
-=46or which one does gcc generate more efficient code? I've thought a
-switch-case statement might get compiled into something more efficient
-than a table lookup.
-
-But the rest of the code is generic - just the one function which
-compares against known address registers is specific to 2D.
-
->>>> +static int __exit gr2d_remove(struct platform_device *dev)
->>>> +{
->>>> +     struct host1x *host1x =3D
->>>> +             host1x_get_drm_data(to_platform_device(dev->dev.pare=
-nt));
->>>> +     struct gr2d *gr2d =3D platform_get_drvdata(dev);
->>>> +     int err;
->>>> +
->>>> +     err =3D host1x_unregister_client(host1x, &gr2d->client);
->>>> +     if (err < 0) {
->>>> +             dev_err(&dev->dev, "failed to unregister host1x clie=
-nt: %d\n",
->>>> +                     err);
->>>> +             return err;
->>>> +     }
->>>> +
->>>> +     host1x_syncpt_free(gr2d->syncpt);
->>>> +     return 0;
->>>> +}
->>>
->>> Isn't this missing a host1x_channel_put() or host1x_free_channel()?
->>
->> All references should be handled in gr2d_open_channel() and
->> gr2d_close_channel(). I think we'd need to ensure all contexts are
->> closed at this point.
->=20
-> Yes, that'd work as well. Actually I would assume that all contexts
-> associated with a given file should be freed when the file is closed.
-> That way all of this should work pretty much automatically.
-
-Naturally they are, so we're actually already good. All contexts get
-closed at file close.
-
-> For timeout =3D=3D 0 I don't think we need a symbolic name. It is pre=
-tty
-> common for 0 to mean no timeout. But yes, DRM_TEGRA_INFINITE_TIMEOUT
-> should be okay.
-
-Ok, will do that.
-
->>>> +struct tegra_drm_syncpt_incr {
->>>> +     __u32 syncpt_id;
->>>> +     __u32 syncpt_incrs;
->>>> +};
->>>
->>> Maybe the fields would be better named id and incrs. Though I also
->>> notice that incrs is never used. I guess that's supposed to be used=
- in
->>> the future to allow increments by more than a single value. If so,
->>> perhaps value would be a better name.
->>
->> It's actually used in the dreaded patch 3, as part of tegra_drm_subm=
-it_args.
->=20
-> Okay. The superfluous syncpt_ prefixes should still go away.
-
-Sure, forgot to comment, but I'm fine with that.
-
-Terje
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a163812..1d41b35 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -332,9 +332,9 @@ enum tegra30_clk {
+ 	cdev1, cdev2, cpu_g = 96, cpu_lp, gr3d2, mselect, tsensor, i2s3, i2s4,
+ 	i2c4, sbc5, sbc6, d_audio, apbif, dam0, dam1, dam2, hda2codec_2x,
+ 	atomics, audio0_2x, audio1_2x, audio2_2x, audio3_2x, audio4_2x,
+-	spdif_2x, actmon, extern1, extern2, extern3, sata_oob, sata, hda, se,
+-	hda2hdmi, sata_cold, uartb = 160, vfir, spdif_out, spdif_in, vi,
+-	vi_sensor, fuse, fuse_burn, cve, tvo, clk_32k, clk_m, clk_m_div2,
++	spdif_2x, actmon, extern1, extern2, extern3, sata_oob, sata, hda,
++	se = 127, hda2hdmi, sata_cold, uartb = 160, vfir, spdif_out, spdif_in,
++	vi, vi_sensor, fuse, fuse_burn, cve, tvo, clk_32k, clk_m, clk_m_div2,
+ 	clk_m_div4, pll_ref, pll_c, pll_c_out1, pll_m, pll_m_out1, pll_p,
+ 	pll_p_out1, pll_p_out2, pll_p_out3, pll_p_out4, pll_a, pll_a_out0,
+ 	pll_d, pll_d_out0, pll_d2, pll_d2_out0, pll_u, pll_x, pll_x_out0, pll_e,
+-- 
+1.8.1.1
