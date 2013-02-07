@@ -1,52 +1,34 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH 06/14] ARM: pci: Keep pci_common_init() around after init
-Date: Wed, 6 Feb 2013 18:07:53 +0100
-Message-ID: <CACRpkdYGgdMTi0ZeMeCk5UmrndD451Pyz8L_XE=y9SPXfGGdew@mail.gmail.com>
+Date: Thu, 07 Feb 2013 02:20:05 +0100
+Message-ID: <2957343.pp7RNnqk54@wuerfel>
 References: <1357764194-12677-1-git-send-email-thierry.reding@avionic-design.de>
-	<1357764194-12677-7-git-send-email-thierry.reding@avionic-design.de>
-	<CACRpkdYV5w6BksUjXvXs=88BovUyXgRt-vXSD0twjRpzbZcvFQ@mail.gmail.com>
-	<9348609.HjKCmL9u9S@wuerfel>
+ <9348609.HjKCmL9u9S@wuerfel>
+ <CACRpkdYGgdMTi0ZeMeCk5UmrndD451Pyz8L_XE=y9SPXfGGdew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9348609.HjKCmL9u9S@wuerfel>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CACRpkdYGgdMTi0ZeMeCk5UmrndD451Pyz8L_XE=y9SPXfGGdew@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Russell King <linux@arm.linux.org.uk>, Greg KH <gregkh@linuxfoundation.org>, devicetree-discuss@lists.ozlabs.org, Thierry Reding <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Andrew Murray <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 7, 2013 at 1:54 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Wednesday 06 February 2013 17:38:20 Linus Walleij wrote:
->> On Wed, Jan 9, 2013 at 9:43 PM, Thierry Reding
->> <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org> wrote:
->>
->> > When using deferred driver probing, PCI host controller drivers may
->> > actually require this function after the init stage.
->> >
->> > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
->>
->> There seem to be a proliferation of these patches now.
->>
->> Isn't this just papering over the real problem? The discarding
->> of __init sections need to happen *after* all deferred probes
->> are complete, lest we have to remove *all* __init sections from
->> *all* drivers in the kernel, don't we?
->
-> No, I think it's not quite that bad. I think the rule is still
-> just that .probe() functions and anything called from them must
-> not be __init. They used to be __devinit, which would cause
-> problems with deferred probing on !HOTPLUG systems but that's
-> gone in 3.9.
->
-> Thierry's patch is just necessary because pci_common_init used
-> to be called only from actual __init functions, and not it
-> gets called from a .probe() function for the first time.
+On Wednesday 06 February 2013 18:07:53 Linus Walleij wrote:
+> However it leaves the question of how much __init, __initdata
+> and __initconst we have littering around. Oh, well, we'll see
+> I guess.
 
-Aha OK, then it feels much better now.
+Actually, kbuild is pretty good at warning around the
+bugs there.
 
-However it leaves the question of how much __init, __initdata
-and __initconst we have littering around. Oh, well, we'll see
-I guess.
-
-Thanks,
-Linus Walleij
+	Arnd
