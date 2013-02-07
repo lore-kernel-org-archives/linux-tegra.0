@@ -1,10 +1,8 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: sort Kconfig selects for Tegra114
-Date: Thu,  7 Feb 2013 14:43:24 -0700
-Message-ID: <1360273404-32397-2-git-send-email-swarren@wwwdotorg.org>
-References: <1360273404-32397-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 1/2] ARM: tegra: enable ARCH_REQUIRE_GPIOLIB for Tegra114
+Date: Thu,  7 Feb 2013 14:43:23 -0700
+Message-ID: <1360273404-32397-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360273404-32397-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,30 +10,58 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Kconfig options selected by ARCH_TEGRA_*_SOC were recently sorted.
-Update the newly added ARCH_TEGRA_114_SOC's select statements to match.
+CONFIG_ARCH_TEGRA_114_SOC doesn't currently enable gpiolib, which causes
+numerous build problems building a Tegra kernel with only Tegra114
+enabled, and not Tegra20 or Tegra30. Enable ARCH_REQUIRE_GPIOLIB to
+solve this. However, all Tegra will use gpiolib, so select this option
+from ARCH_TEGRA rather than each individual ARCH_TEGRA_*_SOC, to
+prevent this problem for any future chips.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Olof, Arnd, These two patches can be applied on top of Tegra's previous
+tegra-for-3.9-soc-t114 branch.
 
+I think this (coupled with Hiroshi's "ARM: tegra: Fix build error w/
+ARCH_TEGRA_114_SOC w/o ARCH_TEGRA_3x_SOC" is it for build failure fixes,
+although I'm queueing up a number of clock driver patches for which I'll
+send a pull request in the next few days.
+
+ arch/arm/Kconfig            |    1 +
+ arch/arm/mach-tegra/Kconfig |    2 --
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 4265a26..7ea0866 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -643,6 +643,7 @@ config ARCH_LPC32XX
+ config ARCH_TEGRA
+ 	bool "NVIDIA Tegra"
+ 	select ARCH_HAS_CPUFREQ
++	select ARCH_REQUIRE_GPIOLIB
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select CLKSRC_OF
 diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 8654324..d1c4893 100644
+index bde8197..8654324 100644
 --- a/arch/arm/mach-tegra/Kconfig
 +++ b/arch/arm/mach-tegra/Kconfig
-@@ -45,10 +45,10 @@ config ARCH_TEGRA_3x_SOC
+@@ -5,7 +5,6 @@ comment "NVIDIA Tegra options"
+ config ARCH_TEGRA_2x_SOC
+ 	bool "Enable support for Tegra20 family"
+ 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+-	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_ERRATA_720789
+ 	select ARM_ERRATA_742230 if SMP
+ 	select ARM_ERRATA_751472
+@@ -27,7 +26,6 @@ config ARCH_TEGRA_2x_SOC
  
- config ARCH_TEGRA_114_SOC
- 	bool "Enable support for Tegra114 family"
-+	select ARM_ARCH_TIMER
- 	select ARM_GIC
--	select CPU_V7
- 	select ARM_L1_CACHE_SHIFT_6
--	select ARM_ARCH_TIMER
-+	select CPU_V7
- 	select PINCTRL
- 	select PINCTRL_TEGRA114
- 	help
+ config ARCH_TEGRA_3x_SOC
+ 	bool "Enable support for Tegra30 family"
+-	select ARCH_REQUIRE_GPIOLIB
+ 	select ARM_ERRATA_743622
+ 	select ARM_ERRATA_751472
+ 	select ARM_ERRATA_754322
 -- 
 1.7.10.4
