@@ -1,42 +1,23 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v5 09/10] clk: tegra: Implement clocks for Tegra114
-Date: Thu, 7 Feb 2013 18:18:09 +0200
-Message-ID: <20130207161809.GQ3073@tbergstrom-lnx.Nvidia.com>
-References: <1359713962-16822-1-git-send-email-pdeschrijver@nvidia.com>
- <1359713962-16822-10-git-send-email-pdeschrijver@nvidia.com>
- <510F5E87.90801@nvidia.com>
- <20130204104531.GQ2364@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra30: fix wrong clock index between se to sata_cold
+Date: Thu, 07 Feb 2013 12:14:38 -0700
+Message-ID: <5113FD1E.9020801@wwwdotorg.org>
+References: <1360213631-16893-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130204104531.GQ2364@tbergstrom-lnx.Nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360213631-16893-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> 
-> > > +       /* xusb_hs_src */
-> > > +       val = readl(clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > > +       val |= BIT(25); /* always select PLLU_60M */
-> > > +       writel(val, clk_base + CLK_SOURCE_XUSB_SS_SRC);
-> > > +
-> > > +       clk = clk_register_fixed_factor(NULL, "xusb_hs_src", "pll_u_60M", 0,
-> > > +                                       1, 1);
-> > > +       clks[xusb_hs_src] = clk;
-> > > +
-> > 
-> > With device tree we can directly use pll_u_60M, no need to register 
-> > clock with fixed factor 1.
-> 
-> This is true for now. In the future these clocks will need to be dvfs aware
-> though. I think it makes sense to have a separate clock then?
-> 
+On 02/06/2013 10:07 PM, Joseph Lo wrote:
+> The index of se should be 127. And the previous clock index was 125. So
+> we need to set up the index for se to get the correct index between se
+> to sata_cold.
 
-As this seems to be a different clock (ie. the hw allows you to select a
-different parent), I think keeping this node makes sense.
-
-Cheers,
-
-Peter.
+I've applied this to Tegra's for-3.9/soc-ccf-fixes branch, on the
+assumption Mike is OK with it. I'll hold a pull request for his ack, and
+probably for a day or too in case any more clk-related fixes show up.
