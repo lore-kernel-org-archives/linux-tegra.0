@@ -1,159 +1,108 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [PATCH 4/4] ARM: tegra: Restore USB/PCIE info in new DT board file
-Date: Fri, 8 Feb 2013 09:29:34 +0200
-Message-ID: <1360308574-19658-5-git-send-email-hdoyu@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
+Date: Fri, 8 Feb 2013 09:47:20 +0200
+Message-ID: <20130208074720.GB21879@arwen.pp.htv.fi>
 References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com>
+ <1360308574-19658-2-git-send-email-hdoyu@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, arnd@arndb.de, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Hiroshi Doyu <hdoyu@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1360308574-19658-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Mainly for the compatibility for the existing driver.
-This would be removed once new USB/PCIE DT supports come.
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
----
- arch/arm/mach-tegra/tegra.c |   92 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 90 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 62ae39a..82fea64 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -23,6 +23,8 @@
- #include <linux/of_fdt.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
-+#include <linux/platform_data/tegra_usb.h>
-+#include <linux/usb/tegra_usb_phy.h>
- 
- #include <asm/mach/arch.h>
- 
-@@ -30,9 +32,63 @@
- #include "common.h"
- #include "iomap.h"
- 
-+#ifdef USB_EHCI_TEGRA
-+static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
-+	.reset_gpio = -1,
-+	.clk = "cdev2",
-+};
-+
-+static struct tegra_ehci_platform_data tegra_ehci_pdata[] = {
-+	{
-+		.operating_mode = TEGRA_USB_OTG,
-+		.power_down_on_bus_suspend = 1,
-+		.vbus_gpio = -1,
-+	},
-+	{
-+		.operating_mode = TEGRA_USB_HOST,
-+		.power_down_on_bus_suspend = 1,
-+		.vbus_gpio = -1,
-+		.phy_config = &tegra_ehci2_ulpi_phy_config,
-+	},
-+	{
-+		.operating_mode = TEGRA_USB_HOST,
-+		.power_down_on_bus_suspend = 1,
-+		.vbus_gpio = -1,
-+	},
-+};
-+
- static struct of_dev_auxdata tegra_auxdata_lookup[] __initdata = {
--	{},
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xc5000000, "tegra-ehci.0", &tegra_ehci_pdata[0]),
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xc5004000, "tegra-ehci.1", &tegra_ehci_pdata[1]),
-+	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5008000, "tegra-ehci.2", &tegra_ehci_pdata[2]),
-+	{}
- };
-+#else
-+#define tegra_auxdata_lookup	NULL
-+#endif
-+
-+#if defined(CONFIG_TEGRA_PCI) && defined(CONFIG_ARCH_TEGRA_2x_SOC)
-+static void __init trimslice_init(void)
-+{
-+	int err;
-+
-+	err = tegra_pcie_init(true, true);
-+	if (err)
-+		pr_err("%s failed: %d\n", __func__, err);
-+}
-+static void __init harmony_init(void)
-+{
-+	harmony_pcie_init();
-+}
-+static void __init paz00_init(void)
-+{
-+	tegra_paz00_wifikill_init();
-+}
-+#else
-+#define trimslice_init	NULL
-+#define harmony_init	NULL
-+#define paz00_init	NULL
-+#endif
- 
- static void __init tegra_dt_init(void)
- {
-@@ -40,6 +96,38 @@ static void __init tegra_dt_init(void)
- 			     tegra_auxdata_lookup, NULL);
- }
- 
-+static void __init tegra_dt_init_late(void)
-+{
-+	int i;
-+	struct {
-+		const char *name;
-+		void (*init)(void);
-+	} board[] = {
-+		{
-+			.name = "compulab,trimslice",
-+			.init = trimslice_init,
-+		},
-+		{
-+			.name = "nvidia,harmony",
-+			.init = harmony_init,
-+		},
-+		{
-+			.name = "compal,paz00",
-+			.init = paz00_init
-+		},
-+	};
-+
-+	tegra_init_late();
-+
-+	for (i = 0; i < ARRAY_SIZE(board); i++) {
-+		if (of_machine_is_compatible(board[i].name)) {
-+			if (board[i].init)
-+				board[i].init();
-+			break;
-+		}
-+	}
-+}
-+
- static const char * const tegra_dt_board_compat[] = {
- 	"nvidia,tegra20",
- 	"nvidia,tegra30",
-@@ -54,7 +142,7 @@ DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra_dt_init,
--	.init_late	= tegra_init_late,
-+	.init_late	= tegra_dt_init_late,
- 	.restart	= tegra_assert_system_reset,
- 	.dt_compat	= tegra_dt_board_compat,
- MACHINE_END
--- 
-1.7.9.5
+On Fri, Feb 08, 2013 at 09:29:31AM +0200, Hiroshi Doyu wrote:
+> @@ -56,18 +56,21 @@ int tegra_cpu_disable(unsigned int cpu)
+>  	return cpu =3D=3D 0 ? -EPERM : 0;
+>  }
+> =20
+> -#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> -extern void tegra20_hotplug_shutdown(void);
+> -void __init tegra20_hotplug_init(void)
+> +void __init tegra_hotplug_init(void)
+>  {
+> -	tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
+> -}
+> +	switch (tegra_chip_id) {
+> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> +	case TEGRA20:
+> +		tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
+> +		break;
+>  #endif
+> -
+> -#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> -extern void tegra30_hotplug_shutdown(void);
+> -void __init tegra30_hotplug_init(void)
+> -{
+> -	tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
+> -}
+> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+
+how about using:
+
+#if IS_BUILTIN(CONFIG_ARCH_TEGRA_3x_SOC)
+
+instead ?
+
+> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+> index 4ffae54..970ebd5 100644
+> --- a/arch/arm/mach-tegra/sleep.h
+> +++ b/arch/arm/mach-tegra/sleep.h
+> @@ -1,5 +1,5 @@
+>  /*
+> - * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
+> + * Copyright (c) 2010-2013, NVIDIA Corporation. All rights reserved.
+>   *
+>   * This program is free software; you can redistribute it and/or modify =
+it
+>   * under the terms and conditions of the GNU General Public License,
+> @@ -124,11 +124,11 @@ int tegra_sleep_cpu_finish(unsigned long);
+>  void tegra_disable_clean_inv_dcache(void);
+> =20
+>  #ifdef CONFIG_HOTPLUG_CPU
+> -void tegra20_hotplug_init(void);
+> -void tegra30_hotplug_init(void);
+> +void tegra20_hotplug_shutdown(void);
+> +void tegra30_hotplug_shutdown(void);
+
+aren't these two called only by tegra_hotplug_init() now ? That means
+they don't need to be exposed.
+
+--=20
+balbi
+
+--Fba/0zbH8Xs+Fj9o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRFK2IAAoJEIaOsuA1yqREh1EP/229kuSGNVelXDtla3Y8B07T
+8bMwvhjjAJw8SFhsWoimPxjGROjqMZyl5uJQpTZPKPIGwt8e/zSg6wu/0pBn17rt
+ehC89NHwH3GitM9K9Vo4IKQBmQw05XAdeuvROpYHRxKdytfXsHdZ5GifHc9lQcnq
+rQEso6itvJlE63OkNJJSU37gmnltFjzQTvkKLdzpDnZMEhazySV2A7gtm+8H7pFM
+Rdvyo+r3ZNTDB0JUztq1bAu66q/Vo3panJeHZue1gVuJKRYuqDFXPdvHA+GgMbsq
+Wub9CFGoUgsmNXnFmPjsjrq+nKd2gJuuNp4+TU0KgsPQsx6eVtbQeWQlRHUi9Ho5
+s4IHAnxtNsTzhDCcKkU2mH59VGgL6u6hxfZZPmY9LfMTL/dDLBJWrroVAgdSzQcr
+yJm/YgSVziP6O2xgOnydQ+1EdSMMM56s6s+w9Z+rJjNrqXqOuhjd0XmI5iyjYxcN
+CyIrB9iSnIPea6Vf0AzCZnL48RsIo8ymwouDPcEx4MQuOxWCcp9sD9rOZStBLIZa
+aP14vCU/WARHt+4xeUaW+k0LgpkQwuhSOq/j4uGi/TC6cTdcojlTsrAblLQtjKkk
+Rd7NaE4HMCPgQ3RbhMBfnwkhiOFr4Pr8bS5RQvICmE4+cFSGyQxQ7ecPJi00hdnU
+4LC0TBWtpG2DRsBx7Icu
+=AGIZ
+-----END PGP SIGNATURE-----
+
+--Fba/0zbH8Xs+Fj9o--
