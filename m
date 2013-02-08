@@ -1,108 +1,42 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Fri, 8 Feb 2013 09:47:20 +0200
-Message-ID: <20130208074720.GB21879@arwen.pp.htv.fi>
-References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com>
- <1360308574-19658-2-git-send-email-hdoyu@nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+Date: Fri, 8 Feb 2013 09:09:42 +0100
+Message-ID: <20130208.100942.592982910310763762.hdoyu@nvidia.com>
+References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com><1360308574-19658-2-git-send-email-hdoyu@nvidia.com><20130208074720.GB21879@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360308574-19658-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130208074720.GB21879-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Felipe,
 
-Hi,
+Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote @ Fri, 8 Feb 2013 08:47:20 +0100:
 
-On Fri, Feb 08, 2013 at 09:29:31AM +0200, Hiroshi Doyu wrote:
-> @@ -56,18 +56,21 @@ int tegra_cpu_disable(unsigned int cpu)
->  	return cpu =3D=3D 0 ? -EPERM : 0;
->  }
-> =20
-> -#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-> -extern void tegra20_hotplug_shutdown(void);
-> -void __init tegra20_hotplug_init(void)
-> +void __init tegra_hotplug_init(void)
->  {
-> -	tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
-> -}
-> +	switch (tegra_chip_id) {
-> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-> +	case TEGRA20:
-> +		tegra_hotplug_shutdown =3D tegra20_hotplug_shutdown;
-> +		break;
->  #endif
-> -
-> -#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-> -extern void tegra30_hotplug_shutdown(void);
-> -void __init tegra30_hotplug_init(void)
-> -{
-> -	tegra_hotplug_shutdown =3D tegra30_hotplug_shutdown;
-> -}
-> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> > +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+>
+> how about using:
+>
+> #if IS_BUILTIN(CONFIG_ARCH_TEGRA_3x_SOC)
+>
+> instead ?
 
-how about using:
+Why is IS_BUILTIN() prefered?
 
-#if IS_BUILTIN(CONFIG_ARCH_TEGRA_3x_SOC)
+> > -void tegra20_hotplug_init(void);
+> > -void tegra30_hotplug_init(void);
+> > +void tegra20_hotplug_shutdown(void);
+> > +void tegra30_hotplug_shutdown(void);
+>
+> aren't these two called only by tegra_hotplug_init() now ?
 
-instead ?
+Yes
 
-> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-> index 4ffae54..970ebd5 100644
-> --- a/arch/arm/mach-tegra/sleep.h
-> +++ b/arch/arm/mach-tegra/sleep.h
-> @@ -1,5 +1,5 @@
->  /*
-> - * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
-> + * Copyright (c) 2010-2013, NVIDIA Corporation. All rights reserved.
->   *
->   * This program is free software; you can redistribute it and/or modify =
-it
->   * under the terms and conditions of the GNU General Public License,
-> @@ -124,11 +124,11 @@ int tegra_sleep_cpu_finish(unsigned long);
->  void tegra_disable_clean_inv_dcache(void);
-> =20
->  #ifdef CONFIG_HOTPLUG_CPU
-> -void tegra20_hotplug_init(void);
-> -void tegra30_hotplug_init(void);
-> +void tegra20_hotplug_shutdown(void);
-> +void tegra30_hotplug_shutdown(void);
+> That means they don't need to be exposed.
 
-aren't these two called only by tegra_hotplug_init() now ? That means
-they don't need to be exposed.
-
---=20
-balbi
-
---Fba/0zbH8Xs+Fj9o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRFK2IAAoJEIaOsuA1yqREh1EP/229kuSGNVelXDtla3Y8B07T
-8bMwvhjjAJw8SFhsWoimPxjGROjqMZyl5uJQpTZPKPIGwt8e/zSg6wu/0pBn17rt
-ehC89NHwH3GitM9K9Vo4IKQBmQw05XAdeuvROpYHRxKdytfXsHdZ5GifHc9lQcnq
-rQEso6itvJlE63OkNJJSU37gmnltFjzQTvkKLdzpDnZMEhazySV2A7gtm+8H7pFM
-Rdvyo+r3ZNTDB0JUztq1bAu66q/Vo3panJeHZue1gVuJKRYuqDFXPdvHA+GgMbsq
-Wub9CFGoUgsmNXnFmPjsjrq+nKd2gJuuNp4+TU0KgsPQsx6eVtbQeWQlRHUi9Ho5
-s4IHAnxtNsTzhDCcKkU2mH59VGgL6u6hxfZZPmY9LfMTL/dDLBJWrroVAgdSzQcr
-yJm/YgSVziP6O2xgOnydQ+1EdSMMM56s6s+w9Z+rJjNrqXqOuhjd0XmI5iyjYxcN
-CyIrB9iSnIPea6Vf0AzCZnL48RsIo8ymwouDPcEx4MQuOxWCcp9sD9rOZStBLIZa
-aP14vCU/WARHt+4xeUaW+k0LgpkQwuhSOq/j4uGi/TC6cTdcojlTsrAblLQtjKkk
-Rd7NaE4HMCPgQ3RbhMBfnwkhiOFr4Pr8bS5RQvICmE4+cFSGyQxQ7ecPJi00hdnU
-4LC0TBWtpG2DRsBx7Icu
-=AGIZ
------END PGP SIGNATURE-----
-
---Fba/0zbH8Xs+Fj9o--
+tegra{20,30}_hotplug_shutdown are defined in sleep-tegra{20,30}.S and
+used in hotplug.c So I think that the above are necessary here.
