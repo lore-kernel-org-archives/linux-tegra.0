@@ -1,79 +1,58 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
-Date: Fri, 8 Feb 2013 15:36:40 +0200
-Message-ID: <1360330602-30472-9-git-send-email-pdeschrijver@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
+Date: Fri, 8 Feb 2013 16:03:02 +0200
+Message-ID: <20130208140301.GA23979@arwen.pp.htv.fi>
 References: <1360330602-30472-1-git-send-email-pdeschrijver@nvidia.com>
+ <1360330602-30472-9-git-send-email-pdeschrijver@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1360330602-30472-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1360330602-30472-9-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add references to tegra_car clocks for the basic device nodes.
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- arch/arm/boot/dts/tegra114.dtsi |    8 +++++++-
- 1 files changed, 7 insertions(+), 1 deletions(-)
+Hi,
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 96a8235..6b0a01e 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -24,10 +24,11 @@
- 			      0 42 0x04
- 			      0 121 0x04
- 			      0 122 0x04>;
-+		clocks = <&tegra_car 5>;
- 	};
- 
- 	tegra_car: clock {
--		compatible = "nvidia,tegra114-car, nvidia,tegra30-car";
-+		compatible = "nvidia,tegra114-car";
- 		reg = <0x60006000 0x1000>;
- 		#clock-cells = <1>;
- 	};
-@@ -43,6 +44,7 @@
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
- 		status = "disabled";
-+		clocks = <&tegra_car 6>;
- 	};
- 
- 	serial@70006040 {
-@@ -51,6 +53,7 @@
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
- 		status = "disabled";
-+		clocks = <&tegra_car 192>;
- 	};
- 
- 	serial@70006200 {
-@@ -59,6 +62,7 @@
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
- 		status = "disabled";
-+		clocks = <&tegra_car 55>;
- 	};
- 
- 	serial@70006300 {
-@@ -67,12 +71,14 @@
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
- 		status = "disabled";
-+		clocks = <&tegra_car 65>;
- 	};
- 
- 	rtc {
- 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x7000e000 0x100>;
- 		interrupts = <0 2 0x04>;
-+		clocks = <&tegra_car 4>;
- 	};
- 
- 	pmc {
--- 
-1.7.1
+On Fri, Feb 08, 2013 at 03:36:40PM +0200, Peter De Schrijver wrote:
+>  	tegra_car: clock {
+> -		compatible =3D "nvidia,tegra114-car, nvidia,tegra30-car";
+> +		compatible =3D "nvidia,tegra114-car";
+
+trailing change or intentional ?
+
+--=20
+balbi
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRFQWVAAoJEIaOsuA1yqRE8VQP/jb3s4240ftU0ywaW20Ums3p
++YeWH0qJJ+fj3qF5ZjOAYZSTYBTvaQRzlZiqG3dr9vzd+IsC1D2d9USoBb/jddH4
+cFA0HXB0v7dLyweSSA1v87Mvuqv7r3CxJNvdrw59GDbx5aHHFGZcP9MmM2lEsyv5
++KbQ8Fbs5OZygDQcybUjMlyl5K4pFsLa/F6mafMJBYBEbu3BJ/Ve54BkPuNrpjDQ
++rdcJ9LJG6pjGy0XbftimJ0C8oRsH/vgQoZOgPcsbpYMSAuRz8wHF7lBnU9SS7vt
+UdY+4b7BRRTB6uZFZ3pWf74U7h6cRJ9iSimVD1ziHgWofHnUtCVDmohieiRRqG5H
+/GKYFMpba6VEBQZT6As8Ir/dG8lwechuMIUlMoM0WG9CAcfEe7FkH3rTttjE0OBz
+58+rRHJQdDcDzyWti0Fzf47zhLKYVCxT2D9dA90ILwcZ6epiRtlAbk5KjSLamKHk
+AExrSCjEevVqoBzyfYl9Zu1EliTfv8L93MBbTIZyIDuAKREU+wGrAf5Har6yyo+q
+uFO276w4HeAFCJruHqHAFc2Q8zc0d8+jI5HOwHHzcSyMOwtJ9Ya7O2jQ5jWXQbYt
+Mvr+MF+yvjX+4NlHRha+bGA+jwRG8c33TAgoikzEcxfm3xkUNz/xWtvEskfM83V1
+I/u3NU2eVs+hhWpnY7XC
+=Lbll
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
