@@ -1,42 +1,87 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Fri, 8 Feb 2013 09:09:42 +0100
-Message-ID: <20130208.100942.592982910310763762.hdoyu@nvidia.com>
-References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com><1360308574-19658-2-git-send-email-hdoyu@nvidia.com><20130208074720.GB21879@arwen.pp.htv.fi>
+Date: Fri, 08 Feb 2013 13:29:14 +0100
+Message-ID: <340098510.UosBEPkrGv@fb07-iapwap2>
+References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <1360308574-19658-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130208074720.GB21879-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+In-Reply-To: <1360308574-19658-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Felipe,
+Hiroshi,
 
-Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote @ Fri, 8 Feb 2013 08:47:20 +0100:
+Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
+> Refactored tegra{20,30,114}_init_early() so that we have the unified
+> tegra_init_early().
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> > +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
->
-> how about using:
->
-> #if IS_BUILTIN(CONFIG_ARCH_TEGRA_3x_SOC)
->
-> instead ?
+[...]
 
-Why is IS_BUILTIN() prefered?
+> diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
+> index a599f6e..9bcecb8 100644
+> --- a/arch/arm/mach-tegra/hotplug.c
+> +++ b/arch/arm/mach-tegra/hotplug.c
+> @@ -1,8 +1,7 @@
+>  /*
+> - *
+>   *  Copyright (C) 2002 ARM Ltd.
+>   *  All Rights Reserved
+> - *  Copyright (c) 2010, 2012 NVIDIA Corporation. All rights reserved.
+> + *  Copyright (c) 2010, 2012-2013, NVIDIA Corporation. All rights reserved.
+> *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as
+> @@ -15,6 +14,7 @@
+>  #include <asm/cacheflush.h>
+>  #include <asm/smp_plat.h>
+> 
+> +#include "fuse.h"
+>  #include "sleep.h"
+> 
+>  static void (*tegra_hotplug_shutdown)(void);
+> @@ -56,18 +56,21 @@ int tegra_cpu_disable(unsigned int cpu)
+>  	return cpu == 0 ? -EPERM : 0;
+>  }
+> 
+> -#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> -extern void tegra20_hotplug_shutdown(void);
+> -void __init tegra20_hotplug_init(void)
+> +void __init tegra_hotplug_init(void)
+>  {
+> -	tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
+> -}
+> +	switch (tegra_chip_id) {
+> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> +	case TEGRA20:
+> +		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
+> +		break;
+>  #endif
+> -
+> -#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> -extern void tegra30_hotplug_shutdown(void);
+> -void __init tegra30_hotplug_init(void)
+> -{
+> -	tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
+> -}
+> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> +	case TEGRA30:
+> +		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
+> +		break;
+>  #endif
+> +	default:
+> +		BUG_ON(IS_ENABLED(CONFIG_HOTPLUG_CPU));
+> +		break;
+> +	}
+> +}
 
-> > -void tegra20_hotplug_init(void);
-> > -void tegra30_hotplug_init(void);
-> > +void tegra20_hotplug_shutdown(void);
-> > +void tegra30_hotplug_shutdown(void);
->
-> aren't these two called only by tegra_hotplug_init() now ?
+are these ifdefs really needed? Multisoc kernels will enable them all anyway 
+and there is a case structure which protects the assignments. Also the hotplug 
+functions are very tiny, so there shouldn't be a big loss.
 
-Yes
-
-> That means they don't need to be exposed.
-
-tegra{20,30}_hotplug_shutdown are defined in sleep-tegra{20,30}.S and
-used in hotplug.c So I think that the above are necessary here.
+Marc
