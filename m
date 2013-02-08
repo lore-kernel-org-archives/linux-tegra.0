@@ -1,56 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Fri, 08 Feb 2013 10:09:10 -0700
-Message-ID: <51153136.7010705@wwwdotorg.org>
-References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <1360308574-19658-2-git-send-email-hdoyu@nvidia.com> <340098510.UosBEPkrGv@fb07-iapwap2>
+Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
+Date: Fri, 08 Feb 2013 10:16:13 -0700
+Message-ID: <511532DD.2080306@wwwdotorg.org>
+References: <1360330602-30472-1-git-send-email-pdeschrijver@nvidia.com> <1360330602-30472-9-git-send-email-pdeschrijver@nvidia.com> <20130208140301.GA23979@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <340098510.UosBEPkrGv@fb07-iapwap2>
+In-Reply-To: <20130208140301.GA23979-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/08/2013 05:29 AM, Marc Dietrich wrote:
-> Hiroshi,
+On 02/08/2013 07:03 AM, Felipe Balbi wrote:
+> Hi,
 > 
-> Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
->> Refactored tegra{20,30,114}_init_early() so that we have the unified
->> tegra_init_early().
-
->> diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-
->> +void __init tegra_hotplug_init(void)
->>  {
->> +	switch (tegra_chip_id) {
->> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
->> +	case TEGRA20:
->> +		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
->> +		break;
->>  #endif
->> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
->> +	case TEGRA30:
->> +		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
->> +		break;
->>  #endif
->> +	default:
->> +		BUG_ON(IS_ENABLED(CONFIG_HOTPLUG_CPU));
->> +		break;
->> +	}
->> +}
+> On Fri, Feb 08, 2013 at 03:36:40PM +0200, Peter De Schrijver
+> wrote:
+>> tegra_car: clock { -		compatible = "nvidia,tegra114-car,
+>> nvidia,tegra30-car"; +		compatible = "nvidia,tegra114-car";
 > 
-> are these ifdefs really needed? Multisoc kernels will enable them all anyway 
-> and there is a case structure which protects the assignments. Also the hotplug 
-> functions are very tiny, so there shouldn't be a big loss.
+> trailing change or intentional ?
 
-The files that contain/implement those functions are separate for each
-SoC and only included in the build when the individual SoCs are enabled.
-
-While multi-platform SoCs do make sense for distros, we also very
-specifically want to support the case where only Tegra, and only a
-single Tegra SoC, is enabled, hence this separation.
-
-(and Tegra doesn't support multi-platform yet; maybe in another kernel
-release or two)
+I believe it's intentional since the HW isn't fully
+backwards-compatible. However, the commit description should mention this.
