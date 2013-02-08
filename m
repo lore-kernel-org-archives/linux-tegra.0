@@ -1,58 +1,56 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
-Date: Fri, 8 Feb 2013 16:03:02 +0200
-Message-ID: <20130208140301.GA23979@arwen.pp.htv.fi>
-References: <1360330602-30472-1-git-send-email-pdeschrijver@nvidia.com>
- <1360330602-30472-9-git-send-email-pdeschrijver@nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
+Date: Fri, 08 Feb 2013 10:09:10 -0700
+Message-ID: <51153136.7010705@wwwdotorg.org>
+References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <1360308574-19658-2-git-send-email-hdoyu@nvidia.com> <340098510.UosBEPkrGv@fb07-iapwap2>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360330602-30472-9-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <340098510.UosBEPkrGv@fb07-iapwap2>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 02/08/2013 05:29 AM, Marc Dietrich wrote:
+> Hiroshi,
+> 
+> Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
+>> Refactored tegra{20,30,114}_init_early() so that we have the unified
+>> tegra_init_early().
 
-Hi,
+>> diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
 
-On Fri, Feb 08, 2013 at 03:36:40PM +0200, Peter De Schrijver wrote:
->  	tegra_car: clock {
-> -		compatible =3D "nvidia,tegra114-car, nvidia,tegra30-car";
-> +		compatible =3D "nvidia,tegra114-car";
+>> +void __init tegra_hotplug_init(void)
+>>  {
+>> +	switch (tegra_chip_id) {
+>> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+>> +	case TEGRA20:
+>> +		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
+>> +		break;
+>>  #endif
+>> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+>> +	case TEGRA30:
+>> +		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
+>> +		break;
+>>  #endif
+>> +	default:
+>> +		BUG_ON(IS_ENABLED(CONFIG_HOTPLUG_CPU));
+>> +		break;
+>> +	}
+>> +}
+> 
+> are these ifdefs really needed? Multisoc kernels will enable them all anyway 
+> and there is a case structure which protects the assignments. Also the hotplug 
+> functions are very tiny, so there shouldn't be a big loss.
 
-trailing change or intentional ?
+The files that contain/implement those functions are separate for each
+SoC and only included in the build when the individual SoCs are enabled.
 
---=20
-balbi
+While multi-platform SoCs do make sense for distros, we also very
+specifically want to support the case where only Tegra, and only a
+single Tegra SoC, is enabled, hence this separation.
 
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRFQWVAAoJEIaOsuA1yqRE8VQP/jb3s4240ftU0ywaW20Ums3p
-+YeWH0qJJ+fj3qF5ZjOAYZSTYBTvaQRzlZiqG3dr9vzd+IsC1D2d9USoBb/jddH4
-cFA0HXB0v7dLyweSSA1v87Mvuqv7r3CxJNvdrw59GDbx5aHHFGZcP9MmM2lEsyv5
-+KbQ8Fbs5OZygDQcybUjMlyl5K4pFsLa/F6mafMJBYBEbu3BJ/Ve54BkPuNrpjDQ
-+rdcJ9LJG6pjGy0XbftimJ0C8oRsH/vgQoZOgPcsbpYMSAuRz8wHF7lBnU9SS7vt
-UdY+4b7BRRTB6uZFZ3pWf74U7h6cRJ9iSimVD1ziHgWofHnUtCVDmohieiRRqG5H
-/GKYFMpba6VEBQZT6As8Ir/dG8lwechuMIUlMoM0WG9CAcfEe7FkH3rTttjE0OBz
-58+rRHJQdDcDzyWti0Fzf47zhLKYVCxT2D9dA90ILwcZ6epiRtlAbk5KjSLamKHk
-AExrSCjEevVqoBzyfYl9Zu1EliTfv8L93MBbTIZyIDuAKREU+wGrAf5Har6yyo+q
-uFO276w4HeAFCJruHqHAFc2Q8zc0d8+jI5HOwHHzcSyMOwtJ9Ya7O2jQ5jWXQbYt
-Mvr+MF+yvjX+4NlHRha+bGA+jwRG8c33TAgoikzEcxfm3xkUNz/xWtvEskfM83V1
-I/u3NU2eVs+hhWpnY7XC
-=Lbll
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
+(and Tegra doesn't support multi-platform yet; maybe in another kernel
+release or two)
