@@ -1,40 +1,70 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: enable ARCH_REQUIRE_GPIOLIB for Tegra114
-Date: Sat, 9 Feb 2013 17:52:35 -0800
-Message-ID: <20130210015235.GA25302@quad.lixom.net>
-References: <1360273404-32397-1-git-send-email-swarren@wwwdotorg.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
+Date: Sun, 10 Feb 2013 18:28:14 +0100
+Message-ID: <2499199.srlLvkihNZ@ax5200p>
+References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <340098510.UosBEPkrGv@fb07-iapwap2> <51153136.7010705@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360273404-32397-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51153136.7010705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 07, 2013 at 02:43:23PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Friday 08 February 2013 10:09:10 Stephen Warren wrote:
+> On 02/08/2013 05:29 AM, Marc Dietrich wrote:
+> > Hiroshi,
+> > 
+> > Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
+> >> Refactored tegra{20,30,114}_init_early() so that we have the unified
+> >> tegra_init_early().
+> >> 
+> >> diff --git a/arch/arm/mach-tegra/hotplug.c
+> >> b/arch/arm/mach-tegra/hotplug.c
+> >> 
+> >> +void __init tegra_hotplug_init(void)
+> >> 
+> >>  {
+> >> 
+> >> +	switch (tegra_chip_id) {
+> >> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> >> +	case TEGRA20:
+> >> +		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
+> >> +		break;
+> >> 
+> >>  #endif
+> >> 
+> >> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
+> >> +	case TEGRA30:
+> >> +		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
+> >> +		break;
+> >> 
+> >>  #endif
+> >> 
+> >> +	default:
+> >> +		BUG_ON(IS_ENABLED(CONFIG_HOTPLUG_CPU));
+> >> +		break;
+> >> +	}
+> >> +}
+> > 
+> > are these ifdefs really needed? Multisoc kernels will enable them all
+> > anyway and there is a case structure which protects the assignments. Also
+> > the hotplug functions are very tiny, so there shouldn't be a big loss.
 > 
-> CONFIG_ARCH_TEGRA_114_SOC doesn't currently enable gpiolib, which causes
-> numerous build problems building a Tegra kernel with only Tegra114
-> enabled, and not Tegra20 or Tegra30. Enable ARCH_REQUIRE_GPIOLIB to
-> solve this. However, all Tegra will use gpiolib, so select this option
-> from ARCH_TEGRA rather than each individual ARCH_TEGRA_*_SOC, to
-> prevent this problem for any future chips.
+> The files that contain/implement those functions are separate for each
+> SoC and only included in the build when the individual SoCs are enabled.
 > 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Olof, Arnd, These two patches can be applied on top of Tegra's previous
-> tegra-for-3.9-soc-t114 branch.
-> 
-> I think this (coupled with Hiroshi's "ARM: tegra: Fix build error w/
-> ARCH_TEGRA_114_SOC w/o ARCH_TEGRA_3x_SOC" is it for build failure fixes,
-> although I'm queueing up a number of clock driver patches for which I'll
-> send a pull request in the next few days.
+> While multi-platform SoCs do make sense for distros, we also very
+> specifically want to support the case where only Tegra, and only a
+> single Tegra SoC, is enabled, hence this separation.
 
-Thanks, applied both to the tegra/t114 branch (together with the above
-mentioned fix).
+Huh? so tegra_defconfig is not supported?
 
+grep "TEGRA_.*_SOC" tegra_defconfig:
 
--Olof
+CONFIG_ARCH_TEGRA_2x_SOC=y
+CONFIG_ARCH_TEGRA_3x_SOC=y
+
+Marc
