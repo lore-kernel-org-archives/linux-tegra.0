@@ -1,70 +1,48 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Sun, 10 Feb 2013 18:28:14 +0100
-Message-ID: <2499199.srlLvkihNZ@ax5200p>
-References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <340098510.UosBEPkrGv@fb07-iapwap2> <51153136.7010705@wwwdotorg.org>
+Date: Sun, 10 Feb 2013 13:20:49 -0700
+Message-ID: <51180121.6040803@wwwdotorg.org>
+References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <340098510.UosBEPkrGv@fb07-iapwap2> <51153136.7010705@wwwdotorg.org> <2499199.srlLvkihNZ@ax5200p>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51153136.7010705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <2499199.srlLvkihNZ@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 08 February 2013 10:09:10 Stephen Warren wrote:
-> On 02/08/2013 05:29 AM, Marc Dietrich wrote:
-> > Hiroshi,
-> > 
-> > Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
-> >> Refactored tegra{20,30,114}_init_early() so that we have the unified
-> >> tegra_init_early().
-> >> 
-> >> diff --git a/arch/arm/mach-tegra/hotplug.c
-> >> b/arch/arm/mach-tegra/hotplug.c
-> >> 
-> >> +void __init tegra_hotplug_init(void)
-> >> 
-> >>  {
-> >> 
-> >> +	switch (tegra_chip_id) {
-> >> +#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-> >> +	case TEGRA20:
-> >> +		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
-> >> +		break;
-> >> 
-> >>  #endif
-> >> 
-> >> +#if defined(CONFIG_ARCH_TEGRA_3x_SOC)
-> >> +	case TEGRA30:
-> >> +		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
-> >> +		break;
-> >> 
-> >>  #endif
-> >> 
-> >> +	default:
-> >> +		BUG_ON(IS_ENABLED(CONFIG_HOTPLUG_CPU));
-> >> +		break;
-> >> +	}
-> >> +}
-> > 
-> > are these ifdefs really needed? Multisoc kernels will enable them all
-> > anyway and there is a case structure which protects the assignments. Also
-> > the hotplug functions are very tiny, so there shouldn't be a big loss.
+1On 02/10/2013 10:28 AM, Marc Dietrich wrote:
+> On Friday 08 February 2013 10:09:10 Stephen Warren wrote:
+>> On 02/08/2013 05:29 AM, Marc Dietrich wrote:
+>>> Hiroshi,
+>>>
+>>> Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
+>>>> Refactored tegra{20,30,114}_init_early() so that we have the unified
+>>>> tegra_init_early().
+...
+>>> are these ifdefs really needed? Multisoc kernels will enable them all
+>>> anyway and there is a case structure which protects the assignments. Also
+>>> the hotplug functions are very tiny, so there shouldn't be a big loss.
+>>
+>> The files that contain/implement those functions are separate for each
+>> SoC and only included in the build when the individual SoCs are enabled.
+>>
+>> While multi-platform SoCs do make sense for distros, we also very
+>> specifically want to support the case where only Tegra, and only a
+>> single Tegra SoC, is enabled, hence this separation.
 > 
-> The files that contain/implement those functions are separate for each
-> SoC and only included in the build when the individual SoCs are enabled.
+> Huh? so tegra_defconfig is not supported?
 > 
-> While multi-platform SoCs do make sense for distros, we also very
-> specifically want to support the case where only Tegra, and only a
-> single Tegra SoC, is enabled, hence this separation.
+> grep "TEGRA_.*_SOC" tegra_defconfig:
+> 
+> CONFIG_ARCH_TEGRA_2x_SOC=y
+> CONFIG_ARCH_TEGRA_3x_SOC=y
 
-Huh? so tegra_defconfig is not supported?
+I don't understand the question.
 
-grep "TEGRA_.*_SOC" tegra_defconfig:
-
-CONFIG_ARCH_TEGRA_2x_SOC=y
-CONFIG_ARCH_TEGRA_3x_SOC=y
-
-Marc
+But to be clear. There are now 3 variants of Tegra supported. (Tegra20,
+Tegra30, Tegra114). We want to be able to build a minimal-size kernel
+(e.g. for embedded applications) that supports just one, any combination
+of two, or all three Tegra variants.
