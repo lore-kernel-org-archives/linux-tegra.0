@@ -1,35 +1,59 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 5/5] drm/tegra: Implement page-flipping support
-Date: Mon, 11 Feb 2013 19:00:35 +0100
-Message-ID: <CAKMK7uG944fp04GCPOu1BHP-guwjPxnru_V6f0ggDbf_36520A@mail.gmail.com>
-References: <1358178932-25505-1-git-send-email-thierry.reding@avionic-design.de>
-	<CAKMK7uFQKwvEN0j-L=g1UwTzVvtYyqyyBaH8apQnqWPa2sq5vQ@mail.gmail.com>
-	<20130116185606.GC28660@avionic-0098.adnet.avionic-design.de>
-	<1944869.Bk5ttSU6yt@avalon>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2] MAINTAINERS: add keyword "tegra" to Tegra section
+Date: Mon, 11 Feb 2013 11:01:12 -0700
+Message-ID: <511931E8.3080802@wwwdotorg.org>
+References: <1360605099-7088-1-git-send-email-swarren@wwwdotorg.org> <1360605395.2028.28.camel@joe-AO722>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1944869.Bk5ttSU6yt@avalon>
+In-Reply-To: <1360605395.2028.28.camel@joe-AO722>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Feb 2, 2013 at 12:05 AM, Laurent Pinchart
-<laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
->> Back to the original topic: should it not work to queue a page flip and
->> immediately exit(0) after that to test the cleanup code? I suppose if
->> that can be tested on all drivers we should have pretty good coverage.
->
-> Maybe we need some kind of compliance test suite tool ?
+On 02/11/2013 10:56 AM, Joe Perches wrote:
+> On Mon, 2013-02-11 at 10:51 -0700, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> The intent is to ensure that all Tegra-related patches are sent to the
+>> linux-tegra@ mailing list, so people can keep up-to-date on all misc
+>> driver changes.
+>>
+>> Doing this with a keyword is far simpler and more compact than listing
+>> all Tegra-related drivers, even if wildcards were used.
+>>
+>> Words such as integrate or integrator are common. Ensure the character
+>> right before "tegra" isn't a-z (case-insensitive), to make sure the
+>> keyword doesn't match those.
+>>
+>> Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  MAINTAINERS |    4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index b98c89b..10e9b31 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7829,9 +7829,7 @@ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>  Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+>>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+>>  S:	Supported
+>> -F:	arch/arm/mach-tegra
+>> -F:	arch/arm/boot/dts/tegra*
+>> -F:	arch/arm/configs/tegra_defconfig
+>> +K:	(?i)[^a-z]tegra
+>>  
+>>  TEHUTI ETHERNET DRIVER
+>>  M:	Andy Gospodarek <andy-QlMahl40kYEqcZcGjlUOXw@public.gmane.org>
+> 
+> It's probably not a good idea to remove
+> any of the F: lines as there are files
+> that could get modified in those paths
+> without any tegra word in the patch.
 
-kms_flip from our intel-specific testsuite is probably the most
-paranoid thing for testing page flips out there:
-
-http://cgit.freedesktop.org/xorg/app/intel-gpu-tools/tree/tests/kms_flip.c
-
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+At least for those F: lines that exist already and are removed above,
+the keyword will match their filename, so there's no issue here.
