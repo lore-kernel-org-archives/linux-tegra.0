@@ -1,58 +1,52 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Sun, 10 Feb 2013 22:16:14 +0100
-Message-ID: <1828614.u7HcYf891a@ax5200p>
-References: <1360308574-19658-1-git-send-email-hdoyu@nvidia.com> <2499199.srlLvkihNZ@ax5200p> <51180121.6040803@wwwdotorg.org>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv5,RESEND 8/8] drm: tegra: Add gr2d device
+Date: Sun, 10 Feb 2013 16:42:53 -0800
+Message-ID: <51183E8D.1090607@nvidia.com>
+References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-9-git-send-email-tbergstrom@nvidia.com> <20130204125618.GD595@avionic-0098.mockup.avionic-design.de> <511095F9.6040607@nvidia.com> <20130205095403.GF20437@avionic-0098.mockup.avionic-design.de> <5112C9C5.8080205@nvidia.com> <20130208070734.GB15429@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51180121.6040803-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130208070734.GB15429-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sunday 10 February 2013 13:20:49 Stephen Warren wrote:
-> 1On 02/10/2013 10:28 AM, Marc Dietrich wrote:
-> > On Friday 08 February 2013 10:09:10 Stephen Warren wrote:
-> >> On 02/08/2013 05:29 AM, Marc Dietrich wrote:
-> >>> Hiroshi,
-> >>> 
-> >>> Am Freitag, 8. Februar 2013, 09:29:31 schrieb Hiroshi Doyu:
-> >>>> Refactored tegra{20,30,114}_init_early() so that we have the unified
-> >>>> tegra_init_early().
-> 
-> ...
-> 
-> >>> are these ifdefs really needed? Multisoc kernels will enable them all
-> >>> anyway and there is a case structure which protects the assignments.
-> >>> Also
-> >>> the hotplug functions are very tiny, so there shouldn't be a big loss.
-> >> 
-> >> The files that contain/implement those functions are separate for each
-> >> SoC and only included in the build when the individual SoCs are enabled.
-> >> 
-> >> While multi-platform SoCs do make sense for distros, we also very
-> >> specifically want to support the case where only Tegra, and only a
-> >> single Tegra SoC, is enabled, hence this separation.
-> > 
-> > Huh? so tegra_defconfig is not supported?
-> > 
-> > grep "TEGRA_.*_SOC" tegra_defconfig:
-> > 
-> > CONFIG_ARCH_TEGRA_2x_SOC=y
-> > CONFIG_ARCH_TEGRA_3x_SOC=y
-> 
-> I don't understand the question.
-> 
-> But to be clear. There are now 3 variants of Tegra supported. (Tegra20,
-> Tegra30, Tegra114). We want to be able to build a minimal-size kernel
-> (e.g. for embedded applications) that supports just one, any combination
-> of two, or all three Tegra variants.
+On 07.02.2013 23:07, Thierry Reding wrote:
+> On Wed, Feb 06, 2013 at 01:23:17PM -0800, Terje Bergstr=C3=B6m wrote:
+>>>> That's the security firewall. It walks through each submit, and en=
+sures
+>>>> that each register write that writes an address, goes through the =
+host1x
+>>>> reloc mechanism. This way user space cannot ask 2D to write to arb=
+itrary
+>>>> memory locations.
+>>> I see. Can this be made more generic? Perhaps adding a table of val=
+id
+>>> registers to the device and use a generic function to iterate over =
+that
+>>> instead of having to provide the same function for each client.
+>> For which one does gcc generate more efficient code? I've thought a
+>> switch-case statement might get compiled into something more efficie=
+nt
+>> than a table lookup.
+>> But the rest of the code is generic - just the one function which
+>> compares against known address registers is specific to 2D.
+> Table lookup should be pretty fast. I wouldn't worry too much about
+> performance at this stage, though. Readability is more important in m=
+y
+> opinion. A lookup table is a lot more readable and reusable I think. =
+If
+> it turns out that using a function is actually faster we can always
+> optimize later.
 
-ah, ok - I just skipped the "also" in your sentence above. But still, the 
-#ifdefs look strange to me and save only a few byte of code. Just me few 
-cents.
+You're right about performance. We already saw quite a bad performance
+hit with the current firewall, so we'll need to worry about performance
+later.
 
-Marc
+I'll take a look at converting the register list to a table. Instead of
+always doing a linear search of a table, a bitfield might be more
+appropriate.
+
+Terje
