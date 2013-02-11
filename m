@@ -1,34 +1,78 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
-Date: Mon, 11 Feb 2013 12:03:10 +0200
-Message-ID: <20130211100310.GZ3073@tbergstrom-lnx.Nvidia.com>
-References: <1360330602-30472-1-git-send-email-pdeschrijver@nvidia.com>
- <1360330602-30472-9-git-send-email-pdeschrijver@nvidia.com>
- <20130208140301.GA23979@arwen.pp.htv.fi>
+Subject: [PATCH v6 00/10] Tegra114 clockframework
+Date: Mon, 11 Feb 2013 13:04:50 +0200
+Message-ID: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130208140301.GA23979-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 08, 2013 at 03:03:02PM +0100, Felipe Balbi wrote:
-> * PGP Signed by an unknown key
-> 
-> Hi,
-> 
-> On Fri, Feb 08, 2013 at 03:36:40PM +0200, Peter De Schrijver wrote:
-> >  	tegra_car: clock {
-> > -		compatible = "nvidia,tegra114-car, nvidia,tegra30-car";
-> > +		compatible = "nvidia,tegra114-car";
-> 
-> trailing change or intentional ?
+This is the sixth version of the Tegra114 clockframework. It is based on the
+for-next branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git and
+http://www.spinics.net/lists/arm-kernel/msg220452.html.
 
-No, the Tegra30 car driver shouldn't be used for Tegra114.
+It has been boottested on Pluto.
 
-Cheers,
+Changes from v5:
 
-Peter.
+* Add initialization code for PLLC
+* Remove some unnecessary clocks
+* Fix bug in PLL locking refactoring
+* Add super clocks
+* Remove most calls to clk_register_clkdev() for the peripheral clocks
+
+Changes from v4:
+
+* Split the new PLL types patch into smaller patches
+* Fix some bugs in the PLL patches
+
+Changes from v3:
+
+* Merge with for-next branch
+* Provide empty tegra_cpu_car_ops to make SMP boot not crash
+
+Changes from v2:
+
+* Added missing PLLs
+* Added bindings to tegra114.dtsi
+* Moved the table patch for clk-mux.c to 'clk: add table lookup to mux'
+* Bugfixes
+
+Changes from v1:
+
+* Remove SATA and PCIe clocks. They don't appear in the internal TRM, so I
+  assume they don't exist.
+* Rebase on top of Hiroshi's latest Tegra114 patches
+* More generic mux code. This is necessary for the AHUB and DAM clocks.
+
+
+Peter De Schrijver (10):
+  clk: tegra: Refactor PLL programming code
+  clk: tegra: Add TEGRA_PLL_BYPASS flag
+  clk: tegra: Add PLL post divider table
+  clk: tegra: Add new fields and PLL types for Tegra114
+  clk: tegra: Add flags to tegra_clk_periph()
+  clk: tegra: Workaround for Tegra114 MSENC problem
+  ARM: tegra: Define Tegra114 CAR binding
+  ARM: dt: Add references to tegra_car clocks
+  clk: tegra: Implement clocks for Tegra114
+  clk: tegra: devicetree match for nvidia,tegra114-car
+
+ .../bindings/clock/nvidia,tegra114-car.txt         |  316 +++
+ arch/arm/boot/dts/tegra114.dtsi                    |    8 +-
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-periph-gate.c                |    9 +
+ drivers/clk/tegra/clk-periph.c                     |   11 +-
+ drivers/clk/tegra/clk-pll.c                        | 1136 ++++++++++-
+ drivers/clk/tegra/clk-tegra114.c                   | 2036 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  153 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  243 ++--
+ drivers/clk/tegra/clk.c                            |    1 +
+ drivers/clk/tegra/clk.h                            |   90 +-
+ 11 files changed, 3696 insertions(+), 308 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
