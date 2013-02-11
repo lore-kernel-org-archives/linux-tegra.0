@@ -1,34 +1,44 @@
 From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH V2] MAINTAINERS: add keyword "tegra" to Tegra section
-Date: Mon, 11 Feb 2013 10:19:20 -0800
-Message-ID: <1360606760.2028.34.camel@joe-AO722>
+Date: Mon, 11 Feb 2013 10:30:28 -0800
+Message-ID: <1360607428.2028.37.camel@joe-AO722>
 References: <1360605099-7088-1-git-send-email-swarren@wwwdotorg.org>
 	 <1360605395.2028.28.camel@joe-AO722> <511931E8.3080802@wwwdotorg.org>
 	 <1360605873.2028.30.camel@joe-AO722> <51193476.8020509@wwwdotorg.org>
+	 <1360606760.2028.34.camel@joe-AO722>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51193476.8020509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1360606760.2028.34.camel@joe-AO722>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-02-11 at 11:12 -0700, Stephen Warren wrote:
-> On 02/11/2013 11:04 AM, Joe Perches wrote:
-> > ./scripts/get_maintainer.pl -f arch/arm/mach-tegra
-> > wouldn't match anything.
+On Mon, 2013-02-11 at 10:19 -0800, Joe Perches wrote:
+> On Mon, 2013-02-11 at 11:12 -0700, Stephen Warren wrote:
+> > On 02/11/2013 11:04 AM, Joe Perches wrote:
+> > > ./scripts/get_maintainer.pl -f arch/arm/mach-tegra
+> > > wouldn't match anything.
+> > 
+> > That's annoying; it kinda defeats the whole purpose of this patch then.
+> > 
+> > The way this patch works out with a patch is because the file-names are
+> > matched against the keywords since they appear in the patch. A solution
+> > to the issue you raise would be to do the same in -f mode, by adding an
+> > explicit pass to check the filenames that are found against MAINTAINERS
+> > too. Do you have any objection to that?
 > 
-> That's annoying; it kinda defeats the whole purpose of this patch then.
+> Knock yourself out.
 > 
-> The way this patch works out with a patch is because the file-names are
-> matched against the keywords since they appear in the patch. A solution
-> to the issue you raise would be to do the same in -f mode, by adding an
-> explicit pass to check the filenames that are found against MAINTAINERS
-> too. Do you have any objection to that?
+> Are there any tegra related files that would not
+> have tegra in the path?
 
-Knock yourself out.
+To answer my own question:
 
-Are there any tegra related files that would not
-have tegra in the path?
+$ git ls-files | grep -v tegra | xargs grep -Pl "(?i)[^a-z]tegra"
+...
+
+Several.  Most are Kconfig and Makefiles.
+Most except staging/nvec don't seem to be very important.
