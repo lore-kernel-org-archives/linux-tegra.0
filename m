@@ -1,47 +1,46 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on
- TEGRA_IOMMU_SMMU
-Date: Mon, 11 Feb 2013 18:30:34 +0100
-Message-ID: <20130211.193034.1346903263789032239.hdoyu@nvidia.com>
-References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com><5112A642.1020800@wwwdotorg.org><20130206.211635.744922728615926717.hdoyu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2] MAINTAINERS: add keyword "tegra" to Tegra section
+Date: Mon, 11 Feb 2013 10:51:39 -0700
+Message-ID: <1360605099-7088-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130206.211635.744922728615926717.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> Hi Russell,
-> 
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
-> 
-> > On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
-> > > New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
-> > > dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
-> > > whenever a new Tegra SoC comes.
-> > > 
-> > > The following combination caused build error, which this patch fixes.
-> > > 
-> > > CONFIG_ARCH_TEGRA_2x_SOC=y
-> > > \# CONFIG_ARCH_TEGRA_3x_SOC is not set
-> > > CONFIG_ARCH_TEGRA_114_SOC=y
-> > > 
-> > > drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
-> > 
-> > Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Russell, I assume Hiroshi should upload this to your patch tracker? It's
-> > needed for 3.9.
-> 
-> FYI: Submitted as:
-> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
+The intent is to ensure that all Tegra-related patches are sent to the
+linux-tegra@ mailing list, so people can keep up-to-date on all misc
+driver changes.
 
-Russell,
+Doing this with a keyword is far simpler and more compact than listing
+all Tegra-related drivers, even if wildcards were used.
 
-Is the above ok for you?
-Please let me know if still I need to do something.
+Words such as integrate or integrator are common. Ensure the character
+right before "tegra" isn't a-z (case-insensitive), to make sure the
+keyword doesn't match those.
+
+Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ MAINTAINERS |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b98c89b..10e9b31 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7829,9 +7829,7 @@ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+ S:	Supported
+-F:	arch/arm/mach-tegra
+-F:	arch/arm/boot/dts/tegra*
+-F:	arch/arm/configs/tegra_defconfig
++K:	(?i)[^a-z]tegra
+ 
+ TEHUTI ETHERNET DRIVER
+ M:	Andy Gospodarek <andy-QlMahl40kYEqcZcGjlUOXw@public.gmane.org>
+-- 
+1.7.10.4
