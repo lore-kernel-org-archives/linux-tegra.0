@@ -1,44 +1,57 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V2] MAINTAINERS: add keyword "tegra" to Tegra section
-Date: Mon, 11 Feb 2013 10:30:28 -0800
-Message-ID: <1360607428.2028.37.camel@joe-AO722>
-References: <1360605099-7088-1-git-send-email-swarren@wwwdotorg.org>
-	 <1360605395.2028.28.camel@joe-AO722> <511931E8.3080802@wwwdotorg.org>
-	 <1360605873.2028.30.camel@joe-AO722> <51193476.8020509@wwwdotorg.org>
-	 <1360606760.2028.34.camel@joe-AO722>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360606760.2028.34.camel@joe-AO722>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V4 3/4] input: keyboard: tegra: add support for rows/cols configuration from dt
+Date: Mon, 11 Feb 2013 21:36:16 +0000
+Message-ID: <20130211213616.862453E3530@localhost>
+References: <1357470900-12619-1-git-send-email-ldewangan@nvidia.com> <1357470900-12619-4-git-send-email-ldewangan@nvidia.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1357470900-12619-4-git-send-email-ldewangan@nvidia.com>
+Sender: linux-input-owner@vger.kernel.org
+To: dmitry.torokhov@gmail.com
+Cc: rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-02-11 at 10:19 -0800, Joe Perches wrote:
-> On Mon, 2013-02-11 at 11:12 -0700, Stephen Warren wrote:
-> > On 02/11/2013 11:04 AM, Joe Perches wrote:
-> > > ./scripts/get_maintainer.pl -f arch/arm/mach-tegra
-> > > wouldn't match anything.
-> > 
-> > That's annoying; it kinda defeats the whole purpose of this patch then.
-> > 
-> > The way this patch works out with a patch is because the file-names are
-> > matched against the keywords since they appear in the patch. A solution
-> > to the issue you raise would be to do the same in -f mode, by adding an
-> > explicit pass to check the filenames that are found against MAINTAINERS
-> > too. Do you have any objection to that?
+On Sun, 6 Jan 2013 16:44:59 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> The NVIDIA's Tegra KBC has maximum 24 pins to make matrix keypad.
+> Any pin can be configured as row or column. The maximum column pin
+> can be 8 and maximum row pin can be 16.
 > 
-> Knock yourself out.
+> Remove the assumption that all first 16 pins will be used as row
+> and remaining as columns and Add the property for configuring pins
+> to either row or column from DT. Update the devicetree binding
+> document accordingly.
 > 
-> Are there any tegra related files that would not
-> have tegra in the path?
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> Changes from V1:
+> - renames the rows and pins property array.
+> - nit cleanups.
+> Changes from V2/V3:
+>  None
+> 
+>  .../bindings/input/nvidia,tegra20-kbc.txt          |   22 ++++++
+>  drivers/input/keyboard/tegra-kbc.c                 |   74 +++++++++++++++-----
+>  2 files changed, 79 insertions(+), 17 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> index 72683be..2995fae 100644
+> --- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> +++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
+> @@ -1,7 +1,18 @@
+>  * Tegra keyboard controller
+> +The key controller has maximum 24 pins to make matrix keypad. Any pin
+> +can be configured as row or column. The maximum column pin can be 8
+> +and maximum row pins can be 16 for Tegra20/Tegra30.
+>  
+>  Required properties:
+>  - compatible: "nvidia,tegra20-kbc"
+> +- reg: Register base address of KBC.
+> +- interrupts: Interrupt number for the KBC.
+> +- nvidia,kbc-row-pins: The KBC pins which are configured as row. This is an
+> +  array of pin numbers which is used as rows.
+> +- nvidia,kbc-col-pins: The KBC pins which are configured as column. This is an
+> +  array of pin numbers which is used as column.
+> +- linux,keymap: The keymap for keys as described in the binding document
+> +  devicetree/bindings/input/matrix-keymap.txt.
 
-To answer my own question:
-
-$ git ls-files | grep -v tegra | xargs grep -Pl "(?i)[^a-z]tegra"
-...
-
-Several.  Most are Kconfig and Makefiles.
-Most except staging/nvec don't seem to be very important.
+For the binding:
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
