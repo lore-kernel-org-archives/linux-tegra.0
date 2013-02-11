@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3 1/2] get_maintainer: allow keywords to match filenames
-Date: Mon, 11 Feb 2013 16:40:15 -0700
-Message-ID: <1360626016-23332-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 2/2] MAINTAINERS: update Tegra section to capture all Tegra files
+Date: Mon, 11 Feb 2013 16:40:16 -0700
+Message-ID: <1360626016-23332-2-git-send-email-swarren@wwwdotorg.org>
+References: <1360626016-23332-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360626016-23332-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,49 +12,49 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Allow K: entries in MAINTAINERS to match directly against filenames;
-either those extracted from patch +++ or --- lines, or those specified
-on the command-line using the -f option.
+The intent is to ensure that all Tegra-related patches are sent to the
+linux-tegra@ mailing list, so people can keep up-to-date on all misc
+driver changes.
 
-This potentially allows fewer lines in a MAINTAINERS entry, if all the
-relevant files are scattered throughout the whole kernel tree, yet
-contain some common keyword. An example would be using an ARM SoC name
-as the keyword to catch all related drivers.
+Doing this with a keyword is far simpler and more compact than listing
+all Tegra-related drivers, even if wildcards were used.
 
-I don't think setting exact_pattern_match_hash would be appropriate here;
-at least for intended Tegra use case, this feature is to ensure that all
-Tegra-related driver changes get Cc'd to the Tegra mailing list. Setting
-exact_pattern_match_hash would prevent git history parsing for e.g. S-o-b
-tags, which still seems like it would be useful. Hence, this flag isn't
-set.
+Words such as integrate or integrator are common. Ensure the character
+right before "tegra" isn't a-z (case-insensitive), to make sure the
+keyword doesn't match those.
 
-The value in $hash{$tvi} doesn't seem relevant, so I just assign 0.
+The only files that the keyword doesn't match are the NVEC driver. Add
+the linux-tegra mailing list to the NVEC entry to solve this.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V3: New patch.
+V2: Edit NVEC entry too.
 
-Joe, I'm not sure if you care where this gets merged; could it go through
-arm-soc together with patch 2/2? A quick look at git history of the
-script in linux-next indicates there won't be conflicts doing that.
+ MAINTAINERS |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- scripts/get_maintainer.pl |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index 18d4ab5..96cf92a 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -611,6 +611,10 @@ sub get_maintainers {
- 				    $hash{$tvi} = $value_pd;
- 				}
- 			    }
-+			} elsif ($type eq "K") {
-+			    if ($file =~ m/$value/x) {
-+				$hash{$tvi} = 0;
-+			    }
- 			}
- 		    }
- 		}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b98c89b..0cfb670 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7531,6 +7531,7 @@ STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER INTERFACE (nvec)
+ M:	Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+ M:	Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+ L:	ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org (moderated for non-subscribers)
++L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ S:	Maintained
+ F:	drivers/staging/nvec/
+ 
+@@ -7829,9 +7830,7 @@ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+ S:	Supported
+-F:	arch/arm/mach-tegra
+-F:	arch/arm/boot/dts/tegra*
+-F:	arch/arm/configs/tegra_defconfig
++K:	(?i)[^a-z]tegra
+ 
+ TEHUTI ETHERNET DRIVER
+ M:	Andy Gospodarek <andy-QlMahl40kYEqcZcGjlUOXw@public.gmane.org>
 -- 
 1.7.10.4
