@@ -1,29 +1,47 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 4/5] drm/tegra: Implement VBLANK support
-Date: Mon, 11 Feb 2013 07:43:20 -0800
-Message-ID: <51191198.7020303@nvidia.com>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-5-git-send-email-thierry.reding@avionic-design.de> <50FECE63.7090009@tuebingen.mpg.de> <1358879999.1540.22.camel@tellur> <CADWT_cOjVg9-hB+jWuEUr+Ou-YECBN73WQXNy17qXf3TO1ZjpQ@mail.gmail.com> <50FEEF92.9060009@tuebingen.mpg.de> <50FF990C.3040902@nvidia.com> <20130211090840.GB3423@avionic-0098.mockup.avionic-design.de>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on
+ TEGRA_IOMMU_SMMU
+Date: Mon, 11 Feb 2013 18:30:34 +0100
+Message-ID: <20130211.193034.1346903263789032239.hdoyu@nvidia.com>
+References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com><5112A642.1020800@wwwdotorg.org><20130206.211635.744922728615926717.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130211090840.GB3423-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <20130206.211635.744922728615926717.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>, Jon Mayo <jon-MQ+mZzckBGs@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11.02.2013 01:08, Thierry Reding wrote:
-> Are the syncpoints incremented even if the VBLANK interrupts are turned
-> off? If that's the case they could indeed be used as a hardware counter
-> rather than the fake approach used right now.
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
+
+> Hi Russell,
 > 
-> Maybe we should leave the code as it is right now and fix that up once
-> the syncpoint support has been merged.
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
+> 
+> > On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
+> > > New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
+> > > dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
+> > > whenever a new Tegra SoC comes.
+> > > 
+> > > The following combination caused build error, which this patch fixes.
+> > > 
+> > > CONFIG_ARCH_TEGRA_2x_SOC=y
+> > > \# CONFIG_ARCH_TEGRA_3x_SOC is not set
+> > > CONFIG_ARCH_TEGRA_114_SOC=y
+> > > 
+> > > drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
+> > 
+> > Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Russell, I assume Hiroshi should upload this to your patch tracker? It's
+> > needed for 3.9.
+> 
+> FYI: Submitted as:
+> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
 
-Yes, the sync point increment signal to host1x is independent of VBLANK
-interrupt.
+Russell,
 
-Definitely not needed yet, so that was a comment for future improvement.
-
-Terje
+Is the above ok for you?
+Please let me know if still I need to do something.
