@@ -1,57 +1,92 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH V4 3/4] input: keyboard: tegra: add support for rows/cols configuration from dt
-Date: Mon, 11 Feb 2013 21:36:16 +0000
-Message-ID: <20130211213616.862453E3530@localhost>
-References: <1357470900-12619-1-git-send-email-ldewangan@nvidia.com> <1357470900-12619-4-git-send-email-ldewangan@nvidia.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1357470900-12619-4-git-send-email-ldewangan@nvidia.com>
-Sender: linux-input-owner@vger.kernel.org
-To: dmitry.torokhov@gmail.com
-Cc: rob.herring@calxeda.com, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] pinctrl: tegra: add clfvs function to Tegra114 support
+Date: Mon, 11 Feb 2013 17:25:12 -0500
+Message-ID: <1360621513-18814-1-git-send-email-rklein@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 6 Jan 2013 16:44:59 +0530, Laxman Dewangan <ldewangan@nvidia.com> wrote:
-> The NVIDIA's Tegra KBC has maximum 24 pins to make matrix keypad.
-> Any pin can be configured as row or column. The maximum column pin
-> can be 8 and maximum row pin can be 16.
-> 
-> Remove the assumption that all first 16 pins will be used as row
-> and remaining as columns and Add the property for configuring pins
-> to either row or column from DT. Update the devicetree binding
-> document accordingly.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
-> Changes from V1:
-> - renames the rows and pins property array.
-> - nit cleanups.
-> Changes from V2/V3:
->  None
-> 
->  .../bindings/input/nvidia,tegra20-kbc.txt          |   22 ++++++
->  drivers/input/keyboard/tegra-kbc.c                 |   74 +++++++++++++++-----
->  2 files changed, 79 insertions(+), 17 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-> index 72683be..2995fae 100644
-> --- a/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-> +++ b/Documentation/devicetree/bindings/input/nvidia,tegra20-kbc.txt
-> @@ -1,7 +1,18 @@
->  * Tegra keyboard controller
-> +The key controller has maximum 24 pins to make matrix keypad. Any pin
-> +can be configured as row or column. The maximum column pin can be 8
-> +and maximum row pins can be 16 for Tegra20/Tegra30.
->  
->  Required properties:
->  - compatible: "nvidia,tegra20-kbc"
-> +- reg: Register base address of KBC.
-> +- interrupts: Interrupt number for the KBC.
-> +- nvidia,kbc-row-pins: The KBC pins which are configured as row. This is an
-> +  array of pin numbers which is used as rows.
-> +- nvidia,kbc-col-pins: The KBC pins which are configured as column. This is an
-> +  array of pin numbers which is used as column.
-> +- linux,keymap: The keymap for keys as described in the binding document
-> +  devicetree/bindings/input/matrix-keymap.txt.
+This patch adds the definition for the cldvfs function for Tegra114 pinctrl
+support. This is based on work by Pritesh Raithatha.
 
-For the binding:
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra114.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
+index 053a8b1..622c485 100644
+--- a/drivers/pinctrl/pinctrl-tegra114.c
++++ b/drivers/pinctrl/pinctrl-tegra114.c
+@@ -1349,6 +1349,7 @@ static const unsigned drive_dev3_pins[] = {
+ enum tegra_mux {
+ 	TEGRA_MUX_BLINK,
+ 	TEGRA_MUX_CEC,
++	TEGRA_MUX_CLDVFS,
+ 	TEGRA_MUX_CLK12,
+ 	TEGRA_MUX_CPU,
+ 	TEGRA_MUX_DAP,
+@@ -1432,6 +1433,15 @@ static const char * const cec_groups[] = {
+ 	"hdmi_cec_pee3",
+ };
+ 
++static const char * const cldvfs_groups[] = {
++	"gmi_ad9_ph1",
++	"gmi_ad10_ph2",
++	"kb_row7_pr7",
++	"kb_row8_ps0",
++	"dvfs_pwm_px0",
++	"dvfs_clk_px2",
++};
++
+ static const char * const clk12_groups[] = {
+ 	"sdmmc1_wp_n_pv3",
+ 	"sdmmc1_clk_pz0",
+@@ -2352,6 +2362,7 @@ static const char * const vi_alt3_groups[] = {
+ static const struct tegra_function  tegra114_functions[] = {
+ 	FUNCTION(blink),
+ 	FUNCTION(cec),
++	FUNCTION(cldvfs),
+ 	FUNCTION(clk12),
+ 	FUNCTION(cpu),
+ 	FUNCTION(dap),
+@@ -2586,8 +2597,8 @@ static const struct tegra_pingroup tegra114_groups[] = {
+ 	PINGROUP(gmi_ad6_pg6,            RSVD1,      NAND,       GMI,          SPI4,        RSVD1,    0x3208,  N,  N,  N),
+ 	PINGROUP(gmi_ad7_pg7,            RSVD1,      NAND,       GMI,          SPI4,        RSVD1,    0x320c,  N,  N,  N),
+ 	PINGROUP(gmi_ad8_ph0,            PWM0,       NAND,       GMI,          DTV,         GMI,      0x3210,  N,  N,  N),
+-	PINGROUP(gmi_ad9_ph1,            PWM1,       NAND,       GMI,          RSVD4,       GMI,      0x3214,  N,  N,  N),
+-	PINGROUP(gmi_ad10_ph2,           PWM2,       NAND,       GMI,          RSVD4,       GMI,      0x3218,  N,  N,  N),
++	PINGROUP(gmi_ad9_ph1,            PWM1,       NAND,       GMI,          CLDVFS,      GMI,      0x3214,  N,  N,  N),
++	PINGROUP(gmi_ad10_ph2,           PWM2,       NAND,       GMI,          CLDVFS,      GMI,      0x3218,  N,  N,  N),
+ 	PINGROUP(gmi_ad11_ph3,           PWM3,       NAND,       GMI,          USB,         GMI,      0x321c,  N,  N,  N),
+ 	PINGROUP(gmi_ad12_ph4,           SDMMC2,     NAND,       GMI,          RSVD4,       RSVD4,    0x3220,  N,  N,  N),
+ 	PINGROUP(gmi_ad13_ph5,           SDMMC2,     NAND,       GMI,          RSVD4,       RSVD4,    0x3224,  N,  N,  N),
+@@ -2633,8 +2644,8 @@ static const struct tegra_pingroup tegra114_groups[] = {
+ 	PINGROUP(kb_row4_pr4,            KBC,        DISPLAYA,   SPI2,         DISPLAYB,    KBC,      0x32cc,  N,  N,  N),
+ 	PINGROUP(kb_row5_pr5,            KBC,        DISPLAYA,   SPI2,         DISPLAYB,    KBC,      0x32d0,  N,  N,  N),
+ 	PINGROUP(kb_row6_pr6,            KBC,        DISPLAYA,   DISPLAYA_ALT, DISPLAYB,    KBC,      0x32d4,  N,  N,  N),
+-	PINGROUP(kb_row7_pr7,            KBC,        RSVD2,      RSVD3,        UARTA,       RSVD2,    0x32d8,  N,  N,  N),
+-	PINGROUP(kb_row8_ps0,            KBC,        RSVD2,      RSVD3,        UARTA,       RSVD2,    0x32dc,  N,  N,  N),
++	PINGROUP(kb_row7_pr7,            KBC,        RSVD2,      CLDVFS,       UARTA,       RSVD2,    0x32d8,  N,  N,  N),
++	PINGROUP(kb_row8_ps0,            KBC,        RSVD2,      CLDVFS,       UARTA,       RSVD2,    0x32dc,  N,  N,  N),
+ 	PINGROUP(kb_row9_ps1,            KBC,        RSVD2,      RSVD3,        UARTA,       RSVD3,    0x32e0,  N,  N,  N),
+ 	PINGROUP(kb_row10_ps2,           KBC,        RSVD2,      RSVD3,        UARTA,       RSVD3,    0x32e4,  N,  N,  N),
+ 	PINGROUP(kb_col0_pq0,            KBC,        USB,        SPI2,         EMC_DLL,     KBC,      0x32fc,  N,  N,  N),
+@@ -2663,9 +2674,10 @@ static const struct tegra_pingroup tegra114_groups[] = {
+ 	PINGROUP(dap2_din_pa4,           I2S1,       HDA,        RSVD3,        RSVD4,       RSVD4,    0x335c,  N,  N,  N),
+ 	PINGROUP(dap2_dout_pa5,          I2S1,       HDA,        RSVD3,        RSVD4,       RSVD4,    0x3360,  N,  N,  N),
+ 	PINGROUP(dap2_sclk_pa3,          I2S1,       HDA,        RSVD3,        RSVD4,       RSVD4,    0x3364,  N,  N,  N),
+-	PINGROUP(dvfs_pwm_px0,           SPI6,       RSVD2,      RSVD3,        RSVD4,       RSVD4,    0x3368,  N,  N,  N),
++	PINGROUP(dvfs_pwm_px0,           SPI6,       CLDVFS,     RSVD3,        RSVD4,       RSVD4,    0x3368,  N,  N,  N),
+ 	PINGROUP(gpio_x1_aud_px1,        SPI6,       RSVD2,      RSVD3,        RSVD4,       RSVD4,    0x336c,  N,  N,  N),
+ 	PINGROUP(gpio_x3_aud_px3,        SPI6,       SPI1,       RSVD3,        RSVD4,       RSVD4,    0x3370,  N,  N,  N),
++	PINGROUP(dvfs_clk_px2,           SPI6,       CLDVFS,     RSVD3,        RSVD4,       RSVD4,    0x3374,  N,  N,  N),
+ 	PINGROUP(gpio_x4_aud_px4,        RSVD1,      SPI1,       SPI2,         DAP2,        RSVD1,    0x3378,  N,  N,  N),
+ 	PINGROUP(gpio_x5_aud_px5,        RSVD1,      SPI1,       SPI2,         RSVD4,       RSVD1,    0x337c,  N,  N,  N),
+ 	PINGROUP(gpio_x6_aud_px6,        SPI6,       SPI1,       SPI2,         RSVD4,       RSVD4,    0x3380,  N,  N,  N),
+-- 
+1.7.9.5
