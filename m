@@ -1,7 +1,7 @@
 From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [PATCH] HACK: ARM: Fix generic timer broadcast for TWD
-Date: Tue, 12 Feb 2013 16:40:23 +0000
-Message-ID: <20130212164008.GA13775@e106331-lin.cambridge.arm.com>
+Date: Tue, 12 Feb 2013 17:12:17 +0000
+Message-ID: <20130212171217.GB13775@e106331-lin.cambridge.arm.com>
 References: <1360684194-10894-1-git-send-email-thierry.reding@avionic-design.de>
  <20130212155516.GP17833@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
@@ -12,63 +12,55 @@ In-Reply-To: <20130212155516.GP17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gma
 Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+[...]
 
-On Tue, Feb 12, 2013 at 03:55:16PM +0000, Russell King - ARM Linux wrote:
-> On Tue, Feb 12, 2013 at 04:49:54PM +0100, Thierry Reding wrote:
-> > Note that I have close to no clue what I'm doing, so the patch might be
-> > the completely wrong thing to do. An alternative I had initially thought
-> > about was to check for NULL before calling the clock_event_device's
-> > .broadcast() function.
-> > 
-> > The reason why I chose to always assign .broadcast instead is that a
-> > previous patch (3d06770: Add generic timer broadcast support) aims at
-> > generically implementing broadcast support on ARM and providing a
-> > tick_broadcast() implementation for this purpose so it seemed like the
-> > right thing to do.
-> > 
-> > The above-mentioned patch for some reason removed the assignment to the
-> > .broadcast() member for apparently no reason, so maybe that was just
-> > done by mistake?
-
-Apologies for this. I believe you've hit the same problem as Stephen Warren [1].
-
-The broadcast function is now meant to be set by timer core, but unfortunately
-I made a mistake when adding the functionality such that it isn't set for
-timers with CLOCK_EVT_FEAT_C3STOP. I posted a fix [2] on Friday, but so far
-I've had no reply.
-
-Thomas, are you happy to take the fix at [2] ?
-
-> 
-> This is now supposed to be handled by the timer core stuff.  It
-> looks to me like 3d06770eef43eaad606e77246bfcc7e82b1d9fb4
-> (arm: Add generic timer broadcast support) is slightly busted in
-> that it doesn't deal with the #else case you identified below.
-
-That's a minor cosmetic defect. We shouldn't touch smp_timer_broadcast at all
-now.
-
-> 
-> Certainly, initializing evt->broadcast after the setup is not the
-> right solution - it must be done before, but this was removed by
-> the above commit.
-> 
 > So, things to be done here:
 > 1. Fix the #else part of the code.
 > 2. Fix the reported oops.
-> 
-> I think this falls to Mark, being the last one to touch this and cause
-> this breakage. :)
-> 
 
-Hopefully with [2], I've fixed 2. I'll fix 1 shortly. :)
+I believe the patch below solves point 1. Nothing refers to smp_timer_broadcast
+any more (as I've tested with git grep), so removing it shouldn't create any
+additional problems.
+
+Russell, are you happy for me to drop this in the patch system?
 
 Thanks,
 Mark.
 
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/148065.html
-[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/148471.html
+---->8----
+From 1954a075d0ce7f5ce5466b20f7aee9a0ac044cda Mon Sep 17 00:00:00 2001
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Date: Tue, 12 Feb 2013 16:50:18 +0000
+Subject: [PATCH] arm: remove unused smp_timer_broadcast #define
+
+The assignment of clock_event_device::broadcast can be done by timer
+core as of 12ad100046: "clockevents: Add generic timer broadcast
+function", and the arm code moved over to this as of 3d06770eef: "arm:
+Add generic timer broadcast support", but left a dangling #define when
+!CONFIG_GENERIC_TIMER_BROADCAST.
+
+This patch removes the now unused #define.
+
+Signed-off-by: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+---
+ arch/arm/kernel/smp.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index b7e3b50..ab9458d 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -480,8 +480,6 @@ void tick_broadcast(const struct cpumask *mask)
+ {
+ 	smp_cross_call(mask, IPI_TIMER);
+ }
+-#else
+-#define smp_timer_broadcast	NULL
+ #endif
+ 
+ static void broadcast_timer_set_mode(enum clock_event_mode mode,
+-- 
+1.8.1.1
