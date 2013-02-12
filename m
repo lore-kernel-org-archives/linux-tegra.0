@@ -1,79 +1,70 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V5] get_maintainer: allow keywords to match filenames
-Date: Tue, 12 Feb 2013 12:39:34 -0700
-Message-ID: <1360697974-23257-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
+Date: Tue, 12 Feb 2013 13:52:17 -0700
+Message-ID: <511AAB81.4000306@wwwdotorg.org>
+References: <5119849B.1070300@wwwdotorg.org> <201302121350.15683.arnd@arndb.de> <511A6F6C.8090205@wwwdotorg.org> <201302121732.14960.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201302121732.14960.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marvin24@gmx.de" <marvin24@gmx.de>, "balbi@ti.com" <balbi@ti.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/12/2013 10:32 AM, Arnd Bergmann wrote:
+> On Tuesday 12 February 2013, Stephen Warren wrote:
+>>>>>>> I don't think that's going to help any link issues, so I'd drop it and
+>>>>>>> keep this function simple.
+>>>>>>
+>>>>>> As explained in the above, a complier will drop unnecessary functions
+>>>>>> automatically with this IS_ENABLED(), which could save many ifdefs.
+>>>>>
+>>>>> That sounds extremely brittle. Have you validated this on a wide variety
+>>>>> of compiler versions?
+>>>>
+>>>> I verified with gcc-4.6.
+>>>> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
+>>>
+>>> It's certainly expected to work with all compilers, yes. If a compiler
+>>> cannot remove conditional function calls that depend on a constant
+>>> expression, we have a lot of other problems alredy.
+>>
+>> Removing the function calls isn't guaranteed to remove the body of the
+>> functions though. Those functions aren't implemented in some separate
+>> file that's optionally included, but rather are implemented in the same
+>> object file, now unconditionally, and they in turn reference (with no
+>> IS_ENABLED logic) other functions that are implemented in conditionally
+>> linked files.
+> 
+> I think gcc should remove all of that in this case, since board_init_funcs
+> becomes unused when the only code that references it cannot be reached,
+> and when that array is gone, the now unused functions would be removed
+> as well.
+> 
+> We have had bugs with prerelease gcc versions that did not handle cases
+> like this in the way we want it, but I think all releases get it right.
+> I don't think it's mandated anywhere in the C99 standard that this is
+> what happens, but we do rely on it anyway AFAIK.
 
-Allow K: entries in MAINTAINERS to match directly against filenames;
-either those extracted from patch +++ or --- lines, or those specified
-on the command-line using the -f option.
+Hmmm. Very surprisingly (to me), this does indeed work fine, even with
+an older gcc-4.4.1 I had lying around (after fixing the test inversion
+in tegra_dt_init_late).
 
-This potentially allows fewer lines in a MAINTAINERS entry, if all the
-relevant files are scattered throughout the whole kernel tree, yet
-contain some common keyword. An example would be using an ARM SoC name
-as the keyword to catch all related drivers.
+I believe U-Boot enabled -ffunction-sections -fdata-sections or similar
+(recently?) to get this kind of behaviour. I wonder why the kernel
+didn't need that. Perhaps -O2 is more aggressive (within a file at
+least) than I thought.
 
-I don't think setting exact_pattern_match_hash would be appropriate here;
-at least for intended Tegra use case, this feature is to ensure that all
-Tegra-related driver changes get Cc'd to the Tegra mailing list. Setting
-exact_pattern_match_hash would prevent git history parsing for e.g. S-o-b
-tags, which still seems like it would be useful. Hence, this flag isn't
-set.
+I did note a few warnings due to the ifdefs in tegra_auxdata_lookup[]:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V5: Add back "file content" into list of things affected by K: entries.
-V4:
-* Updated documentation at the start of MAINTAINERS to mention filename
-  matching.
-* s/"/'/ in if check for type 'K'.
----
- MAINTAINERS               |    9 +++++----
- scripts/get_maintainer.pl |    4 ++++
- 2 files changed, 9 insertions(+), 4 deletions(-)
+arch/arm/mach-tegra/tegra.c:47: warning: 'tegra_ehci1_pdata' defined but
+not used
+arch/arm/mach-tegra/tegra.c:58: warning: 'tegra_ehci2_pdata' defined but
+not used
+arch/arm/mach-tegra/tegra.c:65: warning: 'tegra_ehci3_pdata' defined but
+not used
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d0651e..ce35ee2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -97,12 +97,13 @@ Descriptions of section entries:
- 	   X:	net/ipv6/
- 	   matches all files in and below net excluding net/ipv6/
- 	K: Keyword perl extended regex pattern to match content in a
--	   patch or file.  For instance:
-+	   patch or file, or an affected filename.  For instance:
- 	   K: of_get_profile
--	      matches patches or files that contain "of_get_profile"
-+	      matches patch or file content, or filenames, that contain
-+	      "of_get_profile"
- 	   K: \b(printk|pr_(info|err))\b
--	      matches patches or files that contain one or more of the words
--	      printk, pr_info or pr_err
-+	      matches patch or file content, or filenames, that contain one or
-+	      more of the words printk, pr_info or pr_err
- 	   One regex pattern per line.  Multiple K: lines acceptable.
- 
- Note: For the hard of thinking, this list is meant to remain in alphabetical
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index 18d4ab5..ce4cc83 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -611,6 +611,10 @@ sub get_maintainers {
- 				    $hash{$tvi} = $value_pd;
- 				}
- 			    }
-+			} elsif ($type eq 'K') {
-+			    if ($file =~ m/$value/x) {
-+				$hash{$tvi} = 0;
-+			    }
- 			}
- 		    }
- 		}
--- 
-1.7.10.4
+(I built a tegra_defconfig kernel and modified it to enable
+Tegra30+Tegra114, disable Tegra20, disable DRM)
