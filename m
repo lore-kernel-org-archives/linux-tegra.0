@@ -1,56 +1,82 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V4 1/2] get_maintainer: allow keywords to match filenames
-Date: Mon, 11 Feb 2013 22:17:55 -0800
-Message-ID: <1360649875.5128.18.camel@joe-AO722>
-References: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
+Date: Tue, 12 Feb 2013 13:50:15 +0000
+Message-ID: <201302121350.15683.arnd@arndb.de>
+References: <5119849B.1070300@wwwdotorg.org> <5119C958.1030304@wwwdotorg.org> <20130212.070456.532657136988541923.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360629574-23989-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130212.070456.532657136988541923.hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marvin24@gmx.de" <marvin24@gmx.de>, "balbi@ti.com" <balbi@ti.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-02-11 at 17:39 -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tuesday 12 February 2013, Hiroshi Doyu wrote:
+> > >>>  static void __init paz00_init(void)
+> > >>> @@ -129,6 +128,9 @@ static void __init tegra_dt_init_late(void)
+> > >>>  
+> > >>>   tegra_init_late();
+> > >>>  
+> > >>> + if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+> > >>> +         return;
+> > >>
+> > >> I don't think that's going to help any link issues, so I'd drop it and
+> > >> keep this function simple.
+> > > 
+> > > As explained in the above, a complier will drop unnecessary functions
+> > > automatically with this IS_ENABLED(), which could save many ifdefs.
+> > 
+> > That sounds extremely brittle. Have you validated this on a wide variety
+> > of compiler versions?
 > 
-> Allow K: entries in MAINTAINERS to match directly against filenames;
-> either those extracted from patch +++ or --- lines, or those specified
-> on the command-line using the -f option.
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -97,12 +97,12 @@ Descriptions of section entries:
->  	   X:	net/ipv6/
->  	   matches all files in and below net excluding net/ipv6/
->  	K: Keyword perl extended regex pattern to match content in a
-> -	   patch or file.  For instance:
-> +	   patch, or an affected filename.  For instance:
+> I verified with gcc-4.6.
+> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
 
-The removal of file isn't correct.
+It's certainly expected to work with all compilers, yes. If a compiler
+cannot remove conditional function calls that depend on a constant
+expression, we have a lot of other problems alredy.
 
-This should read "patch, file or filename".
+However, from what I see above, you have the logic reversed (it
+should return if neither TEGRA_2x nor PCI are enabled, rather
+than return if one of them is enabled). and it becomes a little
+confusing to read.
 
-If the -f pattern is a single file,
-get_maintainer reads that file content and then
-matches any K: patterns.
+If you want to get rid of the #ifdef here, I would suggest you put those
+into the functions directly, like
 
-When the -f pattern is a directory, it doesn't.
+static void __init harmony_init(void)
+{
+        int ret = 0;
 
->  	   K: of_get_profile
-> -	      matches patches or files that contain "of_get_profile"
-> +	      matches patches or filenames that contain "of_get_profile"
+        if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+		ret = harmony_pcie_init();
+        if (ret)
+                pr_err("harmony_pcie_init() failed: %d\n", ret);
+}
 
-here too.
+which will turn into an empty function if one of the two is disabled.
 
->  	   K: \b(printk|pr_(info|err))\b
-> -	      matches patches or files that contain one or more of the words
-> -	      printk, pr_info or pr_err
-> +	      matches patches or filenames that contain one or more of
-> +	      the words printk, pr_info or pr_err
+Since we are not going to add any other board specfic init functions, you
+can also unroll the loop and put everything into tegra_dt_init_late:
 
-three.
+/* Board specific fixups, try not add any new ones here */
+static void __init tegra_dt_init_late(void)
+{
+	tegra_powergate_debugfs_init();
 
-cheers, Joe
+	/* so far, these all apply only to tegra2x */
+	if (!IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+		return;
+
+	if (of_machine_is_compatible("compal,paz00"))
+		tegra_paz00_wifikill_init();
+	if (IS_ENABLED(CONFIG_PCI) && of_machine_is_compatible("nvidia,harmony")
+		harmony_pcie_init();
+	if (IS_ENABLED(CONFIG_PCI) && of_machine_is_compatible("compulab,trimslice")
+		tegra_pcie_init(true, true);
+}
+
+	Arnd
