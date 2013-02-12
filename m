@@ -1,32 +1,81 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: tegra: add clfvs function to Tegra114 support
-Date: Tue, 12 Feb 2013 11:33:44 -0500
-Message-ID: <511A6EE8.7010301@nvidia.com>
-References: <1360621513-18814-1-git-send-email-rklein@nvidia.com> <5119829C.20400@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
+Date: Tue, 12 Feb 2013 09:35:56 -0700
+Message-ID: <511A6F6C.8090205@wwwdotorg.org>
+References: <5119849B.1070300@wwwdotorg.org> <5119C958.1030304@wwwdotorg.org> <20130212.070456.532657136988541923.hdoyu@nvidia.com> <201302121350.15683.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5119829C.20400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <201302121350.15683.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "marvin24-Mmb7MZpHnFY@public.gmane.org" <marvin24-Mmb7MZpHnFY@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/11/2013 6:45 PM, Stephen Warren wrote:
-> On 02/11/2013 03:25 PM, Rhyland Klein wrote:
->> This patch adds the definition for the cldvfs function for Tegra114 pinctrl
->> support. This is based on work by Pritesh Raithatha.
-> Sorry I forgot about this before, but
-> Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
-> needs to be updated too.
->
-> Aside from that,
->
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-thanks, I'll add that and send new rev.
+On 02/12/2013 06:50 AM, Arnd Bergmann wrote:
+> On Tuesday 12 February 2013, Hiroshi Doyu wrote:
+>>>>>>  static void __init paz00_init(void)
+>>>>>> @@ -129,6 +128,9 @@ static void __init tegra_dt_init_late(void)
+>>>>>>  
+>>>>>>   tegra_init_late();
+>>>>>>  
+>>>>>> + if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+>>>>>> +         return;
+>>>>>
+>>>>> I don't think that's going to help any link issues, so I'd drop it and
+>>>>> keep this function simple.
+>>>>
+>>>> As explained in the above, a complier will drop unnecessary functions
+>>>> automatically with this IS_ENABLED(), which could save many ifdefs.
+>>>
+>>> That sounds extremely brittle. Have you validated this on a wide variety
+>>> of compiler versions?
+>>
+>> I verified with gcc-4.6.
+>> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
+> 
+> It's certainly expected to work with all compilers, yes. If a compiler
+> cannot remove conditional function calls that depend on a constant
+> expression, we have a lot of other problems alredy.
 
---rhyland
+Removing the function calls isn't guaranteed to remove the body of the
+functions though. Those functions aren't implemented in some separate
+file that's optionally included, but rather are implemented in the same
+object file, now unconditionally, and they in turn reference (with no
+IS_ENABLED logic) other functions that are implemented in conditionally
+linked files.
 
--- 
-nvpublic
+> However, from what I see above, you have the logic reversed (it
+> should return if neither TEGRA_2x nor PCI are enabled, rather
+> than return if one of them is enabled). and it becomes a little
+> confusing to read.
+> 
+> If you want to get rid of the #ifdef here, I would suggest you put those
+> into the functions directly, like
+> 
+> static void __init harmony_init(void)
+> {
+>         int ret = 0;
+> 
+>         if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+> 		ret = harmony_pcie_init();
+>         if (ret)
+>                 pr_err("harmony_pcie_init() failed: %d\n", ret);
+> }
+> 
+> which will turn into an empty function if one of the two is disabled.
+
+That would work.
+
+However I'd like to avoid changing the body of those two functions at
+all if possible, since I hope the PCIe driver rework will be merged in
+3.10, and that will allow the Harmony and TrimSlice init functions to be
+removed entirely. I'd rather not have conflicts with the removal patch.
+
+> Since we are not going to add any other board specfic init functions, you
+> can also unroll the loop and put everything into tegra_dt_init_late:
+
+That's not necessarily true. While we certainly don't plan to, I don't
+think we can rule it out; after all, we don't have rfkill bindings and
+yet other boards will need them.
