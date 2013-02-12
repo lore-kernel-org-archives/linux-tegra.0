@@ -1,82 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
-Date: Tue, 12 Feb 2013 13:50:15 +0000
-Message-ID: <201302121350.15683.arnd@arndb.de>
-References: <5119849B.1070300@wwwdotorg.org> <5119C958.1030304@wwwdotorg.org> <20130212.070456.532657136988541923.hdoyu@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] clk: tegra: initialise parent of uart clocks
+Date: Tue, 12 Feb 2013 20:47:13 +0530
+Message-ID: <1360682233-23016-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130212.070456.532657136988541923.hdoyu@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marvin24@gmx.de" <marvin24@gmx.de>, "balbi@ti.com" <balbi@ti.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: swarren@nvidia.com, mturquette@linaro.org
+Cc: pgaikwad@nvidia.com, pdeschrijver@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 12 February 2013, Hiroshi Doyu wrote:
-> > >>>  static void __init paz00_init(void)
-> > >>> @@ -129,6 +128,9 @@ static void __init tegra_dt_init_late(void)
-> > >>>  
-> > >>>   tegra_init_late();
-> > >>>  
-> > >>> + if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-> > >>> +         return;
-> > >>
-> > >> I don't think that's going to help any link issues, so I'd drop it and
-> > >> keep this function simple.
-> > > 
-> > > As explained in the above, a complier will drop unnecessary functions
-> > > automatically with this IS_ENABLED(), which could save many ifdefs.
-> > 
-> > That sounds extremely brittle. Have you validated this on a wide variety
-> > of compiler versions?
-> 
-> I verified with gcc-4.6.
-> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
+Initialise the parent of UARTs to PLLP and disabling clock by
+default.
 
-It's certainly expected to work with all compilers, yes. If a compiler
-cannot remove conditional function calls that depend on a constant
-expression, we have a lot of other problems alredy.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+As suggested by Stephen, Make other uarts clock state to disable as
+driver already enable these clocks.
 
-However, from what I see above, you have the logic reversed (it
-should return if neither TEGRA_2x nor PCI are enabled, rather
-than return if one of them is enabled). and it becomes a little
-confusing to read.
+ drivers/clk/tegra/clk-tegra20.c |    7 +++++--
+ drivers/clk/tegra/clk-tegra30.c |    6 +++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-If you want to get rid of the #ifdef here, I would suggest you put those
-into the functions directly, like
-
-static void __init harmony_init(void)
-{
-        int ret = 0;
-
-        if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-		ret = harmony_pcie_init();
-        if (ret)
-                pr_err("harmony_pcie_init() failed: %d\n", ret);
-}
-
-which will turn into an empty function if one of the two is disabled.
-
-Since we are not going to add any other board specfic init functions, you
-can also unroll the loop and put everything into tegra_dt_init_late:
-
-/* Board specific fixups, try not add any new ones here */
-static void __init tegra_dt_init_late(void)
-{
-	tegra_powergate_debugfs_init();
-
-	/* so far, these all apply only to tegra2x */
-	if (!IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-		return;
-
-	if (of_machine_is_compatible("compal,paz00"))
-		tegra_paz00_wifikill_init();
-	if (IS_ENABLED(CONFIG_PCI) && of_machine_is_compatible("nvidia,harmony")
-		harmony_pcie_init();
-	if (IS_ENABLED(CONFIG_PCI) && of_machine_is_compatible("compulab,trimslice")
-		tegra_pcie_init(true, true);
-}
-
-	Arnd
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 4612b2e..8b5241e 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1254,8 +1254,11 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{csite, clk_max, 0, 1},
+ 	{emc, clk_max, 0, 1},
+ 	{cclk, clk_max, 0, 1},
+-	{uarta, pll_p, 0, 1},
+-	{uartd, pll_p, 0, 1},
++	{uarta, pll_p, 0, 0},
++	{uartb, pll_p, 0, 0},
++	{uartc, pll_p, 0, 0},
++	{uartd, pll_p, 0, 0},
++	{uarte, pll_p, 0, 0},
+ 	{usbd, clk_max, 12000000, 0},
+ 	{usb2, clk_max, 12000000, 0},
+ 	{usb3, clk_max, 12000000, 0},
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index bf050bc..56925e1 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1877,7 +1877,11 @@ static struct tegra_cpu_car_ops tegra30_cpu_car_ops = {
+ };
+ 
+ static __initdata struct tegra_clk_init_table init_table[] = {
+-	{uarta, pll_p, 408000000, 1},
++	{uarta, pll_p, 408000000, 0},
++	{uartb, pll_p, 408000000, 0},
++	{uartc, pll_p, 408000000, 0},
++	{uartd, pll_p, 408000000, 0},
++	{uarte, pll_p, 408000000, 0},
+ 	{pll_a, clk_max, 564480000, 1},
+ 	{pll_a_out0, clk_max, 11289600, 1},
+ 	{extern1, pll_a_out0, 0, 1},
+-- 
+1.7.1.1
