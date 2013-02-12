@@ -1,61 +1,25 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] clk: tegra: initialise parent of uart clocks
-Date: Tue, 12 Feb 2013 20:47:59 +0530
-Message-ID: <1360682279-23051-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: initialise parent of uart clocks
+Date: Tue, 12 Feb 2013 20:49:47 +0530
+Message-ID: <511A5D93.1040101@nvidia.com>
+References: <1360682233-23016-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360682233-23016-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Initialise the parent of UARTs to PLLP and disabling clock by
-default.
+On Tuesday 12 February 2013 08:47 PM, Laxman Dewangan wrote:
+> Initialise the parent of UARTs to PLLP and disabling clock by
+> default.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-As suggested by Stephen, Make other uarts clock state to disable as
-driver already enable these clocks.
-
- drivers/clk/tegra/clk-tegra20.c |    7 +++++--
- drivers/clk/tegra/clk-tegra30.c |    6 +++++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4612b2e..8b5241e 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1254,8 +1254,11 @@ static __initdata struct tegra_clk_init_table init_table[] = {
- 	{csite, clk_max, 0, 1},
- 	{emc, clk_max, 0, 1},
- 	{cclk, clk_max, 0, 1},
--	{uarta, pll_p, 0, 1},
--	{uartd, pll_p, 0, 1},
-+	{uarta, pll_p, 0, 0},
-+	{uartb, pll_p, 0, 0},
-+	{uartc, pll_p, 0, 0},
-+	{uartd, pll_p, 0, 0},
-+	{uarte, pll_p, 0, 0},
- 	{usbd, clk_max, 12000000, 0},
- 	{usb2, clk_max, 12000000, 0},
- 	{usb3, clk_max, 12000000, 0},
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index bf050bc..56925e1 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1877,7 +1877,11 @@ static struct tegra_cpu_car_ops tegra30_cpu_car_ops = {
- };
- 
- static __initdata struct tegra_clk_init_table init_table[] = {
--	{uarta, pll_p, 408000000, 1},
-+	{uarta, pll_p, 408000000, 0},
-+	{uartb, pll_p, 408000000, 0},
-+	{uartc, pll_p, 408000000, 0},
-+	{uartd, pll_p, 408000000, 0},
-+	{uarte, pll_p, 408000000, 0},
- 	{pll_a, clk_max, 564480000, 1},
- 	{pll_a_out0, clk_max, 11289600, 1},
- 	{extern1, pll_a_out0, 0, 1},
--- 
-1.7.1.1
+Please ignore this, I just sent the other patch as V2 to have more 
+appropriate version. Please review the Patch V2.
+Sorry for spam/inconvenience.
