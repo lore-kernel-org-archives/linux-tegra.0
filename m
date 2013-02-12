@@ -1,46 +1,32 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] HACK: ARM: Fix generic timer broadcast for TWD
-Date: Tue, 12 Feb 2013 15:55:16 +0000
-Message-ID: <20130212155516.GP17833@n2100.arm.linux.org.uk>
-References: <1360684194-10894-1-git-send-email-thierry.reding@avionic-design.de>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: add clfvs function to Tegra114 support
+Date: Tue, 12 Feb 2013 11:33:44 -0500
+Message-ID: <511A6EE8.7010301@nvidia.com>
+References: <1360621513-18814-1-git-send-email-rklein@nvidia.com> <5119829C.20400@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360684194-10894-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <5119829C.20400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 12, 2013 at 04:49:54PM +0100, Thierry Reding wrote:
-> Note that I have close to no clue what I'm doing, so the patch might be
-> the completely wrong thing to do. An alternative I had initially thought
-> about was to check for NULL before calling the clock_event_device's
-> .broadcast() function.
-> 
-> The reason why I chose to always assign .broadcast instead is that a
-> previous patch (3d06770: Add generic timer broadcast support) aims at
-> generically implementing broadcast support on ARM and providing a
-> tick_broadcast() implementation for this purpose so it seemed like the
-> right thing to do.
-> 
-> The above-mentioned patch for some reason removed the assignment to the
-> .broadcast() member for apparently no reason, so maybe that was just
-> done by mistake?
+On 2/11/2013 6:45 PM, Stephen Warren wrote:
+> On 02/11/2013 03:25 PM, Rhyland Klein wrote:
+>> This patch adds the definition for the cldvfs function for Tegra114 pinctrl
+>> support. This is based on work by Pritesh Raithatha.
+> Sorry I forgot about this before, but
+> Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
+> needs to be updated too.
+>
+> Aside from that,
+>
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+thanks, I'll add that and send new rev.
 
-This is now supposed to be handled by the timer core stuff.  It
-looks to me like 3d06770eef43eaad606e77246bfcc7e82b1d9fb4
-(arm: Add generic timer broadcast support) is slightly busted in
-that it doesn't deal with the #else case you identified below.
+--rhyland
 
-Certainly, initializing evt->broadcast after the setup is not the
-right solution - it must be done before, but this was removed by
-the above commit.
-
-So, things to be done here:
-1. Fix the #else part of the code.
-2. Fix the reported oops.
-
-I think this falls to Mark, being the last one to touch this and cause
-this breakage. :)
+-- 
+nvpublic
