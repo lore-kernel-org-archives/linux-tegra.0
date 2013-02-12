@@ -1,41 +1,81 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] HACK: ARM: Fix generic timer broadcast for TWD
-Date: Tue, 12 Feb 2013 17:24:18 +0000
-Message-ID: <20130212172418.GC13775@e106331-lin.cambridge.arm.com>
-References: <1360684194-10894-1-git-send-email-thierry.reding@avionic-design.de>
- <20130212155516.GP17833@n2100.arm.linux.org.uk>
- <20130212171217.GB13775@e106331-lin.cambridge.arm.com>
- <20130212171501.GT17833@n2100.arm.linux.org.uk>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
+Date: Tue, 12 Feb 2013 17:32:14 +0000
+Message-ID: <201302121732.14960.arnd@arndb.de>
+References: <5119849B.1070300@wwwdotorg.org> <201302121350.15683.arnd@arndb.de> <511A6F6C.8090205@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130212171501.GT17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <511A6F6C.8090205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "marvin24-Mmb7MZpHnFY@public.gmane.org" <marvin24-Mmb7MZpHnFY@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 12, 2013 at 05:15:01PM +0000, Russell King - ARM Linux wrote:
-> On Tue, Feb 12, 2013 at 05:12:17PM +0000, Mark Rutland wrote:
-> > [...]
+On Tuesday 12 February 2013, Stephen Warren wrote:
+> >>>>> I don't think that's going to help any link issues, so I'd drop it and
+> >>>>> keep this function simple.
+> >>>>
+> >>>> As explained in the above, a complier will drop unnecessary functions
+> >>>> automatically with this IS_ENABLED(), which could save many ifdefs.
+> >>>
+> >>> That sounds extremely brittle. Have you validated this on a wide variety
+> >>> of compiler versions?
+> >>
+> >> I verified with gcc-4.6.
+> >> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
 > > 
-> > > So, things to be done here:
-> > > 1. Fix the #else part of the code.
-> > > 2. Fix the reported oops.
-> > 
-> > I believe the patch below solves point 1. Nothing refers to smp_timer_broadcast
-> > any more (as I've tested with git grep), so removing it shouldn't create any
-> > additional problems.
-> > 
-> > Russell, are you happy for me to drop this in the patch system?
+> > It's certainly expected to work with all compilers, yes. If a compiler
+> > cannot remove conditional function calls that depend on a constant
+> > expression, we have a lot of other problems alredy.
 > 
-> Yes, it might as well go into the devel-stable branch along with your
-> other patches.  Thanks.
+> Removing the function calls isn't guaranteed to remove the body of the
+> functions though. Those functions aren't implemented in some separate
+> file that's optionally included, but rather are implemented in the same
+> object file, now unconditionally, and they in turn reference (with no
+> IS_ENABLED logic) other functions that are implemented in conditionally
+> linked files.
+
+I think gcc should remove all of that in this case, since board_init_funcs
+becomes unused when the only code that references it cannot be reached,
+and when that array is gone, the now unused functions would be removed
+as well.
+
+We have had bugs with prerelease gcc versions that did not handle cases
+like this in the way we want it, but I think all releases get it right.
+I don't think it's mandated anywhere in the C99 standard that this is
+what happens, but we do rely on it anyway AFAIK.
+
+> > static void __init harmony_init(void)
+> > {
+> >         int ret = 0;
+> > 
+> >         if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+> >               ret = harmony_pcie_init();
+> >         if (ret)
+> >                 pr_err("harmony_pcie_init() failed: %d\n", ret);
+> > }
+> > 
+> > which will turn into an empty function if one of the two is disabled.
 > 
+> That would work.
+> 
+> However I'd like to avoid changing the body of those two functions at
+> all if possible, since I hope the PCIe driver rework will be merged in
+> 3.10, and that will allow the Harmony and TrimSlice init functions to be
+> removed entirely. I'd rather not have conflicts with the removal patch.
 
-Submitted as 7651/1.
+Yes, makes sense.
 
-Thanks,
-Mark.
+> > Since we are not going to add any other board specfic init functions, you
+> > can also unroll the loop and put everything into tegra_dt_init_late:
+> 
+> That's not necessarily true. While we certainly don't plan to, I don't
+> think we can rule it out; after all, we don't have rfkill bindings and
+> yet other boards will need them.
+
+Ok.
+
+	Arnd
