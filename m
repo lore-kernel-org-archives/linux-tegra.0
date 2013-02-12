@@ -1,32 +1,48 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: remove clock-frequency properties from serial
- nodes
-Date: Tue, 12 Feb 2013 10:47:33 -0700
-Message-ID: <511A8035.6080808@wwwdotorg.org>
-References: <1360691025-8393-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V4 1/2] get_maintainer: allow keywords to match filenames
+Date: Tue, 12 Feb 2013 11:17:39 -0700
+Message-ID: <511A8743.9010408@wwwdotorg.org>
+References: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org> <1360649875.5128.18.camel@joe-AO722>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360691025-8393-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1360649875.5128.18.camel@joe-AO722>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2013 10:43 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/11/2013 11:17 PM, Joe Perches wrote:
+> On Mon, 2013-02-11 at 17:39 -0700, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Allow K: entries in MAINTAINERS to match directly against filenames;
+>> either those extracted from patch +++ or --- lines, or those specified
+>> on the command-line using the -f option.
+> []
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+> []
+>> @@ -97,12 +97,12 @@ Descriptions of section entries:
+>>  	   X:	net/ipv6/
+>>  	   matches all files in and below net excluding net/ipv6/
+>>  	K: Keyword perl extended regex pattern to match content in a
+>> -	   patch or file.  For instance:
+>> +	   patch, or an affected filename.  For instance:
 > 
-> Currently, the serial nodes define both a clock-frequency and a clocks
-> property. We should not provide both, since they might conflict.
+> The removal of file isn't correct.
 > 
-> In practice, this also causes problems since the of_serial driver uses
-> the clock-frequency property in preference to the clocks property, and
-> hence doesn't clk_prepare_enable() the clock, which may then leave it
-> with no known users, and hence the common clock framework will disable
-> it, thus breaking the port, which is usually the console.
+> This should read "patch, file or filename".
+> 
+> If the -f pattern is a single file,
+> get_maintainer reads that file content and then
+> matches any K: patterns.
+> 
+> When the -f pattern is a directory, it doesn't.
 
-I've applied this to Tegra's for-3.9/soc-ccf-fixes branch, although I'll
-hold off on pushing it out a little while in case anyone has comments on
-it. That said, I hope to include it in an arm-soc pull request tomorrow
-at the latest.
+Yes, I guess that's true; I had convinced myself that "file" wasn't
+accurate since "-f directory/" didn't scan the files within that
+directory tree, but as you say "-f file" does scan the file content.
+
+BTW, given I'm adding "filename" to the list, I intend to change the
+existing "file" to "file content" to be clear. Are you OK with that?
