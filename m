@@ -1,52 +1,46 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Add clocks property to TWD node
-Date: Tue, 12 Feb 2013 16:56:51 +0100
-Message-ID: <1360684611-11152-1-git-send-email-thierry.reding@avionic-design.de>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] HACK: ARM: Fix generic timer broadcast for TWD
+Date: Tue, 12 Feb 2013 15:55:16 +0000
+Message-ID: <20130212155516.GP17833@n2100.arm.linux.org.uk>
+References: <1360684194-10894-1-git-send-email-thierry.reding@avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1360684194-10894-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The generic ARM TWD code has recently gained support for looking up the
-clock from DT. Adding the appropriate clocks property allows the driver
-to successfully register the clock event device.
+On Tue, Feb 12, 2013 at 04:49:54PM +0100, Thierry Reding wrote:
+> Note that I have close to no clue what I'm doing, so the patch might be
+> the completely wrong thing to do. An alternative I had initially thought
+> about was to check for NULL before calling the clock_event_device's
+> .broadcast() function.
+> 
+> The reason why I chose to always assign .broadcast instead is that a
+> previous patch (3d06770: Add generic timer broadcast support) aims at
+> generically implementing broadcast support on ARM and providing a
+> tick_broadcast() implementation for this purpose so it seemed like the
+> right thing to do.
+> 
+> The above-mentioned patch for some reason removed the assignment to the
+> .broadcast() member for apparently no reason, so maybe that was just
+> done by mistake?
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
-Note that the binding documentation says that the twd clock is 132 on
-Tegra20, but according to drivers/clk/tegra/clk-tegra20.c it is in fact
-130. The patch doesn't update the binding documentation because some
-other offsets are probably also wrong and I didn't have the time to go
-through all of them.
----
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- arch/arm/boot/dts/tegra30.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+This is now supposed to be handled by the timer core stuff.  It
+looks to me like 3d06770eef43eaad606e77246bfcc7e82b1d9fb4
+(arm: Add generic timer broadcast support) is slightly busted in
+that it doesn't deal with the #else case you identified below.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index cdb8da0..d6642b2 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -118,6 +118,7 @@
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0x50040600 0x20>;
- 		interrupts = <1 13 0x304>;
-+		clocks = <&tegra_car 130>;
- 	};
- 
- 	intc: interrupt-controller {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 572a45b..922c8cf 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -119,6 +119,7 @@
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0x50040600 0x20>;
- 		interrupts = <1 13 0xf04>;
-+		clocks = <&tegra_car 214>;
- 	};
- 
- 	intc: interrupt-controller {
--- 
-1.8.1.2
+Certainly, initializing evt->broadcast after the setup is not the
+right solution - it must be done before, but this was removed by
+the above commit.
+
+So, things to be done here:
+1. Fix the #else part of the code.
+2. Fix the reported oops.
+
+I think this falls to Mark, being the last one to touch this and cause
+this breakage. :)
