@@ -1,21 +1,80 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V3 1/2] get_maintainer: allow keywords to match filenames
-Date: Mon, 11 Feb 2013 16:16:12 -0800
-Message-ID: <1360628172.4707.10.camel@joe-AO722>
-References: <1360626016-23332-1-git-send-email-swarren@wwwdotorg.org>
-	 <1360627226.4707.6.camel@joe-AO722> <5119880C.8010602@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V4 1/2] get_maintainer: allow keywords to match filenames
+Date: Mon, 11 Feb 2013 17:39:32 -0700
+Message-ID: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5119880C.8010602-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-02-11 at 17:08 -0700, Stephen Warren wrote:
-> Does "that" above mean "not setting exact_pattern_match_hash", or
-> "changing the patch so that it does set exact_pattern_match_hash". Sorry...
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I think what you have is fine.
+Allow K: entries in MAINTAINERS to match directly against filenames;
+either those extracted from patch +++ or --- lines, or those specified
+on the command-line using the -f option.
+
+This potentially allows fewer lines in a MAINTAINERS entry, if all the
+relevant files are scattered throughout the whole kernel tree, yet
+contain some common keyword. An example would be using an ARM SoC name
+as the keyword to catch all related drivers.
+
+I don't think setting exact_pattern_match_hash would be appropriate here;
+at least for intended Tegra use case, this feature is to ensure that all
+Tegra-related driver changes get Cc'd to the Tegra mailing list. Setting
+exact_pattern_match_hash would prevent git history parsing for e.g. S-o-b
+tags, which still seems like it would be useful. Hence, this flag isn't
+set.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V4:
+* Updated documentation at the start of MAINTAINERS to mention filename
+  matching.
+* s/"/'/ in if check for type 'K'.
+
+Note: I left in my comments in the patch description about not setting
+exact_pattern_match_hash as rational for future git archaeologists.
+---
+ MAINTAINERS               |    8 ++++----
+ scripts/get_maintainer.pl |    4 ++++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1d0651e..fbba896 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -97,12 +97,12 @@ Descriptions of section entries:
+ 	   X:	net/ipv6/
+ 	   matches all files in and below net excluding net/ipv6/
+ 	K: Keyword perl extended regex pattern to match content in a
+-	   patch or file.  For instance:
++	   patch, or an affected filename.  For instance:
+ 	   K: of_get_profile
+-	      matches patches or files that contain "of_get_profile"
++	      matches patches or filenames that contain "of_get_profile"
+ 	   K: \b(printk|pr_(info|err))\b
+-	      matches patches or files that contain one or more of the words
+-	      printk, pr_info or pr_err
++	      matches patches or filenames that contain one or more of
++	      the words printk, pr_info or pr_err
+ 	   One regex pattern per line.  Multiple K: lines acceptable.
+ 
+ Note: For the hard of thinking, this list is meant to remain in alphabetical
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index 18d4ab5..ce4cc83 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -611,6 +611,10 @@ sub get_maintainers {
+ 				    $hash{$tvi} = $value_pd;
+ 				}
+ 			    }
++			} elsif ($type eq 'K') {
++			    if ($file =~ m/$value/x) {
++				$hash{$tvi} = 0;
++			    }
+ 			}
+ 		    }
+ 		}
+-- 
+1.7.10.4
