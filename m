@@ -1,81 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
-Date: Tue, 12 Feb 2013 09:35:56 -0700
-Message-ID: <511A6F6C.8090205@wwwdotorg.org>
-References: <5119849B.1070300@wwwdotorg.org> <5119C958.1030304@wwwdotorg.org> <20130212.070456.532657136988541923.hdoyu@nvidia.com> <201302121350.15683.arnd@arndb.de>
+Subject: Re: [PATCH] HACK: ARM: Fix generic timer broadcast for TWD
+Date: Tue, 12 Feb 2013 09:39:36 -0700
+Message-ID: <511A7048.3070905@wwwdotorg.org>
+References: <1360684194-10894-1-git-send-email-thierry.reding@avionic-design.de> <20130212155516.GP17833@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201302121350.15683.arnd-r2nGTMty4D4@public.gmane.org>
+In-Reply-To: <20130212155516.GP17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "marvin24-Mmb7MZpHnFY@public.gmane.org" <marvin24-Mmb7MZpHnFY@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2013 06:50 AM, Arnd Bergmann wrote:
-> On Tuesday 12 February 2013, Hiroshi Doyu wrote:
->>>>>>  static void __init paz00_init(void)
->>>>>> @@ -129,6 +128,9 @@ static void __init tegra_dt_init_late(void)
->>>>>>  
->>>>>>   tegra_init_late();
->>>>>>  
->>>>>> + if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
->>>>>> +         return;
->>>>>
->>>>> I don't think that's going to help any link issues, so I'd drop it and
->>>>> keep this function simple.
->>>>
->>>> As explained in the above, a complier will drop unnecessary functions
->>>> automatically with this IS_ENABLED(), which could save many ifdefs.
->>>
->>> That sounds extremely brittle. Have you validated this on a wide variety
->>> of compiler versions?
+On 02/12/2013 08:55 AM, Russell King - ARM Linux wrote:
+> On Tue, Feb 12, 2013 at 04:49:54PM +0100, Thierry Reding wrote:
+>> Note that I have close to no clue what I'm doing, so the patch might be
+>> the completely wrong thing to do. An alternative I had initially thought
+>> about was to check for NULL before calling the clock_event_device's
+>> .broadcast() function.
 >>
->> I verified with gcc-4.6.
->> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
+>> The reason why I chose to always assign .broadcast instead is that a
+>> previous patch (3d06770: Add generic timer broadcast support) aims at
+>> generically implementing broadcast support on ARM and providing a
+>> tick_broadcast() implementation for this purpose so it seemed like the
+>> right thing to do.
+>>
+>> The above-mentioned patch for some reason removed the assignment to the
+>> .broadcast() member for apparently no reason, so maybe that was just
+>> done by mistake?
 > 
-> It's certainly expected to work with all compilers, yes. If a compiler
-> cannot remove conditional function calls that depend on a constant
-> expression, we have a lot of other problems alredy.
+> This is now supposed to be handled by the timer core stuff.  It
+> looks to me like 3d06770eef43eaad606e77246bfcc7e82b1d9fb4
+> (arm: Add generic timer broadcast support) is slightly busted in
+> that it doesn't deal with the #else case you identified below.
 
-Removing the function calls isn't guaranteed to remove the body of the
-functions though. Those functions aren't implemented in some separate
-file that's optionally included, but rather are implemented in the same
-object file, now unconditionally, and they in turn reference (with no
-IS_ENABLED logic) other functions that are implemented in conditionally
-linked files.
+This is fixed by:
 
-> However, from what I see above, you have the logic reversed (it
-> should return if neither TEGRA_2x nor PCI are enabled, rather
-> than return if one of them is enabled). and it becomes a little
-> confusing to read.
-> 
-> If you want to get rid of the #ifdef here, I would suggest you put those
-> into the functions directly, like
-> 
-> static void __init harmony_init(void)
-> {
->         int ret = 0;
-> 
->         if (IS_ENABLED(CONFIG_PCI) && IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-> 		ret = harmony_pcie_init();
->         if (ret)
->                 pr_err("harmony_pcie_init() failed: %d\n", ret);
-> }
-> 
-> which will turn into an empty function if one of the two is disabled.
+"clockevents: fix generic broadcast for FEAT_C3STOP"
 
-That would work.
+http://www.spinics.net/lists/arm-kernel/msg223568.html
 
-However I'd like to avoid changing the body of those two functions at
-all if possible, since I hope the PCIe driver rework will be merged in
-3.10, and that will allow the Harmony and TrimSlice init functions to be
-removed entirely. I'd rather not have conflicts with the removal patch.
+For some reason this hasn't made it into linux-next yet, at least not by
+next-20130211.
 
-> Since we are not going to add any other board specfic init functions, you
-> can also unroll the loop and put everything into tegra_dt_init_late:
+It's in:
 
-That's not necessarily true. While we certainly don't plan to, I don't
-think we can rule it out; after all, we don't have rfkill bindings and
-yet other boards will need them.
+git://nv-tegra.nvidia.com/user/swarren/linux-2.6 next-20130211-fixed
