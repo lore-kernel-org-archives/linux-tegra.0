@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V4 1/2] get_maintainer: allow keywords to match filenames
-Date: Mon, 11 Feb 2013 17:39:32 -0700
-Message-ID: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V4 2/2] MAINTAINERS: update Tegra section to capture all Tegra files
+Date: Mon, 11 Feb 2013 17:39:33 -0700
+Message-ID: <1360629574-23989-2-git-send-email-swarren@wwwdotorg.org>
+References: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360629574-23989-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,71 +12,50 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Allow K: entries in MAINTAINERS to match directly against filenames;
-either those extracted from patch +++ or --- lines, or those specified
-on the command-line using the -f option.
+The intent is to ensure that all Tegra-related patches are sent to the
+linux-tegra@ mailing list, so people can keep up-to-date on all misc
+driver changes.
 
-This potentially allows fewer lines in a MAINTAINERS entry, if all the
-relevant files are scattered throughout the whole kernel tree, yet
-contain some common keyword. An example would be using an ARM SoC name
-as the keyword to catch all related drivers.
+Doing this with a keyword is far simpler and more compact than listing
+all Tegra-related drivers, even if wildcards were used.
 
-I don't think setting exact_pattern_match_hash would be appropriate here;
-at least for intended Tegra use case, this feature is to ensure that all
-Tegra-related driver changes get Cc'd to the Tegra mailing list. Setting
-exact_pattern_match_hash would prevent git history parsing for e.g. S-o-b
-tags, which still seems like it would be useful. Hence, this flag isn't
-set.
+Words such as integrate or integrator are common. Ensure the character
+right before "tegra" isn't a-z (case-insensitive), to make sure the
+keyword doesn't match those.
 
+The only files that the keyword doesn't match are the NVEC driver. Add
+the linux-tegra mailing list to the NVEC entry to solve this.
+
+Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V4:
-* Updated documentation at the start of MAINTAINERS to mention filename
-  matching.
-* s/"/'/ in if check for type 'K'.
-
-Note: I left in my comments in the patch description about not setting
-exact_pattern_match_hash as rational for future git archaeologists.
+V4: No change.
 ---
- MAINTAINERS               |    8 ++++----
- scripts/get_maintainer.pl |    4 ++++
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ MAINTAINERS |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1d0651e..fbba896 100644
+index fbba896..f42f82f 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -97,12 +97,12 @@ Descriptions of section entries:
- 	   X:	net/ipv6/
- 	   matches all files in and below net excluding net/ipv6/
- 	K: Keyword perl extended regex pattern to match content in a
--	   patch or file.  For instance:
-+	   patch, or an affected filename.  For instance:
- 	   K: of_get_profile
--	      matches patches or files that contain "of_get_profile"
-+	      matches patches or filenames that contain "of_get_profile"
- 	   K: \b(printk|pr_(info|err))\b
--	      matches patches or files that contain one or more of the words
--	      printk, pr_info or pr_err
-+	      matches patches or filenames that contain one or more of
-+	      the words printk, pr_info or pr_err
- 	   One regex pattern per line.  Multiple K: lines acceptable.
+@@ -7566,6 +7566,7 @@ STAGING - NVIDIA COMPLIANT EMBEDDED CONTROLLER INTERFACE (nvec)
+ M:	Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>
+ M:	Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+ L:	ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org (moderated for non-subscribers)
++L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ S:	Maintained
+ F:	drivers/staging/nvec/
  
- Note: For the hard of thinking, this list is meant to remain in alphabetical
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index 18d4ab5..ce4cc83 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -611,6 +611,10 @@ sub get_maintainers {
- 				    $hash{$tvi} = $value_pd;
- 				}
- 			    }
-+			} elsif ($type eq 'K') {
-+			    if ($file =~ m/$value/x) {
-+				$hash{$tvi} = 0;
-+			    }
- 			}
- 		    }
- 		}
+@@ -7864,9 +7865,7 @@ L:	linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+ Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+ S:	Supported
+-F:	arch/arm/mach-tegra
+-F:	arch/arm/boot/dts/tegra*
+-F:	arch/arm/configs/tegra_defconfig
++K:	(?i)[^a-z]tegra
+ 
+ TEHUTI ETHERNET DRIVER
+ M:	Andy Gospodarek <andy-QlMahl40kYEqcZcGjlUOXw@public.gmane.org>
 -- 
 1.7.10.4
