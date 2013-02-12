@@ -1,31 +1,79 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2] clk: tegra: initialise parent of uart clocks
-Date: Tue, 12 Feb 2013 11:34:55 -0800
-Message-ID: <20130212193455.11471.39288@quantum>
-References: <1360682279-23051-1-git-send-email-ldewangan@nvidia.com>
- <511A7FF1.1030009@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V5] get_maintainer: allow keywords to match filenames
+Date: Tue, 12 Feb 2013 12:39:34 -0700
+Message-ID: <1360697974-23257-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <511A7FF1.1030009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-02-12 09:46:25)
-> On 02/12/2013 08:17 AM, Laxman Dewangan wrote:
-> > Initialise the parent of UARTs to PLLP and disabling clock by
-> > default.
-> 
-> This patch wasn't tested, was it? Without the patch I just sent titled
-> "ARM: tegra: remove clock-frequency properties from serial nodes", the
-> UART clocks get turned off and the console breaks.
-> 
-> Anyway, I've applied this patch to Tegra's for-3.9/soc-ccf-fixes branch
-> along with that other patch, although I'll hold off on pushing them out
-> while I wait for an ack from Mike on this patch, and give the other one
-> time to get reviews.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Allow K: entries in MAINTAINERS to match directly against filenames;
+either those extracted from patch +++ or --- lines, or those specified
+on the command-line using the -f option.
+
+This potentially allows fewer lines in a MAINTAINERS entry, if all the
+relevant files are scattered throughout the whole kernel tree, yet
+contain some common keyword. An example would be using an ARM SoC name
+as the keyword to catch all related drivers.
+
+I don't think setting exact_pattern_match_hash would be appropriate here;
+at least for intended Tegra use case, this feature is to ensure that all
+Tegra-related driver changes get Cc'd to the Tegra mailing list. Setting
+exact_pattern_match_hash would prevent git history parsing for e.g. S-o-b
+tags, which still seems like it would be useful. Hence, this flag isn't
+set.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V5: Add back "file content" into list of things affected by K: entries.
+V4:
+* Updated documentation at the start of MAINTAINERS to mention filename
+  matching.
+* s/"/'/ in if check for type 'K'.
+---
+ MAINTAINERS               |    9 +++++----
+ scripts/get_maintainer.pl |    4 ++++
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1d0651e..ce35ee2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -97,12 +97,13 @@ Descriptions of section entries:
+ 	   X:	net/ipv6/
+ 	   matches all files in and below net excluding net/ipv6/
+ 	K: Keyword perl extended regex pattern to match content in a
+-	   patch or file.  For instance:
++	   patch or file, or an affected filename.  For instance:
+ 	   K: of_get_profile
+-	      matches patches or files that contain "of_get_profile"
++	      matches patch or file content, or filenames, that contain
++	      "of_get_profile"
+ 	   K: \b(printk|pr_(info|err))\b
+-	      matches patches or files that contain one or more of the words
+-	      printk, pr_info or pr_err
++	      matches patch or file content, or filenames, that contain one or
++	      more of the words printk, pr_info or pr_err
+ 	   One regex pattern per line.  Multiple K: lines acceptable.
+ 
+ Note: For the hard of thinking, this list is meant to remain in alphabetical
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index 18d4ab5..ce4cc83 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -611,6 +611,10 @@ sub get_maintainers {
+ 				    $hash{$tvi} = $value_pd;
+ 				}
+ 			    }
++			} elsif ($type eq 'K') {
++			    if ($file =~ m/$value/x) {
++				$hash{$tvi} = 0;
++			    }
+ 			}
+ 		    }
+ 		}
+-- 
+1.7.10.4
