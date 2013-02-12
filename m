@@ -1,70 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
-Date: Tue, 12 Feb 2013 13:52:17 -0700
-Message-ID: <511AAB81.4000306@wwwdotorg.org>
-References: <5119849B.1070300@wwwdotorg.org> <201302121350.15683.arnd@arndb.de> <511A6F6C.8090205@wwwdotorg.org> <201302121732.14960.arnd@arndb.de>
+Date: Tue, 12 Feb 2013 22:25:58 +0000
+Message-ID: <201302122225.58322.arnd@arndb.de>
+References: <5119849B.1070300@wwwdotorg.org> <201302121732.14960.arnd@arndb.de> <511AAB81.4000306@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201302121732.14960.arnd@arndb.de>
+In-Reply-To: <511AAB81.4000306@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
+To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: Hiroshi Doyu <hdoyu@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "marvin24@gmx.de" <marvin24@gmx.de>, "balbi@ti.com" <balbi@ti.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2013 10:32 AM, Arnd Bergmann wrote:
-> On Tuesday 12 February 2013, Stephen Warren wrote:
->>>>>>> I don't think that's going to help any link issues, so I'd drop it and
->>>>>>> keep this function simple.
->>>>>>
->>>>>> As explained in the above, a complier will drop unnecessary functions
->>>>>> automatically with this IS_ENABLED(), which could save many ifdefs.
->>>>>
->>>>> That sounds extremely brittle. Have you validated this on a wide variety
->>>>> of compiler versions?
->>>>
->>>> I verified with gcc-4.6.
->>>> IIRC, that's the point of IS_ENABLED() being introduced. Arnd?
->>>
->>> It's certainly expected to work with all compilers, yes. If a compiler
->>> cannot remove conditional function calls that depend on a constant
->>> expression, we have a lot of other problems alredy.
->>
->> Removing the function calls isn't guaranteed to remove the body of the
->> functions though. Those functions aren't implemented in some separate
->> file that's optionally included, but rather are implemented in the same
->> object file, now unconditionally, and they in turn reference (with no
->> IS_ENABLED logic) other functions that are implemented in conditionally
->> linked files.
-> 
-> I think gcc should remove all of that in this case, since board_init_funcs
-> becomes unused when the only code that references it cannot be reached,
-> and when that array is gone, the now unused functions would be removed
-> as well.
-> 
-> We have had bugs with prerelease gcc versions that did not handle cases
-> like this in the way we want it, but I think all releases get it right.
-> I don't think it's mandated anywhere in the C99 standard that this is
-> what happens, but we do rely on it anyway AFAIK.
+On Tuesday 12 February 2013, Stephen Warren wrote:
+> I believe U-Boot enabled -ffunction-sections -fdata-sections or similar
+> (recently?) to get this kind of behaviour. I wonder why the kernel
+> didn't need that. Perhaps -O2 is more aggressive (within a file at
+> least) than I thought.
 
-Hmmm. Very surprisingly (to me), this does indeed work fine, even with
-an older gcc-4.4.1 I had lying around (after fixing the test inversion
-in tegra_dt_init_late).
+-ffunction-sections works across files, while the trick I described
+only works on file static symbols. David Woodhouse at some point
+had a working kernel build with -ffunction-sections but for some
+reason that never got merged.
 
-I believe U-Boot enabled -ffunction-sections -fdata-sections or similar
-(recently?) to get this kind of behaviour. I wonder why the kernel
-didn't need that. Perhaps -O2 is more aggressive (within a file at
-least) than I thought.
-
-I did note a few warnings due to the ifdefs in tegra_auxdata_lookup[]:
-
-arch/arm/mach-tegra/tegra.c:47: warning: 'tegra_ehci1_pdata' defined but
-not used
-arch/arm/mach-tegra/tegra.c:58: warning: 'tegra_ehci2_pdata' defined but
-not used
-arch/arm/mach-tegra/tegra.c:65: warning: 'tegra_ehci3_pdata' defined but
-not used
-
-(I built a tegra_defconfig kernel and modified it to enable
-Tegra30+Tegra114, disable Tegra20, disable DRM)
+	Arnd
