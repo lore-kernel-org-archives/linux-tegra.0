@@ -1,214 +1,43 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [v3 1/3] ARM: tegra: Unify tegra{20,30,114}_init_early()
-Date: Wed, 13 Feb 2013 19:15:48 +0200
-Message-ID: <1360775751-23850-2-git-send-email-hdoyu@nvidia.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: [v3 2/3] ARM: tegra: Rename board-dt-tegra20.c to tegra.c
+Date: Wed, 13 Feb 2013 19:15:49 +0200
+Message-ID: <1360775751-23850-3-git-send-email-hdoyu@nvidia.com>
 References: <1360775751-23850-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360775751-23850-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: arnd-r2nGTMty4D4@public.gmane.org, marvin24-Mmb7MZpHnFY@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360775751-23850-1-git-send-email-hdoyu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: arnd@arndb.de, marvin24@gmx.de, balbi@ti.com, Hiroshi Doyu <hdoyu@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Refactored tegra{20,30,114}_init_early() so that we have the unified
-tegra_init_early().
+This is the preparation to unify "board-dt-tegra{20,30,114}.c" to a
+single file "tegra.c".
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
 ---
- arch/arm/mach-tegra/board-dt-tegra114.c |    2 +-
- arch/arm/mach-tegra/board-dt-tegra20.c  |    2 +-
- arch/arm/mach-tegra/board-dt-tegra30.c  |    4 ++--
- arch/arm/mach-tegra/board.h             |    4 +---
- arch/arm/mach-tegra/common.c            |   26 ++------------------------
- arch/arm/mach-tegra/hotplug.c           |   23 +++++++++--------------
- arch/arm/mach-tegra/sleep.h             |   10 +++++-----
- 7 files changed, 21 insertions(+), 50 deletions(-)
+ arch/arm/mach-tegra/Makefile                       |    2 +-
+ .../arm/mach-tegra/{board-dt-tegra20.c => tegra.c} |    0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename arch/arm/mach-tegra/{board-dt-tegra20.c => tegra.c} (100%)
 
-diff --git a/arch/arm/mach-tegra/board-dt-tegra114.c b/arch/arm/mach-tegra/board-dt-tegra114.c
-index 085d636..08e8294 100644
---- a/arch/arm/mach-tegra/board-dt-tegra114.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra114.c
-@@ -36,7 +36,7 @@ static const char * const tegra114_dt_board_compat[] = {
- DT_MACHINE_START(TEGRA114_DT, "NVIDIA Tegra114 (Flattened Device Tree)")
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.map_io		= tegra_map_common_io,
--	.init_early	= tegra114_init_early,
-+	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra114_dt_init,
-diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/board-dt-tegra20.c
-index a0edf25..fca18e9 100644
---- a/arch/arm/mach-tegra/board-dt-tegra20.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra20.c
-@@ -145,7 +145,7 @@ static const char *tegra20_dt_board_compat[] = {
- DT_MACHINE_START(TEGRA_DT, "nVidia Tegra20 (Flattened Device Tree)")
- 	.map_io		= tegra_map_common_io,
- 	.smp		= smp_ops(tegra_smp_ops),
--	.init_early	= tegra20_init_early,
-+	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra_dt_init,
-diff --git a/arch/arm/mach-tegra/board-dt-tegra30.c b/arch/arm/mach-tegra/board-dt-tegra30.c
-index bf68567..63f8139 100644
---- a/arch/arm/mach-tegra/board-dt-tegra30.c
-+++ b/arch/arm/mach-tegra/board-dt-tegra30.c
-@@ -3,7 +3,7 @@
-  *
-  * NVIDIA Tegra30 device tree board support
-  *
-- * Copyright (C) 2011 NVIDIA Corporation
-+ * Copyright (C) 2011, 2013, NVIDIA Corporation
-  *
-  * Derived from:
-  *
-@@ -50,7 +50,7 @@ static const char *tegra30_dt_board_compat[] = {
- DT_MACHINE_START(TEGRA30_DT, "NVIDIA Tegra30 (Flattened Device Tree)")
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.map_io		= tegra_map_common_io,
--	.init_early	= tegra30_init_early,
-+	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
- 	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra30_dt_init,
-diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
-index 86851c8..60431de 100644
---- a/arch/arm/mach-tegra/board.h
-+++ b/arch/arm/mach-tegra/board.h
-@@ -26,9 +26,7 @@
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index f6b46ae..c6d6be2 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -27,7 +27,7 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
  
- void tegra_assert_system_reset(char mode, const char *cmd);
- 
--void __init tegra20_init_early(void);
--void __init tegra30_init_early(void);
--void __init tegra114_init_early(void);
-+void __init tegra_init_early(void);
- void __init tegra_map_common_io(void);
- void __init tegra_init_irq(void);
- void __init tegra_dt_init_irq(void);
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 5449a3f..f0315c9 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -94,7 +94,7 @@ static void __init tegra_init_cache(void)
- 
- }
- 
--static void __init tegra_init_early(void)
-+void __init tegra_init_early(void)
- {
- 	tegra_cpu_reset_handler_init();
- 	tegra_apb_io_init();
-@@ -102,31 +102,9 @@ static void __init tegra_init_early(void)
- 	tegra_init_cache();
- 	tegra_pmc_init();
- 	tegra_powergate_init();
-+	tegra_hotplug_init();
- }
- 
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
--void __init tegra20_init_early(void)
--{
--	tegra_init_early();
--	tegra20_hotplug_init();
--}
--#endif
--
--#ifdef CONFIG_ARCH_TEGRA_3x_SOC
--void __init tegra30_init_early(void)
--{
--	tegra_init_early();
--	tegra30_hotplug_init();
--}
--#endif
--
--#ifdef CONFIG_ARCH_TEGRA_114_SOC
--void __init tegra114_init_early(void)
--{
--	tegra_init_early();
--}
--#endif
--
- void __init tegra_init_late(void)
- {
- 	tegra_powergate_debugfs_init();
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index a599f6e..8da9f78 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -1,8 +1,7 @@
- /*
-- *
-  *  Copyright (C) 2002 ARM Ltd.
-  *  All Rights Reserved
-- *  Copyright (c) 2010, 2012 NVIDIA Corporation. All rights reserved.
-+ *  Copyright (c) 2010, 2012-2013, NVIDIA Corporation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -15,6 +14,7 @@
- #include <asm/cacheflush.h>
- #include <asm/smp_plat.h>
- 
-+#include "fuse.h"
- #include "sleep.h"
- 
- static void (*tegra_hotplug_shutdown)(void);
-@@ -56,18 +56,13 @@ int tegra_cpu_disable(unsigned int cpu)
- 	return cpu == 0 ? -EPERM : 0;
- }
- 
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
--extern void tegra20_hotplug_shutdown(void);
--void __init tegra20_hotplug_init(void)
-+void __init tegra_hotplug_init(void)
- {
--	tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
--}
--#endif
-+	if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))
-+		return;
- 
--#ifdef CONFIG_ARCH_TEGRA_3x_SOC
--extern void tegra30_hotplug_shutdown(void);
--void __init tegra30_hotplug_init(void)
--{
--	tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && tegra_chip_id == TEGRA20)
-+		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) && tegra_chip_id == TEGRA30)
-+		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
- }
--#endif
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 4ffae54..970ebd5 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2010-2012, NVIDIA Corporation. All rights reserved.
-+ * Copyright (c) 2010-2013, NVIDIA Corporation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -124,11 +124,11 @@ int tegra_sleep_cpu_finish(unsigned long);
- void tegra_disable_clean_inv_dcache(void);
- 
- #ifdef CONFIG_HOTPLUG_CPU
--void tegra20_hotplug_init(void);
--void tegra30_hotplug_init(void);
-+void tegra20_hotplug_shutdown(void);
-+void tegra30_hotplug_shutdown(void);
-+void tegra_hotplug_init(void);
- #else
--static inline void tegra20_hotplug_init(void) {}
--static inline void tegra30_hotplug_init(void) {}
-+static inline void tegra_hotplug_init(void) {}
- #endif
- 
- void tegra20_cpu_shutdown(int cpu);
+-obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-dt-tegra20.o
++obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra.o
+ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= board-dt-tegra30.o
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= board-dt-tegra114.o
+ ifeq ($(CONFIG_CPU_IDLE),y)
+diff --git a/arch/arm/mach-tegra/board-dt-tegra20.c b/arch/arm/mach-tegra/tegra.c
+similarity index 100%
+rename from arch/arm/mach-tegra/board-dt-tegra20.c
+rename to arch/arm/mach-tegra/tegra.c
 -- 
 1.7.9.5
