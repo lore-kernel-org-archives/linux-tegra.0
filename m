@@ -1,68 +1,50 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: fix driver to match DT binding
-Date: Wed, 13 Feb 2013 16:53:13 +0100
-Message-ID: <20130213155313.GA24119@avionic-0098.mockup.avionic-design.de>
-References: <1360697642-22620-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
+Subject: [PATCH v3 0/7] drm/tegra: Miscellaneous enhancements
+Date: Wed, 13 Feb 2013 17:04:59 +0100
+Message-ID: <1360771506-17849-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360697642-22620-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+This patch series introduces a number of useful features for the Tegra
+DRM driver. Patch 1 is a documentation update and adds a warning to the
+page-flip IOCTL to catch buggy drivers that return success but failed to
+update the crtc->fb field, which would cause the reference counting to
+become unbalanced.
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Patch 2 adds support for the additional two planes available on Tegra
+hardware, while patch 3 implement .mode_set_base() to allow for some
+nice speed up when changing the framebuffer without actually changing
+the resolution. Patch 4 adds VBLANK support and patch 5 builds on the
+previous two to provide the page-flipping IOCTL. Patch 6 splits the
+DC_CMD_STATE_CONTROL register writes into two consecutive writes as
+required by the TRM.
 
-On Tue, Feb 12, 2013 at 12:34:02PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> enum tegra*_clk is intended to match the IDs listed in the Tegra clock
-> bindings. There are a few mismatches, which this patch fixes:
->=20
-> 1) pll_s and cop were left out of the Tegra20 enum.
->=20
-> 2) spdif_in and spdif_out were swapped relative to the Tegra30 binding.
->=20
-> 3) i2cslow was misnamed as i2c_slow, and a duplicate i2cslow clock added
->    to the Tegra30 enum.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra20.c |    4 ++--
->  drivers/clk/tegra/clk-tegra30.c |    6 +++---
->  2 files changed, 5 insertions(+), 5 deletions(-)
+Finally patch 7 adds a new file, named "framebuffers" to debugfs which
+can be used to dump a list of framebuffers attached to the DRM device.
+This is most useful to inspect the reference count but could also be
+helpful in diagnosing out-of-memory conditions and such.
 
-Looks good to me and I haven't seen any regressions, so:
+Thierry
 
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Tested-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Thierry Reding (7):
+  drm: Add consistency check for page-flipping
+  drm/tegra: Add plane support
+  drm/tegra: Implement .mode_set_base()
+  drm/tegra: Implement VBLANK support
+  drm/tegra: Implement page-flipping support
+  drm/tegra: Split DC_CMD_STATE_CONTROL register write
+  drm/tegra: Add list of framebuffers to debugfs
 
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature
+ Documentation/DocBook/drm.tmpl |   6 +
+ drivers/gpu/drm/drm_crtc.c     |   7 +
+ drivers/gpu/drm/tegra/dc.c     | 489 ++++++++++++++++++++++++++++++++---------
+ drivers/gpu/drm/tegra/dc.h     |   2 +-
+ drivers/gpu/drm/tegra/drm.c    | 103 +++++++++
+ drivers/gpu/drm/tegra/drm.h    |  37 ++++
+ 6 files changed, 533 insertions(+), 111 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRG7bpAAoJEN0jrNd/PrOhlp4P/3tQ9qx8whSmThpkqdPIt3y6
-zrbwNSs28MYHIyKKN/FEQDYBfX9NPUACBy6DbU9+PuesudR5Lqf0Tc1wfIn7hbRZ
-jsjOmvGJxi17cIHxo6eoS64BjI2UNLj4eHce1krw/9IZ876OVn6fM66OhWaZHf1u
-hcxIUw4+nwXHsptabhIKSp95LhJmUpjHaKsyTfXLN9h0pQ2xBdYlzzgDsX4rvots
-qRboq42TjtVkzsGivsjgLGnRxnZev/lXtRqHSyotc4Nw/10hq3Xs70FAfV4np79B
-KU+j6MKm9jYUpGpV1bA/wDrbB2uYoQdMR7pJkei+z1jLL2CYgvdUi50CnU6YfTK0
-Tt5nQpipY80699H6XONXgbw94Mp6m8/SreSbIJ7MAc0HHuF/jQAhDM6mFJyjAl57
-QD2WpBfAFHwYdM0qs53HgDHosL25bOk5jo2g9w4f+jvvlfZVQVqffgsr8yaNa8w0
-gmQPu8TH0iQ7KobvXcInqC5TF6DHx2Ep2xtGONik9x9G4auDzW0YbT6RAJ7Ekpxl
-/fMoDLJd3hiIZER4FCSZW4JNvUTKs8xK+WUGVQiL57XVXGjicJB1Mpbt67TZqupM
-/yyGoMc5f45ehoARKSQpCmj3HClw+U+/vcaU0Jfv98v24LfME1vIWCBbi7S/6At3
-rFEly18A4nEszPIxJQRn
-=R6+6
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+-- 
+1.8.1.2
