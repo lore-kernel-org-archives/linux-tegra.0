@@ -1,371 +1,44 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 6/9] ARM: tegra: use pre-processor for all device trees
-Date: Wed, 13 Feb 2013 15:21:11 -0700
-Message-ID: <1360794071-29629-1-git-send-email-swarren@wwwdotorg.org>
-References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: fix driver to match DT binding
+Date: Wed, 13 Feb 2013 15:00:15 -0800
+Message-ID: <20130213230015.11471.46669@quantum>
+References: <1360697642-22620-1-git-send-email-swarren@wwwdotorg.org>
+ <20130213155313.GA24119@avionic-0098.mockup.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360791198-29462-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130213155313.GA24119-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Quoting Thierry Reding (2013-02-13 07:53:13)
+> On Tue, Feb 12, 2013 at 12:34:02PM -0700, Stephen Warren wrote:
+> > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > enum tegra*_clk is intended to match the IDs listed in the Tegra clock
+> > bindings. There are a few mismatches, which this patch fixes:
+> > 
+> > 1) pll_s and cop were left out of the Tegra20 enum.
+> > 
+> > 2) spdif_in and spdif_out were swapped relative to the Tegra30 binding.
+> > 
+> > 3) i2cslow was misnamed as i2c_slow, and a duplicate i2cslow clock added
+> >    to the Tegra30 enum.
+> > 
+> > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/clk/tegra/clk-tegra20.c |    4 ++--
+> >  drivers/clk/tegra/clk-tegra30.c |    6 +++---
+> >  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> Looks good to me and I haven't seen any regressions, so:
+> 
+> Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> Tested-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-This enables a C pre-processor pass on all Tegra device trees. This
-allows future use of #defines and header files in order to define names
-for various constants, such as the IDs and flags in GPIO specifiers.
-Use of those features will increase the readability of the device tree
-files.
+Hurray for testing.  If this hasn't already been sent to Arnd & Olof:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/{tegra114-dalmore.dts => tegra114-dalmore.dtsp}    |    2 +-
- arch/arm/boot/dts/{tegra114-pluto.dts => tegra114-pluto.dtsp}        |    2 +-
- arch/arm/boot/dts/{tegra114.dtsi => tegra114.dtsip}                  |    2 +-
- .../boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri-512.dtsip} |    2 +-
- arch/arm/boot/dts/{tegra20-harmony.dts => tegra20-harmony.dtsp}      |    2 +-
- arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-512.dtsp}    |    2 +-
- .../boot/dts/{tegra20-medcom-wide.dts => tegra20-medcom-wide.dtsp}   |    2 +-
- arch/arm/boot/dts/{tegra20-paz00.dts => tegra20-paz00.dtsp}          |    2 +-
- arch/arm/boot/dts/{tegra20-plutux.dts => tegra20-plutux.dtsp}        |    2 +-
- arch/arm/boot/dts/{tegra20-seaboard.dts => tegra20-seaboard.dtsp}    |    2 +-
- arch/arm/boot/dts/{tegra20-tamonten.dtsi => tegra20-tamonten.dtsip}  |    2 +-
- arch/arm/boot/dts/{tegra20-tec.dts => tegra20-tec.dtsp}              |    2 +-
- arch/arm/boot/dts/{tegra20-trimslice.dts => tegra20-trimslice.dtsp}  |    2 +-
- arch/arm/boot/dts/{tegra20-ventana.dts => tegra20-ventana.dtsp}      |    2 +-
- arch/arm/boot/dts/{tegra20-whistler.dts => tegra20-whistler.dtsp}    |    2 +-
- arch/arm/boot/dts/{tegra20.dtsi => tegra20.dtsip}                    |    2 +-
- arch/arm/boot/dts/{tegra30-beaver.dts => tegra30-beaver.dtsp}        |    2 +-
- .../arm/boot/dts/{tegra30-cardhu-a02.dts => tegra30-cardhu-a02.dtsp} |    2 +-
- .../arm/boot/dts/{tegra30-cardhu-a04.dts => tegra30-cardhu-a04.dtsp} |    2 +-
- arch/arm/boot/dts/{tegra30-cardhu.dtsi => tegra30-cardhu.dtsip}      |    2 +-
- arch/arm/boot/dts/{tegra30.dtsi => tegra30.dtsip}                    |    2 +-
- 21 files changed, 21 insertions(+), 21 deletions(-)
- rename arch/arm/boot/dts/{tegra114-dalmore.dts => tegra114-dalmore.dtsp} (91%)
- rename arch/arm/boot/dts/{tegra114-pluto.dts => tegra114-pluto.dtsp} (91%)
- rename arch/arm/boot/dts/{tegra114.dtsi => tegra114.dtsip} (99%)
- rename arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri-512.dtsip} (99%)
- rename arch/arm/boot/dts/{tegra20-harmony.dts => tegra20-harmony.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-512.dtsp} (97%)
- rename arch/arm/boot/dts/{tegra20-medcom-wide.dts => tegra20-medcom-wide.dtsp} (97%)
- rename arch/arm/boot/dts/{tegra20-paz00.dts => tegra20-paz00.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20-plutux.dts => tegra20-plutux.dtsp} (96%)
- rename arch/arm/boot/dts/{tegra20-seaboard.dts => tegra20-seaboard.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20-tamonten.dtsi => tegra20-tamonten.dtsip} (99%)
- rename arch/arm/boot/dts/{tegra20-tec.dts => tegra20-tec.dtsp} (96%)
- rename arch/arm/boot/dts/{tegra20-trimslice.dts => tegra20-trimslice.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20-ventana.dts => tegra20-ventana.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20-whistler.dts => tegra20-whistler.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra20.dtsi => tegra20.dtsip} (99%)
- rename arch/arm/boot/dts/{tegra30-beaver.dts => tegra30-beaver.dtsp} (99%)
- rename arch/arm/boot/dts/{tegra30-cardhu-a02.dts => tegra30-cardhu-a02.dtsp} (98%)
- rename arch/arm/boot/dts/{tegra30-cardhu-a04.dts => tegra30-cardhu-a04.dtsp} (98%)
- rename arch/arm/boot/dts/{tegra30-cardhu.dtsi => tegra30-cardhu.dtsip} (99%)
- rename arch/arm/boot/dts/{tegra30.dtsi => tegra30.dtsip} (99%)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dtsp
-similarity index 91%
-rename from arch/arm/boot/dts/tegra114-dalmore.dts
-rename to arch/arm/boot/dts/tegra114-dalmore.dtsp
-index a30aca6..51f67cd 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra114.dtsi"
-+#include "tegra114.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra114 Dalmore evaluation board";
-diff --git a/arch/arm/boot/dts/tegra114-pluto.dts b/arch/arm/boot/dts/tegra114-pluto.dtsp
-similarity index 91%
-rename from arch/arm/boot/dts/tegra114-pluto.dts
-rename to arch/arm/boot/dts/tegra114-pluto.dtsp
-index 9bea8f5..40a88d1 100644
---- a/arch/arm/boot/dts/tegra114-pluto.dts
-+++ b/arch/arm/boot/dts/tegra114-pluto.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra114.dtsi"
-+#include "tegra114.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra114 Pluto evaluation board";
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra114.dtsi
-rename to arch/arm/boot/dts/tegra114.dtsip
-index 1dfaf28..d2150f0 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsip
-@@ -1,4 +1,4 @@
--/include/ "skeleton.dtsi"
-+#include "skeleton.dtsi"
- 
- / {
- 	compatible = "nvidia,tegra114";
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-colibri-512.dtsi
-rename to arch/arm/boot/dts/tegra20-colibri-512.dtsip
-index 4441620..bf8865b 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsip
-@@ -1,4 +1,4 @@
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "Toradex Colibri T20 512MB";
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-harmony.dts
-rename to arch/arm/boot/dts/tegra20-harmony.dtsp
-index 61d027f..3fe66c1 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra20 Harmony evaluation board";
-diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris-512.dtsp
-similarity index 97%
-rename from arch/arm/boot/dts/tegra20-iris-512.dts
-rename to arch/arm/boot/dts/tegra20-iris-512.dtsp
-index 52f1103..a0ba0b0 100644
---- a/arch/arm/boot/dts/tegra20-iris-512.dts
-+++ b/arch/arm/boot/dts/tegra20-iris-512.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20-colibri-512.dtsi"
-+#include "tegra20-colibri-512.dtsip"
- 
- / {
- 	model = "Toradex Colibri T20 512MB on Iris";
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dtsp
-similarity index 97%
-rename from arch/arm/boot/dts/tegra20-medcom-wide.dts
-rename to arch/arm/boot/dts/tegra20-medcom-wide.dtsp
-index a2d6d65..6125604 100644
---- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20-tamonten.dtsi"
-+#include "tegra20-tamonten.dtsip"
- 
- / {
- 	model = "Avionic Design Medcom-Wide board";
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-paz00.dts
-rename to arch/arm/boot/dts/tegra20-paz00.dtsp
-index 54d6fce..e40d7ee 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "Toshiba AC100 / Dynabook AZ";
-diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dtsp
-similarity index 96%
-rename from arch/arm/boot/dts/tegra20-plutux.dts
-rename to arch/arm/boot/dts/tegra20-plutux.dtsp
-index 2894800..08401b9 100644
---- a/arch/arm/boot/dts/tegra20-plutux.dts
-+++ b/arch/arm/boot/dts/tegra20-plutux.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20-tamonten.dtsi"
-+#include "tegra20-tamonten.dtsip"
- 
- / {
- 	model = "Avionic Design Plutux board";
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-seaboard.dts
-rename to arch/arm/boot/dts/tegra20-seaboard.dtsp
-index 37b3a57..6534a61 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "NVIDIA Seaboard";
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-tamonten.dtsi
-rename to arch/arm/boot/dts/tegra20-tamonten.dtsip
-index 4766aba..089bbec 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsip
-@@ -1,4 +1,4 @@
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "Avionic Design Tamonten SOM";
-diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dtsp
-similarity index 96%
-rename from arch/arm/boot/dts/tegra20-tec.dts
-rename to arch/arm/boot/dts/tegra20-tec.dtsp
-index 402b210..331c81a 100644
---- a/arch/arm/boot/dts/tegra20-tec.dts
-+++ b/arch/arm/boot/dts/tegra20-tec.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20-tamonten.dtsi"
-+#include "tegra20-tamonten.dtsip"
- 
- / {
- 	model = "Avionic Design Tamonten Evaluation Carrier";
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-trimslice.dts
-rename to arch/arm/boot/dts/tegra20-trimslice.dtsp
-index 5d79e4f..1f6cd20 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "Compulab TrimSlice board";
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-ventana.dts
-rename to arch/arm/boot/dts/tegra20-ventana.dtsp
-index 425c890..a5ae217 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra20 Ventana evaluation board";
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20-whistler.dts
-rename to arch/arm/boot/dts/tegra20-whistler.dtsp
-index ea57c0f..ee24daa 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra20.dtsi"
-+#include "tegra20.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra20 Whistler evaluation board";
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra20.dtsi
-rename to arch/arm/boot/dts/tegra20.dtsip
-index 5916c93..917edd4 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsip
-@@ -1,4 +1,4 @@
--/include/ "skeleton.dtsi"
-+#include "skeleton.dtsi"
- 
- / {
- 	compatible = "nvidia,tegra20";
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dtsp
-similarity index 99%
-rename from arch/arm/boot/dts/tegra30-beaver.dts
-rename to arch/arm/boot/dts/tegra30-beaver.dtsp
-index 8ff2ff2..af23c94 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra30.dtsi"
-+#include "tegra30.dtsip"
- 
- / {
- 	model = "NVIDIA Tegra30 Beaver evaluation board";
-diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dtsp
-similarity index 98%
-rename from arch/arm/boot/dts/tegra30-cardhu-a02.dts
-rename to arch/arm/boot/dts/tegra30-cardhu-a02.dtsp
-index adc88aa..64b7184 100644
---- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra30-cardhu.dtsi"
-+#include "tegra30-cardhu.dtsip"
- 
- /* This dts file support the cardhu A02 version of board */
- 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dtsp
-similarity index 98%
-rename from arch/arm/boot/dts/tegra30-cardhu-a04.dts
-rename to arch/arm/boot/dts/tegra30-cardhu-a04.dtsp
-index 08163e1..fc0d771 100644
---- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-+++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dtsp
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "tegra30-cardhu.dtsi"
-+#include "tegra30-cardhu.dtsip"
- 
- /* This dts file support the cardhu A04 and later versions of board */
- 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra30-cardhu.dtsi
-rename to arch/arm/boot/dts/tegra30-cardhu.dtsip
-index 1749927..75ff544 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsip
-@@ -1,4 +1,4 @@
--/include/ "tegra30.dtsi"
-+#include "tegra30.dtsip"
- 
- /**
-  * This file contains common DT entry for all fab version of Cardhu.
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsip
-similarity index 99%
-rename from arch/arm/boot/dts/tegra30.dtsi
-rename to arch/arm/boot/dts/tegra30.dtsip
-index 572a45b..d25975e 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsip
-@@ -1,4 +1,4 @@
--/include/ "skeleton.dtsi"
-+#include "skeleton.dtsi"
- 
- / {
- 	compatible = "nvidia,tegra30";
--- 
-1.7.10.4
+Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
