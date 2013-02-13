@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v3 6/7] drm/tegra: Split DC_CMD_STATE_CONTROL register write
-Date: Wed, 13 Feb 2013 17:05:05 +0100
-Message-ID: <1360771506-17849-7-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v3 1/7] drm: Add consistency check for page-flipping
+Date: Wed, 13 Feb 2013 17:05:00 +0100
+Message-ID: <1360771506-17849-2-git-send-email-thierry.reding@avionic-design.de>
 References: <1360771506-17849-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1360771506-17849-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,31 +10,55 @@ To: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra TRM says that the ACT_REQ and UPDATE fields cannot be
-programmed at the same time so they are updated in two consecutive
-writes instead.
+Driver implementations of the drm_crtc's .page_flip() function are
+required to update the crtc->fb field on success to reflect that the new
+framebuffer is now in use. This is important to keep reference counting
+on the framebuffers balanced.
 
+While at it, document this requirement to keep others from falling into
+the same trap.
+
+Suggested-by: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Documentation/DocBook/drm.tmpl | 6 ++++++
+ drivers/gpu/drm/drm_crtc.c     | 7 +++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 0328963..9b2a551 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -594,9 +594,10 @@ static void tegra_crtc_commit(struct drm_crtc *crtc)
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
- 	unsigned long value;
- 
--	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ |
--		GENERAL_UPDATE | WIN_A_UPDATE;
-+	value = GENERAL_UPDATE | WIN_A_UPDATE;
-+	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
- 
-+	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
- 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
- 
- 	drm_vblank_post_modeset(crtc->dev, dc->pipe);
+diff --git a/Documentation/DocBook/drm.tmpl b/Documentation/DocBook/drm.tmpl
+index fae8018..8dfaeb0 100644
+--- a/Documentation/DocBook/drm.tmpl
++++ b/Documentation/DocBook/drm.tmpl
+@@ -1161,6 +1161,12 @@ int max_width, max_height;</synopsis>
+             any new rendering to the frame buffer until the page flip completes.
+           </para>
+           <para>
++            If a page flip can be successfully scheduled the driver must set the
++            <code>drm_crtc-&lt;fb</code> field to the new framebuffer pointed to
++            by <code>fb</code>. This is important so that the reference counting
++            on framebuffers stays balanced.
++          </para>
++          <para>
+             If a page flip is already pending, the
+             <methodname>page_flip</methodname> operation must return
+             -<errorname>EBUSY</errorname>.
+diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+index 838c9b6..d86edc1 100644
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -3766,6 +3766,13 @@ int drm_mode_page_flip_ioctl(struct drm_device *dev,
+ 		/* Keep the old fb, don't unref it. */
+ 		old_fb = NULL;
+ 	} else {
++		/*
++		 * Warn if the driver hasn't properly updated the crtc->fb
++		 * field to reflect that the new framebuffer is now used.
++		 * Failing to do so will screw with the reference counting
++		 * on framebuffers.
++		 */
++		WARN_ON(crtc->fb != fb);
+ 		/* Unref only the old framebuffer. */
+ 		fb = NULL;
+ 	}
 -- 
 1.8.1.2
