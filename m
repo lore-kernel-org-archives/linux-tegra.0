@@ -1,109 +1,42 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 3/3] ARM: tegra: Unify Device tree board files
-Date: Wed, 13 Feb 2013 07:12:40 +0100
-Message-ID: <20130213.081240.1605796167151164030.hdoyu@nvidia.com>
-References: <20130212.070456.532657136988541923.hdoyu@nvidia.com><201302121350.15683.arnd@arndb.de><511A6F6C.8090205@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] clk: tegra: initialise parent of uart clocks
+Date: Wed, 13 Feb 2013 12:32:56 +0530
+Message-ID: <511B3AA0.7020403@nvidia.com>
+References: <1360682279-23051-1-git-send-email-ldewangan@nvidia.com> <511A7FF1.1030009@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <511A6F6C.8090205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <511A7FF1.1030009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "marvin24-Mmb7MZpHnFY@public.gmane.org" <marvin24-Mmb7MZpHnFY@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 12 Feb 2013 17:35:56 +0100:
+On Tuesday 12 February 2013 11:16 PM, Stephen Warren wrote:
+> On 02/12/2013 08:17 AM, Laxman Dewangan wrote:
+>> Initialise the parent of UARTs to PLLP and disabling clock by
+>> default.
+> This patch wasn't tested, was it? Without the patch I just sent titled
+> "ARM: tegra: remove clock-frequency properties from serial nodes", the
+> UART clocks get turned off and the console breaks.
 
-> However I'd like to avoid changing the body of those two functions at
-> all if possible, since I hope the PCIe driver rework will be merged in
-> 3.10, and that will allow the Harmony and TrimSlice init functions to be
-> removed entirely. I'd rather not have conflicts with the removal patch.
-> 
-> > Since we are not going to add any other board specfic init functions, you
-> > can also unroll the loop and put everything into tegra_dt_init_late:
-> 
-> That's not necessarily true. While we certainly don't plan to, I don't
-> think we can rule it out; after all, we don't have rfkill bindings and
-> yet other boards will need them.
+I tested this in next-20130212 where "clock-frequency" is there in 
+tegra30.dtsi file.
+If you remove this from dts file at all then it will not work as there 
+is no execution path to call the clk_prepare_enable().
 
-Considering the above points,
+of_serial.c file:
+         if (of_property_read_u32(np, "clock-frequency", &clk)) {
 
-- The Harmony and TrimSlice init functions will be removed entirely
-  so soon that we want to avoid those merge conflicts as much as
-  possible.
-- We may still need board specific init, especially for rfkill.
-- We want to build any combination of Tegra{20,30,114}, 2^3 - 1 == 7.
+                 /* Get clk rate through clk driver if present */
+                 info->clk = clk_get(&ofdev->dev, NULL);
+                 if (IS_ERR(info->clk)) {
+                         dev_warn(&ofdev->dev,
+                                 "clk or clock-frequency not defined\n");
+                         return PTR_ERR(info->clk);
+                 }
 
-The patch for "tegra.c" would be as below.
-
-Should I still keep the name, "tegra20_auxdata_lookup" to avoid
-any conflicts or "tegra_auxdata_lookup" would be ok for merge?
-
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index fca18e9..fd4412d 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -1,6 +1,7 @@
- /*
-- * nVidia Tegra device tree board support
-+ * NVIDIA Tegra SoC device tree board support
-  *
-+ * Copyright (C) 2011, 2013, NVIDIA Corporation
-  * Copyright (C) 2010 Secret Lab Technologies, Ltd.
-  * Copyright (C) 2010 Google, Inc.
-  *
-@@ -67,7 +68,7 @@ static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
- 	.vbus_gpio = -1,
- };
- 
--static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
-+static struct of_dev_auxdata tegra_auxdata_lookup[] __initdata = {
- 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5000000, "tegra-ehci.0",
- 		       &tegra_ehci1_pdata),
- 	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5004000, "tegra-ehci.1",
-@@ -84,7 +85,7 @@ static void __init tegra_dt_init(void)
- 	 * devices
- 	 */
- 	of_platform_populate(NULL, of_default_bus_match_table,
--				tegra20_auxdata_lookup, NULL);
-+				tegra_auxdata_lookup, NULL);
- }
- 
- static void __init trimslice_init(void)
-@@ -111,7 +112,8 @@ static void __init harmony_init(void)
- 
- static void __init paz00_init(void)
- {
--	tegra_paz00_wifikill_init();
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-+		tegra_paz00_wifikill_init();
- }
- 
- static struct {
-@@ -137,12 +139,14 @@ static void __init tegra_dt_init_late(void)
- 	}
- }
- 
--static const char *tegra20_dt_board_compat[] = {
-+static const char * const tegra_dt_board_compat[] = {
-+	"nvidia,tegra114",
-+	"nvidia,tegra30",
- 	"nvidia,tegra20",
- 	NULL
- };
- 
--DT_MACHINE_START(TEGRA_DT, "nVidia Tegra20 (Flattened Device Tree)")
-+DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
- 	.map_io		= tegra_map_common_io,
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.init_early	= tegra_init_early,
-@@ -151,5 +155,5 @@ DT_MACHINE_START(TEGRA_DT, "nVidia Tegra20 (Flattened Device Tree)")
- 	.init_machine	= tegra_dt_init,
- 	.init_late	= tegra_dt_init_late,
- 	.restart	= tegra_assert_system_reset,
--	.dt_compat	= tegra20_dt_board_compat,
-+	.dt_compat	= tegra_dt_board_compat,
- MACHINE_END
--- 
-1.7.9.5
+                 clk_prepare_enable(info->clk);
+                 clk = clk_get_rate(info->clk);
+         }
