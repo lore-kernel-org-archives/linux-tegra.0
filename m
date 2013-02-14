@@ -1,30 +1,25 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
-Date: Thu, 14 Feb 2013 16:29:06 -0700
-Message-ID: <511D7342.2070205@wwwdotorg.org>
-References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com><1360868369-20093-2-git-send-email-hdoyu@nvidia.com><511D45E0.1080105@wwwdotorg.org> <20130214.223422.1106350409475384652.hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/9] ARM: dt: add header to define GPIO flags
+Date: Thu, 14 Feb 2013 16:29:53 -0700
+Message-ID: <511D7371.6040603@wwwdotorg.org>
+References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org><1360791198-29462-2-git-send-email-swarren@wwwdotorg.org> <20130214.224816.1898594449880044716.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20130214.223422.1106350409475384652.hdoyu@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "sjg@chromium.org" <sjg@chromium.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130214.224816.1898594449880044716.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/14/2013 01:34 PM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren@wwwdotorg.org> wrote @ Thu, 14 Feb 2013 21:15:28 +0100:
-> 
->> Oh, and I don't think you updated e.g. nvidia,tegra20-car.txt to remove
->> the list of clocks.
-> 
-> Not yet removed. I think that this could be done with the patch which
-> allows kernel source to include DT header files.
+On 02/14/2013 01:48 PM, Hiroshi Doyu wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 13 Feb 2013 22:33:10 +0100:
+>> Many GPIO device tree bindings use the same flags. Create a header to
+>> define those.
+... [discussion about adding include guards]
+> To avoid multple inclusion problems, do we want the above
+> ifdef/define/endif for other DT header files as well?
 
-By defining the header file, you're really causing that header to be
-part of the binding definition. I think we should move the code from the
-binding .txt file to the header, rather than duplicating it and then
-removing it. The kernel doesn't include the binding .txt file right now,
-so I don't see any correlation with making it include the header vs.
-when we remove the list from the binding document.
+Yes, we should probably add include guards to all the files. I'll update
+my patch series.
