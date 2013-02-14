@@ -1,12 +1,12 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [PATCH] i2c: tegra: remove warning dump if timeout happen in transfer
-Date: Thu, 14 Feb 2013 18:11:07 +0530
-Message-ID: <1360845667-11276-1-git-send-email-ldewangan@nvidia.com>
+Date: Thu, 14 Feb 2013 18:13:33 +0530
+Message-ID: <1360845813-11334-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
 Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
@@ -21,6 +21,8 @@ Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.or
 The patch is generated based on discussion happen between Stephena and
 Wolfram on the patch:
  i2c: add bcm2835 driver
+
+resending patch as Wolfram's email id has been changed.
 
  drivers/i2c/busses/i2c-tegra.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
