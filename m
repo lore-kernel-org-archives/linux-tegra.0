@@ -1,106 +1,43 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: [PATCH 2/2] ARM: tegra114: convert device tree files to use CLK defines
-Date: Thu, 14 Feb 2013 21:54:01 +0200
-Message-ID: <1360871650-25771-2-git-send-email-hdoyu@nvidia.com>
-References: <1360871650-25771-1-git-send-email-hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
+Date: Thu, 14 Feb 2013 13:15:28 -0700
+Message-ID: <511D45E0.1080105@wwwdotorg.org>
+References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com> <1360868369-20093-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1360871650-25771-1-git-send-email-hdoyu@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360868369-20093-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Replace magic number in tegra_car:
+On 02/14/2013 11:59 AM, Hiroshi Doyu wrote:
+> To replace magic number in tegra_car:
+> 
+> -               clocks = <&tegra_car 28>;
+> +               clocks = <&tegra_car CLK_HOST1X>;
 
--               clocks = <&tegra_car 28>;
-+               clocks = <&tegra_car CLK_HOST1X>;
+> diff --git a/arch/arm/boot/dts/tegra20-car.h b/arch/arm/boot/dts/tegra20-car.h
 
-Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
----
- .../bindings/clock/nvidia,tegra114-car.txt         |    2 +-
- arch/arm/boot/dts/tegra114.dtsip                   |   13 +++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+Sorry, forgot a couple small comments the last time around.
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
-index 25e088d..be95f92 100644
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
-@@ -283,7 +283,7 @@ Example SoC include file:
- 	};
- 
- 	usb@c5004000 {
--		clocks = <&tegra_car 58>; /* usb2 */
-+		clocks = <&tegra_car CLK_USB2>; /* usb2 */
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/tegra114.dtsip b/arch/arm/boot/dts/tegra114.dtsip
-index df01b15..2afa559 100644
---- a/arch/arm/boot/dts/tegra114.dtsip
-+++ b/arch/arm/boot/dts/tegra114.dtsip
-@@ -1,6 +1,7 @@
- #include "skeleton.dtsi"
- #include "tegra-gpio.h"
- #include "arm-gic.h"
-+#include "tegra114-car.h"
- 
- / {
- 	compatible = "nvidia,tegra114";
-@@ -27,7 +28,7 @@
- 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&tegra_car 5>;
-+		clocks = <&tegra_car CLK_TIMER>;
- 	};
- 
- 	tegra_car: clock {
-@@ -70,7 +71,7 @@
- 		reg-shift = <2>;
- 		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
- 		status = "disabled";
--		clocks = <&tegra_car 6>;
-+		clocks = <&tegra_car CLK_UARTA>;
- 	};
- 
- 	serial@70006040 {
-@@ -79,7 +80,7 @@
- 		reg-shift = <2>;
- 		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
- 		status = "disabled";
--		clocks = <&tegra_car 192>;
-+		clocks = <&tegra_car CLK_UARTB>;
- 	};
- 
- 	serial@70006200 {
-@@ -88,7 +89,7 @@
- 		reg-shift = <2>;
- 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
- 		status = "disabled";
--		clocks = <&tegra_car 55>;
-+		clocks = <&tegra_car CLK_UARTC>;
- 	};
- 
- 	serial@70006300 {
-@@ -97,14 +98,14 @@
- 		reg-shift = <2>;
- 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
- 		status = "disabled";
--		clocks = <&tegra_car 65>;
-+		clocks = <&tegra_car CLK_UARTD>;
- 	};
- 
- 	rtc {
- 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x7000e000 0x100>;
- 		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&tegra_car 4>;
-+		clocks = <&tegra_car CLK_RTC>;
- 	};
- 
- 	pmc {
--- 
-1.7.9.5
+This file should probably have some header indicating which binding it
+describes, rather like the GPIO header in my patch series.
 
+> +#define CLK_CPU 0
+
+I'd suggest naming that TEGRA20_CLK_CPU, so that the various different
+clock headers don't conflict. It's not too likely that more than one of
+the /Tegra/ clock headers will be included at once, but it doesn't seem
+that unlikely that a board file could end up having a Tegra clock header
+included plus various other clock headers for some other chip that has
+some clock outputs.
+
+Oh, and I don't think you updated e.g. nvidia,tegra20-car.txt to remove
+the list of clocks.
+
+BTW, I assume this patch includes the changes from my recent "clk:
+tegra: fix driver to match DT binding" and anything else similar that's
+in the most recent Tegra for-next?
