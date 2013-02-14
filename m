@@ -1,57 +1,37 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
-Date: Thu, 14 Feb 2013 12:01:12 +0200
-Message-ID: <20130214100112.GH3073@tbergstrom-lnx.Nvidia.com>
-References: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com>
- <1360580700-10245-9-git-send-email-pdeschrijver@nvidia.com>
- <511A7AB5.4040607@wwwdotorg.org>
- <20130213113807.GE3073@tbergstrom-lnx.Nvidia.com>
- <511BC3C3.6070402@wwwdotorg.org>
+Subject: Re: [PATCH 1/1] ARM: dt: add header to define tegra20 clocks
+Date: Thu, 14 Feb 2013 12:12:20 +0200
+Message-ID: <20130214101220.GI3073@tbergstrom-lnx.Nvidia.com>
+References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org>
+ <1360823899-17846-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <511BC3C3.6070402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360823899-17846-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 13, 2013 at 05:48:03PM +0100, Stephen Warren wrote:
-> On 02/13/2013 04:38 AM, Peter De Schrijver wrote:
-> > On Tue, Feb 12, 2013 at 06:24:05PM +0100, Stephen Warren wrote:
-> >> On 02/11/2013 04:04 AM, Peter De Schrijver wrote:
-> >>> Add references to tegra_car clocks for the basic device nodes.
-> >>
-> >> In this patch, you also need to remove the "clock-frequency" properties
-> >> from tegra114-*.dts board files.
-> > 
-> > That would probably break bisectability no?
-> 
-> Oh right, I read the patch order backwards. You can fix this by moving
-> this patch to the end of the series.
+On Thu, Feb 14, 2013 at 07:38:17AM +0100, Hiroshi Doyu wrote:
+> To replace magic number in "clocks = <&tegra_car 28>;"
 > 
 
-Probably. Need to check if this doesn't cause other problems.
-
-> > I think this needs to be done in a separate patch.
-> 
-> To avoid bisect issues, the clock-frequency property should be removed
-> in the same patch that adds the clocks property, or after it.
-> 
-> > Also, the UARTD enabling in init_table[] can then be removed.
-> 
-> You still need to initialize all the UART clocks in init_table[]. This
-> is required to make sure the clocks have the correct parent. Without
-> this explicit initialization, on Tegra30 at least, it was found that
-> UART C didn't work correctly for Bluetooth since the default parent was
-> something that wasn't generating the expected frequency.
-> 
-
-Yes. The parent relationships still need to be defined. But I think that's
-the only thing we actually need to define still? Also the parent relationships
-can be board specific I think in some cases, so maybe we want to move those to
-DT as well at some point?
+But then we should probably also remove the enum tegra20_clk and replace it
+with this header file. We should also consider removing the list of IDs from
+the documentation and refer to the header file instead. Otherwise we will have
+3 places which define the same IDs and we need to be sure they stay in sync...
 
 Cheers,
 
