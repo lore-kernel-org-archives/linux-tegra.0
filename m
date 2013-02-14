@@ -1,38 +1,45 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: dt: add header to define tegra20 clocks
-Date: Thu, 14 Feb 2013 14:42:50 +0100
-Message-ID: <20130214.154250.475978229890081002.hdoyu@nvidia.com>
-References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org><1360823899-17846-1-git-send-email-hdoyu@nvidia.com><20130214101220.GI3073@tbergstrom-lnx.Nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: provide dummy cpu car ops
+Date: Thu, 14 Feb 2013 16:52:57 +0200
+Message-ID: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130214101220.GI3073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Thu, 14 Feb 2013 11:12:20 +0100:
+tegra_boot_secondary() relies on some of the car ops. This means having an
+uninitialized tegra_cpu_car_ops will lead to an early boot panic.
+Providing a dummy struct avoids this and makes adding Tegra114 clock support
+in a bisectable way a lot easier.
 
-> On Thu, Feb 14, 2013 at 07:38:17AM +0100, Hiroshi Doyu wrote:
-> > To replace magic number in "clocks = <&tegra_car 28>;"
-> > 
-> 
-> But then we should probably also remove the enum tegra20_clk and replace it
-> with this header file. We should also consider removing the list of IDs from
-> the documentation and refer to the header file instead. Otherwise we will have
-> 3 places which define the same IDs and we need to be sure they stay in sync...
+--
 
-Actually I generate "arch/arm/boot/dts/tegra{20,30}-car.h" by parsing
-"enum tegra{20,30}_clk {..};" with a python script.
+Stephen,
 
-There could be the same kind of requirement from others that both
-"dtsip" and "C-source" want to share the same header file. If we
-consider that DT is the exact H/W description, C-source should be able
-to include a DT header file.
+Should this be a separate patch or should I make this part of new release of
+the Tegra114 clock series?
 
-For example, a C-header file for "enum tegra{20,30}_clk" should be
-generated from "arch/arm/boot/dts/tegra{20,30}-car.h" at runtime, or
-alternatively just "drivers/clk/tegra/clk-tegra{20,30}.c" can include
-"arch/arm/boot/dts/tegra{20,30}-car.h"? The latter may be easier.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index a603b9a..f6c141f 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -22,7 +22,8 @@
+ #include "clk.h"
+ 
+ /* Global data of Tegra CPU CAR ops */
+-struct tegra_cpu_car_ops *tegra_cpu_car_ops;
++static struct tegra_cpu_car_ops *dummy_car_ops;
++struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
+ 
+ void __init tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
+ 				struct clk *clks[], int clk_max)
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
