@@ -1,31 +1,53 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
-Date: Thu, 14 Feb 2013 21:34:22 +0100
-Message-ID: <20130214.223422.1106350409475384652.hdoyu@nvidia.com>
-References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com><1360868369-20093-2-git-send-email-hdoyu@nvidia.com><511D45E0.1080105@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/9] ARM: dt: add header to define GPIO flags
+Date: Thu, 14 Feb 2013 21:48:16 +0100
+Message-ID: <20130214.224816.1898594449880044716.hdoyu@nvidia.com>
+References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org><1360791198-29462-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <511D45E0.1080105@wwwdotorg.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "rob@landley.net" <rob@landley.net>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "sjg@chromium.org" <sjg@chromium.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360791198-29462-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren@wwwdotorg.org> wrote @ Thu, 14 Feb 2013 21:15:28 +0100:
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 13 Feb 2013 22:33:10 +0100:
 
-> Oh, and I don't think you updated e.g. nvidia,tegra20-car.txt to remove
-> the list of clocks.
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Many GPIO device tree bindings use the same flags. Create a header to
+> define those.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/gpio.h |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/gpio.h
+> 
+> diff --git a/arch/arm/boot/dts/gpio.h b/arch/arm/boot/dts/gpio.h
+> new file mode 100644
+> index 0000000..4c9da69
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/gpio.h
+> @@ -0,0 +1,10 @@
+> +/*
+> + * This header provides constants for most GPIO bindings.
+> + *
+> + * Most GPIO bindings include a flags cell as part of the GPIO specifier.
+> + * In most cases, the format of the flags cell uses the standard values
+> + * defined in this header.
+> + */
 
-Not yet removed. I think that this could be done with the patch which
-allows kernel source to include DT header files.
+#ifdef _DTS_GPIO_H
+#define _DTS_GPIO_H
 
-> BTW, I assume this patch includes the changes from my recent "clk:
-> tegra: fix driver to match DT binding" and anything else similar that's
-> in the most recent Tegra for-next?
+> +
+> +#define GPIO_ACTIVE_HIGH 0
+> +#define GPIO_ACTIVE_LOW 1
 
-Of course not, that's a little bit too recent.
+#endif /* _DTS_GPIO_H */
 
-I'll rerun my script against the laste Tegra for-next and post them as
-v3(inc. Tegra114)
+To avoid multple inclusion problems, do we want the above
+ifdef/define/endif for other DT header files as well?
