@@ -1,27 +1,59 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH 6/9] ARM: tegra: use pre-processor for all device trees
-Date: Thu, 14 Feb 2013 10:31:38 -0800
-Message-ID: <CAOesGMjxkwDF45vfsq8ipNa=465_A6dDF4a2zD3q17uJU8fseg@mail.gmail.com>
-References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org>
-	<1360791198-29462-7-git-send-email-swarren@wwwdotorg.org>
-	<511D21E7.5090307@gmail.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: [v2 0/4] ARM: tegra: convert device tree files to use CLK defines
+Date: Thu, 14 Feb 2013 20:59:14 +0200
+Message-ID: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <511D21E7.5090307-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 14, 2013 at 9:41 AM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Hi,
 
-> Just a reminder to use -M for git format-patch. Why -M for format-patch
-> is not the default I wonder.
+With new dtc+cpp feature, we can get rid of magic numbers in dts*
+files. To get rid of Tegra clock magic number, the following patches
+were created with a script run as below. This can be applied for
+Tegra114 clock as well.
 
-Also, don't quote a huge patch just to make a 2-line comment. :-)
+for x in 20 30; do
+    cat drivers/clk/tegra/clk-tegra$x.c | enum2define.py \
+    	> arch/arm/boot/dts/tegra$x-car.h 2>/tmp/tegra$x-car.sed
+    sed -i -f /tmp/tegra$x-car.sed \
+    	Documentation/devicetree/bindings/clock/nvidia\,tegra$x-car.txt \
+	arch/arm/boot/dts/*
+done
 
--M is likely not the default because classic patch does not understand it.
+We plan to share those DT header files with kernel source later[1].
 
+This series depends on:
 
--Olof
+  [PATCH 0/9] ARM: tegra: use new dtc+cpp feature
+  http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/149613.html
+
+v1:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/149672.html
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/149804.html
+
+Hiroshi Doyu (4):
+  ARM: tegra20: create a DT header defining CLK IDs
+  ARM: tegra20: convert device tree files to use CLK defines
+  ARM: tegra30: create a DT header defining CLK IDs
+  ARM: tegra30: convert device tree files to use CLK defines
+
+ .../bindings/clock/nvidia,tegra20-car.txt          |    2 +-
+ .../bindings/clock/nvidia,tegra30-car.txt          |    2 +-
+ arch/arm/boot/dts/tegra20-car.h                    |  114 +++++++++++++
+ arch/arm/boot/dts/tegra20-paz00.dtsp               |    2 +-
+ arch/arm/boot/dts/tegra20.dtsip                    |   85 +++++-----
+ arch/arm/boot/dts/tegra30-car.h                    |  171 ++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsip                    |   87 +++++-----
+ 7 files changed, 375 insertions(+), 88 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra20-car.h
+ create mode 100644 arch/arm/boot/dts/tegra30-car.h
+
+--
+1.7.9.5
+
