@@ -1,44 +1,32 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 0/9] ARM: tegra: use new dtc+cpp feature
-Date: Thu, 14 Feb 2013 09:03:33 -0800
-Message-ID: <20130214170333.GB7144@atomide.com>
-References: <1360791198-29462-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
+Date: Thu, 14 Feb 2013 10:30:39 -0700
+Message-ID: <511D1F3F.1020309@wwwdotorg.org>
+References: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com> <1360580700-10245-9-git-send-email-pdeschrijver@nvidia.com> <511A7AB5.4040607@wwwdotorg.org> <20130213113807.GE3073@tbergstrom-lnx.Nvidia.com> <511BC3C3.6070402@wwwdotorg.org> <20130214100112.GH3073@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1360791198-29462-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130214100112.GH3073-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> [130213 13:37]:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This series converts the Tegra device tree files to use the new feature
-> of running cpp over .dts files before compiling them with dtc. This
-> allows GPIOs and other GPIO/IRQ specifier cells to be named for example.
-> 
-> As far as merging goes, I'd anticipate the first 3 patches being useful
-> to any other ARM sub-arch that wants to convert; perhaps they could go
-> through some arm-soc common branch. The next 2 patches are Tegra-specific
-> cleanup that I'd anticipate applying to Tegra's for-3.10/cleanup. The
-> rest of the patches depend on those 5 previous patches, so would need to
-> go into a Tegra branch that merges in the previous patches; I'd anticipate
-> calling it for-3.10/dtc-cpp say.
+On 02/14/2013 03:01 AM, Peter De Schrijver wrote:
+> On Wed, Feb 13, 2013 at 05:48:03PM +0100, Stephen Warren wrote:
+...
+>> You still need to initialize all the UART clocks in init_table[]. This
+...
+> Yes. The parent relationships still need to be defined. But I think that's
+> the only thing we actually need to define still?
 
-Great! This will help a lot with making the .dts* files readable.
- 
-> One issue this raises: The first 2 patches aren't ARM-specific. I put the
-> files they create into arch/arm/boot/dts, but I wonder if they wouldn't be
-> better in some arch-agnostic include directory, or even right with the
-> binding documentation in Documentation/devicetree/bindings. Moving the
-> files would require adjusting the cpp include path.
+You might want to explicitly set the rate too, if there is a divider in
+the clk module that affects it. If not, then parenting is indeed all you
+need.
 
-I'd assume this will be used by many architectures, so it would probably
-be a good idea to make them common to start with.
+> Also the parent relationships
+> can be board specific I think in some cases, so maybe we want to move those to
+> DT as well at some point?
 
-Regards,
-
-Tony
+Yes, that's the plan. I think/thought Prashant was planning to work on that.
