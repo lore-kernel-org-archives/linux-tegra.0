@@ -1,57 +1,59 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] drm: tegra: don't depend on OF
-Date: Fri, 15 Feb 2013 23:26:35 +0100
-Message-ID: <20130215222635.GA14328@avionic-0098.mockup.avionic-design.de>
-References: <1360965179-14815-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] pwm: tegra: assume CONFIG_OF
+Date: Fri, 15 Feb 2013 23:28:58 +0100
+Message-ID: <20130215222858.GA14441@avionic-0098.mockup.avionic-design.de>
+References: <1360965742-19744-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
+	protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1360965179-14815-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1360965742-19744-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---/9DWx/yDrRhgMJTb
+--dDRMvlgZJXvWKvBx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 15, 2013 at 02:52:59PM -0700, Stephen Warren wrote:
+On Fri, Feb 15, 2013 at 03:02:22PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> ARCH_TEGRA always enabled OF, so there's no need for any driver to
-> depend on it.
+> Tegra only supports, and always enables, device tree. Remove all ifdefs
+> for DT support from the driver.
 >=20
 > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pwm/pwm-tegra.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Applied, thanks.
 
---/9DWx/yDrRhgMJTb
+Thierry
+
+--dDRMvlgZJXvWKvBx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRHrYbAAoJEN0jrNd/PrOhCQkP/jxLBXZ+AeRpp7GDEyXvGlp2
-n84M2QQUpnvzKPXE+YQAc0MjQXxabGiaoolGaGl4GeY7TpgYXq0+q+MQTn82rtzr
-2MRCfCOA6jqKGWrXDXHZGXumKcP/SNiql6pP11sLh0p2XKZT0ZogWf9xz9YVg964
-dMIfOCZlQBPxRXZV/7A79ZS5EPG8CN/Ixa20eFs1vktI+fIa/o/+rm0fRabDWkc0
-PN2cZcfiRw73FpK18dCl4kSwcSiK9jdJnebT9TA/HEXX2n9DFS1kj+WLhu4d+ZxU
-jeWEybR9jZLYhqZq7aTcwWfKAm2CbMMzvqDtvDxie/pwT6yvz/vxJi+5GywG6HJ4
-AzSIK2LOL34VllNqAHEHTNTVv1ezIBz65O8JGo5V5525AJa/dmIaBDI7FnW1LtDB
-+w0Rd+B4Iwwru94Ce1JE5BMesE5tf0+5Fw2eSqq3uNNqxjVeBuSOsUO6LcdW9JLy
-oyf6Xsy14cmXSVmoFitDajYCGXHPfwk+2W6DQoFtlZT6zP0gg4dFbEPRa8XMrMta
-r/bWWpRVY7xy4RL8n23XA0703OQo1B8NCOSHPlCjPBcyGY0LH16D0on1ehD6NoIT
-qQAcln5U+tWzGQaElKufV9mxoskWt0Wq7Nt9p33KQcW9YIaA3361HwpLxv1WU6Ht
-TOu4wdLgRDXOt1EIUoT8
-=kltT
+iQIcBAEBAgAGBQJRHraqAAoJEN0jrNd/PrOhbGwP/Rq5azRbDk0dKiZzp6Cf/Gbr
+V/qhhRsHNDmK0+ffmvqIulKmBrUNsU5u0RANnU580CfD4vEespm23mFOQx2RjriE
+lfkpE8pxCBvIDxjZWFyrV/ZCARuX5YbWkKw2hFqZi8eB7RC83GIXUYXP+dxseBcN
+yNKYBuWoNYHHjmqjdLX9+9pVGN7um821XFRb7Z8sbPH0D+O/1aG51D6j4Vkrukav
+LxFZubyqQrxj5x9Shr9PKT+r6pbUe/NJbMvy2v2qSkMiOd2FS/gDXwyhLurqn1Vh
+288lvMwpsdYpq27vMEeIez2af/cdi4ZAy7VK8uaLUYDeccOkX7SR8fqFoRyq30Zh
+NdlFCsbiyznNPS9LCRO+weNxNUkmeu/O2OFixoVqT9PEYVeE6Hi5cM06a4GcXDB4
+VkLAbCy7FYkdONj0Jv+CoB4tKtVeMKgJ+yyT1+L/EQLHBDvT6nUyp9rVF7oe6Idj
+zmHc57nEKL4aD/bvXHFNvoEz5REoIyCsG7gCNFtMwaifJbtnXH8WX6VMbOpdn0HG
+hjvaUcNkS5HOPkyIRM1d1jE6r7jAJQ5LRAvLHrFIeXUYFf0wdo3c1UKQbbEc0mVR
+ScvlucIdsoDslLe3Ui51i/3nDSy5u9fH2wAjafSaG03jGwOEG0iq7hjtW4Dx1l2B
+GhybQaoHEyHmaupTiJ9V
+=01kc
 -----END PGP SIGNATURE-----
 
---/9DWx/yDrRhgMJTb--
+--dDRMvlgZJXvWKvBx--
