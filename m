@@ -1,115 +1,233 @@
-From: Mario Kleiner <mario.kleiner.de-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 5/5] drm/tegra: Implement page-flipping support
-Date: Fri, 15 Feb 2013 23:34:26 +0100
-Message-ID: <511EB7F2.4070603@gmail.com>
-References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de> <1358179560-26799-6-git-send-email-thierry.reding@avionic-design.de> <50FE4E4F.6080506@nvidia.com> <50FECBFC.8080307@gmail.com> <20130211090001.GA3423@avionic-0098.mockup.avionic-design.de>
+From: Mario Kleiner <mario.kleiner.de@gmail.com>
+Subject: Re: [PATCH v2 4/5] drm/tegra: Implement VBLANK support
+Date: Fri, 15 Feb 2013 23:38:14 +0100
+Message-ID: <511EB8D6.8090401@gmail.com>
+References: <1358179560-26799-1-git-send-email-thierry.reding@avionic-design.de>
+	<1358179560-26799-5-git-send-email-thierry.reding@avionic-design.de>
+	<50FECE63.7090009@tuebingen.mpg.de>
+	<20130211091301.GC3423@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130211090001.GA3423-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mario Kleiner <mario.kleiner-TdbV1Z3I5XE0NhjG498hmQ@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============2026069448=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20130211091301.GC3423@avionic-0098.mockup.avionic-design.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Thierry Reding <thierry.reding@avionic-design.de>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mario Kleiner <mario.kleiner@tuebingen.mpg.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/11/2013 10:00 AM, Thierry Reding wrote:
-> On Tue, Jan 22, 2013 at 06:27:24PM +0100, Mario Kleiner wrote:
->> On 22.01.13 09:31, Terje Bergstr=C3=B6m wrote:
->>> On 14.01.2013 18:06, Thierry Reding wrote:
->>>> +static int tegra_dc_page_flip(struct drm_crtc *crtc, struct drm_f=
-ramebuffer *fb,
->>>> +			      struct drm_pending_vblank_event *event)
->>>> +{
->>>> +	struct tegra_framebuffer *newfb =3D to_tegra_fb(fb);
->>>> +	struct tegra_dc *dc =3D to_tegra_dc(crtc);
->>>> +	struct drm_device *drm =3D crtc->dev;
->>>> +	unsigned long flags;
->>>> +
->>>> +	if (dc->event)
->>>> +		return -EBUSY;
->> Hi
+This is a multi-part message in MIME format.
+--===============2026069448==
+Content-Type: multipart/alternative;
+ boundary="------------060101000103090403090701"
+
+This is a multi-part message in MIME format.
+--------------060101000103090403090701
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 02/11/2013 10:13 AM, Thierry Reding wrote:
+> On Tue, Jan 22, 2013 at 06:37:39PM +0100, Mario Kleiner wrote:
+>> On 14.01.13 17:05, Thierry Reding wrote:
+>>> Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+>>> special in this case because it doesn't use the generic IRQ support
+>>> provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+>>> interrupt handler for each display controller.
+>>>
+>>> While at it, clean up the way that interrupts are enabled to ensure
+>>> that the VBLANK interrupt only gets enabled when required.
+>>>
+>>> Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+>> ... snip ...
 >>
->> I haven't read the Tegra programming manual or played with this, so
->> maybe i'm wrong for some reason, but i think there is a race here
->> between actual pageflip completion - latching newfb into the scanout
->> base register and the completion routine that gets called from the
->> vblank irq handler.
+>>>   struct drm_driver tegra_drm_driver = {
+>>>   	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
+>>>   	.load = tegra_drm_load,
+>>> @@ -96,6 +136,10 @@ struct drm_driver tegra_drm_driver = {
+>>>   	.open = tegra_drm_open,
+>>>   	.lastclose = tegra_drm_lastclose,
+>>>
+>>> +	.get_vblank_counter = drm_vblank_count,
+>> -> .get_vblank_counter = drm_vblank_count is a no-op.
 >>
->> If this code gets called close to vblank or inside vblank, couldn't
->> it happen that tegra_dc_set_base() programs a pageflip that gets
->> executed immediately - the new fb gets latched into the crtc, but
->> the corresponding vblank irq handler for the vblank of flip
->> completion runs before the "if (event)" block can set dc->event =3D
->> event;? Or vblank irq's are off because drm_vblank_get() is only
->> called at the end of the routine? In both cases the completion
->> routine would miss the correct vblank and only timestamp and emit
->> the completion event 1 vblank after actual flip completion.
+>> .get_vblank_counter() is supposed to return some real hardware
+>> vblank counter value to reinitialize the software vblank counter at
+>> vbl irq enable time. That software counter gets queried via
+>> drm_vblank_count(). If you hook this up to drm_vblank_count() it
+>> essentially returns a constant, frozen vblank count, it has the same
+>> effect as returning zero or any other constant value -- You lose all
+>> vblank counter increments during vblank irq off time. The same
+>> problem is present in nouveau-kms.
 >>
->> In that case it would be better to place tegra_dc_set_base() after
->> the "if (event)" block and have some check inside the flip
->> completion routine to make sure the pageflip completion event is
->> only emitted if the scanout is really already latched with the
->> newfb.
-> An easier solution might be to expand the scope of the lock a bit to
-> encompass the call to tegra_dc_set_base() and extend until the end of
-> tegra_dc_page_flip(). That should properly keep the page-flip complet=
-ion
-> from interfering, right?
->
-> 	spin_lock_irqsave(&drm->event_lock, flags);
->
-> 	tegra_dc_set_base(dc, 0, 0, newfb);
->
-> 	if (event) {
-> 		event->pipe =3D dc->pipe;
-> 		dc->event =3D event;
-> 		drm_vblank_get(drm, dc->pipe);
-> 	}
->
-> 	spin_unlock_irqrestore(&drm->event_lock, flags);
+>> I think it would be better to either implement a real hw counter
+>> query, or some function with a /* TODO: Implement me properly */
+>> comment which returns zero, so it is clear something is missing
+>> here.
+> I've finally managed to find some time to look into this some more. The
+> comment atop the drm_driver.get_vblank_counter() field actually suggests
+> that drivers should set this to drm_vblank_count if no real hardware
+> counter is supported.
+
+It certainly works fine that way. I just think it hides that some 
+implementation is missing there, whereas an extra no-op function makes 
+that clear to the reader.
+
+> Now it seems like we may get functionality to obtain the real VBLANK
+> counter once the syncpoint support is merged, so maybe we can leave this
+> as-is until then and replace it with a proper implementation at that
+> point in time?
+
+Perfectly fine with me.
+
+ciao,
+-mario
+
+> Alternatively I could use a small wrapper with an explicit comment that
+> this should be implemented using the upcoming syncpoint support.
 >
 > Thierry
-Yes, that would avoid races between page flip ioctl and the irq handler=
-=2E=20
-But i think the tegra_dc_set_base() should go below the if (event) {}=20
-block, before the spin_unlock_irqrestore() so you can be sure that=20
-drm_vblank_get() has been called before tegra_dc_set_base() is executed=
-=2E=20
-Otherwise vblank irq's may be off during the vblank in which the=20
-tegra_dc_set_base() takes effect and a flip complete would only get=20
-reported one scanout cycle later at the next vblank -> You'd signal a=20
-pageflip completion 1 frame too late.
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-You also still need to check in tegra_dc_finish_page_flip() if the new=20
-scanout buffer has really been latched before emitting the flip complet=
-e=20
-event. Otherwise it could happen that your execution of=20
-tegra_dc_page_flip() intersects with the vblank interval and manages to=
-=20
-queue the event in time, so the finish_page_flip picks it up, but the=20
-register programming in tegra_dc_set_base() happened a bit too late, so=
-=20
-it doesn't get latched in the same vblank but one vblank later --> You'=
-d=20
-signal pageflip completion 1 frame too early.
 
-I've just downloaded the Tegra-3 TRM and had a quick look. Section=20
-20.5.1 "Display shadow registers". As far as i understand, if dc->event=
-=20
-is pending in tegra_dc_finish_page_flip(), you could read back the=20
-ACTIVE copy of DC_WINBUF_START_ADDR by setting READ_MUX properly in=20
-DC_CMD_STATE_ACCESS_0, and compare its value against the ARM copy in=20
-DC_WINBUF_A_START_ADDR_NS_0. If both values match, the pageflip has=20
-happened and the dc->event can be dequeued and emitted.
+--------------060101000103090403090701
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-That assumes that the ARM copy is latched into the ACTIVE copy only at=20
-leading edge of vblank. Section 20.5.1 says "...latching happens on the=
-=20
-next frame boundary after (GENERAL/WIN_A/WIN_B/WIN_C)_ACT_REQ is=20
-programmed..." - not totally clear to me if this is the same as start o=
-f=20
-vblank?
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+  </head>
+  <body bgcolor="#FFFFFF" text="#000000">
+    <div class="moz-cite-prefix">On 02/11/2013 10:13 AM, Thierry Reding
+      wrote:<br>
+    </div>
+    <blockquote
+      cite="mid:20130211091301.GC3423@avionic-0098.mockup.avionic-design.de"
+      type="cite">
+      <pre wrap="">On Tue, Jan 22, 2013 at 06:37:39PM +0100, Mario Kleiner wrote:
+</pre>
+      <blockquote type="cite">
+        <pre wrap="">On 14.01.13 17:05, Thierry Reding wrote:
+</pre>
+        <blockquote type="cite">
+          <pre wrap="">Implement support for the VBLANK IOCTL. Note that Tegra is somewhat
+special in this case because it doesn't use the generic IRQ support
+provided by the DRM core (DRIVER_HAVE_IRQ) but rather registers one
+interrupt handler for each display controller.
 
--mario
+While at it, clean up the way that interrupts are enabled to ensure
+that the VBLANK interrupt only gets enabled when required.
+
+Signed-off-by: Thierry Reding <a class="moz-txt-link-rfc2396E" href="mailto:thierry.reding@avionic-design.de">&lt;thierry.reding@avionic-design.de&gt;</a>
+</pre>
+        </blockquote>
+        <pre wrap="">
+... snip ...
+
+</pre>
+        <blockquote type="cite">
+          <pre wrap=""> struct drm_driver tegra_drm_driver = {
+ 	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
+ 	.load = tegra_drm_load,
+@@ -96,6 +136,10 @@ struct drm_driver tegra_drm_driver = {
+ 	.open = tegra_drm_open,
+ 	.lastclose = tegra_drm_lastclose,
+
++	.get_vblank_counter = drm_vblank_count,
+</pre>
+        </blockquote>
+        <pre wrap="">
+-&gt; .get_vblank_counter = drm_vblank_count is a no-op.
+
+.get_vblank_counter() is supposed to return some real hardware
+vblank counter value to reinitialize the software vblank counter at
+vbl irq enable time. That software counter gets queried via
+drm_vblank_count(). If you hook this up to drm_vblank_count() it
+essentially returns a constant, frozen vblank count, it has the same
+effect as returning zero or any other constant value -- You lose all
+vblank counter increments during vblank irq off time. The same
+problem is present in nouveau-kms.
+
+I think it would be better to either implement a real hw counter
+query, or some function with a /* TODO: Implement me properly */
+comment which returns zero, so it is clear something is missing
+here.
+</pre>
+      </blockquote>
+      <pre wrap="">
+I've finally managed to find some time to look into this some more. The
+comment atop the drm_driver.get_vblank_counter() field actually suggests
+that drivers should set this to drm_vblank_count if no real hardware
+counter is supported.
+</pre>
+    </blockquote>
+    <br>
+    It certainly works fine that way. I just think it hides that some
+    implementation is missing there, whereas an extra no-op function
+    makes that clear to the reader.<br>
+    <br>
+    <blockquote
+      cite="mid:20130211091301.GC3423@avionic-0098.mockup.avionic-design.de"
+      type="cite">
+      <pre wrap="">
+Now it seems like we may get functionality to obtain the real VBLANK
+counter once the syncpoint support is merged, so maybe we can leave this
+as-is until then and replace it with a proper implementation at that
+point in time?
+</pre>
+    </blockquote>
+    <br>
+    Perfectly fine with me.<br>
+    <br>
+    ciao,<br>
+    -mario<br>
+    <br>
+    <blockquote
+      cite="mid:20130211091301.GC3423@avionic-0098.mockup.avionic-design.de"
+      type="cite">
+      <pre wrap="">
+Alternatively I could use a small wrapper with an explicit comment that
+this should be implemented using the upcoming syncpoint support.
+
+Thierry
+</pre>
+      <br>
+      <fieldset class="mimeAttachmentHeader"></fieldset>
+      <br>
+      <pre wrap="">_______________________________________________
+dri-devel mailing list
+<a class="moz-txt-link-abbreviated" href="mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.freedesktop.org</a>
+<a class="moz-txt-link-freetext" href="http://lists.freedesktop.org/mailman/listinfo/dri-devel">http://lists.freedesktop.org/mailman/listinfo/dri-devel</a>
+</pre>
+    </blockquote>
+    <br>
+  </body>
+</html>
+
+--------------060101000103090403090701--
+
+--===============2026069448==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============2026069448==--
