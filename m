@@ -1,10 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] dma: tegra: assume CONFIG_OF
-Date: Fri, 15 Feb 2013 14:53:57 -0700
-Message-ID: <1360965237-14857-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] gpio: tegra: assume CONFIG_OF
+Date: Fri, 15 Feb 2013 14:54:48 -0700
+Message-ID: <1360965288-14899-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
@@ -15,64 +15,38 @@ and runtime checks for DT support from the driver.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/dma/tegra20-apb-dma.c |   22 +++++++---------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ drivers/gpio/gpio-tegra.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index fcee27e..5a0b66c 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1213,7 +1213,6 @@ static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
- 	.support_channel_pause	= false,
- };
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 414ad91..a78a81f 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -398,10 +398,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	int j;
  
--#if defined(CONFIG_OF)
- /* Tegra30 specific DMA controller information */
- static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
- 	.nr_channels		= 32,
-@@ -1243,7 +1242,6 @@ static const struct of_device_id tegra_dma_of_match[] = {
- 	},
- };
- MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
--#endif
- 
- static int tegra_dma_probe(struct platform_device *pdev)
- {
-@@ -1252,20 +1250,14 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	int ret;
- 	int i;
- 	const struct tegra_dma_chip_data *cdata = NULL;
-+	const struct of_device_id *match;
- 
--	if (pdev->dev.of_node) {
--		const struct of_device_id *match;
--		match = of_match_device(of_match_ptr(tegra_dma_of_match),
--					&pdev->dev);
--		if (!match) {
--			dev_err(&pdev->dev, "Error: No device match found\n");
--			return -ENODEV;
--		}
--		cdata = match->data;
--	} else {
--		/* If no device tree then fallback to tegra20 */
--		cdata = &tegra20_dma_chip_data;
-+	match = of_match_device(tegra_dma_of_match, &pdev->dev);
+ 	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
+-	if (match)
+-		config = (struct tegra_gpio_soc_config *)match->data;
+-	else
+-		config = &tegra20_gpio_config;
 +	if (!match) {
 +		dev_err(&pdev->dev, "Error: No device match found\n");
 +		return -ENODEV;
- 	}
-+	cdata = match->data;
++	}
++	config = (struct tegra_gpio_soc_config *)match->data;
  
- 	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
- 			sizeof(struct tegra_dma_channel), GFP_KERNEL);
-@@ -1460,7 +1452,7 @@ static struct platform_driver tegra_dmac_driver = {
- 		.name	= "tegra-apbdma",
- 		.owner = THIS_MODULE,
- 		.pm	= &tegra_dma_dev_pm_ops,
--		.of_match_table = of_match_ptr(tegra_dma_of_match),
-+		.of_match_table = tegra_dma_of_match,
- 	},
- 	.probe		= tegra_dma_probe,
- 	.remove		= tegra_dma_remove,
+ 	tegra_gpio_bank_stride = config->bank_stride;
+ 	tegra_gpio_upper_offset = config->upper_offset;
+@@ -462,9 +463,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-#ifdef CONFIG_OF_GPIO
+ 	tegra_gpio_chip.of_node = pdev->dev.of_node;
+-#endif
+ 
+ 	gpiochip_add(&tegra_gpio_chip);
+ 
 -- 
 1.7.10.4
