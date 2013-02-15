@@ -1,31 +1,48 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 09/10] clk: tegra: Implement clocks for Tegra114
-Date: Fri, 15 Feb 2013 11:13:01 +0200
-Message-ID: <20130215091301.GN3073@tbergstrom-lnx.Nvidia.com>
-References: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com>
- <1360580700-10245-10-git-send-email-pdeschrijver@nvidia.com>
- <20130215.081805.2193798170330624846.hdoyu@nvidia.com>
+Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
+Date: Fri, 15 Feb 2013 11:24:07 +0200
+Message-ID: <20130215092407.GO3073@tbergstrom-lnx.Nvidia.com>
+References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com>
+ <1360868369-20093-2-git-send-email-hdoyu@nvidia.com>
+ <511D45E0.1080105@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20130215.081805.2193798170330624846.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <511D45E0.1080105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 15, 2013 at 07:18:05AM +0100, Hiroshi Doyu wrote:
-> Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 11 Feb 2013 12:04:59 +0100:
+On Thu, Feb 14, 2013 at 09:15:28PM +0100, Stephen Warren wrote:
+> On 02/14/2013 11:59 AM, Hiroshi Doyu wrote:
+> > To replace magic number in tegra_car:
+> > 
+> > -               clocks = <&tegra_car 28>;
+> > +               clocks = <&tegra_car CLK_HOST1X>;
 > 
-> > +enum tegra114_clk {
-> > +       rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
+> > diff --git a/arch/arm/boot/dts/tegra20-car.h b/arch/arm/boot/dts/tegra20-car.h
 > 
-> Why no 'cpu = 0' here?
+> Sorry, forgot a couple small comments the last time around.
+> 
+> This file should probably have some header indicating which binding it
+> describes, rather like the GPIO header in my patch series.
+> 
+> > +#define CLK_CPU 0
+> 
+> I'd suggest naming that TEGRA20_CLK_CPU, so that the various different
+> clock headers don't conflict. It's not too likely that more than one of
+> the /Tegra/ clock headers will be included at once, but it doesn't seem
+> that unlikely that a board file could end up having a Tegra clock header
+> included plus various other clock headers for some other chip that has
+> some clock outputs.
+> 
 
-It doesn't make sense I think. Yes there is a bit, but we can't use it from
-software I think? Also the clock itself doesn't exist. Maybe this should be
-removed from the binding document.
+I would suggest removing this clock. It's not actually implemented in the CCF
+and rather useless. If you would gate the CPU clock from the CPU by writing to
+this register, how would you ungate it? :) Note that this would gate the clock
+to all CPUs.
 
 Cheers,
 
