@@ -1,40 +1,89 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
-Date: Fri, 15 Feb 2013 14:22:44 +0200
-Message-ID: <20130215122244.GP3073@tbergstrom-lnx.Nvidia.com>
-References: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com>
- <1360580700-10245-9-git-send-email-pdeschrijver@nvidia.com>
- <511A7AB5.4040607@wwwdotorg.org>
- <20130213113807.GE3073@tbergstrom-lnx.Nvidia.com>
- <511BC3C3.6070402@wwwdotorg.org>
- <20130214100112.GH3073@tbergstrom-lnx.Nvidia.com>
- <511D1F3F.1020309@wwwdotorg.org>
+Subject: [PATCH v7 00/12] Tegra114 clockframework
+Date: Fri, 15 Feb 2013 14:36:30 +0200
+Message-ID: <1360931849-7090-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <511D1F3F.1020309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 14, 2013 at 06:30:39PM +0100, Stephen Warren wrote:
-> On 02/14/2013 03:01 AM, Peter De Schrijver wrote:
-> > On Wed, Feb 13, 2013 at 05:48:03PM +0100, Stephen Warren wrote:
-> ...
-> >> You still need to initialize all the UART clocks in init_table[]. This
-> ...
-> > Yes. The parent relationships still need to be defined. But I think that's
-> > the only thing we actually need to define still?
-> 
-> You might want to explicitly set the rate too, if there is a divider in
-> the clk module that affects it. If not, then parenting is indeed all you
-> need.
+This is the seventh version of the Tegra114 clockframework. It is based on the
+for-next branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git and
+http://www.spinics.net/lists/arm-kernel/msg220452.html.
 
-Yes, for PLLs that might be useful. Device clock rates can also be set by the
-driver and probably should be set by the driver.
+It has been boottested on Pluto.
 
-Cheers,
+Changes from v6:
 
-Peter.
+* Remove clock-frequency from DT serial nodes
+* Remove useless 'cpu' clock from binding documentation
+* Use HW gate control for PLLU divided outputs
+* Fix clock ID for 'd_audio' clock
+* Add dummy cpu car ops to ease making a bisectable series
+
+Changes from v5:
+
+* Add initialization code for PLLC
+* Remove some unnecessary clocks
+* Fix bug in PLL locking refactoring
+* Add super clocks
+* Remove most calls to clk_register_clkdev() for the peripheral clocks
+
+Changes from v4:
+
+* Split the new PLL types patch into smaller patches
+* Fix some bugs in the PLL patches
+
+Changes from v3:
+
+* Merge with for-next branch
+* Provide empty tegra_cpu_car_ops to make SMP boot not crash
+
+Changes from v2:
+
+* Added missing PLLs
+* Added bindings to tegra114.dtsi
+* Moved the table patch for clk-mux.c to 'clk: add table lookup to mux'
+* Bugfixes
+
+Changes from v1:
+
+* Remove SATA and PCIe clocks. They don't appear in the internal TRM, so I
+  assume they don't exist.
+* Rebase on top of Hiroshi's latest Tegra114 patches
+* More generic mux code. This is necessary for the AHUB and DAM clocks.
+
+Peter De Schrijver (12):
+  clk: tegra: provide dummy cpu car ops
+  clk: tegra: Refactor PLL programming code
+  clk: tegra: Add TEGRA_PLL_BYPASS flag
+  clk: tegra: Add PLL post divider table
+  clk: tegra: Add new fields and PLL types for Tegra114
+  clk: tegra: Add flags to tegra_clk_periph()
+  clk: tegra: Workaround for Tegra114 MSENC problem
+  ARM: tegra: Define Tegra114 CAR binding
+  clk: tegra: Implement clocks for Tegra114
+  clk: tegra: devicetree match for nvidia,tegra114-car
+  ARM: dt: Add references to tegra_car clocks
+  clk: tegra: Remove forced clk_enable of uartd
+
+ .../bindings/clock/nvidia,tegra114-car.txt         |  316 +++
+ arch/arm/boot/dts/tegra114-dalmore.dts             |    1 -
+ arch/arm/boot/dts/tegra114-pluto.dts               |    1 -
+ arch/arm/boot/dts/tegra114.dtsi                    |    8 +-
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-periph-gate.c                |    9 +
+ drivers/clk/tegra/clk-periph.c                     |   11 +-
+ drivers/clk/tegra/clk-pll.c                        | 1136 ++++++++++-
+ drivers/clk/tegra/clk-tegra114.c                   | 2032 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  153 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  243 ++--
+ drivers/clk/tegra/clk.c                            |    4 +-
+ drivers/clk/tegra/clk.h                            |   90 +-
+ 13 files changed, 3694 insertions(+), 311 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
