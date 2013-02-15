@@ -1,48 +1,39 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
-Date: Fri, 15 Feb 2013 11:24:07 +0200
-Message-ID: <20130215092407.GO3073@tbergstrom-lnx.Nvidia.com>
-References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com>
- <1360868369-20093-2-git-send-email-hdoyu@nvidia.com>
- <511D45E0.1080105@wwwdotorg.org>
+Subject: Re: [PATCH v6 08/10] ARM: dt: Add references to tegra_car clocks
+Date: Fri, 15 Feb 2013 14:22:44 +0200
+Message-ID: <20130215122244.GP3073@tbergstrom-lnx.Nvidia.com>
+References: <1360580700-10245-1-git-send-email-pdeschrijver@nvidia.com>
+ <1360580700-10245-9-git-send-email-pdeschrijver@nvidia.com>
+ <511A7AB5.4040607@wwwdotorg.org>
+ <20130213113807.GE3073@tbergstrom-lnx.Nvidia.com>
+ <511BC3C3.6070402@wwwdotorg.org>
+ <20130214100112.GH3073@tbergstrom-lnx.Nvidia.com>
+ <511D1F3F.1020309@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <511D45E0.1080105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <511D1F3F.1020309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 14, 2013 at 09:15:28PM +0100, Stephen Warren wrote:
-> On 02/14/2013 11:59 AM, Hiroshi Doyu wrote:
-> > To replace magic number in tegra_car:
-> > 
-> > -               clocks = <&tegra_car 28>;
-> > +               clocks = <&tegra_car CLK_HOST1X>;
+On Thu, Feb 14, 2013 at 06:30:39PM +0100, Stephen Warren wrote:
+> On 02/14/2013 03:01 AM, Peter De Schrijver wrote:
+> > On Wed, Feb 13, 2013 at 05:48:03PM +0100, Stephen Warren wrote:
+> ...
+> >> You still need to initialize all the UART clocks in init_table[]. This
+> ...
+> > Yes. The parent relationships still need to be defined. But I think that's
+> > the only thing we actually need to define still?
 > 
-> > diff --git a/arch/arm/boot/dts/tegra20-car.h b/arch/arm/boot/dts/tegra20-car.h
-> 
-> Sorry, forgot a couple small comments the last time around.
-> 
-> This file should probably have some header indicating which binding it
-> describes, rather like the GPIO header in my patch series.
-> 
-> > +#define CLK_CPU 0
-> 
-> I'd suggest naming that TEGRA20_CLK_CPU, so that the various different
-> clock headers don't conflict. It's not too likely that more than one of
-> the /Tegra/ clock headers will be included at once, but it doesn't seem
-> that unlikely that a board file could end up having a Tegra clock header
-> included plus various other clock headers for some other chip that has
-> some clock outputs.
-> 
+> You might want to explicitly set the rate too, if there is a divider in
+> the clk module that affects it. If not, then parenting is indeed all you
+> need.
 
-I would suggest removing this clock. It's not actually implemented in the CCF
-and rather useless. If you would gate the CPU clock from the CPU by writing to
-this register, how would you ungate it? :) Note that this would gate the clock
-to all CPUs.
+Yes, for PLLs that might be useful. Device clock rates can also be set by the
+driver and probably should be set by the driver.
 
 Cheers,
 
