@@ -1,47 +1,59 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v7 12/12] clk: tegra: Remove forced clk_enable of uartd
-Date: Fri, 15 Feb 2013 14:36:42 +0200
-Message-ID: <1360931849-7090-13-git-send-email-pdeschrijver@nvidia.com>
-References: <1360931849-7090-1-git-send-email-pdeschrijver@nvidia.com>
+From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Subject: Re: [PATCH] i2c: tegra: remove warning dump if timeout happen in transfer
+Date: Fri, 15 Feb 2013 18:31:07 +0530
+Message-ID: <CAM=Q2csZyX5PvOPiSJ22u0SCXvh19y1qoC3+qJmmPfTQziM-tg@mail.gmail.com>
+References: <1360845813-11334-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1360931849-7090-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360845813-11334-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: wsa@the-dreams.de, swarren@nvidia.com, khali@linux-fr.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The UART driver enables the console uart clock, so we don't need to do that
-anymore in this file.
+On Thu, Feb 14, 2013 at 6:13 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> If timeout error occurs in the i2c transfer then it was dumping warning
+> of call stack.
+>
+> Remove the warning dump as there is may be possibility that some slave
+> devices are busy and not responding the i2c communication.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> The patch is generated based on discussion happen between Stephena and
+> Wolfram on the patch:
+>  i2c: add bcm2835 driver
+>
+> resending patch as Wolfram's email id has been changed.
+>
+>  drivers/i2c/busses/i2c-tegra.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index ae2e027..36704e3 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -587,7 +587,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>         ret = wait_for_completion_timeout(&i2c_dev->msg_complete, TEGRA_I2C_TIMEOUT);
+>         tegra_i2c_mask_irq(i2c_dev, int_mask);
+>
+> -       if (WARN_ON(ret == 0)) {
+> +       if (ret == 0) {
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra114.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I think WARN_ON has a unlikely.
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index f6c6b67..4175bf1 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1973,7 +1973,7 @@ static __initdata struct tegra_clk_init_table init_table[] = {
- 	{uarta, pll_p, 408000000, 0},
- 	{uartb, pll_p, 408000000, 0},
- 	{uartc, pll_p, 408000000, 0},
--	{uartd, pll_p, 408000000, 1},
-+	{uartd, pll_p, 408000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
- };
- 
--- 
-1.7.1
+If you could do a profiling and have the unlikely.
+
+BTW thats not an objection to the patch though.
+
+>                 dev_err(i2c_dev->dev, "i2c transfer timed out\n");
+>
+>                 tegra_i2c_init(i2c_dev);
+> --
+> 1.7.1.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-i2c" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
