@@ -1,70 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 4/4] spi: remove unused Tegra platform data header
-Date: Fri, 15 Feb 2013 15:03:50 -0700
-Message-ID: <1360965830-19795-4-git-send-email-swarren@wwwdotorg.org>
-References: <1360965830-19795-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360965830-19795-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] serial: tegra: assume CONFIG_OF
+Date: Fri, 15 Feb 2013 15:04:45 -0700
+Message-ID: <1360965885-19842-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-The platform data header is no longer used. Delete it.
+Tegra only supports, and always enables, device tree. Remove all ifdefs
+for DT support from the driver.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- include/linux/spi/spi-tegra.h |   40 ----------------------------------------
- 1 file changed, 40 deletions(-)
- delete mode 100644 include/linux/spi/spi-tegra.h
+ drivers/tty/serial/serial-tegra.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/spi/spi-tegra.h b/include/linux/spi/spi-tegra.h
-deleted file mode 100644
-index 786932c..0000000
---- a/include/linux/spi/spi-tegra.h
-+++ /dev/null
-@@ -1,40 +0,0 @@
--/*
-- * spi-tegra.h: SPI interface for Nvidia Tegra20 SLINK controller.
-- *
-- * Copyright (C) 2011 NVIDIA Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along
-- * with this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-- */
--
--#ifndef _LINUX_SPI_TEGRA_H
--#define _LINUX_SPI_TEGRA_H
--
--struct tegra_spi_platform_data {
--	int dma_req_sel;
--	unsigned int spi_max_frequency;
--};
--
--/*
-- * Controller data from device to pass some info like
-- * hw based chip select can be used or not and if yes
-- * then CS hold and setup time.
-- */
--struct tegra_spi_device_controller_data {
--	bool is_hw_based_cs;
--	int cs_setup_clk_count;
--	int cs_hold_clk_count;
--};
--
--#endif /* _LINUX_SPI_TEGRA_H */
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 4f5e629..372de8a 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1269,8 +1269,7 @@ static int tegra_uart_probe(struct platform_device *pdev)
+ 	const struct tegra_uart_chip_data *cdata;
+ 	const struct of_device_id *match;
+ 
+-	match = of_match_device(of_match_ptr(tegra_uart_of_match),
+-				&pdev->dev);
++	match = of_match_device(tegra_uart_of_match, &pdev->dev);
+ 	if (!match) {
+ 		dev_err(&pdev->dev, "Error: No device match found\n");
+ 		return -ENODEV;
+@@ -1361,7 +1360,7 @@ static struct platform_driver tegra_uart_platform_driver = {
+ 	.remove		= tegra_uart_remove,
+ 	.driver		= {
+ 		.name	= "serial-tegra",
+-		.of_match_table = of_match_ptr(tegra_uart_of_match),
++		.of_match_table = tegra_uart_of_match,
+ 		.pm	= &tegra_uart_pm_ops,
+ 	},
+ };
 -- 
 1.7.10.4
+
