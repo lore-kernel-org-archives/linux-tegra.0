@@ -1,44 +1,101 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC 0/3] Add DT Binding for Power-Supply supplied-nodes property
-Date: Fri, 15 Feb 2013 18:36:53 -0500
-Message-ID: <1360971416-30717-1-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [RFC 2/3] power: power_supply: Add core support for supplied_nodes
+Date: Fri, 15 Feb 2013 18:36:55 -0500
+Message-ID: <1360971416-30717-3-git-send-email-rklein@nvidia.com>
+References: <1360971416-30717-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360971416-30717-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This series is an attempt to define a common way for devicetree
-initialized power_supplies to define their list of supplicants
-in a common manner.
+With the growing support for dt, it make sense to try to make sure of
+dt features as to make the general code cleaner. This patch is an
+attempt to commonize how chargers receive their "supplied_to" list
+of supplicants. This was previously done via passing an array of
+strings.
 
-Instead of relying on custom properties which contain is list of
-strings, use the much more direct method of phandles to reference
-the supplicants and define a common function which can retrieve them
-automatically.
+Currently, charger drivers that make use of the supplicant list, do
+so using custom private dt mechanisms, this will should make a common
+implementation that all can use.
 
-Rhyland Klein (3):
-  power_supply: Define Binding for supplied-nodes
-  power: power_supply: Add core support for supplied_nodes
-  power: power_supply: add support for getting supplied-nodes from dt
+With device tree, it is much cleaner to instead use a list of phandles
+in the device tree to point directly to the supplicants thus ensuring
+a proper reference without having to hard code in names.
 
- .../bindings/power_supply/power_supply.txt         |   17 ++++
- drivers/power/power_supply_core.c                  |   82 +++++++++++++++++++-
- include/linux/power_supply.h                       |   10 +++
- 3 files changed, 107 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/power_supply/power_supply.txt
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+ drivers/power/power_supply_core.c |   25 +++++++++++++++++++++++--
+ include/linux/power_supply.h      |    4 ++++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 8a7cfb3..9e42702 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -26,6 +26,27 @@ EXPORT_SYMBOL_GPL(power_supply_class);
+ 
+ static struct device_type power_supply_dev_type;
+ 
++static int __power_supply_is_supplied_by(struct power_supply *psy1,
++					 struct power_supply *psy2,
++					 int supply_idx)
++{
++
++	if (supply_idx < 0)
++		return -EINVAL;
++
++#ifdef CONFIG_OF
++	if (psy2->node && psy1->supplied_nodes)
++		if (psy1->supplied_nodes[supply_idx] == psy2->node)
++			return 0;
++#endif
++
++	if (psy2->name && psy1->supplied_to)
++		if (!strcmp(psy1->supplied_to[supply_idx], psy2->name))
++			return 0;
++
++	return -EINVAL;
++}
++
+ static int __power_supply_changed_work(struct device *dev, void *data)
+ {
+ 	struct power_supply *psy = (struct power_supply *)data;
+@@ -33,7 +54,7 @@ static int __power_supply_changed_work(struct device *dev, void *data)
+ 	int i;
+ 
+ 	for (i = 0; i < psy->num_supplicants; i++)
+-		if (!strcmp(psy->supplied_to[i], pst->name)) {
++		if (__power_supply_is_supplied_by(psy, pst, i)) {
+ 			if (pst->external_power_changed)
+ 				pst->external_power_changed(pst);
+ 		}
+@@ -71,7 +92,7 @@ static int __power_supply_am_i_supplied(struct device *dev, void *data)
+ 	int i;
+ 
+ 	for (i = 0; i < epsy->num_supplicants; i++) {
+-		if (!strcmp(epsy->supplied_to[i], psy->name)) {
++		if (__power_supply_is_supplied_by(epsy, psy, i)) {
+ 			if (epsy->get_property(epsy,
+ 				  POWER_SUPPLY_PROP_ONLINE, &ret))
+ 				continue;
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 1f0ab90..8c8693b 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -166,6 +166,10 @@ struct power_supply {
+ 	enum power_supply_property *properties;
+ 	size_t num_properties;
+ 
++#ifdef CONFIG_OF
++	struct device_node *node;
++	struct device_node **supplied_nodes;
++#endif
+ 	char **supplied_to;
+ 	size_t num_supplicants;
+ 
 -- 
 1.7.9.5
