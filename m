@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 4/6] ASoC: tegra_alc5632: assume CONFIG_OF, and other cleanup
-Date: Fri, 15 Feb 2013 17:07:33 -0700
-Message-ID: <1360973255-344-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 5/6] ASoC: tegra trimslice: assume CONFIG_OF, and other cleanup
+Date: Fri, 15 Feb 2013 17:07:34 -0700
+Message-ID: <1360973255-344-5-git-send-email-swarren@wwwdotorg.org>
 References: <1360973255-344-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1360973255-344-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -15,54 +15,103 @@ From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Tegra only supports, and always enables, device tree. Remove all runtime
 checks for DT support from the driver.
 
-Also, various minor cleanups so that the probe() body more closely
-resembles other drivers, for easier comparison.
+Also, some minor changes so that the probe() body more closely resembles
+other drivers, for easier comparison.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra_alc5632.c |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ sound/soc/tegra/trimslice.c |   56 +++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 32 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index c80adb9..48d05d9 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -161,20 +161,13 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
- 			sizeof(struct tegra_alc5632), GFP_KERNEL);
- 	if (!alc5632) {
- 		dev_err(&pdev->dev, "Can't allocate tegra_alc5632\n");
+diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+index 7fcf6c2..05c68aa 100644
+--- a/sound/soc/tegra/trimslice.c
++++ b/sound/soc/tegra/trimslice.c
+@@ -97,9 +97,6 @@ static const struct snd_soc_dapm_route trimslice_audio_map[] = {
+ static struct snd_soc_dai_link trimslice_tlv320aic23_dai = {
+ 	.name = "TLV320AIC23",
+ 	.stream_name = "AIC23",
+-	.codec_name = "tlv320aic23-codec.2-001a",
+-	.platform_name = "tegra20-i2s.0",
+-	.cpu_dai_name = "tegra20-i2s.0",
+ 	.codec_dai_name = "tlv320aic23-hifi",
+ 	.ops = &trimslice_asoc_ops,
+ 	.dai_fmt = SND_SOC_DAIFMT_I2S |
+@@ -122,6 +119,7 @@ static struct snd_soc_card snd_soc_trimslice = {
+ 
+ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
+ {
++	struct device_node *np = pdev->dev.of_node;
+ 	struct snd_soc_card *card = &snd_soc_trimslice;
+ 	struct tegra_trimslice *trimslice;
+ 	int ret;
+@@ -130,44 +128,38 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
+ 				 GFP_KERNEL);
+ 	if (!trimslice) {
+ 		dev_err(&pdev->dev, "Can't allocate tegra_trimslice\n");
 -		ret = -ENOMEM;
--		goto err;
 +		return -ENOMEM;
++	}
++
++	card->dev = &pdev->dev;
++	platform_set_drvdata(pdev, card);
++	snd_soc_card_set_drvdata(card, trimslice);
++
++	trimslice_tlv320aic23_dai.codec_of_node = of_parse_phandle(np,
++			"nvidia,audio-codec", 0);
++	if (!trimslice_tlv320aic23_dai.codec_of_node) {
++		dev_err(&pdev->dev,
++			"Property 'nvidia,audio-codec' missing or invalid\n");
++		ret = -EINVAL;
+ 		goto err;
  	}
  
- 	card->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, card);
- 	snd_soc_card_set_drvdata(card, alc5632);
- 
--	if (!(pdev->dev.of_node)) {
--		dev_err(&pdev->dev, "Must be instantiated using device tree\n");
--		ret = -EINVAL;
--		goto err;
--	}
+-	if (pdev->dev.of_node) {
+-		trimslice_tlv320aic23_dai.codec_name = NULL;
+-		trimslice_tlv320aic23_dai.codec_of_node = of_parse_phandle(
+-				pdev->dev.of_node, "nvidia,audio-codec", 0);
+-		if (!trimslice_tlv320aic23_dai.codec_of_node) {
+-			dev_err(&pdev->dev,
+-				"Property 'nvidia,audio-codec' missing or invalid\n");
+-			ret = -EINVAL;
+-			goto err;
+-		}
 -
- 	alc5632->gpio_hp_det = of_get_named_gpio(np, "nvidia,hp-det-gpios", 0);
- 	if (alc5632->gpio_hp_det == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
-@@ -197,11 +190,11 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
- 		goto err;
+-		trimslice_tlv320aic23_dai.cpu_dai_name = NULL;
+-		trimslice_tlv320aic23_dai.cpu_of_node = of_parse_phandle(
+-				pdev->dev.of_node, "nvidia,i2s-controller", 0);
+-		if (!trimslice_tlv320aic23_dai.cpu_of_node) {
+-			dev_err(&pdev->dev,
+-				"Property 'nvidia,i2s-controller' missing or invalid\n");
+-			ret = -EINVAL;
+-			goto err;
+-		}
+-
+-		trimslice_tlv320aic23_dai.platform_name = NULL;
+-		trimslice_tlv320aic23_dai.platform_of_node =
+-				trimslice_tlv320aic23_dai.cpu_of_node;
++	trimslice_tlv320aic23_dai.cpu_of_node = of_parse_phandle(np,
++			"nvidia,i2s-controller", 0);
++	if (!trimslice_tlv320aic23_dai.cpu_of_node) {
++		dev_err(&pdev->dev,
++			"Property 'nvidia,i2s-controller' missing or invalid\n");
++		ret = -EINVAL;
++		goto err;
  	}
  
--	tegra_alc5632_dai.cpu_of_node = of_parse_phandle(
--			pdev->dev.of_node, "nvidia,i2s-controller", 0);
-+	tegra_alc5632_dai.cpu_of_node = of_parse_phandle(np,
-+			"nvidia,i2s-controller", 0);
- 	if (!tegra_alc5632_dai.cpu_of_node) {
- 		dev_err(&pdev->dev,
--		"Property 'nvidia,i2s-controller' missing or invalid\n");
-+			"Property 'nvidia,i2s-controller' missing or invalid\n");
- 		ret = -EINVAL;
++	trimslice_tlv320aic23_dai.platform_of_node =
++			trimslice_tlv320aic23_dai.cpu_of_node;
++
+ 	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
+ 	if (ret)
  		goto err;
- 	}
+ 
+-	card->dev = &pdev->dev;
+-	platform_set_drvdata(pdev, card);
+-	snd_soc_card_set_drvdata(card, trimslice);
+-
+ 	ret = snd_soc_register_card(card);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
 -- 
 1.7.10.4
