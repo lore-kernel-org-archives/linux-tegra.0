@@ -1,77 +1,115 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH v3 2/7] drm/tegra: Add plane support
-Date: Mon, 18 Feb 2013 07:40:02 +0100
-Message-ID: <20130218064002.GA30856@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH v3 3/7] drm/tegra: Implement .mode_set_base()
+Date: Mon, 18 Feb 2013 07:48:32 +0100
+Message-ID: <20130218064832.GB30856@avionic-0098.mockup.avionic-design.de>
 References: <1360771506-17849-1-git-send-email-thierry.reding@avionic-design.de>
- <1360771506-17849-3-git-send-email-thierry.reding@avionic-design.de>
- <5121C500.3000000@gmail.com>
+ <1360771506-17849-4-git-send-email-thierry.reding@avionic-design.de>
+ <5121C791.3040903@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+	protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5121C500.3000000-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <5121C791.3040903-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---r5Pyd7+fXNt84Ff3
+--A6N2fC+uXW/VQSAv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 18, 2013 at 02:06:56PM +0800, Mark Zhang wrote:
+On Mon, Feb 18, 2013 at 02:17:53PM +0800, Mark Zhang wrote:
 > On 02/14/2013 12:05 AM, Thierry Reding wrote:
-> > Add support for the B and C planes which support RGB and YUV pixel
-> > formats and can be used as overlays or hardware cursor. Currently
-> > only 32-bit RGBA pixel formats are advertised.
+> > The sequence for replacing the scanout buffer is much shorter than a
+> > full mode change operation so implementing this callback considerably
+> > speeds up cases where only a new framebuffer is to be scanned out.
 > >=20
 > > Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> [...]
-> > +static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc=
- *dc)
+> > ---
+> > Changes in v3:
+> > - split DC_CMD_STATE_CONTROL writes
+> >=20
+> >  drivers/gpu/drm/tegra/dc.c | 31 +++++++++++++++++++++++++++++++
+> >  1 file changed, 31 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> > index 8f97b1c..cc4c85e 100644
+> > --- a/drivers/gpu/drm/tegra/dc.c
+> > +++ b/drivers/gpu/drm/tegra/dc.c
+> > @@ -114,6 +114,27 @@ static int tegra_dc_add_planes(struct drm_device *=
+drm, struct tegra_dc *dc)
+> >  	return 0;
+> >  }
+> > =20
+> > +static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
+> > +			     struct tegra_framebuffer *fb)
 > > +{
-> > +	unsigned int i;
-> > +	int err =3D 0;
+> > +	unsigned long value;
 > > +
-> > +	for (i =3D 0; i < 2; i++) {
-> > +		struct tegra_plane *plane;
+> > +	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
 > > +
-> > +		plane =3D devm_kzalloc(drm->dev, sizeof(*plane), GFP_KERNEL);
+> > +	value =3D fb->base.offsets[0] + y * fb->base.pitches[0] +
+> > +		x * fb->base.bits_per_pixel / 8;
+> > +
+> > +	tegra_dc_writel(dc, fb->obj->paddr + value, DC_WINBUF_START_ADDR);
+> > +
+> > +	value =3D GENERAL_UPDATE | WIN_A_UPDATE;
+> > +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+> > +
+> > +	value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+> > +	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+> > +
+> > +	return 0;
+> > +}
 >=20
-> Using "devm_kzalloc" here seems like not a good idea. Everytime plane
-> disable or crtc disable, we should free "struct tegra_plane" which is
-> allocated here. But the memory which devm_kzalloc allocates is only
-> freed when the driver detach. This makes lots of memory can't be
-> recycled when the plane enable/disable frequently.
+> Again, what do you think about the "line stride" problem I mentioned:
+>=20
+> http://lists.freedesktop.org/archives/dri-devel/2013-January/033561.html
+>=20
+> Don't get me wrong that I also don't want to add a line stride update
+> here because that doesn't make sense. It's just a workaround. But we
+> need to find a way to make multi-head page flip working.
 
-Why would we want to do that? I don't think doing so would even work,
-since the planes are resources that need to be registered with the DRM
-core and therefore can't be allocated on-demand.
+I'm not sure that it's something we need to support. .mode_set_base() is
+explicitly used only for cases where the framebuffer configuration
+doesn't change. That is, only in cases where the only thing that changes
+is the physical address of the framebuffer to be displayed.
+
+The current case where one framebuffer is used as scanout for both
+outputs isn't something that page-flipping can support. Page-flipping is
+always per-CRTC because typically each CRTC would run at a different
+frequency (or even if both ran at the same frequency the VBLANK is very
+unlikely to coincide anyway).
+
+So an application that wants to support page-flipping on two outputs
+also needs to take care to set them up with different framebuffers, in
+which case what you're describing here can't really happen.
 
 Thierry
 
---r5Pyd7+fXNt84Ff3
+--A6N2fC+uXW/VQSAv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRIczCAAoJEN0jrNd/PrOh/HEP/jciN9arLGWfkLFtWJJ7QASU
-URV/6ENLZbEE+pl8VCuXnSP2vvrSh2bl22s/TTjayawu/t7t4deqDwcvSC352cQI
-X/pQduZiL/7PRgA7YITTbzUyZ22eu49atYcAJAV2kk8YDYObD78XLI+Nmi4lSXai
-O1V2qHlWK7Kx0w/NBsbcHBfAqM9hmEsvS/PK+muPn1Zjmcn87Epmk3cr8wBzse01
-zyhzX/DMl6Vkccd9ypqwKGxrMlmkvQWyPFFNqZ86y1MKne8GoWw2ZlQg9PV5loVk
-MRxChN70U2OIywRxXsWHLJJ0njSTgdZpJENTwlVYQHAPLp4tNf5CO7CDCNDGgtC2
-rpfxU/VPBJUb/b0b3HaKOPOk8oOlbi63kROgC+kvtLoiAA+xizGwwPiSVCgTJuFU
-68oIbRk1Br4mG19HIrbHcPIl5LVWcWGsxEE2aixBORBPpBWs3XRjl8Hgw/+qXEwe
-1hvNfoMN2d3JSchZ53vMKdEOw3QcCZAVL+4BzCX2fMFASICi6CUb9zmnfjbHOP3w
-FfQ64laxPJIf8xndNf2LIeyAXvlW0tdl5c8rBBOJZnVGz7hIWQ7iP/4heLEiduCC
-Sl0KgLklmxNIUSpL+qKdhEaanuJM7IEvt112ZJ78aaJX3ZqyvuCRmUGzADv88NA7
-NoDHUSypd0er7m12J7aE
-=+ep4
+iQIcBAEBAgAGBQJRIc7AAAoJEN0jrNd/PrOhDG8QAKeqXGSiTJgSyjmK5FIuxDAu
+CDAwcC37nzWw6O9+ZmdzXXDOEzTtW4UG2ijKSmKJrWXgWXvrrXnpGuQFEKzbV02n
+OnbkL5KuR6F/yplF5Jp70px7SAc+QSrsJ4iVuGOAcYvKA8MKnueDvrgNxJz9i8Zb
+Am1PNiDPHa1QxMc06vbpAuuKwHfqzqJ3D/EW3uIs2gH7dIlYb1kZTgn9/rMpX5iq
+h6v0+k8Bb/9/Wgz4O9uNQ/PsKgpBQbrR/LQkkoBVmX/BFC2vjCCaKTkk6dOfbwcK
+rpc5WZHYvLPyl231dLlG1d9G0oN+suIw6P22l0Jwv/LOZrwlTBSAUyn43gakDExi
+zuM+f8uCXZQln/VaZZz2GVXuQG5uwqsIj7FyRh9dquXluR1I6HSEJBDd/NcivKLJ
+GiT8EPTvwIbhElNM/BQlp4b1TdsPZ/lodI2S313hqUyCuDAEyR7vbaFSELsUD9S4
+WAGkQ28pQZVCr2jN5lruw0NdBswqnPmofEawBHw7xcw+ZmgHxhoPltQbZD0ATYkG
+0Ch1fSzWpLilDI6kBVQKhAjidoxf/HDNBxMJkbf/fve0OqE3Kuyq43K/u+gNT3cT
+mts9cAew794M81mhNVp8AHz3DDEAZZF9fXKoSlR4nhHb3UwgUmJIbIuteNh2Td2u
+WC7sNpRJmA+ZKI4JXNv8
+=NN4o
 -----END PGP SIGNATURE-----
 
---r5Pyd7+fXNt84Ff3--
+--A6N2fC+uXW/VQSAv--
