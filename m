@@ -1,34 +1,33 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [RFC PATCH 4/9] hwmon: (lm90) use macros for the indexes of temp8
- and temp11
-Date: Tue, 19 Feb 2013 14:39:22 +0900
-Message-ID: <5123100A.9050604@nvidia.com>
-References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-5-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [RFC PATCH 2/9] hwmon: (lm90) split set&show temp as common codes
+Date: Tue, 19 Feb 2013 17:48:06 +0800
+Message-ID: <51234A56.4020006@nvidia.com>
+References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-3-git-send-email-wni@nvidia.com> <1B93E76B0D8B0E4E8BDD54060BBDE81975FB926ACC@HQMAIL03.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1361187031-3679-5-git-send-email-wni@nvidia.com>
+In-Reply-To: <1B93E76B0D8B0E4E8BDD54060BBDE81975FB926ACC@HQMAIL03.nvidia.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: "durgadoss.r@intel.com" <durgadoss.r@intel.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.orgrs.org" <linux-kernel@vger.kernel.orgrs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Matthew Longnecker <MLongnecker@nvidia.com>
+Cc: "durgadoss.r@intel.com" <durgadoss.r@intel.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/18/2013 08:30 PM, Wei Ni wrote:
-> Using macros for the indexes and nrs of temp8 and temp11.
-> This make the code much clearer.
->
-> Signed-off-by: Wei Ni <wni@nvidia.com>
+On 02/19/2013 06:29 AM, Matthew Longnecker wrote:
+> Wei,
+> 
+> This set of patches seems to include 3 logical subsets
+> 1) lm90 changes
+> 2) dt support in drivers/thermal
+> 3) tegra30 support in drivers/thermal
+> 
+> Would it make sense to split this into 3 separate sets of changes?
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Ok, I will do it in my next version.
 
-Great patch. This makes the code much more readable. I also compiled 
-lm90.o before and after this patch, and diff'ed the stripped binaries to 
-make sure there was no error in the macro indexes. Both binaries were 
-indentical, therefore:
-
-Tested-by: Alexandre Courbot <acourbot@nvidia.com>
-
-Alex.
-
+> 
+> -Matt Longnecker
+> 
+> nvpublic
+> 
 
