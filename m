@@ -1,50 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v3 0/6] ARM: tegra: convert device tree files to use CLK defines
-Date: Tue, 19 Feb 2013 10:10:16 -0700
-Message-ID: <5123B1F8.4040102@wwwdotorg.org>
-References: <1360917814-27236-1-git-send-email-hdoyu@nvidia.com>
- <1361138717.29465.2@driftwood>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC 1/2] Makefile: Add arch/arch/$(hdr-arch)/boot in header
+ include path
+Date: Tue, 19 Feb 2013 10:18:13 -0700
+Message-ID: <5123B3D5.1000405@wwwdotorg.org>
+References: <1360918364-27960-1-git-send-email-hdoyu@nvidia.com> <511E617E.6080206@wwwdotorg.org> <51222BF9.3040802@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1361138717.29465.2@driftwood>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51222BF9.3040802@suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/17/2013 03:05 PM, Rob Landley wrote:
-> On 02/15/2013 02:43:11 AM, Hiroshi Doyu wrote:
->> Hi,
->>
->> With new dtc+cpp feature, we could get rid of magic numbers in dts*
->> files. This patch replaces CLK IDs.
->>
->> We also plan to share those DT header files with kernel source
->> later[1].
-> ...
->> [1]
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-February/149804.html
->>
+On 02/18/2013 06:26 AM, Michal Marek wrote:
+> On 15.2.2013 17:25, Stephen Warren wrote:
+>> On 02/15/2013 01:52 AM, Hiroshi Doyu wrote:
+>>> This patch allows kernel source to include those DT
+>>> headers. For example:
+>>>
+>>> + #include <dts/tegra20-car.h>
+>>>
+>>> Signed-off-by: Hiroshi Doyu <hdoyu@nvidia.com>
+>>> ---
+>>>  Makefile |    2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/Makefile b/Makefile
+>>> index 0b4bf62..7f54cdb 100644
+>>> --- a/Makefile
+>>> +++ b/Makefile
+>>> @@ -364,7 +364,7 @@ LINUXINCLUDE    := \
+>>>  		-I$(srctree)/arch/$(hdr-arch)/include \
+>>>  		-Iarch/$(hdr-arch)/include/generated \
+>>>  		$(if $(KBUILD_SRC), -I$(srctree)/include) \
+>>> -		-Iinclude \
+>>> +		-Iinclude -Iarch/$(hdr-arch)/boot \
 > 
-> This really smells like documentation should be updated, probably
-> booting-without-of.txt or similar. Alas, I'm not capable of writing such
-> an update...
+> Would it be possible to use a new directory for this? At least POWER and
+> x86 have several unrelated headers in their arch/*/boot that are only
+> meant for the bootstrap code.
 
-I'm not sure what documentation would be updated nor why. Can you
-describe that?
+The need here is to allow access to headers in
+arch/$(hdr-arch)/boot/dts, but passing the directory above that allows
+including files as <dts/foo.h> which is nice. That's the rationale for
+this patch.
 
-This patch is (or should be) editing the device tree binding
-documentation to (include by) reference the header file that is being
-added in this patch. I don't believe there's any more general
-documentation that is affected by this series.
+But as I mentioned in other threads, I wonder if we should put the
+header files in arch/$(hdr-arch)/boot/dts at all;
+Documentation/devicetree/bindings/... would keep the headers adjacent to
+the documentation for the bindings themselves, and the headers really
+are part of the binding definitions... That would avoid the issue Michal
+pointed out, and I think clean up the dtc+cpp include path usage too.
+
+Grant, what are your thoughts?
