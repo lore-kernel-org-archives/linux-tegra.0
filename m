@@ -1,65 +1,34 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: Broken build due to 6aed8ec "drm: review locking for
-	drm_fb_helper_restore_fbdev_mode"
-Date: Tue, 19 Feb 2013 19:56:07 +0100
-Message-ID: <CAKMK7uG=x4ESF_uVUwvK+0kzvsXEgZBtM9Z6_Qrm6keSasoCbA@mail.gmail.com>
-References: <5123BADC.2050807@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: assume CONFIG_OF, remove platform data
+Date: Tue, 19 Feb 2013 12:17:13 -0700
+Message-ID: <5123CFB9.7020209@wwwdotorg.org>
+References: <1360966039-24071-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <5123BADC.2050807@wwwdotorg.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Zhang <markz@nvidia.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1360966039-24071-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 19, 2013 at 6:48 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> Daniel,
->
-> Commit 6aed8ec "drm: review locking for
-> drm_fb_helper_restore_fbdev_mode" (now in next-20130218 and later)
-> causes build failures for tegra_defconfig. The issue is this part of the
-> patch:
+On 02/15/2013 03:07 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra only supports, and always enables, device tree. Remove all ifdefs
+> and runtime checks for DT support from the driver. Platform data is
+> therefore no longer required. Rework the driver to parse the device tree
+> directly into struct sdhci_tegra.
 
-You need to yell at Dave Airlie:
+Chris,
 
-https://patchwork.kernel.org/patch/2162391/
+If you can take this for 3.9, everything is simple. I understand it's
+very late for that.
 
-Cheers, Daniel
-
->> diff --git a/drivers/gpu/drm/drm_fb_cma_helper.c b/drivers/gpu/drm/drm_fb_cma_helper.c
->> index 3742bc9..1b6ba2d 100644
->> --- a/drivers/gpu/drm/drm_fb_cma_helper.c
->> +++ b/drivers/gpu/drm/drm_fb_cma_helper.c
->> @@ -389,8 +389,10 @@ EXPORT_SYMBOL_GPL(drm_fbdev_cma_fini);
->>   */
->>  void drm_fbdev_cma_restore_mode(struct drm_fbdev_cma *fbdev_cma)
->>  {
->> +       drm_modeset_lock_all(dev);
->>         if (fbdev_cma)
->>                 drm_fb_helper_restore_fbdev_mode(&fbdev_cma->fb_helper);
->> +       drm_modeset_unlock_all(dev);
->>  }
->>  EXPORT_SYMBOL_GPL(drm_fbdev_cma_restore_mode);
->
-> There, there is no "dev" variable, so compile fails.
->
-> If I revert this one patch, the build succeeds, although I didn't check
-> whether DRM still works after that (e.g. due to any dependencies from
-> the rest of the series).
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+If this goes into 3.10, then there will be some dependencies. Can you
+ack this patch so that I can take it through the Tegra tree? The reason
+being: I know that Joseph Lo will be posting some patches to this file
+that need to go through the Tegra tree due to device tree dependencies,
+and the simplest way to resolve it is just to take all changes to this
+file through the Tegra tree in 3.10. Thanks.
