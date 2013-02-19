@@ -1,37 +1,43 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL] ARM: tegra: common clock framework fixes
-Date: Tue, 19 Feb 2013 21:43:58 +0000
-Message-ID: <201302192143.59019.arnd@arndb.de>
-References: <1360780358-2866-1-git-send-email-swarren@wwwdotorg.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: unhandled interrupt from otg port
+Date: Tue, 19 Feb 2013 23:12:53 +0100
+Message-ID: <3906801.pvZ5F8TrFD@ax5200p>
+References: <1978166.seipGZS4QH@ax5200p> <5123B073.7060005@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360780358-2866-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5123B073.7060005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 13 February 2013, Stephen Warren wrote:
-> A number of small fixes are included to the new Tegra common clock
-> driver. These are: Missing locking, definition of device tree clock IDs
-> not matching the binding, a static cleanup, missing initialization of
-> some UART clocks.
+Stephen,
+
+On Tuesday 19 February 2013 10:03:47 Stephen Warren wrote:
+> On 02/17/2013 04:48 AM, Marc Dietrich wrote:
+> > Hi,
+> > 
+> > I sometimes see unhandled irq from the otg port on my AC100 (kernel 3.8.0-rc7).
+> > This happens randomly when the a cable is pluged into the mini usb port. Seems
+> > the port generates an interrupt on probe which isn't handled.
 > 
-> This branch is based on Tegra's previous pull request tegra-for-3.9-dt.
-> This dependency is caused by the one patch that edits the device tree.
-> If this causes a problem, I can drop the final two patches in this pull
-> request for now, and rebase it onto previous tegra-for-3.9-soc-ccf
-> instead.
+> Perhaps Venu can explain this; he is our USB expert.
+> 
+> > Any ideas?
+> 
+> I'm slightly confused by your description though; I assume this problem
+> happens when you boot with a USB cable already plugged in, not when you
+> first boot the system, then plug in a cable? Is the cable connected to a
+> host PC, or to a device?
 
-It's not ideal, but I've merged them into next/dt now because of this
-dependency. The order of the next/* branches in arm-soc is fixed
-now because of other dependencies, so putting it into next/soc would
-have been equally wrong.
+the cable is connected to a host PC. It is not shown when connecting after the
+system has booted. Unfortunately, I cannot generate the error reproducible, e.g.
+I just tried 10 times and nothing was shown. Maybe just forget it for now if
+no one has an obvious idea. I'll try to find some reproducable situation and will
+report back.
 
-I think a better solution would have been to send two pull requests,
-where one was based on the ccf branch and the other on the dt branch.
+Thanks
 
-	Arnd
+Marc
