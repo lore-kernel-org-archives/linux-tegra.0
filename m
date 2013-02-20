@@ -1,52 +1,55 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC PATCH 8/9] ARM: dt: t30 cardhu: add dt entry for thermal
- driver
-Date: Wed, 20 Feb 2013 10:18:37 -0700
-Message-ID: <5125056D.7060608@wwwdotorg.org>
-References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-9-git-send-email-wni@nvidia.com> <51240A95.9070007@wwwdotorg.org> <5124B934.3020900@nvidia.com>
+Subject: Re: [PATCH] spi: tegra114: add spi driver
+Date: Wed, 20 Feb 2013 10:25:13 -0700
+Message-ID: <512506F9.2030508@wwwdotorg.org>
+References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com> <5123C18A.9010604@wwwdotorg.org> <5124C18F.6070108@nvidia.com> <20130220131112.GE2726@opensource.wolfsonmicro.com> <5124CEF5.3060605@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5124B934.3020900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5124CEF5.3060605-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 04:53 AM, Wei Ni wrote:
-> On 02/20/2013 07:28 AM, Stephen Warren wrote:
->> On 02/18/2013 04:30 AM, Wei Ni wrote:
->>> Enable thermal driver in the dts file.
->>> Set sensor as lm90 remote sensor, and set throttle data.
+On 02/20/2013 06:26 AM, Laxman Dewangan wrote:
+> On Wednesday 20 February 2013 06:41 PM, Mark Brown wrote:
+>> * PGP Signed by an unknown key
 >>
->>> diff --git a/Documentation/devicetree/bindings/thermal/tegra3-thermal.txt b/Documentation/devicetree/bindings/thermal/tegra3-thermal.txt
-
->> Also, what units are used for all these properties?
+>> On Wed, Feb 20, 2013 at 05:59:03PM +0530, Laxman Dewangan wrote:
+>>>>> +    tspi->clk = devm_clk_get(&pdev->dev, "spi");
+>>>> Does this HW block use multiple clocks? If not, I think s/"spi"/NULL/
+>>>> there, just like the Tegra20 driver.
+>>> No, spi controller uses the only one clock. I will change to NULL.
+>> I'm never convinced that NULL is a helpful clock name to pick, it's not
+>> awesome if you ever acquire a second clock.
 > 
-> they use "int".
-> And according to our downstream dvfs driver, the throttle table use
-> "unsigned long".
-
-int and unsigned long are types, not units. Units means degrees C vs.
-degrees F vs. degrees K, or Hz vs. KHz vs. MHz, etc.
-
->> Judging by the example below, this property is a list of tuples. The
->> meaning of each field in the tuple needs to be explained.
->>
->> What happens when the CPU/SoC needs to be throttled? Must some clock or
->> voltage be lowered/limited? If so, you need properties that indicate
->> which clock/voltage/... needs to be acted upon.
+> I had other idea of okeeping clock name here for power optimization.
+> Spi controller can take the power source ffrom different clock source
+> say clk_m (crystal) and pllp.
 > 
-> This table which will be used by our DVFS driver, although it didn't be
-> upstreamed yet. The table set clock frequency limited value with
-> different cooling state. When the temperature touch the different
-> limited value, we will set difficult cooling state, find the limited
-> freq from this table and pass to the dvfs driver.
-> I think may be this table should be set for cooling device node. This
-> table is only for our tegra dvfs, so I think we can parse this table in
-> the tegra3_cooling.c, which will be the new driver for cooling device.
+> I want to set the parent clock dynamically based on required speed so
+> that if the desire speed can be meet from clk_m, no need to increase pll
+> count and possible we may endup with siwtchng off pllp which can save
+> power.
+> 
+> So for this I may require
+> 
+> spi_clk = devm_clk_get(&pdev->dev, "spi");
+> spi_clkm = devm_clk_get(&pdev->dev, "clmkm");
+> spi_pllp = devm_clk_get(&pdev->dev, "pllp");
+> 
+> and call clk_set_parent(spi_clk, spi_clkm) or clk_set_parent(spi_clk,
+> spi_pllp).
 
-Note that I expect the answers to these questions (pretty much all the
-questions I asked in response to your patch) to be included in the DT
-binding documentation, not just in email.
+OK, so that's certainly an argument for requesting a specific clock name
+rather than NULL.
+
+But, please do think this approach through fully. The DT binding needs
+to define which clock-names the driver requires to be present, and any
+optional clock names. DT bindings are supposed to be immutable, or
+perhaps extendible in a completely backwards-compatible fashion. This
+implies that you need to have thought through the entire list of clocks
+that the driver might want in the DT clock-names property when you first
+write the DT binding documentation...
