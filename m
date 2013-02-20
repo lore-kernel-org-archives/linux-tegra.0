@@ -1,67 +1,42 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC PATCH 7/9] thermal: tegra30: add tegra30 thermal driver
-Date: Tue, 19 Feb 2013 23:56:29 +0000
-Message-ID: <20130219235629.GU17833@n2100.arm.linux.org.uk>
-References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-8-git-send-email-wni@nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [RFC PATCH 3/9] hwmon: (lm90) add support to handle irq
+Date: Wed, 20 Feb 2013 12:27:23 +0900
+Message-ID: <5124429B.2000404@nvidia.com>
+References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-4-git-send-email-wni@nvidia.com> <512403F5.5010005@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1361187031-3679-8-git-send-email-wni@nvidia.com>
+In-Reply-To: <512403F5.5010005@wwwdotorg.org>
 Sender: linux-pm-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: durgadoss.r@intel.com, rui.zhang@intel.com, MLongnecker@nvidia.com, khali@linux-fr.org, linux-kernel@vger.kernel.orgrs.org, linux-pm@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Wei Ni <wni@nvidia.com>, "durgadoss.r@intel.com" <durgadoss.r@intel.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 18, 2013 at 07:30:29PM +0800, Wei Ni wrote:
-> +static struct tegra_thermal_data * __devinit thermal_tegra_dt_parse_pdata(
+On 02/20/2013 08:00 AM, Stephen Warren wrote:
+> On 02/18/2013 04:30 AM, Wei Ni wrote:
+>> Add support to handle irq. When the temperature touch the limit value, the
+>> driver can handle the interrupt.
+>
+>> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+>
+>> +static void lm90_irq_work(struct work_struct *work)
+> ...
+>> +	enable_irq(client->irq);
+>> +}
+>> +
+>> +static irqreturn_t lm90_irq(int irq, void *dev_id)
+>> +{
+>> +	struct lm90_data *data = dev_id;
+>> +
+>> +	disable_irq_nosync(irq);
+>
+> I think IRQF_ONESHOT would enable you to remove the manual
+> enable/disable_irq calls.
 
-__dev* no longer exists.
+Oh, right. Using a threaded IRQ with IRQF_ONESHOT would make that happen 
+transparently. Wasn't aware of that, thanks.
 
-> +	tdata = devm_kzalloc(&pdev->dev, sizeof(*tdata), GFP_KERNEL);
-> +	if (!tdata) {
-> +		dev_err(&pdev->dev, "Can't allocate platform data\n");
-> +		return NULL;
-> +	}
-> +	memset(tdata, 0, sizeof(*tdata));
+Alex.
 
-Useless memset.  k*z*alloc already zeros the memory before returning.
 
-> +static int tegra30_thermal_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_thermal_data *pdata = pdev->dev.platform_data;
-
-You read pdata here....
-
-> +	struct thermal_zone *tz;
-> +	struct thermal_sensor *ts;
-> +	static struct thermal_cooling_device *cdev;
-> +	int ret;
-> +
-> +	pdata = thermal_tegra_dt_parse_pdata(pdev);
-
-and immediately overwrite it here.
-
-> +	if (!pdata) {
-> +		dev_err(&pdev->dev, "Get platform data failed.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Create a thermal zone */
-> +	tz = create_thermal_zone("tz_tegra", NULL);
-> +	if (!tz) {
-> +		dev_err(&pdev->dev, "Create thermal_zone failed.\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	pdata->tz = tz;
-
-This isn't how you deal with driver data.  Set driver data against a
-platform device using platform_set_drvdata(pdev, tz).
-
-> +static int tegra30_thermal_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_thermal_data *pdata = pdev->dev.platform_data;
-
-and use platform_get_drvdata() here - and don't use pdata->tz.
-	struct struct thermal_zone *tz = platform_get_drvdata(pdev);
