@@ -1,42 +1,39 @@
-From: Alex Courbot <acourbot@nvidia.com>
-Subject: Re: [RFC PATCH 3/9] hwmon: (lm90) add support to handle irq
-Date: Wed, 20 Feb 2013 12:27:23 +0900
-Message-ID: <5124429B.2000404@nvidia.com>
-References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-4-git-send-email-wni@nvidia.com> <512403F5.5010005@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/2] mmc: tegra: use mmc_of_parse to get support of standard MMC DT binding
+Date: Wed, 20 Feb 2013 15:05:00 +0800
+Message-ID: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <512403F5.5010005@wwwdotorg.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Wei Ni <wni@nvidia.com>, "durgadoss.r@intel.com" <durgadoss.r@intel.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 08:00 AM, Stephen Warren wrote:
-> On 02/18/2013 04:30 AM, Wei Ni wrote:
->> Add support to handle irq. When the temperature touch the limit value, the
->> driver can handle the interrupt.
->
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->
->> +static void lm90_irq_work(struct work_struct *work)
-> ...
->> +	enable_irq(client->irq);
->> +}
->> +
->> +static irqreturn_t lm90_irq(int irq, void *dev_id)
->> +{
->> +	struct lm90_data *data = dev_id;
->> +
->> +	disable_irq_nosync(irq);
->
-> I think IRQF_ONESHOT would enable you to remove the manual
-> enable/disable_irq calls.
+The 2nd patch of this series depends on two patches below.
 
-Oh, right. Using a threaded IRQ with IRQF_ONESHOT would make that happen 
-transparently. Wasn't aware of that, thanks.
+"mmc: provide a standard MMC device-tree binding parser centrally"
+(available on next-20130219)
+mmc: tegra: assume CONFIG_OF, remove platform data
+(https://patchwork.kernel.org/patch/2150351/)
 
-Alex.
+Verified on Seaboard and Cardhu.
 
+Joseph Lo (2):
+  ARM: dts: tegra: fix the activate polarity of cd-gpio in mmc host
+  mmc: tegra: use mmc_of_parse to get the support of standard MMC DT
+    bindings
 
+ arch/arm/boot/dts/tegra20-harmony.dts   |  4 +-
+ arch/arm/boot/dts/tegra20-paz00.dts     |  2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts  |  2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts |  2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts   |  2 +-
+ arch/arm/boot/dts/tegra20-whistler.dts  |  1 +
+ arch/arm/boot/dts/tegra30-beaver.dts    |  2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi   |  2 +-
+ drivers/mmc/host/sdhci-tegra.c          | 85 +++------------------------------
+ 9 files changed, 16 insertions(+), 86 deletions(-)
+
+-- 
+1.8.1.1
