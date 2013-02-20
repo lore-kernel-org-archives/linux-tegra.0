@@ -1,143 +1,60 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 1/2] ARM: dts: tegra: fix the activate polarity of cd-gpio in mmc host
-Date: Wed, 20 Feb 2013 15:05:01 +0800
-Message-ID: <1361343902-15223-2-git-send-email-josephl@nvidia.com>
-References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: unhandled interrupt from otg port
+Date: Wed, 20 Feb 2013 09:50:47 +0100
+Message-ID: <2407399.sDvuQ1S2GC@fb07-iapwap2.physik.uni-giessen.de>
+References: <1978166.seipGZS4QH@ax5200p> <4469776.MJZ64uWU3E@ax5200p> <5123FBAC.6010302@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5123FBAC.6010302-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The GPIO pin of SD slot card detection should active low.
+Am Dienstag, 19. Februar 2013, 15:24:44 schrieb Stephen Warren:
+> On 02/19/2013 03:17 PM, Marc Dietrich wrote:
+> > On Tuesday 19 February 2013 23:12:53 Marc Dietrich wrote:
+> >> Stephen,
+> >> 
+> >> On Tuesday 19 February 2013 10:03:47 Stephen Warren wrote:
+> >>> On 02/17/2013 04:48 AM, Marc Dietrich wrote:
+> >>>> Hi,
+> >>>> 
+> >>>> I sometimes see unhandled irq from the otg port on my AC100 (kernel
+> >>>> 3.8.0-rc7). This happens randomly when the a cable is pluged into the
+> >>>> mini usb port. Seems the port generates an interrupt on probe which
+> >>>> isn't handled.
+> >>> 
+> >>> Perhaps Venu can explain this; he is our USB expert.
+> >>> 
+> >>>> Any ideas?
+> >>> 
+> >>> I'm slightly confused by your description though; I assume this problem
+> >>> happens when you boot with a USB cable already plugged in, not when you
+> >>> first boot the system, then plug in a cable? Is the cable connected to a
+> >>> host PC, or to a device?
+> >> 
+> >> the cable is connected to a host PC. It is not shown when connecting
+> >> after the system has booted. Unfortunately, I cannot generate the error
+> >> reproducible, e.g. I just tried 10 times and nothing was shown. Maybe
+> >> just forget it for now if no one has an obvious idea. I'll try to find
+> >> some reproducable situation and will report back.
+> > 
+> > arr, just found it: it happens when you load an uboot image via tegrarcm
+> > first - so this could be a kernel or uboot problem.
+> 
+> Ah, so that means that the Tegra boot ROM already initialized the USB
+> port in device mode to receive U-Boot. I assume you're not touching USB
+> in U-Boot at all, but loading the kernel/... from SD/eMMC. Then, the
+> kernel initializes/uses USB in host mode (since that's all we support so
+> far), and then you see the issue.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- arch/arm/boot/dts/tegra20-harmony.dts   | 4 ++--
- arch/arm/boot/dts/tegra20-paz00.dts     | 2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts  | 2 +-
- arch/arm/boot/dts/tegra20-trimslice.dts | 2 +-
- arch/arm/boot/dts/tegra20-ventana.dts   | 2 +-
- arch/arm/boot/dts/tegra20-whistler.dts  | 1 +
- arch/arm/boot/dts/tegra30-beaver.dts    | 2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi   | 2 +-
- 8 files changed, 9 insertions(+), 8 deletions(-)
+yes, sounds reasonable.
 
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 61d027f..1f79c0d 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -437,7 +437,7 @@
- 
- 	sdhci@c8000200 {
- 		status = "okay";
--		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 155 0>; /* gpio PT3 */
- 		bus-width = <4>;
-@@ -445,7 +445,7 @@
- 
- 	sdhci@c8000600 {
- 		status = "okay";
--		cd-gpios = <&gpio 58 0>; /* gpio PH2 */
-+		cd-gpios = <&gpio 58 1>; /* gpio PH2 */
- 		wp-gpios = <&gpio 59 0>; /* gpio PH3 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 		bus-width = <8>;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index 54d6fce..9db36da 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -436,7 +436,7 @@
- 
- 	sdhci@c8000000 {
- 		status = "okay";
--		cd-gpios = <&gpio 173 0>; /* gpio PV5 */
-+		cd-gpios = <&gpio 173 1>; /* gpio PV5 */
- 		wp-gpios = <&gpio 57 0>;  /* gpio PH1 */
- 		power-gpios = <&gpio 169 0>; /* gpio PV1 */
- 		bus-width = <4>;
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 37b3a57..715a8b8 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -584,7 +584,7 @@
- 
- 	sdhci@c8000400 {
- 		status = "okay";
--		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 		bus-width = <4>;
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 5d79e4f..98f3e44 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -325,7 +325,7 @@
- 
- 	sdhci@c8000600 {
- 		status = "okay";
--		cd-gpios = <&gpio 121 0>; /* gpio PP1 */
-+		cd-gpios = <&gpio 121 1>; /* gpio PP1 */
- 		wp-gpios = <&gpio 122 0>; /* gpio PP2 */
- 		bus-width = <4>;
- 	};
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 425c890..4aef56f 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -520,7 +520,7 @@
- 
- 	sdhci@c8000400 {
- 		status = "okay";
--		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 57 0>; /* gpio PH1 */
- 		power-gpios = <&gpio 70 0>; /* gpio PI6 */
- 		bus-width = <4>;
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index ea57c0f..5762188 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -510,6 +510,7 @@
- 
- 	sdhci@c8000400 {
- 		status = "okay";
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 173 0>; /* gpio PV5 */
- 		bus-width = <8>;
- 	};
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 8ff2ff2..0a2cd24 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -257,7 +257,7 @@
- 
- 	sdhci@78000000 {
- 		status = "okay";
--		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 155 0>; /* gpio PT3 */
- 		power-gpios = <&gpio 31 0>; /* gpio PD7 */
- 		bus-width = <4>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index 1749927..3e2d210 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -311,7 +311,7 @@
- 
- 	sdhci@78000000 {
- 		status = "okay";
--		cd-gpios = <&gpio 69 0>; /* gpio PI5 */
-+		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
- 		wp-gpios = <&gpio 155 0>; /* gpio PT3 */
- 		power-gpios = <&gpio 31 0>; /* gpio PD7 */
- 		bus-width = <4>;
--- 
-1.8.1.1
+> I reproduced this on Harmony. I'll file a bug and assign it to Venu.
 
+Thanks!
+
+Marc
