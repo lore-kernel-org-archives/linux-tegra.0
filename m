@@ -1,37 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra114: add spi driver
-Date: Wed, 20 Feb 2013 11:00:02 -0700
-Message-ID: <51250F22.8050401@wwwdotorg.org>
-References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com> <5123C18A.9010604@wwwdotorg.org> <5124C18F.6070108@nvidia.com> <20130220131112.GE2726@opensource.wolfsonmicro.com> <5124CEF5.3060605@nvidia.com> <512506F9.2030508@wwwdotorg.org> <20130220173109.GU2726@opensource.wolfsonmicro.com> <512509A9.6020208@wwwdotorg.org> <20130220175721.GW2726@opensource.wolfsonmicro.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] Tegra114 Add Minimal SDHCI support
+Date: Wed, 20 Feb 2013 13:35:13 -0500
+Message-ID: <1361385317-6020-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130220175721.GW2726-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 10:57 AM, Mark Brown wrote:
-> On Wed, Feb 20, 2013 at 10:36:41AM -0700, Stephen Warren wrote:
->> On 02/20/2013 10:31 AM, Mark Brown wrote:
-> 
->>> Since we can extend the list of clocks it doesn't seem like
->>> there's much issue here, especially if some of them are
->>> optional?
-> 
->> Yes, there's certainly a way to extend the binding in a 
->> backwards-compatible way.
-> 
->> However, I have seen in Rob and/or Grant push back on not fully 
->> defining bindings in the past - i.e. actively planning to
->> initially create a minimal binding and extend it in the future,
->> rather than completely defining it up-front.
-> 
-> That sounds like the current stuff with a minimal definition is
-> OK?
+This patchset adds the minimal support for Tegra114 SDHCI support
+and enables it for tegra114-dalmore.
 
-I'm personally OK with defining a minimal binding first and extending
-it later. But, I'm worried if when we actually try to extend the
-binding later, we'll get push-back.
+This patchset is dependent on:
+ - Tegra114 Clock framework (v7) from Peter De Schrijver
+   ( http://patchwork.ozlabs.org/patch/220727/ ...)
+ - Tegra114 Pinctrl patches (v2) I sent 2/11
+   ( http://patchwork.ozlabs.org/patch/219686/
+     http://patchwork.ozlabs.org/patch/219687/ )
+ - mmc: tegra: assume CONFIG_OF, remove platform data
+   ( https://patchwork.kernel.org/patch/2150351/)
+
+I tested merging this with and without the mmc patches from Joseph Lo
+and it merged cleanly in either case, so there shouldn't be a nasty
+dependency between them.
+   ( http://patchwork.ozlabs.org/patch/221969/
+     http://patchwork.ozlabs.org/patch/221970/ )
+
+Pritesh Raithatha (1):
+  ARM tegra: add SDHCI nodes with common properties
+
+Rhyland Klein (3):
+  ARM: tegra: add SDHCI support for Dalmore
+  mmc: host: sdhci-tegra: cleanup ifdefs
+  mmc: host: sdhci-tegra: add basic support for Tegra114
+
+ arch/arm/boot/dts/tegra114-dalmore.dts |   11 +++++++++++
+ arch/arm/boot/dts/tegra114.dtsi        |   32 ++++++++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci-tegra.c         |   22 ++++++++++++++--------
+ 3 files changed, 57 insertions(+), 8 deletions(-)
+
+-- 
+1.7.9.5
