@@ -1,48 +1,52 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
- standard MMC DT bindings
-Date: Wed, 20 Feb 2013 10:07:35 -0700
-Message-ID: <512502D7.4090605@wwwdotorg.org>
-References: <1361343902-15223-1-git-send-email-josephl@nvidia.com> <1361343902-15223-3-git-send-email-josephl@nvidia.com>
+Subject: Re: [RFC PATCH 8/9] ARM: dt: t30 cardhu: add dt entry for thermal
+ driver
+Date: Wed, 20 Feb 2013 10:18:37 -0700
+Message-ID: <5125056D.7060608@wwwdotorg.org>
+References: <1361187031-3679-1-git-send-email-wni@nvidia.com> <1361187031-3679-9-git-send-email-wni@nvidia.com> <51240A95.9070007@wwwdotorg.org> <5124B934.3020900@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361343902-15223-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5124B934.3020900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 12:05 AM, Joseph Lo wrote:
-> Updating the sdhci-tegra driver to use mmc_of_parse to support standard
-> MMC DT bindings. Then we can remove the redundant code that already support
+On 02/20/2013 04:53 AM, Wei Ni wrote:
+> On 02/20/2013 07:28 AM, Stephen Warren wrote:
+>> On 02/18/2013 04:30 AM, Wei Ni wrote:
+>>> Enable thermal driver in the dts file.
+>>> Set sensor as lm90 remote sensor, and set throttle data.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/thermal/tegra3-thermal.txt b/Documentation/devicetree/bindings/thermal/tegra3-thermal.txt
 
->  static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
->  {
-> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> -	struct sdhci_tegra *tegra_host = pltfm_host->priv;
-> -
-> -	if (!gpio_is_valid(tegra_host->wp_gpio))
-> -		return -1;
-> -
-> -	return gpio_get_value(tegra_host->wp_gpio);
-> +	return mmc_gpio_get_ro(host->mmc);
->  }
+>> Also, what units are used for all these properties?
+> 
+> they use "int".
+> And according to our downstream dvfs driver, the throttle table use
+> "unsigned long".
 
-It'd be nice if there was a standard version of this function that could
-be plugged directly into struct sdhci_ops, so that each individual
-driver doesn't have to re-invent this wrapper.
+int and unsigned long are types, not units. Units means degrees C vs.
+degrees F vs. degrees K, or Hz vs. KHz vs. MHz, etc.
 
-> @@ -220,15 +203,12 @@ static void sdhci_tegra_parse_dt(struct device *dev,
->  					struct sdhci_tegra *tegra_host)
->  {
-...
-> +	struct sdhci_host *host;
-...
-> +	host = platform_get_drvdata(to_platform_device(dev));
-> +	mmc_of_parse(host->mmc);
->  }
+>> Judging by the example below, this property is a list of tuples. The
+>> meaning of each field in the tuple needs to be explained.
+>>
+>> What happens when the CPU/SoC needs to be throttled? Must some clock or
+>> voltage be lowered/limited? If so, you need properties that indicate
+>> which clock/voltage/... needs to be acted upon.
+> 
+> This table which will be used by our DVFS driver, although it didn't be
+> upstreamed yet. The table set clock frequency limited value with
+> different cooling state. When the temperature touch the different
+> limited value, we will set difficult cooling state, find the limited
+> freq from this table and pass to the dvfs driver.
+> I think may be this table should be set for cooling device node. This
+> table is only for our tegra dvfs, so I think we can parse this table in
+> the tegra3_cooling.c, which will be the new driver for cooling device.
 
-It might be simpler to change the function prototype to simply pass in
-the host object too.
+Note that I expect the answers to these questions (pretty much all the
+questions I asked in response to your patch) to be included in the DT
+binding documentation, not just in email.
