@@ -1,55 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra114: add spi driver
-Date: Wed, 20 Feb 2013 10:25:13 -0700
-Message-ID: <512506F9.2030508@wwwdotorg.org>
-References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com> <5123C18A.9010604@wwwdotorg.org> <5124C18F.6070108@nvidia.com> <20130220131112.GE2726@opensource.wolfsonmicro.com> <5124CEF5.3060605@nvidia.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 1/6] ASoC: tegra: assume CONFIG_OF in
+ tegra_asoc_utils_init
+Date: Wed, 20 Feb 2013 17:25:49 +0000
+Message-ID: <20130220172549.GR2726@opensource.wolfsonmicro.com>
+References: <1360973255-344-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2z7AKWNQ4hR/M4ga"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5124CEF5.3060605-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1360973255-344-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 06:26 AM, Laxman Dewangan wrote:
-> On Wednesday 20 February 2013 06:41 PM, Mark Brown wrote:
->> * PGP Signed by an unknown key
->>
->> On Wed, Feb 20, 2013 at 05:59:03PM +0530, Laxman Dewangan wrote:
->>>>> +    tspi->clk = devm_clk_get(&pdev->dev, "spi");
->>>> Does this HW block use multiple clocks? If not, I think s/"spi"/NULL/
->>>> there, just like the Tegra20 driver.
->>> No, spi controller uses the only one clock. I will change to NULL.
->> I'm never convinced that NULL is a helpful clock name to pick, it's not
->> awesome if you ever acquire a second clock.
-> 
-> I had other idea of okeeping clock name here for power optimization.
-> Spi controller can take the power source ffrom different clock source
-> say clk_m (crystal) and pllp.
-> 
-> I want to set the parent clock dynamically based on required speed so
-> that if the desire speed can be meet from clk_m, no need to increase pll
-> count and possible we may endup with siwtchng off pllp which can save
-> power.
-> 
-> So for this I may require
-> 
-> spi_clk = devm_clk_get(&pdev->dev, "spi");
-> spi_clkm = devm_clk_get(&pdev->dev, "clmkm");
-> spi_pllp = devm_clk_get(&pdev->dev, "pllp");
-> 
-> and call clk_set_parent(spi_clk, spi_clkm) or clk_set_parent(spi_clk,
-> spi_pllp).
 
-OK, so that's certainly an argument for requesting a specific clock name
-rather than NULL.
+--2z7AKWNQ4hR/M4ga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But, please do think this approach through fully. The DT binding needs
-to define which clock-names the driver requires to be present, and any
-optional clock names. DT bindings are supposed to be immutable, or
-perhaps extendible in a completely backwards-compatible fashion. This
-implies that you need to have thought through the entire list of clocks
-that the driver might want in the DT clock-names property when you first
-write the DT binding documentation...
+On Fri, Feb 15, 2013 at 05:07:30PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra only supports, and always enables, device tree. Remove all runtime
+> checks for DT support from the driver.
+
+Applied all, thanks.
+
+--2z7AKWNQ4hR/M4ga
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRJQcUAAoJELSic+t+oim9MIAP/j0yCs2zp6OcEWSG8uNSKxQD
+sWry22mw3qcMfNZjX7/jF7ajEWRilR9LrzO6DReern/Lwzsq5+NIBztKiV/61Sre
+9vEHmwJyCUXRZisv7VR0T2OcM1MEN2JIum6Ej8T6GSve32yNY3kGm5xk258sYyZH
+X9JhzD/pr3/IPQn+dk3EU7dxbhREgixOmGTJBW/erUWm1PE8jyOKc4vuqldzdfGn
+QdpBGooXSyMWHNAmwrDC4/Tu6KvUzDKtaVOCWuTBni2OGZm7CpH9fueo7B06RIzL
+lHJI6aRanVHJijQvBb1GlYAmu5ZhpMAdycEESDMQ1rmKlPT2RpHbIxEGQ+Ee/sQI
+Hoxr23rS6aik4S9vF8cHb2wHEXjcpFJVtlohkM2fDwrIDKgBPUqg+BZuUNKUs9QL
+LoqmJU8hFkW0D3Ugf1FfYUsXk8pkKxXS4L1PVtWUu9MRavPSSDRiBT/al38ywZFk
+jITz2xqtIo/+U7+EAfxTbjMabsuEeUPenfXsyid2VhTBppzaSH/hVBV2HPvs3r6/
+C+w4QDoFWAMVOfio7lDjoobD839WCijmnl2oM2FQNiNOM891OdmmnnFrnu7OV7er
+/ZrP00RHEQRtUfT2K7CQXLHq8W9DpiBMi3FrSkgewJQVDs8JmL0X7xYDVDGBSGei
+lojiTsWu1YZHDM3a8dpg
+=3rD9
+-----END PGP SIGNATURE-----
+
+--2z7AKWNQ4hR/M4ga--
