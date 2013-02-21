@@ -1,51 +1,74 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: tegra: fix the activate polarity of
- cd-gpio in mmc host
-Date: Thu, 21 Feb 2013 16:30:35 +0800
-Message-ID: <1361435435.5678.113.camel@jlo-ubuntu-64.nvidia.com>
-References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
-	 <1361343902-15223-2-git-send-email-josephl@nvidia.com>
-	 <512500EB.1070802@wwwdotorg.org>
-	 <20130221081809.GB7718@avionic-0098.mockup.avionic-design.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra114: add spi driver
+Date: Thu, 21 Feb 2013 11:56:54 +0200
+Message-ID: <20130221095654.GH23234@tbergstrom-lnx.Nvidia.com>
+References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com>
+	<5123C18A.9010604@wwwdotorg.org> <5124C18F.6070108@nvidia.com>
+	<20130220131112.GE2726@opensource.wolfsonmicro.com>
+	<5124CEF5.3060605@nvidia.com> <512506F9.2030508@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130221081809.GB7718-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <512506F9.2030508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-Thanks for your verification.
-
-On Thu, 2013-02-21 at 16:18 +0800, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Wed, Feb 20, 2013 at 09:59:23AM -0700, Stephen Warren wrote:
-> > On 02/20/2013 12:05 AM, Joseph Lo wrote:
-> > > The GPIO pin of SD slot card detection should active low.
+On Wed, Feb 20, 2013 at 06:25:13PM +0100, Stephen Warren wrote:
+> On 02/20/2013 06:26 AM, Laxman Dewangan wrote:
+> > On Wednesday 20 February 2013 06:41 PM, Mark Brown wrote:
+> >> * PGP Signed by an unknown key
+> >>
+> >> On Wed, Feb 20, 2013 at 05:59:03PM +0530, Laxman Dewangan wrote:
+> >>>>> +    tspi->clk = devm_clk_get(&pdev->dev, "spi");
+> >>>> Does this HW block use multiple clocks? If not, I think s/"spi"/NULL/
+> >>>> there, just like the Tegra20 driver.
+> >>> No, spi controller uses the only one clock. I will change to NULL.
+> >> I'm never convinced that NULL is a helpful clock name to pick, it's not
+> >> awesome if you ever acquire a second clock.
 > > 
-> > Thierry, Lucas, can you please check if the same change should be made
-> > to all the Avionic Design and Toradex boards? I assume MMC CD should be
-> > active low on all of them. Once you've confirmed this, Joseph can respin
-> > this first patch, and perhaps we can get it into 3.9/stable as a
-> > bug-fix. Thanks.
+> > I had other idea of okeeping clock name here for power optimization.
+> > Spi controller can take the power source ffrom different clock source
+> > say clk_m (crystal) and pllp.
+> > 
+> > I want to set the parent clock dynamically based on required speed so
+> > that if the desire speed can be meet from clk_m, no need to increase pll
+> > count and possible we may endup with siwtchng off pllp which can save
+> > power.
+> > 
+> > So for this I may require
+> > 
+> > spi_clk = devm_clk_get(&pdev->dev, "spi");
+> > spi_clkm = devm_clk_get(&pdev->dev, "clmkm");
+> > spi_pllp = devm_clk_get(&pdev->dev, "pllp");
+> > 
+> > and call clk_set_parent(spi_clk, spi_clkm) or clk_set_parent(spi_clk,
+> > spi_pllp).
 > 
-> The card-detect GPIO is certainly low-active on Tamonten. I'm not quite
-> sure why things worked before, but I guess it was due to the MMC core
-> assuming the CD GPIO to be low-active unless otherwise specified and the
-> Tegra DT code didn't pass the GPIO flags to the core.
+> OK, so that's certainly an argument for requesting a specific clock name
+> rather than NULL.
 > 
-Yes. And the original sdhci-tegra driver didn't use the GPIO flag to
-config anything. After we use mmc_of_parse, it will be taken care in the
-core. So both of the cp-gpio and wp-gpio should be config right in DT.
 
-> Anyway, I've verified that on Tamonten the same change doesn't break
-> anything, card detect still works as expected with this patch series
-> applied, so if Joseph could carry the Tamonten change as part of this
-> patch it'd be great.
+The list of possible parents for each clock is determined by the SoC and is
+already known to CCF, so maybe we just need to add a function to CCF to allow
+the drivers to query the list of possible parents?
 
-Thanks. Will do.
+Cheers,
+
+Peter.
+
+------------------------------------------------------------------------------
+Everyone hates slow websites. So do we.
+Make your web apps faster with AppDynamics
+Download AppDynamics Lite for free today:
+http://p.sf.net/sfu/appdyn_d2d_feb
