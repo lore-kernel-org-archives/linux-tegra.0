@@ -1,55 +1,60 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on
-	TEGRA_IOMMU_SMMU
-Date: Thu, 21 Feb 2013 13:28:51 +0000
-Message-ID: <20130221132851.GB17833@n2100.arm.linux.org.uk>
-References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com> <5112A642.1020800@wwwdotorg.org> <20130206.211635.744922728615926717.hdoyu@nvidia.com> <20130211.193034.1346903263789032239.hdoyu@nvidia.com> <51250DDE.7010408@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH v4 0/9] drm/tegra: Miscellaneous enhancements
+Date: Thu, 21 Feb 2013 15:35:52 +0100
+Message-ID: <1361457361-13838-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51250DDE.7010408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 20, 2013 at 10:54:38AM -0700, Stephen Warren wrote:
-> On 02/11/2013 10:30 AM, Hiroshi Doyu wrote:
-> > Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
-> > 
-> >> Hi Russell,
-> >>
-> >> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
-> >>
-> >>> On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
-> >>>> New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
-> >>>> dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
-> >>>> whenever a new Tegra SoC comes.
-> >>>>
-> >>>> The following combination caused build error, which this patch fixes.
-> >>>>
-> >>>> CONFIG_ARCH_TEGRA_2x_SOC=y
-> >>>> \# CONFIG_ARCH_TEGRA_3x_SOC is not set
-> >>>> CONFIG_ARCH_TEGRA_114_SOC=y
-> >>>>
-> >>>> drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
-> >>>
-> >>> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>
-> >>> Russell, I assume Hiroshi should upload this to your patch tracker? It's
-> >>> needed for 3.9.
-> >>
-> >> FYI: Submitted as:
-> >> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
-> > 
-> > Russell,
-> > 
-> > Is the above ok for you?
-> > Please let me know if still I need to do something.
-> 
-> Russell, will this patch make it into your tree for 3.9? Do you think it
-> should go through some other tree? Thanks.
+This patch series introduces a number of useful features for the Tegra
+DRM driver. Patch 1 is a documentation update and adds a warning to the
+page-flip IOCTL to catch buggy drivers that return success but failed to
+update the crtc->fb field, which would cause the reference counting to
+become unbalanced.
 
-I'll merge it, and I think it's a minor fix.  Should it be copied to
-stable?  If so, which ones are affected?
+Patch 2 removes usage of the tegra_framebuffer structure which was used
+before the driver moved to the CMA FB helpers. It is wrong to use it but
+it happens to work because the drm_fb_cma and tegra_framebuffers were
+sufficiently similar.
+
+Patch 3 adds support for the additional two planes available on Tegra
+hardware, while patch 4 implement .mode_set_base() to allow for some
+nice speed up when changing the framebuffer without actually changing
+the resolution. Patch 5 adds VBLANK support and patch 6 builds on the
+previous two to provide the page-flipping IOCTL. Patch 7 splits the
+DC_CMD_STATE_CONTROL register writes into two consecutive writes as
+required by the TRM.
+
+Finally patch 8 fixes color expansions for pixel formats with less than
+24 bits per pixel and patch 9 adds a new file, named "framebuffers" to
+debugfs which can be used to dump a list of framebuffers attached to the
+DRM device. This is most useful to inspect the reference count but could
+also be helpful in diagnosing out-of-memory conditions and such.
+
+This series is based on Dave's drm-next branch.
+
+Thierry
+
+Thierry Reding (9):
+  drm: Add consistency check for page-flipping
+  drm/tegra: Remove bogus tegra_framebuffer structure
+  drm/tegra: Add plane support
+  drm/tegra: Implement .mode_set_base()
+  drm/tegra: Implement VBLANK support
+  drm/tegra: Implement page-flipping support
+  drm/tegra: Split DC_CMD_STATE_CONTROL register write
+  drm/tegra: Fix color expansion
+  drm/tegra: Add list of framebuffers to debugfs
+
+ Documentation/DocBook/drm.tmpl |   6 +
+ drivers/gpu/drm/drm_crtc.c     |   7 +
+ drivers/gpu/drm/tegra/dc.c     | 585 +++++++++++++++++++++++++++++++++--------
+ drivers/gpu/drm/tegra/dc.h     |  14 +-
+ drivers/gpu/drm/tegra/drm.c    | 103 ++++++++
+ drivers/gpu/drm/tegra/drm.h    |  43 ++-
+ 6 files changed, 635 insertions(+), 123 deletions(-)
+
+-- 
+1.8.1.2
