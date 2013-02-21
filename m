@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v4 4/9] drm/tegra: Implement .mode_set_base()
-Date: Thu, 21 Feb 2013 15:35:56 +0100
-Message-ID: <1361457361-13838-5-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v4 8/9] drm/tegra: Fix color expansion
+Date: Thu, 21 Feb 2013 15:36:00 +0100
+Message-ID: <1361457361-13838-9-git-send-email-thierry.reding@avionic-design.de>
 References: <1361457361-13838-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1361457361-13838-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
@@ -10,78 +10,26 @@ To: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The sequence for replacing the scanout buffer is much shorter than a
-full mode change operation so implementing this callback considerably
-speeds up cases where only a new framebuffer is to be scanned out.
+bpp stores the number of bytes per pixel, but color expansion needs to
+be enabled for less than 24 bits per pixel.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
-Changes in v3:
-- split DC_CMD_STATE_CONTROL writes
-
-Changes in v4:
-- reset line stride to fix cases where the framebuffer size doesn't
-  match the display mode (suggested by Mark Zhang)
-
- drivers/gpu/drm/tegra/dc.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/gpu/drm/tegra/dc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 52bf63f..ceb2f52 100644
+index 2086400..bf8095c 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -134,6 +134,29 @@ static int tegra_dc_add_planes(struct drm_device *drm, struct tegra_dc *dc)
- 	return 0;
- }
+@@ -500,7 +500,7 @@ int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
+ 		tegra_dc_writel(dc, 0x0000, DC_WIN_CSC_KVB);
  
-+static int tegra_dc_set_base(struct tegra_dc *dc, int x, int y,
-+			     struct drm_framebuffer *fb)
-+{
-+	struct drm_gem_cma_object *gem = drm_fb_cma_get_gem_obj(fb, 0);
-+	unsigned long value;
-+
-+	tegra_dc_writel(dc, WINDOW_A_SELECT, DC_CMD_DISPLAY_WINDOW_HEADER);
-+
-+	value = fb->offsets[0] + y * fb->pitches[0] +
-+		x * fb->bits_per_pixel / 8;
-+
-+	tegra_dc_writel(dc, gem->paddr + value, DC_WINBUF_START_ADDR);
-+	tegra_dc_writel(dc, fb->pitches[0], DC_WIN_LINE_STRIDE);
-+
-+	value = GENERAL_UPDATE | WIN_A_UPDATE;
-+	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-+
-+	value = GENERAL_ACT_REQ | WIN_A_ACT_REQ;
-+	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-+
-+	return 0;
-+}
-+
- static const struct drm_crtc_funcs tegra_crtc_funcs = {
- 	.set_config = drm_crtc_helper_set_config,
- 	.destroy = drm_crtc_cleanup,
-@@ -510,6 +533,14 @@ static int tegra_crtc_mode_set(struct drm_crtc *crtc,
- 	return 0;
- }
+ 		value |= CSC_ENABLE;
+-	} else if (bpp < 24) {
++	} else if (window->bits_per_pixel < 24) {
+ 		value |= COLOR_EXPAND;
+ 	}
  
-+static int tegra_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
-+				    struct drm_framebuffer *old_fb)
-+{
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+
-+	return tegra_dc_set_base(dc, x, y, crtc->fb);
-+}
-+
- static void tegra_crtc_prepare(struct drm_crtc *crtc)
- {
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
-@@ -589,6 +620,7 @@ static const struct drm_crtc_helper_funcs tegra_crtc_helper_funcs = {
- 	.disable = tegra_crtc_disable,
- 	.mode_fixup = tegra_crtc_mode_fixup,
- 	.mode_set = tegra_crtc_mode_set,
-+	.mode_set_base = tegra_crtc_mode_set_base,
- 	.prepare = tegra_crtc_prepare,
- 	.commit = tegra_crtc_commit,
- 	.load_lut = tegra_crtc_load_lut,
 -- 
 1.8.1.2
