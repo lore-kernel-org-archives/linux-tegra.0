@@ -1,60 +1,152 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC v2 1/3] power_supply: Define Binding for supplied-nodes
-Date: Thu, 21 Feb 2013 18:11:10 -0500
-Message-ID: <1361488272-21010-2-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [RFC v2 2/3] power: power_supply: Add core support for supplied_nodes
+Date: Thu, 21 Feb 2013 18:11:11 -0500
+Message-ID: <1361488272-21010-3-git-send-email-rklein@nvidia.com>
 References: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361488272-21010-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
+Cc: linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This property is meant to be used in device nodes which represent
-power_supply devices that wish to provide a list of supplies to
-which they provide power. A common case is a AC Charger with
-the batteries it powers.
+With the growing support for dt, it make sense to try to make use of
+dt features to make the general code cleaner. This patch is an
+attempt to commonize how chargers and their supplies are linked.
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Following common dt convention, the "supplied-to" char** list is
+replaced with phandle lists defined in the supplies which contain
+phandles of their suppliers.
+
+This has the effect however of introducing an inversion in the internal
+mechanics of how this information is stored. In the case of non-dt,
+the char** list of supplies is stored in the charger. In the dt case,
+a device_node * list is stored in the supplies of their chargers,
+however this seems to be the only way to support this.
+
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
 v2:
-  - Changed property to "power-supply" which should be contained in the
-    battery rather than the charger. Also updated example to match.
+  - Changed from struct device_node* contained in suppliers to a list stored
+    in the supplies.
+  - changed logic for the is_supplied_by check to handle the entire loop
+    as the array structure is different between the 2 paths.
 
- .../bindings/power_supply/power_supply.txt         |   23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power_supply/power_supply.txt
+ drivers/power/power_supply_core.c |   46 +++++++++++++++++++++++++++----------
+ include/linux/power_supply.h      |    9 ++++++++
+ 2 files changed, 43 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/power_supply/power_supply.txt b/Documentation/devicetree/bindings/power_supply/power_supply.txt
-new file mode 100644
-index 0000000..7d8951c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power_supply/power_supply.txt
-@@ -0,0 +1,23 @@
-+Power Supply Core Support
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 8a7cfb3..a87c5b8 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -26,17 +26,40 @@ EXPORT_SYMBOL_GPL(power_supply_class);
+ 
+ static struct device_type power_supply_dev_type;
+ 
++static int __power_supply_is_supplied_by(struct power_supply *supplier,
++					 struct power_supply *supply)
++{
++	int i;
++#ifdef CONFIG_OF
++	struct power_supply_supplies *pss;
++#endif
 +
-+Optional Properties:
-+ - power-supply : This property is added to a supply in order to list the
-+   devices which supply it power, referenced by their phandles.
++#ifdef CONFIG_OF
++	list_for_each_entry(pss, &supply->supplies.list, list) {
++		if (supplier->supplies.node == pss->node)
++			return 0;
++	}
++#endif
 +
-+Example:
++	for (i = 0; i < supplier->num_supplicants; i++) {
++		if (!supply->name || !supplier->supplied_to)
++			continue;
++		if (!strcmp(supplier->supplied_to[i], supply->name))
++			return 0;
++	}
 +
-+	usb-charger: power@e {
-+		compatible = "some,usb-charger";
-+		...
-+	};
++	return -EINVAL;
++}
 +
-+	ac-charger: power@e {
-+		compatible = "some,ac-charger";
-+		...
-+	};
+ static int __power_supply_changed_work(struct device *dev, void *data)
+ {
+ 	struct power_supply *psy = (struct power_supply *)data;
+ 	struct power_supply *pst = dev_get_drvdata(dev);
+-	int i;
+ 
+-	for (i = 0; i < psy->num_supplicants; i++)
+-		if (!strcmp(psy->supplied_to[i], pst->name)) {
+-			if (pst->external_power_changed)
+-				pst->external_power_changed(pst);
+-		}
++	if (__power_supply_is_supplied_by(psy, pst)) {
++		if (pst->external_power_changed)
++			pst->external_power_changed(pst);
++	}
+ 	return 0;
+ }
+ 
+@@ -68,13 +91,9 @@ static int __power_supply_am_i_supplied(struct device *dev, void *data)
+ 	union power_supply_propval ret = {0,};
+ 	struct power_supply *psy = (struct power_supply *)data;
+ 	struct power_supply *epsy = dev_get_drvdata(dev);
+-	int i;
+ 
+-	for (i = 0; i < epsy->num_supplicants; i++) {
+-		if (!strcmp(epsy->supplied_to[i], psy->name)) {
+-			if (epsy->get_property(epsy,
+-				  POWER_SUPPLY_PROP_ONLINE, &ret))
+-				continue;
++	if (__power_supply_is_supplied_by(epsy, psy)) {
++		if (!epsy->get_property(epsy, POWER_SUPPLY_PROP_ONLINE, &ret)) {
+ 			if (ret.intval)
+ 				return ret.intval;
+ 		}
+@@ -334,6 +353,9 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
+ 	dev_set_drvdata(dev, psy);
+ 	psy->dev = dev;
+ 
++#ifdef CONFIG_OF
++	INIT_LIST_HEAD(&psy->supplies.list);
++#endif
+ 	INIT_WORK(&psy->changed_work, power_supply_changed_work);
+ 
+ 	rc = kobject_set_name(&dev->kobj, "%s", psy->name);
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 1f0ab90..d16f6ab 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/workqueue.h>
+ #include <linux/leds.h>
++#include <linux/list.h>
+ 
+ struct device;
+ 
+@@ -160,12 +161,20 @@ union power_supply_propval {
+ 	const char *strval;
+ };
+ 
++struct power_supply_supplies {
++	struct device_node *node;
++	struct list_head list;
++};
 +
-+	battery@b {
-+		compatible = "some,battery";
-+		...
-+		power-supply = <&usb-charger>, <&ac-charger>;
-+	};
+ struct power_supply {
+ 	const char *name;
+ 	enum power_supply_type type;
+ 	enum power_supply_property *properties;
+ 	size_t num_properties;
+ 
++#ifdef CONFIG_OF
++	struct power_supply_supplies supplies;
++#endif
+ 	char **supplied_to;
+ 	size_t num_supplicants;
+ 
 -- 
 1.7.9.5
