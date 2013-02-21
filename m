@@ -1,80 +1,60 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
- standard MMC DT bindings
-Date: Thu, 21 Feb 2013 11:50:30 -0700
-Message-ID: <51266C76.5000902@wwwdotorg.org>
-References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>  <1361343902-15223-3-git-send-email-josephl@nvidia.com>  <512502D7.4090605@wwwdotorg.org>  <1361413425.5678.8.camel@jlo-ubuntu-64.nvidia.com>  <5125A075.5000000@wwwdotorg.org> <1361427997.5678.59.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on TEGRA_IOMMU_SMMU
+Date: Thu, 21 Feb 2013 11:56:41 -0700
+Message-ID: <51266DE9.1020404@wwwdotorg.org>
+References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com> <5112A642.1020800@wwwdotorg.org> <20130206.211635.744922728615926717.hdoyu@nvidia.com> <20130211.193034.1346903263789032239.hdoyu@nvidia.com> <51250DDE.7010408@wwwdotorg.org> <20130221132851.GB17833@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361427997.5678.59.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <20130221132851.GB17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 11:26 PM, Joseph Lo wrote:
-> On Thu, 2013-02-21 at 12:20 +0800, Stephen Warren wrote:
->> On 02/20/2013 07:23 PM, Joseph Lo wrote:
->>> On Thu, 2013-02-21 at 01:07 +0800, Stephen Warren wrote:
->>>> On 02/20/2013 12:05 AM, Joseph Lo wrote:
->>>>> Updating the sdhci-tegra driver to use mmc_of_parse to support standard
->>>>> MMC DT bindings. Then we can remove the redundant code that already support
->>
->>>>> @@ -220,15 +203,12 @@ static void sdhci_tegra_parse_dt(struct device *dev,
->>>>>  					struct sdhci_tegra *tegra_host)
->>>>>  {
->>>> ...
->>>>> +	struct sdhci_host *host;
->>>> ...
->>>>> +	host = platform_get_drvdata(to_platform_device(dev));
->>>>> +	mmc_of_parse(host->mmc);
->>>>>  }
->>>>
->>>> It might be simpler to change the function prototype to simply pass in
->>>> the host object too.
+On 02/21/2013 06:28 AM, Russell King - ARM Linux wrote:
+> On Wed, Feb 20, 2013 at 10:54:38AM -0700, Stephen Warren wrote:
+>> On 02/11/2013 10:30 AM, Hiroshi Doyu wrote:
+>>> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
 >>>
->>> It's a interface problem that I can't fix now. If sdhci core is going to
->>> integrate mmc_of_parse into sdhci_get_of_property and mmc_gpio_get_ro
->>> into somethere sdhci_do_get_ro, then we can refine later.
+>>>> Hi Russell,
+>>>>
+>>>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
+>>>>
+>>>>> On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
+>>>>>> New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
+>>>>>> dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
+>>>>>> whenever a new Tegra SoC comes.
+>>>>>>
+>>>>>> The following combination caused build error, which this patch fixes.
+>>>>>>
+>>>>>> CONFIG_ARCH_TEGRA_2x_SOC=y
+>>>>>> \# CONFIG_ARCH_TEGRA_3x_SOC is not set
+>>>>>> CONFIG_ARCH_TEGRA_114_SOC=y
+>>>>>>
+>>>>>> drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
+>>>>>
+>>>>> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>
+>>>>> Russell, I assume Hiroshi should upload this to your patch tracker? It's
+>>>>> needed for 3.9.
+>>>>
+>>>> FYI: Submitted as:
+>>>> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
+>>>
+>>> Russell,
+>>>
+>>> Is the above ok for you?
+>>> Please let me know if still I need to do something.
 >>
->> I meant to change the prototype of sdhci_tegra_parse_dt(). It would be
->> simple to change that function in this patch.
+>> Russell, will this patch make it into your tree for 3.9? Do you think it
+>> should go through some other tree? Thanks.
 > 
-> Hmm. It might not too much different. Which version you prefer?
-> 
-> 1. Original version
-> 
-> 2.
+> I'll merge it, and I think it's a minor fix.  Should it be copied to
+> stable?  If so, which ones are affected?
 
-sdhci_tegra_probe() already has all the values you need; I was thinking
-of just passing in all of the values that this function needs, rather
-than deriving anything within the function.
+It's only relevant for 3.9. It will apply without issue to some older
+kernels, but there's no need for it there.
 
->  static void sdhci_tegra_parse_dt(struct device *dev,
-> -                                       struct sdhci_tegra *tegra_host)
-> +                                       struct sdhci_host *host)
->  {
->         struct device_node *np = dev->of_node;
-> -       struct sdhci_host *host;
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
->  
->         tegra_host->power_gpio = of_get_named_gpio(np, "power-gpios",0);
-> -
-> -       host = platform_get_drvdata(to_platform_device(dev));
->         mmc_of_parse(host->mmc);
->  }
->  
-> @@ -240,7 +239,7 @@ static int sdhci_tegra_probe(struct platform_device
-> *pdev)
->         tegra_host->soc_data = soc_data;
->         pltfm_host->priv = tegra_host;
->  
-> -       sdhci_tegra_parse_dt(&pdev->dev, tegra_host);
-> +       sdhci_tegra_parse_dt(&pdev->dev, host);
-
-That seems fairly direct though. Is "dev" available inside host,
-platfm_host or tegra_host? You could obtain it from there if you wanted
-to reduce the number of parameters passed to the function.
+Thanks.
