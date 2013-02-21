@@ -1,43 +1,55 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: Re: [PATCH v7 00/12] Tegra114 clockframework
-Date: Thu, 21 Feb 2013 18:28:19 +0530
-Message-ID: <512619EB.4030103@nvidia.com>
-References: <1360931849-7090-1-git-send-email-pdeschrijver@nvidia.com> <5123C6E7.9070407@wwwdotorg.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on
+	TEGRA_IOMMU_SMMU
+Date: Thu, 21 Feb 2013 13:28:51 +0000
+Message-ID: <20130221132851.GB17833@n2100.arm.linux.org.uk>
+References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com> <5112A642.1020800@wwwdotorg.org> <20130206.211635.744922728615926717.hdoyu@nvidia.com> <20130211.193034.1346903263789032239.hdoyu@nvidia.com> <51250DDE.7010408@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <5123C6E7.9070407@wwwdotorg.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Joseph Lo <josephl@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51250DDE.7010408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 20 February 2013 12:09 AM, Stephen Warren wrote:
-> On 02/15/2013 05:36 AM, Peter De Schrijver wrote:
->> This is the seventh version of the Tegra114 clockframework. It is based on the
->> for-next branch of
->> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git and
->> http://www.spinics.net/lists/arm-kernel/msg220452.html.
-> Mike,
->
-> I think it'd be prudent to take this series through the Tegra tree again
-> for 3.10; patch 11 needs to go in as part of the series due to internal
-> dependencies, and I'm slightly worried that other Tegra DT changes might
-> conflict with that patch (if only for context). Taking this series (and
-> any other Tegra clk driver changes for 3.10) through the Tegra tree
-> could resolve that easily. Do you have a problem with that?
->
-> If that's OK, can you stage the dependency Peter mentioned:
-> http://www.spinics.net/lists/arm-kernel/msg220452.html
-> into a stable branch for me to merge, obviously after 3.9-rc1 is out.
->
-> Thanks.
->
-> Prashant, could you provide a review/ack for this series too.
+On Wed, Feb 20, 2013 at 10:54:38AM -0700, Stephen Warren wrote:
+> On 02/11/2013 10:30 AM, Hiroshi Doyu wrote:
+> > Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
+> > 
+> >> Hi Russell,
+> >>
+> >> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
+> >>
+> >>> On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
+> >>>> New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
+> >>>> dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
+> >>>> whenever a new Tegra SoC comes.
+> >>>>
+> >>>> The following combination caused build error, which this patch fixes.
+> >>>>
+> >>>> CONFIG_ARCH_TEGRA_2x_SOC=y
+> >>>> \# CONFIG_ARCH_TEGRA_3x_SOC is not set
+> >>>> CONFIG_ARCH_TEGRA_114_SOC=y
+> >>>>
+> >>>> drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
+> >>>
+> >>> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>
+> >>> Russell, I assume Hiroshi should upload this to your patch tracker? It's
+> >>> needed for 3.9.
+> >>
+> >> FYI: Submitted as:
+> >> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
+> > 
+> > Russell,
+> > 
+> > Is the above ok for you?
+> > Please let me know if still I need to do something.
+> 
+> Russell, will this patch make it into your tree for 3.9? Do you think it
+> should go through some other tree? Thanks.
 
-For the series
-
-Reviewed-by: Prashant Gaikwad <pgaikwad@nvidia.com>
-
-
+I'll merge it, and I think it's a minor fix.  Should it be copied to
+stable?  If so, which ones are affected?
