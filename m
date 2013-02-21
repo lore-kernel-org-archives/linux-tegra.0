@@ -1,55 +1,63 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
-Date: Thu, 21 Feb 2013 17:32:40 +0200
-Message-ID: <20130221153240.GN23234@tbergstrom-lnx.Nvidia.com>
-References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com>
- <1360868369-20093-2-git-send-email-hdoyu@nvidia.com>
- <511D45E0.1080105@wwwdotorg.org>
- <20130215092407.GO3073@tbergstrom-lnx.Nvidia.com>
- <511E6639.1090909@wwwdotorg.org>
- <20130221122536.GJ23234@tbergstrom-lnx.Nvidia.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] spi: tegra114: add spi driver
+Date: Thu, 21 Feb 2013 17:29:51 +0000
+Message-ID: <20130221172950.GA1766@opensource.wolfsonmicro.com>
+References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com>
+ <5123C18A.9010604@wwwdotorg.org>
+ <5124C18F.6070108@nvidia.com>
+ <20130220131112.GE2726@opensource.wolfsonmicro.com>
+ <5124CEF5.3060605@nvidia.com>
+ <512506F9.2030508@wwwdotorg.org>
+ <20130221095654.GH23234@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
 Return-path: <linux-doc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130221122536.GJ23234@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20130221095654.GH23234@tbergstrom-lnx.Nvidia.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 21, 2013 at 01:25:36PM +0100, Peter De Schrijver wrote:
-> On Fri, Feb 15, 2013 at 05:45:45PM +0100, Stephen Warren wrote:
-> 
-> ...
-> 
-> > > I would suggest removing this clock. It's not actually implemented in the CCF
-> > > and rather useless. If you would gate the CPU clock from the CPU by writing to
-> > > this register, how would you ungate it? :) Note that this would gate the clock
-> > > to all CPUs.
-> > 
-> > (Note that my comment was re: all clocks, not just that one clock)
-> > 
-> > Can't the PMC or flow-controller ungate the clock based on some event?
-> 
-> I don't think the flow-controller controls this gate. The usual way of
-> clockgating a core is to execute a WFI instruction. That will trigger
-> clockgating the core, unless the flow-controller has been programmed to do
-> something else. The flow-controller will ungate the clock when there is an
-> interrupt.
-> 
-> > Either way, that clock definition exists in HW, right? So I don't think
-> > there's actually any harm in including the definition in the binding
-> > even if we never implement/use it.
-> 
-> The clock definition seems to exist in HW yes, the corresponding resetbit
-> however is marked as 'reserved' in the Tegra114 documentation.
 
-Apparently from Tegra114 onwards, this bit no longer exists. In previous
-chips, it is just turned by the bootloader running on the AVP and stays on
-from there on. So at least for Tegra114 I think we remove this clock from
-the DT binding.
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cheers,
+On Thu, Feb 21, 2013 at 11:56:54AM +0200, Peter De Schrijver wrote:
+> On Wed, Feb 20, 2013 at 06:25:13PM +0100, Stephen Warren wrote:
 
-Peter.
+> > OK, so that's certainly an argument for requesting a specific clock name
+> > rather than NULL.
+
+> The list of possible parents for each clock is determined by the SoC and is
+> already known to CCF, so maybe we just need to add a function to CCF to allow
+> the drivers to query the list of possible parents?
+
+Assuming that "CCF" is the clock framework that's pretty much what I was
+suggesting, yes.
+
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRJlldAAoJELSic+t+oim9bFwP/11Vm+ANLvoLNzJEdpIfzzh6
+904JEDRA2pDZm/C81SkBawdDg4F1lsgieLVmDZg7a8Qij67CmwjINvXQLBhpXPqo
+7eW7FSLOpLAoJ5tXeOzQiMbJPldXnJ3C2vEkvCnuftI1AQXbY9WspBki12q5R2KM
+1tXQaUCglB0PMfkO5cK9kre3StL2fMGgiygDBfAqKXicZoMArBI2x90kgjl1H4ox
+Qy5sBBnX7PSJ0vfpYzRTy5lOfUYzhOi/Lu9bVSZJ8QnQEYlDhyuw0vDuallmr20L
+QkIte9vCgETMgivhe5czBl7hoy2INyOpMNv4hqQgFTZSlQ7393Xmj6ycGDtMWQOn
+zS/hW9sXy3PBwhfqOBhbOo2pFJYbiOdrKe5zSBadaD36w1kfxmZzN9iwIhdEuMMR
+7p8LOBK/OfLwD7RiLXRZhpi4ep7NzC/41KdBCytk/y4gQXfkH2MqgC7tQl8RIp2q
+pPVdDDS/0WGVCck6ZwASkvFCbq/WSDYws/vdAcBQ+16EsmSUL1+SX13i9gx+bCAe
+mLiODb6CLIxIjlcBYYT+7ZO+VKbJvwooTFjoJIUVLAe0NNYvg/JQUik48VH+m2R1
+s85RkupjcjWs/o+ZyMwdvQwfuaclbZ/91MPSQBZT0SLIyqCgA4YQGs8tmmA9aWmQ
+H5G/VmwzVrYACm2Nra4e
+=GU7B
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
