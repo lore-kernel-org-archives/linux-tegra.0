@@ -1,41 +1,58 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: add SDHCI support for Dalmore
-Date: Wed, 20 Feb 2013 12:16:19 -0700
-Message-ID: <51252103.70202@wwwdotorg.org>
-References: <1361385317-6020-1-git-send-email-rklein@nvidia.com> <1361385317-6020-3-git-send-email-rklein@nvidia.com> <51251EF3.4050901@wwwdotorg.org> <512520A2.5060005@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
+ standard MMC DT bindings
+Date: Thu, 21 Feb 2013 10:23:45 +0800
+Message-ID: <1361413425.5678.8.camel@jlo-ubuntu-64.nvidia.com>
+References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
+	 <1361343902-15223-3-git-send-email-josephl@nvidia.com>
+	 <512502D7.4090605@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <512520A2.5060005@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Chris Ball <cjb@laptop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Pritesh Raithatha <praithatha@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <512502D7.4090605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 12:14 PM, Rhyland Klein wrote:
-> On 2/20/2013 2:07 PM, Stephen Warren wrote:
->> On 02/20/2013 11:35 AM, Rhyland Klein wrote:
->>> Based on changes by: Pritesh Raithatha <praithatha@nvidia.com>
->>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->> A patch description would be useful here. Something simple like:
->>
->> Dalmore has a built-in eMMC device and a user-accessible SD card slot.
->> Add device tree nodes to enable these.
->>
->> The same rebasing comment will apply here too.
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Will update patch description for next series.
+On Thu, 2013-02-21 at 01:07 +0800, Stephen Warren wrote:
+> On 02/20/2013 12:05 AM, Joseph Lo wrote:
+> > Updating the sdhci-tegra driver to use mmc_of_parse to support standard
+> > MMC DT bindings. Then we can remove the redundant code that already support
 > 
-> I can rebase on the cpp usage, but for some stuff like the #define
-> replacements, it sounded like things were still being hashed out (like
-> .h location, include paths, etc) so I figured its safer not to base on
-> those initially. If they are settled by the time i send this out again,
-> i can use them as a base.
+> >  static unsigned int tegra_sdhci_get_ro(struct sdhci_host *host)
+> >  {
+> > -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > -	struct sdhci_tegra *tegra_host = pltfm_host->priv;
+> > -
+> > -	if (!gpio_is_valid(tegra_host->wp_gpio))
+> > -		return -1;
+> > -
+> > -	return gpio_get_value(tegra_host->wp_gpio);
+> > +	return mmc_gpio_get_ro(host->mmc);
+> >  }
+> 
+> It'd be nice if there was a standard version of this function that could
+> be plugged directly into struct sdhci_ops, so that each individual
+> driver doesn't have to re-invent this wrapper.
+> 
+> > @@ -220,15 +203,12 @@ static void sdhci_tegra_parse_dt(struct device *dev,
+> >  					struct sdhci_tegra *tegra_host)
+> >  {
+> ...
+> > +	struct sdhci_host *host;
+> ...
+> > +	host = platform_get_drvdata(to_platform_device(dev));
+> > +	mmc_of_parse(host->mmc);
+> >  }
+> 
+> It might be simpler to change the function prototype to simply pass in
+> the host object too.
 
-Yes, it's not all 100% settled yet; I pointed it out more as a heads-up
-that I might ask you to rebase later. There's no need to actively rebase
-just yet.
+It's a interface problem that I can't fix now. If sdhci core is going to
+integrate mmc_of_parse into sdhci_get_of_property and mmc_gpio_get_ro
+into somethere sdhci_do_get_ro, then we can refine later.
+
+Thanks,
+Joseph
