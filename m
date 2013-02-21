@@ -1,41 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
- standard MMC DT bindings
-Date: Wed, 20 Feb 2013 21:20:05 -0700
-Message-ID: <5125A075.5000000@wwwdotorg.org>
-References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>  <1361343902-15223-3-git-send-email-josephl@nvidia.com>  <512502D7.4090605@wwwdotorg.org> <1361413425.5678.8.camel@jlo-ubuntu-64.nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH] spi: tegra114: add spi driver
+Date: Thu, 21 Feb 2013 11:18:36 +0530
+Message-ID: <5125B534.1080606@nvidia.com>
+References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com> <5123C18A.9010604@wwwdotorg.org> <5124C18F.6070108@nvidia.com> <20130220131112.GE2726@opensource.wolfsonmicro.com> <5124CEF5.3060605@nvidia.com> <512506F9.2030508@wwwdotorg.org> <20130220173109.GU2726@opensource.wolfsonmicro.com> <512509A9.6020208@wwwdotorg.org> <20130220175721.GW2726@opensource.wolfsonmicro.com> <51250F22.8050401@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361413425.5678.8.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <51250F22.8050401@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/20/2013 07:23 PM, Joseph Lo wrote:
-> On Thu, 2013-02-21 at 01:07 +0800, Stephen Warren wrote:
->> On 02/20/2013 12:05 AM, Joseph Lo wrote:
->>> Updating the sdhci-tegra driver to use mmc_of_parse to support standard
->>> MMC DT bindings. Then we can remove the redundant code that already support
+On Wednesday 20 February 2013 11:30 PM, Stephen Warren wrote:
+> On 02/20/2013 10:57 AM, Mark Brown wrote:
+>> On Wed, Feb 20, 2013 at 10:36:41AM -0700, Stephen Warren wrote:
+>>> On 02/20/2013 10:31 AM, Mark Brown wrote:
+>>>> Since we can extend the list of clocks it doesn't seem like
+>>>> there's much issue here, especially if some of them are
+>>>> optional?
+>>> Yes, there's certainly a way to extend the binding in a
+>>> backwards-compatible way.
+>>> However, I have seen in Rob and/or Grant push back on not fully
+>>> defining bindings in the past - i.e. actively planning to
+>>> initially create a minimal binding and extend it in the future,
+>>> rather than completely defining it up-front.
+>> That sounds like the current stuff with a minimal definition is
+>> OK?
+> I'm personally OK with defining a minimal binding first and extending
+> it later. But, I'm worried if when we actually try to extend the
+> binding later, we'll get push-back.
 
->>> @@ -220,15 +203,12 @@ static void sdhci_tegra_parse_dt(struct device *dev,
->>>  					struct sdhci_tegra *tegra_host)
->>>  {
->> ...
->>> +	struct sdhci_host *host;
->> ...
->>> +	host = platform_get_drvdata(to_platform_device(dev));
->>> +	mmc_of_parse(host->mmc);
->>>  }
->>
->> It might be simpler to change the function prototype to simply pass in
->> the host object too.
-> 
-> It's a interface problem that I can't fix now. If sdhci core is going to
-> integrate mmc_of_parse into sdhci_get_of_property and mmc_gpio_get_ro
-> into somethere sdhci_do_get_ro, then we can refine later.
+Yes, for a given controller there is lots of input sources which can be 
+mux but we can not use all option as some of source is changeable based 
+on DVFS policy or other constraints. Like one of controller has the 
+input clock source as PLLC which is again used by CPU and it varies for 
+requested CPU frequency. In this context, we would like to not choose 
+PLLC as clock source for given controller.
 
-I meant to change the prototype of sdhci_tegra_parse_dt(). It would be
-simple to change that function in this patch.
+So we may need to provide the list of valid clock source/option from DT 
+file and clock muxing should be done from that source list only in place 
+of super set supported by SoCs.
+
