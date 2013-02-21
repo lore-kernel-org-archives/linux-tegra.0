@@ -1,40 +1,60 @@
 From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC v2 0/3] Add DT Binding for Power-Supply power-supply property
-Date: Thu, 21 Feb 2013 18:11:09 -0500
-Message-ID: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
+Subject: [RFC v2 1/3] power_supply: Define Binding for supplied-nodes
+Date: Thu, 21 Feb 2013 18:11:10 -0500
+Message-ID: <1361488272-21010-2-git-send-email-rklein@nvidia.com>
+References: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1361488272-21010-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series is an attempt to define a common way for devicetree
-initialized power_supplies to define their list of supplicants
-in a common manner.
+This property is meant to be used in device nodes which represent
+power_supply devices that wish to provide a list of supplies to
+which they provide power. A common case is a AC Charger with
+the batteries it powers.
 
-Instead of relying on custom properties which contain is list of
-strings, use the much more direct method of phandles to reference
-the supplies and define a common function which can retrieve them
-automatically.
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2:
+  - Changed property to "power-supply" which should be contained in the
+    battery rather than the charger. Also updated example to match.
 
-Changes:
- - v2: Inverted the logic so that supplies (batteries) contain a list
-       of the supplies (chargers) which supply them.
-
-
-
-Rhyland Klein (3):
-  power_supply: Define Binding for supplied-nodes
-  power: power_supply: Add core support for supplied_nodes
-  power: power_supply: add support for getting supplied-nodes from dt
-
- .../bindings/power_supply/power_supply.txt         |   23 ++++++
- drivers/power/power_supply_core.c                  |   81 +++++++++++++++++---
- include/linux/power_supply.h                       |    9 +++
- 3 files changed, 101 insertions(+), 12 deletions(-)
+ .../bindings/power_supply/power_supply.txt         |   23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/power_supply/power_supply.txt
 
+diff --git a/Documentation/devicetree/bindings/power_supply/power_supply.txt b/Documentation/devicetree/bindings/power_supply/power_supply.txt
+new file mode 100644
+index 0000000..7d8951c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power_supply/power_supply.txt
+@@ -0,0 +1,23 @@
++Power Supply Core Support
++
++Optional Properties:
++ - power-supply : This property is added to a supply in order to list the
++   devices which supply it power, referenced by their phandles.
++
++Example:
++
++	usb-charger: power@e {
++		compatible = "some,usb-charger";
++		...
++	};
++
++	ac-charger: power@e {
++		compatible = "some,ac-charger";
++		...
++	};
++
++	battery@b {
++		compatible = "some,battery";
++		...
++		power-supply = <&usb-charger>, <&ac-charger>;
++	};
 -- 
 1.7.9.5
