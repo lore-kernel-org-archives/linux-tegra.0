@@ -1,35 +1,55 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v4 8/9] drm/tegra: Fix color expansion
-Date: Thu, 21 Feb 2013 15:36:00 +0100
-Message-ID: <1361457361-13838-9-git-send-email-thierry.reding@avionic-design.de>
-References: <1361457361-13838-1-git-send-email-thierry.reding@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361457361-13838-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [v2 1/4] ARM: tegra20: create a DT header defining CLK IDs
+Date: Thu, 21 Feb 2013 17:32:40 +0200
+Message-ID: <20130221153240.GN23234@tbergstrom-lnx.Nvidia.com>
+References: <1360868369-20093-1-git-send-email-hdoyu@nvidia.com>
+ <1360868369-20093-2-git-send-email-hdoyu@nvidia.com>
+ <511D45E0.1080105@wwwdotorg.org>
+ <20130215092407.GO3073@tbergstrom-lnx.Nvidia.com>
+ <511E6639.1090909@wwwdotorg.org>
+ <20130221122536.GJ23234@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130221122536.GJ23234@tbergstrom-lnx.Nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Russell King <linux@arm.linux.org.uk>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-bpp stores the number of bytes per pixel, but color expansion needs to
-be enabled for less than 24 bits per pixel.
+On Thu, Feb 21, 2013 at 01:25:36PM +0100, Peter De Schrijver wrote:
+> On Fri, Feb 15, 2013 at 05:45:45PM +0100, Stephen Warren wrote:
+> 
+> ...
+> 
+> > > I would suggest removing this clock. It's not actually implemented in the CCF
+> > > and rather useless. If you would gate the CPU clock from the CPU by writing to
+> > > this register, how would you ungate it? :) Note that this would gate the clock
+> > > to all CPUs.
+> > 
+> > (Note that my comment was re: all clocks, not just that one clock)
+> > 
+> > Can't the PMC or flow-controller ungate the clock based on some event?
+> 
+> I don't think the flow-controller controls this gate. The usual way of
+> clockgating a core is to execute a WFI instruction. That will trigger
+> clockgating the core, unless the flow-controller has been programmed to do
+> something else. The flow-controller will ungate the clock when there is an
+> interrupt.
+> 
+> > Either way, that clock definition exists in HW, right? So I don't think
+> > there's actually any harm in including the definition in the binding
+> > even if we never implement/use it.
+> 
+> The clock definition seems to exist in HW yes, the corresponding resetbit
+> however is marked as 'reserved' in the Tegra114 documentation.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- drivers/gpu/drm/tegra/dc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Apparently from Tegra114 onwards, this bit no longer exists. In previous
+chips, it is just turned by the bootloader running on the AVP and stays on
+from there on. So at least for Tegra114 I think we remove this clock from
+the DT binding.
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index 2086400..bf8095c 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -500,7 +500,7 @@ int tegra_dc_setup_window(struct tegra_dc *dc, unsigned int index,
- 		tegra_dc_writel(dc, 0x0000, DC_WIN_CSC_KVB);
- 
- 		value |= CSC_ENABLE;
--	} else if (bpp < 24) {
-+	} else if (window->bits_per_pixel < 24) {
- 		value |= COLOR_EXPAND;
- 	}
- 
--- 
-1.8.1.2
+Cheers,
+
+Peter.
