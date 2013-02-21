@@ -1,60 +1,62 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] memory: tegra_ahb_enable_smmu() depends on TEGRA_IOMMU_SMMU
-Date: Thu, 21 Feb 2013 11:56:41 -0700
-Message-ID: <51266DE9.1020404@wwwdotorg.org>
-References: <1360175666-8377-1-git-send-email-hdoyu@nvidia.com> <5112A642.1020800@wwwdotorg.org> <20130206.211635.744922728615926717.hdoyu@nvidia.com> <20130211.193034.1346903263789032239.hdoyu@nvidia.com> <51250DDE.7010408@wwwdotorg.org> <20130221132851.GB17833@n2100.arm.linux.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2] spi: tegra114: add spi driver
+Date: Thu, 21 Feb 2013 12:15:15 -0700
+Message-ID: <51267243.7090102@wwwdotorg.org>
+References: <1361430631-18894-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130221132851.GB17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1361430631-18894-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, broonie@opensource.wolfsonmicro.com, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-tegra@vger.kernel.org, swarren@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/21/2013 06:28 AM, Russell King - ARM Linux wrote:
-> On Wed, Feb 20, 2013 at 10:54:38AM -0700, Stephen Warren wrote:
->> On 02/11/2013 10:30 AM, Hiroshi Doyu wrote:
->>> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 06 Feb 2013 21:16:35 +0200 (EET):
->>>
->>>> Hi Russell,
->>>>
->>>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 6 Feb 2013 19:51:46 +0100:
->>>>
->>>>> On 02/06/2013 11:34 AM, Hiroshi Doyu wrote:
->>>>>> New SoC, Tegra114 also uses SMMU. Change tegra_ahb_enable_smmu()'s
->>>>>> dependency from ARCH_TEGRA_3x_SOC to TEGRA_IOMMU_SMMU. No need to edit
->>>>>> whenever a new Tegra SoC comes.
->>>>>>
->>>>>> The following combination caused build error, which this patch fixes.
->>>>>>
->>>>>> CONFIG_ARCH_TEGRA_2x_SOC=y
->>>>>> \# CONFIG_ARCH_TEGRA_3x_SOC is not set
->>>>>> CONFIG_ARCH_TEGRA_114_SOC=y
->>>>>>
->>>>>> drivers/iommu/tegra-smmu.c:485: undefined reference to 'tegra_ahb_enable_smmu'
->>>>>
->>>>> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>
->>>>> Russell, I assume Hiroshi should upload this to your patch tracker? It's
->>>>> needed for 3.9.
->>>>
->>>> FYI: Submitted as:
->>>> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7640/1
->>>
->>> Russell,
->>>
->>> Is the above ok for you?
->>> Please let me know if still I need to do something.
->>
->> Russell, will this patch make it into your tree for 3.9? Do you think it
->> should go through some other tree? Thanks.
-> 
-> I'll merge it, and I think it's a minor fix.  Should it be copied to
-> stable?  If so, which ones are affected?
+On 02/21/2013 12:10 AM, Laxman Dewangan wrote:
+> Add SPI driver for NVIDIA's Tegra114 SPI controller. This controller
+> is different than the older SoCs SPI controller in internal design as
+> well as register interface.
 
-It's only relevant for 3.9. It will apply without issue to some older
-kernels, but there's no need for it there.
+Looks good. Just a couple of nits mentioned below, then,
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
 
-Thanks.
+Note: There are a few minor diffs between this file and
+spi-tegra20-slink.c. It might be worth eliminating as many as possible,
+perhaps in a followon patch.
+
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+
+> +NVIDIA Tegra114 SPI controller.
+> +
+> +Required properties:
+> +- compatible : should be "nvidia,tegra114-spi".
+> +- reg: Should contain SPI registers location and length.
+> +- interrupts: Should contain SPI interrupts.
+> +- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
+> +  request selector for this SPI controller.
+
+The binding should specify that a clock named "spi" needs to be
+provided, using the standard properties in ../clock/clock-bindings.txt
+
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+
+>  obj-$(CONFIG_SPI_SIRF)		+= spi-sirf.o
+>  obj-$(CONFIG_SPI_TEGRA20_SFLASH)	+= spi-tegra20-sflash.o
+>  obj-$(CONFIG_SPI_TEGRA20_SLINK)		+= spi-tegra20-slink.o
+> +obj-$(CONFIG_SPI_TEGRA114)		+= spi-tegra114.o
+
+While Tegra114 is newer, it should really be listed before the Tegra20
+entries, since the Makefile is alpha-numerically sorted right now I believe.
+
+> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+
+> +static struct platform_driver tegra_spi_driver = {
+> +	.driver = {
+> +		.name		= "spi-tegra114",
+> +		.owner		= THIS_MODULE,
+> +		.pm		= &tegra_spi_pm_ops,
+> +		.of_match_table	= of_match_ptr(tegra_spi_of_match),
+
+No need to use of_match_ptr() there; just use the raw value since
+CONFIG_OF is guaranteed to be enabled.
