@@ -1,63 +1,80 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] spi: tegra114: add spi driver
-Date: Thu, 21 Feb 2013 17:29:51 +0000
-Message-ID: <20130221172950.GA1766@opensource.wolfsonmicro.com>
-References: <1361281115-20436-1-git-send-email-ldewangan@nvidia.com>
- <5123C18A.9010604@wwwdotorg.org>
- <5124C18F.6070108@nvidia.com>
- <20130220131112.GE2726@opensource.wolfsonmicro.com>
- <5124CEF5.3060605@nvidia.com>
- <512506F9.2030508@wwwdotorg.org>
- <20130221095654.GH23234@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
+ standard MMC DT bindings
+Date: Thu, 21 Feb 2013 11:50:30 -0700
+Message-ID: <51266C76.5000902@wwwdotorg.org>
+References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>  <1361343902-15223-3-git-send-email-josephl@nvidia.com>  <512502D7.4090605@wwwdotorg.org>  <1361413425.5678.8.camel@jlo-ubuntu-64.nvidia.com>  <5125A075.5000000@wwwdotorg.org> <1361427997.5678.59.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130221095654.GH23234@tbergstrom-lnx.Nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "spi-devel-general@lists.sourceforge.net" <spi-devel-general@lists.sourceforge.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1361427997.5678.59.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 02/20/2013 11:26 PM, Joseph Lo wrote:
+> On Thu, 2013-02-21 at 12:20 +0800, Stephen Warren wrote:
+>> On 02/20/2013 07:23 PM, Joseph Lo wrote:
+>>> On Thu, 2013-02-21 at 01:07 +0800, Stephen Warren wrote:
+>>>> On 02/20/2013 12:05 AM, Joseph Lo wrote:
+>>>>> Updating the sdhci-tegra driver to use mmc_of_parse to support standard
+>>>>> MMC DT bindings. Then we can remove the redundant code that already support
+>>
+>>>>> @@ -220,15 +203,12 @@ static void sdhci_tegra_parse_dt(struct device *dev,
+>>>>>  					struct sdhci_tegra *tegra_host)
+>>>>>  {
+>>>> ...
+>>>>> +	struct sdhci_host *host;
+>>>> ...
+>>>>> +	host = platform_get_drvdata(to_platform_device(dev));
+>>>>> +	mmc_of_parse(host->mmc);
+>>>>>  }
+>>>>
+>>>> It might be simpler to change the function prototype to simply pass in
+>>>> the host object too.
+>>>
+>>> It's a interface problem that I can't fix now. If sdhci core is going to
+>>> integrate mmc_of_parse into sdhci_get_of_property and mmc_gpio_get_ro
+>>> into somethere sdhci_do_get_ro, then we can refine later.
+>>
+>> I meant to change the prototype of sdhci_tegra_parse_dt(). It would be
+>> simple to change that function in this patch.
+> 
+> Hmm. It might not too much different. Which version you prefer?
+> 
+> 1. Original version
+> 
+> 2.
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+sdhci_tegra_probe() already has all the values you need; I was thinking
+of just passing in all of the values that this function needs, rather
+than deriving anything within the function.
 
-On Thu, Feb 21, 2013 at 11:56:54AM +0200, Peter De Schrijver wrote:
-> On Wed, Feb 20, 2013 at 06:25:13PM +0100, Stephen Warren wrote:
+>  static void sdhci_tegra_parse_dt(struct device *dev,
+> -                                       struct sdhci_tegra *tegra_host)
+> +                                       struct sdhci_host *host)
+>  {
+>         struct device_node *np = dev->of_node;
+> -       struct sdhci_host *host;
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
+>  
+>         tegra_host->power_gpio = of_get_named_gpio(np, "power-gpios",0);
+> -
+> -       host = platform_get_drvdata(to_platform_device(dev));
+>         mmc_of_parse(host->mmc);
+>  }
+>  
+> @@ -240,7 +239,7 @@ static int sdhci_tegra_probe(struct platform_device
+> *pdev)
+>         tegra_host->soc_data = soc_data;
+>         pltfm_host->priv = tegra_host;
+>  
+> -       sdhci_tegra_parse_dt(&pdev->dev, tegra_host);
+> +       sdhci_tegra_parse_dt(&pdev->dev, host);
 
-> > OK, so that's certainly an argument for requesting a specific clock name
-> > rather than NULL.
-
-> The list of possible parents for each clock is determined by the SoC and is
-> already known to CCF, so maybe we just need to add a function to CCF to allow
-> the drivers to query the list of possible parents?
-
-Assuming that "CCF" is the clock framework that's pretty much what I was
-suggesting, yes.
-
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRJlldAAoJELSic+t+oim9bFwP/11Vm+ANLvoLNzJEdpIfzzh6
-904JEDRA2pDZm/C81SkBawdDg4F1lsgieLVmDZg7a8Qij67CmwjINvXQLBhpXPqo
-7eW7FSLOpLAoJ5tXeOzQiMbJPldXnJ3C2vEkvCnuftI1AQXbY9WspBki12q5R2KM
-1tXQaUCglB0PMfkO5cK9kre3StL2fMGgiygDBfAqKXicZoMArBI2x90kgjl1H4ox
-Qy5sBBnX7PSJ0vfpYzRTy5lOfUYzhOi/Lu9bVSZJ8QnQEYlDhyuw0vDuallmr20L
-QkIte9vCgETMgivhe5czBl7hoy2INyOpMNv4hqQgFTZSlQ7393Xmj6ycGDtMWQOn
-zS/hW9sXy3PBwhfqOBhbOo2pFJYbiOdrKe5zSBadaD36w1kfxmZzN9iwIhdEuMMR
-7p8LOBK/OfLwD7RiLXRZhpi4ep7NzC/41KdBCytk/y4gQXfkH2MqgC7tQl8RIp2q
-pPVdDDS/0WGVCck6ZwASkvFCbq/WSDYws/vdAcBQ+16EsmSUL1+SX13i9gx+bCAe
-mLiODb6CLIxIjlcBYYT+7ZO+VKbJvwooTFjoJIUVLAe0NNYvg/JQUik48VH+m2R1
-s85RkupjcjWs/o+ZyMwdvQwfuaclbZ/91MPSQBZT0SLIyqCgA4YQGs8tmmA9aWmQ
-H5G/VmwzVrYACm2Nra4e
-=GU7B
------END PGP SIGNATURE-----
-
---ZGiS0Q5IWpPtfppv--
+That seems fairly direct though. Is "dev" available inside host,
+platfm_host or tegra_host? You could obtain it from there if you wanted
+to reduce the number of parameters passed to the function.
