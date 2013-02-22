@@ -1,65 +1,29 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH V3] spi: tegra114: add spi driver
-Date: Fri, 22 Feb 2013 18:02:26 +0000
-Message-ID: <20130222180226.GC19796@opensource.wolfsonmicro.com>
-References: <1361536659-23225-1-git-send-email-ldewangan@nvidia.com>
- <CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 0/2] mmc: tegra: use mmc_of_parse to get support of
+ standard MMC DT binding
+Date: Fri, 22 Feb 2013 11:16:18 -0700
+Message-ID: <5127B5F2.40304@wwwdotorg.org>
+References: <1361503420-16473-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Manish Badarkhe <badarkhe.manish@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-tegra@vger.kernel.org, swarren@nvidia.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1361503420-16473-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 02/21/2013 08:23 PM, Joseph Lo wrote:
+> The 2nd patch of this series depends on two patches below.
+> 
+> "mmc: provide a standard MMC device-tree binding parser centrally"
+> (available on next-20130219)
+> mmc: tegra: assume CONFIG_OF, remove platform data
+> (available on next-20130220)
 
---UPT3ojh+0CqEDtpF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think this version looks good. I'll apply it for 3.10 when I can.
 
-On Fri, Feb 22, 2013 at 07:59:11PM +0530, Manish Badarkhe wrote:
-> On Fri, Feb 22, 2013 at 6:07 PM, Laxman Dewangan <ldewangan@nvidia.com> w=
-rote:
-> > Add SPI driver for NVIDIA's Tegra114 SPI controller. This controller
-> > is different than the older SoCs SPI controller in internal design as
-> > well as register interface.
-> >
-> > This driver supports the:
-> > - non DMA based transfer for smaller transfer i.e. less than FIFO depth.
-> > - APB DMA based transfer for lager transfer i.e. more than FIFO depth.
->=20
-> s/lager/larger
->=20
-> > - Clock gating through runtime PM callbacks.
-> > - registration through DT only.
-
-Delete unneeded context from your replies, we shouldn't need to page
-through the entire patch because you've noticed a spelling error...
-
---UPT3ojh+0CqEDtpF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRJ7KrAAoJELSic+t+oim99m0P/1Lv2IL0oI8UFS0+iR75/yiE
-TP4aMhgt4h6FdU9YG9xz7tUI2d/ur0J0lHfgcA0jSB+HqdSy/5rNo/FN7j8qMge4
-ydavTAvxGbMBdiEpg9XA2FCaxlNyLAcfOOG3OVDyGpmEQxdI1r5eXXKC8jdR2p8W
-uQ2aSZpxAqwpBDO8jvLkT5f11+EhSKRd0OwyuA2dIYLmeAkQNnWTTttO1VEAfKpy
-69jOUgSFpvuYs7QojdRgFcUKr/BZD4/HCgOcWhHDLT5FUp/fREhb/dKtpGuiePng
-7As38F/nVsu9Sm47FBTMprE4Lxly0/h8j3ywbubHfv69j1L763k/skZsTUkCjsmr
-Y3/kpsXXWMc956pEN8GTltyWIm+NepcGenOQqnT/ViXmjuuIMxFao2GdrOQX/Y1S
-NmO95k9suxTvgi9+y13Cb7G84SI8n7b5kDvjQKx8u3Kz/v7M48xgOpcI/39fjs7R
-UdEmnUUj11ocfCerh+mTgiR9IksGwnXYYNbmXxqBGovdqfEEqoDHYdZUnDocSeT1
-SBZw9TVsGOIHd/1EffEI71mOQfZ/vVri3jUv69+SzJslwvuw/4WTZvku7DpjKCJY
-P+lGNJYwfKdQkepdJ5E4jDPiwImotfzGgEAwiHfBrtcBobdbMka6mzH62xYB5zuF
-X/qwoX2N1Y73F/x0EVDq
-=I72D
------END PGP SIGNATURE-----
-
---UPT3ojh+0CqEDtpF--
+Chris, once you can merge patches for 3.10, can you create a topic
+branch that contains "mmc: provide a standard MMC device-tree binding
+parser centrally" so I can merge it into the Tegra tree? Thanks.
