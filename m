@@ -1,39 +1,38 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3] ARM: tegra30: fix the logical detection of power on sequence of warm boot CPUs
-Date: Fri, 22 Feb 2013 14:24:26 +0800
-Message-ID: <1361514267-12111-2-git-send-email-josephl@nvidia.com>
-References: <1361514267-12111-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 1/3] ARM: tegra: Fix unchecked return value
+Date: Fri, 22 Feb 2013 14:24:25 +0800
+Message-ID: <1361514267-12111-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361514267-12111-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The warm boo sequence of secondary CPUs should wait for the power ready
-then removing the clamps.
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This did not fix any known or unknown issue, but nice to have this fix.
+Check a return value for tegra_powergate_remove_clamping().
 
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/platsmp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-tegra/platsmp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 4dfc75e..e78d52d 100644
+index 2c6b3d5..4dfc75e 100644
 --- a/arch/arm/mach-tegra/platsmp.c
 +++ b/arch/arm/mach-tegra/platsmp.c
-@@ -91,7 +91,7 @@ static int tegra30_power_up_cpu(unsigned int cpu)
- 	if (cpumask_test_cpu(cpu, &tegra_cpu_init_mask)) {
- 		timeout = jiffies + msecs_to_jiffies(50);
- 		do {
--			if (!tegra_powergate_is_powered(pwrgateid))
-+			if (tegra_powergate_is_powered(pwrgateid))
- 				goto remove_clamps;
- 			udelay(10);
- 		} while (time_before(jiffies, timeout));
+@@ -124,6 +124,9 @@ remove_clamps:
+ 
+ 	/* Remove I/O clamps. */
+ 	ret = tegra_powergate_remove_clamping(pwrgateid);
++	if (ret)
++		return ret;
++
+ 	udelay(10);
+ 
+ 	/* Clear flow controller CSR. */
 -- 
 1.8.1.1
