@@ -1,32 +1,58 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/4] ARM: tegra114: bring up secondary CPU for SMP
-Date: Fri, 22 Feb 2013 14:43:51 +0200
-Message-ID: <20130222124351.GU23234@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH 2/4] ARM: tegra: pmc: add power on function for
+ secondary CPUs
+Date: Fri, 22 Feb 2013 15:00:51 +0200
+Message-ID: <20130222130051.GV23234@tbergstrom-lnx.Nvidia.com>
 References: <1361515491-16199-1-git-send-email-josephl@nvidia.com>
+ <1361515491-16199-3-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1361515491-16199-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1361515491-16199-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Feb 22, 2013 at 07:44:47AM +0100, Joseph Lo wrote:
-> This series bring up secondary CPU for Tegra114. Because we are going to
-> support generic power domain later, the conventional powergate driver will
-> be removed. So we add the CPU power on/off function in PMC driver first.
+On Fri, Feb 22, 2013 at 07:44:49AM +0100, Joseph Lo wrote:
+> Adding the power on function for secondary CPUs in PMC driver, this can
+> help us to remove legacy powergate driver and add generic power domain
+> support later.
 > 
-> This series was dependent on the patches below.
-> "ARM: tegra: Fix unchecked return value"
-> "ARM: tegra30: fix the logical detection of power on sequence of warm boot CPUs"
-> "ARM: tegra: refactor tegra{20,30}_boot_secondary"
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/pmc.c | 105 +++++++++++++++++++++++++++++++++++++++++++++-
+>  arch/arm/mach-tegra/pmc.h |   4 ++
+>  2 files changed, 107 insertions(+), 2 deletions(-)
 > 
+> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+> index 2315e25..a2446c2 100644
+> --- a/arch/arm/mach-tegra/pmc.c
+> +++ b/arch/arm/mach-tegra/pmc.c
+> @@ -21,8 +21,26 @@
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  
+> -#define PMC_CTRL		0x0
+> -#define PMC_CTRL_INTR_LOW	(1 << 17)
+> +#define PMC_CTRL			0x0
+> +#define PMC_CTRL_INTR_LOW		(1 << 17)
+> +#define PMC_PWRGATE_TOGGLE		0x30
+> +#define PMC_PWRGATE_TOGGLE_START	(1 << 8)
+> +#define PMC_REMOVE_CLAMPING		0x34
+> +#define PMC_PWRGATE_STATUS		0x38
+> +
+> +#define TEGRA_POWERGATE_PCIE	3
+> +#define TEGRA_POWERGATE_VDEC	4
+> +#define TEGRA_POWERGATE_CPU1	9
+> +#define TEGRA_POWERGATE_CPU2	10
+> +#define TEGRA_POWERGATE_CPU3	11
+> +
+> +static u8 tegra_cpu_domains[] = {
+> +	0xFF,			/* not available for CPU0 */
 
-It also depends on 'ARM: tegra: don't unlock MMIO access to DBGLAR for working'
-secondary core boot on Tegra114. Otherwise the secondary cores will hang at
-bootup.
+On Tegra114 we can also powergate CPU0, so this needs to be defined then.
 
 Cheers,
 
