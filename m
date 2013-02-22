@@ -1,83 +1,85 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: pmc: add power on function for secondary
- CPUs
-Date: Fri, 22 Feb 2013 11:37:06 -0700
-Message-ID: <5127BAD2.8030904@wwwdotorg.org>
-References: <1361515491-16199-1-git-send-email-josephl@nvidia.com> <1361515491-16199-3-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC v2 1/3] power_supply: Define Binding for supplied-nodes
+Date: Fri, 22 Feb 2013 12:46:01 -0700
+Message-ID: <5127CAF9.1030506@wwwdotorg.org>
+References: <1361488272-21010-1-git-send-email-rklein@nvidia.com> <1361488272-21010-2-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361515491-16199-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1361488272-21010-2-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/21/2013 11:44 PM, Joseph Lo wrote:
-> Adding the power on function for secondary CPUs in PMC driver, this can
-> help us to remove legacy powergate driver and add generic power domain
-> support later.
+On 02/21/2013 04:11 PM, Rhyland Klein wrote:
+> This property is meant to be used in device nodes which represent
+> power_supply devices that wish to provide a list of supplies to
+> which they provide power. A common case is a AC Charger with
+> the batteries it powers.
 
-> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+> diff --git a/Documentation/devicetree/bindings/power_supply/power_supply.txt b/Documentation/devicetree/bindings/power_supply/power_supply.txt
 
-> +static u8 tegra_cpu_domains[] = {
-> +	0xFF,			/* not available for CPU0 */
-> +	TEGRA_POWERGATE_CPU1,
-> +	TEGRA_POWERGATE_CPU2,
-> +	TEGRA_POWERGATE_CPU3,
-> +};
+> +Optional Properties:
+> + - power-supply : This property is added to a supply in order to list the
+> +   devices which supply it power, referenced by their phandles.
 
-Per Peter's comment, you probably need SoC-specific arrays here, to
-support CPU0 having a valid value or not.
+DT properties that reference resources are usually named in the plural,
+so "power-supplies" would be more appropriate here.
 
-> +static int tegra_pmc_get_cpu_powerdomain_id(int cpuid)
-> +{
-> +	if (cpuid <= 0 || cpuid > num_possible_cpus())
+It seems plausible that a single DT node could represent/instantiate
+multiple separate supply objects. I think we want to employ the standard
+pattern of <phandle args*> rather than just <phandle>.
 
-cpuid >= num_possible_cpus()?
+That way, each supply that can supply others would have something like a
+#supply-cells = <n>, where n is the number of cells that the supply uses
+to name the multiple supplies provided by that node. 0 would be a common
+value here. 1 might be used for a node that represents many supplies.
 
-> +static int tegra_pmc_powergate_set(int id, bool new_state)
-> +{
-> +	bool status;
-> +	unsigned long flags;
+When a client supply uses a providing supply as the supply(!), do you
+need any flags to parameterize the connection? If so, that might be
+cause for a supplier to have a larger #supply-cells, so the flags could
+be represented.
+
+That all said, regulators assume 1 node == 1 regulator, so an
+alternative would be for a multi-supply node to include a child node per
+supply, e.g.:
+
+power@xxx {
+    ...
+    supply1 {
+        ...
+    };
+    supply2 {
+        ...
+    };
+};
+
+client {
+    supplies = <&supply1> <&supply2>;
+};
+
+I don't recall why regulators went for the style above rather than the
+#supply-cells style. Cc Mark Brown for any comment here.
+
+Also, do supplies and regulators need to inter-operate in any way (e.g.
+reference each-other in DT)?
+
+> +Example:
 > +
-> +	spin_lock_irqsave(&tegra_powergate_lock, flags);
+> +	usb-charger: power@e {
+> +		compatible = "some,usb-charger";
+> +		...
+> +	};
 > +
-> +	status = tegra_pmc_readl(PMC_PWRGATE_STATUS) & (1 << id);
-
-I would perform the read and the logical operations separately. Same for
-the write below.
-
-Don't you want to and with ~BIT(id) not BIT(id)?
-
-> +static int tegra_pmc_powergate_remove_clamping(int id)
-> +{
-> +	u32 mask;
+> +	ac-charger: power@e {
+> +		compatible = "some,ac-charger";
+> +		...
+> +	};
 > +
-> +	/*
-> +	 * Tegra has a bug where PCIE and VDE clamping masks are
-> +	 * swapped relatively to the partition ids.
-> +	 */
-> +	if (id ==  TEGRA_POWERGATE_VDEC)
-> +		mask = (1 << TEGRA_POWERGATE_PCIE);
-> +	else if	(id == TEGRA_POWERGATE_PCIE)
-> +		mask = (1 << TEGRA_POWERGATE_VDEC);
-> +	else
-> +		mask = (1 << id);
-
-Is this just true for this one register, but not others? If it's true
-everywhere, why not just fix the TEGRA_POWERGATE_* definitions?
-
-I asked this downstream, but you didn't answer.
-
-> +bool tegra_pmc_cpu_is_powered(int cpuid)
-> +{
-> +	int id;
-> +
-> +	id = tegra_pmc_get_cpu_powerdomain_id(cpuid);
-> +	if (IS_ERR_VALUE(id))
-> +		return false;
-
-As I pointed out downstream, that should be if (id < 0); IS_ERR_VALUE is
-intended for use on error-pointers, not on integer error codes.
+> +	battery@b {
+> +		compatible = "some,battery";
+> +		...
+> +		power-supply = <&usb-charger>, <&ac-charger>;
+> +	};
