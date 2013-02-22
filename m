@@ -1,91 +1,65 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [REPOST PATCH 2/2] clk: tegra: adapt tegra periph clk to mux table/mask
-Date: Fri, 22 Feb 2013 17:02:29 +0200
-Message-ID: <1361545358-22721-3-git-send-email-pdeschrijver@nvidia.com>
-References: <1361545358-22721-1-git-send-email-pdeschrijver@nvidia.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V3] spi: tegra114: add spi driver
+Date: Fri, 22 Feb 2013 18:02:26 +0000
+Message-ID: <20130222180226.GC19796@opensource.wolfsonmicro.com>
+References: <1361536659-23225-1-git-send-email-ldewangan@nvidia.com>
+ <CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1361545358-22721-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Manish Badarkhe <badarkhe.manish@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-tegra@vger.kernel.org, swarren@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra peripheral clock type uses struct clk_mux directly, so it needs to
-be updated to handle the new mask and table fields. Also the macros need
-to be updated
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk.h |   27 +++++++++++++++++++--------
- 1 files changed, 19 insertions(+), 8 deletions(-)
+--UPT3ojh+0CqEDtpF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 0744731..a09d7dc 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -355,15 +355,16 @@ struct clk *tegra_clk_register_periph_nodiv(const char *name,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
- 		u32 offset);
- 
--#define TEGRA_CLK_PERIPH(_mux_shift, _mux_width, _mux_flags,		\
-+#define TEGRA_CLK_PERIPH(_mux_shift, _mux_mask, _mux_flags,		\
- 			 _div_shift, _div_width, _div_frac_width,	\
- 			 _div_flags, _clk_num, _enb_refcnt, _regs,	\
--			 _gate_flags)					\
-+			 _gate_flags, _table)				\
- 	{								\
- 		.mux = {						\
- 			.flags = _mux_flags,				\
- 			.shift = _mux_shift,				\
--			.width = _mux_width,				\
-+			.mask = _mux_mask,				\
-+			.table = _table,				\
- 		},							\
- 		.divider = {						\
- 			.flags = _div_flags,				\
-@@ -393,26 +394,36 @@ struct tegra_periph_init_data {
- 	const char *dev_id;
- };
- 
--#define TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parent_names, _offset, \
--			_mux_shift, _mux_width, _mux_flags, _div_shift,	\
-+#define TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parent_names, _offset,\
-+			_mux_shift, _mux_mask, _mux_flags, _div_shift,	\
- 			_div_width, _div_frac_width, _div_flags, _regs,	\
--			_clk_num, _enb_refcnt, _gate_flags, _clk_id)	\
-+			_clk_num, _enb_refcnt, _gate_flags, _clk_id, _table) \
- 	{								\
- 		.name = _name,						\
- 		.clk_id = _clk_id,					\
- 		.parent_names = _parent_names,				\
- 		.num_parents = ARRAY_SIZE(_parent_names),		\
--		.periph = TEGRA_CLK_PERIPH(_mux_shift, _mux_width,	\
-+		.periph = TEGRA_CLK_PERIPH(_mux_shift, _mux_mask,	\
- 					   _mux_flags, _div_shift,	\
- 					   _div_width, _div_frac_width,	\
- 					   _div_flags, _clk_num,	\
- 					   _enb_refcnt, _regs,		\
--					   _gate_flags),		\
-+					   _gate_flags, _table),	\
- 		.offset = _offset,					\
- 		.con_id = _con_id,					\
- 		.dev_id = _dev_id,					\
- 	}
- 
-+#define TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parent_names, _offset,\
-+			_mux_shift, _mux_width, _mux_flags, _div_shift,	\
-+			_div_width, _div_frac_width, _div_flags, _regs,	\
-+			_clk_num, _enb_refcnt, _gate_flags, _clk_id)	\
-+	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parent_names, _offset,\
-+			_mux_shift, BIT(_mux_width) - 1, _mux_flags,	\
-+			_div_shift, _div_width, _div_frac_width, _div_flags, \
-+			_regs, _clk_num, _enb_refcnt, _gate_flags, _clk_id,\
-+			NULL)
-+
- /**
-  * struct clk_super_mux - super clock
-  *
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+On Fri, Feb 22, 2013 at 07:59:11PM +0530, Manish Badarkhe wrote:
+> On Fri, Feb 22, 2013 at 6:07 PM, Laxman Dewangan <ldewangan@nvidia.com> w=
+rote:
+> > Add SPI driver for NVIDIA's Tegra114 SPI controller. This controller
+> > is different than the older SoCs SPI controller in internal design as
+> > well as register interface.
+> >
+> > This driver supports the:
+> > - non DMA based transfer for smaller transfer i.e. less than FIFO depth.
+> > - APB DMA based transfer for lager transfer i.e. more than FIFO depth.
+>=20
+> s/lager/larger
+>=20
+> > - Clock gating through runtime PM callbacks.
+> > - registration through DT only.
+
+Delete unneeded context from your replies, we shouldn't need to page
+through the entire patch because you've noticed a spelling error...
+
+--UPT3ojh+0CqEDtpF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRJ7KrAAoJELSic+t+oim99m0P/1Lv2IL0oI8UFS0+iR75/yiE
+TP4aMhgt4h6FdU9YG9xz7tUI2d/ur0J0lHfgcA0jSB+HqdSy/5rNo/FN7j8qMge4
+ydavTAvxGbMBdiEpg9XA2FCaxlNyLAcfOOG3OVDyGpmEQxdI1r5eXXKC8jdR2p8W
+uQ2aSZpxAqwpBDO8jvLkT5f11+EhSKRd0OwyuA2dIYLmeAkQNnWTTttO1VEAfKpy
+69jOUgSFpvuYs7QojdRgFcUKr/BZD4/HCgOcWhHDLT5FUp/fREhb/dKtpGuiePng
+7As38F/nVsu9Sm47FBTMprE4Lxly0/h8j3ywbubHfv69j1L763k/skZsTUkCjsmr
+Y3/kpsXXWMc956pEN8GTltyWIm+NepcGenOQqnT/ViXmjuuIMxFao2GdrOQX/Y1S
+NmO95k9suxTvgi9+y13Cb7G84SI8n7b5kDvjQKx8u3Kz/v7M48xgOpcI/39fjs7R
+UdEmnUUj11ocfCerh+mTgiR9IksGwnXYYNbmXxqBGovdqfEEqoDHYdZUnDocSeT1
+SBZw9TVsGOIHd/1EffEI71mOQfZ/vVri3jUv69+SzJslwvuw/4WTZvku7DpjKCJY
+P+lGNJYwfKdQkepdJ5E4jDPiwImotfzGgEAwiHfBrtcBobdbMka6mzH62xYB5zuF
+X/qwoX2N1Y73F/x0EVDq
+=I72D
+-----END PGP SIGNATURE-----
+
+--UPT3ojh+0CqEDtpF--
