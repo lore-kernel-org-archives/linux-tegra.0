@@ -1,47 +1,51 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: tegra: refactor tegra{20,30}_boot_secondary
-Date: Fri, 22 Feb 2013 11:28:28 -0700
-Message-ID: <5127B8CC.3030808@wwwdotorg.org>
-References: <1361514267-12111-1-git-send-email-josephl@nvidia.com> <1361514267-12111-3-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 1/4] ARM: tegra: pmc: convert PMC driver to support DT
+ only
+Date: Fri, 22 Feb 2013 11:32:40 -0700
+Message-ID: <5127B9C8.3050600@wwwdotorg.org>
+References: <1361515491-16199-1-git-send-email-josephl@nvidia.com> <1361515491-16199-2-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361514267-12111-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1361515491-16199-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/21/2013 11:24 PM, Joseph Lo wrote:
-> From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/21/2013 11:44 PM, Joseph Lo wrote:
+> The Tegra kernel only support boot from DT now. Clean up the PMC driver
+> to support DT only, that includes:
 > 
-> "tegra_boot_secondary()" has many condition branches for some Tegra
-> SoC generations in a single function so that it's not easy to compile
-> a kernel only for a single SoC if one wants with some reason, debug
-> purpose(?). This patch provides SoC specific version of
-> boot_secondary(), tegra{20,30}_boot_secondary(). This could allow
-> any combination of SoC to be built. Those boot_secondary functions can
-> be preparation when we ntroduce chip specific function pointers in the
-> future without having chip dependent branches around.
-> 
-> Also removed unused definition/prototpye.
+> * remove the ifdef of CONFIG_OF
+> * replace the static mapping of PMC addr to map from DT
 
-That "also" is really something that should be a separate patch, since
-it's not related to the code refactoring that's the main purpose of this
-patch.
+> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
 
-However, I'll let it slide this time, since I think both patches would
-just end up in Tegra's cleanup branch anyway, even though I did already
-point this out (multiple times?) during downstream review:-( You're
-getting lucky because I don't feel like reviewing this again.
+>  static inline u32 tegra_pmc_readl(u32 reg)
+>  {
+> -	return readl(IO_ADDRESS(TEGRA_PMC_BASE + reg));
+> +	return readl_relaxed(tegra_pmc_base + reg);
 
-I'll apply this series once I can apply patches for 3.10.
+The change from readl to readl_relaxed is definitely unrelated to
+cleaning up DT support. It needs to be a separate patch, and needs to be
+mentioned in the commit description.
 
-One note to anyone else reading this patch: It does look like this is
-duplicating code that was previously nicely shared in
-tegra_boot_secondary(). However, I believe it's appropriate to do this
-in this case, since the equivalent code for future SoCs (such as
-Tegra114) is extremely different, and so the current shared code won't
-end up being shared, and this would just make tegra_boot_secondary()
-over-complex with conditionals when adding Tegra114 support.
+> +static void tegra_pmc_parse_dt(void)
+> +{
+> +	struct device_node *np;
+> +
+> +	np = of_find_matching_node(NULL, matches);
+> +	if (np) {
+
+Here, if (!np) BUG(); would be simpler, and allow the rest of the
+function not to be indented.
+
+>  void __init tegra_pmc_init(void)
+>  {
+...
+> +	if (!of_have_populated_dt())
+> +		return;
+
+That won't ever be true.
