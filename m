@@ -1,88 +1,42 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [RFC v2 3/3] power: power_supply: add support for getting supplied-nodes from dt
-Date: Thu, 21 Feb 2013 18:11:12 -0500
-Message-ID: <1361488272-21010-4-git-send-email-rklein@nvidia.com>
-References: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] mmc: tegra: use mmc_of_parse to get the support of
+ standard MMC DT bindings
+Date: Fri, 22 Feb 2013 10:07:39 +0800
+Message-ID: <1361498859.2330.1.camel@jlo-ubuntu-64.nvidia.com>
+References: <1361343902-15223-1-git-send-email-josephl@nvidia.com>
+	 <1361343902-15223-3-git-send-email-josephl@nvidia.com>
+	 <Pine.LNX.4.64.1302212333330.10403@axis700.grange>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anton Vorontsov <cbou@mail.ru>, David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
-Cc: linux-tegra@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.64.1302212333330.10403-0199iw4Nj15frtckUFj5Ag@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-With the addition of the device_nodes to use to link suppliers and
-supplicants, its useful to add logic to handle the creation of
-the list in a common place so as to be common for all drivers.
+On Fri, 2013-02-22 at 06:44 +0800, Guennadi Liakhovetski wrote:
+> Hi Joseph
+>=20
+> On Wed, 20 Feb 2013, Joseph Lo wrote:
+> >  static int tegra_sdhci_buswidth(struct sdhci_host *host, int bus_w=
+idth)
+> >  {
+> > -	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> > -	struct sdhci_tegra *tegra_host =3D pltfm_host->priv;
+> >  	u32 ctrl;
+> > =20
+> >  	ctrl =3D sdhci_readb(host, SDHCI_HOST_CONTROL);
+> > -	if (tegra_host->is_8bit && bus_width =3D=3D MMC_BUS_WIDTH_8) {
+> > +	if (host->mmc->caps =3D=3D MMC_CAP_8_BIT_DATA &&
+>=20
+> Don't you want to check for just one bit? -=C5=A0caps can contain mul=
+tiple=20
+> flags set:
+>=20
+> +	if ((host->mmc->caps & MMC_CAP_8_BIT_DATA) &&
+>=20
+Ah, yes. Thanks for your review.
 
-As of now, as long as the supply's device_node is supplied, the core
-will attempt to parse the list of supplies and store it in the
-power_supply structure. In this way, it shouldn't break existing
-drivers, but allow for transition cleanly.
-
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v2:
-  - Simplified and renamed the logic to parse dt for the charger list.
-  - Tied the dt parsing directly to power_supply_register to make fewer
-    changes required for converting existing chargers/supplies.
-
- drivers/power/power_supply_core.c |   35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index a87c5b8..05e2031 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -86,6 +86,39 @@ void power_supply_changed(struct power_supply *psy)
- }
- EXPORT_SYMBOL_GPL(power_supply_changed);
- 
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+
-+int power_supply_register_supplicant(struct power_supply *psy)
-+{
-+	struct device_node *np;
-+	int i = 0;
-+
-+	if (!psy->supplies.node)
-+		return -EINVAL;
-+
-+	do {
-+		struct power_supply_supplies *lst;
-+
-+		np = of_parse_phandle(psy->supplies.node, "power-supply", i++);
-+		if (!np)
-+			continue;
-+
-+		lst = devm_kzalloc(psy->dev->parent, sizeof(*lst), GFP_KERNEL);
-+		if (!lst) {
-+			dev_warn(psy->dev->parent,
-+				 "Failed to alloc mem for supplies list\n");
-+			return -ENOMEM;
-+		}
-+
-+		lst->node = np;
-+		list_add(&(lst->list), &(psy->supplies.list));
-+	} while (np);
-+
-+	return 0;
-+}
-+#endif
-+
- static int __power_supply_am_i_supplied(struct device *dev, void *data)
- {
- 	union power_supply_propval ret = {0,};
-@@ -355,6 +388,8 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
- 
- #ifdef CONFIG_OF
- 	INIT_LIST_HEAD(&psy->supplies.list);
-+
-+	power_supply_register_supplicant(psy);
- #endif
- 	INIT_WORK(&psy->changed_work, power_supply_changed_work);
- 
--- 
-1.7.9.5
+Joseph
