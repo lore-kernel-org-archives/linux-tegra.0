@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [RFC v2 2/3] power: power_supply: Add core support for supplied_nodes
-Date: Fri, 22 Feb 2013 12:49:45 -0700
-Message-ID: <5127CBD9.9050501@wwwdotorg.org>
+Date: Fri, 22 Feb 2013 13:09:39 -0700
+Message-ID: <5127D083.6020308@wwwdotorg.org>
 References: <1361488272-21010-1-git-send-email-rklein@nvidia.com> <1361488272-21010-3-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -28,11 +28,9 @@ On 02/21/2013 04:11 PM, Rhyland Klein wrote:
 > a device_node * list is stored in the supplies of their chargers,
 > however this seems to be the only way to support this.
 
-When parsing the DT, you can convert from phandle (or struct device_node
-*) to the name of the referenced supply by simple lookup. So, you could
-store supply names rather than device_node *. Can't you then also fill
-in the referenced supply's existing char** list of supplies?
-
-Of course, making this interact-with/use -EPROBE_DEFERRED might be
-challenging, since this would be operating in the inverse order to other
-producer/consumer relationships, which might cause loops.
+grep over the whole kernel tree for supplied_to doesn't yield /too/ many
+hits, although I didn't look at the complexity of most of them. Would it
+be possible to invert all the current in-kernel uses to represent a
+supplied_from/by model instead? That would mean the proposed DT binding
+would then represent the same relationship ordering as the kernel code,
+which would be easier to handle.
