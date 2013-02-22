@@ -1,29 +1,47 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 0/2] mmc: tegra: use mmc_of_parse to get support of
- standard MMC DT binding
-Date: Fri, 22 Feb 2013 11:16:18 -0700
-Message-ID: <5127B5F2.40304@wwwdotorg.org>
-References: <1361503420-16473-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 3/3] ARM: tegra: refactor tegra{20,30}_boot_secondary
+Date: Fri, 22 Feb 2013 11:28:28 -0700
+Message-ID: <5127B8CC.3030808@wwwdotorg.org>
+References: <1361514267-12111-1-git-send-email-josephl@nvidia.com> <1361514267-12111-3-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361503420-16473-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1361514267-12111-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/21/2013 08:23 PM, Joseph Lo wrote:
-> The 2nd patch of this series depends on two patches below.
+On 02/21/2013 11:24 PM, Joseph Lo wrote:
+> From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> "mmc: provide a standard MMC device-tree binding parser centrally"
-> (available on next-20130219)
-> mmc: tegra: assume CONFIG_OF, remove platform data
-> (available on next-20130220)
+> "tegra_boot_secondary()" has many condition branches for some Tegra
+> SoC generations in a single function so that it's not easy to compile
+> a kernel only for a single SoC if one wants with some reason, debug
+> purpose(?). This patch provides SoC specific version of
+> boot_secondary(), tegra{20,30}_boot_secondary(). This could allow
+> any combination of SoC to be built. Those boot_secondary functions can
+> be preparation when we ntroduce chip specific function pointers in the
+> future without having chip dependent branches around.
+> 
+> Also removed unused definition/prototpye.
 
-I think this version looks good. I'll apply it for 3.10 when I can.
+That "also" is really something that should be a separate patch, since
+it's not related to the code refactoring that's the main purpose of this
+patch.
 
-Chris, once you can merge patches for 3.10, can you create a topic
-branch that contains "mmc: provide a standard MMC device-tree binding
-parser centrally" so I can merge it into the Tegra tree? Thanks.
+However, I'll let it slide this time, since I think both patches would
+just end up in Tegra's cleanup branch anyway, even though I did already
+point this out (multiple times?) during downstream review:-( You're
+getting lucky because I don't feel like reviewing this again.
+
+I'll apply this series once I can apply patches for 3.10.
+
+One note to anyone else reading this patch: It does look like this is
+duplicating code that was previously nicely shared in
+tegra_boot_secondary(). However, I believe it's appropriate to do this
+in this case, since the equivalent code for future SoCs (such as
+Tegra114) is extremely different, and so the current shared code won't
+end up being shared, and this would just make tegra_boot_secondary()
+over-complex with conditionals when adding Tegra114 support.
