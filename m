@@ -1,65 +1,61 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: pmc: add power on function for
- secondary CPUs
-Date: Sat, 23 Feb 2013 10:38:55 +0800
-Message-ID: <1361587135.1804.16.camel@jlo-ubuntu-64.nvidia.com>
-References: <1361515491-16199-1-git-send-email-josephl@nvidia.com>
-	 <1361515491-16199-3-git-send-email-josephl@nvidia.com>
-	 <20130222130051.GV23234@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH 3/3] ARM: tegra: refactor tegra{20,30}_boot_secondary
+Date: Sat, 23 Feb 2013 12:06:20 +0800
+Message-ID: <1361592380.1804.20.camel@jlo-ubuntu-64.nvidia.com>
+References: <1361514267-12111-1-git-send-email-josephl@nvidia.com>
+	 <1361514267-12111-3-git-send-email-josephl@nvidia.com>
+	 <5127B8CC.3030808@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130222130051.GV23234-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <5127B8CC.3030808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2013-02-22 at 21:00 +0800, Peter De Schrijver wrote:
-> On Fri, Feb 22, 2013 at 07:44:49AM +0100, Joseph Lo wrote:
-> > Adding the power on function for secondary CPUs in PMC driver, this can
-> > help us to remove legacy powergate driver and add generic power domain
-> > support later.
+On Sat, 2013-02-23 at 02:28 +0800, Stephen Warren wrote:
+> On 02/21/2013 11:24 PM, Joseph Lo wrote:
+> > From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > > 
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/mach-tegra/pmc.c | 105 +++++++++++++++++++++++++++++++++++++++++++++-
-> >  arch/arm/mach-tegra/pmc.h |   4 ++
-> >  2 files changed, 107 insertions(+), 2 deletions(-)
+> > "tegra_boot_secondary()" has many condition branches for some Tegra
+> > SoC generations in a single function so that it's not easy to compile
+> > a kernel only for a single SoC if one wants with some reason, debug
+> > purpose(?). This patch provides SoC specific version of
+> > boot_secondary(), tegra{20,30}_boot_secondary(). This could allow
+> > any combination of SoC to be built. Those boot_secondary functions can
+> > be preparation when we ntroduce chip specific function pointers in the
+> > future without having chip dependent branches around.
 > > 
-> > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-> > index 2315e25..a2446c2 100644
-> > --- a/arch/arm/mach-tegra/pmc.c
-> > +++ b/arch/arm/mach-tegra/pmc.c
-> > @@ -21,8 +21,26 @@
-> >  #include <linux/of.h>
-> >  #include <linux/of_address.h>
-> >  
-> > -#define PMC_CTRL		0x0
-> > -#define PMC_CTRL_INTR_LOW	(1 << 17)
-> > +#define PMC_CTRL			0x0
-> > +#define PMC_CTRL_INTR_LOW		(1 << 17)
-> > +#define PMC_PWRGATE_TOGGLE		0x30
-> > +#define PMC_PWRGATE_TOGGLE_START	(1 << 8)
-> > +#define PMC_REMOVE_CLAMPING		0x34
-> > +#define PMC_PWRGATE_STATUS		0x38
-> > +
-> > +#define TEGRA_POWERGATE_PCIE	3
-> > +#define TEGRA_POWERGATE_VDEC	4
-> > +#define TEGRA_POWERGATE_CPU1	9
-> > +#define TEGRA_POWERGATE_CPU2	10
-> > +#define TEGRA_POWERGATE_CPU3	11
-> > +
-> > +static u8 tegra_cpu_domains[] = {
-> > +	0xFF,			/* not available for CPU0 */
+> > Also removed unused definition/prototpye.
 > 
-> On Tegra114 we can also powergate CPU0, so this needs to be defined then.
+> That "also" is really something that should be a separate patch, since
+> it's not related to the code refactoring that's the main purpose of this
+> patch.
 > 
-No, DON'T DO THAT!!
-We don't allow any code to power gate CPU0 manually here or elsewhere.
+> However, I'll let it slide this time, since I think both patches would
+> just end up in Tegra's cleanup branch anyway, even though I did already
+> point this out (multiple times?) during downstream review:-( You're
+> getting lucky because I don't feel like reviewing this again.
+> 
+> I'll apply this series once I can apply patches for 3.10.
+> 
+> One note to anyone else reading this patch: It does look like this is
+> duplicating code that was previously nicely shared in
+> tegra_boot_secondary(). However, I believe it's appropriate to do this
+> in this case, since the equivalent code for future SoCs (such as
+> Tegra114) is extremely different, and so the current shared code won't
+> end up being shared, and this would just make tegra_boot_secondary()
+> over-complex with conditionals when adding Tegra114 support.
 
-The function here only for SMP and hotplug bring up for secondary CPU.
+Hiroshi,
+
+Per Stephen's comment, should we drop this patch? And refactoring this
+later when I add support for Tegra114 CPU PM function.
+
+How do you think? If no, I found a redundant blank line in this patch
+that need a V2 to fix.
 
 Thanks,
 Joseph
