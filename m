@@ -1,60 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: pmc: add power on function for secondary
- CPUs
-Date: Sat, 23 Feb 2013 16:59:25 -0700
-Message-ID: <512957DD.8040406@wwwdotorg.org>
-References: <1361515491-16199-1-git-send-email-josephl@nvidia.com>  <1361515491-16199-3-git-send-email-josephl@nvidia.com>  <5127BAD2.8030904@wwwdotorg.org> <1361604480.1804.59.camel@jlo-ubuntu-64.nvidia.com>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 0/2] mmc: tegra: use mmc_of_parse to get support of standard MMC DT binding
+Date: Sun, 24 Feb 2013 15:08:44 -0500
+Message-ID: <87mwutbhkj.fsf@octavius.laptop.org>
+References: <1361503420-16473-1-git-send-email-josephl@nvidia.com>
+	<5127B5F2.40304@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1361604480.1804.59.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <5127B5F2.40304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen Warren's message of "Fri,
+	22 Feb 2013 11:16:18 -0700")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/23/2013 12:28 AM, Joseph Lo wrote:
-> On Sat, 2013-02-23 at 02:37 +0800, Stephen Warren wrote:
->> On 02/21/2013 11:44 PM, Joseph Lo wrote:
->>> Adding the power on function for secondary CPUs in PMC driver, this can
->>> help us to remove legacy powergate driver and add generic power domain
->>> support later.
->>
->>> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
->>> +static int tegra_pmc_get_cpu_powerdomain_id(int cpuid)
->>> +{
->>> +	if (cpuid <= 0 || cpuid > num_possible_cpus())
->>
->> cpuid >= num_possible_cpus()?
->>
-> Yes.
-> 
->>> +static int tegra_pmc_powergate_set(int id, bool new_state)
->>> +{
->>> +	bool status;
->>> +	unsigned long flags;
->>> +
->>> +	spin_lock_irqsave(&tegra_powergate_lock, flags);
->>> +
->>> +	status = tegra_pmc_readl(PMC_PWRGATE_STATUS) & (1 << id);
->>
->> I would perform the read and the logical operations separately. Same for
->> the write below.
->>
->> Don't you want to and with ~BIT(id) not BIT(id)?
->>
-> This is what I want.
-> WARN_ON(!(!!(status & BIT(id)) ^ new_state));
+Hi Stephen,
 
-Oh sorry, I guess this isn't a standard read-modify-write cycle, but
-something else.
+On Fri, Feb 22 2013, Stephen Warren wrote:
+> On 02/21/2013 08:23 PM, Joseph Lo wrote:
+>> The 2nd patch of this series depends on two patches below.
+>> 
+>> "mmc: provide a standard MMC device-tree binding parser centrally"
+>> (available on next-20130219)
+>> mmc: tegra: assume CONFIG_OF, remove platform data
+>> (available on next-20130220)
+>
+> I think this version looks good. I'll apply it for 3.10 when I can.
+>
+> Chris, once you can merge patches for 3.10, can you create a topic
+> branch that contains "mmc: provide a standard MMC device-tree binding
+> parser centrally" so I can merge it into the Tegra tree? Thanks.
 
-So yes, the & in the register read is probably fine as you have it, but
-yes there is an issue in the current WARN_ON comparison, as you say.
+I just sent "mmc: provide a standard MMC device-tree binding parser
+centrally" for 3.9, so you're all set.
 
-The WARN_ON you gave above is rather complex. Simplest might be:
+Thanks,
 
-u32 reg = tegra_pmc_readl(PMC_PWRGATE_STATUS);
-bool old_state = (reg >> id) & 1;
-WARN_ON(new_state == old_state);
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
