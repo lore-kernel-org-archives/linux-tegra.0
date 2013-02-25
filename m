@@ -1,42 +1,42 @@
-From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 0/2] mmc: tegra: use mmc_of_parse to get support of standard MMC DT binding
-Date: Sun, 24 Feb 2013 15:08:44 -0500
-Message-ID: <87mwutbhkj.fsf@octavius.laptop.org>
-References: <1361503420-16473-1-git-send-email-josephl@nvidia.com>
-	<5127B5F2.40304@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/4] ARM: tegra: pmc: add power on function for
+ secondary CPUs
+Date: Mon, 25 Feb 2013 10:39:20 +0200
+Message-ID: <20130225083920.GZ23234@tbergstrom-lnx.Nvidia.com>
+References: <1361515491-16199-1-git-send-email-josephl@nvidia.com>
+ <1361515491-16199-3-git-send-email-josephl@nvidia.com>
+ <5127BAD2.8030904@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5127B5F2.40304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen Warren's message of "Fri,
-	22 Feb 2013 11:16:18 -0700")
+Content-Disposition: inline
+In-Reply-To: <5127BAD2.8030904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+On Fri, Feb 22, 2013 at 07:37:06PM +0100, Stephen Warren wrote:
+> On 02/21/2013 11:44 PM, Joseph Lo wrote:
+> > Adding the power on function for secondary CPUs in PMC driver, this can
+> > help us to remove legacy powergate driver and add generic power domain
+> > support later.
+> 
+> > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+> 
+> > +static u8 tegra_cpu_domains[] = {
+> > +	0xFF,			/* not available for CPU0 */
+> > +	TEGRA_POWERGATE_CPU1,
+> > +	TEGRA_POWERGATE_CPU2,
+> > +	TEGRA_POWERGATE_CPU3,
+> > +};
+> 
+> Per Peter's comment, you probably need SoC-specific arrays here, to
+> support CPU0 having a valid value or not.
 
-On Fri, Feb 22 2013, Stephen Warren wrote:
-> On 02/21/2013 08:23 PM, Joseph Lo wrote:
->> The 2nd patch of this series depends on two patches below.
->> 
->> "mmc: provide a standard MMC device-tree binding parser centrally"
->> (available on next-20130219)
->> mmc: tegra: assume CONFIG_OF, remove platform data
->> (available on next-20130220)
->
-> I think this version looks good. I'll apply it for 3.10 when I can.
->
-> Chris, once you can merge patches for 3.10, can you create a topic
-> branch that contains "mmc: provide a standard MMC device-tree binding
-> parser centrally" so I can merge it into the Tegra tree? Thanks.
+That was a mistake, we never use these functions on CPU0. Powergating uses
+a different path. So this is ok.
 
-I just sent "mmc: provide a standard MMC device-tree binding parser
-centrally" for 3.9, so you're all set.
+Cheers,
 
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
-One Laptop Per Child
+Peter.
