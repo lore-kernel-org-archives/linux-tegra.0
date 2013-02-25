@@ -1,38 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 2/2] MAINTAINERS: update Tegra section to capture all
- Tegra files
-Date: Mon, 25 Feb 2013 13:56:53 -0700
-Message-ID: <512BD015.5000200@wwwdotorg.org>
-References: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org> <1360629574-23989-2-git-send-email-swarren@wwwdotorg.org>
+Subject: Multi-platform, and secure-only ARM errata workarounds
+Date: Mon, 25 Feb 2013 16:47:38 -0700
+Message-ID: <512BF81A.3080700@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1360629574-23989-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/11/2013 05:39 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The intent is to ensure that all Tegra-related patches are sent to the
-> linux-tegra@ mailing list, so people can keep up-to-date on all misc
-> driver changes.
-> 
-> Doing this with a keyword is far simpler and more compact than listing
-> all Tegra-related drivers, even if wildcards were used.
-> 
-> Words such as integrate or integrator are common. Ensure the character
-> right before "tegra" isn't a-z (case-insensitive), to make sure the
-> keyword doesn't match those.
-> 
-> The only files that the keyword doesn't match are the NVEC driver. Add
-> the linux-tegra mailing list to the NVEC entry to solve this.
+Rob,
 
-Andrew, I see you've taken patch 1/2 into your tree. Are you planning on
-taking patch 2/2 as well? Patch 2/2 depends on patch 1/2, so they really
-should go through the same tree, or into different kernel versions or -rcs.
+I'm looking into enabling CONFIG_MULTIPLATFORM on Tegra for 3.10, and
+the main blocking issue is due to commit 62e4d35 "ARM: 7609/1: disable
+errata work-arounds which access secure registers". Various Tegra
+versions need 3 of those workarounds, and our bootloader doesn't
+implement them (at the least, upstream U-Boot; not sure about our
+downstream code, but I'm fairly sure given the lack of any feedback I
+got in the bug I filed to implement them).
 
-Thanks.
+Now, I can easily add those 3 errata workarounds to U-Boot, but that
+will require people to reflash their bootloader. This is probably
+acceptable for development/reference boards (although I'm sure people
+will find it annoying) but for re-purposed production boards (such as
+the Toshiba AC100 or various tablets) it will be impossible to update
+the factory bootloader. Switching to upstream U-Boot would currently
+lose some functionality, and significantly affect people's boot flow, so
+is likely unacceptable.
+
+Is there any other alternative I'm not seeing? Having the kernel
+suddenly become incompatible with any currently extant bootloader when I
+enable CONFIG_MULTIPLATFORM doesn't seem like a great idea.
