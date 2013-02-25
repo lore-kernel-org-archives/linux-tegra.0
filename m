@@ -1,36 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: pmc: convert PMC driver to support DT
- only
-Date: Mon, 25 Feb 2013 08:43:13 -0700
-Message-ID: <512B8691.5000702@wwwdotorg.org>
-References: <1361515491-16199-1-git-send-email-josephl@nvidia.com> <1361515491-16199-2-git-send-email-josephl@nvidia.com> <20130222130516.GW23234@tbergstrom-lnx.Nvidia.com> <1361585022.1804.11.camel@jlo-ubuntu-64.nvidia.com> <51284615.6080808@wwwdotorg.org> <20130225142841.GJ23234@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH V4 2/2] MAINTAINERS: update Tegra section to capture all
+ Tegra files
+Date: Mon, 25 Feb 2013 13:56:53 -0700
+Message-ID: <512BD015.5000200@wwwdotorg.org>
+References: <1360629574-23989-1-git-send-email-swarren@wwwdotorg.org> <1360629574-23989-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130225142841.GJ23234-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1360629574-23989-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/25/2013 07:28 AM, Peter De Schrijver wrote:
-> On Sat, Feb 23, 2013 at 05:31:17AM +0100, Stephen Warren wrote:
-...
->> Peter, can you confirm exactly which [PMC] HW versions, if any, are 100%
->> backwards-compatible?
->>
+On 02/11/2013 05:39 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> The major difference between the PMCs are the powerdomain IDs. The Tegra30 IDs
-> are a strict superset of the Tegra20 IDs, but the Tegra114 IDs are not. There
-> are differences in the CPU domains and 3D. The CPU domains aren't a problem I
-> think because we won't powergate those domains directly using the PMC. We
-> always program the flowcontroller to do the powergating on WFI. 3D is a
-> different story however. We do powergate 3D under software control and the
-> sequencing is different between Tegra30 and Tegra114. Also Tegra30 has 2
-> domains for 3D while Tegra114 has only 1. Then of course Tegra114 lacks the
-> SATA and PCIe domains because those features are missing compared to Tegra30.
-> But the IDs haven't been reused. All in all I think it's best to explicitly
-> require the driver to support the various SoCs.
+> The intent is to ensure that all Tegra-related patches are sent to the
+> linux-tegra@ mailing list, so people can keep up-to-date on all misc
+> driver changes.
+> 
+> Doing this with a keyword is far simpler and more compact than listing
+> all Tegra-related drivers, even if wildcards were used.
+> 
+> Words such as integrate or integrator are common. Ensure the character
+> right before "tegra" isn't a-z (case-insensitive), to make sure the
+> keyword doesn't match those.
+> 
+> The only files that the keyword doesn't match are the NVEC driver. Add
+> the linux-tegra mailing list to the NVEC entry to solve this.
 
-That does sound like a good idea; a separate compatible value for each SoC.
+Andrew, I see you've taken patch 1/2 into your tree. Are you planning on
+taking patch 2/2 as well? Patch 2/2 depends on patch 1/2, so they really
+should go through the same tree, or into different kernel versions or -rcs.
+
+Thanks.
