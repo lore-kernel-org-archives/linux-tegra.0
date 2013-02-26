@@ -1,49 +1,25 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: dts: tegra: fix the PMC compatible string
-Date: Tue, 26 Feb 2013 17:58:59 +0800
-Message-ID: <1361872739-4467-1-git-send-email-josephl@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Tue, 26 Feb 2013 10:23:26 +0000
+Message-ID: <201302261023.26939.arnd@arndb.de>
+References: <512BF81A.3080700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <512BF81A.3080700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The PMC HW does not 100% compatible across all Tegra series. We need to
-specify them in DT.
+On Monday 25 February 2013, Stephen Warren wrote:
+> Is there any other alternative I'm not seeing? Having the kernel
+> suddenly become incompatible with any currently extant bootloader when I
+> enable CONFIG_MULTIPLATFORM doesn't seem like a great idea.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114.dtsi | 2 +-
- arch/arm/boot/dts/tegra30.dtsi  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Could we make those errata be run-time enabled only when not booting
+in secure mode?
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 1dfaf28..e4ddedd 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -99,7 +99,7 @@
- 	};
- 
- 	pmc {
--		compatible = "nvidia,tegra114-pmc", "nvidia,tegra30-pmc";
-+		compatible = "nvidia,tegra114-pmc";
- 		reg = <0x7000e400 0x400>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 767803e..6ae82e7 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -422,7 +422,7 @@
- 	};
- 
- 	pmc {
--		compatible = "nvidia,tegra20-pmc", "nvidia,tegra30-pmc";
-+		compatible = "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
- 	};
- 
--- 
-1.8.1.1
+	Arnd
