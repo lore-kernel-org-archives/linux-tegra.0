@@ -1,91 +1,31 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: Multi-platform, and secure-only ARM errata workarounds
-Date: Tue, 26 Feb 2013 18:49:42 +0000
-Message-ID: <20130226184942.GV17833@n2100.arm.linux.org.uk>
-References: <512BF81A.3080700@wwwdotorg.org> <201302261023.26939.arnd@arndb.de> <20130226113538.GS17833@n2100.arm.linux.org.uk> <512CF87A.4090404@wwwdotorg.org> <20130226181114.GU17833@n2100.arm.linux.org.uk> <512CFF30.9080300@wwwdotorg.org>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: dts: tegra: fix the PMC compatible string
+Date: Wed, 27 Feb 2013 00:59:25 +0400
+Message-ID: <512D222D.6040607@cogentembedded.com>
+References: <1361872739-4467-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <512CFF30.9080300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1361872739-4467-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 26, 2013 at 11:30:08AM -0700, Stephen Warren wrote:
-> On 02/26/2013 11:11 AM, Russell King - ARM Linux wrote:
-> > On Tue, Feb 26, 2013 at 11:01:30AM -0700, Stephen Warren wrote:
-> >> The conditional in that statement makes me wonder which of the following
-> >> operations will fault in non-secure mode:
-> >>
-> >> 1) Reading from the diagnostic register.
-> > 
-> > Won't fault.
-> > 
-> >> 2) Writing to the diagnostic register, of a value the same as what's
-> >> already there.
-> > 
-> > Will fault.
-> > 
-> >> 3) Writing to the diagnostic register, of a value different than what's
-> >> already there.
-> > 
-> > Will fault.
-> > 
-> >> Would the following not fault in both secure and non-secure mode:
-> >>
-> >> read diagnostic register
-> >> if desired bit already set:
-> >>     b 1f
-> >> set desired bit
-> >> write value back to diagnostic register
-> >> 1:
-> > 
-> > That is exactly what we do
-> 
-> Well, I asked because for the 3 WARs in question at least, that isn't
-> what the code does. For example, from proc-v7.s:
-> 
-> #ifdef CONFIG_ARM_ERRATA_742230
-> 	cmp	r6, #0x22		@ only present up to r2p2
-> 	mrcle	p15, 0, r10, c15, c0, 1	@ read diagnostic register
-> 	orrle	r10, r10, #1 << 4	@ set bit #4
-> 	mcrle	p15, 0, r10, c15, c0, 1	@ write diagnostic register
-> #endif
-> 
-> (unless that orrle affects the flags and hence skips the mcrle, but I
-> don't think so.)
+Hello.
 
-Hmm.  I've not really been taking much notice of how these work-arounds
-all work - maybe it's safe to write this diagnostic register from
-non-secure mode then?
+On 26-02-2013 13:58, Joseph Lo wrote:
 
-I have noticed this kind of fishy thing with OMAP4430 running in non-secure
-mode - some registers I thought would cause an exception don't.  No idea
-why not...
+    A small typo:
 
-> > - the problem is, that if you require
-> > workaround X to be enabled, and a different platform has that errata
-> > fixed, then the other platform will not enable the work-around, and
-> > the bit will be clear.
-> 
-> The 3 WARs in question are conditional upon the CPU's revision and patch
-> number (which I'll call rNpN). I assume that any Cortex-A9 with the
-> affected rNpN would require the WAR enabled; is it possible that someone
-> could have fixed a particular core bug directly (and hence not changed
-> rNpN),
+> The PMC HW does
 
-SoC folk are apparantly free to incorporate fixes into the ARM CPU
-when they fabricate it, which means that the rNpN number doesn't
-accurately reflect what workarounds are required.
+    s/does/is/
 
-We've had this discussion before - a few months ago - and the conclusion
-that was arrived at was that the _only_ way out of this mess is to
-require whatever runs _before_ the kernel to enable the appropriate
-work-arounds in these apparantly secure-accessible only registers.
+> not 100% compatible across all Tegra series. We need to
+> specify them in DT.
 
-We've now been around this problem about three or four times, and we
-ultimately end up coming back to the above, and/or talking about
-ripping out the errata workarounds from the kernel which just set
-bits in the register(s).
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+WBR, Sergei
