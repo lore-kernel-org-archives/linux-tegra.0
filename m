@@ -1,49 +1,55 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: pmc: convert PMC driver to support DT
- only
-Date: Tue, 26 Feb 2013 10:27:42 +0800
-Message-ID: <1361845662.6382.6.camel@jlo-ubuntu-64.nvidia.com>
-References: <1361515491-16199-1-git-send-email-josephl@nvidia.com>
-	 <1361515491-16199-2-git-send-email-josephl@nvidia.com>
-	 <20130222130516.GW23234@tbergstrom-lnx.Nvidia.com>
-	 <1361585022.1804.11.camel@jlo-ubuntu-64.nvidia.com>
-	 <51284615.6080808@wwwdotorg.org>
-	 <20130225142841.GJ23234@tbergstrom-lnx.Nvidia.com>
-	 <512B8691.5000702@wwwdotorg.org>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Tue, 26 Feb 2013 10:36:09 +0100
+Message-ID: <4928288.ie8EUukfVD@fb07-iapwap2.physik.uni-giessen.de>
+References: <512BF81A.3080700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <512B8691.5000702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <512BF81A.3080700@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <rob.herring@calxeda.com>, Olof Johansson <olof@lixom.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-02-25 at 23:43 +0800, Stephen Warren wrote:
-> On 02/25/2013 07:28 AM, Peter De Schrijver wrote:
-> > On Sat, Feb 23, 2013 at 05:31:17AM +0100, Stephen Warren wrote:
-> ...
-> >> Peter, can you confirm exactly which [PMC] HW versions, if any, are 100%
-> >> backwards-compatible?
-> >>
-> > 
-> > The major difference between the PMCs are the powerdomain IDs. The Tegra30 IDs
-> > are a strict superset of the Tegra20 IDs, but the Tegra114 IDs are not. There
-> > are differences in the CPU domains and 3D. The CPU domains aren't a problem I
-> > think because we won't powergate those domains directly using the PMC. We
-> > always program the flowcontroller to do the powergating on WFI. 3D is a
-> > different story however. We do powergate 3D under software control and the
-> > sequencing is different between Tegra30 and Tegra114. Also Tegra30 has 2
-> > domains for 3D while Tegra114 has only 1. Then of course Tegra114 lacks the
-> > SATA and PCIe domains because those features are missing compared to Tegra30.
-> > But the IDs haven't been reused. All in all I think it's best to explicitly
-> > require the driver to support the various SoCs.
+Stephen,
+
+Am Montag, 25. Februar 2013, 16:47:38 schrieb Stephen Warren:
+> I'm looking into enabling CONFIG_MULTIPLATFORM on Tegra for 3.10, and
+> the main blocking issue is due to commit 62e4d35 "ARM: 7609/1: disable
+> errata work-arounds which access secure registers". Various Tegra
+> versions need 3 of those workarounds, and our bootloader doesn't
+> implement them (at the least, upstream U-Boot; not sure about our
+> downstream code, but I'm fairly sure given the lack of any feedback I
+> got in the bug I filed to implement them).
 > 
-> That does sound like a good idea; a separate compatible value for each SoC.
+> Now, I can easily add those 3 errata workarounds to U-Boot, but that
+> will require people to reflash their bootloader. This is probably
+> acceptable for development/reference boards (although I'm sure people
+> will find it annoying) but for re-purposed production boards (such as
+> the Toshiba AC100 or various tablets) it will be impossible to update
+> the factory bootloader. Switching to upstream U-Boot would currently
+> lose some functionality, and significantly affect people's boot flow, so
+> is likely unacceptable.
 
-OK. Will add another patch to fix the PMC compatibility in Tegra30 and
-Tegra114 dts file. And also in the DT match table of PMC driver.
+personally, I have no problem to require a certain u-boot version for a given 
+kernel. From a distro point of view, you will likely update the 
+bootloader/kernel on a distro update anyway.
 
-Thanks,
-Joseph
+> Is there any other alternative I'm not seeing? Having the kernel
+> suddenly become incompatible with any currently extant bootloader when I
+> enable CONFIG_MULTIPLATFORM doesn't seem like a great idea.
+
+I *think* it's ok to deprecate fastboot on older devices. AFAIK, the in-kernel 
+supported boards all have u-boot support already.
+
+Marc
