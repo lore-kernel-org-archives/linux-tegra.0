@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 3/4] power_supply: tps65090-charger: Add binding doc
-Date: Wed, 27 Feb 2013 18:07:29 -0500
-Message-ID: <1362006450-4979-4-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 2/4] mfd: tps65090: Add resources for charger
+Date: Wed, 27 Feb 2013 18:07:28 -0500
+Message-ID: <1362006450-4979-3-git-send-email-rklein@nvidia.com>
 References: <1362006450-4979-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,42 +12,40 @@ To: Grant Likely <grant.likely@secretlab.ca>, Samuel Ortiz <sameo@linux.intel.co
 Cc: Laxman Dewangan <ldewangan@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This change adds the binding documentation for the tps65090-charger.
+Add irq resources to pass to the charger mfd sub dev so
+the charger can listen for interrupts.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
+ drivers/mfd/tps65090.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power_supply/tps65090.txt b/Documentation/devicetree/bindings/power_supply/tps65090.txt
-new file mode 100644
-index 0000000..56370c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power_supply/tps65090.txt
-@@ -0,0 +1,23 @@
-+TPS65090 Frontend PMU with Switchmode Charger
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index 98edb5be..88846ae 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -56,12 +56,22 @@
+ #define TPS65090_INT2_MASK_OVERLOAD_FET6		6
+ #define TPS65090_INT2_MASK_OVERLOAD_FET7		7
+ 
++static struct resource charger_resources[] = {
++	{
++		.start  = TPS65090_IRQ_VAC_STATUS_CHANGE,
++		.end    = TPS65090_IRQ_VAC_STATUS_CHANGE,
++		.flags  = IORESOURCE_IRQ,
++	}
++};
 +
-+Required Properties:
-+-compatible: "ti,tps65090"
-+-reg: I2C slave address
-+-interrupts: the interrupt output to which this device connects
-+
-+Optional Properties:
-+-ti,enable-low-current-chrg: Enables charging when a low current is detected
-+ while the default logic is to stop charging.
-+
-+Example:
-+
-+	tps65090@48 {
-+		compatible = "ti,tps65090";
-+		reg = <0x48>;
-+		interrupts = <0 88 0x4>;
-+
-+		ti,enable-low-current-chrg;
-+
-+		regulators {
-+			...
-+		};
+ static struct mfd_cell tps65090s[] = {
+ 	{
+ 		.name = "tps65090-pmic",
+ 	},
+ 	{
+ 		.name = "tps65090-charger",
++		.num_resources = ARRAY_SIZE(charger_resources),
++		.resources = &charger_resources[0],
+ 	},
+ };
+ 
 -- 
 1.7.9.5
