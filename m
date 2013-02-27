@@ -1,47 +1,53 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/4] mfd: tps65090: Fix enum in header file
-Date: Wed, 27 Feb 2013 18:07:27 -0500
-Message-ID: <1362006450-4979-2-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 3/4] power_supply: tps65090-charger: Add binding doc
+Date: Wed, 27 Feb 2013 18:07:29 -0500
+Message-ID: <1362006450-4979-4-git-send-email-rklein@nvidia.com>
 References: <1362006450-4979-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1362006450-4979-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1362006450-4979-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Samuel Ortiz <sameo@linux.intel.com>, Anton Vorontsov <cbou@mail.ru>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The enum is missing the definition for the first bit, which makes all
-the rest off by one. Add definition for the TPS65090_IRQ_INTERRUPT bit
-which at 0.
+This change adds the binding documentation for the tps65090-charger.
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- include/linux/mfd/tps65090.h |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
 
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 6694cf4..9ce231f 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -27,6 +27,7 @@
- 
- /* TPS65090 IRQs */
- enum {
-+	TPS65090_IRQ_INTERRUPT,
- 	TPS65090_IRQ_VAC_STATUS_CHANGE,
- 	TPS65090_IRQ_VSYS_STATUS_CHANGE,
- 	TPS65090_IRQ_BAT_STATUS_CHANGE,
+diff --git a/Documentation/devicetree/bindings/power_supply/tps65090.txt b/Documentation/devicetree/bindings/power_supply/tps65090.txt
+new file mode 100644
+index 0000000..56370c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power_supply/tps65090.txt
+@@ -0,0 +1,23 @@
++TPS65090 Frontend PMU with Switchmode Charger
++
++Required Properties:
++-compatible: "ti,tps65090"
++-reg: I2C slave address
++-interrupts: the interrupt output to which this device connects
++
++Optional Properties:
++-ti,enable-low-current-chrg: Enables charging when a low current is detected
++ while the default logic is to stop charging.
++
++Example:
++
++	tps65090@48 {
++		compatible = "ti,tps65090";
++		reg = <0x48>;
++		interrupts = <0 88 0x4>;
++
++		ti,enable-low-current-chrg;
++
++		regulators {
++			...
++		};
 -- 
 1.7.9.5
