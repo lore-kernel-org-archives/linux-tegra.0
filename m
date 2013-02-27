@@ -1,36 +1,47 @@
 From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] Add support for tps65090-charger
-Date: Wed, 27 Feb 2013 18:07:26 -0500
-Message-ID: <1362006450-4979-1-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 1/4] mfd: tps65090: Fix enum in header file
+Date: Wed, 27 Feb 2013 18:07:27 -0500
+Message-ID: <1362006450-4979-2-git-send-email-rklein@nvidia.com>
+References: <1362006450-4979-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1362006450-4979-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset adds support for the TPS65090-charger. This charger is
-registered as a subdevice of the TPS65090 PMIC.
+The enum is missing the definition for the first bit, which makes all
+the rest off by one. Add definition for the TPS65090_IRQ_INTERRUPT bit
+which at 0.
 
-This series includes a fix for the tps65090 header file where all
-the interrupts were shifted by 1.
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/linux/mfd/tps65090.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-Rhyland Klein (4):
-  mfd: tps65090: Fix enum in header file
-  mfd: tps65090: Add resources for charger
-  power_supply: tps65090-charger: Add binding doc
-  power: tps65090: Add support for tps65090-charger
-
- .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++
- drivers/mfd/tps65090.c                             |   10 +
- drivers/power/Kconfig                              |    7 +
- drivers/power/Makefile                             |    1 +
- drivers/power/tps65090-charger.c                   |  310 ++++++++++++++++++++
- include/linux/mfd/tps65090.h                       |    6 +
- 6 files changed, 357 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
- create mode 100644 drivers/power/tps65090-charger.c
-
+diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
+index 6694cf4..9ce231f 100644
+--- a/include/linux/mfd/tps65090.h
++++ b/include/linux/mfd/tps65090.h
+@@ -27,6 +27,7 @@
+ 
+ /* TPS65090 IRQs */
+ enum {
++	TPS65090_IRQ_INTERRUPT,
+ 	TPS65090_IRQ_VAC_STATUS_CHANGE,
+ 	TPS65090_IRQ_VSYS_STATUS_CHANGE,
+ 	TPS65090_IRQ_BAT_STATUS_CHANGE,
 -- 
 1.7.9.5
