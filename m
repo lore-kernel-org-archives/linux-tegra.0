@@ -1,95 +1,49 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: unhandled interrupt from otg port
-Date: Thu, 28 Feb 2013 12:17:10 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E4ED32BDD@BGMAIL02.nvidia.com>
-References: <1978166.seipGZS4QH@ax5200p> <4469776.MJZ64uWU3E@ax5200p>
- <5123FBAC.6010302@wwwdotorg.org>
- <2407399.sDvuQ1S2GC@fb07-iapwap2.physik.uni-giessen.de>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/2] clk: Tegra: Remove duplicate smp_twd clock
+Date: Thu, 28 Feb 2013 13:13:01 +0530
+Message-ID: <1362037381-4730-2-git-send-email-pgaikwad@nvidia.com>
+References: <1362037381-4730-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1362037381-4730-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: Venu Byravarasu
-> Sent: Wednesday, February 20, 2013 2:30 PM
-> To: 'Marc Dietrich'; Stephen Warren
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: RE: unhandled interrupt from otg port
-> 
-> 
-> > -----Original Message-----
-> > From: Marc Dietrich [mailto:marvin24-Mmb7MZpHnFY@public.gmane.org]
-> > Sent: Wednesday, February 20, 2013 2:21 PM
-> > To: Stephen Warren
-> > Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Venu Byravarasu
-> > Subject: Re: unhandled interrupt from otg port
-> >
-> > Am Dienstag, 19. Februar 2013, 15:24:44 schrieb Stephen Warren:
-> > > On 02/19/2013 03:17 PM, Marc Dietrich wrote:
-> > > > On Tuesday 19 February 2013 23:12:53 Marc Dietrich wrote:
-> > > >> Stephen,
-> > > >>
-> > > >> On Tuesday 19 February 2013 10:03:47 Stephen Warren wrote:
-> > > >>> On 02/17/2013 04:48 AM, Marc Dietrich wrote:
-> > > >>>> Hi,
-> > > >>>>
-> > > >>>> I sometimes see unhandled irq from the otg port on my AC100
-> (kernel
-> > > >>>> 3.8.0-rc7). This happens randomly when the a cable is pluged into
-> the
-> > > >>>> mini usb port. Seems the port generates an interrupt on probe
-> which
-> > > >>>> isn't handled.
-> > > >>>
-> > > >>> Perhaps Venu can explain this; he is our USB expert.
-> > > >>>
-> > > >>>> Any ideas?
-> > > >>>
-> > > >>> I'm slightly confused by your description though; I assume this
-> problem
-> > > >>> happens when you boot with a USB cable already plugged in, not
-> when
-> > you
-> > > >>> first boot the system, then plug in a cable? Is the cable connected to a
-> > > >>> host PC, or to a device?
-> > > >>
-> > > >> the cable is connected to a host PC. It is not shown when connecting
-> > > >> after the system has booted. Unfortunately, I cannot generate the
-> error
-> > > >> reproducible, e.g. I just tried 10 times and nothing was shown. Maybe
-> > > >> just forget it for now if no one has an obvious idea. I'll try to find
-> > > >> some reproducable situation and will report back.
-> > > >
-> > > > arr, just found it: it happens when you load an uboot image via
-> tegrarcm
-> > > > first - so this could be a kernel or uboot problem.
-> > >
-> > > Ah, so that means that the Tegra boot ROM already initialized the USB
-> > > port in device mode to receive U-Boot. I assume you're not touching USB
-> > > in U-Boot at all, but loading the kernel/... from SD/eMMC. Then, the
-> > > kernel initializes/uses USB in host mode (since that's all we support so
-> > > far), and then you see the issue.
-> >
-> > yes, sounds reasonable.
-> >
-> > > I reproduced this on Harmony. I'll file a bug and assign it to Venu.
-> >
-> 
-> Reproduced the issue on Ventana.
-> Debug is in progress.
+Remove duplicate smp_twd clocks as these clocks are accessed using
+DT now.
 
-Fix is pushed for external review with http://marc.info/?l=linux-usb&m=136203353205291&w=2  
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra20.c |    1 -
+ drivers/clk/tegra/clk-tegra30.c |    1 -
+ 2 files changed, 0 insertions(+), 2 deletions(-)
 
-> 
-> Thanks,
-> Venu
-> 
-> > Thanks!
-> >
-> > Marc
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 143ce1f..1e2de73 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1292,7 +1292,6 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+ 	TEGRA_CLK_DUPLICATE(usbd,   "tegra-ehci.0", NULL),
+ 	TEGRA_CLK_DUPLICATE(usbd,   "tegra-otg",    NULL),
+ 	TEGRA_CLK_DUPLICATE(cclk,   NULL,           "cpu"),
+-	TEGRA_CLK_DUPLICATE(twd,    "smp_twd",      NULL),
+ 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* Must be the last entry */
+ };
+ 
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 32c61cb..ba6f51b 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1931,7 +1931,6 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+ 	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
+ 	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
+ 	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
+-	TEGRA_CLK_DUPLICATE(twd, "smp_twd", NULL),
+ 	TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
+ 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
+ };
+-- 
+1.7.4.1
