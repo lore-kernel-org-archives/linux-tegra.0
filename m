@@ -1,91 +1,61 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC v2 2/3] power: power_supply: Add core support for supplied_nodes
-Date: Thu, 28 Feb 2013 14:54:24 -0500
-Message-ID: <512FB5F0.3090805@nvidia.com>
-References: <1361488272-21010-1-git-send-email-rklein@nvidia.com> <1361488272-21010-3-git-send-email-rklein@nvidia.com> <5127CBD9.9050501@wwwdotorg.org> <5127E95E.4010500@nvidia.com> <5127F8B5.10002@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: Tegra: Add clock entry for smp_twd clock
+Date: Thu, 28 Feb 2013 21:04:15 +0100
+Message-ID: <20130228200415.GA17598@avionic-0098.mockup.avionic-design.de>
+References: <1362037381-4730-1-git-send-email-pgaikwad@nvidia.com>
+ <512F9F59.5030702@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5127F8B5.10002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <512F9F59.5030702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/22/2013 6:01 PM, Stephen Warren wrote:
-> On 02/22/2013 02:55 PM, Rhyland Klein wrote:
->> On 2/22/2013 2:49 PM, Stephen Warren wrote:
->>> On 02/21/2013 04:11 PM, Rhyland Klein wrote:
->>>> With the growing support for dt, it make sense to try to make use of
->>>> dt features to make the general code cleaner. This patch is an
->>>> attempt to commonize how chargers and their supplies are linked.
->>>>
->>>> Following common dt convention, the "supplied-to" char** list is
->>>> replaced with phandle lists defined in the supplies which contain
->>>> phandles of their suppliers.
->>>>
->>>> This has the effect however of introducing an inversion in the internal
->>>> mechanics of how this information is stored. In the case of non-dt,
->>>> the char** list of supplies is stored in the charger. In the dt case,
->>>> a device_node * list is stored in the supplies of their chargers,
->>>> however this seems to be the only way to support this.
->>> When parsing the DT, you can convert from phandle (or struct device_node
->>> *) to the name of the referenced supply by simple lookup. So, you could
->>> store supply names rather than device_node *. Can't you then also fill
->>> in the referenced supply's existing char** list of supplies?
->>>
->>> Of course, making this interact-with/use -EPROBE_DEFERRED might be
->>> challenging, since this would be operating in the inverse order to other
->>> producer/consumer relationships, which might cause loops.
->> The main problem I ran into when I was essentially trying to do this,
->> was that the list of names that
->> are used to match the power_supplies are the strings set as "name" in
->> the power_supply structs. This
->> doesn't get set automatically based on their nodes, and it is currently
->> up to each driver to define their
->> own name.
->>
->> For example, the sbs-battery driver uses the name "sbs-XXX" where XX is
->> its dev_name. Other drivers
->> use "%s-$%d" as i2c_device_id->name, + instance number. Then the only
->> solution I see is to require a new
->> property that defines the power-supply's name in the devicetree.
->>
->> This solution with device_nodes, while not ideal, seems the be the best
->> bet from what I see. Maybe
->> someone else has a better idea.
-> For other resource types, this is handled by the (phandle -> whatever)
-> conversion process actually being a function call on the referenced
-> object, so that the driver code for it can look up the data in the
-> actual device/... object etc. See the various .of_xlate functions that
-> exist in the kernel.
 
-I think this makes sense assuming we can change the existing supplies_to 
-property
-to match this style so that there isn't an inversion in the 2 paths.
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Then I think the idea of an of_xlate function would work fine given that 
-there are no
-circular dependencies (causes issues with -EPROBE_DEFER). If that is the 
-case, then
-we could add a step to power_supply registration where it would generate the
-char * list of supplies and store it in the power_supply being 
-registered. In that way,
-from then on, it wouldn't matter how the power_supply was registered, 
-and the list
-of supplies would be the same in either case.
+On Thu, Feb 28, 2013 at 11:18:01AM -0700, Stephen Warren wrote:
+> On 02/28/2013 12:43 AM, Prashant Gaikwad wrote:
+> > As DT support for clocks and smp_twd is enabled, add clock entry
+> > for smp_twd clock to DT.
+>=20
+> Is this a cleanup for 3.10, or a bug-fix for 3.9? Perhaps it solves the
+> "twd: clock not found" bug I reported?
 
-Anton, David, have you seen it, or can you potentially see a case where 
-circular
-dependencies could arise? I can't but maybe you know of a situation I don't.
+Yes. This is pretty much identical to the patch I sent a few days ago
+before your patch that fixed the clock drivers to match the devicetree
+binding documentation.
 
-I will start working on patches to support this, including changing the way
-supplied_to currently works, while I await answers whether or not it 
-would be
-acceptable.
+The "clock not found" is exactly what this fixes.
 
--rhyland
+Thierry
 
--- 
-nvpublic
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRL7g/AAoJEN0jrNd/PrOhc3cP/11NBfoe6v5+gnm1d0CMmlOd
+6lioQ/T6ZonyIPEleTuLtqe1DXsuH/u9NlseOIc4X7Mx5HpA9gqsJmlFI4NKreVZ
+obVEVJEXkkmnSvZz6N+EtPrgucO0FbFlUNdSOx03CX9A7mLe61zK9tf+8DWOuhE+
+1UaB6DO3zCzrSewoaEc9t6gucRGi61pU1GYaxuIgulNr7YSB9ZngyBce+14kHL6l
+miXmxn6XB+buf+tk+AIwiRLBhlOMO4+Uym0BGAI5fqyrgiF9//9KdcsQ0iLf0eya
+a9vm0DUo62L/ZJMsc5cQWddQsVZLXqpmEIhtAPVfiDvyXgdJTFtm3uZpQH3ZjXs6
+zLVAN8xvQyMvSZLX4QFpBPf0zXhQncylqKxrLUCRTcc7M0LaqPH95U+YuJ7lC3+b
+SEb4LzaI10ixnobHPz5iLES4T5bW/TXGAjDZ5Z2d8GwoCyHH7HPEfYZeL8OdWeo/
+kovd8TnFuWqCo/vVzsh2ezdu7gMclCNdDs2kKlXBoGDUeg64iF7EeYvsjJPif80O
+41NVJsuZanEArFfxJa/ZrBCo/pwfEmcOJNmpojGfOB6ktezh+ou8SNbIb14CUAGm
+A/1ua0YaagTFNDhv/rgvf5tsIqrEZl31NZW7ljoYoJKFYUAzdbuUhc/DU2zHIJ7r
+mNdcyEanD7rqRA+Cth70
+=Sn9Z
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
