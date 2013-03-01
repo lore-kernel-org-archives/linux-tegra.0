@@ -1,168 +1,92 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 2/4] ARM: tegra: pmc: add power on function for secondary CPUs
-Date: Fri, 1 Mar 2013 15:32:11 +0800
-Message-ID: <1362123131-3339-2-git-send-email-josephl@nvidia.com>
-References: <1362123131-3339-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Fri, 01 Mar 2013 10:37:27 -0700
+Message-ID: <5130E757.6090500@wwwdotorg.org>
+References: <512BF81A.3080700@wwwdotorg.org> <201302261023.26939.arnd@arndb.de> <20130226113538.GS17833@n2100.arm.linux.org.uk> <512CF87A.4090404@wwwdotorg.org> <20130226181114.GU17833@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362123131-3339-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130226181114.GU17833-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding the power on function for secondary CPUs in PMC driver, this can
-help us to remove legacy powergate driver and add generic power domain
-support later.
+On 02/26/2013 11:11 AM, Russell King - ARM Linux wrote:
+...
+> The whole errata business is a total nightmare - and it gets much worse
+> with the advent of multi-SoC kernels.  We don't have an answer to this
+> other than disabling these troublesome errata and requiring the code
+> which comes before the kernel to do whatever is necessary.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
-* making code more simpler in pmc_powergate_set and is_powered func
-V2:
-* Don't use ISS_ERR_VALUE for checking error return code
-* the CPU power on function only available for secondary CPU which means
-  we don't support (cpuid <= 0 || cpuid >= num_possible_cpus())
-* adding a WARN_ON when the current power state is same with we want to set
----
- arch/arm/mach-tegra/pmc.c | 101 +++++++++++++++++++++++++++++++++++++++++++++-
- arch/arm/mach-tegra/pmc.h |   4 ++
- 2 files changed, 103 insertions(+), 2 deletions(-)
+So for the initial boot, I can see that the bootloader can apply any
+WARs that are required, irrespective of whether the code that comes
+before the kernel is a secure monitor, a regular bootloader and/or
+whether the kernel ends up running in secure or normal world.
 
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index a916eca..b30e921 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -20,8 +20,26 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- 
--#define PMC_CTRL		0x0
--#define PMC_CTRL_INTR_LOW	(1 << 17)
-+#define PMC_CTRL			0x0
-+#define PMC_CTRL_INTR_LOW		(1 << 17)
-+#define PMC_PWRGATE_TOGGLE		0x30
-+#define PMC_PWRGATE_TOGGLE_START	(1 << 8)
-+#define PMC_REMOVE_CLAMPING		0x34
-+#define PMC_PWRGATE_STATUS		0x38
-+
-+#define TEGRA_POWERGATE_PCIE	3
-+#define TEGRA_POWERGATE_VDEC	4
-+#define TEGRA_POWERGATE_CPU1	9
-+#define TEGRA_POWERGATE_CPU2	10
-+#define TEGRA_POWERGATE_CPU3	11
-+
-+static u8 tegra_cpu_domains[] = {
-+	0xFF,			/* not available for CPU0 */
-+	TEGRA_POWERGATE_CPU1,
-+	TEGRA_POWERGATE_CPU2,
-+	TEGRA_POWERGATE_CPU3,
-+};
-+static DEFINE_SPINLOCK(tegra_powergate_lock);
- 
- static void __iomem *tegra_pmc_base;
- static bool tegra_pmc_invert_interrupt;
-@@ -36,6 +54,85 @@ static inline void tegra_pmc_writel(u32 val, u32 reg)
- 	writel(val, tegra_pmc_base + reg);
- }
- 
-+static int tegra_pmc_get_cpu_powerdomain_id(int cpuid)
-+{
-+	if (cpuid <= 0 || cpuid >= num_possible_cpus())
-+		return -EINVAL;
-+	return tegra_cpu_domains[cpuid];
-+}
-+
-+static bool tegra_pmc_powergate_is_powered(int id)
-+{
-+	return (tegra_pmc_readl(PMC_PWRGATE_STATUS) >> id) & 1;
-+}
-+
-+static int tegra_pmc_powergate_set(int id, bool new_state)
-+{
-+	bool old_state;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&tegra_powergate_lock, flags);
-+
-+	old_state = tegra_pmc_powergate_is_powered(id);
-+	WARN_ON(old_state == new_state);
-+
-+	tegra_pmc_writel(PMC_PWRGATE_TOGGLE_START | id, PMC_PWRGATE_TOGGLE);
-+
-+	spin_unlock_irqrestore(&tegra_powergate_lock, flags);
-+
-+	return 0;
-+}
-+
-+static int tegra_pmc_powergate_remove_clamping(int id)
-+{
-+	u32 mask;
-+
-+	/*
-+	 * Tegra has a bug where PCIE and VDE clamping masks are
-+	 * swapped relatively to the partition ids.
-+	 */
-+	if (id ==  TEGRA_POWERGATE_VDEC)
-+		mask = (1 << TEGRA_POWERGATE_PCIE);
-+	else if	(id == TEGRA_POWERGATE_PCIE)
-+		mask = (1 << TEGRA_POWERGATE_VDEC);
-+	else
-+		mask = (1 << id);
-+
-+	tegra_pmc_writel(mask, PMC_REMOVE_CLAMPING);
-+
-+	return 0;
-+}
-+
-+bool tegra_pmc_cpu_is_powered(int cpuid)
-+{
-+	int id;
-+
-+	id = tegra_pmc_get_cpu_powerdomain_id(cpuid);
-+	if (id < 0)
-+		return false;
-+	return tegra_pmc_powergate_is_powered(id);
-+}
-+
-+int tegra_pmc_cpu_power_on(int cpuid)
-+{
-+	int id;
-+
-+	id = tegra_pmc_get_cpu_powerdomain_id(cpuid);
-+	if (id < 0)
-+		return id;
-+	return tegra_pmc_powergate_set(id, true);
-+}
-+
-+int tegra_pmc_cpu_remove_clamping(int cpuid)
-+{
-+	int id;
-+
-+	id = tegra_pmc_get_cpu_powerdomain_id(cpuid);
-+	if (id < 0)
-+		return id;
-+	return tegra_pmc_powergate_remove_clamping(id);
-+}
-+
- static const struct of_device_id matches[] __initconst = {
- 	{ .compatible = "nvidia,tegra114-pmc" },
- 	{ .compatible = "nvidia,tegra30-pmc" },
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 8995ee4..7d44710 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -18,6 +18,10 @@
- #ifndef __MACH_TEGRA_PMC_H
- #define __MACH_TEGRA_PMC_H
- 
-+bool tegra_pmc_cpu_is_powered(int cpuid);
-+int tegra_pmc_cpu_power_on(int cpuid);
-+int tegra_pmc_cpu_remove_clamping(int cpuid);
-+
- void tegra_pmc_init(void);
- 
- #endif
--- 
-1.8.1.1
+I have one question on this case though: For erratum 751472 (An
+interrupted ICIALLUIS operation may prevent the completion of a
+following broadcasted operation), one of our engineers asserts:
+
+This is valid only for SMP configurations and since bootloader has only
+one CPU (CPU0) up and running, this is not valid for Bootloader.
+
+Is that assertion correct? I assume that the WAR can be enabled
+irrespective of whether SMP is actively in use, and shouldn't negatively
+affect single-CPU operation in the bootloader. Hence, the bootloader or
+secure monitor should always apply this WAR.
+
+Now on to other scenarios: What about booting secondary CPUs, in cases
+such as: initial kernel boot, CPU hotplug, CPU power saving.
+
+Since some of the bits that enable WARs are banked per CPU, the WAR
+needs to be enabled by code running on each individual CPU, each time
+it's powered on. When a secure monitor exists, the CPU will boot through
+it (at least on Tegra, there is a single register that defines the boot
+vector for all CPUs; I don't know if that fact is ARM-architectural or
+not), so the secure monitor can apply the WAR if needed. However, when
+there is no secure monitor and the kernel runs in secure world, the
+kernel would have to apply those WARs, since the only code that runs is
+in the kernel.
+
+But that leads to the question: How does the secondary CPU boot vector
+code in the kernel know whether it can/should apply the WARs? It only
+can if the kernel is running in secure mode, and that isn't always the
+case, and there's no easy way to detect this at run-time. (It usually is
+with any upstream SW, but we presumably want to support running the
+upstream kernel on boards that were repurposed and have a secure monitor).
+
+Apparently, the solution we have downstream is a Kconfig option that
+selects whether the kernel should support running in secure world or
+normal world, and hence whether to apply the WARs or not. Obviously that
+won't work well with a multi-platform kernel.
+
+The solutions that come to mind are:
+
+1)
+
+Assume that Tegra kernels always run in secure world, and so the WARs
+can be applied in the Tegra-specific secondary CPU boot code. The
+bootloader would still have to apply WARs for the initial CPU0 boot,
+since the kernel code for that is common, so we can't assume we're
+running in secure mode there. I guess that upstream we have no support
+for running under a secure monitor on Tegra yet though, so perhaps this
+isn't so bad (e.g. we don't make an SMC call to set the CPU boot vector,
+but rather just write to the register directly). Still, making this
+assumption would only be a temporary solution until we actually do
+support running under a secure monitor upstream.
+
+2)
+
+Assume that we're always running in normal world, and mandate that a
+secure monitor must exist, and push the WARs into it. That would require
+implementing a simple secure monitor and using it for the cases where
+one otherwise wouldn't exist.
+
+Neither seems entirely ideal.
+
+Perhaps one more option: I wonder if we can play games like reading the
+CPU boot vector register; if it's equal to the kernel's value then we
+must have been running in secure mode since we wrote it, but otherwise
+we must have booted through a secure monitor?
