@@ -1,61 +1,126 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Tegra: Add clock entry for smp_twd clock
-Date: Thu, 28 Feb 2013 21:04:15 +0100
-Message-ID: <20130228200415.GA17598@avionic-0098.mockup.avionic-design.de>
-References: <1362037381-4730-1-git-send-email-pgaikwad@nvidia.com>
- <512F9F59.5030702@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 1/4] ARM: tegra: pmc: convert PMC driver to support DT only
+Date: Fri, 1 Mar 2013 15:32:10 +0800
+Message-ID: <1362123131-3339-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <512F9F59.5030702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The Tegra kernel only support boot from DT now. Clean up the PMC driver
+to support DT only, that includes:
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* remove the ifdef of CONFIG_OF
+* replace the static mapping of PMC addr to map from DT
 
-On Thu, Feb 28, 2013 at 11:18:01AM -0700, Stephen Warren wrote:
-> On 02/28/2013 12:43 AM, Prashant Gaikwad wrote:
-> > As DT support for clocks and smp_twd is enabled, add clock entry
-> > for smp_twd clock to DT.
->=20
-> Is this a cleanup for 3.10, or a bug-fix for 3.9? Perhaps it solves the
-> "twd: clock not found" bug I reported?
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V3:
+* BUG_ON directly if no PMC DT node
+* remove redundant () in tegra_pmc_writel
+V2:
+* removing the change from readl_relaxed back to readl, same with the
+  write function
+* adding a BUG() when there is no PMC node in DT
+* removeing the redundancy of_have_populated_dt() check
+---
+ arch/arm/mach-tegra/pmc.c | 51 ++++++++++++++++++++---------------------------
+ 1 file changed, 22 insertions(+), 29 deletions(-)
 
-Yes. This is pretty much identical to the patch I sent a few days ago
-before your patch that fixed the clock drivers to match the devicetree
-binding documentation.
-
-The "clock not found" is exactly what this fixes.
-
-Thierry
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRL7g/AAoJEN0jrNd/PrOhc3cP/11NBfoe6v5+gnm1d0CMmlOd
-6lioQ/T6ZonyIPEleTuLtqe1DXsuH/u9NlseOIc4X7Mx5HpA9gqsJmlFI4NKreVZ
-obVEVJEXkkmnSvZz6N+EtPrgucO0FbFlUNdSOx03CX9A7mLe61zK9tf+8DWOuhE+
-1UaB6DO3zCzrSewoaEc9t6gucRGi61pU1GYaxuIgulNr7YSB9ZngyBce+14kHL6l
-miXmxn6XB+buf+tk+AIwiRLBhlOMO4+Uym0BGAI5fqyrgiF9//9KdcsQ0iLf0eya
-a9vm0DUo62L/ZJMsc5cQWddQsVZLXqpmEIhtAPVfiDvyXgdJTFtm3uZpQH3ZjXs6
-zLVAN8xvQyMvSZLX4QFpBPf0zXhQncylqKxrLUCRTcc7M0LaqPH95U+YuJ7lC3+b
-SEb4LzaI10ixnobHPz5iLES4T5bW/TXGAjDZ5Z2d8GwoCyHH7HPEfYZeL8OdWeo/
-kovd8TnFuWqCo/vVzsh2ezdu7gMclCNdDs2kKlXBoGDUeg64iF7EeYvsjJPif80O
-41NVJsuZanEArFfxJa/ZrBCo/pwfEmcOJNmpojGfOB6ktezh+ou8SNbIb14CUAGm
-A/1ua0YaagTFNDhv/rgvf5tsIqrEZl31NZW7ljoYoJKFYUAzdbuUhc/DU2zHIJ7r
-mNdcyEanD7rqRA+Cth70
-=Sn9Z
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index 5d79d34..a916eca 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
++ * Copyright (C) 2012,2013 NVIDIA CORPORATION. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+@@ -18,59 +18,52 @@
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-
+-#include "iomap.h"
++#include <linux/of_address.h>
+ 
+ #define PMC_CTRL		0x0
+ #define PMC_CTRL_INTR_LOW	(1 << 17)
+ 
++static void __iomem *tegra_pmc_base;
++static bool tegra_pmc_invert_interrupt;
++
+ static inline u32 tegra_pmc_readl(u32 reg)
+ {
+-	return readl(IO_ADDRESS(TEGRA_PMC_BASE + reg));
++	return readl(tegra_pmc_base + reg);
+ }
+ 
+ static inline void tegra_pmc_writel(u32 val, u32 reg)
+ {
+-	writel(val, IO_ADDRESS(TEGRA_PMC_BASE + reg));
++	writel(val, tegra_pmc_base + reg);
+ }
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id matches[] __initconst = {
+ 	{ .compatible = "nvidia,tegra114-pmc" },
+ 	{ .compatible = "nvidia,tegra30-pmc" },
+ 	{ .compatible = "nvidia,tegra20-pmc" },
+ 	{ }
+ };
+-#endif
+ 
+-void __init tegra_pmc_init(void)
++static void tegra_pmc_parse_dt(void)
+ {
+-	/*
+-	 * For now, Harmony is the only board that uses the PMC, and it wants
+-	 * the signal inverted. Seaboard would too if it used the PMC.
+-	 * Hopefully by the time other boards want to use the PMC, everything
+-	 * will be device-tree, or they also want it inverted.
+-	 */
+-	bool invert_interrupt = true;
+-	u32 val;
++	struct device_node *np;
++
++	np = of_find_matching_node(NULL, matches);
++	BUG_ON(!np);
+ 
+-#ifdef CONFIG_OF
+-	if (of_have_populated_dt()) {
+-		struct device_node *np;
++	tegra_pmc_base = of_iomap(np, 0);
+ 
+-		invert_interrupt = false;
++	tegra_pmc_invert_interrupt = of_property_read_bool(np,
++				     "nvidia,invert-interrupt");
++}
++
++void __init tegra_pmc_init(void)
++{
++	u32 val;
+ 
+-		np = of_find_matching_node(NULL, matches);
+-		if (np) {
+-			if (of_find_property(np, "nvidia,invert-interrupt",
+-						NULL))
+-				invert_interrupt = true;
+-		}
+-	}
+-#endif
++	tegra_pmc_parse_dt();
+ 
+ 	val = tegra_pmc_readl(PMC_CTRL);
+-	if (invert_interrupt)
++	if (tegra_pmc_invert_interrupt)
+ 		val |= PMC_CTRL_INTR_LOW;
+ 	else
+ 		val &= ~PMC_CTRL_INTR_LOW;
+-- 
+1.8.1.1
