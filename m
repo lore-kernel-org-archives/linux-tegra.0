@@ -1,43 +1,52 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH V3] spi: tegra114: add spi driver
-Date: Sun, 3 Mar 2013 18:19:04 +0530
-Message-ID: <CAKDJKT6i6ivb6kQ9u3_SUCEJmL0zdXdQAomKS0vRvqXYGumg1g@mail.gmail.com>
-References: <1361536659-23225-1-git-send-email-ldewangan@nvidia.com>
-	<CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com>
-	<20130222180226.GC19796@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20130222180226.GC19796@opensource.wolfsonmicro.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-tegra@vger.kernel.org, swarren@nvidia.com
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 1/1] serial: tegra: Convert to devm_ioremap_resource()
+Date: Mon,  4 Mar 2013 09:59:00 +0530
+Message-ID: <1362371340-22746-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jslaby-AlSwsSmVLrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
+Use the newly introduced devm_ioremap_resource() instead of
+devm_request_and_ioremap() which provides more consistent error handling.
 
-On Fri, Feb 22, 2013 at 11:32 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Feb 22, 2013 at 07:59:11PM +0530, Manish Badarkhe wrote:
->> On Fri, Feb 22, 2013 at 6:07 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->> > Add SPI driver for NVIDIA's Tegra114 SPI controller. This controller
->> > is different than the older SoCs SPI controller in internal design as
->> > well as register interface.
->> >
->> > This driver supports the:
->> > - non DMA based transfer for smaller transfer i.e. less than FIFO depth.
->> > - APB DMA based transfer for lager transfer i.e. more than FIFO depth.
->>
->> s/lager/larger
->>
->> > - Clock gating through runtime PM callbacks.
->> > - registration through DT only.
->
-> Delete unneeded context from your replies, we shouldn't need to page
-> through the entire patch because you've noticed a spelling error...
+devm_ioremap_resource() provides its own error messages; so all explicit
+error messages can be removed from the failure code paths.
 
-Thanks for your reply.
-I will take care of this later on.
+Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/tty/serial/serial-tegra.c |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
 
-Thanks
-Manish Badarkhe
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index 372de8a..9799d04 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -26,6 +26,7 @@
+ #include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmapool.h>
++#include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+ #include <linux/module.h>
+@@ -1301,11 +1302,9 @@ static int tegra_uart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	u->mapbase = resource->start;
+-	u->membase = devm_request_and_ioremap(&pdev->dev, resource);
+-	if (!u->membase) {
+-		dev_err(&pdev->dev, "memregion/iomap address req failed\n");
+-		return -EADDRNOTAVAIL;
+-	}
++	u->membase = devm_ioremap_resource(&pdev->dev, resource);
++	if (IS_ERR(u->membase))
++		return PTR_ERR(u->membase);
+ 
+ 	tup->uart_clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(tup->uart_clk)) {
+-- 
+1.7.4.1
