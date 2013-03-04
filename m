@@ -1,52 +1,41 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 1/1] serial: tegra: Convert to devm_ioremap_resource()
-Date: Mon,  4 Mar 2013 09:59:00 +0530
-Message-ID: <1362371340-22746-1-git-send-email-sachin.kamat@linaro.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Mon, 4 Mar 2013 08:34:36 +0200
+Message-ID: <20130304063436.GB27241@tbergstrom-lnx.Nvidia.com>
+References: <512BF81A.3080700@wwwdotorg.org>
+ <201302261023.26939.arnd@arndb.de>
+ <20130226113538.GS17833@n2100.arm.linux.org.uk>
+ <512CF87A.4090404@wwwdotorg.org>
+ <20130226181114.GU17833@n2100.arm.linux.org.uk>
+ <5130E757.6090500@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5130E757.6090500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jslaby-AlSwsSmVLrQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the newly introduced devm_ioremap_resource() instead of
-devm_request_and_ioremap() which provides more consistent error handling.
+On Fri, Mar 01, 2013 at 06:37:27PM +0100, Stephen Warren wrote:
 
-devm_ioremap_resource() provides its own error messages; so all explicit
-error messages can be removed from the failure code paths.
+...
 
-Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/tty/serial/serial-tegra.c |    9 ++++-----
- 1 files changed, 4 insertions(+), 5 deletions(-)
+> Since some of the bits that enable WARs are banked per CPU, the WAR
+> needs to be enabled by code running on each individual CPU, each time
+> it's powered on. When a secure monitor exists, the CPU will boot through
+> it (at least on Tegra, there is a single register that defines the boot
+> vector for all CPUs; I don't know if that fact is ARM-architectural or
+> not), so the secure monitor can apply the WAR if needed. However, when
+> there is no secure monitor and the kernel runs in secure world, the
+> kernel would have to apply those WARs, since the only code that runs is
+> in the kernel.
+> 
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index 372de8a..9799d04 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -26,6 +26,7 @@
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/dmapool.h>
-+#include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/module.h>
-@@ -1301,11 +1302,9 @@ static int tegra_uart_probe(struct platform_device *pdev)
- 	}
- 
- 	u->mapbase = resource->start;
--	u->membase = devm_request_and_ioremap(&pdev->dev, resource);
--	if (!u->membase) {
--		dev_err(&pdev->dev, "memregion/iomap address req failed\n");
--		return -EADDRNOTAVAIL;
--	}
-+	u->membase = devm_ioremap_resource(&pdev->dev, resource);
-+	if (IS_ERR(u->membase))
-+		return PTR_ERR(u->membase);
- 
- 	tup->uart_clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(tup->uart_clk)) {
--- 
-1.7.4.1
+The boot vector register is Tegra specific. At least on OMAP all cores boot
+from ROM afaik.
+
+Cheers,
+
+Peter.
