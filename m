@@ -1,47 +1,41 @@
-From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC v2 2/3] power: power_supply: Add core support for
- supplied_nodes
-Date: Mon, 4 Mar 2013 09:47:06 -0800
-Message-ID: <20130304174705.GA31100@lizard.fhda.edu>
-References: <1361488272-21010-1-git-send-email-rklein@nvidia.com>
- <1361488272-21010-3-git-send-email-rklein@nvidia.com>
- <5127D083.6020308@wwwdotorg.org>
- <5127EA13.9010403@nvidia.com>
- <512FB473.8060309@nvidia.com>
- <20130302224832.GA16720@lizard.sbx05280.losalca.wayport.net>
- <5134DAB3.5000604@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/4] Add support for tps65090-charger
+Date: Mon, 4 Mar 2013 14:01:45 -0500
+Message-ID: <1362423709-29596-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5134DAB3.5000604-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Mar 04, 2013 at 12:32:35PM -0500, Rhyland Klein wrote:
-[...]
-> >>Anton, David, would you be adverse to the changing of supplied_to
-> >>from being a
-> >>list of batteries stored in a charger to being a list of chargers
-> >>stored in batteries?
-> >>
-> >I wonder if we can support both ways?..
->
-> Well, the interesting factor becomes either we end up with 2 arrays
-> (supplied_to, supplied_from) or we make 1 array (horray, save space!)
-> but need to then either have a flag or use the power_supply type to
-> know how to interpret the single array (as supplied_to or supplied_from).
-> 
-> Adding in the second array and adds a char ** and an int, which doesn't seem
-> like as much overhead as trying to figure out how to interpret the
-> single array
-> so I am inclined to stick with 2 arrays.
+This patchset adds support for the TPS65090-charger. This charger is
+registered as a subdevice of the TPS65090 PMIC.
 
-Yup, two arrays seems very reasonable. Plus that way we don't need to
-convert existing drivers, so we avoid churn.
+This series includes a fix for the tps65090 header file where all
+the interrupts were shifted by 1.
 
-Thanks!
+Changes since v1:
+ - cleaned up tps65090 driver per comments (mostly var naming)
+ - flushed out commit description for driver
+ - reordered probe so irq is registered after power_supply and cleaned up 1st
 
-Anton
+Rhyland Klein (4):
+  mfd: tps65090: Fix enum in header file
+  mfd: tps65090: Add resources for charger
+  power_supply: tps65090-charger: Add binding doc
+  power: tps65090: Add support for tps65090-charger
+
+ .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++
+ drivers/mfd/tps65090.c                             |   10 +
+ drivers/power/Kconfig                              |    7 +
+ drivers/power/Makefile                             |    1 +
+ drivers/power/tps65090-charger.c                   |  316 ++++++++++++++++++++
+ include/linux/mfd/tps65090.h                       |    6 +
+ 6 files changed, 363 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
+ create mode 100644 drivers/power/tps65090-charger.c
+
+-- 
+1.7.9.5
