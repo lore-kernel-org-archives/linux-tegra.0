@@ -1,41 +1,40 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/4] Add support for tps65090-charger
-Date: Mon, 4 Mar 2013 14:01:45 -0500
-Message-ID: <1362423709-29596-1-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v2 1/4] mfd: tps65090: Fix enum in header file
+Date: Mon, 4 Mar 2013 14:01:46 -0500
+Message-ID: <1362423709-29596-2-git-send-email-rklein@nvidia.com>
+References: <1362423709-29596-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1362423709-29596-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Samuel Ortiz <sameo@linux.intel.com>, Anton Vorontsov <cbou@mail.ru>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset adds support for the TPS65090-charger. This charger is
-registered as a subdevice of the TPS65090 PMIC.
+The enum is missing the definition for the first bit, which makes all
+the rest off by one. Add definition for the TPS65090_IRQ_INTERRUPT bit
+which at 0.
 
-This series includes a fix for the tps65090 header file where all
-the interrupts were shifted by 1.
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v2:
+ - no changes since v1
 
-Changes since v1:
- - cleaned up tps65090 driver per comments (mostly var naming)
- - flushed out commit description for driver
- - reordered probe so irq is registered after power_supply and cleaned up 1st
+ include/linux/mfd/tps65090.h |    1 +
+ 1 file changed, 1 insertion(+)
 
-Rhyland Klein (4):
-  mfd: tps65090: Fix enum in header file
-  mfd: tps65090: Add resources for charger
-  power_supply: tps65090-charger: Add binding doc
-  power: tps65090: Add support for tps65090-charger
-
- .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++
- drivers/mfd/tps65090.c                             |   10 +
- drivers/power/Kconfig                              |    7 +
- drivers/power/Makefile                             |    1 +
- drivers/power/tps65090-charger.c                   |  316 ++++++++++++++++++++
- include/linux/mfd/tps65090.h                       |    6 +
- 6 files changed, 363 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
- create mode 100644 drivers/power/tps65090-charger.c
-
+diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
+index 6694cf4..9ce231f 100644
+--- a/include/linux/mfd/tps65090.h
++++ b/include/linux/mfd/tps65090.h
+@@ -27,6 +27,7 @@
+ 
+ /* TPS65090 IRQs */
+ enum {
++	TPS65090_IRQ_INTERRUPT,
+ 	TPS65090_IRQ_VAC_STATUS_CHANGE,
+ 	TPS65090_IRQ_VSYS_STATUS_CHANGE,
+ 	TPS65090_IRQ_BAT_STATUS_CHANGE,
 -- 
 1.7.9.5
