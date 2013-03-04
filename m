@@ -1,217 +1,123 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch v1 3/3] power: power_supply_core: Add support for supplied_from
-Date: Mon, 4 Mar 2013 15:11:58 -0500
-Message-ID: <1362427918-14504-4-git-send-email-rklein@nvidia.com>
-References: <1362427918-14504-1-git-send-email-rklein@nvidia.com>
+From: Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>
+Subject: nouveau lockdep splat
+Date: Mon, 4 Mar 2013 22:16:08 +0100
+Message-ID: <20130304211608.GD22274@pd.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1362427918-14504-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Anton Vorontsov <cbou@mail.ru>
-Cc: David Woodhouse <dwmw2@infradead.org>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding support for supplied_from char * array. This is meant to store the
-list of suppliers for a given supply, i.e. chargers for a battery. This
-list can be populated through devicetree readily as well as passed
-directly from the driver.
+New -rc1, so let the stabilization games begin.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v1:
- - Changed from RFC v2 -> patch v1
- - removed list logic, added logic to first verify all supplies are
-   present and defer probe until they are.
- - after all devices are registered, populate the char ** supplied_from
-   array which simulates the case of dt not being used.
- - added of_node element to struct power_supply
+I see the following on rc1, let me know if you need more info.
 
-v2 (RFC):
-  - Simplified and renamed the logic to parse dt for the charger list.
-  - Tied the dt parsing directly to power_supply_register to make fewer
-    changes required for converting existing chargers/supplies.
 
- drivers/power/power_supply_core.c |  138 +++++++++++++++++++++++++++++++++++++
- include/linux/power_supply.h      |    3 +
- 2 files changed, 141 insertions(+)
+[    0.633617] =============================================
+[    0.633618] [ INFO: possible recursive locking detected ]
+[    0.633618] 3.9.0-rc1 #2 Not tainted
+[    0.633619] ---------------------------------------------
+[    0.633619] swapper/0/1 is trying to acquire lock:
+[    0.633623]  (&dmac->lock){+.+...}, at: [<ffffffff8141bb53>] evo_wait+0x43/0xf0
+[    0.633624] 
+[    0.633624] but task is already holding lock:
+[    0.633626]  (&dmac->lock){+.+...}, at: [<ffffffff8141bb53>] evo_wait+0x43/0xf0
+[    0.633626] 
+[    0.633626] other info that might help us debug this:
+[    0.633626]  Possible unsafe locking scenario:
+[    0.633626] 
+[    0.633626]        CPU0
+[    0.633627]        ----
+[    0.633627]   lock(&dmac->lock);
+[    0.633628]   lock(&dmac->lock);
+[    0.633628] 
+[    0.633628]  *** DEADLOCK ***
+[    0.633628] 
+[    0.633628]  May be due to missing lock nesting notation
+[    0.633628] 
+[    0.633629] 10 locks held by swapper/0/1:
+[    0.633632]  #0:  (&__lockdep_no_validate__){......}, at: [<ffffffff8143375b>] __driver_attach+0x5b/0xb0
+[    0.633633]  #1:  (&__lockdep_no_validate__){......}, at: [<ffffffff81433769>] __driver_attach+0x69/0xb0
+[    0.633636]  #2:  (drm_global_mutex){+.+.+.}, at: [<ffffffff8135a8f6>] drm_get_pci_dev+0xc6/0x2d0
+[    0.633640]  #3:  (registration_lock){+.+.+.}, at: [<ffffffff812c8e75>] register_framebuffer+0x25/0x310
+[    0.633642]  #4:  (&fb_info->lock){+.+.+.}, at: [<ffffffff812c7d86>] lock_fb_info+0x26/0x60
+[    0.633644]  #5:  (console_lock){+.+.+.}, at: [<ffffffff812c900a>] register_framebuffer+0x1ba/0x310
+[    0.633646]  #6:  ((fb_notifier_list).rwsem){.+.+.+}, at: [<ffffffff810694d2>] __blocking_notifier_call_chain+0x42/0x80
+[    0.633648]  #7:  (&dev->mode_config.mutex){+.+.+.}, at: [<ffffffff8135e63a>] drm_modeset_lock_all+0x2a/0x70
+[    0.633650]  #8:  (&crtc->mutex){+.+.+.}, at: [<ffffffff8135e664>] drm_modeset_lock_all+0x54/0x70
+[    0.633652]  #9:  (&dmac->lock){+.+...}, at: [<ffffffff8141bb53>] evo_wait+0x43/0xf0
+[    0.633652] 
+[    0.633652] stack backtrace:
+[    0.633653] Pid: 1, comm: swapper/0 Not tainted 3.9.0-rc1 #2
+[    0.633654] Call Trace:
+[    0.633656]  [<ffffffff8109524b>] __lock_acquire+0x76b/0x1c20
+[    0.633658]  [<ffffffff8137f50c>] ? dcb_table+0x1ac/0x2a0
+[    0.633659]  [<ffffffff8141bb53>] ? evo_wait+0x43/0xf0
+[    0.633660]  [<ffffffff81096c6a>] lock_acquire+0x8a/0x120
+[    0.633662]  [<ffffffff8141bb53>] ? evo_wait+0x43/0xf0
+[    0.633664]  [<ffffffff815eaf52>] ? mutex_lock_nested+0x292/0x330
+[    0.633665]  [<ffffffff815ead2e>] mutex_lock_nested+0x6e/0x330
+[    0.633667]  [<ffffffff8141bb53>] ? evo_wait+0x43/0xf0
+[    0.633668]  [<ffffffff815eb0b7>] ? __mutex_unlock_slowpath+0xc7/0x150
+[    0.633669]  [<ffffffff8141bb53>] evo_wait+0x43/0xf0
+[    0.633671]  [<ffffffff8141e569>] nv50_display_flip_next+0x749/0x7d0
+[    0.633672]  [<ffffffff8141bc37>] ? evo_kick+0x37/0x40
+[    0.633674]  [<ffffffff8141e7ee>] nv50_crtc_commit+0x10e/0x230
+[    0.633676]  [<ffffffff8134c2a5>] drm_crtc_helper_set_mode+0x365/0x510
+[    0.633677]  [<ffffffff8134d69e>] drm_crtc_helper_set_config+0xa4e/0xb70
+[    0.633679]  [<ffffffff8135f751>] drm_mode_set_config_internal+0x31/0x70
+[    0.633680]  [<ffffffff8134b7a1>] drm_fb_helper_set_par+0x71/0xf0
+[    0.633682]  [<ffffffff812d40e4>] fbcon_init+0x514/0x5a0
+[    0.633683]  [<ffffffff8132cbdc>] visual_init+0xbc/0x120
+[    0.633685]  [<ffffffff8132f293>] do_bind_con_driver+0x163/0x320
+[    0.633686]  [<ffffffff8132f521>] do_take_over_console+0x61/0x70
+[    0.633687]  [<ffffffff812d2703>] do_fbcon_takeover+0x63/0xc0
+[    0.633689]  [<ffffffff812d63dd>] fbcon_event_notify+0x5fd/0x700
+[    0.633690]  [<ffffffff815f23fd>] notifier_call_chain+0x4d/0x70
+[    0.633691]  [<ffffffff810694e8>] __blocking_notifier_call_chain+0x58/0x80
+[    0.633692]  [<ffffffff81069526>] blocking_notifier_call_chain+0x16/0x20
+[    0.633694]  [<ffffffff812c787b>] fb_notifier_call_chain+0x1b/0x20
+[    0.633695]  [<ffffffff812c9018>] register_framebuffer+0x1c8/0x310
+[    0.633696]  [<ffffffff8134b4d1>] drm_fb_helper_initial_config+0x371/0x520
+[    0.633697]  [<ffffffff8134a607>] ? drm_fb_helper_single_add_all_connectors+0x47/0xf0
+[    0.633700]  [<ffffffff81140a5e>] ? kmem_cache_alloc_trace+0xee/0x150
+[    0.633701]  [<ffffffff8140578e>] nouveau_fbcon_init+0x10e/0x160
+[    0.633703]  [<ffffffff813f5f8a>] nouveau_drm_load+0x40a/0x5d0
+[    0.633705]  [<ffffffff81430cee>] ? device_register+0x1e/0x30
+[    0.633706]  [<ffffffff8135c086>] ? drm_sysfs_device_add+0x86/0xb0
+[    0.633708]  [<ffffffff8135a9b6>] drm_get_pci_dev+0x186/0x2d0
+[    0.633710]  [<ffffffff812b0eab>] ? __pci_set_master+0x2b/0x90
+[    0.633711]  [<ffffffff813f63ba>] nouveau_drm_probe+0x26a/0x2c0
+[    0.633713]  [<ffffffff812b4f15>] ? pci_match_device+0xd5/0xe0
+[    0.633714]  [<ffffffff812b5096>] pci_device_probe+0x136/0x150
+[    0.633715]  [<ffffffff81433566>] driver_probe_device+0x76/0x210
+[    0.633716]  [<ffffffff814337ab>] __driver_attach+0xab/0xb0
+[    0.633717]  [<ffffffff81433700>] ? driver_probe_device+0x210/0x210
+[    0.633718]  [<ffffffff8143175d>] bus_for_each_dev+0x5d/0xa0
+[    0.633719]  [<ffffffff81432fae>] driver_attach+0x1e/0x20
+[    0.633720]  [<ffffffff81432b91>] bus_add_driver+0x111/0x280
+[    0.633722]  [<ffffffff81b21cf6>] ? ttm_init+0x62/0x62
+[    0.633724]  [<ffffffff81433e67>] driver_register+0x77/0x170
+[    0.633725]  [<ffffffff81b21cf6>] ? ttm_init+0x62/0x62
+[    0.633726]  [<ffffffff812b4054>] __pci_register_driver+0x64/0x70
+[    0.633728]  [<ffffffff8135ac15>] drm_pci_init+0x115/0x130
+[    0.633729]  [<ffffffff81b21cf6>] ? ttm_init+0x62/0x62
+[    0.633730]  [<ffffffff81b21cf6>] ? ttm_init+0x62/0x62
+[    0.633731]  [<ffffffff81b21d43>] nouveau_drm_init+0x4d/0x4f
+[    0.633732]  [<ffffffff81000312>] do_one_initcall+0x122/0x170
+[    0.633734]  [<ffffffff81af6f49>] kernel_init_freeable+0x108/0x197
+[    0.633735]  [<ffffffff81af681c>] ? do_early_param+0x8c/0x8c
+[    0.633737]  [<ffffffff815d4d20>] ? rest_init+0xe0/0xe0
+[    0.633738]  [<ffffffff815d4d2e>] kernel_init+0xe/0xf0
+[    0.633740]  [<ffffffff815f6b1c>] ret_from_fork+0x7c/0xb0
+[    0.633741]  [<ffffffff815d4d20>] ? rest_init+0xe0/0xe0
 
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index dd675ae..c16666c 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -90,6 +90,133 @@ void power_supply_changed(struct power_supply *psy)
- }
- EXPORT_SYMBOL_GPL(power_supply_changed);
- 
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+
-+static int __power_supply_populate_supplied_from(struct device *dev,
-+						 void *data)
-+{
-+	struct power_supply *psy = (struct power_supply *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+	struct device_node *np;
-+	int i = 0;
-+
-+	do {
-+		np = of_parse_phandle(psy->of_node, "power-supplies", i++);
-+		if (!np)
-+			continue;
-+
-+		if (np == epsy->of_node) {
-+			dev_info(psy->dev, "%s: Found supply : %s\n",
-+				psy->name, epsy->name);
-+			psy->supplied_from[i-1] = (char *)epsy->name;
-+			psy->num_supplies++;
-+			break;
-+		}
-+	} while (np);
-+
-+	return 0;
-+}
-+
-+int power_supply_populate_supplied_from(struct power_supply *psy)
-+{
-+	int error;
-+
-+	error = class_for_each_device(power_supply_class, NULL, psy,
-+				      __power_supply_populate_supplied_from);
-+
-+	dev_dbg(psy->dev, "%s %d\n", __func__, error);
-+
-+	return error;
-+}
-+
-+static int  __power_supply_find_supply_from_node(struct device *dev,
-+						 void *data)
-+{
-+	struct device_node *np = (struct device_node *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+
-+	/* return error breaks out of class_for_each_device loop */
-+	if (epsy->of_node == np)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+int power_supply_find_supply_from_node(struct device_node *supply_node)
-+{
-+	int error;
-+	struct device *dev;
-+	struct class_dev_iter iter;
-+
-+	/* Use iterator to see if any other device is registered.
-+	 * This is required since class_for_each_device returns 0
-+	 * if there are no devices registered.
-+	 */
-+	class_dev_iter_init(&iter, power_supply_class, NULL, NULL);
-+	dev = class_dev_iter_next(&iter);
-+
-+	if (!dev)
-+		return -EPROBE_DEFER;
-+
-+	/* we have to treat the return value as inverted, because if
-+	 * we return error on not found, then it won't continue looking.
-+	 * So we trick it by returning error on success to stop looking
-+	 * once the matching device is found.
-+	 */
-+	error = class_for_each_device(power_supply_class, NULL, supply_node,
-+				       __power_supply_find_supply_from_node);
-+
-+	return error ? 0 : -EPROBE_DEFER;
-+}
-+
-+int power_supply_check_supplies(struct power_supply *psy)
-+{
-+	struct device_node *np;
-+	int cnt = 0;
-+	int ret = 0;
-+
-+	/* If there is already a list honor it */
-+	if (psy->supplied_from && psy->num_supplies > 0)
-+		return 0;
-+
-+	/* No device node found, nothing to do */
-+	if (!psy->of_node)
-+		return 0;
-+
-+	do {
-+		np = of_parse_phandle(psy->of_node, "power-supplies", cnt++);
-+		if (!np)
-+			continue;
-+
-+		ret = power_supply_find_supply_from_node(np);
-+		if (ret) {
-+			dev_dbg(psy->dev, "Failed to find supply, defer!\n");
-+			return -EPROBE_DEFER;
-+		}
-+	} while (np);
-+
-+	/* All supplies found, allocate char ** array for filling */
-+	psy->supplied_from = devm_kzalloc(psy->dev, sizeof(psy->supplied_from),
-+					  GFP_KERNEL);
-+	if (!psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	*psy->supplied_from = devm_kzalloc(psy->dev, sizeof(char *) * cnt,
-+					   GFP_KERNEL);
-+	if (!*psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = power_supply_populate_supplied_from(psy);
-+
-+	return ret;
-+}
-+#endif
-+
- static int __power_supply_am_i_supplied(struct device *dev, void *data)
- {
- 	union power_supply_propval ret = {0,};
-@@ -359,6 +486,14 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
- 
- 	INIT_WORK(&psy->changed_work, power_supply_changed_work);
- 
-+#ifdef CONFIG_OF
-+	rc = power_supply_check_supplies(psy);
-+	if (rc) {
-+		dev_info(dev, "Not all required supplies found, defer probe\n");
-+		goto check_supplies_failed;
-+	}
-+#endif
-+
- 	rc = kobject_set_name(&dev->kobj, "%s", psy->name);
- 	if (rc)
- 		goto kobject_set_name_failed;
-@@ -391,6 +526,9 @@ register_thermal_failed:
- 	device_del(dev);
- kobject_set_name_failed:
- device_add_failed:
-+#ifdef CONFIG_OF
-+check_supplies_failed:
-+#endif
- 	put_device(dev);
- success:
- 	return rc;
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index c1cbd5e..3828cef 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -173,6 +173,9 @@ struct power_supply {
- 
- 	char **supplied_from;
- 	size_t num_supplies;
-+#ifdef CONFIG_OF
-+	struct device_node *of_node;
-+#endif
- 
- 	int (*get_property)(struct power_supply *psy,
- 			    enum power_supply_property psp,
 -- 
-1.7.9.5
+Regards/Gruss,
+    Boris.
+
+Sent from a fat crate under my desk. Formatting is fine.
+--
