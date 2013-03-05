@@ -1,43 +1,55 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] drm/tegra: drop "select DRM_HDMI"
-Date: Tue, 05 Mar 2013 22:07:36 +0100
-Message-ID: <1362517656.16460.125.camel@x61.thuisdomein>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [REPOST PATCH 0/2] Table lookup for mux clock type
+Date: Tue, 05 Mar 2013 15:48:05 -0700
+Message-ID: <51367625.2090405@wwwdotorg.org>
+References: <1361545358-22721-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@avionic-design.de>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1361545358-22721-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit ac24c2204a76e5b42aa103bf963ae0eda1b827f3 ("drm/tegra: Use generic
-HDMI infoframe helpers") added "select DRM_HDMI" to the DRM_TEGRA
-Kconfig entry. But there is no Kconfig symbol named DRM_HDMI. The select
-statement for that symbol is a nop. Drop it.
+On 02/22/2013 08:02 AM, Peter De Schrijver wrote:
+> This patchset adds a table lookup feature to the mux clock type. This will
+> be used by the forthcoming Tegra114 clock implementation. Also instead of
+> a fixed field width, a mask is used. This is because Tegra114 has some muxes
+> where the parent selector is spread over several bitfields. The second patch
+> adapts the tegra periph clock implementation which uses struct clk_mux
+> directly.
+> 
+> --
+> 
+> Mike,
+> 
+> This patch is a dependency for the Tegra114 CCF implementation. Could you
+> review it and merge on a topic branch so Stephen can pull it in to verify
+> the integration?
 
-What was needed to use HDMI functionality was to select HDMI (which this
-entry already did through depending on DRM) and to include linux/hdmi.h
-(which this commit also did).
+Peter, does this repost you resolve the issue I pointed out at:
+http://www.spinics.net/lists/arm-kernel/msg220873.html
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
----
-Untested. 
+To quote:
 
- drivers/gpu/drm/tegra/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index c92955d..be1daf7 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -4,7 +4,6 @@ config DRM_TEGRA
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_CMA_HELPER
--	select DRM_HDMI
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
--- 
-1.7.11.7
+>>> Just a quick note on patch dependencies here:
+>>>
+>>> Patch 1/2 can presumably be taken through the clk tree whenever Mike is
+>>> OK with it.
+>>>
+>>> Patch 2/2 depends on patches in the Tegra tree for 3.9. Since patch 2/2
+>>> is useful mostly for the Tegra114 clock driver, and I don't imagine that
+>>> will get posted/merged in time for 3.9, it's probably easiest to just
+>>> take patch 2/2 for 3.10 along with the Tegra114 clock driver. Also, I
+>>> imagine there won't be any more clk/Tegra tree dependencies in 3.10, so
+>>> patch 2/2 and the Tegra114 clk driver patches can likely go through the
+>>> clk tree itself for 3.10.
+>> 
+>> No. Because 1/2 changes struct clk_mux and the tegra peripheral clock type 
+>> uses struct clk_mux directly, 2/2 needs to be applied together with 1/2, even
+>> if the new functionality is not yet used.
+> 
+> Oh, then they can't be two separate patches then, or "git bisect" won't
+> work. I guess it's best to wait for 3.10 for this:-(
