@@ -1,54 +1,66 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] ASoC: tegra: fix I2S bit count mask
-Date: Tue, 5 Mar 2013 10:42:59 +0800
-Message-ID: <20130305024254.GA9391@opensource.wolfsonmicro.com>
-References: <1362442220-28718-1-git-send-email-swarren@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Tue, 5 Mar 2013 09:40:47 +0200
+Message-ID: <20130305074047.GH27241@tbergstrom-lnx.Nvidia.com>
+References: <512BF81A.3080700@wwwdotorg.org>
+ <201302261023.26939.arnd@arndb.de>
+ <20130226113538.GS17833@n2100.arm.linux.org.uk>
+ <512CF87A.4090404@wwwdotorg.org>
+ <20130226181114.GU17833@n2100.arm.linux.org.uk>
+ <5130E757.6090500@wwwdotorg.org>
+ <20130304063436.GB27241@tbergstrom-lnx.Nvidia.com>
+ <20130304091600.GC27241@tbergstrom-lnx.Nvidia.com>
+ <5134D50B.8060001@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1362442220-28718-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5134D50B.8060001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Mar 04, 2013 at 06:08:27PM +0100, Stephen Warren wrote:
+> On 03/04/2013 02:16 AM, Peter De Schrijver wrote:
+> > On Mon, Mar 04, 2013 at 07:34:36AM +0100, Peter De Schrijver wrote:
+> >> On Fri, Mar 01, 2013 at 06:37:27PM +0100, Stephen Warren wrote:
+> >>
 
---cWoXeonUoKmBZSoM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Mon, Mar 04, 2013 at 05:10:20PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> This register field is 11 bits wide, not 15 bits wide. Given the way
-> this value is currently, used, this patch has no practical effect.
-> However, it's still best if the value is correct.
+> > 1) Handle CPU0 errata WARs in the bootloader
+> 
+> OK - there's not much choice here, and I've posted a patch for this for
+> Tegra U-Boot already.
+> 
+> > 2) Indicate in device tree if linux is booting in secude mode or non-secure
+> >    mode.
+> > 3) Use this information in the kernel to decide how to apply the WARs for
+> >    secondary core bringup and after powerungating.
+> 
+> Hmmm. That seems like a lot of overhead to avoid duplicating roughly 8
+> assembly instructions per Tegra version. Also, some/all of the WARs in
 
-Applied, thanks.
+Unfortunately we can't write to the diag register if we are in non-secure
+mode. So unless we never want to support running in non-secure mode, we will
+need to make the distinction somehow and use a different method for non-secure
+mode. Or assume the secure OS has applied the WARs. I'm afraid existing secure
+OS implementations for Tegra don't work that way though. They just offer an
+SMC which allows the kernel to read and write the diag register.
 
---cWoXeonUoKmBZSoM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> question probably need to be applied very early by assembly code, e.g.
+> before MMU is re-enabled, so I think you'd end up parsing DT from
+> assembly again, which would be painful. I tend to think just including
+> the code in the kernel's SoC-specific reset handler is simplest, and
+> even with the slight duplication, probably most maintainable. I've
+> written a patch for this for Tegra already, which I hope to post later
+> today, depending on testing and what other stuff I get side-tracked on.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+No. We could just set a flag in __tegra_cpu_reset_handler_data based on the
+info in DT or use a different reset handler. DT is parsed before bringing up
+secondary CPUs, so this approach should work I think.
 
-iQIcBAEBAgAGBQJRNVuUAAoJELSic+t+oim93CwP/3CHj8to8LDKE3LEiBimhym3
-GDbjw2WE0qcU0b1/HNweMdLKGoJqp6rPb2QES6Eli5MFIMqHL6ffQGvqnIGCdc/C
-hODua4UpTZR6EHPSdxIv7yrQX1FZ1aJrtDV3lt9Axl7DxNkIYmBANwYplT3O4uD5
-LNjjizCSIi34lhoeinKTEqMwgueHR8ktxOBBH/08ugil96AVK7/0CeLQON5a3TaZ
-scM7hGnqYjgaSxXPhSQO6ocGFw6aQ3WT/6qGm/4AltK6o66RnHARCZBPFgEUdcoU
-UEwhnWqklBbIxbD3tcuamEO3ae9cv13Ju7XE7udIPenobzDXLyHZaXOWqrdiVv1W
-GulqA1zDIQKJkhcr5+/p8suPiYHjLYVvFxG8MeabA9jw8CFq/DXuZuVmwGxB7OC+
-xLYXJYUStIRFwq5raQBhZXlXa/gv9pKyB09GBEk2VMpxAd6lJqC28lZDvxDWohMn
-FDSQcRq4KhlwtbUtFdcFyhWz/BCrPHLbkZBcO5hDAR48iXKQfdfRA3dWN4c9jLdm
-G0ZYQhgw+Mc0PbSmXUsI08UVKknZnF/iBn0gFoypr+Wfp4e0m9UcAm38Zc1/Fpd/
-ajja9I55gC3VxttsUFueEMo+30MedlwyxHsqC90CzhVBGW2IdW0EYA7e4Hysqu/8
-oe/AtNXvlaPGKdPFXg7n
-=7o0/
------END PGP SIGNATURE-----
+Cheers,
 
---cWoXeonUoKmBZSoM--
+Peter.
