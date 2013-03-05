@@ -1,118 +1,52 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: remove save/restore of CPU diag register
-Date: Mon,  4 Mar 2013 17:05:57 -0700
-Message-ID: <1362441957-22050-2-git-send-email-swarren@wwwdotorg.org>
-References: <1362441957-22050-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V2] ASoC: tegra: fix I2S bit count mask
+Date: Mon,  4 Mar 2013 17:10:20 -0700
+Message-ID: <1362442220-28718-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362441957-22050-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Prior to this change, {save,restore}_cpu_arch_register() collaborated to
-maintain the value of the CPU diagnostic register across power cycles.
-This was required to maintain any CPU errata workaround enable bits in
-that register. However, now that the Tegra reset vector code always
-enables all required workarounds, there is no need to save and restore
-the diagnostic register; it is always explicitly programmed in the
-required manner.
-
-Hence, remove the save/restore logic.
-
-This has the advantage that the kernel always directly controls the value
-of this register every boot, rather than relying on a bootloader or other
-kernel code having previously written the correct value into it. This
-makes CPU0 (which was previously saved/restored) and CPUn (which should
-have been set up by the reset vector) be controlled in exactly the same
-way, which is easier to debug/find/...
-
-In particular, when converting Tegra to a multi-platform kernel, the CPU0
-diagnostic register value initially comes from the bootloader. Most Tegra
-bootloaders don't yet enable all required CPU bug workarounds. The
-previous commit updates the kernel to do so on any CPU power cycle.
-However, the save/restore code ends up over-writing the value with the
-old bootloader-driven value instead of the now more-likely-to-be-correct
-kernel value!
-
-Even irrespective of multi-platform conversion, this change limits the
-kernel's exposure to any WARs the bootloader didn't enable for CPU0: on
-the very first LP2 transition (CPU power-saving which power-cycles the
-CPU), the correct value will be enabled.
+This register field is 11 bits wide, not 15 bits wide. Given the way
+this value is currently, used, this patch has no practical effect.
+However, it's still best if the value is correct.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/cpuidle-tegra30.c |    4 ----
- arch/arm/mach-tegra/pm.c              |   19 -------------------
- 2 files changed, 23 deletions(-)
+v2: Apply fix to Tegra20 as well as Tegra30.
+---
+ sound/soc/tegra/tegra20_i2s.h |    2 +-
+ sound/soc/tegra/tegra30_i2s.h |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index 8b50cf4..80445ed 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -102,12 +102,8 @@ static bool tegra30_cpu_core_power_down(struct cpuidle_device *dev,
+diff --git a/sound/soc/tegra/tegra20_i2s.h b/sound/soc/tegra/tegra20_i2s.h
+index c27069d..7299587 100644
+--- a/sound/soc/tegra/tegra20_i2s.h
++++ b/sound/soc/tegra/tegra20_i2s.h
+@@ -121,7 +121,7 @@
  
- 	smp_wmb();
+ #define TEGRA20_I2S_TIMING_NON_SYM_ENABLE		(1 << 12)
+ #define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
+-#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
++#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7ff
+ #define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK	(TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
  
--	save_cpu_arch_register();
--
- 	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+ /* Fields in TEGRA20_I2S_FIFO_SCR */
+diff --git a/sound/soc/tegra/tegra30_i2s.h b/sound/soc/tegra/tegra30_i2s.h
+index 34dc47b..a294d94 100644
+--- a/sound/soc/tegra/tegra30_i2s.h
++++ b/sound/soc/tegra/tegra30_i2s.h
+@@ -110,7 +110,7 @@
  
--	restore_cpu_arch_register();
--
- 	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+ #define TEGRA30_I2S_TIMING_NON_SYM_ENABLE		(1 << 12)
+ #define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
+-#define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
++#define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7ff
+ #define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK	(TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
  
- 	return true;
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 523604d..0494f73 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -46,26 +46,11 @@
- #define PMC_CPUPWROFF_TIMER	0xcc
- 
- #ifdef CONFIG_PM_SLEEP
--static unsigned int g_diag_reg;
- static DEFINE_SPINLOCK(tegra_lp2_lock);
- static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
- static struct clk *tegra_pclk;
- void (*tegra_tear_down_cpu)(void);
- 
--void save_cpu_arch_register(void)
--{
--	/* read diagnostic register */
--	asm("mrc p15, 0, %0, c15, c0, 1" : "=r"(g_diag_reg) : : "cc");
--	return;
--}
--
--void restore_cpu_arch_register(void)
--{
--	/* write diagnostic register */
--	asm("mcr p15, 0, %0, c15, c0, 1" : : "r"(g_diag_reg) : "cc");
--	return;
--}
--
- static void set_power_timers(unsigned long us_on, unsigned long us_off)
- {
- 	unsigned long long ticks;
-@@ -119,8 +104,6 @@ static void restore_cpu_complex(void)
- 	tegra_cpu_clock_resume();
- 
- 	flowctrl_cpu_suspend_exit(cpu);
--
--	restore_cpu_arch_register();
- }
- 
- /*
-@@ -145,8 +128,6 @@ static void suspend_cpu_complex(void)
- 	tegra_cpu_clock_suspend();
- 
- 	flowctrl_cpu_suspend_enter(cpu);
--
--	save_cpu_arch_register();
- }
- 
- void tegra_clear_cpu_in_lp2(int phy_cpu_id)
+ /* Fields in TEGRA30_I2S_OFFSET */
 -- 
 1.7.10.4
