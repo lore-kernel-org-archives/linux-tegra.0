@@ -1,52 +1,78 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] ASoC: tegra: fix I2S bit count mask
-Date: Mon,  4 Mar 2013 17:10:20 -0700
-Message-ID: <1362442220-28718-1-git-send-email-swarren@wwwdotorg.org>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] pinctrl: tegra: add suspend/resume support
+Date: Tue, 05 Mar 2013 04:13:48 +0400
+Message-ID: <513538BC.5070706@gmail.com>
+References: <5097F013.8070002@wwwdotorg.org> <1352165844-4837-1-git-send-email-digetx@gmail.com> <50988701.5080602@wwwdotorg.org> <50990BE0.9040507@gmail.com> <50994AFB.8000802@wwwdotorg.org> <50996DCC.8030508@gmail.com> <509984F9.1060508@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <509984F9.1060508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+07.11.2012 01:45, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> On 11/06/2012 01:06 PM, Dmitry Osipenko wrote:
+>> 06.11.2012 21:38, Stephen Warren wrote:
+>>> OK, so only you and he have the binaries built from this repository=
+? Or,
+>>> are those binaries distributed to other people too? If the binaries=
+ are
+>>> distributed, you need to distribute (or offer to make available) th=
+e
+>>> source too. See the GPL for exact requirements.
+>>
+>> I'm not against GPL, but for now repo is private. It's something lik=
+e nvidia's
+>> private downstream kernel that I'm working on. Surely it will become=
+ public but
+>> bit later.
+>>
+>>> OK, so if I accept the private repo link, download the source, and
+>>> repost it on my github account, you're fine with that? If not, then
+>>> you're requesting something semantically equivalent to an NDA.
+>>
+>> For me it's not very important, but my companion may be unhappy with=
+ that. I
+>> just believe that you are not so evil. As I understand NDA should be=
+ some
+>> legally valid official document. I'm sure you are much better in thi=
+s than me,
+>> so let's stop discussing it.
+>>
+>>> However, I'd ask that we resolve the distribution issues of the sou=
+rce
+>>> kernel first to avoid any tainting of the patch.
+>>
+>> I don't see any issues. It's my personal work that I'm contributing =
+to the
+>> kernel community. If nvidia is against of any public contributions j=
+ust tell me.
+>=20
+> NVIDIA and indeed the kernel community welcome public contributions.
+>=20
+> However, the rules in SubmittingPatches (as set by the kernel communi=
+ty,
+> not NVIDIA) are clear re: the licensing requirements for patches. If
+> you're taking the patches from a downstream kernel that's published a=
+s
+> binaries and not source, I believe that makes the patches non-complia=
+nt
+> (since there's a GPL violation in the downstream kernel, so the patch=
+es
+> can't be passed off as being GPL compliant), and hence your
+> signed-off-by line is not valid.
+>=20
+> Once the downstream kernel's source is publicly available, I imagine
+> there will be no problem accepting patches that are derived from it.
+>=20
 
-This register field is 11 bits wide, not 15 bits wide. Given the way
-this value is currently, used, this patch has no practical effect.
-However, it's still best if the value is correct.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: Apply fix to Tegra20 as well as Tegra30.
----
- sound/soc/tegra/tegra20_i2s.h |    2 +-
- sound/soc/tegra/tegra30_i2s.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra20_i2s.h b/sound/soc/tegra/tegra20_i2s.h
-index c27069d..7299587 100644
---- a/sound/soc/tegra/tegra20_i2s.h
-+++ b/sound/soc/tegra/tegra20_i2s.h
-@@ -121,7 +121,7 @@
- 
- #define TEGRA20_I2S_TIMING_NON_SYM_ENABLE		(1 << 12)
- #define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
--#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
-+#define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7ff
- #define TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK	(TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA20_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
- 
- /* Fields in TEGRA20_I2S_FIFO_SCR */
-diff --git a/sound/soc/tegra/tegra30_i2s.h b/sound/soc/tegra/tegra30_i2s.h
-index 34dc47b..a294d94 100644
---- a/sound/soc/tegra/tegra30_i2s.h
-+++ b/sound/soc/tegra/tegra30_i2s.h
-@@ -110,7 +110,7 @@
- 
- #define TEGRA30_I2S_TIMING_NON_SYM_ENABLE		(1 << 12)
- #define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT	0
--#define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7fff
-+#define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US	0x7ff
- #define TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK	(TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_MASK_US << TEGRA30_I2S_TIMING_CHANNEL_BIT_COUNT_SHIFT)
- 
- /* Fields in TEGRA30_I2S_OFFSET */
--- 
-1.7.10.4
+Hello, Stephen. I made my recent work on kernel public and it's availab=
+le
+at https://bitbucket.org/digetx/picasso-kernel/ It contains all patches=
+ that
+I have sent and has some small fixes that I will send later. Hope there=
+ is no
+problem anymore and you would like to continue reviewing my patches.
