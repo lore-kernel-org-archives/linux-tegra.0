@@ -1,8 +1,8 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 03/10] ARM: tegra: get power management configurations
  for PMC from DT
-Date: Tue, 05 Mar 2013 11:33:57 -0700
-Message-ID: <51363A95.8090000@wwwdotorg.org>
+Date: Tue, 05 Mar 2013 11:41:17 -0700
+Message-ID: <51363C4D.9090702@wwwdotorg.org>
 References: <1362397207-5597-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -22,22 +22,12 @@ On 03/04/2013 04:40 AM, Joseph Lo wrote:
 
 > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
 
-> @@ -143,6 +161,10 @@ static const struct of_device_id matches[] __initconst = {
->  static void tegra_pmc_parse_dt(void)
->  {
->  	struct device_node *np;
-> +	u32 prop;
-> +	enum tegra_suspend_mode suspend_mode;
-> +	u32 core_good_time[2] = {0, 0};
-> +	u32 lp0_vec[2] = {0, 0};
->  
->  	np = of_find_matching_node(NULL, matches);
->  	BUG_ON(!np);
+> +struct pmc_pm_data {
+> +	unsigned long cpu_good_time;	/* CPU power good time in uS */
+> +	unsigned long cpu_off_time;	/* CPU power off time in uS */
+> +	unsigned long core_osc_time;	/* Core power good osc time in uS */
+> +	unsigned long core_pmu_time;	/* Core power good pmu time in uS */
+> +	unsigned long core_off_time;	/* Core power off time in uS */
 
-This files doesn't look like that; the BUG_ON() isn't present upstream
-yet. So, this series depends on some other patches not yet applied. You
-need to explicitly document your patch dependencies somewhere. Hopefully
-I can work it out...
-
-The DT binding documentation patch (5/10) should be squashed into this
-patch; both document and implement the bindings in the same patch.
+Since those values are all coming from DT, shouldn't they be u32 to
+match the DT cell type?
