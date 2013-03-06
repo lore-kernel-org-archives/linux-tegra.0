@@ -1,46 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] clk: tegra: Fix periph_clk_to_bit macro
-Date: Wed, 06 Mar 2013 14:59:05 -0700
-Message-ID: <5137BC29.2030909@wwwdotorg.org>
-References: <1362606444-19970-1-git-send-email-achew@nvidia.com>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/4] mmc: host: sdhci-tegra: cleanup ifdefs
+Date: Wed, 06 Mar 2013 17:54:42 -0500
+Message-ID: <87r4js16ml.fsf@octavius.laptop.org>
+References: <1361385317-6020-1-git-send-email-rklein@nvidia.com>
+	<1361385317-6020-4-git-send-email-rklein@nvidia.com>
+	<5137B07C.1040700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362606444-19970-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5137B07C.1040700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen Warren's message of
+	"Wed, 06 Mar 2013 14:09:16 -0700")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/06/2013 02:47 PM, Andrew Chew wrote:
-> The parameter name should be "gate", not "periph".  This worked, however,
-> because it happens that everywhere periph_clk_to_bit is called, "gate" was
-> in the local scope.
+Hi,
 
-Peter, Prashant, can I get an ack/reviewed-by please?
+On Wed, Mar 06 2013, Stephen Warren wrote:
+> On 02/20/2013 11:35 AM, Rhyland Klein wrote:
+>> The structs wrapped with the SOC ifdefs are small enough where having
+>> them always there shouldn't be a big overhead. Removing the ifdefs
+>> also makes the code a little cleaner.
+>
+> I think patches 3 and 4 of this series can go through either the MMC
+> tree (I checked there are no conflicts with the MMC patch I have to take
+> through the Tegra tree), or the Tegra tree (since I'm taking another
+> Tegra MMC patch though there), both without any dependency issues.
+>
+> It's your call. Let me know if you want me to take them through the
+> Tegra tree with an ack. Or, if you want to take them through the MMC
+> tree that's fine too. If you need them reposted to see the content, let
+> me know, or they're at:
 
-Note: I'm also CC'ing Mike and the LAKML mailing list; common clock
-driver changes should be sent to Mike as CCF maintainer, and any
-ARM-related changes should typically get sent to LAKML in the absence of
-any other specific subsystem list.
+Via the MMC tree with an ack sounds good, just for the mundane reason
+that I like my "highlights for 3.10" pull request to Linus to mention
+when support for new MMC hardware is added, and it won't do that if
+the tegra110 patch is coming through your tree.
 
-> Signed-off-by: Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-periph-gate.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-> index 6dd5332..d87e1ce 100644
-> --- a/drivers/clk/tegra/clk-periph-gate.c
-> +++ b/drivers/clk/tegra/clk-periph-gate.c
-> @@ -41,7 +41,7 @@ static DEFINE_SPINLOCK(periph_ref_lock);
->  #define write_rst_clr(val, gate) \
->  	writel_relaxed(val, gate->clk_base + (gate->regs->rst_clr_reg))
->  
-> -#define periph_clk_to_bit(periph) (1 << (gate->clk_num % 32))
-> +#define periph_clk_to_bit(gate) (1 << (gate->clk_num % 32))
->  
->  /* Peripheral gate clock ops */
->  static int clk_periph_is_enabled(struct clk_hw *hw)
+Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
+One Laptop Per Child
