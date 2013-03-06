@@ -1,38 +1,60 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/4] mmc: host: sdhci-tegra: cleanup ifdefs
-Date: Wed, 06 Mar 2013 16:17:47 -0700
-Message-ID: <5137CE9B.3070203@wwwdotorg.org>
-References: <1361385317-6020-1-git-send-email-rklein@nvidia.com> <1361385317-6020-4-git-send-email-rklein@nvidia.com> <5137B07C.1040700@wwwdotorg.org> <87r4js16ml.fsf@octavius.laptop.org>
+From: Andrew Chew <AChew@nvidia.com>
+Subject: RE: [PATCH] clk: tegra: provide dummy cpu car ops
+Date: Wed, 6 Mar 2013 15:20:00 -0800
+Message-ID: <643E69AA4436674C8F39DCC2C05F7638629CA50C97@HQMAIL03.nvidia.com>
+References: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87r4js16ml.fsf-DGHOrqG7t0YzNDMTQreKSUB+6BGkLq7r@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/06/2013 03:54 PM, Chris Ball wrote:
-> Hi,
+> Subject: [PATCH] clk: tegra: provide dummy cpu car ops
 > 
-> On Wed, Mar 06 2013, Stephen Warren wrote:
->> On 02/20/2013 11:35 AM, Rhyland Klein wrote:
->>> The structs wrapped with the SOC ifdefs are small enough where having
->>> them always there shouldn't be a big overhead. Removing the ifdefs
->>> also makes the code a little cleaner.
->>
->> I think patches 3 and 4 of this series can go through either the MMC
->> tree (I checked there are no conflicts with the MMC patch I have to take
->> through the Tegra tree), or the Tegra tree (since I'm taking another
->> Tegra MMC patch though there), both without any dependency issues.
->>
->> It's your call. Let me know if you want me to take them through the
->> Tegra tree with an ack. Or, if you want to take them through the MMC
->> tree that's fine too. If you need them reposted to see the content, let
->> me know, or they're at:
+> tegra_boot_secondary() relies on some of the car ops. This means having an
+> uninitialized tegra_cpu_car_ops will lead to an early boot panic.
+> Providing a dummy struct avoids this and makes adding Tegra114 clock
+> support in a bisectable way a lot easier.
 > 
-> Via the MMC tree with an ack sounds good
+> --
+> 
+> Stephen,
+> 
+> Should this be a separate patch or should I make this part of new release of
+> the Tegra114 clock series?
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/clk.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c index
+> a603b9a..f6c141f 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -22,7 +22,8 @@
+>  #include "clk.h"
+> 
+>  /* Global data of Tegra CPU CAR ops */
+> -struct tegra_cpu_car_ops *tegra_cpu_car_ops;
 
-OK, thanks. Patches 3/4 and 4/4,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sorry for bringing this up so late...
+Shouldn't the above be "struct tegra_cpu_car_ops tegra_cpu_car_ops;"?
+
+> +static struct tegra_cpu_car_ops *dummy_car_ops; struct
+> +tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
+> 
+>  void __init tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
+>  				struct clk *clks[], int clk_max)
+> --
+> 1.7.7.rc0.72.g4b5ea.dirty
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in the
+> body of a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
