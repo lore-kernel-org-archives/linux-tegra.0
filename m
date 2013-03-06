@@ -1,38 +1,22 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: add CPU errata WARs to Tegra reset handler
-Date: Wed, 06 Mar 2013 13:29:51 -0700
-Message-ID: <5137A73F.7090705@wwwdotorg.org>
-References: <1362441957-22050-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] clocksource: tegra: move to of_clk_get
+Date: Wed, 06 Mar 2013 13:38:34 -0700
+Message-ID: <5137A94A.2030203@wwwdotorg.org>
+References: <1359985230-11506-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362441957-22050-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1359985230-11506-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, John Stultz <johnstul-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2013 05:05 PM, Stephen Warren wrote:
-> The CPU cores in Tegra contain some errata. Workarounds must be applied
-> for these every time a CPU boots. Implement those workarounds directly
-> in the Tegra-specific CPU reset vector.
-> 
-> Many of these workarounds duplicate code in the core ARM kernel.
-> 
-> However, the core ARM kernel cannot enable those workarounds when
-> building a multi-platform kernel, since they require writing to secure-
-> only registers, and a multi-platform kernel often does not run in secure
-> mode, and also cannot generically/architecturally detect whether it is
-> running in secure mode, and hence cannot either unconditionally or
-> conditionally apply these workarounds.
-> 
-> Instead, the workarounds must be applied in architecture-specific reset
-> code, which is able to have more direct knowledge of the secure/normal
-> state. On Tegra, we will be able to detect this using a non-architected
-> register in the future, although we currently assume the kernel runs only
-> in secure mode. Other SoCs may never run the kernel in secure mode, and
-> hence always rely on a secure monitor to enable the workarounds, and
-> hence never implement them in the kernel.
+On 02/04/2013 06:40 AM, Peter De Schrijver wrote:
+> The new clockframework introduced DT IDs for each clock. To be able to remove
+> the device registrations, this driver needs to be updated to use the DT IDs.
+> Note that the actual removal of the clk_register_clkdev() calls will be done
+> in a later series.
 
-I have applied this series to Tegra's for-3.10/fixes branch.
+I've applied this to Tegra's for-3.10/cleanup branch.
