@@ -1,39 +1,48 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 2/2] MAINTAINERS: tegra: match related files using N: not K:
-Date: Wed,  6 Mar 2013 16:36:45 -0700
-Message-ID: <1362613005-31439-2-git-send-email-swarren@wwwdotorg.org>
-References: <1362613005-31439-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1362613005-31439-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, Marcin Slusarz <marcin.slusarz@gmail.com>, Lucas Stach <dev@lynxeye.de>, Borislav Petkov <bp@alien8.de>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: provide dummy cpu car ops
+Date: Wed, 06 Mar 2013 16:42:53 -0700
+Message-ID: <5137D47D.6030105@wwwdotorg.org>
+References: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com> <643E69AA4436674C8F39DCC2C05F7638629CA50C97@HQMAIL03.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <643E69AA4436674C8F39DCC2C05F7638629CA50C97-lR+7xdUAJVNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+On 03/06/2013 04:20 PM, Andrew Chew wrote:
+>> Subject: [PATCH] clk: tegra: provide dummy cpu car ops
+>>
+>> tegra_boot_secondary() relies on some of the car ops. This means having an
+>> uninitialized tegra_cpu_car_ops will lead to an early boot panic.
+>> Providing a dummy struct avoids this and makes adding Tegra114 clock
+>> support in a bisectable way a lot easier.
+>>
+>> --
+>>
+>> Stephen,
+>>
+>> Should this be a separate patch or should I make this part of new release of
+>> the Tegra114 clock series?
 
-This causes the regex to be applied to filenames only, and not patch or
-file content (such as comments). This should prevent e.g.
-drivers/gpu/drm/nouveau/nv50_display.c from matching this entry.
+I'm not sure if I answered this. Peter, I intend to apply this patch to
+a branch right before the CCF, so there's no explicit need to include it
+in the series, although if you do, that's fine.
 
-Reported-by: Marcin Slusarz <marcin.slusarz@gmail.com>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
- MAINTAINERS |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c index
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1671842..8b986e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7851,7 +7851,7 @@ L:	linux-tegra@vger.kernel.org
- Q:	http://patchwork.ozlabs.org/project/linux-tegra/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
- S:	Supported
--K:	(?i)[^a-z]tegra
-+N:	[^a-z]tegra
- 
- TEHUTI ETHERNET DRIVER
- M:	Andy Gospodarek <andy@greyhouse.net>
--- 
-1.7.10.4
+>>  /* Global data of Tegra CPU CAR ops */
+>> -struct tegra_cpu_car_ops *tegra_cpu_car_ops;
+> 
+> Sorry for bringing this up so late...
+> Shouldn't the above be "struct tegra_cpu_car_ops tegra_cpu_car_ops;"?
+> 
+>> +static struct tegra_cpu_car_ops *dummy_car_ops; struct
+>> +tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
+
+No, the value is used as a pointer in include/linux/clk/tegra.h, e.g.:
+
+tegra_cpu_car_ops->wait_for_reset(cpu);
