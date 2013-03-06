@@ -1,60 +1,57 @@
-From: Andrew Chew <AChew@nvidia.com>
-Subject: RE: [PATCH] clk: tegra: provide dummy cpu car ops
-Date: Wed, 6 Mar 2013 15:20:00 -0800
-Message-ID: <643E69AA4436674C8F39DCC2C05F7638629CA50C97@HQMAIL03.nvidia.com>
-References: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1360853581-9756-1-git-send-email-pdeschrijver@nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] get_maintainer: create filename-only regex match type
+Date: Wed,  6 Mar 2013 16:36:44 -0700
+Message-ID: <1362613005-31439-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcin Slusarz <marcin.slusarz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> Subject: [PATCH] clk: tegra: provide dummy cpu car ops
-> 
-> tegra_boot_secondary() relies on some of the car ops. This means having an
-> uninitialized tegra_cpu_car_ops will lead to an early boot panic.
-> Providing a dummy struct avoids this and makes adding Tegra114 clock
-> support in a bisectable way a lot easier.
-> 
-> --
-> 
-> Stephen,
-> 
-> Should this be a separate patch or should I make this part of new release of
-> the Tegra114 clock series?
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/clk.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c index
-> a603b9a..f6c141f 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -22,7 +22,8 @@
->  #include "clk.h"
-> 
->  /* Global data of Tegra CPU CAR ops */
-> -struct tegra_cpu_car_ops *tegra_cpu_car_ops;
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Sorry for bringing this up so late...
-Shouldn't the above be "struct tegra_cpu_car_ops tegra_cpu_car_ops;"?
+Create a new N: entry type in MAINTAINERS which performs a regex match
+against filenames; either those extracted from patch +++ or --- lines,
+or those specified on the command-line using the -f option.
 
-> +static struct tegra_cpu_car_ops *dummy_car_ops; struct
-> +tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
-> 
->  void __init tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
->  				struct clk *clks[], int clk_max)
-> --
-> 1.7.7.rc0.72.g4b5ea.dirty
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in the
-> body of a message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+This provides the same benefits as using a K: regex option to match a
+set of filenames (see commit eb90d08 "get_maintainer: allow keywords to
+match filenames"), but without the disadvantage that "random" file
+content, such as comments,  will ever match the regex.
+
+Suggested-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ MAINTAINERS               |    3 +++
+ scripts/get_maintainer.pl |    2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9561658..1671842 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -90,6 +90,9 @@ Descriptions of section entries:
+ 	   F:	drivers/net/*	all files in drivers/net, but not below
+ 	   F:	*/net/*		all files in "any top level directory"/net
+ 	   One pattern per line.  Multiple F: lines acceptable.
++	N: Files and directories with regex patterns.
++	   K:	[^a-z]tegra	all files whose patch contains the word tegra
++	   One pattern per line.  Multiple N: lines acceptable.
+ 	X: Files and directories that are NOT maintained, same rules as F:
+ 	   Files exclusions are tested before file matches.
+ 	   Can be useful for excluding a specific subdirectory, for instance:
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index ce4cc83..27dc5cb 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -611,7 +611,7 @@ sub get_maintainers {
+ 				    $hash{$tvi} = $value_pd;
+ 				}
+ 			    }
+-			} elsif ($type eq 'K') {
++			} elsif ($type eq 'K' || $type eq 'N') {
+ 			    if ($file =~ m/$value/x) {
+ 				$hash{$tvi} = 0;
+ 			    }
+-- 
+1.7.10.4
