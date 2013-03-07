@@ -1,57 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 1/3] get_maintainer: create filename-only regex match type
-Date: Wed,  6 Mar 2013 17:28:59 -0700
-Message-ID: <1362616141-13947-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcin Slusarz <marcin.slusarz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH V2 3/3] get_maintainer: prevent keywords from matching filenames
+Date: Wed,  6 Mar 2013 17:29:01 -0700
+Message-ID: <1362616141-13947-3-git-send-email-swarren@wwwdotorg.org>
+References: <1362616141-13947-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1362616141-13947-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org, Marcin Slusarz <marcin.slusarz@gmail.com>, Lucas Stach <dev@lynxeye.de>, Borislav Petkov <bp@alien8.de>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, Maarten Lankhorst <maarten.lankhorst@canonical.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-Create a new N: entry type in MAINTAINERS which performs a regex match
-against filenames; either those extracted from patch +++ or --- lines,
-or those specified on the command-line using the -f option.
+This reverts most of eb90d08 "get_maintainer: allow keywords to match
+filenames"; all except the parts that are required to implement the new
+N: entry type.
 
-This provides the same benefits as using a K: regex option to match a
-set of filenames (see commit eb90d08 "get_maintainer: allow keywords to
-match filenames"), but without the disadvantage that "random" file
-content, such as comments,  will ever match the regex.
+The rationale is that it's better to have K: match just patch or file
+content as it previously did, and N: match just filenames, rather than
+have K: math all three cases. This gives more explicit control, and
+removes the temptation to use K: for filenames, and then have those
+keywords accidentally match unexpected patch or file content.
 
-Suggested-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
-v2: Corrected typo in MAINTAINERS documentation
+v2: New patch.
 ---
- MAINTAINERS               |    3 +++
+ MAINTAINERS               |    9 ++++-----
  scripts/get_maintainer.pl |    2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 9561658..c9b1e37 100644
+index 2d02ab5..e68a07a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -90,6 +90,9 @@ Descriptions of section entries:
- 	   F:	drivers/net/*	all files in drivers/net, but not below
- 	   F:	*/net/*		all files in "any top level directory"/net
- 	   One pattern per line.  Multiple F: lines acceptable.
-+	N: Files and directories with regex patterns.
-+	   N:	[^a-z]tegra	all files whose patch contains the word tegra
-+	   One pattern per line.  Multiple N: lines acceptable.
- 	X: Files and directories that are NOT maintained, same rules as F:
- 	   Files exclusions are tested before file matches.
- 	   Can be useful for excluding a specific subdirectory, for instance:
+@@ -100,13 +100,12 @@ Descriptions of section entries:
+ 	   X:	net/ipv6/
+ 	   matches all files in and below net excluding net/ipv6/
+ 	K: Keyword perl extended regex pattern to match content in a
+-	   patch or file, or an affected filename.  For instance:
++	   patch or file.  For instance:
+ 	   K: of_get_profile
+-	      matches patch or file content, or filenames, that contain
+-	      "of_get_profile"
++	      matches patches or files that contain "of_get_profile"
+ 	   K: \b(printk|pr_(info|err))\b
+-	      matches patch or file content, or filenames, that contain one or
+-	      more of the words printk, pr_info or pr_err
++	      matches patches or files that contain one or more of the words
++	      printk, pr_info or pr_err
+ 	   One regex pattern per line.  Multiple K: lines acceptable.
+ 
+ Note: For the hard of thinking, this list is meant to remain in alphabetical
 diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index ce4cc83..27dc5cb 100755
+index 27dc5cb..5e4fb14 100755
 --- a/scripts/get_maintainer.pl
 +++ b/scripts/get_maintainer.pl
 @@ -611,7 +611,7 @@ sub get_maintainers {
  				    $hash{$tvi} = $value_pd;
  				}
  			    }
--			} elsif ($type eq 'K') {
-+			} elsif ($type eq 'K' || $type eq 'N') {
+-			} elsif ($type eq 'K' || $type eq 'N') {
++			} elsif ($type eq 'N') {
  			    if ($file =~ m/$value/x) {
  				$hash{$tvi} = 0;
  			    }
