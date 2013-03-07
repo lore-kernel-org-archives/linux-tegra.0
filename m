@@ -1,70 +1,58 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/2] get_maintainer: create filename-only regex match type
-Date: Wed, 06 Mar 2013 16:06:07 -0800
-Message-ID: <1362614767.2093.29.camel@joe-AO722>
-References: <1362613005-31439-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: fix ignored return value of regulator_enable
+Date: Wed,  6 Mar 2013 17:16:25 -0700
+Message-ID: <1362615385-13418-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1362613005-31439-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Stephen Warren <swarren@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-03-06 at 16:36 -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> Create a new N: entry type in MAINTAINERS which performs a regex match
-> against filenames; either those extracted from patch +++ or --- lines,
-> or those specified on the command-line using the -f option.
+=46rom: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-NAK
+This fixes:
 
-At least get the prefix right and remove the
-now incorrect filename matches in K:
+arch/arm/mach-tegra/board-harmony-pcie.c: In function =E2=80=98harmony_=
+pcie_init=E2=80=99:
+arch/arm/mach-tegra/board-harmony-pcie.c:65:18: warning: ignoring retur=
+n
+    value of =E2=80=98regulator_enable=E2=80=99, declared with attribut=
+e
+    warn_unused_result [-Wunused-result]
 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9561658..1671842 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -90,6 +90,9 @@ Descriptions of section entries:
->  	   F:	drivers/net/*	all files in drivers/net, but not below
->  	   F:	*/net/*		all files in "any top level directory"/net
->  	   One pattern per line.  Multiple F: lines acceptable.
-> +	N: Files and directories with regex patterns.
-> +	   K:	[^a-z]tegra	all files whose patch contains the word tegra
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board-harmony-pcie.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-N: not K:
-
-> +	   One pattern per line.  Multiple N: lines acceptable.
->  	X: Files and directories that are NOT maintained, same rules as F:
->  	   Files exclusions are tested before file matches.
->  	   Can be useful for excluding a specific subdirectory, for instance:
-
-and remove the K: descriptions that show filename too.
-
-> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-> index ce4cc83..27dc5cb 100755
-> --- a/scripts/get_maintainer.pl
-> +++ b/scripts/get_maintainer.pl
-> @@ -611,7 +611,7 @@ sub get_maintainers {
->  				    $hash{$tvi} = $value_pd;
->  				}
->  			    }
-> -			} elsif ($type eq 'K') {
-> +			} elsif ($type eq 'K' || $type eq 'N') {
->  			    if ($file =~ m/$value/x) {
->  				$hash{$tvi} = 0;
->  			    }
-
-Remove K:  It has no value here.
+diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-t=
+egra/board-harmony-pcie.c
+index 3cdc1bb..d195db0 100644
+--- a/arch/arm/mach-tegra/board-harmony-pcie.c
++++ b/arch/arm/mach-tegra/board-harmony-pcie.c
+@@ -62,7 +62,11 @@ int __init harmony_pcie_init(void)
+ 		goto err_reg;
+ 	}
+=20
+-	regulator_enable(regulator);
++	err =3D regulator_enable(regulator);
++	if (err) {
++		pr_err("%s: regulator_enable failed: %d\n", __func__, err);
++		goto err_en;
++	}
+=20
+ 	err =3D tegra_pcie_init(true, true);
+ 	if (err) {
+@@ -74,6 +78,7 @@ int __init harmony_pcie_init(void)
+=20
+ err_pcie:
+ 	regulator_disable(regulator);
++err_en:
+ 	regulator_put(regulator);
+ err_reg:
+ 	gpio_free(en_vdd_1v05);
+--=20
+1.7.10.4
