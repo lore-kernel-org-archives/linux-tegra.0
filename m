@@ -1,261 +1,276 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH v2] usb: phy: remove CONFIG_USB_OTG_UTILS
-Date: Thu, 7 Mar 2013 16:41:39 +0200
-Message-ID: <1362667299-17752-1-git-send-email-balbi@ti.com>
-References: <1362648969-13737-11-git-send-email-balbi@ti.com>
+Subject: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
+Date: Thu, 7 Mar 2013 17:45:26 +0200
+Message-ID: <1362671126-24571-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362648969-13737-11-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-there are no more users of CONFIG_USB_OTG_UTILS
-left in tree, we can remove it just fine.
+this will make sure that we have sensible names
+for all phy drivers. Current situation was already
+quite bad with too generic names being used.
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
+ drivers/usb/phy/Makefile                           | 42 +++++++++++-----------
+ drivers/usb/phy/{ab8500-usb.c => phy-ab8500.c}     |  0
+ drivers/usb/phy/{fsl_otg.c => phy-fsl.c}           |  2 +-
+ drivers/usb/phy/{fsl_otg.h => phy-fsl.h}           |  0
+ drivers/usb/phy/{gpio_vbus.c => phy-gpio-vbus.c}   |  0
+ .../usb/phy/{isp1301_omap.c => phy-isp1301-omap.c} |  0
+ drivers/usb/phy/{isp1301.c => phy-isp1301.c}       |  0
+ drivers/usb/phy/{msm_otg.c => phy-msm.c}           |  0
+ drivers/usb/phy/{mv_u3d_phy.c => phy-mv-u3d.c}     |  2 +-
+ drivers/usb/phy/{mv_u3d_phy.h => phy-mv-u3d.h}     |  0
+ drivers/usb/phy/{mv_otg.c => phy-mv.c}             |  2 +-
+ drivers/usb/phy/{mv_otg.h => phy-mv.h}             |  0
+ drivers/usb/phy/{mxs-phy.c => phy-mxs.c}           |  0
+ drivers/usb/phy/{nop-usb-xceiv.c => phy-nop.c}     |  0
+ .../phy/{omap-control-usb.c => phy-omap-control.c} |  0
+ drivers/usb/phy/{omap-usb2.c => phy-omap-usb2.c}   |  0
+ drivers/usb/phy/{omap-usb3.c => phy-omap-usb3.c}   |  0
+ drivers/usb/phy/{otg_fsm.c => phy-otg-fsm.c}       |  2 +-
+ drivers/usb/phy/{otg_fsm.h => phy-otg-fsm.h}       |  0
+ drivers/usb/phy/{rcar-phy.c => phy-rcar.c}         |  0
+ .../usb/phy/{samsung-usbphy.c => phy-samsung.c}    |  0
+ drivers/usb/phy/{tegra_usb_phy.c => phy-tegra.c}   |  0
+ drivers/usb/phy/{twl4030-usb.c => phy-twl4030.c}   |  0
+ drivers/usb/phy/{twl6030-usb.c => phy-twl6030.c}   |  0
+ .../phy/{ulpi_viewport.c => phy-ulpi-viewport.c}   |  0
+ drivers/usb/phy/{ulpi.c => phy-ulpi.c}             |  0
+ 26 files changed, 25 insertions(+), 25 deletions(-)
+ rename drivers/usb/phy/{ab8500-usb.c => phy-ab8500.c} (100%)
+ rename drivers/usb/phy/{fsl_otg.c => phy-fsl.c} (99%)
+ rename drivers/usb/phy/{fsl_otg.h => phy-fsl.h} (100%)
+ rename drivers/usb/phy/{gpio_vbus.c => phy-gpio-vbus.c} (100%)
+ rename drivers/usb/phy/{isp1301_omap.c => phy-isp1301-omap.c} (100%)
+ rename drivers/usb/phy/{isp1301.c => phy-isp1301.c} (100%)
+ rename drivers/usb/phy/{msm_otg.c => phy-msm.c} (100%)
+ rename drivers/usb/phy/{mv_u3d_phy.c => phy-mv-u3d.c} (99%)
+ rename drivers/usb/phy/{mv_u3d_phy.h => phy-mv-u3d.h} (100%)
+ rename drivers/usb/phy/{mv_otg.c => phy-mv.c} (99%)
+ rename drivers/usb/phy/{mv_otg.h => phy-mv.h} (100%)
+ rename drivers/usb/phy/{mxs-phy.c => phy-mxs.c} (100%)
+ rename drivers/usb/phy/{nop-usb-xceiv.c => phy-nop.c} (100%)
+ rename drivers/usb/phy/{omap-control-usb.c => phy-omap-control.c} (100%)
+ rename drivers/usb/phy/{omap-usb2.c => phy-omap-usb2.c} (100%)
+ rename drivers/usb/phy/{omap-usb3.c => phy-omap-usb3.c} (100%)
+ rename drivers/usb/phy/{otg_fsm.c => phy-otg-fsm.c} (99%)
+ rename drivers/usb/phy/{otg_fsm.h => phy-otg-fsm.h} (100%)
+ rename drivers/usb/phy/{rcar-phy.c => phy-rcar.c} (100%)
+ rename drivers/usb/phy/{samsung-usbphy.c => phy-samsung.c} (100%)
+ rename drivers/usb/phy/{tegra_usb_phy.c => phy-tegra.c} (100%)
+ rename drivers/usb/phy/{twl4030-usb.c => phy-twl4030.c} (100%)
+ rename drivers/usb/phy/{twl6030-usb.c => phy-twl6030.c} (100%)
+ rename drivers/usb/phy/{ulpi_viewport.c => phy-ulpi-viewport.c} (100%)
+ rename drivers/usb/phy/{ulpi.c => phy-ulpi.c} (100%)
 
-v1 -> v2:
-	. removed a few extra instances which my original (and stupid)
-		grep didn't find
-
- drivers/power/Kconfig      |  2 +-
- drivers/usb/dwc3/Kconfig   |  1 -
- drivers/usb/gadget/Kconfig |  3 ---
- drivers/usb/host/Kconfig   |  1 -
- drivers/usb/musb/Kconfig   |  1 -
- drivers/usb/phy/Kconfig    | 23 -----------------------
- 6 files changed, 1 insertion(+), 30 deletions(-)
-
-diff --git a/drivers/power/Kconfig b/drivers/power/Kconfig
-index 9e00c38..ffe02fb 100644
---- a/drivers/power/Kconfig
-+++ b/drivers/power/Kconfig
-@@ -254,7 +254,7 @@ config BATTERY_RX51
+diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
+index d10a8b3..32db575 100644
+--- a/drivers/usb/phy/Makefile
++++ b/drivers/usb/phy/Makefile
+@@ -8,24 +8,24 @@ obj-$(CONFIG_USB_PHY)			+= phy.o
  
- config CHARGER_ISP1704
- 	tristate "ISP1704 USB Charger Detection"
--	depends on USB_OTG_UTILS
-+	depends on USB_PHY
- 	help
- 	  Say Y to enable support for USB Charger Detection with
- 	  ISP1707/ISP1704 USB transceivers.
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 68e9a2c..ea5ee9c 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -1,7 +1,6 @@
- config USB_DWC3
- 	tristate "DesignWare USB3 DRD Core Support"
- 	depends on (USB || USB_GADGET) && GENERIC_HARDIRQS
--	select USB_OTG_UTILS
- 	select USB_XHCI_PLATFORM if USB_SUPPORT && USB_XHCI_HCD
- 	help
- 	  Say Y or M here if your system has a Dual Role SuperSpeed
-diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-index 50586ff..7ad108a 100644
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@ -195,7 +195,6 @@ config USB_OMAP
- 	tristate "OMAP USB Device Controller"
- 	depends on ARCH_OMAP1
- 	select ISP1301_OMAP if MACH_OMAP_H2 || MACH_OMAP_H3 || MACH_OMAP_H4_OTG
--	select USB_OTG_UTILS if ARCH_OMAP
- 	help
- 	   Many Texas Instruments OMAP processors have flexible full
- 	   speed USB device controllers, with support for up to 30
-@@ -210,7 +209,6 @@ config USB_OMAP
- config USB_PXA25X
- 	tristate "PXA 25x or IXP 4xx"
- 	depends on (ARCH_PXA && PXA25x) || ARCH_IXP4XX
--	select USB_OTG_UTILS
- 	help
- 	   Intel's PXA 25x series XScale ARM-5TE processors include
- 	   an integrated full speed USB 1.1 device controller.  The
-@@ -258,7 +256,6 @@ config USB_RENESAS_USBHS_UDC
+ # transceiver drivers, keep the list sorted
  
- config USB_PXA27X
- 	tristate "PXA 27x"
--	select USB_OTG_UTILS
- 	help
- 	   Intel's PXA 27x series XScale ARM v5TE processors include
- 	   an integrated full speed USB 1.1 device controller.
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index c59a112..ba1347c 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -300,7 +300,6 @@ config USB_OHCI_HCD
- 	tristate "OHCI HCD support"
- 	depends on USB && USB_ARCH_HAS_OHCI
- 	select ISP1301_OMAP if MACH_OMAP_H2 || MACH_OMAP_H3
--	select USB_OTG_UTILS if ARCH_OMAP
- 	depends on USB_ISP1301 || !ARCH_LPC32XX
- 	---help---
- 	  The Open Host Controller Interface (OHCI) is a standard for accessing
-diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
-index b387431..079330b 100644
---- a/drivers/usb/musb/Kconfig
-+++ b/drivers/usb/musb/Kconfig
-@@ -10,7 +10,6 @@ config USB_MUSB_HDRC
- 	select NOP_USB_XCEIV if (ARCH_DAVINCI || MACH_OMAP3EVM || BLACKFIN)
- 	select NOP_USB_XCEIV if (SOC_TI81XX || SOC_AM33XX)
- 	select OMAP_CONTROL_USB if MACH_OMAP_4430SDP || MACH_OMAP4_PANDA
--	select USB_OTG_UTILS
- 	help
- 	  Say Y here if your system has a dual role high speed USB
- 	  controller based on the Mentor Graphics silicon IP.  Then
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index 832cd69..97de6de 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -3,7 +3,6 @@
- #
- menuconfig USB_PHY
- 	tristate "USB Physical Layer drivers"
--	select USB_OTG_UTILS
- 	help
- 	  USB controllers (those which are host, device or DRD) need a
- 	  device to handle the physical layer signalling, commonly called
-@@ -13,19 +12,12 @@ menuconfig USB_PHY
+-obj-$(CONFIG_AB8500_USB)		+= ab8500-usb.o
+-fsl_usb2_otg-objs			:= fsl_otg.o otg_fsm.o
+-obj-$(CONFIG_FSL_USB2_OTG)		+= fsl_usb2_otg.o
+-obj-$(CONFIG_ISP1301_OMAP)		+= isp1301_omap.o
+-obj-$(CONFIG_MV_U3D_PHY)		+= mv_u3d_phy.o
+-obj-$(CONFIG_NOP_USB_XCEIV)		+= nop-usb-xceiv.o
+-obj-$(CONFIG_OMAP_CONTROL_USB)		+= omap-control-usb.o
+-obj-$(CONFIG_OMAP_USB2)			+= omap-usb2.o
+-obj-$(CONFIG_OMAP_USB3)			+= omap-usb3.o
+-obj-$(CONFIG_SAMSUNG_USBPHY)		+= samsung-usbphy.o
+-obj-$(CONFIG_TWL4030_USB)		+= twl4030-usb.o
+-obj-$(CONFIG_TWL6030_USB)		+= twl6030-usb.o
+-obj-$(CONFIG_USB_EHCI_TEGRA)		+= tegra_usb_phy.o
+-obj-$(CONFIG_USB_GPIO_VBUS)		+= gpio_vbus.o
+-obj-$(CONFIG_USB_ISP1301)		+= isp1301.o
+-obj-$(CONFIG_USB_MSM_OTG)		+= msm_otg.o
+-obj-$(CONFIG_USB_MV_OTG)		+= mv_otg.o
+-obj-$(CONFIG_USB_MXS_PHY)		+= mxs-phy.o
+-obj-$(CONFIG_USB_RCAR_PHY)		+= rcar-phy.o
+-obj-$(CONFIG_USB_ULPI)			+= ulpi.o
+-obj-$(CONFIG_USB_ULPI_VIEWPORT)		+= ulpi_viewport.o
++obj-$(CONFIG_AB8500_USB)		+= phy-ab8500.o
++phy-fsl-usb2-objs			:= phy-fsl.o phy-otg-fsm.o
++obj-$(CONFIG_FSL_USB2_OTG)		+= phy-fsl-usb2.o
++obj-$(CONFIG_ISP1301_OMAP)		+= phy-isp1301.omap.o
++obj-$(CONFIG_MV_U3D_PHY)		+= phy-mv-u3d.o
++obj-$(CONFIG_NOP_USB_XCEIV)		+= phy-nop.o
++obj-$(CONFIG_OMAP_CONTROL_USB)		+= phy-omap-control.o
++obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
++obj-$(CONFIG_OMAP_USB3)			+= phy-omap-usb3.o
++obj-$(CONFIG_SAMSUNG_USBPHY)		+= phy-samsung.o
++obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030.o
++obj-$(CONFIG_TWL6030_USB)		+= phy-twl6030.o
++obj-$(CONFIG_USB_EHCI_TEGRA)		+= phy-tegra.o
++obj-$(CONFIG_USB_GPIO_VBUS)		+= phy-gpio-vbus.o
++obj-$(CONFIG_USB_ISP1301)		+= phy-isp1301.o
++obj-$(CONFIG_USB_MSM_OTG)		+= phy-msm.o
++obj-$(CONFIG_USB_MV_OTG)		+= phy-mv.o
++obj-$(CONFIG_USB_MXS_PHY)		+= phy-mxs.o
++obj-$(CONFIG_USB_RCAR_PHY)		+= phy-rcar.o
++obj-$(CONFIG_USB_ULPI)			+= phy-ulpi.o
++obj-$(CONFIG_USB_ULPI_VIEWPORT)		+= phy-ulpi-viewport.o
+diff --git a/drivers/usb/phy/ab8500-usb.c b/drivers/usb/phy/phy-ab8500.c
+similarity index 100%
+rename from drivers/usb/phy/ab8500-usb.c
+rename to drivers/usb/phy/phy-ab8500.c
+diff --git a/drivers/usb/phy/fsl_otg.c b/drivers/usb/phy/phy-fsl.c
+similarity index 99%
+rename from drivers/usb/phy/fsl_otg.c
+rename to drivers/usb/phy/phy-fsl.c
+index 72a2a00..bca345b 100644
+--- a/drivers/usb/phy/fsl_otg.c
++++ b/drivers/usb/phy/phy-fsl.c
+@@ -43,7 +43,7 @@
  
- if USB_PHY
+ #include <asm/unaligned.h>
  
--config USB_OTG_UTILS
--	bool
--	help
--	  Select this to make sure the build includes objects from
--	  the OTG infrastructure directory.
--
- #
- # USB Transceiver Drivers
- #
- config AB8500_USB
- 	tristate "AB8500 USB Transceiver Driver"
- 	depends on AB8500_CORE
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support the USB OTG transceiver in AB8500 chip.
- 	  This transceiver supports high and full speed devices plus,
-@@ -35,14 +27,12 @@ config FSL_USB2_OTG
- 	bool "Freescale USB OTG Transceiver Driver"
- 	depends on USB_EHCI_FSL && USB_FSL_USB2 && USB_SUSPEND
- 	select USB_OTG
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support Freescale USB OTG transceiver.
+-#include "fsl_otg.h"
++#include "phy-fsl.h"
  
- config ISP1301_OMAP
- 	tristate "Philips ISP1301 with OMAP OTG"
- 	depends on I2C && ARCH_OMAP_OTG
--	select USB_OTG_UTILS
- 	help
- 	  If you say yes here you get support for the Philips ISP1301
- 	  USB-On-The-Go transceiver working with the OMAP OTG controller.
-@@ -56,14 +46,12 @@ config ISP1301_OMAP
- config MV_U3D_PHY
- 	bool "Marvell USB 3.0 PHY controller Driver"
- 	depends on USB_MV_U3D
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support Marvell USB 3.0 phy controller for Marvell
- 	  SoC.
+ #define DRIVER_VERSION "Rev. 1.55"
+ #define DRIVER_AUTHOR "Jerry Huang/Li Yang"
+diff --git a/drivers/usb/phy/fsl_otg.h b/drivers/usb/phy/phy-fsl.h
+similarity index 100%
+rename from drivers/usb/phy/fsl_otg.h
+rename to drivers/usb/phy/phy-fsl.h
+diff --git a/drivers/usb/phy/gpio_vbus.c b/drivers/usb/phy/phy-gpio-vbus.c
+similarity index 100%
+rename from drivers/usb/phy/gpio_vbus.c
+rename to drivers/usb/phy/phy-gpio-vbus.c
+diff --git a/drivers/usb/phy/isp1301_omap.c b/drivers/usb/phy/phy-isp1301-omap.c
+similarity index 100%
+rename from drivers/usb/phy/isp1301_omap.c
+rename to drivers/usb/phy/phy-isp1301-omap.c
+diff --git a/drivers/usb/phy/isp1301.c b/drivers/usb/phy/phy-isp1301.c
+similarity index 100%
+rename from drivers/usb/phy/isp1301.c
+rename to drivers/usb/phy/phy-isp1301.c
+diff --git a/drivers/usb/phy/msm_otg.c b/drivers/usb/phy/phy-msm.c
+similarity index 100%
+rename from drivers/usb/phy/msm_otg.c
+rename to drivers/usb/phy/phy-msm.c
+diff --git a/drivers/usb/phy/mv_u3d_phy.c b/drivers/usb/phy/phy-mv-u3d.c
+similarity index 99%
+rename from drivers/usb/phy/mv_u3d_phy.c
+rename to drivers/usb/phy/phy-mv-u3d.c
+index 9d85991..f94e441 100644
+--- a/drivers/usb/phy/mv_u3d_phy.c
++++ b/drivers/usb/phy/phy-mv-u3d.c
+@@ -15,7 +15,7 @@
+ #include <linux/usb/otg.h>
+ #include <linux/platform_data/mv_usb.h>
  
- config NOP_USB_XCEIV
- 	tristate "NOP USB Transceiver Driver"
--	select USB_OTG_UTILS
- 	help
- 	  This driver is to be used by all the usb transceiver which are either
- 	  built-in with usb ip or which are autonomous and doesn't require any
-@@ -81,7 +69,6 @@ config OMAP_CONTROL_USB
- config OMAP_USB2
- 	tristate "OMAP USB2 PHY Driver"
- 	depends on ARCH_OMAP2PLUS
--	select USB_OTG_UTILS
- 	select OMAP_CONTROL_USB
- 	help
- 	  Enable this to support the transceiver that is part of SOC. This
-@@ -91,7 +78,6 @@ config OMAP_USB2
+-#include "mv_u3d_phy.h"
++#include "phy-mv-u3d.h"
  
- config OMAP_USB3
- 	tristate "OMAP USB3 PHY Driver"
--	select USB_OTG_UTILS
- 	select OMAP_CONTROL_USB
- 	help
- 	  Enable this to support the USB3 PHY that is part of SOC. This
-@@ -102,7 +88,6 @@ config OMAP_USB3
- config SAMSUNG_USBPHY
- 	bool "Samsung USB PHY controller Driver"
- 	depends on USB_S3C_HSOTG || USB_EHCI_S5P || USB_OHCI_EXYNOS
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support Samsung USB phy controller for samsung
- 	  SoCs.
-@@ -110,7 +95,6 @@ config SAMSUNG_USBPHY
- config TWL4030_USB
- 	tristate "TWL4030 USB Transceiver Driver"
- 	depends on TWL4030_CORE && REGULATOR_TWL4030 && USB_MUSB_OMAP2PLUS
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support the USB OTG transceiver on TWL4030
- 	  family chips (including the TWL5030 and TPS659x0 devices).
-@@ -120,7 +104,6 @@ config TWL4030_USB
- config TWL6030_USB
- 	tristate "TWL6030 USB Transceiver Driver"
- 	depends on TWL4030_CORE && OMAP_USB2 && USB_MUSB_OMAP2PLUS
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support the USB OTG transceiver on TWL6030
- 	  family chips. This TWL6030 transceiver has the VBUS and ID GND
-@@ -132,7 +115,6 @@ config TWL6030_USB
- config USB_GPIO_VBUS
- 	tristate "GPIO based peripheral-only VBUS sensing 'transceiver'"
- 	depends on GENERIC_GPIO
--	select USB_OTG_UTILS
- 	help
- 	  Provides simple GPIO VBUS sensing for controllers with an
- 	  internal transceiver via the usb_phy interface, and
-@@ -154,7 +136,6 @@ config USB_ISP1301
- config USB_MSM_OTG
- 	tristate "OTG support for Qualcomm on-chip USB controller"
- 	depends on (USB || USB_GADGET) && ARCH_MSM
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support the USB OTG transceiver on MSM chips. It
- 	  handles PHY initialization, clock management, and workarounds
-@@ -168,7 +149,6 @@ config USB_MV_OTG
- 	tristate "Marvell USB OTG support"
- 	depends on USB_EHCI_MV && USB_MV_UDC && USB_SUSPEND
- 	select USB_OTG
--	select USB_OTG_UTILS
- 	help
- 	  Say Y here if you want to build Marvell USB OTG transciever
- 	  driver in kernel (including PXA and MMP series). This driver
-@@ -180,7 +160,6 @@ config USB_MXS_PHY
- 	tristate "Freescale MXS USB PHY support"
- 	depends on ARCH_MXC || ARCH_MXS
- 	select STMP_DEVICE
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support the Freescale MXS USB PHY.
+ /*
+  * struct mv_u3d_phy - transceiver driver state
+diff --git a/drivers/usb/phy/mv_u3d_phy.h b/drivers/usb/phy/phy-mv-u3d.h
+similarity index 100%
+rename from drivers/usb/phy/mv_u3d_phy.h
+rename to drivers/usb/phy/phy-mv-u3d.h
+diff --git a/drivers/usb/phy/mv_otg.c b/drivers/usb/phy/phy-mv.c
+similarity index 99%
+rename from drivers/usb/phy/mv_otg.c
+rename to drivers/usb/phy/phy-mv.c
+index b6a9be3..043fdd2 100644
+--- a/drivers/usb/phy/mv_otg.c
++++ b/drivers/usb/phy/phy-mv.c
+@@ -27,7 +27,7 @@
+ #include <linux/usb/hcd.h>
+ #include <linux/platform_data/mv_usb.h>
  
-@@ -189,7 +168,6 @@ config USB_MXS_PHY
- config USB_RCAR_PHY
- 	tristate "Renesas R-Car USB phy support"
- 	depends on USB || USB_GADGET
--	select USB_OTG_UTILS
- 	help
- 	  Say Y here to add support for the Renesas R-Car USB phy driver.
- 	  This chip is typically used as USB phy for USB host, gadget.
-@@ -201,7 +179,6 @@ config USB_RCAR_PHY
- config USB_ULPI
- 	bool "Generic ULPI Transceiver Driver"
- 	depends on ARM
--	select USB_OTG_UTILS
- 	help
- 	  Enable this to support ULPI connected USB OTG transceivers which
- 	  are likely found on embedded boards.
+-#include "mv_otg.h"
++#include "phy-mv.h"
+ 
+ #define	DRIVER_DESC	"Marvell USB OTG transceiver driver"
+ #define	DRIVER_VERSION	"Jan 20, 2010"
+diff --git a/drivers/usb/phy/mv_otg.h b/drivers/usb/phy/phy-mv.h
+similarity index 100%
+rename from drivers/usb/phy/mv_otg.h
+rename to drivers/usb/phy/phy-mv.h
+diff --git a/drivers/usb/phy/mxs-phy.c b/drivers/usb/phy/phy-mxs.c
+similarity index 100%
+rename from drivers/usb/phy/mxs-phy.c
+rename to drivers/usb/phy/phy-mxs.c
+diff --git a/drivers/usb/phy/nop-usb-xceiv.c b/drivers/usb/phy/phy-nop.c
+similarity index 100%
+rename from drivers/usb/phy/nop-usb-xceiv.c
+rename to drivers/usb/phy/phy-nop.c
+diff --git a/drivers/usb/phy/omap-control-usb.c b/drivers/usb/phy/phy-omap-control.c
+similarity index 100%
+rename from drivers/usb/phy/omap-control-usb.c
+rename to drivers/usb/phy/phy-omap-control.c
+diff --git a/drivers/usb/phy/omap-usb2.c b/drivers/usb/phy/phy-omap-usb2.c
+similarity index 100%
+rename from drivers/usb/phy/omap-usb2.c
+rename to drivers/usb/phy/phy-omap-usb2.c
+diff --git a/drivers/usb/phy/omap-usb3.c b/drivers/usb/phy/phy-omap-usb3.c
+similarity index 100%
+rename from drivers/usb/phy/omap-usb3.c
+rename to drivers/usb/phy/phy-omap-usb3.c
+diff --git a/drivers/usb/phy/otg_fsm.c b/drivers/usb/phy/phy-otg-fsm.c
+similarity index 99%
+rename from drivers/usb/phy/otg_fsm.c
+rename to drivers/usb/phy/phy-otg-fsm.c
+index 1f729a1..c520b35 100644
+--- a/drivers/usb/phy/otg_fsm.c
++++ b/drivers/usb/phy/phy-otg-fsm.c
+@@ -29,7 +29,7 @@
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/otg.h>
+ 
+-#include "otg_fsm.h"
++#include "phy-otg-fsm.h"
+ 
+ /* Change USB protocol when there is a protocol change */
+ static int otg_set_protocol(struct otg_fsm *fsm, int protocol)
+diff --git a/drivers/usb/phy/otg_fsm.h b/drivers/usb/phy/phy-otg-fsm.h
+similarity index 100%
+rename from drivers/usb/phy/otg_fsm.h
+rename to drivers/usb/phy/phy-otg-fsm.h
+diff --git a/drivers/usb/phy/rcar-phy.c b/drivers/usb/phy/phy-rcar.c
+similarity index 100%
+rename from drivers/usb/phy/rcar-phy.c
+rename to drivers/usb/phy/phy-rcar.c
+diff --git a/drivers/usb/phy/samsung-usbphy.c b/drivers/usb/phy/phy-samsung.c
+similarity index 100%
+rename from drivers/usb/phy/samsung-usbphy.c
+rename to drivers/usb/phy/phy-samsung.c
+diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/phy-tegra.c
+similarity index 100%
+rename from drivers/usb/phy/tegra_usb_phy.c
+rename to drivers/usb/phy/phy-tegra.c
+diff --git a/drivers/usb/phy/twl4030-usb.c b/drivers/usb/phy/phy-twl4030.c
+similarity index 100%
+rename from drivers/usb/phy/twl4030-usb.c
+rename to drivers/usb/phy/phy-twl4030.c
+diff --git a/drivers/usb/phy/twl6030-usb.c b/drivers/usb/phy/phy-twl6030.c
+similarity index 100%
+rename from drivers/usb/phy/twl6030-usb.c
+rename to drivers/usb/phy/phy-twl6030.c
+diff --git a/drivers/usb/phy/ulpi_viewport.c b/drivers/usb/phy/phy-ulpi-viewport.c
+similarity index 100%
+rename from drivers/usb/phy/ulpi_viewport.c
+rename to drivers/usb/phy/phy-ulpi-viewport.c
+diff --git a/drivers/usb/phy/ulpi.c b/drivers/usb/phy/phy-ulpi.c
+similarity index 100%
+rename from drivers/usb/phy/ulpi.c
+rename to drivers/usb/phy/phy-ulpi.c
 -- 
 1.8.1.rc1.5.g7e0651a
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
