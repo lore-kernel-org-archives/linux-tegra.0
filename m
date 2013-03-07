@@ -1,73 +1,27 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 00/10] usb: phy: cleanups to Kconfig and directories
-Date: Thu, 7 Mar 2013 18:41:49 +0200
-Message-ID: <20130307164149.GA16548@arwen.pp.htv.fi>
-References: <1362648969-13737-1-git-send-email-balbi@ti.com>
- <Pine.LNX.4.44L0.1303071101190.1646-100000@iolanthe.rowland.org>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix ignored return value of regulator_enable
+Date: Thu, 07 Mar 2013 13:31:40 -0700
+Message-ID: <5138F92C.2010107@wwwdotorg.org>
+References: <1362615385-13418-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1303071101190.1646-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+In-Reply-To: <1362615385-13418-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Mar 07, 2013 at 11:01:47AM -0500, Alan Stern wrote:
-> On Thu, 7 Mar 2013, Felipe Balbi wrote:
+On 03/06/2013 05:16 PM, Stephen Warren wrote:
+> This fixes:
 >=20
-> > Hi folks,
-> >=20
-> > inspired by Paul's DWC2 patchset which added usb_otg_state_string()
-> > (a copy of otg_state_string()) I have now renamed otg_state_string()
-> > to usb_otg_state_string(), moved it to usb-common, then moved all
-> > phy drivers to drivers/usb/phy/ and completely deleted the otg director=
-y.
-> >=20
-> > We're also removing CONFIG_USB_OTG_UTILS since that has lots its
-> > meaning long ago.
-> >=20
-> > I have compiled all patches with allyes, allno and allmod configs,
-> > but please make sure to test on your platforms to make sure we're
-> > not leaking any more problems to mainline.
->=20
-> Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
->=20
-> for the EHCI changes.
+> arch/arm/mach-tegra/board-harmony-pcie.c: In function =E2=80=98harmon=
+y_pcie_init=E2=80=99:
+> arch/arm/mach-tegra/board-harmony-pcie.c:65:18: warning: ignoring ret=
+urn
+>     value of =E2=80=98regulator_enable=E2=80=99, declared with attrib=
+ute
+>     warn_unused_result [-Wunused-result]
 
-thanks, added your ack to the patches.
-
---=20
-balbi
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJROMNNAAoJEIaOsuA1yqREbyQQAIFYccU0inPdvI5GN2p4t1VO
-M9oexdwowW22Ogcw/CMYTFUcIYgZz+6SWYIFiCZpu5lKxdsWxPGjQxlWx97DQQNu
-Ad8HGEMu29/ghlW+J4Ajhf3ATLcJjZI3lny1U1R98vMs6GIO8MgCsoApnoiXcvGG
-fgxI4D8uW61ImIhIX4fwCH33mXn/b759sFP7V2TeGRCuFb2tVFvL/Wa11mtCF9bL
-5to1srypqlmtZUEVpeVL2XyPK4S/5IY5D+d0chRU2n9qvAAicOE2YFtCy+JOLUw4
-Pz+9FViVVfpvMOGqHNPOh4qzxE4TjydYhTmB/2i59ABEozfpBK2xqxEsS0SEKeLk
-ejZRjBu2ffSgY7EAzijwznUo2Aa+zX6fQoTzQ3nLM972IWt0vmkbpjcYSa6tN9WZ
-+yHHsSHqT+WdQNIIZx2FirlP/Jld8DNftDHoiRK+jQ8rrTZEKY0XhPpIFFFdgcbS
-i1KOZed7pXkAXKTQLg6MUaFgxFPg9iTk0X0cN7Fo+w7lPERicyqCvtaSXEFgqGSY
-rRkVCF7rxyxKTSjmDPSrvheEO+BE57TuxREPspTMSVyrZIuVLcrH6p/Ymhhpunf7
-HJPsGfAJ61cs0e0Ks5yDyZOxiwK1iFblgGLt0VDFgseJhk5kOF1ZfuYbebh/U3ha
-3V1KVzBpxdV7UWuK8vSx
-=6z/b
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
+I've applied this to Tegra's for-3.10/fixes branch.
