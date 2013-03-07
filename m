@@ -1,58 +1,59 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix ignored return value of regulator_enable
-Date: Wed,  6 Mar 2013 17:16:25 -0700
-Message-ID: <1362615385-13418-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH V2 1/3] get_maintainer: create filename-only regex match type
+Date: Wed,  6 Mar 2013 17:28:59 -0700
+Message-ID: <1362616141-13947-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Cc: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcin Slusarz <marcin.slusarz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-=46rom: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This fixes:
+Create a new N: entry type in MAINTAINERS which performs a regex match
+against filenames; either those extracted from patch +++ or --- lines,
+or those specified on the command-line using the -f option.
 
-arch/arm/mach-tegra/board-harmony-pcie.c: In function =E2=80=98harmony_=
-pcie_init=E2=80=99:
-arch/arm/mach-tegra/board-harmony-pcie.c:65:18: warning: ignoring retur=
-n
-    value of =E2=80=98regulator_enable=E2=80=99, declared with attribut=
-e
-    warn_unused_result [-Wunused-result]
+This provides the same benefits as using a K: regex option to match a
+set of filenames (see commit eb90d08 "get_maintainer: allow keywords to
+match filenames"), but without the disadvantage that "random" file
+content, such as comments,  will ever match the regex.
 
+Suggested-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/board-harmony-pcie.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+v2: Corrected typo in MAINTAINERS documentation
+---
+ MAINTAINERS               |    3 +++
+ scripts/get_maintainer.pl |    2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/board-harmony-pcie.c b/arch/arm/mach-t=
-egra/board-harmony-pcie.c
-index 3cdc1bb..d195db0 100644
---- a/arch/arm/mach-tegra/board-harmony-pcie.c
-+++ b/arch/arm/mach-tegra/board-harmony-pcie.c
-@@ -62,7 +62,11 @@ int __init harmony_pcie_init(void)
- 		goto err_reg;
- 	}
-=20
--	regulator_enable(regulator);
-+	err =3D regulator_enable(regulator);
-+	if (err) {
-+		pr_err("%s: regulator_enable failed: %d\n", __func__, err);
-+		goto err_en;
-+	}
-=20
- 	err =3D tegra_pcie_init(true, true);
- 	if (err) {
-@@ -74,6 +78,7 @@ int __init harmony_pcie_init(void)
-=20
- err_pcie:
- 	regulator_disable(regulator);
-+err_en:
- 	regulator_put(regulator);
- err_reg:
- 	gpio_free(en_vdd_1v05);
---=20
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9561658..c9b1e37 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -90,6 +90,9 @@ Descriptions of section entries:
+ 	   F:	drivers/net/*	all files in drivers/net, but not below
+ 	   F:	*/net/*		all files in "any top level directory"/net
+ 	   One pattern per line.  Multiple F: lines acceptable.
++	N: Files and directories with regex patterns.
++	   N:	[^a-z]tegra	all files whose patch contains the word tegra
++	   One pattern per line.  Multiple N: lines acceptable.
+ 	X: Files and directories that are NOT maintained, same rules as F:
+ 	   Files exclusions are tested before file matches.
+ 	   Can be useful for excluding a specific subdirectory, for instance:
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index ce4cc83..27dc5cb 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -611,7 +611,7 @@ sub get_maintainers {
+ 				    $hash{$tvi} = $value_pd;
+ 				}
+ 			    }
+-			} elsif ($type eq 'K') {
++			} elsif ($type eq 'K' || $type eq 'N') {
+ 			    if ($file =~ m/$value/x) {
+ 				$hash{$tvi} = 0;
+ 			    }
+-- 
 1.7.10.4
