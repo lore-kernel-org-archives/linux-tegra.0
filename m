@@ -1,73 +1,46 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 1/5] ARM: DT: tegra114: add APB DMA controller DT entry
-Date: Fri, 8 Mar 2013 19:22:58 +0530
-Message-ID: <1362750782-15174-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 4/5] ARM: DT: tegra114: add KBC controller DT entry
+Date: Fri, 8 Mar 2013 19:23:01 +0530
+Message-ID: <1362750782-15174-5-git-send-email-ldewangan@nvidia.com>
 References: <1362750782-15174-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1362750782-15174-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1362750782-15174-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra114 has 32 channels APB DMA controller. Add DT entry for
-APB DMA controllers and make it compatible with "nvidia,tegra114-apbdma".
+NVIDIA's Tegra114 SoCs have the matrix keyboard controller which
+supports 11x8 type of matrix. The number of rows and columns
+are configurable.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Add DT entry for KBC controller.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114.dtsi |   38 ++++++++++++++++++++++++++++++++++++++
- 1 files changed, 38 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 0eec49f..b73b8a6 100644
+index 686e33f..18fbd49 100644
 --- a/arch/arm/boot/dts/tegra114.dtsi
 +++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -38,6 +38,44 @@
- 		reg = <0x6000c004 0x14c>;
+@@ -248,6 +248,14 @@
+ 		clocks = <&tegra_car 4>;
  	};
  
-+	apbdma: dma {
-+		compatible = "nvidia,tegra114-apbdma";
-+		reg = <0x6000a000 0x1400>;
-+		interrupts = <0 104 0x04
-+			      0 105 0x04
-+			      0 106 0x04
-+			      0 107 0x04
-+			      0 108 0x04
-+			      0 109 0x04
-+			      0 110 0x04
-+			      0 111 0x04
-+			      0 112 0x04
-+			      0 113 0x04
-+			      0 114 0x04
-+			      0 115 0x04
-+			      0 116 0x04
-+			      0 117 0x04
-+			      0 118 0x04
-+			      0 119 0x04
-+			      0 128 0x04
-+			      0 129 0x04
-+			      0 130 0x04
-+			      0 131 0x04
-+			      0 132 0x04
-+			      0 133 0x04
-+			      0 134 0x04
-+			      0 135 0x04
-+			      0 136 0x04
-+			      0 137 0x04
-+			      0 138 0x04
-+			      0 139 0x04
-+			      0 140 0x04
-+			      0 141 0x04
-+			      0 142 0x04
-+			      0 143 0x04>;
-+		clocks = <&tegra_car 34>;
++	kbc {
++		compatible = "nvidia,tegra20-kbc";
++		reg = <0x7000e200 0x100>;
++		interrupts = <0 85 0x04>;
++		clocks = <&tegra_car 36>;
++		status = "disabled";
 +	};
 +
- 	gpio: gpio {
- 		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
- 		reg = <0x6000d000 0x1000>;
+ 	pmc {
+ 		compatible = "nvidia,tegra114-pmc";
+ 		reg = <0x7000e400 0x400>;
 -- 
 1.7.1.1
