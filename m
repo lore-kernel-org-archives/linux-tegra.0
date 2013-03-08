@@ -1,83 +1,74 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] spi: slink-tegra20: move runtime pm calls to transfer_one_message
-Date: Fri, 8 Mar 2013 11:51:19 +0530
-Message-ID: <1362723679-1155-1-git-send-email-ldewangan@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
+Date: Fri, 8 Mar 2013 09:08:37 +0200
+Message-ID: <20130308070836.GB21589@arwen.pp.htv.fi>
+References: <1362671126-24571-1-git-send-email-balbi@ti.com>
+ <5138FA7D.3040104@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MW5yreqqjyrRcusr"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5138FA7D.3040104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The prepare_transfer_hardware() is called in atomic context and
-calling synchronous runtime pm calls can create scheduling deadlock.
+--MW5yreqqjyrRcusr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Therefore, in place of calling runtime PM calls from prepare/unprepare
-message transfer, calling this in transfer_one_message().
+On Thu, Mar 07, 2013 at 01:37:17PM -0700, Stephen Warren wrote:
+> On 03/07/2013 08:45 AM, Felipe Balbi wrote:
+> > this will make sure that we have sensible names
+> > for all phy drivers. Current situation was already
+> > quite bad with too generic names being used.
+>=20
+> Is phy-$name specific enough? There are other types of PHY such as
+> Ethernet, etc. What about phy-usb-$name?
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/spi/spi-tegra20-slink.c |   25 ++++++++-----------------
- 1 files changed, 8 insertions(+), 17 deletions(-)
+we will be creating a generic (kernel-wide) phy layer, so I guess that
+matters very little. Specially since we don't want to be differentiating
+PHYs by their subsystem and rather by the IP name (which means
+phy-tegra, phy-samsung, phy-omap, are all 'wrong', but there were no
+better names).
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index b8698b3..a829563 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -858,21 +858,6 @@ static int tegra_slink_setup(struct spi_device *spi)
- 	return 0;
- }
- 
--static int tegra_slink_prepare_transfer(struct spi_master *master)
--{
--	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
--
--	return pm_runtime_get_sync(tspi->dev);
--}
--
--static int tegra_slink_unprepare_transfer(struct spi_master *master)
--{
--	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
--
--	pm_runtime_put(tspi->dev);
--	return 0;
--}
--
- static int tegra_slink_transfer_one_message(struct spi_master *master,
- 			struct spi_message *msg)
- {
-@@ -885,6 +870,12 @@ static int tegra_slink_transfer_one_message(struct spi_master *master,
- 
- 	msg->status = 0;
- 	msg->actual_length = 0;
-+	ret = pm_runtime_get_sync(tspi->dev);
-+	if (ret < 0) {
-+		dev_err(tspi->dev, "runtime get failed: %d\n", ret);
-+		goto done;
-+	}
-+
- 	single_xfer = list_is_singular(&msg->transfers);
- 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
- 		INIT_COMPLETION(tspi->xfer_completion);
-@@ -921,6 +912,8 @@ static int tegra_slink_transfer_one_message(struct spi_master *master,
- exit:
- 	tegra_slink_writel(tspi, tspi->def_command_reg, SLINK_COMMAND);
- 	tegra_slink_writel(tspi, tspi->def_command2_reg, SLINK_COMMAND2);
-+	pm_runtime_put(tspi->dev);
-+done:
- 	msg->status = ret;
- 	spi_finalize_current_message(master);
- 	return ret;
-@@ -1148,9 +1141,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 	/* the spi->mode bits understood by this driver: */
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
- 	master->setup = tegra_slink_setup;
--	master->prepare_transfer_hardware = tegra_slink_prepare_transfer;
- 	master->transfer_one_message = tegra_slink_transfer_one_message;
--	master->unprepare_transfer_hardware = tegra_slink_unprepare_transfer;
- 	master->num_chipselect = MAX_CHIP_SELECT;
- 	master->bus_num = -1;
- 
--- 
-1.7.1.1
+> Venu, please comment on what conflicts, if any, this will cause with the
+> patches you'll be sending to clean up the Tegra USB/PHY drivers. Thanks.
+
+BTW, let's stop with the whole dependency between PHY driver cleanup and
+arch/arm/mach-tegra/, too many patches have gone upstream bypassing my
+tree. What we should be doing is figuring out how to remove arch/
+dependencies so that patches can go upstream and not cause conflicts.
+
+cheers
+
+--=20
+balbi
+
+--MW5yreqqjyrRcusr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJROY50AAoJEIaOsuA1yqREnkEP/A+9oWop3XlI+lQnmKr8cHf1
+SOaz6I7o7USfwpFJapVzb5ThxdxN+KYDn6k8oM5rXDAShwlVleMulAsVp6iKA9eR
+q4caKwzd9wMwkjedFsu/FjHxgn5vCh/91ggLiZYTanU4FT0/h3W91n82U4OiUh9h
+2mDPz+qy5wROSEz0Na0FQgM/FhhxkN5mCd9zK7Kmo3acqQbA7YsEj1MkkT4whEVu
+9bvHRJ62qbLyNcgGWqgg/l8bvxMafplVkgLcbfdnOgnra9xNj+XQm/gRcPqze+YO
+EycjavO1mpEvjExQF8xOlptfKg8Q7izvJSO7BJltx5fU/cvxpgiDxbRnryAByHhw
+eb0C/5XsTin0xJAUZGZuIsFx8Hu7GxftNn4IIl5BDSoC7eQr+dCK4ajOXtm23lR4
+Lla9FmTCLPEuFXJ8hm5iN1VfGqpe/pH5qPy9INYz5T30eRxVmgUhWeKpPSe9xWyk
+vUw97t6lEF+n7uV3qJ6YCI6SByxYwvdtyFoXRvTHmgQUloEAqBkY/PRfUjYje+ab
+fLZsLjEfFnCmIq5BsIF33+ppllQKVkY/NEb0YMVuot0RA2Ho2YgVgbrmT70Gm+5b
+xVdxqgohPBqdiHtszS4uMGaOCq5Fq+kZOXhtuwz7gCx/eqNyRCKb2OBg3BBCRuuD
+dL3neLp2bx55H9Zg/IxU
+=qT0m
+-----END PGP SIGNATURE-----
+
+--MW5yreqqjyrRcusr--
