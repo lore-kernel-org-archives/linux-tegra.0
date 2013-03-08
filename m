@@ -1,33 +1,83 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 00/10] usb: phy: cleanups to Kconfig and directories
-Date: Thu, 07 Mar 2013 14:20:36 -0700
-Message-ID: <513904A4.7040101@wwwdotorg.org>
-References: <1362648969-13737-1-git-send-email-balbi@ti.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] spi: slink-tegra20: move runtime pm calls to transfer_one_message
+Date: Fri, 8 Mar 2013 11:51:19 +0530
+Message-ID: <1362723679-1155-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362648969-13737-1-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/07/2013 02:35 AM, Felipe Balbi wrote:
-> Hi folks,
-> 
-> inspired by Paul's DWC2 patchset which added usb_otg_state_string()
-> (a copy of otg_state_string()) I have now renamed otg_state_string()
-> to usb_otg_state_string(), moved it to usb-common, then moved all
-> phy drivers to drivers/usb/phy/ and completely deleted the otg directory.
-> 
-> We're also removing CONFIG_USB_OTG_UTILS since that has lots its
-> meaning long ago.
-> 
-> I have compiled all patches with allyes, allno and allmod configs,
-> but please make sure to test on your platforms to make sure we're
-> not leaking any more problems to mainline.
+The prepare_transfer_hardware() is called in atomic context and
+calling synchronous runtime pm calls can create scheduling deadlock.
 
-What branch do the patches apply to? They didn't "git am" for me on
-either next-20130305, nor
-git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git next.
+Therefore, in place of calling runtime PM calls from prepare/unprepare
+message transfer, calling this in transfer_one_message().
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/spi/spi-tegra20-slink.c |   25 ++++++++-----------------
+ 1 files changed, 8 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index b8698b3..a829563 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -858,21 +858,6 @@ static int tegra_slink_setup(struct spi_device *spi)
+ 	return 0;
+ }
+ 
+-static int tegra_slink_prepare_transfer(struct spi_master *master)
+-{
+-	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
+-
+-	return pm_runtime_get_sync(tspi->dev);
+-}
+-
+-static int tegra_slink_unprepare_transfer(struct spi_master *master)
+-{
+-	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
+-
+-	pm_runtime_put(tspi->dev);
+-	return 0;
+-}
+-
+ static int tegra_slink_transfer_one_message(struct spi_master *master,
+ 			struct spi_message *msg)
+ {
+@@ -885,6 +870,12 @@ static int tegra_slink_transfer_one_message(struct spi_master *master,
+ 
+ 	msg->status = 0;
+ 	msg->actual_length = 0;
++	ret = pm_runtime_get_sync(tspi->dev);
++	if (ret < 0) {
++		dev_err(tspi->dev, "runtime get failed: %d\n", ret);
++		goto done;
++	}
++
+ 	single_xfer = list_is_singular(&msg->transfers);
+ 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+ 		INIT_COMPLETION(tspi->xfer_completion);
+@@ -921,6 +912,8 @@ static int tegra_slink_transfer_one_message(struct spi_master *master,
+ exit:
+ 	tegra_slink_writel(tspi, tspi->def_command_reg, SLINK_COMMAND);
+ 	tegra_slink_writel(tspi, tspi->def_command2_reg, SLINK_COMMAND2);
++	pm_runtime_put(tspi->dev);
++done:
+ 	msg->status = ret;
+ 	spi_finalize_current_message(master);
+ 	return ret;
+@@ -1148,9 +1141,7 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	/* the spi->mode bits understood by this driver: */
+ 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
+ 	master->setup = tegra_slink_setup;
+-	master->prepare_transfer_hardware = tegra_slink_prepare_transfer;
+ 	master->transfer_one_message = tegra_slink_transfer_one_message;
+-	master->unprepare_transfer_hardware = tegra_slink_unprepare_transfer;
+ 	master->num_chipselect = MAX_CHIP_SELECT;
+ 	master->bus_num = -1;
+ 
+-- 
+1.7.1.1
