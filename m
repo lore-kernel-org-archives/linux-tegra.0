@@ -1,88 +1,169 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
-Date: Fri, 8 Mar 2013 09:38:22 +0200
-Message-ID: <20130308073821.GG21589@arwen.pp.htv.fi>
-References: <1362671126-24571-1-git-send-email-balbi@ti.com>
- <5138FA7D.3040104@wwwdotorg.org>
- <D958900912E20642BCBC71664EFECE3E6E50310DD2@BGMAIL02.nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv6 0/9] Support for Tegra 2D hardware
+Date: Fri, 8 Mar 2013 15:46:52 +0200
+Message-ID: <1362750421-18080-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WkfBGePaEyrk4zXB"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E50310DD2-QZ+emBqkIFBDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org" <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org" <kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org>, "p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org" <stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org>, "tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org" <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org" <yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---WkfBGePaEyrk4zXB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This set of patches adds support for Tegra20 and Tegra30 host1x and
+2D. It is based on linux-next-20130307.
 
-On Fri, Mar 08, 2013 at 12:51:13PM +0530, Venu Byravarasu wrote:
-> > -----Original Message-----
-> > From: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-tegra-
-> > owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Stephen Warren
-> > Sent: Friday, March 08, 2013 2:07 AM
-> > To: Felipe Balbi; Venu Byravarasu
-> > Cc: Linux USB Mailing List; Greg KH; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org; sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org; aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org;
-> > gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org;
-> > p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org; tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org;
-> > yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org
-> > Subject: Re: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
-> >=20
-> > On 03/07/2013 08:45 AM, Felipe Balbi wrote:
-> > > this will make sure that we have sensible names
-> > > for all phy drivers. Current situation was already
-> > > quite bad with too generic names being used.
-> >=20
-> > Is phy-$name specific enough? There are other types of PHY such as
-> > Ethernet, etc. What about phy-usb-$name?
-> >=20
-> > Venu, please comment on what conflicts, if any, this will cause with the
-> > patches you'll be sending to clean up the Tegra USB/PHY drivers. Thanks.
->=20
-> As this is just a name change, it should not cause any big issues, other =
-than porting
-> all changes on top of this new file. =20
->=20
-> Felipe,
-> When can we expect these changes getting merged into linux-next?
+Changes in this version:
+ * Rebased on latest tegradrm
+ * Renamed tegradrm's host1x to host1x_drm
+ * Indentation and line split fixed to follow tegradrm convention
+ * Pointers to platform_device replaced with pointers to device
+ * Added host1x allocator, and wired it in
+ * Debug spew code fixed to access mem handles from host1x_job
+ * CDMA code doesn't keep the mem handles anymore
+ * Push buffer ops have been made generic code
+ * Removed the pin_array optimization in host1x_job to simplify code
+ * Large number of smaller changes
 
-After -rc2 is tagged, I will have everything I need to start my -next
-branch. From that point on it should be in linux-next ;-)
+The driver implements an allocator using the DRM CMA helper. Each buffer is
+assigned an ops structure to operate on it. In future the DRM CMA helper will
+be replaced with an own allocator to implement IOMMU support.
 
---=20
-balbi
+host1x is the driver that controls host1x hardware. It supports
+host1x command channels, synchronization, and memory management. It
+is sectioned into logical driver under drivers/gpu/host1x and
+physical driver under drivers/host1x/hw. The physical driver is
+compiled with the hardware headers of the particular host1x version.
 
---WkfBGePaEyrk4zXB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+The hardware units are described (briefly) in the Tegra2 TRM. Wiki
+page http://http.download.nvidia.com/tegra-public-appnotes/host1x.html
+also contains a short description of the functionality.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+The patch set merges tegradrm into host1x and adds 2D driver, which
+uses host1x channels and sync points. The patch set also adds user
+space API to tegradrm for accessing host1x and 2D.
 
-iQIcBAEBAgAGBQJROZVtAAoJEIaOsuA1yqRE2b8P/2ZAuMIT2+zC1UUlYOhQ6MZ2
-SpyyzXeoENZ8ZkbnJwl2YUdCYvd1fWccrLaP94u3Y01fDCnljghPurCLlAy4uHPM
-AoUwpDNN83qUGUbBllRDYDoSMBigCgir86pfrK1CyvoQ8roPbgv535ypPlzNd5TH
-+mwK9HsL4/kASSZjloulxh9j7lkwVabKXbDsLEH4zcBKCzrfGoB36vVtCBMGwDlG
-XRnQTT0O2zNXF8aOiCbhigwBO4R7Ps6DDvZr6AkJy4ZqIRVTSqpxuhp4eY9m1nd2
-4xLdwAOyHLxMtroGiiMgIDaBGHvZHn3uNNGgx7ALsK8Hot/xF+ye/jzDKhs3p/Cq
-L1lU81Zeulb+5UVsPV3os+o5CpmEjsoCRlu4BMSY+ya7dYKUyohBAcqEfM50YX42
-Q3KrXZlZ+ktF56ix4Ws0wLxJjsrboghSdPBCTbNckRYOo/+KrWNwlG9KsOkLzpSO
-NyiOou7et9xpAVrO02UHsKWgRd0KWGNLf4n83FSiGtIXT0K2A2ARh8eD1WaetwyX
-bPyleiB+2IRmuWW0NL+yFE5LFgGdFGV0AnS73M+UNk+wLz/NR/U3mb51FSnqc7Rn
-xDtBrYF1DCIbva5+knmZfKuY3HgmS2YaC3Svb+P5DvSRBL/gICw6jkyyKxY7zXmA
-IMwI+dP2VG+n3Pi9WB1d
-=EtXZ
------END PGP SIGNATURE-----
+The changes to add support to libdrm are in
+git-OGgr7I4mDcYgsBAKwltoeQ@public.gmane.org:linux-host1x/libdrm-host1x.git
 
---WkfBGePaEyrk4zXB--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Arto Merilainen (2):
+  gpu: host1x: drm: Rename host1x to host1x_drm
+  gpu: host1x: drm: Add CMA ops for host1x driver
+
+Terje Bergstrom (7):
+  gpu: host1x: Add host1x driver
+  gpu: host1x: Add syncpoint wait and interrupts
+  gpu: host1x: Add channel support
+  gpu: host1x: Add debug support
+  drm: tegra: Move drm to live under host1x
+  gpu: host1x: Remove second host1x driver
+  drm: tegra: Add gr2d device
+
+ drivers/gpu/Makefile                           |    1 +
+ drivers/gpu/drm/Kconfig                        |    2 -
+ drivers/gpu/drm/Makefile                       |    1 -
+ drivers/gpu/drm/tegra/Makefile                 |    7 -
+ drivers/gpu/drm/tegra/drm.c                    |  217 --------
+ drivers/gpu/drm/tegra/host1x.c                 |  327 ------------
+ drivers/gpu/host1x/Kconfig                     |   23 +
+ drivers/gpu/host1x/Makefile                    |   21 +
+ drivers/gpu/host1x/cdma.c                      |  491 ++++++++++++++++++
+ drivers/gpu/host1x/cdma.h                      |  102 ++++
+ drivers/gpu/host1x/channel.c                   |  120 +++++
+ drivers/gpu/host1x/channel.h                   |   52 ++
+ drivers/gpu/host1x/debug.c                     |  210 ++++++++
+ drivers/gpu/host1x/debug.h                     |   51 ++
+ drivers/gpu/host1x/dev.c                       |  248 +++++++++
+ drivers/gpu/host1x/dev.h                       |  317 ++++++++++++
+ drivers/gpu/{drm/tegra => host1x/drm}/Kconfig  |    2 +-
+ drivers/gpu/host1x/drm/cma.c                   |   87 ++++
+ drivers/gpu/host1x/drm/cma.h                   |   26 +
+ drivers/gpu/{drm/tegra => host1x/drm}/dc.c     |    5 +-
+ drivers/gpu/{drm/tegra => host1x/drm}/dc.h     |    0
+ drivers/gpu/host1x/drm/drm.c                   |  661 ++++++++++++++++++++++++
+ drivers/gpu/{drm/tegra => host1x/drm}/drm.h    |   51 +-
+ drivers/gpu/{drm/tegra => host1x/drm}/fb.c     |    6 +-
+ drivers/gpu/host1x/drm/gr2d.c                  |  325 ++++++++++++
+ drivers/gpu/{drm/tegra => host1x/drm}/hdmi.c   |    5 +-
+ drivers/gpu/{drm/tegra => host1x/drm}/hdmi.h   |    0
+ drivers/gpu/{drm/tegra => host1x/drm}/output.c |    0
+ drivers/gpu/{drm/tegra => host1x/drm}/rgb.c    |    0
+ drivers/gpu/host1x/host1x.h                    |   29 ++
+ drivers/gpu/host1x/host1x_client.h             |   35 ++
+ drivers/gpu/host1x/hw/Makefile                 |    6 +
+ drivers/gpu/host1x/hw/cdma_hw.c                |  327 ++++++++++++
+ drivers/gpu/host1x/hw/channel_hw.c             |  167 ++++++
+ drivers/gpu/host1x/hw/debug_hw.c               |  322 ++++++++++++
+ drivers/gpu/host1x/hw/host1x01.c               |   42 ++
+ drivers/gpu/host1x/hw/host1x01.h               |   25 +
+ drivers/gpu/host1x/hw/host1x01_hardware.h      |  143 +++++
+ drivers/gpu/host1x/hw/hw_host1x01_channel.h    |  120 +++++
+ drivers/gpu/host1x/hw/hw_host1x01_sync.h       |  243 +++++++++
+ drivers/gpu/host1x/hw/hw_host1x01_uclass.h     |  174 +++++++
+ drivers/gpu/host1x/hw/intr_hw.c                |  143 +++++
+ drivers/gpu/host1x/hw/syncpt_hw.c              |  114 ++++
+ drivers/gpu/host1x/intr.c                      |  354 +++++++++++++
+ drivers/gpu/host1x/intr.h                      |  102 ++++
+ drivers/gpu/host1x/job.c                       |  598 +++++++++++++++++++++
+ drivers/gpu/host1x/job.h                       |  158 ++++++
+ drivers/gpu/host1x/memmgr.c                    |   82 +++
+ drivers/gpu/host1x/memmgr.h                    |   64 +++
+ drivers/gpu/host1x/syncpt.c                    |  387 ++++++++++++++
+ drivers/gpu/host1x/syncpt.h                    |  165 ++++++
+ drivers/video/Kconfig                          |    2 +
+ include/drm/tegra_drm.h                        |  131 +++++
+ include/trace/events/host1x.h                  |  272 ++++++++++
+ 54 files changed, 6987 insertions(+), 576 deletions(-)
+ delete mode 100644 drivers/gpu/drm/tegra/Makefile
+ delete mode 100644 drivers/gpu/drm/tegra/drm.c
+ delete mode 100644 drivers/gpu/drm/tegra/host1x.c
+ create mode 100644 drivers/gpu/host1x/Kconfig
+ create mode 100644 drivers/gpu/host1x/Makefile
+ create mode 100644 drivers/gpu/host1x/cdma.c
+ create mode 100644 drivers/gpu/host1x/cdma.h
+ create mode 100644 drivers/gpu/host1x/channel.c
+ create mode 100644 drivers/gpu/host1x/channel.h
+ create mode 100644 drivers/gpu/host1x/debug.c
+ create mode 100644 drivers/gpu/host1x/debug.h
+ create mode 100644 drivers/gpu/host1x/dev.c
+ create mode 100644 drivers/gpu/host1x/dev.h
+ rename drivers/gpu/{drm/tegra => host1x/drm}/Kconfig (94%)
+ create mode 100644 drivers/gpu/host1x/drm/cma.c
+ create mode 100644 drivers/gpu/host1x/drm/cma.h
+ rename drivers/gpu/{drm/tegra => host1x/drm}/dc.c (99%)
+ rename drivers/gpu/{drm/tegra => host1x/drm}/dc.h (100%)
+ create mode 100644 drivers/gpu/host1x/drm/drm.c
+ rename drivers/gpu/{drm/tegra => host1x/drm}/drm.h (82%)
+ rename drivers/gpu/{drm/tegra => host1x/drm}/fb.c (89%)
+ create mode 100644 drivers/gpu/host1x/drm/gr2d.c
+ rename drivers/gpu/{drm/tegra => host1x/drm}/hdmi.c (99%)
+ rename drivers/gpu/{drm/tegra => host1x/drm}/hdmi.h (100%)
+ rename drivers/gpu/{drm/tegra => host1x/drm}/output.c (100%)
+ rename drivers/gpu/{drm/tegra => host1x/drm}/rgb.c (100%)
+ create mode 100644 drivers/gpu/host1x/host1x.h
+ create mode 100644 drivers/gpu/host1x/host1x_client.h
+ create mode 100644 drivers/gpu/host1x/hw/Makefile
+ create mode 100644 drivers/gpu/host1x/hw/cdma_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/channel_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x01.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_channel.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_uclass.h
+ create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
+ create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
+ create mode 100644 drivers/gpu/host1x/intr.c
+ create mode 100644 drivers/gpu/host1x/intr.h
+ create mode 100644 drivers/gpu/host1x/job.c
+ create mode 100644 drivers/gpu/host1x/job.h
+ create mode 100644 drivers/gpu/host1x/memmgr.c
+ create mode 100644 drivers/gpu/host1x/memmgr.h
+ create mode 100644 drivers/gpu/host1x/syncpt.c
+ create mode 100644 drivers/gpu/host1x/syncpt.h
+ create mode 100644 include/drm/tegra_drm.h
+ create mode 100644 include/trace/events/host1x.h
+
+-- 
+1.7.9.5
