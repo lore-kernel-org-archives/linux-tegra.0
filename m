@@ -1,88 +1,59 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 00/10] usb: phy: cleanups to Kconfig and directories
-Date: Fri, 08 Mar 2013 11:37:17 -0700
-Message-ID: <513A2FDD.2040800@wwwdotorg.org>
-References: <1362648969-13737-1-git-send-email-balbi@ti.com> <513904A4.7040101@wwwdotorg.org> <20130308071453.GD21589@arwen.pp.htv.fi> <513A1C63.9050704@wwwdotorg.org> <20130308182623.GD900@arwen.pp.htv.fi>
+Subject: Re: [PATCH 3/5] ARM: DT: tegra114:add aliases and DMA requestor for
+ serial controller
+Date: Fri, 08 Mar 2013 11:40:38 -0700
+Message-ID: <513A30A6.3040806@wwwdotorg.org>
+References: <1362750782-15174-1-git-send-email-ldewangan@nvidia.com> <1362750782-15174-4-git-send-email-ldewangan@nvidia.com> <513A25E4.8040504@wwwdotorg.org> <513A281B.9010702@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130308182623.GD900-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+In-Reply-To: <513A281B.9010702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/08/2013 11:26 AM, Felipe Balbi wrote:
-> On Fri, Mar 08, 2013 at 10:14:11AM -0700, Stephen Warren wrote:
->> On 03/08/2013 12:14 AM, Felipe Balbi wrote:
->>> Hi,
->>> 
->>> On Thu, Mar 07, 2013 at 02:20:36PM -0700, Stephen Warren
->>> wrote:
->>>> On 03/07/2013 02:35 AM, Felipe Balbi wrote:
->>>>> Hi folks,
->>>>> 
->>>>> inspired by Paul's DWC2 patchset which added 
->>>>> usb_otg_state_string() (a copy of otg_state_string()) I
->>>>> have now renamed otg_state_string() to
->>>>> usb_otg_state_string(), moved it to usb-common, then moved
->>>>> all phy drivers to drivers/usb/phy/ and completely deleted
->>>>> the otg directory.
->>>>> 
->>>>> We're also removing CONFIG_USB_OTG_UTILS since that has
->>>>> lots its meaning long ago.
->>>>> 
->>>>> I have compiled all patches with allyes, allno and allmod 
->>>>> configs, but please make sure to test on your platforms to
->>>>> make sure we're not leaking any more problems to mainline.
->>>> 
->>>> What branch do the patches apply to? They didn't "git am" for
->>>> me on either next-20130305, nor 
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git 
->>>> next.
->>> 
->>> they're on top of my testing branch.
->> 
->> Ah, thanks. I took that whole branch, built ARM's
->> tegra_defconfig, and see:
->> 
->>> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects
->>> USB_ULPI which has unmet direct dependencies (USB_SUPPORT &&
->>> USB_PHY && ARM) warning: (ARCH_TEGRA_2x_SOC &&
->>> ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet
->>> direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
->>> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects
->>> USB_ULPI which has unmet direct dependencies (USB_SUPPORT &&
->>> USB_PHY && ARM) warning: (ARCH_TEGRA_2x_SOC &&
->>> ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet
->>> direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
->> 
->> Manually enabling USB_PHY fixes this. However, this highlights
->> an issue with your removal of all selects (as mentioned in your
->> other email) - it will break perhaps any defconfig that has USB
->> enabled.
->> 
->> After enabling USB_PHY, the code builds and runs without issue.
+On 03/08/2013 11:04 AM, Laxman Dewangan wrote:
+> On Friday 08 March 2013 11:24 PM, Stephen Warren wrote:
+>> On 03/08/2013 06:53 AM, Laxman Dewangan wrote:
+>>> Add APB DMA requestor and serial aliases for serial controller.
+>>> There will be two serial driver i.e. 8250 based simple serial driver
+>>> and APB DMA based serial driver for higher baudrate and performace.
+>>>
+>>> The simple serial driver get enabled with compatible nvidia,tegra20-uart
+>>> and APB DMA based driver will get enabled with compatible
+>>> nvidia,tegra30-hsuart.
+
+>>> diff --git a/arch/arm/boot/dts/tegra114.dtsi
+>>> b/arch/arm/boot/dts/tegra114.dtsi
+>>> +    /*
+>>> +     * There are two serial driver i.e. 8250 based simple serial
+>>> +     * driver and APB DMA based serial driver for higher baudrate
+>>> +     * and performace. To enable the 8250 based driver, the compatible
+>>> +     * is "nvidia,tegra30-uart", "nvidia,tegra20-uart" and to enable
+>>> +     * the APB DMA based serial driver, the comptible is
+>>> +     * "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart".
+>>> +     */
+>> Any references to Tegra30 there should be changed to Tegra114 I think.
 > 
-> fair enough, but then I'm just exposing the trouble. ARCH
-> shouldn't select USB_ULTI or any of the phy drivers, for that
-> matter.
+> Ok, there is not change on tegra30 and Tegra114, also we have not added
+> the tegra114 compatible in driver file.
 
-Yes, I think it should instead work like:
+As I mentioned elsewhere, compatible must always include the most
+specific value; nvidia,tegra114-uart in this case. If the HW is
+backwards-compatible, then also include entries for the HW it's
+compatible with.
 
-ARCH_TEGRA* selects nothing in particular related to USB.
+Hence here, you want:
 
-The Tegra EHCI controller Kconfig depends on ARCH_TEGRA so it doesn't
-show up for other builds. I hope it's OK for the EHCI controller to
-select USB_ARCH_HAS_EHCI?
+compatible = "nvidia,tegra114-uart", "nvdia,tegra20-uart";
 
-The Tegra EHCI controller Kconfig selects everything needed for it to
-be useful, i.e. PHY support and the Tegra PHY, and I guess the ULPI
-viewport options.
+Since the compatible value here shouldn't include any Tegra30-related
+value, the comment shouldn't say that it should.
 
-The Tegra PHY Kconfig probably shouldn't be user-visible (relying on
-being selected by the Tegra EHCI controller) and itself selects
-anything it relies on.
-
-Does that sound reasonable?
+Note that when there are multiple values in the compatible property,
+even if the driver doesn't know about the first value, it will still get
+matched based upon the 2nd/3rd/... value, so even though the driver
+doesn't explicitly know about nvidia,tegra114-uart, it will still get
+instantiated, because it does support nvdia,tegra20-uart.
