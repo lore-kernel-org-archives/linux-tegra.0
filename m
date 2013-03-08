@@ -1,40 +1,65 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/4] spi: remove unused Tegra platform data header
-Date: Fri, 8 Mar 2013 12:10:26 -0500
-Message-ID: <513A1B82.6060101@nvidia.com>
-References: <1360965830-19795-1-git-send-email-swarren@wwwdotorg.org> <1360965830-19795-4-git-send-email-swarren@wwwdotorg.org> <20130302230217.1F9353E32AB@localhost>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 00/10] usb: phy: cleanups to Kconfig and directories
+Date: Fri, 08 Mar 2013 10:14:11 -0700
+Message-ID: <513A1C63.9050704@wwwdotorg.org>
+References: <1362648969-13737-1-git-send-email-balbi@ti.com> <513904A4.7040101@wwwdotorg.org> <20130308071453.GD21589@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130302230217.1F9353E32AB@localhost>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130308071453.GD21589-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/2/2013 6:02 PM, Grant Likely wrote:
-> On Fri, 15 Feb 2013 15:03:50 -0700, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> The platform data header is no longer used. Delete it.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> I like the diffstat for this series. Applied!
->
-> Thanks,
-> g.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Grant, I was looking to pull these patches. I don't see them in 
-linux-next and I
-looked at your repo and didn't see them. Can you give me a pointer?
+On 03/08/2013 12:14 AM, Felipe Balbi wrote:
+> Hi,
+> 
+> On Thu, Mar 07, 2013 at 02:20:36PM -0700, Stephen Warren wrote:
+>> On 03/07/2013 02:35 AM, Felipe Balbi wrote:
+>>> Hi folks,
+>>> 
+>>> inspired by Paul's DWC2 patchset which added
+>>> usb_otg_state_string() (a copy of otg_state_string()) I have
+>>> now renamed otg_state_string() to usb_otg_state_string(), moved
+>>> it to usb-common, then moved all phy drivers to
+>>> drivers/usb/phy/ and completely deleted the otg directory.
+>>> 
+>>> We're also removing CONFIG_USB_OTG_UTILS since that has lots
+>>> its meaning long ago.
+>>> 
+>>> I have compiled all patches with allyes, allno and allmod
+>>> configs, but please make sure to test on your platforms to make
+>>> sure we're not leaking any more problems to mainline.
+>> 
+>> What branch do the patches apply to? They didn't "git am" for me
+>> on either next-20130305, nor 
+>> git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git
+>> next.
+> 
+> they're on top of my testing branch.
 
-Thanks,
-Rhyland
+Ah, thanks. I took that whole branch, built ARM's tegra_defconfig, and
+see:
 
--- 
-nvpublic
+> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI
+> which has unmet direct dependencies (USB_SUPPORT && USB_PHY &&
+> ARM) warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects
+> USB_ULPI_VIEWPORT which has unmet direct dependencies (USB_SUPPORT
+> && USB_PHY && USB_ULPI) warning: (ARCH_TEGRA_2x_SOC &&
+> ARCH_TEGRA_3x_SOC) selects USB_ULPI which has unmet direct
+> dependencies (USB_SUPPORT && USB_PHY && ARM) warning:
+> (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT
+> which has unmet direct dependencies (USB_SUPPORT && USB_PHY &&
+> USB_ULPI)
+
+Manually enabling USB_PHY fixes this. However, this highlights an
+issue with your removal of all selects (as mentioned in your other
+email) - it will break perhaps any defconfig that has USB enabled.
+
+After enabling USB_PHY, the code builds and runs without issue.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
