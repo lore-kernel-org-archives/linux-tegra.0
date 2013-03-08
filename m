@@ -1,50 +1,88 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
-Date: Fri, 08 Mar 2013 11:33:48 -0700
-Message-ID: <513A2F0C.8090201@wwwdotorg.org>
-References: <1362671126-24571-1-git-send-email-balbi@ti.com> <5138FA7D.3040104@wwwdotorg.org> <20130308070836.GB21589@arwen.pp.htv.fi>
+Subject: Re: [PATCH 00/10] usb: phy: cleanups to Kconfig and directories
+Date: Fri, 08 Mar 2013 11:37:17 -0700
+Message-ID: <513A2FDD.2040800@wwwdotorg.org>
+References: <1362648969-13737-1-git-send-email-balbi@ti.com> <513904A4.7040101@wwwdotorg.org> <20130308071453.GD21589@arwen.pp.htv.fi> <513A1C63.9050704@wwwdotorg.org> <20130308182623.GD900@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130308070836.GB21589-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130308182623.GD900-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-l0cyMroinI0@public.gmane.org
-Cc: vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, cbou-JGs/UdohzUI@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/08/2013 12:08 AM, Felipe Balbi wrote:
-> On Thu, Mar 07, 2013 at 01:37:17PM -0700, Stephen Warren wrote:
->> On 03/07/2013 08:45 AM, Felipe Balbi wrote:
->>> this will make sure that we have sensible names for all phy
->>> drivers. Current situation was already quite bad with too
->>> generic names being used.
+On 03/08/2013 11:26 AM, Felipe Balbi wrote:
+> On Fri, Mar 08, 2013 at 10:14:11AM -0700, Stephen Warren wrote:
+>> On 03/08/2013 12:14 AM, Felipe Balbi wrote:
+>>> Hi,
+>>> 
+>>> On Thu, Mar 07, 2013 at 02:20:36PM -0700, Stephen Warren
+>>> wrote:
+>>>> On 03/07/2013 02:35 AM, Felipe Balbi wrote:
+>>>>> Hi folks,
+>>>>> 
+>>>>> inspired by Paul's DWC2 patchset which added 
+>>>>> usb_otg_state_string() (a copy of otg_state_string()) I
+>>>>> have now renamed otg_state_string() to
+>>>>> usb_otg_state_string(), moved it to usb-common, then moved
+>>>>> all phy drivers to drivers/usb/phy/ and completely deleted
+>>>>> the otg directory.
+>>>>> 
+>>>>> We're also removing CONFIG_USB_OTG_UTILS since that has
+>>>>> lots its meaning long ago.
+>>>>> 
+>>>>> I have compiled all patches with allyes, allno and allmod 
+>>>>> configs, but please make sure to test on your platforms to
+>>>>> make sure we're not leaking any more problems to mainline.
+>>>> 
+>>>> What branch do the patches apply to? They didn't "git am" for
+>>>> me on either next-20130305, nor 
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git 
+>>>> next.
+>>> 
+>>> they're on top of my testing branch.
 >> 
->> Is phy-$name specific enough? There are other types of PHY such
->> as Ethernet, etc. What about phy-usb-$name?
+>> Ah, thanks. I took that whole branch, built ARM's
+>> tegra_defconfig, and see:
+>> 
+>>> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects
+>>> USB_ULPI which has unmet direct dependencies (USB_SUPPORT &&
+>>> USB_PHY && ARM) warning: (ARCH_TEGRA_2x_SOC &&
+>>> ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet
+>>> direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
+>>> warning: (ARCH_TEGRA_2x_SOC && ARCH_TEGRA_3x_SOC) selects
+>>> USB_ULPI which has unmet direct dependencies (USB_SUPPORT &&
+>>> USB_PHY && ARM) warning: (ARCH_TEGRA_2x_SOC &&
+>>> ARCH_TEGRA_3x_SOC) selects USB_ULPI_VIEWPORT which has unmet
+>>> direct dependencies (USB_SUPPORT && USB_PHY && USB_ULPI)
+>> 
+>> Manually enabling USB_PHY fixes this. However, this highlights
+>> an issue with your removal of all selects (as mentioned in your
+>> other email) - it will break perhaps any defconfig that has USB
+>> enabled.
+>> 
+>> After enabling USB_PHY, the code builds and runs without issue.
 > 
-> we will be creating a generic (kernel-wide) phy layer, so I guess
-> that matters very little. Specially since we don't want to be
-> differentiating PHYs by their subsystem and rather by the IP name
-> (which means phy-tegra, phy-samsung, phy-omap, are all 'wrong', but
-> there were no better names).
+> fair enough, but then I'm just exposing the trouble. ARCH
+> shouldn't select USB_ULTI or any of the phy drivers, for that
+> matter.
 
-On other thought here: The Tegra PHY in question here very
-specifically is a USB PHY. There's no way it could be used as e.g. a
-SATA PHY, either as a HW block or given the driver code that program
-is. Is sharing a PHY IP block or driver ever possible for any HW?
+Yes, I think it should instead work like:
 
-Hence, I don't think removing "USB" from the filename makes sense, nor
-even moving it into a generic PHY directory.
+ARCH_TEGRA* selects nothing in particular related to USB.
 
-By the same logic, any code for Tegra30's SATA PHY should also be in
-phy-tegra.c, but that name would conflict. Naming them phy-tegra-usb.c
-and phy-tegra-sata.c, or something specific like that, would avoid any
-issue. And actually, better phy-tegra20-usb.c since Tegra114 has some
-XHCI support, and I have no idea if the PHY code for that will end up
-being at all related to the existing Tegra20 code, so we might need a
-separate phy-tegra114-usb.c down the road.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The Tegra EHCI controller Kconfig depends on ARCH_TEGRA so it doesn't
+show up for other builds. I hope it's OK for the EHCI controller to
+select USB_ARCH_HAS_EHCI?
+
+The Tegra EHCI controller Kconfig selects everything needed for it to
+be useful, i.e. PHY support and the Tegra PHY, and I guess the ULPI
+viewport options.
+
+The Tegra PHY Kconfig probably shouldn't be user-visible (relying on
+being selected by the Tegra EHCI controller) and itself selects
+anything it relies on.
+
+Does that sound reasonable?
