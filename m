@@ -1,49 +1,187 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: DT: tegra20/tegra30: Correct clock id for UARTB
-Date: Fri, 8 Mar 2013 19:30:45 +0530
-Message-ID: <1362751245-32432-1-git-send-email-ldewangan@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv5,RESEND 3/8] gpu: host1x: Add channel support
+Date: Fri, 8 Mar 2013 18:16:16 +0200
+Message-ID: <513A0ED0.4070701@nvidia.com>
+References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-4-git-send-email-tbergstrom@nvidia.com> <20130225152457.GA29545@avionic-0098.mockup.avionic-design.de> <512C84E2.5090201@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <512C84E2.5090201-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-UARTB clock bit in CAR register is 7. Correcting this
-in DTS file.
+On 26.02.2013 11:48, Terje Bergstr=F6m wrote:
+> On 25.02.2013 17:24, Thierry Reding wrote:
+>> You use two different styles to indent the function parameters. You
+>> might want to stick to one, preferably aligning them with the first
+>> parameter on the first line.
+>=20
+> I've generally favored "two tabs" indenting, but we'll anyway
+> standardize on one.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20.dtsi |    2 +-
- arch/arm/boot/dts/tegra30.dtsi |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+We standardized on the convention used in tegradrm, i.e. aligning with
+first parameter.
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index bbbe2de..b89fea2 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -260,7 +260,7 @@
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 9>;
--		clocks = <&tegra_car 96>;
-+		clocks = <&tegra_car 7>;
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index eddd0f9..0c9532b 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -247,7 +247,7 @@
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 9>;
--		clocks = <&tegra_car 160>;
-+		clocks = <&tegra_car 7>;
- 		status = "disabled";
- 	};
- 
--- 
-1.7.1.1
+>> There's nothing in this function that requires a platform_device, so
+>> passing struct device should be enough. Or maybe host1x_cdma should =
+get
+>> a struct device * field?
+>=20
+> I think we'll just start using struct device * in general in code.
+> Arto's been already fixing a lot of these, so he might've already fix=
+ed
+> this.
+
+We did a sweep in the code and now I hope everything that can, uses
+struct device *. The side effect was getting rid of a lot of casting,
+which is good.
+
+>> Why don't you use any of the kernel's reference counting mechanisms?
+>>
+>>> +void host1x_channel_put(struct host1x_channel *ch)
+>>> +{
+>>> +     mutex_lock(&ch->reflock);
+>>> +     if (ch->refcount =3D=3D 1) {
+>>> +             host1x_get_host(ch->dev)->cdma_op.stop(&ch->cdma);
+>>> +             host1x_cdma_deinit(&ch->cdma);
+>>> +     }
+>>> +     ch->refcount--;
+>>> +     mutex_unlock(&ch->reflock);
+>>> +}
+>>
+>> I think you can do all of this using a kref.
+>=20
+> I think the original reason was that there's no reason to use atomic
+> kref, as we anyway have to do mutual exclusion via mutex. But, using
+> kref won't be any problem, so we could use that.
+
+Actually, we ended up with a problem with this. kref assumes that once
+refcount goes to zero, it gets destroyed. In ch->refcount, going to zer=
+o
+is just fine and just indicates that we need to initialize. And, we
+anyway need to do locking, so we didn't do the conversion to kref.
+
+>>> +struct host1x_channel *host1x_channel_alloc(struct platform_device=
+ *pdev)
+>>> +{
+(...)
+>>> +}
+>>
+>> I think the critical section could be shorter here. It's probably no=
+t
+>> worth the extra trouble, though, given that channels are not often
+>> allocated.
+>=20
+> Yeah, boot time isn't measured in microseconds. :-) But, if we just m=
+ake
+> allocated_channels an atomic, we should be able to drop chlist_mutex
+> altogether and it could simplify the code.
+
+There wasn't much we could have moved outside the critical section, so
+we didn't touch this area.
+
+>> Also, is it really necessary to abstract these into an ops structure=
+? I
+>> get that newer hardware revisions might require different ops for sy=
+nc-
+>> point handling because the register layout or number of syncpoints m=
+ay
+>> be different, but the CDMA and push buffer (below) concepts are pret=
+ty
+>> much a software abstraction, and as such its implementation is unlik=
+ely
+>> to change with some future hardware revision.
+>=20
+> Pushbuffer ops can become generic. There's only one catch - init uses
+> the restart opcode. But the opcode is not going to change, so we can
+> generalize that.
+
+We ended up keeping the init as an operation, but rest of push buffer
+ops became generic.
+
+>>
+>>> +/*
+>>> + * Push two words to the push buffer
+>>> + * Caller must ensure push buffer is not full
+>>> + */
+>>> +static void push_buffer_push_to(struct push_buffer *pb,
+>>> +             struct mem_handle *handle,
+>>> +             u32 op1, u32 op2)
+>>> +{
+>>> +     u32 cur =3D pb->cur;
+>>> +     u32 *p =3D (u32 *)((u32)pb->mapped + cur);
+>>
+>> You do all this extra casting to make sure to increment by bytes and=
+ not
+>> 32-bit words. How about you change pb->cur to contain the word index=
+, so
+>> that you don't have to go through hoops each time around.
+
+When we changed DMASTART and DMAEND to actually denote the push buffer
+area, we noticed that DMAGET and DMAPUT are actually relative to
+DMASTART and DMAEND. This and the need to access both CPU and device
+virtual addresses coupled with changing to word indexes didn't actually
+simplify the code, so we kept still using byte indexes.
+
+>>
+>>> +/*
+>>> + * Return the number of two word slots free in the push buffer
+>>> + */
+>>> +static u32 push_buffer_space(struct push_buffer *pb)
+>>> +{
+>>> +     return ((pb->fence - pb->cur) & (PUSH_BUFFER_SIZE - 1)) / 8;
+>>> +}
+>>
+>> Why & (PUSH_BUFFER_SIZE - 1) here? fence - cur can never be larger t=
+han
+>> PUSH_BUFFER_SIZE, can it?
+>=20
+> You're right, this function doesn't need to worry about wrapping.
+
+Arto noticed this, but actually I was wrong - the wrapping is very
+possible. We just have to remember that if we're processing something a=
+t
+the end of push buffer, cur might be in the end, and fence in the begin=
+ning.
+
+>>> diff --git a/drivers/gpu/host1x/memmgr.h b/drivers/gpu/host1x/memmg=
+r.h
+>> [...]
+>>> +struct mem_handle;
+>>> +struct platform_device;
+>>> +
+>>> +struct host1x_job_unpin_data {
+>>> +     struct mem_handle *h;
+>>> +     struct sg_table *mem;
+>>> +};
+>>> +
+>>> +enum mem_mgr_flag {
+>>> +     mem_mgr_flag_uncacheable =3D 0,
+>>> +     mem_mgr_flag_write_combine =3D 1,
+>>> +};
+>>
+>> I'd like to see this use a more object-oriented approach and more co=
+mmon
+>> terminology. All of these handles are essentially buffer objects, so
+>> maybe something like host1x_bo would be a nice and short name.
+
+We did this a bit differently, but following pretty much the same
+principles. We have host1x_mem_handle, which contains an ops pointer.
+The handle gets encapsulated inside drm_gem_cma_object.
+
+_bo structs seem to usually contains a drm_gem_object, so we thought
+it's better not to reuse that term.
+
+Please check the code and let us know what you think. This pretty much
+follows what Lucas proposed a while ago, and keeps neatly the DRM
+specific parts inside the drm directory.
+
+Other than these, we should have implemented all changes that we agreed
+to include. If something's missing, it's because there were so many tha=
+t
+we just dropped the ball.
+
+Terje
