@@ -1,79 +1,82 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 2/5] rtc: tegra: Use struct dev_pm_ops for power management
-Date: Sat, 9 Mar 2013 23:39:46 +0530
-Message-ID: <1362852588-13362-3-git-send-email-ldewangan@nvidia.com>
-References: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V2 1/5] ARM: DT: tegra114: add APB DMA controller DT entry
+Date: Sat, 9 Mar 2013 23:41:14 +0530
+Message-ID: <1362852678-13421-2-git-send-email-ldewangan@nvidia.com>
+References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, a.zummo@towertech.it
-Cc: swarren@wwwdotorg.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: swarren@wwwdotorg.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Make the Tegra RTC controller driver define its PM callbacks through
-a struct dev_pm_ops object rather than by using legacy PM hooks
-in struct platform_driver.
+NVIDIA's Tegra114 has 32 channels APB DMA controller. Add DT entry for
+APB DMA controllers and make it compatible with "nvidia,tegra114-apbdma".
+
+Tegra114 DMA controller is not compatible with Tegra30/Tegra20 DMA
+controller driver as in T114, the global pause also clock gate the
+DMA register and hence it iw not possible to write the DMA register
+with global pause.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/rtc/rtc-tegra.c |   19 +++++++++----------
- 1 files changed, 9 insertions(+), 10 deletions(-)
+Changes from V1:
+- Add reeason why APBDMA is not compatible with older driver
+  in description.
 
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index d64cde6..f7718de 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -391,10 +391,9 @@ static int __exit tegra_rtc_remove(struct platform_device *pdev)
- }
+ arch/arm/boot/dts/tegra114.dtsi |   38 ++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 38 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 0eec49f..b73b8a6 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -38,6 +38,44 @@
+ 		reg = <0x6000c004 0x14c>;
+ 	};
  
- #ifdef CONFIG_PM_SLEEP
--static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
-+static int tegra_rtc_suspend(struct device *dev)
- {
--	struct device *dev = &pdev->dev;
--	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-+	struct tegra_rtc_info *info = dev_get_drvdata(dev);
- 
- 	tegra_rtc_wait_while_busy(dev);
- 
-@@ -416,10 +415,9 @@ static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
- 	return 0;
- }
- 
--static int tegra_rtc_resume(struct platform_device *pdev)
-+static int tegra_rtc_resume(struct device *dev)
- {
--	struct device *dev = &pdev->dev;
--	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-+	struct tegra_rtc_info *info = dev_get_drvdata(dev);
- 
- 	dev_vdbg(dev, "Resume (device_may_wakeup=%d)\n",
- 		device_may_wakeup(dev));
-@@ -431,6 +429,10 @@ static int tegra_rtc_resume(struct platform_device *pdev)
- }
- #endif
- 
-+static const struct dev_pm_ops tegra_rtc_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_rtc_suspend, tegra_rtc_resume)
-+};
++	apbdma: dma {
++		compatible = "nvidia,tegra114-apbdma";
++		reg = <0x6000a000 0x1400>;
++		interrupts = <0 104 0x04
++			      0 105 0x04
++			      0 106 0x04
++			      0 107 0x04
++			      0 108 0x04
++			      0 109 0x04
++			      0 110 0x04
++			      0 111 0x04
++			      0 112 0x04
++			      0 113 0x04
++			      0 114 0x04
++			      0 115 0x04
++			      0 116 0x04
++			      0 117 0x04
++			      0 118 0x04
++			      0 119 0x04
++			      0 128 0x04
++			      0 129 0x04
++			      0 130 0x04
++			      0 131 0x04
++			      0 132 0x04
++			      0 133 0x04
++			      0 134 0x04
++			      0 135 0x04
++			      0 136 0x04
++			      0 137 0x04
++			      0 138 0x04
++			      0 139 0x04
++			      0 140 0x04
++			      0 141 0x04
++			      0 142 0x04
++			      0 143 0x04>;
++		clocks = <&tegra_car 34>;
++	};
 +
- static void tegra_rtc_shutdown(struct platform_device *pdev)
- {
- 	dev_vdbg(&pdev->dev, "disabling interrupts.\n");
-@@ -445,11 +447,8 @@ static struct platform_driver tegra_rtc_driver = {
- 		.name	= "tegra_rtc",
- 		.owner	= THIS_MODULE,
- 		.of_match_table = tegra_rtc_dt_match,
-+		.pm	= &tegra_rtc_pm_ops,
- 	},
--#ifdef CONFIG_PM_SLEEP
--	.suspend	= tegra_rtc_suspend,
--	.resume		= tegra_rtc_resume,
--#endif
- };
- 
- static int __init tegra_rtc_init(void)
+ 	gpio: gpio {
+ 		compatible = "nvidia,tegra114-gpio", "nvidia,tegra30-gpio";
+ 		reg = <0x6000d000 0x1000>;
 -- 
 1.7.1.1
