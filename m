@@ -1,43 +1,113 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 0/5] ARM: DT: tegra114: Add DT entry for different
- controller
-Date: Sat, 9 Mar 2013 23:41:13 +0530
-Message-ID: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V2 5/5] ARM: DT: tegra114: Add spi controller DT entry
+Date: Sat, 9 Mar 2013 23:41:18 +0530
+Message-ID: <1362852678-13421-6-git-send-email-ldewangan@nvidia.com>
+References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, pdeschrijver@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series add DT entry for APB DMA, I2C, UART, KBC and SPI.
+NVIDIA's Tegra114 has 6 spi controllers. These controllers are
+redesign on T114 with different register interface.
 
-This patch series is generated on top of CCF work for T114 done by Peter
-and hence it should be applied on top of T114 CCF patches.
+Add DT entry for spi controllers and make it compatible with
+"nvidia,tegra114-spi".
 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
 Changes from V1:
-- Add reeason why APBDMA is not compatible with older driver
-  in description.
-- Remove UARTB car id correction. Make the compatible with tegra114 and
-  older chip.
-- Add compatible for kbc as nvidia,tegra114-kbc and nvidia,tegra20-kbc.
+- None
 
-Laxman Dewangan (5):
-  ARM: DT: tegra114: add APB DMA controller DT entry
-  ARM: DT: tegra114: Add i2c controller DT entry
-  ARM: DT: tegra114:add aliases and DMA requestor for serial controller
-  ARM: DT: tegra114: add KBC controller DT entry
-  ARM: DT: tegra114: Add spi controller DT entry
+ arch/arm/boot/dts/tegra114.dtsi |   72 +++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 72 insertions(+), 0 deletions(-)
 
- arch/arm/boot/dts/tegra114.dtsi |  200 ++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 196 insertions(+), 4 deletions(-)
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 21ff340..47ad1b8 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -209,6 +209,78 @@
+ 		clock-names = "div-clk";
+ 	};
+ 
++	spi@7000d400 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000d400 0x200>;
++		interrupts = <0 59 0x04>;
++		nvidia,dma-request-selector = <&apbdma 15>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 41>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
++	spi@7000d600 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000d600 0x200>;
++		interrupts = <0 82 0x04>;
++		nvidia,dma-request-selector = <&apbdma 16>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 44>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
++	spi@7000d800 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000d480 0x200>;
++		interrupts = <0 83 0x04>;
++		nvidia,dma-request-selector = <&apbdma 17>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 46>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
++	spi@7000da00 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000da00 0x200>;
++		interrupts = <0 93 0x04>;
++		nvidia,dma-request-selector = <&apbdma 18>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 68>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
++	spi@7000dc00 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000dc00 0x200>;
++		interrupts = <0 94 0x04>;
++		nvidia,dma-request-selector = <&apbdma 27>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 104>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
++	spi@7000de00 {
++		compatible = "nvidia,tegra114-spi";
++		reg = <0x7000de00 0x200>;
++		interrupts = <0 79 0x04>;
++		nvidia,dma-request-selector = <&apbdma 28>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&tegra_car 105>;
++		clock-names = "spi";
++		status = "disabled";
++	};
++
+ 	sdhci@78000000 {
+ 		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
+ 		reg = <0x78000000 0x200>;
+-- 
+1.7.1.1
