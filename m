@@ -1,50 +1,43 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 4/5] ARM: DT: tegra114: add KBC controller DT entry
-Date: Sat, 9 Mar 2013 23:41:17 +0530
-Message-ID: <1362852678-13421-5-git-send-email-ldewangan@nvidia.com>
-References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 0/5] ARM: DT: tegra114: Add DT entry for different
+ controller
+Date: Sat, 9 Mar 2013 23:41:13 +0530
+Message-ID: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362852678-13421-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: swarren@wwwdotorg.org
+Cc: linux-tegra@vger.kernel.org, pdeschrijver@nvidia.com, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra114 SoCs have the matrix keyboard controller which
-supports 11x8 type of matrix. The number of rows and columns
-are configurable.
+This patch series add DT entry for APB DMA, I2C, UART, KBC and SPI.
 
-Add DT entry for KBC controller with compatibility as "nvidia,tegra114-kbc",
-"nvidia,tegra20-kbc".
+This patch series is generated on top of CCF work for T114 done by Peter
+and hence it should be applied on top of T114 CCF patches.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
 Changes from V1:
+- Add reeason why APBDMA is not compatible with older driver
+  in description.
+- Remove UARTB car id correction. Make the compatible with tegra114 and
+  older chip.
 - Add compatible for kbc as nvidia,tegra114-kbc and nvidia,tegra20-kbc.
 
- arch/arm/boot/dts/tegra114.dtsi |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
+Laxman Dewangan (5):
+  ARM: DT: tegra114: add APB DMA controller DT entry
+  ARM: DT: tegra114: Add i2c controller DT entry
+  ARM: DT: tegra114:add aliases and DMA requestor for serial controller
+  ARM: DT: tegra114: add KBC controller DT entry
+  ARM: DT: tegra114: Add spi controller DT entry
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 300082d..21ff340 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -248,6 +248,14 @@
- 		clocks = <&tegra_car 4>;
- 	};
- 
-+	kbc {
-+		compatible = "nvidia,tegra114-kbc", "nvidia,tegra20-kbc";
-+		reg = <0x7000e200 0x100>;
-+		interrupts = <0 85 0x04>;
-+		clocks = <&tegra_car 36>;
-+		status = "disabled";
-+	};
-+
- 	pmc {
- 		compatible = "nvidia,tegra114-pmc";
- 		reg = <0x7000e400 0x400>;
--- 
-1.7.1.1
+ arch/arm/boot/dts/tegra114.dtsi |  200 ++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 196 insertions(+), 4 deletions(-)
