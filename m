@@ -1,106 +1,83 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 3/5] ARM: DT: tegra114:add aliases and DMA requestor for serial controller
-Date: Sat, 9 Mar 2013 23:41:16 +0530
-Message-ID: <1362852678-13421-4-git-send-email-ldewangan@nvidia.com>
-References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 5/5] rtc: tegra: use managed rtc_device_register
+Date: Sat, 9 Mar 2013 23:43:36 +0530
+Message-ID: <1362852816-13460-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1362852678-13421-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, a.zummo@towertech.it
+Cc: swarren@wwwdotorg.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add APB DMA requestor and serial aliases for serial controller.
-There will be two serial driver i.e. 8250 based simple serial driver
-and APB DMA based serial driver for higher baudrate and performace.
+Use devm_rtc_device_register for registering rtc device.
+This will reduce the code for unregistering rtc device in
+cleanup path and remove the implementation of remove
+callback of platform driver.
 
-The simple serial driver get enabled with compatible "nvidia,tegra114-uart",
-"nvidia,tegra20-uart" and APB DMA based driver will get enabled with
-compatible "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
-Changes from V1:
-- Remove UARTB car id correction. Make the compatible with tegra114 and
-  tegra30 for hsuart and tegra20 for simple uart driver.
+ drivers/rtc/rtc-tegra.c |   27 ++++-----------------------
+ 1 files changed, 4 insertions(+), 23 deletions(-)
 
- arch/arm/boot/dts/tegra114.dtsi |   27 +++++++++++++++++++++++----
- 1 files changed, 23 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 14afbc8..300082d 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -4,6 +4,13 @@
- 	compatible = "nvidia,tegra114";
- 	interrupt-parent = <&gic>;
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index 8186405..1ac8199 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -348,13 +348,11 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
  
-+	aliases {
-+		serial0 = &uarta;
-+		serial1 = &uartb;
-+		serial2 = &uartc;
-+		serial3 = &uartd;
-+	};
-+
- 	gic: interrupt-controller {
- 		compatible = "arm,cortex-a15-gic";
- 		#interrupt-cells = <3>;
-@@ -99,38 +106,50 @@
- 		       0x70003000 0x40c>;	/* Mux registers */
- 	};
+ 	device_init_wakeup(&pdev->dev, 1);
  
--	serial@70006000 {
-+	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra114-uart", "nvidia,tegra20-uart" and to enable
-+	 * the APB DMA based serial driver, the comptible is
-+	 * "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
-+	 */
-+	uarta: serial@70006000 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006000 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 36 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 8>;
- 		status = "disabled";
- 		clocks = <&tegra_car 6>;
- 	};
+-	info->rtc_dev = rtc_device_register(
+-		pdev->name, &pdev->dev, &tegra_rtc_ops, THIS_MODULE);
++	info->rtc_dev = devm_rtc_device_register(
++		dev_name(&pdev->dev), &pdev->dev, &tegra_rtc_ops, THIS_MODULE);
+ 	if (IS_ERR(info->rtc_dev)) {
+ 		ret = PTR_ERR(info->rtc_dev);
+-		info->rtc_dev = NULL;
+-		dev_err(&pdev->dev,
+-			"Unable to register device (err=%d).\n",
++		dev_err(&pdev->dev, "Unable to register device (err=%d).\n",
+ 			ret);
+ 		return ret;
+ 	}
+@@ -366,28 +364,12 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev,
+ 			"Unable to request interrupt for device (err=%d).\n",
+ 			ret);
+-		goto err_dev_unreg;
++		return ret;
+ 	}
  
--	serial@70006040 {
-+	uartb: serial@70006040 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006040 0x40>;
- 		reg-shift = <2>;
- 		interrupts = <0 37 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 9>;
- 		status = "disabled";
- 		clocks = <&tegra_car 192>;
- 	};
+ 	dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
  
--	serial@70006200 {
-+	uartc: serial@70006200 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006200 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 46 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 10>;
- 		status = "disabled";
- 		clocks = <&tegra_car 55>;
- 	};
+ 	return 0;
+-
+-err_dev_unreg:
+-	rtc_device_unregister(info->rtc_dev);
+-
+-	return ret;
+-}
+-
+-static int __exit tegra_rtc_remove(struct platform_device *pdev)
+-{
+-	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
+-
+-	rtc_device_unregister(info->rtc_dev);
+-
+-	platform_set_drvdata(pdev, NULL);
+-
+-	return 0;
+ }
  
--	serial@70006300 {
-+	uartd: serial@70006300 {
- 		compatible = "nvidia,tegra114-uart", "nvidia,tegra20-uart";
- 		reg = <0x70006300 0x100>;
- 		reg-shift = <2>;
- 		interrupts = <0 90 0x04>;
-+		nvidia,dma-request-selector = <&apbdma 19>;
- 		status = "disabled";
- 		clocks = <&tegra_car 65>;
- 	};
+ #ifdef CONFIG_PM_SLEEP
+@@ -441,7 +423,6 @@ static void tegra_rtc_shutdown(struct platform_device *pdev)
+ 
+ MODULE_ALIAS("platform:tegra_rtc");
+ static struct platform_driver tegra_rtc_driver = {
+-	.remove		= __exit_p(tegra_rtc_remove),
+ 	.shutdown	= tegra_rtc_shutdown,
+ 	.driver		= {
+ 		.name	= "tegra_rtc",
 -- 
 1.7.1.1
