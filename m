@@ -1,60 +1,59 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH 1/5] rtc: tegra: protect suspend/resume callbacks with
- CONFIG_PM_SLEEP
-Date: Sun, 10 Mar 2013 23:30:15 +0100
-Message-ID: <20130310223015.GA4743@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH 2/5] rtc: tegra: Use struct dev_pm_ops for power
+ management
+Date: Sun, 10 Mar 2013 23:32:20 +0100
+Message-ID: <20130310223220.GB4743@avionic-0098.mockup.avionic-design.de>
 References: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com>
- <1362852588-13362-2-git-send-email-ldewangan@nvidia.com>
+ <1362852588-13362-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+	protocol="application/pgp-signature"; boundary="Yylu36WmvOXNoKYn"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1362852588-13362-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1362852588-13362-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Dxnq1zWXvFF0Q93v
+--Yylu36WmvOXNoKYn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 09, 2013 at 11:39:45PM +0530, Laxman Dewangan wrote:
-> The CONFIG_PM doesn't actually enable any of the PM callbacks, it
-> only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
-> This means if CONFIG_PM is used to protect system sleep callbacks
-> then it may end up unreferenced if only runtime PM is enabled.
-> Hence protecting sleep callbacks with CONFIG_PM_SLEEP.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/rtc/rtc-tegra.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+On Sat, Mar 09, 2013 at 11:39:46PM +0530, Laxman Dewangan wrote:
+[...]
+> @@ -431,6 +429,10 @@ static int tegra_rtc_resume(struct platform_device *=
+pdev)
+>  }
+>  #endif
+> =20
+> +static const struct dev_pm_ops tegra_rtc_pm_ops =3D {
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_rtc_suspend, tegra_rtc_resume)
+> +};
 
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+SIMPLE_DEV_PM_OPS?
 
---Dxnq1zWXvFF0Q93v
+--Yylu36WmvOXNoKYn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRPQl3AAoJEN0jrNd/PrOhZi0P/RCrHDh6UdZSqgeprjSBHqBi
-7AlbLPU3XbPjTI6JQoEvS2f4qBz9reNr17PNk4orJo6PnOB0dxEqL9MCJfXxeN06
-ULRiyzPcEKJ0a2J/ZTKbo+6Hy8p/brPQuPi3sNqX8QMIfNrIjBOXh7FPur3wm1RR
-R1rnveC8LYJ5a9cLGuX8iYBJuBdmpKfAqXF+WdqRoBGnwy7JSpSIyK/yY4Zw9UOs
-vDTRgSM5ss9q4GxpX0RHNVRD51JUJ8mAO96RTsTYQ5GREnoTWa9bELGjEePYagy7
-tZ8K5j46z/b4k2cBAAtQqjqGGbn3OEgaHm23M/m06jZ33bLlqhkYgykERRCJ6MtF
-HAzGa5RFUEluzvV0FOfd3v3/BLuNocX+0mMTlvb5UWClOemzSdSy3phrapIxvyPs
-vzTWf11867Kg2zyiu81GWdoqjCxbmwC1IGyjs3rPvPwEeOvFX9iYKMMK2gVFN8Au
-FRDtzQtEExvfb9AqTqJwDds10R1CRzCp3Ux95oMi9eGwCev8lJZJgvffjeoBpu1e
-qU9N4XTtF0Gmysy8Exdq6y3CEqwWhwo6mPYKJzbR92O0X596lJs6xgVrXoJzt+2U
-qFenDDo9tj+73jh1ESELQZCwXlZvxOSDMPYm8Pj3X/KtUt6qb7IPxY59DcqPX/99
-KEPa2FU81fRYuI4wfqre
-=ON/y
+iQIcBAEBAgAGBQJRPQn0AAoJEN0jrNd/PrOh86wP/jtkPl3VpeO25340mAEGjTER
+07bEB94whlRYs0qFvXGlNljnZPesZp73pKVlTbA9V83iRtcFq0Oelp7e1LFlTpBs
+ZG8tuKBJU5wIm4r0ajUYw/JAsbqOnRnalvFBqCNHvZ8NyMy2V9Aq9UWhVNI6Z5Nl
+5BqpGRokUNzCfCCLPhLbrl/nxtF1Cp5eETmSiDVMM5YS2oiuKIQtspm9cUmr7AXY
+nBhxju1YudaQ9Mz1Fx5/n3/C919y+agmZacnc4XuqQHjp+JHivmMTbEdCb/NOGqW
+yK/JtSiI+gKRe1nHX5QNVtnDfleHRRTJcM46UICN5SS0j2cz2B0cYQkpG9MyIv85
+NmD9io0veBQvlo7tr8olxO0qzUma62iCEkvVlsB6Rfb6rF0ZDGuNY4PvhrSCR1RZ
+87dR9oyK9eqwai0OVLqRcCgtYFvVdMUXuirDm69J1rAenmlj1sZozxkXQKZBLdT7
+yxIYNgvKRazDjG3yCxAnyhJoyGL0LNqCOuOlACfknpV+v71Db0OAAzVJ08/TBa6w
+VF6wao1JM7GrpeWunkhuPF8IzWWEN5j14a+mrPtLJo0D9h/x1Yevr6RknIEPfM6l
+N8gFG6fyk6QpxCcVuIt42vxREYF+Rd34DLvG9dKM3AoXUxsP7I6Fo0xmiYP655IY
+iYBP+UD6T88daX68JN8g
+=QuVI
 -----END PGP SIGNATURE-----
 
---Dxnq1zWXvFF0Q93v--
+--Yylu36WmvOXNoKYn--
