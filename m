@@ -1,24 +1,45 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V3] get_maintainer: use filename-only regex match for
- Tegra
-Date: Mon, 11 Mar 2013 13:32:44 -0700
-Message-ID: <1363033964.2056.49.camel@joe-AO722>
-References: <1363033149-7839-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363033149-7839-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marcin Slusarz <marcin.slusarz-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Borislav Petkov <bp-Gina5bIWoIWzQB+pC5nmwQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Maarten Lankhorst <maarten.lankhorst-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [GIT PULL] ARM: tegra: DT-related fixes needed by the MMC tree
+Date: Mon, 11 Mar 2013 14:44:10 -0600
+Message-ID: <1363034651-21472-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2013-03-11 at 14:19 -0600, Stephen Warren wrote:
-> Create a new N: entry type in MAINTAINERS which performs a regex match
-> against filenames; either those extracted from patch +++ or --- lines,
-> or those specified on the command-line using the -f option.
-[]
-> Switch the Tegra entry from using K: to N:
+In order to convert the Tegra MMC driver to using mmc_of_parse(), some
+bugs in the Tegra device-tree content need to be fixed first; it's
+currently wrong but unused, and mmc_of_parse() causes that data to be
+used for the first time.
 
-Acked-by: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+----------------------------------------------------------------
+
+The following changes since commit 6dbe51c251a327e012439c4772097a13df43c5b8:
+
+  Linux 3.9-rc1
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.10-fixes-for-mmc
+
+for you to fetch changes up to 908ab9368866e6edf0edebdd546adefd5f3128f9:
+
+  ARM: dts: tegra: fix the activate polarity of cd-gpio in mmc host
+
+----------------------------------------------------------------
+
+Joseph Lo (1):
+      ARM: dts: tegra: fix the activate polarity of cd-gpio in mmc host
+
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi |    2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts      |    4 ++--
+ arch/arm/boot/dts/tegra20-paz00.dts        |    2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts     |    2 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    |    2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts    |    2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts      |    2 +-
+ arch/arm/boot/dts/tegra20-whistler.dts     |    1 +
+ arch/arm/boot/dts/tegra30-beaver.dts       |    2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi      |    2 +-
+ 10 files changed, 11 insertions(+), 10 deletions(-)
