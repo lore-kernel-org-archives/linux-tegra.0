@@ -1,212 +1,136 @@
-From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] PM/domains: add delayed power off capability
-Date: Mon, 11 Mar 2013 21:20:28 +0530
-Message-ID: <1363017028-16164-1-git-send-email-mkulkarni@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Multi-platform, and secure-only ARM errata workarounds
+Date: Mon, 11 Mar 2013 10:59:45 -0600
+Message-ID: <513E0D81.7030108@wwwdotorg.org>
+References: <512BF81A.3080700@wwwdotorg.org> <201302261023.26939.arnd@arndb.de> <20130226113538.GS17833@n2100.arm.linux.org.uk> <512CF87A.4090404@wwwdotorg.org> <20130226181114.GU17833@n2100.arm.linux.org.uk> <5130E757.6090500@wwwdotorg.org> <20130304063436.GB27241@tbergstrom-lnx.Nvidia.com> <20130304091600.GC27241@tbergstrom-lnx.Nvidia.com> <5134D50B.8060001@wwwdotorg.org> <20130305074047.GH27241@tbergstrom-lnx.Nvidia.com> <513624AA.4090207@wwwdotorg.org> <513CC21E.7080901@ti.com> <CAOesGMgYL19+u-bLp080iasct5xtC=qfNCoz=SY7bbVgF=7JQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMgYL19+u-bLp080iasct5xtC=qfNCoz=SY7bbVgF=7JQg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-- this commit adds a capability to delay the powering off
-of the domain
-- callers can use pm_genpd_set_poweroff_delay to set the
-power off delay for a domain
-- it expects the delay in milli-seconds
-- it also adds a pm_notifier per pm domain which cancels
-the delayed power off work when system suspend is invoked
+On 03/10/2013 12:47 PM, Olof Johansson wrote:
+> On Sun, Mar 10, 2013 at 10:25 AM, Santosh Shilimkar
+> <santosh.shilimkar-l0cyMroinI0@public.gmane.org> wrote:
+>> On Tuesday 05 March 2013 10:30 PM, Stephen Warren wrote:
+>>> On 03/05/2013 12:40 AM, Peter De Schrijver wrote:
+>>>> On Mon, Mar 04, 2013 at 06:08:27PM +0100, Stephen Warren wrote:
+>>>>> On 03/04/2013 02:16 AM, Peter De Schrijver wrote:
+>>>>>> On Mon, Mar 04, 2013 at 07:34:36AM +0100, Peter De Schrijver wrote:
+>>>>>>> On Fri, Mar 01, 2013 at 06:37:27PM +0100, Stephen Warren wrote:
+>>>>>>>
+>>>>
+>>>> ...
+>>>>
+>>>>>> 1) Handle CPU0 errata WARs in the bootloader
+>>>>>
+>>>>> OK - there's not much choice here, and I've posted a patch for this for
+>>>>> Tegra U-Boot already.
+>>>>>
+>>>>>> 2) Indicate in device tree if linux is booting in secude mode or non-secure
+>>>>>>    mode.
+>>>>>> 3) Use this information in the kernel to decide how to apply the WARs for
+>>>>>>    secondary core bringup and after powerungating.
+>>>>>
+>>>>> Hmmm. That seems like a lot of overhead to avoid duplicating roughly 8
+>>>>> assembly instructions per Tegra version. Also, some/all of the WARs in
+>>>>
+>>>> Unfortunately we can't write to the diag register if we are in non-secure
+>>>> mode. So unless we never want to support running in non-secure mode, we will
+>>>> need to make the distinction somehow and use a different method for non-secure
+>>>> mode. Or assume the secure OS has applied the WARs.
+>>>
+>>> Yes. The secure OS really has to have enabled the appropriate WARs
+>>> before jumping into the kernel's reset vector. If/when we support the
+>>> upstream kernel running on Tegra in non-secure mode, the plan was to use
+>>> a Tegra-specific mechanism to detect secure-vs-normal mode in the Tegra
+>>> reset vector, and skip the application of secure-only WARs based on that.
+>>>
+>>>> I'm afraid existing secure
+>>>> OS implementations for Tegra don't work that way though. They just offer an
+>>>> SMC which allows the kernel to read and write the diag register.
+>>>
+>>> I had a downstream discussion about this, and Bo Yan said someone had
+>>> verified this was working correctly for at least for some WARs on some
+>>> CPUs and for the one particular secure OS we're using.
+>>>
+>>> I think it's reasonable to require a fixed secure OS (i.e. one that
+>>> correctly enables any required WARs) be used with any upstream kernel,
+>>> since running in normal world would be a new feature that we'd be
+>>> supporting.
+>>>
+>>> An SMC to read/write the diag register sounds the opposite of secure...
+>>>
+>>>>> question probably need to be applied very early by assembly code, e.g.
+>>>>> before MMU is re-enabled, so I think you'd end up parsing DT from
+>>>>> assembly again, which would be painful. I tend to think just including
+>>>>> the code in the kernel's SoC-specific reset handler is simplest, and
+>>>>> even with the slight duplication, probably most maintainable. I've
+>>>>> written a patch for this for Tegra already, which I hope to post later
+>>>>> today, depending on testing and what other stuff I get side-tracked on.
+>>>>
+>>>> No. We could just set a flag in __tegra_cpu_reset_handler_data based on the
+>>>> info in DT or use a different reset handler. DT is parsed before bringing up
+>>>> secondary CPUs, so this approach should work I think.
+>>>
+>>> Yes, that could work.
+>>>
+>> It might work for few but it isn't an alternative which is maintainable.
+>>
+>> Olof proposed to have a common code which can be executed before kernel boot
+>> in recent Linaro connect multi-platform discussion.
+>> Though there was no conclusion on where this file can be part of kernel source
+>> tree. Just form errata WA version control perspective, its is best to have such
+>> errata WA as part of kernel code instead of spreading it over boot-loader, kernel
+>> and firmware/sleep code.
+> 
+> 
+> Yeah, that was mentioned in the discussion at Linaro Connect that we
+> should have brought out here on the mailing list. I just got home and
+> haven't had time to follow up on it, but thanks for the reminder. :)
+> 
+> My reasoning was this:
+> 
+> 1) Sleep/powerdown recovery code can per definition know what platform
+> we're running on, so we can do the right thing at runtime there
 
-Signed-off-by: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/base/power/domain.c | 84 ++++++++++++++++++++++++++++++++++++++++++---
- include/linux/pm_domain.h   | 14 ++++++++
- 2 files changed, 93 insertions(+), 5 deletions(-)
+So this seems to be the opposite of what Santosh was saying. By
+definition, if you're talking about platform-specific knowledge, surely
+you are /not/ talking about common code. If you /are/ talking about
+common code that enables the WARs based on some data that was created by
+the kernel before it power-saved, then that's exactly what Peter was
+proposing, so I don't understand Santosh's "not maintainable" comment...
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 9a6b05a..349f778 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -585,6 +585,19 @@ static int pm_genpd_poweroff(struct generic_pm_domain *genpd)
- 	return ret;
- }
- 
-+static int __pm_genpd_poweroff(struct generic_pm_domain *genpd)
-+{
-+	int ret = 0;
-+
-+	mutex_lock(&genpd->lock);
-+	genpd->in_progress++;
-+	ret = pm_genpd_poweroff(genpd);
-+	genpd->in_progress--;
-+	mutex_unlock(&genpd->lock);
-+
-+	return ret;
-+}
-+
- /**
-  * genpd_power_off_work_fn - Power off PM domain whose subdomain count is 0.
-  * @work: Work structure used for scheduling the execution of this function.
-@@ -601,6 +614,22 @@ static void genpd_power_off_work_fn(struct work_struct *work)
- }
- 
- /**
-+ * genpd_delayed_power_off_work_fn - Power off PM domain after the delay.
-+ * @work: Delayed work structure used for scheduling the
-+ *        execution of this function.
-+ */
-+static void genpd_delayed_power_off_work_fn(struct work_struct *work)
-+{
-+	struct generic_pm_domain *genpd;
-+	struct delayed_work *delay_work = to_delayed_work(work);
-+
-+	genpd = container_of(delay_work, struct generic_pm_domain,
-+		power_off_delayed_work);
-+
-+	__pm_genpd_poweroff(genpd);
-+}
-+
-+/**
-  * pm_genpd_runtime_suspend - Suspend a device belonging to I/O PM domain.
-  * @dev: Device to suspend.
-  *
-@@ -637,11 +666,11 @@ static int pm_genpd_runtime_suspend(struct device *dev)
- 	if (dev->power.irq_safe)
- 		return 0;
- 
--	mutex_lock(&genpd->lock);
--	genpd->in_progress++;
--	pm_genpd_poweroff(genpd);
--	genpd->in_progress--;
--	mutex_unlock(&genpd->lock);
-+	if (genpd->power_off_delay)
-+		queue_delayed_work(pm_wq, &genpd->power_off_delayed_work,
-+			msecs_to_jiffies(genpd->power_off_delay));
-+	else
-+		__pm_genpd_poweroff(genpd);
- 
- 	return 0;
- }
-@@ -672,6 +701,12 @@ static int pm_genpd_runtime_resume(struct device *dev)
- 	if (dev->power.irq_safe)
- 		return genpd_start_dev_no_timing(genpd, dev);
- 
-+	if (genpd->power_off_delay) {
-+		if (delayed_work_pending(&genpd->power_off_delayed_work))
-+			cancel_delayed_work_sync(
-+				&genpd->power_off_delayed_work);
-+	}
-+
- 	mutex_lock(&genpd->lock);
- 	ret = __pm_genpd_poweron(genpd);
- 	if (ret) {
-@@ -730,6 +765,7 @@ static inline int genpd_dev_pm_qos_notifier(struct notifier_block *nb,
- }
- 
- static inline void genpd_power_off_work_fn(struct work_struct *work) {}
-+static inline void genpd_delayed_power_off_work_fn(struct work_struct *work) {}
- 
- #define pm_genpd_runtime_suspend	NULL
- #define pm_genpd_runtime_resume		NULL
-@@ -2101,6 +2137,36 @@ static int pm_genpd_default_thaw(struct device *dev)
- 	return cb ? cb(dev) : pm_generic_thaw(dev);
- }
- 
-+static int pm_genpd_suspend_notifier(struct notifier_block *notifier,
-+	unsigned long pm_event, void *unused)
-+{
-+	struct generic_pm_domain *genpd = container_of(notifier,
-+		struct generic_pm_domain, system_suspend_notifier);
-+
-+	if (!genpd)
-+		return NOTIFY_DONE;
-+
-+	switch (pm_event) {
-+	case PM_SUSPEND_PREPARE:
-+		if (genpd->power_off_delay) {
-+			/* if a domain has scheduled a delayed work */
-+			if (delayed_work_pending(
-+				&genpd->power_off_delayed_work)) {
-+
-+				/* cancel it now */
-+				cancel_delayed_work_sync(
-+					&genpd->power_off_delayed_work);
-+
-+				/* call its power off */
-+				__pm_genpd_poweroff(genpd);
-+			}
-+		}
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- #else /* !CONFIG_PM_SLEEP */
- 
- #define pm_genpd_default_suspend	NULL
-@@ -2132,7 +2198,10 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
- 	mutex_init(&genpd->lock);
- 	genpd->gov = gov;
- 	INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
-+	INIT_DELAYED_WORK(&genpd->power_off_delayed_work,
-+		genpd_delayed_power_off_work_fn);
- 	genpd->in_progress = 0;
-+	genpd->power_off_delay = 0;
- 	atomic_set(&genpd->sd_count, 0);
- 	genpd->status = is_off ? GPD_STATE_POWER_OFF : GPD_STATE_ACTIVE;
- 	init_waitqueue_head(&genpd->status_wait_queue);
-@@ -2174,6 +2243,11 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
- 	genpd->dev_ops.freeze_late = pm_genpd_default_freeze_late;
- 	genpd->dev_ops.thaw_early = pm_genpd_default_thaw_early;
- 	genpd->dev_ops.thaw = pm_genpd_default_thaw;
-+#ifdef CONFIG_PM_SLEEP
-+	genpd->system_suspend_notifier.notifier_call =
-+		pm_genpd_suspend_notifier;
-+	register_pm_notifier(&genpd->system_suspend_notifier);
-+#endif
- 	mutex_lock(&gpd_list_lock);
- 	list_add(&genpd->gpd_list_node, &gpd_list);
- 	mutex_unlock(&gpd_list_lock);
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 7c1d252..3ffb068 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -82,6 +82,11 @@ struct generic_pm_domain {
- 	bool cached_power_down_ok;
- 	struct device_node *of_node; /* Node in device tree */
- 	struct gpd_cpu_data *cpu_data;
-+	struct delayed_work power_off_delayed_work;
-+	s64 power_off_delay;
-+#ifdef CONFIG_PM_SLEEP
-+	struct notifier_block system_suspend_notifier;
-+#endif
- };
- 
- static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
-@@ -127,6 +132,12 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
- 	return to_gpd_data(dev->power.subsys_data->domain_data);
- }
- 
-+static inline void pm_genpd_set_poweroff_delay(struct generic_pm_domain *genpd,
-+	s64 delay)
-+{
-+	genpd->power_off_delay = delay;
-+}
-+
- extern struct dev_power_governor simple_qos_governor;
- 
- extern struct generic_pm_domain *dev_to_genpd(struct device *dev);
-@@ -170,6 +181,9 @@ extern bool default_stop_ok(struct device *dev);
- extern struct dev_power_governor pm_domain_always_on_gov;
- #else
- 
-+static inline void pm_genpd_set_poweroff_delay(struct generic_pm_domain *genpd,
-+	s64 delay) {}
-+
- static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
- {
- 	return ERR_PTR(-ENOSYS);
--- 
-1.8.1.5
+Item (2) below I assume is intended only to address the
+CPU0-on-first-boot issue. Any code that "wraps" (is prepended to?) the
+kernel isn't part of the kernel, and hence won't be available for the
+kernel to use when bringing up CPUn, or when resuming from power save,
+since the whole point is the kernel doesn't even know that code exists,
+right?
+
+> 2) The real tricky one are the very early errata enablement before MMU
+> enablement
+> 
+> On platforms where we can update firmware, (2) can and should be done
+> from there. (1) is still possible to do in the kernel for those cases.
+> 
+> The tricky part is where we don't have easily updateable firmware. To
+> date, these are very likely to still be platforms running legacy
+> firmware that does not know about device tree either, so we have a
+> window of opportunity to take advantage of that:
+> 
+> If we already have to use appended DTB on these systems, then we
+> already have a need to wrap the kernel in a per-system image (i.e. by
+> appending the DTB to the kernel and booting that). If we're already
+> doing that, we could just as well add a wrapper around the whole thing
+> that enables the errata before launching the zimage.
+> 
+> This is not the same as putting it in the zimage boot wrapper code,
+> since that means it's a buildtime and not a kernel install time thing.
+> This needs to be done at install/wrap time. Maybe the wrap code
+> fragments could be kept in the kernel tree and supplied from there
+> though, we didn't reach closure on that.
