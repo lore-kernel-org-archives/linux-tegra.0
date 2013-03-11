@@ -1,43 +1,55 @@
-From: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>
-Subject: Re: Multi-platform, and secure-only ARM errata workarounds
-Date: Mon, 11 Mar 2013 12:54:00 -0600
-Message-ID: <20130311185400.GC10992@obsidianresearch.com>
-References: <512CF87A.4090404@wwwdotorg.org>
- <20130226181114.GU17833@n2100.arm.linux.org.uk>
- <5130E757.6090500@wwwdotorg.org>
- <20130304063436.GB27241@tbergstrom-lnx.Nvidia.com>
- <20130304091600.GC27241@tbergstrom-lnx.Nvidia.com>
- <5134D50B.8060001@wwwdotorg.org>
- <20130305074047.GH27241@tbergstrom-lnx.Nvidia.com>
- <513624AA.4090207@wwwdotorg.org>
- <513CC21E.7080901@ti.com>
- <CAOesGMgYL19+u-bLp080iasct5xtC=qfNCoz=SY7bbVgF=7JQg@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 3/5] rtc: tegra: use module_platform_driver_probe for
+ module init/exit
+Date: Tue, 12 Mar 2013 00:59:41 +0530
+Message-ID: <513E30A5.8020104@nvidia.com>
+References: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com> <1362852588-13362-4-git-send-email-ldewangan@nvidia.com> <513E1153.20207@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgYL19+u-bLp080iasct5xtC=qfNCoz=SY7bbVgF=7JQg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Bo Yan <byan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <513E1153.20207@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "a.zummo@towertech.it" <a.zummo@towertech.it>, "rtc-linux@googlegroups.com" <rtc-linux@googlegroups.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Mar 10, 2013 at 11:47:31AM -0700, Olof Johansson wrote:
+On Monday 11 March 2013 10:46 PM, Stephen Warren wrote:
+> On 03/09/2013 11:09 AM, Laxman Dewangan wrote:
+>> Use macro module_platform_driver_probe() to reduce some of the
+>> boilerplate code in the driver.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> ---
+>>   drivers/rtc/rtc-tegra.c |   12 +-----------
+>>   1 files changed, 1 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+>> index f7718de..4cba10d 100644
+>> --- a/drivers/rtc/rtc-tegra.c
+>> +++ b/drivers/rtc/rtc-tegra.c
+>> @@ -451,17 +451,7 @@ static struct platform_driver tegra_rtc_driver = {
+>>   	},
+>>   };
+>>   
+>> -static int __init tegra_rtc_init(void)
+>> -{
+>> -	return platform_driver_probe(&tegra_rtc_driver, tegra_rtc_probe);
+>> -}
+>> -module_init(tegra_rtc_init);
+>> -
+>> -static void __exit tegra_rtc_exit(void)
+>> -{
+>> -	platform_driver_unregister(&tegra_rtc_driver);
+>> -}
+>> -module_exit(tegra_rtc_exit);
+>> +module_platform_driver_probe(tegra_rtc_driver, tegra_rtc_probe);
+> Out of curiosity here, why not just module_platform_driver(); can't the
+> instantiation of the RTC device be driven by the presence of the DT
+> node, and hence the creation of the platform device object, just like
+> any other driver/device?
 
-> If we already have to use appended DTB on these systems, then we
-> already have a need to wrap the kernel in a per-system image (i.e. by
-> appending the DTB to the kernel and booting that). If we're already
-> doing that, we could just as well add a wrapper around the whole thing
-> that enables the errata before launching the zimage.
-
-What about bundling the DTB and a block of asm code to do 'CPU
-startup' together somehow? If it was easy to locate the code in the
-bundle then it could be jumped to directly from the vmlinux pre-mmu
-startup code, from the secondary CPU startup, and from the CPU wake up
-as well.
-
-The tool to generate this bundle could generate and compile the asm
-code based on an errata list in the DTB itself..
-
-Regards,
-Jason
+Theoretically it should work but I will work with John (original author) 
+about using the platform_driver_probe().
+If he agrees then  I will send patch to convert it to 
+module_platform_driver().
