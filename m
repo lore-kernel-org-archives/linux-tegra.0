@@ -1,25 +1,34 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2 4/5] ARM: DT: tegra114: add KBC controller DT entry
-Date: Mon, 11 Mar 2013 11:43:29 -0600
-Message-ID: <513E17C1.1070305@wwwdotorg.org>
-References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com> <1362852678-13421-5-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] PM/domains: add delayed power off capability
+Date: Mon, 11 Mar 2013 11:47:18 -0600
+Message-ID: <513E18A6.1050101@wwwdotorg.org>
+References: <1363017028-16164-1-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1362852678-13421-5-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363017028-16164-1-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/09/2013 11:11 AM, Laxman Dewangan wrote:
-> NVIDIA's Tegra114 SoCs have the matrix keyboard controller which
-> supports 11x8 type of matrix. The number of rows and columns
-> are configurable.
-> 
-> Add DT entry for KBC controller with compatibility as "nvidia,tegra114-kbc",
-> "nvidia,tegra20-kbc".
+On 03/11/2013 09:50 AM, Mayuresh Kulkarni wrote:
+> - this commit adds a capability to delay the powering off
+> of the domain
+> - callers can use pm_genpd_set_poweroff_delay to set the
+> power off delay for a domain
+> - it expects the delay in milli-seconds
+> - it also adds a pm_notifier per pm domain which cancels
+> the delayed power off work when system suspend is invoked
 
-I thought the HW really wasn't compatible with Tegra20 due to the
-reduced number of rows/columns/pins supported?
+You didn't Cc any of the maintainers of this code. I'm not sure what
+this patch directly has to do with Tegra.
+
+> [swarren@swarren-lx1 kernel.git]$ ./scripts/get_maintainer.pl -f drivers/base/power
+> Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> (supporter:SUSPEND TO RAM)
+> Pavel Machek <pavel-+ZI9xUNit7I@public.gmane.org> (supporter:SUSPEND TO RAM)
+> "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org> (supporter:SUSPEND TO RAM)
+> Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> (supporter:DRIVER CORE, KOBJ...)
+> linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (open list:SUSPEND TO RAM)
+> linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (open list)
