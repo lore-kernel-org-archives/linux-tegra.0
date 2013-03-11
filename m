@@ -1,34 +1,41 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST] drm: tegra: don't depend on OF
-Date: Mon, 11 Mar 2013 16:33:02 -0600
-Message-ID: <1363041182-31944-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/1] ARM: dt: tegra114: add PWM nodes
+Date: Mon, 11 Mar 2013 17:30:11 -0600
+Message-ID: <513E6903.6060506@wwwdotorg.org>
+References: <1363041036-26358-1-git-send-email-achew@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363041036-26358-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 03/11/2013 04:30 PM, Andrew Chew wrote:
+> This patch adds device tree nodes for the four PWM controllers present
+> on tegra114.
 
-ARCH_TEGRA always enabled OF, so there's no need for any driver to
-depend on it.
+Nit: Capitalize Tegra.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
 
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index c92955d..965c48c 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -1,6 +1,6 @@
- config DRM_TEGRA
- 	tristate "NVIDIA Tegra DRM"
--	depends on DRM && OF && ARCH_TEGRA
-+	depends on DRM && ARCH_TEGRA
- 	select DRM_KMS_HELPER
- 	select DRM_GEM_CMA_HELPER
- 	select DRM_KMS_CMA_HELPER
--- 
-1.7.10.4
+> @@ -150,4 +150,36 @@
+>  			     <1 11 0xf08>,
+>  			     <1 10 0xf08>;
+>  	};
+
+DT nodes should be sorted in order by reg address, so I think this is in
+the wrong place.
+
+> +	pwm0: pwm@7000a000 {
+> +		compatible = "nvidia,tegra20-pwm";
+
+If the HW is 100% backwards-compatible, that should be:
+
+compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
+
+if not:
+
+compatible = "nvidia,tegra114-pwm";
