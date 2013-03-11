@@ -1,34 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 2/5] ARM: DT: tegra114: Add i2c controller DT entry
-Date: Mon, 11 Mar 2013 11:35:37 -0600
-Message-ID: <513E15E9.8090904@wwwdotorg.org>
-References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com> <1362852678-13421-3-git-send-email-ldewangan@nvidia.com> <20130310223936.GF4743@avionic-0098.mockup.avionic-design.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 3/5] ARM: DT: tegra114:add aliases and DMA requestor
+ for serial controller
+Date: Mon, 11 Mar 2013 11:38:06 -0600
+Message-ID: <513E167E.8030000@wwwdotorg.org>
+References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com> <1362852678-13421-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130310223936.GF4743-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1362852678-13421-4-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/10/2013 04:39 PM, Thierry Reding wrote:
-> On Sat, Mar 09, 2013 at 11:41:15PM +0530, Laxman Dewangan wrote:
->> NVIDIA's Tegra114 has 5 i2c controllers. These controllers have 
->> additional feature/configurations to make it functional over 
->> Tegra30's i2c controller driver.
->> 
->> Add DT entry for i2c controllers and make it compatible with 
->> "nvidia,tegra114-i2c".
+On 03/09/2013 11:11 AM, Laxman Dewangan wrote:
+> Add APB DMA requestor and serial aliases for serial controller.
+> There will be two serial driver i.e. 8250 based simple serial driver
+> and APB DMA based serial driver for higher baudrate and performace.
 > 
-> Both the subject and description should probably use I2C instead of
-> i2c. Also I don't understand what "make it functional over" means.
-> Perhaps, since the entries aren't marked compatible with
-> nvidia,tegra30-i2c you meant to say that they are incompatible with
-> Tegra30?
+> The simple serial driver get enabled with compatible "nvidia,tegra114-uart",
+> "nvidia,tegra20-uart" and APB DMA based driver will get enabled with
+> compatible "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
+> Changes from V1:
+> - Remove UARTB car id correction. Make the compatible with tegra114 and
+>   tegra30 for hsuart and tegra20 for simple uart driver.
 
-The second sentence Laxman wrote above should probably say:
-
-These controllers have a modified clocking structure that make them
-incompatible with previous hardware.
+Why the difference for the two drivers? Either the HW is compatible with
+all 3 of 114/30/20 (in which case you only need list 114/20 in the
+compatible value), or it's not compatible with either 30/20, since we
+already know that 30/20 are compatible with each-other (in which case
+you should only list 114 in the compatible property).
