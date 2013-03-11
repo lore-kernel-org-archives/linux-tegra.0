@@ -1,58 +1,95 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 3/8] gpu: host1x: Add channel support
-Date: Mon, 11 Mar 2013 08:29:59 +0200
-Message-ID: <513D79E7.5000801@nvidia.com>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com> <1358250244-9678-4-git-send-email-tbergstrom@nvidia.com> <20130225152457.GA29545@avionic-0098.mockup.avionic-design.de> <512C84E2.5090201@nvidia.com> <513A0ED0.4070701@nvidia.com> <20130308204301.GA30742@avionic-0098.mockup.avionic-design.de>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: rename all phy drivers to phy-$name.c
+Date: Mon, 11 Mar 2013 08:59:03 +0200
+Message-ID: <20130311065903.GE12860@arwen.pp.htv.fi>
+References: <1362671126-24571-1-git-send-email-balbi@ti.com>
+ <5138FA7D.3040104@wwwdotorg.org>
+ <20130308070836.GB21589@arwen.pp.htv.fi>
+ <513A1F55.1000800@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RpqchZ26BWispMcB"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130308204301.GA30742-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <513A1F55.1000800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, aletes.xgr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kuninori.morimoto.gx-zM6kxYcvzFBBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stigge-uj/7R2tJ6VmzQB+pC5nmwQ@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, yuxu-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08.03.2013 22:43, Thierry Reding wrote:
-> A bo is just a buffer object, so I don't see why the name shouldn't
-> be used. The name is in no way specific to DRM or GEM. But the point
-> that I was trying to make was that there is nothing to suggest that
-> we couldn't use drm_gem_object as the underlying scaffold to base all
-> host1x buffer objects on.
-> 
-> Furthermore I don't understand why you've chosen this approach. It
-> is completely different from what other drivers do and therefore
-> makes it more difficult to comprehend. That alone I could live with
-> if there were any advantages to that approach, but as far as I can
-> tell there are none.
+--RpqchZ26BWispMcB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was following the plan we agreed on earlier in email discussion with
-you and Lucas:
+Hi,
 
-On 29.11.2012 11:09, Lucas Stach wrote:
-> We should aim for a clean split here. GEM handles are something which
-> is really specific to how DRM works and as such should be constructed
-> by tegradrm. nvhost should really just manage allocations/virtual
-> address space and provide something that is able to back all the GEM
-> handle operations.
-> 
-> nvhost has really no reason at all to even know about GEM handles.
-> If you back a GEM object by a nvhost object you can just peel out
-> the nvhost handles from the GEM wrapper in the tegradrm submit ioctl
-> handler and queue the job to nvhost using it's native handles.
-> 
-> This way you would also be able to construct different handles (like
-> GEM obj or V4L2 buffers) from the same backing nvhost object. Note
-> that I'm not sure how useful this would be, but it seems like a
-> reasonable design to me being able to do so.
+On Fri, Mar 08, 2013 at 10:26:45AM -0700, Stephen Warren wrote:
+> On 03/08/2013 12:08 AM, Felipe Balbi wrote:
+> > On Thu, Mar 07, 2013 at 01:37:17PM -0700, Stephen Warren wrote:
+> >> On 03/07/2013 08:45 AM, Felipe Balbi wrote:
+> >>> this will make sure that we have sensible names for all phy
+> >>> drivers. Current situation was already quite bad with too
+> >>> generic names being used.
+> >>=20
+> >> Is phy-$name specific enough? There are other types of PHY such
+> >> as Ethernet, etc. What about phy-usb-$name?
+> >=20
+> > we will be creating a generic (kernel-wide) phy layer, so I guess
+> > that matters very little. Specially since we don't want to be
+> > differentiating PHYs by their subsystem and rather by the IP name
+> > (which means phy-tegra, phy-samsung, phy-omap, are all 'wrong', but
+> > there were no better names).
+> >=20
+> >> Venu, please comment on what conflicts, if any, this will cause
+> >> with the patches you'll be sending to clean up the Tegra USB/PHY
+> >> drivers. Thanks.
+> >=20
+> > BTW, let's stop with the whole dependency between PHY driver
+> > cleanup and arch/arm/mach-tegra/, too many patches have gone
+> > upstream bypassing my tree. What we should be doing is figuring out
+> > how to remove arch/ dependencies so that patches can go upstream
+> > and not cause conflicts.
+>=20
+> Unfortunately, there's no way to actually avoid the dependencies
+> themselves. The DT bindings and EHCI/PHY controller split are wrong,
+> and need work on both the DT and drivers to fix.
 
-With this structure, we are already prepared for non-DRM APIs. Tt's a
-matter of familiarity of code versus future expansion. Code paths for
-both are as simple/complex, so neither has a direct technical
-superiority in performance.
+but those changes don't need to come together, right ? I mean, for the
+DT part you could add the bindings to driver A without removing from
+driver B and span the changes accross 2 merge windows.
 
-I know other DRM drivers have opted to hard code GEM dependency
-throughout the code. Then again, host1x hardware is managing much more
-than graphics, so we need to think outside the DRM box, too.
+> I guess I could apply all the initial DT changes to a topic branch in
+> the Tegra tree (item 1 below), and have you merge that branch into
+> yours, and then you could take all the USB-related patches (item 2
+> below) through your tree. Would that work better?
 
-Terje
+I'm not merging, taking everything as patches, sorry.
+
+--=20
+balbi
+
+--RpqchZ26BWispMcB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRPYC2AAoJEIaOsuA1yqRE0SQP/3CMytswLC71ZL7DHj95liWq
+DwVLVODoKWn1vn5SyumQSLwDMrKjcGO7en6fYGNk8t7I/BaKwmk7T4Uoi5TsXOXJ
+M95526XywstOXpCdeFysg0u5GI+Iqf1cx6SwXk8STn3WusIQwtiLSCn/kkupDIra
+teADg6CTSWpA9lyhNLb3MPMFv/YoAlK3Aoh2TvjttpGuhxCV4osTKsRRk006Xv47
+34+L/7RUUy6BfMy1UrL8Igxr/fKHhnrsRExYm1eGL91jD+CbsIs5Vv/ztA3rGKba
+kA0uOzPwbJSNU37VoY0lufMZ5yWtMN6NPiGQeT4/6tgclL6pbM60jNISF4+nBPL7
+SpK6R7doVZclc8FNCLOb9/zO8lvbzg0tNAaS5TbJgmg+jRGK91NohX1xqMfAEZ1G
+6MYIPJbNa2E004EDeEnhxtquC04q3P4iKXI1y6WKiw7oTVfbkmrgv6+MKZZOEwbQ
+4wpC+iPL9wj+CvenzZjLqN4/Pv+EqYnSD2IlO9emJrbep48a+6A0xbUKU+4l2PEk
+1/h+A7rGcUrfsItBy94PhXmflNhQN19CiMH3pTfrPSrlPEbxWTJcSBgTKIo9bdl+
+brx8hV0GnYtiPWFaGK4mZCNOGq61PU9cXZhtpmzpJQRe9WHWtsdzAdDpflb8vone
+mkmFzrNJ8q6zt/GkyLEg
+=P/zy
+-----END PGP SIGNATURE-----
+
+--RpqchZ26BWispMcB--
