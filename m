@@ -1,46 +1,50 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] arm: tegra: fuse: export chip id and revision
-Date: Mon, 11 Mar 2013 11:10:14 -0600
-Message-ID: <513E0FF6.1050909@wwwdotorg.org>
-References: <1363005441-26329-1-git-send-email-dahuang@nvidia.com>
+Subject: Re: [PATCH 3/5] rtc: tegra: use module_platform_driver_probe for
+ module init/exit
+Date: Mon, 11 Mar 2013 11:16:03 -0600
+Message-ID: <513E1153.20207@wwwdotorg.org>
+References: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com> <1362852588-13362-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363005441-26329-1-git-send-email-dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1362852588-13362-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/11/2013 06:37 AM, Danny Huang wrote:
-> Expose tegra chip id and revision in /proc/cpu/chipinfo for user mode
-> usage.
+On 03/09/2013 11:09 AM, Laxman Dewangan wrote:
+> Use macro module_platform_driver_probe() to reduce some of the
+> boilerplate code in the driver.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/rtc/rtc-tegra.c |   12 +-----------
+>  1 files changed, 1 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+> index f7718de..4cba10d 100644
+> --- a/drivers/rtc/rtc-tegra.c
+> +++ b/drivers/rtc/rtc-tegra.c
+> @@ -451,17 +451,7 @@ static struct platform_driver tegra_rtc_driver = {
+>  	},
+>  };
+>  
+> -static int __init tegra_rtc_init(void)
+> -{
+> -	return platform_driver_probe(&tegra_rtc_driver, tegra_rtc_probe);
+> -}
+> -module_init(tegra_rtc_init);
+> -
+> -static void __exit tegra_rtc_exit(void)
+> -{
+> -	platform_driver_unregister(&tegra_rtc_driver);
+> -}
+> -module_exit(tegra_rtc_exit);
+> +module_platform_driver_probe(tegra_rtc_driver, tegra_rtc_probe);
 
-I agree with Shawn's comments, but I have a few other comments here too
-for the record.
-
-Nit: "Tegra" and "ID" above should be capitalized as I've done so in
-this sentence.
-
-> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-
-> +static int __init tegra_chip_info(void)
-> +{
-> +	proc_entry = create_proc_entry("cpu/chipinfo", S_IRUGO, NULL);
-> +	if (proc_entry)
-> +		proc_entry->read_proc = show_chip_info;
-> +	return 0;
-> +}
-> +
-> +late_initcall(tegra_chip_info);
-
-Please don't introduce any more initcalls. Especially initcalls that are
-not conditional on the run-time (rather than compile-time) SoC. This
-code may be compiled into a kernel that supports SoCs other than Tegra.
-However, tegra_chip_info() shouldn't run on those SoCs.
-
-It'd probably be simplest to just perform this initialization as part of
-the already-existing tegra_init_fuse(). If not, please call this
-initialization function from one of the initialization functions in
-arch/arm/mach-tegra/common.c. Both those cases only execute on Tegra.
+Out of curiosity here, why not just module_platform_driver(); can't the
+instantiation of the RTC device be driven by the presence of the DT
+node, and hence the creation of the platform device object, just like
+any other driver/device?
