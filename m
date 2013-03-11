@@ -1,142 +1,33 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCHv5,RESEND 3/8] gpu: host1x: Add channel support
-Date: Mon, 11 Mar 2013 08:18:51 +0100
-Message-ID: <20130311071851.GA6033@avionic-0098.mockup.avionic-design.de>
-References: <1358250244-9678-1-git-send-email-tbergstrom@nvidia.com>
- <1358250244-9678-4-git-send-email-tbergstrom@nvidia.com>
- <20130225152457.GA29545@avionic-0098.mockup.avionic-design.de>
- <512C84E2.5090201@nvidia.com>
- <513A0ED0.4070701@nvidia.com>
- <20130308204301.GA30742@avionic-0098.mockup.avionic-design.de>
- <513D79E7.5000801@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/5] rtc: tegra: cleanups to remove warning/code lines
+Date: Mon, 11 Mar 2013 14:14:23 +0530
+Message-ID: <1362991468-30226-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <513D79E7.5000801-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This patch series does the cleanups in the rtc driver as follows:
+- Protect suspend/resume with CONFIG_PM_SLEEP.
+- Use dev_pm_ops in place of legacy way for suspend/resume.
+- Properly reflect teh irq name when doing cat /proc/interrupts.
+- Use module_platform_probe() to remove boilerplate code.
+- use devm_rtc_device_register.
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes from V1:
+- Use SIMPLE_DEV_PM_OPS
+- Correctd the acronym case rtc to RTC in description.
+- Add Thierry reviewed by on some of patches.
 
-On Mon, Mar 11, 2013 at 08:29:59AM +0200, Terje Bergstr=C3=B6m wrote:
-> On 08.03.2013 22:43, Thierry Reding wrote:
-> > A bo is just a buffer object, so I don't see why the name shouldn't
-> > be used. The name is in no way specific to DRM or GEM. But the point
-> > that I was trying to make was that there is nothing to suggest that
-> > we couldn't use drm_gem_object as the underlying scaffold to base all
-> > host1x buffer objects on.
-> >=20
-> > Furthermore I don't understand why you've chosen this approach. It
-> > is completely different from what other drivers do and therefore
-> > makes it more difficult to comprehend. That alone I could live with
-> > if there were any advantages to that approach, but as far as I can
-> > tell there are none.
->=20
-> I was following the plan we agreed on earlier in email discussion with
-> you and Lucas:
->=20
-> On 29.11.2012 11:09, Lucas Stach wrote:
-> > We should aim for a clean split here. GEM handles are something which
-> > is really specific to how DRM works and as such should be constructed
-> > by tegradrm. nvhost should really just manage allocations/virtual
-> > address space and provide something that is able to back all the GEM
-> > handle operations.
-> >=20
-> > nvhost has really no reason at all to even know about GEM handles.
-> > If you back a GEM object by a nvhost object you can just peel out
-> > the nvhost handles from the GEM wrapper in the tegradrm submit ioctl
-> > handler and queue the job to nvhost using it's native handles.
-> >=20
-> > This way you would also be able to construct different handles (like
-> > GEM obj or V4L2 buffers) from the same backing nvhost object. Note
-> > that I'm not sure how useful this would be, but it seems like a
-> > reasonable design to me being able to do so.
->=20
-> With this structure, we are already prepared for non-DRM APIs. Tt's a
-> matter of familiarity of code versus future expansion. Code paths for
-> both are as simple/complex, so neither has a direct technical
-> superiority in performance.
->=20
-> I know other DRM drivers have opted to hard code GEM dependency
-> throughout the code. Then again, host1x hardware is managing much more
-> than graphics, so we need to think outside the DRM box, too.
+Laxman Dewangan (5):
+  rtc: tegra: protect suspend/resume callbacks with CONFIG_PM_SLEEP
+  rtc: tegra: Use struct dev_pm_ops for power management
+  rtc: tegra: use module_platform_driver_probe for module init/exit
+  rtc: tegra: set irq name as device name
+  rtc: tegra: use managed rtc_device_register
 
-This sound a bit over-engineered at this point in time. DRM is currently
-the only user. Is anybody working on any non-DRM drivers that would use
-this?
-
-Even that aside, I don't think host1x_mem_handle is a good choice of
-name here. The objects are much more than handles. They are in fact
-buffer objects, which can optionally be attached to a handle. I also
-think that using a void * to store the handle specific data isn't such a
-good idea.
-
-So how about the following proposal, which I think might satisfy both of
-us:
-
-	struct host1x_bo;
-
-	struct host1x_bo_ops {
-		struct host1x_bo *(*get)(struct host1x_bo *bo);
-		void (*put)(struct host1x_bo *bo);
-		dma_addr_t (*pin)(struct host1x_bo *bo, struct sg_table **sgt);
-		...
-	};
-
-	struct host1x_bo *host1x_bo_get(struct host1x_bo *bo);
-	void host1x_bo_put(struct host1x_bo *bo);
-	dma_addr_t host1x_bo_pin(struct host1x_bo *bo, struct sg_table **sgt);
-	...
-
-	struct host1x_bo {
-		const struct host1x_bo_ops *ops;
-		...
-	};
-
-	struct tegra_drm_bo {
-		struct host1x_bo base;
-		...
-	};
-
-That way you can get rid of the host1x_memmgr_create_handle() helper and
-instead embed host1x_bo into driver-/framework-specific structures with
-the necessary initialization.
-
-It also allows you to interact directly with the objects instead of
-having to go through the memmgr API. The memory manager doesn't really
-exist anymore so keeping the name in the API is only confusing. Your
-current proposal deals with memory handles directly already so it's
-really just making the naming more consistent.
-
-Thierry
-
---jRHKVT23PllUwdXP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRPYVbAAoJEN0jrNd/PrOh1zwP/11O6tlCkJxYl7LC+ujY1ZZl
-MZB/7Ge+pnzm5bc1Wb2gI4lnwZ3jfCKcqHqUNcifeKO/6JlZhytuH+M0h1oZtp3P
-/LR56mFwnq832+qKYvZDNr0ZtosV1Gz/QcqAzwvgBk1fX/r2rTDCAxED05CTxCfe
-n2mdHtWDZwBAKlyoE/JyJxmFN9JxXZ6cgIgXq9IcX0u7ZwiTh11ZJRojo4Vqtuhj
-Ef2CaPPVx6MNT9WSnV0MohNtGrM+atHwH9FURYGGjsCItM49Yqkg7Y80eLNfyunk
-kEWUFx2UElGhokmbL44548Lkcx//bNF7b8D7poBWJM73royLyjCpRU9RpTNYL7Yp
-l8Agh7i4xuC6YXxtwVGJy5iNwhpkzPgJHh9qWwJGpcDE3rDTHy1uDrROCYtf8A1m
-98W4rXf8tXXZpOqLTCQD8BY3wIccoRUhlv7fsQeiswO4RvOZBHskf7FYJvvih3K5
-PbNBK/pPXmsu7Er0+8/pzIlT4jG7XKqYZY8HDdDI8Q3LTkwgQFNLKxrtWcpf+YTu
-Fy4Yeh+O0wt0IIOJ5mipFtFZK1MI2XZljAhpmlN/2StdAnmJ2uZLidMVDpJHBLbx
-C6MSduyOlFOdyZqM37ngWKVsvQZvIX1Nk1QZLkc8gt3FLZBoQQidAKVrd3LBfl5a
-TZhh7FWkDw2ipz4by2AR
-=O5tA
------END PGP SIGNATURE-----
-
---jRHKVT23PllUwdXP--
+ drivers/rtc/rtc-tegra.c |   61 +++++++++++-----------------------------------
+ 1 files changed, 15 insertions(+), 46 deletions(-)
