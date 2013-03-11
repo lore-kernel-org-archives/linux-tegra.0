@@ -1,37 +1,94 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 0/5] rtc: tegra: cleanups to remove warning/code lines
-Date: Tue, 12 Mar 2013 00:59:56 +0530
-Message-ID: <1363030201-14717-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 2/5] rtc: tegra: Use struct dev_pm_ops for power management
+Date: Tue, 12 Mar 2013 00:59:58 +0530
+Message-ID: <1363030201-14717-3-git-send-email-ldewangan@nvidia.com>
+References: <1363030201-14717-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1363030201-14717-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, a.zummo@towertech.it
+Cc: swarren@wwwdotorg.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@avionic-design.de, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch series does the cleanups in the rtc driver as follows:
-- Protect suspend/resume with CONFIG_PM_SLEEP.
-- Use dev_pm_ops in place of legacy way for suspend/resume.
-- Properly reflect teh irq name when doing cat /proc/interrupts.
-- Use module_platform_probe() to remove boilerplate code.
-- use devm_rtc_device_register.
+Make the Tegra RTC controller driver define its PM callbacks through
+a struct dev_pm_ops object rather than by using legacy PM hooks
+in struct platform_driver.
 
-Changes from V1: 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Reviewed-by: Thierry Reding <thierry.reding@avionic-design.de>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
+---
+Changes from V1:
 - Use SIMPLE_DEV_PM_OPS
-- Correctd the acronym case rtc to RTC in description.
-- Add Thierry reviewed by on some of patches.
 
 Changes from V2:
-- define tegra_rtc_pm_ops as static.
-- Added Stephen's reviewed by on all patches.
+- Make tegra_rtc_pm_ops as static
+- Add Stephen's and Thierry's reviewed by.
 
-Laxman Dewangan (5):
-  rtc: tegra: protect suspend/resume callbacks with CONFIG_PM_SLEEP
-  rtc: tegra: Use struct dev_pm_ops for power management
-  rtc: tegra: use module_platform_driver_probe for module init/exit
-  rtc: tegra: set irq name as device name
-  rtc: tegra: use managed rtc_device_register
+ drivers/rtc/rtc-tegra.c |   18 ++++++++----------
+ 1 files changed, 8 insertions(+), 10 deletions(-)
 
- drivers/rtc/rtc-tegra.c |   61 +++++++++++-----------------------------------
- 1 files changed, 15 insertions(+), 46 deletions(-)
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index d64cde6..9b00bb7 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -26,6 +26,7 @@
+ #include <linux/delay.h>
+ #include <linux/rtc.h>
+ #include <linux/platform_device.h>
++#include <linux/pm.h>
+ 
+ /* set to 1 = busy every eight 32kHz clocks during copy of sec+msec to AHB */
+ #define TEGRA_RTC_REG_BUSY			0x004
+@@ -391,10 +392,9 @@ static int __exit tegra_rtc_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
++static int tegra_rtc_suspend(struct device *dev)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
++	struct tegra_rtc_info *info = dev_get_drvdata(dev);
+ 
+ 	tegra_rtc_wait_while_busy(dev);
+ 
+@@ -416,10 +416,9 @@ static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
+ 	return 0;
+ }
+ 
+-static int tegra_rtc_resume(struct platform_device *pdev)
++static int tegra_rtc_resume(struct device *dev)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
++	struct tegra_rtc_info *info = dev_get_drvdata(dev);
+ 
+ 	dev_vdbg(dev, "Resume (device_may_wakeup=%d)\n",
+ 		device_may_wakeup(dev));
+@@ -431,6 +430,8 @@ static int tegra_rtc_resume(struct platform_device *pdev)
+ }
+ #endif
+ 
++static SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
++
+ static void tegra_rtc_shutdown(struct platform_device *pdev)
+ {
+ 	dev_vdbg(&pdev->dev, "disabling interrupts.\n");
+@@ -445,11 +446,8 @@ static struct platform_driver tegra_rtc_driver = {
+ 		.name	= "tegra_rtc",
+ 		.owner	= THIS_MODULE,
+ 		.of_match_table = tegra_rtc_dt_match,
++		.pm	= &tegra_rtc_pm_ops,
+ 	},
+-#ifdef CONFIG_PM_SLEEP
+-	.suspend	= tegra_rtc_suspend,
+-	.resume		= tegra_rtc_resume,
+-#endif
+ };
+ 
+ static int __init tegra_rtc_init(void)
+-- 
+1.7.1.1
