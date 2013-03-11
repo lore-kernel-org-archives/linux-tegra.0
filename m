@@ -1,63 +1,78 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] ARM: dt: tegra114: add PWM nodes
-Date: Mon, 11 Mar 2013 15:30:36 -0700
-Message-ID: <1363041036-26358-1-git-send-email-achew@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH REPOST] dma: tegra: assume CONFIG_OF
+Date: Mon, 11 Mar 2013 16:30:26 -0600
+Message-ID: <1363041026-31890-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds device tree nodes for the four PWM controllers present
-on tegra114.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tegra only supports, and always enables, device tree. Remove all ifdefs
+and runtime checks for DT support from the driver.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra114.dtsi |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/dma/tegra20-apb-dma.c |   22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 1dfaf28..68fc0e1 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -150,4 +150,36 @@
- 			     <1 11 0xf08>,
- 			     <1 10 0xf08>;
- 	};
-+
-+	pwm0: pwm@7000a000 {
-+		compatible = "nvidia,tegra20-pwm";
-+		reg = <0x7000a000 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm1: pwm@7000a010 {
-+		compatible = "nvidia,tegra20-pwm";
-+		reg = <0x7000a010 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm2: pwm@7000a020 {
-+		compatible = "nvidia,tegra20-pwm";
-+		reg = <0x7000a020 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm3: pwm@7000a030 {
-+		compatible = "nvidia,tegra20-pwm";
-+		reg = <0x7000a030 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index fcee27e..5a0b66c 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1213,7 +1213,6 @@ static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
+ 	.support_channel_pause	= false,
  };
+ 
+-#if defined(CONFIG_OF)
+ /* Tegra30 specific DMA controller information */
+ static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
+ 	.nr_channels		= 32,
+@@ -1243,7 +1242,6 @@ static const struct of_device_id tegra_dma_of_match[] = {
+ 	},
+ };
+ MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
+-#endif
+ 
+ static int tegra_dma_probe(struct platform_device *pdev)
+ {
+@@ -1252,20 +1250,14 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 	const struct tegra_dma_chip_data *cdata = NULL;
++	const struct of_device_id *match;
+ 
+-	if (pdev->dev.of_node) {
+-		const struct of_device_id *match;
+-		match = of_match_device(of_match_ptr(tegra_dma_of_match),
+-					&pdev->dev);
+-		if (!match) {
+-			dev_err(&pdev->dev, "Error: No device match found\n");
+-			return -ENODEV;
+-		}
+-		cdata = match->data;
+-	} else {
+-		/* If no device tree then fallback to tegra20 */
+-		cdata = &tegra20_dma_chip_data;
++	match = of_match_device(tegra_dma_of_match, &pdev->dev);
++	if (!match) {
++		dev_err(&pdev->dev, "Error: No device match found\n");
++		return -ENODEV;
+ 	}
++	cdata = match->data;
+ 
+ 	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
+ 			sizeof(struct tegra_dma_channel), GFP_KERNEL);
+@@ -1460,7 +1452,7 @@ static struct platform_driver tegra_dmac_driver = {
+ 		.name	= "tegra-apbdma",
+ 		.owner = THIS_MODULE,
+ 		.pm	= &tegra_dma_dev_pm_ops,
+-		.of_match_table = of_match_ptr(tegra_dma_of_match),
++		.of_match_table = tegra_dma_of_match,
+ 	},
+ 	.probe		= tegra_dma_probe,
+ 	.remove		= tegra_dma_remove,
 -- 
-1.7.9.5
+1.7.10.4
