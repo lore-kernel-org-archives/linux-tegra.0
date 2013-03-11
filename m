@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 2/5] rtc: tegra: Use struct dev_pm_ops for power management
-Date: Mon, 11 Mar 2013 14:14:25 +0530
-Message-ID: <1362991468-30226-3-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V2 1/5] rtc: tegra: protect suspend/resume callbacks with CONFIG_PM_SLEEP
+Date: Mon, 11 Mar 2013 14:14:24 +0530
+Message-ID: <1362991468-30226-2-git-send-email-ldewangan@nvidia.com>
 References: <1362991468-30226-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,77 +12,43 @@ To: akpm@linux-foundation.org, a.zummo@towertech.it
 Cc: swarren@wwwdotorg.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@avionic-design.de, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Make the Tegra RTC controller driver define its PM callbacks through
-a struct dev_pm_ops object rather than by using legacy PM hooks
-in struct platform_driver.
+The CONFIG_PM doesn't actually enable any of the PM callbacks, it
+only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
+This means if CONFIG_PM is used to protect system sleep callbacks
+then it may end up unreferenced if only runtime PM is enabled.
+Hence protecting sleep callbacks with CONFIG_PM_SLEEP.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Reviewed-by: Thierry Reding <thierry.reding@avionic-design.de>
 ---
 Changes from V1:
-- Use SIMPLE_DEV_PM_OPS
+- Add Thierry's reviewed by.
+- No Change in code.
 
- drivers/rtc/rtc-tegra.c |   18 ++++++++----------
- 1 files changed, 8 insertions(+), 10 deletions(-)
+ drivers/rtc/rtc-tegra.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index d64cde6..6373eb7 100644
+index 0020bab..d64cde6 100644
 --- a/drivers/rtc/rtc-tegra.c
 +++ b/drivers/rtc/rtc-tegra.c
-@@ -26,6 +26,7 @@
- #include <linux/delay.h>
- #include <linux/rtc.h>
- #include <linux/platform_device.h>
-+#include <linux/pm.h>
- 
- /* set to 1 = busy every eight 32kHz clocks during copy of sec+msec to AHB */
- #define TEGRA_RTC_REG_BUSY			0x004
-@@ -391,10 +392,9 @@ static int __exit tegra_rtc_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
--static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
-+static int tegra_rtc_suspend(struct device *dev)
- {
--	struct device *dev = &pdev->dev;
--	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-+	struct tegra_rtc_info *info = dev_get_drvdata(dev);
- 
- 	tegra_rtc_wait_while_busy(dev);
- 
-@@ -416,10 +416,9 @@ static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
+@@ -390,7 +390,7 @@ static int __exit tegra_rtc_remove(struct platform_device *pdev)
  	return 0;
  }
  
--static int tegra_rtc_resume(struct platform_device *pdev)
-+static int tegra_rtc_resume(struct device *dev)
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
  {
--	struct device *dev = &pdev->dev;
--	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-+	struct tegra_rtc_info *info = dev_get_drvdata(dev);
- 
- 	dev_vdbg(dev, "Resume (device_may_wakeup=%d)\n",
- 		device_may_wakeup(dev));
-@@ -431,6 +430,8 @@ static int tegra_rtc_resume(struct platform_device *pdev)
- }
- #endif
- 
-+SIMPLE_DEV_PM_OPS(tegra_rtc_pm_ops, tegra_rtc_suspend, tegra_rtc_resume);
-+
- static void tegra_rtc_shutdown(struct platform_device *pdev)
- {
- 	dev_vdbg(&pdev->dev, "disabling interrupts.\n");
-@@ -445,11 +446,8 @@ static struct platform_driver tegra_rtc_driver = {
- 		.name	= "tegra_rtc",
+ 	struct device *dev = &pdev->dev;
+@@ -446,7 +446,7 @@ static struct platform_driver tegra_rtc_driver = {
  		.owner	= THIS_MODULE,
  		.of_match_table = tegra_rtc_dt_match,
-+		.pm	= &tegra_rtc_pm_ops,
  	},
--#ifdef CONFIG_PM_SLEEP
--	.suspend	= tegra_rtc_suspend,
--	.resume		= tegra_rtc_resume,
--#endif
- };
- 
- static int __init tegra_rtc_init(void)
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ 	.suspend	= tegra_rtc_suspend,
+ 	.resume		= tegra_rtc_resume,
+ #endif
 -- 
 1.7.1.1
