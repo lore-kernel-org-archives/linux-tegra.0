@@ -1,59 +1,48 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 1/5] rtc: tegra: protect suspend/resume callbacks with CONFIG_PM_SLEEP
-Date: Tue, 12 Mar 2013 00:59:57 +0530
-Message-ID: <1363030201-14717-2-git-send-email-ldewangan@nvidia.com>
-References: <1363030201-14717-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/5] rtc: tegra: use module_platform_driver_probe for
+ module init/exit
+Date: Mon, 11 Mar 2013 13:46:03 -0600
+Message-ID: <513E347B.2020509@wwwdotorg.org>
+References: <1362852588-13362-1-git-send-email-ldewangan@nvidia.com> <1362852588-13362-4-git-send-email-ldewangan@nvidia.com> <513E1153.20207@wwwdotorg.org> <513E30A5.8020104@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1363030201-14717-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, a.zummo@towertech.it
-Cc: swarren@wwwdotorg.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@avionic-design.de, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <513E30A5.8020104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org" <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, "a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org" <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, "rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The CONFIG_PM doesn't actually enable any of the PM callbacks, it
-only allows to enable CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME.
-This means if CONFIG_PM is used to protect system sleep callbacks
-then it may end up unreferenced if only runtime PM is enabled.
-Hence protecting sleep callbacks with CONFIG_PM_SLEEP.
+On 03/11/2013 01:29 PM, Laxman Dewangan wrote:
+> On Monday 11 March 2013 10:46 PM, Stephen Warren wrote:
+>> On 03/09/2013 11:09 AM, Laxman Dewangan wrote:
+>>> Use macro module_platform_driver_probe() to reduce some of the
+>>> boilerplate code in the driver.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Reviewed-by: Thierry Reding <thierry.reding@avionic-design.de>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
----
-Changes from V1:
-- Add Thierry's reviewed by.
-- No Change in code.
+>>> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
 
-Changes from V2:
-- Add Stephen's reviewed by.
-- No Change in code.
+>>>   -static int __init tegra_rtc_init(void)
+>>> -{
+>>> -    return platform_driver_probe(&tegra_rtc_driver, tegra_rtc_probe);
+>>> -}
+>>> -module_init(tegra_rtc_init);
+>>> -
+>>> -static void __exit tegra_rtc_exit(void)
+>>> -{
+>>> -    platform_driver_unregister(&tegra_rtc_driver);
+>>> -}
+>>> -module_exit(tegra_rtc_exit);
+>>> +module_platform_driver_probe(tegra_rtc_driver, tegra_rtc_probe);
+>>
+>> Out of curiosity here, why not just module_platform_driver(); can't the
+>> instantiation of the RTC device be driven by the presence of the DT
+>> node, and hence the creation of the platform device object, just like
+>> any other driver/device?
+> 
+> Theoretically it should work but I will work with John (original author)
+> about using the platform_driver_probe().
+> If he agrees then  I will send patch to convert it to
+> module_platform_driver().
 
- drivers/rtc/rtc-tegra.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 0020bab..d64cde6 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -390,7 +390,7 @@ static int __exit tegra_rtc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- static int tegra_rtc_suspend(struct platform_device *pdev, pm_message_t state)
- {
- 	struct device *dev = &pdev->dev;
-@@ -446,7 +446,7 @@ static struct platform_driver tegra_rtc_driver = {
- 		.owner	= THIS_MODULE,
- 		.of_match_table = tegra_rtc_dt_match,
- 	},
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- 	.suspend	= tegra_rtc_suspend,
- 	.resume		= tegra_rtc_resume,
- #endif
--- 
-1.7.1.1
+OK, sounds good. Thanks.
