@@ -1,51 +1,37 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] spi: slink-tegra20: move runtime pm calls to
- transfer_one_message
-Date: Tue, 12 Mar 2013 19:07:56 +0000
-Message-ID: <20130312190756.GB19942@opensource.wolfsonmicro.com>
-References: <1362723679-1155-1-git-send-email-ldewangan@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: tegra: expose chip ID and revision
+Date: Tue, 12 Mar 2013 19:10:54 +0000
+Message-ID: <201303121910.55141.arnd@arndb.de>
+References: <1363089667-15737-1-git-send-email-dahuang@nvidia.com> <201303121259.18710.arnd@arndb.de> <513F6E2C.1000101@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sZvnRN25x3w09J/6"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1362723679-1155-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <513F6E2C.1000101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Tuesday 12 March 2013, Stephen Warren wrote:
+> > You are dropping the soc_dev on the floor here by just returning.
+> > 
+> > The idea of the soc node is to have all on-soc components be children
+> > of that node, so you should instead pass it into of_platform_populate
+> > as the parent device.
+> 
+> Tegra DTs don't have a separate node for on-soc vs. off-soc components.
+> Wouldn't passing soc_dev into of_platform_populate() make everything a
+> child of this soc_dev; is that what we want?
 
---sZvnRN25x3w09J/6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, we had long discussions about this when the soc infrastructure was
+merged. Right now, everything is a child of /sys/devices/platform/,
+basically saying that all devices are random stuff that cannot be
+probed. Moving it to /sys/devices/soc0 would not make the hierarchy
+any deeper but show much clearer which devices are part of the
+soc, and which ones are added as anonymous platform devices by code
+that does not use DT based probing. Ideally the second category is
+empty.
 
-On Fri, Mar 08, 2013 at 11:51:19AM +0530, Laxman Dewangan wrote:
-> The prepare_transfer_hardware() is called in atomic context and
-> calling synchronous runtime pm calls can create scheduling deadlock.
-
-Applied, thanks.
-
---sZvnRN25x3w09J/6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRP30FAAoJELSic+t+oim9TWEP/3VVKHnywO7dQ2QXGd/lmQw2
-czvndLWLIeiEHzd8uDZLAcUeVln9xBCYYTHpHo84U8K8PeVROixo7LgYtt6qPNfx
-hKtXqlDg/DPipkrWFlqOAIY2KWSdqDeGNsrcTpM11ei5vTzb+sZ268bWV9xBNaOj
-WONQMCL6qWYQY2keMNBa1v54CLgEwEmA/XwW4Mwov5f+8rMEglftSEqogczR1ak6
-0a5g+eYGzcsm4zCqbbTIw7jk5hEpN7RkYgpT+9t5cAd3UVpLaIp7biyHjRWaqBZx
-CHiF8IYGTM1lR91t1tSQorxvF/aZyz8SwTzrI4GPD1ki66MTUPrVscDkHTQ1j6Zy
-d+CcYHC2kfjRmbAQ+MZ0ZBTZrSfOEK1xovgPwpd7NfL/ptHWjaBW3CNOetNLCdlu
-SrsenMeeHAmFjbWu+EMyGDgxCN8kPUDiGHblnLL95g6L53CmAbOYlhECYmR6tVYA
-FEePkNIhpAbgPnrs/guPckzkYnTTQUM0kEo5FkpPXnxK6qokcF6v/UY3qrNw3sGQ
-mP3DsVec/ukRV9FU5yuzA4YG/sEq5ifAl6DLk8DVqbRzHZu1PB7orJpxXmg+jsEw
-f9j1aMJmD+H2Tbb60xfkPFoamZvQBAoWdaghXJCZ83rjhiwmbTElr3KmJ3QOyt83
-BPHH6oQoEYuw6mLQdhW4
-=eNTy
------END PGP SIGNATURE-----
-
---sZvnRN25x3w09J/6--
+	Arnd
