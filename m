@@ -1,39 +1,34 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 0/9] ARM: tegra: add platform suspend support
-Date: Tue, 12 Mar 2013 13:32:59 -0600
-Message-ID: <513F82EB.1030407@wwwdotorg.org>
-References: <1363060916-8897-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
+Date: Tue, 12 Mar 2013 13:34:59 -0600
+Message-ID: <513F8363.8090908@wwwdotorg.org>
+References: <1363045695-28874-1-git-send-email-achew@nvidia.com> <20130312192429.GA21924@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363060916-8897-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130312192429.GA21924-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/11/2013 10:01 PM, Joseph Lo wrote:
-> This series introduces a basic functionality for Tegra to support the
-> platform suspend and resume.
+On 03/12/2013 01:24 PM, Thierry Reding wrote:
+> On Mon, Mar 11, 2013 at 04:48:15PM -0700, Andrew Chew wrote: [...]
+>> diff --git a/arch/arm/boot/dts/tegra114.dtsi
+>> b/arch/arm/boot/dts/tegra114.dtsi
+> [...]
+>> +	pwm0: pwm@7000a000 {
+...
+>> +	pwm1: pwm@7000a010 {
+...
+>> +	pwm2: pwm@7000a020 {
+...
+>> +	pwm3: pwm@7000a030 {
+...
 > 
-> Note: This series only adds the support for Tegra20 and Tegra30. The
-> Tegra114 will be supported later.
+> Shouldn't these rather go into a single PWM node which provides 4
+> PWM devices? Just like we do on Tegra20?
 
-Aside from the few issues that have already been pointed out, this looks
-OK now. I have a couple questions:
-
-1) Please remind me if this series depends on anything. If not, I hope
-to apply it mostly directly on top of 3.9-rc1 or so.
-
-2) You mentioned that Tegra114 isn't supported. What is the failure mode
-on Tegra114? Is suspend simply not available and hence can't be
-requested, or will suspend attempts gracefully return an error, or will
-there we crashes, boot failures, etc.?
-
-3) Sorry for asking this again, but since only LP2 is actually
-implemented in patch 4, what happens if the user selects LP0 or LP1?
-Does the system (a) just use LP2, (b) fail to suspend, and hence
-immediately resume, (c) suspend, but can't be resumed, ...?
-
-Thanks.
+Oh yes. Thanks for catching that. I'll remove the patch from the Tegra
+tree for now until that's fixed.
