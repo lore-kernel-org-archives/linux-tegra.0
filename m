@@ -1,60 +1,264 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 0/5] ARM: DT: tegra114: Add DT entry for different
- controller
-Date: Tue, 12 Mar 2013 12:31:49 -0600
-Message-ID: <513F7495.60001@wwwdotorg.org>
-References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com> <513E5771.9000408@wwwdotorg.org> <513EFF36.50107@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: add table lookup to mux
+Date: Tue, 12 Mar 2013 20:42:23 +0200
+Message-ID: <1363113747-6572-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513EFF36.50107-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/12/2013 04:11 AM, Laxman Dewangan wrote:
-> On Tuesday 12 March 2013 03:45 AM, Stephen Warren wrote:
->> On 03/09/2013 11:11 AM, Laxman Dewangan wrote:
->>> This patch series add DT entry for APB DMA, I2C, UART, KBC and SPI.
->>>
->>> This patch series is generated on top of CCF work for T114 done by Peter
->>> and hence it should be applied on top of T114 CCF patches.
->>>
->>> Changes from V1:
->>> - Add reeason why APBDMA is not compatible with older driver
->>>    in description.
->>> - Remove UARTB car id correction. Make the compatible with tegra114 and
->>>    older chip.
->>> - Add compatible for kbc as nvidia,tegra114-kbc and nvidia,tegra20-kbc.
->>>
->>> Laxman Dewangan (5):
->>>    ARM: DT: tegra114: add APB DMA controller DT entry
->>>    ARM: DT: tegra114: Add i2c controller DT entry
->>>    ARM: DT: tegra114:add aliases and DMA requestor for serial controller
->>>    ARM: DT: tegra114: add KBC controller DT entry
->>>    ARM: DT: tegra114: Add spi controller DT entry
->> What branch is this series based on? I tried to apply these for testing,
->> but git am failed to apply it to Tegra's for-3.10/dt, and Tegra's
->> for-next, and my local work branch, and next-20130307.
->>
->> Can you please rebase onto Tegra's for-3.10/dt. Thanks.
-> 
-> I created the patch as:
-> - linux next 20130307
-> - Then add all clock changes from Peter's
-> git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git
-> 
-> - Then I generated the DT entry on top of this which has clock reference.
-> 
-> In your 3.10/DT, there is no change for Peter's clock change and
-> possibly this is the reason.
+Add a table lookup feature to the mux clock. Also allow arbitrary masks
+instead of the width. This will be used by some clocks on Tegra114. Also
+adapt the tegra periph clk because it uses struct clk_mux directly.
 
-Yes, that's probably the problem. Please base on the current for-3.10/dt
-branch directly.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> If I base my change on your 3.10/DT then:
-> - Do I need to add the clock entry for all modules also?
+--
+Mike,
 
-Yes, please add complete nodes.
+This is the same patch I posted before which implements a table lookup
+feature for the mux clock. I squashed both the changes to clk-mux.c and
+tegra/clk.h together in order to make the patch bisectable.
+
+Thanks,
+
+Peter.
+---
+ drivers/clk/clk-mux.c        |   50 ++++++++++++++++++++++++++++++++----------
+ drivers/clk/tegra/clk.h      |   27 ++++++++++++++++-------
+ include/linux/clk-private.h  |    3 ++-
+ include/linux/clk-provider.h |    9 +++++++-
+ 4 files changed, 68 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 508c032..25b1734 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -32,6 +32,7 @@
+ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_mux *mux = to_clk_mux(hw);
++	int num_parents = __clk_get_num_parents(hw->clk);
+ 	u32 val;
+ 
+ 	/*
+@@ -42,7 +43,16 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 	 * val = 0x4 really means "bit 2, index starts at bit 0"
+ 	 */
+ 	val = readl(mux->reg) >> mux->shift;
+-	val &= (1 << mux->width) - 1;
++	val &= mux->mask;
++
++	if (mux->table) {
++		int i;
++
++		for (i = 0; i < num_parents; i++)
++			if (mux->table[i] == val)
++				return i;
++		return -EINVAL;
++	}
+ 
+ 	if (val && (mux->flags & CLK_MUX_INDEX_BIT))
+ 		val = ffs(val) - 1;
+@@ -50,7 +60,7 @@ static u8 clk_mux_get_parent(struct clk_hw *hw)
+ 	if (val && (mux->flags & CLK_MUX_INDEX_ONE))
+ 		val--;
+ 
+-	if (val >= __clk_get_num_parents(hw->clk))
++	if (val >= num_parents)
+ 		return -EINVAL;
+ 
+ 	return val;
+@@ -62,17 +72,22 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	u32 val;
+ 	unsigned long flags = 0;
+ 
+-	if (mux->flags & CLK_MUX_INDEX_BIT)
+-		index = (1 << ffs(index));
++	if (mux->table)
++		index = mux->table[index];
+ 
+-	if (mux->flags & CLK_MUX_INDEX_ONE)
+-		index++;
++	else {
++		if (mux->flags & CLK_MUX_INDEX_BIT)
++			index = (1 << ffs(index));
++
++		if (mux->flags & CLK_MUX_INDEX_ONE)
++			index++;
++	}
+ 
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
+ 
+ 	val = readl(mux->reg);
+-	val &= ~(((1 << mux->width) - 1) << mux->shift);
++	val &= ~(mux->mask << mux->shift);
+ 	val |= index << mux->shift;
+ 	writel(val, mux->reg);
+ 
+@@ -88,10 +103,10 @@ const struct clk_ops clk_mux_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_mux_ops);
+ 
+-struct clk *clk_register_mux(struct device *dev, const char *name,
++struct clk *clk_register_mux_table(struct device *dev, const char *name,
+ 		const char **parent_names, u8 num_parents, unsigned long flags,
+-		void __iomem *reg, u8 shift, u8 width,
+-		u8 clk_mux_flags, spinlock_t *lock)
++		void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+ {
+ 	struct clk_mux *mux;
+ 	struct clk *clk;
+@@ -113,9 +128,10 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 	/* struct clk_mux assignments */
+ 	mux->reg = reg;
+ 	mux->shift = shift;
+-	mux->width = width;
++	mux->mask = mask;
+ 	mux->flags = clk_mux_flags;
+ 	mux->lock = lock;
++	mux->table = table;
+ 	mux->hw.init = &init;
+ 
+ 	clk = clk_register(dev, &mux->hw);
+@@ -125,3 +141,15 @@ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 
+ 	return clk;
+ }
++
++struct clk *clk_register_mux(struct device *dev, const char *name,
++		const char **parent_names, u8 num_parents, unsigned long flags,
++		void __iomem *reg, u8 shift, u8 width,
++		u8 clk_mux_flags, spinlock_t *lock)
++{
++	u32 mask = BIT(width) - 1;
++
++	return clk_register_mux_table(dev, name, parent_names, num_parents,
++				      flags, reg, shift, mask, clk_mux_flags,
++				      NULL, lock);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 0744731..a09d7dc 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -355,15 +355,16 @@ struct clk *tegra_clk_register_periph_nodiv(const char *name,
+ 		struct tegra_clk_periph *periph, void __iomem *clk_base,
+ 		u32 offset);
+ 
+-#define TEGRA_CLK_PERIPH(_mux_shift, _mux_width, _mux_flags,		\
++#define TEGRA_CLK_PERIPH(_mux_shift, _mux_mask, _mux_flags,		\
+ 			 _div_shift, _div_width, _div_frac_width,	\
+ 			 _div_flags, _clk_num, _enb_refcnt, _regs,	\
+-			 _gate_flags)					\
++			 _gate_flags, _table)				\
+ 	{								\
+ 		.mux = {						\
+ 			.flags = _mux_flags,				\
+ 			.shift = _mux_shift,				\
+-			.width = _mux_width,				\
++			.mask = _mux_mask,				\
++			.table = _table,				\
+ 		},							\
+ 		.divider = {						\
+ 			.flags = _div_flags,				\
+@@ -393,26 +394,36 @@ struct tegra_periph_init_data {
+ 	const char *dev_id;
+ };
+ 
+-#define TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parent_names, _offset, \
+-			_mux_shift, _mux_width, _mux_flags, _div_shift,	\
++#define TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parent_names, _offset,\
++			_mux_shift, _mux_mask, _mux_flags, _div_shift,	\
+ 			_div_width, _div_frac_width, _div_flags, _regs,	\
+-			_clk_num, _enb_refcnt, _gate_flags, _clk_id)	\
++			_clk_num, _enb_refcnt, _gate_flags, _clk_id, _table) \
+ 	{								\
+ 		.name = _name,						\
+ 		.clk_id = _clk_id,					\
+ 		.parent_names = _parent_names,				\
+ 		.num_parents = ARRAY_SIZE(_parent_names),		\
+-		.periph = TEGRA_CLK_PERIPH(_mux_shift, _mux_width,	\
++		.periph = TEGRA_CLK_PERIPH(_mux_shift, _mux_mask,	\
+ 					   _mux_flags, _div_shift,	\
+ 					   _div_width, _div_frac_width,	\
+ 					   _div_flags, _clk_num,	\
+ 					   _enb_refcnt, _regs,		\
+-					   _gate_flags),		\
++					   _gate_flags, _table),	\
+ 		.offset = _offset,					\
+ 		.con_id = _con_id,					\
+ 		.dev_id = _dev_id,					\
+ 	}
+ 
++#define TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parent_names, _offset,\
++			_mux_shift, _mux_width, _mux_flags, _div_shift,	\
++			_div_width, _div_frac_width, _div_flags, _regs,	\
++			_clk_num, _enb_refcnt, _gate_flags, _clk_id)	\
++	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parent_names, _offset,\
++			_mux_shift, BIT(_mux_width) - 1, _mux_flags,	\
++			_div_shift, _div_width, _div_frac_width, _div_flags, \
++			_regs, _clk_num, _enb_refcnt, _gate_flags, _clk_id,\
++			NULL)
++
+ /**
+  * struct clk_super_mux - super clock
+  *
+diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
+index 9c7f580..53d39c2 100644
+--- a/include/linux/clk-private.h
++++ b/include/linux/clk-private.h
+@@ -144,12 +144,13 @@ struct clk {
+ 
+ #define DEFINE_CLK_MUX(_name, _parent_names, _parents, _flags,	\
+ 				_reg, _shift, _width,		\
+-				_mux_flags, _lock)		\
++				_mux_flags, _table, _lock)	\
+ 	static struct clk _name;				\
+ 	static struct clk_mux _name##_hw = {			\
+ 		.hw = {						\
+ 			.clk = &_name,				\
+ 		},						\
++		.table = _table,				\
+ 		.reg = _reg,					\
+ 		.shift = _shift,				\
+ 		.width = _width,				\
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 7f197d7..fc435bb 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -287,8 +287,9 @@ struct clk *clk_register_divider_table(struct device *dev, const char *name,
+ struct clk_mux {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	u32		*table;
++	u32		mask;
+ 	u8		shift;
+-	u8		width;
+ 	u8		flags;
+ 	spinlock_t	*lock;
+ };
+@@ -297,11 +298,17 @@ struct clk_mux {
+ #define CLK_MUX_INDEX_BIT		BIT(1)
+ 
+ extern const struct clk_ops clk_mux_ops;
++
+ struct clk *clk_register_mux(struct device *dev, const char *name,
+ 		const char **parent_names, u8 num_parents, unsigned long flags,
+ 		void __iomem *reg, u8 shift, u8 width,
+ 		u8 clk_mux_flags, spinlock_t *lock);
+ 
++struct clk *clk_register_mux_table(struct device *dev, const char *name,
++		const char **parent_names, u8 num_parents, unsigned long flags,
++		void __iomem *reg, u8 shift, u32 mask,
++		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
++
+ /**
+  * struct clk_fixed_factor - fixed multiplier and divider clock
+  *
+-- 
+1.7.10.4
