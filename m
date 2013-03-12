@@ -1,52 +1,55 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
-Date: Tue, 12 Mar 2013 11:23:40 +0200
-Message-ID: <20130312112340.6d624df5dfe28c4b5b8157f5@nvidia.com>
-References: <1363045695-28874-1-git-send-email-achew@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 0/5] ARM: DT: tegra114: Add DT entry for different
+ controller
+Date: Tue, 12 Mar 2013 15:41:02 +0530
+Message-ID: <513EFF36.50107@nvidia.com>
+References: <1362852678-13421-1-git-send-email-ldewangan@nvidia.com> <513E5771.9000408@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363045695-28874-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <513E5771.9000408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Andrew,
+On Tuesday 12 March 2013 03:45 AM, Stephen Warren wrote:
+> On 03/09/2013 11:11 AM, Laxman Dewangan wrote:
+>> This patch series add DT entry for APB DMA, I2C, UART, KBC and SPI.
+>>
+>> This patch series is generated on top of CCF work for T114 done by Peter
+>> and hence it should be applied on top of T114 CCF patches.
+>>
+>> Changes from V1:
+>> - Add reeason why APBDMA is not compatible with older driver
+>>    in description.
+>> - Remove UARTB car id correction. Make the compatible with tegra114 and
+>>    older chip.
+>> - Add compatible for kbc as nvidia,tegra114-kbc and nvidia,tegra20-kbc.
+>>
+>> Laxman Dewangan (5):
+>>    ARM: DT: tegra114: add APB DMA controller DT entry
+>>    ARM: DT: tegra114: Add i2c controller DT entry
+>>    ARM: DT: tegra114:add aliases and DMA requestor for serial controller
+>>    ARM: DT: tegra114: add KBC controller DT entry
+>>    ARM: DT: tegra114: Add spi controller DT entry
+> What branch is this series based on? I tried to apply these for testing,
+> but git am failed to apply it to Tegra's for-3.10/dt, and Tegra's
+> for-next, and my local work branch, and next-20130307.
+>
+> Can you please rebase onto Tegra's for-3.10/dt. Thanks.
 
-On Tue, 12 Mar 2013 00:48:15 +0100
-Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+I created the patch as:
+- linux next 20130307
+- Then add all clock changes from Peter's
+git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git
 
-> This patch adds device tree nodes for the four PWM controllers present
-> on Tegra114.
-> 
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Fixed commit message.
-> Corrected the compatible property.
-> Placed PWM nodes in the right place such that nodes are sorted by register
-> address.
-> 
->  arch/arm/boot/dts/tegra114.dtsi |   32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-> index 1dfaf28..5741ae4 100644
-> --- a/arch/arm/boot/dts/tegra114.dtsi
-> +++ b/arch/arm/boot/dts/tegra114.dtsi
-> @@ -92,6 +92,38 @@
->  		status = "disabled";
->  	};
->  
-> +	pwm0: pwm@7000a000 {
-> +		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-> +		reg = <0x7000a000 0x4>;
-> +		#pwm-cells = <2>;
-> +		clocks = <&tegra_car 17>;
+- Then I generated the DT entry on top of this which has clock reference.
 
-FYI:
-I'm sending out the patch(v4) to replace car magic # with macro[1].
-Then you could replace the above magic #s with macro names.
+In your 3.10/DT, there is no change for Peter's clock change and 
+possibly this is the reason.
 
-[1] http://patchwork.ozlabs.org/patch/220680/
+
+If I base my change on your 3.10/DT then:
+- Do I need to add the clock entry for all modules also?
