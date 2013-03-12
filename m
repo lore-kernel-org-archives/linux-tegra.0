@@ -1,45 +1,45 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1 v3] ARM: tegra: add PWM nodes to Tegra114 DT
-Date: Tue, 12 Mar 2013 14:42:43 -0700
-Message-ID: <1363124563-24784-1-git-send-email-achew@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [Patch v3 0/4] Add support for tps65090-charger
+Date: Tue, 12 Mar 2013 18:08:05 -0400
+Message-ID: <1363126089-9071-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds a device tree node for the four PWM controllers present
-on Tegra114.
+This patchset adds support for the TPS65090-charger. This charger is
+registered as a subdevice of the TPS65090 PMIC.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changed from specifying four PWM nodes to specifying a single node for all
-four PWM comtrollers.  The first member of the cells tuple is used to
-select which specific PWM controller.
+This series includes a fix for the tps65090 header file where all
+the interrupts were shifted by 1.
 
- arch/arm/boot/dts/tegra114.dtsi |    8 ++++++++
- 1 file changed, 8 insertions(+)
+v3:
+ - fixed up the tps65090-charger driver to fix build errors/warnings
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 1dfaf28..71783be 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -92,6 +92,14 @@
- 		status = "disabled";
- 	};
- 
-+	pwm: pwm {
-+		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x7000a000 0x40>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
- 	rtc {
- 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x7000e000 0x100>;
+v2:
+ - cleaned up tps65090 driver per comments (mostly var naming)
+ - flushed out commit description for driver
+ - reordered probe so irq is registered after power_supply and cleaned up 1st
+
+
+Rhyland Klein (4):
+  mfd: tps65090: Fix enum in header file
+  mfd: tps65090: Add resources for charger
+  power_supply: tps65090-charger: Add binding doc
+  power: tps65090: Add support for tps65090-charger
+
+ .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++
+ drivers/mfd/tps65090.c                             |   10 +
+ drivers/power/Kconfig                              |    7 +
+ drivers/power/Makefile                             |    1 +
+ drivers/power/tps65090-charger.c                   |  315 ++++++++++++++++++++
+ include/linux/mfd/tps65090.h                       |    6 +
+ 6 files changed, 362 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
+ create mode 100644 drivers/power/tps65090-charger.c
+
 -- 
 1.7.9.5
