@@ -1,44 +1,34 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: expose chip ID and revision
-Date: Tue, 12 Mar 2013 12:59:18 +0000
-Message-ID: <201303121259.18710.arnd@arndb.de>
-References: <1363089667-15737-1-git-send-email-dahuang@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] PM/domains: add delayed power off capability
+Date: Tue, 12 Mar 2013 16:29:07 +0200
+Message-ID: <20130312142907.GM27241@tbergstrom-lnx.Nvidia.com>
+References: <1363017028-16164-1-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363089667-15737-1-git-send-email-dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1363017028-16164-1-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 12 March 2013, Danny Huang wrote:
-> 
-> +void __init tegra_soc_device_init(void)
-> +{
-> +       struct soc_device *soc_dev;
-> +       struct soc_device_attribute *soc_dev_attr;
-> +
-> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +       if (!soc_dev_attr)
-> +               return;
-> +
-> +       soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%d", tegra_chip_id);
-> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_revision);
-> +       soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
-> +
-> +       soc_dev = soc_device_register(soc_dev_attr);
-> +       if (IS_ERR_OR_NULL(soc_dev))
-> +               kfree(soc_dev_attr);
-> +
-> +       return;
+On Mon, Mar 11, 2013 at 04:50:28PM +0100, Mayuresh Kulkarni wrote:
+> - this commit adds a capability to delay the powering off
+> of the domain
+> - callers can use pm_genpd_set_poweroff_delay to set the
+> power off delay for a domain
+> - it expects the delay in milli-seconds
+> - it also adds a pm_notifier per pm domain which cancels
+> the delayed power off work when system suspend is invoked
 
-You are dropping the soc_dev on the floor here by just returning.
+This is meant as a RFC patch. Some powerdomains (eg. GPU domains) can be
+controlled quite well using this strategy. The question is how to implement
+this. The current governor scheme is ill suited for this because the governor
+is only called when genpd wants to shutdown a domain. So the governor seems
+to be mostly there to impose extra constraints beyond 'all devices are off'
+and the predicted idle time is long enough to reach energy breakeven.
 
-The idea of the soc node is to have all on-soc components be children
-of that node, so you should instead pass it into of_platform_populate
-as the parent device.
+Thanks,
 
-	Arnd
+Peter.
