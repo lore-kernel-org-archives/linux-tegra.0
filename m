@@ -1,70 +1,63 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
-Date: Mon, 11 Mar 2013 16:48:15 -0700
-Message-ID: <1363045695-28874-1-git-send-email-achew@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/9] ARM: tegra: add platform suspend support
+Date: Tue, 12 Mar 2013 12:01:56 +0800
+Message-ID: <1363060916-8897-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds device tree nodes for the four PWM controllers present
-on Tegra114.
+This series introduces a basic functionality for Tegra to support the
+platform suspend and resume.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Fixed commit message.
-Corrected the compatible property.
-Placed PWM nodes in the right place such that nodes are sorted by register
-address.
+Note: This series only adds the support for Tegra20 and Tegra30. The
+Tegra114 will be supported later.
 
- arch/arm/boot/dts/tegra114.dtsi |   32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Verified on Seaboard and Cardhu.
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 1dfaf28..5741ae4 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -92,6 +92,38 @@
- 		status = "disabled";
- 	};
- 
-+	pwm0: pwm@7000a000 {
-+		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x7000a000 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm1: pwm@7000a010 {
-+		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x7000a010 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm2: pwm@7000a020 {
-+		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x7000a020 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
-+	pwm3: pwm@7000a030 {
-+		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
-+		reg = <0x7000a030 0x4>;
-+		#pwm-cells = <2>;
-+		clocks = <&tegra_car 17>;
-+		status = "disabled";
-+	};
-+
- 	rtc {
- 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x7000e000 0x100>;
+V2:
+* re-order the patch sequence to make sure the suspend function can be
+  enabled well after the last patch be merged
+* squash the patches that defined the PM bindings for PMC and the
+  implementation
+
+Joseph Lo (9):
+  gpio: tegra: add gpio wakeup source handling
+  ARM: tegra: irq: add wake up handling
+  ARM: dt: tegra: add bindings of power management configurations for
+    PMC
+  ARM: tegra: pm: add platform suspend support
+  ARM: dts: tegra: add power gpio keys to DT
+  ARM: dts: tegra: whistler: add wakeup source for KBC
+  ARM: dts: tegra: add non-removable and keep-power-in-suspend property
+    for MMC
+  ARM: tegra: config: defconfig update
+  ARM: dts: tegra: add the PM configurations of PMC
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++++++-
+ arch/arm/boot/dts/tegra20-harmony.dts              |  17 +++
+ arch/arm/boot/dts/tegra20-paz00.dts                |   8 ++
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   8 ++
+ arch/arm/boot/dts/tegra20-trimslice.dts            |  20 ++++
+ arch/arm/boot/dts/tegra20-ventana.dts              |  19 +++
+ arch/arm/boot/dts/tegra20-whistler.dts             |  10 ++
+ arch/arm/boot/dts/tegra30-beaver.dts               |   8 ++
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 ++
+ arch/arm/configs/tegra_defconfig                   |   1 +
+ arch/arm/mach-tegra/common.c                       |   3 +
+ arch/arm/mach-tegra/irq.c                          |  95 ++++++++++++++-
+ arch/arm/mach-tegra/irq.h                          |   6 +
+ arch/arm/mach-tegra/pm.c                           |  65 +++++++++++
+ arch/arm/mach-tegra/pm.h                           |   6 +
+ arch/arm/mach-tegra/pmc.c                          | 128 +++++++++++++++++++++
+ arch/arm/mach-tegra/pmc.h                          |  16 +++
+ drivers/gpio/gpio-tegra.c                          |  21 +++-
+ 20 files changed, 479 insertions(+), 4 deletions(-)
+
 -- 
-1.7.9.5
+1.8.1.5
