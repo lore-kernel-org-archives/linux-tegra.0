@@ -1,37 +1,84 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: tegra: expose chip ID and revision
-Date: Tue, 12 Mar 2013 19:10:54 +0000
-Message-ID: <201303121910.55141.arnd@arndb.de>
-References: <1363089667-15737-1-git-send-email-dahuang@nvidia.com> <201303121259.18710.arnd@arndb.de> <513F6E2C.1000101@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
+Date: Tue, 12 Mar 2013 20:24:29 +0100
+Message-ID: <20130312192429.GA21924@avionic-0098.mockup.avionic-design.de>
+References: <1363045695-28874-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513F6E2C.1000101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1363045695-28874-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 12 March 2013, Stephen Warren wrote:
-> > You are dropping the soc_dev on the floor here by just returning.
-> > 
-> > The idea of the soc node is to have all on-soc components be children
-> > of that node, so you should instead pass it into of_platform_populate
-> > as the parent device.
-> 
-> Tegra DTs don't have a separate node for on-soc vs. off-soc components.
-> Wouldn't passing soc_dev into of_platform_populate() make everything a
-> child of this soc_dev; is that what we want?
 
-Yes, we had long discussions about this when the soc infrastructure was
-merged. Right now, everything is a child of /sys/devices/platform/,
-basically saying that all devices are random stuff that cannot be
-probed. Moving it to /sys/devices/soc0 would not make the hierarchy
-any deeper but show much clearer which devices are part of the
-soc, and which ones are added as anonymous platform devices by code
-that does not use DT based probing. Ideally the second category is
-empty.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Arnd
+On Mon, Mar 11, 2013 at 04:48:15PM -0700, Andrew Chew wrote:
+[...]
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+[...]
+> +	pwm0: pwm@7000a000 {
+> +		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
+> +		reg = <0x7000a000 0x4>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&tegra_car 17>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pwm1: pwm@7000a010 {
+> +		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
+> +		reg = <0x7000a010 0x4>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&tegra_car 17>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pwm2: pwm@7000a020 {
+> +		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
+> +		reg = <0x7000a020 0x4>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&tegra_car 17>;
+> +		status = "disabled";
+> +	};
+> +
+> +	pwm3: pwm@7000a030 {
+> +		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
+> +		reg = <0x7000a030 0x4>;
+> +		#pwm-cells = <2>;
+> +		clocks = <&tegra_car 17>;
+> +		status = "disabled";
+> +	};
+
+Shouldn't these rather go into a single PWM node which provides 4 PWM
+devices? Just like we do on Tegra20?
+
+Thierry
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRP4DtAAoJEN0jrNd/PrOhd2AP/00iZv5OkWoNigKwBShB37Xk
+iphjieROrJXalhXNMpXSYjMUX7kXXDQuTp1t/UrlDuu2EiQf6+FuhB+960ceta6d
+CykfyDv3kLgbidqmwKILszqcliekth+s8mh5gIf7ZfCJMEWykjSH77wwOUSeTenB
+B7bpS8GpGjynE7dln8mVPpy3jJpO0xQlkCX3zEK+QdZQ3TXn0+25H3RNOgdIwraR
+HMj8ICmuAGwjFd8iOmiHb+xO3G3Ivl9NovhQjEKqVnEnDYngZCEAIW1fl4ZUAxsE
+Sm6AwXilaaWj7PvNY4Tv+ck00Gqnmq8tpxrd1x6UJG4nOBShgC2urROYGgmD5WsY
+map8iVHm8kvY77EW6jdUN+3piktY6aMYOLEk+xFS5OK06Ov3INLnqPBF+h0VCzdX
+iIeyrIolummsQXl3UDsEcr444yc9lIhbbhmXpPQPWVsXkiCmo+Tx8RolsMKr3q3n
+/or6RiBTypw9loUfX/YecE4Ma5FVc4KYi9d9+PWM8fk8iJZSrGYlLycOzi1+34B7
+Hu6WxNlrMhJt2y5NR6+MkdD6Yu4MEYFXBwzJ7F7Uoa/1GMtg+QLj9XSUNRbcnO1F
+89N+XYrZgWPD230WReWgxWRlIDPbwrnIifalqHXsY37SePRWug37Npa4yz977+NE
+9Qzc0P3F42kwA6+5o3Ru
+=fPxF
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
