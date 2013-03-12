@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch v3 1/4] mfd: tps65090: Fix enum in header file
-Date: Tue, 12 Mar 2013 18:08:06 -0400
-Message-ID: <1363126089-9071-2-git-send-email-rklein@nvidia.com>
+Subject: [Patch v3 3/4] power_supply: tps65090-charger: Add binding doc
+Date: Tue, 12 Mar 2013 18:08:08 -0400
+Message-ID: <1363126089-9071-4-git-send-email-rklein@nvidia.com>
 References: <1363126089-9071-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,9 +12,7 @@ To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.c
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Laxman Dewangan <ldewangan@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The enum is missing the definition for the first bit, which makes all
-the rest off by one. Add definition for the TPS65090_IRQ_INTERRUPT bit
-which at 0.
+This change adds the binding documentation for the tps65090-charger.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
@@ -23,20 +21,38 @@ v3:
 v2:
  - no changes since v1
 
- include/linux/mfd/tps65090.h |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/power_supply/tps65090.txt  |   23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/tps65090.txt
 
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 6694cf4..9ce231f 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -27,6 +27,7 @@
- 
- /* TPS65090 IRQs */
- enum {
-+	TPS65090_IRQ_INTERRUPT,
- 	TPS65090_IRQ_VAC_STATUS_CHANGE,
- 	TPS65090_IRQ_VSYS_STATUS_CHANGE,
- 	TPS65090_IRQ_BAT_STATUS_CHANGE,
+diff --git a/Documentation/devicetree/bindings/power_supply/tps65090.txt b/Documentation/devicetree/bindings/power_supply/tps65090.txt
+new file mode 100644
+index 0000000..56370c7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power_supply/tps65090.txt
+@@ -0,0 +1,23 @@
++TPS65090 Frontend PMU with Switchmode Charger
++
++Required Properties:
++-compatible: "ti,tps65090"
++-reg: I2C slave address
++-interrupts: the interrupt output to which this device connects
++
++Optional Properties:
++-ti,enable-low-current-chrg: Enables charging when a low current is detected
++ while the default logic is to stop charging.
++
++Example:
++
++	tps65090@48 {
++		compatible = "ti,tps65090";
++		reg = <0x48>;
++		interrupts = <0 88 0x4>;
++
++		ti,enable-low-current-chrg;
++
++		regulators {
++			...
++		};
 -- 
 1.7.9.5
