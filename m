@@ -1,78 +1,218 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH V2 9/9] ARM: dts: tegra: add the PM configurations of PMC
-Date: Tue, 12 Mar 2013 11:43:17 +0100
-Message-ID: <97395805.p014F9TUYL@fb07-iapwap2.physik.uni-giessen.de>
-References: <1363061043-9680-1-git-send-email-josephl@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] input: keyboard: tegra: support for defining row/columns based on SoC
+Date: Tue, 12 Mar 2013 17:06:29 +0530
+Message-ID: <1363088189-14654-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363061043-9680-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Joseph,
+NVIDIA's Tegra20 and Tegra30 supports the 16x8 keyboard matrix and T114
+support the 11x8 Key matrix.
 
-Am Dienstag, 12. M=E4rz 2013, 12:04:03 schrieb Joseph Lo:
-> Adding the PM configuration of PMC when the platform support suspend
-> function.
->=20
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V2:
-> * no change
-> ---
->  arch/arm/boot/dts/tegra20-harmony.dts   | 6 ++++++
->  arch/arm/boot/dts/tegra20-paz00.dts     | 7 +++++++
->  arch/arm/boot/dts/tegra20-seaboard.dts  | 6 ++++++
->  arch/arm/boot/dts/tegra20-trimslice.dts | 9 +++++++++
->  arch/arm/boot/dts/tegra20-ventana.dts   | 6 ++++++
->  arch/arm/boot/dts/tegra20-whistler.dts  | 8 ++++++++
->  arch/arm/boot/dts/tegra30-beaver.dts    | 7 +++++++
->  arch/arm/boot/dts/tegra30-cardhu.dtsi   | 7 +++++++
->  8 files changed, 56 insertions(+)
->=20
-> [...]
->
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
-> b/arch/arm/boot/dts/tegra20-paz00.dts index 41e82e3..cd8e798 100644
-> --- a/arch/arm/boot/dts/tegra20-paz00.dts
-> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
-> @@ -415,6 +415,13 @@
->=20
->  	pmc {
->  		nvidia,invert-interrupt;
-> +		nvidia,suspend-mode =3D <2>;
-> +		nvidia,cpu-pwr-good-time =3D <5000>;
+Add support for defining the maximum row/columns based on SoC through
+proper compatibity.
 
-should be 2000
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/input/keyboard/tegra-kbc.c |   81 +++++++++++++++++++++++++++--------
+ 1 files changed, 62 insertions(+), 19 deletions(-)
 
-> +		nvidia,cpu-pwr-off-time =3D <5000>;
-
-should be 0
-
-> +		nvidia,core-pwr-good-time =3D <3845 3845>;
-
-mmh, no idea here. original source [1] shows 0x7e7e ticks which transla=
-tes to=20
-1 sec?
-
-> +		nvidia,core-pwr-off-time =3D <3875>;
-
-should be 0
-
-> +		nvidia,sys-clock-req-active-high;
-> +		nvidia,combined-power-req;
-
-paz00 has no combined power req.
-
->  	};
->=20
->  	usb@c5000000 {
-
-[1]: http://gitorious.org/ac100/kernel/blobs/2.6.32/arch/arm/mach-tegra=
-/odm_kit/query/paz00/nvodm_query.c#line649
-
-Marc
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 0e138eb..ccb9298 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -27,17 +27,18 @@
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+ #include <linux/input/matrix_keypad.h>
+ #include <linux/clk/tegra.h>
+ 
+-#define KBC_MAX_GPIO	24
+ #define KBC_MAX_KPENT	8
+ 
+-#define KBC_MAX_ROW	16
+-#define KBC_MAX_COL	8
+-#define KBC_MAX_KEY	(KBC_MAX_ROW * KBC_MAX_COL)
++/* Maximum row/column supported by Tegra KBC yet  is 16x8 */
++#define KBC_MAX_GPIO	24
++/* Maximum keys supported by Tegra KBC yet is 16 x 8*/
++#define KBC_MAX_KEY	(16 * 8)
+ 
+ #define KBC_MAX_DEBOUNCE_CNT	0x3ffu
+ 
+@@ -80,6 +81,12 @@ enum tegra_pin_type {
+ 	PIN_CFG_ROW,
+ };
+ 
++/* Tegra KBC hw support */
++struct tegra_kbc_hw_support {
++	int max_rows;
++	int max_columns;
++};
++
+ struct tegra_kbc_pin_cfg {
+ 	enum tegra_pin_type type;
+ 	unsigned char num;
+@@ -108,6 +115,9 @@ struct tegra_kbc {
+ 	u32 wakeup_key;
+ 	struct timer_list timer;
+ 	struct clk *clk;
++	const struct tegra_kbc_hw_support *hw_support;
++	int max_keys;
++	int max_row_columns;
+ };
+ 
+ static void tegra_kbc_report_released_keys(struct input_dev *input,
+@@ -204,11 +214,11 @@ static void tegra_kbc_report_keys(struct tegra_kbc *kbc)
+ 
+ 	/*
+ 	 * If the platform uses Fn keymaps, translate keys on a Fn keypress.
+-	 * Function keycodes are KBC_MAX_KEY apart from the plain keycodes.
++	 * Function keycodes are max_keys apart from the plain keycodes.
+ 	 */
+ 	if (fn_keypress) {
+ 		for (i = 0; i < num_down; i++) {
+-			scancodes[i] += KBC_MAX_KEY;
++			scancodes[i] += kbc->max_keys;
+ 			keycodes[i] = kbc->keycode[scancodes[i]];
+ 		}
+ 	}
+@@ -315,7 +325,7 @@ static void tegra_kbc_setup_wakekeys(struct tegra_kbc *kbc, bool filter)
+ 	/* Either mask all keys or none. */
+ 	rst_val = (filter && !kbc->wakeup) ? ~0 : 0;
+ 
+-	for (i = 0; i < KBC_MAX_ROW; i++)
++	for (i = 0; i < kbc->hw_support->max_rows; i++)
+ 		writel(rst_val, kbc->mmio + KBC_ROW0_MASK_0 + i * 4);
+ }
+ 
+@@ -452,7 +462,7 @@ static bool tegra_kbc_check_pin_cfg(const struct tegra_kbc *kbc,
+ 
+ 		switch (pin_cfg->type) {
+ 		case PIN_CFG_ROW:
+-			if (pin_cfg->num >= KBC_MAX_ROW) {
++			if (pin_cfg->num >= kbc->hw_support->max_rows) {
+ 				dev_err(kbc->dev,
+ 					"pin_cfg[%d]: invalid row number %d\n",
+ 					i, pin_cfg->num);
+@@ -462,7 +472,7 @@ static bool tegra_kbc_check_pin_cfg(const struct tegra_kbc *kbc,
+ 			break;
+ 
+ 		case PIN_CFG_COL:
+-			if (pin_cfg->num >= KBC_MAX_COL) {
++			if (pin_cfg->num >= kbc->hw_support->max_columns) {
+ 				dev_err(kbc->dev,
+ 					"pin_cfg[%d]: invalid column number %d\n",
+ 					i, pin_cfg->num);
+@@ -520,6 +530,18 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 	}
+ 	num_cols = proplen / sizeof(u32);
+ 
++	if (num_rows > kbc->hw_support->max_rows) {
++		dev_err(kbc->dev,
++			"Number of row is more than supported on SoCs\n");
++		return -EINVAL;
++	}
++
++	if (num_cols > kbc->hw_support->max_columns) {
++		dev_err(kbc->dev,
++			"Number of column is more than supported on SoCs\n");
++		return -EINVAL;
++	}
++
+ 	if (!of_get_property(np, "linux,keymap", &proplen)) {
+ 		dev_err(kbc->dev, "property linux,keymap not found\n");
+ 		return -ENOENT;
+@@ -532,7 +554,7 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 	}
+ 
+ 	/* Set all pins as non-configured */
+-	for (i = 0; i < KBC_MAX_GPIO; i++)
++	for (i = 0; i < kbc->max_row_columns; ++i)
+ 		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
+ 
+ 	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
+@@ -562,6 +584,24 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 	return 0;
+ }
+ 
++static const struct tegra_kbc_hw_support tegra20_kbc_hw_support = {
++	.max_rows	= 16,
++	.max_columns	= 8,
++};
++
++static const struct tegra_kbc_hw_support tegra11_kbc_hw_support = {
++	.max_rows	= 11,
++	.max_columns	= 8,
++};
++
++static const struct of_device_id tegra_kbc_of_match[] = {
++	{ .compatible = "nvidia,tegra114-kbc", .data = &tegra11_kbc_hw_support},
++	{ .compatible = "nvidia,tegra30-kbc", .data = &tegra20_kbc_hw_support},
++	{ .compatible = "nvidia,tegra20-kbc", .data = &tegra20_kbc_hw_support},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, tegra_kbc_of_match);
++
+ static int tegra_kbc_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_kbc *kbc;
+@@ -570,7 +610,10 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 	int num_rows = 0;
+ 	unsigned int debounce_cnt;
+ 	unsigned int scan_time_rows;
+-	unsigned int keymap_rows = KBC_MAX_KEY;
++	unsigned int keymap_rows;
++	const struct of_device_id *match;
++
++	match = of_match_device(of_match_ptr(tegra_kbc_of_match), &pdev->dev);
+ 
+ 	kbc = devm_kzalloc(&pdev->dev, sizeof(*kbc), GFP_KERNEL);
+ 	if (!kbc) {
+@@ -579,6 +622,12 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	kbc->dev = &pdev->dev;
++	kbc->hw_support = match->data;
++	kbc->max_keys = (kbc->hw_support->max_rows *
++				kbc->hw_support->max_columns);
++	kbc->max_row_columns = (kbc->hw_support->max_rows +
++					kbc->hw_support->max_columns);
++	keymap_rows = kbc->max_keys;
+ 	spin_lock_init(&kbc->lock);
+ 
+ 	err = tegra_kbc_parse_dt(kbc);
+@@ -641,8 +690,8 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 		keymap_rows *= 2;
+ 
+ 	err = matrix_keypad_build_keymap(kbc->keymap_data, NULL,
+-					 keymap_rows, KBC_MAX_COL,
+-					 kbc->keycode, kbc->idev);
++				 keymap_rows, kbc->hw_support->max_columns,
++				 kbc->keycode, kbc->idev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to setup keymap\n");
+ 		return err;
+@@ -767,12 +816,6 @@ static int tegra_kbc_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops, tegra_kbc_suspend, tegra_kbc_resume);
+ 
+-static const struct of_device_id tegra_kbc_of_match[] = {
+-	{ .compatible = "nvidia,tegra20-kbc", },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(of, tegra_kbc_of_match);
+-
+ static struct platform_driver tegra_kbc_driver = {
+ 	.probe		= tegra_kbc_probe,
+ 	.driver	= {
+-- 
+1.7.1.1
