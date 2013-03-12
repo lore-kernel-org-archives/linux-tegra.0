@@ -1,45 +1,45 @@
-From: Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
-Date: Tue, 12 Mar 2013 13:38:16 -0700
-Message-ID: <643E69AA4436674C8F39DCC2C05F7638629CA51724@HQMAIL03.nvidia.com>
-References: <1363045695-28874-1-git-send-email-achew@nvidia.com>
- <20130312192429.GA21924@avionic-0098.mockup.avionic-design.de>
- <513F8363.8090908@wwwdotorg.org>
+From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1 v3] ARM: tegra: add PWM nodes to Tegra114 DT
+Date: Tue, 12 Mar 2013 14:42:43 -0700
+Message-ID: <1363124563-24784-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513F8363.8090908-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Tuesday, March 12, 2013 12:35 PM
-> To: Thierry Reding
-> Cc: Andrew Chew; Hiroshi Doyu; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [PATCH 1/1 v2] ARM: dt: tegra114: add PWM nodes
-> 
-> On 03/12/2013 01:24 PM, Thierry Reding wrote:
-> > On Mon, Mar 11, 2013 at 04:48:15PM -0700, Andrew Chew wrote: [...]
-> >> diff --git a/arch/arm/boot/dts/tegra114.dtsi
-> >> b/arch/arm/boot/dts/tegra114.dtsi
-> > [...]
-> >> +	pwm0: pwm@7000a000 {
-> ...
-> >> +	pwm1: pwm@7000a010 {
-> ...
-> >> +	pwm2: pwm@7000a020 {
-> ...
-> >> +	pwm3: pwm@7000a030 {
-> ...
-> >
-> > Shouldn't these rather go into a single PWM node which provides 4 PWM
-> > devices? Just like we do on Tegra20?
-> 
-> Oh yes. Thanks for catching that. I'll remove the patch from the Tegra tree for
-> now until that's fixed.
+This patch adds a device tree node for the four PWM controllers present
+on Tegra114.
 
-Does that work?  Let me try that, using Tegra20 as guidance.
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changed from specifying four PWM nodes to specifying a single node for all
+four PWM comtrollers.  The first member of the cells tuple is used to
+select which specific PWM controller.
+
+ arch/arm/boot/dts/tegra114.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 1dfaf28..71783be 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -92,6 +92,14 @@
+ 		status = "disabled";
+ 	};
+ 
++	pwm: pwm {
++		compatible = "nvidia,tegra114-pwm", "nvidia,tegra20-pwm";
++		reg = <0x7000a000 0x40>;
++		#pwm-cells = <2>;
++		clocks = <&tegra_car 17>;
++		status = "disabled";
++	};
++
+ 	rtc {
+ 		compatible = "nvidia,tegra114-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x7000e000 0x100>;
+-- 
+1.7.9.5
