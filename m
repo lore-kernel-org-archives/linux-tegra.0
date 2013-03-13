@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 2/2 v4] ARM: tegra: fix the status of PWM nodes
-Date: Wed, 13 Mar 2013 10:07:22 -0600
-Message-ID: <5140A43A.4060808@wwwdotorg.org>
+Date: Wed, 13 Mar 2013 10:19:10 -0600
+Message-ID: <5140A6FE.8070504@wwwdotorg.org>
 References: <1363131651-13734-1-git-send-email-achew@nvidia.com> <1363131651-13734-2-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -18,6 +18,11 @@ On 03/12/2013 05:40 PM, Andrew Chew wrote:
 > chip-specific dtsi file, since we don't know whether specific boards
 > will use the PWM or not.  This patch fixes the PWM node status for
 > Tegra20 and Tegra30.
+> 
+> Also fixed the one user of PWM, which is the Tegra20 medcom-wide board,
+> so that PWM is set to "okay" in the board-specific dts file.
+
+I've applied this series to Tegra's for-3.10/dt branch.
 
 > diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
 
@@ -25,13 +30,9 @@ On 03/12/2013 05:40 PM, Andrew Chew wrote:
 > +		status = "okay";
 > +	}
 > +
->  	backlight {
 
-You don't need to repeat the label ("pwm:") in this file; it's already
-defined in tegra20.dtsi.
+There's also a syntax error here; there needs to be a ; after the }. I
+also fixed this up when I applied it.
 
-Also, the node sort order is wrong here; pwm's reg value is before i2c's
-reg value (which is the current node immediately before the backlight
-node in this file).
-
-I'll fix these issues up when applying the patch since they're easy.
+BTW, "PATCH 2/2 v4" is more typically written "PATCH V4 2/2". Using "git
+format-patch --subject-prefix='PATCH V4'" can help automate that a little.
