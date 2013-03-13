@@ -1,161 +1,96 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/3] ARM: tegra: moving the CPU power timer function to PMC driver
-Date: Wed, 13 Mar 2013 16:27:24 +0800
-Message-ID: <1363163246-26368-1-git-send-email-josephl@nvidia.com>
+From: Danny Huang <dahuang@nvidia.com>
+Subject: [PATCH v3] ARM: tegra: expose chip ID and revision
+Date: Wed, 13 Mar 2013 17:48:00 +0800
+Message-ID: <1363168080-12697-1-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux@arm.linux.org.uk, swarren@wwwdotorg.org, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, thierry.reding@avionic-design.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Danny Huang <dahuang@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The CPU power timer set up fucntion was related to PMC register. Now moving
-it to PMC driver. And it also help to clean up the PM related code later.
+Expose Tegra chip ID and revision in /sys/devices/soc for user mode
+usage
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Danny Huang <dahuang@nvidia.com>
 ---
-This series was based on the patch set of suspending support.
----
- arch/arm/mach-tegra/pm.c  | 36 ------------------------------------
- arch/arm/mach-tegra/pmc.c | 38 ++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/pmc.h |  1 +
- 3 files changed, 39 insertions(+), 36 deletions(-)
+ arch/arm/Kconfig            |  1 +
+ arch/arm/mach-tegra/tegra.c | 31 ++++++++++++++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 915e13b..b7cc637 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -23,7 +23,6 @@
- #include <linux/delay.h>
- #include <linux/cpu_pm.h>
- #include <linux/suspend.h>
--#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/clk/tegra.h>
- 
-@@ -44,47 +43,12 @@
- #define TEGRA_POWER_CPU_PWRREQ_OE	(1 << 16)  /* CPU pwr req enable */
- 
- #define PMC_CTRL		0x0
--#define PMC_CPUPWRGOOD_TIMER	0xc8
--#define PMC_CPUPWROFF_TIMER	0xcc
- 
- #ifdef CONFIG_PM_SLEEP
- static DEFINE_SPINLOCK(tegra_lp2_lock);
- static void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
--static struct clk *tegra_pclk;
- void (*tegra_tear_down_cpu)(void);
- 
--static void set_power_timers(unsigned long us_on, unsigned long us_off)
--{
--	unsigned long long ticks;
--	unsigned long long pclk;
--	unsigned long rate;
--	static unsigned long tegra_last_pclk;
--
--	if (tegra_pclk == NULL) {
--		tegra_pclk = clk_get_sys(NULL, "pclk");
--		WARN_ON(IS_ERR(tegra_pclk));
--	}
--
--	rate = clk_get_rate(tegra_pclk);
--
--	if (WARN_ON_ONCE(rate <= 0))
--		pclk = 100000000;
--	else
--		pclk = rate;
--
--	if ((rate != tegra_last_pclk)) {
--		ticks = (us_on * pclk) + 999999ull;
--		do_div(ticks, 1000000);
--		writel((unsigned long)ticks, pmc + PMC_CPUPWRGOOD_TIMER);
--
--		ticks = (us_off * pclk) + 999999ull;
--		do_div(ticks, 1000000);
--		writel((unsigned long)ticks, pmc + PMC_CPUPWROFF_TIMER);
--		wmb();
--	}
--	tegra_last_pclk = pclk;
--}
--
- /*
-  * restore_cpu_complex
-  *
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index f0c5435..bb1fe8e 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -19,6 +19,7 @@
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 2363926..12fa4e5 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -675,6 +675,7 @@ config ARCH_TEGRA
+ 	select HAVE_CLK
+ 	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
++	select SOC_BUS
+ 	select SPARSE_IRQ
+ 	select USE_OF
+ 	help
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 27232c9..536ed3e 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -33,6 +33,8 @@
  #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/clk.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-tegra.h>
++#include <linux/slab.h>
++#include <linux/sys_soc.h>
+ #include <linux/usb/tegra_usb_phy.h>
  
- #include "fuse.h"
- #include "pmc.h"
-@@ -52,6 +53,9 @@ static DEFINE_SPINLOCK(tegra_powergate_lock);
- static void __iomem *tegra_pmc_base;
- static bool tegra_pmc_invert_interrupt;
+ #include <asm/mach-types.h>
+@@ -42,6 +44,7 @@
  
-+#define PMC_CPUPWRGOOD_TIMER	0xc8
-+#define PMC_CPUPWROFF_TIMER	0xcc
+ #include "board.h"
+ #include "common.h"
++#include "fuse.h"
+ #include "iomap.h"
+ 
+ static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+@@ -80,12 +83,38 @@ static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 
+ static void __init tegra_dt_init(void)
+ {
++	struct device *parent = NULL;
++	struct soc_device *soc_dev;
++	struct soc_device_attribute *soc_dev_attr;
 +
- struct pmc_pm_data {
- 	u32 cpu_good_time;	/* CPU power good time in uS */
- 	u32 cpu_off_time;	/* CPU power off time in uS */
-@@ -158,6 +162,40 @@ int tegra_pmc_cpu_remove_clamping(int cpuid)
++	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
++	if (!soc_dev_attr)
++		goto out;
++
++	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%d", tegra_chip_id);
++	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_revision);
++	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
++
++	soc_dev = soc_device_register(soc_dev_attr);
++	if (IS_ERR(soc_dev)) {
++		kfree(soc_dev_attr->soc_id);
++		kfree(soc_dev_attr->revision);
++		kfree(soc_dev_attr->family);
++		kfree(soc_dev_attr);
++		goto out;
++	}
++
++	parent = soc_device_to_device(soc_dev);
++	if (IS_ERR(parent))
++		parent = NULL;
++
+ 	/*
+ 	 * Finished with the static registrations now; fill in the missing
+ 	 * devices
+ 	 */
++out:
+ 	of_platform_populate(NULL, of_default_bus_match_table,
+-				tegra20_auxdata_lookup, NULL);
++				tegra20_auxdata_lookup, parent);
  }
  
- #ifdef CONFIG_PM_SLEEP
-+static struct clk *tegra_pclk;
-+
-+void set_power_timers(unsigned long us_on, unsigned long us_off)
-+{
-+	unsigned long long ticks;
-+	unsigned long long pclk;
-+	unsigned long rate;
-+	static unsigned long tegra_last_pclk;
-+
-+	if (tegra_pclk == NULL) {
-+		tegra_pclk = clk_get_sys(NULL, "pclk");
-+		WARN_ON(IS_ERR(tegra_pclk));
-+	}
-+
-+	rate = clk_get_rate(tegra_pclk);
-+
-+	if (WARN_ON_ONCE(rate <= 0))
-+		pclk = 100000000;
-+	else
-+		pclk = rate;
-+
-+	if ((rate != tegra_last_pclk)) {
-+		ticks = (us_on * pclk) + 999999ull;
-+		do_div(ticks, 1000000);
-+		tegra_pmc_writel((unsigned long)ticks, PMC_CPUPWRGOOD_TIMER);
-+
-+		ticks = (us_off * pclk) + 999999ull;
-+		do_div(ticks, 1000000);
-+		tegra_pmc_writel((unsigned long)ticks, PMC_CPUPWROFF_TIMER);
-+		wmb();
-+	}
-+	tegra_last_pclk = pclk;
-+}
-+
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
- {
- 	return pmc_pm_data.suspend_mode;
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 72b2cee..9413a44 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -27,6 +27,7 @@ enum tegra_suspend_mode {
- };
- 
- #ifdef CONFIG_PM_SLEEP
-+void set_power_timers(unsigned long us_on, unsigned long us_off);
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void);
- void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
- u32 tegra_pmc_get_cpu_good_time(void);
+ static void __init trimslice_init(void)
 -- 
 1.8.1.5
