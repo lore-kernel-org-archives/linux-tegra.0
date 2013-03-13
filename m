@@ -1,53 +1,62 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 9/9] ARM: dts: tegra: add the PM configurations of
- PMC
-Date: Wed, 13 Mar 2013 12:57:34 +0800
-Message-ID: <1363150654.3998.103.camel@jlo-ubuntu-64.nvidia.com>
-References: <1363061043-9680-1-git-send-email-josephl@nvidia.com>
-	 <97395805.p014F9TUYL@fb07-iapwap2.physik.uni-giessen.de>
-	 <1363142623.3998.33.camel@jlo-ubuntu-64.nvidia.com>
-	 <513FFD12.8050007@wwwdotorg.org>
+Subject: Re: [PATCH V2 0/9] ARM: tegra: add platform suspend support
+Date: Wed, 13 Mar 2013 14:04:04 +0800
+Message-ID: <1363154644.3998.140.camel@jlo-ubuntu-64.nvidia.com>
+References: <1363060916-8897-1-git-send-email-josephl@nvidia.com>
+	 <513F82EB.1030407@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513FFD12.8050007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <513F82EB.1030407-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-03-13 at 12:14 +0800, Stephen Warren wrote:
-> On 03/12/2013 08:43 PM, Joseph Lo wrote:
-> > Hi Marc,
-> >=20
-> > On Tue, 2013-03-12 at 18:43 +0800, Marc Dietrich wrote:
-> >> Am Dienstag, 12. M=C3=A4rz 2013, 12:04:03 schrieb Joseph Lo:
-> >>> Adding the PM configuration of PMC when the platform support susp=
-end
-> >>> function.
->=20
-> >>> +		nvidia,core-pwr-good-time =3D <3845 3845>;
-> >>
-> >> mmh, no idea here. original source [1] shows 0x7e7e ticks which tr=
-anslates to=20
-> >> 1 sec?
-> >>
-> > The ticks was based on the 32KHz clock domain. I translate it to uS=
-=2E
->=20
-> >>> 0x7e7e * (1.0/32000) * 1000000
-> 1011937.4999999999
->=20
-> Oh, I suppose perhaps the 0x7e7e value is both values packed together=
-,
-> so this should be:
->=20
-> >>> 0x7e * (1.0/32000) * 1000000
-> 3937.5
-Yes.
+On Wed, 2013-03-13 at 03:32 +0800, Stephen Warren wrote:
+> On 03/11/2013 10:01 PM, Joseph Lo wrote:
+> > This series introduces a basic functionality for Tegra to support the
+> > platform suspend and resume.
+> > 
+> > Note: This series only adds the support for Tegra20 and Tegra30. The
+> > Tegra114 will be supported later.
+> 
+> Aside from the few issues that have already been pointed out, this looks
+> OK now. I have a couple questions:
+> 
+> 1) Please remind me if this series depends on anything. If not, I hope
+> to apply it mostly directly on top of 3.9-rc1 or so.
+> 
+There is a patch that you just re-post to linux-mmc tree (mmc: tegra:
+use mmc_of_parse to get the support of standard MMC DT bindings). This
+series need the patch to make sure everything work.
 
-0x7e * (1.0/32768) * 1000000 =3D 3845
+> 2) You mentioned that Tegra114 isn't supported. What is the failure mode
+> on Tegra114? Is suspend simply not available and hence can't be
+> requested, or will suspend attempts gracefully return an error, or will
+> there we crashes, boot failures, etc.?
+> 
+Because the DT of Tegra114 didn't describe any PMC suspend information.
+So the driver will prevent to register any platform suspend ops. The
+result will something like below.
+
+Tegra114 > echo mem > /sys/power/state
+write error: No such device
+
+> 3) Sorry for asking this again, but since only LP2 is actually
+> implemented in patch 4, what happens if the user selects LP0 or LP1?
+> Does the system (a) just use LP2, (b) fail to suspend, and hence
+> immediately resume, (c) suspend, but can't be resumed, ...?
+> 
+Ah. I didn't add any protection here. It will be (c) due the LP2 mask. I
+will add a protection in next version. Thanks for remind.
+
+BTW, I want to mention one thing about PMC DT bindings. Because I can't
+add all of the PMC DT bindings in one time, the PMC is related to too
+many devices to work for runtime PM and power domain control. And some
+wake up sources control for deep sleep mode (LP0). They are still under
+developing for upstream. May I add more bindings for PMC later?
 
 Thanks,
 Joseph
