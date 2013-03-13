@@ -1,66 +1,58 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: refactor the pmc_pm_set function
-Date: Wed, 13 Mar 2013 11:52:57 -0600
-Message-ID: <5140BCF9.2070900@wwwdotorg.org>
-References: <1363163246-26368-1-git-send-email-josephl@nvidia.com> <1363163246-26368-2-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH V3 4/9] ARM: tegra: pm: add platform suspend support
+Date: Wed, 13 Mar 2013 12:03:06 -0600
+Message-ID: <5140BF5A.3040108@wwwdotorg.org>
+References: <1363161683-20825-1-git-send-email-josephl@nvidia.com> <1363161683-20825-5-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363163246-26368-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1363161683-20825-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/13/2013 02:27 AM, Joseph Lo wrote:
-> The pmc_pm_set function was designed for SoC to configure the related
-> settings when system going to some low power modes (e.g. platform
-> suspend or CPU idle powered-down mode). We refactor the function to make
-> it work on the usage.
+On 03/13/2013 02:01 AM, Joseph Lo wrote:
+> Adding suspend to RAM support for Tegra platform. There are three suspend
+> mode for Tegra. The difference were below.
+> 
+> * LP2: CPU voltage off
+> * LP1: CPU voltage off, DRAM in self-refresh
+> * LP0: CPU + Core voltage off, DRAM in self-refresh
+> 
+> After this patch, the LP2 suspend mode will be supported.
 
-> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
 
-> +#include <linux/clk-provider.h>
+> +void __init tegra_init_suspend(void)
+...
+> +	/* We only support LP2 suspend mode right now. */
+> +	if (mode > TEGRA_SUSPEND_LP2)
+> +		tegra_pmc_set_suspend_mode(TEGRA_SUSPEND_LP2);
 
-This code isn't a clock-provider, and hence shouldn't include that
-header file.
+I see that in patch 3/9, tegra_pmc_parse_dt() simply assigns directly to
+pmc_pm_data.suspend_mode rather than calling a function. If it's useful
+to call a function here, isn't doing so also useful in tegra_pmc_parse_dt()?
 
-> +void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
+I guess you did this because pmc_pm_data is static so you can't just
+assign it here.
 
-> +	switch (mode) {
-> +	case TEGRA_SUSPEND_LP2:
-> +		rate = __clk_get_rate(tegra_pclk);
+Instead, I would suggest that tegra_pmc_parse_dt() does this validation
+itself, either by:
 
-Doesn't regular clk_get_rate() work here?
+a) Enhancing tegra_pmc_parse_dt() to know which modes are supported itself.
 
-> @@ -234,6 +229,9 @@ void tegra_pmc_suspend_init(void)
->  {
->  	u32 reg;
->  
-> +	tegra_pclk = clk_get_sys(NULL, "pclk");
-> +	WARN_ON(IS_ERR(tegra_pclk));
+or:
 
-Shouldn't this instead error out and/or disable any system suspend
-modes? Otherwise, tegra_pmc_pm_set() is going to call
-clk_get_rate(tegra_pclk), and tegra_pclk won't be a valid clock object.
+b) Have tegra_pmc_parse_dt() call a function in pm.c to determine
+whether the user-selected suspend mode is valid or not. Something like:
 
-Also, can you use regular clk_get() rather than clk_get_sys()? That'd
-need a clocks property in the PMC DT node.
+pmc_pm_data.suspend_mode = tegra_pm_validate_suspend_mode(suspend_mode);
 
-I guess I see now that this series does actually depend on the suspend
-series. However, stuff like:
+That way, tegra_pm_validate_suspend_mode() can encapsulate all details
+of which suspend modes are supported, any SoC-specific differences (e.g.
+not Tegra114 in any mode, but any earlier chip in LP2 mode for example).
 
-> -u32 tegra_pmc_get_cpu_good_time(void)
-> -{
-> -	return pmc_pm_data.cpu_good_time;
-> -}
-> -
-> -u32 tegra_pmc_get_cpu_off_time(void)
-> -{
-> -	return pmc_pm_data.cpu_off_time;
-> -}
-
-... was actually added in that series, so if you put this series first,
-or merged the two series with these patches first, you could end up
-avoiding some churn.
+(a) is slightly simpler. (b) is probably more flexible. I guess I'd
+prefer (b).
