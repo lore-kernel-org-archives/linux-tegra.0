@@ -1,62 +1,72 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 0/9] ARM: tegra: add platform suspend support
-Date: Wed, 13 Mar 2013 14:04:04 +0800
-Message-ID: <1363154644.3998.140.camel@jlo-ubuntu-64.nvidia.com>
-References: <1363060916-8897-1-git-send-email-josephl@nvidia.com>
-	 <513F82EB.1030407@wwwdotorg.org>
+Subject: [PATCH V3 0/9] ARM: tegra: add platform suspend support
+Date: Wed, 13 Mar 2013 16:01:14 +0800
+Message-ID: <1363161683-20825-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <513F82EB.1030407-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-03-13 at 03:32 +0800, Stephen Warren wrote:
-> On 03/11/2013 10:01 PM, Joseph Lo wrote:
-> > This series introduces a basic functionality for Tegra to support the
-> > platform suspend and resume.
-> > 
-> > Note: This series only adds the support for Tegra20 and Tegra30. The
-> > Tegra114 will be supported later.
-> 
-> Aside from the few issues that have already been pointed out, this looks
-> OK now. I have a couple questions:
-> 
-> 1) Please remind me if this series depends on anything. If not, I hope
-> to apply it mostly directly on top of 3.9-rc1 or so.
-> 
-There is a patch that you just re-post to linux-mmc tree (mmc: tegra:
-use mmc_of_parse to get the support of standard MMC DT bindings). This
-series need the patch to make sure everything work.
+This series introduces a basic functionality for Tegra to support the
+platform suspend and resume.
 
-> 2) You mentioned that Tegra114 isn't supported. What is the failure mode
-> on Tegra114? Is suspend simply not available and hence can't be
-> requested, or will suspend attempts gracefully return an error, or will
-> there we crashes, boot failures, etc.?
-> 
-Because the DT of Tegra114 didn't describe any PMC suspend information.
-So the driver will prevent to register any platform suspend ops. The
-result will something like below.
+Note: This series only adds the support for Tegra20 and Tegra30. The
+Tegra114 will be supported later.
 
-Tegra114 > echo mem > /sys/power/state
-write error: No such device
+This series were depending on the patch below that not yet be merged into
+linux-mmc tree.
+"mmc: tegra: use mmc_of_parse to get the support of standard MMC DT bindings"
 
-> 3) Sorry for asking this again, but since only LP2 is actually
-> implemented in patch 4, what happens if the user selects LP0 or LP1?
-> Does the system (a) just use LP2, (b) fail to suspend, and hence
-> immediately resume, (c) suspend, but can't be resumed, ...?
-> 
-Ah. I didn't add any protection here. It will be (c) due the LP2 mask. I
-will add a protection in next version. Thanks for remind.
 
-BTW, I want to mention one thing about PMC DT bindings. Because I can't
-add all of the PMC DT bindings in one time, the PMC is related to too
-many devices to work for runtime PM and power domain control. And some
-wake up sources control for deep sleep mode (LP0). They are still under
-developing for upstream. May I add more bindings for PMC later?
+Verified on Seaboard and Cardhu.
 
-Thanks,
-Joseph
+V3:
+* fix the PMC DT configurations for paz00 board
+* add a protection for only support LP2 suspend mode
+
+V2:
+* re-order the patch sequence to make sure the suspend function can be
+  enabled well after the last patch be merged
+* squash the patches that defined the PM bindings for PMC and the
+  implementation
+
+Joseph Lo (9):
+  gpio: tegra: add gpio wakeup source handling
+  ARM: tegra: irq: add wake up handling
+  ARM: dt: tegra: add bindings of power management configurations for
+    PMC
+  ARM: tegra: pm: add platform suspend support
+  ARM: dts: tegra: add power gpio keys to DT
+  ARM: dts: tegra: whistler: add wakeup source for KBC
+  ARM: dts: tegra: add non-removable and keep-power-in-suspend property
+    for MMC
+  ARM: tegra: config: defconfig update
+  ARM: dts: tegra: add the PM configurations of PMC
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++++++-
+ arch/arm/boot/dts/tegra20-harmony.dts              |  17 +++
+ arch/arm/boot/dts/tegra20-paz00.dts                |   7 ++
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   8 ++
+ arch/arm/boot/dts/tegra20-trimslice.dts            |  20 +++
+ arch/arm/boot/dts/tegra20-ventana.dts              |  19 +++
+ arch/arm/boot/dts/tegra20-whistler.dts             |  10 ++
+ arch/arm/boot/dts/tegra30-beaver.dts               |   8 ++
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 ++
+ arch/arm/configs/tegra_defconfig                   |   1 +
+ arch/arm/mach-tegra/common.c                       |   3 +
+ arch/arm/mach-tegra/irq.c                          |  95 +++++++++++++-
+ arch/arm/mach-tegra/irq.h                          |   6 +
+ arch/arm/mach-tegra/pm.c                           |  71 +++++++++++
+ arch/arm/mach-tegra/pm.h                           |   6 +
+ arch/arm/mach-tegra/pmc.c                          | 136 +++++++++++++++++++++
+ arch/arm/mach-tegra/pmc.h                          |  17 +++
+ drivers/gpio/gpio-tegra.c                          |  21 +++-
+ 20 files changed, 493 insertions(+), 4 deletions(-)
+
+-- 
+1.8.1.5
