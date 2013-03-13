@@ -1,70 +1,87 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2 v4] ARM: tegra: fix the status of PWM nodes
-Date: Tue, 12 Mar 2013 16:40:51 -0700
-Message-ID: <1363131651-13734-2-git-send-email-achew@nvidia.com>
-References: <1363131651-13734-1-git-send-email-achew@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 9/9] ARM: dts: tegra: add the PM configurations of
+ PMC
+Date: Wed, 13 Mar 2013 10:43:43 +0800
+Message-ID: <1363142623.3998.33.camel@jlo-ubuntu-64.nvidia.com>
+References: <1363061043-9680-1-git-send-email-josephl@nvidia.com>
+	 <97395805.p014F9TUYL@fb07-iapwap2.physik.uni-giessen.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363131651-13734-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <97395805.p014F9TUYL-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-We should be defining the PWM nodes with status as "disabled" in the
-chip-specific dtsi file, since we don't know whether specific boards
-will use the PWM or not.  This patch fixes the PWM node status for
-Tegra20 and Tegra30.
+Hi Marc,
 
-Also fixed the one user of PWM, which is the Tegra20 medcom-wide board,
-so that PWM is set to "okay" in the board-specific dts file.
+On Tue, 2013-03-12 at 18:43 +0800, Marc Dietrich wrote:
+> Am Dienstag, 12. M=C3=A4rz 2013, 12:04:03 schrieb Joseph Lo:
+> > Adding the PM configuration of PMC when the platform support suspen=
+d
+> > function.
+> >=20
+> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > V2:
+> > * no change
+> > ---
+> >  arch/arm/boot/dts/tegra20-harmony.dts   | 6 ++++++
+> >  arch/arm/boot/dts/tegra20-paz00.dts     | 7 +++++++
+> >  arch/arm/boot/dts/tegra20-seaboard.dts  | 6 ++++++
+> >  arch/arm/boot/dts/tegra20-trimslice.dts | 9 +++++++++
+> >  arch/arm/boot/dts/tegra20-ventana.dts   | 6 ++++++
+> >  arch/arm/boot/dts/tegra20-whistler.dts  | 8 ++++++++
+> >  arch/arm/boot/dts/tegra30-beaver.dts    | 7 +++++++
+> >  arch/arm/boot/dts/tegra30-cardhu.dtsi   | 7 +++++++
+> >  8 files changed, 56 insertions(+)
+> >=20
+> > [...]
+> >
+> > diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> > b/arch/arm/boot/dts/tegra20-paz00.dts index 41e82e3..cd8e798 100644
+> > --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> > +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> > @@ -415,6 +415,13 @@
+> >=20
+> >  	pmc {
+> >  		nvidia,invert-interrupt;
+> > +		nvidia,suspend-mode =3D <2>;
+> > +		nvidia,cpu-pwr-good-time =3D <5000>;
+>=20
+> should be 2000
+>=20
+> > +		nvidia,cpu-pwr-off-time =3D <5000>;
+>=20
+> should be 0
+>=20
+> > +		nvidia,core-pwr-good-time =3D <3845 3845>;
+>=20
+> mmh, no idea here. original source [1] shows 0x7e7e ticks which trans=
+lates to=20
+> 1 sec?
+>=20
+The ticks was based on the 32KHz clock domain. I translate it to uS.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-medcom-wide.dts |    4 ++++
- arch/arm/boot/dts/tegra20.dtsi            |    1 +
- arch/arm/boot/dts/tegra30.dtsi            |    1 +
- 3 files changed, 6 insertions(+)
+> > +		nvidia,core-pwr-off-time =3D <3875>;
+>=20
+> should be 0
+>=20
+> > +		nvidia,sys-clock-req-active-high;
+> > +		nvidia,combined-power-req;
+>=20
+> paz00 has no combined power req.
+>=20
+> >  	};
+> >=20
+> >  	usb@c5000000 {
+>=20
+> [1]: http://gitorious.org/ac100/kernel/blobs/2.6.32/arch/arm/mach-teg=
+ra/odm_kit/query/paz00/nvodm_query.c#line649
+>=20
+Thanks for your review and point me out the detail information about
+paz00 board.
 
-diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-index a2d6d65..ec392a2 100644
---- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
-+++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
-@@ -26,6 +26,10 @@
- 		};
- 	};
- 
-+	pwm: pwm {
-+		status = "okay";
-+	}
-+
- 	backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 5000000>;
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 2e7c83c..1887ac3 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -268,6 +268,7 @@
- 		reg = <0x7000a000 0x100>;
- 		#pwm-cells = <2>;
- 		clocks = <&tegra_car 17>;
-+		status = "disabled";
- 	};
- 
- 	rtc {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 2de8b91..6294687 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -263,6 +263,7 @@
- 		reg = <0x7000a000 0x100>;
- 		#pwm-cells = <2>;
- 		clocks = <&tegra_car 17>;
-+		status = "disabled";
- 	};
- 
- 	rtc {
--- 
-1.7.9.5
+Joseph
