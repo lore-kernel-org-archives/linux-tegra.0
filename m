@@ -1,60 +1,52 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] spi: remove unused variable in
-	tegra_slink_read_rx_fifo_to_client_rxbuf()
-Date: Thu, 14 Mar 2013 01:29:30 +0530
-Message-ID: <5140DAA2.3000703@nvidia.com>
-References: <CAPgLHd8yTotMxH-Rb6UX3bsQrTTUM4SdQWNVDoU_LszgxM_qsQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 3/5] ARM: tegra:add aliases and DMA requestor for serial
+ nodes of Tegra114
+Date: Wed, 13 Mar 2013 14:02:41 -0600
+Message-ID: <5140DB61.3090809@wwwdotorg.org>
+References: <1363204194-19487-1-git-send-email-ldewangan@nvidia.com> <1363204194-19487-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <CAPgLHd8yTotMxH-Rb6UX3bsQrTTUM4SdQWNVDoU_LszgxM_qsQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org" <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363204194-19487-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 13 March 2013 06:59 PM, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
->
-> The variable bits_per_word is initialized but never used
-> otherwise, so remove the unused variable.
->
-> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> ---
->   drivers/spi/spi-tegra20-slink.c | 3 ---
->   1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-> index a829563..17224f0 100644
-> --- a/drivers/spi/spi-tegra20-slink.c
-> +++ b/drivers/spi/spi-tegra20-slink.c
-> @@ -375,9 +375,6 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
->   		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
->   		read_words += tspi->curr_dma_words;
->   	} else {
-> -		unsigned int bits_per_word;
-> -
-> -		bits_per_word = t->bits_per_word;
->
+On 03/13/2013 01:49 PM, Laxman Dewangan wrote:
+> Add APB DMA requestor and serial aliases for serial controller.
+> There will be two serial driver i.e. 8250 based simple serial driver
+> and APB DMA based serial driver for higher baudrate and performace.
+> 
+> The simple serial driver get enabled with compatible "nvidia,tegra114-uart",
+> "nvidia,tegra20-uart" and APB DMA based driver will get enabled with
+> compatible "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
 
+> +	/*
+> +	 * There are two serial driver i.e. 8250 based simple serial
+> +	 * driver and APB DMA based serial driver for higher baudrate
+> +	 * and performace. To enable the 8250 based driver, the compatible
+> +	 * is "nvidia,tegra114-uart", "nvidia,tegra20-uart" and to enable
+> +	 * the APB DMA based serial driver, the comptible is
+> +	 * "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
+> +	 */
 
-Yes, it is not needed.
-Acked-By: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Again, that text says you want either of:
 
-Thanks,
-Laxman
+compatible = "nvidia,tegra114-uart",   "nvidia,tegra20-uart";
+compatible = "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart";
 
+(note Tegra20-vs-Tegra30 in the second compatible value)
 
-------------------------------------------------------------------------------
-Everyone hates slow websites. So do we.
-Make your web apps faster with AppDynamics
-Download AppDynamics Lite for free today:
-http://p.sf.net/sfu/appdyn_d2d_mar
+Why isn't it instead:
+
+compatible = "nvidia,tegra114-uart",   "nvidia,tegra20-uart";
+compatible = "nvidia,tegra114-hsuart", "nvidia,tegra20-hsuart";
+
+(note both second compatible values say Tegra20)
+
+I assume this is a typo.
+
+I suppose I can fix this up when I apply it to avoid a resend, assuming
+it's wrong.
