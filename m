@@ -1,33 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: moving the CPU power timer function to
- PMC driver
-Date: Wed, 13 Mar 2013 11:40:06 -0600
-Message-ID: <5140B9F6.3060604@wwwdotorg.org>
-References: <1363163246-26368-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3] ARM: tegra: expose chip ID and revision
+Date: Wed, 13 Mar 2013 11:45:52 -0600
+Message-ID: <5140BB50.8080004@wwwdotorg.org>
+References: <1363168080-12697-1-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363163246-26368-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1363168080-12697-1-git-send-email-dahuang@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Danny Huang <dahuang@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ldewangan@nvidia.com, olof@lixom.net, linux-arm-kernel@lists.infradead.org, hdoyu@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/13/2013 02:27 AM, Joseph Lo wrote:
-> The CPU power timer set up fucntion was related to PMC register. Now moving
-> it to PMC driver. And it also help to clean up the PM related code later.
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This series was based on the patch set of suspending support.
+On 03/13/2013 03:48 AM, Danny Huang wrote:
+> Expose Tegra chip ID and revision in /sys/devices/soc for user mode
+> usage
 
-So the series is based on the suspend series in terms of patch context,
-but does it actually /depend/ on that series?
+> diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
 
-This series feels like cleanup to me, so I'd be tempted to apply it to
-Tegra's for-3.10/cleanup branch, whereas I was planning on applying the
-suspend series to its own for-3.10/suspend topic branch.
+>  static void __init tegra_dt_init(void)
+>  {
+> +	struct device *parent = NULL;
+> +	struct soc_device *soc_dev;
+> +	struct soc_device_attribute *soc_dev_attr;
 
-If that won't work, I guess I can apply this series on top of the
-suspend series in the suspend topic branch.
+Since Russell asked you to redo the patch anyway, I'd prefer that
+variables be declared in the order they're used. So, soc_dev_attr, then
+soc_dev, then parent.
