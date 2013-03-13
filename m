@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 8/9] ARM: tegra: config: defconfig update
-Date: Wed, 13 Mar 2013 16:01:22 +0800
-Message-ID: <1363161683-20825-9-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V3 7/9] ARM: dts: tegra: add non-removable and keep-power-in-suspend property for MMC
+Date: Wed, 13 Mar 2013 16:01:21 +0800
+Message-ID: <1363161683-20825-8-git-send-email-josephl@nvidia.com>
 References: <1363161683-20825-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,8 +12,11 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-KEYBOARD_GPIO:
-* Enable gpio-key driver
+This patch adds "non-removable" property of MMC host where the eMMC device
+is for Tegra platform.
+
+And the "keep-power-in-suspend" property was used for the SDIO device that
+need this to go into suspend mode (e.g. BRCM43xx series).
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
@@ -22,20 +25,126 @@ V3:
 V2:
 * no change
 ---
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra20-paz00.dts      | 1 +
+ arch/arm/boot/dts/tegra20-seaboard.dts   | 2 ++
+ arch/arm/boot/dts/tegra20-ventana.dts    | 2 ++
+ arch/arm/boot/dts/tegra20-whistler.dts   | 1 +
+ arch/arm/boot/dts/tegra30-beaver.dts     | 1 +
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts | 1 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts | 1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi    | 1 +
+ 8 files changed, 10 insertions(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index aba4881..6eee91d 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -108,6 +108,7 @@ CONFIG_RT2X00=y
- CONFIG_RT2800USB=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_TEGRA=y
-+CONFIG_KEYBOARD_GPIO=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
- # CONFIG_LEGACY_PTYS is not set
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 9db36da..41e82e3 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -445,6 +445,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 715a8b8..fd0e1cf 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -580,6 +580,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ 
+ 	sdhci@c8000400 {
+@@ -593,6 +594,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index ede91c0..826a6cc 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -516,6 +516,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ 
+ 	sdhci@c8000400 {
+@@ -529,6 +530,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 4afcae1..847383f 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -518,6 +518,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	kbc {
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 0a2cd24..89eb495 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -266,6 +266,7 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	regulators {
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+index adc88aa..e392bd2 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+@@ -88,6 +88,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 28 0>; /* gpio PD4 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+index 08163e1..d0db6c7 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+@@ -100,5 +100,6 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 27 0>; /* gpio PD3 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 3e2d210..b448fca 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -320,6 +320,7 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	regulators {
 -- 
 1.8.1.5
