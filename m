@@ -1,58 +1,99 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 4/9] ARM: tegra: pm: add platform suspend support
-Date: Wed, 13 Mar 2013 12:03:06 -0600
-Message-ID: <5140BF5A.3040108@wwwdotorg.org>
-References: <1363161683-20825-1-git-send-email-josephl@nvidia.com> <1363161683-20825-5-git-send-email-josephl@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Patch v3 3/4] power_supply: tps65090-charger: Add binding doc
+Date: Wed, 13 Mar 2013 15:25:53 -0400
+Message-ID: <5140D2C1.8020507@nvidia.com>
+References: <1363126089-9071-1-git-send-email-rklein@nvidia.com> <1363126089-9071-4-git-send-email-rklein@nvidia.com> <513FB5D7.5090800@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363161683-20825-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <513FB5D7.5090800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/13/2013 02:01 AM, Joseph Lo wrote:
-> Adding suspend to RAM support for Tegra platform. There are three suspend
-> mode for Tegra. The difference were below.
-> 
-> * LP2: CPU voltage off
-> * LP1: CPU voltage off, DRAM in self-refresh
-> * LP0: CPU + Core voltage off, DRAM in self-refresh
-> 
-> After this patch, the LP2 suspend mode will be supported.
+On 3/12/2013 7:10 PM, Stephen Warren wrote:
+> On 03/12/2013 04:08 PM, Rhyland Klein wrote:
+>> This change adds the binding documentation for the tps65090-charger.
+>> diff --git a/Documentation/devicetree/bindings/power_supply/tps65090.txt b/Documentation/devicetree/bindings/power_supply/tps65090.txt
+>> +Example:
+>> +
+>> +	tps65090@48 {
+>> +		compatible = "ti,tps65090";
+>> +		reg = <0x48>;
+>> +		interrupts = <0 88 0x4>;
+>> +
+>> +		ti,enable-low-current-chrg;
+>> +
+>> +		regulators {
+>> +			...
+>> +		};
+> I'm a little confused by this binding.
+>
+> What goes in the regulators sub-node; is that specified by another
+> binding file in bindings/regulator/tps65090.txt?
+>
+> I would expect one of the following:
+>
+> 1) A single binding file that describes absolutely everything in the
+> chip. In this case, the main TPS65909 node wouldn't have child nodes for
+> the MFD components, although the regulators sub-node, which in turn
+> contains children does still make sense.
+>
+> 2) A separate binding for each component block, and perhaps also some
+> top-level binding that indicates which child bindings can "plug into"
+> it. In this case, I'd expect each block to be represented as a sub-node
+> in DT. The overall regulator component might then still have a
+> regulators child DT node itself, to represent each regulator's
+> configuration. In this scenario, each binding document describes the
+> entirety of a single node.
+>
+> I think what you've got here is a hybrid; a single top-level node, but
+> different binding documents defining the various properties that are
+> relevant to each component block in the device. That seems odd to me.
 
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+Yes we started this discussion before and were discussing the proper 
+arrangement of
+documentation when dealing with devices like these. This is where the 
+drivers/ directory
+naming in the binding docs might diverge a bit as it might make less 
+sense to have
+a binding doc for each child component of an mfd.
 
-> +void __init tegra_init_suspend(void)
-...
-> +	/* We only support LP2 suspend mode right now. */
-> +	if (mode > TEGRA_SUSPEND_LP2)
-> +		tegra_pmc_set_suspend_mode(TEGRA_SUSPEND_LP2);
+I was thinking about moving this driver towards #1 above, and using a 
+child node for
+the charger. I would then also move the regulators to a child node, and 
+its structure would
+be very similar to the Palmas driver/dt representation. My only concern 
+was that, from
+what I understood, separating out the child node implied that the child 
+functionality
+could/might be used somewhere else. Say in this case, that the charger 
+functionality might
+be duplicated in another pmic from ti. I don't know how much that is the 
+case with the
+tps65090 and so I am unsure if child nodes are the correct way to go.
 
-I see that in patch 3/9, tegra_pmc_parse_dt() simply assigns directly to
-pmc_pm_data.suspend_mode rather than calling a function. If it's useful
-to call a function here, isn't doing so also useful in tegra_pmc_parse_dt()?
+As for #2, This would also be fine with me, as logically we are talking 
+about a single chip. I
+this the only concern here is where to place a single binding document 
+in the bindings
+directory where it makes sense. Putting regulator documentation under 
+charger or vice
+versa doesn't make sense. And then for some devices, they might also 
+have an rtc, gpio
+controller, interrupt controller, etc.. If each of them had a driver and 
+their own dt
+information, I don't know where a single core place for all that 
+documentation would be
+right now.
 
-I guess you did this because pmc_pm_data is static so you can't just
-assign it here.
+Hence, I was hoping to continue this dicussion and see if we can decide 
+on the most logical
+choice, whatever that may be.
 
-Instead, I would suggest that tegra_pmc_parse_dt() does this validation
-itself, either by:
+-rhyland
 
-a) Enhancing tegra_pmc_parse_dt() to know which modes are supported itself.
-
-or:
-
-b) Have tegra_pmc_parse_dt() call a function in pm.c to determine
-whether the user-selected suspend mode is valid or not. Something like:
-
-pmc_pm_data.suspend_mode = tegra_pm_validate_suspend_mode(suspend_mode);
-
-That way, tegra_pm_validate_suspend_mode() can encapsulate all details
-of which suspend modes are supported, any SoC-specific differences (e.g.
-not Tegra114 in any mode, but any earlier chip in LP2 mode for example).
-
-(a) is slightly simpler. (b) is probably more flexible. I guess I'd
-prefer (b).
+-- 
+nvpublic
