@@ -1,53 +1,60 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 4/5] ARM: tegra: add KBC nodes to Tegra114 DT
-Date: Thu, 14 Mar 2013 01:19:53 +0530
-Message-ID: <1363204194-19487-5-git-send-email-ldewangan@nvidia.com>
-References: <1363204194-19487-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH -next] spi: remove unused variable in
+	tegra_slink_read_rx_fifo_to_client_rxbuf()
+Date: Thu, 14 Mar 2013 01:29:30 +0530
+Message-ID: <5140DAA2.3000703@nvidia.com>
+References: <CAPgLHd8yTotMxH-Rb6UX3bsQrTTUM4SdQWNVDoU_LszgxM_qsQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1363204194-19487-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <CAPgLHd8yTotMxH-Rb6UX3bsQrTTUM4SdQWNVDoU_LszgxM_qsQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org" <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra114 SoCs have the matrix keyboard controller which
-supports 11x8 type of matrix. The number of rows and columns
-are configurable.
+On Wednesday 13 March 2013 06:59 PM, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+>
+> The variable bits_per_word is initialized but never used
+> otherwise, so remove the unused variable.
+>
+> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+> ---
+>   drivers/spi/spi-tegra20-slink.c | 3 ---
+>   1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+> index a829563..17224f0 100644
+> --- a/drivers/spi/spi-tegra20-slink.c
+> +++ b/drivers/spi/spi-tegra20-slink.c
+> @@ -375,9 +375,6 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
+>   		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
+>   		read_words += tspi->curr_dma_words;
+>   	} else {
+> -		unsigned int bits_per_word;
+> -
+> -		bits_per_word = t->bits_per_word;
+>
 
-Add DT entry for KBC controller with compatibility as "nvidia,tegra114-kbc".
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-Changes from V1:
-- Add compatible for kbc as nvidia,tegra114-kbc and nvidia,tegra20-kbc.
+Yes, it is not needed.
+Acked-By: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Changes from V2:
-- Rebase to for-3.10/dt of Stephen's Tegra tree.
-- Remove compatibilty of prev hardware as it has 11x8 matrix,
+Thanks,
+Laxman
 
- arch/arm/boot/dts/tegra114.dtsi |    8 ++++++++
- 1 files changed, 8 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 5a41d04..d2bbfaf 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -218,6 +218,14 @@
- 		interrupts = <0 2 0x04>;
- 	};
- 
-+	kbc {
-+		compatible = "nvidia,tegra114-kbc";
-+		reg = <0x7000e200 0x100>;
-+		interrupts = <0 85 0x04>;
-+		clocks = <&tegra_car 36>;
-+		status = "disabled";
-+	};
-+
- 	pmc {
- 		compatible = "nvidia,tegra114-pmc", "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
--- 
-1.7.1.1
+------------------------------------------------------------------------------
+Everyone hates slow websites. So do we.
+Make your web apps faster with AppDynamics
+Download AppDynamics Lite for free today:
+http://p.sf.net/sfu/appdyn_d2d_mar
