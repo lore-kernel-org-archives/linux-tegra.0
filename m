@@ -1,36 +1,37 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] spi: remove unused variable in tegra_slink_read_rx_fifo_to_client_rxbuf()
-Date: Wed, 13 Mar 2013 21:29:12 +0800
-Message-ID: <CAPgLHd8yTotMxH-Rb6UX3bsQrTTUM4SdQWNVDoU_LszgxM_qsQ@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2 v4] ARM: tegra: fix the status of PWM nodes
+Date: Wed, 13 Mar 2013 10:07:22 -0600
+Message-ID: <5140A43A.4060808@wwwdotorg.org>
+References: <1363131651-13734-1-git-send-email-achew@nvidia.com> <1363131651-13734-2-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363131651-13734-2-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
-Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+On 03/12/2013 05:40 PM, Andrew Chew wrote:
+> We should be defining the PWM nodes with status as "disabled" in the
+> chip-specific dtsi file, since we don't know whether specific boards
+> will use the PWM or not.  This patch fixes the PWM node status for
+> Tegra20 and Tegra30.
 
-The variable bits_per_word is initialized but never used
-otherwise, so remove the unused variable.
+> diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
 
-Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
----
- drivers/spi/spi-tegra20-slink.c | 3 ---
- 1 file changed, 3 deletions(-)
+> +	pwm: pwm {
+> +		status = "okay";
+> +	}
+> +
+>  	backlight {
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index a829563..17224f0 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -375,9 +375,6 @@ static unsigned int tegra_slink_read_rx_fifo_to_client_rxbuf(
- 		tspi->cur_rx_pos += tspi->curr_dma_words * tspi->bytes_per_word;
- 		read_words += tspi->curr_dma_words;
- 	} else {
--		unsigned int bits_per_word;
--
--		bits_per_word = t->bits_per_word;
- 		for (count = 0; count < rx_full_count; count++) {
- 			x = tegra_slink_readl(tspi, SLINK_RX_FIFO);
- 			for (i = 0; (i < tspi->bytes_per_word); i++)
+You don't need to repeat the label ("pwm:") in this file; it's already
+defined in tegra20.dtsi.
+
+Also, the node sort order is wrong here; pwm's reg value is before i2c's
+reg value (which is the current node immediately before the backlight
+node in this file).
+
+I'll fix these issues up when applying the patch since they're easy.
