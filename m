@@ -1,94 +1,59 @@
-From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4] ARM: tegra: expose chip ID and revision
-Date: Thu, 14 Mar 2013 08:48:40 +0800
-Message-ID: <1363222120-22210-1-git-send-email-dahuang@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 0/9] ARM: tegra: add platform suspend support
+Date: Thu, 14 Mar 2013 09:26:25 +0800
+Message-ID: <1363224385.3308.8.camel@jlo-ubuntu-64.nvidia.com>
+References: <1363060916-8897-1-git-send-email-josephl@nvidia.com>
+	 <513F82EB.1030407@wwwdotorg.org>
+	 <1363154644.3998.140.camel@jlo-ubuntu-64.nvidia.com>
+	 <5140B893.9010704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5140B893.9010704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Expose Tegra chip ID and revision in /sys/devices/soc for user mode
-usage
+On Thu, 2013-03-14 at 01:34 +0800, Stephen Warren wrote:
+> On 03/13/2013 12:04 AM, Joseph Lo wrote:
+> ...
+> > BTW, I want to mention one thing about PMC DT bindings. Because I can't
+> > add all of the PMC DT bindings in one time, the PMC is related to too
+> > many devices to work for runtime PM and power domain control. And some
+> > wake up sources control for deep sleep mode (LP0). They are still under
+> > developing for upstream. May I add more bindings for PMC later?
+> 
+> With DT you are supposed to define the complete DT binding for the HW up
+> front. There have been some hints that incrementally defining bindings
+> will start to get push-back. How hard is it in this case to simply
+> define the entire binding right now?
+> 
+There are still two main features for PMC that we need to define
+bindings/properties in DT. One is power main the other wake up source.
+But we are not there yet. Because I don't have drivers to verify them is
+enough or not. If I add all the bindings right now, I believe it will be
+modify later.
 
-Signed-off-by: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/Kconfig            |  1 +
- arch/arm/mach-tegra/tegra.c | 29 ++++++++++++++++++++++++++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+> That said, in practice, you can certainly incrementally define bindings
+> at the moment. The main issue here is to ensure that when you add the
+> new properties/..., then:
+> 
+> a) You don't change anything that's already there. The old properties
+> and content must continue to work without modification.
+> 
+Yes.
+> b) For all nodes/properties that are newly required, either there is a
+> suitable default if they are missing from the DT (as they would be for
+> DTs written to the old specification), /or/ the new nodes/properties
+> only enable new features, so that any old DT continues to work fine with
+> at least as many features as it always did.
+> 
+Yes, it's only for new features.
+> If you satisfy those conditions, I believe we can still get away with
+> incrementally defining bindings. I don't know how long that will last
+> though.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2363926..12fa4e5 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -675,6 +675,7 @@ config ARCH_TEGRA
- 	select HAVE_CLK
- 	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
-+	select SOC_BUS
- 	select SPARSE_IRQ
- 	select USE_OF
- 	help
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 27232c9..84deeab 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -33,6 +33,8 @@
- #include <linux/io.h>
- #include <linux/i2c.h>
- #include <linux/i2c-tegra.h>
-+#include <linux/slab.h>
-+#include <linux/sys_soc.h>
- #include <linux/usb/tegra_usb_phy.h>
- 
- #include <asm/mach-types.h>
-@@ -42,6 +44,7 @@
- 
- #include "board.h"
- #include "common.h"
-+#include "fuse.h"
- #include "iomap.h"
- 
- static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
-@@ -80,12 +83,36 @@ static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
- 
- static void __init tegra_dt_init(void)
- {
-+	struct soc_device_attribute *soc_dev_attr;
-+	struct soc_device *soc_dev;
-+	struct device *parent = NULL;
-+
-+	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-+	if (!soc_dev_attr)
-+		goto out;
-+
-+	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
-+	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d", tegra_revision);
-+	soc_dev_attr->soc_id = kasprintf(GFP_KERNEL, "%d", tegra_chip_id);
-+
-+	soc_dev = soc_device_register(soc_dev_attr);
-+	if (IS_ERR(soc_dev)) {
-+		kfree(soc_dev_attr->family);
-+		kfree(soc_dev_attr->revision);
-+		kfree(soc_dev_attr->soc_id);
-+		kfree(soc_dev_attr);
-+		goto out;
-+	}
-+
-+	parent = soc_device_to_device(soc_dev);
-+
- 	/*
- 	 * Finished with the static registrations now; fill in the missing
- 	 * devices
- 	 */
-+out:
- 	of_platform_populate(NULL, of_default_bus_match_table,
--				tegra20_auxdata_lookup, NULL);
-+				tegra20_auxdata_lookup, parent);
- }
- 
- static void __init trimslice_init(void)
--- 
-1.8.1.5
+Thanks,
+Joseph
