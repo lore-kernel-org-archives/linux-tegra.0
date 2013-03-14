@@ -1,77 +1,39 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: refactor the pmc_pm_set function
-Date: Thu, 14 Mar 2013 09:44:16 +0800
-Message-ID: <1363225456.3308.23.camel@jlo-ubuntu-64.nvidia.com>
-References: <1363163246-26368-1-git-send-email-josephl@nvidia.com>
-	 <1363163246-26368-2-git-send-email-josephl@nvidia.com>
-	 <5140BCF9.2070900@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 0/9] ARM: tegra: add platform suspend support
+Date: Wed, 13 Mar 2013 22:43:52 -0600
+Message-ID: <51415588.7080403@wwwdotorg.org>
+References: <1363060916-8897-1-git-send-email-josephl@nvidia.com>  <513F82EB.1030407@wwwdotorg.org>  <1363154644.3998.140.camel@jlo-ubuntu-64.nvidia.com>  <5140B893.9010704@wwwdotorg.org> <1363224385.3308.8.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5140BCF9.2070900-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1363224385.3308.8.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-03-14 at 01:52 +0800, Stephen Warren wrote:
-> On 03/13/2013 02:27 AM, Joseph Lo wrote:
-> > The pmc_pm_set function was designed for SoC to configure the related
-> > settings when system going to some low power modes (e.g. platform
-> > suspend or CPU idle powered-down mode). We refactor the function to make
-> > it work on the usage.
-> 
-> > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-> 
-> > +#include <linux/clk-provider.h>
-> 
-> This code isn't a clock-provider, and hence shouldn't include that
-> header file.
-> 
-> > +void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
-> 
-> > +	switch (mode) {
-> > +	case TEGRA_SUSPEND_LP2:
-> > +		rate = __clk_get_rate(tegra_pclk);
-> 
-> Doesn't regular clk_get_rate() work here?
-> 
-Actually it works. So I will use clk_get_rate() here and remove
-clk-provider.
+On 03/13/2013 07:26 PM, Joseph Lo wrote:
+> On Thu, 2013-03-14 at 01:34 +0800, Stephen Warren wrote:
+>> On 03/13/2013 12:04 AM, Joseph Lo wrote:
+>> ...
+>>> BTW, I want to mention one thing about PMC DT bindings. Because I can't
+>>> add all of the PMC DT bindings in one time, the PMC is related to too
+>>> many devices to work for runtime PM and power domain control. And some
+>>> wake up sources control for deep sleep mode (LP0). They are still under
+>>> developing for upstream. May I add more bindings for PMC later?
+>>
+>> With DT you are supposed to define the complete DT binding for the HW up
+>> front. There have been some hints that incrementally defining bindings
+>> will start to get push-back. How hard is it in this case to simply
+>> define the entire binding right now?
+>>
+> There are still two main features for PMC that we need to define
+> bindings/properties in DT. One is power main the other wake up source.
+> But we are not there yet. Because I don't have drivers to verify them is
+> enough or not. If I add all the bindings right now, I believe it will be
+> modify later.
 
-> > @@ -234,6 +229,9 @@ void tegra_pmc_suspend_init(void)
-> >  {
-> >  	u32 reg;
-> >  
-> > +	tegra_pclk = clk_get_sys(NULL, "pclk");
-> > +	WARN_ON(IS_ERR(tegra_pclk));
-> 
-> Shouldn't this instead error out and/or disable any system suspend
-> modes? Otherwise, tegra_pmc_pm_set() is going to call
-> clk_get_rate(tegra_pclk), and tegra_pclk won't be a valid clock object.
-OK.
-> 
-> Also, can you use regular clk_get() rather than clk_get_sys()? That'd
-> need a clocks property in the PMC DT node.
-OK.
-> I guess I see now that this series does actually depend on the suspend
-> series. However, stuff like:
-> 
-> > -u32 tegra_pmc_get_cpu_good_time(void)
-> > -{
-> > -	return pmc_pm_data.cpu_good_time;
-> > -}
-> > -
-> > -u32 tegra_pmc_get_cpu_off_time(void)
-> > -{
-> > -	return pmc_pm_data.cpu_off_time;
-> > -}
-> 
-> ... was actually added in that series, so if you put this series first,
-> or merged the two series with these patches first, you could end up
-> avoiding some churn.
-Let me check how to reorganize them.
-
-Thanks,
-Joseph
+Since the DT is supposed to be a representation of the HW, and not a
+representation of what a particular driver needs, I'm not sue why you'd
+need to be able to test a driver before you could design a DT binding.
