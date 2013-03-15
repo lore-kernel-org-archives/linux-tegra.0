@@ -1,7 +1,7 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 6/9] usb: host: ehci-mv: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:07 +0200
-Message-ID: <1363338730-14581-7-git-send-email-balbi@ti.com>
+Subject: [PATCH 7/9] usb: host: ehci-s5p: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:08 +0200
+Message-ID: <1363338730-14581-8-git-send-email-balbi@ti.com>
 References: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,47 +17,22 @@ switch from IS_ERR_OR_NULL() to IS_ERR().
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/host/ehci-mv.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ drivers/usb/host/ehci-s5p.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
-index 9751823..3804820 100644
---- a/drivers/usb/host/ehci-mv.c
-+++ b/drivers/usb/host/ehci-mv.c
-@@ -240,12 +240,16 @@ static int mv_ehci_probe(struct platform_device *pdev)
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 20ebf6a..867a923 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -139,7 +139,7 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	ehci_mv->mode = pdata->mode;
- 	if (ehci_mv->mode == MV_USB_MODE_OTG) {
--#if IS_ENABLED(CONFIG_USB_PHY)
- 		ehci_mv->otg = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--		if (IS_ERR_OR_NULL(ehci_mv->otg)) {
--			dev_err(&pdev->dev,
--				"unable to find transceiver\n");
--			retval = -ENODEV;
-+		if (IS_ERR(ehci_mv->otg)) {
-+			retval = PTR_ERR(ehci_mv->otg);
-+
-+			if (retval == -ENXIO)
-+				dev_info(&pdev->dev, "MV_USB_MODE_OTG "
-+						"must have CONFIG_USB_PHY enabled\n");
-+			else
-+				dev_err(&pdev->dev,
-+						"unable to find transceiver\n");
- 			goto err_disable_clk;
- 		}
- 
-@@ -258,11 +262,6 @@ static int mv_ehci_probe(struct platform_device *pdev)
- 		}
- 		/* otg will enable clock before use as host */
- 		mv_ehci_disable(ehci_mv);
--#else
--		dev_info(&pdev->dev, "MV_USB_MODE_OTG "
--			 "must have CONFIG_USB_PHY enabled\n");
--		goto err_disable_clk;
--#endif
- 	} else {
- 		if (pdata->set_vbus)
- 			pdata->set_vbus(1);
+ 	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR_OR_NULL(phy)) {
++	if (IS_ERR(phy)) {
+ 		/* Fallback to pdata */
+ 		if (!pdata) {
+ 			dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
 -- 
 1.8.2
 
