@@ -1,31 +1,49 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCH 1/1] amba: tegra-ahb: Fix build error w/ PM_SLEEP w/o
- PM_RUNTIME
-Date: Fri, 15 Mar 2013 07:56:00 +0100
-Message-ID: <20130315.085600.1539318572744189496.hdoyu@nvidia.com>
-References: <1363252089-4120-1-git-send-email-hdoyu@nvidia.com><5142B05A.2070408@wwwdotorg.org>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH 0/9] usb: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:01 +0200
+Message-ID: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5142B05A.2070408@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>
-Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren@wwwdotorg.org> wrote @ Fri, 15 Mar 2013 06:23:38 +0100:
+Hi Folks,
 
-> On 03/14/2013 03:08 AM, Hiroshi Doyu wrote:
-> > Make this depend on CONFIG_PM. This protection is necessary to not
-> > cause any build errors with any combination of PM features especially
-> > when supporting a new SoC where each PM features are being enabled
-> > one-by-one during its depelopment.
-> 
-> Looks fine to me.
-> 
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-> 
-> I assume Russell will want this to go through his patch tracker.
+this patch set depends on [1] which makes PHY layer
+*always* return an error as suggested by Alan Stern.
 
-FYI: Patch has been accepted as patch 7675/1
+I have compiled what I could, please go over the
+patches and give your Acked-by or NAK it if you think
+there's something wrong with any of the patches.
+
+cheers
+
+[1] http://marc.info/?l=linux-usb&m=136327710513124
+
+Felipe Balbi (9):
+  usb: dwc3: fix PHY error handling
+  usb: gadget: mv_udc_core: fix PHY error handling
+  usb: gadget: s3c-hsotg: fix PHY error handling
+  usb: musb: omap2430: fix PHY error handling
+  usb: host: ehci-msm: fix PHY error handling
+  usb: host: ehci-mv: fix PHY error handling
+  usb: host: ehci-s5p: fix PHY error handling
+  usb: host: ehci-tegra: fix PHY error handling
+  usb: host: ohci-exynos: fix PHY error handling
+
+ drivers/usb/dwc3/core.c          | 24 ++++++++++++++++++++++--
+ drivers/usb/gadget/mv_udc_core.c | 11 +++++++----
+ drivers/usb/gadget/s3c-hsotg.c   |  2 +-
+ drivers/usb/host/ehci-msm.c      |  2 +-
+ drivers/usb/host/ehci-mv.c       | 19 +++++++++----------
+ drivers/usb/host/ehci-s5p.c      |  2 +-
+ drivers/usb/host/ehci-tegra.c    | 12 +++---------
+ drivers/usb/host/ohci-exynos.c   |  2 +-
+ drivers/usb/musb/omap2430.c      |  7 ++++++-
+ 9 files changed, 51 insertions(+), 30 deletions(-)
+
+-- 
+1.8.2
