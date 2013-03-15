@@ -1,68 +1,67 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 8/9] usb: host: ehci-tegra: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:09 +0200
-Message-ID: <1363338730-14581-9-git-send-email-balbi@ti.com>
+Subject: [PATCH 6/9] usb: host: ehci-mv: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:07 +0200
+Message-ID: <1363338730-14581-7-git-send-email-balbi@ti.com>
 References: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1363338730-14581-1-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PHY layer no longer returns NULL, we must
+PHY layer no longer returns NULL. We must
 switch from IS_ERR_OR_NULL() to IS_ERR().
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/host/ehci-tegra.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/usb/host/ehci-mv.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index fafbc81..1d2488c 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -768,14 +768,12 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 		goto fail;
- 	}
+diff --git a/drivers/usb/host/ehci-mv.c b/drivers/usb/host/ehci-mv.c
+index 9751823..3804820 100644
+--- a/drivers/usb/host/ehci-mv.c
++++ b/drivers/usb/host/ehci-mv.c
+@@ -240,12 +240,16 @@ static int mv_ehci_probe(struct platform_device *pdev)
  
+ 	ehci_mv->mode = pdata->mode;
+ 	if (ehci_mv->mode == MV_USB_MODE_OTG) {
 -#if IS_ENABLED(CONFIG_USB_PHY)
- 	if (pdata->operating_mode == TEGRA_USB_OTG) {
- 		tegra->transceiver =
- 			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--		if (!IS_ERR_OR_NULL(tegra->transceiver))
-+		if (!IS_ERR(tegra->transceiver))
- 			otg_set_host(tegra->transceiver->otg, &hcd->self);
- 	}
+ 		ehci_mv->otg = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+-		if (IS_ERR_OR_NULL(ehci_mv->otg)) {
+-			dev_err(&pdev->dev,
+-				"unable to find transceiver\n");
+-			retval = -ENODEV;
++		if (IS_ERR(ehci_mv->otg)) {
++			retval = PTR_ERR(ehci_mv->otg);
++
++			if (retval == -ENXIO)
++				dev_info(&pdev->dev, "MV_USB_MODE_OTG "
++						"must have CONFIG_USB_PHY enabled\n");
++			else
++				dev_err(&pdev->dev,
++						"unable to find transceiver\n");
+ 			goto err_disable_clk;
+ 		}
+ 
+@@ -258,11 +262,6 @@ static int mv_ehci_probe(struct platform_device *pdev)
+ 		}
+ 		/* otg will enable clock before use as host */
+ 		mv_ehci_disable(ehci_mv);
+-#else
+-		dev_info(&pdev->dev, "MV_USB_MODE_OTG "
+-			 "must have CONFIG_USB_PHY enabled\n");
+-		goto err_disable_clk;
 -#endif
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -794,10 +792,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	return err;
- 
- fail:
--#if IS_ENABLED(CONFIG_USB_PHY)
--	if (!IS_ERR_OR_NULL(tegra->transceiver))
-+	if (!IS_ERR(tegra->transceiver))
- 		otg_set_host(tegra->transceiver->otg, NULL);
--#endif
- 	usb_phy_shutdown(hcd->phy);
- fail_io:
- 	clk_disable_unprepare(tegra->clk);
-@@ -815,10 +811,8 @@ static int tegra_ehci_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_put_noidle(&pdev->dev);
- 
--#if IS_ENABLED(CONFIG_USB_PHY)
--	if (!IS_ERR_OR_NULL(tegra->transceiver))
-+	if (!IS_ERR(tegra->transceiver))
- 		otg_set_host(tegra->transceiver->otg, NULL);
--#endif
- 
- 	usb_phy_shutdown(hcd->phy);
- 	usb_remove_hcd(hcd);
+ 	} else {
+ 		if (pdata->set_vbus)
+ 			pdata->set_vbus(1);
 -- 
 1.8.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
