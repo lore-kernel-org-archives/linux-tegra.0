@@ -1,59 +1,119 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] i2c: tegra: check the clk_prepare_enable() return value
-Date: Fri, 15 Mar 2013 21:04:08 +0530
-Message-ID: <1363361648-10326-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra114: add speedo-based process identification
+Date: Fri, 15 Mar 2013 11:36:08 -0600
+Message-ID: <51435C08.2030402@wwwdotorg.org>
+References: <1363246822-14597-1-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363246822-14597-1-git-send-email-dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra SoC allows read/write of controller register only
-if controller clock is enabled. System hangs if read/write happens
-to registers without enabling clock.
+On 03/14/2013 01:40 AM, Danny Huang wrote:
+> Add speedo-based process identifictaion for Tegra114.
+> 
+> Based on the work by:
+> Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-clk_prepare_enable() can be fail due to unknown reason and hence
-adding check for return value of this function. If this function
-success then only access register otherwise return to caller with
-error.
+This code is surprisingly quite a bit simpler than the existing
+tegra30_speedo.c. Are you sure it's complete?
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c |   13 +++++++++++--
- 1 files changed, 11 insertions(+), 2 deletions(-)
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 36704e3..b714776 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -411,7 +411,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
- 	u32 clk_divisor;
- 
--	tegra_i2c_clock_enable(i2c_dev);
-+	err = tegra_i2c_clock_enable(i2c_dev);
-+	if (err < 0) {
-+		dev_err(i2c_dev->dev, "Clock enable failed %d\n", err);
-+		return err;
-+	}
- 
- 	tegra_periph_reset_assert(i2c_dev->div_clk);
- 	udelay(2);
-@@ -628,7 +632,12 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	if (i2c_dev->is_suspended)
- 		return -EBUSY;
- 
--	tegra_i2c_clock_enable(i2c_dev);
-+	ret = tegra_i2c_clock_enable(i2c_dev);
-+	if (ret < 0) {
-+		dev_err(i2c_dev->dev, "Clock enable failed %d\n", ret);
-+		return ret;
-+	}
-+
- 	for (i = 0; i < num; i++) {
- 		enum msg_end_type end_type = MSG_END_STOP;
- 		if (i < (num - 1)) {
--- 
-1.7.1.1
+> @@ -137,6 +138,9 @@ void tegra_init_fuse(void)
+>  		tegra_fuse_spare_bit = TEGRA30_FUSE_SPARE_BIT;
+>  		tegra_init_speedo_data = &tegra30_init_speedo_data;
+>  		break;
+> +	case TEGRA114:
+> +		tegra_init_speedo_data = &tegra114_init_speedo_data;
+> +		break;
+
+Don't you need to set tegra_fuse_spare_bit there just like all the other
+paths do?
+
+> diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
+
+> +#define CORE_PROCESS_CORNERS_NUM	2
+> +#define CPU_PROCESS_CORNERS_NUM		2
+> +
+> +enum {
+> +	THRESHOLD_INDEX_0,
+> +	THRESHOLD_INDEX_1,
+> +	THRESHOLD_INDEX_COUNT,
+> +};
+> +
+> +static const u32 core_process_speedos[THRESHOLD_INDEX_COUNT]
+> +	[CORE_PROCESS_CORNERS_NUM] = {
+> +	{1123,     UINT_MAX},
+> +	{0,        UINT_MAX},
+> +};
+> +
+> +static const u32 cpu_process_speedos[THRESHOLD_INDEX_COUNT]
+> +	[CPU_PROCESS_CORNERS_NUM] = {
+> +	{1695,     UINT_MAX},
+> +	{0,        UINT_MAX},
+> +};
+
+Those enums/tables are a lot smaller than Tegra30. I'm surprised if we
+end up making new chips simpler rather than more complex in this area.
+Are those tables complete?
+
+> +static void rev_sku_to_speedo_ids(int rev, int sku, int *threshold)
+> +{
+> +	u32 tmp;
+> +
+> +	switch (sku) {
+> +	case 0x00:
+> +	case 0x10:
+> +	case 0x05:
+> +	case 0x06:
+> +		tegra_cpu_speedo_id = 1;
+> +		tegra_soc_speedo_id = 0;
+> +		*threshold = THRESHOLD_INDEX_0;
+> +		break;
+> +
+> +	case 0x03:
+> +	case 0x04:
+> +		tegra_cpu_speedo_id = 2;
+> +		tegra_soc_speedo_id = 1;
+> +		*threshold = THRESHOLD_INDEX_1;
+> +		break;
+> +
+> +	default:
+> +		pr_err("Tegra114 Unknown SKU %d\n", sku);
+> +		tegra_cpu_speedo_id = 0;
+> +		tegra_soc_speedo_id = 0;
+> +		*threshold = THRESHOLD_INDEX_0;
+> +		break;
+> +	}
+> +
+> +	if (rev == TEGRA_REVISION_A01) {
+> +		tmp = tegra_fuse_readl(0x270) << 1;
+> +		tmp |= tegra_fuse_readl(0x26c);
+> +		if (!tmp)
+> +			tegra_cpu_speedo_id = 0;
+> +	}
+> +}
+
+That's also a lot simpler than Tegra30. Are all those SKUs really valid
+for all chip revisions including A01 where the 0x270/0x26c fuses are clear?
+
+If life really is this simple, then I should be happy:-) But I just want
+to check that this code really is accurate.
+
+> +void tegra114_init_speedo_data(void)
+
+The Tegra30 code has a couple BUILD_BUG_ON() here to ensure that the
+size of the {cpu,core}_process_speedos arrays match
+THRESHOLD_INDEX_COUNT. It'd be good to be consistent here.
+
+
+In general, the implementation of tegra114_init_speedo_data() is quite
+different from that of the existing tegra30_init_speedo_data(). It'd be
+nice if they were as similar as possible in structure so they could be
+easily compared. Can you take a look at the two and see if any changes
+are warranted in this patch?
