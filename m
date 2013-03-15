@@ -1,433 +1,473 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCHv7 10/10] drm: tegra: Add gr2d device
-Date: Fri, 15 Mar 2013 13:13:32 +0100
-Message-ID: <20130315121332.GA3374@avionic-0098.mockup.avionic-design.de>
-References: <1363178186-2017-1-git-send-email-tbergstrom@nvidia.com>
- <1363178186-2017-11-git-send-email-tbergstrom@nvidia.com>
+Date: Fri, 15 Mar 2013 15:22:57 +0200
+Message-ID: <514320B1.5060002@nvidia.com>
+References: <1363178186-2017-1-git-send-email-tbergstrom@nvidia.com> <1363178186-2017-11-git-send-email-tbergstrom@nvidia.com> <20130315121332.GA3374@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1363178186-2017-11-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130315121332.GA3374-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 15.03.2013 14:13, Thierry Reding wrote:
+> On Wed, Mar 13, 2013 at 02:36:26PM +0200, Terje Bergstrom wrote:
+> [...]
+>> diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+> [...]
+>> +static inline struct host1x_drm_context *tegra_drm_get_context(
+>> +                                     struct list_head *contexts,
+>> +                                     struct host1x_drm_context *_ctx)
+>> +{
+>> +     struct host1x_drm_context *ctx;
+>> +
+>> +     list_for_each_entry(ctx, contexts, list)
+>> +             if (ctx == _ctx)
+>> +                     return ctx;
+>> +     return NULL;
+>> +}
+> 
+> Maybe make this a little more high-level, such as:
+> 
+> static bool host1x_drm_file_owns_context(struct host1x_drm_file *file,
+>                                          struct host1x_drm_context *context)
+> 
+> ?
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We only need the true/false value, so changing signature makes sense.
 
-On Wed, Mar 13, 2013 at 02:36:26PM +0200, Terje Bergstrom wrote:
-[...]
-> diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
-[...]
-> +static inline struct host1x_drm_context *tegra_drm_get_context(
-> +					struct list_head *contexts,
-> +					struct host1x_drm_context *_ctx)
-> +{
-> +	struct host1x_drm_context *ctx;
-> +
-> +	list_for_each_entry(ctx, contexts, list)
-> +		if (ctx =3D=3D _ctx)
-> +			return ctx;
-> +	return NULL;
-> +}
+> 
+>> +static int tegra_drm_ioctl_open_channel(struct drm_device *drm, void *data,
+>> +                                     struct drm_file *file_priv)
+>> +{
+>> +     struct tegra_drm_open_channel_args *args = data;
+>> +     struct host1x_client *client;
+>> +     struct host1x_drm_context *context;
+>> +     struct host1x_drm_file *fpriv = file_priv->driver_priv;
+>> +     struct host1x_drm *host1x = drm->dev_private;
+>> +     int err = -ENODEV;
+>> +
+>> +     context = kzalloc(sizeof(*context), GFP_KERNEL);
+>> +     if (!context)
+>> +             return -ENOMEM;
+>> +
+>> +     list_for_each_entry(client, &host1x->clients, list)
+>> +             if (client->class == args->class) {
+>> +                     context->client = client;
+> 
+> Why do you assign this here? Should it perhaps be assigned only when the
+> opening of the channel succeeds? The .open_channel() already receives a
+> pointer to the client as parameter, so it doesn't have to be associated
+> with the context.
 
-Maybe make this a little more high-level, such as:
+True, we can move the assignment to happen after checking the
+open_channel result.
 
-static bool host1x_drm_file_owns_context(struct host1x_drm_file *file,
-					 struct host1x_drm_context *context)
+> 
+>> +static int tegra_drm_ioctl_get_syncpoint(struct drm_device *drm, void *data,
+>> +                                      struct drm_file *file_priv)
+>> +{
+>> +     struct tegra_drm_get_syncpoint *args = data;
+>> +     struct host1x_drm_file *fpriv = file_priv->driver_priv;
+>> +     struct host1x_drm_context *context =
+>> +             (struct host1x_drm_context *)(uintptr_t)args->context;
+>> +
+>> +     if (!tegra_drm_get_context(&fpriv->contexts, context))
+>> +             return -ENODEV;
+>> +
+>> +     if (context->client->num_syncpts < args->param)
+>> +             return -ENODEV;
+> 
+> I think this might be easier to read as:
+> 
+>         if (args->param >= context->client->num_syncpts)
+>                 return -ENODEV;
 
-?
+Ok, will do.
 
-> +static int tegra_drm_ioctl_open_channel(struct drm_device *drm, void *da=
-ta,
-> +					struct drm_file *file_priv)
-> +{
-> +	struct tegra_drm_open_channel_args *args =3D data;
-> +	struct host1x_client *client;
-> +	struct host1x_drm_context *context;
-> +	struct host1x_drm_file *fpriv =3D file_priv->driver_priv;
-> +	struct host1x_drm *host1x =3D drm->dev_private;
-> +	int err =3D -ENODEV;
-> +
-> +	context =3D kzalloc(sizeof(*context), GFP_KERNEL);
-> +	if (!context)
-> +		return -ENOMEM;
-> +
-> +	list_for_each_entry(client, &host1x->clients, list)
-> +		if (client->class =3D=3D args->class) {
-> +			context->client =3D client;
+> 
+>> +     args->value = host1x_syncpt_id(context->client->syncpts[args->param]);
+> 
+> This could use a temporary variable "syncpt" to make it easier to read.
 
-Why do you assign this here? Should it perhaps be assigned only when the
-opening of the channel succeeds? The .open_channel() already receives a
-pointer to the client as parameter, so it doesn't have to be associated
-with the context.
+Ok.
 
-> +static int tegra_drm_ioctl_get_syncpoint(struct drm_device *drm, void *d=
-ata,
-> +					 struct drm_file *file_priv)
-> +{
-> +	struct tegra_drm_get_syncpoint *args =3D data;
-> +	struct host1x_drm_file *fpriv =3D file_priv->driver_priv;
-> +	struct host1x_drm_context *context =3D
-> +		(struct host1x_drm_context *)(uintptr_t)args->context;
-> +
-> +	if (!tegra_drm_get_context(&fpriv->contexts, context))
-> +		return -ENODEV;
-> +
-> +	if (context->client->num_syncpts < args->param)
-> +		return -ENODEV;
+> 
+>> +static int tegra_drm_gem_create_ioctl(struct drm_device *drm, void *data,
+>> +                                   struct drm_file *file_priv)
+> 
+> tegra_drm_ioctl_gem_create()?
 
-I think this might be easier to read as:
+Sure.
 
-	if (args->param >=3D context->client->num_syncpts)
-		return -ENODEV;
+> 
+>> +{
+>> +     struct tegra_drm_create *args = data;
+>> +     struct drm_gem_cma_object *cma_obj;
+>> +     struct tegra_drm_bo *cma_bo;
+> 
+> These can probably just be named "cma"/"gem" and "bo" instead.
 
-> +	args->value =3D host1x_syncpt_id(context->client->syncpts[args->param]);
+Ok.
 
-This could use a temporary variable "syncpt" to make it easier to read.
+> 
+>> +static int tegra_drm_ioctl_get_offset(struct drm_device *drm, void *data,
+>> +                                   struct drm_file *file_priv)
+> 
+> I think this might be more generically named tegra_drm_ioctl_mmap()
+> which might come in handy if we ever need to do something more than just
+> retrieve the offset.
 
-> +static int tegra_drm_gem_create_ioctl(struct drm_device *drm, void *data,
-> +				      struct drm_file *file_priv)
+Yeah, that changes the API semantics a bit, but in general there
+shouldn't be a need to just get the offset without doing the actual mmap.
 
-tegra_drm_ioctl_gem_create()?
+> 
+>> +{
+>> +     struct tegra_drm_get_offset *args = data;
+>> +     struct drm_gem_cma_object *cma_obj;
+>> +     struct drm_gem_object *obj;
+>> +
+>> +     obj = drm_gem_object_lookup(drm, file_priv, args->handle);
+>> +     if (!obj)
+>> +             return -EINVAL;
+>> +     cma_obj = to_drm_gem_cma_obj(obj);
+> 
+> The above two lines should be separated by a blank line.
 
-> +{
-> +	struct tegra_drm_create *args =3D data;
-> +	struct drm_gem_cma_object *cma_obj;
-> +	struct tegra_drm_bo *cma_bo;
+Ok.
 
-These can probably just be named "cma"/"gem" and "bo" instead.
+> 
+>> +
+>> +     args->offset = cma_obj->base.map_list.hash.key << PAGE_SHIFT;
+> 
+> Perhaps a better way would be to export the get_gem_mmap_offset() from
+> drivers/gpu/drm/drm_gem_cma_helper.c and reuse that.
 
-> +static int tegra_drm_ioctl_get_offset(struct drm_device *drm, void *data,
-> +				      struct drm_file *file_priv)
+Ok, we'll add that as a patch to the series.
 
-I think this might be more generically named tegra_drm_ioctl_mmap()
-which might come in handy if we ever need to do something more than just
-retrieve the offset.
+> 
+>>  static struct drm_ioctl_desc tegra_drm_ioctls[] = {
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_GEM_CREATE,
+>> +                     tegra_drm_gem_create_ioctl, DRM_UNLOCKED | DRM_AUTH),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_READ,
+>> +                     tegra_drm_ioctl_syncpt_read, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_INCR,
+>> +                     tegra_drm_ioctl_syncpt_incr, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_WAIT,
+>> +                     tegra_drm_ioctl_syncpt_wait, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_OPEN_CHANNEL,
+>> +                     tegra_drm_ioctl_open_channel, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_CLOSE_CHANNEL,
+>> +                     tegra_drm_ioctl_close_channel, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_GET_SYNCPOINT,
+>> +                     tegra_drm_ioctl_get_syncpoint, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_SUBMIT,
+>> +                     tegra_drm_ioctl_submit, DRM_UNLOCKED),
+>> +     DRM_IOCTL_DEF_DRV(TEGRA_DRM_GEM_GET_OFFSET,
+>> +                     tegra_drm_ioctl_get_offset, DRM_UNLOCKED),
+>>  };
+> 
+> Maybe resort these to put the GEM-specific IOCTLs closer together?
 
-> +{
-> +	struct tegra_drm_get_offset *args =3D data;
-> +	struct drm_gem_cma_object *cma_obj;
-> +	struct drm_gem_object *obj;
-> +
-> +	obj =3D drm_gem_object_lookup(drm, file_priv, args->handle);
-> +	if (!obj)
-> +		return -EINVAL;
-> +	cma_obj =3D to_drm_gem_cma_obj(obj);
+Ok.
 
-The above two lines should be separated by a blank line.
+> 
+>>  static const struct file_operations tegra_drm_fops = {
+>> @@ -345,10 +585,17 @@ static void tegra_drm_disable_vblank(struct drm_device *drm, int pipe)
+>>
+>>  static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *file)
+>>  {
+>> +     struct host1x_drm_file *fpriv = file->driver_priv;
+>> +     struct host1x_drm_context *context, *tmp;
+>>       struct drm_crtc *crtc;
+>>
+>>       list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
+>>               tegra_dc_cancel_page_flip(crtc, file);
+>> +
+>> +     list_for_each_entry_safe(context, tmp, &fpriv->contexts, list)
+>> +             host1x_drm_context_free(context);
+>> +     kfree(fpriv);
+> 
+> Another missing blank line between these.
 
-> +
-> +	args->offset =3D cma_obj->base.map_list.hash.key << PAGE_SHIFT;
+Will fix.
 
-Perhaps a better way would be to export the get_gem_mmap_offset() from
-drivers/gpu/drm/drm_gem_cma_helper.c and reuse that.
+> 
+>> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+> [...]
+>> +static struct host1x_bo *handle_cma_to_host1x(struct drm_device *drm,
+>> +                                           struct drm_file *file_priv,
+>> +                                           u32 gem_handle)
+>> +{
+>> +     struct drm_gem_object *gem_obj;
+>> +     struct drm_gem_cma_object *cma_obj;
+>> +     struct tegra_drm_bo *cma_bo;
+>> +
+>> +     gem_obj = drm_gem_object_lookup(drm, file_priv, gem_handle);
+>> +     if (!gem_obj)
+>> +             return 0;
+>> +
+>> +     mutex_lock(&drm->struct_mutex);
+>> +     drm_gem_object_unreference(gem_obj);
+>> +     mutex_unlock(&drm->struct_mutex);
+>> +
+>> +     cma_obj = to_drm_gem_cma_obj(gem_obj);
+>> +     cma_bo = container_of(cma_obj, struct tegra_drm_bo, cma_obj);
+>> +
+>> +     return &cma_bo->base;
+>> +}
+> 
+> Maybe rename this to host1x_bo_lookup()? *_to_* are usually used for
+> up- and downcasting; this function does a lot more.
 
->  static struct drm_ioctl_desc tegra_drm_ioctls[] =3D {
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_GEM_CREATE,
-> +			tegra_drm_gem_create_ioctl, DRM_UNLOCKED | DRM_AUTH),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_READ,
-> +			tegra_drm_ioctl_syncpt_read, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_INCR,
-> +			tegra_drm_ioctl_syncpt_incr, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_SYNCPT_WAIT,
-> +			tegra_drm_ioctl_syncpt_wait, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_OPEN_CHANNEL,
-> +			tegra_drm_ioctl_open_channel, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_CLOSE_CHANNEL,
-> +			tegra_drm_ioctl_close_channel, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_GET_SYNCPOINT,
-> +			tegra_drm_ioctl_get_syncpoint, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_SUBMIT,
-> +			tegra_drm_ioctl_submit, DRM_UNLOCKED),
-> +	DRM_IOCTL_DEF_DRV(TEGRA_DRM_GEM_GET_OFFSET,
-> +			tegra_drm_ioctl_get_offset, DRM_UNLOCKED),
->  };
+Yep, will do.
 
-Maybe resort these to put the GEM-specific IOCTLs closer together?
+> 
+>> +static int gr2d_submit(struct host1x_drm_context *context,
+>> +                    struct tegra_drm_submit_args *args,
+>> +                    struct drm_device *drm,
+>> +                    struct drm_file *file_priv)
+>> +{
+>> +     struct host1x_job *job;
+>> +     int num_cmdbufs = args->num_cmdbufs;
+>> +     int num_relocs = args->num_relocs;
+>> +     int num_waitchks = args->num_waitchks;
+>> +     struct tegra_drm_cmdbuf __user *cmdbufs =
+>> +             (void * __user)(uintptr_t)args->cmdbufs;
+>> +     struct tegra_drm_reloc __user *relocs =
+>> +             (void * __user)(uintptr_t)args->relocs;
+>> +     struct tegra_drm_waitchk __user *waitchks =
+>> +             (void * __user)(uintptr_t)args->waitchks;
+>> +     struct tegra_drm_syncpt_incr syncpt_incr;
+>> +     int err;
+>> +
+>> +     /* We don't yet support other than one syncpt_incr struct per submit */
+>> +     if (args->num_syncpt_incrs != 1)
+>> +             return -EINVAL;
+>> +
+>> +     job = host1x_job_alloc(context->channel, args->num_cmdbufs,
+>> +                            args->num_relocs, args->num_waitchks);
+>> +     if (!job)
+>> +             return -ENOMEM;
+>> +
+>> +     job->num_relocs = args->num_relocs;
+>> +     job->num_waitchk = args->num_waitchks;
+>> +     job->client = (u32)args->context;
+>> +     job->class = context->client->class;
+>> +     job->serialize = true;
+>> +
+>> +     while (num_cmdbufs) {
+>> +             struct tegra_drm_cmdbuf cmdbuf;
+>> +             struct host1x_bo *mem_handle;
+>> +             err = copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf));
+> 
+> Could use an blank line to separate variable declarations from the code.
+> Also maybe rename mem_handle to bo which is much shorter.
 
->  static const struct file_operations tegra_drm_fops =3D {
-> @@ -345,10 +585,17 @@ static void tegra_drm_disable_vblank(struct drm_dev=
-ice *drm, int pipe)
-> =20
->  static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *=
-file)
->  {
-> +	struct host1x_drm_file *fpriv =3D file->driver_priv;
-> +	struct host1x_drm_context *context, *tmp;
->  	struct drm_crtc *crtc;
-> =20
->  	list_for_each_entry(crtc, &drm->mode_config.crtc_list, head)
->  		tegra_dc_cancel_page_flip(crtc, file);
-> +
-> +	list_for_each_entry_safe(context, tmp, &fpriv->contexts, list)
-> +		host1x_drm_context_free(context);
-> +	kfree(fpriv);
+Sure, mem_handle is anyway legacy naming.
 
-Another missing blank line between these.
+> 
+>> +             goto fail;
+>> +
+>> +     err = host1x_job_pin(job, context->client->dev);
+>> +     if (err)
+>> +             goto fail;
+>> +
+>> +     err = copy_from_user(&syncpt_incr,
+>> +                          (void * __user)(uintptr_t)args->syncpt_incrs,
+>> +                          sizeof(syncpt_incr));
+>> +     if (err)
+>> +             goto fail;
+>> +
+>> +     job->syncpt_id = syncpt_incr.id;
+>> +     job->syncpt_incrs = syncpt_incr.incrs;
+>> +     job->timeout = 10000;
+>> +     job->is_addr_reg = gr2d_is_addr_reg;
+>> +     if (args->timeout && args->timeout < 10000)
+> 
+> Another missing blank line.
+> 
+> Also you now create a lookup table (or bitfield actually) as we
+> discussed but you still pass around a function to check the lookup table
+> against. What I originally intended was to not pass a function around at
+> all but directly use the lookup table/bitfield. However I think we can
+> leave this as-is for now and change it later if required.
 
-> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-[...]
-> +static struct host1x_bo *handle_cma_to_host1x(struct drm_device *drm,
-> +					      struct drm_file *file_priv,
-> +					      u32 gem_handle)
-> +{
-> +	struct drm_gem_object *gem_obj;
-> +	struct drm_gem_cma_object *cma_obj;
-> +	struct tegra_drm_bo *cma_bo;
-> +
-> +	gem_obj =3D drm_gem_object_lookup(drm, file_priv, gem_handle);
-> +	if (!gem_obj)
-> +		return 0;
-> +
-> +	mutex_lock(&drm->struct_mutex);
-> +	drm_gem_object_unreference(gem_obj);
-> +	mutex_unlock(&drm->struct_mutex);
-> +
-> +	cma_obj =3D to_drm_gem_cma_obj(gem_obj);
-> +	cma_bo =3D container_of(cma_obj, struct tegra_drm_bo, cma_obj);
-> +
-> +	return &cma_bo->base;
-> +}
+Oops, the intention was to pass the table around, but I and Arto both
+missed that. We'll fix that.
 
-Maybe rename this to host1x_bo_lookup()? *_to_* are usually used for
-up- and downcasting; this function does a lot more.
+> 
+>> +static int gr2d_probe(struct platform_device *pdev)
+>> +{
+>> +     struct device *dev = &pdev->dev;
+>> +     struct host1x_drm *host1x = host1x_get_drm_data(dev->parent);
+>> +     int err;
+>> +     struct gr2d *gr2d = NULL;
+>> +     struct host1x_syncpt **syncpts;
+> 
+> I don't think there's a need for this temporary variable. You could just
+> use gr2d->client.syncpts directly.
 
-> +static int gr2d_submit(struct host1x_drm_context *context,
-> +		       struct tegra_drm_submit_args *args,
-> +		       struct drm_device *drm,
-> +		       struct drm_file *file_priv)
-> +{
-> +	struct host1x_job *job;
-> +	int num_cmdbufs =3D args->num_cmdbufs;
-> +	int num_relocs =3D args->num_relocs;
-> +	int num_waitchks =3D args->num_waitchks;
-> +	struct tegra_drm_cmdbuf __user *cmdbufs =3D
-> +		(void * __user)(uintptr_t)args->cmdbufs;
-> +	struct tegra_drm_reloc __user *relocs =3D
-> +		(void * __user)(uintptr_t)args->relocs;
-> +	struct tegra_drm_waitchk __user *waitchks =3D
-> +		(void * __user)(uintptr_t)args->waitchks;
-> +	struct tegra_drm_syncpt_incr syncpt_incr;
-> +	int err;
-> +
-> +	/* We don't yet support other than one syncpt_incr struct per submit */
-> +	if (args->num_syncpt_incrs !=3D 1)
-> +		return -EINVAL;
-> +
-> +	job =3D host1x_job_alloc(context->channel, args->num_cmdbufs,
-> +			       args->num_relocs, args->num_waitchks);
-> +	if (!job)
-> +		return -ENOMEM;
-> +
-> +	job->num_relocs =3D args->num_relocs;
-> +	job->num_waitchk =3D args->num_waitchks;
-> +	job->client =3D (u32)args->context;
-> +	job->class =3D context->client->class;
-> +	job->serialize =3D true;
-> +
-> +	while (num_cmdbufs) {
-> +		struct tegra_drm_cmdbuf cmdbuf;
-> +		struct host1x_bo *mem_handle;
-> +		err =3D copy_from_user(&cmdbuf, cmdbufs, sizeof(cmdbuf));
+Ok, it might make a bit longer lines, but it doesn't look too bad.
 
-Could use an blank line to separate variable declarations from the code.
-Also maybe rename mem_handle to bo which is much shorter.
+> 
+>> +     gr2d = devm_kzalloc(dev, sizeof(*gr2d), GFP_KERNEL);
+>> +     if (!gr2d)
+>> +             return -ENOMEM;
+>> +
+>> +     syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
+>> +     if (!syncpts)
+>> +             return -ENOMEM;
+>> +
+>> +     gr2d->clk = devm_clk_get(dev, NULL);
+>> +     if (IS_ERR(gr2d->clk)) {
+>> +             dev_err(dev, "cannot get clock\n");
+>> +             return PTR_ERR(gr2d->clk);
+>> +     }
+>> +
+>> +     err = clk_prepare_enable(gr2d->clk);
+>> +     if (err) {
+>> +             dev_err(dev, "cannot turn on clock\n");
+>> +             return err;
+>> +     }
+>> +
+>> +     gr2d->channel = host1x_channel_alloc(dev);
+>> +     if (!gr2d->channel)
+>> +             return -ENOMEM;
+>> +
+>> +     *syncpts = host1x_syncpt_request(dev, 0);
+>> +     if (!(*syncpts)) {
+>> +             host1x_channel_free(gr2d->channel);
+>> +             return -ENOMEM;
+>> +     }
+>> +
+>> +     gr2d->client.ops = &gr2d_client_ops;
+>> +     gr2d->client.dev = dev;
+>> +     gr2d->client.class = HOST1X_CLASS_GR2D;
+>> +     gr2d->client.syncpts = syncpts;
+>> +     gr2d->client.num_syncpts = 1;
+>> +
+>> +     err = host1x_register_client(host1x, &gr2d->client);
+>> +     if (err < 0) {
+>> +             dev_err(dev, "failed to register host1x client: %d\n", err);
+>> +             return err;
+>> +     }
+>> +
+>> +     gr2d_init_addr_reg_map(dev, gr2d);
+>> +
+>> +     dev_set_drvdata(dev, gr2d);
+> 
+> Nit: I think it'd be nicer to use platform_set_drvdata() here to mirror
+> the platform_get_drvdata() from gr2d_remove().
 
-> +		goto fail;
-> +
-> +	err =3D host1x_job_pin(job, context->client->dev);
-> +	if (err)
-> +		goto fail;
-> +
-> +	err =3D copy_from_user(&syncpt_incr,
-> +			     (void * __user)(uintptr_t)args->syncpt_incrs,
-> +			     sizeof(syncpt_incr));
-> +	if (err)
-> +		goto fail;
-> +
-> +	job->syncpt_id =3D syncpt_incr.id;
-> +	job->syncpt_incrs =3D syncpt_incr.incrs;
-> +	job->timeout =3D 10000;
-> +	job->is_addr_reg =3D gr2d_is_addr_reg;
-> +	if (args->timeout && args->timeout < 10000)
+Yeah, we'll fix that.
 
-Another missing blank line.
+> 
+>> diff --git a/include/drm/tegra_drm.h b/include/drm/tegra_drm.h
+> [...]
+>> +struct tegra_drm_create {
+> 
+> struct tegra_drm_gem_create?
 
-Also you now create a lookup table (or bitfield actually) as we
-discussed but you still pass around a function to check the lookup table
-against. What I originally intended was to not pass a function around at
-all but directly use the lookup table/bitfield. However I think we can
-leave this as-is for now and change it later if required.
+Yep.
 
-> +static int gr2d_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct host1x_drm *host1x =3D host1x_get_drm_data(dev->parent);
-> +	int err;
-> +	struct gr2d *gr2d =3D NULL;
-> +	struct host1x_syncpt **syncpts;
+> 
+>> +     __u64 size;
+>> +     u32 flags;
+>> +     u32 handle;
+>> +     u32 offset;
+>> +     u32 padding;
+> 
+> Also since we have a separate IOCTL for this, I think you can leave out
+> the offset field (and also padding since it isn't required anymore).
 
-I don't think there's a need for this temporary variable. You could just
-use gr2d->client.syncpts directly.
+This is a genuine mistake, offset should've been dropped.
 
-> +	gr2d =3D devm_kzalloc(dev, sizeof(*gr2d), GFP_KERNEL);
-> +	if (!gr2d)
-> +		return -ENOMEM;
-> +
-> +	syncpts =3D devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
-> +	if (!syncpts)
-> +		return -ENOMEM;
-> +
-> +	gr2d->clk =3D devm_clk_get(dev, NULL);
-> +	if (IS_ERR(gr2d->clk)) {
-> +		dev_err(dev, "cannot get clock\n");
-> +		return PTR_ERR(gr2d->clk);
-> +	}
-> +
-> +	err =3D clk_prepare_enable(gr2d->clk);
-> +	if (err) {
-> +		dev_err(dev, "cannot turn on clock\n");
-> +		return err;
-> +	}
-> +
-> +	gr2d->channel =3D host1x_channel_alloc(dev);
-> +	if (!gr2d->channel)
-> +		return -ENOMEM;
-> +
-> +	*syncpts =3D host1x_syncpt_request(dev, 0);
-> +	if (!(*syncpts)) {
-> +		host1x_channel_free(gr2d->channel);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	gr2d->client.ops =3D &gr2d_client_ops;
-> +	gr2d->client.dev =3D dev;
-> +	gr2d->client.class =3D HOST1X_CLASS_GR2D;
-> +	gr2d->client.syncpts =3D syncpts;
-> +	gr2d->client.num_syncpts =3D 1;
-> +
-> +	err =3D host1x_register_client(host1x, &gr2d->client);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to register host1x client: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	gr2d_init_addr_reg_map(dev, gr2d);
-> +
-> +	dev_set_drvdata(dev, gr2d);
+> 
+>> +struct tegra_drm_get_offset {
+>> +     __u32 handle;
+>> +     __u32 offset;
+>> +};
+> 
+> struct tegra_drm_gem_mmap to go along with the name change of the IOCTL.
 
-Nit: I think it'd be nicer to use platform_set_drvdata() here to mirror
-the platform_get_drvdata() from gr2d_remove().
+Ok.
 
-> diff --git a/include/drm/tegra_drm.h b/include/drm/tegra_drm.h
-[...]
-> +struct tegra_drm_create {
+> 
+>> +struct tegra_drm_syncpt_incr_args {
+>> +     __u32 id;
+>> +     __u32 pad;
+>> +};
+> 
+> Shouldn't this second field be something like "value" to allow this
+> IOCTL to increment by more than 1?
 
-struct tegra_drm_gem_create?
+This is actually an IOCTL that normally shouldn't be used. It's still
+there for testing.
 
-> +	__u64 size;
-> +	u32 flags;
-> +	u32 handle;
-> +	u32 offset;
-> +	u32 padding;
+The intention with this is that user space can submit a job that waits
+for a sync point value. The user space can then investigate the state of
+the channel to verify that host1x driver is working correctly. After
+investigation, user space can increment the sync point to unblock the
+channel.
 
-Also since we have a separate IOCTL for this, I think you can leave out
-the offset field (and also padding since it isn't required anymore).
+It's a bit tricky to find out the correct sync point value to wait for,
+but for test cases we can usually hack it together by just shutting down
+all other users of host1x and reading current value.
 
-> +struct tegra_drm_get_offset {
-> +	__u32 handle;
-> +	__u32 offset;
-> +};
+>> +#define DRM_TEGRA_NO_TIMEOUT (0xffffffff)
+> 
+> No need for the parentheses.
 
-struct tegra_drm_gem_mmap to go along with the name change of the IOCTL.
+Sure, will remove.
 
-> +struct tegra_drm_syncpt_incr_args {
-> +	__u32 id;
-> +	__u32 pad;
-> +};
+> 
+>> +struct tegra_drm_reloc {
+>> +     __u32 cmdbuf_mem;
+>> +     __u32 cmdbuf_offset;
+>> +     __u32 target;
+>> +     __u32 target_offset;
+>> +     __u32 shift;
+>> +     __u32 pad;
+>> +};
+> 
+> I've found this to be a little inconsistent. Why does the cmdbuf_mem
+> have the _mem suffix, but not the target field? Given that this will
+> eventually be used by userspace software once merged it will be fixed
+> forever. I had noticed the same for the in-kernel structures but didn't
+> think it important enough to hold up the patches. In this case I think
+> we should make them consistent, though.
 
-Shouldn't this second field be something like "value" to allow this
-IOCTL to increment by more than 1?
+Ok. I propose we rename target to target_mem. We could also rename
+tegra_drm_waitchk.mem to cmdbuf_mem and tegra_drm_waitchk.offset to
+cmdbuf_offset for consistency.
 
-> +#define DRM_TEGRA_NO_TIMEOUT	(0xffffffff)
+> 
+>> +#define DRM_TEGRA_DRM_GEM_CREATE     0x00
+>> +#define DRM_TEGRA_DRM_SYNCPT_READ    0x01
+>> +#define DRM_TEGRA_DRM_SYNCPT_INCR    0x02
+>> +#define DRM_TEGRA_DRM_SYNCPT_WAIT    0x03
+>> +#define DRM_TEGRA_DRM_OPEN_CHANNEL   0x04
+>> +#define DRM_TEGRA_DRM_CLOSE_CHANNEL  0x05
+>> +#define DRM_TEGRA_DRM_GET_SYNCPOINT  0x06
+>> +#define DRM_TEGRA_DRM_SUBMIT         0x08
+>> +#define DRM_TEGRA_DRM_GEM_GET_OFFSET 0x09
+>> +
+>> +#define DRM_IOCTL_TEGRA_DRM_GEM_CREATE DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_GEM_CREATE, struct tegra_drm_create)
+>> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_READ DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_SYNCPT_READ, struct tegra_drm_syncpt_read_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_INCR DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_SYNCPT_INCR, struct tegra_drm_syncpt_incr_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_WAIT DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_SYNCPT_WAIT, struct tegra_drm_syncpt_wait_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_OPEN_CHANNEL DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_OPEN_CHANNEL, struct tegra_drm_open_channel_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_CLOSE_CHANNEL DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_CLOSE_CHANNEL, struct tegra_drm_open_channel_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_GET_SYNCPOINT DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_GET_SYNCPOINT, struct tegra_drm_get_syncpoint)
+>> +#define DRM_IOCTL_TEGRA_DRM_SUBMIT DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_SUBMIT, struct tegra_drm_submit_args)
+>> +#define DRM_IOCTL_TEGRA_DRM_GEM_GET_OFFSET DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA_DRM_GEM_GET_OFFSET, struct tegra_drm_get_offset)
+> 
+> Same comment regarding reordering and GET_OFFSET -> MMAP rename.
 
-No need for the parentheses.
+Ok.
 
-> +struct tegra_drm_reloc {
-> +	__u32 cmdbuf_mem;
-> +	__u32 cmdbuf_offset;
-> +	__u32 target;
-> +	__u32 target_offset;
-> +	__u32 shift;
-> +	__u32 pad;
-> +};
-
-I've found this to be a little inconsistent. Why does the cmdbuf_mem
-have the _mem suffix, but not the target field? Given that this will
-eventually be used by userspace software once merged it will be fixed
-forever. I had noticed the same for the in-kernel structures but didn't
-think it important enough to hold up the patches. In this case I think
-we should make them consistent, though.
-
-> +#define DRM_TEGRA_DRM_GEM_CREATE	0x00
-> +#define DRM_TEGRA_DRM_SYNCPT_READ	0x01
-> +#define DRM_TEGRA_DRM_SYNCPT_INCR	0x02
-> +#define DRM_TEGRA_DRM_SYNCPT_WAIT	0x03
-> +#define DRM_TEGRA_DRM_OPEN_CHANNEL	0x04
-> +#define DRM_TEGRA_DRM_CLOSE_CHANNEL	0x05
-> +#define DRM_TEGRA_DRM_GET_SYNCPOINT	0x06
-> +#define DRM_TEGRA_DRM_SUBMIT		0x08
-> +#define DRM_TEGRA_DRM_GEM_GET_OFFSET	0x09
-> +
-> +#define DRM_IOCTL_TEGRA_DRM_GEM_CREATE DRM_IOWR(DRM_COMMAND_BASE + DRM_T=
-EGRA_DRM_GEM_CREATE, struct tegra_drm_create)
-> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_READ DRM_IOWR(DRM_COMMAND_BASE + DRM_=
-TEGRA_DRM_SYNCPT_READ, struct tegra_drm_syncpt_read_args)
-> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_INCR DRM_IOWR(DRM_COMMAND_BASE + DRM_=
-TEGRA_DRM_SYNCPT_INCR, struct tegra_drm_syncpt_incr_args)
-> +#define DRM_IOCTL_TEGRA_DRM_SYNCPT_WAIT DRM_IOWR(DRM_COMMAND_BASE + DRM_=
-TEGRA_DRM_SYNCPT_WAIT, struct tegra_drm_syncpt_wait_args)
-> +#define DRM_IOCTL_TEGRA_DRM_OPEN_CHANNEL DRM_IOWR(DRM_COMMAND_BASE + DRM=
-_TEGRA_DRM_OPEN_CHANNEL, struct tegra_drm_open_channel_args)
-> +#define DRM_IOCTL_TEGRA_DRM_CLOSE_CHANNEL DRM_IOWR(DRM_COMMAND_BASE + DR=
-M_TEGRA_DRM_CLOSE_CHANNEL, struct tegra_drm_open_channel_args)
-> +#define DRM_IOCTL_TEGRA_DRM_GET_SYNCPOINT DRM_IOWR(DRM_COMMAND_BASE + DR=
-M_TEGRA_DRM_GET_SYNCPOINT, struct tegra_drm_get_syncpoint)
-> +#define DRM_IOCTL_TEGRA_DRM_SUBMIT DRM_IOWR(DRM_COMMAND_BASE + DRM_TEGRA=
-_DRM_SUBMIT, struct tegra_drm_submit_args)
-> +#define DRM_IOCTL_TEGRA_DRM_GEM_GET_OFFSET DRM_IOWR(DRM_COMMAND_BASE + D=
-RM_TEGRA_DRM_GEM_GET_OFFSET, struct tegra_drm_get_offset)
-
-Same comment regarding reordering and GET_OFFSET -> MMAP rename.
-
-Thierry
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRQxBsAAoJEN0jrNd/PrOhBsQP+gJBx5Tr4//PL0oIFZX5CPgy
-tY69e4g3G4YEKnEBYG3isTT7/HLoUpiMriJ2MPGX2++kOgF4HSVcRVWQbjWZkkop
-ayXCYSY0X/w8d5BUWSDF0JZjfIGqwcHHwnprh+Nxlw5DFrsmCXQl7Tr5nZrIlrGD
-tlHq8U1IhAKVhNzihvZDPoZjzBAkoVBgxOniM/cJf7ho9ISFHPaWAA1y/6IJwkPW
-7lmVGPwS2dgjFtcWQ8FiLTMrp8G1dhfPgtdZE6INSkbf7qQYYkePmRuCzWvC5mqi
-rfWg9cW/kbE5fJXoLzUw44/QoI9EgIfolmVOLID/LghYEtpcrKZ/Xg43FCQBQPmb
-rg+HKPlNKOB4qriTw4CVvW3vPK0OrTTu1Q6khiZZk9sqGdd+CqtaY7cxuZQyLZvI
-Vpq8E/2gJ2kv8SwK0o8D/zcut4d1do5JjIe5ghpzaRwVY7fpc00S0ScfzaqSjkpU
-kj77v8qiFAGHqoj8rHs3zG2U0/6GWgRM3RjS41wwdPOt3GvjbiYu6vB52NJ+d92n
-VdhOJLZY+hQPVBZxB1ka76WO9kq6qYVOPMo99h9v8QfPKb1yhyi4tdsDTRhxN6RX
-TFg0LVKQ4ha/fn4ZnNm9n4GdXyQ9/qmi78zvrukH1Q5etEYSVQKffI0yquOIYij/
-fZPBwUj1ofs+icX2Wq95
-=sSJ/
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+Terje
