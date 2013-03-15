@@ -1,42 +1,45 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 5/9] usb: host: ehci-msm: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:06 +0200
-Message-ID: <1363338730-14581-6-git-send-email-balbi@ti.com>
-References: <1363338730-14581-1-git-send-email-balbi@ti.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Allow PLLE training to succeed
+Date: Fri, 15 Mar 2013 11:28:05 +0200
+Message-ID: <20130315092805.GU18519@tbergstrom-lnx.Nvidia.com>
+References: <1363274825-2439-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363338730-14581-1-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1363274825-2439-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PHY layer no longer returns NULL. We must
-switch from IS_ERR_OR_NULL() to IS_ERR().
+On Thu, Mar 14, 2013 at 04:27:05PM +0100, Thierry Reding wrote:
+> Under some circumstances the PLLE needs to be retrained, in which case
+> access to the PMC registers is required. Fix this by passing a pointer
+> to the PMC registers instead of NULL when registering the PLLE clock.
+> 
+> Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 
-Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
----
- drivers/usb/host/ehci-msm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/drivers/usb/host/ehci-msm.c b/drivers/usb/host/ehci-msm.c
-index 88a49c8..ebf4103 100644
---- a/drivers/usb/host/ehci-msm.c
-+++ b/drivers/usb/host/ehci-msm.c
-@@ -145,7 +145,7 @@ static int ehci_msm_probe(struct platform_device *pdev)
- 	 * management.
- 	 */
- 	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR_OR_NULL(phy)) {
-+	if (IS_ERR(phy)) {
- 		dev_err(&pdev->dev, "unable to find transceiver\n");
- 		ret = -ENODEV;
- 		goto put_hcd;
--- 
-1.8.2
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index b92d48b..bf19400 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -703,7 +703,7 @@ static void tegra20_pll_init(void)
+>  	clks[pll_a_out0] = clk;
+>  
+>  	/* PLLE */
+> -	clk = tegra_clk_register_plle("pll_e", "pll_ref", clk_base, NULL,
+> +	clk = tegra_clk_register_plle("pll_e", "pll_ref", clk_base, pmc_base,
+>  			     0, 100000000, &pll_e_params,
+>  			     0, pll_e_freq_table, NULL);
+>  	clk_register_clkdev(clk, "pll_e", NULL);
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers,
+
+Peter.
