@@ -1,51 +1,59 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH 0/9] usb: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:01:39 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1303151100540.1414-100000@iolanthe.rowland.org>
-References: <1363338730-14581-1-git-send-email-balbi@ti.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] i2c: tegra: check the clk_prepare_enable() return value
+Date: Fri, 15 Mar 2013 21:04:08 +0530
+Message-ID: <1363361648-10326-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363338730-14581-1-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 15 Mar 2013, Felipe Balbi wrote:
+NVIDIA's Tegra SoC allows read/write of controller register only
+if controller clock is enabled. System hangs if read/write happens
+to registers without enabling clock.
 
-> Hi Folks,
-> 
-> this patch set depends on [1] which makes PHY layer
-> *always* return an error as suggested by Alan Stern.
-> 
-> I have compiled what I could, please go over the
-> patches and give your Acked-by or NAK it if you think
-> there's something wrong with any of the patches.
-> 
-> cheers
-> 
-> [1] http://marc.info/?l=linux-usb&m=136327710513124
-> 
-> Felipe Balbi (9):
->   usb: dwc3: fix PHY error handling
->   usb: gadget: mv_udc_core: fix PHY error handling
->   usb: gadget: s3c-hsotg: fix PHY error handling
->   usb: musb: omap2430: fix PHY error handling
->   usb: host: ehci-msm: fix PHY error handling
->   usb: host: ehci-mv: fix PHY error handling
->   usb: host: ehci-s5p: fix PHY error handling
->   usb: host: ehci-tegra: fix PHY error handling
->   usb: host: ohci-exynos: fix PHY error handling
+clk_prepare_enable() can be fail due to unknown reason and hence
+adding check for return value of this function. If this function
+success then only access register otherwise return to caller with
+error.
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c |   13 +++++++++++--
+ 1 files changed, 11 insertions(+), 2 deletions(-)
 
-for all the EHCI and OHCI changes.  But it would be good to have 
-somebody test them.
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 36704e3..b714776 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -411,7 +411,11 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
+ 	u32 clk_divisor;
+ 
+-	tegra_i2c_clock_enable(i2c_dev);
++	err = tegra_i2c_clock_enable(i2c_dev);
++	if (err < 0) {
++		dev_err(i2c_dev->dev, "Clock enable failed %d\n", err);
++		return err;
++	}
+ 
+ 	tegra_periph_reset_assert(i2c_dev->div_clk);
+ 	udelay(2);
+@@ -628,7 +632,12 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	if (i2c_dev->is_suspended)
+ 		return -EBUSY;
+ 
+-	tegra_i2c_clock_enable(i2c_dev);
++	ret = tegra_i2c_clock_enable(i2c_dev);
++	if (ret < 0) {
++		dev_err(i2c_dev->dev, "Clock enable failed %d\n", ret);
++		return ret;
++	}
++
+ 	for (i = 0; i < num; i++) {
+ 		enum msg_end_type end_type = MSG_END_STOP;
+ 		if (i < (num - 1)) {
+-- 
+1.7.1.1
