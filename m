@@ -1,7 +1,7 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 9/9] usb: host: ohci-exynos: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:10 +0200
-Message-ID: <1363338730-14581-10-git-send-email-balbi@ti.com>
+Subject: [PATCH 5/9] usb: host: ehci-msm: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:06 +0200
+Message-ID: <1363338730-14581-6-git-send-email-balbi@ti.com>
 References: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,22 +17,22 @@ switch from IS_ERR_OR_NULL() to IS_ERR().
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/host/ohci-exynos.c | 2 +-
+ drivers/usb/host/ehci-msm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index e3b7e85..4b469e0 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -128,7 +128,7 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
+diff --git a/drivers/usb/host/ehci-msm.c b/drivers/usb/host/ehci-msm.c
+index 88a49c8..ebf4103 100644
+--- a/drivers/usb/host/ehci-msm.c
++++ b/drivers/usb/host/ehci-msm.c
+@@ -145,7 +145,7 @@ static int ehci_msm_probe(struct platform_device *pdev)
+ 	 * management.
+ 	 */
  	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
 -	if (IS_ERR_OR_NULL(phy)) {
 +	if (IS_ERR(phy)) {
- 		/* Fallback to pdata */
- 		if (!pdata) {
- 			dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+ 		dev_err(&pdev->dev, "unable to find transceiver\n");
+ 		ret = -ENODEV;
+ 		goto put_hcd;
 -- 
 1.8.2
 
