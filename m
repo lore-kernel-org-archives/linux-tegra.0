@@ -1,7 +1,7 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 4/9] usb: musb: omap2430: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:05 +0200
-Message-ID: <1363338730-14581-5-git-send-email-balbi@ti.com>
+Subject: [PATCH 1/9] usb: dwc3: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:02 +0200
+Message-ID: <1363338730-14581-2-git-send-email-balbi@ti.com>
 References: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -19,25 +19,46 @@ request a probe deferral.
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/musb/omap2430.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/core.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/musb/omap2430.c b/drivers/usb/musb/omap2430.c
-index ec460ea..798e029 100644
---- a/drivers/usb/musb/omap2430.c
-+++ b/drivers/usb/musb/omap2430.c
-@@ -353,7 +353,12 @@ static int omap2430_musb_init(struct musb *musb)
- 	else
- 		musb->xceiv = devm_usb_get_phy_dev(dev, 0);
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index c845e70..e2325ad 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -434,12 +434,32 @@ static int dwc3_probe(struct platform_device *pdev)
+ 		dwc->usb3_phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB3);
+ 	}
  
--	if (IS_ERR_OR_NULL(musb->xceiv)) {
-+	if (IS_ERR(musb->xceiv)) {
-+		status = PTR_ERR(musb->xceiv);
+-	if (IS_ERR_OR_NULL(dwc->usb2_phy)) {
++	if (IS_ERR(dwc->usb2_phy)) {
++		ret = PTR_ERR(dwc->usb2_phy);
 +
-+		if (status == -ENXIO)
-+			return status;
++		/*
++		 * if -ENXIO is returned, it means PHY layer wasn't
++		 * enabled, so it makes no sense to return -EPROBE_DEFER
++		 * in that case, since no PHY driver will ever probe.
++		 */
++		if (ret == -ENXIO)
++			return ret;
 +
- 		pr_err("HS USB OTG: no transceiver configured\n");
+ 		dev_err(dev, "no usb2 phy configured\n");
+ 		return -EPROBE_DEFER;
+ 	}
+ 
+-	if (IS_ERR_OR_NULL(dwc->usb3_phy)) {
++	if (IS_ERR(dwc->usb3_phy)) {
++		ret = PTR_ERR(dwc->usb2_phy);
++
++		/*
++		 * if -ENXIO is returned, it means PHY layer wasn't
++		 * enabled, so it makes no sense to return -EPROBE_DEFER
++		 * in that case, since no PHY driver will ever probe.
++		 */
++		if (ret == -ENXIO)
++			return ret;
++
+ 		dev_err(dev, "no usb3 phy configured\n");
  		return -EPROBE_DEFER;
  	}
 -- 
