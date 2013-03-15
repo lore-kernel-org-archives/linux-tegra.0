@@ -1,7 +1,7 @@
 From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH 7/9] usb: host: ehci-s5p: fix PHY error handling
-Date: Fri, 15 Mar 2013 11:12:08 +0200
-Message-ID: <1363338730-14581-8-git-send-email-balbi@ti.com>
+Subject: [PATCH 9/9] usb: host: ohci-exynos: fix PHY error handling
+Date: Fri, 15 Mar 2013 11:12:10 +0200
+Message-ID: <1363338730-14581-10-git-send-email-balbi@ti.com>
 References: <1363338730-14581-1-git-send-email-balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,14 +17,14 @@ switch from IS_ERR_OR_NULL() to IS_ERR().
 
 Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/host/ehci-s5p.c | 2 +-
+ drivers/usb/host/ohci-exynos.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 20ebf6a..867a923 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -139,7 +139,7 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index e3b7e85..4b469e0 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -128,7 +128,7 @@ static int exynos_ohci_probe(struct platform_device *pdev)
  		return -ENOMEM;
  
  	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
