@@ -1,54 +1,40 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 8/9] usb: host: ehci-tegra: fix PHY error handling
-Date: Fri, 15 Mar 2013 15:12:08 -0600
-Message-ID: <51438EA8.1060301@wwwdotorg.org>
-References: <1363338730-14581-1-git-send-email-balbi@ti.com> <1363338730-14581-9-git-send-email-balbi@ti.com>
+From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging: nvec: fix the '&&' vs '&' typo in nvec_toggle_global_events()
+Date: Sat, 16 Mar 2013 22:51:25 +0800
+Message-ID: <CAPgLHd8rhMVb_cpVR6tiYsYTrOgk3m1PyR=Eo9L2_8bOGwwbag@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363338730-14581-9-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org, marvin24-Mmb7MZpHnFY@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/15/2013 03:12 AM, Felipe Balbi wrote:
-> PHY layer no longer returns NULL, we must
-> switch from IS_ERR_OR_NULL() to IS_ERR().
+From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-This change will definitely conflict with some Tegra EHCI/USB-PHY
-changes that Venu plans to submit very soon, for 3.10. This is relevant
-since we'd previously discussed you ack'ing Venu's patches, and my
-applying them to the Tegra tree, due to dependencies between the Tegra
-device tree files and his USB changes.
+Fix the '&&' vs '&' typo.
 
-To resolve this, we can do the following:
+Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+---
+ drivers/staging/nvec/nvec.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-1) I will create a tiny topic branch containing just the Tegra DT
-changes that must happen before the USB driver changes. This can be
-based on v3.9-rc1 or similar, and be entirely self-contained.
-
-2) You can merge that topic branch into your USB tree, so that the
-changes are present there.
-
-3) I will merge that topic branch into the Tegra tree.
-
-(2) and (3) are both needed so that the exact same commit ID is present
-in each of our branches. It's needed in yours as a pre-cursor to Venu's
-changes. It's needed in Tegra's because I still hope to activate usage
-of the C pre-processor on the Tegra DT files, and that needs to build on
-top of the same DT change of Venu's that you also need.
-
-4) Once you've done that, you can take Venu's USB patches through your
-USB tree rather than my applying them to the Tegra tree. This will allow
-you to resolve any conflicts between your changes and Venu's changes
-entirely within your branch simply by applying the patches one after the
-other. Nice and simple, and just like any other USB change.
-
-However, this goes against your statement that you "don't accept pull
-requests". Perhaps you can make an exception for this case?
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index cf15936..a88959f 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -352,10 +352,10 @@ static void nvec_toggle_global_events(struct nvec_chip *nvec, bool state)
+  */
+ static void nvec_event_mask(char *ev, u32 mask)
+ {
+-	ev[3] = mask >> 16 && 0xff;
+-	ev[4] = mask >> 24 && 0xff;
+-	ev[5] = mask >> 0  && 0xff;
+-	ev[6] = mask >> 8  && 0xff;
++	ev[3] = mask >> 16 & 0xff;
++	ev[4] = mask >> 24 & 0xff;
++	ev[5] = mask >> 0  & 0xff;
++	ev[6] = mask >> 8  & 0xff;
+ }
+ 
+ /**
