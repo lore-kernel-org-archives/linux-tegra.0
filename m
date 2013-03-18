@@ -1,131 +1,192 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] Doc: dt: i2c: tegra: add dt binding for i2c-tegra
-Date: Mon, 18 Mar 2013 15:05:50 +0530
-Message-ID: <1363599350-25187-1-git-send-email-ldewangan@nvidia.com>
+From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] ARM: tegra114: add speedo-based process identification
+Date: Mon, 18 Mar 2013 19:17:34 +0800
+Message-ID: <1363605454-24176-1-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add documentation for device tree binding of NVIDIA's Tegra i2c
-controller driver.
+Add speedo-based process identifictaion for Tegra114.
 
-Describing all compatible values used for diffenent Tegra SoCs
-in details in this documentation.
+Based on the work by:
+Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |   99 ++++++++++++++++++++
- 1 files changed, 99 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
+ arch/arm/mach-tegra/Makefile          |   1 +
+ arch/arm/mach-tegra/fuse.c            |   4 ++
+ arch/arm/mach-tegra/fuse.h            |   7 +++
+ arch/arm/mach-tegra/tegra114_speedo.c | 103 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 115 insertions(+)
+ create mode 100644 arch/arm/mach-tegra/tegra114_speedo.c
 
-diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index 92703f9..e40326d 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+ 
++obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= tegra114_speedo.o
+ ifeq ($(CONFIG_CPU_IDLE),y)
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= cpuidle-tegra114.o
+ endif
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index f7db078..e035cd2 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -2,6 +2,7 @@
+  * arch/arm/mach-tegra/fuse.c
+  *
+  * Copyright (C) 2010 Google, Inc.
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Author:
+  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+@@ -137,6 +138,9 @@ void tegra_init_fuse(void)
+ 		tegra_fuse_spare_bit = TEGRA30_FUSE_SPARE_BIT;
+ 		tegra_init_speedo_data = &tegra30_init_speedo_data;
+ 		break;
++	case TEGRA114:
++		tegra_init_speedo_data = &tegra114_init_speedo_data;
++		break;
+ 	default:
+ 		pr_warn("Tegra: unknown chip id %d\n", tegra_chip_id);
+ 		tegra_fuse_spare_bit = TEGRA20_FUSE_SPARE_BIT;
+diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
+index da78434..aacc00d 100644
+--- a/arch/arm/mach-tegra/fuse.h
++++ b/arch/arm/mach-tegra/fuse.h
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2010 Google, Inc.
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Author:
+  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+@@ -66,4 +67,10 @@ void tegra30_init_speedo_data(void);
+ static inline void tegra30_init_speedo_data(void) {}
+ #endif
+ 
++#ifdef CONFIG_ARCH_TEGRA_114_SOC
++void tegra114_init_speedo_data(void);
++#else
++static inline void tegra114_init_speedo_data(void) {}
++#endif
++
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
 new file mode 100644
-index 0000000..e390ce8
+index 0000000..a49de85
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-@@ -0,0 +1,99 @@
-+NVIDIA Tegra20/Tegra30/Tegra114 I2C controller driver.
++++ b/arch/arm/mach-tegra/tegra114_speedo.c
+@@ -0,0 +1,103 @@
++/*
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+Required properties:
-+- compatible : should be:
-+	"nvidia,tegra114-i2c"
-+	"nvidia,tegra30-i2c"
-+	"nvidia,tegra20-i2c"
-+	"nvidia,tegra20-i2c-dvc"
++#include <linux/kernel.h>
 +
-+ Details of compatible are as follows:
-+  nvidia,tegra20-i2c-dvc: Tegra20 has specific i2c controller called as DVC I2C
-+	controller. This only support master mode of I2C communication. Register
-+	interface/offset and interrupts handling are different than generic I2C
-+	controller. Driver of DVC I2C controller is only compatible with
-+	"nvidia,tegra20-i2c-dvc".
-+  nvidia,tegra20-i2c: Tegra20 has 4 generic I2C controller. This can support
-+	master and slave mode of I2C communication. The i2c-tegra driver only
-+	support master mode of I2C communication. Driver of I2C controller is
-+	only compatible with "nvidia,tegra20-i2c".
-+  nvidia,tegra30-i2c: Tegra30 has 5 generic I2C controller. This controller is
-+	very much similar to Tegra20 I2C controller with additional feature:
-+	Continue Transfer Support. This feature helps to implement M_NO_START
-+	as per I2C core API transfer flags. Driver of I2C controller is
-+	compatible with "nvidia,tegra30-i2c" to enable the continue transfer
-+	support. This is also compatible with "nvidia,tegra20-i2c" without
-+	continue transfer support.
-+  nvidia,tegra114-i2c: Tegra114 has 5 generic I2C controller. This controller is
-+	very much similar to Tegra30 I2C controller with some hardware
-+	modification:
-+	 - Tegra30/Tegra20 I2C controller has 2 clock source called div-clk and
-+	   fast-clk. Tegra114 has only one clock source called as div-clk and
-+	   hence clock mechanism is changed in I2C controller.
-+	 - Tegra30/Tegra20 I2C controller has enabled per packet transfer by
-+	   default and there is no way to disable it. Tegra114 has this
-+	   interrupt disable by default and SW need to enable explicitly.
-+	Due to above changes, Tegra114 I2C driver makes incompatible with
-+	previous hardware driver. Hence, tegra114 I2C controller is compatible
-+	with "nvidia,tegra114-i2c".
++#include "fuse.h"
 +
++#define CORE_PROCESS_CORNERS_NUM	2
++#define CPU_PROCESS_CORNERS_NUM		2
 +
-+- reg: Should contain I2C controller registers physical address and length.
-+- interrupts: Should contain I2C controller interrupts.
-+- address-cells: Address cells for I2C device address.
-+- size-cells: Size of the I2C device address.
-+- clocks: Clock Id as per
-+		Documentation/devicetree/bindings/clock/tegra<chip-id>.txt
-+	for I2C controller.
-+- clock-names: Name of the clock:
-+	Tegra20/Tegra30 I2C controller: "div-clk and "fast-clk".
-+	Tegra114 I2C controller: "div-clk".
++enum {
++	THRESHOLD_INDEX_0,
++	THRESHOLD_INDEX_1,
++	THRESHOLD_INDEX_COUNT,
++};
 +
++static const u32 core_process_speedos[][CORE_PROCESS_CORNERS_NUM] = {
++	{1123,     UINT_MAX},
++	{0,        UINT_MAX},
++};
 +
-+Typical i2c node for Tegra20:
-+	i2c@7000c000 {
-+		compatible = "nvidia,tegra20-i2c";
-+		reg = <0x7000c000 0x100>;
-+		interrupts = <0 38 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car 12>, <&tegra_car 124>;
-+		clock-names = "div-clk", "fast-clk";
-+		status = "disabled";
-+	};
++static const u32 cpu_process_speedos[][CPU_PROCESS_CORNERS_NUM] = {
++	{1695,     UINT_MAX},
++	{0,        UINT_MAX},
++};
 +
-+Typical dvc-i2c node for Tegra20:
-+	i2c@7000d000 {
-+		compatible = "nvidia,tegra20-i2c-dvc";
-+		reg = <0x7000d000 0x200>;
-+		interrupts = <0 53 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car 47>, <&tegra_car 124>;
-+		clock-names = "div-clk", "fast-clk";
-+		status = "disabled";
-+	};
++static void rev_sku_to_speedo_ids(int rev, int sku, int *threshold)
++{
++	u32 tmp;
 +
-+Typical i2c node for Tegra30:
-+	i2c@7000c000 {
-+		compatible =  "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		reg = <0x7000c000 0x100>;
-+		interrupts = <0 38 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&tegra_car 12>, <&tegra_car 182>;
-+		clock-names = "div-clk", "fast-clk";
-+		status = "disabled";
-+	};
++	switch (sku) {
++	case 0x00:
++	case 0x10:
++	case 0x05:
++	case 0x06:
++		tegra_cpu_speedo_id = 1;
++		tegra_soc_speedo_id = 0;
++		*threshold = THRESHOLD_INDEX_0;
++		break;
 +
-+Typical i2c node for Tegra114:
-+	i2c@7000c000 {
-+		compatible = "nvidia,tegra114-i2c";
-+		reg = <0x7000c000 0x100>;
-+		interrupts = <0 38 0x04>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+		clocks = <&tegra_car 12>;
-+		clock-names = "div-clk";
-+	};
++	case 0x03:
++	case 0x04:
++		tegra_cpu_speedo_id = 2;
++		tegra_soc_speedo_id = 1;
++		*threshold = THRESHOLD_INDEX_1;
++		break;
++
++	default:
++		pr_err("Tegra114 Unknown SKU %d\n", sku);
++		tegra_cpu_speedo_id = 0;
++		tegra_soc_speedo_id = 0;
++		*threshold = THRESHOLD_INDEX_0;
++		break;
++	}
++
++	if (rev == TEGRA_REVISION_A01) {
++		tmp = tegra_fuse_readl(0x270) << 1;
++		tmp |= tegra_fuse_readl(0x26c);
++		if (!tmp)
++			tegra_cpu_speedo_id = 0;
++	}
++}
++
++void tegra114_init_speedo_data(void)
++{
++	u32 cpu_speedo_val;
++	u32 core_speedo_val;
++	int threshold;
++	int i;
++
++	BUILD_BUG_ON(ARRAY_SIZE(cpu_process_speedos) !=
++			THRESHOLD_INDEX_COUNT);
++	BUILD_BUG_ON(ARRAY_SIZE(core_process_speedos) !=
++			THRESHOLD_INDEX_COUNT);
++
++	rev_sku_to_speedo_ids(tegra_revision, tegra_sku_id, &threshold);
++
++	cpu_speedo_val = tegra_fuse_readl(0x12c) + 1024;
++	core_speedo_val = tegra_fuse_readl(0x134);
++
++	for (i = 0; i < CPU_PROCESS_CORNERS_NUM; i++)
++		if (cpu_speedo_val < cpu_process_speedos[threshold][i])
++			break;
++	tegra_cpu_process_id = i;
++
++	for (i = 0; i < CORE_PROCESS_CORNERS_NUM; i++)
++		if (core_speedo_val < core_process_speedos[threshold][i])
++			break;
++	tegra_core_process_id = i;
++}
 -- 
-1.7.1.1
+1.8.2
