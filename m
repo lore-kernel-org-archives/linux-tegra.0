@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 1/3] ARM: dts: tegra: add clock source for PMC
-Date: Mon, 18 Mar 2013 16:09:57 +0800
-Message-ID: <1363594199-10974-2-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 2/3] ARM: tegra: get PMC clock source from DT
+Date: Mon, 18 Mar 2013 16:09:58 +0800
+Message-ID: <1363594199-10974-3-git-send-email-josephl@nvidia.com>
 References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,65 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The clock source of PMC is PCLK. Adding it into DTS for Tegra20 and Tegra30.
+The clock source of PMC should be PCLK and gotten from DT.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
 * new in this change
 ---
- arch/arm/boot/dts/tegra20.dtsi | 1 +
- arch/arm/boot/dts/tegra30.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/mach-tegra/common.c | 2 +-
+ arch/arm/mach-tegra/pmc.c    | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 3183581..4ba9c7b 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -419,6 +419,7 @@
- 	pmc {
- 		compatible = "nvidia,tegra20-pmc";
- 		reg = <0x7000e400 0x400>;
-+		clocks = <&tegra_car 110>;
- 	};
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index f0315c9..b02ebe7 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -61,6 +61,7 @@ u32 tegra_uart_config[4] = {
+ void __init tegra_dt_init_irq(void)
+ {
+ 	tegra_clocks_init();
++	tegra_pmc_init();
+ 	tegra_init_irq();
+ 	irqchip_init();
+ }
+@@ -100,7 +101,6 @@ void __init tegra_init_early(void)
+ 	tegra_apb_io_init();
+ 	tegra_init_fuse();
+ 	tegra_init_cache();
+-	tegra_pmc_init();
+ 	tegra_powergate_init();
+ 	tegra_hotplug_init();
+ }
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index b30e921..05259fd 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -19,6 +19,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/clk.h>
  
- 	memory-controller@7000f000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 11d04fe..7299014 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -428,6 +428,7 @@
- 	pmc {
- 		compatible = "nvidia,tegra30-pmc";
- 		reg = <0x7000e400 0x400>;
-+		clocks = <&tegra_car 218>;
- 	};
+ #define PMC_CTRL			0x0
+ #define PMC_CTRL_INTR_LOW		(1 << 17)
+@@ -43,6 +44,7 @@ static DEFINE_SPINLOCK(tegra_powergate_lock);
  
- 	memory-controller {
+ static void __iomem *tegra_pmc_base;
+ static bool tegra_pmc_invert_interrupt;
++static struct clk *tegra_pclk;
+ 
+ static inline u32 tegra_pmc_readl(u32 reg)
+ {
+@@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
+ 
+ 	tegra_pmc_invert_interrupt = of_property_read_bool(np,
+ 				     "nvidia,invert-interrupt");
++	tegra_pclk = of_clk_get(np, 0);
++	WARN_ON_ONCE(IS_ERR(tegra_pclk));
+ }
+ 
+ void __init tegra_pmc_init(void)
 -- 
 1.8.1.5
