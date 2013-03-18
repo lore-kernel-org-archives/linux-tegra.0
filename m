@@ -1,192 +1,122 @@
-From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] ARM: tegra114: add speedo-based process identification
-Date: Mon, 18 Mar 2013 19:17:34 +0800
-Message-ID: <1363605454-24176-1-git-send-email-dahuang@nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/7] ARM: tegra: finalize USB EHCI and PHY bindings
+Date: Mon, 18 Mar 2013 17:59:35 +0530
+Message-ID: <1363609781-4045-2-git-send-email-vbyravarasu@nvidia.com>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363609781-4045-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add speedo-based process identifictaion for Tegra114.
+The existing Tegra USB bindings have a few issues:
 
-Based on the work by:
-Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+1) Many properties are documented as being part of the EHCI controller
+node, yet they apply more to the PHY device. They should be moved.
 
-Signed-off-by: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+2) Some registers in PHY1 are shared with PHY3, and hence PHY3 needs a
+reg entry to point at PHY1's register space. We can't assume the PHY1
+driver is present, so the PHY3 driver will directly access those
+registers.
+
+3) The list of clocks required by the PHY was missing some required
+entries.
+
+This patch fixes the binding definition to resolve these issues.
+
+Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Makefile          |   1 +
- arch/arm/mach-tegra/fuse.c            |   4 ++
- arch/arm/mach-tegra/fuse.h            |   7 +++
- arch/arm/mach-tegra/tegra114_speedo.c | 103 ++++++++++++++++++++++++++++++++++
- 4 files changed, 115 insertions(+)
- create mode 100644 arch/arm/mach-tegra/tegra114_speedo.c
+ .../bindings/usb/nvidia,tegra20-ehci.txt           |   27 +++----------------
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |   27 +++++++++++++++++--
+ 2 files changed, 29 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index 92703f9..e40326d 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
- obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
- obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+index 34c9528..df09330 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+@@ -6,27 +6,10 @@ Practice : Universal Serial Bus" with the following modifications
+ and additions :
  
-+obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= tegra114_speedo.o
- ifeq ($(CONFIG_CPU_IDLE),y)
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= cpuidle-tegra114.o
- endif
-diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-index f7db078..e035cd2 100644
---- a/arch/arm/mach-tegra/fuse.c
-+++ b/arch/arm/mach-tegra/fuse.c
-@@ -2,6 +2,7 @@
-  * arch/arm/mach-tegra/fuse.c
-  *
-  * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-@@ -137,6 +138,9 @@ void tegra_init_fuse(void)
- 		tegra_fuse_spare_bit = TEGRA30_FUSE_SPARE_BIT;
- 		tegra_init_speedo_data = &tegra30_init_speedo_data;
- 		break;
-+	case TEGRA114:
-+		tegra_init_speedo_data = &tegra114_init_speedo_data;
-+		break;
- 	default:
- 		pr_warn("Tegra: unknown chip id %d\n", tegra_chip_id);
- 		tegra_fuse_spare_bit = TEGRA20_FUSE_SPARE_BIT;
-diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
-index da78434..aacc00d 100644
---- a/arch/arm/mach-tegra/fuse.h
-+++ b/arch/arm/mach-tegra/fuse.h
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-@@ -66,4 +67,10 @@ void tegra30_init_speedo_data(void);
- static inline void tegra30_init_speedo_data(void) {}
- #endif
+ Required properties :
+- - compatible : Should be "nvidia,tegra20-ehci" for USB controllers
+-   used in host mode.
+- - phy_type : Should be one of "ulpi" or "utmi".
+- - nvidia,vbus-gpio : If present, specifies a gpio that needs to be
+-   activated for the bus to be powered.
+- - nvidia,phy : phandle of the PHY instance, the controller is connected to.
+-
+-Required properties for phy_type == ulpi:
+-  - nvidia,phy-reset-gpio : The GPIO used to reset the PHY.
++ - compatible : Should be "nvidia,tegra20-ehci".
++ - nvidia,phy : phandle of the PHY that the controller is connected to.
++ - clocks : Contains a single entry which defines the USB controller's clock.
  
-+#ifdef CONFIG_ARCH_TEGRA_114_SOC
-+void tegra114_init_speedo_data(void);
-+#else
-+static inline void tegra114_init_speedo_data(void) {}
-+#endif
-+
- #endif
-diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
-new file mode 100644
-index 0000000..a49de85
---- /dev/null
-+++ b/arch/arm/mach-tegra/tegra114_speedo.c
-@@ -0,0 +1,103 @@
-+/*
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/kernel.h>
-+
-+#include "fuse.h"
-+
-+#define CORE_PROCESS_CORNERS_NUM	2
-+#define CPU_PROCESS_CORNERS_NUM		2
-+
-+enum {
-+	THRESHOLD_INDEX_0,
-+	THRESHOLD_INDEX_1,
-+	THRESHOLD_INDEX_COUNT,
-+};
-+
-+static const u32 core_process_speedos[][CORE_PROCESS_CORNERS_NUM] = {
-+	{1123,     UINT_MAX},
-+	{0,        UINT_MAX},
-+};
-+
-+static const u32 cpu_process_speedos[][CPU_PROCESS_CORNERS_NUM] = {
-+	{1695,     UINT_MAX},
-+	{0,        UINT_MAX},
-+};
-+
-+static void rev_sku_to_speedo_ids(int rev, int sku, int *threshold)
-+{
-+	u32 tmp;
-+
-+	switch (sku) {
-+	case 0x00:
-+	case 0x10:
-+	case 0x05:
-+	case 0x06:
-+		tegra_cpu_speedo_id = 1;
-+		tegra_soc_speedo_id = 0;
-+		*threshold = THRESHOLD_INDEX_0;
-+		break;
-+
-+	case 0x03:
-+	case 0x04:
-+		tegra_cpu_speedo_id = 2;
-+		tegra_soc_speedo_id = 1;
-+		*threshold = THRESHOLD_INDEX_1;
-+		break;
-+
-+	default:
-+		pr_err("Tegra114 Unknown SKU %d\n", sku);
-+		tegra_cpu_speedo_id = 0;
-+		tegra_soc_speedo_id = 0;
-+		*threshold = THRESHOLD_INDEX_0;
-+		break;
-+	}
-+
-+	if (rev == TEGRA_REVISION_A01) {
-+		tmp = tegra_fuse_readl(0x270) << 1;
-+		tmp |= tegra_fuse_readl(0x26c);
-+		if (!tmp)
-+			tegra_cpu_speedo_id = 0;
-+	}
-+}
-+
-+void tegra114_init_speedo_data(void)
-+{
-+	u32 cpu_speedo_val;
-+	u32 core_speedo_val;
-+	int threshold;
-+	int i;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(cpu_process_speedos) !=
-+			THRESHOLD_INDEX_COUNT);
-+	BUILD_BUG_ON(ARRAY_SIZE(core_process_speedos) !=
-+			THRESHOLD_INDEX_COUNT);
-+
-+	rev_sku_to_speedo_ids(tegra_revision, tegra_sku_id, &threshold);
-+
-+	cpu_speedo_val = tegra_fuse_readl(0x12c) + 1024;
-+	core_speedo_val = tegra_fuse_readl(0x134);
-+
-+	for (i = 0; i < CPU_PROCESS_CORNERS_NUM; i++)
-+		if (cpu_speedo_val < cpu_process_speedos[threshold][i])
-+			break;
-+	tegra_cpu_process_id = i;
-+
-+	for (i = 0; i < CORE_PROCESS_CORNERS_NUM; i++)
-+		if (core_speedo_val < core_process_speedos[threshold][i])
-+			break;
-+	tegra_core_process_id = i;
-+}
+ Optional properties:
+-  - dr_mode : dual role mode. Indicates the working mode for
+-   nvidia,tegra20-ehci compatible controllers.  Can be "host", "peripheral",
+-   or "otg".  Default to "host" if not defined for backward compatibility.
+-      host means this is a host controller
+-      peripheral means it is device controller
+-      otg means it can operate as either ("on the go")
+-  - nvidia,has-legacy-mode : boolean indicates whether this controller can
+-    operate in legacy mode (as APX 2500 / 2600). In legacy mode some
+-    registers are accessed through the APB_MISC base address instead of
+-    the USB controller. Since this is a legacy issue it probably does not
+-    warrant a compatible string of its own.
+-  - nvidia,needs-double-reset : boolean is to be set for some of the Tegra2
+-    USB ports, which need reset twice due to hardware issues.
++ - nvidia,needs-double-reset : boolean is to be set for some of the Tegra20
++   USB ports, which need reset twice due to hardware issues.
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+index 6bdaba2..7ceccd3 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+@@ -4,8 +4,24 @@ The device node for Tegra SOC USB PHY:
+ 
+ Required properties :
+  - compatible : Should be "nvidia,tegra20-usb-phy".
+- - reg : Address and length of the register set for the USB PHY interface.
+- - phy_type : Should be one of "ulpi" or "utmi".
++ - reg : Defines the following set of registers, in the order listed:
++   - The PHY's own register set.
++     Always present.
++   - The register set of the PHY containing the UTMI pad control registers.
++     Present if-and-only-if phy_type == utmi.
++ - phy_type : Should be one of "utmi", "ulpi" or "hsic".
++ - clocks : Defines the clocks listed in the clock-names property.
++ - clock-names : The following clock names must be present:
++   - reg: The clock needed to access the PHY's own registers. This is the
++     associated EHCI controller's clock. Always present.
++   - pll_u: PLL_U. Always present.
++   - timer: The timeout clock (clk_m). Present if phy_type == utmi.
++   - utmi-pads: The clock needed to access the UTMI pad control registers.
++     Present if phy_type == utmi.
++   - ulpi-link: The clock Tegra provides to the ULPI PHY (cdev2).
++     Present if phy_type == ulpi, and ULPI link mode is in use.
++   - nvidia,vbus-gpio : If present, specifies a GPIO that needs to be
++    activated for the bus to be powered.
+ 
+ Required properties for phy_type == ulpi:
+   - nvidia,phy-reset-gpio : The GPIO used to reset the PHY.
+@@ -14,4 +30,9 @@ Optional properties:
+   - nvidia,has-legacy-mode : boolean indicates whether this controller can
+     operate in legacy mode (as APX 2500 / 2600). In legacy mode some
+     registers are accessed through the APB_MISC base address instead of
+-    the USB controller.
+\ No newline at end of file
++    the USB controller.
++  - dr_mode : dual role mode. Indicates the working mode for the PHY. Can be
++    "host", "gadget", or "otg". Defaults to "host" if not defined.
++      host means this is a host controller
++      gadget means it is device controller
++      otg means it can operate as either ("on the go")
 -- 
-1.8.2
+1.7.0.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
