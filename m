@@ -1,140 +1,98 @@
-From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra114: add speedo-based process identification
-Date: Mon, 18 Mar 2013 14:38:02 +0800
-Message-ID: <1363588682.4994.223.camel@dahuang-vm>
-References: <1363246822-14597-1-git-send-email-dahuang@nvidia.com>
-	 <51435C08.2030402@wwwdotorg.org>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 8/9] usb: host: ehci-tegra: fix PHY error handling
+Date: Mon, 18 Mar 2013 10:02:45 +0200
+Message-ID: <20130318080245.GI17135@arwen.pp.htv.fi>
+References: <1363338730-14581-1-git-send-email-balbi@ti.com>
+ <1363338730-14581-9-git-send-email-balbi@ti.com>
+ <51438EA8.1060301@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pMCBjikF2xGw87uL"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51435C08.2030402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51438EA8.1060301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 2013-03-16 at 01:36 +0800, Stephen Warren wrote:
-> On 03/14/2013 01:40 AM, Danny Huang wrote:
-> > Add speedo-based process identifictaion for Tegra114.
-> > 
-> > Based on the work by:
-> > Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This code is surprisingly quite a bit simpler than the existing
-> tegra30_speedo.c. Are you sure it's complete?
+--pMCBjikF2xGw87uL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's complete and working for now. But It may need update if we have
-more sku/chip revision in the future.
+Hi,
 
-> > diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-> 
-> > @@ -137,6 +138,9 @@ void tegra_init_fuse(void)
-> >  		tegra_fuse_spare_bit = TEGRA30_FUSE_SPARE_BIT;
-> >  		tegra_init_speedo_data = &tegra30_init_speedo_data;
-> >  		break;
-> > +	case TEGRA114:
-> > +		tegra_init_speedo_data = &tegra114_init_speedo_data;
-> > +		break;
-> 
-> Don't you need to set tegra_fuse_spare_bit there just like all the other
-> paths do?
-> 
+On Fri, Mar 15, 2013 at 03:12:08PM -0600, Stephen Warren wrote:
+> On 03/15/2013 03:12 AM, Felipe Balbi wrote:
+> > PHY layer no longer returns NULL, we must
+> > switch from IS_ERR_OR_NULL() to IS_ERR().
+>=20
+> This change will definitely conflict with some Tegra EHCI/USB-PHY
+> changes that Venu plans to submit very soon, for 3.10. This is relevant
 
-There is no need of spare fuse access for Tegra114 for now.
+but this is such a small change that, even if it conflicts, resolution
+will be trivial.
 
-> > diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
-> 
-> > +#define CORE_PROCESS_CORNERS_NUM	2
-> > +#define CPU_PROCESS_CORNERS_NUM		2
-> > +
-> > +enum {
-> > +	THRESHOLD_INDEX_0,
-> > +	THRESHOLD_INDEX_1,
-> > +	THRESHOLD_INDEX_COUNT,
-> > +};
-> > +
-> > +static const u32 core_process_speedos[THRESHOLD_INDEX_COUNT]
-> > +	[CORE_PROCESS_CORNERS_NUM] = {
-> > +	{1123,     UINT_MAX},
-> > +	{0,        UINT_MAX},
-> > +};
-> > +
-> > +static const u32 cpu_process_speedos[THRESHOLD_INDEX_COUNT]
-> > +	[CPU_PROCESS_CORNERS_NUM] = {
-> > +	{1695,     UINT_MAX},
-> > +	{0,        UINT_MAX},
-> > +};
-> 
-> Those enums/tables are a lot smaller than Tegra30. I'm surprised if we
-> end up making new chips simpler rather than more complex in this area.
-> Are those tables complete?
+> since we'd previously discussed you ack'ing Venu's patches, and my
+> applying them to the Tegra tree, due to dependencies between the Tegra
+> device tree files and his USB changes.
+>=20
+> To resolve this, we can do the following:
+>=20
+> 1) I will create a tiny topic branch containing just the Tegra DT
+> changes that must happen before the USB driver changes. This can be
+> based on v3.9-rc1 or similar, and be entirely self-contained.
+>=20
+> 2) You can merge that topic branch into your USB tree, so that the
+> changes are present there.
+>=20
+> 3) I will merge that topic branch into the Tegra tree.
+>=20
+> (2) and (3) are both needed so that the exact same commit ID is present
+> in each of our branches. It's needed in yours as a pre-cursor to Venu's
+> changes. It's needed in Tegra's because I still hope to activate usage
+> of the C pre-processor on the Tegra DT files, and that needs to build on
+> top of the same DT change of Venu's that you also need.
+>=20
+> 4) Once you've done that, you can take Venu's USB patches through your
+> USB tree rather than my applying them to the Tegra tree. This will allow
+> you to resolve any conflicts between your changes and Venu's changes
+> entirely within your branch simply by applying the patches one after the
+> other. Nice and simple, and just like any other USB change.
+>=20
+> However, this goes against your statement that you "don't accept pull
+> requests". Perhaps you can make an exception for this case?
 
-That's currently all I have. I think we can add some more data in the
-future when needed.
+Greg won't like seeing merges from my pull request and I kinda agree
+with him. We can sort out the conflicts later.
 
-> 
-> > +static void rev_sku_to_speedo_ids(int rev, int sku, int *threshold)
-> > +{
-> > +	u32 tmp;
-> > +
-> > +	switch (sku) {
-> > +	case 0x00:
-> > +	case 0x10:
-> > +	case 0x05:
-> > +	case 0x06:
-> > +		tegra_cpu_speedo_id = 1;
-> > +		tegra_soc_speedo_id = 0;
-> > +		*threshold = THRESHOLD_INDEX_0;
-> > +		break;
-> > +
-> > +	case 0x03:
-> > +	case 0x04:
-> > +		tegra_cpu_speedo_id = 2;
-> > +		tegra_soc_speedo_id = 1;
-> > +		*threshold = THRESHOLD_INDEX_1;
-> > +		break;
-> > +
-> > +	default:
-> > +		pr_err("Tegra114 Unknown SKU %d\n", sku);
-> > +		tegra_cpu_speedo_id = 0;
-> > +		tegra_soc_speedo_id = 0;
-> > +		*threshold = THRESHOLD_INDEX_0;
-> > +		break;
-> > +	}
-> > +
-> > +	if (rev == TEGRA_REVISION_A01) {
-> > +		tmp = tegra_fuse_readl(0x270) << 1;
-> > +		tmp |= tegra_fuse_readl(0x26c);
-> > +		if (!tmp)
-> > +			tegra_cpu_speedo_id = 0;
-> > +	}
-> > +}
-> 
-> That's also a lot simpler than Tegra30. Are all those SKUs really valid
-> for all chip revisions including A01 where the 0x270/0x26c fuses are clear?
+Greg ?
 
-Yes, currently the 0x26c/0x270 value affects all sku of A01 chips.
+--=20
+balbi
 
-> If life really is this simple, then I should be happy:-) But I just want
-> to check that this code really is accurate.
-> 
-> > +void tegra114_init_speedo_data(void)
-> 
-> The Tegra30 code has a couple BUILD_BUG_ON() here to ensure that the
-> size of the {cpu,core}_process_speedos arrays match
-> THRESHOLD_INDEX_COUNT. It'd be good to be consistent here.
+--pMCBjikF2xGw87uL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-I'll put the BUILD_BUG_ON back and make them consistent with Tegra30 in
-next version. Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-> 
-> In general, the implementation of tegra114_init_speedo_data() is quite
-> different from that of the existing tegra30_init_speedo_data(). It'd be
-> nice if they were as similar as possible in structure so they could be
-> easily compared. Can you take a look at the two and see if any changes
-> are warranted in this patch?
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+iQIcBAEBAgAGBQJRRsolAAoJEIaOsuA1yqRENCkP/2Zt03Bd6pIs05jeaUoSXm/a
+KI9quwNmEppHMdxugmq6UT4Qifc1henKuqxH/lg6bS7mf0DlJ6MjwbBFEVpoSG0j
+3Eh1J+ntWQAOnbEXoBfSNoPvft4WYLCOH7Lh9XgWLqG4jb4J4GJK63eDW+meNr6P
+wDAFbtlm5CshA18cPCbPGk+aSFd/5xgq96Qex+FId++kJw8IeQhKDv1aatvsp0le
+uyZsZ7OIrIgT1sKLbTGtQ+5MZnHAYLcm1xBA5hE8e5NurKZe+VAuToJ59B2fNnGC
+W0Hwl0b6eeng8F1t+LTStRtjFceU1WMlmC/DTiF8JU19S2o5WDss1Bv9z1NXrlHU
+XnUa1ID8nVoNT4YC5njgjo+NaeZciDPOkZKti2Ie6+jLcQh2T0ckX0FsOuTrKaQB
+SIaa2QtxoAPDpa/bT5rSD3k2Vu/g/7coV0f62XS+aKv7o44TuTEKsw34MJv6gPi3
+YCxlJNLzsWLwbFXm2QqdshfIBQpMuguTzWJiFyjJJgE4aUZVjiZau6t195vKe5y/
+JNm6/EQZZP9pIz1uSQQ5c+sSAMMBsVT7C1bw8vxU0Vpo3DOBSisu2HaC30VuD5RG
+0S90+iLWnLgU9vvDZQ/49Oz9kbMLNJ49TnkJArLZxu7HzmciAtYNEmRxjigybdtX
+h3lDzp5DPeXBBHNwAxk2
+=ULuQ
+-----END PGP SIGNATURE-----
+
+--pMCBjikF2xGw87uL--
