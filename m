@@ -1,59 +1,140 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH] staging: nvec: fix the '&&' vs '&' typo in
- nvec_toggle_global_events()
-Date: Sat, 16 Mar 2013 22:33:24 +0100
-Message-ID: <10181113.13atlJeaaa@ax5200p>
-References: <CAPgLHd8rhMVb_cpVR6tiYsYTrOgk3m1PyR=Eo9L2_8bOGwwbag@mail.gmail.com>
+From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra114: add speedo-based process identification
+Date: Mon, 18 Mar 2013 14:38:02 +0800
+Message-ID: <1363588682.4994.223.camel@dahuang-vm>
+References: <1363246822-14597-1-git-send-email-dahuang@nvidia.com>
+	 <51435C08.2030402@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <CAPgLHd8rhMVb_cpVR6tiYsYTrOgk3m1PyR=Eo9L2_8bOGwwbag@mail.gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Wei Yongjun <weiyj.lk@gmail.com>, linux-tegra@vger.kernel.org
-Cc: devel@driverdev.osuosl.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, yongjun_wei@trendmicro.com.cn
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51435C08.2030402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Yongjun,
-
-On Saturday 16 March 2013 22:51:25 Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On Sat, 2013-03-16 at 01:36 +0800, Stephen Warren wrote:
+> On 03/14/2013 01:40 AM, Danny Huang wrote:
+> > Add speedo-based process identifictaion for Tegra114.
+> > 
+> > Based on the work by:
+> > Alex Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Fix the '&&' vs '&' typo.
-> 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-> ---
->  drivers/staging/nvec/nvec.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index cf15936..a88959f 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -352,10 +352,10 @@ static void nvec_toggle_global_events(struct nvec_chip *nvec, bool state)
->   */
->  static void nvec_event_mask(char *ev, u32 mask)
->  {
-> -	ev[3] = mask >> 16 && 0xff;
-> -	ev[4] = mask >> 24 && 0xff;
-> -	ev[5] = mask >> 0  && 0xff;
-> -	ev[6] = mask >> 8  && 0xff;
-> +	ev[3] = mask >> 16 & 0xff;
-> +	ev[4] = mask >> 24 & 0xff;
-> +	ev[5] = mask >> 0  & 0xff;
-> +	ev[6] = mask >> 8  & 0xff;
->  }
->  
->  /**
+> This code is surprisingly quite a bit simpler than the existing
+> tegra30_speedo.c. Are you sure it's complete?
 
-yes, this was obviously wrong. Thanks for fixing!
+It's complete and working for now. But It may need update if we have
+more sku/chip revision in the future.
 
-Acked-By: Marc Dietrich <marvin24@gmx.de>
+> > diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+> 
+> > @@ -137,6 +138,9 @@ void tegra_init_fuse(void)
+> >  		tegra_fuse_spare_bit = TEGRA30_FUSE_SPARE_BIT;
+> >  		tegra_init_speedo_data = &tegra30_init_speedo_data;
+> >  		break;
+> > +	case TEGRA114:
+> > +		tegra_init_speedo_data = &tegra114_init_speedo_data;
+> > +		break;
+> 
+> Don't you need to set tegra_fuse_spare_bit there just like all the other
+> paths do?
+> 
+
+There is no need of spare fuse access for Tegra114 for now.
+
+> > diff --git a/arch/arm/mach-tegra/tegra114_speedo.c b/arch/arm/mach-tegra/tegra114_speedo.c
+> 
+> > +#define CORE_PROCESS_CORNERS_NUM	2
+> > +#define CPU_PROCESS_CORNERS_NUM		2
+> > +
+> > +enum {
+> > +	THRESHOLD_INDEX_0,
+> > +	THRESHOLD_INDEX_1,
+> > +	THRESHOLD_INDEX_COUNT,
+> > +};
+> > +
+> > +static const u32 core_process_speedos[THRESHOLD_INDEX_COUNT]
+> > +	[CORE_PROCESS_CORNERS_NUM] = {
+> > +	{1123,     UINT_MAX},
+> > +	{0,        UINT_MAX},
+> > +};
+> > +
+> > +static const u32 cpu_process_speedos[THRESHOLD_INDEX_COUNT]
+> > +	[CPU_PROCESS_CORNERS_NUM] = {
+> > +	{1695,     UINT_MAX},
+> > +	{0,        UINT_MAX},
+> > +};
+> 
+> Those enums/tables are a lot smaller than Tegra30. I'm surprised if we
+> end up making new chips simpler rather than more complex in this area.
+> Are those tables complete?
+
+That's currently all I have. I think we can add some more data in the
+future when needed.
+
+> 
+> > +static void rev_sku_to_speedo_ids(int rev, int sku, int *threshold)
+> > +{
+> > +	u32 tmp;
+> > +
+> > +	switch (sku) {
+> > +	case 0x00:
+> > +	case 0x10:
+> > +	case 0x05:
+> > +	case 0x06:
+> > +		tegra_cpu_speedo_id = 1;
+> > +		tegra_soc_speedo_id = 0;
+> > +		*threshold = THRESHOLD_INDEX_0;
+> > +		break;
+> > +
+> > +	case 0x03:
+> > +	case 0x04:
+> > +		tegra_cpu_speedo_id = 2;
+> > +		tegra_soc_speedo_id = 1;
+> > +		*threshold = THRESHOLD_INDEX_1;
+> > +		break;
+> > +
+> > +	default:
+> > +		pr_err("Tegra114 Unknown SKU %d\n", sku);
+> > +		tegra_cpu_speedo_id = 0;
+> > +		tegra_soc_speedo_id = 0;
+> > +		*threshold = THRESHOLD_INDEX_0;
+> > +		break;
+> > +	}
+> > +
+> > +	if (rev == TEGRA_REVISION_A01) {
+> > +		tmp = tegra_fuse_readl(0x270) << 1;
+> > +		tmp |= tegra_fuse_readl(0x26c);
+> > +		if (!tmp)
+> > +			tegra_cpu_speedo_id = 0;
+> > +	}
+> > +}
+> 
+> That's also a lot simpler than Tegra30. Are all those SKUs really valid
+> for all chip revisions including A01 where the 0x270/0x26c fuses are clear?
+
+Yes, currently the 0x26c/0x270 value affects all sku of A01 chips.
+
+> If life really is this simple, then I should be happy:-) But I just want
+> to check that this code really is accurate.
+> 
+> > +void tegra114_init_speedo_data(void)
+> 
+> The Tegra30 code has a couple BUILD_BUG_ON() here to ensure that the
+> size of the {cpu,core}_process_speedos arrays match
+> THRESHOLD_INDEX_COUNT. It'd be good to be consistent here.
+
+I'll put the BUILD_BUG_ON back and make them consistent with Tegra30 in
+next version. Thanks.
+
+> 
+> In general, the implementation of tegra114_init_speedo_data() is quite
+> different from that of the existing tegra30_init_speedo_data(). It'd be
+> nice if they were as similar as possible in structure so they could be
+> easily compared. Can you take a look at the two and see if any changes
+> are warranted in this patch?
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
