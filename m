@@ -1,76 +1,77 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/3] ARM: tegra: get PMC clock source from DT
-Date: Mon, 18 Mar 2013 16:09:58 +0800
-Message-ID: <1363594199-10974-3-git-send-email-josephl@nvidia.com>
-References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V4 0/9] ARM: tegra: add platform suspend support
+Date: Mon, 18 Mar 2013 16:13:11 +0800
+Message-ID: <1363594400-11663-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363594199-10974-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The clock source of PMC should be PCLK and gotten from DT.
+This series introduces a basic functionality for Tegra to support the
+platform suspend and resume.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+Note: This series only adds the support for Tegra20 and Tegra30. The
+Tegra114 will be supported later.
+
+This series needs the patch below that not yet be merged into linux-mmc tree
+to make the system suspend/resume function work correctly.
+"mmc: tegra: use mmc_of_parse to get the support of standard MMC DT bindings"
+
+Verified on Seaboard and Cardhu.
+
+V4:
+* add tegra_pm_validate_suspend_mode() to validate the suspend mode config
+  from DT
+* squash the patch below into [4/9] to avoid churn after this series
+  [2/3] ARM: tegra: refactor the pmc_pm_set function
+
+V3:
+* fix the PMC DT configurations for paz00 board
+* add a protection for only support LP2 suspend mode
+
 V2:
-* new in this change
----
- arch/arm/mach-tegra/common.c | 2 +-
- arch/arm/mach-tegra/pmc.c    | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+* re-order the patch sequence to make sure the suspend function can be
+  enabled well after the last patch be merged
+* squash the patches that defined the PM bindings for PMC and the
+  implementation
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index f0315c9..b02ebe7 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -61,6 +61,7 @@ u32 tegra_uart_config[4] = {
- void __init tegra_dt_init_irq(void)
- {
- 	tegra_clocks_init();
-+	tegra_pmc_init();
- 	tegra_init_irq();
- 	irqchip_init();
- }
-@@ -100,7 +101,6 @@ void __init tegra_init_early(void)
- 	tegra_apb_io_init();
- 	tegra_init_fuse();
- 	tegra_init_cache();
--	tegra_pmc_init();
- 	tegra_powergate_init();
- 	tegra_hotplug_init();
- }
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index b30e921..05259fd 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/clk.h>
- 
- #define PMC_CTRL			0x0
- #define PMC_CTRL_INTR_LOW		(1 << 17)
-@@ -43,6 +44,7 @@ static DEFINE_SPINLOCK(tegra_powergate_lock);
- 
- static void __iomem *tegra_pmc_base;
- static bool tegra_pmc_invert_interrupt;
-+static struct clk *tegra_pclk;
- 
- static inline u32 tegra_pmc_readl(u32 reg)
- {
-@@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
- 
- 	tegra_pmc_invert_interrupt = of_property_read_bool(np,
- 				     "nvidia,invert-interrupt");
-+	tegra_pclk = of_clk_get(np, 0);
-+	WARN_ON_ONCE(IS_ERR(tegra_pclk));
- }
- 
- void __init tegra_pmc_init(void)
+Joseph Lo (9):
+  gpio: tegra: add gpio wakeup source handling
+  ARM: tegra: irq: add wake up handling
+  ARM: dt: tegra: add bindings of power management configurations for
+    PMC
+  ARM: tegra: pm: add platform suspend support
+  ARM: dts: tegra: add power gpio keys to DT
+  ARM: dts: tegra: whistler: add wakeup source for KBC
+  ARM: dts: tegra: add non-removable and keep-power-in-suspend property
+    for MMC
+  ARM: tegra: config: defconfig update
+  ARM: dts: tegra: add the PM configurations of PMC
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++++++-
+ arch/arm/boot/dts/tegra20-harmony.dts              |  17 +++
+ arch/arm/boot/dts/tegra20-paz00.dts                |   7 ++
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   8 ++
+ arch/arm/boot/dts/tegra20-trimslice.dts            |  20 +++
+ arch/arm/boot/dts/tegra20-ventana.dts              |  19 +++
+ arch/arm/boot/dts/tegra20-whistler.dts             |  10 ++
+ arch/arm/boot/dts/tegra30-beaver.dts               |   8 ++
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts           |   1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 ++
+ arch/arm/configs/tegra_defconfig                   |   1 +
+ arch/arm/mach-tegra/common.c                       |   3 +
+ arch/arm/mach-tegra/irq.c                          |  95 ++++++++++++++-
+ arch/arm/mach-tegra/irq.h                          |   6 +
+ arch/arm/mach-tegra/pm.c                           |  93 ++++++++++++--
+ arch/arm/mach-tegra/pm.h                           |  15 +++
+ arch/arm/mach-tegra/pmc.c                          | 135 ++++++++++++++++++++-
+ arch/arm/mach-tegra/pmc.h                          |  12 +-
+ drivers/gpio/gpio-tegra.c                          |  21 +++-
+ 20 files changed, 500 insertions(+), 22 deletions(-)
+
 -- 
 1.8.1.5
