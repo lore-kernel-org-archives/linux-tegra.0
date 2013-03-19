@@ -1,7 +1,7 @@
 From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 1/9] ARM: OMAP: board-4430sdp: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 11:59:25 -0700
-Message-ID: <1363719573-20926-2-git-send-email-achew@nvidia.com>
+Subject: [PATCH V4 7/9] ARM: vt8500: Provide regulator to pwm-backlight
+Date: Tue, 19 Mar 2013 11:59:31 -0700
+Message-ID: <1363719573-20926-8-git-send-email-achew@nvidia.com>
 References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,34 +17,31 @@ during driver probe.  Initialize a dummy regulator to satisfy this
 requirement.
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Peter Ujfalusi <peter.ujfalusi-l0cyMroinI0@public.gmane.org>
 ---
- arch/arm/mach-omap2/board-4430sdp.c | 6 ++++++
+ arch/arm/boot/dts/wm8850-w70v2.dts | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
-index 35f3ad0..a01a39a 100644
---- a/arch/arm/mach-omap2/board-4430sdp.c
-+++ b/arch/arm/mach-omap2/board-4430sdp.c
-@@ -291,6 +291,10 @@ static struct platform_device sdp4430_leds_pwm = {
- 	},
- };
+diff --git a/arch/arm/boot/dts/wm8850-w70v2.dts b/arch/arm/boot/dts/wm8850-w70v2.dts
+index fcc660c..47a0b1a 100644
+--- a/arch/arm/boot/dts/wm8850-w70v2.dts
++++ b/arch/arm/boot/dts/wm8850-w70v2.dts
+@@ -37,11 +37,17 @@
+ 		};
+ 	};
  
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("enable", "pwm-backlight");
++	bl_en: fixed-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "bl-en-supply";
++	};
 +
- static struct platform_pwm_backlight_data sdp4430_backlight_data = {
- 	.max_brightness = 127,
- 	.dft_brightness = 127,
-@@ -718,6 +722,8 @@ static void __init omap_4430sdp_init(void)
+ 	backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm 0 50000 1>;	/* duty inverted */
  
- 	omap4_i2c_init();
- 	omap_sfh7741prox_init();
-+	regulator_register_always_on(-1, "backlight-enable",
-+				     &backlight_supply, 1, 0);
- 	platform_add_devices(sdp4430_devices, ARRAY_SIZE(sdp4430_devices));
- 	omap_serial_init();
- 	omap_sdrc_init(NULL, NULL);
+ 		brightness-levels = <0 40 60 80 100 130 190 255>;
+ 		default-brightness-level = <5>;
++		enable-supply = <&bl_en>;
+ 	};
+ };
 -- 
 1.8.1.5
