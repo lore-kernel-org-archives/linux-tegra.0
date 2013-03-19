@@ -1,84 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 4/9] ARM: tegra: pm: add platform suspend support
-Date: Tue, 19 Mar 2013 11:07:41 -0600
-Message-ID: <51489B5D.3050101@wwwdotorg.org>
-References: <1363594400-11663-1-git-send-email-josephl@nvidia.com> <1363594400-11663-5-git-send-email-josephl@nvidia.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [GIT PULL] ARM: tegra: DT-related fixes needed by the MMC tree
+Date: Tue, 19 Mar 2013 13:11:36 -0400
+Message-ID: <87obeftiuv.fsf@octavius.laptop.org>
+References: <1363034651-21472-1-git-send-email-swarren@wwwdotorg.org>
+	<51489146.9090109@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363594400-11663-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <51489146.9090109@wwwdotorg.org> (Stephen Warren's message of
+	"Tue, 19 Mar 2013 10:24:38 -0600")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/18/2013 02:13 AM, Joseph Lo wrote:
-> Adding suspend to RAM support for Tegra platform. There are three suspend
-> mode for Tegra. The difference were below.
-> 
-> * LP2: CPU voltage off
-> * LP1: CPU voltage off, DRAM in self-refresh
-> * LP0: CPU + Core voltage off, DRAM in self-refresh
-> 
-> After this patch, the LP2 suspend mode will be supported.
+Hi Stephen,
 
-> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-> index c84505c..024f355 100644
-> --- a/arch/arm/mach-tegra/common.c
-> +++ b/arch/arm/mach-tegra/common.c
-> @@ -66,6 +66,7 @@ void __init tegra_dt_init_irq(void)
->  	tegra_init_irq();
->  	irqchip_init();
->  	tegra_legacy_irq_syscore_init();
-> +	tegra_init_suspend();
+On Tue, Mar 19 2013, Stephen Warren wrote:
+> On 03/11/2013 02:44 PM, Stephen Warren wrote:
+>> In order to convert the Tegra MMC driver to using mmc_of_parse(), some
+>> bugs in the Tegra device-tree content need to be fixed first; it's
+>> currently wrong but unused, and mmc_of_parse() causes that data to be
+>> used for the first time.
+>
+> Chris, I don't see this pull request nor the followup patch in the
+> mmc-next branch yet. Are you still planning on pulling it in? Let me
+> know if you need me to resend them. Thanks.
 
-Does that have to be part of tegra_dt_init_irq()? Can't we initialize
-suspend support in some later hook. init_irq() should just initialize IRQs.
+Thanks for the reminder, I've pulled your tag and the followup patch
+into mmc-next now.
 
-> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-
-> -void set_power_timers(unsigned long us_on, unsigned long us_off)
-> +static void set_power_timers(u32 us_on, u32 us_off, unsigned long rate)
->  {
->  	unsigned long long ticks;
->  	unsigned long long pclk;
-> -	unsigned long rate;
->  	static unsigned long tegra_last_pclk;
->  
-> -	rate = clk_get_rate(tegra_pclk);
-> -
->  	if (WARN_ON_ONCE(rate <= 0))
->  		pclk = 100000000;
->  	else
-
-I don't think the code compiles after that?
-
-The code must both compile and execute correctly after each patch is
-applied, without relying on any future patches.
-
-> +void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
-> +{
-> +	u32 reg;
-> +	unsigned long rate = 0;
-> +
-> +	reg = tegra_pmc_readl(PMC_CTRL);
-> +	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
-> +	reg &= ~TEGRA_POWER_EFFECT_LP0;
-> +
-> +	switch (mode) {
-> +	case TEGRA_SUSPEND_LP2:
-> +		rate = clk_get_rate(tegra_pclk);
-
-That isn't used anywhere.
-
-> +void tegra_pmc_suspend_init(void)
-> +{
-> +	u32 reg;
-> +
-> +	/* Always enable CPU power request; just normal polarity is supported */
-> +	reg = tegra_pmc_readl(PMC_CTRL);
-> +	BUG_ON(reg & TEGRA_POWER_CPU_PWRREQ_POLARITY);
-
-Why is that comment true? What does it take to support arbitrary
-polarity; just flipping the OE bit in the register?
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
