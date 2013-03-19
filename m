@@ -1,41 +1,26 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 3/9] ARM: dt: tegra: add bindings of power management
- configurations for PMC
-Date: Tue, 19 Mar 2013 11:26:21 -0600
-Message-ID: <51489FBD.5060107@wwwdotorg.org>
-References: <1363594400-11663-1-git-send-email-josephl@nvidia.com> <1363594400-11663-4-git-send-email-josephl@nvidia.com> <5148999A.90102@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] Doc: dt: i2c: tegra: add dt binding for i2c-tegra
+Date: Tue, 19 Mar 2013 11:35:22 -0600
+Message-ID: <5148A1DA.6040304@wwwdotorg.org>
+References: <1363599350-25187-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5148999A.90102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1363599350-25187-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: rob@landley.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/19/2013 11:00 AM, Stephen Warren wrote:
-> On 03/18/2013 02:13 AM, Joseph Lo wrote:
->> The PMC mostly controls the entry and exit of the system from different
->> sleep modes. Different platform or system may have different configurations.
->> The power management configurations of PMC is represented as some properties.
->> The system needs to define the properties when the system supports deep sleep
->> mode (i.e. suspend).
+On 03/18/2013 03:35 AM, Laxman Dewangan wrote:
+> Add documentation for device tree binding of NVIDIA's Tegra i2c
+> controller driver.
 > 
->> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> 
->> +- nvidia,suspend-mode : The suspend mode that the platform should use.
->> +  Valid values are 0, 1 and 2:
->> +  0 (LP0): CPU + Core voltage off and DRAM in self-refresh
->> +  1 (LP1): CPU vlotage off and DRAM in self-refresh
-> 
-> s/vlotage/voltage/
-> 
-> BTW, checkpatch spews hundreds of lines of errors because these patches
-> have DOS-style line-endings. Can you please generate and send them
-> directly from Linux to fix this. There are also a couple of trailing
-> whitespace errors.
+> Describing all compatible values used for diffenent Tegra SoCs
+> in details in this documentation.
 
-Oops. The DOS-style line-endings was a mistake in my work-flow, so you
-can ignore that. There were a few other checkpatch errors though that
-need fixing.
+I have applied this to Tegra's for-3.10/dt branch. I fixed a couple of
+typos and capitalization errors. I also trimmed the patch to include
+only a single example; the description in the text is enough to get the
+rest right, so there's no need to include exhaustive examples.
