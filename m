@@ -1,36 +1,84 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 3/9] ARM: dt: tegra: add bindings of power management
- configurations for PMC
-Date: Tue, 19 Mar 2013 11:00:10 -0600
-Message-ID: <5148999A.90102@wwwdotorg.org>
-References: <1363594400-11663-1-git-send-email-josephl@nvidia.com> <1363594400-11663-4-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH V4 4/9] ARM: tegra: pm: add platform suspend support
+Date: Tue, 19 Mar 2013 11:07:41 -0600
+Message-ID: <51489B5D.3050101@wwwdotorg.org>
+References: <1363594400-11663-1-git-send-email-josephl@nvidia.com> <1363594400-11663-5-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363594400-11663-4-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1363594400-11663-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 03/18/2013 02:13 AM, Joseph Lo wrote:
-> The PMC mostly controls the entry and exit of the system from different
-> sleep modes. Different platform or system may have different configurations.
-> The power management configurations of PMC is represented as some properties.
-> The system needs to define the properties when the system supports deep sleep
-> mode (i.e. suspend).
+> Adding suspend to RAM support for Tegra platform. There are three suspend
+> mode for Tegra. The difference were below.
+> 
+> * LP2: CPU voltage off
+> * LP1: CPU voltage off, DRAM in self-refresh
+> * LP0: CPU + Core voltage off, DRAM in self-refresh
+> 
+> After this patch, the LP2 suspend mode will be supported.
 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+> index c84505c..024f355 100644
+> --- a/arch/arm/mach-tegra/common.c
+> +++ b/arch/arm/mach-tegra/common.c
+> @@ -66,6 +66,7 @@ void __init tegra_dt_init_irq(void)
+>  	tegra_init_irq();
+>  	irqchip_init();
+>  	tegra_legacy_irq_syscore_init();
+> +	tegra_init_suspend();
 
-> +- nvidia,suspend-mode : The suspend mode that the platform should use.
-> +  Valid values are 0, 1 and 2:
-> +  0 (LP0): CPU + Core voltage off and DRAM in self-refresh
-> +  1 (LP1): CPU vlotage off and DRAM in self-refresh
+Does that have to be part of tegra_dt_init_irq()? Can't we initialize
+suspend support in some later hook. init_irq() should just initialize IRQs.
 
-s/vlotage/voltage/
+> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
 
-BTW, checkpatch spews hundreds of lines of errors because these patches
-have DOS-style line-endings. Can you please generate and send them
-directly from Linux to fix this. There are also a couple of trailing
-whitespace errors.
+> -void set_power_timers(unsigned long us_on, unsigned long us_off)
+> +static void set_power_timers(u32 us_on, u32 us_off, unsigned long rate)
+>  {
+>  	unsigned long long ticks;
+>  	unsigned long long pclk;
+> -	unsigned long rate;
+>  	static unsigned long tegra_last_pclk;
+>  
+> -	rate = clk_get_rate(tegra_pclk);
+> -
+>  	if (WARN_ON_ONCE(rate <= 0))
+>  		pclk = 100000000;
+>  	else
+
+I don't think the code compiles after that?
+
+The code must both compile and execute correctly after each patch is
+applied, without relying on any future patches.
+
+> +void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
+> +{
+> +	u32 reg;
+> +	unsigned long rate = 0;
+> +
+> +	reg = tegra_pmc_readl(PMC_CTRL);
+> +	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
+> +	reg &= ~TEGRA_POWER_EFFECT_LP0;
+> +
+> +	switch (mode) {
+> +	case TEGRA_SUSPEND_LP2:
+> +		rate = clk_get_rate(tegra_pclk);
+
+That isn't used anywhere.
+
+> +void tegra_pmc_suspend_init(void)
+> +{
+> +	u32 reg;
+> +
+> +	/* Always enable CPU power request; just normal polarity is supported */
+> +	reg = tegra_pmc_readl(PMC_CTRL);
+> +	BUG_ON(reg & TEGRA_POWER_CPU_PWRREQ_POLARITY);
+
+Why is that comment true? What does it take to support arbitrary
+polarity; just flipping the OE bit in the register?
