@@ -1,82 +1,70 @@
-From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fuse: add fuctions to read speedo id and process id
-Date: Tue, 19 Mar 2013 10:33:25 +0800
-Message-ID: <1363660405-10668-1-git-send-email-dahuang@nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 5/7] usb: phy: tegra: get ULPI reset GPIO info using DT.
+Date: Tue, 19 Mar 2013 09:42:26 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E50311A71@BGMAIL02.nvidia.com>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
+ <1363609781-4045-6-git-send-email-vbyravarasu@nvidia.com>
+ <5147102F.1060204@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5147102F.1060204-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add functions to read the speedo and process id of both cpu and soc.
-There might be some drivers need the information as well.
+> -----Original Message-----
+> From: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-usb-
+> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Sergei Shtylyov
+> Sent: Monday, March 18, 2013 6:32 PM
+> To: Venu Byravarasu
+> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-
+> discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> Subject: Re: [PATCH 5/7] usb: phy: tegra: get ULPI reset GPIO info using DT.
+> 
+> Hello.
+> 
+> On 18-03-2013 16:29, Venu Byravarasu wrote:
+> 
+> > As GPIO information is avail through DT, used it to get Tegra ULPI
+> > reset GPIO number. Added a new member to tegra_usb_phy structure to
+> > store this number.
+> 
+> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >   drivers/usb/phy/tegra_usb_phy.c   |   25 +++++++++++--------------
+> >   include/linux/usb/tegra_usb_phy.h |    1 +
+> >   2 files changed, 12 insertions(+), 14 deletions(-)
+> 
+> > diff --git a/drivers/usb/phy/tegra_usb_phy.c
+> b/drivers/usb/phy/tegra_usb_phy.c
+> > index b5b2037..29c5ac4 100644
+> > --- a/drivers/usb/phy/tegra_usb_phy.c
+> > +++ b/drivers/usb/phy/tegra_usb_phy.c
+> [...]
+> > @@ -622,18 +619,18 @@ static int	tegra_phy_init(struct usb_phy *x)
+> [...]
+> > -		gpio_request(ulpi_config->reset_gpio, "ulpi_phy_reset_b");
+> > -		gpio_direction_output(ulpi_config->reset_gpio, 0);
+> > +		gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
+> > +		gpio_direction_output(phy->reset_gpio, 0);
+> 
+>     Why not use goio_request_one() instead of these two? Thought maybe it's
+> a
+> material of another patch...
 
-Signed-off-by: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/fuse.c | 24 ++++++++++++++++++++++++
- include/linux/tegra-soc.h  |  6 +++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+Sure, can take this up as part of next patch.
+Thanks for the review. 
 
-diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-index f7db078..f0e356e 100644
---- a/arch/arm/mach-tegra/fuse.c
-+++ b/arch/arm/mach-tegra/fuse.c
-@@ -2,6 +2,7 @@
-  * arch/arm/mach-tegra/fuse.c
-  *
-  * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-@@ -161,3 +162,26 @@ unsigned long long tegra_chip_uid(void)
- 	return (hi << 32ull) | lo;
- }
- EXPORT_SYMBOL(tegra_chip_uid);
-+
-+int tegra_get_cpu_process_id(void)
-+{
-+	return tegra_cpu_process_id;
-+}
-+
-+int tegra_get_core_process_id(void)
-+{
-+	return tegra_core_process_id;
-+}
-+
-+int tegra_get_cpu_speedo_id(void)
-+{
-+	if (tegra_chip_id == TEGRA20)
-+		return -EINVAL;
-+
-+	return tegra_cpu_speedo_id;
-+}
-+
-+int tegra_get_soc_speedo_id(void)
-+{
-+	return tegra_soc_speedo_id;
-+}
-diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
-index 95f611d..b3e4b74 100644
---- a/include/linux/tegra-soc.h
-+++ b/include/linux/tegra-soc.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2012,2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -18,5 +18,9 @@
- #define __LINUX_TEGRA_SOC_H_
- 
- u32 tegra_read_chipid(void);
-+int tegra_get_cpu_process_id(void);
-+int tegra_get_core_process_id(void);
-+int tegra_get_cpu_speedo_id(void);
-+int tegra_get_soc_speedo_id(void);
- 
- #endif /* __LINUX_TEGRA_SOC_H_ */
--- 
-1.8.2
+> 
+> WBR, Sergei
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
