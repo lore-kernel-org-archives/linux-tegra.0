@@ -1,36 +1,41 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [GIT PULL] ARM: tegra: DT-related fixes needed by the MMC tree
-Date: Tue, 19 Mar 2013 13:11:36 -0400
-Message-ID: <87obeftiuv.fsf@octavius.laptop.org>
-References: <1363034651-21472-1-git-send-email-swarren@wwwdotorg.org>
-	<51489146.9090109@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 3/9] ARM: dt: tegra: add bindings of power management
+ configurations for PMC
+Date: Tue, 19 Mar 2013 11:26:21 -0600
+Message-ID: <51489FBD.5060107@wwwdotorg.org>
+References: <1363594400-11663-1-git-send-email-josephl@nvidia.com> <1363594400-11663-4-git-send-email-josephl@nvidia.com> <5148999A.90102@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <51489146.9090109@wwwdotorg.org> (Stephen Warren's message of
-	"Tue, 19 Mar 2013 10:24:38 -0600")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5148999A.90102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+On 03/19/2013 11:00 AM, Stephen Warren wrote:
+> On 03/18/2013 02:13 AM, Joseph Lo wrote:
+>> The PMC mostly controls the entry and exit of the system from different
+>> sleep modes. Different platform or system may have different configurations.
+>> The power management configurations of PMC is represented as some properties.
+>> The system needs to define the properties when the system supports deep sleep
+>> mode (i.e. suspend).
+> 
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> 
+>> +- nvidia,suspend-mode : The suspend mode that the platform should use.
+>> +  Valid values are 0, 1 and 2:
+>> +  0 (LP0): CPU + Core voltage off and DRAM in self-refresh
+>> +  1 (LP1): CPU vlotage off and DRAM in self-refresh
+> 
+> s/vlotage/voltage/
+> 
+> BTW, checkpatch spews hundreds of lines of errors because these patches
+> have DOS-style line-endings. Can you please generate and send them
+> directly from Linux to fix this. There are also a couple of trailing
+> whitespace errors.
 
-On Tue, Mar 19 2013, Stephen Warren wrote:
-> On 03/11/2013 02:44 PM, Stephen Warren wrote:
->> In order to convert the Tegra MMC driver to using mmc_of_parse(), some
->> bugs in the Tegra device-tree content need to be fixed first; it's
->> currently wrong but unused, and mmc_of_parse() causes that data to be
->> used for the first time.
->
-> Chris, I don't see this pull request nor the followup patch in the
-> mmc-next branch yet. Are you still planning on pulling it in? Let me
-> know if you need me to resend them. Thanks.
-
-Thanks for the reminder, I've pulled your tag and the followup patch
-into mmc-next now.
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Oops. The DOS-style line-endings was a mistake in my work-flow, so you
+can ignore that. There were a few other checkpatch errors though that
+need fixing.
