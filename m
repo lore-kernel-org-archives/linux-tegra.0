@@ -1,79 +1,41 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 8/9] usb: host: ehci-tegra: fix PHY error handling
-Date: Tue, 19 Mar 2013 10:24:09 +0200
-Message-ID: <20130319082409.GD17049@arwen.pp.htv.fi>
-References: <1363338730-14581-1-git-send-email-balbi@ti.com>
- <1363338730-14581-9-git-send-email-balbi@ti.com>
- <51438EA8.1060301@wwwdotorg.org>
- <20130318080245.GI17135@arwen.pp.htv.fi>
- <514731EE.9010709@wwwdotorg.org>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Patch v3 0/4] Add support for tps65090-charger
+Date: Tue, 19 Mar 2013 11:55:33 -0400
+Message-ID: <51488A75.6000003@nvidia.com>
+References: <1363126089-9071-1-git-send-email-rklein@nvidia.com> <20130319022402.GA14118@lizard.gateway.2wire.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FN+gV9K+162wdwwF"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <514731EE.9010709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130319022402.GA14118-1CZZkhFgUWNRmOO2HpYVOJIbA5emDH3N@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---FN+gV9K+162wdwwF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3/18/2013 10:24 PM, Anton Vorontsov wrote:
+> On Tue, Mar 12, 2013 at 06:08:05PM -0400, Rhyland Klein wrote:
+>> This patchset adds support for the TPS65090-charger. This charger is
+>> registered as a subdevice of the TPS65090 PMIC.
+>>
+>> This series includes a fix for the tps65090 header file where all
+>> the interrupts were shifted by 1.
+> 
+> Thanks for the patches, Rhyland! 3/4 and 4/4 applied to the
+> battery-2.6.git tree.
+> 
+> Anton
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+I was planning on posting a slightly changed v4 sometime soon which took
+care of some concerns on the Documentation and added a compatibility
+entry for the charger. Do you want me to send that still and you can
+replace v3 with v4?
 
-On Mon, Mar 18, 2013 at 09:25:34AM -0600, Stephen Warren wrote:
-> On 03/18/2013 02:02 AM, Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Fri, Mar 15, 2013 at 03:12:08PM -0600, Stephen Warren wrote:
-> >> On 03/15/2013 03:12 AM, Felipe Balbi wrote:
-> >>> PHY layer no longer returns NULL, we must switch from
-> >>> IS_ERR_OR_NULL() to IS_ERR().
-> >>=20
-> >> This change will definitely conflict with some Tegra
-> >> EHCI/USB-PHY changes that Venu plans to submit very soon, for
-> >> 3.10. This is relevant
-> >=20
-> > but this is such a small change that, even if it conflicts,
-> > resolution will be trivial.
->=20
-> Well, Venu's changes re-organize exactly the code you're modifying.
-> Wouldn't it be simpler to simply take all the Tegra USB patches
-> through the PHY tree and avoid any conflicts at all?
+-rhyland
 
-alright, I will take all patches, so please create a very small
-immutable branch which I can merge then I'll take all other patches.
-
-Let's just try to avoid this sort of situation whenever possible.
-
-cheers
-
---=20
-balbi
-
---FN+gV9K+162wdwwF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRSCCpAAoJEIaOsuA1yqREyxIP/0Xc4tWhFeV5p/w9/Ictb/Xl
-D8uG6i36GzuVxTeqLhgtQ1GctdoL3l4QQALhBqXAjq9xJnJdk5fYLqfKDhwKSeHq
-Od7XqkyrSg+5J3nMyYaBv9SyjSdTiK9UeKRlWPoVK/H9DZeVT+h2piB7fncWXBhR
-scNwgprmWY336GVzXBIy8X5Mo4SXzBeZt4+W4ZmozdbldkYLqCUBlT9PNIMUJdXL
-i5NaFC2TUoEc7EQZDtAI1uOBxl4qsgbPo7stR0QbjRsqcuqn+FwlFuEdCZ5eNB4V
-E5cCk9uZpqYN38tawwLcSjqco8azW2MvG6n95a/63pcYhA2jh9EfKu2HbYKOyB3r
-67b6++NHJAia1EptUUszjdJ3RZqA7iGhWtPh7bMhzBkxMFnox5Ut4xpJNonzTdhn
-KLQFkrn0tfA9JusEdLqU2L3olxf13YR7pp+7K3cU4FsZ2dujgwxAK3Gz+3OpHJvG
-WtU8uTOWxRGL1skQjmK+kafVeqzinCf/zkjngXtkW878SEU67w14yh2oh8vCogmT
-KrEEK/rvSGF+VDAdk54HJhLQTrehJJ2T5UvgXj0Xrt0KiFYm/niXdwg0rMeJuiie
-GtJgQ2nucIMc0E7QXKPX/SomHOpKoJZ7zUSqkpIFZkRq3KtzMyIWc7cYZ9FPcCqZ
-95uzwMA7xFf9v3G0qrGA
-=cFNW
------END PGP SIGNATURE-----
-
---FN+gV9K+162wdwwF--
+-- 
+nvpublic
