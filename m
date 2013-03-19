@@ -1,32 +1,63 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 16:10:26 -0600
-Message-ID: <5148E252.9050900@wwwdotorg.org>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-7-git-send-email-achew@nvidia.com> <201303192227.21717.marex@denx.de>
+Subject: Re: Reboot/shutdown failure due to "USB: EHCI: work around silicon
+ bug in Intel's EHCI"
+Date: Tue, 19 Mar 2013 16:48:12 -0600
+Message-ID: <5148EB2C.1080402@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1303191604530.1302-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201303192227.21717.marex-ynQEQJNshbs@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1303191604530.1302-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/19/2013 03:27 PM, Marek Vasut wrote:
-> Dear Andrew Chew,
+On 03/19/2013 02:07 PM, Alan Stern wrote:
+> On Tue, 19 Mar 2013, Stephen Warren wrote:
 > 
->> The pwm-backlight driver now takes a mandatory regulator that is gotten
->> during driver probe.  Initialize a dummy regulator to satisfy this
->> requirement.
+>> Yes, sysrq seems to work over the serial console:-)
 >>
->> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>  * Will now restart
+>>>
+>>> *** break sent ***
+>>> [  180.765213] SysRq : Show Blocked State
+>>> [  180.768963]   task                PC stack   pid father
+>>> [  180.774182] khubd           D c0517678     0    21      2 0x00000000
+>>> [  180.780559] [<c0517678>] (__schedule+0x348/0x6dc) from [<c02ebc90>] (usb_kill_urb+0x88/0xd4)
+>>> [  180.788984] [<c02ebc90>] (usb_kill_urb+0x88/0xd4) from [<c02ecb70>] (usb_start_wait_urb+0xa4/0x13c)
+>>> [  180.798012] [<c02ecb70>] (usb_start_wait_urb+0xa4/0x13c) from [<c02ecd98>] (usb_control_msg+0x98/0xcc)
+>>> [  180.807301] [<c02ecd98>] (usb_control_msg+0x98/0xcc) from [<c02e4394>] (hub_port_init+0x5e0/0x9d0)
+>>> [  180.816242] [<c02e4394>] (hub_port_init+0x5e0/0x9d0) from [<c02e6640>] (hub_port_connect_change+0x1f4/0x970)
+>>> [  180.826050] [<c02e6640>] (hub_port_connect_change+0x1f4/0x970) from [<c02e70fc>] (hub_events+0x340/0x8c4)
+>>> [  180.835598] [<c02e70fc>] (hub_events+0x340/0x8c4) from [<c02e76a8>] (hub_thread+0x28/0x1b8)
+>>> [  180.843941] [<c02e76a8>] (hub_thread+0x28/0x1b8) from [<c0041268>] (kthread+0xa4/0xb0)
 > 
-> Do we really need a mandatory regulator? Why can't it be optional?
+>> I assume you only want the back-traces, not the reset of the sysrq spew?
+> 
+> Yes.  It looks like khubd is your problem.
+> 
+>> BTW, I have also occasionally noticed some either hung task or RCU spew
+>> related to usb_kill_urb at other times (i.e. when not rebooting), IIRC
+>> (which I may not; I may be remembering what happens if I just leave the
+>> reboot hung for a few minutes, as shown below):
+>>
+>>> [  240.670335] INFO: task khubd:21 blocked for more than 120 seconds.
+>>> [  240.676516] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>>> [  240.684336] khubd           D c0517678     0    21      2 0x00000000
+> 
+> Right.  It's another symptom of the same thing.  This problem occurs 
+> well before shutdown -- something is causing khubd to hang and that 
+> messes up everything else.
+> 
+> A dmesg log with CONFIG_USB_DEBUG enabled would be helpful.  We ought
+> to be able to tell where khubd is getting stuck.
 
-IIRC, the previous advice I've seen is that if a device (driver) uses a
-regulator, it must /require/ a regulator, and if a particular board
-doesn't actually have a SW-controlled regulator, then a fixed- or dummy-
-regulator should be provided to satisfy this requirement.
-
-CC'ing Mark Brown to make sure I really do Recall Correctly.
+Hmmm. Enabling CONFIG_USB_DEBUG appears to mask the problem. I assume
+this is some kind of timing/race condition, unless there's some code
+with required side-effects hiding under ifdef CONFIG_USB_DEBUG somehow?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
