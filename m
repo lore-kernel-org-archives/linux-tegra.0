@@ -1,26 +1,82 @@
-From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-Subject: Re: [Patch v3 0/4] Add support for tps65090-charger
-Date: Mon, 18 Mar 2013 19:24:02 -0700
-Message-ID: <20130319022402.GA14118@lizard.gateway.2wire.net>
-References: <1363126089-9071-1-git-send-email-rklein@nvidia.com>
+From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: fuse: add fuctions to read speedo id and process id
+Date: Tue, 19 Mar 2013 10:33:25 +0800
+Message-ID: <1363660405-10668-1-git-send-email-dahuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1363126089-9071-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 12, 2013 at 06:08:05PM -0400, Rhyland Klein wrote:
-> This patchset adds support for the TPS65090-charger. This charger is
-> registered as a subdevice of the TPS65090 PMIC.
-> 
-> This series includes a fix for the tps65090 header file where all
-> the interrupts were shifted by 1.
+Add functions to read the speedo and process id of both cpu and soc.
+There might be some drivers need the information as well.
 
-Thanks for the patches, Rhyland! 3/4 and 4/4 applied to the
-battery-2.6.git tree.
+Signed-off-by: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/fuse.c | 24 ++++++++++++++++++++++++
+ include/linux/tegra-soc.h  |  6 +++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-Anton
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index f7db078..f0e356e 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -2,6 +2,7 @@
+  * arch/arm/mach-tegra/fuse.c
+  *
+  * Copyright (C) 2010 Google, Inc.
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Author:
+  *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+@@ -161,3 +162,26 @@ unsigned long long tegra_chip_uid(void)
+ 	return (hi << 32ull) | lo;
+ }
+ EXPORT_SYMBOL(tegra_chip_uid);
++
++int tegra_get_cpu_process_id(void)
++{
++	return tegra_cpu_process_id;
++}
++
++int tegra_get_core_process_id(void)
++{
++	return tegra_core_process_id;
++}
++
++int tegra_get_cpu_speedo_id(void)
++{
++	if (tegra_chip_id == TEGRA20)
++		return -EINVAL;
++
++	return tegra_cpu_speedo_id;
++}
++
++int tegra_get_soc_speedo_id(void)
++{
++	return tegra_soc_speedo_id;
++}
+diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
+index 95f611d..b3e4b74 100644
+--- a/include/linux/tegra-soc.h
++++ b/include/linux/tegra-soc.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2012,2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+@@ -18,5 +18,9 @@
+ #define __LINUX_TEGRA_SOC_H_
+ 
+ u32 tegra_read_chipid(void);
++int tegra_get_cpu_process_id(void);
++int tegra_get_core_process_id(void);
++int tegra_get_cpu_speedo_id(void);
++int tegra_get_soc_speedo_id(void);
+ 
+ #endif /* __LINUX_TEGRA_SOC_H_ */
+-- 
+1.8.2
