@@ -1,7 +1,7 @@
 From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 5/9] unicore32: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 11:59:29 -0700
-Message-ID: <1363719573-20926-6-git-send-email-achew@nvidia.com>
+Subject: [PATCH V4 2/9] ARM: S3C24XX: Provide regulator to pwm-backlight
+Date: Tue, 19 Mar 2013 11:59:26 -0700
+Message-ID: <1363719573-20926-3-git-send-email-achew@nvidia.com>
 References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,42 +18,76 @@ requirement.
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/unicore32/kernel/puv3-nb0916.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-s3c24xx/mach-h1940.c  | 8 ++++++++
+ arch/arm/mach-s3c24xx/mach-rx1950.c | 9 +++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/arch/unicore32/kernel/puv3-nb0916.c b/arch/unicore32/kernel/puv3-nb0916.c
-index 181108b..ff84d77 100644
---- a/arch/unicore32/kernel/puv3-nb0916.c
-+++ b/arch/unicore32/kernel/puv3-nb0916.c
-@@ -19,6 +19,8 @@
- #include <linux/reboot.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index 8dd6601..d2594b8 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -24,6 +24,8 @@
+ #include <linux/gpio.h>
+ #include <linux/input.h>
+ #include <linux/gpio_keys.h>
 +#include <linux/regulator/machine.h>
 +#include <linux/regulator/fixed.h>
  #include <linux/pwm_backlight.h>
- #include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/leds.h>
+@@ -497,6 +499,9 @@ static void h1940_backlight_exit(struct device *dev)
+ 	gpio_set_value(H1940_LATCH_MAX1698_nSHUTDOWN, 0);
+ }
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("enable", "pwm-backlight");
+ 
+ static struct platform_pwm_backlight_data backlight_data = {
+ 	.pwm_id         = 0,
+@@ -720,6 +725,9 @@ static void __init h1940_init(void)
+ 	gpio_request(H1940_LATCH_SD_POWER, "SD power");
+ 	gpio_direction_output(H1940_LATCH_SD_POWER, 0);
+ 
++	regulator_register_always_on(-1, "backlight-enable",
++				     &backlight_supply, 1, 0);
++
+ 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
+ 
+ 	gpio_request(S3C2410_GPA(1), "Red LED blink");
+diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
+index e4d67a3..ac674b6 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx1950.c
++++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
+@@ -25,6 +25,8 @@
  #include <linux/gpio_keys.h>
-@@ -49,6 +51,10 @@ static struct resource puv3_i2c_resources[] = {
- 	}
- };
+ #include <linux/device.h>
+ #include <linux/pda_power.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/pwm_backlight.h>
+ #include <linux/pwm.h>
+ #include <linux/s3c_adc_battery.h>
+@@ -518,6 +520,10 @@ static int rx1950_backlight_notify(struct device *dev, int brightness)
+ 	return brightness;
+ }
  
 +/* Dummy regulator for pwm-backlight driver */
 +static struct regulator_consumer_supply backlight_supply =
 +	REGULATOR_SUPPLY("enable", "pwm-backlight");
 +
- static struct platform_pwm_backlight_data nb0916_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 100,
-@@ -111,6 +117,9 @@ int __init mach_nb0916_init(void)
- 	platform_device_register_simple("PKUnity-v3-I2C", -1,
- 			puv3_i2c_resources, ARRAY_SIZE(puv3_i2c_resources));
+ static struct platform_pwm_backlight_data rx1950_backlight_data = {
+ 	.pwm_id = 0,
+ 	.max_brightness = 24,
+@@ -795,6 +801,9 @@ static void __init rx1950_init_machine(void)
+ 	gpio_direction_output(S3C2410_GPA(4), 0);
+ 	gpio_direction_output(S3C2410_GPJ(6), 0);
  
 +	regulator_register_always_on(-1, "backlight-enable",
 +				     &backlight_supply, 1, 0);
 +
- 	platform_device_register_data(&platform_bus, "pwm-backlight", -1,
- 			&nb0916_backlight_data, sizeof(nb0916_backlight_data));
+ 	platform_add_devices(rx1950_devices, ARRAY_SIZE(rx1950_devices));
  
+ 	i2c_register_board_info(0, rx1950_i2c_devices,
 -- 
 1.8.1.5
