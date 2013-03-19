@@ -1,70 +1,79 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 5/7] usb: phy: tegra: get ULPI reset GPIO info using DT.
-Date: Tue, 19 Mar 2013 09:42:26 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E50311A71@BGMAIL02.nvidia.com>
-References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <1363609781-4045-6-git-send-email-vbyravarasu@nvidia.com>
- <5147102F.1060204@cogentembedded.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 8/9] usb: host: ehci-tegra: fix PHY error handling
+Date: Tue, 19 Mar 2013 10:24:09 +0200
+Message-ID: <20130319082409.GD17049@arwen.pp.htv.fi>
+References: <1363338730-14581-1-git-send-email-balbi@ti.com>
+ <1363338730-14581-9-git-send-email-balbi@ti.com>
+ <51438EA8.1060301@wwwdotorg.org>
+ <20130318080245.GI17135@arwen.pp.htv.fi>
+ <514731EE.9010709@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FN+gV9K+162wdwwF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5147102F.1060204-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <514731EE.9010709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-usb-
-> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf Of Sergei Shtylyov
-> Sent: Monday, March 18, 2013 6:32 PM
-> To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-
-> discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Subject: Re: [PATCH 5/7] usb: phy: tegra: get ULPI reset GPIO info using DT.
-> 
-> Hello.
-> 
-> On 18-03-2013 16:29, Venu Byravarasu wrote:
-> 
-> > As GPIO information is avail through DT, used it to get Tegra ULPI
-> > reset GPIO number. Added a new member to tegra_usb_phy structure to
-> > store this number.
-> 
-> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >   drivers/usb/phy/tegra_usb_phy.c   |   25 +++++++++++--------------
-> >   include/linux/usb/tegra_usb_phy.h |    1 +
-> >   2 files changed, 12 insertions(+), 14 deletions(-)
-> 
-> > diff --git a/drivers/usb/phy/tegra_usb_phy.c
-> b/drivers/usb/phy/tegra_usb_phy.c
-> > index b5b2037..29c5ac4 100644
-> > --- a/drivers/usb/phy/tegra_usb_phy.c
-> > +++ b/drivers/usb/phy/tegra_usb_phy.c
-> [...]
-> > @@ -622,18 +619,18 @@ static int	tegra_phy_init(struct usb_phy *x)
-> [...]
-> > -		gpio_request(ulpi_config->reset_gpio, "ulpi_phy_reset_b");
-> > -		gpio_direction_output(ulpi_config->reset_gpio, 0);
-> > +		gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
-> > +		gpio_direction_output(phy->reset_gpio, 0);
-> 
->     Why not use goio_request_one() instead of these two? Thought maybe it's
-> a
-> material of another patch...
+--FN+gV9K+162wdwwF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure, can take this up as part of next patch.
-Thanks for the review. 
+On Mon, Mar 18, 2013 at 09:25:34AM -0600, Stephen Warren wrote:
+> On 03/18/2013 02:02 AM, Felipe Balbi wrote:
+> > Hi,
+> >=20
+> > On Fri, Mar 15, 2013 at 03:12:08PM -0600, Stephen Warren wrote:
+> >> On 03/15/2013 03:12 AM, Felipe Balbi wrote:
+> >>> PHY layer no longer returns NULL, we must switch from
+> >>> IS_ERR_OR_NULL() to IS_ERR().
+> >>=20
+> >> This change will definitely conflict with some Tegra
+> >> EHCI/USB-PHY changes that Venu plans to submit very soon, for
+> >> 3.10. This is relevant
+> >=20
+> > but this is such a small change that, even if it conflicts,
+> > resolution will be trivial.
+>=20
+> Well, Venu's changes re-organize exactly the code you're modifying.
+> Wouldn't it be simpler to simply take all the Tegra USB patches
+> through the PHY tree and avoid any conflicts at all?
 
-> 
-> WBR, Sergei
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+alright, I will take all patches, so please create a very small
+immutable branch which I can merge then I'll take all other patches.
+
+Let's just try to avoid this sort of situation whenever possible.
+
+cheers
+
+--=20
+balbi
+
+--FN+gV9K+162wdwwF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRSCCpAAoJEIaOsuA1yqREyxIP/0Xc4tWhFeV5p/w9/Ictb/Xl
+D8uG6i36GzuVxTeqLhgtQ1GctdoL3l4QQALhBqXAjq9xJnJdk5fYLqfKDhwKSeHq
+Od7XqkyrSg+5J3nMyYaBv9SyjSdTiK9UeKRlWPoVK/H9DZeVT+h2piB7fncWXBhR
+scNwgprmWY336GVzXBIy8X5Mo4SXzBeZt4+W4ZmozdbldkYLqCUBlT9PNIMUJdXL
+i5NaFC2TUoEc7EQZDtAI1uOBxl4qsgbPo7stR0QbjRsqcuqn+FwlFuEdCZ5eNB4V
+E5cCk9uZpqYN38tawwLcSjqco8azW2MvG6n95a/63pcYhA2jh9EfKu2HbYKOyB3r
+67b6++NHJAia1EptUUszjdJ3RZqA7iGhWtPh7bMhzBkxMFnox5Ut4xpJNonzTdhn
+KLQFkrn0tfA9JusEdLqU2L3olxf13YR7pp+7K3cU4FsZ2dujgwxAK3Gz+3OpHJvG
+WtU8uTOWxRGL1skQjmK+kafVeqzinCf/zkjngXtkW878SEU67w14yh2oh8vCogmT
+KrEEK/rvSGF+VDAdk54HJhLQTrehJJ2T5UvgXj0Xrt0KiFYm/niXdwg0rMeJuiie
+GtJgQ2nucIMc0E7QXKPX/SomHOpKoJZ7zUSqkpIFZkRq3KtzMyIWc7cYZ9FPcCqZ
+95uzwMA7xFf9v3G0qrGA
+=cFNW
+-----END PGP SIGNATURE-----
+
+--FN+gV9K+162wdwwF--
