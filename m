@@ -1,51 +1,44 @@
-From: Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Tue, 19 Mar 2013 22:35:05 +0100
-Message-ID: <201303192235.06137.marex@denx.de>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <201303192227.21717.marex@denx.de>
- <643E69AA4436674C8F39DCC2C05F7638629CD2FDF4@HQMAIL03.nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: add table lookup to mux
+Date: Tue, 19 Mar 2013 14:37:06 -0700
+Message-ID: <20130319213706.8663.87186@quantum>
+References: <1363113747-6572-1-git-send-email-pdeschrijver@nvidia.com>
+ <513F79BA.7000608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <643E69AA4436674C8F39DCC2C05F7638629CD2FDF4@HQMAIL03.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Chew <AChew@nvidia.com>
-Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Alex Courbot <acourbot@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-arm-kernel@lists.i
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <513F79BA.7000608@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Andrew Chew,
-
-> > Dear Andrew Chew,
+Quoting Stephen Warren (2013-03-12 11:53:46)
+> On 03/12/2013 12:42 PM, Peter De Schrijver wrote:
+> > Add a table lookup feature to the mux clock. Also allow arbitrary masks
+> > instead of the width. This will be used by some clocks on Tegra114. Also
+> > adapt the tegra periph clk because it uses struct clk_mux directly.
 > > 
-> > > The pwm-backlight driver now takes a mandatory regulator that is
-> > > gotten during driver probe.  Initialize a dummy regulator to satisfy
-> > > this requirement.
-> > > 
-> > > Signed-off-by: Andrew Chew <achew@nvidia.com>
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > > 
-> > Do we really need a mandatory regulator? Why can't it be optional?
+> > --
+> > Mike,
 > > 
-> > Best regards,
-> > Marek Vasut
+> > This is the same patch I posted before which implements a table lookup
+> > feature for the mux clock. I squashed both the changes to clk-mux.c and
+> > tegra/clk.h together in order to make the patch bisectable.
 > 
-> Because for those using board setup code (and not devicetree), it was
-> not possible to distinguish between opting out of the regulator, and
-> deferred probe, without adding something to the platform data that
-> board setup code needed to fill in anyway.
+> For the record in this thread, this is a dependency of the Tegra114
+> clock driver. Can this patch be added to a stable branch in the clk or
+> arm-soc trees, which I can merge before applying the Tegra114 clock
+> driver? Thanks.
 
-Sure, but this adds a bit of overhead for the DT platforms, no?
+Yes.  I don't have an immutable branch today, but I will have one by
+-rc4.  It will be named clk-for-3.10.
 
-Other than this curiosity, I have no problems with this stuff.
+I have a pending question about the ugly width/mask issue, otherwise
+I'll let you know when I take this patch into clk-next.
 
-Best regards,
-Marek Vasut
+Regards,
+Mike
