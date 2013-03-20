@@ -1,86 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as platform
- driver
-Date: Wed, 20 Mar 2013 11:36:20 -0600
-Message-ID: <5149F394.4070600@wwwdotorg.org>
-References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com> <5148C1DC.1020903@wwwdotorg.org> <D958900912E20642BCBC71664EFECE3E6E5092FFE2@BGMAIL02.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: USB-related build errors on Tegra in next-20130319
+Date: Wed, 20 Mar 2013 11:42:20 -0600
+Message-ID: <5149F4FC.5040103@wwwdotorg.org>
+References: <51489251.5040504@wwwdotorg.org> <20130320122031.GI29659@arwen.pp.htv.fi> <5149E62F.9090705@wwwdotorg.org> <20130320164553.GL1567@arwen.pp.htv.fi> <5149E925.7030302@wwwdotorg.org> <20130320171147.GM1567@arwen.pp.htv.fi> <5149F15A.1000806@wwwdotorg.org> <20130320173006.GN1567@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E5092FFE2-QZ+emBqkIFBDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+In-Reply-To: <20130320173006.GN1567@arwen.pp.htv.fi>
+Sender: linux-next-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: Venu Byravarasu <vbyravarasu@nvidia.com>, USB list <linux-usb@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 06:12 AM, Venu Byravarasu wrote:
->> -----Original Message-----
->> From: Venu Byravarasu
->> Sent: Wednesday, March 20, 2013 11:30 AM
->> To: 'Stephen Warren'
->> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
->> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
->> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
->> Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
->> platform driver
->>
->>> -----Original Message-----
->>> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
->>> Sent: Wednesday, March 20, 2013 1:22 AM
->>> To: Venu Byravarasu
->>> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
->>> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
->>> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
->>> Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
->>> platform driver
->>>
->>> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
->>>> As part of this series, apart from patch containing changes to register
->>> TEGRA
->>>> USB PHY driver as platform driver, prepared below patches:
->>>> 1. Re-arranging & adding new DT properties.
->>>> 2. Getting various params from DT properties added.
->>>> 3. code clean up.
->>>
->>> Venu, I'm curious whether these patches were tested at all. I have found
->>> at least two significant problems with trivial testing:
->>
->> Stephen,
->> Initially started testing after applying each and every patch.
->> Like that tested till first 5 patches.
->> As did not see any issues till then, applied rest 2 patches at once and tested
->> with that.
->> Though did not see mouse getting vbus on the 1st boot, Vbus was coming
->> fine after disconnect and connect.
->> Hence did not test thereafter.
->>
->> After checking your current mail, tried now and observed that there seems to
->> be some real issue with patch#7 only. (As tried now after applying till patch#
->> 6 and did not see this issue).
->> Will debug further on patch#7 and update with proper fix after addressing
->> your other comments.
+On 03/20/2013 11:30 AM, Felipe Balbi wrote:
+> On Wed, Mar 20, 2013 at 11:26:50AM -0600, Stephen Warren wrote:
+>> On 03/20/2013 11:11 AM, Felipe Balbi wrote:
+>>> Hi,
+>>> 
+>>> On Wed, Mar 20, 2013 at 10:51:49AM -0600, Stephen Warren
+>>> wrote:
+>>>> On 03/20/2013 10:45 AM, Felipe Balbi wrote:
+>>>>> Hi,
+>>>>> 
+>>>>> On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren 
+>>>>> wrote:
+>>>>>> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
+>>>> ...
+>>>>>> The patch you gave fixes the Kconfig warnings, but not
+>>>>>> the build failure.
+>>>> ...
+>>>>>> For now, I think the correct solution is to have 
+>>>>>> USB_EHCI_TEGRA select USB_PHY. I validated that solves
+>>>>>> the build problem, and has the bonus of not needing any
+>>>>>> changes to tegra_defconfig.
+>>>> ...
+>>>>> Alright, do you want to send that patch ? My bad that I
+>>>>> missed that build error...
+>>>> 
+>>>> Sure. Do you want to roll it into your patch and repost it,
+>>>> or me to send a separate patch?
+>> 
+>> Oops, sorry, I meant to write "Do you want *me* to" ...
+>> 
+>>> updated patch below:
+>> 
+>> Anyway, the updated patch you sent does solve the problem, so:
+>> 
+>> Acked-by: Stephen Warren <swarren@nvidia.com> Tested-by: Stephen
+>> Warren <swarren@nvidia.com> (both build and ran it on HW to make
+>> sure nothing was missing)
+>> 
+>> Feel free to use yours or the separate one I sent; entirely your
+>> call.
 > 
-> Debugged further and found that the issue is because of http://marc.info/?l=linux-arm-kernel&m=135890098024987&w=2 
-> On reverting that patch and applying it on top of patch#7, able to see  enumeration working fine.
+> I wonder if the third option isn't nicer ?
 > 
-> Anyhow, will take care of your other comments and merge this change with patch#7 and resend
-> for review.
+> select USB_PHY if USB select USB_ULPI select USB_ULPI_VIEWPORT
+> 
+> then all changes are in tegra's Kconfig itself ?
 
-Venu, we already discussed this downstream, and I pointed out that patch
-is /extremely/ unlikely to cause any issue.
-
-The clk_set_rate() call returns an error since the requested clock rate
-is not supported. The clk_prepare_enable() shouldn't have any effect
-because if it did, the only possible meaning is that the clock is
-otherwise turned off because it has no users, and that would prevent far
-more than USB from operating correctly.
-
-Please fully debug this problem and root-cause it. I'm not reverting
-that EMC clock patch without a complete explanation. There's little
-point reposting the patches until you've found the problem.
-
-If we did have to revert that patch, then we would need to redefine the
-DT bindings for Tegra USB to add that clock into the list of required
-clocks, since otherwise it could not clk_get(dev, "emc"). But the USB
-driver shouldn't be touching non-USB clocks.
+I imagine that'd work although I didn't try it. However, I suspect
+it's more correct to have USB_EHCI_TEGRA do the select (or later, do a
+depend), since that's the option which actually has the dependency.
+Otherwise, you're just making USB_EHCI_TEGRA's dependencies work via
+selects in some other pretty unrelated node.
