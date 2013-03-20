@@ -1,47 +1,67 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] drivers/rtc/rtc-tegra.c: fix build warning
-Date: Wed, 20 Mar 2013 17:57:02 +0530
-Message-ID: <1363782422-32128-1-git-send-email-ldewangan@nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: RE: [PATCH 2/7] ARM: tegra: update device trees for USB binding
+ rework
+Date: Wed, 20 Mar 2013 18:00:13 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFF4@BGMAIL02.nvidia.com>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
+ <1363609781-4045-3-git-send-email-vbyravarasu@nvidia.com>
+ <51499C29.6070405@ti.com>
+ <D958900912E20642BCBC71664EFECE3E6E5092FFE7@BGMAIL02.nvidia.com>
+ <20130320122454.GK29659@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130320122454.GK29659@arwen.pp.htv.fi>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "balbi@ti.com" <balbi@ti.com>
+Cc: kishon <kishon@ti.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix the below build warning:
+> -----Original Message-----
+> From: Felipe Balbi [mailto:balbi@ti.com]
+> Sent: Wednesday, March 20, 2013 5:55 PM
+> To: Venu Byravarasu
+> Cc: kishon; gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
+> balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
+> swarren@wwwdotorg.org; linux-tegra@vger.kernel.org; devicetree-
+> discuss@lists.ozlabs.org
+> Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding
+> rework
+> 
+> * PGP Signed by an unknown key
+> 
+> On Wed, Mar 20, 2013 at 05:47:46PM +0530, Venu Byravarasu wrote:
+> > > -----Original Message-----
+> > > From: kishon [mailto:kishon@ti.com]
+> > > Sent: Wednesday, March 20, 2013 4:53 PM
+> > > To: Venu Byravarasu
+> > > Cc: gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
+> > > balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > swarren@wwwdotorg.org; linux-tegra@vger.kernel.org; devicetree-
+> > > discuss@lists.ozlabs.org
+> > > Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding
+> > > rework
+> > >
+> > > Hi,
+> > > >
 
-drivers/rtc/rtc-tegra.c: In function 'tegra_rtc_probe':
-drivers/rtc/rtc-tegra.c:353:33: warning: passing argument 1 of 'devm_rtc_device_register' from incompatible pointer type [enabled by default]
-include/linux/rtc.h:136:27: note: expected 'struct device *' but argument is of type 'const char *'
-drivers/rtc/rtc-tegra.c:353:33: warning: passing argument 2 of 'devm_rtc_device_register' from incompatible pointer type [enabled by default]
-include/linux/rtc.h:136:27: note: expected 'const char *' but argument is of type 'struct device *'
+> > > > +	usb-phy@c5004000 {
+> > > This node doesn't have a *reg* property. So "@c5004000" is not needed.
+> > > This comment applies to all the nodes which doesn't have *reg* property.
+> >
+> > Thanks Kishon for the comments.
+> > As I've 3 usb-phy DT nodes, how to differentiate between them if I remove
+> this @Address ?
+> 
+> then add reg property :-)
 
-This warning was introduced with patch
-	commit 8a96d445e921b0d881421767fb6f7c5b6fb91b3a
-	drivers/rtc/rtc-tegra.c: use managed rtc_device_register()
+Thanks Felipe, for confirming. 
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/rtc/rtc-tegra.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 7cb3da0..a34315d 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -349,8 +349,9 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
- 
- 	device_init_wakeup(&pdev->dev, 1);
- 
--	info->rtc_dev = devm_rtc_device_register(dev_name(&pdev->dev),
--				&pdev->dev, &tegra_rtc_ops, THIS_MODULE);
-+	info->rtc_dev = devm_rtc_device_register(&pdev->dev,
-+				dev_name(&pdev->dev), &tegra_rtc_ops,
-+				THIS_MODULE);
- 	if (IS_ERR(info->rtc_dev)) {
- 		ret = PTR_ERR(info->rtc_dev);
- 		dev_err(&pdev->dev, "Unable to register device (err=%d).\n",
--- 
-1.7.1.1
+> 
+> --
+> balbi
+> 
+> * Unknown Key
+> * 0x35CAA444
