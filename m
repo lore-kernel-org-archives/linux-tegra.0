@@ -1,72 +1,30 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: add table lookup to mux
-Date: Wed, 20 Mar 2013 08:51:58 -0700
-Message-ID: <20130320155158.11073.43798@quantum>
-References: <1363113747-6572-1-git-send-email-pdeschrijver@nvidia.com>
- <20130319235110.8663.67548@quantum>
- <20130320094957.GG18519@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2] regulator: palmas: add input supply names
+Date: Wed, 20 Mar 2013 10:07:17 -0600
+Message-ID: <5149DEB5.7000709@wwwdotorg.org>
+References: <1363598989-25112-1-git-send-email-ldewangan@nvidia.com> <20130320123128.GM28775@opensource.wolfsonmicro.com> <5149B19E.90400@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130320094957.GG18519@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5149B19E.90400-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-03-20 02:49:57)
-> On Wed, Mar 20, 2013 at 12:51:10AM +0100, Mike Turquette wrote:
-> > Quoting Peter De Schrijver (2013-03-12 11:42:23)
-> > > diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-> > > index 9c7f580..53d39c2 100644
-> > > --- a/include/linux/clk-private.h
-> > > +++ b/include/linux/clk-private.h
-> > > @@ -144,12 +144,13 @@ struct clk {
-> > >  
-> > >  #define DEFINE_CLK_MUX(_name, _parent_names, _parents, _flags, \
-> > >                                 _reg, _shift, _width,           \
-> > > -                               _mux_flags, _lock)              \
-> > > +                               _mux_flags, _table, _lock)      \
-> > >         static struct clk _name;                                \
-> > >         static struct clk_mux _name##_hw = {                    \
-> > >                 .hw = {                                         \
-> > >                         .clk = &_name,                          \
-> > >                 },                                              \
-> > > +               .table = _table,                                \
-> > >                 .reg = _reg,                                    \
-> > >                 .shift = _shift,                                \
-> > >                 .width = _width,                                \
-> > 
-> > This breaks OMAP horribly since OMAP already uses this macro.  There are
-> > two options:
-> > 
-> > 1) stop using statically initialized data and no longer use
-> > clk-private.h macros.  I was under the impression that the tegra clock
-> > data no longer required this?
+On 03/20/2013 06:54 AM, Laxman Dewangan wrote:
+> On Wednesday 20 March 2013 06:01 PM, Mark Brown wrote:
+>> * PGP Signed by an unknown key
+>>
+>> On Mon, Mar 18, 2013 at 02:59:48PM +0530, Laxman Dewangan wrote:
+>>
+>> There's something odd about several recent patch serieses you've posted,
+>> they end up with patch 2 before instead of after patch 1.  Anyway...
 > 
-> Ok. We don't do that anymore. Maybe I just modified it out of habbit...
-> 
+> I generally send a patches on single git-send command
+> git send-emal --to=ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org 0000.patch 0001.patch
 
-Cool.  Will you send a V2 that drops the macro changes?
-
-Thanks,
-Mike
-
-> > 
-> > 2) if you must continue to use the clk-private.h macros (temporarily!)
-> > then create a new one, DEFINE_CLK_MUX_TABLE.
-> 
-> Hopefully not needed.
-> 
-> Cheers,
-> 
-> Peter.
+Don't do that; send *.patch. If you don't, then patches 2..n don't end
+up being "in-reply-to" patch 1, so they won't show up as a single email
+thread.
