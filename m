@@ -1,50 +1,73 @@
-From: kishon <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding rework
-Date: Wed, 20 Mar 2013 16:53:21 +0530
-Message-ID: <51499C29.6070405@ti.com>
-References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com> <1363609781-4045-3-git-send-email-vbyravarasu@nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
+ platform driver
+Date: Wed, 20 Mar 2013 17:42:56 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFE2@BGMAIL02.nvidia.com>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
+ <5148C1DC.1020903@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363609781-4045-3-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+> -----Original Message-----
+> From: Venu Byravarasu
+> Sent: Wednesday, March 20, 2013 11:30 AM
+> To: 'Stephen Warren'
+> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
+> platform driver
+> 
+> > -----Original Message-----
+> > From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> > Sent: Wednesday, March 20, 2013 1:22 AM
+> > To: Venu Byravarasu
+> > Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> > balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> > linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> > Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
+> > platform driver
+> >
+> > On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
+> > > As part of this series, apart from patch containing changes to register
+> > TEGRA
+> > > USB PHY driver as platform driver, prepared below patches:
+> > > 1. Re-arranging & adding new DT properties.
+> > > 2. Getting various params from DT properties added.
+> > > 3. code clean up.
+> >
+> > Venu, I'm curious whether these patches were tested at all. I have found
+> > at least two significant problems with trivial testing:
+> 
+> Stephen,
+> Initially started testing after applying each and every patch.
+> Like that tested till first 5 patches.
+> As did not see any issues till then, applied rest 2 patches at once and tested
+> with that.
+> Though did not see mouse getting vbus on the 1st boot, Vbus was coming
+> fine after disconnect and connect.
+> Hence did not test thereafter.
+> 
+> After checking your current mail, tried now and observed that there seems to
+> be some real issue with patch#7 only. (As tried now after applying till patch#
+> 6 and did not see this issue).
+> Will debug further on patch#7 and update with proper fix after addressing
+> your other comments.
 
-On Monday 18 March 2013 05:59 PM, Venu Byravarasu wrote:
-> This patch updates all Tegra board files so that they contain all the
-> properties required by the updated USB DT binding. Note that this patch
-> only adds the new properties and does not yet remove the old properties,
-> in order to maintain bisectability. The old properties will be removed
-> once the driver has been updated to assume the new bindings.
->
-> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   arch/arm/boot/dts/tegra20-colibri-512.dtsi |    4 +++
->   arch/arm/boot/dts/tegra20-harmony.dts      |    8 +++---
->   arch/arm/boot/dts/tegra20-iris-512.dts     |    4 +++
->   arch/arm/boot/dts/tegra20-paz00.dts        |    8 +++---
->   arch/arm/boot/dts/tegra20-seaboard.dts     |   13 +++++++---
->   arch/arm/boot/dts/tegra20-trimslice.dts    |   12 +++++++---
->   arch/arm/boot/dts/tegra20-ventana.dts      |    7 +++--
->   arch/arm/boot/dts/tegra20.dtsi             |   32 +++++++++++++++++----------
->   8 files changed, 57 insertions(+), 31 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> index cb73e62..af5a7ae 100644
-> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-> @@ -443,6 +443,10 @@
->   		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
->   	};
->
-> +	usb-phy@c5004000 {
-This node doesn't have a *reg* property. So "@c5004000" is not needed. 
-This comment applies to all the nodes which doesn't have *reg* property.
+Debugged further and found that the issue is because of http://marc.info/?l=linux-arm-kernel&m=135890098024987&w=2 
+On reverting that patch and applying it on top of patch#7, able to see  enumeration working fine.
 
-Thanks
-Kishon
+Anyhow, will take care of your other comments and merge this change with patch#7 and resend
+for review.
+
+> 
+> Thanks for the review & heads up,
+> venu
+> 
