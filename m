@@ -1,149 +1,79 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 3/4] ARM: tegra: dalmore: add dt node for TPS65090's regulators
-Date: Wed, 20 Mar 2013 19:14:29 +0530
-Message-ID: <1363787070-14801-4-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/4] ARM: tegra: enable Tegra114 based platform PMICs
+Date: Wed, 20 Mar 2013 19:14:27 +0530
+Message-ID: <1363787070-14801-2-git-send-email-ldewangan@nvidia.com>
 References: <1363787070-14801-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1363787070-14801-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1363787070-14801-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra114 platform, Dalmore, uses the TPS65090 as
-secondary PMICs which mainly act as voltage switch controlled
-by I2C communication.
+NVIDIA's Tegra114 have two reference platform, Dalmore and Pluto.
+Dalmore uses the following PMICs:
+- TPS65913 as primary PMIC.
+- TPS65090 as secondary PMIC used for switch regulators and battery charging.
+- TPS51632 for cpu regulator.
 
-Add regulator node for this device.
+Pluto uses the TPS65913 as the PMIC.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Enable config variable of these PMICs for Dalomore and Pluto.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/regulator/tps65090.txt     |    4 +-
- arch/arm/boot/dts/tegra114-dalmore.dts             |   90 ++++++++++++++++++++
- 2 files changed, 92 insertions(+), 2 deletions(-)
+ arch/arm/configs/tegra_defconfig |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt b/Documentation/devicetree/bindings/regulator/tps65090.txt
-index 313a60b..8926e2d 100644
---- a/Documentation/devicetree/bindings/regulator/tps65090.txt
-+++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
-@@ -41,8 +41,8 @@ Example:
- 		infet5-supply = <&some_reg>;
- 		infet6-supply = <&some_reg>;
- 		infet7-supply = <&some_reg>;
--		vsys_l1-supply = <&some_reg>;
--		vsys_l2-supply = <&some_reg>;
-+		vsys-l1-supply = <&some_reg>;
-+		vsys-l2-supply = <&some_reg>;
- 
- 		regulators {
- 			dcdc1 {
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 6be9434..a47c3d2 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -731,6 +731,82 @@
- 			regulator-boot-on;
- 			regulator-always-on;
- 		};
-+
-+		tps65090@48 {
-+			compatible = "ti,tps65090";
-+			reg = <0x48>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <72 0x04>; /* gpio PJ0 */
-+
-+			vsys1-supply = <&vdd_ac_bat_reg>;
-+			vsys2-supply = <&vdd_ac_bat_reg>;
-+			vsys3-supply = <&vdd_ac_bat_reg>;
-+			infet1-supply = <&vdd_ac_bat_reg>;
-+			infet2-supply = <&vdd_ac_bat_reg>;
-+			infet3-supply = <&tps65090_dcdc2_reg>;
-+			infet4-supply = <&tps65090_dcdc2_reg>;
-+			infet5-supply = <&tps65090_dcdc2_reg>;
-+			infet6-supply = <&tps65090_dcdc2_reg>;
-+			infet7-supply = <&tps65090_dcdc2_reg>;
-+			vsys-l1-supply = <&vdd_ac_bat_reg>;
-+			vsys-l2-supply = <&vdd_ac_bat_reg>;
-+
-+			regulators {
-+				dcdc1 {
-+					regulator-name = "vdd-sys-5v0";
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				tps65090_dcdc2_reg: dcdc2 {
-+					regulator-name = "vdd-sys-3v3";
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				dcdc3 {
-+					regulator-name = "vdd-ao";
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				fet1 {
-+					regulator-name = "vdd-lcd-bl";
-+				};
-+
-+				fet3 {
-+					regulator-name = "vdd-modem-3v3";
-+				};
-+
-+				fet4 {
-+					regulator-name = "avdd-lcd";
-+				};
-+
-+				fet5 {
-+					regulator-name = "vdd-lvds";
-+				};
-+
-+				fet6 {
-+					regulator-name = "vdd-sd-slot";
-+				};
-+
-+				fet7 {
-+					regulator-name = "vdd-com-3v3";
-+				};
-+
-+				ldo1 {
-+					regulator-name = "vdd-sby-5v0";
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				ldo2 {
-+					regulator-name = "vdd-sby-3v3";
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
- 	};
- 
- 	pmc {
-@@ -747,4 +823,18 @@
- 		bus-width = <8>;
- 		status = "okay";
- 	};
-+	regulators {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vdd_ac_bat_reg: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "vdd_ac_bat";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+	};
- };
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index aba4881..34b9342 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -126,6 +126,7 @@ CONFIG_SPI=y
+ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
+ CONFIG_GPIO_PCA953X_IRQ=y
++CONFIG_GPIO_PALMAS=y
+ CONFIG_GPIO_TPS6586X=y
+ CONFIG_GPIO_TPS65910=y
+ CONFIG_POWER_SUPPLY=y
+@@ -136,12 +137,17 @@ CONFIG_SENSORS_LM90=y
+ CONFIG_MFD_TPS6586X=y
+ CONFIG_MFD_TPS65910=y
+ CONFIG_MFD_MAX8907=y
++CONFIG_MFD_TPS65090=y
++CONFIG_MFD_PALMAS=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_MAX8907=y
++CONFIG_REGULATOR_PALMAS=y
++CONFIG_REGULATOR_TPS51632=y
+ CONFIG_REGULATOR_TPS62360=y
++CONFIG_REGULATOR_TPS65090=y
+ CONFIG_REGULATOR_TPS6586X=y
+ CONFIG_REGULATOR_TPS65910=y
+ CONFIG_MEDIA_SUPPORT=y
+@@ -191,6 +197,7 @@ CONFIG_RTC_INTF_SYSFS=y
+ CONFIG_RTC_INTF_PROC=y
+ CONFIG_RTC_INTF_DEV=y
+ CONFIG_RTC_DRV_MAX8907=y
++CONFIG_RTC_DRV_PALMAS=y
+ CONFIG_RTC_DRV_TPS6586X=y
+ CONFIG_RTC_DRV_TPS65910=y
+ CONFIG_RTC_DRV_EM3027=y
 -- 
 1.7.1.1
