@@ -1,56 +1,67 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: add table lookup to mux
-Date: Wed, 20 Mar 2013 11:49:57 +0200
-Message-ID: <20130320094957.GG18519@tbergstrom-lnx.Nvidia.com>
-References: <1363113747-6572-1-git-send-email-pdeschrijver@nvidia.com>
- <20130319235110.8663.67548@quantum>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] ARM: tegra: get PMC clock source from DT
+Date: Wed, 20 Mar 2013 18:00:08 +0800
+Message-ID: <1363773608.5697.8.camel@jlo-ubuntu-64.nvidia.com>
+References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>
+	 <1363594199-10974-3-git-send-email-josephl@nvidia.com>
+	 <51489513.1020107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130319235110.8663.67548@quantum>
+In-Reply-To: <51489513.1020107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Mar 20, 2013 at 12:51:10AM +0100, Mike Turquette wrote:
-> Quoting Peter De Schrijver (2013-03-12 11:42:23)
-> > diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-> > index 9c7f580..53d39c2 100644
-> > --- a/include/linux/clk-private.h
-> > +++ b/include/linux/clk-private.h
-> > @@ -144,12 +144,13 @@ struct clk {
+On Wed, 2013-03-20 at 00:40 +0800, Stephen Warren wrote:
+> On 03/18/2013 02:09 AM, Joseph Lo wrote:
+> > The clock source of PMC should be PCLK and gotten from DT.
+> > 
+> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > V2:
+> > * new in this change
+> 
+> s/change/series/ ???
+> 
+> > diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+> 
+> >  void __init tegra_dt_init_irq(void)
+> >  {
+> >  	tegra_clocks_init();
+> > +	tegra_pmc_init();
+> >  	tegra_init_irq();
+> >  	irqchip_init();
+> >  }
+> > @@ -100,7 +101,6 @@ void __init tegra_init_early(void)
+> >  	tegra_apb_io_init();
+> >  	tegra_init_fuse();
+> >  	tegra_init_cache();
+> > -	tegra_pmc_init();
+> 
+> This change isn't mentioned in the commit description.
+> 
+> Why is this change needed? We should minimize the amount of code in
+> tegra_dt_init_irq(), not add more code there.
+> 
+The clocks only available after tegra_clocks_init(). If I can keep the
+PMC dt node somewhere in PMC driver, then I can get the clock later.
+
+> > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+> 
+> > @@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
 > >  
-> >  #define DEFINE_CLK_MUX(_name, _parent_names, _parents, _flags, \
-> >                                 _reg, _shift, _width,           \
-> > -                               _mux_flags, _lock)              \
-> > +                               _mux_flags, _table, _lock)      \
-> >         static struct clk _name;                                \
-> >         static struct clk_mux _name##_hw = {                    \
-> >                 .hw = {                                         \
-> >                         .clk = &_name,                          \
-> >                 },                                              \
-> > +               .table = _table,                                \
-> >                 .reg = _reg,                                    \
-> >                 .shift = _shift,                                \
-> >                 .width = _width,                                \
+> >  	tegra_pmc_invert_interrupt = of_property_read_bool(np,
+> >  				     "nvidia,invert-interrupt");
+> > +	tegra_pclk = of_clk_get(np, 0);
+> > +	WARN_ON_ONCE(IS_ERR(tegra_pclk));
 > 
-> This breaks OMAP horribly since OMAP already uses this macro.  There are
-> two options:
+> Why WARN_ON_ONCE(); is tegra_pmc_parse_dt() called more than once?
 > 
-> 1) stop using statically initialized data and no longer use
-> clk-private.h macros.  I was under the impression that the tegra clock
-> data no longer required this?
-
-Ok. We don't do that anymore. Maybe I just modified it out of habbit...
-
+> Can the code continue if IS_ERR(tegra_pclk), or is that fatal?
 > 
-> 2) if you must continue to use the clk-private.h macros (temporarily!)
-> then create a new one, DEFINE_CLK_MUX_TABLE.
 
-Hopefully not needed.
-
-Cheers,
-
-Peter.
+The code is still OK just want to warn people that the PMC DT node
+needs PCLK clock info.
