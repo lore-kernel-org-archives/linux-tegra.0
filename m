@@ -1,52 +1,54 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 2/7] ARM: tegra: update device trees for USB binding
- rework
-Date: Wed, 20 Mar 2013 17:50:51 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFE9@BGMAIL02.nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: RE: [PATCH 3/7] usb: phy: tegra: Get PHY mode using DT
+Date: Wed, 20 Mar 2013 17:54:27 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFF0@BGMAIL02.nvidia.com>
 References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <1363609781-4045-3-git-send-email-vbyravarasu@nvidia.com>
- <5148C253.6030007@wwwdotorg.org>
+ <1363609781-4045-4-git-send-email-vbyravarasu@nvidia.com>
+ <5148C367.6050606@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5148C253.6030007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5148C367.6050606@wwwdotorg.org>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, "balbi@ti.com" <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
 > -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Wednesday, March 20, 2013 1:24 AM
+> From: Stephen Warren [mailto:swarren@wwwdotorg.org]
+> Sent: Wednesday, March 20, 2013 1:29 AM
 > To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding
-> rework
+> Cc: gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
+> balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-tegra@vger.kernel.org; devicetree-discuss@lists.ozlabs.org
+> Subject: Re: [PATCH 3/7] usb: phy: tegra: Get PHY mode using DT
 > 
 > On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
-> > This patch updates all Tegra board files so that they contain all the
-> > properties required by the updated USB DT binding. Note that this patch
-> > only adds the new properties and does not yet remove the old properties,
-> > in order to maintain bisectability. The old properties will be removed
-> > once the driver has been updated to assume the new bindings.
-> >
-> > Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/boot/dts/tegra20-colibri-512.dtsi |    4 +++
-> >  arch/arm/boot/dts/tegra20-harmony.dts      |    8 +++---
-> >  arch/arm/boot/dts/tegra20-iris-512.dts     |    4 +++
-> >  arch/arm/boot/dts/tegra20-paz00.dts        |    8 +++---
-> >  arch/arm/boot/dts/tegra20-seaboard.dts     |   13 +++++++---
-> >  arch/arm/boot/dts/tegra20-trimslice.dts    |   12 +++++++---
-> >  arch/arm/boot/dts/tegra20-ventana.dts      |    7 +++--
-> >  arch/arm/boot/dts/tegra20.dtsi             |   32 +++++++++++++++++----------
-> >  8 files changed, 57 insertions(+), 31 deletions(-)
+> > Added a new PHY mode to support OTG.
+> > Obtained Tegra USB PHY mode using DT property.
 > 
-> I think you forgot to update arch/arm/boot/dts/tegra20-whistler.dts in
-> this patch.
- 
-Thanks Stephen, will add that & send updated patch for review.
+> > diff --git a/drivers/usb/phy/tegra_usb_phy.c
+> b/drivers/usb/phy/tegra_usb_phy.c
+> 
+> > @@ -713,6 +712,16 @@ struct tegra_usb_phy
+> *tegra_usb_phy_open(struct device *dev, int instance,
+> >  	else
+> >  		phy->is_ulpi_phy = true;
+> >
+> > +	err = of_property_match_string(np, "dr_mode", "otg");
+> > +	if (err < 0) {
+> > +		err = of_property_match_string(np, "dr_mode", "gadget");
+> > +		if (err < 0)
+> 
+> The binding says the 3 legal values for this property are "host",
+> "peripheral", or "otg". This agrees with the usage in
+> Documentation/devicetree/bindings/usb/fsl-usb.txt and
+> drivers/usb/host/fsl-mph-dr-of.c. So, "gadget" is not something the code
+> should be checking for.
+
+Agree, will correct it. 
+
+> 
+> I'm sure I pointed this out before.
