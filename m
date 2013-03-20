@@ -1,156 +1,84 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: USB-related build errors on Tegra in next-20130319
-Date: Wed, 20 Mar 2013 19:11:47 +0200
-Message-ID: <20130320171147.GM1567@arwen.pp.htv.fi>
-References: <51489251.5040504@wwwdotorg.org>
- <20130320122031.GI29659@arwen.pp.htv.fi>
- <5149E62F.9090705@wwwdotorg.org>
- <20130320164553.GL1567@arwen.pp.htv.fi>
- <5149E925.7030302@wwwdotorg.org>
-Reply-To: <balbi@ti.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Reboot/shutdown failure due to "USB: EHCI: work around silicon
+ bug in Intel's EHCI"
+Date: Wed, 20 Mar 2013 11:19:35 -0600
+Message-ID: <5149EFA7.8050307@wwwdotorg.org>
+References: <Pine.LNX.4.44L0.1303201026310.1701-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BHMq0+oGliEfCAkH"
-Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5149E925.7030302@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: balbi@ti.com, Venu Byravarasu <vbyravarasu@nvidia.com>, USB list <linux-usb@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1303201026310.1701-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Andreas Bombe <aeb-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, Sven Joachim <svenjoac-Mmb7MZpHnFY@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---BHMq0+oGliEfCAkH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/20/2013 08:40 AM, Alan Stern wrote:
+> On Tue, 19 Mar 2013, Stephen Warren wrote:
+> 
+>> On 03/19/2013 04:48 PM, Stephen Warren wrote:
+>>> On 03/19/2013 02:07 PM, Alan Stern wrote:
+>> ...
+>>>> A dmesg log with CONFIG_USB_DEBUG enabled would be helpful.  We ought
+>>>> to be able to tell where khubd is getting stuck.
+>>>
+>>> Hmmm. Enabling CONFIG_USB_DEBUG appears to mask the problem. I assume
+>>> this is some kind of timing/race condition, unless there's some code
+>>> with required side-effects hiding under ifdef CONFIG_USB_DEBUG somehow?
+>>
+>> Some further information: I added some printks, which are hopefully
+>> obvious from the text below, and in the failing case, I see:
+>>
+>>> [    1.291277] single_unlink_async: qh ee31bc40 qh_state set to UNLINK_WAIT
+>>> [    1.297960] start_iaa_cycle: qh ee31bc40 qh_state changing UNLINK_WAIT -> UNLINK
+>> ...
+>>> [    6.452331] ehci_urb_dequeue: qh ee31bc40 attempting dequeue (qh_stated 2)
+>>
+>> This is with CONFIG_USB_DEBUG disabled. That seems to happen to the very
+>> first (and only) URB(?) ever issued.
+> 
+> There should be a call to ehci_end_async_unlink shortly after 
+> start_iaa_cycle.
+> 
+>> If I enable CONFIG_USB_DEBUG, then I see the more expected:
+>>
+>>> [    1.540410] single_unlink_async: qh ee0c0300 qh_state set to UNLINK_WAIT
+>>> [    1.547094] start_iaa_cycle: qh ee0c0300 qh_state changing UNLINK_WAIT -> UNLINK
+>>> [    1.554487] start_iaa_cycle: qh ee0c0300 qh_state was UNLINK; processing
+>>
+>> followed by a whole slew of subsequent URBs being submitted and processed.
+>>
+>> Perhaps the issue is that start_iaa_cycle() (or whatever triggers it)
+>> only happens when there's an URB in state UNLINK, but not when there's
+>> only one in state UNLINK_WAIT, so that it only happens once rather than
+>> the required twice? I'm not sure why a timing difference would affect
+>> this though, unless there's some loop in the IAA processing that happens
+>> to do both the UNLINK_WAIT->UNLINK change, and the processing of the URB
+>> in the UNLINK state in one invocation sometimes, but not others?
+> 
+> A possible explanation for a timing difference is that the IAA
+> mechanism simply isn't working right on your controller, so the IAA
+> watchdog timer expires.  It's worth pointing out that your second log
+> excerpt above has messages spaced at intervals of 7 ms, which is
+> strange considering that the second line should get printed almost
+> immediately after the first.  Excessively long delays like this do
+> point in the direction of a timer expiration.
 
-Hi,
+Bugs probably wouldn't surprise me:-)
 
-On Wed, Mar 20, 2013 at 10:51:49AM -0600, Stephen Warren wrote:
-> On 03/20/2013 10:45 AM, Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren wrote:
-> >> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
-> ...
-> >> The patch you gave fixes the Kconfig warnings, but not the build
-> >> failure.
-> ...
-> >> For now, I think the correct solution is to have USB_EHCI_TEGRA
-> >> select USB_PHY. I validated that solves the build problem, and
-> >> has the bonus of not needing any changes to tegra_defconfig.
-> ...
-> > Alright, do you want to send that patch ? My bad that I missed
-> > that build error...
->=20
-> Sure. Do you want to roll it into your patch and repost it, or me to
-> send a separate patch?
+> Anyway, there _is_ a mistake in the "work around silicon bug" patch; I
+> forgot to update the timeout handler.  Does the patch below help?  You 
+> should build it without CONFIG_USB_DEBUG; I changed the ehci_vdbg to 
+> ehci_info so that it would show up in the log regardless and we can see 
+> if it gets triggered.
 
-updated patch below:
+Yes, with that applied, I see:
 
-=46rom c2b3334a624e4231952ab050e29445b8c62f662d Mon Sep 17 00:00:00 2001
-=46rom: Felipe Balbi <balbi@ti.com>
-Date: Wed, 20 Mar 2013 14:18:28 +0200
-Subject: [PATCH] arm: tegra: fix Kconfig select clauses
+> root@localhost:~# dmesg|grep IAA
+> [    1.310994] tegra-ehci tegra-ehci.0: IAA watchdog: status a0a0 cmd 10025
+> [    1.322006] tegra-ehci tegra-ehci.0: IAA watchdog: status 80a0 cmd 10025
 
-USB_ULPI and USB_ULPI_VIEWPORT shouldn't really
-be selected directly by anyone, but since Tegra
-still needs some time before turning ulpi viewport
-into a proper PHY driver, we need to keep the
-selects in place.
+and reboot and shutdown both work fine.
 
-This patch just fixes the conditional select
-so that it will continue to build after merging
-the latest PHY layer changes.
-
-Signed-off-by: Felipe Balbi <balbi@ti.com>
----
- arch/arm/mach-tegra/Kconfig | 8 ++++----
- drivers/usb/host/Kconfig    | 1 +
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index d1c4893..dbc653e 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -18,8 +18,8 @@ config ARCH_TEGRA_2x_SOC
- 	select PL310_ERRATA_727915 if CACHE_L2X0
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
--	select USB_ULPI if USB
--	select USB_ULPI_VIEWPORT if USB_SUPPORT
-+	select USB_ULPI if USB_PHY
-+	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-@@ -37,8 +37,8 @@ config ARCH_TEGRA_3x_SOC
- 	select PINCTRL_TEGRA30
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
--	select USB_ULPI if USB
--	select USB_ULPI_VIEWPORT if USB_SUPPORT
-+	select USB_ULPI if USB_PHY
-+	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Support for NVIDIA Tegra T30 processor family, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index ba1347c..1b58587 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -179,6 +179,7 @@ config USB_EHCI_TEGRA
-        boolean "NVIDIA Tegra HCD support"
-        depends on USB_EHCI_HCD && ARCH_TEGRA
-        select USB_EHCI_ROOT_HUB_TT
-+       select USB_PHY
-        help
-          This driver enables support for the internal USB Host Controllers
-          found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
---=20
-1.8.2
-
-Another possibility would be to:
-
-select USB_PHY if USB
-select USB_ULPI
-select USB_ULPI_VIEWPORT
-
-Would you prefer that one instead ?
-
-> I assume you'd apply both to the same branch that contains the patches
-> that add the USB_PHY config option? If the arch/arm patch gets applied
-> to the Tegra tree instead, it'll cause breakage there since USB_PHY
-> won't exist yet, so USB will be disabled until merged with the USB
-> tree in 3.10-rc1.
-
-alright, but I need your Acked-by to the updated patch. I have now
-compiled it with tegra_defconfig (is that the one which should be used?)
-and it's compiling fine without any issues.
-
---=20
-balbi
-
---BHMq0+oGliEfCAkH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRSe3TAAoJEIaOsuA1yqREM9wP/0f1fahq0Rox3V0g53QM7wV3
-GvGKZVjd/AEdR5Q+yHcCKF6pKvwBeUr2HG3okx33cmq6amlgXRZt7pNuz8mhLxVz
-FW72JUw2Yr3ASSQrAhYIjBiGvRgWPwj9jyIq8D6/1s2QXcwQteJCmycTzJrshrzR
-EAY6A8L/CslhkrHIw1t9yu1CaeN+28wfNpA9aSAV3laJzfPDKfJLx1ttkt2C76Gi
-GsO3Q86MU+qjC2AQEWjYEekMr0/yR3OZt2NzjfYz+NazF6WdRPd0lIbqfVFbaVoY
-ySXJ8b+RbrsmiYlHIBSWDIrL2Uv0BkiJH7kgHhq/j2JHTEHoDF/UELHd758oBuc3
-I+fD37+Gt0crRi0rER7rjP8jb9GCTo0Xsuc0nmQqyFUCpe2VSC61UpiNO6iLrtgz
-JKMg3dnK56SCY3Skzxa01sBGYpf4mmrgFj78KOBWm2hFStP2Lkw64u7/mbSEZvtj
-xfKimVLEy8Ziuf3lxZAx2FryqXR7ewmLnXVI6yory8AsaAD7wb0ZKAVSHzE3Lk7d
-P6FkP812pORfKrcqXNja5USt2ZBQKsA1BocWanjZ5BYEyn7z9Je5il1MY9Q6M4eO
-ETNQSYfenmI0+Wv2oHroddHUoFYiKMzuLDpZqdbrVbs/wGbc+iqtpppCROenkOtC
-IziO7bYwkyD8Hy0846Ox
-=N+71
------END PGP SIGNATURE-----
-
---BHMq0+oGliEfCAkH--
+Thanks.
