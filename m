@@ -1,45 +1,44 @@
-From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: fuse: add fuctions to read speedo id and
- process id
-Date: Wed, 20 Mar 2013 10:20:03 +0800
-Message-ID: <1363746003.3573.80.camel@dahuang-vm>
-References: <1363660405-10668-1-git-send-email-dahuang@nvidia.com>
-	 <5148A8D6.8000002@wwwdotorg.org> <1363743557.3573.50.camel@dahuang-vm>
-	 <514915DB.8060206@wwwdotorg.org>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
+ pwm-backlight.
+Date: Wed, 20 Mar 2013 11:24:48 +0900
+Message-ID: <51491DF0.10408@nvidia.com>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+ <20130320021442.GB20443@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <514915DB.8060206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130320021442.GB20443@S2101-09.ap.freescale.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, eric.
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-03-20 at 09:50 +0800, Stephen Warren wrote:
-> On 03/19/2013 07:39 PM, Danny Huang wrote:
-> > On Wed, 2013-03-20 at 02:05 +0800, Stephen Warren wrote:
-> >> On 03/18/2013 08:33 PM, Danny Huang wrote:
-> >>> Add functions to read the speedo and process id of both cpu and soc.
-> >>> There might be some drivers need the information as well.
-> >>
-> >> What code wants to use these functions? It'd be best to submit this
-> >> patch with that code, so that something actually uses the functions, and
-> >> they don't look like dead code.
-> > 
-> > There are some developing drivers that are located in drivers folder
-> > needs those information.
-> 
-> Which drivers?
+On 03/20/2013 11:14 AM, Shawn Guo wrote:
+> On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
+>> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+>> fixed regulator.
+>>
+> I think we should push the series of "Runtime Interpreted Power
+> Sequences" moving forward, which should be useful this case and many
+> other cases as well.
+>
+> http://thread.gmane.org/gmane.linux.kernel/1395912
 
-Per my understanding, there is a dvfs development that is trying to use
-the devfreq framework.
+That's still the medium-term plan. But doing this correctly requires 
+some improvements to be done in the GPIO subsystem, which I am pushing 
+at the moment.
 
-> 
-> > I think that they can't include a header file in mach-tegra folder
-> 
-> True.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Eventually power sequences should handle this kind of scenario, but by 
+the meantime it cannot hurt to get the job done.
+
+Alex.
