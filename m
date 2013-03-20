@@ -1,97 +1,64 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
- platform driver
-Date: Wed, 20 Mar 2013 11:29:59 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FED0@BGMAIL02.nvidia.com>
-References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <5148C1DC.1020903@wwwdotorg.org>
+From: Tony Prisk <linux@prisktech.co.nz>
+Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
+ pwm-backlight.
+Date: Wed, 20 Mar 2013 20:13:08 +1300
+Message-ID: <1363763588.30752.7.camel@gitbox>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+ <20130320021442.GB20443@S2101-09.ap.freescale.net>
+ <51491DF0.10408@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5148C1DC.1020903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <51491DF0.10408@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, eric.
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Wednesday, March 20, 2013 1:22 AM
-> To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
-> platform driver
+On Wed, 2013-03-20 at 11:24 +0900, Alex Courbot wrote:
+> On 03/20/2013 11:14 AM, Shawn Guo wrote:
+> > On Tue, Mar 19, 2013 at 11:59:24AM -0700, Andrew Chew wrote:
+> >> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+> >> fixed regulator.
+> >>
+> > I think we should push the series of "Runtime Interpreted Power
+> > Sequences" moving forward, which should be useful this case and many
+> > other cases as well.
+> >
+> > http://thread.gmane.org/gmane.linux.kernel/1395912
 > 
-> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
-> > As part of this series, apart from patch containing changes to register
-> TEGRA
-> > USB PHY driver as platform driver, prepared below patches:
-> > 1. Re-arranging & adding new DT properties.
-> > 2. Getting various params from DT properties added.
-> > 3. code clean up.
+> That's still the medium-term plan. But doing this correctly requires 
+> some improvements to be done in the GPIO subsystem, which I am pushing 
+> at the moment.
 > 
-> Venu, I'm curious whether these patches were tested at all. I have found
-> at least two significant problems with trivial testing:
+> Eventually power sequences should handle this kind of scenario, but by 
+> the meantime it cannot hurt to get the job done.
+> 
+> Alex.
 
-Stephen,
-Initially started testing after applying each and every patch.
-Like that tested till first 5 patches.
-As did not see any issues till then, applied rest 2 patches at once and tested with that.
-Though did not see mouse getting vbus on the 1st boot, Vbus was coming fine after disconnect and connect.
-Hence did not test thereafter.
+I don't mind this patch personally, so take this query as more of a
+'generalization' than a problem with this patch:
 
-After checking your current mail, tried now and observed that there seems to be some real issue with patch#7 only. (As tried now after applying till patch# 6 and did not see this issue).
-Will debug further on patch#7 and update with proper fix after addressing your other comments.
 
-Thanks for the review & heads up,
-venu
+This patch changes the binding for an already used device (by addition
+of a required property), which isn't so bad BUT, as Alex pointed out,
+the binding will probably end up being changed again once power
+sequencing is sorted out.
 
-> 
-> 1)
-> 
-> "reboot" or "shutdown -h now" both cause the following crash, with or
-> without any USB devices plugged in (or ever having been plugged in):
-> 
-> > [  355.836288] Unable to handle kernel NULL pointer dereference at virtual
-> address 00000028
-> > [  355.847961] pgd = ed620000
-> > [  355.854093] [00000028] *pgd=00000000
-> ...
-> > [  356.146728] [<c02e5978>] (tegra_ehci_hcd_shutdown+0x18/0x2c) from
-> [<c0279edc>] (platform_drv_shutdown+0x18/0x1c)
-> > [  356.160379] [<c0279edc>] (platform_drv_shutdown+0x18/0x1c) from
-> [<c027703c>] (device_shutdown+0x34/0x188)
-> > [  356.173464] [<c027703c>] (device_shutdown+0x34/0x188) from
-> [<c0034650>] (kernel_restart_prepare+0x34/0x3c)
-> > [  356.186668] [<c0034650>] (kernel_restart_prepare+0x34/0x3c) from
-> [<c0034664>] (kernel_restart+0xc/0x4c)
-> > [  356.199637] [<c0034664>] (kernel_restart+0xc/0x4c) from [<c0034858>]
-> (sys_reboot+0x1ac/0x1d8)
-> > [  356.211704] [<c0034858>] (sys_reboot+0x1ac/0x1d8) from [<c000e2c0>]
-> (ret_fast_syscall+0x0/0x30)
-> > [  356.223965] Code: ebfe4b27 e5903000 e24300e8 e5133044 (e5933028)
-> > [  356.233896] ---[ end trace 088d89482b4af176 ]---
-> 
-> 2)
-> 
-> The first time enumeration USB devices is attempted on a port fails. For
-> devices that are plugged in at boot, this means that to get them
-> working, they must be unplugged and re-plugged after boot. For devices
-> that are not plugged in at boot, this means they must be plugged,
-> unplugged, and then plugged in again.
-> 
-> This is obviously problematic in and of itself. This is especially true
-> for boards like Harmony that have a built-in USB hub and network chip. I
-> didn't actually test this, but I assume that they cannot be made to work
-> at all with this patch series, since they cannot be unplugged.
-> 
-> The failed enumeration is accompanied by the following message:
-> 
-> [    2.451530] hub 3-0:1.0: unable to enumerate USB device on port 1
-> 
-> Both of these problems reproduce on at least boards Ventana and
-> Seaboard(Springbank), although I assume that all boards are affected.
+I realise it's still early days and things need to be tried-and-tested
+first, but wasn't the point of the bindings that they should be
+finalized (as best as possible anyway) the first time, so we don't have
+to worry about incompatibilities between bindings and drivers?
+
+Regards
+
+Tony P
