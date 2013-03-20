@@ -1,60 +1,97 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Wed, 20 Mar 2013 11:13:26 +0800
-Message-ID: <20130320031324.GB26941@S2101-09.ap.freescale.net>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
- <1363719573-20926-7-git-send-email-achew@nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
+ platform driver
+Date: Wed, 20 Mar 2013 11:29:59 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FED0@BGMAIL02.nvidia.com>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
+ <5148C1DC.1020903@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1363719573-20926-7-git-send-email-achew@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5148C1DC.1020903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 19, 2013 at 11:59:30AM -0700, Andrew Chew wrote:
-> The pwm-backlight driver now takes a mandatory regulator that is gotten
-> during driver probe.  Initialize a dummy regulator to satisfy this
-> requirement.
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Wednesday, March 20, 2013 1:22 AM
+> To: Venu Byravarasu
+> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
+> platform driver
 > 
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> ---
->  arch/arm/boot/dts/imx23-evk.dts      | 6 ++++++
->  arch/arm/boot/dts/imx28-apf28dev.dts | 6 ++++++
->  arch/arm/boot/dts/imx28-cfa10049.dts | 6 ++++++
->  arch/arm/boot/dts/imx28-evk.dts      | 6 ++++++
->  arch/arm/boot/dts/imx28-tx28.dts     | 6 ++++++
->  5 files changed, 30 insertions(+)
+> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
+> > As part of this series, apart from patch containing changes to register
+> TEGRA
+> > USB PHY driver as platform driver, prepared below patches:
+> > 1. Re-arranging & adding new DT properties.
+> > 2. Getting various params from DT properties added.
+> > 3. code clean up.
 > 
-> diff --git a/arch/arm/boot/dts/imx23-evk.dts b/arch/arm/boot/dts/imx23-evk.dts
-> index 035c13f..e48e36c 100644
-> --- a/arch/arm/boot/dts/imx23-evk.dts
-> +++ b/arch/arm/boot/dts/imx23-evk.dts
-> @@ -97,10 +97,16 @@
->  		};
->  	};
->  
-> +	bl_en: fixed-regulator {
+> Venu, I'm curious whether these patches were tested at all. I have found
+> at least two significant problems with trivial testing:
 
-The node name is too generic.  Very likely we have other fixed regulator
-in a dts.
+Stephen,
+Initially started testing after applying each and every patch.
+Like that tested till first 5 patches.
+As did not see any issues till then, applied rest 2 patches at once and tested with that.
+Though did not see mouse getting vbus on the 1st boot, Vbus was coming fine after disconnect and connect.
+Hence did not test thereafter.
 
-For mxs, we have all such board level regulators defined in node
-"regulators" as children.
+After checking your current mail, tried now and observed that there seems to be some real issue with patch#7 only. (As tried now after applying till patch# 6 and did not see this issue).
+Will debug further on patch#7 and update with proper fix after addressing your other comments.
 
-Shawn
+Thanks for the review & heads up,
+venu
 
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "bl-en-supply";
-> +        };
-> +
->  	backlight {
->  		compatible = "pwm-backlight";
->  		pwms = <&pwm 2 5000000>;
->  		brightness-levels = <0 4 8 16 32 64 128 255>;
->  		default-brightness-level = <6>;
-> +		enable-supply = <&bl_en>;
->  	};
->  };
+> 
+> 1)
+> 
+> "reboot" or "shutdown -h now" both cause the following crash, with or
+> without any USB devices plugged in (or ever having been plugged in):
+> 
+> > [  355.836288] Unable to handle kernel NULL pointer dereference at virtual
+> address 00000028
+> > [  355.847961] pgd = ed620000
+> > [  355.854093] [00000028] *pgd=00000000
+> ...
+> > [  356.146728] [<c02e5978>] (tegra_ehci_hcd_shutdown+0x18/0x2c) from
+> [<c0279edc>] (platform_drv_shutdown+0x18/0x1c)
+> > [  356.160379] [<c0279edc>] (platform_drv_shutdown+0x18/0x1c) from
+> [<c027703c>] (device_shutdown+0x34/0x188)
+> > [  356.173464] [<c027703c>] (device_shutdown+0x34/0x188) from
+> [<c0034650>] (kernel_restart_prepare+0x34/0x3c)
+> > [  356.186668] [<c0034650>] (kernel_restart_prepare+0x34/0x3c) from
+> [<c0034664>] (kernel_restart+0xc/0x4c)
+> > [  356.199637] [<c0034664>] (kernel_restart+0xc/0x4c) from [<c0034858>]
+> (sys_reboot+0x1ac/0x1d8)
+> > [  356.211704] [<c0034858>] (sys_reboot+0x1ac/0x1d8) from [<c000e2c0>]
+> (ret_fast_syscall+0x0/0x30)
+> > [  356.223965] Code: ebfe4b27 e5903000 e24300e8 e5133044 (e5933028)
+> > [  356.233896] ---[ end trace 088d89482b4af176 ]---
+> 
+> 2)
+> 
+> The first time enumeration USB devices is attempted on a port fails. For
+> devices that are plugged in at boot, this means that to get them
+> working, they must be unplugged and re-plugged after boot. For devices
+> that are not plugged in at boot, this means they must be plugged,
+> unplugged, and then plugged in again.
+> 
+> This is obviously problematic in and of itself. This is especially true
+> for boards like Harmony that have a built-in USB hub and network chip. I
+> didn't actually test this, but I assume that they cannot be made to work
+> at all with this patch series, since they cannot be unplugged.
+> 
+> The failed enumeration is accompanied by the following message:
+> 
+> [    2.451530] hub 3-0:1.0: unable to enumerate USB device on port 1
+> 
+> Both of these problems reproduce on at least boards Ventana and
+> Seaboard(Springbank), although I assume that all boards are affected.
