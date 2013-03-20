@@ -1,47 +1,94 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] regulator: palmas: add input supply names
-Date: Wed, 20 Mar 2013 10:56:16 -0600
-Message-ID: <5149EA30.8020302@wwwdotorg.org>
-References: <1363598989-25112-1-git-send-email-ldewangan@nvidia.com> <20130320123128.GM28775@opensource.wolfsonmicro.com> <5149B19E.90400@nvidia.com> <5149DEB5.7000709@wwwdotorg.org> <20130320163833.GT28775@opensource.wolfsonmicro.com> <5149E6F2.5070205@wwwdotorg.org> <20130320165227.GU28775@opensource.wolfsonmicro.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/4] ARM: tegra: dalmore: add dt node for TPS65090's regulators
+Date: Wed, 20 Mar 2013 12:57:51 -0400
+Message-ID: <5149EA8F.6090806@nvidia.com>
+References: <1363787070-14801-1-git-send-email-ldewangan@nvidia.com> <1363787070-14801-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130320165227.GU28775-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <1363787070-14801-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 10:52 AM, Mark Brown wrote:
-> On Wed, Mar 20, 2013 at 10:42:26AM -0600, Stephen Warren wrote:
->> On 03/20/2013 10:38 AM, Mark Brown wrote:
->>> On Wed, Mar 20, 2013 at 10:07:17AM -0600, Stephen Warren
->>> wrote:
->>>> On 03/20/2013 06:54 AM, Laxman Dewangan wrote:
+On 3/20/2013 9:44 AM, Laxman Dewangan wrote:
+> NVIDIA's Tegra114 platform, Dalmore, uses the TPS65090 as
+> secondary PMICs which mainly act as voltage switch controlled
+> by I2C communication.
 > 
->>>>> I generally send a patches on single git-send command git 
->>>>> send-emal --to=ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org 0000.patch 0001.patch
+> Add regulator node for this device.
 > 
->>>> Don't do that; send *.patch. If you don't, then patches 2..n 
->>>> don't end up being "in-reply-to" patch 1, so they won't show
->>>> up as a single email thread.
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../devicetree/bindings/regulator/tps65090.txt     |    4 +-
+>  arch/arm/boot/dts/tegra114-dalmore.dts             |   90 ++++++++++++++++++++
+>  2 files changed, 92 insertions(+), 2 deletions(-)
 > 
->>> The two should be equivalent (though the glob is much easier
->>> to type)? The result of the globbing ought to be what Laxman is
->>> typing by hand assuming that he's getting the order correct.
-> 
->> If you send *.patch at once, git send-email adds an in-reply-to
->> header to the email which sets up the threading. If you send the
->> patches 1-by-1, this header isn't added, since git send-email
->> doesn't have a clue what message ID it chose for patch 1. Unless
->> you pass the --in-reply-to command-line option, that is.
-> 
-> Indeed - I think you may have quoted the wrong bit of Laxman's
-> mail there?  The bit you're replying to is doing it as a single
-> command, though he did talk about doing this in multiple commands
-> elsewhere in his mail.
+> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt b/Documentation/devicetree/bindings/regulator/tps65090.txt
+> index 313a60b..8926e2d 100644
+> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
+> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
+> @@ -41,8 +41,8 @@ Example:
+>  		infet5-supply = <&some_reg>;
+>  		infet6-supply = <&some_reg>;
+>  		infet7-supply = <&some_reg>;
+> -		vsys_l1-supply = <&some_reg>;
+> -		vsys_l2-supply = <&some_reg>;
+> +		vsys-l1-supply = <&some_reg>;
+> +		vsys-l2-supply = <&some_reg>;
+>  
+>  		regulators {
+>  			dcdc1 {
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+> index 6be9434..a47c3d2 100644
+> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
+> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+> @@ -731,6 +731,82 @@
+>  			regulator-boot-on;
+>  			regulator-always-on;
+>  		};
+> +
+> +		tps65090@48 {
+> +			compatible = "ti,tps65090";
+> +			reg = <0x48>;
+> +			interrupt-parent = <&gpio>;
+> +			interrupts = <72 0x04>; /* gpio PJ0 */
+> +
+> +			vsys1-supply = <&vdd_ac_bat_reg>;
+> +			vsys2-supply = <&vdd_ac_bat_reg>;
+> +			vsys3-supply = <&vdd_ac_bat_reg>;
+> +			infet1-supply = <&vdd_ac_bat_reg>;
+> +			infet2-supply = <&vdd_ac_bat_reg>;
+> +			infet3-supply = <&tps65090_dcdc2_reg>;
+> +			infet4-supply = <&tps65090_dcdc2_reg>;
+> +			infet5-supply = <&tps65090_dcdc2_reg>;
+> +			infet6-supply = <&tps65090_dcdc2_reg>;
+> +			infet7-supply = <&tps65090_dcdc2_reg>;
+> +			vsys-l1-supply = <&vdd_ac_bat_reg>;
+> +			vsys-l2-supply = <&vdd_ac_bat_reg>;
+> +
+> +			regulators {
+> +				dcdc1 {
+> +					regulator-name = "vdd-sys-5v0";
+> +					regulator-always-on;
+> +					regulator-boot-on;
+> +				};
 
-Oh right yes. I'd seen 0000.patch and not that there were multiple
-entries in the command-line that listed (I assume) all the files.
-Sorry for the noise.
+You should also add the tps65090_dcdc1_reg label to dcdc1. I believe you
+make use of it in patch 4 and this currently causes build breaks.
+
+> +
+> +				tps65090_dcdc2_reg: dcdc2 {
+> +					regulator-name = "vdd-sys-3v3";
+> +					regulator-always-on;
+> +					regulator-boot-on;
+> +				};
+> +
+> 
+
+-rhyland
+
+-- 
+nvpublic
