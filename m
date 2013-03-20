@@ -1,50 +1,105 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] USB: EHCI: have USB_EHCI_TEGRA select USB_PHY
-Date: Wed, 20 Mar 2013 11:10:38 -0600
-Message-ID: <1363799438-24665-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: USB-related build errors on Tegra in next-20130319
+Date: Wed, 20 Mar 2013 19:11:47 +0200
+Message-ID: <20130320171147.GM1567@arwen.pp.htv.fi>
+References: <51489251.5040504@wwwdotorg.org>
+ <20130320122031.GI29659@arwen.pp.htv.fi>
+ <5149E62F.9090705@wwwdotorg.org>
+ <20130320164553.GL1567@arwen.pp.htv.fi>
+ <5149E925.7030302@wwwdotorg.org>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BHMq0+oGliEfCAkH"
+Return-path: <linux-next-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5149E925.7030302@wwwdotorg.org>
+Sender: linux-next-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: balbi@ti.com, Venu Byravarasu <vbyravarasu@nvidia.com>, USB list <linux-usb@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--BHMq0+oGliEfCAkH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-ehci-tegra.c calls functions in phy-usb-tegra.c. Hence, that file must
-be built if ehci-tegra.c is. To ensure this, drivers/usb/phy/Makefile
-always builds phy-usb-tegra.c under the same Kconfig option that builds
-ehci-tegra.c. However, after the following commits:
+Hi,
 
-1c20888 usb: Makefile: fix drivers/usb/phy/ Makefile entry
-a0e6312 usb: phy: move all PHY drivers to drivers/usb/phy/
-fd89149 usb: phy: remove CONFIG_USB_OTG_UTILS
+On Wed, Mar 20, 2013 at 10:51:49AM -0600, Stephen Warren wrote:
+> On 03/20/2013 10:45 AM, Felipe Balbi wrote:
+> > Hi,
+> >=20
+> > On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren wrote:
+> >> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
+> ...
+> >> The patch you gave fixes the Kconfig warnings, but not the build
+> >> failure.
+> ...
+> >> For now, I think the correct solution is to have USB_EHCI_TEGRA
+> >> select USB_PHY. I validated that solves the build problem, and
+> >> has the bonus of not needing any changes to tegra_defconfig.
+> ...
+> > Alright, do you want to send that patch ? My bad that I missed
+> > that build error...
+>=20
+> Sure. Do you want to roll it into your patch and repost it, or me to
+> send a separate patch?
 
-drivers/usb/Makefile requires USB_PHY to be enabled in order to process
-drivers/usb/phy/Makefile at all. To solve this, have USB_EHCI_TEGRA
-select USB_PHY.
+updated patch below:
 
-The long-term solution is to either/both:
+=46rom c2b3334a624e4231952ab050e29445b8c62f662d Mon Sep 17 00:00:00 2001
+=46rom: Felipe Balbi <balbi@ti.com>
+Date: Wed, 20 Mar 2013 14:18:28 +0200
+Subject: [PATCH] arm: tegra: fix Kconfig select clauses
 
-a) Create a separate Kconfig option for phy-usb-tegra.c, update
-   USB_EHCI_TEGRA to depend on that.
+USB_ULPI and USB_ULPI_VIEWPORT shouldn't really
+be selected directly by anyone, but since Tegra
+still needs some time before turning ulpi viewport
+into a proper PHY driver, we need to keep the
+selects in place.
 
-b) Have ehci-tegra.c access phy-usb-tegra.c using standardized APIs, and
-   hence avoid the direct dependency. Part of this will be resolved by
-   Venu's forthcoming Tegra USB cleanup series. Other aspects may rely
-   on Kishon's generic PHY framework APIs.
+This patch just fixes the conditional select
+so that it will continue to build after merging
+the latest PHY layer changes.
 
-In either case, the changes will require some updates to tegra_defconfig.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
 ---
- drivers/usb/host/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-tegra/Kconfig | 8 ++++----
+ drivers/usb/host/Kconfig    | 1 +
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index d1c4893..dbc653e 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -18,8 +18,8 @@ config ARCH_TEGRA_2x_SOC
+ 	select PL310_ERRATA_727915 if CACHE_L2X0
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+-	select USB_ULPI if USB
+-	select USB_ULPI_VIEWPORT if USB_SUPPORT
++	select USB_ULPI if USB_PHY
++	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -37,8 +37,8 @@ config ARCH_TEGRA_3x_SOC
+ 	select PINCTRL_TEGRA30
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+ 	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+-	select USB_ULPI if USB
+-	select USB_ULPI_VIEWPORT if USB_SUPPORT
++	select USB_ULPI if USB_PHY
++	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Support for NVIDIA Tegra T30 processor family, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
 diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 8e1bca3..f7af098 100644
+index ba1347c..1b58587 100644
 --- a/drivers/usb/host/Kconfig
 +++ b/drivers/usb/host/Kconfig
-@@ -180,6 +180,7 @@ config USB_EHCI_TEGRA
+@@ -179,6 +179,7 @@ config USB_EHCI_TEGRA
         boolean "NVIDIA Tegra HCD support"
         depends on USB_EHCI_HCD && ARCH_TEGRA
         select USB_EHCI_ROOT_HUB_TT
@@ -52,10 +107,50 @@ index 8e1bca3..f7af098 100644
         help
           This driver enables support for the internal USB Host Controllers
           found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
--- 
-1.7.10.4
+--=20
+1.8.2
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Another possibility would be to:
+
+select USB_PHY if USB
+select USB_ULPI
+select USB_ULPI_VIEWPORT
+
+Would you prefer that one instead ?
+
+> I assume you'd apply both to the same branch that contains the patches
+> that add the USB_PHY config option? If the arch/arm patch gets applied
+> to the Tegra tree instead, it'll cause breakage there since USB_PHY
+> won't exist yet, so USB will be disabled until merged with the USB
+> tree in 3.10-rc1.
+
+alright, but I need your Acked-by to the updated patch. I have now
+compiled it with tegra_defconfig (is that the one which should be used?)
+and it's compiling fine without any issues.
+
+--=20
+balbi
+
+--BHMq0+oGliEfCAkH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRSe3TAAoJEIaOsuA1yqREM9wP/0f1fahq0Rox3V0g53QM7wV3
+GvGKZVjd/AEdR5Q+yHcCKF6pKvwBeUr2HG3okx33cmq6amlgXRZt7pNuz8mhLxVz
+FW72JUw2Yr3ASSQrAhYIjBiGvRgWPwj9jyIq8D6/1s2QXcwQteJCmycTzJrshrzR
+EAY6A8L/CslhkrHIw1t9yu1CaeN+28wfNpA9aSAV3laJzfPDKfJLx1ttkt2C76Gi
+GsO3Q86MU+qjC2AQEWjYEekMr0/yR3OZt2NzjfYz+NazF6WdRPd0lIbqfVFbaVoY
+ySXJ8b+RbrsmiYlHIBSWDIrL2Uv0BkiJH7kgHhq/j2JHTEHoDF/UELHd758oBuc3
+I+fD37+Gt0crRi0rER7rjP8jb9GCTo0Xsuc0nmQqyFUCpe2VSC61UpiNO6iLrtgz
+JKMg3dnK56SCY3Skzxa01sBGYpf4mmrgFj78KOBWm2hFStP2Lkw64u7/mbSEZvtj
+xfKimVLEy8Ziuf3lxZAx2FryqXR7ewmLnXVI6yory8AsaAD7wb0ZKAVSHzE3Lk7d
+P6FkP812pORfKrcqXNja5USt2ZBQKsA1BocWanjZ5BYEyn7z9Je5il1MY9Q6M4eO
+ETNQSYfenmI0+Wv2oHroddHUoFYiKMzuLDpZqdbrVbs/wGbc+iqtpppCROenkOtC
+IziO7bYwkyD8Hy0846Ox
+=N+71
+-----END PGP SIGNATURE-----
+
+--BHMq0+oGliEfCAkH--
