@@ -1,114 +1,54 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 7/7] usb: phy: registering tegra USB PHY as platform
- driver
-Date: Wed, 20 Mar 2013 18:13:07 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFFA@BGMAIL02.nvidia.com>
-References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <1363609781-4045-8-git-send-email-vbyravarasu@nvidia.com>
- <5148C8B6.90303@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] regulator: palmas: add input supply names
+Date: Wed, 20 Mar 2013 18:24:54 +0530
+Message-ID: <5149B19E.90400@nvidia.com>
+References: <1363598989-25112-1-git-send-email-ldewangan@nvidia.com> <20130320123128.GM28775@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5148C8B6.90303-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <20130320123128.GM28775-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Wednesday, March 20, 2013 1:51 AM
-> To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Subject: Re: [PATCH 7/7] usb: phy: registering tegra USB PHY as platform
-> driver
-> 
-> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
-> > Registered tegra USB PHY as a separate platform driver.
-> >
-> > diff --git a/drivers/usb/phy/tegra_usb_phy.c
-> b/drivers/usb/phy/tegra_usb_phy.c
-> 
-> >  static void tegra_usb_phy_close(struct usb_phy *x)
-> >  {
-> >  	if (phy->is_ulpi_phy)
-> >  		clk_put(phy->clk);
-> 
-> phy->clk is obtained using devm_clk_get(). This typically means you
-> never need to clk_put() it, and if for some reason you really have to,
-> you should use devm_clk_put() instead of plain clk_put().
+On Wednesday 20 March 2013 06:01 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Mon, Mar 18, 2013 at 02:59:48PM +0530, Laxman Dewangan wrote:
+>
+> There's something odd about several recent patch serieses you've posted,
+> they end up with patch 2 before instead of after patch 1.  Anyway...
 
-Agree, will remove clk_put.
- 
-> 
-> > @@ -774,23 +667,53 @@ struct tegra_usb_phy
-> *tegra_usb_phy_open(struct device *dev, int instance,
-> 
-> > +		err = gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
-> 
-> I think you can use devm_gpio_request() here to simplify the error-handling.
+I generally send a patches on single git-send command
+git send-emal --to=ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org 0000.patch 0001.patch
 
-Sure, will do. 
+So file names are in seq but not sure why it is not on seq. Something 
+mail exchange  resuffle.
+Probably I need to send one by one...
 
-> 
-> I wonder why in the ULPI case, all the code is inline here, whereas in
-> the UTMI case, this simply calls a function. Wouldn't it be more
-> consistent to have the following code here:
-> 
-> 	if (phy->is_ulpi_phy)
-> 		err = ulpi_open();
-> 	else
-> 		err = utmip_open();
-> 	if (err)
-> 		goto fail;
 
-Sure, will take care of this in next patch. 
+>
+>> +		if (config.init_data)
+>> +			pmic->desc[id].supply_name = palmas_regs_info[id].sname;
+>> +
+> This looks wrong...  why is it conditional on init_data?
 
-> 
-> > +static int tegra_usb_phy_probe(struct platform_device *pdev)
-> 
-> Hmmm. Note that in order to make deferred probe work correctly, all the
-> gpio_request(), clk_get(), etc. calls that acquire resources from other
-> drivers must happen here in probe() and not in tegra_usb_phy_open().
- 
-In present code tegra_usb_phy_open() is indirectly called via usb_phy_init() from ehci-tegra.c.
-Between obtaining PHY handle (and hence getting into deferred probe, when it is not available)
-and calling usb_phy_init, no other USB registers were accessed. Hence I was doing this way.
+Some of the rails are not used in board and hence their inputs are also 
+left floating (unconnected). In this case, during DT population, I did 
+not put entry
+i.e. if ldo1 is not used then ldo1-in is not connected on board and hence
+entry on DT
 
-Do you still think it would be better to move gpio and clk APIs to probe?
+ldo1-in-supply=<&xyzreg>;
 
-> 
-> > +	err = of_property_match_string(np, "dr_mode", "otg");
-> > +	if (err < 0) {
-> > +		err = of_property_match_string(np, "dr_mode", "gadget");
-> 
-> Again, use "peripheral", not "gadget".
+is not there.
 
-Will do. 
+The regulator core register the regulator even if there is NULL 
+init_data and in this case, it tries to findout the input-supply 
+(provided through desc->supply_name) and it fails to find out the supply 
+handle and so regulator register fails cause all regulator registration 
+to fail.
 
-> 
-> > +struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
-> > +{
-> > +	struct device *dev;
-> > +	struct tegra_usb_phy *tegra_phy;
-> > +
-> > +	dev = driver_find_device(&tegra_usb_phy_driver.driver, NULL, dn,
-> > +				 tegra_usb_phy_match);
-> > +	if (!dev)
-> > +		return ERR_PTR(-EPROBE_DEFER);
-> > +
-> > +	tegra_phy = dev_get_drvdata(dev);
-> > +
-> > +	return &tegra_phy->u_phy;
-> > +}
-> 
-> I think you need a module_get() somewhere in there, and also need to add
-> a tegra_usb_put_phy() function too, so you can call module_put() from it.
-
-Am not clear on why to add module_get here. Can you plz provide more details?
- 
-Thanks Stephen, for the review.
+So providing the dec->supply_name only in case of valid init_data.
