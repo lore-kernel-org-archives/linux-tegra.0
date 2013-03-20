@@ -1,77 +1,76 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 2/3] ARM: tegra: get PMC clock source from DT
-Date: Wed, 20 Mar 2013 09:51:33 -0600
-Message-ID: <5149DB05.5000906@wwwdotorg.org>
-References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>  <1363594199-10974-3-git-send-email-josephl@nvidia.com>  <51489513.1020107@wwwdotorg.org> <1363773608.5697.8.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH V2 1/3] ARM: dts: tegra: add clock source for PMC
+Date: Wed, 20 Mar 2013 09:54:16 -0600
+Message-ID: <5149DBA8.4030308@wwwdotorg.org>
+References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>  <1363594199-10974-2-git-send-email-josephl@nvidia.com>  <51489586.9090605@wwwdotorg.org> <1363774325.5697.19.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363773608.5697.8.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <1363774325.5697.19.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 04:00 AM, Joseph Lo wrote:
-> On Wed, 2013-03-20 at 00:40 +0800, Stephen Warren wrote:
+On 03/20/2013 04:12 AM, Joseph Lo wrote:
+> On Wed, 2013-03-20 at 00:42 +0800, Stephen Warren wrote:
 >> On 03/18/2013 02:09 AM, Joseph Lo wrote:
->>> The clock source of PMC should be PCLK and gotten from DT.
->>>
->>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> V2:
->>> * new in this change
+>>> The clock source of PMC is PCLK. Adding it into DTS for Tegra20 and Tegra30.
 >>
->> s/change/series/ ???
+>>> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
 >>
->>> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+>>>  	pmc {
+>>>  		compatible = "nvidia,tegra20-pmc";
+>>>  		reg = <0x7000e400 0x400>;
+>>> +		clocks = <&tegra_car 110>;
+>>>  	};
 >>
->>>  void __init tegra_dt_init_irq(void)
->>>  {
->>>  	tegra_clocks_init();
->>> +	tegra_pmc_init();
->>>  	tegra_init_irq();
->>>  	irqchip_init();
->>>  }
->>> @@ -100,7 +101,6 @@ void __init tegra_init_early(void)
->>>  	tegra_apb_io_init();
->>>  	tegra_init_fuse();
->>>  	tegra_init_cache();
->>> -	tegra_pmc_init();
+>> The DT binding documentation needs to list the set of clocks that must
+>> be present.
 >>
->> This change isn't mentioned in the commit description.
->>
->> Why is this change needed? We should minimize the amount of code in
->> tegra_dt_init_irq(), not add more code there.
->
-> The clocks only available after tegra_clocks_init(). If I can keep the
-> PMC dt node somewhere in PMC driver, then I can get the clock later.
-
-Oh right. For some reason I thought that init_irq was executed before
-init_early.
-
-I guess this is OK for now, but I wonder if we shouldn't create a
-tegra_init_machine() that tegra.c:tegra_dt_init() can call before
-creating all the devices, and have that call both tegra_clocks_init()
-and tegra_pmc_init(). But, we can leave that until a later cleanup patch
-once we've thought it through a bit more.
-
->>> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
->>
->>> @@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
->>>  
->>>  	tegra_pmc_invert_interrupt = of_property_read_bool(np,
->>>  				     "nvidia,invert-interrupt");
->>> +	tegra_pclk = of_clk_get(np, 0);
->>> +	WARN_ON_ONCE(IS_ERR(tegra_pclk));
->>
->> Why WARN_ON_ONCE(); is tegra_pmc_parse_dt() called more than once?
->>
->> Can the code continue if IS_ERR(tegra_pclk), or is that fatal?
+>> Doesn't the PMC also receive a "clk32k_in" from the PMIC, or is that
+>> routed into the CAR, and then into the PMC? Either way, the PMC module
+>> receives that clock somehow. Since there are multiple clocks, that also
+>> means that a clock-names property is required.
 > 
-> The code is still OK just want to warn people that the PMC DT node
-> needs PCLK clock info.
+> Do you mean the DTS below and add it into binding document?
+> 
+> / SoC dts including file
+> pmc {
+> 	compatible = "nvidia,tegra20-pmc";
+> 	reg = <0x7000e400 0x400>;
+> 	clocks = <&tegra_car 110>, <&clk32k_in>;
+> 	clock-names= "pclk", "clk32k_in";
+> };
 
-So perhaps s/WARN_ON_ONCE/WARN_ON/? No need to explicitly use a macro
-that only emits the warning once if the code path is only executed once.
+Yes, that's what should technically be present.
+
+> / Tegra board dts file
+> 
+> pmic {
+> 	...
+> 	clocks {
+> 		compatible = "simple-bus";
+> 		#address-cells = <1>;
+> 		#size-cells = <0>;
+> 
+> 		clk32k_in: clock@0 {
+> 			compatible = "fixed-clock";
+> 			reg=<0>;
+> 			#clock-cells = <0>;
+> 			clock-frequency = <32768>;
+> 		};
+> 	};
+> };
+
+That won't work; the PMIC drivers don't enumerate sub-nodes as busss, so
+ that clocks node won't ever be processed. Also, the PMIC drivers aren't
+clock providers in most cases. It's not quite a correct representation
+of the HW, but I would suggest simply creating a top-level "clock" node
+for that fixed clock. If we ever have more top-level clocks, we can move
+them into a top-level "clocks" node at that time.
+
+Note: If there aren't already any other top-level clock nodes (which I
+think is the case), the node can be named just "clock" rather than
+"clock@0", since there are no naming conflicts.
