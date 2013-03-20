@@ -1,67 +1,91 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: USB-related build errors on Tegra in next-20130319
-Date: Wed, 20 Mar 2013 11:42:20 -0600
-Message-ID: <5149F4FC.5040103@wwwdotorg.org>
-References: <51489251.5040504@wwwdotorg.org> <20130320122031.GI29659@arwen.pp.htv.fi> <5149E62F.9090705@wwwdotorg.org> <20130320164553.GL1567@arwen.pp.htv.fi> <5149E925.7030302@wwwdotorg.org> <20130320171147.GM1567@arwen.pp.htv.fi> <5149F15A.1000806@wwwdotorg.org> <20130320173006.GN1567@arwen.pp.htv.fi>
+Subject: Re: [PATCH 7/7] usb: phy: registering tegra USB PHY as platform driver
+Date: Wed, 20 Mar 2013 11:51:30 -0600
+Message-ID: <5149F722.8040901@wwwdotorg.org>
+References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com> <1363609781-4045-8-git-send-email-vbyravarasu@nvidia.com> <5148C8B6.90303@wwwdotorg.org> <D958900912E20642BCBC71664EFECE3E6E5092FFFA@BGMAIL02.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <20130320173006.GN1567@arwen.pp.htv.fi>
-Sender: linux-next-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: Venu Byravarasu <vbyravarasu@nvidia.com>, USB list <linux-usb@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <D958900912E20642BCBC71664EFECE3E6E5092FFFA@BGMAIL02.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, "balbi@ti.com" <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 11:30 AM, Felipe Balbi wrote:
-> On Wed, Mar 20, 2013 at 11:26:50AM -0600, Stephen Warren wrote:
->> On 03/20/2013 11:11 AM, Felipe Balbi wrote:
->>> Hi,
->>> 
->>> On Wed, Mar 20, 2013 at 10:51:49AM -0600, Stephen Warren
->>> wrote:
->>>> On 03/20/2013 10:45 AM, Felipe Balbi wrote:
->>>>> Hi,
->>>>> 
->>>>> On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren 
->>>>> wrote:
->>>>>> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
->>>> ...
->>>>>> The patch you gave fixes the Kconfig warnings, but not
->>>>>> the build failure.
->>>> ...
->>>>>> For now, I think the correct solution is to have 
->>>>>> USB_EHCI_TEGRA select USB_PHY. I validated that solves
->>>>>> the build problem, and has the bonus of not needing any
->>>>>> changes to tegra_defconfig.
->>>> ...
->>>>> Alright, do you want to send that patch ? My bad that I
->>>>> missed that build error...
->>>> 
->>>> Sure. Do you want to roll it into your patch and repost it,
->>>> or me to send a separate patch?
->> 
->> Oops, sorry, I meant to write "Do you want *me* to" ...
->> 
->>> updated patch below:
->> 
->> Anyway, the updated patch you sent does solve the problem, so:
->> 
->> Acked-by: Stephen Warren <swarren@nvidia.com> Tested-by: Stephen
->> Warren <swarren@nvidia.com> (both build and ran it on HW to make
->> sure nothing was missing)
->> 
->> Feel free to use yours or the separate one I sent; entirely your
->> call.
-> 
-> I wonder if the third option isn't nicer ?
-> 
-> select USB_PHY if USB select USB_ULPI select USB_ULPI_VIEWPORT
-> 
-> then all changes are in tegra's Kconfig itself ?
+On 03/20/2013 06:43 AM, Venu Byravarasu wrote:
+> Stephen Warren wrote at Wednesday, March 20, 2013 1:51 AM:
+>> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
+>>> Registered tegra USB PHY as a separate platform driver.
 
-I imagine that'd work although I didn't try it. However, I suspect
-it's more correct to have USB_EHCI_TEGRA do the select (or later, do a
-depend), since that's the option which actually has the dependency.
-Otherwise, you're just making USB_EHCI_TEGRA's dependencies work via
-selects in some other pretty unrelated node.
+>>> diff --git a/drivers/usb/phy/tegra_usb_phy.c b/drivers/usb/phy/tegra_usb_phy.c
+
+>>> +static int tegra_usb_phy_probe(struct platform_device *pdev)
+>>
+>> Hmmm. Note that in order to make deferred probe work correctly, all the
+>> gpio_request(), clk_get(), etc. calls that acquire resources from other
+>> drivers must happen here in probe() and not in tegra_usb_phy_open().
+>  
+> In present code tegra_usb_phy_open() is indirectly called via usb_phy_init() from ehci-tegra.c.
+> Between obtaining PHY handle (and hence getting into deferred probe, when it is not available)
+> and calling usb_phy_init, no other USB registers were accessed. Hence I was doing this way.
+> 
+> Do you still think it would be better to move gpio and clk APIs to probe?
+
+Yes.
+
+What's happening right now is that the PHY driver potentially completes
+probe() before its resources are available.
+
+This just happens not to break anything because the EHCI driver's probe
+ends up getting deferred until some other PHY driver function can
+acquire those resources, so the USB port as a whole isn't registered
+until the resources are available.
+
+However, this still means that the PHY driver could be suspended after
+e.g. a driver that provides a GPIO it uses, since the PHY's probe
+completed before the GPIO driver's probe.
+
+Hence, this could easily cause some form of suspend/resume or perhaps
+even shutdown/reboot problem.
+
+>>> +struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
+>>> +{
+>>> +	struct device *dev;
+>>> +	struct tegra_usb_phy *tegra_phy;
+>>> +
+>>> +	dev = driver_find_device(&tegra_usb_phy_driver.driver, NULL, dn,
+>>> +				 tegra_usb_phy_match);
+>>> +	if (!dev)
+>>> +		return ERR_PTR(-EPROBE_DEFER);
+>>> +
+>>> +	tegra_phy = dev_get_drvdata(dev);
+>>> +
+>>> +	return &tegra_phy->u_phy;
+>>> +}
+>>
+>> I think you need a module_get() somewhere in there, and also need to add
+>> a tegra_usb_put_phy() function too, so you can call module_put() from it.
+> 
+> Am not clear on why to add module_get here. Can you plz provide more details?
+
+Actually, I guess it isn't needed, although slightly by accident perhaps:
+
+If ehci-tegra.c and phy-usb-tegra.c are built as modules, they'll be
+separate modules. Since ehci-tegra.c calls into phy-usb-tegra.c, you
+need to make sure that phy-usb-tegra.c stays loaded any time
+ehci-tegra.c is loaded.
+
+Right now, this is ensured because ehci-tegra.c references functions in
+phy-usb-tegra.c by symbol name, so a dependency exists. So, I guess
+everything actually works out without the module_get(). So, no changes
+are needed.
+
+After this series is applied, I believe that tegra_usb_get_phy() is the
+last function that ehci-tegra.c references by symbol name. Eventually,
+that function will be replaced by devm_of_phy_get_byname() (see Kishon's
+generic PHY API patch series), so there won't be any symbol name
+dependencies, so some other mechanism must be used to ensure the PHY
+driver stays loaded while the EHCI driver is using it. At that point,
+the implementation of devm_of_phy_get_byname() should be calling
+module_get(), so again no changes should be required to your patch.
