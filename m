@@ -1,40 +1,77 @@
-From: Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>
-Subject: Re: [PATCH V4 6/9] ARM: mxs: Provide regulator to pwm-backlight
-Date: Wed, 20 Mar 2013 15:03:20 +0100
-Message-ID: <201303201503.20480.marex@denx.de>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <5148E252.9050900@wwwdotorg.org> <20130320082318.GA28775@opensource.wolfsonmicro.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] ARM: tegra: get PMC clock source from DT
+Date: Wed, 20 Mar 2013 09:51:33 -0600
+Message-ID: <5149DB05.5000906@wwwdotorg.org>
+References: <1363594199-10974-1-git-send-email-josephl@nvidia.com>  <1363594199-10974-3-git-send-email-josephl@nvidia.com>  <51489513.1020107@wwwdotorg.org> <1363773608.5697.8.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130320082318.GA28775-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <1363773608.5697.8.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
+On 03/20/2013 04:00 AM, Joseph Lo wrote:
+> On Wed, 2013-03-20 at 00:40 +0800, Stephen Warren wrote:
+>> On 03/18/2013 02:09 AM, Joseph Lo wrote:
+>>> The clock source of PMC should be PCLK and gotten from DT.
+>>>
+>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>> V2:
+>>> * new in this change
+>>
+>> s/change/series/ ???
+>>
+>>> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+>>
+>>>  void __init tegra_dt_init_irq(void)
+>>>  {
+>>>  	tegra_clocks_init();
+>>> +	tegra_pmc_init();
+>>>  	tegra_init_irq();
+>>>  	irqchip_init();
+>>>  }
+>>> @@ -100,7 +101,6 @@ void __init tegra_init_early(void)
+>>>  	tegra_apb_io_init();
+>>>  	tegra_init_fuse();
+>>>  	tegra_init_cache();
+>>> -	tegra_pmc_init();
+>>
+>> This change isn't mentioned in the commit description.
+>>
+>> Why is this change needed? We should minimize the amount of code in
+>> tegra_dt_init_irq(), not add more code there.
+>
+> The clocks only available after tegra_clocks_init(). If I can keep the
+> PMC dt node somewhere in PMC driver, then I can get the clock later.
 
-> On Tue, Mar 19, 2013 at 04:10:26PM -0600, Stephen Warren wrote:
-> > On 03/19/2013 03:27 PM, Marek Vasut wrote:
-> > > Do we really need a mandatory regulator? Why can't it be optional?
-> > 
-> > IIRC, the previous advice I've seen is that if a device (driver) uses a
-> > regulator, it must /require/ a regulator, and if a particular board
-> > doesn't actually have a SW-controlled regulator, then a fixed- or dummy-
-> > regulator should be provided to satisfy this requirement.
-> > 
-> > CC'ing Mark Brown to make sure I really do Recall Correctly.
+Oh right. For some reason I thought that init_irq was executed before
+init_early.
+
+I guess this is OK for now, but I wonder if we shouldn't create a
+tegra_init_machine() that tegra.c:tegra_dt_init() can call before
+creating all the devices, and have that call both tegra_clocks_init()
+and tegra_pmc_init(). But, we can leave that until a later cleanup patch
+once we've thought it through a bit more.
+
+>>> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+>>
+>>> @@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
+>>>  
+>>>  	tegra_pmc_invert_interrupt = of_property_read_bool(np,
+>>>  				     "nvidia,invert-interrupt");
+>>> +	tegra_pclk = of_clk_get(np, 0);
+>>> +	WARN_ON_ONCE(IS_ERR(tegra_pclk));
+>>
+>> Why WARN_ON_ONCE(); is tegra_pmc_parse_dt() called more than once?
+>>
+>> Can the code continue if IS_ERR(tegra_pclk), or is that fatal?
 > 
-> Yes, and it should be fixed rather than dummy.  The issue is partly that
-> it's probably important that the device has power so we don't want to
-> just ignore errors and partly that this is something which applies to
-> essentially all devices so whatever we do for this case ought to be done
-> by the core so all devices can benefit and we don't have to duplicate
-> lots of code in individual drivers.
+> The code is still OK just want to warn people that the PMC DT node
+> needs PCLK clock info.
 
-Thanks for clearing this!
-
-Best regards,
-Marek Vasut
+So perhaps s/WARN_ON_ONCE/WARN_ON/? No need to explicitly use a macro
+that only emits the warning once if the code path is only executed once.
