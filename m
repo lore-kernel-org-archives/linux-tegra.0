@@ -1,116 +1,52 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: USB-related build errors on Tegra in next-20130319
-Date: Wed, 20 Mar 2013 19:56:16 +0200
-Message-ID: <20130320175616.GO1567@arwen.pp.htv.fi>
-References: <51489251.5040504@wwwdotorg.org>
- <20130320122031.GI29659@arwen.pp.htv.fi>
- <5149E62F.9090705@wwwdotorg.org>
- <20130320164553.GL1567@arwen.pp.htv.fi>
- <5149E925.7030302@wwwdotorg.org>
- <20130320171147.GM1567@arwen.pp.htv.fi>
- <5149F15A.1000806@wwwdotorg.org>
- <20130320173006.GN1567@arwen.pp.htv.fi>
- <5149F4FC.5040103@wwwdotorg.org>
-Reply-To: <balbi@ti.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 9/9] pwm_bl: Add mandatory backlight enable regulator
+Date: Wed, 20 Mar 2013 12:00:10 -0600
+Message-ID: <5149F92A.3070004@wwwdotorg.org>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-10-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hXth9cGL35Nvpk4x"
-Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5149F4FC.5040103@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: balbi@ti.com, Venu Byravarasu <vbyravarasu@nvidia.com>, USB list <linux-usb@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363719573-20926-10-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---hXth9cGL35Nvpk4x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/19/2013 12:59 PM, Andrew Chew wrote:
+> Many backlights need to be explicitly enabled.  Typically, this is done
+> with a GPIO.  For flexibility, we generalize the enable mechanism to a
+> regulator.
+> 
+> If an enable regulator is not needed, then a dummy regulator can be given
+> to the backlight driver.  If a GPIO is used to enable the backlight,
+> then a fixed regulator can be instantiated to control the GPIO.
+> 
+> The backlight enable regulator can be specified in the device tree node
+> for the backlight, or can be done with legacy board setup code in the
+> usual way.
 
-Hi,
+> diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> index 1e4fc72..7e2e089 100644
+> --- a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> +++ b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
+> @@ -10,6 +10,11 @@ Required properties:
+>        last value in the array represents a 100% duty cycle (brightest).
+>    - default-brightness-level: the default brightness level (index into the
+>        array defined by the "brightness-levels" property)
+> +  - enable-supply: A phandle to the regulator device tree node. This
+> +      regulator will be turned on and off as the pwm is enabled and disabled.
+> +      Many backlights are enabled via a GPIO. In this case, we instantiate
+> +      a fixed regulator and give that to enable-supply. If a regulator
+> +      is not needed, then provide a dummy fixed regulator.
 
-On Wed, Mar 20, 2013 at 11:42:20AM -0600, Stephen Warren wrote:
-> On 03/20/2013 11:30 AM, Felipe Balbi wrote:
-> > On Wed, Mar 20, 2013 at 11:26:50AM -0600, Stephen Warren wrote:
-> >> On 03/20/2013 11:11 AM, Felipe Balbi wrote:
-> >>> Hi,
-> >>>=20
-> >>> On Wed, Mar 20, 2013 at 10:51:49AM -0600, Stephen Warren
-> >>> wrote:
-> >>>> On 03/20/2013 10:45 AM, Felipe Balbi wrote:
-> >>>>> Hi,
-> >>>>>=20
-> >>>>> On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren=20
-> >>>>> wrote:
-> >>>>>> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
-> >>>> ...
-> >>>>>> The patch you gave fixes the Kconfig warnings, but not
-> >>>>>> the build failure.
-> >>>> ...
-> >>>>>> For now, I think the correct solution is to have=20
-> >>>>>> USB_EHCI_TEGRA select USB_PHY. I validated that solves
-> >>>>>> the build problem, and has the bonus of not needing any
-> >>>>>> changes to tegra_defconfig.
-> >>>> ...
-> >>>>> Alright, do you want to send that patch ? My bad that I
-> >>>>> missed that build error...
-> >>>>=20
-> >>>> Sure. Do you want to roll it into your patch and repost it,
-> >>>> or me to send a separate patch?
-> >>=20
-> >> Oops, sorry, I meant to write "Do you want *me* to" ...
-> >>=20
-> >>> updated patch below:
-> >>=20
-> >> Anyway, the updated patch you sent does solve the problem, so:
-> >>=20
-> >> Acked-by: Stephen Warren <swarren@nvidia.com> Tested-by: Stephen
-> >> Warren <swarren@nvidia.com> (both build and ran it on HW to make
-> >> sure nothing was missing)
-> >>=20
-> >> Feel free to use yours or the separate one I sent; entirely your
-> >> call.
-> >=20
-> > I wonder if the third option isn't nicer ?
-> >=20
-> > select USB_PHY if USB select USB_ULPI select USB_ULPI_VIEWPORT
-> >=20
-> > then all changes are in tegra's Kconfig itself ?
->=20
-> I imagine that'd work although I didn't try it. However, I suspect
-> it's more correct to have USB_EHCI_TEGRA do the select (or later, do a
-> depend), since that's the option which actually has the dependency.
-> Otherwise, you're just making USB_EHCI_TEGRA's dependencies work via
-> selects in some other pretty unrelated node.
+"enable" doesn't seem like the right name here; if this really is an
+"enable" input, then it's not a regulator. If you're calling it "enable"
+because the regulator is usually controlled by a GPIO that enables it,
+then what you really have is a regulator that provides power to the
+backlight, and the method that you enable that regulator is irrelevant.
 
-alright, let's keep it your way, I'll add your Acked-by and Tested-by
-tags and push the patch to my 'next' branch, should show up in
-linux-next tomorrow.
-
---=20
-balbi
-
---hXth9cGL35Nvpk4x
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRSfhAAAoJEIaOsuA1yqREzhIP/i9bUV9XoZmrQ2//YLzxbYDX
-BVA9WD47Hi+fLHM8zb/Z6c3o2meBVqc2IiCPPt05ftlc8uh5JJ6t5N2NvvNETs7W
-hIz4MIJN0zGGh3UardwvNG+Fzm+mdeSRX+h+BgDdbqK6Bpdoifbl4vi+6XH2itbG
-Vz33VmUt4u1GSDos38k5Rlx6RlIQd7xLSkNxB36gGc6ajb7N5YJ04MohwzokYQYq
-xYay/GY0ZzDLeM1HJ6pM1FT8Wj4T9WkI+GXM0qIl5VuNcBsK8wIdIc+FTNH2C5ME
-If4YC9dMEe+EuWuWivaZ5ae4obTXNGSCCJ+DHfyKu1haBqTyNJ/rTt32NrEKat6Q
-kV3zyjQEi75+x01QTVljhm14mF1KROmn2qtZGuz/rZxLvlAmKa8TpfvNcN/D7MNM
-QINoTABcdwGQxWnMr7kcuWDAjBJ7A3FBZiqY0Rn1qeok4jdvf7m1tTzhm4LnQ6Ud
-RHGgSQ9moDwXnrAQQROZYhJuyPqSJvD9rdlgo6FL+VLqvjkXp965y1U8HEVP5nzJ
-pNQGqYle3b18xajOaIZln8NY0ctIqFm+C0PP5lUHaeKdHyTKmrh0KtsBnP7hsERN
-uIYr56W5mXHGQnXNVb/5K2Xd3yGrVbvsUSVpDQg+gA70zGxK6qrd0qY/cRXqpPps
-5aKHAlX9YA4W8xbqr43Z
-=9HnH
------END PGP SIGNATURE-----
-
---hXth9cGL35Nvpk4x--
+Put another way, wouldn't "power" be a better name, thus making the
+property "power-supply"? Although that property name migth be considered
+to have some negative correlation with other concepts, so if people
+object to that, perhaps e.g. "vdd-supply"?
