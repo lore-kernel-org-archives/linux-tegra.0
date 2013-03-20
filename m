@@ -1,39 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: USB-related build errors on Tegra in next-20130319
-Date: Wed, 20 Mar 2013 10:51:49 -0600
-Message-ID: <5149E925.7030302@wwwdotorg.org>
-References: <51489251.5040504@wwwdotorg.org> <20130320122031.GI29659@arwen.pp.htv.fi> <5149E62F.9090705@wwwdotorg.org> <20130320164553.GL1567@arwen.pp.htv.fi>
+From: Sven Joachim <svenjoac-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: Reboot/shutdown failure due to "USB: EHCI: work around silicon bug in Intel's EHCI"
+Date: Wed, 20 Mar 2013 17:54:02 +0100
+Message-ID: <878v5ic8r9.fsf@turtle.gmx.de>
+References: <Pine.LNX.4.44L0.1303201026310.1701-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130320164553.GL1567-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1303201026310.1701-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+	(Alan Stern's message of "Wed, 20 Mar 2013 10:40:04 -0400 (EDT)")
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andreas Bombe <aeb-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 10:45 AM, Felipe Balbi wrote:
-> Hi,
-> 
-> On Wed, Mar 20, 2013 at 10:39:11AM -0600, Stephen Warren wrote:
->> On 03/20/2013 06:20 AM, Felipe Balbi wrote:
-...
->> The patch you gave fixes the Kconfig warnings, but not the build
->> failure.
-...
->> For now, I think the correct solution is to have USB_EHCI_TEGRA
->> select USB_PHY. I validated that solves the build problem, and
->> has the bonus of not needing any changes to tegra_defconfig.
-...
-> Alright, do you want to send that patch ? My bad that I missed
-> that build error...
+On 2013-03-20 15:40 +0100, Alan Stern wrote:
 
-Sure. Do you want to roll it into your patch and repost it, or me to
-send a separate patch?
+> Anyway, there _is_ a mistake in the "work around silicon bug" patch; I
+> forgot to update the timeout handler.  Does the patch below help?  You 
+> should build it without CONFIG_USB_DEBUG; I changed the ehci_vdbg to 
+> ehci_info so that it would show up in the log regardless and we can see 
+> if it gets triggered.
+>
+> (Sven, this patch should replace the one I sent you earlier.)
 
-I assume you'd apply both to the same branch that contains the patches
-that add the USB_PHY config option? If the arch/arm patch gets applied
-to the Tegra tree instead, it'll cause breakage there since USB_PHY
-won't exist yet, so USB will be disabled until merged with the USB
-tree in 3.10-rc1.
+Works fine for me.
+
+Cheers,
+       Sven
+
+> Index: 3.8/drivers/usb/host/ehci-timer.c
+> ===================================================================
+> --- 3.8.orig/drivers/usb/host/ehci-timer.c
+> +++ 3.8/drivers/usb/host/ehci-timer.c
+> @@ -305,7 +305,8 @@ static void ehci_iaa_watchdog(struct ehc
+>  	 * (a) SMP races against real IAA firing and retriggering, and
+>  	 * (b) clean HC shutdown, when IAA watchdog was pending.
+>  	 */
+> -	if (ehci->async_iaa) {
+> +//	if (ehci->async_iaa) {
+> +	if (1) {
+>  		u32 cmd, status;
+>  
+>  		/* If we get here, IAA is *REALLY* late.  It's barely
+> @@ -329,7 +330,7 @@ static void ehci_iaa_watchdog(struct ehc
+>  			ehci_writel(ehci, STS_IAA, &ehci->regs->status);
+>  		}
+>  
+> -		ehci_vdbg(ehci, "IAA watchdog: status %x cmd %x\n",
+> +		ehci_info(ehci, "IAA watchdog: status %x cmd %x\n",
+>  				status, cmd);
+>  		end_unlink_async(ehci);
+>  	}
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
