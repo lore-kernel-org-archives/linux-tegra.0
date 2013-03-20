@@ -1,73 +1,87 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
- platform driver
-Date: Wed, 20 Mar 2013 17:42:56 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFE2@BGMAIL02.nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: RE: [PATCH 1/7] ARM: tegra: finalize USB EHCI and PHY bindings
+Date: Wed, 20 Mar 2013 17:45:43 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFE5@BGMAIL02.nvidia.com>
 References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <5148C1DC.1020903@wwwdotorg.org>
+ <1363609781-4045-2-git-send-email-vbyravarasu@nvidia.com>
+ <51499B3E.3080602@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51499B3E.3080602@ti.com>
 Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kishon <kishon@ti.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, "balbi@ti.com" <balbi@ti.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
 > -----Original Message-----
-> From: Venu Byravarasu
-> Sent: Wednesday, March 20, 2013 11:30 AM
-> To: 'Stephen Warren'
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> Subject: RE: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
-> platform driver
+> From: kishon [mailto:kishon@ti.com]
+> Sent: Wednesday, March 20, 2013 4:49 PM
+> To: Venu Byravarasu
+> Cc: gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
+> balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
+> swarren@wwwdotorg.org; linux-tegra@vger.kernel.org; devicetree-
+> discuss@lists.ozlabs.org
+> Subject: Re: [PATCH 1/7] ARM: tegra: finalize USB EHCI and PHY bindings
 > 
-> > -----Original Message-----
-> > From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> > Sent: Wednesday, March 20, 2013 1:22 AM
-> > To: Venu Byravarasu
-> > Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
-> > balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-> > Subject: Re: [PATCH 0/7] USB: PHY: Tegra: registering TEGRA USB PHY as
-> > platform driver
+> Hi,
+> 
+> On Monday 18 March 2013 05:59 PM, Venu Byravarasu wrote:
+> > The existing Tegra USB bindings have a few issues:
 > >
-> > On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
-> > > As part of this series, apart from patch containing changes to register
-> > TEGRA
-> > > USB PHY driver as platform driver, prepared below patches:
-> > > 1. Re-arranging & adding new DT properties.
-> > > 2. Getting various params from DT properties added.
-> > > 3. code clean up.
+> > 1) Many properties are documented as being part of the EHCI controller
+> > node, yet they apply more to the PHY device. They should be moved.
 > >
-> > Venu, I'm curious whether these patches were tested at all. I have found
-> > at least two significant problems with trivial testing:
-> 
-> Stephen,
-> Initially started testing after applying each and every patch.
-> Like that tested till first 5 patches.
-> As did not see any issues till then, applied rest 2 patches at once and tested
-> with that.
-> Though did not see mouse getting vbus on the 1st boot, Vbus was coming
-> fine after disconnect and connect.
-> Hence did not test thereafter.
-> 
-> After checking your current mail, tried now and observed that there seems to
-> be some real issue with patch#7 only. (As tried now after applying till patch#
-> 6 and did not see this issue).
-> Will debug further on patch#7 and update with proper fix after addressing
-> your other comments.
+> > 2) Some registers in PHY1 are shared with PHY3, and hence PHY3 needs a
+> > reg entry to point at PHY1's register space. We can't assume the PHY1
+> > driver is present, so the PHY3 driver will directly access those
+> > registers.
+> >
+> > 3) The list of clocks required by the PHY was missing some required
+> > entries.
+> >
+> > This patch fixes the binding definition to resolve these issues.
+> >
+> > Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+> > ---
+> >   .../bindings/usb/nvidia,tegra20-ehci.txt           |   27 +++----------------
+> >   .../bindings/usb/nvidia,tegra20-usb-phy.txt        |   27
+> +++++++++++++++++--
+> >   2 files changed, 29 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+> b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+> > index 34c9528..df09330 100644
+> > --- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+> > +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
+> > @@ -6,27 +6,10 @@ Practice : Universal Serial Bus" with the following
+> modifications
+> >   and additions :
+> >
+> >   Required properties :
+> > - - compatible : Should be "nvidia,tegra20-ehci" for USB controllers
+> > -   used in host mode.
+> > - - phy_type : Should be one of "ulpi" or "utmi".
+> >
+> >   Optional properties:
+> > -  - dr_mode : dual role mode. Indicates the working mode for
 
-Debugged further and found that the issue is because of http://marc.info/?l=linux-arm-kernel&m=135890098024987&w=2 
-On reverting that patch and applying it on top of patch#7, able to see  enumeration working fine.
-
-Anyhow, will take care of your other comments and merge this change with patch#7 and resend
-for review.
-
+> > index 6bdaba2..7ceccd3 100644
+> > --- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+> > +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+> > @@ -4,8 +4,24 @@ The device node for Tegra SOC USB PHY:
+> >
+> >   Required properties :
+> > + - phy_type : Should be one of "utmi", "ulpi" or "hsic".
 > 
-> Thanks for the review & heads up,
-> venu
+> dt property names generally dont have "_".
+
+Thanks Kishon, for your comments.
+Is it mandatory or optional?
+If it is mandatory, then I might have to change dr_mode as well along with phy_type.
+ 
 > 
+> Thanks
+> Kishon
