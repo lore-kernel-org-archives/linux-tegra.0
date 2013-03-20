@@ -1,57 +1,47 @@
-From: Sven Joachim <svenjoac-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: Reboot/shutdown failure due to "USB: EHCI: work around silicon bug in Intel's EHCI"
-Date: Wed, 20 Mar 2013 17:54:02 +0100
-Message-ID: <878v5ic8r9.fsf@turtle.gmx.de>
-References: <Pine.LNX.4.44L0.1303201026310.1701-100000@iolanthe.rowland.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/2] regulator: palmas: add input supply names
+Date: Wed, 20 Mar 2013 10:56:16 -0600
+Message-ID: <5149EA30.8020302@wwwdotorg.org>
+References: <1363598989-25112-1-git-send-email-ldewangan@nvidia.com> <20130320123128.GM28775@opensource.wolfsonmicro.com> <5149B19E.90400@nvidia.com> <5149DEB5.7000709@wwwdotorg.org> <20130320163833.GT28775@opensource.wolfsonmicro.com> <5149E6F2.5070205@wwwdotorg.org> <20130320165227.GU28775@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1303201026310.1701-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-	(Alan Stern's message of "Wed, 20 Mar 2013 10:40:04 -0400 (EDT)")
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Andreas Bombe <aeb-8fiUuRrzOP0dnm+yROfE0A@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130320165227.GU28775-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lrg-l0cyMroinI0@public.gmane.org" <lrg-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2013-03-20 15:40 +0100, Alan Stern wrote:
+On 03/20/2013 10:52 AM, Mark Brown wrote:
+> On Wed, Mar 20, 2013 at 10:42:26AM -0600, Stephen Warren wrote:
+>> On 03/20/2013 10:38 AM, Mark Brown wrote:
+>>> On Wed, Mar 20, 2013 at 10:07:17AM -0600, Stephen Warren
+>>> wrote:
+>>>> On 03/20/2013 06:54 AM, Laxman Dewangan wrote:
+> 
+>>>>> I generally send a patches on single git-send command git 
+>>>>> send-emal --to=ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org 0000.patch 0001.patch
+> 
+>>>> Don't do that; send *.patch. If you don't, then patches 2..n 
+>>>> don't end up being "in-reply-to" patch 1, so they won't show
+>>>> up as a single email thread.
+> 
+>>> The two should be equivalent (though the glob is much easier
+>>> to type)? The result of the globbing ought to be what Laxman is
+>>> typing by hand assuming that he's getting the order correct.
+> 
+>> If you send *.patch at once, git send-email adds an in-reply-to
+>> header to the email which sets up the threading. If you send the
+>> patches 1-by-1, this header isn't added, since git send-email
+>> doesn't have a clue what message ID it chose for patch 1. Unless
+>> you pass the --in-reply-to command-line option, that is.
+> 
+> Indeed - I think you may have quoted the wrong bit of Laxman's
+> mail there?  The bit you're replying to is doing it as a single
+> command, though he did talk about doing this in multiple commands
+> elsewhere in his mail.
 
-> Anyway, there _is_ a mistake in the "work around silicon bug" patch; I
-> forgot to update the timeout handler.  Does the patch below help?  You 
-> should build it without CONFIG_USB_DEBUG; I changed the ehci_vdbg to 
-> ehci_info so that it would show up in the log regardless and we can see 
-> if it gets triggered.
->
-> (Sven, this patch should replace the one I sent you earlier.)
-
-Works fine for me.
-
-Cheers,
-       Sven
-
-> Index: 3.8/drivers/usb/host/ehci-timer.c
-> ===================================================================
-> --- 3.8.orig/drivers/usb/host/ehci-timer.c
-> +++ 3.8/drivers/usb/host/ehci-timer.c
-> @@ -305,7 +305,8 @@ static void ehci_iaa_watchdog(struct ehc
->  	 * (a) SMP races against real IAA firing and retriggering, and
->  	 * (b) clean HC shutdown, when IAA watchdog was pending.
->  	 */
-> -	if (ehci->async_iaa) {
-> +//	if (ehci->async_iaa) {
-> +	if (1) {
->  		u32 cmd, status;
->  
->  		/* If we get here, IAA is *REALLY* late.  It's barely
-> @@ -329,7 +330,7 @@ static void ehci_iaa_watchdog(struct ehc
->  			ehci_writel(ehci, STS_IAA, &ehci->regs->status);
->  		}
->  
-> -		ehci_vdbg(ehci, "IAA watchdog: status %x cmd %x\n",
-> +		ehci_info(ehci, "IAA watchdog: status %x cmd %x\n",
->  				status, cmd);
->  		end_unlink_async(ehci);
->  	}
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Oh right yes. I'd seen 0000.patch and not that there were multiple
+entries in the command-line that listed (I assume) all the files.
+Sorry for the noise.
