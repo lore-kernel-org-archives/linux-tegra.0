@@ -1,67 +1,114 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: RE: [PATCH 2/7] ARM: tegra: update device trees for USB binding
- rework
-Date: Wed, 20 Mar 2013 18:00:13 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFF4@BGMAIL02.nvidia.com>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 7/7] usb: phy: registering tegra USB PHY as platform
+ driver
+Date: Wed, 20 Mar 2013 18:13:07 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E5092FFFA@BGMAIL02.nvidia.com>
 References: <1363609781-4045-1-git-send-email-vbyravarasu@nvidia.com>
- <1363609781-4045-3-git-send-email-vbyravarasu@nvidia.com>
- <51499C29.6070405@ti.com>
- <D958900912E20642BCBC71664EFECE3E6E5092FFE7@BGMAIL02.nvidia.com>
- <20130320122454.GK29659@arwen.pp.htv.fi>
+ <1363609781-4045-8-git-send-email-vbyravarasu@nvidia.com>
+ <5148C8B6.90303@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130320122454.GK29659@arwen.pp.htv.fi>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5148C8B6.90303-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: "balbi@ti.com" <balbi@ti.com>
-Cc: kishon <kishon@ti.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 > -----Original Message-----
-> From: Felipe Balbi [mailto:balbi@ti.com]
-> Sent: Wednesday, March 20, 2013 5:55 PM
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Wednesday, March 20, 2013 1:51 AM
 > To: Venu Byravarasu
-> Cc: kishon; gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
-> balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
-> swarren@wwwdotorg.org; linux-tegra@vger.kernel.org; devicetree-
-> discuss@lists.ozlabs.org
-> Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding
-> rework
+> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
+> balbi-l0cyMroinI0@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> Subject: Re: [PATCH 7/7] usb: phy: registering tegra USB PHY as platform
+> driver
 > 
-> * PGP Signed by an unknown key
-> 
-> On Wed, Mar 20, 2013 at 05:47:46PM +0530, Venu Byravarasu wrote:
-> > > -----Original Message-----
-> > > From: kishon [mailto:kishon@ti.com]
-> > > Sent: Wednesday, March 20, 2013 4:53 PM
-> > > To: Venu Byravarasu
-> > > Cc: gregkh@linuxfoundation.org; stern@rowland.harvard.edu;
-> > > balbi@ti.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > swarren@wwwdotorg.org; linux-tegra@vger.kernel.org; devicetree-
-> > > discuss@lists.ozlabs.org
-> > > Subject: Re: [PATCH 2/7] ARM: tegra: update device trees for USB binding
-> > > rework
-> > >
-> > > Hi,
-> > > >
-
-> > > > +	usb-phy@c5004000 {
-> > > This node doesn't have a *reg* property. So "@c5004000" is not needed.
-> > > This comment applies to all the nodes which doesn't have *reg* property.
+> On 03/18/2013 06:29 AM, Venu Byravarasu wrote:
+> > Registered tegra USB PHY as a separate platform driver.
 > >
-> > Thanks Kishon for the comments.
-> > As I've 3 usb-phy DT nodes, how to differentiate between them if I remove
-> this @Address ?
+> > diff --git a/drivers/usb/phy/tegra_usb_phy.c
+> b/drivers/usb/phy/tegra_usb_phy.c
 > 
-> then add reg property :-)
+> >  static void tegra_usb_phy_close(struct usb_phy *x)
+> >  {
+> >  	if (phy->is_ulpi_phy)
+> >  		clk_put(phy->clk);
+> 
+> phy->clk is obtained using devm_clk_get(). This typically means you
+> never need to clk_put() it, and if for some reason you really have to,
+> you should use devm_clk_put() instead of plain clk_put().
 
-Thanks Felipe, for confirming. 
+Agree, will remove clk_put.
+ 
+> 
+> > @@ -774,23 +667,53 @@ struct tegra_usb_phy
+> *tegra_usb_phy_open(struct device *dev, int instance,
+> 
+> > +		err = gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
+> 
+> I think you can use devm_gpio_request() here to simplify the error-handling.
+
+Sure, will do. 
 
 > 
-> --
-> balbi
+> I wonder why in the ULPI case, all the code is inline here, whereas in
+> the UTMI case, this simply calls a function. Wouldn't it be more
+> consistent to have the following code here:
 > 
-> * Unknown Key
-> * 0x35CAA444
+> 	if (phy->is_ulpi_phy)
+> 		err = ulpi_open();
+> 	else
+> 		err = utmip_open();
+> 	if (err)
+> 		goto fail;
+
+Sure, will take care of this in next patch. 
+
+> 
+> > +static int tegra_usb_phy_probe(struct platform_device *pdev)
+> 
+> Hmmm. Note that in order to make deferred probe work correctly, all the
+> gpio_request(), clk_get(), etc. calls that acquire resources from other
+> drivers must happen here in probe() and not in tegra_usb_phy_open().
+ 
+In present code tegra_usb_phy_open() is indirectly called via usb_phy_init() from ehci-tegra.c.
+Between obtaining PHY handle (and hence getting into deferred probe, when it is not available)
+and calling usb_phy_init, no other USB registers were accessed. Hence I was doing this way.
+
+Do you still think it would be better to move gpio and clk APIs to probe?
+
+> 
+> > +	err = of_property_match_string(np, "dr_mode", "otg");
+> > +	if (err < 0) {
+> > +		err = of_property_match_string(np, "dr_mode", "gadget");
+> 
+> Again, use "peripheral", not "gadget".
+
+Will do. 
+
+> 
+> > +struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
+> > +{
+> > +	struct device *dev;
+> > +	struct tegra_usb_phy *tegra_phy;
+> > +
+> > +	dev = driver_find_device(&tegra_usb_phy_driver.driver, NULL, dn,
+> > +				 tegra_usb_phy_match);
+> > +	if (!dev)
+> > +		return ERR_PTR(-EPROBE_DEFER);
+> > +
+> > +	tegra_phy = dev_get_drvdata(dev);
+> > +
+> > +	return &tegra_phy->u_phy;
+> > +}
+> 
+> I think you need a module_get() somewhere in there, and also need to add
+> a tegra_usb_put_phy() function too, so you can call module_put() from it.
+
+Am not clear on why to add module_get here. Can you plz provide more details?
+ 
+Thanks Stephen, for the review.
