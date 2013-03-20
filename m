@@ -1,48 +1,37 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clk: add table lookup to mux
-Date: Tue, 19 Mar 2013 16:51:10 -0700
-Message-ID: <20130319235110.8663.67548@quantum>
-References: <1363113747-6572-1-git-send-email-pdeschrijver@nvidia.com>
+From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fuse: add fuctions to read speedo id and
+ process id
+Date: Wed, 20 Mar 2013 09:39:17 +0800
+Message-ID: <1363743557.3573.50.camel@dahuang-vm>
+References: <1363660405-10668-1-git-send-email-dahuang@nvidia.com>
+	 <5148A8D6.8000002@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363113747-6572-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5148A8D6.8000002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-03-12 11:42:23)
-> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-> index 9c7f580..53d39c2 100644
-> --- a/include/linux/clk-private.h
-> +++ b/include/linux/clk-private.h
-> @@ -144,12 +144,13 @@ struct clk {
->  
->  #define DEFINE_CLK_MUX(_name, _parent_names, _parents, _flags, \
->                                 _reg, _shift, _width,           \
-> -                               _mux_flags, _lock)              \
-> +                               _mux_flags, _table, _lock)      \
->         static struct clk _name;                                \
->         static struct clk_mux _name##_hw = {                    \
->                 .hw = {                                         \
->                         .clk = &_name,                          \
->                 },                                              \
-> +               .table = _table,                                \
->                 .reg = _reg,                                    \
->                 .shift = _shift,                                \
->                 .width = _width,                                \
+On Wed, 2013-03-20 at 02:05 +0800, Stephen Warren wrote:
+> On 03/18/2013 08:33 PM, Danny Huang wrote:
+> > Add functions to read the speedo and process id of both cpu and soc.
+> > There might be some drivers need the information as well.
+> 
+> What code wants to use these functions? It'd be best to submit this
+> patch with that code, so that something actually uses the functions, and
+> they don't look like dead code.
 
-This breaks OMAP horribly since OMAP already uses this macro.  There are
-two options:
+There are some developing drivers that are located in drivers folder
+needs those information. I think that they can't include a header file
+in mach-tegra folder. Hence I'd like to provide them such functions for
+their development.
+Is there any better way to do this?
 
-1) stop using statically initialized data and no longer use
-clk-private.h macros.  I was under the impression that the tegra clock
-data no longer required this?
-
-2) if you must continue to use the clk-private.h macros (temporarily!)
-then create a new one, DEFINE_CLK_MUX_TABLE.
-
-Regards,
-Mike
+> 
+> In the past, functions similar to this used to exist. However, they were
+> removed and replaced by direct access to the underlying variables. Do we
+> actually need functions for this, or can code simply read from the
+> variables instead?
