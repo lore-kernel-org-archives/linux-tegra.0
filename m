@@ -1,94 +1,61 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: tegra: dalmore: add dt node for TPS65090's regulators
-Date: Wed, 20 Mar 2013 12:57:51 -0400
-Message-ID: <5149EA8F.6090806@nvidia.com>
-References: <1363787070-14801-1-git-send-email-ldewangan@nvidia.com> <1363787070-14801-4-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363787070-14801-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] USB: EHCI: have USB_EHCI_TEGRA select USB_PHY
+Date: Wed, 20 Mar 2013 11:10:38 -0600
+Message-ID: <1363799438-24665-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/20/2013 9:44 AM, Laxman Dewangan wrote:
-> NVIDIA's Tegra114 platform, Dalmore, uses the TPS65090 as
-> secondary PMICs which mainly act as voltage switch controlled
-> by I2C communication.
-> 
-> Add regulator node for this device.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../devicetree/bindings/regulator/tps65090.txt     |    4 +-
->  arch/arm/boot/dts/tegra114-dalmore.dts             |   90 ++++++++++++++++++++
->  2 files changed, 92 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt b/Documentation/devicetree/bindings/regulator/tps65090.txt
-> index 313a60b..8926e2d 100644
-> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
-> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
-> @@ -41,8 +41,8 @@ Example:
->  		infet5-supply = <&some_reg>;
->  		infet6-supply = <&some_reg>;
->  		infet7-supply = <&some_reg>;
-> -		vsys_l1-supply = <&some_reg>;
-> -		vsys_l2-supply = <&some_reg>;
-> +		vsys-l1-supply = <&some_reg>;
-> +		vsys-l2-supply = <&some_reg>;
->  
->  		regulators {
->  			dcdc1 {
-> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-> index 6be9434..a47c3d2 100644
-> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
-> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-> @@ -731,6 +731,82 @@
->  			regulator-boot-on;
->  			regulator-always-on;
->  		};
-> +
-> +		tps65090@48 {
-> +			compatible = "ti,tps65090";
-> +			reg = <0x48>;
-> +			interrupt-parent = <&gpio>;
-> +			interrupts = <72 0x04>; /* gpio PJ0 */
-> +
-> +			vsys1-supply = <&vdd_ac_bat_reg>;
-> +			vsys2-supply = <&vdd_ac_bat_reg>;
-> +			vsys3-supply = <&vdd_ac_bat_reg>;
-> +			infet1-supply = <&vdd_ac_bat_reg>;
-> +			infet2-supply = <&vdd_ac_bat_reg>;
-> +			infet3-supply = <&tps65090_dcdc2_reg>;
-> +			infet4-supply = <&tps65090_dcdc2_reg>;
-> +			infet5-supply = <&tps65090_dcdc2_reg>;
-> +			infet6-supply = <&tps65090_dcdc2_reg>;
-> +			infet7-supply = <&tps65090_dcdc2_reg>;
-> +			vsys-l1-supply = <&vdd_ac_bat_reg>;
-> +			vsys-l2-supply = <&vdd_ac_bat_reg>;
-> +
-> +			regulators {
-> +				dcdc1 {
-> +					regulator-name = "vdd-sys-5v0";
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-You should also add the tps65090_dcdc1_reg label to dcdc1. I believe you
-make use of it in patch 4 and this currently causes build breaks.
+ehci-tegra.c calls functions in phy-usb-tegra.c. Hence, that file must
+be built if ehci-tegra.c is. To ensure this, drivers/usb/phy/Makefile
+always builds phy-usb-tegra.c under the same Kconfig option that builds
+ehci-tegra.c. However, after the following commits:
 
-> +
-> +				tps65090_dcdc2_reg: dcdc2 {
-> +					regulator-name = "vdd-sys-3v3";
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> 
+1c20888 usb: Makefile: fix drivers/usb/phy/ Makefile entry
+a0e6312 usb: phy: move all PHY drivers to drivers/usb/phy/
+fd89149 usb: phy: remove CONFIG_USB_OTG_UTILS
 
--rhyland
+drivers/usb/Makefile requires USB_PHY to be enabled in order to process
+drivers/usb/phy/Makefile at all. To solve this, have USB_EHCI_TEGRA
+select USB_PHY.
 
+The long-term solution is to either/both:
+
+a) Create a separate Kconfig option for phy-usb-tegra.c, update
+   USB_EHCI_TEGRA to depend on that.
+
+b) Have ehci-tegra.c access phy-usb-tegra.c using standardized APIs, and
+   hence avoid the direct dependency. Part of this will be resolved by
+   Venu's forthcoming Tegra USB cleanup series. Other aspects may rely
+   on Kishon's generic PHY framework APIs.
+
+In either case, the changes will require some updates to tegra_defconfig.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/host/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 8e1bca3..f7af098 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -180,6 +180,7 @@ config USB_EHCI_TEGRA
+        boolean "NVIDIA Tegra HCD support"
+        depends on USB_EHCI_HCD && ARCH_TEGRA
+        select USB_EHCI_ROOT_HUB_TT
++       select USB_PHY
+        help
+          This driver enables support for the internal USB Host Controllers
+          found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
 -- 
-nvpublic
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
