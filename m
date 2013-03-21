@@ -1,37 +1,66 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 1/4] ARM: tegra: dalmore: add cpu regulator node
-Date: Thu, 21 Mar 2013 11:30:45 -0600
-Message-ID: <514B43C5.6060404@wwwdotorg.org>
-References: <1363873663-19272-1-git-send-email-ldewangan@nvidia.com> <1363873663-19272-2-git-send-email-ldewangan@nvidia.com> <514B1412.9060707@cogentembedded.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
+Date: Thu, 21 Mar 2013 19:31:00 +0200
+Message-ID: <20130321173100.GB16186@arwen.pp.htv.fi>
+References: <1363868603-14525-1-git-send-email-balbi@ti.com>
+ <514B4137.2020707@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <514B1412.9060707-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <514B4137.2020707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2013 08:07 AM, Sergei Shtylyov wrote:
-> Hello.
-> 
-> On 21-03-2013 17:47, Laxman Dewangan wrote:
-> 
->> Dalmore uses the TPS51632 as CPU regulator. The device is connected
->> on I2C5.
-> 
->> Add DT node for TPS51632.
+--CdrF4e02JqNVZeln
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
+On Thu, Mar 21, 2013 at 11:19:51AM -0600, Stephen Warren wrote:
+> On 03/21/2013 06:23 AM, Felipe Balbi wrote:
+> > PHY layer no longer returns NULL, we must
+> > switch from IS_ERR_OR_NULL() to IS_ERR().
+>=20
+> The patches that I'll put into my topic branch are not yet complete;
+> Venu first posted them a couple days back and there are a number of
+> issues that will require a repost.
+>=20
+> I would suggest that you apply your patch to your tree, and when Venu
 
->> +    i2c@7000d000 {
->> +        status = "okay";
->> +        clock-frequency = <400000>;
->> +
->> +        tps51632 {
-> 
->    Should be named "tps51632@43" I think.
+alright, in that case, can I get yours or Venu's Acked-by ?
 
-The unit-address (i.e. "@43" part) of the node name is typically omitted
-if it isn't required to make the node name unique.
+--=20
+balbi
+
+--CdrF4e02JqNVZeln
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRS0PUAAoJEIaOsuA1yqREX9wP/0Vl8KIchCif2iNVC5HHGsL2
+a1V6o/qQaFpq24kJwv3QzD21TnlpF0RrNLqQGfuySnVeQXH+ecOlCdTfiP9MnmwN
+zN8+lhDWtEU0Xcuaiv3ZOc5d6OpHHv/HGPFw+sP/Xhg4n3vXEq2dm493Z3F4jixk
+hRT9zOKepzjUdF7XsxjkwAJzDLY0G5hNIjybyh7fWlTUBwRxYb3NoDFeoPDi2OpB
+iE4UFzn3JXioxCMxlLzLYnDtkdIsLZefhWJ1qR+GwLP3PksY7QrQax8kfN4nJiHD
+5SzggJAhsd4/7LhzSRgTqMBFBsssBCgu9xwzXMw33pDoje8b8c9A/KrxCHnnXTUT
+Yr1BhavudrNc2AdIc6tc535PhftBGc5iA4ilSzVMZFZSsaxJsO4Ph7SxbLbgzFOB
+GmRwY9xMdqfFkQbKMwFbrza3FWDDJFtQe21bbJDJPCmk2qYpVmbVrGErk9y8/6Uu
+eSxcb5sShWNwnyOJ/H5MrtyZf+vJDc/nJEceQ6wBYigblYbYvlyQl2xEH3axWAJn
+GOj7M3gWg1o81zqr6+oYufobWHcz0Cf569M70F70BAXhOALG7g3hrsErUKmHKyW/
+CW6ojSyZz/1t6LfbpPDDxx+ykW6jcwJLMdJ0tPg6RSPU8hfE4c7YQrg7q6O4QGmB
+u7lBtFO4YP42NiXVSiOn
+=pbW9
+-----END PGP SIGNATURE-----
+
+--CdrF4e02JqNVZeln--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
