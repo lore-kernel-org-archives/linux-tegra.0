@@ -1,22 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V4 8/9] ARM: tegra: Provide regulator to pwm-backlight
-Date: Thu, 21 Mar 2013 14:01:54 -0600
-Message-ID: <514B6732.7020107@wwwdotorg.org>
-References: <1363719573-20926-1-git-send-email-achew@nvidia.com> <1363719573-20926-9-git-send-email-achew@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [Patch V4 2/2] mfd: tps65090: Add resources for charger
+Date: Thu, 21 Mar 2013 16:30:42 -0400
+Message-ID: <1363897842-19835-2-git-send-email-rklein@nvidia.com>
+References: <1363897842-19835-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1363719573-20926-9-git-send-email-achew@nvidia.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Andrew Chew <achew@nvidia.com>
-Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, linux@prisktech.co.nz, thierry.reding@avionic-design.de, acourbot@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1363897842-19835-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/19/2013 12:59 PM, Andrew Chew wrote:
-> The pwm-backlight driver now takes a mandatory regulator that is gotten
-> during driver probe.  Initialize a dummy regulator to satisfy this
-> requirement.
+Add irq resources to pass to the charger mfd sub dev so
+the charger can listen for interrupts.
 
-I assume these patches will get merged through the PWM tree? If so,
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+---
+v4:
+ - Added of_compatible string to resources for tps65090-charger
+v3:
+ - no changes since v2
+v2:
+ - no changes since v1
+
+ drivers/mfd/tps65090.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index 98edb5be..fbd6ee6 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -56,12 +56,23 @@
+ #define TPS65090_INT2_MASK_OVERLOAD_FET6		6
+ #define TPS65090_INT2_MASK_OVERLOAD_FET7		7
+ 
++static struct resource charger_resources[] = {
++	{
++		.start  = TPS65090_IRQ_VAC_STATUS_CHANGE,
++		.end    = TPS65090_IRQ_VAC_STATUS_CHANGE,
++		.flags  = IORESOURCE_IRQ,
++	}
++};
++
+ static struct mfd_cell tps65090s[] = {
+ 	{
+ 		.name = "tps65090-pmic",
+ 	},
+ 	{
+ 		.name = "tps65090-charger",
++		.num_resources = ARRAY_SIZE(charger_resources),
++		.resources = &charger_resources[0],
++		.of_compatible = "ti,tps65090-charger",
+ 	},
+ };
+ 
+-- 
+1.7.9.5
