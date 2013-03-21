@@ -1,36 +1,24 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
-Date: Thu, 21 Mar 2013 11:19:51 -0600
-Message-ID: <514B4137.2020707@wwwdotorg.org>
-References: <1363868603-14525-1-git-send-email-balbi@ti.com>
+Subject: Re: [PATCH] gpio: palmas: add dt support
+Date: Thu, 21 Mar 2013 11:29:47 -0600
+Message-ID: <514B438B.80603@wwwdotorg.org>
+References: <1363876214-25933-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363868603-14525-1-git-send-email-balbi-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363876214-25933-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Graeme Gregory <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, Ian Lartey <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "J, KEERTHY" <j-keerthy-l0cyMroinI0@public.gmane.org>, "Kristo, Tero" <t-kristo-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2013 06:23 AM, Felipe Balbi wrote:
-> PHY layer no longer returns NULL, we must
-> switch from IS_ERR_OR_NULL() to IS_ERR().
+On 03/21/2013 08:30 AM, Laxman Dewangan wrote:
+> Add of_device_id table for Palma GPIO to be enable the
+> driver from DT file.
 
-The patches that I'll put into my topic branch are not yet complete;
-Venu first posted them a couple days back and there are a number of
-issues that will require a repost.
-
-I would suggest that you apply your patch to your tree, and when Venu
-reposts his patches, he'll need to make sure he's rebased on top of this
-patch.
-
-Venu, just so you're clear: The device tree changes in your series (the
-first 2 or 3 patches) will be applied to a branch based directly to
-v3.9-rc1, which will then get merged into both Felipe's USB tree and the
-Tegra tree. The USB driver changes in your series will then be applied
-to Felipe's USB branch, so please make sure they apply there. Thanks.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On this, the RTC patches, and the regulator patches, I think you should
+be Ccing the Slimlogic guys (CC'd now) and perhaps some people from TI
+(CC'd now; I hope the right people) , to make sure so that you're all on
+the same page w.r.t. how the DT bindings work, and so you don't step on
+each-others toes.
