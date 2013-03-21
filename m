@@ -1,74 +1,32 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
-Date: Thu, 21 Mar 2013 14:23:23 +0200
-Message-ID: <1363868603-14525-1-git-send-email-balbi@ti.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 0/4] ARM: tegra: dalmore: add regulators
+Date: Thu, 21 Mar 2013 19:17:39 +0530
+Message-ID: <1363873663-19272-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: swarren@nvidia.com
+Cc: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PHY layer no longer returns NULL, we must
-switch from IS_ERR_OR_NULL() to IS_ERR().
+This series add the regulators for Dalmore platform.
+Dalmore also have the Palma PMIC as primary PMIC but 
+dt population will be send later once DT documentation
+finalize.
 
-Signed-off-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
----
+Changes from V1:
+- Rearrange patches so that config change will be last patch.
+- Correct some sentence and Caps.
+- fix compilation issue arise in mid of patches.
 
-Hi Stephen,
+Laxman Dewangan (4):
+  ARM: tegra: dalmore: add cpu regulator node
+  ARM: tegra: dalmore: add TPS65090 node
+  ARM: tegra: dalmore: add fixed regulator node
+  ARM: tegra: enable Tegra114 based platform PMICs
 
-I'm waiting for your topic branch before I can merge
-this into my 'next' branch.
+ arch/arm/boot/dts/tegra114-dalmore.dts |  162 ++++++++++++++++++++++++++++++++
+ arch/arm/configs/tegra_defconfig       |    7 ++
+ 2 files changed, 169 insertions(+), 0 deletions(-)
 
-cheers
-
- drivers/usb/host/ehci-tegra.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index fafbc81..1d2488c 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -768,14 +768,12 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 		goto fail;
- 	}
- 
--#if IS_ENABLED(CONFIG_USB_PHY)
- 	if (pdata->operating_mode == TEGRA_USB_OTG) {
- 		tegra->transceiver =
- 			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--		if (!IS_ERR_OR_NULL(tegra->transceiver))
-+		if (!IS_ERR(tegra->transceiver))
- 			otg_set_host(tegra->transceiver->otg, &hcd->self);
- 	}
--#endif
- 
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
-@@ -794,10 +792,8 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	return err;
- 
- fail:
--#if IS_ENABLED(CONFIG_USB_PHY)
--	if (!IS_ERR_OR_NULL(tegra->transceiver))
-+	if (!IS_ERR(tegra->transceiver))
- 		otg_set_host(tegra->transceiver->otg, NULL);
--#endif
- 	usb_phy_shutdown(hcd->phy);
- fail_io:
- 	clk_disable_unprepare(tegra->clk);
-@@ -815,10 +811,8 @@ static int tegra_ehci_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_put_noidle(&pdev->dev);
- 
--#if IS_ENABLED(CONFIG_USB_PHY)
--	if (!IS_ERR_OR_NULL(tegra->transceiver))
-+	if (!IS_ERR(tegra->transceiver))
- 		otg_set_host(tegra->transceiver->otg, NULL);
--#endif
- 
- 	usb_phy_shutdown(hcd->phy);
- 	usb_remove_hcd(hcd);
--- 
-1.8.2
