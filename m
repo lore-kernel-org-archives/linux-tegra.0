@@ -1,45 +1,49 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 2/2] clk: tegra: add ac97 controller clock
-Date: Thu, 21 Mar 2013 15:01:03 +0100
-Message-ID: <1363874463.1846.2.camel@antimon>
-References: <1359325055-5160-1-git-send-email-dev@lynxeye.de>
-	 <1359325055-5160-2-git-send-email-dev@lynxeye.de>
-	 <5106CE6D.9030008@wwwdotorg.org> <1359401144.1558.11.camel@tellur>
-	 <5106EB03.6080606@wwwdotorg.org>
-	 <20130130093525.GC2364@tbergstrom-lnx.Nvidia.com>
-	 <51096618.3000100@wwwdotorg.org>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH V2 1/4] ARM: tegra: dalmore: add cpu regulator node
+Date: Thu, 21 Mar 2013 18:07:14 +0400
+Message-ID: <514B1412.9060707@cogentembedded.com>
+References: <1363873663-19272-1-git-send-email-ldewangan@nvidia.com> <1363873663-19272-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51096618.3000100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1363873663-19272-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Mittwoch, den 30.01.2013, 11:27 -0700 schrieb Stephen Warren:
-> On 01/30/2013 02:35 AM, Peter De Schrijver wrote:
-> >>
-> >>> and also ac97 clock == pll_a_out0, so you can
-> >>> just as well use the pll out in that case.
-> >>
-> >> I suspect that "ac97 clock == pll_a_out0" isn't categorically true; it's
-> >> quite possible that the TRM simply doesn't document the mux
-> >> register/field for the ac97 clock since the ac97 module is considered
-> >> deprecated. The diagram at the end of section 5.2.3 "Audio Clocks"
-> >> certainly implies that all of the i2s*, spdifout, and ac97 clocks have
-> >> the same structure.
-> > 
-> > It indeed does, but I can't find any reference to a mux control register for
-> > ac97 in any document...
-> 
-> For both these two issues, I'll try and track down the relevant HW
-> engineers or other sources of documentation internally...
-> 
-Ping.
-I would really like to see those two patches in 3.9, as otherwise
-Colibri T20 boots up with kernel warnings and a non-functional audio.
+Hello.
 
-Regards,
-Lucas
+On 21-03-2013 17:47, Laxman Dewangan wrote:
+
+> Dalmore uses the TPS51632 as CPU regulator. The device is connected
+> on I2C5.
+
+> Add DT node for TPS51632.
+
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>   arch/arm/boot/dts/tegra114-dalmore.dts |   15 +++++++++++++++
+>   1 files changed, 15 insertions(+), 0 deletions(-)
+
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+> index a61974e..6be9434 100644
+> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
+> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+> @@ -718,6 +718,21 @@
+>   		clock-frequency = <408000000>;
+>   	};
+>
+> +	i2c@7000d000 {
+> +		status = "okay";
+> +		clock-frequency = <400000>;
+> +
+> +		tps51632 {
+
+    Should be named "tps51632@43" I think.
+
+> +			compatible = "ti,tps51632";
+> +			reg = <0x43>;
+
+WBR, Sergei
