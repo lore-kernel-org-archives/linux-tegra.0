@@ -1,22 +1,46 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH REPOST 2] drm: tegra: don't depend on OF
-Date: Thu, 21 Mar 2013 13:03:35 -0600
-Message-ID: <514B5987.4040704@wwwdotorg.org>
-References: <1363888630-30197-1-git-send-email-swarren@wwwdotorg.org> <CAF6AEGs0Sw=-xGv9+Aq6xnTktE3R4xcGPokVpmjqEAC1uOct8A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] clk: tegra: set up audio clocks on Tegra114
+Date: Thu, 21 Mar 2013 13:45:15 -0600
+Message-ID: <1363895115-14129-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAF6AEGs0Sw=-xGv9+Aq6xnTktE3R4xcGPokVpmjqEAC1uOct8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2013 01:02 PM, Rob Clark wrote:
-> How far away are we from supporting tegradrm with ARCH_MULTIPLATFORM?
-> It would be nice to be able to at least compile-test drm core changes
-> with all the arm drivers in one shot..
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Pretty close. It might happen in 3.10 if I get time, otherwise it should
-happen for 3.11.
+This sets up all the audio-related clocks on Tegra114 in the same way
+as they are set up on previous chips.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Peter, do you want to roll this into your CCF series V8, or should I apply
+it seperately?
+---
+ drivers/clk/tegra/clk-tegra114.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 81101f1..9aa87b5 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1979,6 +1979,16 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{uartb, pll_p, 408000000, 0},
+ 	{uartc, pll_p, 408000000, 0},
+ 	{uartd, pll_p, 408000000, 0},
++	{pll_a, clk_max, 564480000, 1},
++	{pll_a_out0, clk_max, 11289600, 1},
++	{extern1, pll_a_out0, 0, 1},
++	{clk_out_1_mux, extern1, 0, 0},
++	{clk_out_1, clk_max, 0, 1},
++	{i2s0, pll_a_out0, 11289600, 0},
++	{i2s1, pll_a_out0, 11289600, 0},
++	{i2s2, pll_a_out0, 11289600, 0},
++	{i2s3, pll_a_out0, 11289600, 0},
++	{i2s4, pll_a_out0, 11289600, 0},
+ 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
+ };
+ 
+-- 
+1.7.10.4
