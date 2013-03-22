@@ -1,296 +1,828 @@
-From: Terje Bergstrom <tbergstrom@nvidia.com>
-Subject: [PATCHv8 4/9] gpu: host1x: Add debug support
-Date: Fri, 22 Mar 2013 10:30:01 +0200
-Message-ID: <1363941006-14204-5-git-send-email-tbergstrom@nvidia.com>
+From: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv8 7/9] gpu: host1x: Remove second host1x driver
+Date: Fri, 22 Mar 2013 10:30:04 +0200
+Message-ID: <1363941006-14204-8-git-send-email-tbergstrom@nvidia.com>
 References: <1363941006-14204-1-git-send-email-tbergstrom@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1363941006-14204-1-git-send-email-tbergstrom@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: airlied@linux.ie, thierry.reding@avionic-design.de, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, amerilainen@nvidia.com, Terje Bergstrom <tbergstrom@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363941006-14204-1-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for host1x debugging. Adds debugfs entries, and dumps
-channel state to UART in case of stuck job.
+Remove second host1x driver, and bind tegra-drm to the new host1x
+driver. The logic to parse device tree and track clients is moved
+to drm.c.
 
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
-Signed-off-by: Terje Bergstrom <tbergstrom@nvidia.com>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/Makefile                 |    1 +
- drivers/gpu/host1x/cdma.c                   |    4 +
- drivers/gpu/host1x/debug.c                  |  210 +++++++++++++++++
- drivers/gpu/host1x/debug.h                  |   51 +++++
- drivers/gpu/host1x/dev.c                    |    3 +
- drivers/gpu/host1x/dev.h                    |   42 ++++
- drivers/gpu/host1x/hw/cdma_hw.c             |    2 +
- drivers/gpu/host1x/hw/channel_hw.c          |   25 +++
- drivers/gpu/host1x/hw/debug_hw.c            |  322 +++++++++++++++++++++++++++
- drivers/gpu/host1x/hw/host1x01.c            |    2 +
- drivers/gpu/host1x/hw/hw_host1x01_channel.h |   18 ++
- drivers/gpu/host1x/hw/hw_host1x01_sync.h    |  115 ++++++++++
- drivers/gpu/host1x/hw/hw_host1x01_uclass.h  |    6 +
- drivers/gpu/host1x/hw/syncpt_hw.c           |    1 +
- drivers/gpu/host1x/syncpt.c                 |    5 +
- 15 files changed, 807 insertions(+)
- create mode 100644 drivers/gpu/host1x/debug.c
- create mode 100644 drivers/gpu/host1x/debug.h
- create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
+ drivers/gpu/host1x/Makefile        |    2 +-
+ drivers/gpu/host1x/dev.c           |   58 ++++++-
+ drivers/gpu/host1x/dev.h           |    6 +
+ drivers/gpu/host1x/drm/Kconfig     |    2 +-
+ drivers/gpu/host1x/drm/dc.c        |    5 +-
+ drivers/gpu/host1x/drm/drm.c       |  214 ++++++++++++++++++++++-
+ drivers/gpu/host1x/drm/drm.h       |    3 -
+ drivers/gpu/host1x/drm/hdmi.c      |    5 +-
+ drivers/gpu/host1x/drm/host1x.c    |  329 ------------------------------------
+ drivers/gpu/host1x/host1x_client.h |   35 ++++
+ 10 files changed, 317 insertions(+), 342 deletions(-)
+ delete mode 100644 drivers/gpu/host1x/drm/host1x.c
+ create mode 100644 drivers/gpu/host1x/host1x_client.h
 
 diff --git a/drivers/gpu/host1x/Makefile b/drivers/gpu/host1x/Makefile
-index 06a995b..49fd580 100644
+index 4761e8a..9a6fc76 100644
 --- a/drivers/gpu/host1x/Makefile
 +++ b/drivers/gpu/host1x/Makefile
-@@ -7,6 +7,7 @@ host1x-y = \
- 	cdma.o \
- 	channel.o \
- 	job.o \
-+	debug.o \
- 	hw/host1x01.o
+@@ -13,6 +13,6 @@ host1x-y = \
+ ccflags-y += -Iinclude/drm
+ ccflags-$(CONFIG_DRM_TEGRA_DEBUG) += -DDEBUG
  
+-host1x-$(CONFIG_DRM_TEGRA) += drm/drm.o drm/fb.o drm/dc.o drm/host1x.o
++host1x-$(CONFIG_DRM_TEGRA) += drm/drm.o drm/fb.o drm/dc.o
+ host1x-$(CONFIG_DRM_TEGRA) += drm/output.o drm/rgb.o drm/hdmi.o
  obj-$(CONFIG_TEGRA_HOST1X) += host1x.o
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index 33935de..de72172 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -439,6 +439,10 @@ void host1x_cdma_push(struct host1x_cdma *cdma, u32 op1, u32 op2)
- 	struct push_buffer *pb = &cdma->push_buffer;
- 	u32 slots_free = cdma->slots_free;
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 9689724..8ce9889 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -32,6 +32,19 @@
+ #include "channel.h"
+ #include "debug.h"
+ #include "hw/host1x01.h"
++#include "host1x_client.h"
++
++void host1x_set_drm_data(struct device *dev, void *data)
++{
++	struct host1x *host1x = dev_get_drvdata(dev);
++	host1x->drm_data = data;
++}
++
++void *host1x_get_drm_data(struct device *dev)
++{
++	struct host1x *host1x = dev_get_drvdata(dev);
++	return host1x->drm_data;
++}
  
-+	if (host1x_debug_trace_cmdbuf)
-+		trace_host1x_cdma_push(dev_name(cdma_to_channel(cdma)->dev),
-+				       op1, op2);
+ void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r)
+ {
+@@ -150,6 +163,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 
+ 	host1x_debug_init(host);
+ 
++	host1x_drm_alloc(pdev);
 +
- 	if (slots_free == 0) {
- 		host1x_hw_cdma_flush(host1x, cdma);
- 		slots_free = host1x_cdma_wait_locked(cdma,
-diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
-new file mode 100644
-index 0000000..3ec7d77
---- /dev/null
-+++ b/drivers/gpu/host1x/debug.c
-@@ -0,0 +1,210 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ * Author: Erik Gilling <konkers@android.com>
-+ *
-+ * Copyright (C) 2011-2013 NVIDIA Corporation
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
-+#include <linux/uaccess.h>
-+
-+#include <linux/io.h>
-+
-+#include "dev.h"
-+#include "debug.h"
-+#include "channel.h"
-+
-+unsigned int host1x_debug_trace_cmdbuf;
-+
-+static pid_t host1x_debug_force_timeout_pid;
-+static u32 host1x_debug_force_timeout_val;
-+static u32 host1x_debug_force_timeout_channel;
-+
-+void host1x_debug_output(struct output *o, const char *fmt, ...)
+ 	return 0;
+ 
+ fail_deinit_syncpt:
+@@ -168,7 +183,7 @@ static int __exit host1x_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct platform_driver platform_driver = {
++static struct platform_driver tegra_host1x_driver = {
+ 	.probe = host1x_probe,
+ 	.remove = __exit_p(host1x_remove),
+ 	.driver = {
+@@ -178,8 +193,47 @@ static struct platform_driver platform_driver = {
+ 	},
+ };
+ 
+-module_platform_driver(platform_driver);
++static int __init tegra_host1x_init(void)
 +{
-+	va_list args;
-+	int len;
++	int err;
 +
-+	va_start(args, fmt);
-+	len = vsnprintf(o->buf, sizeof(o->buf), fmt, args);
-+	va_end(args);
-+	o->fn(o->ctx, o->buf, len);
-+}
++	err = platform_driver_register(&tegra_host1x_driver);
++	if (err < 0)
++		return err;
 +
-+static int show_channels(struct host1x_channel *ch, void *data, bool show_fifo)
-+{
-+	struct host1x *m = dev_get_drvdata(ch->dev->parent);
-+	struct output *o = data;
++#ifdef CONFIG_DRM_TEGRA
++	err = platform_driver_register(&tegra_dc_driver);
++	if (err < 0)
++		goto unregister_host1x;
 +
-+	mutex_lock(&ch->reflock);
-+	if (ch->refcount) {
-+		mutex_lock(&ch->cdma.lock);
-+		if (show_fifo)
-+			host1x_hw_show_channel_fifo(m, ch, o);
-+		host1x_hw_show_channel_cdma(m, ch, o);
-+		mutex_unlock(&ch->cdma.lock);
-+	}
-+	mutex_unlock(&ch->reflock);
-+
-+	return 0;
-+}
-+
-+static void show_syncpts(struct host1x *m, struct output *o)
-+{
-+	int i;
-+	host1x_debug_output(o, "---- syncpts ----\n");
-+	for (i = 0; i < host1x_syncpt_nb_pts(m); i++) {
-+		u32 max = host1x_syncpt_read_max(m->syncpt + i);
-+		u32 min = host1x_syncpt_load(m->syncpt + i);
-+		if (!min && !max)
-+			continue;
-+		host1x_debug_output(o, "id %d (%s) min %d max %d\n",
-+				    i, m->syncpt[i].name, min, max);
-+	}
-+
-+	for (i = 0; i < host1x_syncpt_nb_bases(m); i++) {
-+		u32 base_val;
-+		base_val = host1x_syncpt_load_wait_base(m->syncpt + i);
-+		if (base_val)
-+			host1x_debug_output(o, "waitbase id %d val %d\n", i,
-+					    base_val);
-+	}
-+
-+	host1x_debug_output(o, "\n");
-+}
-+
-+static void show_all(struct host1x *m, struct output *o)
-+{
-+	struct host1x_channel *ch;
-+
-+	host1x_hw_show_mlocks(m, o);
-+	show_syncpts(m, o);
-+	host1x_debug_output(o, "---- channels ----\n");
-+
-+	host1x_for_each_channel(m, ch)
-+		show_channels(ch, o, true);
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static void show_all_no_fifo(struct host1x *host1x, struct output *o)
-+{
-+	struct host1x_channel *ch;
-+
-+	host1x_hw_show_mlocks(host1x, o);
-+	show_syncpts(host1x, o);
-+	host1x_debug_output(o, "---- channels ----\n");
-+
-+	host1x_for_each_channel(host1x, ch)
-+		show_channels(ch, o, false);
-+}
-+
-+static int host1x_debug_show_all(struct seq_file *s, void *unused)
-+{
-+	struct output o = {
-+		.fn = write_to_seqfile,
-+		.ctx = s
-+	};
-+	show_all(s->private, &o);
-+	return 0;
-+}
-+
-+static int host1x_debug_show(struct seq_file *s, void *unused)
-+{
-+	struct output o = {
-+		.fn = write_to_seqfile,
-+		.ctx = s
-+	};
-+	show_all_no_fifo(s->private, &o);
-+	return 0;
-+}
-+
-+static int host1x_debug_open_all(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, host1x_debug_show_all, inode->i_private);
-+}
-+
-+static const struct file_operations host1x_debug_all_fops = {
-+	.open		= host1x_debug_open_all,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static int host1x_debug_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, host1x_debug_show, inode->i_private);
-+}
-+
-+static const struct file_operations host1x_debug_fops = {
-+	.open		= host1x_debug_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+void host1x_debug_init(struct host1x *host1x)
-+{
-+	struct dentry *de = debugfs_create_dir("tegra-host1x", NULL);
-+
-+	if (!de)
-+		return;
-+
-+	/* Store the created entry */
-+	host1x->debugfs = de;
-+
-+	debugfs_create_file("status", S_IRUGO, de, host1x, &host1x_debug_fops);
-+	debugfs_create_file("status_all", S_IRUGO, de, host1x,
-+			    &host1x_debug_all_fops);
-+
-+	debugfs_create_u32("trace_cmdbuf", S_IRUGO|S_IWUSR, de,
-+			   &host1x_debug_trace_cmdbuf);
-+
-+	host1x_hw_debug_init(host1x, de);
-+
-+	debugfs_create_u32("force_timeout_pid", S_IRUGO|S_IWUSR, de,
-+			   &host1x_debug_force_timeout_pid);
-+	debugfs_create_u32("force_timeout_val", S_IRUGO|S_IWUSR, de,
-+			   &host1x_debug_force_timeout_val);
-+	debugfs_create_u32("force_timeout_channel", S_IRUGO|S_IWUSR, de,
-+			   &host1x_debug_force_timeout_channel);
-+}
-+
-+void host1x_debug_deinit(struct host1x *host1x)
-+{
-+	debugfs_remove_recursive(host1x->debugfs);
-+}
-+#else
-+void host1x_debug_init(struct host1x *host1x)
-+{
-+}
-+void host1x_debug_deinit(struct host1x *host1x)
-+{
-+}
++	err = platform_driver_register(&tegra_hdmi_driver);
++	if (err < 0)
++		goto unregister_dc;
 +#endif
 +
-+void host1x_debug_dump(struct host1x *host1x)
++	return 0;
++
++#ifdef CONFIG_DRM_TEGRA
++unregister_dc:
++	platform_driver_unregister(&tegra_dc_driver);
++unregister_host1x:
++	platform_driver_unregister(&tegra_host1x_driver);
++	return err;
++#endif
++}
++module_init(tegra_host1x_init);
++
++static void __exit tegra_host1x_exit(void)
 +{
-+	struct output o = {
-+		.fn = write_to_printk
-+	};
-+	show_all(host1x, &o);
++#ifdef CONFIG_DRM_TEGRA
++	platform_driver_unregister(&tegra_hdmi_driver);
++	platform_driver_unregister(&tegra_dc_driver);
++#endif
++	platform_driver_unregister(&tegra_host1x_driver);
++}
++module_exit(tegra_host1x_exit);
+ 
++MODULE_AUTHOR("Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>");
+ MODULE_AUTHOR("Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+ MODULE_DESCRIPTION("Host1x driver for Tegra products");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 4d16fe9..a1607d6 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -124,6 +124,8 @@ struct host1x {
+ 	unsigned int num_allocated_channels;
+ 
+ 	struct dentry *debugfs;
++
++	void *drm_data;
+ };
+ 
+ void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
+@@ -299,4 +301,8 @@ static inline void host1x_hw_show_mlocks(struct host1x *host, struct output *o)
+ 	host->debug_op->show_mlocks(host, o);
+ }
+ 
++extern struct platform_driver tegra_hdmi_driver;
++extern struct platform_driver tegra_dc_driver;
++extern struct platform_driver tegra_gr2d_driver;
++
+ #endif
+diff --git a/drivers/gpu/host1x/drm/Kconfig b/drivers/gpu/host1x/drm/Kconfig
+index be1daf7..7db9b3a 100644
+--- a/drivers/gpu/host1x/drm/Kconfig
++++ b/drivers/gpu/host1x/drm/Kconfig
+@@ -1,5 +1,5 @@
+ config DRM_TEGRA
+-	tristate "NVIDIA Tegra DRM"
++	bool "NVIDIA Tegra DRM"
+ 	depends on DRM && OF && ARCH_TEGRA
+ 	select DRM_KMS_HELPER
+ 	select DRM_GEM_CMA_HELPER
+diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
+index d1f6609..29a79b6 100644
+--- a/drivers/gpu/host1x/drm/dc.c
++++ b/drivers/gpu/host1x/drm/dc.c
+@@ -16,6 +16,7 @@
+ 
+ #include "drm.h"
+ #include "dc.h"
++#include "host1x_client.h"
+ 
+ struct tegra_plane {
+ 	struct drm_plane base;
+@@ -1097,7 +1098,7 @@ static const struct host1x_client_ops dc_client_ops = {
+ 
+ static int tegra_dc_probe(struct platform_device *pdev)
+ {
+-	struct host1x_drm *host1x = dev_get_drvdata(pdev->dev.parent);
++	struct host1x_drm *host1x = host1x_get_drm_data(pdev->dev.parent);
+ 	struct resource *regs;
+ 	struct tegra_dc *dc;
+ 	int err;
+@@ -1160,7 +1161,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 
+ static int tegra_dc_remove(struct platform_device *pdev)
+ {
+-	struct host1x_drm *host1x = dev_get_drvdata(pdev->dev.parent);
++	struct host1x_drm *host1x = host1x_get_drm_data(pdev->dev.parent);
+ 	struct tegra_dc *dc = platform_get_drvdata(pdev);
+ 	int err;
+ 
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+index 6c59bcd..901f0b4 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -14,6 +14,7 @@
+ #include <linux/dma-mapping.h>
+ #include <asm/dma-iommu.h>
+ 
++#include "host1x_client.h"
+ #include "drm.h"
+ 
+ #define DRIVER_NAME "tegra"
+@@ -23,13 +24,222 @@
+ #define DRIVER_MINOR 0
+ #define DRIVER_PATCHLEVEL 0
+ 
++struct host1x_drm_client {
++	struct host1x_client *client;
++	struct device_node *np;
++	struct list_head list;
++};
++
++static int host1x_add_drm_client(struct host1x_drm *host1x,
++				 struct device_node *np)
++{
++	struct host1x_drm_client *client;
++
++	client = kzalloc(sizeof(*client), GFP_KERNEL);
++	if (!client)
++		return -ENOMEM;
++
++	INIT_LIST_HEAD(&client->list);
++	client->np = of_node_get(np);
++
++	list_add_tail(&client->list, &host1x->drm_clients);
++
++	return 0;
 +}
 +
-+void host1x_debug_dump_syncpts(struct host1x *host1x)
++static int host1x_activate_drm_client(struct host1x_drm *host1x,
++				      struct host1x_drm_client *drm,
++				      struct host1x_client *client)
 +{
-+	struct output o = {
-+		.fn = write_to_printk
-+	};
-+	show_syncpts(host1x, &o);
++	mutex_lock(&host1x->drm_clients_lock);
++	list_del_init(&drm->list);
++	list_add_tail(&drm->list, &host1x->drm_active);
++	drm->client = client;
++	mutex_unlock(&host1x->drm_clients_lock);
++
++	return 0;
 +}
-diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
++
++static int host1x_remove_drm_client(struct host1x_drm *host1x,
++				    struct host1x_drm_client *client)
++{
++	mutex_lock(&host1x->drm_clients_lock);
++	list_del_init(&client->list);
++	mutex_unlock(&host1x->drm_clients_lock);
++
++	of_node_put(client->np);
++	kfree(client);
++
++	return 0;
++}
++
++static int host1x_parse_dt(struct host1x_drm *host1x)
++{
++	static const char * const compat[] = {
++		"nvidia,tegra20-dc",
++		"nvidia,tegra20-hdmi",
++		"nvidia,tegra30-dc",
++		"nvidia,tegra30-hdmi",
++	};
++	unsigned int i;
++	int err;
++
++	for (i = 0; i < ARRAY_SIZE(compat); i++) {
++		struct device_node *np;
++
++		for_each_child_of_node(host1x->dev->of_node, np) {
++			if (of_device_is_compatible(np, compat[i]) &&
++			    of_device_is_available(np)) {
++				err = host1x_add_drm_client(host1x, np);
++				if (err < 0)
++					return err;
++			}
++		}
++	}
++
++	return 0;
++}
++
++int host1x_drm_alloc(struct platform_device *pdev)
++{
++	struct host1x_drm *host1x;
++	int err;
++
++	host1x = devm_kzalloc(&pdev->dev, sizeof(*host1x), GFP_KERNEL);
++	if (!host1x)
++		return -ENOMEM;
++
++	mutex_init(&host1x->drm_clients_lock);
++	INIT_LIST_HEAD(&host1x->drm_clients);
++	INIT_LIST_HEAD(&host1x->drm_active);
++	mutex_init(&host1x->clients_lock);
++	INIT_LIST_HEAD(&host1x->clients);
++	host1x->dev = &pdev->dev;
++
++	err = host1x_parse_dt(host1x);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to parse DT: %d\n", err);
++		return err;
++	}
++
++	host1x_set_drm_data(&pdev->dev, host1x);
++
++	return 0;
++}
++
++int host1x_drm_init(struct host1x_drm *host1x, struct drm_device *drm)
++{
++	struct host1x_client *client;
++
++	mutex_lock(&host1x->clients_lock);
++
++	list_for_each_entry(client, &host1x->clients, list) {
++		if (client->ops && client->ops->drm_init) {
++			int err = client->ops->drm_init(client, drm);
++			if (err < 0) {
++				dev_err(host1x->dev,
++					"DRM setup failed for %s: %d\n",
++					dev_name(client->dev), err);
++				return err;
++			}
++		}
++	}
++
++	mutex_unlock(&host1x->clients_lock);
++
++	return 0;
++}
++
++int host1x_drm_exit(struct host1x_drm *host1x)
++{
++	struct platform_device *pdev = to_platform_device(host1x->dev);
++	struct host1x_client *client;
++
++	if (!host1x->drm)
++		return 0;
++
++	mutex_lock(&host1x->clients_lock);
++
++	list_for_each_entry_reverse(client, &host1x->clients, list) {
++		if (client->ops && client->ops->drm_exit) {
++			int err = client->ops->drm_exit(client);
++			if (err < 0) {
++				dev_err(host1x->dev,
++					"DRM cleanup failed for %s: %d\n",
++					dev_name(client->dev), err);
++				return err;
++			}
++		}
++	}
++
++	mutex_unlock(&host1x->clients_lock);
++
++	drm_platform_exit(&tegra_drm_driver, pdev);
++	host1x->drm = NULL;
++
++	return 0;
++}
++
++int host1x_register_client(struct host1x_drm *host1x,
++			   struct host1x_client *client)
++{
++	struct host1x_drm_client *drm, *tmp;
++	int err;
++
++	mutex_lock(&host1x->clients_lock);
++	list_add_tail(&client->list, &host1x->clients);
++	mutex_unlock(&host1x->clients_lock);
++
++	list_for_each_entry_safe(drm, tmp, &host1x->drm_clients, list)
++		if (drm->np == client->dev->of_node)
++			host1x_activate_drm_client(host1x, drm, client);
++
++	if (list_empty(&host1x->drm_clients)) {
++		struct platform_device *pdev = to_platform_device(host1x->dev);
++
++		err = drm_platform_init(&tegra_drm_driver, pdev);
++		if (err < 0) {
++			dev_err(host1x->dev, "drm_platform_init(): %d\n", err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++int host1x_unregister_client(struct host1x_drm *host1x,
++			     struct host1x_client *client)
++{
++	struct host1x_drm_client *drm, *tmp;
++	int err;
++
++	list_for_each_entry_safe(drm, tmp, &host1x->drm_active, list) {
++		if (drm->client == client) {
++			err = host1x_drm_exit(host1x);
++			if (err < 0) {
++				dev_err(host1x->dev, "host1x_drm_exit(): %d\n",
++					err);
++				return err;
++			}
++
++			host1x_remove_drm_client(host1x, drm);
++			break;
++		}
++	}
++
++	mutex_lock(&host1x->clients_lock);
++	list_del_init(&client->list);
++	mutex_unlock(&host1x->clients_lock);
++
++	return 0;
++}
++
+ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ {
+-	struct device *dev = drm->dev;
+ 	struct host1x_drm *host1x;
+ 	int err;
+ 
+-	host1x = dev_get_drvdata(dev);
++	host1x = host1x_get_drm_data(drm->dev);
+ 	drm->dev_private = host1x;
+ 	host1x->drm = drm;
+ 
+diff --git a/drivers/gpu/host1x/drm/drm.h b/drivers/gpu/host1x/drm/drm.h
+index 7fedb6c..0b8738f 100644
+--- a/drivers/gpu/host1x/drm/drm.h
++++ b/drivers/gpu/host1x/drm/drm.h
+@@ -229,9 +229,6 @@ extern int tegra_output_exit(struct tegra_output *output);
+ extern int tegra_drm_fb_init(struct drm_device *drm);
+ extern void tegra_drm_fb_exit(struct drm_device *drm);
+ 
+-extern struct platform_driver tegra_host1x_driver;
+-extern struct platform_driver tegra_hdmi_driver;
+-extern struct platform_driver tegra_dc_driver;
+ extern struct drm_driver tegra_drm_driver;
+ 
+ #endif /* HOST1X_DRM_H */
+diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
+index f438f80..01097da 100644
+--- a/drivers/gpu/host1x/drm/hdmi.c
++++ b/drivers/gpu/host1x/drm/hdmi.c
+@@ -22,6 +22,7 @@
+ #include "hdmi.h"
+ #include "drm.h"
+ #include "dc.h"
++#include "host1x_client.h"
+ 
+ struct tegra_hdmi {
+ 	struct host1x_client client;
+@@ -1189,7 +1190,7 @@ static const struct host1x_client_ops hdmi_client_ops = {
+ 
+ static int tegra_hdmi_probe(struct platform_device *pdev)
+ {
+-	struct host1x_drm *host1x = dev_get_drvdata(pdev->dev.parent);
++	struct host1x_drm *host1x = host1x_get_drm_data(pdev->dev.parent);
+ 	struct tegra_hdmi *hdmi;
+ 	struct resource *regs;
+ 	int err;
+@@ -1278,7 +1279,7 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 
+ static int tegra_hdmi_remove(struct platform_device *pdev)
+ {
+-	struct host1x_drm *host1x = dev_get_drvdata(pdev->dev.parent);
++	struct host1x_drm *host1x = host1x_get_drm_data(pdev->dev.parent);
+ 	struct tegra_hdmi *hdmi = platform_get_drvdata(pdev);
+ 	int err;
+ 
+diff --git a/drivers/gpu/host1x/drm/host1x.c b/drivers/gpu/host1x/drm/host1x.c
+deleted file mode 100644
+index c3d8ee5..0000000
+--- a/drivers/gpu/host1x/drm/host1x.c
++++ /dev/null
+@@ -1,329 +0,0 @@
+-/*
+- * Copyright (C) 2012 Avionic Design GmbH
+- * Copyright (C) 2012 NVIDIA CORPORATION.  All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/clk.h>
+-#include <linux/err.h>
+-#include <linux/module.h>
+-#include <linux/of.h>
+-#include <linux/platform_device.h>
+-
+-#include "drm.h"
+-
+-struct host1x_drm_client {
+-	struct host1x_client *client;
+-	struct device_node *np;
+-	struct list_head list;
+-};
+-
+-static int host1x_add_drm_client(struct host1x_drm *host1x,
+-				 struct device_node *np)
+-{
+-	struct host1x_drm_client *client;
+-
+-	client = kzalloc(sizeof(*client), GFP_KERNEL);
+-	if (!client)
+-		return -ENOMEM;
+-
+-	INIT_LIST_HEAD(&client->list);
+-	client->np = of_node_get(np);
+-
+-	list_add_tail(&client->list, &host1x->drm_clients);
+-
+-	return 0;
+-}
+-
+-static int host1x_activate_drm_client(struct host1x_drm *host1x,
+-				      struct host1x_drm_client *drm,
+-				      struct host1x_client *client)
+-{
+-	mutex_lock(&host1x->drm_clients_lock);
+-	list_del_init(&drm->list);
+-	list_add_tail(&drm->list, &host1x->drm_active);
+-	drm->client = client;
+-	mutex_unlock(&host1x->drm_clients_lock);
+-
+-	return 0;
+-}
+-
+-static int host1x_remove_drm_client(struct host1x_drm *host1x,
+-				    struct host1x_drm_client *client)
+-{
+-	mutex_lock(&host1x->drm_clients_lock);
+-	list_del_init(&client->list);
+-	mutex_unlock(&host1x->drm_clients_lock);
+-
+-	of_node_put(client->np);
+-	kfree(client);
+-
+-	return 0;
+-}
+-
+-static int host1x_parse_dt(struct host1x_drm *host1x)
+-{
+-	static const char * const compat[] = {
+-		"nvidia,tegra20-dc",
+-		"nvidia,tegra20-hdmi",
+-		"nvidia,tegra30-dc",
+-		"nvidia,tegra30-hdmi",
+-	};
+-	unsigned int i;
+-	int err;
+-
+-	for (i = 0; i < ARRAY_SIZE(compat); i++) {
+-		struct device_node *np;
+-
+-		for_each_child_of_node(host1x->dev->of_node, np) {
+-			if (of_device_is_compatible(np, compat[i]) &&
+-			    of_device_is_available(np)) {
+-				err = host1x_add_drm_client(host1x, np);
+-				if (err < 0)
+-					return err;
+-			}
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int tegra_host1x_probe(struct platform_device *pdev)
+-{
+-	struct host1x_drm *host1x;
+-	struct resource *regs;
+-	int err;
+-
+-	host1x = devm_kzalloc(&pdev->dev, sizeof(*host1x), GFP_KERNEL);
+-	if (!host1x)
+-		return -ENOMEM;
+-
+-	mutex_init(&host1x->drm_clients_lock);
+-	INIT_LIST_HEAD(&host1x->drm_clients);
+-	INIT_LIST_HEAD(&host1x->drm_active);
+-	mutex_init(&host1x->clients_lock);
+-	INIT_LIST_HEAD(&host1x->clients);
+-	host1x->dev = &pdev->dev;
+-
+-	err = host1x_parse_dt(host1x);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to parse DT: %d\n", err);
+-		return err;
+-	}
+-
+-	host1x->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(host1x->clk))
+-		return PTR_ERR(host1x->clk);
+-
+-	err = clk_prepare_enable(host1x->clk);
+-	if (err < 0)
+-		return err;
+-
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!regs) {
+-		err = -ENXIO;
+-		goto err;
+-	}
+-
+-	err = platform_get_irq(pdev, 0);
+-	if (err < 0)
+-		goto err;
+-
+-	host1x->syncpt = err;
+-
+-	err = platform_get_irq(pdev, 1);
+-	if (err < 0)
+-		goto err;
+-
+-	host1x->irq = err;
+-
+-	host1x->regs = devm_ioremap_resource(&pdev->dev, regs);
+-	if (IS_ERR(host1x->regs)) {
+-		err = PTR_ERR(host1x->regs);
+-		goto err;
+-	}
+-
+-	platform_set_drvdata(pdev, host1x);
+-
+-	return 0;
+-
+-err:
+-	clk_disable_unprepare(host1x->clk);
+-	return err;
+-}
+-
+-static int tegra_host1x_remove(struct platform_device *pdev)
+-{
+-	struct host1x_drm *host1x = platform_get_drvdata(pdev);
+-
+-	clk_disable_unprepare(host1x->clk);
+-
+-	return 0;
+-}
+-
+-int host1x_drm_init(struct host1x_drm *host1x, struct drm_device *drm)
+-{
+-	struct host1x_client *client;
+-
+-	mutex_lock(&host1x->clients_lock);
+-
+-	list_for_each_entry(client, &host1x->clients, list) {
+-		if (client->ops && client->ops->drm_init) {
+-			int err = client->ops->drm_init(client, drm);
+-			if (err < 0) {
+-				dev_err(host1x->dev,
+-					"DRM setup failed for %s: %d\n",
+-					dev_name(client->dev), err);
+-				return err;
+-			}
+-		}
+-	}
+-
+-	mutex_unlock(&host1x->clients_lock);
+-
+-	return 0;
+-}
+-
+-int host1x_drm_exit(struct host1x_drm *host1x)
+-{
+-	struct platform_device *pdev = to_platform_device(host1x->dev);
+-	struct host1x_client *client;
+-
+-	if (!host1x->drm)
+-		return 0;
+-
+-	mutex_lock(&host1x->clients_lock);
+-
+-	list_for_each_entry_reverse(client, &host1x->clients, list) {
+-		if (client->ops && client->ops->drm_exit) {
+-			int err = client->ops->drm_exit(client);
+-			if (err < 0) {
+-				dev_err(host1x->dev,
+-					"DRM cleanup failed for %s: %d\n",
+-					dev_name(client->dev), err);
+-				return err;
+-			}
+-		}
+-	}
+-
+-	mutex_unlock(&host1x->clients_lock);
+-
+-	drm_platform_exit(&tegra_drm_driver, pdev);
+-	host1x->drm = NULL;
+-
+-	return 0;
+-}
+-
+-int host1x_register_client(struct host1x_drm *host1x,
+-			   struct host1x_client *client)
+-{
+-	struct host1x_drm_client *drm, *tmp;
+-	int err;
+-
+-	mutex_lock(&host1x->clients_lock);
+-	list_add_tail(&client->list, &host1x->clients);
+-	mutex_unlock(&host1x->clients_lock);
+-
+-	list_for_each_entry_safe(drm, tmp, &host1x->drm_clients, list)
+-		if (drm->np == client->dev->of_node)
+-			host1x_activate_drm_client(host1x, drm, client);
+-
+-	if (list_empty(&host1x->drm_clients)) {
+-		struct platform_device *pdev = to_platform_device(host1x->dev);
+-
+-		err = drm_platform_init(&tegra_drm_driver, pdev);
+-		if (err < 0) {
+-			dev_err(host1x->dev, "drm_platform_init(): %d\n", err);
+-			return err;
+-		}
+-	}
+-
+-	client->host1x = host1x;
+-
+-	return 0;
+-}
+-
+-int host1x_unregister_client(struct host1x_drm *host1x,
+-			     struct host1x_client *client)
+-{
+-	struct host1x_drm_client *drm, *tmp;
+-	int err;
+-
+-	list_for_each_entry_safe(drm, tmp, &host1x->drm_active, list) {
+-		if (drm->client == client) {
+-			err = host1x_drm_exit(host1x);
+-			if (err < 0) {
+-				dev_err(host1x->dev, "host1x_drm_exit(): %d\n",
+-					err);
+-				return err;
+-			}
+-
+-			host1x_remove_drm_client(host1x, drm);
+-			break;
+-		}
+-	}
+-
+-	mutex_lock(&host1x->clients_lock);
+-	list_del_init(&client->list);
+-	mutex_unlock(&host1x->clients_lock);
+-
+-	return 0;
+-}
+-
+-static struct of_device_id tegra_host1x_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-host1x", },
+-	{ .compatible = "nvidia,tegra20-host1x", },
+-	{ },
+-};
+-MODULE_DEVICE_TABLE(of, tegra_host1x_of_match);
+-
+-struct platform_driver tegra_host1x_driver = {
+-	.driver = {
+-		.name = "tegra-host1x",
+-		.owner = THIS_MODULE,
+-		.of_match_table = tegra_host1x_of_match,
+-	},
+-	.probe = tegra_host1x_probe,
+-	.remove = tegra_host1x_remove,
+-};
+-
+-static int __init tegra_host1x_init(void)
+-{
+-	int err;
+-
+-	err = platform_driver_register(&tegra_host1x_driver);
+-	if (err < 0)
+-		return err;
+-
+-	err = platform_driver_register(&tegra_dc_driver);
+-	if (err < 0)
+-		goto unregister_host1x;
+-
+-	err = platform_driver_register(&tegra_hdmi_driver);
+-	if (err < 0)
+-		goto unregister_dc;
+-
+-	return 0;
+-
+-unregister_dc:
+-	platform_driver_unregister(&tegra_dc_driver);
+-unregister_host1x:
+-	platform_driver_unregister(&tegra_host1x_driver);
+-	return err;
+-}
+-module_init(tegra_host1x_init);
+-
+-static void __exit tegra_host1x_exit(void)
+-{
+-	platform_driver_unregister(&tegra_hdmi_driver);
+-	platform_driver_unregister(&tegra_dc_driver);
+-	platform_driver_unregister(&tegra_host1x_driver);
+-}
+-module_exit(tegra_host1x_exit);
+-
+-MODULE_AUTHOR("Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra DRM driver");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/host1x/host1x_client.h b/drivers/gpu/host1x/host1x_client.h
 new file mode 100644
-index 0000000..4595b2e
+index 0000000..9b85f10
 --- /dev/null
-+++ b/drivers/gpu/host1x/debug.h
-@@ -0,0 +1,51 @@
++++ b/drivers/gpu/host1x/host1x_client.h
+@@ -0,0 +1,35 @@
 +/*
-+ * Tegra host1x Debug
-+ *
-+ * Copyright (c) 2011-2013 NVIDIA Corporation.
++ * Copyright (c) 2013, NVIDIA Corporation.
 + *
 + * This program is free software; you can redistribute it and/or modify it
 + * under the terms and conditions of the GNU General Public License,
@@ -304,769 +836,25 @@ index 0000000..4595b2e
 + * You should have received a copy of the GNU General Public License
 + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
-+#ifndef __HOST1X_DEBUG_H
-+#define __HOST1X_DEBUG_H
 +
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
++#ifndef HOST1X_CLIENT_H
++#define HOST1X_CLIENT_H
 +
-+struct host1x;
++struct device;
++struct platform_device;
 +
-+struct output {
-+	void (*fn)(void *ctx, const char *str, size_t len);
-+	void *ctx;
-+	char buf[256];
-+};
-+
-+static inline void write_to_seqfile(void *ctx, const char *str, size_t len)
++#ifdef CONFIG_DRM_TEGRA
++int host1x_drm_alloc(struct platform_device *pdev);
++#else
++static inline int host1x_drm_alloc(struct platform_device *pdev)
 +{
-+	seq_write((struct seq_file *)ctx, str, len);
++	return 0;
 +}
++#endif
 +
-+static inline void write_to_printk(void *ctx, const char *str, size_t len)
-+{
-+	pr_info("%s", str);
-+}
-+
-+void __printf(2, 3) host1x_debug_output(struct output *o, const char *fmt, ...);
-+
-+extern unsigned int host1x_debug_trace_cmdbuf;
-+
-+void host1x_debug_init(struct host1x *host1x);
-+void host1x_debug_deinit(struct host1x *host1x);
-+void host1x_debug_dump(struct host1x *host1x);
-+void host1x_debug_dump_syncpts(struct host1x *host1x);
++void host1x_set_drm_data(struct device *dev, void *data);
++void *host1x_get_drm_data(struct device *dev);
 +
 +#endif
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 4e522c5..9689724 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -30,6 +30,7 @@
- #include "dev.h"
- #include "intr.h"
- #include "channel.h"
-+#include "debug.h"
- #include "hw/host1x01.h"
- 
- void host1x_sync_writel(struct host1x *host1x, u32 v, u32 r)
-@@ -147,6 +148,8 @@ static int host1x_probe(struct platform_device *pdev)
- 		goto fail_deinit_syncpt;
- 	}
- 
-+	host1x_debug_init(host);
-+
- 	return 0;
- 
- fail_deinit_syncpt:
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index 1a9b438..4d16fe9 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -31,6 +31,8 @@ struct host1x_channel;
- struct host1x_cdma;
- struct host1x_job;
- struct push_buffer;
-+struct output;
-+struct dentry;
- 
- struct host1x_channel_ops {
- 	int (*init)(struct host1x_channel *channel, struct host1x *host,
-@@ -54,6 +56,18 @@ struct host1x_pushbuffer_ops {
- 	void (*init)(struct push_buffer *pb);
- };
- 
-+struct host1x_debug_ops {
-+	void (*debug_init)(struct dentry *de);
-+	void (*show_channel_cdma)(struct host1x *host,
-+				  struct host1x_channel *ch,
-+				  struct output *o);
-+	void (*show_channel_fifo)(struct host1x *host,
-+				  struct host1x_channel *ch,
-+				  struct output *o);
-+	void (*show_mlocks)(struct host1x *host, struct output *output);
-+
-+};
-+
- struct host1x_syncpt_ops {
- 	void (*restore)(struct host1x_syncpt *syncpt);
- 	void (*restore_wait_base)(struct host1x_syncpt *syncpt);
-@@ -100,6 +114,7 @@ struct host1x {
- 	const struct host1x_channel_ops *channel_op;
- 	const struct host1x_cdma_ops *cdma_op;
- 	const struct host1x_pushbuffer_ops *cdma_pb_op;
-+	const struct host1x_debug_ops *debug_op;
- 
- 	struct host1x_syncpt *nop_sp;
- 
-@@ -107,6 +122,8 @@ struct host1x {
- 	struct host1x_channel chlist;
- 	unsigned long allocated_channels;
- 	unsigned int num_allocated_channels;
-+
-+	struct dentry *debugfs;
- };
- 
- void host1x_sync_writel(struct host1x *host1x, u32 r, u32 v);
-@@ -257,4 +274,29 @@ static inline void host1x_hw_pushbuffer_init(struct host1x *host,
- 	host->cdma_pb_op->init(pb);
- }
- 
-+static inline void host1x_hw_debug_init(struct host1x *host, struct dentry *de)
-+{
-+	if (host->debug_op && host->debug_op->debug_init)
-+		host->debug_op->debug_init(de);
-+}
-+
-+static inline void host1x_hw_show_channel_cdma(struct host1x *host,
-+					       struct host1x_channel *channel,
-+					       struct output *o)
-+{
-+	host->debug_op->show_channel_cdma(host, channel, o);
-+}
-+
-+static inline void host1x_hw_show_channel_fifo(struct host1x *host,
-+					       struct host1x_channel *channel,
-+					       struct output *o)
-+{
-+	host->debug_op->show_channel_fifo(host, channel, o);
-+}
-+
-+static inline void host1x_hw_show_mlocks(struct host1x *host, struct output *o)
-+{
-+	host->debug_op->show_mlocks(host, o);
-+}
-+
- #endif
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index 4eb22ef..590b69d 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -244,6 +244,8 @@ static void cdma_timeout_handler(struct work_struct *work)
- 	host1x = cdma_to_host1x(cdma);
- 	ch = cdma_to_channel(cdma);
- 
-+	host1x_debug_dump(cdma_to_host1x(cdma));
-+
- 	mutex_lock(&cdma->lock);
- 
- 	if (!cdma->timeout.client) {
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index 5137a56..ee19962 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -29,6 +29,30 @@
- #define HOST1X_CHANNEL_SIZE 16384
- #define TRACE_MAX_LENGTH 128U
- 
-+static void trace_write_gather(struct host1x_cdma *cdma, struct host1x_bo *bo,
-+			       u32 offset, u32 words)
-+{
-+	void *mem = NULL;
-+
-+	if (host1x_debug_trace_cmdbuf)
-+		mem = host1x_bo_mmap(bo);
-+
-+	if (mem) {
-+		u32 i;
-+		/*
-+		 * Write in batches of 128 as there seems to be a limit
-+		 * of how much you can output to ftrace at once.
-+		 */
-+		for (i = 0; i < words; i += TRACE_MAX_LENGTH) {
-+			trace_host1x_cdma_push_gather(
-+				dev_name(cdma_to_channel(cdma)->dev),
-+				(u32)bo, min(words - i, TRACE_MAX_LENGTH),
-+				offset + i * sizeof(u32), mem);
-+		}
-+		host1x_bo_munmap(bo, mem);
-+	}
-+}
-+
- static void submit_gathers(struct host1x_job *job)
- {
- 	struct host1x_cdma *cdma = &job->channel->cdma;
-@@ -38,6 +62,7 @@ static void submit_gathers(struct host1x_job *job)
- 		struct host1x_job_gather *g = &job->gathers[i];
- 		u32 op1 = host1x_opcode_gather(g->words);
- 		u32 op2 = g->base + g->offset;
-+		trace_write_gather(cdma, g->bo, g->offset, op1 & 0xffff);
- 		host1x_cdma_push(cdma, op1, op2);
- 	}
- }
-diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-new file mode 100644
-index 0000000..8e6b313
---- /dev/null
-+++ b/drivers/gpu/host1x/hw/debug_hw.c
-@@ -0,0 +1,322 @@
-+/*
-+ * Copyright (C) 2010 Google, Inc.
-+ * Author: Erik Gilling <konkers@android.com>
-+ *
-+ * Copyright (C) 2011-2013 NVIDIA Corporation
-+ *
-+ * This software is licensed under the terms of the GNU General Public
-+ * License version 2, as published by the Free Software Foundation, and
-+ * may be copied, distributed, and modified under those terms.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
-+#include <linux/mm.h>
-+#include <linux/scatterlist.h>
-+
-+#include <linux/io.h>
-+
-+#include "dev.h"
-+#include "debug.h"
-+#include "cdma.h"
-+#include "channel.h"
-+#include "host1x_bo.h"
-+
-+#define HOST1X_DEBUG_MAX_PAGE_OFFSET 102400
-+
-+enum {
-+	HOST1X_OPCODE_SETCLASS	= 0x00,
-+	HOST1X_OPCODE_INCR	= 0x01,
-+	HOST1X_OPCODE_NONINCR	= 0x02,
-+	HOST1X_OPCODE_MASK	= 0x03,
-+	HOST1X_OPCODE_IMM	= 0x04,
-+	HOST1X_OPCODE_RESTART	= 0x05,
-+	HOST1X_OPCODE_GATHER	= 0x06,
-+	HOST1X_OPCODE_EXTEND	= 0x0e,
-+};
-+
-+enum {
-+	HOST1X_OPCODE_EXTEND_ACQUIRE_MLOCK	= 0x00,
-+	HOST1X_OPCODE_EXTEND_RELEASE_MLOCK	= 0x01,
-+};
-+
-+static unsigned int show_channel_command(struct output *o, u32 val)
-+{
-+	unsigned mask;
-+	unsigned subop;
-+
-+	switch (val >> 28) {
-+	case HOST1X_OPCODE_SETCLASS:
-+		mask = val & 0x3f;
-+		if (mask) {
-+			host1x_debug_output(o, "SETCL(class=%03x, offset=%03x, mask=%02x, [",
-+					    val >> 6 & 0x3ff,
-+					    val >> 16 & 0xfff, mask);
-+			return hweight8(mask);
-+		} else {
-+			host1x_debug_output(o, "SETCL(class=%03x)\n",
-+					    val >> 6 & 0x3ff);
-+			return 0;
-+		}
-+
-+	case HOST1X_OPCODE_INCR:
-+		host1x_debug_output(o, "INCR(offset=%03x, [",
-+				    val >> 16 & 0xfff);
-+		return val & 0xffff;
-+
-+	case HOST1X_OPCODE_NONINCR:
-+		host1x_debug_output(o, "NONINCR(offset=%03x, [",
-+				    val >> 16 & 0xfff);
-+		return val & 0xffff;
-+
-+	case HOST1X_OPCODE_MASK:
-+		mask = val & 0xffff;
-+		host1x_debug_output(o, "MASK(offset=%03x, mask=%03x, [",
-+				    val >> 16 & 0xfff, mask);
-+		return hweight16(mask);
-+
-+	case HOST1X_OPCODE_IMM:
-+		host1x_debug_output(o, "IMM(offset=%03x, data=%03x)\n",
-+				    val >> 16 & 0xfff, val & 0xffff);
-+		return 0;
-+
-+	case HOST1X_OPCODE_RESTART:
-+		host1x_debug_output(o, "RESTART(offset=%08x)\n", val << 4);
-+		return 0;
-+
-+	case HOST1X_OPCODE_GATHER:
-+		host1x_debug_output(o, "GATHER(offset=%03x, insert=%d, type=%d, count=%04x, addr=[",
-+				    val >> 16 & 0xfff, val >> 15 & 0x1,
-+				    val >> 14 & 0x1, val & 0x3fff);
-+		return 1;
-+
-+	case HOST1X_OPCODE_EXTEND:
-+		subop = val >> 24 & 0xf;
-+		if (subop == HOST1X_OPCODE_EXTEND_ACQUIRE_MLOCK)
-+			host1x_debug_output(o, "ACQUIRE_MLOCK(index=%d)\n",
-+					    val & 0xff);
-+		else if (subop == HOST1X_OPCODE_EXTEND_RELEASE_MLOCK)
-+			host1x_debug_output(o, "RELEASE_MLOCK(index=%d)\n",
-+					    val & 0xff);
-+		else
-+			host1x_debug_output(o, "EXTEND_UNKNOWN(%08x)\n", val);
-+		return 0;
-+
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static void show_gather(struct output *o, phys_addr_t phys_addr,
-+			unsigned int words, struct host1x_cdma *cdma,
-+			phys_addr_t pin_addr, u32 *map_addr)
-+{
-+	/* Map dmaget cursor to corresponding mem handle */
-+	u32 offset = phys_addr - pin_addr;
-+	unsigned int data_count = 0, i;
-+
-+	/*
-+	 * Sometimes we're given different hardware address to the same
-+	 * page - in these cases the offset will get an invalid number and
-+	 * we just have to bail out.
-+	 */
-+	if (offset > HOST1X_DEBUG_MAX_PAGE_OFFSET) {
-+		host1x_debug_output(o, "[address mismatch]\n");
-+		return;
-+	}
-+
-+	for (i = 0; i < words; i++) {
-+		u32 addr = phys_addr + i * 4;
-+		u32 val = *(map_addr + offset / 4 + i);
-+
-+		if (!data_count) {
-+			host1x_debug_output(o, "%08x: %08x:", addr, val);
-+			data_count = show_channel_command(o, val);
-+		} else {
-+			host1x_debug_output(o, "%08x%s", val,
-+					    data_count > 0 ? ", " : "])\n");
-+			data_count--;
-+		}
-+	}
-+}
-+
-+static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
-+{
-+	struct host1x_job *job;
-+
-+	list_for_each_entry(job, &cdma->sync_queue, list) {
-+		int i;
-+		host1x_debug_output(o, "\n%p: JOB, syncpt_id=%d, syncpt_val=%d, first_get=%08x, timeout=%d num_slots=%d, num_handles=%d\n",
-+				    job, job->syncpt_id, job->syncpt_end,
-+				    job->first_get, job->timeout,
-+				    job->num_slots, job->num_unpins);
-+
-+		for (i = 0; i < job->num_gathers; i++) {
-+			struct host1x_job_gather *g = &job->gathers[i];
-+			u32 *mapped;
-+
-+			if (job->gather_copy_mapped)
-+				mapped = (u32 *)job->gather_copy_mapped;
-+			else
-+				mapped = host1x_bo_mmap(g->bo);
-+
-+			if (!mapped) {
-+				host1x_debug_output(o, "[could not mmap]\n");
-+				continue;
-+			}
-+
-+			host1x_debug_output(o, "    GATHER at %08x+%04x, %d words\n",
-+					   g->base, g->offset, g->words);
-+
-+			show_gather(o, g->base + g->offset, g->words, cdma,
-+				   g->base, mapped);
-+
-+			if (!job->gather_copy_mapped)
-+				host1x_bo_munmap(g->bo, mapped);
-+		}
-+	}
-+}
-+
-+static void host1x_debug_show_channel_cdma(struct host1x *host,
-+					   struct host1x_channel *ch,
-+					   struct output *o)
-+{
-+	struct host1x_cdma *cdma = &ch->cdma;
-+	u32 dmaput, dmaget, dmactrl;
-+	u32 cbstat, cbread;
-+	u32 val, base, baseval;
-+
-+	dmaput = host1x_ch_readl(ch, HOST1X_CHANNEL_DMAPUT);
-+	dmaget = host1x_ch_readl(ch, HOST1X_CHANNEL_DMAGET);
-+	dmactrl = host1x_ch_readl(ch, HOST1X_CHANNEL_DMACTRL);
-+	cbread = host1x_sync_readl(host, HOST1X_SYNC_CBREAD(ch->id));
-+	cbstat = host1x_sync_readl(host, HOST1X_SYNC_CBSTAT(ch->id));
-+
-+	host1x_debug_output(o, "%d-%s: ", ch->id, dev_name(ch->dev));
-+
-+	if (HOST1X_CHANNEL_DMACTRL_DMASTOP_V(dmactrl) ||
-+	    !ch->cdma.push_buffer.mapped) {
-+		host1x_debug_output(o, "inactive\n\n");
-+		return;
-+	}
-+
-+	if (HOST1X_SYNC_CBSTAT_CBCLASS_V(cbstat) == HOST1X_CLASS_HOST1X &&
-+	    HOST1X_SYNC_CBSTAT_CBOFFSET_V(cbstat) ==
-+	    HOST1X_UCLASS_WAIT_SYNCPT)
-+		host1x_debug_output(o, "waiting on syncpt %d val %d\n",
-+				    cbread >> 24, cbread & 0xffffff);
-+	else if (HOST1X_SYNC_CBSTAT_CBCLASS_V(cbstat) ==
-+	   HOST1X_CLASS_HOST1X &&
-+	   HOST1X_SYNC_CBSTAT_CBOFFSET_V(cbstat) ==
-+	   HOST1X_UCLASS_WAIT_SYNCPT_BASE) {
-+
-+		base = (cbread >> 16) & 0xff;
-+		baseval =
-+			host1x_sync_readl(host, HOST1X_SYNC_SYNCPT_BASE(base));
-+		val = cbread & 0xffff;
-+		host1x_debug_output(o, "waiting on syncpt %d val %d (base %d = %d; offset = %d)\n",
-+				    cbread >> 24, baseval + val, base,
-+				    baseval, val);
-+	} else
-+		host1x_debug_output(o, "active class %02x, offset %04x, val %08x\n",
-+				    HOST1X_SYNC_CBSTAT_CBCLASS_V(cbstat),
-+				    HOST1X_SYNC_CBSTAT_CBOFFSET_V(cbstat),
-+				    cbread);
-+
-+	host1x_debug_output(o, "DMAPUT %08x, DMAGET %08x, DMACTL %08x\n",
-+			    dmaput, dmaget, dmactrl);
-+	host1x_debug_output(o, "CBREAD %08x, CBSTAT %08x\n", cbread, cbstat);
-+
-+	show_channel_gathers(o, cdma);
-+	host1x_debug_output(o, "\n");
-+}
-+
-+static void host1x_debug_show_channel_fifo(struct host1x *host,
-+					   struct host1x_channel *ch,
-+					   struct output *o)
-+{
-+	u32 val, rd_ptr, wr_ptr, start, end;
-+	unsigned int data_count = 0;
-+
-+	host1x_debug_output(o, "%d: fifo:\n", ch->id);
-+
-+	val = host1x_ch_readl(ch, HOST1X_CHANNEL_FIFOSTAT);
-+	host1x_debug_output(o, "FIFOSTAT %08x\n", val);
-+	if (HOST1X_CHANNEL_FIFOSTAT_CFEMPTY_V(val)) {
-+		host1x_debug_output(o, "[empty]\n");
-+		return;
-+	}
-+
-+	host1x_sync_writel(host, 0x0, HOST1X_SYNC_CFPEEK_CTRL);
-+	host1x_sync_writel(host, HOST1X_SYNC_CFPEEK_CTRL_ENA_F(1) |
-+			   HOST1X_SYNC_CFPEEK_CTRL_CHANNR_F(ch->id),
-+			   HOST1X_SYNC_CFPEEK_CTRL);
-+
-+	val = host1x_sync_readl(host, HOST1X_SYNC_CFPEEK_PTRS);
-+	rd_ptr = HOST1X_SYNC_CFPEEK_PTRS_CF_RD_PTR_V(val);
-+	wr_ptr = HOST1X_SYNC_CFPEEK_PTRS_CF_WR_PTR_V(val);
-+
-+	val = host1x_sync_readl(host, HOST1X_SYNC_CF_SETUP(ch->id));
-+	start = HOST1X_SYNC_CF_SETUP_BASE_V(val);
-+	end = HOST1X_SYNC_CF_SETUP_LIMIT_V(val);
-+
-+	do {
-+		host1x_sync_writel(host, 0x0, HOST1X_SYNC_CFPEEK_CTRL);
-+		host1x_sync_writel(host, HOST1X_SYNC_CFPEEK_CTRL_ENA_F(1) |
-+				   HOST1X_SYNC_CFPEEK_CTRL_CHANNR_F(ch->id) |
-+				   HOST1X_SYNC_CFPEEK_CTRL_ADDR_F(rd_ptr),
-+				   HOST1X_SYNC_CFPEEK_CTRL);
-+		val = host1x_sync_readl(host, HOST1X_SYNC_CFPEEK_READ);
-+
-+		if (!data_count) {
-+			host1x_debug_output(o, "%08x:", val);
-+			data_count = show_channel_command(o, val);
-+		} else {
-+			host1x_debug_output(o, "%08x%s", val,
-+					    data_count > 0 ? ", " : "])\n");
-+			data_count--;
-+		}
-+
-+		if (rd_ptr == end)
-+			rd_ptr = start;
-+		else
-+			rd_ptr++;
-+	} while (rd_ptr != wr_ptr);
-+
-+	if (data_count)
-+		host1x_debug_output(o, ", ...])\n");
-+	host1x_debug_output(o, "\n");
-+
-+	host1x_sync_writel(host, 0x0, HOST1X_SYNC_CFPEEK_CTRL);
-+}
-+
-+static void host1x_debug_show_mlocks(struct host1x *host, struct output *o)
-+{
-+	int i;
-+
-+	host1x_debug_output(o, "---- mlocks ----\n");
-+	for (i = 0; i < host1x_syncpt_nb_mlocks(host); i++) {
-+		u32 owner =
-+			host1x_sync_readl(host, HOST1X_SYNC_MLOCK_OWNER(i));
-+		if (HOST1X_SYNC_MLOCK_OWNER_CH_OWNS_V(owner))
-+			host1x_debug_output(o, "%d: locked by channel %d\n",
-+				i, HOST1X_SYNC_MLOCK_OWNER_CHID_F(owner));
-+		else if (HOST1X_SYNC_MLOCK_OWNER_CPU_OWNS_V(owner))
-+			host1x_debug_output(o, "%d: locked by cpu\n", i);
-+		else
-+			host1x_debug_output(o, "%d: unlocked\n", i);
-+	}
-+	host1x_debug_output(o, "\n");
-+}
-+
-+static const struct host1x_debug_ops host1x_debug_ops = {
-+	.show_channel_cdma = host1x_debug_show_channel_cdma,
-+	.show_channel_fifo = host1x_debug_show_channel_fifo,
-+	.show_mlocks = host1x_debug_show_mlocks,
-+};
-diff --git a/drivers/gpu/host1x/hw/host1x01.c b/drivers/gpu/host1x/hw/host1x01.c
-index 013ff38..a14e91c 100644
---- a/drivers/gpu/host1x/hw/host1x01.c
-+++ b/drivers/gpu/host1x/hw/host1x01.c
-@@ -23,6 +23,7 @@
- /* include code */
- #include "hw/cdma_hw.c"
- #include "hw/channel_hw.c"
-+#include "hw/debug_hw.c"
- #include "hw/intr_hw.c"
- #include "hw/syncpt_hw.c"
- 
-@@ -35,6 +36,7 @@ int host1x01_init(struct host1x *host)
- 	host->cdma_pb_op = &host1x_pushbuffer_ops;
- 	host->syncpt_op = &host1x_syncpt_ops;
- 	host->intr_op = &host1x_intr_ops;
-+	host->debug_op = &host1x_debug_ops;
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/host1x/hw/hw_host1x01_channel.h b/drivers/gpu/host1x/hw/hw_host1x01_channel.h
-index 9ba1332..b4bc7ca 100644
---- a/drivers/gpu/host1x/hw/hw_host1x01_channel.h
-+++ b/drivers/gpu/host1x/hw/hw_host1x01_channel.h
-@@ -51,6 +51,18 @@
- #ifndef __hw_host1x_channel_host1x_h__
- #define __hw_host1x_channel_host1x_h__
- 
-+static inline u32 host1x_channel_fifostat_r(void)
-+{
-+	return 0x0;
-+}
-+#define HOST1X_CHANNEL_FIFOSTAT \
-+	host1x_channel_fifostat_r()
-+static inline u32 host1x_channel_fifostat_cfempty_v(u32 r)
-+{
-+	return (r >> 10) & 0x1;
-+}
-+#define HOST1X_CHANNEL_FIFOSTAT_CFEMPTY_V(r) \
-+	host1x_channel_fifostat_cfempty_v(r)
- static inline u32 host1x_channel_dmastart_r(void)
- {
- 	return 0x14;
-@@ -87,6 +99,12 @@ static inline u32 host1x_channel_dmactrl_dmastop(void)
- }
- #define HOST1X_CHANNEL_DMACTRL_DMASTOP \
- 	host1x_channel_dmactrl_dmastop()
-+static inline u32 host1x_channel_dmactrl_dmastop_v(u32 r)
-+{
-+	return (r >> 0) & 0x1;
-+}
-+#define HOST1X_CHANNEL_DMACTRL_DMASTOP_V(r) \
-+	host1x_channel_dmactrl_dmastop_v(r)
- static inline u32 host1x_channel_dmactrl_dmagetrst(void)
- {
- 	return 1 << 1;
-diff --git a/drivers/gpu/host1x/hw/hw_host1x01_sync.h b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
-index 8f2a246..ac704e5 100644
---- a/drivers/gpu/host1x/hw/hw_host1x01_sync.h
-+++ b/drivers/gpu/host1x/hw/hw_host1x01_sync.h
-@@ -77,6 +77,24 @@ static inline u32 host1x_sync_syncpt_thresh_int_enable_cpu0_r(unsigned int id)
- }
- #define HOST1X_SYNC_SYNCPT_THRESH_INT_ENABLE_CPU0(id) \
- 	host1x_sync_syncpt_thresh_int_enable_cpu0_r(id)
-+static inline u32 host1x_sync_cf_setup_r(unsigned int channel)
-+{
-+	return 0x80 + channel * REGISTER_STRIDE;
-+}
-+#define HOST1X_SYNC_CF_SETUP(channel) \
-+	host1x_sync_cf_setup_r(channel)
-+static inline u32 host1x_sync_cf_setup_base_v(u32 r)
-+{
-+	return (r >> 0) & 0x1ff;
-+}
-+#define HOST1X_SYNC_CF_SETUP_BASE_V(r) \
-+	host1x_sync_cf_setup_base_v(r)
-+static inline u32 host1x_sync_cf_setup_limit_v(u32 r)
-+{
-+	return (r >> 16) & 0x1ff;
-+}
-+#define HOST1X_SYNC_CF_SETUP_LIMIT_V(r) \
-+	host1x_sync_cf_setup_limit_v(r)
- static inline u32 host1x_sync_cmdproc_stop_r(void)
- {
- 	return 0xac;
-@@ -107,6 +125,30 @@ static inline u32 host1x_sync_ip_busy_timeout_r(void)
- }
- #define HOST1X_SYNC_IP_BUSY_TIMEOUT \
- 	host1x_sync_ip_busy_timeout_r()
-+static inline u32 host1x_sync_mlock_owner_r(unsigned int id)
-+{
-+	return 0x340 + id * REGISTER_STRIDE;
-+}
-+#define HOST1X_SYNC_MLOCK_OWNER(id) \
-+	host1x_sync_mlock_owner_r(id)
-+static inline u32 host1x_sync_mlock_owner_chid_f(u32 v)
-+{
-+	return (v & 0xf) << 8;
-+}
-+#define HOST1X_SYNC_MLOCK_OWNER_CHID_F(v) \
-+	host1x_sync_mlock_owner_chid_f(v)
-+static inline u32 host1x_sync_mlock_owner_cpu_owns_v(u32 r)
-+{
-+	return (r >> 1) & 0x1;
-+}
-+#define HOST1X_SYNC_MLOCK_OWNER_CPU_OWNS_V(r) \
-+	host1x_sync_mlock_owner_cpu_owns_v(r)
-+static inline u32 host1x_sync_mlock_owner_ch_owns_v(u32 r)
-+{
-+	return (r >> 0) & 0x1;
-+}
-+#define HOST1X_SYNC_MLOCK_OWNER_CH_OWNS_V(r) \
-+	host1x_sync_mlock_owner_ch_owns_v(r)
- static inline u32 host1x_sync_syncpt_int_thresh_r(unsigned int id)
- {
- 	return 0x500 + id * REGISTER_STRIDE;
-@@ -125,4 +167,77 @@ static inline u32 host1x_sync_syncpt_cpu_incr_r(unsigned int id)
- }
- #define HOST1X_SYNC_SYNCPT_CPU_INCR(id) \
- 	host1x_sync_syncpt_cpu_incr_r(id)
-+static inline u32 host1x_sync_cbread_r(unsigned int channel)
-+{
-+	return 0x720 + channel * REGISTER_STRIDE;
-+}
-+#define HOST1X_SYNC_CBREAD(channel) \
-+	host1x_sync_cbread_r(channel)
-+static inline u32 host1x_sync_cfpeek_ctrl_r(void)
-+{
-+	return 0x74c;
-+}
-+#define HOST1X_SYNC_CFPEEK_CTRL \
-+	host1x_sync_cfpeek_ctrl_r()
-+static inline u32 host1x_sync_cfpeek_ctrl_addr_f(u32 v)
-+{
-+	return (v & 0x1ff) << 0;
-+}
-+#define HOST1X_SYNC_CFPEEK_CTRL_ADDR_F(v) \
-+	host1x_sync_cfpeek_ctrl_addr_f(v)
-+static inline u32 host1x_sync_cfpeek_ctrl_channr_f(u32 v)
-+{
-+	return (v & 0x7) << 16;
-+}
-+#define HOST1X_SYNC_CFPEEK_CTRL_CHANNR_F(v) \
-+	host1x_sync_cfpeek_ctrl_channr_f(v)
-+static inline u32 host1x_sync_cfpeek_ctrl_ena_f(u32 v)
-+{
-+	return (v & 0x1) << 31;
-+}
-+#define HOST1X_SYNC_CFPEEK_CTRL_ENA_F(v) \
-+	host1x_sync_cfpeek_ctrl_ena_f(v)
-+static inline u32 host1x_sync_cfpeek_read_r(void)
-+{
-+	return 0x750;
-+}
-+#define HOST1X_SYNC_CFPEEK_READ \
-+	host1x_sync_cfpeek_read_r()
-+static inline u32 host1x_sync_cfpeek_ptrs_r(void)
-+{
-+	return 0x754;
-+}
-+#define HOST1X_SYNC_CFPEEK_PTRS \
-+	host1x_sync_cfpeek_ptrs_r()
-+static inline u32 host1x_sync_cfpeek_ptrs_cf_rd_ptr_v(u32 r)
-+{
-+	return (r >> 0) & 0x1ff;
-+}
-+#define HOST1X_SYNC_CFPEEK_PTRS_CF_RD_PTR_V(r) \
-+	host1x_sync_cfpeek_ptrs_cf_rd_ptr_v(r)
-+static inline u32 host1x_sync_cfpeek_ptrs_cf_wr_ptr_v(u32 r)
-+{
-+	return (r >> 16) & 0x1ff;
-+}
-+#define HOST1X_SYNC_CFPEEK_PTRS_CF_WR_PTR_V(r) \
-+	host1x_sync_cfpeek_ptrs_cf_wr_ptr_v(r)
-+static inline u32 host1x_sync_cbstat_r(unsigned int channel)
-+{
-+	return 0x758 + channel * REGISTER_STRIDE;
-+}
-+#define HOST1X_SYNC_CBSTAT(channel) \
-+	host1x_sync_cbstat_r(channel)
-+static inline u32 host1x_sync_cbstat_cboffset_v(u32 r)
-+{
-+	return (r >> 0) & 0xffff;
-+}
-+#define HOST1X_SYNC_CBSTAT_CBOFFSET_V(r) \
-+	host1x_sync_cbstat_cboffset_v(r)
-+static inline u32 host1x_sync_cbstat_cbclass_v(u32 r)
-+{
-+	return (r >> 16) & 0x3ff;
-+}
-+#define HOST1X_SYNC_CBSTAT_CBCLASS_V(r) \
-+	host1x_sync_cbstat_cbclass_v(r)
-+
- #endif /* __hw_host1x01_sync_h__ */
-diff --git a/drivers/gpu/host1x/hw/hw_host1x01_uclass.h b/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-index 7af6609..42f3ce1 100644
---- a/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-+++ b/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-@@ -87,6 +87,12 @@ static inline u32 host1x_uclass_wait_syncpt_thresh_f(u32 v)
- }
- #define HOST1X_UCLASS_WAIT_SYNCPT_THRESH_F(v) \
- 	host1x_uclass_wait_syncpt_thresh_f(v)
-+static inline u32 host1x_uclass_wait_syncpt_base_r(void)
-+{
-+	return 0x9;
-+}
-+#define HOST1X_UCLASS_WAIT_SYNCPT_BASE \
-+	host1x_uclass_wait_syncpt_base_r()
- static inline u32 host1x_uclass_wait_syncpt_base_indx_f(u32 v)
- {
- 	return (v & 0xff) << 24;
-diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
-index 2c1f4af..6117499 100644
---- a/drivers/gpu/host1x/hw/syncpt_hw.c
-+++ b/drivers/gpu/host1x/hw/syncpt_hw.c
-@@ -86,6 +86,7 @@ static void syncpt_cpu_incr(struct host1x_syncpt *sp)
- 	    host1x_syncpt_idle(sp)) {
- 		dev_err(host->dev, "Trying to increment syncpoint id %d beyond max\n",
- 			sp->id);
-+		host1x_debug_dump(sp->host);
- 		return;
- 	}
- 	host1x_sync_writel(host, BIT_MASK(sp->id),
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 7e77e63..4b49345 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -25,6 +25,7 @@
- #include "syncpt.h"
- #include "dev.h"
- #include "intr.h"
-+#include "debug.h"
- 
- #define SYNCPT_CHECK_PERIOD (2 * HZ)
- #define MAX_STUCK_CHECK_COUNT 15
-@@ -231,6 +232,10 @@ int host1x_syncpt_wait(struct host1x_syncpt *sp, u32 thresh, long timeout,
- 				"%s: syncpoint id %d (%s) stuck waiting %d, timeout=%ld\n",
- 				 current->comm, sp->id, sp->name,
- 				 thresh, timeout);
-+
-+			host1x_debug_dump_syncpts(sp->host);
-+			if (check_count == MAX_STUCK_CHECK_COUNT)
-+				host1x_debug_dump(sp->host);
- 			check_count++;
- 		}
- 	}
 -- 
 1.7.9.5
