@@ -1,53 +1,41 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: fix register address of slink controller
-Date: Fri, 22 Mar 2013 12:35:06 -0600
-Message-ID: <1363977306-7548-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/1] clk: tegra: Fix periph_clk_to_bit macro
+Date: Fri, 22 Mar 2013 12:43:02 -0600
+Message-ID: <514CA636.9000005@wwwdotorg.org>
+References: <1362606444-19970-1-git-send-email-achew@nvidia.com> <514B66A1.6020101@wwwdotorg.org> <20130321212542.834.78153@quantum>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130321212542.834.78153@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 03/21/2013 03:25 PM, Mike Turquette wrote:
+> Quoting Stephen Warren (2013-03-21 12:59:29)
+>> On 03/06/2013 02:47 PM, Andrew Chew wrote:
+>>> The parameter name should be "gate", not "periph".  This worked, however,
+>>> because it happens that everywhere periph_clk_to_bit is called, "gate" was
+>>> in the local scope.
+>>
+>> Mike, could you please ack this so that I can take it through the Tegra
+>> tree with the rest of the Tegra clock changes for 3.10? Thanks.
+>>
+>> Oh, I see this was never sent to Mike:-( Hence, I'm quoting the whole patch.
+>>
+> 
+> Thanks for looping me in to the original patch.
+> 
+> I'm still going through v7 of the tegra114 patches now, so acking this
+> is is a bit out-of-sequence, but the change is trivial enough:
+> 
+> Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Fix typo on register address of slink3 controller where register
-address is wrongly set as 0x7000d480 but it is 0x7000d800.
+Thanks.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Arnd, Olof, this is a fix for v3.9.
+This is actually a fix for the previous existing clock drivers for
+Tegra20 and Tegra30, so I'll apply it before the Tegra114 CCF series.
 
- arch/arm/boot/dts/tegra20.dtsi |    2 +-
- arch/arm/boot/dts/tegra30.dtsi |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 48d00a0..3d3f64d 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -385,7 +385,7 @@
- 
- 	spi@7000d800 {
- 		compatible = "nvidia,tegra20-slink";
--		reg = <0x7000d480 0x200>;
-+		reg = <0x7000d800 0x200>;
- 		interrupts = <0 83 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 17>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 9d87a3f..dbf46c2 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -372,7 +372,7 @@
- 
- 	spi@7000d800 {
- 		compatible = "nvidia,tegra30-slink", "nvidia,tegra20-slink";
--		reg = <0x7000d480 0x200>;
-+		reg = <0x7000d800 0x200>;
- 		interrupts = <0 83 0x04>;
- 		nvidia,dma-request-selector = <&apbdma 17>;
- 		#address-cells = <1>;
--- 
-1.7.10.4
+Applied to Tegra's for-3.10/clk branch.
