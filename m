@@ -1,38 +1,108 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V4 1/2] mfd: tps65090: Fix enum in header file
-Date: Thu, 21 Mar 2013 16:30:41 -0400
-Message-ID: <1363897842-19835-1-git-send-email-rklein@nvidia.com>
+From: Alex Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH V4 0/9] Add mandatory regulator for all users of
+ pwm-backlight.
+Date: Fri, 22 Mar 2013 10:57:48 +0900
+Message-ID: <514BBA9C.2020602@nvidia.com>
+References: <1363719573-20926-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1363719573-20926-1-git-send-email-achew@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: "romain.naour@openwide.fr" <romain.naour@openwide.fr>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "philipp.zabel@gmail.com" <philipp.zabel@gmail.com>, "gxt@mprc.pku.edu.cn" <gxt@mprc.pku.edu.cn>, "robert.jarzmik@free.fr" <robert.jarzmik@free.fr>, "laforge@openezx.org" <laforge@openezx.org>, "openezx-devel@lists.openezx.org" <openezx-devel@lists.openezx.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "marek.vasut@gmail.com" <marek.vasut@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lost.distance@yahoo.com" <lost.distance@yahoo.com>, "drwyrm@gmail.com" <drwyrm@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "haojian.zhuang@gmail.com" <haojian.zhuang@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>linux
 List-Id: linux-tegra@vger.kernel.org
 
-The enum is missing the definition for the first bit, which makes all
-the rest off by one. Add definition for the TPS65090_IRQ_INTERRUPT bit
-which at 0.
+On 03/20/2013 03:59 AM, Andrew Chew wrote:
+> Many backlights are enabled via GPIO.  We can generalize the GPIO to a
+> fixed regulator.
+>
+> The enable regulator needs to be mandatory because there was no good way
+> to determine the difference between opting out of the regulator, and probe
+> deferral.
+>
+> This series of patches is intended to add a dummy regulator (or a GPIO
+> regulator) for all users of the pwm-backlight.
+>
+> The last patch in the series will always be the pwm-backlight change to add
+> this mandatory regulator.  Patches following up to that patch add the
+> mandatory regulator on a per mach family basis.  Once all users of
+> pwm-backlight have been patched, this series can be applied in order to
+> maintain bisectability.
+>
+> All I did in every case was to provide a dummy fixed regulator to
+> pwm-backlight.  If your platform actually uses a regulator (or a GPIO)
+> to enable the backlight, please either let me know so that I can make
+> the modifications and give you something back to test.  Or (better yet),
+> provide me with a tested, alternate patch that I can fold into this patch
+> series.
+>
+> I made sure that where there was a defconfig for an affected board, that it
+> builds.  I did not test-build the unicore patch.
+>
+> V3 and earlier versions of this series only had the OMAP patch, which I
+> used for ironing out some early, obvious stuff.  V4 and later is the complete
+> patch set.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v4:
- - no changes since v1
+For the series:
 
- include/linux/mfd/tps65090.h |    1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-diff --git a/include/linux/mfd/tps65090.h b/include/linux/mfd/tps65090.h
-index 998628a..3f43069 100644
---- a/include/linux/mfd/tps65090.h
-+++ b/include/linux/mfd/tps65090.h
-@@ -27,6 +27,7 @@
- 
- /* TPS65090 IRQs */
- enum {
-+	TPS65090_IRQ_INTERRUPT,
- 	TPS65090_IRQ_VAC_STATUS_CHANGE,
- 	TPS65090_IRQ_VSYS_STATUS_CHANGE,
- 	TPS65090_IRQ_BAT_STATUS_CHANGE,
--- 
-1.7.9.5
+Thanks,
+Alex.
+
+>
+> Andrew Chew (9):
+>    ARM: OMAP: board-4430sdp: Provide regulator to pwm-backlight
+>    ARM: S3C24XX: Provide regulator to pwm-backlight
+>    ARM: pxa: Provide regulator to pwm-backlight
+>    ARM: EXYNOS: Provide regulator to pwm-backlight
+>    unicore32: Provide regulator to pwm-backlight
+>    ARM: mxs: Provide regulator to pwm-backlight
+>    ARM: vt8500: Provide regulator to pwm-backlight
+>    ARM: tegra: Provide regulator to pwm-backlight
+>    pwm_bl: Add mandatory backlight enable regulator
+>
+>   .../bindings/video/backlight/pwm-backlight.txt     | 14 +++++
+>   arch/arm/boot/dts/imx23-evk.dts                    |  6 +++
+>   arch/arm/boot/dts/imx28-apf28dev.dts               |  6 +++
+>   arch/arm/boot/dts/imx28-cfa10049.dts               |  6 +++
+>   arch/arm/boot/dts/imx28-evk.dts                    |  6 +++
+>   arch/arm/boot/dts/imx28-tx28.dts                   |  6 +++
+>   arch/arm/boot/dts/tegra20-medcom-wide.dts          |  6 +++
+>   arch/arm/boot/dts/wm8850-w70v2.dts                 |  6 +++
+>   arch/arm/mach-exynos/mach-nuri.c                   |  7 +++
+>   arch/arm/mach-omap2/board-4430sdp.c                |  6 +++
+>   arch/arm/mach-pxa/cm-x300.c                        |  7 +++
+>   arch/arm/mach-pxa/colibri-pxa270-income.c          |  8 +++
+>   arch/arm/mach-pxa/ezx.c                            |  9 ++++
+>   arch/arm/mach-pxa/hx4700.c                         |  8 +++
+>   arch/arm/mach-pxa/lpd270.c                         |  9 ++++
+>   arch/arm/mach-pxa/magician.c                       |  8 +++
+>   arch/arm/mach-pxa/mainstone.c                      | 13 ++++-
+>   arch/arm/mach-pxa/mioa701.c                        |  8 +++
+>   arch/arm/mach-pxa/palm27x.c                        |  8 +++
+>   arch/arm/mach-pxa/palmtc.c                         |  8 +++
+>   arch/arm/mach-pxa/palmte2.c                        |  9 ++++
+>   arch/arm/mach-pxa/pcm990-baseboard.c               |  8 +++
+>   arch/arm/mach-pxa/raumfeld.c                       |  6 +++
+>   arch/arm/mach-pxa/tavorevb.c                       | 11 ++++
+>   arch/arm/mach-pxa/viper.c                          |  8 +++
+>   arch/arm/mach-pxa/z2.c                             | 10 ++++
+>   arch/arm/mach-pxa/zylonite.c                       |  7 +++
+>   arch/arm/mach-s3c24xx/mach-h1940.c                 |  8 +++
+>   arch/arm/mach-s3c24xx/mach-rx1950.c                |  9 ++++
+>   arch/arm/plat-samsung/dev-backlight.c              |  9 ++++
+>   arch/unicore32/kernel/puv3-nb0916.c                |  9 ++++
+>   drivers/video/backlight/pwm_bl.c                   | 59 ++++++++++++++++++----
+>   32 files changed, 297 insertions(+), 11 deletions(-)
+>
