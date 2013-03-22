@@ -1,231 +1,45 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCHv9 0/9] Support Tegra 2D hardware
-Date: Fri, 22 Mar 2013 15:54:55 +0100
-Message-ID: <20130322145454.GA3231@avionic-0098.mockup.avionic-design.de>
-References: <1363962849-19872-1-git-send-email-tbergstrom@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Don't enable PLLs during early boot
+Date: Fri, 22 Mar 2013 09:48:11 -0600
+Message-ID: <514C7D3B.40602@wwwdotorg.org>
+References: <1363953308-28828-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1363962849-19872-1-git-send-email-tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1363953308-28828-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 03/22/2013 05:54 AM, Peter De Schrijver wrote:
+> The PLL code relies on udelay() which is not available when CCF is
+> initialized. Hence we can't enable any PLL during this phase.
+> 
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> --
+> 
+> Stephen,
+> 
+> Can you confirm this is ok for the audio drivers?
+> 
+> We used to be lucky that this has worked up to now, but I will introduce some
+> changes to the pll lock check code which cause this to fail due to the
+> slight differences in timing.
 
---2oS5YaxWCcQjTEyO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, this won't work for the audio drivers; they assume the clock is
+enabled when they start.
 
-On Fri, Mar 22, 2013 at 04:34:00PM +0200, Terje Bergstrom wrote:
-> This set of patches adds support for Tegra20 and Tegra30 host1x and
-> 2D. It is based on linux-next-20130322 with RTC fixes applied.
->=20
-> Changes in this version:
->  * Renaming in drivers/gpu/host1x/drm/drm.c to shorten function names
->  * Whitespace and function order fixes
->  * An extra struct (host1x_addr_reg) removed
->  * Added uapi Kbuild entry
->=20
-> Changes in version 8:
->  * Own version of framebuffer driver due to move to own allocator
->    * Thanks to Thierry Reding for help
->  * Miscellaneous variable name, whitespace and IOCTL interface cleanups
->  * Bug fixes:
->    * Validator enabled again
->    * Added new class 2D strechblit
->  * Dropped patch "Support CMA object preallocation"
->=20
-> Changes in version 7:
->  * host1x memory data structures refactored
->  * Some "nvhost" leftovers renamed to host1x
->=20
-> Changes in version 6:
->  * Rebased on latest tegradrm
->  * Renamed tegradrm's host1x to host1x_drm
->  * Indentation and line split fixed to follow tegradrm convention
->  * Pointers to platform_device replaced with pointers to device
->  * Added host1x allocator, and wired it in
->  * Debug spew code fixed to access mem handles from host1x_job
->  * CDMA code doesn't keep the mem handles anymore
->  * Push buffer ops have been made generic code
->  * Removed the pin_array optimization in host1x_job to simplify code
->  * Large number of smaller changes
->=20
-> The driver implements an allocator using the dma mapping API. Each buffer=
- is
-> assigned an ops structure to operate on it.
->=20
-> host1x is the driver that controls host1x hardware. It supports
-> host1x command channels, synchronization, and memory management. It
-> is sectioned into logical driver under drivers/gpu/host1x and
-> physical driver under drivers/host1x/hw. The physical driver is
-> compiled with the hardware headers of the particular host1x version.
->=20
-> The hardware units are described (briefly) in the Tegra2 TRM. Wiki
-> page http://http.download.nvidia.com/tegra-public-appnotes/host1x.html
-> also contains a short description of the functionality.
->=20
-> The patch set merges tegradrm into host1x and adds 2D driver, which
-> uses host1x channels and sync points. The patch set also adds user
-> space API to tegradrm for accessing host1x and 2D.
->=20
-> The changes to add support to libdrm are in
-> git-OGgr7I4mDcYgsBAKwltoeQ@public.gmane.org:linux-host1x/libdrm-host1x.git
->=20
-> Arto Merilainen (2):
->   gpu: host1x: drm: Rename host1x to host1x_drm
->   gpu: host1x: drm: Add memory manager and fb
->=20
-> Terje Bergstrom (7):
->   gpu: host1x: Add host1x driver
->   gpu: host1x: Add syncpoint wait and interrupts
->   gpu: host1x: Add channel support
->   gpu: host1x: Add debug support
->   drm: tegra: Move drm to live under host1x
->   gpu: host1x: Remove second host1x driver
->   drm: tegra: Add gr2d device
->=20
->  drivers/gpu/Makefile                           |    1 +
->  drivers/gpu/drm/Kconfig                        |    2 -
->  drivers/gpu/drm/Makefile                       |    1 -
->  drivers/gpu/drm/tegra/Makefile                 |    7 -
->  drivers/gpu/drm/tegra/drm.c                    |  217 --------
->  drivers/gpu/drm/tegra/fb.c                     |   52 --
->  drivers/gpu/drm/tegra/host1x.c                 |  327 ------------
->  drivers/gpu/host1x/Kconfig                     |   23 +
->  drivers/gpu/host1x/Makefile                    |   20 +
->  drivers/gpu/host1x/cdma.c                      |  491 ++++++++++++++++++
->  drivers/gpu/host1x/cdma.h                      |  100 ++++
->  drivers/gpu/host1x/channel.c                   |  126 +++++
->  drivers/gpu/host1x/channel.h                   |   52 ++
->  drivers/gpu/host1x/debug.c                     |  210 ++++++++
->  drivers/gpu/host1x/debug.h                     |   51 ++
->  drivers/gpu/host1x/dev.c                       |  246 +++++++++
->  drivers/gpu/host1x/dev.h                       |  308 ++++++++++++
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/Kconfig  |   19 +-
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/dc.c     |   26 +-
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/dc.h     |    0
->  drivers/gpu/host1x/drm/drm.c                   |  640 ++++++++++++++++++=
-++++++
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/drm.h    |   68 ++-
->  drivers/gpu/host1x/drm/fb.c                    |  372 ++++++++++++++
->  drivers/gpu/host1x/drm/gem.c                   |  270 ++++++++++
->  drivers/gpu/host1x/drm/gem.h                   |   59 +++
->  drivers/gpu/host1x/drm/gr2d.c                  |  339 +++++++++++++
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/hdmi.c   |    5 +-
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/hdmi.h   |    0
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/output.c |    0
->  drivers/gpu/{drm/tegra =3D> host1x/drm}/rgb.c    |    0
->  drivers/gpu/host1x/host1x.h                    |   30 ++
->  drivers/gpu/host1x/host1x_bo.h                 |   87 ++++
->  drivers/gpu/host1x/host1x_client.h             |   35 ++
->  drivers/gpu/host1x/hw/Makefile                 |    6 +
->  drivers/gpu/host1x/hw/cdma_hw.c                |  326 ++++++++++++
->  drivers/gpu/host1x/hw/channel_hw.c             |  168 +++++++
->  drivers/gpu/host1x/hw/debug_hw.c               |  322 ++++++++++++
->  drivers/gpu/host1x/hw/host1x01.c               |   42 ++
->  drivers/gpu/host1x/hw/host1x01.h               |   25 +
->  drivers/gpu/host1x/hw/host1x01_hardware.h      |  143 ++++++
->  drivers/gpu/host1x/hw/hw_host1x01_channel.h    |  120 +++++
->  drivers/gpu/host1x/hw/hw_host1x01_sync.h       |  243 +++++++++
->  drivers/gpu/host1x/hw/hw_host1x01_uclass.h     |  174 +++++++
->  drivers/gpu/host1x/hw/intr_hw.c                |  143 ++++++
->  drivers/gpu/host1x/hw/syncpt_hw.c              |  114 +++++
->  drivers/gpu/host1x/intr.c                      |  354 +++++++++++++
->  drivers/gpu/host1x/intr.h                      |  102 ++++
->  drivers/gpu/host1x/job.c                       |  603 ++++++++++++++++++=
-++++
->  drivers/gpu/host1x/job.h                       |  162 ++++++
->  drivers/gpu/host1x/syncpt.c                    |  387 ++++++++++++++
->  drivers/gpu/host1x/syncpt.h                    |  165 ++++++
->  drivers/video/Kconfig                          |    2 +
->  include/trace/events/host1x.h                  |  272 ++++++++++
->  include/uapi/drm/Kbuild                        |    1 +
->  include/uapi/drm/tegra_drm.h                   |  136 +++++
->  55 files changed, 7551 insertions(+), 643 deletions(-)
->  delete mode 100644 drivers/gpu/drm/tegra/Makefile
->  delete mode 100644 drivers/gpu/drm/tegra/drm.c
->  delete mode 100644 drivers/gpu/drm/tegra/fb.c
->  delete mode 100644 drivers/gpu/drm/tegra/host1x.c
->  create mode 100644 drivers/gpu/host1x/Kconfig
->  create mode 100644 drivers/gpu/host1x/Makefile
->  create mode 100644 drivers/gpu/host1x/cdma.c
->  create mode 100644 drivers/gpu/host1x/cdma.h
->  create mode 100644 drivers/gpu/host1x/channel.c
->  create mode 100644 drivers/gpu/host1x/channel.h
->  create mode 100644 drivers/gpu/host1x/debug.c
->  create mode 100644 drivers/gpu/host1x/debug.h
->  create mode 100644 drivers/gpu/host1x/dev.c
->  create mode 100644 drivers/gpu/host1x/dev.h
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/Kconfig (56%)
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/dc.c (98%)
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/dc.h (100%)
->  create mode 100644 drivers/gpu/host1x/drm/drm.c
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/drm.h (77%)
->  create mode 100644 drivers/gpu/host1x/drm/fb.c
->  create mode 100644 drivers/gpu/host1x/drm/gem.c
->  create mode 100644 drivers/gpu/host1x/drm/gem.h
->  create mode 100644 drivers/gpu/host1x/drm/gr2d.c
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/hdmi.c (99%)
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/hdmi.h (100%)
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/output.c (100%)
->  rename drivers/gpu/{drm/tegra =3D> host1x/drm}/rgb.c (100%)
->  create mode 100644 drivers/gpu/host1x/host1x.h
->  create mode 100644 drivers/gpu/host1x/host1x_bo.h
->  create mode 100644 drivers/gpu/host1x/host1x_client.h
->  create mode 100644 drivers/gpu/host1x/hw/Makefile
->  create mode 100644 drivers/gpu/host1x/hw/cdma_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/channel_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/debug_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/host1x01.c
->  create mode 100644 drivers/gpu/host1x/hw/host1x01.h
->  create mode 100644 drivers/gpu/host1x/hw/host1x01_hardware.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_channel.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_sync.h
->  create mode 100644 drivers/gpu/host1x/hw/hw_host1x01_uclass.h
->  create mode 100644 drivers/gpu/host1x/hw/intr_hw.c
->  create mode 100644 drivers/gpu/host1x/hw/syncpt_hw.c
->  create mode 100644 drivers/gpu/host1x/intr.c
->  create mode 100644 drivers/gpu/host1x/intr.h
->  create mode 100644 drivers/gpu/host1x/job.c
->  create mode 100644 drivers/gpu/host1x/job.h
->  create mode 100644 drivers/gpu/host1x/syncpt.c
->  create mode 100644 drivers/gpu/host1x/syncpt.h
->  create mode 100644 include/trace/events/host1x.h
->  create mode 100644 include/uapi/drm/tegra_drm.h
+This assumption was made long ago. I know drivers are supposed to assume
+that clocks are disabled when they're probed, but historically that
+wasn't always the case, so if the audio drivers assumed that, and then
+did clk_enable() as the first thing, they got a warning due to the
+enabling an already enabled clock and/or later attempts to disable the
+clocks wouldn't actually disable them. Perhaps this has changed now, but
+either way, audio driver changes would be needed to support this change.
 
-For the series:
-
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Tested-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-
-For the Tegra DRM bits:
-
-Acked-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-
---2oS5YaxWCcQjTEyO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRTHC+AAoJEN0jrNd/PrOhM68P/330rjz4utImVJhTJ9zJGna2
-SxRkO4BHb+G8xpY1MlejFsnlawCxIWIkA7rSm1S5sI0WrDdOix2wX2v3lW2+NLR6
-3BMlQmoe3GXFQKrXz6PgMVZLgF0OdFTEE8k9OwkDjiZMyWSSu8pTdmiD4DYeiyfG
-otGrrvRmAof8UN7JwVG3bklA6HMHnuTHCdFHsiXQw350ZTj8UQvVxzNbZ2YCzC7Z
-x+m5SmW8+V92t64sKa4XWV7Y0nJlbETdH37PgqLFAmC0R1QSgT00t3Ld5GBQb/hc
-DSjy0BWqwWaZmGh/yGxFoMHZABDOfy6STVQou9OsoJJNYDS26zT907dm90ahhNte
-/VyEdXhJb1HNKPW+7dgRiaw/uH4FBWjBaoz3D7qRXuhUu2Kp7vdeWlb1Ni7E0edy
-51N1Y0kdTgIfQfk9XsrPlxL5yTv9z0asbt3VfOZdkIPIHEpmq96UKKpL0GG6JVH1
-/7DiPaUrVg4qQ0qRsudYe5BcwoUOQ/JAtlqoK2XaagP7vMs3JI5eZU7nmjFo6KE4
-TFh8hhUzKHBwVtAGgvXn388wDxR/+gj9uqgA3t54w6kRdpXZDOm1Fb4eTh1fR1wc
-E9CZ8u2rqzUNr1FrMjWAz/LrrDT1dcNTSUmQeHmJZkUp3qFmh6VVJ0F9ixBtQ31q
-UB8vF0nFpNg17I2NYbji
-=ZrXT
------END PGP SIGNATURE-----
-
---2oS5YaxWCcQjTEyO--
+Perhaps this is due to initializing the Tegra clock driver in the
+machine descriptor's init_irq function, rather than in the init_machine
+function? Can this be moved?
