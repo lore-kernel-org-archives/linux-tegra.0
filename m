@@ -1,51 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: set up audio clocks on Tegra114
-Date: Fri, 22 Mar 2013 12:48:51 -0600
-Message-ID: <514CA793.4040105@wwwdotorg.org>
-References: <1363895115-14129-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v8 00/14] Tegra114 clockframework
+Date: Fri, 22 Mar 2013 13:05:21 -0600
+Message-ID: <514CAB71.7020005@wwwdotorg.org>
+References: <1363956029-31873-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363895115-14129-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1363956029-31873-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2013 01:45 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This sets up all the audio-related clocks on Tegra114 in the same way
-> as they are set up on previous chips.
+On 03/22/2013 06:39 AM, Peter De Schrijver wrote:
+> This is the eight version of the Tegra114 clockframework. It is based on the
+> next-20130320-fixed branch of
+> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
 
-> Peter, do you want to roll this into your CCF series V8, or should I apply
-> it seperately?
+Hmmm. Basing this on v3.9-rcX would be better, since when I apply it to
+the Tegra tree, that's what it will be based on. Luckily, it applies
+there with trivial conflicts.
 
-I see that part of this is included in your CCF series v8, except that:
+> http://patchwork.ozlabs.org/patch/229972/ and
+> http://patchwork.ozlabs.org/patch/229978/
 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+The series,
 
-> +	{pll_a, clk_max, 564480000, 1},
-> +	{pll_a_out0, clk_max, 11289600, 1},
-> +	{extern1, pll_a_out0, 0, 1},
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +	{clk_out_1, clk_max, 0, 1},
+(based on my personal next-20130318-fixed branch, without
+http://patchwork.ozlabs.org/patch/229972/ applied, but instead with the
+audio clocks initialized per the patch I posted yesterday to do this).
 
-The "enable" bits are set to 0 there. As I mentioned in the other email,
-the audio driver assumes these clocks are enabled, unless we want to
-enhance the driver to change that, but that would create a dependency
-between the ASoC and Tegra trees, which I'd really rather not do, since
-other changes to the relevant ASoC files are already going through ASoC
-tree for 3.10.
+I tested: serial console, eMMC for the root filesystem, audio playback
+using different pll_a rates, reboot, and shutdown.
 
-> +	{i2s0, pll_a_out0, 11289600, 0},
-> +	{i2s1, pll_a_out0, 11289600, 0},
-> +	{i2s2, pll_a_out0, 11289600, 0},
-> +	{i2s3, pll_a_out0, 11289600, 0},
-> +	{i2s4, pll_a_out0, 11289600, 0},
-
-Those entries are missing. At least the parenting relationship needs to
-be set up I believe.
-
-I assume you want me to send an incremental patch to fix that up?
+This version also solves the hard hang I was seeing with V7 during
+shutdown or reboot. Now I don't have to rely on my filesystem journal:-)
