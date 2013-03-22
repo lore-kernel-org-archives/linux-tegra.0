@@ -1,27 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Add sbs-battery node to Dalmore
-Date: Fri, 22 Mar 2013 11:35:48 -0600
-Message-ID: <514C9674.905@wwwdotorg.org>
-References: <1363793492-2019-1-git-send-email-rklein@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 0/4] ARM: tegra: dalmore: add regulators
+Date: Fri, 22 Mar 2013 11:37:16 -0600
+Message-ID: <514C96CC.8000904@wwwdotorg.org>
+References: <1363873663-19272-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1363793492-2019-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1363873663-19272-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/20/2013 09:31 AM, Rhyland Klein wrote:
-> This patch adds the node for the bq20z45 I2C gas gauge which is
-> compatible with the sbs-battery power supply driver.
+On 03/21/2013 07:47 AM, Laxman Dewangan wrote:
+> This series add the regulators for Dalmore platform.
+> Dalmore also have the Palma PMIC as primary PMIC but 
+> dt population will be send later once DT documentation
+> finalize.
 
-Applied to Tegra's for-3.10/dt branch.
+The series is applied. The first 3 patches to Tegra's for-3.10/dt
+branch, and patch 4 to Tegra's for-3.10/defconfig banch.
 
-> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+In patch 2,
 
-> +		battery: smart-battery@b {
+> +		tps65090@48 {
 
-I removed "@b" here, since the unit-address isn't necessary to make the
+I removed "@48" there, since the unit-address isn't required to make the
 node name unique.
