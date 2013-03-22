@@ -1,67 +1,110 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: PCIe code Upstream
-Date: Fri, 22 Mar 2013 13:33:59 +0100
-Message-ID: <20130322123359.GA13174@avionic-0098.mockup.avionic-design.de>
-References: <C79B248886DD134989C8FF6B096A91AB91B06252D9@BGMAIL01.nvidia.com>
- <20130226072232.GA30973@avionic-0098.mockup.avionic-design.de>
- <C79B248886DD134989C8FF6B096A91AB91B1BA7E06@BGMAIL01.nvidia.com>
- <20130308105642.GA29254@avionic-0098.mockup.avionic-design.de>
- <C79B248886DD134989C8FF6B096A91AB91B2F758C0@BGMAIL01.nvidia.com>
- <74CDBE0F657A3D45AFBB94109FB122FF2A74B947F8@HQMAIL01.nvidia.com>
- <20130318125201.GA7697@avionic-0098.mockup.avionic-design.de>
- <C79B248886DD134989C8FF6B096A91AB91B2F75D6A@BGMAIL01.nvidia.com>
- <20130320075322.GA2666@avionic-0098.mockup.avionic-design.de>
- <C79B248886DD134989C8FF6B096A91AB91B36FB281@BGMAIL01.nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v8 00/14] Tegra114 clockframework
+Date: Fri, 22 Mar 2013 14:39:17 +0200
+Message-ID: <1363956029-31873-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B36FB281-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+This is the eight version of the Tegra114 clockframework. It is based on the
+next-20130320-fixed branch of
+git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+http://patchwork.ozlabs.org/patch/229972/ and
+http://patchwork.ozlabs.org/patch/229978/
 
---ReaqsoxgOBHFXBhH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It has been boottested on Dalmore and Beaverboard.
 
-On Fri, Mar 22, 2013 at 05:59:13PM +0530, Jay Agarwal wrote:
-> I don't see can't assign things now on Thierry's latest repo() + my tegra=
-3 support patch, but some reconfiguring things are still there as below:
->=20
->   bridge configuration invalid ([bus 00-00]), reconfiguring
->=20
->=20
->=20
-> I am not sure if it's harmless?
+Changes from v7:
 
-That's harmless.
+* Fixed dummy operations
+* Removed some duplicates from the binding document
+* Fixed tegra114_clk enum to be in line with the binding document
+* Removed __initdata from tegra_periph_clk_list and
+  tegra_periph_nodiv_clk_list
+* Mark csite clock as CLK_IGNORE_UNUSED
+* Fixed mux mask for disp1 and disp2
+* Fixed initializations for PLLX, PLLC, PLLC2 and PLCC3
+* Converted clk_pll_wait_for_lock() to use a mask instead of a single bit
+* added TEGRA_PLL_HAS_LOCK_ENABLE flag
 
-Thierry
+Changes from v6:
 
---ReaqsoxgOBHFXBhH
-Content-Type: application/pgp-signature
+* Remove clock-frequency from DT serial nodes
+* Remove useless 'cpu' clock from binding documentation
+* Use HW gate control for PLLU divided outputs
+* Fix clock ID for 'd_audio' clock
+* Add dummy cpu car ops to ease making a bisectable series
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+Changes from v5:
 
-iQIcBAEBAgAGBQJRTE+3AAoJEN0jrNd/PrOh7ekP/iQUsvHGogl2Lmp3iijHWCnw
-8bigRlHZbVT1k4vJER1k9fub3f1JekcTEPL4hzz+M9Jt7UJpaS14+duilIIvMkBw
-Hh/UEpnK+SAmASbRlUNbC84cqMGfxW3g2Nv3ZiFiHOS3eMHBygleZ0Ml5caVq4NK
-qYrynZErl5zXuTVNaPBO1+dQO+bnuC/Uf3TNs1W+jNgq+4ImklxZwdQuySTBAqow
-MpFeUIH+xYJWAb51XNKl8qatPJAE/iCQ4GRE6l00wSn4qnVHJGP3pyEGKtSmJfkE
-B18uP2zi30GTwSbSCmZzQXvzbbfVcwGF+9mm186OteM73Co/o4xevTSQbWa3byJ0
-gjeWslYUE6mHzvsQiCVkGWm2TmzoAahRtFK0X+vrOLrqMI9aW8h95F4x2xhVED5r
-j+dxm2pP2q0E8KC+AVwTbzMeWucirtICuStoh90k9U8jtZ1iLapO8RiDk+OYg/PT
-nzZ4HHt2+fgBkINqQZu8Q3YVBw5vTtjkYUQdWS7G8inoxvInHl1p1huJ187AZpp/
-EYrDqvFuj4IahlQH/wMgYf/CQ0tGty1zVvG943ynDc7tCBf8MO4PMOvnmeDPEkUZ
-wV/fQO8WIUlIQbNua5mzOtvxVsKxsZ1c4oCukVe2ULgfSZ51wiz/H3XRoKYYyXo4
-mDzgqyxHE4Flu3RbgjDo
-=qhd1
------END PGP SIGNATURE-----
+* Add initialization code for PLLC
+* Remove some unnecessary clocks
+* Fix bug in PLL locking refactoring
+* Add super clocks
+* Remove most calls to clk_register_clkdev() for the peripheral clocks
 
---ReaqsoxgOBHFXBhH--
+Changes from v4:
+
+* Split the new PLL types patch into smaller patches
+* Fix some bugs in the PLL patches
+
+Changes from v3:
+
+* Merge with for-next branch
+* Provide empty tegra_cpu_car_ops to make SMP boot not crash
+
+Changes from v2:
+
+* Added missing PLLs
+* Added bindings to tegra114.dtsi
+* Moved the table patch for clk-mux.c to 'clk: add table lookup to mux'
+* Bugfixes
+
+Changes from v1:
+
+* Remove SATA and PCIe clocks. They don't appear in the internal TRM, so I
+  assume they don't exist.
+* Rebase on top of Hiroshi's latest Tegra114 patches
+* More generic mux code. This is necessary for the AHUB and DAM clocks.
+
+
+Peter De Schrijver (14):
+  clk: tegra: provide dummy cpu car ops
+  clk: tegra: Refactor PLL programming code
+  clk: tegra: Add TEGRA_PLL_BYPASS flag
+  clk: tegra: introduce TEGRA_PLL_HAS_LOCK_ENABLE
+  clk: tegra: Add PLL post divider table
+  clk: tegra: move from a lock bit idx to a lock mask
+  clk: tegra: Add new fields and PLL types for Tegra114
+  clk: tegra: Add flags to tegra_clk_periph()
+  clk: tegra: Workaround for Tegra114 MSENC problem
+  ARM: tegra: Define Tegra114 CAR binding
+  clk: tegra: Implement clocks for Tegra114
+  clk: tegra: devicetree match for nvidia,tegra114-car
+  ARM: dt: Add references to tegra_car clocks
+  clk: tegra: Remove forced clk_enable of uartd
+
+ .../bindings/clock/nvidia,tegra114-car.txt         |  317 +++
+ arch/arm/boot/dts/tegra114-dalmore.dts             |    1 -
+ arch/arm/boot/dts/tegra114-pluto.dts               |    1 -
+ arch/arm/boot/dts/tegra114.dtsi                    |    8 +-
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-periph-gate.c                |    9 +
+ drivers/clk/tegra/clk-periph.c                     |   11 +-
+ drivers/clk/tegra/clk-pll.c                        | 1194 ++++++++++--
+ drivers/clk/tegra/clk-tegra114.c                   | 2068 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  173 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  265 ++--
+ drivers/clk/tegra/clk.c                            |    4 +-
+ drivers/clk/tegra/clk.h                            |   96 +-
+ 13 files changed, 3789 insertions(+), 359 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
+
