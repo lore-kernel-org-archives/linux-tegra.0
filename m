@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v8 08/14] clk: tegra: Add flags to tegra_clk_periph()
-Date: Fri, 22 Mar 2013 14:39:25 +0200
-Message-ID: <1363956029-31873-9-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v8 09/14] clk: tegra: Workaround for Tegra114 MSENC problem
+Date: Fri, 22 Mar 2013 14:39:26 +0200
+Message-ID: <1363956029-31873-10-git-send-email-pdeschrijver@nvidia.com>
 References: <1363956029-31873-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,130 +12,60 @@ To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-We will need some tegra peripheral clocks with the CLK_IGNORE_UNUSED flag,
-most notably mselect, which is a bridge between AXI and most peripherals.
+Workaround a hardware bug in MSENC during clock enable.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-periph.c  |   11 ++++++-----
- drivers/clk/tegra/clk-tegra20.c |    2 +-
- drivers/clk/tegra/clk-tegra30.c |    2 +-
- drivers/clk/tegra/clk.h         |    9 ++++++---
- 4 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/clk/tegra/clk-periph-gate.c |    9 +++++++++
+ drivers/clk/tegra/clk.h             |    2 ++
+ 2 files changed, 11 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index 788486e..067abb3 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -170,14 +170,15 @@ const struct clk_ops tegra_clk_periph_nodiv_ops = {
- static struct clk *_tegra_clk_register_periph(const char *name,
- 			const char **parent_names, int num_parents,
- 			struct tegra_clk_periph *periph,
--			void __iomem *clk_base, u32 offset, bool div)
-+			void __iomem *clk_base, u32 offset, bool div,
-+			unsigned long flags)
- {
- 	struct clk *clk;
- 	struct clk_init_data init;
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index 6dd5332..c9083fb 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -43,6 +43,8 @@ static DEFINE_SPINLOCK(periph_ref_lock);
  
- 	init.name = name;
- 	init.ops = div ? &tegra_clk_periph_ops : &tegra_clk_periph_nodiv_ops;
--	init.flags = div ? 0 : CLK_SET_RATE_PARENT;
-+	init.flags = flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
+ #define periph_clk_to_bit(periph) (1 << (gate->clk_num % 32))
  
-@@ -202,10 +203,10 @@ static struct clk *_tegra_clk_register_periph(const char *name,
- struct clk *tegra_clk_register_periph(const char *name,
- 		const char **parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
--		u32 offset)
-+		u32 offset, unsigned long flags)
++#define LVL2_CLK_GATE_OVRE 0x554
++
+ /* Peripheral gate clock ops */
+ static int clk_periph_is_enabled(struct clk_hw *hw)
  {
- 	return _tegra_clk_register_periph(name, parent_names, num_parents,
--			periph, clk_base, offset, true);
-+			periph, clk_base, offset, true, flags);
- }
- 
- struct clk *tegra_clk_register_periph_nodiv(const char *name,
-@@ -214,5 +215,5 @@ struct clk *tegra_clk_register_periph_nodiv(const char *name,
- 		u32 offset)
- {
- 	return _tegra_clk_register_periph(name, parent_names, num_parents,
--			periph, clk_base, offset, false);
-+			periph, clk_base, offset, false, CLK_SET_RATE_PARENT);
- }
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index e1416e1..4b18701 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1019,7 +1019,7 @@ static void __init tegra20_periph_clk_init(void)
- 		data = &tegra_periph_clk_list[i];
- 		clk = tegra_clk_register_periph(data->name, data->parent_names,
- 				data->num_parents, &data->periph,
--				clk_base, data->offset);
-+				clk_base, data->offset, data->flags);
- 		clk_register_clkdev(clk, data->con_id, data->dev_id);
- 		clks[data->clk_id] = clk;
+@@ -83,6 +85,13 @@ static int clk_periph_enable(struct clk_hw *hw)
+ 		}
  	}
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index aa92745..75cdd46 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1668,7 +1668,7 @@ static void __init tegra30_periph_clk_init(void)
- 		data = &tegra_periph_clk_list[i];
- 		clk = tegra_clk_register_periph(data->name, data->parent_names,
- 				data->num_parents, &data->periph,
--				clk_base, data->offset);
-+				clk_base, data->offset, data->flags);
- 		clk_register_clkdev(clk, data->con_id, data->dev_id);
- 		clks[data->clk_id] = clk;
- 	}
+ 
++	if (gate->flags & TEGRA_PERIPH_WAR_1005168) {
++		writel_relaxed(0, gate->clk_base + LVL2_CLK_GATE_OVRE);
++		writel_relaxed(BIT(22), gate->clk_base + LVL2_CLK_GATE_OVRE);
++		udelay(1);
++		writel_relaxed(0, gate->clk_base + LVL2_CLK_GATE_OVRE);
++	}
++
+ 	spin_unlock_irqrestore(&periph_ref_lock, flags);
+ 
+ 	return 0;
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index bdc085d..8fbdb8a 100644
+index 8fbdb8a..fd8ada2 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -417,7 +417,7 @@ extern const struct clk_ops tegra_clk_periph_ops;
- struct clk *tegra_clk_register_periph(const char *name,
- 		const char **parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
--		u32 offset);
-+		u32 offset, unsigned long flags);
- struct clk *tegra_clk_register_periph_nodiv(const char *name,
- 		const char **parent_names, int num_parents,
- 		struct tegra_clk_periph *periph, void __iomem *clk_base,
-@@ -460,12 +460,14 @@ struct tegra_periph_init_data {
- 	u32 offset;
- 	const char *con_id;
- 	const char *dev_id;
-+	unsigned long flags;
- };
+@@ -358,6 +358,7 @@ struct tegra_clk_periph_regs {
+  * TEGRA_PERIPH_ON_APB - If peripheral is in the APB bus then read the
+  *     bus to flush the write operation in apb bus. This flag indicates
+  *     that this peripheral is in apb bus.
++ * TEGRA_PERIPH_WAR_1005168 - Apply workaround for Tegra114 MSENC bug
+  */
+ struct tegra_clk_periph_gate {
+ 	u32			magic;
+@@ -377,6 +378,7 @@ struct tegra_clk_periph_gate {
+ #define TEGRA_PERIPH_NO_RESET BIT(0)
+ #define TEGRA_PERIPH_MANUAL_RESET BIT(1)
+ #define TEGRA_PERIPH_ON_APB BIT(2)
++#define TEGRA_PERIPH_WAR_1005168 BIT(3)
  
- #define TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parent_names, _offset,\
- 			_mux_shift, _mux_mask, _mux_flags, _div_shift,	\
- 			_div_width, _div_frac_width, _div_flags, _regs,	\
--			_clk_num, _enb_refcnt, _gate_flags, _clk_id, _table) \
-+			_clk_num, _enb_refcnt, _gate_flags, _clk_id, _table,\
-+			_flags) \
- 	{								\
- 		.name = _name,						\
- 		.clk_id = _clk_id,					\
-@@ -480,6 +482,7 @@ struct tegra_periph_init_data {
- 		.offset = _offset,					\
- 		.con_id = _con_id,					\
- 		.dev_id = _dev_id,					\
-+		.flags = _flags						\
- 	}
- 
- #define TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parent_names, _offset,\
-@@ -490,7 +493,7 @@ struct tegra_periph_init_data {
- 			_mux_shift, BIT(_mux_width) - 1, _mux_flags,	\
- 			_div_shift, _div_width, _div_frac_width, _div_flags, \
- 			_regs, _clk_num, _enb_refcnt, _gate_flags, _clk_id,\
--			NULL)
-+			NULL, 0)
- 
- /**
-  * struct clk_super_mux - super clock
+ void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
+ extern const struct clk_ops tegra_clk_periph_gate_ops;
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
