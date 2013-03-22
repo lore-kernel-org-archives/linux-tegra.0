@@ -1,30 +1,31 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH REPOST v2] clk: add table lookup to mux
-Date: Fri, 22 Mar 2013 13:25:22 -0700
-Message-ID: <20130322202522.834.24639@quantum>
-References: <1363954078-29952-1-git-send-email-pdeschrijver@nvidia.com>
- <514C813E.1070603@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix register address of slink controller
+Date: Fri, 22 Mar 2013 20:30:53 +0000
+Message-ID: <201303222030.53942.arnd@arndb.de>
+References: <1363977306-7548-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <514C813E.1070603@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363977306-7548-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-03-22 09:05:18)
-> On 03/22/2013 06:07 AM, Peter De Schrijver wrote:
-> > Add a table lookup feature to the mux clock. Also allow arbitrary masks
-> > instead of the width. This will be used by some clocks on Tegra114. Also
-> > adapt the tegra periph clk because it uses struct clk_mux directly.
-> > 
-> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Friday 22 March 2013, Stephen Warren wrote:
+> From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Tested-by: Stephen Warren <swarren@nvidia.com>
+> Fix typo on register address of slink3 controller where register
+> address is wrongly set as 0x7000d480 but it is 0x7000d800.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Arnd, Olof, this is a fix for v3.9.
 
-Thanks for the patch.  Taken into clk-next.
+Applied to fixes branch, thanks!
 
-Regards,
-Mike
+	Arnd
