@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: [PATCH] clk: tegra: Don't enable PLLs during early boot
-Date: Fri, 22 Mar 2013 13:54:58 +0200
-Message-ID: <1363953308-28828-1-git-send-email-pdeschrijver@nvidia.com>
+Date: Fri, 22 Mar 2013 14:02:33 +0200
+Message-ID: <1363953762-29783-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
