@@ -1,41 +1,51 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] clk: tegra: Fix periph_clk_to_bit macro
-Date: Fri, 22 Mar 2013 12:43:02 -0600
-Message-ID: <514CA636.9000005@wwwdotorg.org>
-References: <1362606444-19970-1-git-send-email-achew@nvidia.com> <514B66A1.6020101@wwwdotorg.org> <20130321212542.834.78153@quantum>
+Subject: Re: [PATCH] clk: tegra: set up audio clocks on Tegra114
+Date: Fri, 22 Mar 2013 12:48:51 -0600
+Message-ID: <514CA793.4040105@wwwdotorg.org>
+References: <1363895115-14129-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130321212542.834.78153@quantum>
+In-Reply-To: <1363895115-14129-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yen Lin <yelin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/21/2013 03:25 PM, Mike Turquette wrote:
-> Quoting Stephen Warren (2013-03-21 12:59:29)
->> On 03/06/2013 02:47 PM, Andrew Chew wrote:
->>> The parameter name should be "gate", not "periph".  This worked, however,
->>> because it happens that everywhere periph_clk_to_bit is called, "gate" was
->>> in the local scope.
->>
->> Mike, could you please ack this so that I can take it through the Tegra
->> tree with the rest of the Tegra clock changes for 3.10? Thanks.
->>
->> Oh, I see this was never sent to Mike:-( Hence, I'm quoting the whole patch.
->>
+On 03/21/2013 01:45 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Thanks for looping me in to the original patch.
-> 
-> I'm still going through v7 of the tegra114 patches now, so acking this
-> is is a bit out-of-sequence, but the change is trivial enough:
-> 
-> Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> This sets up all the audio-related clocks on Tegra114 in the same way
+> as they are set up on previous chips.
 
-Thanks.
+> Peter, do you want to roll this into your CCF series V8, or should I apply
+> it seperately?
 
-This is actually a fix for the previous existing clock drivers for
-Tegra20 and Tegra30, so I'll apply it before the Tegra114 CCF series.
+I see that part of this is included in your CCF series v8, except that:
 
-Applied to Tegra's for-3.10/clk branch.
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+
+> +	{pll_a, clk_max, 564480000, 1},
+> +	{pll_a_out0, clk_max, 11289600, 1},
+> +	{extern1, pll_a_out0, 0, 1},
+
+> +	{clk_out_1, clk_max, 0, 1},
+
+The "enable" bits are set to 0 there. As I mentioned in the other email,
+the audio driver assumes these clocks are enabled, unless we want to
+enhance the driver to change that, but that would create a dependency
+between the ASoC and Tegra trees, which I'd really rather not do, since
+other changes to the relevant ASoC files are already going through ASoC
+tree for 3.10.
+
+> +	{i2s0, pll_a_out0, 11289600, 0},
+> +	{i2s1, pll_a_out0, 11289600, 0},
+> +	{i2s2, pll_a_out0, 11289600, 0},
+> +	{i2s3, pll_a_out0, 11289600, 0},
+> +	{i2s4, pll_a_out0, 11289600, 0},
+
+Those entries are missing. At least the parenting relationship needs to
+be set up I believe.
+
+I assume you want me to send an incremental patch to fix that up?
