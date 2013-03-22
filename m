@@ -1,25 +1,28 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH V2] i2c: tegra: assume CONFIG_OF, remove platform data
-Date: Fri, 22 Mar 2013 10:09:46 +0100
-Message-ID: <20130322090946.GA8240@the-dreams.de>
-References: <1363889326-14728-1-git-send-email-swarren@wwwdotorg.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: tegra: check the clk_prepare_enable() return value
+Date: Fri, 22 Mar 2013 10:31:14 +0100
+Message-ID: <20130322093114.GB8240@the-dreams.de>
+References: <1363361648-10326-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1363889326-14728-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1363361648-10326-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: swarren@wwwdotorg.org, khali@linux-fr.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 21, 2013 at 12:08:46PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Mar 15, 2013 at 09:04:08PM +0530, Laxman Dewangan wrote:
+> NVIDIA's Tegra SoC allows read/write of controller register only
+> if controller clock is enabled. System hangs if read/write happens
+> to registers without enabling clock.
 > 
-> Tegra only supports, and always enables, device tree. Remove all ifdefs
-> and runtime checks for DT support from the driver. Platform data is
-> therefore no longer required. Delete the header that defines it.
+> clk_prepare_enable() can be fail due to unknown reason and hence
+> adding check for return value of this function. If this function
+> success then only access register otherwise return to caller with
+> error.
 > 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Applied to for-next, thanks!
+Applied to for-current, thanks!
