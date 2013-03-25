@@ -1,37 +1,39 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Don't enable PLLs during early boot
-Date: Mon, 25 Mar 2013 10:12:43 -0600
-Message-ID: <5150777B.8030304@wwwdotorg.org>
-References: <1363953308-28828-1-git-send-email-pdeschrijver@nvidia.com> <514C7D3B.40602@wwwdotorg.org> <20130325110236.GP4977@n2100.arm.linux.org.uk>
+Subject: Re: [PATCH 1/2] ASoC: tegra: add Tegra114 support to the AHUB driver
+Date: Mon, 25 Mar 2013 10:19:05 -0600
+Message-ID: <515078F9.1070800@wwwdotorg.org>
+References: <1363895802-20484-1-git-send-email-swarren@wwwdotorg.org> <20130325155232.GR18316@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130325110236.GP4977-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <20130325155232.GR18316-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/25/2013 05:02 AM, Russell King - ARM Linux wrote:
-> On Fri, Mar 22, 2013 at 09:48:11AM -0600, Stephen Warren wrote:
->> This assumption was made long ago. I know drivers are supposed to assume
->> that clocks are disabled when they're probed, but historically that
->> wasn't always the case, so if the audio drivers assumed that, and then
->> did clk_enable() as the first thing, they got a warning due to the
->> enabling an already enabled clock and/or later attempts to disable the
->> clocks wouldn't actually disable them.
+On 03/25/2013 09:52 AM, Mark Brown wrote:
+> On Thu, Mar 21, 2013 at 01:56:41PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> 
+>> Tegra114's AHUB shares a design with Tegra30, with the followin
+>> changes: * Supports more (10 vs. 4) bi-directional FIFO channels
+>> into RAM.
 > 
-> No.  clocks have always been able to be enabled multiple times.  You
-> should only get a warning if you try and disable it more times than you
-> enabled it, because that's a violation of the API.
+> Applied but...
 
-That may have been the issue; the clock may have been on at boot, and
-hence the driver attempted to disable it without ever enabling it
-itself, and this triggered an error/warning.
+Thanks.
 
-Equally, it's plausible this issue is long gone; the audio clocks were
-set up this way due to issues over 2 years ago when the audio code was
-upstreamed. At that time, Tegra's clock code was using very little
-standard infra-structure, whereas now it's been cleaned up to use the
-common clock framework etc.
+>> +	clocks = <&tegra_car 106>, <&tegra_car 107>, <&tegra_car 30>, +
+>> <&tegra_car 11>, <&tegra_car 18>, <&tegra_car 101>, +
+>> <&tegra_car 102>, <&tegra_car 108>, <&tegra_car 109>, +
+>> <&tegra_car 110>, <&tegra_car 162>; +	clock-names = "d_audio",
+>> "apbif", "i2s0", "i2s1", "i2s2", +		"i2s3", "i2s4", "dam0",
+>> "dam1", "dam2", +		"spdif_in";
+> 
+> ...this is exactly what I was worried about with the clock bindings
+> :/
+
+What's the exact issue here? The length of the list is rather
+determined by the HW, so I don't think there's much one can do about that.
