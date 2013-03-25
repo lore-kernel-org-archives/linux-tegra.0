@@ -1,65 +1,75 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 1/2] ASoC: tegra: add Tegra114 support to the AHUB driver
-Date: Mon, 25 Mar 2013 18:32:00 +0000
-Message-ID: <20130325183159.GS18316@opensource.wolfsonmicro.com>
-References: <1363895802-20484-1-git-send-email-swarren@wwwdotorg.org>
- <20130325155232.GR18316@opensource.wolfsonmicro.com>
- <515078F9.1070800@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Allow PLLE training to succeed
+Date: Mon, 25 Mar 2013 19:53:21 +0100
+Message-ID: <20130325185321.GA3542@avionic-0098.mockup.avionic-design.de>
+References: <1363274825-2439-1-git-send-email-thierry.reding@avionic-design.de>
+ <51437655.1030008@wwwdotorg.org>
+ <20130322204822.834.98314@quantum>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZcSDOt7TZFizttpn"
+	protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <515078F9.1070800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130322204822.834.98314@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZcSDOt7TZFizttpn
+--KsGdsel6WgEHnImy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 25, 2013 at 10:19:05AM -0600, Stephen Warren wrote:
-> On 03/25/2013 09:52 AM, Mark Brown wrote:
-> > On Thu, Mar 21, 2013 at 01:56:41PM -0600, Stephen Warren wrote:
+On Fri, Mar 22, 2013 at 01:48:22PM -0700, Mike Turquette wrote:
+> Quoting Stephen Warren (2013-03-15 12:28:21)
+> > On 03/14/2013 09:27 AM, Thierry Reding wrote:
+> > > Under some circumstances the PLLE needs to be retrained, in which case
+> > > access to the PMC registers is required. Fix this by passing a pointer
+> > > to the PMC registers instead of NULL when registering the PLLE clock.
+> >=20
+> > Mike, I believe this patch is appropriate as a fix for v3.9. I assume
+> > you'll take it through the clock tree? Thanks.
+>=20
+> Does this patch fix a crash or a documented failure?  Linus is being
+> more strict about taking fixes in the -rc cycles these days and knowing
+> exactly what behavior this fixes would be beneficial.
 
-> >> +	clocks = <&tegra_car 106>, <&tegra_car 107>, <&tegra_car 30>, +
-> >> <&tegra_car 11>, <&tegra_car 18>, <&tegra_car 101>, +
-> >> <&tegra_car 102>, <&tegra_car 108>, <&tegra_car 109>, +
-> >> <&tegra_car 110>, <&tegra_car 162>; +	clock-names = "d_audio",
-> >> "apbif", "i2s0", "i2s1", "i2s2", +		"i2s3", "i2s4", "dam0",
-> >> "dam1", "dam2", +		"spdif_in";
+This fixes a failure where the clock can't be retrained. Under some
+circumstances the timing is such that retraining isn't required, in
+which case the code runs normally. However I've seen in happen that
+the PLL isn't stable in other cases, so the code tries to retrain.
 
-> > ...this is exactly what I was worried about with the clock bindings
-> > :/
+But the current code doesn't allow retraining to happen because the
+MC registers aren't accessible for the PLLE and therefore the
+clk_plle_training() function immediately errors out with -ENOSYS.
 
-> What's the exact issue here? The length of the list is rather
-> determined by the HW, so I don't think there's much one can do about that.
+Comparing to Tegra30 this is obviously just a typo when registering
+the PLLE clock and the virtual address to the PMC registers can be
+passed in at PLLE registration time to resolve this issue.
 
-The fact that it's two lists that need to be matched up.
+Thierry
 
---ZcSDOt7TZFizttpn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRUJgXAAoJELSic+t+oim9RnUP/3lwU0PopjjWG2Y2OYPiThJz
-jljVI9/d1CxlbxgxNytwszFwbknd/L6fOTTow/eADzQvLIuvYLp3CB/B2imVWL49
-o0TUo3sZuFWXW9oW++17fM83Ut5qyj1aXhhKUzPsOeHCgC2b1k9UgQbLGVX7nMIn
-nLnTFBCQhdntiMbNS8oCtgauTsWnftNxt1S1yyX/0j0oDymMzIoFFN0yCz2k2S04
-xgj9wXuLLM/YF1C+uUCkup6lAj3u3KYQEXKstVuqv9zXO5Um/QlZdibn8BCzEwTK
-qG2NdNiSA4BI8/yCWEHb5wPnrLZjdmQwisVtWLt5fjL2ff45QREBFtAf+4nNvEgL
-e/cGMl3UBSk/Ft3l3yF6c/CZoI7LUP0Zw+MO4LeR+5eE8oowetdXveF9cltxW967
-8nLL5BkGJTfRpn7D0ITe+dERcy1l/YihN669kmSbfyz4n7+09PJi0ekpJTFuXY4h
-+9hqbeI/v2tQalD0FP7Bi7d+FBLl3kDAWj/+CD2POtZ9TKMyBHwNK+spReMnS4J3
-Uj5LvwwVJFHTqE5oVU/NnUaXLNn53Wt8LEl/C3P6It23mDus/VvQaK5Z5PGSluiU
-o5vg1uvtj/wWyVo6RUxjOk5BgSUHgFZ5djbz1KatrUkZOKlW6LGLLofNZlgwFTFk
-vsPeMmZOw6De5/+6AA8o
-=cAyq
+iQIcBAEBAgAGBQJRUJ0hAAoJEN0jrNd/PrOhX3AP/2zM+rarsJjOARAK/AmOhjPR
+/AkMaajItPCa217dMxxDz/0YbdvfIDysCw6tuC1KWcze3tNNkjfjQ6l25BlzSLIN
+zkF9pTcKmM9vlrwDgpmj/XmRdKodaKnld8OTTs52PIOIyCFq9CYvsUFPr5JbI3k2
+fmgYTEkm5c6NmvGGPZPEwlF2qxrqN/jN4s38KGBa6FrrSzbND3bgfBZ+xVYghuaa
+QOrZXNaZbv48uLRtSNATDZnJPhofVL/KU4IxpeP8+1KJy6dIJMDOrKItFQu81nsO
+oW4FTbpyC2WBkWZzTcuWHNvS8znHlxzufKW3eGANKIkenaLC3dSg1F95F0K4bQf4
+07Z4fq6qvSZOd1SvsBArM6v0bLnavaF4cRSTFuaHhnxRvs9et4jk/QF+r8D2RD8Y
+6kGMNIAvxEetjwsP6lU9L18X7Hl/M0UBx2RKY0gjvamQde8Kl4iMvt7SFoLmk+e8
+IWuMsW5WJfxKFgJ2w7vzbm0dweakZqt9dDdVTEnfXEDP6rIZa7DNMea9TFArnCFK
+pwW+xejaxov9PFOdWd63G9LZB7SImea0fqLoFeqjv3I2TDf8pHyn64xwfJut4BoB
+iF0ybq9tCb1+oga2P4Q6lDimT+G1y/yLAvJlCDMsa2natTwZGQ2zsPHWmFi71Xau
+3zms7iaQb8aEbESgofoP
+=Z4gF
 -----END PGP SIGNATURE-----
 
---ZcSDOt7TZFizttpn--
+--KsGdsel6WgEHnImy--
