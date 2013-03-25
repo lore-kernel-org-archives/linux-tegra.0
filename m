@@ -1,99 +1,63 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Allow PLLE training to succeed
-Date: Mon, 25 Mar 2013 22:35:38 +0100
-Message-ID: <20130325213537.GA6555@avionic-0098.mockup.avionic-design.de>
-References: <1363274825-2439-1-git-send-email-thierry.reding@avionic-design.de>
- <51437655.1030008@wwwdotorg.org>
- <20130322204822.834.98314@quantum>
- <20130325185321.GA3542@avionic-0098.mockup.avionic-design.de>
- <20130325211304.4014.822@quantum>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v8 00/14] Tegra114 clockframework
+Date: Mon, 25 Mar 2013 16:44:15 -0600
+Message-ID: <5150D33F.1000206@wwwdotorg.org>
+References: <1363956029-31873-1-git-send-email-pdeschrijver@nvidia.com> <514CAB71.7020005@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130325211304.4014.822@quantum>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <514CAB71.7020005@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 03/22/2013 01:05 PM, Stephen Warren wrote:
+> On 03/22/2013 06:39 AM, Peter De Schrijver wrote:
+>> This is the eight version of the Tegra114 clockframework. It is based on the
+>> next-20130320-fixed branch of
+>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+> 
+> Hmmm. Basing this on v3.9-rcX would be better, since when I apply it to
+> the Tegra tree, that's what it will be based on. Luckily, it applies
+> there with trivial conflicts.
+> 
+>> http://patchwork.ozlabs.org/patch/229972/ and
+>> http://patchwork.ozlabs.org/patch/229978/
+> 
+> The series,
+> 
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> 
+> (based on my personal next-20130318-fixed branch, without
+> http://patchwork.ozlabs.org/patch/229972/ applied, but instead with the
+> audio clocks initialized per the patch I posted yesterday to do this).
+> 
+> I tested: serial console, eMMC for the root filesystem, audio playback
+> using different pll_a rates, reboot, and shutdown.
+> 
+> This version also solves the hard hang I was seeing with V7 during
+> shutdown or reboot. Now I don't have to rely on my filesystem journal:-)
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hmm. I retract that Tested-by now.
 
-On Mon, Mar 25, 2013 at 02:13:04PM -0700, Mike Turquette wrote:
-> Quoting Thierry Reding (2013-03-25 11:53:21)
-> > On Fri, Mar 22, 2013 at 01:48:22PM -0700, Mike Turquette wrote:
-> > > Quoting Stephen Warren (2013-03-15 12:28:21)
-> > > > On 03/14/2013 09:27 AM, Thierry Reding wrote:
-> > > > > Under some circumstances the PLLE needs to be retrained, in which=
- case
-> > > > > access to the PMC registers is required. Fix this by passing a po=
-inter
-> > > > > to the PMC registers instead of NULL when registering the PLLE cl=
-ock.
-> > > >=20
-> > > > Mike, I believe this patch is appropriate as a fix for v3.9. I assu=
-me
-> > > > you'll take it through the clock tree? Thanks.
-> > >=20
-> > > Does this patch fix a crash or a documented failure?  Linus is being
-> > > more strict about taking fixes in the -rc cycles these days and knowi=
-ng
-> > > exactly what behavior this fixes would be beneficial.
-> >=20
-> > This fixes a failure where the clock can't be retrained. Under some
-> > circumstances the timing is such that retraining isn't required, in
-> > which case the code runs normally. However I've seen in happen that
-> > the PLL isn't stable in other cases, so the code tries to retrain.
-> >=20
-> > But the current code doesn't allow retraining to happen because the
-> > MC registers aren't accessible for the PLLE and therefore the
-> > clk_plle_training() function immediately errors out with -ENOSYS.
-> >=20
-> > Comparing to Tegra30 this is obviously just a typo when registering
-> > the PLLE clock and the virtual address to the PMC registers can be
-> > passed in at PLLE registration time to resolve this issue.
-> >=20
->=20
-> Hi Thierry,
->=20
-> Let me rephrase.  Does this really need to go into the current -rc's or
-> can it go towards 3.10?  What user-visible failure does this fix?  For
-> example, the board doesn't boot, or randomly crashes, or ethernet wasn't
-> working but now it is.  That sort of thing.
+If I apply the series on top of Tegra's for-next branch (which is
+currently entirely based on v3.9-rc1) then it works fine. (Similarly, it
+works fine on top of next-20130318, as I reported above).
 
-Without the patch, PCIe doesn't work reliably. So on some hardware this
-indeed causes hardware like ethernet to not be properly initialized.
-With this patch applied, training for the PLL can succeed and PCIe comes
-up reliably.
+If I merge in v3.9-rc3, it's still fine. If I merge in v3.9-rc4, I see a
+hard hang during boot. I believe that "hard hang" here means that some
+module's registers are being touched with the clock turned off, which
+locks up the CPU/bus. Certainly, sysrq doesn't work once it's hung.
 
-So yes, I think this belongs in 3.9.
+I tracked this down to some interaction with commit f7db706 "ARM:
+7674/1: smp: Avoid dummy clockevent being preferred over real hardware
+clock-event". So says a "git bisect" between v3.9-rc3 and v3.9-rc4,
+applying this CCF V8 series at each point.
 
-Thierry
+If I revert that commit, the problem is solved/hidden. I tested this in
+my local dev branch that's based on next-20130325 plus this CCF V8
+series, plus a bunch of other cruft.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRUMMpAAoJEN0jrNd/PrOhbVkP/ReW/7l0fOeJ4CsamUfyt6zU
-WZaRHyYudMJ5Pk3IBZdxQkfmsv0+YKIJq2358rlW8wX8RgLHDZQe4EE6xACHmABr
-OBx8ItYSKfuVx8soKn7vuS5iGK/jgqwWp1AR/rm2HZ8BISNv46Z6Ghm4+doQg6pd
-j2LBEK/FcaC+/2UKZLR8xV5zDLFPxpUR0+iJgKOTdohpYtxeOttyN7OnYpPs9jLX
-6P88lxpqFq23WQrbj+MHk7HlIC/65aeYlr4tm5mv+H1XWv75nxSbZC1vsVtDo5Tq
-8tGI6uVOy1b4Fza173sVg7I3IUMfjnFyF+Birzc10vEPJ67EsEPvm0jUjYqOaRB3
-oVKvh96Z71p72iyj+0kc89Ky+MSaXJ6amBhjskupUPSuBwxhfxW6KUhLeZi+QC/I
-dDXyHFJnSNcJamygeALKSRvOX6jub2+aAqU8ZU0ldPF9H3S072TgBxTbbdQm5F+I
-zOmZHF2aGVwPQkizxlOfrWV1MNy2vApwAcaLeN1CmDyqVB+yHTGMKs6+/6f9XR32
-J5XfDx/FcKXMV0woRV92zlpl3HcC1PuFP5qZTjfDW53sy4MY12weJ3tR/MJ34s3z
-KP9nYC6qONI6KEgNu3LvQNr1ra8C9EKG+LJzqhDj3Q0HiOdF61jmPBN+/7oLY0aU
-1gVndE0K4LwAzTiRWNMI
-=AISI
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+Can you please investigate what the problem is? Thanks.
