@@ -1,217 +1,162 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [REPOST Patch v1 3/3] power: power_supply_core: Add support for supplied_from
-Date: Mon, 25 Mar 2013 22:24:50 -0400
-Message-ID: <1364264690-2124-4-git-send-email-rklein@nvidia.com>
-References: <1364264690-2124-1-git-send-email-rklein@nvidia.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH V5 6/9] ARM: mxs: Provide regulator to pwm-backlight
+Date: Tue, 26 Mar 2013 13:48:31 +0800
+Message-ID: <20130326054830.GD5148@S2101-09.ap.freescale.net>
+References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+ <1364260913-25490-7-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364264690-2124-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Anton Vorontsov <cbou@mail.ru>
-Cc: David Woodhouse <dwmw2@infradead.org>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1364260913-25490-7-git-send-email-achew@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, linux@prisktech.co.nz, thierry.reding@avionic-design.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding support for supplied_from char * array. This is meant to store the
-list of suppliers for a given supply, i.e. chargers for a battery. This
-list can be populated through devicetree readily as well as passed
-directly from the driver.
+On Mon, Mar 25, 2013 at 06:21:50PM -0700, Andrew Chew wrote:
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
+> 
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Moved backlight power regulator into top-level regulators node.
+> 
+>  arch/arm/boot/dts/imx23-evk.dts      |  6 ++++++
+>  arch/arm/boot/dts/imx28-apf28dev.dts |  6 ++++++
+>  arch/arm/boot/dts/imx28-cfa10049.dts |  6 ++++++
+>  arch/arm/boot/dts/imx28-evk.dts      |  6 ++++++
+>  arch/arm/boot/dts/imx28-tx28.dts     | 11 +++++++++++
+>  5 files changed, 35 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/imx23-evk.dts b/arch/arm/boot/dts/imx23-evk.dts
+> index 035c13f..ce5048e 100644
+> --- a/arch/arm/boot/dts/imx23-evk.dts
+> +++ b/arch/arm/boot/dts/imx23-evk.dts
+> @@ -95,6 +95,11 @@
+>  			regulator-max-microvolt = <3300000>;
+>  			gpio = <&gpio1 29 0>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
-v1:
- - Changed from RFC v2 -> patch v1
- - removed list logic, added logic to first verify all supplies are
-   present and defer probe until they are.
- - after all devices are registered, populate the char ** supplied_from
-   array which simulates the case of dt not being used.
- - added of_node element to struct power_supply
+What I meant is the node name "fixed-regulator" is too generic.  But it
+shouldn't an issue right away, and we can fix that later.
 
-v2 (RFC):
-  - Simplified and renamed the logic to parse dt for the charger list.
-  - Tied the dt parsing directly to power_supply_register to make fewer
-    changes required for converting existing chargers/supplies.
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
- drivers/power/power_supply_core.c |  138 +++++++++++++++++++++++++++++++++++++
- include/linux/power_supply.h      |    3 +
- 2 files changed, 141 insertions(+)
-
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index dd675ae..c16666c 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -90,6 +90,133 @@ void power_supply_changed(struct power_supply *psy)
- }
- EXPORT_SYMBOL_GPL(power_supply_changed);
- 
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+
-+static int __power_supply_populate_supplied_from(struct device *dev,
-+						 void *data)
-+{
-+	struct power_supply *psy = (struct power_supply *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+	struct device_node *np;
-+	int i = 0;
-+
-+	do {
-+		np = of_parse_phandle(psy->of_node, "power-supplies", i++);
-+		if (!np)
-+			continue;
-+
-+		if (np == epsy->of_node) {
-+			dev_info(psy->dev, "%s: Found supply : %s\n",
-+				psy->name, epsy->name);
-+			psy->supplied_from[i-1] = (char *)epsy->name;
-+			psy->num_supplies++;
-+			break;
-+		}
-+	} while (np);
-+
-+	return 0;
-+}
-+
-+int power_supply_populate_supplied_from(struct power_supply *psy)
-+{
-+	int error;
-+
-+	error = class_for_each_device(power_supply_class, NULL, psy,
-+				      __power_supply_populate_supplied_from);
-+
-+	dev_dbg(psy->dev, "%s %d\n", __func__, error);
-+
-+	return error;
-+}
-+
-+static int  __power_supply_find_supply_from_node(struct device *dev,
-+						 void *data)
-+{
-+	struct device_node *np = (struct device_node *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+
-+	/* return error breaks out of class_for_each_device loop */
-+	if (epsy->of_node == np)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+int power_supply_find_supply_from_node(struct device_node *supply_node)
-+{
-+	int error;
-+	struct device *dev;
-+	struct class_dev_iter iter;
-+
-+	/* Use iterator to see if any other device is registered.
-+	 * This is required since class_for_each_device returns 0
-+	 * if there are no devices registered.
-+	 */
-+	class_dev_iter_init(&iter, power_supply_class, NULL, NULL);
-+	dev = class_dev_iter_next(&iter);
-+
-+	if (!dev)
-+		return -EPROBE_DEFER;
-+
-+	/* we have to treat the return value as inverted, because if
-+	 * we return error on not found, then it won't continue looking.
-+	 * So we trick it by returning error on success to stop looking
-+	 * once the matching device is found.
-+	 */
-+	error = class_for_each_device(power_supply_class, NULL, supply_node,
-+				       __power_supply_find_supply_from_node);
-+
-+	return error ? 0 : -EPROBE_DEFER;
-+}
-+
-+int power_supply_check_supplies(struct power_supply *psy)
-+{
-+	struct device_node *np;
-+	int cnt = 0;
-+	int ret = 0;
-+
-+	/* If there is already a list honor it */
-+	if (psy->supplied_from && psy->num_supplies > 0)
-+		return 0;
-+
-+	/* No device node found, nothing to do */
-+	if (!psy->of_node)
-+		return 0;
-+
-+	do {
-+		np = of_parse_phandle(psy->of_node, "power-supplies", cnt++);
-+		if (!np)
-+			continue;
-+
-+		ret = power_supply_find_supply_from_node(np);
-+		if (ret) {
-+			dev_dbg(psy->dev, "Failed to find supply, defer!\n");
-+			return -EPROBE_DEFER;
-+		}
-+	} while (np);
-+
-+	/* All supplies found, allocate char ** array for filling */
-+	psy->supplied_from = devm_kzalloc(psy->dev, sizeof(psy->supplied_from),
-+					  GFP_KERNEL);
-+	if (!psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	*psy->supplied_from = devm_kzalloc(psy->dev, sizeof(char *) * cnt,
-+					   GFP_KERNEL);
-+	if (!*psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	ret = power_supply_populate_supplied_from(psy);
-+
-+	return ret;
-+}
-+#endif
-+
- static int __power_supply_am_i_supplied(struct device *dev, void *data)
- {
- 	union power_supply_propval ret = {0,};
-@@ -359,6 +486,14 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
- 
- 	INIT_WORK(&psy->changed_work, power_supply_changed_work);
- 
-+#ifdef CONFIG_OF
-+	rc = power_supply_check_supplies(psy);
-+	if (rc) {
-+		dev_info(dev, "Not all required supplies found, defer probe\n");
-+		goto check_supplies_failed;
-+	}
-+#endif
-+
- 	rc = kobject_set_name(&dev->kobj, "%s", psy->name);
- 	if (rc)
- 		goto kobject_set_name_failed;
-@@ -391,6 +526,9 @@ register_thermal_failed:
- 	device_del(dev);
- kobject_set_name_failed:
- device_add_failed:
-+#ifdef CONFIG_OF
-+check_supplies_failed:
-+#endif
- 	put_device(dev);
- success:
- 	return rc;
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index c1cbd5e..3828cef 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -173,6 +173,9 @@ struct power_supply {
- 
- 	char **supplied_from;
- 	size_t num_supplies;
-+#ifdef CONFIG_OF
-+	struct device_node *of_node;
-+#endif
- 
- 	int (*get_property)(struct power_supply *psy,
- 			    enum power_supply_property psp,
--- 
-1.7.9.5
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +	        };
+>  	};
+>  
+>  	backlight {
+> @@ -102,5 +107,6 @@
+>  		pwms = <&pwm 2 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-apf28dev.dts b/arch/arm/boot/dts/imx28-apf28dev.dts
+> index 6d8865b..e354dc5 100644
+> --- a/arch/arm/boot/dts/imx28-apf28dev.dts
+> +++ b/arch/arm/boot/dts/imx28-apf28dev.dts
+> @@ -132,6 +132,11 @@
+>  			regulator-max-microvolt = <5000000>;
+>  			gpio = <&gpio1 23 1>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	leds {
+> @@ -150,5 +155,6 @@
+>  		pwms = <&pwm 3 191000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-cfa10049.dts b/arch/arm/boot/dts/imx28-cfa10049.dts
+> index a0d3e9f..a6eddd6 100644
+> --- a/arch/arm/boot/dts/imx28-cfa10049.dts
+> +++ b/arch/arm/boot/dts/imx28-cfa10049.dts
+> @@ -205,6 +205,11 @@
+>  			regulator-max-microvolt = <5000000>;
+>  			gpio = <&gpio0 7 1>;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	ahb@80080000 {
+> @@ -304,5 +309,6 @@
+>  		pwms = <&pwm 3 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-evk.dts b/arch/arm/boot/dts/imx28-evk.dts
+> index 2da316e..7ba7216 100644
+> --- a/arch/arm/boot/dts/imx28-evk.dts
+> +++ b/arch/arm/boot/dts/imx28-evk.dts
+> @@ -285,6 +285,11 @@
+>  			gpio = <&gpio3 8 0>;
+>  			enable-active-high;
+>  		};
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+>  	};
+>  
+>  	sound {
+> @@ -312,5 +317,6 @@
+>  		pwms = <&pwm 2 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> diff --git a/arch/arm/boot/dts/imx28-tx28.dts b/arch/arm/boot/dts/imx28-tx28.dts
+> index 37be532..7fa5a44 100644
+> --- a/arch/arm/boot/dts/imx28-tx28.dts
+> +++ b/arch/arm/boot/dts/imx28-tx28.dts
+> @@ -97,6 +97,16 @@
+>  		};
+>  	};
+>  
+> +	regulators {
+> +		compatible = "simple-bus";
+> +
+> +		reg_backlight_power: fixed-regulator {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "backlight-power";
+> +		};
+> +	};
+> +
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+>  
+> @@ -112,5 +122,6 @@
+>  		pwms = <&pwm 0 5000000>;
+>  		brightness-levels = <0 4 8 16 32 64 128 255>;
+>  		default-brightness-level = <6>;
+> +		power-supply = <&reg_backlight_power>;
+>  	};
+>  };
+> -- 
+> 1.8.1.5
+> 
