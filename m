@@ -1,60 +1,64 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 5/9] unicore32: Provide regulator to pwm-backlight
-Date: Mon, 25 Mar 2013 18:21:49 -0700
-Message-ID: <1364260913-25490-6-git-send-email-achew@nvidia.com>
-References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [REPOST Patch v1 1/3] power_supply: Define Binding for power-supplies
+Date: Mon, 25 Mar 2013 22:24:48 -0400
+Message-ID: <1364264690-2124-2-git-send-email-rklein@nvidia.com>
+References: <1364264690-2124-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364260913-25490-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1364264690-2124-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>
+Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The pwm-backlight driver now takes a mandatory regulator that is gotten
-during driver probe.  Initialize a dummy regulator to satisfy this
-requirement.
+This property is meant to be used in device nodes which represent
+power_supply devices that wish to provide a list of supplies which
+provide them power, such as a battery listing its chargers.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/unicore32/kernel/puv3-nb0916.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v1:
+ - changed from RFC v2 -> patch v1
+ - made poropery plural as it can be a list
+ - update example with plural & changed once charger address
 
-diff --git a/arch/unicore32/kernel/puv3-nb0916.c b/arch/unicore32/kernel/puv3-nb0916.c
-index 181108b..839b536 100644
---- a/arch/unicore32/kernel/puv3-nb0916.c
-+++ b/arch/unicore32/kernel/puv3-nb0916.c
-@@ -19,6 +19,8 @@
- #include <linux/reboot.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/pwm_backlight.h>
- #include <linux/gpio.h>
- #include <linux/gpio_keys.h>
-@@ -49,6 +51,10 @@ static struct resource puv3_i2c_resources[] = {
- 	}
- };
- 
-+/* Dummy regulator for pwm-backlight driver */
-+static struct regulator_consumer_supply backlight_supply =
-+	REGULATOR_SUPPLY("power", "pwm-backlight");
+v2 (RFC):
+ - changed property to "power-supply" which should be contained in the
+   battery rather than the charger. Also updated example to match
+
+ .../bindings/power_supply/power_supply.txt         |   23 ++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/power_supply.txt
+
+diff --git a/Documentation/devicetree/bindings/power_supply/power_supply.txt b/Documentation/devicetree/bindings/power_supply/power_supply.txt
+new file mode 100644
+index 0000000..8391bfa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power_supply/power_supply.txt
+@@ -0,0 +1,23 @@
++Power Supply Core Support
 +
- static struct platform_pwm_backlight_data nb0916_backlight_data = {
- 	.pwm_id		= 0,
- 	.max_brightness	= 100,
-@@ -111,6 +117,9 @@ int __init mach_nb0916_init(void)
- 	platform_device_register_simple("PKUnity-v3-I2C", -1,
- 			puv3_i2c_resources, ARRAY_SIZE(puv3_i2c_resources));
- 
-+	regulator_register_always_on(-1, "backlight-power",
-+				     &backlight_supply, 1, 0);
++Optional Properties:
++ - power-supplies : This property is added to a supply in order to list the
++   devices which supply it power, referenced by their phandles.
 +
- 	platform_device_register_data(&platform_bus, "pwm-backlight", -1,
- 			&nb0916_backlight_data, sizeof(nb0916_backlight_data));
- 
++Example:
++
++	usb-charger: power@e {
++		compatible = "some,usb-charger";
++		...
++	};
++
++	ac-charger: power@c {
++		compatible = "some,ac-charger";
++		...
++	};
++
++	battery@b {
++		compatible = "some,battery";
++		...
++		power-supplies = <&usb-charger>, <&ac-charger>;
++	};
 -- 
-1.8.1.5
+1.7.9.5
