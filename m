@@ -1,51 +1,85 @@
-From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 1/9] ARM: OMAP: board-4430sdp: Provide regulator to pwm-backlight
-Date: Mon, 25 Mar 2013 18:21:45 -0700
-Message-ID: <1364260913-25490-2-git-send-email-achew@nvidia.com>
+From: Andrew Chew <achew@nvidia.com>
+Subject: [PATCH V5 4/9] ARM: EXYNOS: Provide regulator to pwm-backlight
+Date: Mon, 25 Mar 2013 18:21:48 -0700
+Message-ID: <1364260913-25490-5-git-send-email-achew@nvidia.com>
 References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364260913-25490-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, marek.vasut-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org, shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org
-Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1364260913-25490-1-git-send-email-achew@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, marek.vasut@gmail.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, linux@prisktech.co.nz
+Cc: thierry.reding@avionic-design.de, achew@nvidia.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 The pwm-backlight driver now takes a mandatory regulator that is gotten
 during driver probe.  Initialize a dummy regulator to satisfy this
 requirement.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Peter Ujfalusi <peter.ujfalusi-l0cyMroinI0@public.gmane.org>
-Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Andrew Chew <achew@nvidia.com>
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm/mach-omap2/board-4430sdp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/mach-exynos/mach-nuri.c      | 7 +++++++
+ arch/arm/plat-samsung/dev-backlight.c | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
-index 35f3ad0..9b03bbd 100644
---- a/arch/arm/mach-omap2/board-4430sdp.c
-+++ b/arch/arm/mach-omap2/board-4430sdp.c
-@@ -291,6 +291,10 @@ static struct platform_device sdp4430_leds_pwm = {
- 	},
- };
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 1ea7973..0223863 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -294,6 +294,10 @@ static void nuri_bl_exit(struct device *dev)
+ 	gpio_free(EXYNOS4_GPE2(3));
+ }
  
 +/* Dummy regulator for pwm-backlight driver */
 +static struct regulator_consumer_supply backlight_supply =
 +	REGULATOR_SUPPLY("power", "pwm-backlight");
 +
- static struct platform_pwm_backlight_data sdp4430_backlight_data = {
- 	.max_brightness = 127,
- 	.dft_brightness = 127,
-@@ -718,6 +722,8 @@ static void __init omap_4430sdp_init(void)
+ /* nuri pwm backlight */
+ static struct platform_pwm_backlight_data nuri_backlight_data = {
+ 	.pwm_id			= 0,
+@@ -1368,6 +1372,9 @@ static void __init nuri_machine_init(void)
+ 	nuri_ehci_init();
+ 	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
  
- 	omap4_i2c_init();
- 	omap_sfh7741prox_init();
 +	regulator_register_always_on(-1, "backlight-power",
 +				     &backlight_supply, 1, 0);
- 	platform_add_devices(sdp4430_devices, ARRAY_SIZE(sdp4430_devices));
- 	omap_serial_init();
- 	omap_sdrc_init(NULL, NULL);
++
+ 	/* Last */
+ 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+ }
+diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
+index 5f197dc..23ce16b 100644
+--- a/arch/arm/plat-samsung/dev-backlight.c
++++ b/arch/arm/plat-samsung/dev-backlight.c
+@@ -14,12 +14,18 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/pwm_backlight.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
++
+ static int samsung_bl_init(struct device *dev)
+ {
+ 	int ret = 0;
+@@ -37,6 +43,9 @@ static int samsung_bl_init(struct device *dev)
+ 	/* Configure GPIO pin with specific GPIO function for PWM timer */
+ 	s3c_gpio_cfgpin(bl_gpio_info->no, bl_gpio_info->func);
+ 
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
++
+ 	return 0;
+ }
+ 
 -- 
 1.8.1.5
