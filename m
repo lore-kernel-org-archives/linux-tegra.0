@@ -1,7 +1,7 @@
 From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 7/9] ARM: vt8500: Provide regulator to pwm-backlight
-Date: Mon, 25 Mar 2013 18:21:51 -0700
-Message-ID: <1364260913-25490-8-git-send-email-achew@nvidia.com>
+Subject: [PATCH V5 8/9] ARM: tegra: Provide regulator to pwm-backlight
+Date: Mon, 25 Mar 2013 18:21:52 -0700
+Message-ID: <1364260913-25490-9-git-send-email-achew@nvidia.com>
 References: <1364260913-25490-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -18,36 +18,37 @@ requirement.
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Made the backlight power regulator controlled via <&gpio 0 7 0>.
+ arch/arm/boot/dts/tegra20-medcom-wide.dts | 1 +
+ arch/arm/boot/dts/tegra20-tamonten.dtsi   | 5 +++++
+ 2 files changed, 6 insertions(+)
 
- arch/arm/boot/dts/wm8850-w70v2.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/wm8850-w70v2.dts b/arch/arm/boot/dts/wm8850-w70v2.dts
-index fcc660c..25c96d0 100644
---- a/arch/arm/boot/dts/wm8850-w70v2.dts
-+++ b/arch/arm/boot/dts/wm8850-w70v2.dts
-@@ -37,11 +37,20 @@
- 		};
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index a2d6d65..90d665e 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -32,6 +32,7 @@
+ 
+ 		brightness-levels = <0 4 8 16 32 64 128 255>;
+ 		default-brightness-level = <6>;
++		power-supply = <&backlight_power_reg>;
  	};
  
-+	backlight_power: fixed-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "backlight-power";
-+		enable-active-high;
-+		regulator-boot-on;
-+		gpio = <&gpio 0 7 0>;
-+	};
+ 	sound {
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 6e9d91f..2d8e7f2 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -485,5 +485,10 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			regulator-always-on;
+ 		};
 +
- 	backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 50000 1>;	/* duty inverted */
- 
- 		brightness-levels = <0 40 60 80 100 130 190 255>;
- 		default-brightness-level = <5>;
-+		power-supply = <&backlight_power>;
++		backlight_power_reg: regulator@1 {
++			compatible = "regulator-fixed";
++			regulator-name = "backlight-power";
++		};
  	};
  };
 -- 
