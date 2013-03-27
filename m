@@ -1,33 +1,35 @@
-From: Michele Roca <michele.rocca-qf2EIlkuS11ZzixIVdtfeLVqHgI0JOqq@public.gmane.org>
-Subject: MY GOOD FRIEND!
-Date: Wed, 27 Mar 2013 09:10:09 +0100
-Message-ID: <858397a3c3e05f3d5407156d0b746379__41176.0207535282$1364372465$gmane$org@cacciatoritrentini.it>
-Reply-To: <wernererichzeller-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 1/9] gpio: tegra: add gpio wakeup source handling
+Date: Wed, 27 Mar 2013 09:24:42 +0100
+Message-ID: <CACRpkdbZgnrP-LeAhR7kgVCJoJchg_YWY00CurtDM-HrvPTtMQ@mail.gmail.com>
+References: <1363060928-8981-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1363060928-8981-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Mar 12, 2013 at 5:02 AM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
+> This patch add the gpio wakeup source handling for the Tegra platform. It
+> was be done by enabling the irq for the gpio in the gpio controller and
+> enabling the bank irq of the gpio in the Tegra legacy irq controller when
+> the system going to suspend.
+>
+> Based on the work by:
+> Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V2:
+> * no change
 
+Hm?
 
-I am Barrister Werner Erich Zeller; I need your sincere partnership in
-transferring the sum of 15,000,000.00 EUR The details await you as you=20
-reply!
+I ACKed V1 just recently for passing through the Tegra tree anyway.
 
-please! Call +44 702 409 0820 (office)
-
---=20
-Ich bin Barrister Werner Erich Zeller, ich brauche eure aufrichtige
-Partnerschaft intransferring die Summe von 15.000.000,00 EUR auf Ihr
-Bankkonto in dieser Woche f=C3=BCr den Nutzen der beiden von uns 50% ea=
-ch.It
-ist 100% legal, legitim und sicher! f=C3=BCr Details, schreiben Sie mir=
- auf
-dieser meiner privaten E-Mail statt: Dies ist dringende und ernste Sie
-m=C3=BCssen bereit sein und bereit, bevor Sie mich kontaktieren.
-
-bitte! Rufen Sie +44 702 409 0820 (B=C3=BCro)
+Yours,
+Linus Walleij
