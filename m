@@ -1,73 +1,21 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [REPOST Patch v1 2/3] power: power_supply: Add core support for
- supplied_from
-Date: Wed, 27 Mar 2013 10:30:10 -0600
-Message-ID: <51531E92.9070805@wwwdotorg.org>
-References: <1364264690-2124-1-git-send-email-rklein@nvidia.com> <1364264690-2124-3-git-send-email-rklein@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: add clocks property to sound nodes
+Date: Wed, 27 Mar 2013 11:13:30 -0600
+Message-ID: <515328BA.7080501@wwwdotorg.org>
+References: <1364340079-3762-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364264690-2124-3-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1364340079-3762-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/25/2013 08:24 PM, Rhyland Klein wrote:
-> This patch adds support for supplies to register a list of char *'s
-> which represent the list of supplies which supply them. This is the
-> opposite as the supplied_to list.
-> 
-> This change maintains support for supplied_to until all drivers which
-> make use of it already are converted.
+On 03/26/2013 05:21 PM, Stephen Warren wrote:
+> Audio-related clocks need to be represented in the device tree. Update
+> bindings to describe which clocks are needed, and DT files to include
+> those clocks.
 
-> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-
-> +static int __power_supply_is_supplied_by(struct power_supply *supplier,
-> +					 struct power_supply *supply)
-
-Shouldn't this function return a Boolean since it's "is" something? At
-least, 1 for yes 0 for no would be more comprehensible than 0 for yes
-and error for no?
-
-> +{
-> +	int i;
-> +
-> +	if (!supply->supplied_from && !supplier->supplied_to)
-> +		return -EINVAL;
-> +
-> +	/* Support both supplied_to and supplied_from modes */
-> +	if (supply->supplied_from) {
-> +		for (i = 0; i < supply->num_supplies; i++) {
-> +			if (!supplier->name)
-> +				continue;
-
-That test is loop invariant. Why put it inside the loop?
-
-Why wouldn't a supply have a name? The loop in
-__power_supply_changed_work() that this function replaces doesn't test
-for NULL names.
-
-> +			if (!strcmp(supplier->name, supply->supplied_from[i]))
-> +				return 0;
-
-Don't you want to return something true here, so that the if block
-inside __power_supply_changed_work() is executed in this case?
-
-Similar comment for the else block.
-
->  static int __power_supply_changed_work(struct device *dev, void *data)
-
-> -	for (i = 0; i < psy->num_supplicants; i++)
-> -		if (!strcmp(psy->supplied_to[i], pst->name)) {
-> -			if (pst->external_power_changed)
-> -				pst->external_power_changed(pst);
-> -		}
-> +	if (__power_supply_is_supplied_by(psy, pst)) {
-> +		if (pst->external_power_changed)
-> +			pst->external_power_changed(pst);
-> +	}
-> +
->  	return 0;
->  }
+Applied to Tegra's for-3.10/dt branch.
