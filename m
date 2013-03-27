@@ -1,41 +1,73 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] gpio: palmas: add dt support
-Date: Wed, 27 Mar 2013 09:57:58 -0600
-Message-ID: <51531706.4040608@wwwdotorg.org>
-References: <1363876214-25933-1-git-send-email-ldewangan@nvidia.com> <CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [REPOST Patch v1 2/3] power: power_supply: Add core support for
+ supplied_from
+Date: Wed, 27 Mar 2013 10:30:10 -0600
+Message-ID: <51531E92.9070805@wwwdotorg.org>
+References: <1364264690-2124-1-git-send-email-rklein@nvidia.com> <1364264690-2124-3-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, swarren@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364264690-2124-3-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/27/2013 07:00 AM, Linus Walleij wrote:
-> On Thu, Mar 21, 2013 at 3:30 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On 03/25/2013 08:24 PM, Rhyland Klein wrote:
+> This patch adds support for supplies to register a list of char *'s
+> which represent the list of supplies which supply them. This is the
+> opposite as the supplied_to list.
 > 
->>  #ifdef CONFIG_OF_GPIO
->> -       palmas_gpio->gpio_chip.of_node = palmas->dev->of_node;
->> +       palmas_gpio->gpio_chip.of_node = pdev->dev.of_node;
->>  #endif
-> 
-> OK I think that #ifdef is necessary...
+> This change maintains support for supplied_to until all drivers which
+> make use of it already are converted.
 
-Laxman,
+> diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
 
-Don't we need to resolve and agree on the final DT bindings before we
-can start making changes like this? It's not clear yet whether everyone
-is on the same page re: how the MFD sub-devices are modelled in DT -
-whether each sub-component really is a standalone device, or whether the
-MFD itself instantiates all its children based on internal static tables
-rather than DT.
+> +static int __power_supply_is_supplied_by(struct power_supply *supplier,
+> +					 struct power_supply *supply)
 
-Presumably, the answer to that question directly determines whether the
-code change above is correct; the correct of_node might be either the
-main Palmas node (if DT doesn't represent the MFD components) or it
-might be the regulator sub-node (if DT is used to represent MFD components).
+Shouldn't this function return a Boolean since it's "is" something? At
+least, 1 for yes 0 for no would be more comprehensible than 0 for yes
+and error for no?
 
-Given that, I'm not sure why the Slimlogic people aren't CC'd on this
-patch:-(
+> +{
+> +	int i;
+> +
+> +	if (!supply->supplied_from && !supplier->supplied_to)
+> +		return -EINVAL;
+> +
+> +	/* Support both supplied_to and supplied_from modes */
+> +	if (supply->supplied_from) {
+> +		for (i = 0; i < supply->num_supplies; i++) {
+> +			if (!supplier->name)
+> +				continue;
+
+That test is loop invariant. Why put it inside the loop?
+
+Why wouldn't a supply have a name? The loop in
+__power_supply_changed_work() that this function replaces doesn't test
+for NULL names.
+
+> +			if (!strcmp(supplier->name, supply->supplied_from[i]))
+> +				return 0;
+
+Don't you want to return something true here, so that the if block
+inside __power_supply_changed_work() is executed in this case?
+
+Similar comment for the else block.
+
+>  static int __power_supply_changed_work(struct device *dev, void *data)
+
+> -	for (i = 0; i < psy->num_supplicants; i++)
+> -		if (!strcmp(psy->supplied_to[i], pst->name)) {
+> -			if (pst->external_power_changed)
+> -				pst->external_power_changed(pst);
+> -		}
+> +	if (__power_supply_is_supplied_by(psy, pst)) {
+> +		if (pst->external_power_changed)
+> +			pst->external_power_changed(pst);
+> +	}
+> +
+>  	return 0;
+>  }
