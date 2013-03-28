@@ -1,51 +1,36 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH V2] regulator: palmas: add input supply names
-Date: Thu, 28 Mar 2013 00:26:43 +0000
-Message-ID: <20130328002643.GU18316@opensource.wolfsonmicro.com>
-References: <1363787797-20659-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] gpio: palmas: add dt support
+Date: Thu, 28 Mar 2013 11:29:00 +0530
+Message-ID: <5153DC24.7040309@nvidia.com>
+References: <1363876214-25933-1-git-send-email-ldewangan@nvidia.com> <CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xO5xrem3WM9Yl24j"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1363787797-20659-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 27 March 2013 06:30 PM, Linus Walleij wrote:
+> On Thu, Mar 21, 2013 at 3:30 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+>> +#ifdef CONFIG_OF
+>> +static struct of_device_id of_palmas_gpio_match[] = {
+>> +       { .compatible = "ti,palmas-gpio"},
+>> +       { },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+>> +#endif
+> But please drop the #ifdef here unless it causes compile errors
+> (I don't think it will.)
+>
 
---xO5xrem3WM9Yl24j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I am using this table as
 
-On Wed, Mar 20, 2013 at 07:26:37PM +0530, Laxman Dewangan wrote:
-> Palmas regulator support the different input supply pins for each of
-> the rails. Fill the regulator info data with their input supply pin
-> names.
+driver.of_match_table = of_match_ptr(of_palmas_gpio_match),
+of_match_ptr is macro which is NULL in case of CONFIG_OF not defined.
+So if I remove ifdefs then it may create build warning as unused variable.
 
-Applied, thanks.
-
---xO5xrem3WM9Yl24j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRU44gAAoJELSic+t+oim9GhoP/iPWdrgs1W7dXzhmIMPMth5h
-01AnGFHLbMCdUA3oLeLLQJa2S0N/2hyVLYaXcWUd/Rw3JpF+rSbbURpKzNDgnXqm
-Djy99ar2DpzHCIYIhKfK6hjXIXOopYELvIoiIbCOMXPehGXd0fCbqQBszBZsJXjt
-L70+bq3l87Dhj7n4QXXZcx+Fe+6uDN51HOCMCTQPy6nRS4Oz0PNLkComtNO6j/5J
-/5OHEopVpSD7kcaKr5pB7Ax8cpBjP10obblsDpNaxyML8FSlvB31zMRp32rRk055
-NLEjqCct258PlQdzTHNo1aaHpdBZxSLYshb5TwCMlCKKGSPvD+SnoRSkLAeoaAsT
-M0+tsPrhioXnFi5RpeA+pZ7ZuVeqeDZxyMwcLFzN3KkykevenKRlHPo4X5IvTTKI
-j/KbQWk7pS7iMVDTXEjUZHPh9R08nvkRR1XwFECgS5QLrW3EM0V8yFWCA4G308dc
-bLOsdqERsV6a+0nkvJrqLJugLwjoc5+t8weYWtIivHggJ14gusuP8WoGDmLQKvbR
-+d9rR087jggG0WJSxr1SBYnFVEVT6fVYiYLiC3G9xe46hKhxEkSBWRAnhnfwTLek
-fJNOnGzBV6EjnXvMkkL3peIorf1Vap/cKcZD4JH2Nt3UK55ye5EWkzmb3j/ZXYrn
-xVw/w44YzDPMxDxYb+vt
-=k2hS
------END PGP SIGNATURE-----
-
---xO5xrem3WM9Yl24j--
+Therefore, I think it is require here.
