@@ -1,35 +1,65 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] clk: tegra: set up audio clocks on Tegra114
-Date: Thu, 28 Mar 2013 09:12:32 -0600
-Message-ID: <51545DE0.9090305@wwwdotorg.org>
-References: <1364311811-4367-1-git-send-email-swarren@wwwdotorg.org> <20130328150526.GX18519@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: add clocks property to AC'97 sound nodes
+Date: Thu, 28 Mar 2013 12:18:38 -0600
+Message-ID: <1364494718-12098-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130328150526.GX18519-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/28/2013 09:05 AM, Peter De Schrijver wrote:
-> On Tue, Mar 26, 2013 at 04:30:11PM +0100, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This sets up all the audio-related clocks on Tegra114 in the same way
->> as they are set up on previous chips.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
->> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+Audio-related clocks need to be represented in the device tree. Update
+bindings to describe which clocks are needed, and DT files to include
+those clocks.
 
->> +	{pll_a, clk_max, 564480000, 1},
->> +	{pll_a_out0, clk_max, 11289600, 1},
->> +	{extern1, pll_a_out0, 0, 1},
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I forgot to add the clocks to AC'97 based sound nodes in my previous
+patch. This patch fixes that.
+---
+ .../devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt    |    8 ++++++++
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi                     |    3 +++
+ 2 files changed, 11 insertions(+)
 
-Yes, those are needed. At present, the audio clock code explicitly
-disables and enables each of those 3 clocks, and assumes they're enabled
-when the driver starts.
-
-Eventually this should probably be changed, but I'd like to get all 3
-chips operational with the CCF first, and then change the audio driver
-later.
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
+index be35d34..ad589b1 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
+@@ -2,6 +2,11 @@ NVIDIA Tegra audio complex
+ 
+ Required properties:
+ - compatible : "nvidia,tegra-audio-wm9712"
++- clocks : Must contain an entry for each entry in clock-names.
++- clock-names : Must include the following entries:
++  "pll_a" (The Tegra clock of that name),
++  "pll_a_out0" (The Tegra clock of that name),
++  "mclk" (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
+ - nvidia,model : The user-visible name of this sound complex.
+ - nvidia,audio-routing : A list of the connections between audio components.
+   Each entry is a pair of strings, the first being the connection's sink,
+@@ -48,4 +53,7 @@ sound {
+ 		"Mic", "MIC1";
+ 
+ 	nvidia,ac97-controller = <&ac97>;
++
++	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++	clock-names = "pll_a", "pll_a_out0", "mclk";
+ };
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index cb73e62..79af149 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -460,6 +460,9 @@
+ 			"Mic", "MIC1";
+ 
+ 		nvidia,ac97-controller = <&ac97>;
++
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+ 	regulators {
+-- 
+1.7.10.4
