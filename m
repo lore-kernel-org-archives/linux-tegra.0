@@ -1,65 +1,23 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add clocks property to AC'97 sound nodes
-Date: Thu, 28 Mar 2013 12:18:38 -0600
-Message-ID: <1364494718-12098-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: add clocks property to AC'97 sound nodes
+Date: Thu, 28 Mar 2013 12:41:44 -0600
+Message-ID: <51548EE8.5040704@wwwdotorg.org>
+References: <1364494718-12098-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364494718-12098-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 03/28/2013 12:18 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Audio-related clocks need to be represented in the device tree. Update
+> bindings to describe which clocks are needed, and DT files to include
+> those clocks.
 
-Audio-related clocks need to be represented in the device tree. Update
-bindings to describe which clocks are needed, and DT files to include
-those clocks.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I forgot to add the clocks to AC'97 based sound nodes in my previous
-patch. This patch fixes that.
----
- .../devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt    |    8 ++++++++
- arch/arm/boot/dts/tegra20-colibri-512.dtsi                     |    3 +++
- 2 files changed, 11 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
-index be35d34..ad589b1 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-wm9712.txt
-@@ -2,6 +2,11 @@ NVIDIA Tegra audio complex
- 
- Required properties:
- - compatible : "nvidia,tegra-audio-wm9712"
-+- clocks : Must contain an entry for each entry in clock-names.
-+- clock-names : Must include the following entries:
-+  "pll_a" (The Tegra clock of that name),
-+  "pll_a_out0" (The Tegra clock of that name),
-+  "mclk" (The Tegra cdev1/extern1 clock, which feeds the CODEC's mclk)
- - nvidia,model : The user-visible name of this sound complex.
- - nvidia,audio-routing : A list of the connections between audio components.
-   Each entry is a pair of strings, the first being the connection's sink,
-@@ -48,4 +53,7 @@ sound {
- 		"Mic", "MIC1";
- 
- 	nvidia,ac97-controller = <&ac97>;
-+
-+	clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
-+	clock-names = "pll_a", "pll_a_out0", "mclk";
- };
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index cb73e62..79af149 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -460,6 +460,9 @@
- 			"Mic", "MIC1";
- 
- 		nvidia,ac97-controller = <&ac97>;
-+
-+		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
-+		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
- 
- 	regulators {
--- 
-1.7.10.4
+Applied to Tegra's for-3.10/dt branch.
