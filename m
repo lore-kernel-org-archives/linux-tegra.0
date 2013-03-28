@@ -1,32 +1,42 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3] spi: tegra114: add spi driver
-Date: Thu, 28 Mar 2013 17:08:45 +0530
-Message-ID: <51542BC5.10701@nvidia.com>
-References: <1361536659-23225-1-git-send-email-ldewangan@nvidia.com> <CAKDJKT5yngpZQC-ZvHSaKeBVHW97wo4QwLSXQ4KsVWCs5J1YKg@mail.gmail.com> <20130302230906.141BE3E336A@localhost>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: defer application of init table
+Date: Thu, 28 Mar 2013 16:38:17 +0200
+Message-ID: <20130328143817.GV18519@tbergstrom-lnx.Nvidia.com>
+References: <1364253019-2533-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130302230906.141BE3E336A@localhost>
+Content-Disposition: inline
+In-Reply-To: <1364253019-2533-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sunday 03 March 2013 04:39 AM, Grant Likely wrote:
-> On Fri, 22 Feb 2013 19:59:11 +0530, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Fri, Feb 22, 2013 at 6:07 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> Add SPI driver for NVIDIA's Tegra114 SPI controller. This controller
->>> is different than the older SoCs SPI controller in internal design as
->>> well as register interface.
->>>
->>> This driver supports the:
->>> - non DMA based transfer for smaller transfer i.e. less than FIFO depth.
->>> - APB DMA based transfer for lager transfer i.e. more than FIFO depth.
->> s/lager/larger
-> Applied, thanks. And I fixed up the typo when I did.
->
+On Tue, Mar 26, 2013 at 12:10:19AM +0100, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The Tegra clock driver is initialized during the ARM machine descriptor's
+> .init_irq() hook. It can't be initialized earlier, since dynamic memory
+> usage is required. It can't be initialized later, since the .init_timer()
+> hook needs the clocks initialized. However, at this time, udelay()
+> doesn't work.
+> 
+> The Tegra clock initialization table may enable some PLLs. Enabling a PLL
+> may require usage of udelay(). Hence, this can't happen right when the
+> clock driver is initialized.
+> 
+> To solve this, separate the clock driver initialization from the clock
+> table processing, so they can execute at separate times.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Peter, if this makes sense to you, perhaps you could included it at the
+> start of your CCF V9 (with the Tegra114 parts split out into the relevant
+> changes of yours).
 
-Grant,
-I still do not see this change in linux-next? Are you going to put this 
-change for K3.10? Wanted to close some of stuff from Tegra side.
+This looks good. I will take this into CCF v9.
+
+Thanks,
+
+Peter.
