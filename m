@@ -1,42 +1,31 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: defer application of init table
-Date: Thu, 28 Mar 2013 16:38:17 +0200
-Message-ID: <20130328143817.GV18519@tbergstrom-lnx.Nvidia.com>
-References: <1364253019-2533-1-git-send-email-swarren@wwwdotorg.org>
+From: Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH V5 3/9] ARM: pxa: Provide regulator to pwm-backlight
+Date: Thu, 28 Mar 2013 15:47:32 +0100
+Message-ID: <201303281547.32895.marex@denx.de>
+References: <1364260913-25490-1-git-send-email-achew@nvidia.com> <1364260913-25490-4-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1364253019-2533-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1364260913-25490-4-git-send-email-achew@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Andrew Chew <achew@nvidia.com>
+Cc: romain.naour@openwide.fr, kgene.kim@samsung.com, drwyrm@gmail.com, stefan@openezx.org, laforge@openezx.org, philipp.zabel@gmail.com, lost.distance@yahoo.com, robert.jarzmik@free.fr, eric.y.miao@gmail.com, linux@arm.linux.org.uk, haojian.zhuang@gmail.com, kyungmin.park@samsung.com, gxt@mprc.pku.edu.cn, shawn.guo@linaro.org, linux@prisktech.co.nz, thierry.reding@avionic-design.de, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, openezx-devel@lists.openezx.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 26, 2013 at 12:10:19AM +0100, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The Tegra clock driver is initialized during the ARM machine descriptor's
-> .init_irq() hook. It can't be initialized earlier, since dynamic memory
-> usage is required. It can't be initialized later, since the .init_timer()
-> hook needs the clocks initialized. However, at this time, udelay()
-> doesn't work.
-> 
-> The Tegra clock initialization table may enable some PLLs. Enabling a PLL
-> may require usage of udelay(). Hence, this can't happen right when the
-> clock driver is initialized.
-> 
-> To solve this, separate the clock driver initialization from the clock
-> table processing, so they can execute at separate times.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Peter, if this makes sense to you, perhaps you could included it at the
-> start of your CCF V9 (with the Tegra114 parts split out into the relevant
-> changes of yours).
+Dear Andrew Chew,
 
-This looks good. I will take this into CCF v9.
+> The pwm-backlight driver now takes a mandatory regulator that is gotten
+> during driver probe.  Initialize a dummy regulator to satisfy this
+> requirement.
+> 
+> Signed-off-by: Andrew Chew <achew@nvidia.com>
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Thanks,
+Looks reasonable. Add my
 
-Peter.
+Reviewed-by: Marek Vasut <marex@denx.de>
+
+Best regards,
+Marek Vasut
