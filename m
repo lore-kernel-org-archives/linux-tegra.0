@@ -1,58 +1,25 @@
-From: Phillip Williams <p.williams-bhd29NJtgzFx51qUn6DUEHlXZ/eiTzbRRoU5hZpVR90@public.gmane.org>
-Subject: Offer to Attend Events for AMD
-Date: Fri, 29 Mar 2013 13:13:42 -0400
-Message-ID: <dbf741a0d3ee12fb7ae750f77148060b@www.americanmediadistributioninc.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] clk: tegra: Export peripheral reset functions
+Date: Fri, 29 Mar 2013 15:45:04 -0600
+Message-ID: <51560B60.70905@wwwdotorg.org>
+References: <1364502688-5135-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364502688-5135-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I would like to know if you would have any interest in covering some
-events for us in your area?
+On 03/28/2013 02:31 PM, Thierry Reding wrote:
+> The tegra_periph_reset_assert() and tegra_periph_reset_deassert()
+> functions can be used by drivers to reset peripherals. In order to allow
+> such drivers to be built as modules, export the functions.
+> 
+> Note that this restores the status quo as the functions were exported
+> before the move to the drivers/clk tree.
 
-There would be NO COST at all for admission, and it would not be
-necessary for you to be an experienced reporter.
-
-We are looking for members of the public to cover events such as Music
-Concerts, Sporting Events, Restaurant Openings, Movies, Gallery
-Openings, Shows, and others.
-
-Since AMD has different pools relevant to experience (beginners up to
-experienced working reporters) should you not be familiar with our
-company, please take a moment to look into American Media Distribution
-with any source you deem trusted.
-
-Here is a link to the AMD BBB page for your convenience.
-
-http://www.bbb.org/new-jersey/business-reviews/news-service/american-media-distribution-in-howell-nj-90096055
-
-There is compensation for the events you would attend and again, there
-is no cost for admission to any of the events, and no obligation is
-required. 
-
-We will be accepting only a few people from your area so let us know
-if you are interested in obtaining any further information. 
-
-Phil Williams
-AMD Event Coverage Coordinator
-American Media Distribution(.com) or americanmediadist.com
-4057 US Hwy 9 North Howell NJ 07731
-888.319.6336 x714(by appointment only please)
-
--This e-mail and any accompanying attachments are confidential. This
-information is intended solely for the use of the individual to whom
-it is addressed. Any review, disclosure, copying, distribution, or use
-of this e-mail communication by others is strictly prohibited. THERE
-WILL BE NO FOLLOWING EMAILS SENT - If you are not the intended
-recipient, please notify us immediately by returning this message to
-the sender and delete all copies. Thank you for your cooperation.
--MacAfee Virus Checked - Virus Free-
-
--- no more reporter/event updates reply w NO MORE in subject
-
-
-
---
+I have applied this one patch to Tegra's for-3.10/clk branch, with
+Mike's ack.
