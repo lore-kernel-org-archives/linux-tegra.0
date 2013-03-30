@@ -1,43 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: HEADS UP! Tegra single zImage conversion landing shortly
-Date: Fri, 29 Mar 2013 18:33:40 -0600
-Message-ID: <515632E4.9050701@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 5/9] ARM: tegra2: cpuidle: change driver initialization
+Date: Sat, 30 Mar 2013 10:22:32 +0800
+Message-ID: <1364610152.2622.3.camel@jlo-ubuntu-64.nvidia.com>
+References: <1364553095-25110-1-git-send-email-daniel.lezcano@linaro.org>
+	 <1364553095-25110-5-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364553095-25110-5-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "rjw-KKrjLPT3xs0@public.gmane.org" <rjw-KKrjLPT3xs0@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "rnayak-l0cyMroinI0@public.gmane.org" <rnayak-l0cyMroinI0@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org" <horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, "santosh.shilimkar-l0cyMroinI0@public.gmane.org" <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "nsekhar-l0cyMroinI0@public.gmane.org" <nsekhar-l0cyMroinI0@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I have posted patches upstream to convert Tegra to "single zImage"; the
-ability for a single zImage to boot on multiple different SoCs. I expect
-to put them into linux-next early next week. You'll see a few changes
-due to this:
+On Fri, 2013-03-29 at 18:31 +0800, Daniel Lezcano wrote:
+> Initialize the idle states directly in the driver structure.
+> 
+> That prevents extra structure declaration and memcpy at init time.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-1) A few CPU ERRATA WORKAROUNDS are NO LONGER ENABLED by the kernel. The
-latest upstream U-Boot enables these before booting the kernel now. You
-will want to:
+Hi Daniel,
 
-1a) Update your bootloader to the master branch in either
-u-boot-tegra.git or u-boot-arm.git, and likely soon the u-boot.git.
+Thank you.
 
-1b) Update your bootloader to some other bootloader that enables the
-workarounds.
+Both the 5th and 6th patch,
 
-1c) Write a small stub that the is prepended to zImage which enables the
-workaround. You should be able to copy the code from U-Boot or the kernel.
-
-1d) Ignore this issue and hope you don't get bitten. The errata
-documentation doesn't sound like they would trigger that often. IIRC,
-the impact in all cases would be silent data corruption. I've actually
-been running a mix of bootloaders that do and don't enable the WAR and
-haven't noticed any issues. I should update though!
-
-2) Minor Kconfig option layout changes.
-
-3) No debug spew from the uncompressor. I hope to fix this very soon;
-most of the work has already been done by Shawn Guo @ Linaro, but I need
-to tweak the Tegra implementation in order to enable it. Earlyprintk
-still works fine though.
+Reviewed-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
