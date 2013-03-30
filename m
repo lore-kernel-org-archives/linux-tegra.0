@@ -1,31 +1,124 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] clk: tegra: Make gr2d and gr3d clocks children of
- pll_c
-Date: Fri, 29 Mar 2013 15:46:44 -0600
-Message-ID: <51560BC4.8020400@wwwdotorg.org>
-References: <1364502688-5135-1-git-send-email-thierry.reding@avionic-design.de> <1364502688-5135-2-git-send-email-thierry.reding@avionic-design.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/2] ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
+Date: Fri, 29 Mar 2013 18:19:49 -0600
+Message-ID: <1364602790-10759-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364502688-5135-2-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6?= =?ISO-8859-1?Q?m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/28/2013 02:31 PM, Thierry Reding wrote:
-> By default these clocks are children of pll_m, but in downstream kernels
-> they are reparented to pll_c. While at it, decrease their frequencies to
-> 300 MHz because the defaults aren't in the specified range.
-> 
-> gr2d can reportedly run at much higher frequencies, but 300 MHz works
-> and is a more conservative default.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Questions on this patch:
+This is required so that code such as Tegra's PCIe and clock drivers
+can still access this header file once Tegra is converted to
+multiplatform, and <mach/> no longer exists.
 
-Do we need to do the same thing for Tegra30 and/or Tegra114?
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/board.h                                       |    1 +
+ arch/arm/mach-tegra/common.c                                      |    2 --
+ arch/arm/mach-tegra/pcie.c                                        |    3 +--
+ arch/arm/mach-tegra/powergate.c                                   |    3 +--
+ drivers/clk/tegra/clk-tegra30.c                                   |    3 +--
+ .../include/mach/powergate.h => include/linux/tegra-powergate.h   |    5 -----
+ 6 files changed, 4 insertions(+), 13 deletions(-)
+ rename arch/arm/mach-tegra/include/mach/powergate.h => include/linux/tegra-powergate.h (92%)
 
-Is 300MHz the right value?
-
-I'm hoping that Peter, Prashant, and/or Terje can provide guidance here.
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index 60431de..1787327 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -40,6 +40,7 @@ int tegra_clk_debugfs_init(void);
+ static inline int tegra_clk_debugfs_init(void) { return 0; }
+ #endif
+ 
++int __init tegra_powergate_init(void);
+ #if defined(CONFIG_ARCH_TEGRA_2x_SOC) && defined(CONFIG_DEBUG_FS)
+ int __init tegra_powergate_debugfs_init(void);
+ #else
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index f0315c9..7cc75636 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -27,8 +27,6 @@
+ 
+ #include <asm/hardware/cache-l2x0.h>
+ 
+-#include <mach/powergate.h>
+-
+ #include "board.h"
+ #include "common.h"
+ #include "fuse.h"
+diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
+index b60165f..46144a1 100644
+--- a/arch/arm/mach-tegra/pcie.c
++++ b/arch/arm/mach-tegra/pcie.c
+@@ -34,12 +34,11 @@
+ #include <linux/delay.h>
+ #include <linux/export.h>
+ #include <linux/clk/tegra.h>
++#include <linux/tegra-powergate.h>
+ 
+ #include <asm/sizes.h>
+ #include <asm/mach/pci.h>
+ 
+-#include <mach/powergate.h>
+-
+ #include "board.h"
+ #include "iomap.h"
+ 
+diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powergate.c
+index c6bc8f8..585d297 100644
+--- a/arch/arm/mach-tegra/powergate.c
++++ b/arch/arm/mach-tegra/powergate.c
+@@ -27,8 +27,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/spinlock.h>
+ #include <linux/clk/tegra.h>
+-
+-#include <mach/powergate.h>
++#include <linux/tegra-powergate.h>
+ 
+ #include "fuse.h"
+ #include "iomap.h"
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 32c61cb..84584e5 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -22,8 +22,7 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/clk/tegra.h>
+-
+-#include <mach/powergate.h>
++#include <linux/tegra-powergate.h>
+ 
+ #include "clk.h"
+ 
+diff --git a/arch/arm/mach-tegra/include/mach/powergate.h b/include/linux/tegra-powergate.h
+similarity index 92%
+rename from arch/arm/mach-tegra/include/mach/powergate.h
+rename to include/linux/tegra-powergate.h
+index 06763fe..55c29a8 100644
+--- a/arch/arm/mach-tegra/include/mach/powergate.h
++++ b/include/linux/tegra-powergate.h
+@@ -1,6 +1,4 @@
+ /*
+- * drivers/regulator/tegra-regulator.c
+- *
+  * Copyright (c) 2010 Google, Inc
+  *
+  * Author:
+@@ -40,9 +38,6 @@ struct clk;
+ #define TEGRA_POWERGATE_CPU0	TEGRA_POWERGATE_CPU
+ #define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
+ 
+-int  __init tegra_powergate_init(void);
+-
+-int tegra_cpu_powergate_id(int cpuid);
+ int tegra_powergate_is_powered(int id);
+ int tegra_powergate_power_on(int id);
+ int tegra_powergate_power_off(int id);
+-- 
+1.7.10.4
