@@ -1,46 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
-Date: Mon, 01 Apr 2013 10:08:31 -0600
-Message-ID: <5159B0FF.2010408@wwwdotorg.org>
-References: <1364602790-10759-1-git-send-email-swarren@wwwdotorg.org> <201303301413.26549.arnd@arndb.de>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/3] Add DT Binding for Power-Supply power-supplies property
+Date: Mon, 1 Apr 2013 17:45:52 -0400
+Message-ID: <1364852755-17425-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201303301413.26549.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/30/2013 08:13 AM, Arnd Bergmann wrote:
-> On Saturday 30 March 2013, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This is required so that code such as Tegra's PCIe and clock drivers
->> can still access this header file once Tegra is converted to
->> multiplatform, and <mach/> no longer exists.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> It sounds like this should be integrated in the reset controller API
-> that Philipp Zabel just posted. I'm not blaming you for now knowing
-> about it, since I only saw it myself a few days ago, and my interpretation
-> could be wrong. Are you able to move to that API before 3.10?
+This series defines a common way for devicetree initialized
+power_supplies to define their relationships between chargers and
+supplicants.
 
-Well, I wrote the binding for it:-)
+This series adds a supplied_from array to complement the supplied_to
+array and to allow supplies to define the list of supplies which
+supply them.
 
-> If not, we can probably take your patch for now, if you remove it
-> again for 3.11.
+Then once this property is supported, we can use a new property for
+devicetree to define the relationships between nodes, and read in this
+property to generate the supplied_from list.
 
-There are at least a couple of different things in this file:
+With this logic in place, all drivers need to do to add support for
+this mechanism, is to store their device tree node in the power_supply
+struct. They should also handle EPROBE_DEFER properly.
 
-a) The reset API, which definitely should be converted to the new reset
-API. I can't make any promises about which kernel release that will
-happen in, but it's definitely something we know we have to do.
+Changes since:
+v2:
+ - Changed __power_supply_is_supplied_by to a boolean function and
+   corrected return paths around it
+ - took loop invariant tests out of loops
+ - Fixed multiline comment style
+ - fixed up return paths around power_supplies_check_supplies
 
-b) Power-gating. This should probably be converted to use the
-powerdomains code. I believe Joseph Lo is aware of this, but again I
-can't promise any specific time-scale at this time.
+RFC v2:
+ - Changed to official Patch set rather than RFC
+ - defined supplied_from char ** array rather than complicated
+   struct device_node related array
 
-So is this still OK, without any promises of timescale?
+RFC v1:
+ - Inverted the logic so that supplies (batteries) contain a list of
+   the supplies (chargers) which supply them.
+
+Rhyland Klein (3):
+  power_supply: Define Binding for power-supplies
+  power: power_supply: Add core support for supplied_from
+  power: power_supply_core: Add support for supplied_from
+
+ .../bindings/power_supply/power_supply.txt         |   23 +++
+ drivers/power/power_supply_core.c                  |  187 ++++++++++++++++++--
+ include/linux/power_supply.h                       |    6 +
+ 3 files changed, 203 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power_supply/power_supply.txt
+
+-- 
+1.7.9.5
