@@ -1,53 +1,46 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: slink: do not prepare dma transfer with
- DMA_CTRL_ACK flag
-Date: Mon, 1 Apr 2013 14:35:00 +0100
-Message-ID: <20130401133459.GS18636@opensource.wolfsonmicro.com>
-References: <1353662559-26515-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
+Date: Mon, 01 Apr 2013 10:08:31 -0600
+Message-ID: <5159B0FF.2010408@wwwdotorg.org>
+References: <1364602790-10759-1-git-send-email-swarren@wwwdotorg.org> <201303301413.26549.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uX7BrQs69PbBafpd"
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1353662559-26515-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <201303301413.26549.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 03/30/2013 08:13 AM, Arnd Bergmann wrote:
+> On Saturday 30 March 2013, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> This is required so that code such as Tegra's PCIe and clock drivers
+>> can still access this header file once Tegra is converted to
+>> multiplatform, and <mach/> no longer exists.
+>>
+>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> It sounds like this should be integrated in the reset controller API
+> that Philipp Zabel just posted. I'm not blaming you for now knowing
+> about it, since I only saw it myself a few days ago, and my interpretation
+> could be wrong. Are you able to move to that API before 3.10?
 
---uX7BrQs69PbBafpd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Well, I wrote the binding for it:-)
 
-On Fri, Nov 23, 2012 at 02:52:39PM +0530, Laxman Dewangan wrote:
-> Spi starts transfer using dma with DMA_CTRL_ACK which is not require
-> becasue spi driver does not use completed dma_desc after transfer
-> done and so it does not ack the dma descriptor. Removing the
-> DMA_CTRL_ACK flag to avoid memory leak in dma driver.
+> If not, we can probably take your patch for now, if you remove it
+> again for 3.11.
 
-Applied, thanks.
+There are at least a couple of different things in this file:
 
---uX7BrQs69PbBafpd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+a) The reset API, which definitely should be converted to the new reset
+API. I can't make any promises about which kernel release that will
+happen in, but it's definitely something we know we have to do.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+b) Power-gating. This should probably be converted to use the
+powerdomains code. I believe Joseph Lo is aware of this, but again I
+can't promise any specific time-scale at this time.
 
-iQIcBAEBAgAGBQJRWYz9AAoJELSic+t+oim9OSEP/2fzNSxztAmM3UC5QKyJBGaR
-P6VqPoOkZXPMcvGcJ+j+yj5kLIesHa5uqdqfyrXjO1s/6+BCa7FeRnjnC+aTUlsp
-u7lof2QSxEgMXoVwsboH9eCEDPIQ0/d6bTLbHicTkiCgFbwMP3/i/sx+zwAd6YCR
-F58RFLgty3+XiA/U/XL9RFjNiHC8HkVnFdeWYJ6dflw0CB48XMOd9+tofTy8mC1p
-9ozEZHpaHtSJKOo+2kBRbhE0dZgE95FWRBQkPU/ivWX1dz52+UOfEzYgprmG0CYK
-t5/zi0rHkB7//ma850KyIWX+R3RCgwyXnT69Pji9ezAXncU4SQjW+NbTvPu0DPTv
-tq0Q7RHY42J4djVoshlVBop9AKGbbHVn7I1HHFuThwsGM6q2KLgC1aUPBspjRPs4
-+vo1dfgt26hBKCGUHemRehWlJuArCrOG+YfgGCaJi99bn33jSodSxVnCrSpUlGzo
-427jvNeklkqmGJlO0by1oz+QeTuiBy6rhqL99suyLJqKbREAjlHihNKwkmk0KCay
-cuoWlzNvZ5aA/Vti57axoo8bd/N1468H7RLEN68kw1I8nOxrkCrH314jlMZ3m8w0
-bUw46xibNTIlcipd5e8iH6wbPoL9YtH/uPPflC5i8ko40TFU/RwWIEOrNj9BFBTN
-su8zYxceIFyNE+/FgVoV
-=vhpb
------END PGP SIGNATURE-----
-
---uX7BrQs69PbBafpd--
+So is this still OK, without any promises of timescale?
