@@ -1,7 +1,7 @@
 From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V6 7/9] ARM: vt8500: Provide regulator to pwm-backlight
-Date: Mon, 1 Apr 2013 14:53:26 -0700
-Message-ID: <1364853208-32503-8-git-send-email-achew@nvidia.com>
+Subject: [PATCH V6 1/9] ARM: OMAP: board-4430sdp: Provide regulator to pwm-backlight
+Date: Mon, 1 Apr 2013 14:53:20 -0700
+Message-ID: <1364853208-32503-2-git-send-email-achew@nvidia.com>
 References: <1364853208-32503-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,36 +17,35 @@ during driver probe.  Initialize a dummy regulator to satisfy this
 requirement.
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Peter Ujfalusi <peter.ujfalusi-l0cyMroinI0@public.gmane.org>
 Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>
 ---
- arch/arm/boot/dts/wm8850-w70v2.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/mach-omap2/board-4430sdp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/wm8850-w70v2.dts b/arch/arm/boot/dts/wm8850-w70v2.dts
-index fcc660c..25c96d0 100644
---- a/arch/arm/boot/dts/wm8850-w70v2.dts
-+++ b/arch/arm/boot/dts/wm8850-w70v2.dts
-@@ -37,11 +37,20 @@
- 		};
- 	};
- 
-+	backlight_power: fixed-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "backlight-power";
-+		enable-active-high;
-+		regulator-boot-on;
-+		gpio = <&gpio 0 7 0>;
-+	};
-+
- 	backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 50000 1>;	/* duty inverted */
- 
- 		brightness-levels = <0 40 60 80 100 130 190 255>;
- 		default-brightness-level = <5>;
-+		power-supply = <&backlight_power>;
- 	};
+diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
+index 35f3ad0..9b03bbd 100644
+--- a/arch/arm/mach-omap2/board-4430sdp.c
++++ b/arch/arm/mach-omap2/board-4430sdp.c
+@@ -291,6 +291,10 @@ static struct platform_device sdp4430_leds_pwm = {
+ 	},
  };
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
++
+ static struct platform_pwm_backlight_data sdp4430_backlight_data = {
+ 	.max_brightness = 127,
+ 	.dft_brightness = 127,
+@@ -718,6 +722,8 @@ static void __init omap_4430sdp_init(void)
+ 
+ 	omap4_i2c_init();
+ 	omap_sfh7741prox_init();
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
+ 	platform_add_devices(sdp4430_devices, ARRAY_SIZE(sdp4430_devices));
+ 	omap_serial_init();
+ 	omap_sdrc_init(NULL, NULL);
 -- 
 1.8.1.5
