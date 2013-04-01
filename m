@@ -1,224 +1,85 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH V2 3/3] power: power_supply_core: Add support for supplied_from
-Date: Mon, 1 Apr 2013 17:45:55 -0400
-Message-ID: <1364852755-17425-4-git-send-email-rklein@nvidia.com>
-References: <1364852755-17425-1-git-send-email-rklein@nvidia.com>
+From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V6 4/9] ARM: EXYNOS: Provide regulator to pwm-backlight
+Date: Mon, 1 Apr 2013 14:53:23 -0700
+Message-ID: <1364853208-32503-5-git-send-email-achew@nvidia.com>
+References: <1364853208-32503-1-git-send-email-achew@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364852755-17425-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anton Vorontsov <cbou@mail.ru>, Grant Likely <grant.likely@secretlab.ca>
-Cc: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364853208-32503-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, drwyrm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, stefan-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, laforge-WB6LKoYH/xlAfugRpC6u6w@public.gmane.org, philipp.zabel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lost.distance-/E1597aS9LQAvxtiuMwx3w@public.gmane.org, robert.jarzmik-GANU6spQydw@public.gmane.org, eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org
+Cc: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, openezx-devel-ZwoEplunGu3n3BO9LpVK+9i2O/JbrIOy@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding support for supplied_from char * array. This is meant to store the
-list of suppliers for a given supply, i.e. chargers for a battery. This
-list can be populated through devicetree readily as well as passed
-directly from the driver.
+The pwm-backlight driver now takes a mandatory regulator that is gotten
+during driver probe.  Initialize a dummy regulator to satisfy this
+requirement.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2:
- - fixed multiline comment style
- - fixed usage of ret to inside loop and directly return result of
-   power_supply_populate_supplied_from
+ arch/arm/mach-exynos/mach-nuri.c      | 7 +++++++
+ arch/arm/plat-samsung/dev-backlight.c | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-v1:
- - Changed from RFC v2 -> patch v1
- - removed list logic, added logic to first verify all supplies are
-   present and defer probe until they are.
- - after all devices are registered, populate the char ** supplied_from
-   array which simulates the case of dt not being used.
- - added of_node element to struct power_supply
-
-v2 (RFC):
-  - Simplified and renamed the logic to parse dt for the charger list.
-  - Tied the dt parsing directly to power_supply_register to make fewer
-    changes required for converting existing chargers/supplies.
-
- drivers/power/power_supply_core.c |  140 +++++++++++++++++++++++++++++++++++++
- include/linux/power_supply.h      |    3 +
- 2 files changed, 143 insertions(+)
-
-diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
-index d843cc9..5e84321 100644
---- a/drivers/power/power_supply_core.c
-+++ b/drivers/power/power_supply_core.c
-@@ -88,6 +88,139 @@ void power_supply_changed(struct power_supply *psy)
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 1ea7973..0223863 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -294,6 +294,10 @@ static void nuri_bl_exit(struct device *dev)
+ 	gpio_free(EXYNOS4_GPE2(3));
  }
- EXPORT_SYMBOL_GPL(power_supply_changed);
  
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
 +
-+static int __power_supply_populate_supplied_from(struct device *dev,
-+						 void *data)
-+{
-+	struct power_supply *psy = (struct power_supply *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+	struct device_node *np;
-+	int i = 0;
+ /* nuri pwm backlight */
+ static struct platform_pwm_backlight_data nuri_backlight_data = {
+ 	.pwm_id			= 0,
+@@ -1368,6 +1372,9 @@ static void __init nuri_machine_init(void)
+ 	nuri_ehci_init();
+ 	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
+ 
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
 +
-+	do {
-+		np = of_parse_phandle(psy->of_node, "power-supplies", i++);
-+		if (!np)
-+			continue;
+ 	/* Last */
+ 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+ }
+diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
+index 5f197dc..23ce16b 100644
+--- a/arch/arm/plat-samsung/dev-backlight.c
++++ b/arch/arm/plat-samsung/dev-backlight.c
+@@ -14,12 +14,18 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/fixed.h>
+ #include <linux/pwm_backlight.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ 
++/* Dummy regulator for pwm-backlight driver */
++static struct regulator_consumer_supply backlight_supply =
++	REGULATOR_SUPPLY("power", "pwm-backlight");
 +
-+		if (np == epsy->of_node) {
-+			dev_info(psy->dev, "%s: Found supply : %s\n",
-+				psy->name, epsy->name);
-+			psy->supplied_from[i-1] = (char *)epsy->name;
-+			psy->num_supplies++;
-+			break;
-+		}
-+	} while (np);
-+
-+	return 0;
-+}
-+
-+int power_supply_populate_supplied_from(struct power_supply *psy)
-+{
-+	int error;
-+
-+	error = class_for_each_device(power_supply_class, NULL, psy,
-+				      __power_supply_populate_supplied_from);
-+
-+	dev_dbg(psy->dev, "%s %d\n", __func__, error);
-+
-+	return error;
-+}
-+
-+static int  __power_supply_find_supply_from_node(struct device *dev,
-+						 void *data)
-+{
-+	struct device_node *np = (struct device_node *)data;
-+	struct power_supply *epsy = dev_get_drvdata(dev);
-+
-+	/* return error breaks out of class_for_each_device loop */
-+	if (epsy->of_node == np)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+int power_supply_find_supply_from_node(struct device_node *supply_node)
-+{
-+	int error;
-+	struct device *dev;
-+	struct class_dev_iter iter;
-+
-+	/*
-+	 * Use iterator to see if any other device is registered.
-+	 * This is required since class_for_each_device returns 0
-+	 * if there are no devices registered.
-+	 */
-+	class_dev_iter_init(&iter, power_supply_class, NULL, NULL);
-+	dev = class_dev_iter_next(&iter);
-+
-+	if (!dev)
-+		return -EPROBE_DEFER;
-+
-+	/*
-+	 * We have to treat the return value as inverted, because if
-+	 * we return error on not found, then it won't continue looking.
-+	 * So we trick it by returning error on success to stop looking
-+	 * once the matching device is found.
-+	 */
-+	error = class_for_each_device(power_supply_class, NULL, supply_node,
-+				       __power_supply_find_supply_from_node);
-+
-+	return error ? 0 : -EPROBE_DEFER;
-+}
-+
-+int power_supply_check_supplies(struct power_supply *psy)
-+{
-+	struct device_node *np;
-+	int cnt = 0;
-+
-+	/* If there is already a list honor it */
-+	if (psy->supplied_from && psy->num_supplies > 0)
-+		return 0;
-+
-+	/* No device node found, nothing to do */
-+	if (!psy->of_node)
-+		return 0;
-+
-+	do {
-+		int ret;
-+
-+		np = of_parse_phandle(psy->of_node, "power-supplies", cnt++);
-+		if (!np)
-+			continue;
-+
-+		ret = power_supply_find_supply_from_node(np);
-+		if (ret) {
-+			dev_dbg(psy->dev, "Failed to find supply, defer!\n");
-+			return -EPROBE_DEFER;
-+		}
-+	} while (np);
-+
-+	/* All supplies found, allocate char ** array for filling */
-+	psy->supplied_from = devm_kzalloc(psy->dev, sizeof(psy->supplied_from),
-+					  GFP_KERNEL);
-+	if (!psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	*psy->supplied_from = devm_kzalloc(psy->dev, sizeof(char *) * cnt,
-+					   GFP_KERNEL);
-+	if (!*psy->supplied_from) {
-+		dev_err(psy->dev, "Couldn't allocate memory for supply list\n");
-+		return -ENOMEM;
-+	}
-+
-+	return power_supply_populate_supplied_from(psy);
-+}
-+#else
-+static inline int power_supply_check_supplies(struct power_supply *psy)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int __power_supply_am_i_supplied(struct device *dev, void *data)
+ static int samsung_bl_init(struct device *dev)
  {
- 	union power_supply_propval ret = {0,};
-@@ -357,6 +490,12 @@ int power_supply_register(struct device *parent, struct power_supply *psy)
+ 	int ret = 0;
+@@ -37,6 +43,9 @@ static int samsung_bl_init(struct device *dev)
+ 	/* Configure GPIO pin with specific GPIO function for PWM timer */
+ 	s3c_gpio_cfgpin(bl_gpio_info->no, bl_gpio_info->func);
  
- 	INIT_WORK(&psy->changed_work, power_supply_changed_work);
- 
-+	rc = power_supply_check_supplies(psy);
-+	if (rc) {
-+		dev_info(dev, "Not all required supplies found, defer probe\n");
-+		goto check_supplies_failed;
-+	}
++	regulator_register_always_on(-1, "backlight-power",
++				     &backlight_supply, 1, 0);
 +
- 	rc = kobject_set_name(&dev->kobj, "%s", psy->name);
- 	if (rc)
- 		goto kobject_set_name_failed;
-@@ -389,6 +528,7 @@ register_thermal_failed:
- 	device_del(dev);
- kobject_set_name_failed:
- device_add_failed:
-+check_supplies_failed:
- 	put_device(dev);
- success:
- 	return rc;
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index c1cbd5e..3828cef 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -173,6 +173,9 @@ struct power_supply {
+ 	return 0;
+ }
  
- 	char **supplied_from;
- 	size_t num_supplies;
-+#ifdef CONFIG_OF
-+	struct device_node *of_node;
-+#endif
- 
- 	int (*get_property)(struct power_supply *psy,
- 			    enum power_supply_property psp,
 -- 
-1.7.9.5
+1.8.1.5
