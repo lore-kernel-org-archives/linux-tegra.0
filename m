@@ -1,56 +1,89 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: How to facilitate the cpuidle drivers to go to the same
- direction (Was: Re: [PATCH 4/9] ARM: OMAP4: cpuidle: fix wrong driver
- initialization)
-Date: Tue, 2 Apr 2013 11:37:54 -0700
-Message-ID: <20130402183754.GN25867@quad.lixom.net>
-References: <1364553095-25110-4-git-send-email-daniel.lezcano@linaro.org>
- <51556F1D.5030208@ti.com>
- <515570DF.5010608@linaro.org>
- <CAP245DX+mYQhhJ-fU6PQdV6V-1P7PGUaOoNo+QdhRFaQR=wiEQ@mail.gmail.com>
- <51558723.1050904@ti.com>
- <CAP245DWAAgQ4co34mdkFgepC5kP9v0n6B954ej2X_y20LE9kSQ@mail.gmail.com>
- <5155AEE7.106@ti.com>
- <5155B85F.6030808@linaro.org>
- <515923C7.8040408@linux.vnet.ibm.com>
- <1364804988.32247.3.camel@pasglop>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 1/3] ARM: tegra: get PMC clock source from DT
+Date: Tue, 02 Apr 2013 13:33:25 -0600
+Message-ID: <515B3285.5080400@wwwdotorg.org>
+References: <1364901583-24867-1-git-send-email-josephl@nvidia.com> <1364901583-24867-2-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1364804988.32247.3.camel@pasglop>
+In-Reply-To: <1364901583-24867-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
-Cc: Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Amit Kucheria <amit.kucheria-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd.bergmann-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lists linaro-kernel <linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, Patch Tracking <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Nori, Sekhar" <nsekhar-l0cyMroinI0@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Rajendra Nayak <rnayak-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, Lists LAKML <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Len Brown <lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 01, 2013 at 10:29:48AM +0200, Benjamin Herrenschmidt wrote:
-> On Mon, 2013-04-01 at 11:35 +0530, Deepthi Dharwar wrote:
-> > But then, this means we get all the
-> > arch specific code out under drivers/cpuidle
-> > which can be very messy.
-> 
-> Not really no. We already have that here or there in other drivers,
-> it's not necessarily messy and the stuff like that can generally be made
-> reasonably self contained.
-> 
-> The main issue is that if I (powerpc) wants a fix in my
-> some_ppc_box_idle.c driver, especially if it needs to sync with other
-> arch changes, having to sync/ack with Rafael might complicate things a
-> bit (though not necessarily a lot).
-> 
-> I would probably keep the liberty of sending to Linus directly urgent
-> bug/regression fixes to individual cpuidle drivers relating to our archs
-> without waiting every now and then if for example Rafael is on
-> vacation :-)
+On 04/02/2013 05:19 AM, Joseph Lo wrote:
+> Adding the bindings of the clock source of PMC in DT. And getting
+> the clock from DT.
 
-Merging them all over sounds like a good idea to me as well.
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 23 ++++++++++++++++++++++
+>  arch/arm/mach-tegra/common.c                       |  2 +-
+>  arch/arm/mach-tegra/pmc.c                          |  4 ++++
 
-This isn't too different from how we handle other subsystems; as
-architecutre maintainer you just use your judgement on what needs an ack
-vs cc. Some smaller details about how the backend of the driver works
-on a platform is quite different from refactoring portions of the
-framework.
+I'd like to re-order and split up this series slightly differently.
 
+Patch (1) should include the binding updates (nvidia,tegra20-pmc.txt)
+from this patch 1/3 and the DT changes (*.dts) from patch 2/3.
 
--Olof
+Patch (2) should contain be the current patch 3/3 plus the *.c changes
+from this patch 1/3.
+
+That ensures that:
+
+a) The DT binding changes happen before (or rather at the same time) as
+the first other change that relies on them.
+
+b) The DT changes happen before the code changes, which is required to
+avoid the code-changes causing WARN_ON(IS_ERR(tegra_pclk)) from firing
+before all the patches are applied.
+
+c) The new code to retrieve tegra_pclk isn't added without anything that
+uses the new variable; it's added only when something makes use of it.
+
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+
+> +- clocks : the source clock of PMC
+> +- clock-names : the name of source clock of PMC
+
+"the" is wrong here, since there is more than one clock. Also, the
+binding document needs to define the set of clocks that those properties
+must provide. I suggest the following wording, which I cribbed from the
+Tegra audio bindings:
+
+- clocks : Must contain an entry for each entry in clock-names.
+- clock-names : Must include the following entries:
+  "pclk" (The Tegra clock of that name),
+  "clk32k_in" (The 32KHz clock input to Tegra).
+
+That text should also be added to the "Required properties" section, not
+the "Optional proeprties" section.
+
+> +/ SoC dts including file
+>  pmc@7000f400 {
+>  	compatible = "nvidia,tegra20-pmc";
+>  	reg = <0x7000e400 0x400>;
+>  	nvidia,invert-interrupt;
+> +	clocks = <&tegra_car 110>, <&clk32k_in>;
+> +	clock-names = "pclk", "clk32k_in";
+
+In this example, I'd prefer the clocks properties to be before the
+custom nvidia,invert-interrupt property, so that all standard and
+required properties are first, then custom properties. so, compatible,
+reg, clock*, nvidia,invert-interrupt.
+
+> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+
+>  void __init tegra_dt_init_irq(void)
+>  {
+>  	tegra_clocks_init();
+> +	tegra_pmc_init();
+>  	tegra_init_irq();
+>  	irqchip_init();
+>  }
+
+I'll let this slide for now. Please be aware that I'd prefer all
+non-IRQ-related initialization to happen somewhere inside the machine's
+.init_machine() callback, not its .init_irq() callback. However, we can
+clean this up later; most likely a lot of the calls in
+tegra_init_early() should move too.
