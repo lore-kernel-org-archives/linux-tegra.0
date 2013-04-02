@@ -1,64 +1,56 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
-Date: Tue, 2 Apr 2013 11:36:05 +0300
-Message-ID: <20130402083604.GJ30286@arwen.pp.htv.fi>
-References: <1363868603-14525-1-git-send-email-balbi@ti.com>
- <514B4137.2020707@wwwdotorg.org>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] gpio: palmas: add dt support
+Date: Tue, 2 Apr 2013 11:01:14 +0200
+Message-ID: <CACRpkdYTcEzVMK-7V_T1qxtz1Pbw_um8pzasM=pTJ+vFnZasAg@mail.gmail.com>
+References: <1363876214-25933-1-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg@mail.gmail.com>
+	<5153DC24.7040309@nvidia.com>
+	<515459D8.4010001@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4vpci17Ql0Nrbul2"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <514B4137.2020707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <515459D8.4010001-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---4vpci17Ql0Nrbul2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 28, 2013 at 3:55 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 03/27/2013 11:59 PM, Laxman Dewangan wrote:
+>> On Wednesday 27 March 2013 06:30 PM, Linus Walleij wrote:
+>>> On Thu, Mar 21, 2013 at 3:30 PM, Laxman Dewangan
+>>> <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>
+>>>> +#ifdef CONFIG_OF
+>>>> +static struct of_device_id of_palmas_gpio_match[] = {
+>>>> +       { .compatible = "ti,palmas-gpio"},
+>>>> +       { },
+>>>> +};
+>>>> +MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+>>>> +#endif
+>>>
+>>> But please drop the #ifdef here unless it causes compile errors
+>>> (I don't think it will.)
+>>>
+>>
+>> I am using this table as
+>>
+>> driver.of_match_table = of_match_ptr(of_palmas_gpio_match),
+>> of_match_ptr is macro which is NULL in case of CONFIG_OF not defined.
+>> So if I remove ifdefs then it may create build warning as unused variable.
+>
+> I think Linus's point is that you can simply remove the use of
+> of_match_ptr(). The only disadvantage of doing so is that the table will
+> always be included in the object file, but it's so small that it's
+> probably not worth worrying about.
 
-Hi again,
+Oh I wasn't that smart :-)
 
-On Thu, Mar 21, 2013 at 11:19:51AM -0600, Stephen Warren wrote:
-> On 03/21/2013 06:23 AM, Felipe Balbi wrote:
-> > PHY layer no longer returns NULL, we must
-> > switch from IS_ERR_OR_NULL() to IS_ERR().
->=20
-> The patches that I'll put into my topic branch are not yet complete;
-> Venu first posted them a couple days back and there are a number of
-> issues that will require a repost.
+But what you're saying seems true.
 
-is your topic branch ready now ? I'm about to close my tree for v3.10,
-we already have -rc5 tagged and I want to leave my pull request cooking
-in next for a while.
+The of_match_ptr() is something
+I haven't quite seen before and don't quite understand the
+semantics of, why would we use that?
 
---=20
-balbi
-
---4vpci17Ql0Nrbul2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRWph0AAoJEIaOsuA1yqRE8lsP/1kqN2h6EpcXoIWJ4nfNecbt
-mktWm5zAf00Msl/m97AF71nApjT2f5WXeCAbeN3OFBpMopp2yWiraUsylF5w9DiW
-+ixBHCk12oxu65EANZNNGO08RpV2kaaysKD2Thgpu7TKOwBWJ1B9VNnretKVOvXe
-Tu5JNrXAPF7hUx6oKAcVho/+eocQrmoK0PXc9irv30vhgvyiE4zP2ZWRDNNcFTGY
-DPQmJh3sp68Ns0IshYCaXOj5+wpskq1XSvsZC7j4UWnU7hA3suH0qUaUS60dKKKF
-ayA8AUi7pUAKj1tqb/u0tGaXjDff24Rw0005beaernC8k1OoL2p6RFZv18Ctblnm
-d6pDvmJzIWhmJAqR6fJodsZcA9fyQUW7FaEglWfAJVw1H9pzQH8d/wZNgNXOHnvC
-61LYc8YgQvf8go2y5rbo3lsOcNaSDbBtZVHKQ9YlfZgBS4pitzh+8c2vgxDd3zLd
-HAJR6GNveXsOQ3/WfgTY7Ce5MiUlna/HSqcL6rOWtTXU/tXt7q9DMDcAVJZ/Qxla
-1wOq+Z7HlfbtuFOh4msOMaU/a1eA0Knnvm2r7zq6wO7lkpQmjKrzK3z3n0D1zA8u
-ef6WVbgcEwQs+UaiLuOSvEOMfsPUN1v2xxlWraKVVUe4+RqiSzMocd5qEbPMYLmE
-+ummtdNdvaOADc4m48YM
-=CJO0
------END PGP SIGNATURE-----
-
---4vpci17Ql0Nrbul2--
+Yours,
+Linus Walleij
