@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 6/9] ARM: dts: tegra: whistler: add wakeup source for KBC
-Date: Tue, 2 Apr 2013 19:20:10 +0800
-Message-ID: <1364901613-25080-7-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V5 8/9] ARM: tegra: config: defconfig update
+Date: Tue, 2 Apr 2013 19:20:12 +0800
+Message-ID: <1364901613-25080-9-git-send-email-josephl@nvidia.com>
 References: <1364901613-25080-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,7 +12,8 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding KBC as a wakeup source for Whistler board.
+KEYBOARD_GPIO:
+* Enable gpio-key driver
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
@@ -25,20 +26,20 @@ V3:
 V2:
 * no change
 ---
- arch/arm/boot/dts/tegra20-whistler.dts | 1 +
+ arch/arm/configs/tegra_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index 87632df..0b04262 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -539,6 +539,7 @@
- 		nvidia,repeat-delay-ms = <160>;
- 		nvidia,kbc-row-pins = <0 1 2>;
- 		nvidia,kbc-col-pins = <16 17>;
-+		nvidia,wakeup-source;
- 		linux,keymap = <0x00000074	/* KEY_POWER */
- 				0x01000066	/* KEY_HOME */
- 				0x0101009E	/* KEY_BACK */
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 2b42a2c..a5f0485 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -106,6 +106,7 @@ CONFIG_RT2X00=y
+ CONFIG_RT2800USB=m
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_TEGRA=y
++CONFIG_KEYBOARD_GPIO=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+ # CONFIG_LEGACY_PTYS is not set
 -- 
 1.8.2
