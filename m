@@ -1,52 +1,59 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] clk: tegra: Export peripheral reset functions
-Date: Tue, 02 Apr 2013 10:35:29 -0700
-Message-ID: <20130402173529.8177.49420@quantum>
-References: <1364502688-5135-1-git-send-email-thierry.reding@avionic-design.de>
- <20130402093426.GZ18519@tbergstrom-lnx.Nvidia.com>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
+Date: Tue, 02 Apr 2013 21:39:57 +0400
+Message-ID: <515B17ED.7010709@cogentembedded.com>
+References: <1363868603-14525-1-git-send-email-balbi@ti.com> <514B4137.2020707@wwwdotorg.org> <20130402083604.GJ30286@arwen.pp.htv.fi> <515AFA64.3050107@wwwdotorg.org> <20130402154410.GL22014@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130402093426.GZ18519-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130402154410.GL22014-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-04-02 02:34:26)
-> On Thu, Mar 28, 2013 at 09:31:27PM +0100, Thierry Reding wrote:
-> > The tegra_periph_reset_assert() and tegra_periph_reset_deassert()
-> > functions can be used by drivers to reset peripherals. In order to allow
-> > such drivers to be built as modules, export the functions.
-> > 
-> > Note that this restores the status quo as the functions were exported
-> > before the move to the drivers/clk tree.
-> > 
-> 
-> I guess we should move to the 'reset framework' at some point in the future?
-> 
+Hello.
 
-Yes please do.  Peripheral reset stuff should not lurk in the clock
-code.  I kind of brought this point up back in June of 2012:
-http://article.gmane.org/gmane.linux.ports.tegra/5346/
+On 04/02/2013 07:44 PM, Felipe Balbi wrote:
 
-Back then the discussion was around removing this export from your clock
-driver and putting common reset code in clk.h (which is a bad idea).
-Now that the reset framework exists this stuff really should be migrated
-out of the clock framework entirely.
+>>> Hi again,
+>>>
+>>> On Thu, Mar 21, 2013 at 11:19:51AM -0600, Stephen Warren wrote:
+>>>> On 03/21/2013 06:23 AM, Felipe Balbi wrote:
+>>>>> PHY layer no longer returns NULL, we must switch from
+>>>>> IS_ERR_OR_NULL() to IS_ERR().
+>>>> The patches that I'll put into my topic branch are not yet
+>>>> complete; Venu first posted them a couple days back and there are
+>>>> a number of issues that will require a repost.
+>>> is your topic branch ready now ? I'm about to close my tree for
+>>> v3.10, we already have -rc5 tagged and I want to leave my pull
+>>> request cooking in next for a while.
+>> Unfortunately not.
+>>
+>> Venu's patch series had a bunch of runtime bugs, and I also found out
+>> that the DT binding /still/ wasn't fully thought out. As such, this
+>> series won't be applied for 3.10.
+>>
+>> I still have a vague (and probably naive) hope that the updated
+>> bindings and DT file modifications can be applied on the Tegra side in
+>> the next few days so that for 3.11 there won't be any inter-tree
+>> dependencies. However, we'll just have to wait and see whether Venu
+>> has found the bugs yet.
+> alright, so I'll go ahead and close my 'next' branch for v3.10,
+> tomorrow. Leave it in linux-next for a few days and send my pull request
+> to Greg by Friday.
+>
+> Let me just check if there are any other important features to go in
+> v3.10 which won't cause big regressions.
 
-But as long as this patch is considered an incremental change then it's
-OK by me.
+    I was going to post some cleanup/features for 
+drivers/usb/phy/rcar-phy.c today
+or tomorrow. So am I already late for 3.10?
 
-Regards,
-Mike
+WBR, Sergei
 
-> Otherwise:
-> 
-> Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> 
-> Cheers,
-> 
-> Peter.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
