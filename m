@@ -1,58 +1,306 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 0/3] ARM: tegra: add clock source for PMC
-Date: Tue, 2 Apr 2013 19:19:40 +0800
-Message-ID: <1364901583-24867-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V3 2/3] ARM: dts: tegra: add clock source for PMC
+Date: Tue, 2 Apr 2013 19:19:42 +0800
+Message-ID: <1364901583-24867-3-git-send-email-josephl@nvidia.com>
+References: <1364901583-24867-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364901583-24867-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series was original introduced to clean up the PM related code after
-the system suspending support series. The information about the origianl
-patch set is below.
+Adding the clock sources of PMC into DTS for Tegra20 and Tegra30.
 
-[1/3] ARM: tegra: moving the CPU power timer function to PMC driver
-[2/3] ARM: tegra: refactor the pmc_pm_set function
-[3/3] ARM: tegra: cpuidle: remove redundant parameters for powered-down mode
-
-I split them up in V2. The [1/3] is integrated into this series. And should
-be merged before the system suspending support series.
-
-The [2/3] is squashed into the system suspending support v4 series.
-
-The [3/3] become a stand alone clean up patah right after the system suspending
-support series.
-
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 V3:
-* add the DT bindings for the clock source of PMC
-* getting the clock from DT
+* add clk32k_in as one of the PMC clock source.
+* add a fixed clock of clk32k_in for Tegra20 & Tegra30
+V2:
+* new in this change
+---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-harmony.dts      | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-paz00.dts        | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-seaboard.dts     | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-trimslice.dts    | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-ventana.dts      | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20-whistler.dts     | 13 +++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi             |  2 ++
+ arch/arm/boot/dts/tegra30-beaver.dts       | 13 +++++++++++++
+ arch/arm/boot/dts/tegra30-cardhu.dtsi      | 13 +++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi             |  2 ++
+ 12 files changed, 134 insertions(+)
 
-Joseph Lo (3):
-  ARM: tegra: get PMC clock source from DT
-  ARM: dts: tegra: add clock source for PMC
-  ARM: tegra: moving the CPU power timer function to PMC driver
-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 23 ++++++++++++++
- arch/arm/boot/dts/tegra20-colibri-512.dtsi         | 13 ++++++++
- arch/arm/boot/dts/tegra20-harmony.dts              | 13 ++++++++
- arch/arm/boot/dts/tegra20-paz00.dts                | 13 ++++++++
- arch/arm/boot/dts/tegra20-seaboard.dts             | 13 ++++++++
- arch/arm/boot/dts/tegra20-tamonten.dtsi            | 13 ++++++++
- arch/arm/boot/dts/tegra20-trimslice.dts            | 13 ++++++++
- arch/arm/boot/dts/tegra20-ventana.dts              | 13 ++++++++
- arch/arm/boot/dts/tegra20-whistler.dts             | 13 ++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  2 ++
- arch/arm/boot/dts/tegra30-beaver.dts               | 13 ++++++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi              | 13 ++++++++
- arch/arm/boot/dts/tegra30.dtsi                     |  2 ++
- arch/arm/mach-tegra/common.c                       |  2 +-
- arch/arm/mach-tegra/pm.c                           | 37 +---------------------
- arch/arm/mach-tegra/pmc.c                          | 36 +++++++++++++++++++++
- arch/arm/mach-tegra/pmc.h                          |  4 +++
- 17 files changed, 199 insertions(+), 37 deletions(-)
-
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index cb73e62..4c107e6 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -8,6 +8,19 @@
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			vdd-supply = <&hdmi_vdd_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 5fb0888..6e6899a 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 43fd28b..54b05b2 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 4f810a5..3b347b8 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 6e9d91f..0c7bc18 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -8,6 +8,19 @@
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			vdd-supply = <&hdmi_vdd_reg>;
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 955bf49..b265ebd 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 3f8ae10..157a2cd 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 87e2d85..87632df 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	host1x {
+ 		hdmi {
+ 			status = "okay";
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 26c1134..5fc661d 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -419,6 +419,8 @@
+ 	pmc {
+ 		compatible = "nvidia,tegra20-pmc";
+ 		reg = <0x7000e400 0x400>;
++		clocks = <&tegra_car 110>, <&clk32k_in>;
++		clock-names = "pclk", "clk32k_in";
+ 	};
+ 
+ 	memory-controller@7000f000 {
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 0a2cd24..c3e0f25 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -10,6 +10,19 @@
+ 		reg = <0x80000000 0x80000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	pinmux {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 11204e1..eeea511 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -31,6 +31,19 @@
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++
+ 	pinmux {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 6042cc1..15ded60 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -428,6 +428,8 @@
+ 	pmc {
+ 		compatible = "nvidia,tegra30-pmc";
+ 		reg = <0x7000e400 0x400>;
++		clocks = <&tegra_car 218>, <&clk32k_in>;
++		clock-names = "pclk", "clk32k_in";
+ 	};
+ 
+ 	memory-controller {
 -- 
 1.8.2
