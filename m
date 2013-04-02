@@ -1,30 +1,54 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: 3.8 config file for CARMA card
-Date: Tue, 2 Apr 2013 14:36:18 +0300
-Message-ID: <20130402113618.GE18519@tbergstrom-lnx.Nvidia.com>
-References: <E61DA4A8-CD86-4F01-B8CF-D1D0D32F1C12@aotera.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [PATCH v2] clk: tegra: Make gr2d and gr3d clocks children of pll_c
+Date: Tue,  2 Apr 2013 16:18:44 +0200
+Message-ID: <1364912324-5576-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <E61DA4A8-CD86-4F01-B8CF-D1D0D32F1C12-cggpePV8Dd8dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Spencer Cheng <spencer-cggpePV8Dd8dnm+yROfE0A@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-(added linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org)
+By default these clocks are children of pll_m, but in downstream kernels
+they are reparented to pll_c. While at it, decrease their frequencies to
+300 MHz because the defaults aren't in the specified range.
 
-Hello,
+gr2d can reportedly run at much higher frequencies, but 300 MHz works
+and is a more conservative default.
 
-> Hello Peter,
-> 
-> Apologies if you are the wrong person to ask. Since you submitted the patch for Tegra 3 support, I thought I try asking you since I can't seem to find any answers elsewhere.
-> 
-> I am looking for a working .config file for the CARMA dev board so I can bring the CARMA cards that I have (7) up to a more current kernel version. I've tried to start from /proc/config.gz which is a 3.1 config file but the resultant kernel compiled on the card won't boot on the CARMA cards. Thanks in advance for any help you can provide.
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+Changes in v2:
+- make the same changes for Tegra30
 
-Unfortunately we don't have support for the carma dev board upstream yet. Also PCIe support is still missing from upstream, although I expect that to change in the near future. 
+ drivers/clk/tegra/clk-tegra20.c | 2 ++
+ drivers/clk/tegra/clk-tegra30.c | 2 ++
+ 2 files changed, 4 insertions(+)
 
-Regards,
-
-Peter.
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index bf19400..b020beb 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1247,6 +1247,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{host1x, pll_c, 150000000, 0},
+ 	{disp1, pll_p, 600000000, 0},
+ 	{disp2, pll_p, 600000000, 0},
++	{gr2d, pll_c, 300000000, 0},
++	{gr3d, pll_c, 300000000, 0},
+ 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry */
+ };
+ 
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index ba6f51b..b8b241d 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1911,6 +1911,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{disp1, pll_p, 600000000, 0},
+ 	{disp2, pll_p, 600000000, 0},
+ 	{twd, clk_max, 0, 1},
++	{gr2d, pll_c, 300000000, 0},
++	{gr3d, pll_c, 300000000, 0},
+ 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
+ };
+ 
+-- 
+1.8.2
