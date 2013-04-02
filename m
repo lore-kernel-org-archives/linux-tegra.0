@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 3/9] ARM: dt: tegra: add bindings of power management configurations for PMC
-Date: Tue, 2 Apr 2013 19:20:07 +0800
-Message-ID: <1364901613-25080-4-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V5 7/9] ARM: dts: tegra: add non-removable and keep-power-in-suspend property for MMC
+Date: Tue, 2 Apr 2013 19:20:11 +0800
+Message-ID: <1364901613-25080-8-git-send-email-josephl@nvidia.com>
 References: <1364901613-25080-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,239 +9,146 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1364901613-25080-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The PMC mostly controls the entry and exit of the system from different
-sleep modes. Different platform or system may have different configurations.
-The power management configurations of PMC is represented as some properties.
-The system needs to define the properties when the system supports deep sleep
-mode (i.e. suspend).
+This patch adds "non-removable" property of MMC host where the eMMC device
+is for Tegra platform.
 
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+And the "keep-power-in-suspend" property was used for the SDIO device that
+need this to go into suspend mode (e.g. BRCM43xx series).
+
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V5:
-* fix typos
+* no change
 V4:
 * no change
 V3:
-* fix typos
+* no change
 V2:
-* squash the patches that defined the PM bindings for PMC and the
-  implementation
-* replace the "unsigned long" with "u32" for the variables that are parsed
-  from DT
+* no change
 ---
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 42 ++++++++++-
- arch/arm/mach-tegra/pmc.c                          | 83 ++++++++++++++++++++++
- arch/arm/mach-tegra/pmc.h                          |  8 +++
- 3 files changed, 132 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra20-paz00.dts      | 1 +
+ arch/arm/boot/dts/tegra20-seaboard.dts   | 2 ++
+ arch/arm/boot/dts/tegra20-ventana.dts    | 2 ++
+ arch/arm/boot/dts/tegra20-whistler.dts   | 1 +
+ arch/arm/boot/dts/tegra30-beaver.dts     | 1 +
+ arch/arm/boot/dts/tegra30-cardhu-a02.dts | 1 +
+ arch/arm/boot/dts/tegra30-cardhu-a04.dts | 1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi    | 1 +
+ 8 files changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index 1cb8f6b..79b8390 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -1,9 +1,15 @@
- NVIDIA Tegra Power Management Controller (PMC)
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 54b05b2..c55e062 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -458,6 +458,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
  
--Properties:
-+The PMC block interacts with an external Power Management Unit. The PMC
-+mostly controls the entry and exit of the system from different sleep
-+modes. It provides power-gating controllers for SoC and CPU power-islands.
-+
-+Required properties:
- - name : Should be pmc
- - compatible : Should contain "nvidia,tegra<chip>-pmc".
- - reg : Offset and length of the register set for the device
-+
-+Optional properties:
- - nvidia,invert-interrupt : If present, inverts the PMU interrupt signal.
-   The PMU is an external Power Management Unit, whose interrupt output
-   signal is fed into the PMC. This signal is optionally inverted, and then
-@@ -11,6 +17,32 @@ Properties:
-   handling of this interrupt signal, merely its inversion.
- - clocks : the source clock of PMC
- - clock-names : the name of source clock of PMC
-+- nvidia,suspend-mode : The suspend mode that the platform should use.
-+  Valid values are 0, 1 and 2:
-+  0 (LP0): CPU + Core voltage off and DRAM in self-refresh
-+  1 (LP1): CPU voltage off and DRAM in self-refresh
-+  2 (LP2): CPU voltage off
-+- nvidia,core-power-req-active-high : Boolean, core power request active-high
-+- nvidia,sys-clock-req-active-high : Boolean, system clock request active-high
-+- nvidia,combined-power-req : Boolean, combined power request for CPU & Core
-+- nvidia,cpu-pwr-good-en : Boolean, CPU power good signal (from PMIC to PMC)
-+			   is enabled.
-+
-+Required properties when nvidia,suspend-mode is specified:
-+- nvidia,cpu-pwr-good-time : CPU power good time in uS.
-+- nvidia,cpu-pwr-off-time : CPU power off time in uS.
-+- nvidia,core-pwr-good-time : <Oscillator-stable-time Power-stable-time>
-+			      Core power good time in uS.
-+- nvidia,core-pwr-off-time : Core power off time in uS.
-+
-+Required properties when nvidia,suspend-mode=<0>:
-+- nvidia,lp0-vec : <start length> Starting address and length of LP0 vector
-+  The LP0 vector contains the warm boot code that is executed by AVP when
-+  resuming from the LP0 state. The AVP (Audio-Video Processor) is an ARM7
-+  processor and always being the first boot processor when chip is power on
-+  or resume from deep sleep mode. When the system is resumed from the deep
-+  sleep mode, the warm boot code will restore some PLLs, clocks and then
-+  bring up CPU0 for resuming the system.
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 3b347b8..5572ee7 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -593,6 +593,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
  
- Example:
+ 	sdhci@c8000400 {
+@@ -606,6 +607,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
  
-@@ -21,6 +53,14 @@ pmc@7000f400 {
- 	nvidia,invert-interrupt;
- 	clocks = <&tegra_car 110>, <&clk32k_in>;
- 	clock-names = "pclk", "clk32k_in";
-+	nvidia,suspend-mode = <1>;
-+	nvidia,cpu-pwr-good-time = <2000>;
-+	nvidia,cpu-pwr-off-time = <100>;
-+	nvidia,core-pwr-good-time = <3845 3845>;
-+	nvidia,core-pwr-off-time = <458>;
-+	nvidia,core-power-req-active-high;
-+	nvidia,sys-clock-req-active-high;
-+	nvidia,lp0-vec = <0xbdffd000 0x2000>;
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 112ef5c..4363764 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -529,6 +529,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 86 0>; /* gpio PK6 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ 
+ 	sdhci@c8000400 {
+@@ -542,6 +543,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	gpio-keys {
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 0b04262..878790e 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -531,6 +531,7 @@
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	kbc {
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index c3e0f25..772e6cf 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -279,6 +279,7 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
+ 
+ 	regulators {
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a02.dts b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+index adc88aa..e392bd2 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a02.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a02.dts
+@@ -88,6 +88,7 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 28 0>; /* gpio PD4 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
  };
  
- / Tegra board dts file
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index 8abf02f..5323bca 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -21,6 +21,8 @@
- #include <linux/of_address.h>
- #include <linux/clk.h>
+diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+index 08163e1..d0db6c7 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
++++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
+@@ -100,5 +100,6 @@
+ 		status = "okay";
+ 		power-gpios = <&gpio 27 0>; /* gpio PD3 */
+ 		bus-width = <4>;
++		keep-power-in-suspend;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index eeea511..053913f 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -333,6 +333,7 @@
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
++		non-removable;
+ 	};
  
-+#include "pmc.h"
-+
- #define PMC_CTRL			0x0
- #define PMC_CTRL_INTR_LOW		(1 << 17)
- #define PMC_PWRGATE_TOGGLE		0x30
-@@ -49,6 +51,22 @@ static void __iomem *tegra_pmc_base;
- static bool tegra_pmc_invert_interrupt;
- static struct clk *tegra_pclk;
- 
-+struct pmc_pm_data {
-+	u32 cpu_good_time;	/* CPU power good time in uS */
-+	u32 cpu_off_time;	/* CPU power off time in uS */
-+	u32 core_osc_time;	/* Core power good osc time in uS */
-+	u32 core_pmu_time;	/* Core power good pmu time in uS */
-+	u32 core_off_time;	/* Core power off time in uS */
-+	bool corereq_high;	/* Core power request active-high */
-+	bool sysclkreq_high;	/* System clock request active-high */
-+	bool combined_req;	/* Combined pwr req for CPU & Core */
-+	bool cpu_pwr_good_en;	/* CPU power good signal is enabled */
-+	u32 lp0_vec_phy_addr;	/* The phy addr of LP0 warm boot code */
-+	u32 lp0_vec_size;	/* The size of LP0 warm boot code */
-+	enum tegra_suspend_mode suspend_mode;
-+};
-+static struct pmc_pm_data pmc_pm_data;
-+
- static inline u32 tegra_pmc_readl(u32 reg)
- {
- 	return readl(tegra_pmc_base + reg);
-@@ -177,6 +195,10 @@ static const struct of_device_id matches[] __initconst = {
- static void tegra_pmc_parse_dt(void)
- {
- 	struct device_node *np;
-+	u32 prop;
-+	enum tegra_suspend_mode suspend_mode;
-+	u32 core_good_time[2] = {0, 0};
-+	u32 lp0_vec[2] = {0, 0};
- 
- 	np = of_find_matching_node(NULL, matches);
- 	BUG_ON(!np);
-@@ -187,6 +209,67 @@ static void tegra_pmc_parse_dt(void)
- 				     "nvidia,invert-interrupt");
- 	tegra_pclk = of_clk_get_by_name(np, "pclk");
- 	WARN_ON(IS_ERR(tegra_pclk));
-+
-+	/* Grabbing the power management configurations */
-+	if (of_property_read_u32(np, "nvidia,suspend-mode", &prop)) {
-+		suspend_mode = TEGRA_SUSPEND_NONE;
-+	} else {
-+		switch (prop) {
-+		case 0:
-+			suspend_mode = TEGRA_SUSPEND_LP0;
-+			break;
-+		case 1:
-+			suspend_mode = TEGRA_SUSPEND_LP1;
-+			break;
-+		case 2:
-+			suspend_mode = TEGRA_SUSPEND_LP2;
-+			break;
-+		default:
-+			suspend_mode = TEGRA_SUSPEND_NONE;
-+			break;
-+		}
-+	}
-+
-+	if (of_property_read_u32(np, "nvidia,cpu-pwr-good-time", &prop))
-+		suspend_mode = TEGRA_SUSPEND_NONE;
-+	pmc_pm_data.cpu_good_time = prop;
-+
-+	if (of_property_read_u32(np, "nvidia,cpu-pwr-off-time", &prop))
-+		suspend_mode = TEGRA_SUSPEND_NONE;
-+	pmc_pm_data.cpu_off_time = prop;
-+
-+	if (of_property_read_u32_array(np, "nvidia,core-pwr-good-time",
-+			core_good_time, ARRAY_SIZE(core_good_time)))
-+		suspend_mode = TEGRA_SUSPEND_NONE;
-+	pmc_pm_data.core_osc_time = core_good_time[0];
-+	pmc_pm_data.core_pmu_time = core_good_time[1];
-+
-+	if (of_property_read_u32(np, "nvidia,core-pwr-off-time",
-+				 &prop))
-+		suspend_mode = TEGRA_SUSPEND_NONE;
-+	pmc_pm_data.core_off_time = prop;
-+
-+	pmc_pm_data.corereq_high = of_property_read_bool(np,
-+				"nvidia,core-power-req-active-high");
-+
-+	pmc_pm_data.sysclkreq_high = of_property_read_bool(np,
-+				"nvidia,sys-clock-req-active-high");
-+
-+	pmc_pm_data.combined_req = of_property_read_bool(np,
-+				"nvidia,combined-power-req");
-+
-+	pmc_pm_data.cpu_pwr_good_en = of_property_read_bool(np,
-+				"nvidia,cpu-pwr-good-en");
-+
-+	if (of_property_read_u32_array(np, "nvidia,lp0-vec", lp0_vec,
-+				       ARRAY_SIZE(lp0_vec)))
-+		if (suspend_mode == TEGRA_SUSPEND_LP0)
-+			suspend_mode = TEGRA_SUSPEND_LP1;
-+
-+	pmc_pm_data.lp0_vec_phy_addr = lp0_vec[0];
-+	pmc_pm_data.lp0_vec_size = lp0_vec[1];
-+
-+	pmc_pm_data.suspend_mode = suspend_mode;
- }
- 
- void __init tegra_pmc_init(void)
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 22f16c9..6bc0fc09 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -18,6 +18,14 @@
- #ifndef __MACH_TEGRA_PMC_H
- #define __MACH_TEGRA_PMC_H
- 
-+enum tegra_suspend_mode {
-+	TEGRA_SUSPEND_NONE = 0,
-+	TEGRA_SUSPEND_LP2,	/* CPU voltage off */
-+	TEGRA_SUSPEND_LP1,	/* CPU voltage off, DRAM self-refresh */
-+	TEGRA_SUSPEND_LP0,      /* CPU + core voltage off, DRAM self-refresh */
-+	TEGRA_MAX_SUSPEND_MODE,
-+};
-+
- #ifdef CONFIG_PM_SLEEP
- void set_power_timers(unsigned long us_on, unsigned long us_off);
- #endif
+ 	regulators {
 -- 
 1.8.2
