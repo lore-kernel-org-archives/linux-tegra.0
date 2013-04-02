@@ -1,45 +1,64 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] clk: tegra: Make gr2d and gr3d clocks children of
- pll_c
-Date: Tue, 2 Apr 2013 08:50:59 +0300
-Message-ID: <515A71C3.2050008@nvidia.com>
-References: <1364502688-5135-1-git-send-email-thierry.reding@avionic-design.de> <1364502688-5135-2-git-send-email-thierry.reding@avionic-design.de> <51560BC4.8020400@wwwdotorg.org> <515A6C95.4060900@nvidia.com> <20130402054722.GA21277@avionic-0098.mockup.avionic-design.de>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RESEND/PATCH] usb: host: ehci-tegra: fix PHY error handling
+Date: Tue, 2 Apr 2013 11:36:05 +0300
+Message-ID: <20130402083604.GJ30286@arwen.pp.htv.fi>
+References: <1363868603-14525-1-git-send-email-balbi@ti.com>
+ <514B4137.2020707@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4vpci17Ql0Nrbul2"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130402054722.GA21277-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <514B4137.2020707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02.04.2013 08:47, Thierry Reding wrote:
-> On Tue, Apr 02, 2013 at 08:28:53AM +0300, Terje Bergstr=C3=B6m wrote:
->> In Tegra20, 300MHz is the max rate we drive 2D in. Later Tegras have=
- a
->> higher max clock, and in Tegra114 we drive it from a different PLL. =
-But
->> for all of them 300MHz and PLLC should be a working configuration. I
->> haven't checked how we use PLLC in upstream, so I'm not 100% sure.
+--4vpci17Ql0Nrbul2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi again,
+
+On Thu, Mar 21, 2013 at 11:19:51AM -0600, Stephen Warren wrote:
+> On 03/21/2013 06:23 AM, Felipe Balbi wrote:
+> > PHY layer no longer returns NULL, we must
+> > switch from IS_ERR_OR_NULL() to IS_ERR().
 >=20
-> At least on Tegra30 (CardHu) I can see that the clocks are also child=
-ren
-> of PLLC. I can add a similar hunk for Tegra30 to the patch. I have no
+> The patches that I'll put into my topic branch are not yet complete;
+> Venu first posted them a couple days back and there are a number of
+> issues that will require a repost.
 
-Yes, Tegra30 is similar to Tegra20 in this respect. Only max clock is
-different, so similar hunk for Tegra30 would be a good idea.
+is your topic branch ready now ? I'm about to close my tree for v3.10,
+we already have -rc5 tagged and I want to leave my pull request cooking
+in next for a while.
 
-> Tegra114 hardware available and none of the downstream kernel branche=
-s I
-> have seem to include Tegra114 support either so I can't check what's =
-in
-> use there, but if you say it should be fine I can include that in the
-> patch as well.
+--=20
+balbi
 
-I think it's better we add this when we have a patch that enables host1=
-x
-driver for Tegra114 and we have tested. Until then, I suggest we just
-leave the Tegra114 part out.
+--4vpci17Ql0Nrbul2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Terje
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRWph0AAoJEIaOsuA1yqRE8lsP/1kqN2h6EpcXoIWJ4nfNecbt
+mktWm5zAf00Msl/m97AF71nApjT2f5WXeCAbeN3OFBpMopp2yWiraUsylF5w9DiW
++ixBHCk12oxu65EANZNNGO08RpV2kaaysKD2Thgpu7TKOwBWJ1B9VNnretKVOvXe
+Tu5JNrXAPF7hUx6oKAcVho/+eocQrmoK0PXc9irv30vhgvyiE4zP2ZWRDNNcFTGY
+DPQmJh3sp68Ns0IshYCaXOj5+wpskq1XSvsZC7j4UWnU7hA3suH0qUaUS60dKKKF
+ayA8AUi7pUAKj1tqb/u0tGaXjDff24Rw0005beaernC8k1OoL2p6RFZv18Ctblnm
+d6pDvmJzIWhmJAqR6fJodsZcA9fyQUW7FaEglWfAJVw1H9pzQH8d/wZNgNXOHnvC
+61LYc8YgQvf8go2y5rbo3lsOcNaSDbBtZVHKQ9YlfZgBS4pitzh+8c2vgxDd3zLd
+HAJR6GNveXsOQ3/WfgTY7Ce5MiUlna/HSqcL6rOWtTXU/tXt7q9DMDcAVJZ/Qxla
+1wOq+Z7HlfbtuFOh4msOMaU/a1eA0Knnvm2r7zq6wO7lkpQmjKrzK3z3n0D1zA8u
+ef6WVbgcEwQs+UaiLuOSvEOMfsPUN1v2xxlWraKVVUe4+RqiSzMocd5qEbPMYLmE
++ummtdNdvaOADc4m48YM
+=CJO0
+-----END PGP SIGNATURE-----
+
+--4vpci17Ql0Nrbul2--
