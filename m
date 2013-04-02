@@ -1,39 +1,121 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
-Date: Mon, 1 Apr 2013 17:14:50 +0000
-Message-ID: <201304011714.50703.arnd@arndb.de>
-References: <1364602790-10759-1-git-send-email-swarren@wwwdotorg.org> <201303301413.26549.arnd@arndb.de> <5159B0FF.2010408@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 1/3] ARM: tegra: get PMC clock source from DT
+Date: Tue, 2 Apr 2013 19:19:41 +0800
+Message-ID: <1364901583-24867-2-git-send-email-josephl@nvidia.com>
+References: <1364901583-24867-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5159B0FF.2010408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1364901583-24867-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 01 April 2013, Stephen Warren wrote:
-> On 03/30/2013 08:13 AM, Arnd Bergmann wrote:
-> > On Saturday 30 March 2013, Stephen Warren wrote:
+Adding the bindings of the clock source of PMC in DT. And getting
+the clock from DT.
 
-> > If not, we can probably take your patch for now, if you remove it
-> > again for 3.11.
-> 
-> There are at least a couple of different things in this file:
-> 
-> a) The reset API, which definitely should be converted to the new reset
-> API. I can't make any promises about which kernel release that will
-> happen in, but it's definitely something we know we have to do.
-> 
-> b) Power-gating. This should probably be converted to use the
-> powerdomains code. I believe Joseph Lo is aware of this, but again I
-> can't promise any specific time-scale at this time.
-> 
-> So is this still OK, without any promises of timescale?
-> 
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+V3:
+* add binding document for the clock source of PMC
+* get the clock from DT by of_get_clk_by_name()
+* fix WARN_ON_ONCE to WARN_ON when there is no clock define in DT
+V2:
+* new in this series
+---
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 23 ++++++++++++++++++++++
+ arch/arm/mach-tegra/common.c                       |  2 +-
+ arch/arm/mach-tegra/pmc.c                          |  4 ++++
+ 3 files changed, 28 insertions(+), 1 deletion(-)
 
-Yes, sounds good.
-
-	Arnd
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+index b5846e2..1cb8f6b 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+@@ -9,11 +9,34 @@ Properties:
+   signal is fed into the PMC. This signal is optionally inverted, and then
+   fed into the ARM GIC. The PMC is not involved in the detection or
+   handling of this interrupt signal, merely its inversion.
++- clocks : the source clock of PMC
++- clock-names : the name of source clock of PMC
+ 
+ Example:
+ 
++/ SoC dts including file
+ pmc@7000f400 {
+ 	compatible = "nvidia,tegra20-pmc";
+ 	reg = <0x7000e400 0x400>;
+ 	nvidia,invert-interrupt;
++	clocks = <&tegra_car 110>, <&clk32k_in>;
++	clock-names = "pclk", "clk32k_in";
+ };
++
++/ Tegra board dts file
++{
++	...
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock@0 {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
++	...
++}
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index f0315c9..b02ebe7 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -61,6 +61,7 @@ u32 tegra_uart_config[4] = {
+ void __init tegra_dt_init_irq(void)
+ {
+ 	tegra_clocks_init();
++	tegra_pmc_init();
+ 	tegra_init_irq();
+ 	irqchip_init();
+ }
+@@ -100,7 +101,6 @@ void __init tegra_init_early(void)
+ 	tegra_apb_io_init();
+ 	tegra_init_fuse();
+ 	tegra_init_cache();
+-	tegra_pmc_init();
+ 	tegra_powergate_init();
+ 	tegra_hotplug_init();
+ }
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index b30e921..dbe2577 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -19,6 +19,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/clk.h>
+ 
+ #define PMC_CTRL			0x0
+ #define PMC_CTRL_INTR_LOW		(1 << 17)
+@@ -43,6 +44,7 @@ static DEFINE_SPINLOCK(tegra_powergate_lock);
+ 
+ static void __iomem *tegra_pmc_base;
+ static bool tegra_pmc_invert_interrupt;
++static struct clk *tegra_pclk;
+ 
+ static inline u32 tegra_pmc_readl(u32 reg)
+ {
+@@ -151,6 +153,8 @@ static void tegra_pmc_parse_dt(void)
+ 
+ 	tegra_pmc_invert_interrupt = of_property_read_bool(np,
+ 				     "nvidia,invert-interrupt");
++	tegra_pclk = of_clk_get_by_name(np, "pclk");
++	WARN_ON(IS_ERR(tegra_pclk));
+ }
+ 
+ void __init tegra_pmc_init(void)
+-- 
+1.8.2
