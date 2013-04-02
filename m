@@ -1,54 +1,63 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2] clk: tegra: Make gr2d and gr3d clocks children of pll_c
-Date: Tue,  2 Apr 2013 16:18:44 +0200
-Message-ID: <1364912324-5576-1-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] gpio: palmas: add dt support
+Date: Tue, 02 Apr 2013 09:30:49 -0600
+Message-ID: <515AF9A9.4060407@wwwdotorg.org>
+References: <1363876214-25933-1-git-send-email-ldewangan@nvidia.com> <CACRpkdY_9pEkNfp7L82nGjsjFOi-VXwPHo7_3XwjCz8XcN8osg@mail.gmail.com> <5153DC24.7040309@nvidia.com> <515459D8.4010001@nvidia.com> <CACRpkdYTcEzVMK-7V_T1qxtz1Pbw_um8pzasM=pTJ+vFnZasAg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYTcEzVMK-7V_T1qxtz1Pbw_um8pzasM=pTJ+vFnZasAg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-By default these clocks are children of pll_m, but in downstream kernels
-they are reparented to pll_c. While at it, decrease their frequencies to
-300 MHz because the defaults aren't in the specified range.
+On 04/02/2013 03:01 AM, Linus Walleij wrote:
+> On Thu, Mar 28, 2013 at 3:55 PM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 03/27/2013 11:59 PM, Laxman Dewangan wrote:
+>>> On Wednesday 27 March 2013 06:30 PM, Linus Walleij wrote:
+>>>> On Thu, Mar 21, 2013 at 3:30 PM, Laxman Dewangan
+>>>> <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>>
+>>>>> +#ifdef CONFIG_OF
+>>>>> +static struct of_device_id of_palmas_gpio_match[] = {
+>>>>> +       { .compatible = "ti,palmas-gpio"},
+>>>>> +       { },
+>>>>> +};
+>>>>> +MODULE_DEVICE_TABLE(of, of_palmas_gpio_match);
+>>>>> +#endif
+>>>>
+>>>> But please drop the #ifdef here unless it causes compile errors
+>>>> (I don't think it will.)
+>>>>
+>>>
+>>> I am using this table as
+>>>
+>>> driver.of_match_table = of_match_ptr(of_palmas_gpio_match),
+>>> of_match_ptr is macro which is NULL in case of CONFIG_OF not defined.
+>>> So if I remove ifdefs then it may create build warning as unused variable.
+>>
+>> I think Linus's point is that you can simply remove the use of
+>> of_match_ptr(). The only disadvantage of doing so is that the table will
+>> always be included in the object file, but it's so small that it's
+>> probably not worth worrying about.
+> 
+> Oh I wasn't that smart :-)
+> 
+> But what you're saying seems true.
+> 
+> The of_match_ptr() is something
+> I haven't quite seen before and don't quite understand the
+> semantics of, why would we use that?
 
-gr2d can reportedly run at much higher frequencies, but 300 MHz works
-and is a more conservative default.
+Very roughly,
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
-Changes in v2:
-- make the same changes for Tegra30
+of_match_ptr(x) == CONFIG_OF ? x : NULL
 
- drivers/clk/tegra/clk-tegra20.c | 2 ++
- drivers/clk/tegra/clk-tegra30.c | 2 ++
- 2 files changed, 4 insertions(+)
+(although with ifdefs rather than the ternary operator)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index bf19400..b020beb 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1247,6 +1247,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
- 	{host1x, pll_c, 150000000, 0},
- 	{disp1, pll_p, 600000000, 0},
- 	{disp2, pll_p, 600000000, 0},
-+	{gr2d, pll_c, 300000000, 0},
-+	{gr3d, pll_c, 300000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry */
- };
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index ba6f51b..b8b241d 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1911,6 +1911,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
- 	{disp1, pll_p, 600000000, 0},
- 	{disp2, pll_p, 600000000, 0},
- 	{twd, clk_max, 0, 1},
-+	{gr2d, pll_c, 300000000, 0},
-+	{gr3d, pll_c, 300000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
- };
- 
--- 
-1.8.2
+So, if you have ifdef'd the match table with CONFIG_OF, and reference it
+from code outside that ifdef, then you need to use of_match_ptr() to
+reference the table, so it isn't referenced when CONFIG_OF is not
+defined, and hence never causes link problems.
