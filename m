@@ -1,100 +1,79 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 9/9] ARM: dts: tegra: add the PM configurations of
- PMC
-Date: Wed, 3 Apr 2013 15:33:51 +0800
-Message-ID: <1364974431.16957.41.camel@jlo-ubuntu-64.nvidia.com>
-References: <1364901613-25080-1-git-send-email-josephl@nvidia.com>
-	 <1364901613-25080-10-git-send-email-josephl@nvidia.com>
-	 <515B38F7.5050606@wwwdotorg.org>
-	 <20130403055935.GB6764@avionic-0098.mockup.avionic-design.de>
-	 <1364970865.16957.21.camel@jlo-ubuntu-64.nvidia.com>
-	 <20130403070423.GB22867@avionic-0098.mockup.avionic-design.de>
-	 <1364973077.16957.32.camel@jlo-ubuntu-64.nvidia.com>
-	 <20130403071932.GA23157@avionic-0098.mockup.avionic-design.de>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: CPU idle LP2 breaks MSI on TrimSlice
+Date: Wed, 3 Apr 2013 09:54:54 +0200
+Message-ID: <20130403075454.GA25174@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130403071932.GA23157-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-04-03 at 15:19 +0800, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Wed, Apr 03, 2013 at 03:11:17PM +0800, Joseph Lo wrote:
-> > On Wed, 2013-04-03 at 15:04 +0800, Thierry Reding wrote:
-> > > > Old Signed by an unknown key
-> > > 
-> > > On Wed, Apr 03, 2013 at 02:34:25PM +0800, Joseph Lo wrote:
-> > > > On Wed, 2013-04-03 at 13:59 +0800, Thierry Reding wrote:
-> > > > > > Old Signed by an unknown key
-> > > > > 
-> > > > > On Tue, Apr 02, 2013 at 02:00:55PM -0600, Stephen Warren wrote:
-> > > > > > On 04/02/2013 05:20 AM, Joseph Lo wrote:
-> > > > > > > Adding the PM configuration of PMC when the platform support suspend
-> > > > > > > function.
-> > > > > > 
-> > > > > > For this patch, some more boards could be supported, but I think we'll
-> > > > > > have to rely on other people (Lucas, Thierry) to send patches for them,
-> > > > > > since they know the details of the board. It's fine to leave suspend
-> > > > > > disabled on those boards until later.
-> > > > > 
-> > > > > I'm not sure what would be the best way to get the Tamonten devices out
-> > > > > of suspend again. For Plutux and TEC we have a power button that could
-> > > > > possibly be reused. There's a WAKEUP pin on the Tamonten connector which
-> > > > > goes to GPIO PV2, but the mechanism to trigger it is carrier-board
-> > > > > dependent.
-> > > > > 
-> > > > > For the Medcom-Wide we don't have a power button, but it could possibly
-> > > > > use the WAKEUP pin if that's connected. It seems like in all designs it
-> > > > > goes to the CPLD, but I need to check with engineering if there's a way
-> > > > > to manipulate it.
-> > > > > 
-> > > > > So yes, I think for now we can leave suspend disabled on Tamonten and I
-> > > > > can send patches to enable it once I've clarified with engineering.
-> > > > > 
-> > > > Hi Thierry,
-> > > > 
-> > > > I just recall I still need at least "nvidia,cpu-pwr-good-time" and
-> > > > "nvidia,cpu-pwr-off-time" two properties to make CPU idle power-down
-> > > > mode (same with LP2) work normally after this series.
-> > > > 
-> > > > So can you provide me that or point me out where is your downstream
-> > > > kernel source? There data would be come from DT after this series.
-> > > 
-> > > We don't have suspend support in downstream kernels either. However
-> > > since the Tamonten was derived from the Harmony reference design I
-> > > suppose the same values can be reused.
-> > > 
-> > OK. That's enough.
-> > 
-> > > That said, the binding document says that those values are only required
-> > > if nvidia,suspend-mode is set. So if we don't add it for the Tamonten
-> > > boards why would you need the cpu-pwr-good-time and cpu-pwr-off-time
-> > > values. Or maybe the binding document is wrong?
-> > 
-> > Actually, when you support CPU idle power-down mode (LP2), you already
-> > support suspend function (at least LP2 mode). Just no wake up source
-> > define in DT for your boards.
-> 
-> Okay, but for CPU idle LP2 we don't need a wakeup source, right? I only
-> need the wakeup source if I explicitly suspend the device.
-> 
-Yes. The difference between CPU idle and suspend LP2 is wake up from any
-interrupt or specific interrupt source (wake up source for suspend).
 
-My approach is adding CPU idle LP2 support first and make it support
-suspend later. Then reorganize them into PM related code and get the
-configurations from DT.
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > May I add these properties to your boards (same as Harmony)? Then you
-> > can figure out your wake up source later, at least the RTC can wake up
-> > your device I believe.
-> 
-> From what I understand there should be no changes in behaviour after
-> this patch, so it should be fine.
-> 
-OK, thanks.
+Hi Joseph,
+
+I didn't want to hijack the other thread, so I'm starting a new one.
+I've recently been trying to get the PCIe ethernet device on TrimSlice
+working on top of the Tegra PCIe rework patches that I've been carrying
+for quite a while.
+
+A bit of background: when I last tried this back in January things still
+worked fine, but I noticed that they aren't working on recent linux-next
+versions. I was able to track down next-20130123 as the last working
+version and next-20130128 as the first broken one (anything in between
+didn't boot properly).
+
+It turns out that the introduction of CPU idle (LP2) seems to have
+introduced this breakage. Normally what I'd do is:
+
+	$ ifconfig eth0 up
+
+and wait for a few seconds for the kernel to report that a link has been
+detected, after which running
+
+	$ dhcpcd eth0
+
+will successfully obtain an IP address. However, with the CPU idle
+support enabled, the network interface no longer detects a link. The
+reason for this is that the MSI that would usually occur after link
+detection by the hardware never occurs when LP2 is enabled.
+
+I've verified on top of next-20130402 that commenting out entry "1" in
+tegra_idle_states (LP2) in cpuidle-tegra20.c "fixes" the issue. I'm able
+to obtain an IP address via DHCP and use the network interface as usual.
+
+I already talked to Stephen and Peter about this on IRC and none of us
+could come up with a good explanation. Since you wrote the CPU idle
+support I thought you might be able to shed some light on this.
+
+Thierry
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRW+BOAAoJEN0jrNd/PrOhO04P/iwNfHGS4BrY23f29Ripj5l4
+Uw7KRy1gazpBf+m4//1/7Jgw1tzlI1HqxK/Jc/Cc/wfsB+SeVbYBYxKGODbp1B4F
+uIALnMfdUGkM0JdeYgIcNmAuXWYNpIyLq95gOgt6zWXTI/dMbUL5GKzzkHPBL3z6
+v82sgb2yb+/9MFgH2ReiNijTXN9lUlTdEq0pTJSzk47doYp3CzS2cbFmjFoaRbPs
+HCQ2Zlyxx+Ik4p95oCcGADnvhKnhMF9L5+Y5aBqcGNVbhdaV28flDbE4J/cKOSZh
+MVpPf463RkTITbROJBKmc6rU8USC9tGmS58cxmsm+3gopn3L94vM+f93cf3EqGnG
+XvylrcXpmAC1LRsd3u3D/NWX/4STJVSpFIdJIyls/D37z+Dyj0F2+5xvBr0YoxRo
+kYiSP9gshO7fye4hVyO1eSR4tIUZgVJgaWfZqU8xkGlGvo2PTNTL7MRFTohnI38L
+yTVrbXThOIHjdbr1/Zxoi+nVm8sO3PMyQ97U+LsztFehIiJ5tHWNnDoOcFBCEK1i
+kgT6KTVvQ9GRpOGOn4Jr16p7t0oOT92gNHz6NPUPOWYHbjEh5vytBkBTW2ZRtuWS
+WRTiCpAZIQx9TSTC9YIhf2/LXv4ftEpsp2C9In5YVwdaJi9o/ivK/6FT38szE/hZ
+yvfMKxTUWiBZKAfiNWX5
+=B8/s
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
