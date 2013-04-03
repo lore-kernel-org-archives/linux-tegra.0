@@ -1,35 +1,45 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 5/9] ARM: tegra2: cpuidle: change driver initialization
-Date: Wed, 03 Apr 2013 10:51:32 -0600
-Message-ID: <515C5E14.3070202@wwwdotorg.org>
-References: <1364553095-25110-1-git-send-email-daniel.lezcano@linaro.org>  <1364553095-25110-5-git-send-email-daniel.lezcano@linaro.org> <1364610152.2622.3.camel@jlo-ubuntu-64.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V5 1/9] gpio: tegra: add gpio wakeup source handling
+Date: Wed, 03 Apr 2013 10:52:19 -0600
+Message-ID: <515C5E43.1080904@wwwdotorg.org>
+References: <1364901613-25080-1-git-send-email-josephl@nvidia.com> <1364901613-25080-2-git-send-email-josephl@nvidia.com> <CACRpkdYOLuUyBu7ER7hqLGZnAoYS0Z7XJ6LC2=ec3vxKzF1rqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1364610152.2622.3.camel@jlo-ubuntu-64.nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "rjw@sisk.pl" <rjw@sisk.pl>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "rnayak@ti.com" <rnayak@ti.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "arnd@arndb.de" <arnd@arndb.de>, "lenb@kernel.org" <lenb@kernel.org>, "nsekhar@ti.com" <nsekhar@ti.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYOLuUyBu7ER7hqLGZnAoYS0Z7XJ6LC2=ec3vxKzF1rqA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/29/2013 08:22 PM, Joseph Lo wrote:
-> On Fri, 2013-03-29 at 18:31 +0800, Daniel Lezcano wrote:
->> Initialize the idle states directly in the driver structure.
+On 04/03/2013 10:29 AM, Linus Walleij wrote:
+> On Tue, Apr 2, 2013 at 1:20 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> This patch ad
+> d the gpio wakeup source handling for the Tegra platform. It
+>> was be done by enabling the irq for the gpio in the gpio controller and
+>> enabling the bank irq of the gpio in the Tegra legacy irq controller when
+>> the system going to suspend.
 >>
->> That prevents extra structure declaration and memcpy at init time.
+>> Based on the work by:
+>> Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> ---
+>> V5:
+>> * no change
+>> V4:
+>> * no change
+>> V3:
+>> * no change
+>> V2:
+>> * no change
 > 
-> Hi Daniel,
-> 
-> Thank you.
-> 
-> Both the 5th and 6th patch,
-> 
-> Reviewed-by: Joseph Lo <josephl@nvidia.com>
+> Shall I just apply this to the GPIO tree to stop these repetitive mails
+> from coming?
 
-Thanks. Those same two patches therefore,
-
-Acked-by: Stephen Warren <swarren@nvidia.com>
-
+It's part of a series where other patches are being rev'd. I'll apply it
+to the Tegra tree with the series once it's final.
