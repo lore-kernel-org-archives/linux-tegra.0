@@ -1,72 +1,188 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: [PATCH v3 06/12] ARM: tegra: Move pmc.h to include/linux/tegra-pmc.h
-Date: Wed,  3 Apr 2013 16:45:12 +0200
-Message-ID: <1365000318-28256-7-git-send-email-thierry.reding@avionic-design.de>
-References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v9 05/14] clk: tegra: Add PLL post divider table
+Date: Wed, 3 Apr 2013 17:40:39 +0300
+Message-ID: <1365000110-8916-6-git-send-email-pdeschrijver@nvidia.com>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+In-Reply-To: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In preparation for moving the PCIe driver into the drivers/pci/host
-directory, this header, which contains prototypes that are required by
-the PCIe driver, needs to be moved to a globally visible location.
+Some PLLs in Tegra114 don't use a power of 2 mapping for the post divider.
+Introduce a table based approach and switch PLLU to it.
 
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-Changes in v2:
-- keep tegra_pmc_init() prototype in arch/arm/mach-tegra/pmc.h
-- move pmc.h to includex/linux/tegra-pmc.h
+ drivers/clk/tegra/clk-pll.c     |   38 ++++++++++++++++++++++++++++++++------
+ drivers/clk/tegra/clk-tegra20.c |    7 +++++++
+ drivers/clk/tegra/clk-tegra30.c |    7 +++++++
+ drivers/clk/tegra/clk.h         |   13 +++++++++++++
+ 4 files changed, 59 insertions(+), 6 deletions(-)
 
-Changes in v3:
-- update subject to match new location
-
- arch/arm/mach-tegra/pmc.h |  1 -
- include/linux/tegra-pmc.h | 23 +++++++++++++++++++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/tegra-pmc.h
-
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index c778451..7d44710 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -23,6 +23,5 @@ int tegra_pmc_cpu_power_on(int cpuid);
- int tegra_pmc_cpu_remove_clamping(int cpuid);
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index eaab060..ccb367e 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -266,6 +266,7 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		      unsigned long rate, unsigned long parent_rate)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
++	struct pdiv_map *p_tohw = pll->params->pdiv_tohw;
+ 	unsigned long cfreq;
+ 	u32 p_div = 0;
  
- void tegra_pmc_init(void);
--void tegra_pmc_pcie_xclk_clamp(bool clamp);
+@@ -299,7 +300,6 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	     cfg->output_rate <<= 1)
+ 		p_div++;
  
- #endif
-diff --git a/include/linux/tegra-pmc.h b/include/linux/tegra-pmc.h
-new file mode 100644
-index 0000000..b6296bf
---- /dev/null
-+++ b/include/linux/tegra-pmc.h
-@@ -0,0 +1,23 @@
-+/*
-+ * Copyright (C) 2012 NVIDIA CORPORATION. All rights reserved.
+-	cfg->p = p_div;
+ 	cfg->m = parent_rate / cfreq;
+ 	cfg->n = cfg->output_rate / cfreq;
+ 	cfg->cpcon = OUT_OF_TABLE_CPCON;
+@@ -312,8 +312,19 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (pll->flags & TEGRA_PLLU)
+-		cfg->p ^= 1;
++	if (p_tohw) {
++		p_div = 1 << p_div;
++		while (p_tohw->pdiv) {
++			if (p_div <= p_tohw->pdiv) {
++				cfg->p = p_tohw->hw_val;
++				break;
++			}
++			p_tohw++;
++		}
++		if (!p_tohw->pdiv)
++			return -EINVAL;
++	} else
++		cfg->p = p_div;
+ 
+ 	return 0;
+ }
+@@ -460,8 +471,10 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	struct tegra_clk_pll_freq_table cfg;
++	struct pdiv_map *p_tohw = pll->params->pdiv_tohw;
+ 	u32 val;
+ 	u64 rate = parent_rate;
++	int pdiv;
+ 
+ 	val = pll_readl_base(pll);
+ 
+@@ -480,10 +493,23 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	_get_pll_mnp(pll, &cfg);
+ 
+-	if (pll->flags & TEGRA_PLLU)
+-		cfg.p ^= 1;
++	if (p_tohw) {
++		while (p_tohw->pdiv) {
++			if (cfg.p == p_tohw->hw_val) {
++				pdiv = p_tohw->pdiv;
++				break;
++			}
++			p_tohw++;
++		}
++
++		if (!p_tohw->pdiv) {
++			WARN_ON(1);
++			pdiv = 1;
++		}
++	} else
++		pdiv = 1 << cfg.p;
+ 
+-	cfg.m *= 1 << cfg.p;
++	cfg.m *= pdiv;
+ 
+ 	rate *= cfg.n;
+ 	do_div(rate, cfg.m);
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 13efdfb..b1a49cb 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -441,6 +441,12 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_delay = 1000,
+ };
+ 
++static struct pdiv_map pllu_p[] = {
++	{ .pdiv = 1, .hw_val = 1 },
++	{ .pdiv = 2, .hw_val = 0 },
++	{ .pdiv = 0, .hw_val = 0 },
++};
++
+ static struct tegra_clk_pll_params pll_u_params = {
+ 	.input_min = 2000000,
+ 	.input_max = 40000000,
+@@ -453,6 +459,7 @@ static struct tegra_clk_pll_params pll_u_params = {
+ 	.lock_bit_idx = PLL_BASE_LOCK,
+ 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
++	.pdiv_tohw = pllu_p,
+ };
+ 
+ static struct tegra_clk_pll_params pll_x_params = {
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a7b955c..102bcbb 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -467,6 +467,12 @@ static struct tegra_clk_pll_freq_table pll_d_freq_table[] = {
+ 	{ 0, 0, 0, 0, 0, 0 },
+ };
+ 
++static struct pdiv_map pllu_p[] = {
++	{ .pdiv = 1, .hw_val = 1 },
++	{ .pdiv = 2, .hw_val = 0 },
++	{ .pdiv = 0, .hw_val = 0 },
++};
++
+ static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
+ 	{ 12000000, 480000000, 960, 12, 0, 12},
+ 	{ 13000000, 480000000, 960, 13, 0, 12},
+@@ -640,6 +646,7 @@ static struct tegra_clk_pll_params pll_u_params = {
+ 	.lock_bit_idx = PLL_BASE_LOCK,
+ 	.lock_enable_bit_idx = PLLDU_MISC_LOCK_ENABLE,
+ 	.lock_delay = 1000,
++	.pdiv_tohw = pllu_p,
+ };
+ 
+ static struct tegra_clk_pll_params pll_x_params = {
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 17ddb22..925da45 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -117,6 +117,17 @@ struct tegra_clk_pll_freq_table {
+ };
+ 
+ /**
++ * struct pdiv_map - map post divider to hw value
 + *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
++ * @pdiv:		post divider
++ * @hw_val:		value to be written to the PLL hw
 + */
++struct pdiv_map {
++	u8 pdiv;
++	u8 hw_val;
++};
 +
-+#ifndef __LINUX_TEGRA_PMC_H
-+#define __LINUX_TEGRA_PMC_H
-+
-+void tegra_pmc_pcie_xclk_clamp(bool clamp);
-+
-+#endif
++/**
+  * struct clk_pll_params - PLL parameters
+  *
+  * @input_min:			Minimum input frequency
+@@ -146,6 +157,8 @@ struct tegra_clk_pll_params {
+ 	u32		lock_bit_idx;
+ 	u32		lock_enable_bit_idx;
+ 	int		lock_delay;
++	int		max_p;
++	struct pdiv_map *pdiv_tohw;
+ };
+ 
+ /**
 -- 
-1.8.2
+1.7.7.rc0.72.g4b5ea.dirty
