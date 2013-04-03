@@ -1,66 +1,69 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/9] ARM: cpuidle: remove useless declaration
-Date: Wed, 03 Apr 2013 14:23:23 +0200
-Message-ID: <515C1F3B.5040008@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
+Date: Wed, 03 Apr 2013 08:28:47 -0500
+Message-ID: <515C2E8F.1030802@gmail.com>
+References: <1364988750-25058-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: rjw@sisk.pl
-Cc: deepthi@linux.vnet.ibm.com, linaro-kernel@lists.linaro.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, patches@linaro.org, linux-pm@vger.kernel.org, rnayak@ti.com, nsekhar@ti.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, linux-arm-kernel@lists.infradead.org, lenb@kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364988750-25058-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 02:15 PM, Daniel Lezcano wrote:
-> The noop functions code is not necessary because the header file is
-> included in files which are compiled when CONFIG_CPU_IDLE is on.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+On 04/03/2013 06:32 AM, Joseph Lo wrote:
+> Architected timer is the local timer for Cortex-A15. Adding the support
+> for Tegra.
+> 
+> Cc: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I have been involved in the development of this file. I know Rob is no
-longer working on this neither monitoring the code.
+My patch series to add CLOCKSOURCE_OF_DECLARE support to arch timer and
+sched_clock enhancements will make this unnecessary:
 
-Russell are you ok with this patch ? Rafael needs your ack to take this
-patch into its tree.
+http://www.spinics.net/lists/arm-kernel/msg234597.html
 
-Thanks
+Testing would be appreciated.
 
--- Daniel
+Rob
 
 > ---
->  arch/arm/include/asm/cpuidle.h |    7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/arch/arm/include/asm/cpuidle.h b/arch/arm/include/asm/cp=
-uidle.h
-> index 2fca60a..7367787 100644
-> --- a/arch/arm/include/asm/cpuidle.h
-> +++ b/arch/arm/include/asm/cpuidle.h
-> @@ -1,13 +1,8 @@
->  #ifndef __ASM_ARM_CPUIDLE_H
->  #define __ASM_ARM_CPUIDLE_H
-> =20
-> -#ifdef CONFIG_CPU_IDLE
->  extern int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
-> -		struct cpuidle_driver *drv, int index);
-> -#else
-> -static inline int arm_cpuidle_simple_enter(struct cpuidle_device *de=
-v,
-> -		struct cpuidle_driver *drv, int index) { return -ENODEV; }
-> -#endif
-> +				    struct cpuidle_driver *drv, int index);
-> =20
->  /* Common ARM WFI state */
->  #define ARM_CPUIDLE_WFI_STATE_PWR(p) {\
-
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>  drivers/clocksource/tegra20_timer.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+> index ae877b0..e443f44 100644
+> --- a/drivers/clocksource/tegra20_timer.c
+> +++ b/drivers/clocksource/tegra20_timer.c
+> @@ -30,6 +30,7 @@
+>  #include <asm/mach/time.h>
+>  #include <asm/smp_twd.h>
+>  #include <asm/sched_clock.h>
+> +#include <asm/arch_timer.h>
+>  
+>  #define RTC_SECONDS            0x08
+>  #define RTC_SHADOW_SECONDS     0x0c
+> @@ -200,8 +201,6 @@ static void __init tegra20_init_timer(struct device_node *np)
+>  		WARN(1, "Unknown clock rate");
+>  	}
+>  
+> -	setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
+> -
+>  	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+>  		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
+>  		pr_err("Failed to register clocksource\n");
+> @@ -218,6 +217,10 @@ static void __init tegra20_init_timer(struct device_node *np)
+>  	tegra_clockevent.irq = tegra_timer_irq.irq;
+>  	clockevents_config_and_register(&tegra_clockevent, 1000000,
+>  					0x1, 0x1fffffff);
+> +	if (arch_timer_of_register())
+> +		setup_sched_clock(tegra_read_sched_clock, 32, 1000000);
+> +	else
+> +		arch_timer_sched_clock_init();
+>  }
+>  CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+>  
+> 
