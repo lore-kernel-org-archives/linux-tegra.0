@@ -1,156 +1,75 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v3 05/12] ARM: tegra: Move tegra_pcie_xclk_clamp() to PMC
-Date: Wed,  3 Apr 2013 16:45:11 +0200
-Message-ID: <1365000318-28256-6-git-send-email-thierry.reding@avionic-design.de>
-References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v9 04/14] clk: tegra: introduce TEGRA_PLL_HAS_LOCK_ENABLE
+Date: Wed, 3 Apr 2013 17:40:38 +0300
+Message-ID: <1365000110-8916-5-git-send-email-pdeschrijver@nvidia.com>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1365000318-28256-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1365000110-8916-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The PMC code already accesses to PMC registers so it makes sense to
-move this function there as well. While at it, rename the function to
-tegra_pmc_pcie_xclk_clamp() for consistency.
+Tegra114 PLLC2 and PLLC3 don't have a lock enable bit. The lock bits are
+always functional.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/pcie.c | 30 ++++--------------------------
- arch/arm/mach-tegra/pmc.c  | 16 ++++++++++++++++
- arch/arm/mach-tegra/pmc.h  |  1 +
- 3 files changed, 21 insertions(+), 26 deletions(-)
+ drivers/clk/tegra/clk-pll.c |    5 +++++
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/pcie.c b/arch/arm/mach-tegra/pcie.c
-index 46144a1..6c1989b 100644
---- a/arch/arm/mach-tegra/pcie.c
-+++ b/arch/arm/mach-tegra/pcie.c
-@@ -41,6 +41,7 @@
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 4ee6d03..eaab060 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -108,6 +108,9 @@ static void clk_pll_enable_lock(struct tegra_clk_pll *pll)
+ 	if (!(pll->flags & TEGRA_PLL_USE_LOCK))
+ 		return;
  
- #include "board.h"
- #include "iomap.h"
-+#include "pmc.h"
- 
- /* Hack - need to parse this from DT */
- #define INT_PCIE_INTR 130
-@@ -147,17 +148,6 @@
- #define  PADS_PLL_CTL_TXCLKREF_DIV10		(0 << 20)
- #define  PADS_PLL_CTL_TXCLKREF_DIV5		(1 << 20)
- 
--/* PMC access is required for PCIE xclk (un)clamping */
--#define PMC_SCRATCH42		0x144
--#define PMC_SCRATCH42_PCX_CLAMP	(1 << 0)
--
--static void __iomem *reg_pmc_base = IO_ADDRESS(TEGRA_PMC_BASE);
--
--#define pmc_writel(value, reg) \
--	__raw_writel(value, reg_pmc_base + (reg))
--#define pmc_readl(reg) \
--	__raw_readl(reg_pmc_base + (reg))
--
- /*
-  * Tegra2 defines 1GB in the AXI address map for PCIe.
-  *
-@@ -639,18 +629,6 @@ static int tegra_pcie_enable_controller(void)
- 	return 0;
- }
- 
--static void tegra_pcie_xclk_clamp(bool clamp)
--{
--	u32 reg;
--
--	reg = pmc_readl(PMC_SCRATCH42) & ~PMC_SCRATCH42_PCX_CLAMP;
--
--	if (clamp)
--		reg |= PMC_SCRATCH42_PCX_CLAMP;
--
--	pmc_writel(reg, PMC_SCRATCH42);
--}
--
- static void tegra_pcie_power_off(void)
- {
- 	tegra_periph_reset_assert(tegra_pcie.pcie_xclk);
-@@ -658,7 +636,7 @@ static void tegra_pcie_power_off(void)
- 	tegra_periph_reset_assert(tegra_pcie.pex_clk);
- 
- 	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
--	tegra_pcie_xclk_clamp(true);
-+	tegra_pmc_pcie_xclk_clamp(true);
- }
- 
- static int tegra_pcie_power_regate(void)
-@@ -667,7 +645,7 @@ static int tegra_pcie_power_regate(void)
- 
- 	tegra_pcie_power_off();
- 
--	tegra_pcie_xclk_clamp(true);
-+	tegra_pmc_pcie_xclk_clamp(true);
- 
- 	tegra_periph_reset_assert(tegra_pcie.pcie_xclk);
- 	tegra_periph_reset_assert(tegra_pcie.afi_clk);
-@@ -681,7 +659,7 @@ static int tegra_pcie_power_regate(void)
- 
- 	tegra_periph_reset_deassert(tegra_pcie.afi_clk);
- 
--	tegra_pcie_xclk_clamp(false);
-+	tegra_pmc_pcie_xclk_clamp(false);
- 
- 	clk_prepare_enable(tegra_pcie.afi_clk);
- 	clk_prepare_enable(tegra_pcie.pex_clk);
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index b30e921..f82284c 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -44,6 +44,10 @@ static DEFINE_SPINLOCK(tegra_powergate_lock);
- static void __iomem *tegra_pmc_base;
- static bool tegra_pmc_invert_interrupt;
- 
-+/* PMC access is required for PCIE xclk (un)clamping */
-+#define PMC_SCRATCH42		0x144
-+#define PMC_SCRATCH42_PCX_CLAMP	(1 << 0)
++	if (!(pll->flags & TEGRA_PLL_HAS_LOCK_ENABLE))
++		return;
 +
- static inline u32 tegra_pmc_readl(u32 reg)
- {
- 	return readl(tegra_pmc_base + reg);
-@@ -166,3 +170,15 @@ void __init tegra_pmc_init(void)
- 		val &= ~PMC_CTRL_INTR_LOW;
- 	tegra_pmc_writel(val, PMC_CTRL);
- }
-+
-+void tegra_pmc_pcie_xclk_clamp(bool clamp)
-+{
-+	u32 reg;
-+
-+	reg = tegra_pmc_readl(PMC_SCRATCH42) & ~PMC_SCRATCH42_PCX_CLAMP;
-+
-+	if (clamp)
-+		reg |= PMC_SCRATCH42_PCX_CLAMP;
-+
-+	tegra_pmc_writel(reg, PMC_SCRATCH42);
-+}
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 7d44710..c778451 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -23,5 +23,6 @@ int tegra_pmc_cpu_power_on(int cpuid);
- int tegra_pmc_cpu_remove_clamping(int cpuid);
+ 	val = pll_readl_misc(pll);
+ 	val |= BIT(pll->params->lock_enable_bit_idx);
+ 	pll_writel_misc(val, pll);
+@@ -675,6 +678,7 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+ 	struct clk *clk;
  
- void tegra_pmc_init(void);
-+void tegra_pmc_pcie_xclk_clamp(bool clamp);
+ 	pll_flags |= TEGRA_PLL_BYPASS;
++	pll_flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
+ 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
+ 			      freq_table, lock);
+ 	if (IS_ERR(pll))
+@@ -698,6 +702,7 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ 	struct clk *clk;
  
- #endif
+ 	pll_flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
++	pll_flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
+ 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
+ 			      freq_table, lock);
+ 	if (IS_ERR(pll))
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index fff520a..17ddb22 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -185,6 +185,7 @@ struct tegra_clk_pll_params {
+  * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
+  *     base register.
+  * TEGRA_PLL_BYPASS - PLL has bypass bit
++ * TEGRA_PLL_HAS_LOCK_ENABLE - PLL has bit to enable lock monitoring
+  */
+ struct tegra_clk_pll {
+ 	struct clk_hw	hw;
+@@ -215,6 +216,7 @@ struct tegra_clk_pll {
+ #define TEGRA_PLLE_CONFIGURE BIT(7)
+ #define TEGRA_PLL_LOCK_MISC BIT(8)
+ #define TEGRA_PLL_BYPASS BIT(9)
++#define TEGRA_PLL_HAS_LOCK_ENABLE BIT(10)
+ 
+ extern const struct clk_ops tegra_clk_pll_ops;
+ extern const struct clk_ops tegra_clk_plle_ops;
 -- 
-1.8.2
+1.7.7.rc0.72.g4b5ea.dirty
