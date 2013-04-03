@@ -1,40 +1,104 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 4/7] usb: phy: tegra: Return correct error value provided by clk_get_sys
-Date: Wed, 3 Apr 2013 14:11:39 +0530
-Message-ID: <1364978502-22887-5-git-send-email-vbyravarasu@nvidia.com>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: [PATCH v2 6/7] usb: phy: tegra: Add error handling & clean up.
+Date: Wed, 3 Apr 2013 14:11:41 +0530
+Message-ID: <1364978502-22887-7-git-send-email-vbyravarasu@nvidia.com>
 References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364978502-22887-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In case if clk_get_sys fails, return correct error value provided by
-the API.
+Check return values from all GPIO APIs and handle errors accordingly.
+Remove clk_disable_unprepare which is no more needed.
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
 ---
-delta from v1: no change.
+delta from v2: no change.
 
- drivers/usb/phy/phy-tegra-usb.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c |   50 ++++++++++++++++++++++++++++++--------
+ 1 files changed, 39 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 91b6e29..16851e2 100644
+index a2a89a9..01c5e23 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -620,8 +620,7 @@ static int	tegra_phy_init(struct usb_phy *x)
- 		phy->clk = clk_get_sys(NULL, ulpi_config->clk);
- 		if (IS_ERR(phy->clk)) {
- 			pr_err("%s: can't get ulpi clock\n", __func__);
--			err = -ENXIO;
+@@ -542,9 +542,17 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 	unsigned long val;
+ 	void __iomem *base = phy->regs;
+ 
+-	gpio_direction_output(phy->reset_gpio, 0);
++	ret = gpio_direction_output(phy->reset_gpio, 0);
++	if (ret < 0) {
++		dev_err(phy->dev, "gpio %d direction not set\n", phy->reset_gpio);
++		return ret;
++	}
+ 	msleep(5);
+-	gpio_direction_output(phy->reset_gpio, 1);
++	ret = gpio_direction_output(phy->reset_gpio, 1);
++	if (ret < 0) {
++		dev_err(phy->dev, "gpio %d direction not set\n", phy->reset_gpio);
++		return ret;
++	}
+ 
+ 	clk_prepare_enable(phy->clk);
+ 	msleep(1);
+@@ -624,24 +632,44 @@ static int	tegra_phy_init(struct usb_phy *x)
+ 			of_get_named_gpio(phy->dev->of_node,
+ 					  "nvidia,phy-reset-gpio", 0);
+ 		if (!gpio_is_valid(phy->reset_gpio)) {
+-			pr_err("%s: invalid reset gpio: %d\n", __func__,
++			dev_err(phy->dev, "invalid gpio: %d\n",
++				phy->reset_gpio);
++			err = phy->reset_gpio;
++			goto cleanup_clk_get;
++		}
++
++		err = gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
++		if (err < 0) {
++			dev_err(phy->dev, "request failed for gpio: %d\n",
+ 			       phy->reset_gpio);
+-			err = -EINVAL;
 -			goto err1;
-+			return PTR_ERR(phy->clk);
++			goto cleanup_clk_get;
++		}
++
++		err = gpio_direction_output(phy->reset_gpio, 0);
++		if (err < 0) {
++			dev_err(phy->dev, "gpio %d direction not set to output\n",
++			       phy->reset_gpio);
++			goto cleanup_gpio_req;
  		}
- 		if (!gpio_is_valid(ulpi_config->reset_gpio))
- 			ulpi_config->reset_gpio =
+-		gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
+-		gpio_direction_output(phy->reset_gpio, 0);
++
+ 		phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
++		if (!phy->ulpi) {
++			dev_err(phy->dev, "otg_ulpi_create returned err\n");
++			err = -ENOMEM;
++			goto cleanup_gpio_req;
++		}
++
+ 		phy->ulpi->io_priv = phy->regs + ULPI_VIEWPORT;
+ 	} else {
+ 		err = utmip_pad_open(phy);
+ 		if (err < 0)
+-			goto err1;
++			return err;
+ 	}
+ 	return 0;
+-err1:
+-	clk_disable_unprepare(phy->pll_u);
+-	clk_put(phy->pll_u);
++cleanup_gpio_req:
++	gpio_free(phy->reset_gpio);
++cleanup_clk_get:
++	clk_put(phy->clk);
+ 	return err;
+ }
+ 
 -- 
 1.7.0.4
