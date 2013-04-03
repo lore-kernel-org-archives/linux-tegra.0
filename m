@@ -1,43 +1,58 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH] usb: host: ehci-tegra: Fix oops in error cleanup
-Date: Wed, 3 Apr 2013 11:40:50 -0700
-Message-ID: <20130403184050.GA9420@kroah.com>
-References: <1364935250-26422-1-git-send-email-thierry@gilfi.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 4/4] spi: remove unused Tegra platform data header
+Date: Wed, 03 Apr 2013 12:43:58 -0600
+Message-ID: <515C786E.1060905@wwwdotorg.org>
+References: <1360965830-19795-1-git-send-email-swarren@wwwdotorg.org>
+	<1360965830-19795-4-git-send-email-swarren@wwwdotorg.org>
+	<20130302230217.1F9353E32AB@localhost>
+	<513A1B82.6060101@nvidia.com>
+	<CACxGe6uFCLzm2LCtchRxv9uQTNcyxjHQMXEdCTBwOkf5suV2Cw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1364935250-26422-1-git-send-email-thierry-TKn1d31QZ+o@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry-TKn1d31QZ+o@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <CACxGe6uFCLzm2LCtchRxv9uQTNcyxjHQMXEdCTBwOkf5suV2Cw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 02, 2013 at 10:40:50PM +0200, Thierry Reding wrote:
-> The cleanup path checks whether the transceiver was properly initialized
-> using IS_ERR(). However it can also happen that the cleanup path is run
-> before the transceiver was initialized (or the operating mode isn't set
-> to TEGRA_USB_OTG) and is therefore NULL. Add a separate label for error
-> unwinding and initialize the transceiver field to ERR_PTR(-ENODEV) when
-> the operating mode isn't TEGRA_USB_OTG to allow for consistent checking.
+On 03/09/2013 02:21 AM, Grant Likely wrote:
+> On Sat, Mar 9, 2013 at 1:10 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 3/2/2013 6:02 PM, Grant Likely wrote:
+>>>
+>>> On Fri, 15 Feb 2013 15:03:50 -0700, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>>> wrote:
+>>>>
+>>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> The platform data header is no longer used. Delete it.
+>>>>
+>>>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> I like the diffstat for this series. Applied!
+>>
+>> Grant, I was looking to pull these patches. I don't see them in linux-next
+>> and I looked at your repo and didn't see them. Can you give me a pointer?
 > 
-> Signed-off-by: Thierry Reding <thierry-TKn1d31QZ+o@public.gmane.org>
-> Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/usb/host/ehci-tegra.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> That is because I haven't pushed them out yet. Initially it was
+> because the merge window was still open, and then it was because I was
+> in Hong Kong last week for Linaro Connect. I haven't wanted to push
+> out my trees until I have a chance to do some build testing which I
+> will do on Monday.
 
-This patch fails to apply to my tree:
+Grant, I still don't see these patches in next-20130403.
 
-checking file drivers/usb/host/ehci-tegra.c
-Hunk #2 succeeded at 765 with fuzz 1.
-Hunk #3 succeeded at 774 with fuzz 2 (offset 1 line).
-Hunk #4 FAILED at 796.
-1 out of 4 hunks FAILED
-
-Can you please fix it up and resend it, keeping the needed acks on it?
-
-thanks,
-
-greg k-h
+------------------------------------------------------------------------------
+Minimize network downtime and maximize team effectiveness.
+Reduce network management and security costs.Learn how to hire 
+the most talented Cisco Certified professionals. Visit the 
+Employer Resources Portal
+http://www.cisco.com/web/learning/employer_resources/index.html
