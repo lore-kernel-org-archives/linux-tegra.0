@@ -1,31 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: spidev t20 on 2.6.36.2 kernel problem
-Date: Wed, 03 Apr 2013 10:48:12 -0600
-Message-ID: <515C5D4C.9050108@wwwdotorg.org>
-References: <1243821364971837@web10h.yandex.ru>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 5/9] ARM: tegra2: cpuidle: change driver initialization
+Date: Wed, 03 Apr 2013 10:51:32 -0600
+Message-ID: <515C5E14.3070202@wwwdotorg.org>
+References: <1364553095-25110-1-git-send-email-daniel.lezcano@linaro.org>  <1364553095-25110-5-git-send-email-daniel.lezcano@linaro.org> <1364610152.2622.3.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1243821364971837-NntFpNdt8ZFxpj1cXAZ9Bg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?0JPQvtGA0Y7QvdC+0LIg0JzQuNGF0LDQuNC7?= <gormih78-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1364610152.2622.3.camel@jlo-ubuntu-64.nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "rjw@sisk.pl" <rjw@sisk.pl>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "rnayak@ti.com" <rnayak@ti.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "arnd@arndb.de" <arnd@arndb.de>, "lenb@kernel.org" <lenb@kernel.org>, "nsekhar@ti.com" <nsekhar@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 12:50 AM, =D0=93=D0=BE=D1=80=D1=8E=D0=BD=D0=BE=D0=B2 =D0=9C=
-=D0=B8=D1=85=D0=B0=D0=B8=D0=BB wrote:
-> Hello!
-> BOARD: QuadMo747-X/T20
-> i get kernel 2.6.36.2 from nvidia tegra partners: Toradex Colibri (ht=
-tp://developer.toradex.com/software-resources/arm-family/linux/source-c=
-ode/linux-(colibri-t20)-source-code), and SecoQseven (http://www.secoqs=
-even.com/en/download/downloads.html)
+On 03/29/2013 08:22 PM, Joseph Lo wrote:
+> On Fri, 2013-03-29 at 18:31 +0800, Daniel Lezcano wrote:
+>> Initialize the idle states directly in the driver structure.
+>>
+>> That prevents extra structure declaration and memcpy at init time.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> Hi Daniel,
+> 
+> Thank you.
+> 
+> Both the 5th and 6th patch,
+> 
+> Reviewed-by: Joseph Lo <josephl@nvidia.com>
 
-=46or that kernel, you will need to get support from whoever supplied t=
-he
-kernel; Toradex or Seco.
+Thanks. Those same two patches therefore,
 
-If you can reproduce the problem using an upstream kernel instead, then
-this list may be an appropriate place to get support. Feel free to ask
-questions about porting the upstream kernel to your board here.
+Acked-by: Stephen Warren <swarren@nvidia.com>
+
