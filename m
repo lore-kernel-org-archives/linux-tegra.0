@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v3 11/12] ARM: tegra: trimslice: Initialize PCIe from DT
-Date: Wed,  3 Apr 2013 16:45:17 +0200
-Message-ID: <1365000318-28256-12-git-send-email-thierry.reding@avionic-design.de>
+Subject: [PATCH v3 08/12] ARM: tegra: tamonten: Add PCIe support
+Date: Wed,  3 Apr 2013 16:45:14 +0200
+Message-ID: <1365000318-28256-9-git-send-email-thierry.reding@avionic-design.de>
 References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,64 +22,58 @@ To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Her
 Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-With the device tree support in place, probe the PCIe controller from
-the device tree and remove the corresponding workaround in the board
-file.
+Add properties common to all Tamonten-derived boards to the Tamonten
+DTSI and add the fixed 1.05 V regulator.
 
 Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 ---
 Changes in v2:
-- add missing dummy regulator nodes by Stephen Warren
-- rename port 0 DT node and disable unused port 1
+- add properties common to all Tamonten boards
+- add fixed 1.05 V regulator
 
- arch/arm/boot/dts/tegra20-trimslice.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm/boot/dts/tegra20-tamonten.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 955bf49..dc081c3 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -300,6 +300,16 @@
- 		};
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 08cc557..020f7bc 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -438,7 +438,7 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo0 {
++				pci_clk_reg: ldo0 {
+ 					regulator-name = "vdd_ldo0,vddio_pex_clk";
+ 					regulator-min-microvolt = <3300000>;
+ 					regulator-max-microvolt = <3300000>;
+@@ -533,6 +533,11 @@
+ 		nvidia,invert-interrupt;
  	};
  
 +	pcie-controller {
-+		status = "okay";
 +		pex-clk-supply = <&pci_clk_reg>;
 +		vdd-supply = <&pci_vdd_reg>;
-+
-+		pci@1,0 {
-+			status = "okay";
-+		};
 +	};
 +
- 	usb@c5000000 {
+ 	usb@c5008000 {
  		status = "okay";
- 		nvidia,vbus-gpio = <&gpio 170 0>; /* gpio PV2 */
-@@ -357,6 +367,24 @@
- 			regulator-max-microvolt = <1800000>;
+ 	};
+@@ -558,5 +563,15 @@
+ 			regulator-max-microvolt = <5000000>;
  			regulator-always-on;
  		};
 +
-+		pci_clk_reg: regulator@2 {
++		pci_vdd_reg: regulator@1 {
 +			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "pci_clk";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		pci_vdd_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "pci_vdd";
++			reg = <1>;
++			regulator-name = "vdd_1v05";
 +			regulator-min-microvolt = <1050000>;
 +			regulator-max-microvolt = <1050000>;
-+			regulator-always-on;
++			gpio = <&pmic 2 0>;
++			enable-active-high;
 +		};
  	};
- 
- 	sound {
+ };
 -- 
 1.8.2
