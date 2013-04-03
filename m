@@ -1,142 +1,61 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: [PATCH v2 1/7] ARM: tegra: finalize USB EHCI and PHY bindings
-Date: Wed, 3 Apr 2013 14:11:36 +0530
-Message-ID: <1364978502-22887-2-git-send-email-vbyravarasu@nvidia.com>
-References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: CPU idle LP2 breaks MSI on TrimSlice
+Date: Wed, 3 Apr 2013 17:10:34 +0800
+Message-ID: <1364980234.16957.75.camel@jlo-ubuntu-64.nvidia.com>
+References: <20130403075454.GA25174@avionic-0098.mockup.avionic-design.de>
+	 <1364976857.16957.56.camel@jlo-ubuntu-64.nvidia.com>
+	 <20130403084036.GA28417@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130403084036.GA28417-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The existing Tegra USB bindings have a few issues:
+On Wed, 2013-04-03 at 16:40 +0800, Thierry Reding wrote:
+> On Wed, Apr 03, 2013 at 04:14:17PM +0800, Joseph Lo wrote:
+> > On Wed, 2013-04-03 at 15:54 +0800, Thierry Reding wrote:
+> > BTW, you can also check the minimal interval to keep the connection
+> > alive. For Tegra20, it need at lease 10 mS for CPU cluster power down.
+> > It means when CPU go into LP2, even there is an interrupt wake up him
+> > immediately. The CPU need to wait for power ready. It's 10mS. Only
+> > Tegra20 had this limitation.
+> 
+> Okay, theoretically we could have something like the following sequence:
+> 
+>   1) user runs "ifconfig eth0 up"
+>   2) driver programs network interface to bring up link
+>   3) driver waits for IRQ
+>   4) CPU goes to idle
+>   5) MSI is received
+5.5) interrupt delivered to interrupt controller
+>   6) CPU is woken up by interrupt controller
+>   7) CPU needs 10 ms before power is ready
+(The 10mS is the interval for PMIC to make the power of vdd_cpu rail
+ready.)
+8) CPU handle the ISR of MSI or R8169.
 
-1) Many properties are documented as being part of the EHCI controller
-node, yet they apply more to the PHY device. They should be moved.
+I am not sure the time interval cause some functions can't work anymore
+on MSI or R8169. If this is the case, you may need a work around to
+trigger interrupt more frequently to make CPU not go into LP2 when PCIe
+ethernet working.
 
-2) Some registers in PHY1 are shared with PHY3, and hence PHY3 needs a
-reg entry to point at PHY1's register space. We can't assume the PHY1
-driver is present, so the PHY3 driver will directly access those
-registers.
+BTW, the interrupt shouldn't lost, I didn't see this case before. The
+device interrupt was always routed to CPU0.
 
-3) The list of clocks required by the PHY was missing some required
-entries.
+You may check the interrupt interval in the case. And the interrupt
+number is still counted or not when CPU idle LP2 enabled.
 
-4) UTMI PHY Timing parameters are added
 
-5) VBUS control is now specified using a regulator rather than a plain GPIO
-
-6) Added nvidia,is-wired property to indicate whether the device is
-hard wired on the board, or pluggable.
-
-This patch fixes the binding definition to resolve these issues.
-
-Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
----
-delta from v1:
-1. added UTMI PHY timing params.
-2. replaced gadget with peripheral in dr_mode
-3. added nvidia,is-wired & vbus-supply params.
-
- .../bindings/usb/nvidia,tegra20-ehci.txt           |   27 +++-----------
- .../bindings/usb/nvidia,tegra20-usb-phy.txt        |   39 ++++++++++++++++++--
- 2 files changed, 41 insertions(+), 25 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-index 34c9528..df09330 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-ehci.txt
-@@ -6,27 +6,10 @@ Practice : Universal Serial Bus" with the following modifications
- and additions :
- 
- Required properties :
-- - compatible : Should be "nvidia,tegra20-ehci" for USB controllers
--   used in host mode.
-- - phy_type : Should be one of "ulpi" or "utmi".
-- - nvidia,vbus-gpio : If present, specifies a gpio that needs to be
--   activated for the bus to be powered.
-- - nvidia,phy : phandle of the PHY instance, the controller is connected to.
--
--Required properties for phy_type == ulpi:
--  - nvidia,phy-reset-gpio : The GPIO used to reset the PHY.
-+ - compatible : Should be "nvidia,tegra20-ehci".
-+ - nvidia,phy : phandle of the PHY that the controller is connected to.
-+ - clocks : Contains a single entry which defines the USB controller's clock.
- 
- Optional properties:
--  - dr_mode : dual role mode. Indicates the working mode for
--   nvidia,tegra20-ehci compatible controllers.  Can be "host", "peripheral",
--   or "otg".  Default to "host" if not defined for backward compatibility.
--      host means this is a host controller
--      peripheral means it is device controller
--      otg means it can operate as either ("on the go")
--  - nvidia,has-legacy-mode : boolean indicates whether this controller can
--    operate in legacy mode (as APX 2500 / 2600). In legacy mode some
--    registers are accessed through the APB_MISC base address instead of
--    the USB controller. Since this is a legacy issue it probably does not
--    warrant a compatible string of its own.
--  - nvidia,needs-double-reset : boolean is to be set for some of the Tegra2
--    USB ports, which need reset twice due to hardware issues.
-+ - nvidia,needs-double-reset : boolean is to be set for some of the Tegra20
-+   USB ports, which need reset twice due to hardware issues.
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-index 6bdaba2..6ae8405 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-@@ -4,14 +4,47 @@ The device node for Tegra SOC USB PHY:
- 
- Required properties :
-  - compatible : Should be "nvidia,tegra20-usb-phy".
-- - reg : Address and length of the register set for the USB PHY interface.
-- - phy_type : Should be one of "ulpi" or "utmi".
-+ - reg : Defines the following set of registers, in the order listed:
-+   - The PHY's own register set.
-+     Always present.
-+   - The register set of the PHY containing the UTMI pad control registers.
-+     Present if-and-only-if phy_type == utmi.
-+ - phy_type : Should be one of "utmi", "ulpi" or "hsic".
-+ - clocks : Defines the clocks listed in the clock-names property.
-+ - clock-names : The following clock names must be present:
-+   - reg: The clock needed to access the PHY's own registers. This is the
-+     associated EHCI controller's clock. Always present.
-+   - pll_u: PLL_U. Always present.
-+   - timer: The timeout clock (clk_m). Present if phy_type == utmi.
-+   - utmi-pads: The clock needed to access the UTMI pad control registers.
-+     Present if phy_type == utmi.
-+   - ulpi-link: The clock Tegra provides to the ULPI PHY (cdev2).
-+     Present if phy_type == ulpi, and ULPI link mode is in use.
-+  - vbus-supply: regulator for VBUS
- 
- Required properties for phy_type == ulpi:
-   - nvidia,phy-reset-gpio : The GPIO used to reset the PHY.
- 
-+Required PHY timing params for utmi phy:
-+  - nvidia,hssync-start-delay : Number of 480 Mhz clock cycles to wait before
-+    start of sync launches RxActive
-+  - nvidia,elastic-limit : Variable FIFO Depth of elastic input store
-+  - nvidia,idle-wait-delay : Number of 480 Mhz clock cycles of idle to wait
-+    before declare IDLE.
-+  - nvidia,term-range-adj : Range adjusment on terminations
-+  - nvidia,xcvr-setup : HS driver output control
-+  - nvidia,xcvr-lsfslew : LS falling slew rate control.
-+  - nvidia,xcvr-lsrslew :  LS rising slew rate control.
-+
- Optional properties:
-   - nvidia,has-legacy-mode : boolean indicates whether this controller can
-     operate in legacy mode (as APX 2500 / 2600). In legacy mode some
-     registers are accessed through the APB_MISC base address instead of
--    the USB controller.
-\ No newline at end of file
-+    the USB controller.
-+  - dr_mode : dual role mode. Indicates the working mode for the PHY. Can be
-+    "host", "peripheral", or "otg". Defaults to "host" if not defined.
-+      host means this is a host controller
-+      peripheral means it is device controller
-+      otg means it can operate as either ("on the go")
-+  - nvidia,is-wired : boolean. Indicates whether we can do certain kind of power
-+    optimizations for the devices that are always connected. e.g. modem.
--- 
-1.7.0.4
+> No matter how long the CPU needs to wake up. Or maybe I didn't
+> understand what you were saying.
+> 
+> Thierry
+> 
+> [0]: https://gitorious.org/thierryreding/linux/blobs/tegra/next/drivers/pci/host/pci-tegra.c
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
