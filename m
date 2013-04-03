@@ -1,68 +1,74 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
-Date: Wed, 03 Apr 2013 16:48:06 -0600
-Message-ID: <515CB1A6.6090308@wwwdotorg.org>
-References: <1364988750-25058-1-git-send-email-josephl@nvidia.com> <515C2E8F.1030802@gmail.com> <515C7363.4040404@wwwdotorg.org> <515CA060.7030100@gmail.com>
+Subject: Re: [PATCH v9 00/14] Tegra114 clockframework
+Date: Wed, 03 Apr 2013 17:23:05 -0600
+Message-ID: <515CB9D9.90303@wwwdotorg.org>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com> <515C6C6E.6060302@wwwdotorg.org> <515C7495.8060106@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515CA060.7030100-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <515C7495.8060106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 03:34 PM, Rob Herring wrote:
-> On 04/03/2013 01:22 PM, Stephen Warren wrote:
->> On 04/03/2013 07:28 AM, Rob Herring wrote:
->>> On 04/03/2013 06:32 AM, Joseph Lo wrote:
->>>> Architected timer is the local timer for Cortex-A15. Adding the support
->>>> for Tegra.
->>>>
->>>> Cc: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>>> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
->>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> My patch series to add CLOCKSOURCE_OF_DECLARE support to arch timer and
->>> sched_clock enhancements will make this unnecessary:
->>>
->>> http://www.spinics.net/lists/arm-kernel/msg234597.html
->>>
->>> Testing would be appreciated.
+On 04/03/2013 12:27 PM, Stephen Warren wrote:
+> On 04/03/2013 11:52 AM, Stephen Warren wrote:
+>> On 04/03/2013 08:40 AM, Peter De Schrijver wrote:
+>>> This is the nineth version of the Tegra114 clockframework. It is based on the
+>>> next-20130320-fixed branch of
+>>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+> ... [it depends on]
+>>> http://patchwork.ozlabs.org/patch/233415/
 >>
->> Joseph (or Rob), what's the benefit of this change; what works with it
->> and/or what breaks without it?
+>> That is Joseph's "clocksource: tegra: enable arch_timer". Is this
+>> actually a dependency, or an optimization, or ...?
+>>
+>> Rob Herring objected to that patch since it isn't necessary if his
+>> series "ARM arch, sp804 and integrator timer CLKSRC_OF support" is applied.
+>>
+>> If I apply just your (Peter's) CCF series without Joseph's or Rob's
+>> patches, will everything still work, or is this a hard dependency to
+>> create a working system?
 > 
-> I assume you mean Joseph's change.
-
-Yes.
-
-> Well, it enables local timers on A15.
-> But mine will too for Tegra if you have the arch timer in the dtb.
-
-Well, I meant what benefit would I see from enabling them, rather than
-using the Tegra-specific timers as I believe is currently happening.
-
->> Rob, if I did apply this change, and you also apply that series of
->> yours, what is the result: compile-time breakage, run-time breakage,
->> just some redundant code that needs to be removed again?
+> I manage to get this series applied on top of my local dev branch, based
+> on next-20130328 (it was painful). Testing indicates that there is no
+> dependency on Joseph's patch mentioned above; I could boot, log in, and
+> play audio (with local patches) with /or/ without Joseph's patch applied.
 > 
-> Compile-time breakage as the functions called here are being removed.
+> However, I still find that I need to revert f7db706 ARM: "7674/1: smp:
+> Avoid dummy clockevent being preferred over real hardware clock-event",
+> or I get a hard system hang right after the root fs is mounted. As such,
+> I not sure if it's worthwhile applying this series since it's unlikely
+> to actually work once merged into Torvalds' tree.
+> 
+> Do you have any idea what the problem is here?
+> 
+> I'll try rebasing my local test branch on top of the latest linux-next
+> just in case some other fix solved this already, but I'm not going to
+> hold my breath.
 
-OK, I definitely won't apply Joseph's patch then.
+I've found the problem. My bootloader wasn't initializing the TSC and
+hence I guess it wasn't working properly, even with Joseph's patch to
+add a call to the initialization function.
 
-Aside from that, I took the git branch you mentioned in the patch you
-linked to above, merged it into my dev tree, updated my bootloader to
-actually initialize the TSC correctly, and I see the following during
-boot, so I guess that's enough for:
+So, if I:
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+a) Fix my bootloader to enable TSC.
 
-on your patches.
+b) Merge Rob's patch series to enable the TSC. This is needed rather
+than Joseph's patch since the two conflict, and I assume that Rob's
+patch is going into 3.10.
 
-> [    0.000000] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps every 4294967ms
-> [    0.000000] Architected local timer running at 12.00MHz (virt).
-> [    0.000000] Switching to timer-based delay loop
-> [  117.431229] Calibrating delay loop (skipped), value calculated using timer frequency.. 24.00 BogoMIPS (lpj=120000)
-> [  117.987221] Switching to clocksource arch_sys_counter
+c) Undo my local revert of "ARM: 7674/1: smp: Avoid dummy clockevent
+being preferred over real hardware clock-event".
+
+... then everything now works.
+
+So the only remaining issues are:
+
+1) Should the mux clocks still be defined in the binding document?
+Prashant didn't seem to think so.
+
+2) I need Mike's ack to apply this series to the Tegra tree.
