@@ -1,37 +1,36 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: slink: do not prepare dma transfer with DMA_CTRL_ACK
- flag
-Date: Wed, 3 Apr 2013 15:01:54 +0530
-Message-ID: <515BF70A.2090805@nvidia.com>
-References: <1353662559-26515-1-git-send-email-ldewangan@nvidia.com> <20130401133459.GS18636@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] sound: soc: tegra: do not provide PAUSE/RESUME in hardware
+ info
+Date: Wed, 3 Apr 2013 15:03:11 +0530
+Message-ID: <515BF757.3030507@nvidia.com>
+References: <1364980781-2204-1-git-send-email-ldewangan@nvidia.com> <515C03BC.3040301@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130401133459.GS18636-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+In-Reply-To: <515C03BC.3040301-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: "broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org" <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tiwai-l3A5Bk7waGM@public.gmane.org" <tiwai-l3A5Bk7waGM@public.gmane.org>, "perex-/Fr2/VpizcU@public.gmane.org" <perex-/Fr2/VpizcU@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 01 April 2013 07:05 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Wednesday 03 April 2013 03:56 PM, Lars-Peter Clausen wrote:
+> On 04/03/2013 11:19 AM, Laxman Dewangan wrote:
+>> Tegra PCM driver uses the dmaengine based DMA driver and Tegra DMA
+>> driver does not support the pause/resume functionality as hardware
+>> does not support it.
+>>
+>> ALSA driver support the sw based pause/resume functionality if hardware
+>> does not support it and in this case, hw driver should not provide
+>> the hardware info with PAUSE/RESUME bit enable.
+>>
+>> Remmoving the SNDRV_PCM_INFO_PAUSE and SNDRV_PCM_INFO_RESUME from hardware
+>> info and using the snd_dmaengine_pcm_trigger() for pcm_trigger callback.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Hm, I sent out the same patch just half an our or so ago.
 >
-> On Fri, Nov 23, 2012 at 02:52:39PM +0530, Laxman Dewangan wrote:
->> Spi starts transfer using dma with DMA_CTRL_ACK which is not require
->> becasue spi driver does not use completed dma_desc after transfer
->> done and so it does not ack the dma descriptor. Removing the
->> DMA_CTRL_ACK flag to avoid memory leak in dma driver.
-> Applied, thanks.
 
-Mark,
-There was bug in dma driver about handling of DMA_CTRL_ACK flag which we 
-fixed after Stephen pointed out.
-This change is no more require.
-Can you please drop this patch? Let me know if I need to send the revert 
-patch.
 
-Sorry for inconvenience.
-
-Thanks,
-Laxan
+Then I lost the race. I was struggling with sdcard  until I bought the 
+new one.
