@@ -1,48 +1,68 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 8/9] ARM: omap3: cpuidle: enable time keeping
-Date: Wed, 03 Apr 2013 14:43:41 -0700
-Message-ID: <87txnnp9wy.fsf@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org>
-	<1364991322-20585-8-git-send-email-daniel.lezcano@linaro.org>
-	<87zjxfzetw.fsf@linaro.org> <515C95BF.6030103@linaro.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
+Date: Wed, 03 Apr 2013 16:48:06 -0600
+Message-ID: <515CB1A6.6090308@wwwdotorg.org>
+References: <1364988750-25058-1-git-send-email-josephl@nvidia.com> <515C2E8F.1030802@gmail.com> <515C7363.4040404@wwwdotorg.org> <515CA060.7030100@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515C95BF.6030103-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> (Daniel Lezcano's message of "Wed,
-	03 Apr 2013 22:49:03 +0200")
+In-Reply-To: <515CA060.7030100-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: rjw-KKrjLPT3xs0@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, rnayak-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, santosh.shilimkar-l0cyMroinI0@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
-
-> On 04/03/2013 07:47 PM, Kevin Hilman wrote:
->> Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> writes:
->> 
->>> The TIME_VALID flag is specified for the different states but
->>> the time residency computation is not done, no tk flag, no time
->>> computation in the idle function.
+On 04/03/2013 03:34 PM, Rob Herring wrote:
+> On 04/03/2013 01:22 PM, Stephen Warren wrote:
+>> On 04/03/2013 07:28 AM, Rob Herring wrote:
+>>> On 04/03/2013 06:32 AM, Joseph Lo wrote:
+>>>> Architected timer is the local timer for Cortex-A15. Adding the support
+>>>> for Tegra.
+>>>>
+>>>> Cc: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>>> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+>>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>
->>> Set the en_core_tk_irqen flag to activate it.
+>>> My patch series to add CLOCKSOURCE_OF_DECLARE support to arch timer and
+>>> sched_clock enhancements will make this unnecessary:
 >>>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Acked-by: Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>
->> 
->> Acked-by: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> 
->> Also, is this a regression fix that also needs to hit v3.9?
->
-> Yes, I think so.
+>>> http://www.spinics.net/lists/arm-kernel/msg234597.html
+>>>
+>>> Testing would be appreciated.
+>>
+>> Joseph (or Rob), what's the benefit of this change; what works with it
+>> and/or what breaks without it?
+> 
+> I assume you mean Joseph's change.
 
-OK.
+Yes.
 
-I've got a handful of other OMAP CPUidle fixes queued for v3.10[1] so
-I'll add this one to the queue and Cc: stable.
+> Well, it enables local timers on A15.
+> But mine will too for Tegra if you have the arch timer in the dtb.
 
-Thanks,
+Well, I meant what benefit would I see from enabling them, rather than
+using the Tegra-specific timers as I believe is currently happening.
 
-Kevin
+>> Rob, if I did apply this change, and you also apply that series of
+>> yours, what is the result: compile-time breakage, run-time breakage,
+>> just some redundant code that needs to be removed again?
+> 
+> Compile-time breakage as the functions called here are being removed.
 
-[1]
-git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux-omap-pm.git for_3.10/cleanup/cpuidle
+OK, I definitely won't apply Joseph's patch then.
+
+Aside from that, I took the git branch you mentioned in the patch you
+linked to above, merged it into my dev tree, updated my bootloader to
+actually initialize the TSC correctly, and I see the following during
+boot, so I guess that's enough for:
+
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+on your patches.
+
+> [    0.000000] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps every 4294967ms
+> [    0.000000] Architected local timer running at 12.00MHz (virt).
+> [    0.000000] Switching to timer-based delay loop
+> [  117.431229] Calibrating delay loop (skipped), value calculated using timer frequency.. 24.00 BogoMIPS (lpj=120000)
+> [  117.987221] Switching to clocksource arch_sys_counter
