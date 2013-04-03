@@ -1,39 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
-Date: Wed, 03 Apr 2013 12:22:27 -0600
-Message-ID: <515C7363.4040404@wwwdotorg.org>
-References: <1364988750-25058-1-git-send-email-josephl@nvidia.com> <515C2E8F.1030802@gmail.com>
+Subject: Re: [PATCH v9 00/14] Tegra114 clockframework
+Date: Wed, 03 Apr 2013 12:27:33 -0600
+Message-ID: <515C7495.8060106@wwwdotorg.org>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com> <515C6C6E.6060302@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515C2E8F.1030802-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <515C6C6E.6060302-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 07:28 AM, Rob Herring wrote:
-> On 04/03/2013 06:32 AM, Joseph Lo wrote:
->> Architected timer is the local timer for Cortex-A15. Adding the support
->> for Tegra.
->>
->> Cc: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
->> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 04/03/2013 11:52 AM, Stephen Warren wrote:
+> On 04/03/2013 08:40 AM, Peter De Schrijver wrote:
+>> This is the nineth version of the Tegra114 clockframework. It is based on the
+>> next-20130320-fixed branch of
+>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+... [it depends on]
+>> http://patchwork.ozlabs.org/patch/233415/
 > 
-> My patch series to add CLOCKSOURCE_OF_DECLARE support to arch timer and
-> sched_clock enhancements will make this unnecessary:
+> That is Joseph's "clocksource: tegra: enable arch_timer". Is this
+> actually a dependency, or an optimization, or ...?
 > 
-> http://www.spinics.net/lists/arm-kernel/msg234597.html
+> Rob Herring objected to that patch since it isn't necessary if his
+> series "ARM arch, sp804 and integrator timer CLKSRC_OF support" is applied.
 > 
-> Testing would be appreciated.
+> If I apply just your (Peter's) CCF series without Joseph's or Rob's
+> patches, will everything still work, or is this a hard dependency to
+> create a working system?
 
-Joseph (or Rob), what's the benefit of this change; what works with it
-and/or what breaks without it?
+I manage to get this series applied on top of my local dev branch, based
+on next-20130328 (it was painful). Testing indicates that there is no
+dependency on Joseph's patch mentioned above; I could boot, log in, and
+play audio (with local patches) with /or/ without Joseph's patch applied.
 
-Rob, if I did apply this change, and you also apply that series of
-yours, what is the result: compile-time breakage, run-time breakage,
-just some redundant code that needs to be removed again?
+However, I still find that I need to revert f7db706 ARM: "7674/1: smp:
+Avoid dummy clockevent being preferred over real hardware clock-event",
+or I get a hard system hang right after the root fs is mounted. As such,
+I not sure if it's worthwhile applying this series since it's unlikely
+to actually work once merged into Torvalds' tree.
 
-Thanks.
+Do you have any idea what the problem is here?
+
+I'll try rebasing my local test branch on top of the latest linux-next
+just in case some other fix solved this already, but I'm not going to
+hold my breath.
