@@ -1,79 +1,136 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v3 08/12] ARM: tegra: tamonten: Add PCIe support
-Date: Wed,  3 Apr 2013 16:45:14 +0200
-Message-ID: <1365000318-28256-9-git-send-email-thierry.reding@avionic-design.de>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: [PATCH v3 04/12] PCI: Introduce new MSI chip infrastructure
+Date: Wed,  3 Apr 2013 16:45:10 +0200
+Message-ID: <1365000318-28256-5-git-send-email-thierry.reding@avionic-design.de>
 References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1365000318-28256-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, linux-tegra@vger.kernel.org, Andrew Murray <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add properties common to all Tamonten-derived boards to the Tamonten
-DTSI and add the fixed 1.05 V regulator.
+The new struct msi_chip is used to associated an MSI controller with a
+PCI bus. It is automatically handed down from the root to its children
+during bus enumeration.
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+This patch provides default (weak) implementations for the architecture-
+specific MSI functions (arch_setup_msi_irq(), arch_teardown_msi_irq()
+and arch_msi_check_device()) which check if a PCI device's bus has an
+attached MSI chip and forward the call appropriately.
+
+Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 ---
-Changes in v2:
-- add properties common to all Tamonten boards
-- add fixed 1.05 V regulator
+ drivers/pci/msi.c   | 35 +++++++++++++++++++++++++++++++----
+ drivers/pci/probe.c |  1 +
+ include/linux/msi.h | 10 ++++++++++
+ include/linux/pci.h |  1 +
+ 4 files changed, 43 insertions(+), 4 deletions(-)
 
- arch/arm/boot/dts/tegra20-tamonten.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index 08cc557..020f7bc 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -438,7 +438,7 @@
- 					regulator-always-on;
- 				};
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index 00cc78c..fce3549 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -26,14 +26,41 @@
  
--				ldo0 {
-+				pci_clk_reg: ldo0 {
- 					regulator-name = "vdd_ldo0,vddio_pex_clk";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -533,6 +533,11 @@
- 		nvidia,invert-interrupt;
- 	};
+ static int pci_msi_enable = 1;
  
-+	pcie-controller {
-+		pex-clk-supply = <&pci_clk_reg>;
-+		vdd-supply = <&pci_vdd_reg>;
-+	};
+-/* Arch hooks */
++int __weak arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc)
++{
++	struct msi_chip *chip = dev->bus->msi;
 +
- 	usb@c5008000 {
- 		status = "okay";
- 	};
-@@ -558,5 +563,15 @@
- 			regulator-max-microvolt = <5000000>;
- 			regulator-always-on;
- 		};
++	if (chip && chip->setup_irq) {
++		int err;
 +
-+		pci_vdd_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "vdd_1v05";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			gpio = <&pmic 2 0>;
-+			enable-active-high;
-+		};
- 	};
- };
++		err = chip->setup_irq(chip, dev, desc);
++		if (err < 0)
++			return err;
++
++		irq_set_chip_data(desc->irq, chip);
++		return err;
++	}
++
++	return -EINVAL;
++}
+ 
+-#ifndef arch_msi_check_device
+-int arch_msi_check_device(struct pci_dev *dev, int nvec, int type)
++void __weak arch_teardown_msi_irq(unsigned int irq)
+ {
++	struct msi_chip *chip = irq_get_chip_data(irq);
++
++	if (chip && chip->teardown_irq)
++		chip->teardown_irq(chip, irq);
++}
++
++int __weak arch_msi_check_device(struct pci_dev *dev, int nvec, int type)
++{
++	struct msi_chip *chip = dev->bus->msi;
++
++	if (chip && chip->check_device)
++		return chip->check_device(chip, dev, nvec, type);
++
+ 	return 0;
+ }
+-#endif
+ 
+ #ifndef arch_setup_msi_irqs
+ # define arch_setup_msi_irqs default_setup_msi_irqs
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b494066..9307550 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -634,6 +634,7 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+ 
+ 	child->parent = parent;
+ 	child->ops = parent->ops;
++	child->msi = parent->msi;
+ 	child->sysdata = parent->sysdata;
+ 	child->bus_flags = parent->bus_flags;
+ 
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index ce93a34..ea4a5be 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -58,5 +58,15 @@ extern int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type);
+ extern void arch_teardown_msi_irqs(struct pci_dev *dev);
+ extern int arch_msi_check_device(struct pci_dev* dev, int nvec, int type);
+ 
++struct msi_chip {
++	struct module *owner;
++	struct device *dev;
++
++	int (*setup_irq)(struct msi_chip *chip, struct pci_dev *dev,
++			 struct msi_desc *desc);
++	void (*teardown_irq)(struct msi_chip *chip, unsigned int irq);
++	int (*check_device)(struct msi_chip *chip, struct pci_dev *dev,
++			    int nvec, int type);
++};
+ 
+ #endif /* LINUX_MSI_H */
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index f42cdc6..7e44085 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -431,6 +431,7 @@ struct pci_bus {
+ 	struct resource busn_res;	/* bus numbers routed to this bus */
+ 
+ 	struct pci_ops	*ops;		/* configuration access functions */
++	struct msi_chip	*msi;		/* MSI controller */
+ 	void		*sysdata;	/* hook for sys-specific extension */
+ 	struct proc_dir_entry *procdir;	/* directory entry in /proc/bus/pci */
+ 
 -- 
 1.8.2
