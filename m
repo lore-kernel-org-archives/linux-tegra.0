@@ -1,54 +1,75 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 1/7] ARM: tegra: finalize USB EHCI and PHY bindings
-Date: Wed, 03 Apr 2013 13:07:51 -0600
-Message-ID: <515C7E07.4040505@wwwdotorg.org>
-References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com> <1364978502-22887-2-git-send-email-vbyravarasu@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 2/7] ARM: tegra: update device trees for USB binding
+ rework
+Date: Wed, 03 Apr 2013 13:16:52 -0600
+Message-ID: <515C8024.30204@wwwdotorg.org>
+References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com> <1364978502-22887-3-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364978502-22887-2-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1364978502-22887-3-git-send-email-vbyravarasu@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Venu Byravarasu <vbyravarasu@nvidia.com>
+Cc: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 04/03/2013 02:41 AM, Venu Byravarasu wrote:
-> The existing Tegra USB bindings have a few issues:
-...
-> This patch fixes the binding definition to resolve these issues.
+> This patch updates all Tegra board files so that they contain all the
+> properties required by the updated USB DT binding. Note that this patch
+> only adds the new properties and does not yet remove the old properties,
+> in order to maintain bisectability. The old properties will be removed
+> once the driver has been updated to assume the new bindings.
 
-> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+The binding documentation says that the vbus-supply property is required
+in all cases. However, many of the DT files still don't have that
+property even after this patch. That's inconsistent.
 
->  Required properties :
-...
-> +  - vbus-supply: regulator for VBUS
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris-512.dts
+> index 52f1103..c99eccc 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
+> @@ -41,6 +41,10 @@
+>  		dr_mode = "otg";
+>  	};
+>  
+> +	usb-phy@c5000000 {
+> +		dr_mode = "otg";
+> +	};
 
-Doesn't the driver only need to control VBUS if the port is in OTG mode?
+Since this port claims to be OTG-capable, presumably a vbus-supply
+property is mandatory here? If you don't know enough about the board to
+correctly set up such a regulator, lets just mark this port as host-only
+for now; we can switch it back to OTG-mode later once someone implements
+the required regulator. This won't lose any functionality, since we
+don't support OTG-mode yet anyway. However, it will allow the device
+tree to be correct/consistent in the mean time.
 
-If there is no VBUS control, and the HW provides VBUS, I think that the
-port can only operate in host mode.
+> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
 
-If there is no VBUS control, and the HW does not provide VBUS, I think
-that the port can only operate in peripheral mode.
+> +	usb-phy@c5000000 {
+> +		vbus-supply = <&vbus_reg>;
+> +		dr_mode = "otg";
+> +	};
 
-If there is VBUS control, then shouldn't the port always operate in OTG
-mode, or are there other reasons to control VBUS even in host-only mode?
+Where is the nvidia,vbus-gpio property? Since your code changes don't
+actually implement use of the vbus-supply property yet, they will expect
+the vbus-gpio property to exist in the PHY node.
 
-If VBUS control is only useful for OTG mode, then I think the
-vbus-supply property should be documented in a "Required properties for
-dr_mode == otg" section.
+> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+> index 955bf49..8f2bb9b 100644
+> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
+> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+> @@ -305,17 +305,21 @@
+>  		nvidia,vbus-gpio = <&gpio 170 0>; /* gpio PV2 */
+>  	};
+>  
+> +	usb-phy@c5000000 {
+> +		vbus-supply = <&vbus_reg>;
+> +	};
 
-I assume that VBUS control makes no sense for a peripheral-mode-only
-port, so if VBUS control is useful for host-only mode as well as OTG
-mode, then I think the vbus-supply property should be documented in a
-"Required properties for dr_mode != peripheral" section.
+Same here; isn't nvidia,vbus-gpio needed in the PHY node until the
+driver is converted to use vbus-supply?
 
-Is the following table correct?
-
-Port operating mode:	host	peripheral	otg
---------------------	----	----------	---
-VBUS control required:	no	no		yes
-VBUS control useful:	yes[1]?	no		yes
-
-[1] perhaps for power-saving/suspend???
+I guess this is a case of a host-only port where there is SW-control
+over VBUS...
