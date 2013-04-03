@@ -1,67 +1,97 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: [PATCH v3 03/12] of/pci: Add of_pci_parse_bus_range() function
-Date: Wed,  3 Apr 2013 16:45:09 +0200
-Message-ID: <1365000318-28256-4-git-send-email-thierry.reding@avionic-design.de>
-References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v9 03/14] clk: tegra: Add TEGRA_PLL_BYPASS flag
+Date: Wed, 3 Apr 2013 17:40:37 +0300
+Message-ID: <1365000110-8916-4-git-send-email-pdeschrijver@nvidia.com>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de>
+In-Reply-To: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This function can be used to parse a bus-range property as specified by
-device nodes representing PCI bridges.
+Not all PLLs in Tegra114 have a bypass bit. Adapt the common code to only use
+this bit when available.
 
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/of/of_pci.c    | 25 +++++++++++++++++++++++++
- include/linux/of_pci.h |  1 +
- 2 files changed, 26 insertions(+)
+ drivers/clk/tegra/clk-pll.c |   12 ++++++++----
+ drivers/clk/tegra/clk.h     |    2 ++
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/of/of_pci.c b/drivers/of/of_pci.c
-index 4dd7b9b..42c687a 100644
---- a/drivers/of/of_pci.c
-+++ b/drivers/of/of_pci.c
-@@ -64,3 +64,28 @@ int of_pci_get_devfn(struct device_node *np)
- 	return (be32_to_cpup(reg) >> 8) & 0xff;
- }
- EXPORT_SYMBOL_GPL(of_pci_get_devfn);
-+
-+/**
-+ * of_pci_parse_bus_range() - parse the bus-range property of a PCI device
-+ * @node: device node
-+ * @res: address to a struct resource to return the bus-range
-+ *
-+ * Returns 0 on success or a negative error-code on failure.
-+ */
-+int of_pci_parse_bus_range(struct device_node *node, struct resource *res)
-+{
-+	const __be32 *values;
-+	int len;
-+
-+	values = of_get_property(node, "bus-range", &len);
-+	if (!values || len < sizeof(*values) * 2)
-+		return -EINVAL;
-+
-+	res->name = node->name;
-+	res->start = be32_to_cpup(values++);
-+	res->end = be32_to_cpup(values);
-+	res->flags = IORESOURCE_BUS;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(of_pci_parse_bus_range);
-diff --git a/include/linux/of_pci.h b/include/linux/of_pci.h
-index 91ec484..7a04826 100644
---- a/include/linux/of_pci.h
-+++ b/include/linux/of_pci.h
-@@ -11,5 +11,6 @@ struct device_node;
- struct device_node *of_pci_find_child_device(struct device_node *parent,
- 					     unsigned int devfn);
- int of_pci_get_devfn(struct device_node *np);
-+int of_pci_parse_bus_range(struct device_node *node, struct resource *res);
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 3feefb1..4ee6d03 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -171,7 +171,8 @@ static void _clk_pll_enable(struct clk_hw *hw)
+ 	clk_pll_enable_lock(pll);
  
- #endif
+ 	val = pll_readl_base(pll);
+-	val &= ~PLL_BASE_BYPASS;
++	if (pll->flags & TEGRA_PLL_BYPASS)
++		val &= ~PLL_BASE_BYPASS;
+ 	val |= PLL_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
+@@ -188,7 +189,9 @@ static void _clk_pll_disable(struct clk_hw *hw)
+ 	u32 val;
+ 
+ 	val = pll_readl_base(pll);
+-	val &= ~(PLL_BASE_BYPASS | PLL_BASE_ENABLE);
++	if (pll->flags & TEGRA_PLL_BYPASS)
++		val &= ~PLL_BASE_BYPASS;
++	val &= ~PLL_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
+ 	if (pll->flags & TEGRA_PLLM) {
+@@ -459,7 +462,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	val = pll_readl_base(pll);
+ 
+-	if (val & PLL_BASE_BYPASS)
++	if ((pll->flags & TEGRA_PLL_BYPASS) && (val & PLL_BASE_BYPASS))
+ 		return parent_rate;
+ 
+ 	if ((pll->flags & TEGRA_PLL_FIXED) && !(val & PLL_BASE_OVERRIDE)) {
+@@ -671,6 +674,7 @@ struct clk *tegra_clk_register_pll(const char *name, const char *parent_name,
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+ 
++	pll_flags |= TEGRA_PLL_BYPASS;
+ 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
+ 			      freq_table, lock);
+ 	if (IS_ERR(pll))
+@@ -692,8 +696,8 @@ struct clk *tegra_clk_register_plle(const char *name, const char *parent_name,
+ {
+ 	struct tegra_clk_pll *pll;
+ 	struct clk *clk;
+-	pll_flags |= TEGRA_PLL_LOCK_MISC;
+ 
++	pll_flags |= TEGRA_PLL_LOCK_MISC | TEGRA_PLL_BYPASS;
+ 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
+ 			      freq_table, lock);
+ 	if (IS_ERR(pll))
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index b9691dd..fff520a 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -184,6 +184,7 @@ struct tegra_clk_pll_params {
+  * TEGRA_PLLE_CONFIGURE - Configure PLLE when enabling.
+  * TEGRA_PLL_LOCK_MISC - Lock bit is in the misc register instead of the
+  *     base register.
++ * TEGRA_PLL_BYPASS - PLL has bypass bit
+  */
+ struct tegra_clk_pll {
+ 	struct clk_hw	hw;
+@@ -213,6 +214,7 @@ struct tegra_clk_pll {
+ #define TEGRA_PLL_FIXED BIT(6)
+ #define TEGRA_PLLE_CONFIGURE BIT(7)
+ #define TEGRA_PLL_LOCK_MISC BIT(8)
++#define TEGRA_PLL_BYPASS BIT(9)
+ 
+ extern const struct clk_ops tegra_clk_pll_ops;
+ extern const struct clk_ops tegra_clk_plle_ops;
 -- 
-1.8.2
+1.7.7.rc0.72.g4b5ea.dirty
