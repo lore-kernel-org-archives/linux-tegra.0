@@ -1,59 +1,53 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH] spi: tegra: slink: do not prepare dma transfer with
- DMA_CTRL_ACK flag
-Date: Wed, 3 Apr 2013 18:36:53 +0100
-Message-ID: <20130403173653.GI11305@opensource.wolfsonmicro.com>
-References: <1353662559-26515-1-git-send-email-ldewangan@nvidia.com>
- <20130401133459.GS18636@opensource.wolfsonmicro.com>
- <515BF6ED.2060904@nvidia.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 8/9] ARM: omap3: cpuidle: enable time keeping
+Date: Wed, 03 Apr 2013 10:47:23 -0700
+Message-ID: <87zjxfzetw.fsf@linaro.org>
+References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org>
+	<1364991322-20585-8-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WHz+neNWvhIGAO8A"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <515BF6ED.2060904-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1364991322-20585-8-git-send-email-daniel.lezcano@linaro.org>
+	(Daniel Lezcano's message of "Wed, 3 Apr 2013 14:15:21 +0200")
+Sender: linux-pm-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@sisk.pl, linux-pm@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, rnayak@ti.com, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, santosh.shilimkar@ti.com, arnd@arndb.de, lenb@kernel.org, nsekhar@ti.com, josephl@nvidia.com, deepthi@linux.vnet.ibm.com
 List-Id: linux-tegra@vger.kernel.org
 
+Daniel Lezcano <daniel.lezcano@linaro.org> writes:
 
---WHz+neNWvhIGAO8A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The TIME_VALID flag is specified for the different states but
+> the time residency computation is not done, no tk flag, no time
+> computation in the idle function.
+>
+> Set the en_core_tk_irqen flag to activate it.
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Acked-by: Santosh Shilimkar <santosh.shilimkar@ti.com>
 
-On Wed, Apr 03, 2013 at 03:01:25PM +0530, Laxman Dewangan wrote:
+Acked-by: Kevin Hilman <khilman@linaro.org>
 
-> There was bug in dma driver about handling of DMA_CTRL_ACK flag
-> which we fixed after Stephen pointed out.
-> This change is no more require.
-> Can you please drop this patch? Let me know if I need to send the
-> revert patch.
+Also, is this a regression fix that also needs to hit v3.9?
 
-Someone really should've followed up to this patch then, the last
-discussion against it was you saying you thought it was OK after Stephen
-queried it.  Anyway, I've reverted now.
+Kevin
 
---WHz+neNWvhIGAO8A
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRXGhuAAoJELSic+t+oim9uCEP/26Nam8u/5S1MPjEGqQWn3Hl
-GRhoEe5Iyrn6bk4b9toIYYEpWrm/HKqJAkVs1mkQz4OEmjBkbQ/sCp/ixph6CTpt
-Zjr8fmSL0IvunH6JT1dttFWAvp183rlMm1Xs8E8fQNSffFP3oNsDxQBzKal9NqRp
-r5qS1HJ72TkJDF7CmJ7FXzc/JUxwBND78zCW2GhVqShb4p7e2KGc5R/x6dCMfW+Y
-6XKhYLBZqFVjPAzfbJOX+4G5Lom8j8VHMi4XhnRwjsr1F4kdH38VmJwP3CUQaQPP
-mw4pdJz0ps88Kb+Zd0IHkQeQuGZZZ4z2OX4TzBMJR6dhUqpJd1EMBpKkjZg6XpFf
-cT6LgFfPxudWdoxVBptUS0I8TeBO4V+J+v6MHX/hswQ2HyWhv3mDpmfOm0SzideG
-5sb+OZrzDdR/xgsrtQQchBP8qVnsPToeHwsV4uwk2f1zaOZ97ssYRXYHlYbbDoqF
-qict+yMtpVIggFBPD2F404gz45oZy+ypqu4LEtVO6D0Ne4HYvfeRxZp7NEGKoD2z
-Bwzw5nUlA8htCbAUHB5oYqWmk4FqVWDTNL2xxOfoZ6zzPV9hzvxJQmTR4SHB3eI8
-eFh8EtVttVyJ7SXnEbRRzselfvD/5F8WXCUnhyHwSZoEz34b+/JRZKMkTPUM2Vtg
-XoCqylAVSIRMADf7JqKO
-=xqm6
------END PGP SIGNATURE-----
-
---WHz+neNWvhIGAO8A--
+> ---
+>  arch/arm/mach-omap2/cpuidle34xx.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-omap2/cpuidle34xx.c b/arch/arm/mach-omap2/cpuidle34xx.c
+> index 80392fc..4f67a5b 100644
+> --- a/arch/arm/mach-omap2/cpuidle34xx.c
+> +++ b/arch/arm/mach-omap2/cpuidle34xx.c
+> @@ -274,8 +274,9 @@ static int omap3_enter_idle_bm(struct cpuidle_device *dev,
+>  static DEFINE_PER_CPU(struct cpuidle_device, omap3_idle_dev);
+>  
+>  static struct cpuidle_driver omap3_idle_driver = {
+> -	.name =		"omap3_idle",
+> -	.owner =	THIS_MODULE,
+> +	.name             = "omap3_idle",
+> +	.owner            = THIS_MODULE,
+> +	.en_core_tk_irqen = 1,
+>  	.states = {
+>  		{
+>  			.enter		  = omap3_enter_idle_bm,
