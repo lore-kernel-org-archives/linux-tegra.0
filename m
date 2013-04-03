@@ -1,45 +1,44 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
-Date: Wed, 03 Apr 2013 16:34:24 -0500
-Message-ID: <515CA060.7030100@gmail.com>
-References: <1364988750-25058-1-git-send-email-josephl@nvidia.com> <515C2E8F.1030802@gmail.com> <515C7363.4040404@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: 3.8 config file for CARMA card
+Date: Wed, 03 Apr 2013 15:35:03 -0600
+Message-ID: <515CA087.6020805@wwwdotorg.org>
+References: <E61DA4A8-CD86-4F01-B8CF-D1D0D32F1C12@aotera.org> <20130402113618.GE18519@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515C7363.4040404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130402113618.GE18519-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Spencer Cheng <spencer-cggpePV8Dd8dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 01:22 PM, Stephen Warren wrote:
-> On 04/03/2013 07:28 AM, Rob Herring wrote:
->> On 04/03/2013 06:32 AM, Joseph Lo wrote:
->>> Architected timer is the local timer for Cortex-A15. Adding the support
->>> for Tegra.
->>>
->>> Cc: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
->>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> My patch series to add CLOCKSOURCE_OF_DECLARE support to arch timer and
->> sched_clock enhancements will make this unnecessary:
->>
->> http://www.spinics.net/lists/arm-kernel/msg234597.html
->>
->> Testing would be appreciated.
+On 04/02/2013 05:36 AM, Peter De Schrijver wrote:
+> (added linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org)
 > 
-> Joseph (or Rob), what's the benefit of this change; what works with it
-> and/or what breaks without it?
+> Hello,
+> 
+>> Hello Peter,
+>>
+>> Apologies if you are the wrong person to ask. Since you submitted the patch for Tegra 3 support, I thought I try asking you since I can't seem to find any answers elsewhere.
+>>
+>> I am looking for a working .config file for the CARMA dev board so I can bring the CARMA cards that I have (7) up to a more current kernel version. I've tried to start from /proc/config.gz which is a 3.1 config file but the resultant kernel compiled on the card won't boot on the CARMA cards. Thanks in advance for any help you can provide.
+> 
+> Unfortunately we don't have support for the carma dev board upstream yet. Also PCIe support is still missing from upstream, although I expect that to change in the near future. 
 
-I assume you mean Joseph's change. Well, it enables local timers on A15.
-But mine will too for Tegra if you have the arch timer in the dtb.
+Spencer, which 3.8 kernel are you attempting to use?
 
-> Rob, if I did apply this change, and you also apply that series of
-> yours, what is the result: compile-time breakage, run-time breakage,
-> just some redundant code that needs to be removed again?
+As Peter mentioned, we don't support CARMA upstream at the moment.
+However, in theory, you should simply need to write a device tree file
+to enable the upstream kernel to boot on CARMA.
 
-Compile-time breakage as the functions called here are being removed.
+(arch/arm/configs/)tegra_defconfig is the .config file for Tegra in the
+upstream kernel. It should enable pretty much anything Tegra-related,
+and should be suitable for your use once you've written a CARMA device tree.
 
-Rob
+You might also want to consider porting upstream U-Boot, and creating a
+configuration file for cbootimage-configs:
+
+http://nv-tegra.nvidia.com/gitweb/?p=tools/tegra-cbootimage-configs.git;a=summary
+
+so that you can use a completely Open-Source flashing process.
