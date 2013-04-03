@@ -1,61 +1,85 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: CPU idle LP2 breaks MSI on TrimSlice
-Date: Wed, 3 Apr 2013 17:10:34 +0800
-Message-ID: <1364980234.16957.75.camel@jlo-ubuntu-64.nvidia.com>
-References: <20130403075454.GA25174@avionic-0098.mockup.avionic-design.de>
-	 <1364976857.16957.56.camel@jlo-ubuntu-64.nvidia.com>
-	 <20130403084036.GA28417@avionic-0098.mockup.avionic-design.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] sound: soc: tegra: do not provide PAUSE/RESUME in hardware info
+Date: Wed, 3 Apr 2013 14:49:41 +0530
+Message-ID: <1364980781-2204-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130403084036.GA28417-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-04-03 at 16:40 +0800, Thierry Reding wrote:
-> On Wed, Apr 03, 2013 at 04:14:17PM +0800, Joseph Lo wrote:
-> > On Wed, 2013-04-03 at 15:54 +0800, Thierry Reding wrote:
-> > BTW, you can also check the minimal interval to keep the connection
-> > alive. For Tegra20, it need at lease 10 mS for CPU cluster power down.
-> > It means when CPU go into LP2, even there is an interrupt wake up him
-> > immediately. The CPU need to wait for power ready. It's 10mS. Only
-> > Tegra20 had this limitation.
-> 
-> Okay, theoretically we could have something like the following sequence:
-> 
->   1) user runs "ifconfig eth0 up"
->   2) driver programs network interface to bring up link
->   3) driver waits for IRQ
->   4) CPU goes to idle
->   5) MSI is received
-5.5) interrupt delivered to interrupt controller
->   6) CPU is woken up by interrupt controller
->   7) CPU needs 10 ms before power is ready
-(The 10mS is the interval for PMIC to make the power of vdd_cpu rail
-ready.)
-8) CPU handle the ISR of MSI or R8169.
+Tegra PCM driver uses the dmaengine based DMA driver and Tegra DMA
+driver does not support the pause/resume functionality as hardware
+does not support it.
 
-I am not sure the time interval cause some functions can't work anymore
-on MSI or R8169. If this is the case, you may need a work around to
-trigger interrupt more frequently to make CPU not go into LP2 when PCIe
-ethernet working.
+ALSA driver support the sw based pause/resume functionality if hardware
+does not support it and in this case, hw driver should not provide
+the hardware info with PAUSE/RESUME bit enable.
 
-BTW, the interrupt shouldn't lost, I didn't see this case before. The
-device interrupt was always routed to CPU0.
+Remmoving the SNDRV_PCM_INFO_PAUSE and SNDRV_PCM_INFO_RESUME from hardware
+info and using the snd_dmaengine_pcm_trigger() for pcm_trigger callback.
 
-You may check the interrupt interval in the case. And the interrupt
-number is still counted or not when CPU idle LP2 enabled.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Lars reported that if driver/chip dma driver does not support the pause/resume
+then need not to export this info through the hw capability and leave this
+implementation to alsa driver.
 
+Making the change accordingly.
 
-> No matter how long the CPU needs to wake up. Or maybe I didn't
-> understand what you were saying.
-> 
-> Thierry
-> 
-> [0]: https://gitorious.org/thierryreding/linux/blobs/tegra/next/drivers/pci/host/pci-tegra.c
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
+ sound/soc/tegra/tegra_pcm.c |   24 +-----------------------
+ 1 files changed, 1 insertions(+), 23 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
+index e67af0b..117cccc 100644
+--- a/sound/soc/tegra/tegra_pcm.c
++++ b/sound/soc/tegra/tegra_pcm.c
+@@ -43,8 +43,6 @@
+ static const struct snd_pcm_hardware tegra_pcm_hardware = {
+ 	.info			= SNDRV_PCM_INFO_MMAP |
+ 				  SNDRV_PCM_INFO_MMAP_VALID |
+-				  SNDRV_PCM_INFO_PAUSE |
+-				  SNDRV_PCM_INFO_RESUME |
+ 				  SNDRV_PCM_INFO_INTERLEAVED,
+ 	.formats		= SNDRV_PCM_FMTBIT_S16_LE,
+ 	.channels_min		= 2,
+@@ -121,26 +119,6 @@ static int tegra_pcm_hw_free(struct snd_pcm_substream *substream)
+ 	return 0;
+ }
+ 
+-static int tegra_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
+-{
+-	switch (cmd) {
+-	case SNDRV_PCM_TRIGGER_START:
+-	case SNDRV_PCM_TRIGGER_RESUME:
+-	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+-		return snd_dmaengine_pcm_trigger(substream,
+-					SNDRV_PCM_TRIGGER_START);
+-
+-	case SNDRV_PCM_TRIGGER_STOP:
+-	case SNDRV_PCM_TRIGGER_SUSPEND:
+-	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+-		return snd_dmaengine_pcm_trigger(substream,
+-					SNDRV_PCM_TRIGGER_STOP);
+-	default:
+-		return -EINVAL;
+-	}
+-	return 0;
+-}
+-
+ static int tegra_pcm_mmap(struct snd_pcm_substream *substream,
+ 				struct vm_area_struct *vma)
+ {
+@@ -158,7 +136,7 @@ static struct snd_pcm_ops tegra_pcm_ops = {
+ 	.ioctl		= snd_pcm_lib_ioctl,
+ 	.hw_params	= tegra_pcm_hw_params,
+ 	.hw_free	= tegra_pcm_hw_free,
+-	.trigger	= tegra_pcm_trigger,
++	.trigger	= snd_dmaengine_pcm_trigger,
+ 	.pointer	= snd_dmaengine_pcm_pointer,
+ 	.mmap		= tegra_pcm_mmap,
+ };
+-- 
+1.7.1.1
