@@ -1,167 +1,116 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 9/9] POWERPC: pseries: cpuidle: use time keeping flag
-Date: Wed, 03 Apr 2013 16:25:54 +0200
-Message-ID: <515C3BF2.7040609@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <1364991322-20585-9-git-send-email-daniel.lezcano@linaro.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH v9 00/14] Tegra114 clockframework
+Date: Wed, 3 Apr 2013 17:40:34 +0300
+Message-ID: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1364991322-20585-9-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rjw-KKrjLPT3xs0@public.gmane.org, deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
-Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rnayak-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Prashant Gaikwad <pgaikwad@nvidia.com>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <achew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/03/2013 02:15 PM, Daniel Lezcano wrote:
-> The current code computes the idle time but that can be handled
-> by the cpuidle framework if we enable the .en_core_tk_irqen flag.
->
-> Set the flag and remove the code related to the time computation.
->
-> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Deepthi Dharwar <deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-> ---
+This is the nineth version of the Tegra114 clockframework. It is based on the
+next-20130320-fixed branch of
+git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+http://patchwork.ozlabs.org/patch/229972/ and
+http://patchwork.ozlabs.org/patch/229978/ and
+http://patchwork.ozlabs.org/patch/233415/
 
-Rafael,
+It has been boottested on Dalmore.
 
-Deepthi took the patch, did a fix and tested it, this is why there is
-its signed-off.
+Changes from v8:
 
-Deepthi, could you ack the patch for Rafael also ?
+* Added pdiv table for PLLU
+* Fixed clock initialization for audio
 
-Thanks
--- Daniel
+Changes from v7:
 
->  arch/powerpc/platforms/pseries/processor_idle.c |   35 ++++++++++---=
-----------
->  1 file changed, 15 insertions(+), 20 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/pseries/processor_idle.c b/arch/p=
-owerpc/platforms/pseries/processor_idle.c
-> index 4d806b4..a197120 100644
-> --- a/arch/powerpc/platforms/pseries/processor_idle.c
-> +++ b/arch/powerpc/platforms/pseries/processor_idle.c
-> @@ -23,8 +23,9 @@
->  #include "pseries.h"
-> =20
->  struct cpuidle_driver pseries_idle_driver =3D {
-> -	.name =3D		"pseries_idle",
-> -	.owner =3D	THIS_MODULE,
-> +	.name             =3D "pseries_idle",
-> +	.owner            =3D THIS_MODULE,
-> +	.en_core_tk_irqen =3D 1,
->  };
-> =20
->  #define MAX_IDLE_STATE_COUNT	2
-> @@ -33,10 +34,8 @@ static int max_idle_state =3D MAX_IDLE_STATE_COUNT=
- - 1;
->  static struct cpuidle_device __percpu *pseries_cpuidle_devices;
->  static struct cpuidle_state *cpuidle_state_table;
-> =20
-> -static inline void idle_loop_prolog(unsigned long *in_purr, ktime_t =
-*kt_before)
-> +static inline void idle_loop_prolog(unsigned long *in_purr)
->  {
-> -
-> -	*kt_before =3D ktime_get();
->  	*in_purr =3D mfspr(SPRN_PURR);
->  	/*
->  	 * Indicate to the HV that we are idle. Now would be
-> @@ -45,12 +44,10 @@ static inline void idle_loop_prolog(unsigned long=
- *in_purr, ktime_t *kt_before)
->  	get_lppaca()->idle =3D 1;
->  }
-> =20
-> -static inline  s64 idle_loop_epilog(unsigned long in_purr, ktime_t k=
-t_before)
-> +static inline void idle_loop_epilog(unsigned long in_purr)
->  {
->  	get_lppaca()->wait_state_cycles +=3D mfspr(SPRN_PURR) - in_purr;
->  	get_lppaca()->idle =3D 0;
-> -
-> -	return ktime_to_us(ktime_sub(ktime_get(), kt_before));
->  }
-> =20
->  static int snooze_loop(struct cpuidle_device *dev,
-> @@ -58,10 +55,9 @@ static int snooze_loop(struct cpuidle_device *dev,
->  			int index)
->  {
->  	unsigned long in_purr;
-> -	ktime_t kt_before;
->  	int cpu =3D dev->cpu;
-> =20
-> -	idle_loop_prolog(&in_purr, &kt_before);
-> +	idle_loop_prolog(&in_purr);
->  	local_irq_enable();
->  	set_thread_flag(TIF_POLLING_NRFLAG);
-> =20
-> @@ -75,8 +71,8 @@ static int snooze_loop(struct cpuidle_device *dev,
->  	clear_thread_flag(TIF_POLLING_NRFLAG);
->  	smp_mb();
-> =20
-> -	dev->last_residency =3D
-> -		(int)idle_loop_epilog(in_purr, kt_before);
-> +	idle_loop_epilog(in_purr);
-> +
->  	return index;
->  }
-> =20
-> @@ -102,9 +98,8 @@ static int dedicated_cede_loop(struct cpuidle_devi=
-ce *dev,
->  				int index)
->  {
->  	unsigned long in_purr;
-> -	ktime_t kt_before;
-> =20
-> -	idle_loop_prolog(&in_purr, &kt_before);
-> +	idle_loop_prolog(&in_purr);
->  	get_lppaca()->donate_dedicated_cpu =3D 1;
-> =20
->  	ppc64_runlatch_off();
-> @@ -112,8 +107,9 @@ static int dedicated_cede_loop(struct cpuidle_dev=
-ice *dev,
->  	check_and_cede_processor();
-> =20
->  	get_lppaca()->donate_dedicated_cpu =3D 0;
-> -	dev->last_residency =3D
-> -		(int)idle_loop_epilog(in_purr, kt_before);
-> +
-> +	idle_loop_epilog(in_purr);
-> +
->  	return index;
->  }
-> =20
-> @@ -122,9 +118,8 @@ static int shared_cede_loop(struct cpuidle_device=
- *dev,
->  			int index)
->  {
->  	unsigned long in_purr;
-> -	ktime_t kt_before;
-> =20
-> -	idle_loop_prolog(&in_purr, &kt_before);
-> +	idle_loop_prolog(&in_purr);
-> =20
->  	/*
->  	 * Yield the processor to the hypervisor.  We return if
-> @@ -135,8 +130,8 @@ static int shared_cede_loop(struct cpuidle_device=
- *dev,
->  	 */
->  	check_and_cede_processor();
-> =20
-> -	dev->last_residency =3D
-> -		(int)idle_loop_epilog(in_purr, kt_before);
-> +	idle_loop_epilog(in_purr);
-> +
->  	return index;
->  }
-> =20
+* Fixed dummy operations
+* Removed some duplicates from the binding document
+* Fixed tegra114_clk enum to be in line with the binding document
+* Removed __initdata from tegra_periph_clk_list and
+  tegra_periph_nodiv_clk_list
+* Mark csite clock as CLK_IGNORE_UNUSED
+* Fixed mux mask for disp1 and disp2
+* Fixed initializations for PLLX, PLLC, PLLC2 and PLCC3
+* Converted clk_pll_wait_for_lock() to use a mask instead of a single bit
+* added TEGRA_PLL_HAS_LOCK_ENABLE flag
+
+Changes from v6:
+
+* Remove clock-frequency from DT serial nodes
+* Remove useless 'cpu' clock from binding documentation
+* Use HW gate control for PLLU divided outputs
+* Fix clock ID for 'd_audio' clock
+* Add dummy cpu car ops to ease making a bisectable series
+
+Changes from v5:
+
+* Add initialization code for PLLC
+* Remove some unnecessary clocks
+* Fix bug in PLL locking refactoring
+* Add super clocks
+* Remove most calls to clk_register_clkdev() for the peripheral clocks
+
+Changes from v4:
+
+* Split the new PLL types patch into smaller patches
+* Fix some bugs in the PLL patches
+
+Changes from v3:
+
+* Merge with for-next branch
+* Provide empty tegra_cpu_car_ops to make SMP boot not crash
+
+Changes from v2:
+
+* Added missing PLLs
+* Added bindings to tegra114.dtsi
+* Moved the table patch for clk-mux.c to 'clk: add table lookup to mux'
+* Bugfixes
+
+Changes from v1:
+
+* Remove SATA and PCIe clocks. They don't appear in the internal TRM, so I
+  assume they don't exist.
+* Rebase on top of Hiroshi's latest Tegra114 patches
+* More generic mux code. This is necessary for the AHUB and DAM clocks.
 
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+Peter De Schrijver (14):
+  clk: tegra: provide dummy cpu car ops
+  clk: tegra: Refactor PLL programming code
+  clk: tegra: Add TEGRA_PLL_BYPASS flag
+  clk: tegra: introduce TEGRA_PLL_HAS_LOCK_ENABLE
+  clk: tegra: Add PLL post divider table
+  clk: tegra: move from a lock bit idx to a lock mask
+  clk: tegra: Add new fields and PLL types for Tegra114
+  clk: tegra: Add flags to tegra_clk_periph()
+  clk: tegra: Workaround for Tegra114 MSENC problem
+  ARM: tegra: Define Tegra114 CAR binding
+  clk: tegra: Implement clocks for Tegra114
+  clk: tegra: devicetree match for nvidia,tegra114-car
+  ARM: dt: Add references to tegra_car clocks
+  clk: tegra: Remove forced clk_enable of uartd
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+ .../bindings/clock/nvidia,tegra114-car.txt         |  317 +++
+ arch/arm/boot/dts/tegra114-dalmore.dts             |    1 -
+ arch/arm/boot/dts/tegra114-pluto.dts               |    1 -
+ arch/arm/boot/dts/tegra114.dtsi                    |    8 +-
+ drivers/clk/tegra/Makefile                         |    1 +
+ drivers/clk/tegra/clk-periph-gate.c                |    9 +
+ drivers/clk/tegra/clk-periph.c                     |   11 +-
+ drivers/clk/tegra/clk-pll.c                        | 1194 ++++++++++--
+ drivers/clk/tegra/clk-tegra114.c                   | 2085 ++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  173 +-
+ drivers/clk/tegra/clk-tegra30.c                    |  265 ++--
+ drivers/clk/tegra/clk.c                            |    4 +-
+ drivers/clk/tegra/clk.h                            |   95 +-
+ 13 files changed, 3805 insertions(+), 359 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
+
