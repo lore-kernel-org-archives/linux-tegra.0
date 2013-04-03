@@ -1,17 +1,17 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH v2 2/7] ARM: tegra: update device trees for USB binding
  rework
-Date: Wed, 03 Apr 2013 13:16:52 -0600
-Message-ID: <515C8024.30204@wwwdotorg.org>
+Date: Wed, 03 Apr 2013 13:33:19 -0600
+Message-ID: <515C83FF.10004@wwwdotorg.org>
 References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com> <1364978502-22887-3-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1364978502-22887-3-git-send-email-vbyravarasu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Venu Byravarasu <vbyravarasu@nvidia.com>
-Cc: gregkh@linuxfoundation.org, balbi@ti.com, stern@rowland.harvard.edu, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1364978502-22887-3-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 04/03/2013 02:41 AM, Venu Byravarasu wrote:
@@ -21,55 +21,28 @@ On 04/03/2013 02:41 AM, Venu Byravarasu wrote:
 > in order to maintain bisectability. The old properties will be removed
 > once the driver has been updated to assume the new bindings.
 
-The binding documentation says that the vbus-supply property is required
-in all cases. However, many of the DT files still don't have that
-property even after this patch. That's inconsistent.
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index cb73e62..af5a7ae 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -443,6 +443,10 @@
+>  		nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
 
-> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris-512.dts
-> index 52f1103..c99eccc 100644
-> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
-> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
-> @@ -41,6 +41,10 @@
->  		dr_mode = "otg";
->  	};
->  
-> +	usb-phy@c5000000 {
-> +		dr_mode = "otg";
-> +	};
+Another problem here: The code pulses this GPIO low to reset the PHY, so
+in other words, the GPIO is active low.
 
-Since this port claims to be OTG-capable, presumably a vbus-supply
-property is mandatory here? If you don't know enough about the board to
-correctly set up such a regulator, lets just mark this port as host-only
-for now; we can switch it back to OTG-mode later once someone implements
-the required regulator. This won't lose any functionality, since we
-don't support OTG-mode yet anyway. However, it will allow the device
-tree to be correct/consistent in the mean time.
+Can you please prepare a separate patch to fix this; you need to change
+all existing instances from:
 
-> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+nvidia,phy-reset-gpio = <&gpio 169 0>; /* gpio PV1 */
 
-> +	usb-phy@c5000000 {
-> +		vbus-supply = <&vbus_reg>;
-> +		dr_mode = "otg";
-> +	};
+to:
 
-Where is the nvidia,vbus-gpio property? Since your code changes don't
-actually implement use of the vbus-supply property yet, they will expect
-the vbus-gpio property to exist in the PHY node.
+nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 
-> diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-> index 955bf49..8f2bb9b 100644
-> --- a/arch/arm/boot/dts/tegra20-trimslice.dts
-> +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-> @@ -305,17 +305,21 @@
->  		nvidia,vbus-gpio = <&gpio 170 0>; /* gpio PV2 */
->  	};
->  
-> +	usb-phy@c5000000 {
-> +		vbus-supply = <&vbus_reg>;
-> +	};
+Insert that new patch before this patch in the series, and then fix this
+patch so that any new copies of that property have the correct content
+from the start.
 
-Same here; isn't nvidia,vbus-gpio needed in the PHY node until the
-driver is converted to use vbus-supply?
-
-I guess this is a case of a host-only port where there is SW-control
-over VBUS...
+Note: I pointed out this problem in my review of V1, but V2 didn't
+include a fix for it:-(
