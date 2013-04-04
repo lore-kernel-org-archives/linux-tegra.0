@@ -1,80 +1,54 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH v2 2/7] ARM: tegra: update device trees for USB binding
- rework
-Date: Thu, 4 Apr 2013 18:31:39 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E50BE48AE@BGMAIL02.nvidia.com>
-References: <1364978502-22887-1-git-send-email-vbyravarasu@nvidia.com>
- <1364978502-22887-3-git-send-email-vbyravarasu@nvidia.com>
- <515C8024.30204@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: [RFC 0/3] drm/tegra: Add 3D support
+Date: Thu,  4 Apr 2013 16:09:17 +0200
+Message-ID: <1365084560-11069-1-git-send-email-thierry.reding@avionic-design.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515C8024.30204-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Thursday, April 04, 2013 12:47 AM
-> To: Venu Byravarasu
-> Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org; balbi-l0cyMroinI0@public.gmane.org;
-> stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
-> usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [PATCH v2 2/7] ARM: tegra: update device trees for USB binding
-> rework
-> 
-> On 04/03/2013 02:41 AM, Venu Byravarasu wrote:
-> > This patch updates all Tegra board files so that they contain all the
-> 
-> The binding documentation says that the vbus-supply property is required
-> in all cases. However, many of the DT files still don't have that
-> property even after this patch. That's inconsistent.
+This small series of patches adds support for the 3D engine found on
+NVIDIA Tegra SoCs. It builds on top of Terje's and Arto's host1x and
+gr2d patches. A couple of things still need to be done before this
+can be merged, though.
 
-Will edit the binding to have the vbus-supply only for otg cases. 
+Patch 1 is the central piece of the series. It adds support for using
+the gr3d engine via the same DRM IOCTLs that gr2d uses. A very basic
+set of programs to test this can be found here[0].
 
-> 
-> > diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
-> b/arch/arm/boot/dts/tegra20-iris-512.dts
-> > index 52f1103..c99eccc 100644
-> > --- a/arch/arm/boot/dts/tegra20-iris-512.dts
-> > +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
-> > @@ -41,6 +41,10 @@
-> >  		dr_mode = "otg";
-> >  	};
-> >
-> > +	usb-phy@c5000000 {
-> > +		dr_mode = "otg";
-> > +	};
-> 
-> Since this port claims to be OTG-capable, presumably a vbus-supply
-> property is mandatory here? If you don't know enough about the board to
-> correctly set up such a regulator, lets just mark this port as host-only
-> for now; we can switch it back to OTG-mode later once someone implements
-> the required regulator. This won't lose any functionality, since we
-> don't support OTG-mode yet anyway. However, it will allow the device
-> tree to be correct/consistent in the mean time.
- 
-Agree completely.
-Will update the patch accordingly and send for review.
+Patch 2 adds support for the XBGR8888 format, which seems to be what
+most gr3d programs use. It also adds the RGB565 as a format supported
+by planes. This latter part could be moved to a separate patch, but I
+didn't think that was necessary.
 
-> 
-> > diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-> b/arch/arm/boot/dts/tegra20-seaboard.dts
-> 
-> > +	usb-phy@c5000000 {
-> > +		vbus-supply = <&vbus_reg>;
-> > +		dr_mode = "otg";
-> > +	};
-> 
-> Where is the nvidia,vbus-gpio property? Since your code changes don't
-> actually implement use of the vbus-supply property yet, they will expect
-> the vbus-gpio property to exist in the PHY node.
+Patch 3 finally allows buffer objects to be marked as tiled so that
+the display controller can scan them out appropriately.
 
-As of now Vbus-gpio is being used by EHCI driver only.
-As anyways we wanted to use vbus-supply, will implement its
-support in PHY driver and remove vbus-gpio from EHCI node. 
-Hence did not add vbus-gpio to PHY DT nodes.
+Thierry
+
+[0]: https://github.com/organizations/grate-driver
+
+Thierry Reding (3):
+  WIP: drm/tegra: Add 3D support
+  drm/tegra: Support the XBGR8888 pixelformat
+  drm/tegra: Add support for tiled buffer objects
+
+ drivers/gpu/host1x/Makefile   |   1 +
+ drivers/gpu/host1x/dev.c      |   7 +
+ drivers/gpu/host1x/dev.h      |   1 +
+ drivers/gpu/host1x/drm/dc.c   |  16 +++
+ drivers/gpu/host1x/drm/dc.h   |   4 +
+ drivers/gpu/host1x/drm/drm.c  |   4 +-
+ drivers/gpu/host1x/drm/drm.h  |   2 +
+ drivers/gpu/host1x/drm/fb.c   |  12 +-
+ drivers/gpu/host1x/drm/gem.c  |  20 ++-
+ drivers/gpu/host1x/drm/gem.h  |  13 +-
+ drivers/gpu/host1x/drm/gr3d.c | 289 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/host1x/host1x.h   |   3 +-
+ include/uapi/drm/tegra_drm.h  |   2 +
+ 13 files changed, 360 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/gpu/host1x/drm/gr3d.c
+
+-- 
+1.8.2
