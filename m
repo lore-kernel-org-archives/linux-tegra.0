@@ -1,69 +1,110 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-cbootimage-configs] Add Tegra20 Tamonten configurations
-Date: Thu, 04 Apr 2013 13:28:26 -0600
-Message-ID: <515DD45A.1040607@wwwdotorg.org>
-References: <1365067814-12925-1-git-send-email-thierry.reding@avionic-design.de> <515DBD7F.1010800@wwwdotorg.org> <20130404185929.GA13407@avionic-0098.mockup.avionic-design.de> <515DD042.5000200@wwwdotorg.org> <20130404192543.GA13569@avionic-0098.mockup.avionic-design.de>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v9 00/14] Tegra114 clockframework
+Date: Thu, 04 Apr 2013 14:20:02 -0700
+Message-ID: <20130404212002.8665.12387@quantum>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
+ <515C6C6E.6060302@wwwdotorg.org> <515C7495.8060106@wwwdotorg.org>
+ <515CB9D9.90303@wwwdotorg.org>
+ <20130404082043.GY18519@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130404192543.GA13569-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130404082043.GY18519-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2013 01:25 PM, Thierry Reding wrote:
-> On Thu, Apr 04, 2013 at 01:10:58PM -0600, Stephen Warren wrote:
->> On 04/04/2013 12:59 PM, Thierry Reding wrote:
->>> On Thu, Apr 04, 2013 at 11:50:55AM -0600, Stephen Warren
->>> wrote:
->>>> On 04/04/2013 03:30 AM, Thierry Reding wrote:
->>>>> In addition to providing the BCT configuration that is
->>>>> common for all Tegra20 Tamonten-derived boards, add scripts
->>>>> to build images that can be flashed to NAND for the Plutux,
->>>>> Medcom-Wide and TEC boards.
->>>> 
->>>> I wonder why there's a need for board-specific
->>>> sub-directories? After all, those boards all use the same BCT
->>>> file, and the image config files are all identical.
->>> 
->>> I could probably rework it to just generate one image that
->>> uses the standard BCT and the u-boot.bin binary/symlink, which
->>> should work just as well. So if the user wanted to build for
->>> different boards they'd need to replace u-boot.bin and rerun
->>> the script.
->>> 
->>> Does that sound any better?
->> 
->> That sounds better.
->> 
->> Either that, or perhaps create a separate top-level directory for
->> each board, and just symlink the BCT file from one common
->> directory, or even duplicate it. That would still allow the user
->> to have one directory of binaries per board, so remove the need
->> to multiplex.
+Quoting Peter De Schrijver (2013-04-04 01:20:44)
+> On Thu, Apr 04, 2013 at 01:23:05AM +0200, Stephen Warren wrote:
+> > On 04/03/2013 12:27 PM, Stephen Warren wrote:
+> > > On 04/03/2013 11:52 AM, Stephen Warren wrote:
+> > >> On 04/03/2013 08:40 AM, Peter De Schrijver wrote:
+> > >>> This is the nineth version of the Tegra114 clockframework. It is based on the
+> > >>> next-20130320-fixed branch of
+> > >>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+> > > ... [it depends on]
+> > >>> http://patchwork.ozlabs.org/patch/233415/
+> > >>
+> > >> That is Joseph's "clocksource: tegra: enable arch_timer". Is this
+> > >> actually a dependency, or an optimization, or ...?
+> > >>
+> > >> Rob Herring objected to that patch since it isn't necessary if his
+> > >> series "ARM arch, sp804 and integrator timer CLKSRC_OF support" is applied.
+> > >>
+> > >> If I apply just your (Peter's) CCF series without Joseph's or Rob's
+> > >> patches, will everything still work, or is this a hard dependency to
+> > >> create a working system?
+> > > 
+> > > I manage to get this series applied on top of my local dev branch, based
+> > > on next-20130328 (it was painful). Testing indicates that there is no
+> > > dependency on Joseph's patch mentioned above; I could boot, log in, and
+> > > play audio (with local patches) with /or/ without Joseph's patch applied.
+> > > 
+> > > However, I still find that I need to revert f7db706 ARM: "7674/1: smp:
+> > > Avoid dummy clockevent being preferred over real hardware clock-event",
+> > > or I get a hard system hang right after the root fs is mounted. As such,
+> > > I not sure if it's worthwhile applying this series since it's unlikely
+> > > to actually work once merged into Torvalds' tree.
+> > > 
+> > > Do you have any idea what the problem is here?
+> > > 
+> > > I'll try rebasing my local test branch on top of the latest linux-next
+> > > just in case some other fix solved this already, but I'm not going to
+> > > hold my breath.
+> > 
+> > I've found the problem. My bootloader wasn't initializing the TSC and
+> > hence I guess it wasn't working properly, even with Joseph's patch to
+> > add a call to the initialization function.
+> > 
 > 
-> I'm not sure I understand correctly. Is this what you're
-> proposing?
+> Ok.
 > 
-> tegra20-tamonten |-- tegra20-tamonten.bct.cfg |--
-> tegra20-tamonten.img.cfg tegra20-plutux |--
-> tegra20-tamonten.bct.cfg -->
-> ../tegra20-tamonten/tegra20-tamonten.bct.cfg |--
-> tegra20-tamonten.img.cfg -->
-> ../tegra20-tamonten/tegra20-tamonten.img.cfg
+> > So, if I:
+> > 
+> > a) Fix my bootloader to enable TSC.
+> > 
+> > b) Merge Rob's patch series to enable the TSC. This is needed rather
+> > than Joseph's patch since the two conflict, and I assume that Rob's
+> > patch is going into 3.10.
+> > 
+> > c) Undo my local revert of "ARM: 7674/1: smp: Avoid dummy clockevent
+> > being preferred over real hardware clock-event".
+> > 
+> 
+> Ok. Good. That's close to what I have and works here. As well.
+> 
+> > ... then everything now works.
+> > 
+> > So the only remaining issues are:
+> > 
+> > 1) Should the mux clocks still be defined in the binding document?
+> > Prashant didn't seem to think so.
+> > 
+> 
+> I guess we should remove them then.
+> 
+> > 2) I need Mike's ack to apply this series to the Tegra tree.
+> 
+> Ok. Mike?
+> 
 
-Yes, or just copy the files.
+Cool to see this come together!
 
-> |-- build.sh |-- u-boot.bin --> /path/to/u-boot-dtb-tegra.bin
-> 
-> And build.sh would generate the tegra20-tamonten.bct and build it
-> into tegra20-tamonten.img using tegra20-tamonten.img.cfg and
-> u-boot.bin. Is that it?
-> 
-> How is that be different from the current method? What is the
-> advantage over what the current scripts do?
+For the drivers/clk bits:
 
-It keeps the directory hierarchy the same for the Tamonten boards, so
-every board works the same.
+Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+> Cheers,
+> 
+> Peter.
