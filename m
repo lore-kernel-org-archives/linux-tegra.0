@@ -1,39 +1,34 @@
-From: Mikhail Goryunov <gormih78-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org>
-Subject: Re: spidev t20 on 2.6.36.2 kernel problem
-Date: Thu, 04 Apr 2013 22:03:10 +0400
-Message-ID: <1714461365098590@web4d.yandex.ru>
-References: <1243821364971837@web10h.yandex.ru> <515C5D4C.9050108@wwwdotorg.org> <883501365053928@web30f.yandex.ru> <515DBA35.6000309@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Fix cdev1 and cdev2 IDs
+Date: Thu, 04 Apr 2013 12:15:54 -0600
+Message-ID: <515DC35A.4030301@wwwdotorg.org>
+References: <1365066304-2327-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515DBA35.6000309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1365066304-2327-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-By the way in the upstream kernel 3.8.5 in my opinion there is no header file with registers of tegra t20?
+On 04/04/2013 03:05 AM, Prashant Gaikwad wrote:
+> Correct IDs for cdev1 and cdev2 are 94 and 93 respectively.
 
+This looks OK, but needs to be split up before I can apply it.
 
-04.04.2013, 21:36, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
-> On 04/03/2013 11:38 PM, Mikhail Goryunov wrote:
->
->> 03.04.2013, 20:48, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
->>> On 04/03/2013 12:50 AM, Goryunov Mikhail wrote:
->>>> Hello!
->>>> BOARD: QuadMo747-X/T20
->>>> i get kernel 2.6.36.2 from nvidia tegra partners: Toradex Colibri (http://developer.toradex.com/software-resources/arm-family/linux/source-code/linux-(colibri-t20)-source-code), and SecoQseven (http://www.secoqseven.com/en/download/downloads.html)
->>> For that kernel, you will need to get support from whoever supplied the
->>> kernel; Toradex or Seco.
->>>
->>> If you can reproduce the problem using an upstream kernel instead, then
->>> this list may be an appropriate place to get support. Feel free to ask
->>> questions about porting the upstream kernel to your board here.
->> The Upstream kernel is something, which is located at kernel.org ?
->
-> Yes.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at http://vger.kernel.org/majordomo-info.html
+The binding change and driver changes will be applied to Tegra's
+for-3.10/clk branch, since that's where clk changes are going.
+
+The DT changes will be applied to Tegra's for-3.10/dt branch, since
+that's where most of the DT content that's being edited here was
+actually added, this kernel cycle.
+
+There's no dependency between these two sets of changes, since the
+clocks properties for the sound and USB PHY nodes aren't actually used
+by the drivers yet; they're just being added this kernel cycle to avoid
+dependencies in the next kernel version.
+
+Mike, can you please ack this patch anyway, and I'll repost later in the
+day when I get around to splitting it up and applying it. Thanks.
