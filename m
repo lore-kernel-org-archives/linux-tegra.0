@@ -1,35 +1,48 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv9 0/9] Support Tegra 2D hardware
-Date: Thu, 4 Apr 2013 09:43:33 +0300
-Message-ID: <515D2115.7020306@nvidia.com>
-References: <1363962849-19872-1-git-send-email-tbergstrom@nvidia.com> <20130322145454.GA3231@avionic-0098.mockup.avionic-design.de>
+From: Prashant Gaikwad <pgaikwad@nvidia.com>
+Subject: Re: [PATCH v8 10/14] ARM: tegra: Define Tegra114 CAR binding
+Date: Thu, 4 Apr 2013 12:44:06 +0530
+Message-ID: <515D283E.5060209@nvidia.com>
+References: <1363956029-31873-1-git-send-email-pdeschrijver@nvidia.com> <1363956029-31873-11-git-send-email-pdeschrijver@nvidia.com> <515031E3.40007@nvidia.com> <20130403141916.GS18519@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130322145454.GA3231-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20130403141916.GS18519@tbergstrom-lnx.Nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Simon Glass <sjg@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Pritesh Raithatha <praithatha@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, Hiroshi Doyu <hdoyu@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Andrew Chew <AChew@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22.03.2013 16:54, Thierry Reding wrote:
-> On Fri, Mar 22, 2013 at 04:34:00PM +0200, Terje Bergstrom wrote:
->> This set of patches adds support for Tegra20 and Tegra30 host1x and
->> 2D. It is based on linux-next-20130322 with RTC fixes applied.
-(...)
-> For the series:
-> 
-> Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> Tested-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> 
-> For the Tegra DRM bits:
-> 
-> Acked-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+On Wednesday 03 April 2013 07:49 PM, Peter De Schrijver wrote:
+> On Mon, Mar 25, 2013 at 12:15:47PM +0100, Prashant Gaikwad wrote:
+>> On Friday 22 March 2013 06:09 PM, Peter De Schrijver wrote:
+>>> The device tree binding models Tegra114 CAR (Clock And Reset) as a single
+>>> monolithic clock provider.
+>>>
+>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>> ---
+>> <snip>
+>>
+>>> +  263	cclk_lp
+>>> +  264	dfll_ref
+>>> +  265	dfll_soc
+>>> +
+>> Peter,
+>>
+>> Please remove following clock IDs from binding.
+>>
+>>> +Mux clocks
+>>> +
+> ...
+>>> +  306	clk_out_1_mux
+> Is at least used by the init list. So we can't remove that?
 
-Dave,
+Init list is internal to driver and does not use device tree, so we can 
+keep that ID in enum but remove from DT binding so that we don't have to 
+change the binding later.
 
-What's the status of this patch? The patch set is not yet merged in your
-tree. Did I forget to do some step?
+>
+> Cheers,
+>
+> Peter.
 
-Terje
