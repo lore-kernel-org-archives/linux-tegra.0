@@ -1,65 +1,101 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: CPU idle LP2 breaks MSI on TrimSlice
-Date: Thu, 4 Apr 2013 11:16:21 +0300
-Message-ID: <20130404081621.GX18519@tbergstrom-lnx.Nvidia.com>
-References: <20130403075454.GA25174@avionic-0098.mockup.avionic-design.de>
- <1364976857.16957.56.camel@jlo-ubuntu-64.nvidia.com>
- <20130403084036.GA28417@avionic-0098.mockup.avionic-design.de>
- <1364980234.16957.75.camel@jlo-ubuntu-64.nvidia.com>
- <515C5BC8.3040902@wwwdotorg.org>
+Subject: Re: [PATCH v9 00/14] Tegra114 clockframework
+Date: Thu, 4 Apr 2013 11:20:44 +0300
+Message-ID: <20130404082043.GY18519@tbergstrom-lnx.Nvidia.com>
+References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
+ <515C6C6E.6060302@wwwdotorg.org> <515C7495.8060106@wwwdotorg.org>
+ <515CB9D9.90303@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <515C5BC8.3040902-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <515CB9D9.90303-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 03, 2013 at 06:41:44PM +0200, Stephen Warren wrote:
-> On 04/03/2013 03:10 AM, Joseph Lo wrote:
-> > On Wed, 2013-04-03 at 16:40 +0800, Thierry Reding wrote:
-> >> On Wed, Apr 03, 2013 at 04:14:17PM +0800, Joseph Lo wrote:
-> >>> On Wed, 2013-04-03 at 15:54 +0800, Thierry Reding wrote:
-> >>> BTW, you can also check the minimal interval to keep the connection
-> >>> alive. For Tegra20, it need at lease 10 mS for CPU cluster power down.
-> >>> It means when CPU go into LP2, even there is an interrupt wake up him
-> >>> immediately. The CPU need to wait for power ready. It's 10mS. Only
-> >>> Tegra20 had this limitation.
+On Thu, Apr 04, 2013 at 01:23:05AM +0200, Stephen Warren wrote:
+> On 04/03/2013 12:27 PM, Stephen Warren wrote:
+> > On 04/03/2013 11:52 AM, Stephen Warren wrote:
+> >> On 04/03/2013 08:40 AM, Peter De Schrijver wrote:
+> >>> This is the nineth version of the Tegra114 clockframework. It is based on the
+> >>> next-20130320-fixed branch of
+> >>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
+> > ... [it depends on]
+> >>> http://patchwork.ozlabs.org/patch/233415/
 > >>
-> >> Okay, theoretically we could have something like the following sequence:
+> >> That is Joseph's "clocksource: tegra: enable arch_timer". Is this
+> >> actually a dependency, or an optimization, or ...?
 > >>
-> >>   1) user runs "ifconfig eth0 up"
-> >>   2) driver programs network interface to bring up link
-> >>   3) driver waits for IRQ
-> >>   4) CPU goes to idle
-> >>   5) MSI is received
-> > 5.5) interrupt delivered to interrupt controller
-> >>   6) CPU is woken up by interrupt controller
-> >>   7) CPU needs 10 ms before power is ready
-> > (The 10mS is the interval for PMIC to make the power of vdd_cpu rail
-> > ready.)
-> > 8) CPU handle the ISR of MSI or R8169.
+> >> Rob Herring objected to that patch since it isn't necessary if his
+> >> series "ARM arch, sp804 and integrator timer CLKSRC_OF support" is applied.
+> >>
+> >> If I apply just your (Peter's) CCF series without Joseph's or Rob's
+> >> patches, will everything still work, or is this a hard dependency to
+> >> create a working system?
 > > 
-> > I am not sure the time interval cause some functions can't work anymore
-> > on MSI or R8169. If this is the case, you may need a work around to
-> > trigger interrupt more frequently to make CPU not go into LP2 when PCIe
-> > ethernet working.
+> > I manage to get this series applied on top of my local dev branch, based
+> > on next-20130328 (it was painful). Testing indicates that there is no
+> > dependency on Joseph's patch mentioned above; I could boot, log in, and
+> > play audio (with local patches) with /or/ without Joseph's patch applied.
 > > 
-> > BTW, the interrupt shouldn't lost, I didn't see this case before. The
-> > device interrupt was always routed to CPU0.
+> > However, I still find that I need to revert f7db706 ARM: "7674/1: smp:
+> > Avoid dummy clockevent being preferred over real hardware clock-event",
+> > or I get a hard system hang right after the root fs is mounted. As such,
+> > I not sure if it's worthwhile applying this series since it's unlikely
+> > to actually work once merged into Torvalds' tree.
+> > 
+> > Do you have any idea what the problem is here?
+> > 
+> > I'll try rebasing my local test branch on top of the latest linux-next
+> > just in case some other fix solved this already, but I'm not going to
+> > hold my breath.
 > 
-> Joseph,
+> I've found the problem. My bootloader wasn't initializing the TSC and
+> hence I guess it wasn't working properly, even with Joseph's patch to
+> add a call to the initialization function.
 > 
-> The legacy interrupt controller steers interrupts to either the A9 CPUs
-> or the AVP. Does this legacy controller lose power when the A9 CPUs
-> enter LP2? If so, does it need reprogramming when resuming the A9 CPUs
-> from LP2?
 
-No, The legacy interrupt controller is part of non-powergateable domain afaik,
-so it will only lose its state when we enter LP0. CPUs entering/exiting LP2
-should not affect its state.
+Ok.
+
+> So, if I:
+> 
+> a) Fix my bootloader to enable TSC.
+> 
+> b) Merge Rob's patch series to enable the TSC. This is needed rather
+> than Joseph's patch since the two conflict, and I assume that Rob's
+> patch is going into 3.10.
+> 
+> c) Undo my local revert of "ARM: 7674/1: smp: Avoid dummy clockevent
+> being preferred over real hardware clock-event".
+> 
+
+Ok. Good. That's close to what I have and works here. As well.
+
+> ... then everything now works.
+> 
+> So the only remaining issues are:
+> 
+> 1) Should the mux clocks still be defined in the binding document?
+> Prashant didn't seem to think so.
+> 
+
+I guess we should remove them then.
+
+> 2) I need Mike's ack to apply this series to the Tegra tree.
+
+Ok. Mike?
 
 Cheers,
 
