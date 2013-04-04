@@ -1,56 +1,62 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [RFC 0/3] drm/tegra: Add 3D support
-Date: Thu, 4 Apr 2013 17:02:26 +0200
-Message-ID: <20130404150226.GA11938@avionic-0098.mockup.avionic-design.de>
-References: <1365084560-11069-1-git-send-email-thierry.reding@avionic-design.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: 3.8 config file for CARMA card
+Date: Thu, 04 Apr 2013 11:05:01 -0600
+Message-ID: <515DB2BD.1040401@wwwdotorg.org>
+References: <E61DA4A8-CD86-4F01-B8CF-D1D0D32F1C12@aotera.org> <20130402113618.GE18519@tbergstrom-lnx.Nvidia.com> <515CA087.6020805@wwwdotorg.org> <43865F50-3268-4A51-99F6-7D6A7C2DC681@aotera.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1365084560-11069-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+In-Reply-To: <43865F50-3268-4A51-99F6-7D6A7C2DC681-cggpePV8Dd8dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Spencer Cheng <spencer-cggpePV8Dd8dnm+yROfE0A@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/03/2013 09:00 PM, Spencer Cheng wrote:
+> Hi Stephen,
+> 
+> On Apr 3, 2013, at 17:35, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> Spencer, which 3.8 kernel are you attempting to use?
+>>
+> 
+> It was the stable 3.8 kernel at the time, perhaps 3.8.2.
+> 
+>> As Peter mentioned, we don't support CARMA upstream at the moment.
+>> However, in theory, you should simply need to write a device tree file
+>> to enable the upstream kernel to boot on CARMA.
+> 
+> Is there a HowTo on writing the device tree file? 
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don't think there's an explicit HowTo.
 
-On Thu, Apr 04, 2013 at 04:09:17PM +0200, Thierry Reding wrote:
-[...]
-> [0]: https://github.com/organizations/grate-driver
+To get a general idea of DT content, I would start by simply reading the
+existing Tegra device trees in the upstream kernel. It's probably best
+to take a look at the Tegra-specific tree so you see the very latest
+changes:
 
-This apparently redirects to github.com unless you're a member of the
-grate-driver organization. So the correct link should actually be:
+git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
+branch for-next
+files arch/arm/boot/dts/tegra*.dts*
+directory Documentation/devicetree/bindings/
 
-	https://github.com/grate-driver
+As far as general DT background information, you could look at the
+following links, which I cribbed from our internal wiki:
 
-Thanks Rob for pointing this out!
+http://devicetree.org/Main_Page (many other links are on this page).
 
-Thierry
+http://devicetree.org/Device_Tree_Usage (general DT structure for a board)
 
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature
+http://devicetree.org/MPC5200:PCI (some background info re: PCI
+bindings; I have no idea how correct/applicable this is, but it should
+aid understanding at least)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+http://lists.ozlabs.org/listinfo/devicetree-discuss
 
-iQIcBAEBAgAGBQJRXZYCAAoJEN0jrNd/PrOh0sIP/2hFRQuiqkyIqfPgbbck3nqe
-LgxMgFC+ak0mmF0NqhRwHmKuJMhnSTaL2li+Jp4i4IYWnUxA/z1IlUSJkPH5z4Vn
-7xh+6ZGVKsdCZPSlXNAuunzO+gHbDQL5G4/WWH8FC0F++gFkmIjez7HnPcFJs0h3
-KvRcOKl5Q7N7m6F5bnCddgUQBAmmfWXokVTitakuuBZOVCZfTqKfGuw19ozqqies
-sUJPXSz1wkrqfoYdh5Rhol/FvIHe4+H9enZW0Q1ru7EUrS3kv6oVzt7Q3eVZZVPu
-3F78iphiWBQUck9iAGTctJfwBO2dN30vcPnDMB0e5zxQ5/10wk4m3a6NLtKTJDmz
-5gGc3G20JvOsKFpDfTcRAfeY8I7e9XRv5IyBqSCzjLLPJI+EpXtgWbqbJD+c9P4O
-c8gFHvkUQgoFH64g0OXEX562Exk8P6oCzsXODedHQk8TLNv8FtxmNveQGEWEI0mT
-E97RYSm5PCibSuCM0ckf4OB4OM3ggEfAcoXQ1IfZy4QHkXLU4dw5C/HzDku4SXq6
-unSkzd4PL6PrhpcjmWX6Sn+VkxATfGvT6R8rKI8Cn3YhejyX9VumFizITLGD695z
-1K3iiWSl+DhTQdf5LzPPmHdHyr8+m3v4FH1UAcBELmOOMwpnrufgCo1Z3YHrHvOS
-z4Y++oAExOd5eaq4ggJq
-=njPS
------END PGP SIGNATURE-----
+http://elinux.org/images/1/14/Glikely--device-tree.pdf
 
---5mCyUwZo2JvN/JJP--
+http://elinux.org/Device_Trees
+
+http://wiki.freebsd.org/FlattenedDeviceTree
+
+http://www.denx.de/wiki/DULG/LinuxFDTBlob
