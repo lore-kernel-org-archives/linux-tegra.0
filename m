@@ -1,102 +1,223 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v9 00/14] Tegra114 clockframework
-Date: Thu, 4 Apr 2013 11:20:44 +0300
-Message-ID: <20130404082043.GY18519@tbergstrom-lnx.Nvidia.com>
-References: <1365000110-8916-1-git-send-email-pdeschrijver@nvidia.com>
- <515C6C6E.6060302@wwwdotorg.org> <515C7495.8060106@wwwdotorg.org>
- <515CB9D9.90303@wwwdotorg.org>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: Fix cdev1 and cdev2 IDs
+Date: Thu, 4 Apr 2013 14:35:04 +0530
+Message-ID: <1365066304-2327-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <515CB9D9.90303-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 04, 2013 at 01:23:05AM +0200, Stephen Warren wrote:
-> On 04/03/2013 12:27 PM, Stephen Warren wrote:
-> > On 04/03/2013 11:52 AM, Stephen Warren wrote:
-> >> On 04/03/2013 08:40 AM, Peter De Schrijver wrote:
-> >>> This is the nineth version of the Tegra114 clockframework. It is based on the
-> >>> next-20130320-fixed branch of
-> >>> git://nv-tegra.nvidia.com/user/swarren/linux-2.6.git,
-> > ... [it depends on]
-> >>> http://patchwork.ozlabs.org/patch/233415/
-> >>
-> >> That is Joseph's "clocksource: tegra: enable arch_timer". Is this
-> >> actually a dependency, or an optimization, or ...?
-> >>
-> >> Rob Herring objected to that patch since it isn't necessary if his
-> >> series "ARM arch, sp804 and integrator timer CLKSRC_OF support" is applied.
-> >>
-> >> If I apply just your (Peter's) CCF series without Joseph's or Rob's
-> >> patches, will everything still work, or is this a hard dependency to
-> >> create a working system?
-> > 
-> > I manage to get this series applied on top of my local dev branch, based
-> > on next-20130328 (it was painful). Testing indicates that there is no
-> > dependency on Joseph's patch mentioned above; I could boot, log in, and
-> > play audio (with local patches) with /or/ without Joseph's patch applied.
-> > 
-> > However, I still find that I need to revert f7db706 ARM: "7674/1: smp:
-> > Avoid dummy clockevent being preferred over real hardware clock-event",
-> > or I get a hard system hang right after the root fs is mounted. As such,
-> > I not sure if it's worthwhile applying this series since it's unlikely
-> > to actually work once merged into Torvalds' tree.
-> > 
-> > Do you have any idea what the problem is here?
-> > 
-> > I'll try rebasing my local test branch on top of the latest linux-next
-> > just in case some other fix solved this already, but I'm not going to
-> > hold my breath.
-> 
-> I've found the problem. My bootloader wasn't initializing the TSC and
-> hence I guess it wasn't working properly, even with Joseph's patch to
-> add a call to the initialization function.
-> 
+Correct IDs for cdev1 and cdev2 are 94 and 93 respectively.
 
-Ok.
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-> So, if I:
-> 
-> a) Fix my bootloader to enable TSC.
-> 
-> b) Merge Rob's patch series to enable the TSC. This is needed rather
-> than Joseph's patch since the two conflict, and I assume that Rob's
-> patch is going into 3.10.
-> 
-> c) Undo my local revert of "ARM: 7674/1: smp: Avoid dummy clockevent
-> being preferred over real hardware clock-event".
-> 
+Stephen, tested this patch on Ventana and Cardhu, please verify if
+I am not missing any platform which uses cdev1/cdev2.
 
-Ok. Good. That's close to what I have and works here. As well.
+---
+ .../bindings/clock/nvidia,tegra20-car.txt          |    4 ++--
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi         |    2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |    2 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts          |    2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |    2 +-
+ arch/arm/boot/dts/tegra20-plutux.dts               |    2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |    2 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |    2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |    2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |    2 +-
+ arch/arm/boot/dts/tegra20-whistler.dts             |    2 +-
+ arch/arm/boot/dts/tegra20.dtsi                     |    2 +-
+ drivers/clk/tegra/clk-tegra20.c                    |    2 +-
+ drivers/clk/tegra/clk-tegra30.c                    |    2 +-
+ 14 files changed, 15 insertions(+), 15 deletions(-)
 
-> ... then everything now works.
-> 
-> So the only remaining issues are:
-> 
-> 1) Should the mux clocks still be defined in the binding document?
-> Prashant didn't seem to think so.
-> 
-
-I guess we should remove them then.
-
-> 2) I need Mike's ack to apply this series to the Tegra tree.
-
-Ok. Mike?
-
-Cheers,
-
-Peter.
+diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+index 0921fac..e885680 100644
+--- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
++++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+@@ -120,8 +120,8 @@ Required properties :
+   90	clk_d
+   91	unassigned
+   92	sus
+-  93	cdev1
+-  94	cdev2
++  93	cdev2
++  94	cdev1
+   95	unassigned
+ 
+   96	uart2
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 79af149..7e96750 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -461,7 +461,7 @@
+ 
+ 		nvidia,ac97-controller = <&ac97>;
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 5fb0888..c108dc8 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -657,7 +657,7 @@
+ 		nvidia,int-mic-en-gpios = <&gpio 184 0>; /*gpio PX0 */
+ 		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-medcom-wide.dts b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+index 740ba7c..ace2343 100644
+--- a/arch/arm/boot/dts/tegra20-medcom-wide.dts
++++ b/arch/arm/boot/dts/tegra20-medcom-wide.dts
+@@ -59,7 +59,7 @@
+ 		nvidia,spkr-en-gpios = <&wm8903 2 0>;
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 43fd28b..59bd476 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -502,7 +502,7 @@
+ 		nvidia,i2s-controller = <&tegra_i2s1>;
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-plutux.dts b/arch/arm/boot/dts/tegra20-plutux.dts
+index 7085ae5..1a17cc3 100644
+--- a/arch/arm/boot/dts/tegra20-plutux.dts
++++ b/arch/arm/boot/dts/tegra20-plutux.dts
+@@ -53,7 +53,7 @@
+ 		nvidia,spkr-en-gpios = <&wm8903 2 0>;
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 4f810a5..926cc6c 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -809,7 +809,7 @@
+ 		nvidia,spkr-en-gpios = <&wm8903 2 0>;
+ 		nvidia,hp-det-gpios = <&gpio 185 0>; /* gpio PX1 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-tec.dts b/arch/arm/boot/dts/tegra20-tec.dts
+index 9be175d..742f0b3 100644
+--- a/arch/arm/boot/dts/tegra20-tec.dts
++++ b/arch/arm/boot/dts/tegra20-tec.dts
+@@ -53,7 +53,7 @@
+ 		nvidia,spkr-en-gpios = <&wm8903 2 0>;
+ 		nvidia,hp-det-gpios = <&gpio 178 0>; /* gpio PW2 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index 955bf49..e703d73 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -364,7 +364,7 @@
+ 		nvidia,i2s-controller = <&tegra_i2s1>;
+ 		nvidia,audio-codec = <&codec>;
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 3f8ae10..02443be 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -608,7 +608,7 @@
+ 		nvidia,int-mic-en-gpios = <&gpio 184 0>; /* gpio PX0 */
+ 		nvidia,ext-mic-en-gpios = <&gpio 185 0>; /* gpio PX1 */
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 87e2d85..988e2d4 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -561,7 +561,7 @@
+ 		nvidia,i2s-controller = <&tegra_i2s1>;
+ 		nvidia,audio-codec = <&codec>;
+ 
+-		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 93>;
++		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 26c1134..b788950 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -476,7 +476,7 @@
+ 		compatible = "nvidia,tegra20-usb-phy";
+ 		reg = <0xc5004400 0x3c00>;
+ 		phy_type = "ulpi";
+-		clocks = <&tegra_car 94>, <&tegra_car 127>;
++		clocks = <&tegra_car 93>, <&tegra_car 127>;
+ 		clock-names = "phy", "pll_u";
+ 	};
+ 
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index b020beb..b324d3f 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -236,7 +236,7 @@ enum tegra20_clk {
+ 	dvc, dsi, mipi = 50, hdmi, csi, tvdac, i2c2, uartc, emc = 57, usb2,
+ 	usb3, mpe, vde, bsea, bsev, speedo, uartd, uarte, i2c3, sbc4, sdmmc3,
+ 	pex, owr, afi, csite, pcie_xclk, avpucq = 75, la, irama = 84, iramb,
+-	iramc, iramd, cram2, audio_2x, clk_d, csus = 92, cdev1, cdev2,
++	iramc, iramd, cram2, audio_2x, clk_d, csus = 92, cdev2, cdev1,
+ 	uartb = 96, vfir, spdif_in, spdif_out, vi, vi_sensor, tvo, cve,
+ 	osc, clk_32k, clk_m, sclk, cclk, hclk, pclk, blink, pll_a, pll_a_out0,
+ 	pll_c, pll_c_out1, pll_d, pll_d_out0, pll_e, pll_m, pll_m_out1,
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index a0c54ad..0681935 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -329,7 +329,7 @@ enum tegra30_clk {
+ 	usb3, mpe, vde, bsea, bsev, speedo, uartd, uarte, i2c3, sbc4, sdmmc3,
+ 	pcie, owr, afi, csite, pciex, avpucq, la, dtv = 79, ndspeed, i2cslow,
+ 	dsib, irama = 84, iramb, iramc, iramd, cram2, audio_2x = 90, csus = 92,
+-	cdev1, cdev2, cpu_g = 96, cpu_lp, gr3d2, mselect, tsensor, i2s3, i2s4,
++	cdev2, cdev1, cpu_g = 96, cpu_lp, gr3d2, mselect, tsensor, i2s3, i2s4,
+ 	i2c4, sbc5, sbc6, d_audio, apbif, dam0, dam1, dam2, hda2codec_2x,
+ 	atomics, audio0_2x, audio1_2x, audio2_2x, audio3_2x, audio4_2x,
+ 	spdif_2x, actmon, extern1, extern2, extern3, sata_oob, sata, hda,
+-- 
+1.7.4.1
