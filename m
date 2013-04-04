@@ -1,46 +1,155 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clocksource: tegra: enable arch_timer
-Date: Thu, 4 Apr 2013 18:28:17 +0800
-Message-ID: <1365071297.1602.1.camel@jlo-ubuntu-64.nvidia.com>
-References: <1364988750-25058-1-git-send-email-josephl@nvidia.com>
-	 <515C2E8F.1030802@gmail.com> <515C7363.4040404@wwwdotorg.org>
-	 <515CA060.7030100@gmail.com>  <515CB1A6.6090308@wwwdotorg.org>
+From: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
+Subject: Re: [PATCH 9/9] POWERPC: pseries: cpuidle: use time keeping flag
+Date: Thu, 04 Apr 2013 16:31:35 +0530
+Message-ID: <515D5D8F.7010906@linux.vnet.ibm.com>
+References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <1364991322-20585-9-git-send-email-daniel.lezcano@linaro.org> <515C3BF2.7040609@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515CB1A6.6090308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <515C3BF2.7040609@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rjw@sisk.pl, linaro-kernel@lists.linaro.org, linux@arm.linux.org.uk, swarren@wwwdotorg.org, patches@linaro.org, linux-pm@vger.kernel.org, rnayak@ti.com, nsekhar@ti.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, linux-arm-kernel@lists.infradead.org, lenb@kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-04-04 at 06:48 +0800, Stephen Warren wrote:
-> On 04/03/2013 03:34 PM, Rob Herring wrote:
-> > On 04/03/2013 01:22 PM, Stephen Warren wrote:
-> >> On 04/03/2013 07:28 AM, Rob Herring wrote:
-> >>> On 04/03/2013 06:32 AM, Joseph Lo wrote:
-> >> Rob, if I did apply this change, and you also apply that series of
-> >> yours, what is the result: compile-time breakage, run-time breakage,
-> >> just some redundant code that needs to be removed again?
-> > 
-> > Compile-time breakage as the functions called here are being removed.
+On 04/03/2013 07:55 PM, Daniel Lezcano wrote:
+> On 04/03/2013 02:15 PM, Daniel Lezcano wrote:
+>> The current code computes the idle time but that can be handled
+>> by the cpuidle framework if we enable the .en_core_tk_irqen flag.
+>>
+>> Set the flag and remove the code related to the time computation.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Signed-off-by: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
+>> ---
 > 
-> OK, I definitely won't apply Joseph's patch then.
+> Rafael,
+> 
+> Deepthi took the patch, did a fix and tested it, this is why there is
+> its signed-off.
+> 
+> Deepthi, could you ack the patch for Rafael also ?
+> 
+> Thanks
+> -- Daniel
 
-Agree. This patch is redundant, once Rob's patches go into mainline.
+
+Signed-off-by: Deepthi Dharwar <deepthi@linux.vnet.ibm.com>
+
+>>  arch/powerpc/platforms/pseries/processor_idle.c |   35 ++++++++++-------------
+>>  1 file changed, 15 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/arch/powerpc/platforms/pseries/processor_idle.c b/arch/powerpc/platforms/pseries/processor_idle.c
+>> index 4d806b4..a197120 100644
+>> --- a/arch/powerpc/platforms/pseries/processor_idle.c
+>> +++ b/arch/powerpc/platforms/pseries/processor_idle.c
+>> @@ -23,8 +23,9 @@
+>>  #include "pseries.h"
+>>  
+>>  struct cpuidle_driver pseries_idle_driver = {
+>> -	.name =		"pseries_idle",
+>> -	.owner =	THIS_MODULE,
+>> +	.name             = "pseries_idle",
+>> +	.owner            = THIS_MODULE,
+>> +	.en_core_tk_irqen = 1,
+>>  };
+>>  
+>>  #define MAX_IDLE_STATE_COUNT	2
+>> @@ -33,10 +34,8 @@ static int max_idle_state = MAX_IDLE_STATE_COUNT - 1;
+>>  static struct cpuidle_device __percpu *pseries_cpuidle_devices;
+>>  static struct cpuidle_state *cpuidle_state_table;
+>>  
+>> -static inline void idle_loop_prolog(unsigned long *in_purr, ktime_t *kt_before)
+>> +static inline void idle_loop_prolog(unsigned long *in_purr)
+>>  {
+>> -
+>> -	*kt_before = ktime_get();
+>>  	*in_purr = mfspr(SPRN_PURR);
+>>  	/*
+>>  	 * Indicate to the HV that we are idle. Now would be
+>> @@ -45,12 +44,10 @@ static inline void idle_loop_prolog(unsigned long *in_purr, ktime_t *kt_before)
+>>  	get_lppaca()->idle = 1;
+>>  }
+>>  
+>> -static inline  s64 idle_loop_epilog(unsigned long in_purr, ktime_t kt_before)
+>> +static inline void idle_loop_epilog(unsigned long in_purr)
+>>  {
+>>  	get_lppaca()->wait_state_cycles += mfspr(SPRN_PURR) - in_purr;
+>>  	get_lppaca()->idle = 0;
+>> -
+>> -	return ktime_to_us(ktime_sub(ktime_get(), kt_before));
+>>  }
+>>  
+>>  static int snooze_loop(struct cpuidle_device *dev,
+>> @@ -58,10 +55,9 @@ static int snooze_loop(struct cpuidle_device *dev,
+>>  			int index)
+>>  {
+>>  	unsigned long in_purr;
+>> -	ktime_t kt_before;
+>>  	int cpu = dev->cpu;
+>>  
+>> -	idle_loop_prolog(&in_purr, &kt_before);
+>> +	idle_loop_prolog(&in_purr);
+>>  	local_irq_enable();
+>>  	set_thread_flag(TIF_POLLING_NRFLAG);
+>>  
+>> @@ -75,8 +71,8 @@ static int snooze_loop(struct cpuidle_device *dev,
+>>  	clear_thread_flag(TIF_POLLING_NRFLAG);
+>>  	smp_mb();
+>>  
+>> -	dev->last_residency =
+>> -		(int)idle_loop_epilog(in_purr, kt_before);
+>> +	idle_loop_epilog(in_purr);
+>> +
+>>  	return index;
+>>  }
+>>  
+>> @@ -102,9 +98,8 @@ static int dedicated_cede_loop(struct cpuidle_device *dev,
+>>  				int index)
+>>  {
+>>  	unsigned long in_purr;
+>> -	ktime_t kt_before;
+>>  
+>> -	idle_loop_prolog(&in_purr, &kt_before);
+>> +	idle_loop_prolog(&in_purr);
+>>  	get_lppaca()->donate_dedicated_cpu = 1;
+>>  
+>>  	ppc64_runlatch_off();
+>> @@ -112,8 +107,9 @@ static int dedicated_cede_loop(struct cpuidle_device *dev,
+>>  	check_and_cede_processor();
+>>  
+>>  	get_lppaca()->donate_dedicated_cpu = 0;
+>> -	dev->last_residency =
+>> -		(int)idle_loop_epilog(in_purr, kt_before);
+>> +
+>> +	idle_loop_epilog(in_purr);
+>> +
+>>  	return index;
+>>  }
+>>  
+>> @@ -122,9 +118,8 @@ static int shared_cede_loop(struct cpuidle_device *dev,
+>>  			int index)
+>>  {
+>>  	unsigned long in_purr;
+>> -	ktime_t kt_before;
+>>  
+>> -	idle_loop_prolog(&in_purr, &kt_before);
+>> +	idle_loop_prolog(&in_purr);
+>>  
+>>  	/*
+>>  	 * Yield the processor to the hypervisor.  We return if
+>> @@ -135,8 +130,8 @@ static int shared_cede_loop(struct cpuidle_device *dev,
+>>  	 */
+>>  	check_and_cede_processor();
+>>  
+>> -	dev->last_residency =
+>> -		(int)idle_loop_epilog(in_purr, kt_before);
+>> +	idle_loop_epilog(in_purr);
+>> +
+>>  	return index;
+>>  }
+>>  
 > 
-> Aside from that, I took the git branch you mentioned in the patch you
-> linked to above, merged it into my dev tree, updated my bootloader to
-> actually initialize the TSC correctly, and I see the following during
-> boot, so I guess that's enough for:
 > 
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> on your patches.
-> 
-> > [    0.000000] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps every 4294967ms
-> > [    0.000000] Architected local timer running at 12.00MHz (virt).
-> > [    0.000000] Switching to timer-based delay loop
-> > [  117.431229] Calibrating delay loop (skipped), value calculated using timer frequency.. 24.00 BogoMIPS (lpj=120000)
-> > [  117.987221] Switching to clocksource arch_sys_counter
+
