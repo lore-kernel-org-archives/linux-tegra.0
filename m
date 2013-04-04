@@ -1,26 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-cbootimage-configs] Add Tegra20 Tamonten configurations
-Date: Thu, 04 Apr 2013 11:50:55 -0600
-Message-ID: <515DBD7F.1010800@wwwdotorg.org>
-References: <1365067814-12925-1-git-send-email-thierry.reding@avionic-design.de>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v7 00/12] Tegra114 clockframework
+Date: Thu, 4 Apr 2013 20:52:06 +0300
+Message-ID: <20130404175206.GD18519@tbergstrom-lnx.Nvidia.com>
+References: <1360931849-7090-1-git-send-email-pdeschrijver@nvidia.com>
+ <5123C6E7.9070407@wwwdotorg.org>
+ <20130219185034.27993.86892@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1365067814-12925-1-git-send-email-thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130219185034.27993.86892@quantum>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/04/2013 03:30 AM, Thierry Reding wrote:
-> In addition to providing the BCT configuration that is common for all
-> Tegra20 Tamonten-derived boards, add scripts to build images that can
-> be flashed to NAND for the Plutux, Medcom-Wide and TEC boards.
+Hi Mike,
 
-I wonder why there's a need for board-specific sub-directories? After
-all, those boards all use the same BCT file, and the image config files
-are all identical.
+> Quoting Stephen Warren (2013-02-19 10:39:35)
+> > On 02/15/2013 05:36 AM, Peter De Schrijver wrote:
+> > > This is the seventh version of the Tegra114 clockframework. It is based on the
+> > > for-next branch of
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git and
+> > > http://www.spinics.net/lists/arm-kernel/msg220452.html.
+> > 
+> > Mike,
+> > 
+> > I think it'd be prudent to take this series through the Tegra tree again
+> > for 3.10; patch 11 needs to go in as part of the series due to internal
+> > dependencies, and I'm slightly worried that other Tegra DT changes might
+> > conflict with that patch (if only for context). Taking this series (and
+> > any other Tegra clk driver changes for 3.10) through the Tegra tree
+> > could resolve that easily. Do you have a problem with that?
+> > 
+> 
+> I was thinking the same thing.  I'll make time to review these now that
+> 3.8 is out.
+> 
 
-Other than that, this looks fine, and I'd be happy to run it through our
-internal review process to get it added to cbootimage.
+I posted v9 of this yesterday (http://www.spinics.net/lists/linux-tegra/msg10891.html)
+and posted a small binding doc update today 
+'[PATCH v9b 10/14] ARM: tegra: Define Tegra114 CAR binding'. Can you ack these so
+Stephen can take them in the Tegra tree?
+
+Thanks!
+
+Peter.
