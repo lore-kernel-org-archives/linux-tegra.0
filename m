@@ -1,13 +1,13 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH -next] ARM: tegra: pm: remove duplicated include from pm.c
-Date: Fri, 05 Apr 2013 09:48:37 -0600
-Message-ID: <515EF255.2010608@wwwdotorg.org>
-References: <CAPgLHd-FCVa-k1dBCgPrQOdDpmovvWwy+UjFmu8pj5ZCRad5EQ@mail.gmail.com>
+Subject: [GIT PULL 5/8] ARM: tegra: clock driver development
+Date: Fri,  5 Apr 2013 11:03:43 -0600
+Message-ID: <1365181426-11547-5-git-send-email-swarren@wwwdotorg.org>
+References: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAPgLHd-FCVa-k1dBCgPrQOdDpmovvWwy+UjFmu8pj5ZCRad5EQ@mail.gmail.com>
+In-Reply-To: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,11 +17,92 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: pgaikwad@nvidia.com, linux@arm.linux.org.uk, pdeschrijver@nvidia.com, will.deacon@arm.com, yongjun_wei@trendmicro.com.cn, josephl@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/05/2013 12:58 AM, Wei Yongjun wrote:
-> Remove duplicated include.
+This branch contains most fixes and enhancements to the Tegra common
+clock driver. The main new feature is a driver for Tegra114, which
+coupled with later device tree changes enables many devices on that
+chip, such as MMC, I2C, etc.
 
-Thanks. Applied to Tegra's for-3.10/soc branch.
+This branch depends on a patch in:
+
+git://git.linaro.org/people/mturquette/linux.git clk-for-3.10
+
+Mike has stated that this branch is stable, and is aware of this
+dependency and merge.
+
+Mike's branch is based on v3.9-rc3, which includes a USB change which
+causes problems on Tegra. That problem was fixed in v3.9-rc4. Hence,
+this branch pulls in v3.9-rc4 to ensure bisectability as much as
+possible.
+
+This branch is based on v3.9-rc4, followed by a merge of previous Tegra
+"soc" pull request, followed by a merge of clk-for-3.10.
+
+----------------------------------------------------------------
+
+The following changes since commit 43089433b00a086980fc6e9571535477fb749e84:
+
+  Merge remote-tracking branch 'linaro_mturquette_linux/clk-for-3.10' into for-3.10/clk
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.10-clk
+
+for you to fetch changes up to 964ea47572b89589b61b553e44bbe9907d4f12a6:
+
+  clk: tegra: fix enum tegra114_clk to match binding
+
+----------------------------------------------------------------
+
+Peter De Schrijver (14):
+      clk: tegra: provide dummy cpu car ops
+      clk: tegra: Refactor PLL programming code
+      clk: tegra: Add TEGRA_PLL_BYPASS flag
+      clk: tegra: introduce TEGRA_PLL_HAS_LOCK_ENABLE
+      clk: tegra: Add PLL post divider table
+      clk: tegra: move from a lock bit idx to a lock mask
+      clk: tegra: Add new fields and PLL types for Tegra114
+      clk: tegra: Add flags to tegra_clk_periph()
+      clk: tegra: Workaround for Tegra114 MSENC problem
+      ARM: tegra: Define Tegra114 CAR binding
+      clk: tegra: Implement clocks for Tegra114
+      clk: tegra: devicetree match for nvidia,tegra114-car
+      ARM: dt: Add references to tegra_car clocks
+      clk: tegra: Remove forced clk_enable of uartd
+
+Prashant Gaikwad (1):
+      clk: tegra: Fix cdev1 and cdev2 IDs
+
+Stephen Warren (2):
+      clk: tegra: defer application of init table
+      clk: tegra: fix enum tegra114_clk to match binding
+
+Thierry Reding (2):
+      clk: tegra: Export peripheral reset functions
+      clk: tegra: Make gr2d and gr3d clocks children of pll_c
+
+Yen Lin (1):
+      clk: tegra: Fix periph_clk_to_bit macro
+
+ .../bindings/clock/nvidia,tegra114-car.txt      |  303 +++
+ .../bindings/clock/nvidia,tegra20-car.txt       |    4 +-
+ arch/arm/boot/dts/tegra114-dalmore.dts          |    1 -
+ arch/arm/boot/dts/tegra114-pluto.dts            |    1 -
+ arch/arm/boot/dts/tegra114.dtsi                 |    8 +-
+ arch/arm/mach-tegra/tegra.c                     |    3 +
+ drivers/clk/tegra/Makefile                      |    1 +
+ drivers/clk/tegra/clk-periph-gate.c             |   11 +-
+ drivers/clk/tegra/clk-periph.c                  |   14 +-
+ drivers/clk/tegra/clk-pll.c                     | 1194 ++++++++--
+ drivers/clk/tegra/clk-tegra114.c                | 2085 ++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                 |  184 +-
+ drivers/clk/tegra/clk-tegra30.c                 |  276 +--
+ drivers/clk/tegra/clk.c                         |   14 +-
+ drivers/clk/tegra/clk.h                         |   98 +-
+ include/linux/clk/tegra.h                       |    1 +
+ 16 files changed, 3832 insertions(+), 366 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-car.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra114.c
