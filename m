@@ -1,49 +1,70 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next v2] spi: tegra: slink: make local symbols static
-Date: Fri, 5 Apr 2013 21:45:36 +0800
-Message-ID: <CAPgLHd-sTt5eKoiLb13dWHipT6Q46qCbG=b9mCYNq=Q7YLmGVA@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [GIT PULL 7/8] ARM: tegra: multi-platform conversion
+Date: Fri,  5 Apr 2013 11:03:45 -0600
+Message-ID: <1365181426-11547-7-git-send-email-swarren@wwwdotorg.org>
+References: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+This branch converts Tegra to support multi-platform/single-zImage.
 
-Neither tegra20_spi_cdata nor tegra30_spi_cdata are used outside this
-file so they can, and should, be static.
+One header is made accessible to drivers. The earlyprintk implementation
+is moved to the multi-platform location. Some Kconfig changes are made
+to enable multi-platform. Some dead files are deleted.
 
-Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
----
- drivers/spi/spi-tegra20-slink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The APIs exposed in the now-global tegra-powergate.h should be replaced
+with standard reset and power domain APIs in the future.
 
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 4e58b53..b224a82 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1087,11 +1087,11 @@ static struct tegra_spi_platform_data *tegra_slink_parse_dt(
- 	return pdata;
- }
- 
--const struct tegra_slink_chip_data tegra30_spi_cdata = {
-+static const struct tegra_slink_chip_data tegra30_spi_cdata = {
- 	.cs_hold_time = true,
- };
- 
--const struct tegra_slink_chip_data tegra20_spi_cdata = {
-+static const struct tegra_slink_chip_data tegra20_spi_cdata = {
- 	.cs_hold_time = false,
- };
+This branch is based on (part of) the previous soc pull request.
+
+----------------------------------------------------------------
+
+The following changes since commit 7495b2eb0770b85e58af98b99faaf853e9563784:
+
+  ARM: tegra: add speedo-based process id for Tegra114
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.10-multiplatform
+
+for you to fetch changes up to 9002722560ba86a2f59811e3d11a2575bf47e1f6:
+
+  ARM: tegra: convert to multi-platform
+
+----------------------------------------------------------------
+
+Stephen Warren (2):
+      ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
+      ARM: tegra: convert to multi-platform
+
+ arch/arm/Kconfig                                |   19 --
+ arch/arm/mach-tegra/Kconfig                     |   27 ++-
+ arch/arm/mach-tegra/Makefile.boot               |    3 -
+ arch/arm/mach-tegra/board.h                     |    1 +
+ arch/arm/mach-tegra/common.c                    |    2 -
+ arch/arm/mach-tegra/include/mach/timex.h        |   26 ---
+ arch/arm/mach-tegra/include/mach/uncompress.h   |  175 ------------------
+ arch/arm/mach-tegra/pcie.c                      |    3 +-
+ arch/arm/mach-tegra/powergate.c                 |    3 +-
+ drivers/clk/tegra/clk-tegra30.c                 |    3 +-
+ .../linux/tegra-powergate.h                     |    5 -
+ 11 files changed, 24 insertions(+), 243 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/Makefile.boot
+ delete mode 100644 arch/arm/mach-tegra/include/mach/timex.h
+ delete mode 100644 arch/arm/mach-tegra/include/mach/uncompress.h
+ rename arch/arm/mach-tegra/include/mach/powergate.h => include/linux/tegra-powergate.h (92%)
