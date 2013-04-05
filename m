@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [GIT PULL 7/8] ARM: tegra: multi-platform conversion
-Date: Fri,  5 Apr 2013 11:03:45 -0600
-Message-ID: <1365181426-11547-7-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 8/8] ARM: tegra: defconfig changes
+Date: Fri,  5 Apr 2013 11:03:46 -0600
+Message-ID: <1365181426-11547-8-git-send-email-swarren@wwwdotorg.org>
 References: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,50 +21,34 @@ To: arm@kernel.org
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch converts Tegra to support multi-platform/single-zImage.
+Various new features are enabled:
 
-One header is made accessible to drivers. The earlyprintk implementation
-is moved to the multi-platform location. Some Kconfig changes are made
-to enable multi-platform. Some dead files are deleted.
+* Tegra114 support.
+* Various PMICs and related options for Tegra114 platforms.
+* KEYBOARD_GPIO, mainly as a suspend wakeup source.
+* tegra_defconfig is rebuilt based on v3.9-rc1, which causes various
+  layout changes.
 
-The APIs exposed in the now-global tegra-powergate.h should be replaced
-with standard reset and power domain APIs in the future.
-
-This branch is based on (part of) the previous soc pull request.
+This branch is based on v3.9-rc1.
 
 ----------------------------------------------------------------
 
-The following changes since commit 7495b2eb0770b85e58af98b99faaf853e9563784:
+The following changes since commit 6dbe51c251a327e012439c4772097a13df43c5b8:
 
-  ARM: tegra: add speedo-based process id for Tegra114
+  Linux 3.9-rc1
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.10-multiplatform
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.10-defconfig
 
-for you to fetch changes up to 9002722560ba86a2f59811e3d11a2575bf47e1f6:
+for you to fetch changes up to e1eee65f1a0cce8e49624104b3497ba3f8d35199:
 
-  ARM: tegra: convert to multi-platform
+  ARM: tegra: defconfig updates
 
 ----------------------------------------------------------------
 
-Stephen Warren (2):
-      ARM: tegra: move <mach/powergate.h> to <linux/tegra-powergate.h>
-      ARM: tegra: convert to multi-platform
+Stephen Warren (1):
+      ARM: tegra: defconfig updates
 
- arch/arm/Kconfig                                |   19 --
- arch/arm/mach-tegra/Kconfig                     |   27 ++-
- arch/arm/mach-tegra/Makefile.boot               |    3 -
- arch/arm/mach-tegra/board.h                     |    1 +
- arch/arm/mach-tegra/common.c                    |    2 -
- arch/arm/mach-tegra/include/mach/timex.h        |   26 ---
- arch/arm/mach-tegra/include/mach/uncompress.h   |  175 ------------------
- arch/arm/mach-tegra/pcie.c                      |    3 +-
- arch/arm/mach-tegra/powergate.c                 |    3 +-
- drivers/clk/tegra/clk-tegra30.c                 |    3 +-
- .../linux/tegra-powergate.h                     |    5 -
- 11 files changed, 24 insertions(+), 243 deletions(-)
- delete mode 100644 arch/arm/mach-tegra/Makefile.boot
- delete mode 100644 arch/arm/mach-tegra/include/mach/timex.h
- delete mode 100644 arch/arm/mach-tegra/include/mach/uncompress.h
- rename arch/arm/mach-tegra/include/mach/powergate.h => include/linux/tegra-powergate.h (92%)
+ arch/arm/configs/tegra_defconfig |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
