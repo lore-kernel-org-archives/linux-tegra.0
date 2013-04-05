@@ -1,104 +1,299 @@
 From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH -next v2] spi: tegra: slink: make local symbols static
-Date: Fri, 5 Apr 2013 15:54:13 +0200
-Message-ID: <20130405135413.GA4737@avionic-0098.mockup.avionic-design.de>
-References: <CAPgLHd-sTt5eKoiLb13dWHipT6Q46qCbG=b9mCYNq=Q7YLmGVA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7241476359587938398=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAPgLHd-sTt5eKoiLb13dWHipT6Q46qCbG=b9mCYNq=Q7YLmGVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Subject: [PATCH v2 tegra-cbootimage-configs] Add Tegra20 Tamonten configurations
+Date: Fri,  5 Apr 2013 17:03:15 +0200
+Message-ID: <1365174195-9003-1-git-send-email-thierry.reding@avionic-design.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+In addition to providing the BCT configuration that is common for all
+Tegra20 Tamonten-derived boards, add scripts to build images that can
+be flashed to NAND for the Plutux, Medcom-Wide and TEC boards.
 
---===============7241476359587938398==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Content-Disposition: inline
+Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+---
+Changes in v2:
+- move board directories to top-level, use common Tamonten files
+- keep BCT and image configurations in tamonten directory
 
+ medcom-wide/build.sh                               |  27 +++++
+ plutux/build.sh                                    |  27 +++++
+ ...onten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg | 132 +++++++++++++++++++++
+ tamonten/tegra20.img.cfg                           |  22 ++++
+ tec/build.sh                                       |  27 +++++
+ 5 files changed, 235 insertions(+)
+ create mode 100755 medcom-wide/build.sh
+ create mode 100755 plutux/build.sh
+ create mode 100644 tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
+ create mode 100644 tamonten/tegra20.img.cfg
+ create mode 100755 tec/build.sh
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Apr 05, 2013 at 09:45:36PM +0800, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
->=20
-> Neither tegra20_spi_cdata nor tegra30_spi_cdata are used outside this
-> file so they can, and should, be static.
->=20
-> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> ---
->  drivers/spi/spi-tegra20-slink.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-sl=
-ink.c
-> index 4e58b53..b224a82 100644
-> --- a/drivers/spi/spi-tegra20-slink.c
-> +++ b/drivers/spi/spi-tegra20-slink.c
-> @@ -1087,11 +1087,11 @@ static struct tegra_spi_platform_data *tegra_slin=
-k_parse_dt(
->  	return pdata;
->  }
-> =20
-> -const struct tegra_slink_chip_data tegra30_spi_cdata =3D {
-> +static const struct tegra_slink_chip_data tegra30_spi_cdata =3D {
->  	.cs_hold_time =3D true,
->  };
-> =20
-> -const struct tegra_slink_chip_data tegra20_spi_cdata =3D {
-> +static const struct tegra_slink_chip_data tegra20_spi_cdata =3D {
->  	.cs_hold_time =3D false,
->  };
-> =20
-
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRXteFAAoJEN0jrNd/PrOh4koP+waJdwDHbKXJZXCn/dhPDk+w
-WaPuTfLJAWnhtiGXR98dHy0uJxnOpoHGamQeeo3I1v0lXfbMbQw3a3Sy0i8TvIKE
-bZFAb+UKzvL9pxBSsUUXnuOa2WeHJE8mH1lRK6SzfB1ShMs4R+BGE1CMPK/Hj7MX
-dUXHb7vnOkFhdywICjjLfWlixoTQffz4+IE+FStBPguvpqJB4g985cY+chLkTY3c
-gz3AKtlr0jwI69L4QPcFFsPewyyvac/SdIR/Hgg3s8c1c/IwCfHrgJrqAF9zWIUZ
-RRlzyqQDr/MXOwHstoNG0azWCo0TbOUAMKgjuYHyb9516fE6YYim4dQckHMw8N1R
-lpN1jm4Cn5xHNy8IQ5JIX038agH2oUN/VeXiYIfmssE7KWDgfeRf3d5EfMRwb9iq
-blmtWcQEobY31SzKBi76SSX910Iy/pCjo5Y+pThqiCKIjr5HG45cyTuHn6DPzilQ
-1+euaTc95QctrUFNJoSi41G9VbOx7Ln8xVw1p0LWaCrMADtL5TRMrvSk7SvJJxW0
-YXE8aQy+B+y7R+0fqRXsMmFx5547yCO0tjYe/806V0HZ2AzAUWaGtBG73erqbZzC
-THMLZl45TwXRK5Ds3Vczsz1N+HuGKgE3uGgtO+QysOrvJPJX4/RwzhCFBk/97mQ9
-8j7dPikXap2MoJt6VnW0
-=/DEn
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
-
---===============7241476359587938398==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============7241476359587938398==--
+diff --git a/medcom-wide/build.sh b/medcom-wide/build.sh
+new file mode 100755
+index 0000000..9fa70e5
+--- /dev/null
++++ b/medcom-wide/build.sh
+@@ -0,0 +1,27 @@
++#!/bin/sh
++
++# Copyright (C) 2013 Avionic Design GmbH
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++set -e
++set -x
++
++cbootimage -t20 -gbct \
++	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
++	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
++cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-medcom-wide.img
+diff --git a/plutux/build.sh b/plutux/build.sh
+new file mode 100755
+index 0000000..382e451
+--- /dev/null
++++ b/plutux/build.sh
+@@ -0,0 +1,27 @@
++#!/bin/sh
++
++# Copyright (C) 2013 Avionic Design GmbH
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++set -e
++set -x
++
++cbootimage -t20 -gbct \
++	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
++	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
++cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-plutux.img
+diff --git a/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg b/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
+new file mode 100644
+index 0000000..16ff9af
+--- /dev/null
++++ b/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
+@@ -0,0 +1,132 @@
++# Copyright (C) 2011-2013 Avionic Design GmbH
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++BlockSize     = 0x00020000;
++PageSize      = 0x00000800;
++PartitionSize = 0x01000000;
++OdmData       = 0x2b2d8011;
++
++DevType[0] = NvBootDevType_Nand;
++DeviceParam[0].NandParams.ClockDivider  = 0x00000004;
++DeviceParam[0].NandParams.NandTiming2   = 0x0000000a;
++DeviceParam[0].NandParams.NandTiming    = 0x3b269213;
++DeviceParam[0].NandParams.BlockSizeLog2 = 0x00000000;
++DeviceParam[0].NandParams.PageSizeLog2  = 0x00000000;
++
++SDRAM[0].MemoryType                 = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl = 0x00000000;
++SDRAM[0].PllMInputDivider           = 0x0000000c;
++SDRAM[0].PllMFeedbackDivider        = 0x0000029a;
++SDRAM[0].PllMPostDivider            = 0x00000000;
++SDRAM[0].PllMStableTime             = 0x0000012c;
++SDRAM[0].EmcClockDivider            = 0x00000001;
++SDRAM[0].EmcAutoCalInterval         = 0x00000000;
++SDRAM[0].EmcAutoCalConfig           = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait             = 0x00000000;
++SDRAM[0].EmcPinProgramWait          = 0x00000000;
++SDRAM[0].EmcRc                      = 0x00000014;
++SDRAM[0].EmcRfc                     = 0x00000041;
++SDRAM[0].EmcRas                     = 0x0000000f;
++SDRAM[0].EmcRp                      = 0x00000005;
++SDRAM[0].EmcR2w                     = 0x00000004;
++SDRAM[0].EmcW2r                     = 0x00000005;
++SDRAM[0].EmcR2p                     = 0x00000003;
++SDRAM[0].EmcW2p                     = 0x0000000b;
++SDRAM[0].EmcRrd                     = 0x00000004;
++SDRAM[0].EmcRdRcd                   = 0x00000005;
++SDRAM[0].EmcWrRcd                   = 0x00000005;
++SDRAM[0].EmcRext                    = 0x00000001;
++SDRAM[0].EmcWdv                     = 0x00000003;
++SDRAM[0].EmcQUseExtra               = 0x00000000;
++SDRAM[0].EmcQUse                    = 0x00000004;
++SDRAM[0].EmcQRst                    = 0x00000003;
++SDRAM[0].EmcQSafe                   = 0x00000009;
++SDRAM[0].EmcRdv                     = 0x0000000c;
++SDRAM[0].EmcRefresh                 = 0x000004df;
++SDRAM[0].EmcBurstRefreshNum         = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                 = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                 = 0x00000003;
++SDRAM[0].EmcPChg2Pden               = 0x00000005;
++SDRAM[0].EmcAct2Pden                = 0x00000005;
++SDRAM[0].EmcAr2Pden                 = 0x00000001;
++SDRAM[0].EmcRw2Pden                 = 0x0000000e;
++SDRAM[0].EmcTxsr                    = 0x000000c8;
++SDRAM[0].EmcTcke                    = 0x00000003;
++SDRAM[0].EmcTfaw                    = 0x0000000f;
++SDRAM[0].EmcTrpab                   = 0x00000006;
++SDRAM[0].EmcTClkStable              = 0x0000000f;
++SDRAM[0].EmcTClkStop                = 0x00000002;
++SDRAM[0].EmcTRefBw                  = 0x00000000;
++SDRAM[0].EmcFbioCfg1                = 0x00000000;
++SDRAM[0].EmcFbioDqsibDlyMsb         = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly            = 0x2f2f2f2f;
++SDRAM[0].EmcFbioQuseDlyMsb          = 0x00000000;
++SDRAM[0].EmcFbioQuseDly             = 0x2f2f2f2f;
++SDRAM[0].EmcFbioCfg5                = 0x00000083;
++SDRAM[0].EmcFbioCfg6                = 0x00000002;
++SDRAM[0].EmcFbioSpare               = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait         = 0x00000000;
++SDRAM[0].EmcMrsResetDll             = 0x00000000;
++SDRAM[0].EmcMrsDdr2DllReset         = 0x00000100;
++SDRAM[0].EmcMrs                     = 0x00000a5a;
++SDRAM[0].EmcEmrsEmr2                = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable       = 0x00100000;
++SDRAM[0].EmcEmrsDdr2OcdCalib        = 0x00100382;
++SDRAM[0].EmcEmrs                    = 0x00100002;
++SDRAM[0].EmcMrw1                    = 0x00000000;
++SDRAM[0].EmcMrw2                    = 0x00000000;
++SDRAM[0].EmcMrw3                    = 0x00000000;
++SDRAM[0].EmcMrwResetCommand         = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait       = 0x00000000;
++SDRAM[0].EmcAdrCfg1                 = 0x00070303;
++SDRAM[0].EmcAdrCfg                  = 0x00070303;
++SDRAM[0].McEmemCfg                  = 0x00080000;
++SDRAM[0].McLowLatencyConfig         = 0x80000003;
++SDRAM[0].EmcCfg2                    = 0x00000405;
++SDRAM[0].EmcCfgDigDll               = 0x00380006;
++SDRAM[0].EmcCfgClktrim0             = 0x00000000;
++SDRAM[0].EmcCfgClktrim1             = 0x00000000;
++SDRAM[0].EmcCfgClktrim2             = 0x00000000;
++SDRAM[0].EmcCfg                     = 0x0001ff00;
++SDRAM[0].EmcDbg                     = 0x01000000;
++SDRAM[0].AhbArbitrationXbarCtrl     = 0x00010000;
++SDRAM[0].EmcDllXformDqs             = 0x00000010;
++SDRAM[0].EmcDllXformQUse            = 0x00000008;
++SDRAM[0].WarmBootWait               = 0x00000002;
++SDRAM[0].EmcCttTermCtrl             = 0x00000802;
++SDRAM[0].EmcOdtWrite                = 0x00000000;
++SDRAM[0].EmcOdtRead                 = 0x00000000;
++SDRAM[0].EmcZcalRefCnt              = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt             = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd              = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1           = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait           = 0x00000000;
++SDRAM[0].EmcDdr2Wait                = 0x00000002;
++SDRAM[0].PmcDdrPwr                  = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl    = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2   = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl    = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2   = 0x44440009;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl    = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl    = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl  = 0x07076600;
+diff --git a/tamonten/tegra20.img.cfg b/tamonten/tegra20.img.cfg
+new file mode 100644
+index 0000000..f37614d
+--- /dev/null
++++ b/tamonten/tegra20.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (C) 2013 Avionic Design GmbH
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tec/build.sh b/tec/build.sh
+new file mode 100755
+index 0000000..2a49fdd
+--- /dev/null
++++ b/tec/build.sh
+@@ -0,0 +1,27 @@
++#!/bin/sh
++
++# Copyright (C) 2013 Avionic Design GmbH
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++set -e
++set -x
++
++cbootimage -t20 -gbct \
++	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
++	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
++cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-tec.img
+-- 
+1.8.2
