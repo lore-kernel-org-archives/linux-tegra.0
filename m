@@ -1,299 +1,78 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 tegra-cbootimage-configs] Add Tegra20 Tamonten configurations
-Date: Fri,  5 Apr 2013 17:03:15 +0200
-Message-ID: <1365174195-9003-1-git-send-email-thierry.reding@avionic-design.de>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 7/9] intel: cpuidle: remove stop/start critical timings
+Date: Sun, 07 Apr 2013 22:52:44 +0200
+Message-ID: <5161DC9C.3020703@linaro.org>
+References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <1364991322-20585-7-git-send-email-daniel.lezcano@linaro.org> <3375360.P4DAA9Jd5Y@vostro.rjw.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3375360.P4DAA9Jd5Y-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, rnayak-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, santosh.shilimkar-l0cyMroinI0@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-In addition to providing the BCT configuration that is common for all
-Tegra20 Tamonten-derived boards, add scripts to build images that can
-be flashed to NAND for the Plutux, Medcom-Wide and TEC boards.
+On 04/05/2013 12:31 AM, Rafael J. Wysocki wrote:
+> On Wednesday, April 03, 2013 02:15:20 PM Daniel Lezcano wrote:
+>> The start/stop_critical_timings are called from arch/x86/kernel/proc=
+ess.c
+>> in the cpu_idle loop function.
+>>
+>> Remove the ones in the cpuidle driver.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>=20
+> For this one I need an ACK from Len.
+>=20
+> Len, any objections?
 
-Signed-off-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
-Changes in v2:
-- move board directories to top-level, use common Tamonten files
-- keep BCT and image configurations in tamonten directory
 
- medcom-wide/build.sh                               |  27 +++++
- plutux/build.sh                                    |  27 +++++
- ...onten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg | 132 +++++++++++++++++++++
- tamonten/tegra20.img.cfg                           |  22 ++++
- tec/build.sh                                       |  27 +++++
- 5 files changed, 235 insertions(+)
- create mode 100755 medcom-wide/build.sh
- create mode 100755 plutux/build.sh
- create mode 100644 tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
- create mode 100644 tamonten/tegra20.img.cfg
- create mode 100755 tec/build.sh
+Len ? ping ...
 
-diff --git a/medcom-wide/build.sh b/medcom-wide/build.sh
-new file mode 100755
-index 0000000..9fa70e5
---- /dev/null
-+++ b/medcom-wide/build.sh
-@@ -0,0 +1,27 @@
-+#!/bin/sh
-+
-+# Copyright (C) 2013 Avionic Design GmbH
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+set -e
-+set -x
-+
-+cbootimage -t20 -gbct \
-+	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
-+	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
-+cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-medcom-wide.img
-diff --git a/plutux/build.sh b/plutux/build.sh
-new file mode 100755
-index 0000000..382e451
---- /dev/null
-+++ b/plutux/build.sh
-@@ -0,0 +1,27 @@
-+#!/bin/sh
-+
-+# Copyright (C) 2013 Avionic Design GmbH
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+set -e
-+set -x
-+
-+cbootimage -t20 -gbct \
-+	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
-+	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
-+cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-plutux.img
-diff --git a/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg b/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
-new file mode 100644
-index 0000000..16ff9af
---- /dev/null
-+++ b/tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg
-@@ -0,0 +1,132 @@
-+# Copyright (C) 2011-2013 Avionic Design GmbH
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+Version       = 0x00020001;
-+BlockSize     = 0x00020000;
-+PageSize      = 0x00000800;
-+PartitionSize = 0x01000000;
-+OdmData       = 0x2b2d8011;
-+
-+DevType[0] = NvBootDevType_Nand;
-+DeviceParam[0].NandParams.ClockDivider  = 0x00000004;
-+DeviceParam[0].NandParams.NandTiming2   = 0x0000000a;
-+DeviceParam[0].NandParams.NandTiming    = 0x3b269213;
-+DeviceParam[0].NandParams.BlockSizeLog2 = 0x00000000;
-+DeviceParam[0].NandParams.PageSizeLog2  = 0x00000000;
-+
-+SDRAM[0].MemoryType                 = NvBootMemoryType_Ddr2;
-+SDRAM[0].PllMChargePumpSetupControl = 0x00000008;
-+SDRAM[0].PllMLoopFilterSetupControl = 0x00000000;
-+SDRAM[0].PllMInputDivider           = 0x0000000c;
-+SDRAM[0].PllMFeedbackDivider        = 0x0000029a;
-+SDRAM[0].PllMPostDivider            = 0x00000000;
-+SDRAM[0].PllMStableTime             = 0x0000012c;
-+SDRAM[0].EmcClockDivider            = 0x00000001;
-+SDRAM[0].EmcAutoCalInterval         = 0x00000000;
-+SDRAM[0].EmcAutoCalConfig           = 0xe0a61111;
-+SDRAM[0].EmcAutoCalWait             = 0x00000000;
-+SDRAM[0].EmcPinProgramWait          = 0x00000000;
-+SDRAM[0].EmcRc                      = 0x00000014;
-+SDRAM[0].EmcRfc                     = 0x00000041;
-+SDRAM[0].EmcRas                     = 0x0000000f;
-+SDRAM[0].EmcRp                      = 0x00000005;
-+SDRAM[0].EmcR2w                     = 0x00000004;
-+SDRAM[0].EmcW2r                     = 0x00000005;
-+SDRAM[0].EmcR2p                     = 0x00000003;
-+SDRAM[0].EmcW2p                     = 0x0000000b;
-+SDRAM[0].EmcRrd                     = 0x00000004;
-+SDRAM[0].EmcRdRcd                   = 0x00000005;
-+SDRAM[0].EmcWrRcd                   = 0x00000005;
-+SDRAM[0].EmcRext                    = 0x00000001;
-+SDRAM[0].EmcWdv                     = 0x00000003;
-+SDRAM[0].EmcQUseExtra               = 0x00000000;
-+SDRAM[0].EmcQUse                    = 0x00000004;
-+SDRAM[0].EmcQRst                    = 0x00000003;
-+SDRAM[0].EmcQSafe                   = 0x00000009;
-+SDRAM[0].EmcRdv                     = 0x0000000c;
-+SDRAM[0].EmcRefresh                 = 0x000004df;
-+SDRAM[0].EmcBurstRefreshNum         = 0x00000000;
-+SDRAM[0].EmcPdEx2Wr                 = 0x00000003;
-+SDRAM[0].EmcPdEx2Rd                 = 0x00000003;
-+SDRAM[0].EmcPChg2Pden               = 0x00000005;
-+SDRAM[0].EmcAct2Pden                = 0x00000005;
-+SDRAM[0].EmcAr2Pden                 = 0x00000001;
-+SDRAM[0].EmcRw2Pden                 = 0x0000000e;
-+SDRAM[0].EmcTxsr                    = 0x000000c8;
-+SDRAM[0].EmcTcke                    = 0x00000003;
-+SDRAM[0].EmcTfaw                    = 0x0000000f;
-+SDRAM[0].EmcTrpab                   = 0x00000006;
-+SDRAM[0].EmcTClkStable              = 0x0000000f;
-+SDRAM[0].EmcTClkStop                = 0x00000002;
-+SDRAM[0].EmcTRefBw                  = 0x00000000;
-+SDRAM[0].EmcFbioCfg1                = 0x00000000;
-+SDRAM[0].EmcFbioDqsibDlyMsb         = 0x00000000;
-+SDRAM[0].EmcFbioDqsibDly            = 0x2f2f2f2f;
-+SDRAM[0].EmcFbioQuseDlyMsb          = 0x00000000;
-+SDRAM[0].EmcFbioQuseDly             = 0x2f2f2f2f;
-+SDRAM[0].EmcFbioCfg5                = 0x00000083;
-+SDRAM[0].EmcFbioCfg6                = 0x00000002;
-+SDRAM[0].EmcFbioSpare               = 0x00000000;
-+SDRAM[0].EmcMrsResetDllWait         = 0x00000000;
-+SDRAM[0].EmcMrsResetDll             = 0x00000000;
-+SDRAM[0].EmcMrsDdr2DllReset         = 0x00000100;
-+SDRAM[0].EmcMrs                     = 0x00000a5a;
-+SDRAM[0].EmcEmrsEmr2                = 0x00200000;
-+SDRAM[0].EmcEmrsEmr3                = 0x00300000;
-+SDRAM[0].EmcEmrsDdr2DllEnable       = 0x00100000;
-+SDRAM[0].EmcEmrsDdr2OcdCalib        = 0x00100382;
-+SDRAM[0].EmcEmrs                    = 0x00100002;
-+SDRAM[0].EmcMrw1                    = 0x00000000;
-+SDRAM[0].EmcMrw2                    = 0x00000000;
-+SDRAM[0].EmcMrw3                    = 0x00000000;
-+SDRAM[0].EmcMrwResetCommand         = 0x00000000;
-+SDRAM[0].EmcMrwResetNInitWait       = 0x00000000;
-+SDRAM[0].EmcAdrCfg1                 = 0x00070303;
-+SDRAM[0].EmcAdrCfg                  = 0x00070303;
-+SDRAM[0].McEmemCfg                  = 0x00080000;
-+SDRAM[0].McLowLatencyConfig         = 0x80000003;
-+SDRAM[0].EmcCfg2                    = 0x00000405;
-+SDRAM[0].EmcCfgDigDll               = 0x00380006;
-+SDRAM[0].EmcCfgClktrim0             = 0x00000000;
-+SDRAM[0].EmcCfgClktrim1             = 0x00000000;
-+SDRAM[0].EmcCfgClktrim2             = 0x00000000;
-+SDRAM[0].EmcCfg                     = 0x0001ff00;
-+SDRAM[0].EmcDbg                     = 0x01000000;
-+SDRAM[0].AhbArbitrationXbarCtrl     = 0x00010000;
-+SDRAM[0].EmcDllXformDqs             = 0x00000010;
-+SDRAM[0].EmcDllXformQUse            = 0x00000008;
-+SDRAM[0].WarmBootWait               = 0x00000002;
-+SDRAM[0].EmcCttTermCtrl             = 0x00000802;
-+SDRAM[0].EmcOdtWrite                = 0x00000000;
-+SDRAM[0].EmcOdtRead                 = 0x00000000;
-+SDRAM[0].EmcZcalRefCnt              = 0x00000000;
-+SDRAM[0].EmcZcalWaitCnt             = 0x00000000;
-+SDRAM[0].EmcZcalMrwCmd              = 0x00000000;
-+SDRAM[0].EmcMrwZqInitDev0           = 0x00000000;
-+SDRAM[0].EmcMrwZqInitDev1           = 0x00000000;
-+SDRAM[0].EmcMrwZqInitWait           = 0x00000000;
-+SDRAM[0].EmcDdr2Wait                = 0x00000002;
-+SDRAM[0].PmcDdrPwr                  = 0x00000001;
-+SDRAM[0].ApbMiscGpXm2CfgAPadCtrl    = 0x77ffc000;
-+SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2   = 0x08080079;
-+SDRAM[0].ApbMiscGpXm2CfgCPadCtrl    = 0x77fffff0;
-+SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2   = 0x44440009;
-+SDRAM[0].ApbMiscGpXm2CfgDPadCtrl    = 0x77fffff0;
-+SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl  = 0x77ffc000;
-+SDRAM[0].ApbMiscGpXm2CompPadCtrl    = 0x01f1f008;
-+SDRAM[0].ApbMiscGpXm2VttGenPadCtrl  = 0x07076600;
-diff --git a/tamonten/tegra20.img.cfg b/tamonten/tegra20.img.cfg
-new file mode 100644
-index 0000000..f37614d
---- /dev/null
-+++ b/tamonten/tegra20.img.cfg
-@@ -0,0 +1,22 @@
-+# Copyright (C) 2013 Avionic Design GmbH
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+Version       = 0x00020001;
-+Bctcopy       = 1;
-+Bctfile       = Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct;
-+BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
-diff --git a/tec/build.sh b/tec/build.sh
-new file mode 100755
-index 0000000..2a49fdd
---- /dev/null
-+++ b/tec/build.sh
-@@ -0,0 +1,27 @@
-+#!/bin/sh
-+
-+# Copyright (C) 2013 Avionic Design GmbH
-+#
-+# This software is provided 'as-is', without any express or implied
-+# warranty. In no event will the authors be held liable for any damages
-+# arising from the use of this software.
-+#
-+# Permission is granted to anyone to use this software for any purpose,
-+# including commercial applications, and to alter it and redistribute it
-+# freely, subject to the following restrictions:
-+#
-+# 1. The origin of this software must not be misrepresented; you must not
-+#    claim that you wrote the original software. If you use this software
-+#    in a product, an acknowledgment in the product documentation would be
-+#    appreciated but is not required.
-+# 2. Altered source versions must be plainly marked as such, and must not be
-+#    misrepresented as being the original software.
-+# 3. This notice may not be removed or altered from any source distribution.
-+
-+set -e
-+set -x
-+
-+cbootimage -t20 -gbct \
-+	../tamonten/Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct.cfg \
-+	Tamonten_T2_512MB_MEM2G16D2D-ABG-25_366MHz.bct
-+cbootimage -t20 ../tamonten/tegra20.img.cfg tegra20-tec.img
--- 
-1.8.2
+>> ---
+>>  drivers/idle/intel_idle.c |    3 ---
+>>  1 file changed, 3 deletions(-)
+>>
+>> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+>> index 5d66750..c99c31e 100644
+>> --- a/drivers/idle/intel_idle.c
+>> +++ b/drivers/idle/intel_idle.c
+>> @@ -339,7 +339,6 @@ static int intel_idle(struct cpuidle_device *dev=
+,
+>>  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
+>>  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);
+>> =20
+>> -	stop_critical_timings();
+>>  	if (!need_resched()) {
+>> =20
+>>  		__monitor((void *)&current_thread_info()->flags, 0, 0);
+>> @@ -348,8 +347,6 @@ static int intel_idle(struct cpuidle_device *dev=
+,
+>>  			__mwait(eax, ecx);
+>>  	}
+>> =20
+>> -	start_critical_timings();
+>> -
+>>  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
+>>  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
+>> =20
+>>
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+  * English - detected
+  * English
+  * French
+
+  * English
+  * French
+
+ <javascript:void(0);> <#>
