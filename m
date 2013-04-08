@@ -1,77 +1,28 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/9] ARM: cpuidle: remove useless declaration
-Date: Mon, 08 Apr 2013 22:53:54 +0200
-Message-ID: <51632E62.2060300@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <515C1F3B.5040008@linaro.org> <3144551.suxBcA9vOB@vostro.rjw.lan>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Boot hang due to "pipe: fold file_operations instances in one" in
+ next-20130408
+Date: Mon, 08 Apr 2013 15:19:39 -0600
+Message-ID: <5163346B.5090602@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <3144551.suxBcA9vOB@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, deepthi@linux.vnet.ibm.com, linaro-kernel@lists.linaro.org, swarren@wwwdotorg.org, patches@linaro.org, linux-pm@vger.kernel.org, rnayak@ti.com, nsekhar@ti.com, josephl@nvidia.com, linux-tegra@vger.kernel.org, horms+renesas@verge.net.au, linux-arm-kernel@lists.infradead.org, lenb@kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
+Cc: "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/08/2013 10:50 PM, Rafael J. Wysocki wrote:
-> On Wednesday, April 03, 2013 02:23:23 PM Daniel Lezcano wrote:
->> On 04/03/2013 02:15 PM, Daniel Lezcano wrote:
->>> The noop functions code is not necessary because the header file is
->>> included in files which are compiled when CONFIG_CPU_IDLE is on.
->>>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>
->> I have been involved in the development of this file. I know Rob is =
-no
->> longer working on this neither monitoring the code.
->>
->> Russell are you ok with this patch ? Rafael needs your ack to take t=
-his
->> patch into its tree.
->=20
-> Well, since nothing in the cpuidle directory seems to really depend o=
-n this
-> patch, my suggestion is to merge it through the ARM tree when suitabl=
-e.
+Al,
 
-Ok.
+I'm seeing a boot hang on Tegra in next-20130408. Even sysrq on the
+serial console doesn't work, yet I think cpuidle is still running since
+the LED that shows CPU power is flickering.
 
+git bisect points at commit 9984d73 "pipe: fold file_operations
+instances in one". Reverting
+the-merge-of-the-branch-that-contains-this-patch from next-20130408
+certainly solves the problem; reverting just that one patch is a bit
+painful since it's in the middle of a bunch of other cleanup.
 
->>> ---
->>>  arch/arm/include/asm/cpuidle.h |    7 +------
->>>  1 file changed, 1 insertion(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm/include/asm/cpuidle.h b/arch/arm/include/asm/=
-cpuidle.h
->>> index 2fca60a..7367787 100644
->>> --- a/arch/arm/include/asm/cpuidle.h
->>> +++ b/arch/arm/include/asm/cpuidle.h
->>> @@ -1,13 +1,8 @@
->>>  #ifndef __ASM_ARM_CPUIDLE_H
->>>  #define __ASM_ARM_CPUIDLE_H
->>> =20
->>> -#ifdef CONFIG_CPU_IDLE
->>>  extern int arm_cpuidle_simple_enter(struct cpuidle_device *dev,
->>> -		struct cpuidle_driver *drv, int index);
->>> -#else
->>> -static inline int arm_cpuidle_simple_enter(struct cpuidle_device *=
-dev,
->>> -		struct cpuidle_driver *drv, int index) { return -ENODEV; }
->>> -#endif
->>> +				    struct cpuidle_driver *drv, int index);
->>> =20
->>>  /* Common ARM WFI state */
->>>  #define ARM_CPUIDLE_WFI_STATE_PWR(p) {\
->>
->>
->>
-
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Do you have any idea what might be wrong? I can't see anything obvious
+in the patch.
