@@ -1,83 +1,103 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 7/9] intel: cpuidle: remove stop/start critical timings
-Date: Mon, 08 Apr 2013 19:40:37 +0200
-Message-ID: <51630115.6040205@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <1364991322-20585-7-git-send-email-daniel.lezcano@linaro.org> <3375360.P4DAA9Jd5Y@vostro.rjw.lan> <5161DC9C.3020703@linaro.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: pcie: Add tegra3 support
+Date: Mon, 08 Apr 2013 12:11:30 -0600
+Message-ID: <51630852.1000107@wwwdotorg.org>
+References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5161DC9C.3020703-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
-Cc: Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, rnayak-l0cyMroinI0@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, ldewangan@nvidia.com, bhelgaas@google.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/07/2013 10:52 PM, Daniel Lezcano wrote:
-> On 04/05/2013 12:31 AM, Rafael J. Wysocki wrote:
->> On Wednesday, April 03, 2013 02:15:20 PM Daniel Lezcano wrote:
->>> The start/stop_critical_timings are called from arch/x86/kernel/pro=
-cess.c
->>> in the cpu_idle loop function.
->>>
->>> Remove the ones in the cpuidle driver.
->>>
->>> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> For this one I need an ACK from Len.
->>
->> Len, any objections?
->
-> Len ? ping ...
+On 04/08/2013 09:41 AM, Jay Agarwal wrote:
+> Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+> 
+> - Enable pcie root port 2 for cardhu
+> - Make private data structure for each SOC
+> - Add required tegra3 clocks and regulators
+> - Add tegra3 specific code in enable controller
+> - Modify clock tree to get clocks based on device
+> - Based on git://gitorious.org/thierryreding/linux.git
 
-Rafael,
+There are quite a few capitalization errors above. The correct versions
+are: PCIe, Cardhu, SoC, Tegra.
 
-this patch is not dependent from any patch in the series, is it possibl=
-e
-you apply the patchset except this patch ?
+Upstream uses engineering names not marketing names, so Tegra30 not Tegra3.
 
-May be you can apply it later when Len acks it, or I can resend it, no =
-?
+>  drivers/clk/tegra/clk-tegra30.c |   12 ++--
+>  drivers/pci/host/pci-tegra.c    |  146 ++++++++++++++++++++++++++++++++++-----
 
-I have a lot of code consolidation patches awaiting for this patchset t=
-o
-be merged.
+This patch touches two unrelated drivers. There is no dependency between
+the changes, since PCIe doesn't work yet on Tegra30, so there's no need
+for those unrelated changes to be part of the same patch. Please split
+them into separate patches. The clk patch can likely be applied very
+soon, without waiting for any of the other PCIe patches.
 
-Thanks
-  -- Daniel
+> - Modify clock tree to get clocks based on device
 
-> ---
->  drivers/idle/intel_idle.c |    3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 5d66750..c99c31e 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -339,7 +339,6 @@ static int intel_idle(struct cpuidle_device *dev,
->  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
->  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);
-> =20
-> -	stop_critical_timings();
->  	if (!need_resched()) {
-> =20
->  		__monitor((void *)&current_thread_info()->flags, 0, 0);
-> @@ -348,8 +347,6 @@ static int intel_idle(struct cpuidle_device *dev,
->  			__mwait(eax, ecx);
->  	}
-> =20
-> -	start_critical_timings();
-> -
->  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
->  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
-> =20
->
->
+That description doesn't seem to describe the change made to
+clk-tegra30.c. Can you please include more details re: what the patch is
+doing and why.
 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+> +/* used to differente tegra chips code */
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+differentiate
+
+> +struct tegra_pcie_soc_data {
+...
+> +	bool need_avdd_supply;
+> +	bool need_cml0_clk;
+
+s/need/has/ would be better.
+
+> @@ -749,6 +778,11 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>  	struct tegra_pcie_port *port;
+>  	unsigned int timeout;
+>  	unsigned long value;
+> +	struct tegra_pcie_soc_data *soc = pcie->soc_data;
+> +
+> +	/* power down to PCIe slot clock bias pad */
+> +	if (soc->pex_bias_ctrl)
+> +		afi_writel(pcie, 0, AFI_PEXBIAS_CTRL_0);
+
+Power down when /enabling/ a controller?
+
+>  	err = regulator_disable(pcie->pex_clk_supply);
+>  	if (err < 0)
+> -		dev_err(pcie->dev, "failed to disable pex-clk regulator: %d\n",
+> +		dev_warn(pcie->dev, "failed to disable pex-clk regulator: %d\n",
+>  			err);
+>  
+>  	err = regulator_disable(pcie->vdd_supply);
+>  	if (err < 0)
+> -		dev_err(pcie->dev, "failed to disable VDD regulator: %d\n",
+> +		dev_warn(pcie->dev, "failed to disable VDD regulator: %d\n",
+>  			err);
+
+Please explain why that change is correct. If the regulators only exist
+on Tegra20, please represent that fact in the SoC data. Regulators must
+always exist, so enable/disable should never fail due to missing
+regulators. Actual run-time failures seem like something that really is
+an error.
+
+> @@ -1489,6 +1597,11 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>  	INIT_LIST_HEAD(&pcie->busses);
+>  	INIT_LIST_HEAD(&pcie->ports);
+>  	pcie->dev = &pdev->dev;
+> +	match = of_match_device(tegra_pcie_of_match, &pdev->dev);
+> +	if (match)
+> +		pcie->soc_data = (struct tegra_pcie_soc_data *)match->data;
+> +	else
+> +		return -ENODEV;
+
+that would be more idiomatic as:
+
+if (!match)
+	return -ENODEV;
+pcie->soc_data = ...;
