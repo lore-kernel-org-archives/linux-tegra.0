@@ -1,78 +1,79 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 7/9] intel: cpuidle: remove stop/start critical timings
-Date: Sun, 07 Apr 2013 22:52:44 +0200
-Message-ID: <5161DC9C.3020703@linaro.org>
-References: <1364991322-20585-1-git-send-email-daniel.lezcano@linaro.org> <1364991322-20585-7-git-send-email-daniel.lezcano@linaro.org> <3375360.P4DAA9Jd5Y@vostro.rjw.lan>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH -next v2] spi: tegra: slink: make local symbols static
+Date: Mon, 8 Apr 2013 13:41:21 +0100
+Message-ID: <20130408124120.GJ9243@opensource.wolfsonmicro.com>
+References: <CAPgLHd-sTt5eKoiLb13dWHipT6Q46qCbG=b9mCYNq=Q7YLmGVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3375360.P4DAA9Jd5Y-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Len Brown <len.brown-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, lenb-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, rnayak-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, horms+renesas-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, santosh.shilimkar-l0cyMroinI0@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, deepthi-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============4054153253478420280=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAPgLHd-sTt5eKoiLb13dWHipT6Q46qCbG=b9mCYNq=Q7YLmGVA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/05/2013 12:31 AM, Rafael J. Wysocki wrote:
-> On Wednesday, April 03, 2013 02:15:20 PM Daniel Lezcano wrote:
->> The start/stop_critical_timings are called from arch/x86/kernel/proc=
-ess.c
->> in the cpu_idle loop function.
->>
->> Remove the ones in the cpuidle driver.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+--===============4054153253478420280==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5mZBmBd1ZkdwT1ny"
+Content-Disposition: inline
+
+
+--5mZBmBd1ZkdwT1ny
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Apr 05, 2013 at 09:45:36PM +0800, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 >=20
-> For this one I need an ACK from Len.
->=20
-> Len, any objections?
+> Neither tegra20_spi_cdata nor tegra30_spi_cdata are used outside this
+> file so they can, and should, be static.
 
+Applied, thanks.
 
-Len ? ping ...
+--5mZBmBd1ZkdwT1ny
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->> ---
->>  drivers/idle/intel_idle.c |    3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
->> index 5d66750..c99c31e 100644
->> --- a/drivers/idle/intel_idle.c
->> +++ b/drivers/idle/intel_idle.c
->> @@ -339,7 +339,6 @@ static int intel_idle(struct cpuidle_device *dev=
-,
->>  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
->>  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &cpu);
->> =20
->> -	stop_critical_timings();
->>  	if (!need_resched()) {
->> =20
->>  		__monitor((void *)&current_thread_info()->flags, 0, 0);
->> @@ -348,8 +347,6 @@ static int intel_idle(struct cpuidle_device *dev=
-,
->>  			__mwait(eax, ecx);
->>  	}
->> =20
->> -	start_critical_timings();
->> -
->>  	if (!(lapic_timer_reliable_states & (1 << (cstate))))
->>  		clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &cpu);
->> =20
->>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
+iQIcBAEBAgAGBQJRYrrnAAoJELSic+t+oim9tTEP/3RYhLvSavrpTxzdG56MBFPU
+DgCvfahkXQJko7Hb5gdZJoAkFQuC96/is+rI6xO3lzb4rOsVnE6EL+4agy6mh1TV
+b5Yg5k7PoY2yFg+iM1oBo8vXfIBw5+0VD4Rz7WWQXlRZS+CRRgR+naRlikeenx/E
+ZyNnU+vJnvnlmRVbRtqKLQ4Tvwp2/rDR0wg57lOImTOOWZ4YPKSRwzwezgi8BeLQ
+WAKIinGDVdzC1D09nBMGU1LXNYJ94QW4gHlW7HgKCJ5CA6iF+27Znokn8IVYSCrT
+sdGAEAUZvpNI7RRO6PcwbCrTL5aig0RnV/wTgaa7vLRzhN01K156VqunbGKNHfm1
+/fgUE7LyDNHOiScVx4x9IKbhqZQcdXX/fLmsObFhokXi0i1rD0NXmrw7dGBOZv5u
+IvcZcbTIGZ/kkLiuKMsG4AVeSKjbgqqGB+Ped5W238YqTHviQ4cfHbhWLQ8EjUxu
+Z02oWTaSwso6ErtRLFsUqxPaoM9f70/tkCFJUU1kj7DJFmDZEINqguh5WThS8kpP
+VwnADHOp3FcHbN0JWyhWKIu3MtmFGMjrqzPYkmYQu02Q9WVolG3eeJGzxxphnwBS
+3/C2qofeNMMN9lg/TT6qw4kgC4+GA8e4H/n9rg7TMJg6pH3VP/Sdtxl8PsEDpHkQ
+lw1y7kLbPj/EoJ45yV9F
+=pNwo
+-----END PGP SIGNATURE-----
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+--5mZBmBd1ZkdwT1ny--
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--===============4054153253478420280==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-  * English - detected
-  * English
-  * French
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
 
-  * English
-  * French
-
- <javascript:void(0);> <#>
+--===============4054153253478420280==--
