@@ -1,36 +1,44 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/3] ARM: tegra: pcie: Add tegra3 support
-Date: Mon, 08 Apr 2013 12:21:47 -0600
-Message-ID: <51630ABB.1020200@wwwdotorg.org>
-References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
+Subject: Re: [PATCH 2/3] ARM: dts: tegra: Correct PCIe entry
+Date: Mon, 08 Apr 2013 12:27:00 -0600
+Message-ID: <51630BF4.6000605@wwwdotorg.org>
+References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com> <1365435688-4179-2-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1365435688-4179-2-git-send-email-jagarwal@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Jay Agarwal <jagarwal@nvidia.com>
 Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, ldewangan@nvidia.com, bhelgaas@google.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 On 04/08/2013 09:41 AM, Jay Agarwal wrote:
 > Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
-> 
-> - Enable pcie root port 2 for cardhu
-> - Make private data structure for each SOC
-> - Add required tegra3 clocks and regulators
-> - Add tegra3 specific code in enable controller
-> - Modify clock tree to get clocks based on device
-> - Based on git://gitorious.org/thierryreding/linux.git
 
-A couple more points on this patch:
+Your s-o-b line should be below the patch description, not above it.
+Please see Documentation/SubmittingPatches.
 
-* You didn't mention that this series is based on Thierry's
-work-in-progress tree, and not something immediately destined for
-upstream. As such, only Thierry is expected to actually apply any of
-these patches.
+I also don't see a --- line between the patch description and diffstat.
+How are you generating these patch emails? Please see our internal wiki,
+or other git documentation.
 
-* Your changes to the Tegra PCIe driver require that device tree include
-extra clocks and regulators. You need to update
-Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt to
-describe these new requirements.
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+
+> -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
+> +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
+
+Can you please explain more about this change?
+
+I see the Tegra clock driver provides both a "cml0" and a "cml1" clock.
+Are both of those used for PCIe?
+
+If so, then why doesn't the driver and this DT change include both cml0
+and cml1?
+
+If not, then please note that the clock-names property doesn't have to
+match the name of the clock at the clock provider. This property names
+the clock inputs to the HW module. Hence, if the PCIe module only uses a
+single CML clock, it can quite legitimately name its clock input just
+"cml" rather than "cml0". In this case, you wouldn't need to make this
+change to the DT.
