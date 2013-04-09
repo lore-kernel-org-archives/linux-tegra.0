@@ -1,42 +1,44 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v9b 10/14] ARM: tegra: Define Tegra114 CAR binding
-Date: Mon, 08 Apr 2013 21:25:37 -0700
-Message-ID: <20130409042537.14359.94241@quantum>
-References: <1365097717-11874-1-git-send-email-pdeschrijver@nvidia.com>
- <515DBE24.3090501@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 2/3] ARM: dts: tegra: Correct PCIe entry
+Date: Tue, 9 Apr 2013 11:30:50 +0300
+Message-ID: <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
+References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
+ <1365435688-4179-2-git-send-email-jagarwal@nvidia.com>
+ <51630BF4.6000605@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <515DBE24.3090501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <51630BF4.6000605@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Jay Agarwal <jagarwal@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-04-04 10:53:40)
-> On 04/04/2013 11:48 AM, Peter De Schrijver wrote:
-> > The device tree binding models Tegra114 CAR (Clock And Reset) as a single
-> > monolithic clock provider.
-> > 
-> > --
-> > 
-> > Mike,
-> > 
-> > This is a small binding doc update only. Hence I didn't make an entire new
-> > patch series, but just an updated version of this patch. Please apply this
-> > instead of '[PATCH v9 10/14] ARM: tegra: Define Tegra114 CAR binding'
-> > (http://www.spinics.net/lists/linux-tegra/msg10910.html).
-> > The rest of the series is not affected. 
+On Mon, Apr 08, 2013 at 08:27:00PM +0200, Stephen Warren wrote:
+> On 04/08/2013 09:41 AM, Jay Agarwal wrote:
+> > Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
 > 
-> I believe I was planning to take this series through the Tegra tree, so
-> I'm more looking for Mikes ack than for him to apply this.
+> Your s-o-b line should be below the patch description, not above it.
+> Please see Documentation/SubmittingPatches.
 > 
-> If that's changed, there are some other Tegra clock bug-fixes that'd
-> benefit from moving to the clock tree.
+> I also don't see a --- line between the patch description and diffstat.
+> How are you generating these patch emails? Please see our internal wiki,
+> or other git documentation.
+> 
+> > diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> 
+> > -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
+> > +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
+> 
+> Can you please explain more about this change?
+> 
+> I see the Tegra clock driver provides both a "cml0" and a "cml1" clock.
+> Are both of those used for PCIe?
+> 
 
-I forgot to reply to this one last week with the rest of the v9 series.
-This patch update also has my ack.
+cml0 is used for pcie and cml1 is used for sata.
 
-Regards,
-Mike
+Cheers,
+
+Peter.
