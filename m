@@ -1,35 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [GIT PULL 5/8] ARM: tegra: clock driver development
-Date: Tue, 09 Apr 2013 09:38:05 -0600
-Message-ID: <516435DD.6060006@wwwdotorg.org>
-References: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org> <1365181426-11547-5-git-send-email-swarren@wwwdotorg.org> <201304091714.53220.arnd@arndb.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/3] ARM: dts: tegra: Correct PCIe entry
+Date: Tue, 09 Apr 2013 09:46:04 -0600
+Message-ID: <516437BC.8060707@wwwdotorg.org>
+References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com> <1365435688-4179-2-git-send-email-jagarwal@nvidia.com> <51630BF4.6000605@wwwdotorg.org> <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201304091714.53220.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Jay Agarwal <jagarwal@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/09/2013 09:14 AM, Arnd Bergmann wrote:
-> On Friday 05 April 2013, Stephen Warren wrote:
->> This branch contains most fixes and enhancements to the Tegra common
->> clock driver. The main new feature is a driver for Tegra114, which
->> coupled with later device tree changes enables many devices on that
->> chip, such as MMC, I2C, etc.
+On 04/09/2013 02:30 AM, Peter De Schrijver wrote:
+> On Mon, Apr 08, 2013 at 08:27:00PM +0200, Stephen Warren wrote:
+>> On 04/08/2013 09:41 AM, Jay Agarwal wrote:
+>>> Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
 >>
->> This branch depends on a patch in:
+>> Your s-o-b line should be below the patch description, not above it.
+>> Please see Documentation/SubmittingPatches.
 >>
->> git://git.linaro.org/people/mturquette/linux.git clk-for-3.10
+>> I also don't see a --- line between the patch description and diffstat.
+>> How are you generating these patch emails? Please see our internal wiki,
+>> or other git documentation.
+>>
+>>> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+>>
+>>> -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
+>>> +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
+>>
+>> Can you please explain more about this change?
+>>
+>> I see the Tegra clock driver provides both a "cml0" and a "cml1" clock.
+>> Are both of those used for PCIe?
+>>
 > 
-> Pulled into next/drivers branch, and noted down the dependency.
-> 
-> As a general recommendation, it is nicer if you can prepare a
-> separate branch with the dependency, even if it's just one patch,
-> and have that pulled into both maintainer trees, rather than
-> having us add the entire set of clk changes as a dependency.
+> cml0 is used for pcie and cml1 is used for sata.
 
-Yes, I did ask for that to happen repeatedly, but Mike forgot when
-applying the patch to his tree.
+OK, so the PCIe drivers' clock-names property may as well contain just
+cml then. Same for SATA. The clock name at the provider isn't relevant.
