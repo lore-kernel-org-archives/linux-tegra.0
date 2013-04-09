@@ -1,42 +1,43 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 2/3] ARM: dts: tegra: Correct PCIe entry
-Date: Tue, 09 Apr 2013 09:46:04 -0600
-Message-ID: <516437BC.8060707@wwwdotorg.org>
-References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com> <1365435688-4179-2-git-send-email-jagarwal@nvidia.com> <51630BF4.6000605@wwwdotorg.org> <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 6/8] ARM: tegra: device tree changes
+Date: Tue, 9 Apr 2013 17:55:04 +0200
+Message-ID: <201304091755.04661.arnd@arndb.de>
+References: <1365181426-11547-1-git-send-email-swarren@wwwdotorg.org>
+ <1365181426-11547-6-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Jay Agarwal <jagarwal@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1365181426-11547-6-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, arm@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/09/2013 02:30 AM, Peter De Schrijver wrote:
-> On Mon, Apr 08, 2013 at 08:27:00PM +0200, Stephen Warren wrote:
->> On 04/08/2013 09:41 AM, Jay Agarwal wrote:
->>> Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
->>
->> Your s-o-b line should be below the patch description, not above it.
->> Please see Documentation/SubmittingPatches.
->>
->> I also don't see a --- line between the patch description and diffstat.
->> How are you generating these patch emails? Please see our internal wiki,
->> or other git documentation.
->>
->>> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
->>
->>> -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
->>> +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
->>
->> Can you please explain more about this change?
->>
->> I see the Tegra clock driver provides both a "cml0" and a "cml1" clock.
->> Are both of those used for PCIe?
->>
+On Friday 05 April 2013, Stephen Warren wrote:
+> This branch contains the majority of the device tree changes for Tegra.
+> Highlights include:
 > 
-> cml0 is used for pcie and cml1 is used for sata.
+> * Many changes for Tegra114, and the Dalmore board, to enable pinctrl,
+>   SDHCI/MMC, PWM, DMA, I2C, KBC, SPI, battery, regulators.
+> * Adding or enabling suspend wakeup sources on many boards, and adding
+>   suspend timing parameters, to support the system suspend patches.
+> * Adding clocks to the audio-related nodes, so that in 3.11, the audio
+>   driver can pull these clocks from device tree rather than hard-coding
+>   clock names.
+> * Some small DT fixes/cleanup.
+> 
+> This branch is based on the previous clk pull request.
 
-OK, so the PCIe drivers' clock-names property may as well contain just
-cml then. Same for SATA. The clock name at the provider isn't relevant.
+I ended up doing a next/dt2 branch for this, since the mxs tree has the
+same kind of dependency.
+
+	Arnd
