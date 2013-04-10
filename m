@@ -1,57 +1,56 @@
-From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] cbootimage: Re-organize directory structure
-Date: Wed, 10 Apr 2013 06:57:58 +0200
-Message-ID: <20130410045758.GA19828@avionic-0098.mockup.avionic-design.de>
-References: <1365546213-13253-1-git-send-email-swarren@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/2] ARM: tegra: pluto: populate key mapping
+Date: Wed, 10 Apr 2013 17:17:34 +0530
+Message-ID: <1365594454-20614-2-git-send-email-ldewangan@nvidia.com>
+References: <1365594454-20614-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1365546213-13253-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1365594454-20614-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Keys on Pluto interfaced through Tegra KBC controller
+in key matrix topology.
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the key mapping for the keys
 
-On Tue, Apr 09, 2013 at 04:23:33PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> With the increasing number of boards and vendors supported, create a
-> directory hierarchy to organize things. The hierarchy is
-> ${soc}/${vendor}/${board}
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+The system is booted on Pluto with the fastboot.
 
-I like that very much!
+ arch/arm/boot/dts/tegra114-pluto.dts |   17 +++++++++++++++++
+ 1 files changed, 17 insertions(+), 0 deletions(-)
 
-Reviewed-by: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRZPFWAAoJEN0jrNd/PrOhUawP/RfGuNbGkRuXKK/XTt+djPAG
-RbPxfVVoX7JI2F7QqswvV2VFVVWxkNTnM6ROQwWBNK8UZOu0qfxSs1Gw0jSyYHGw
-rcBOnKo76LUng/jDrtWdl+vs/Ze2bX1wuIx8bPMac3oVHCNOFCTP+FKEFPkNUVTQ
-Nsq8aW35ofvgXk1sJq/k/d7ndz8JfPrxiYeKC+VioA4dzZli9xiB0mhs0X2IwZFQ
-zxGdErxQKb1/kli5UYOcJaNVykXIduY2jzi6ifbE2SDLQi9BU3/3MjeZw1wT/Mgu
-vmaA9DeJRJauuSTJbmZTQN7g/QmvD7xfFHK1KUOcwwlh8pYNR6HMzZUbqsO85RBT
-P9n2ST3TzAPBE8cjv4Mcj06AcDY7O6qyLbjsCnTCBlOXrWbB9xfHjlBRA14QC0Zc
-Dn9kU129ZK1YOn9DB76OMKxbBjJugWCHHnkV+UfpArKRUszj6KBx74f8NzNpb5RE
-Cs05Xq7Xjg/7djeKDeH/DgBm64kj+c/NTwOn02euCNS1wpTz43flGhVePO8aK+iK
-4hWEBugN4kNXMoDiwTX+MK0OWG85h88s4z+4GreQCKx9zfMus1DybVTx4EjYRNIu
-6qT4OVOGZxBreDySfflS/l+2AAXn0MIp3saGtcoB6QPmMA+52PVCGzfeRpVc+kuu
-LT6etONcXrmTd5FMyvPg
-=5kS+
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+diff --git a/arch/arm/boot/dts/tegra114-pluto.dts b/arch/arm/boot/dts/tegra114-pluto.dts
+index 6bbc8ef..290c9ce 100644
+--- a/arch/arm/boot/dts/tegra114-pluto.dts
++++ b/arch/arm/boot/dts/tegra114-pluto.dts
+@@ -14,6 +14,23 @@
+ 		status = "okay";
+ 	};
+ 
++	kbc {
++		status = "okay";
++		nvidia,debounce-delay-ms = <640>;
++		nvidia,repeat-delay-ms = <1>;
++		nvidia,kbc-row-pins = <0 1 2>;
++		nvidia,kbc-col-pins = <11 12 13>;
++		linux,keymap = < 0x00000074	/* KEY_POWER */
++				 0x00010073	/* KEY_VOLUMEUP */
++				 0x00020072	/* KEY_VOLUMEDOWN */
++				 0x010000D9	/* KEY_SEARCH */
++				 0x010100D4	/* KEY_CAMERA */
++				 0x010200D2	/* KEY_CAMERA_FOCUS */
++				 0x02000066	/* KEY_HOME */
++				 0x0201009E	/* KEY_BACK */
++				 0x0202008B>;	/* KEY_MENU */
++	};
++
+ 	pmc {
+ 		nvidia,invert-interrupt;
+ 	};
+-- 
+1.7.1.1
