@@ -1,41 +1,34 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Add charger subnode to tps65090 node
-Date: Wed, 10 Apr 2013 15:51:45 -0400
-Message-ID: <1365623505-6309-1-git-send-email-rklein@nvidia.com>
+From: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH] mfd: tps65090: Add compatible string for charger subnode
+Date: Thu, 11 Apr 2013 00:17:21 +0200
+Message-ID: <20130410221721.GM4874@zurbaran>
+References: <1365614095-5846-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1365614095-5846-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The charger is now represented by a distinct subnode of the tps65090
-device. Add this node and enable low current charging with it.
+Hi Rhyland,
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-- This patch is dependent upon the following fixup-patch.
-  http://patchwork.ozlabs.org/patch/235434/
+On Wed, Apr 10, 2013 at 01:14:55PM -0400, Rhyland Klein wrote:
+> This patch adds the of_compatible value for the tps65090 charger
+> subnode used when loading the driver to find its properties
+> and of_node.
+> 
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/mfd/tps65090.c |    1 +
+>  1 file changed, 1 insertion(+)
+Applied, thanks. And sorry for taking the wrong version.
 
- arch/arm/boot/dts/tegra114-dalmore.dts |    5 +++++
- 1 file changed, 5 insertions(+)
+Cheers,
+Samuel.
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 72c1f27..d257441 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -763,6 +763,11 @@
- 			vsys-l1-supply = <&vdd_ac_bat_reg>;
- 			vsys-l2-supply = <&vdd_ac_bat_reg>;
- 
-+			charger {
-+				compatible = "ti,tps65090-charger";
-+				ti,enable-low-current-chrg;
-+			};
-+
- 			regulators {
- 				tps65090_dcdc1_reg: dcdc1 {
- 					regulator-name = "vdd-sys-5v0";
 -- 
-1.7.9.5
+Intel Open Source Technology Centre
+http://oss.intel.com/
