@@ -1,34 +1,22 @@
-From: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH] mfd: tps65090: Add compatible string for charger subnode
-Date: Thu, 11 Apr 2013 00:17:21 +0200
-Message-ID: <20130410221721.GM4874@zurbaran>
-References: <1365614095-5846-1-git-send-email-rklein@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] ARM: config: tegra: enable T114 SPI
+Date: Wed, 10 Apr 2013 16:29:32 -0600
+Message-ID: <5165E7CC.1010101@wwwdotorg.org>
+References: <1365594483-20651-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1365614095-5846-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1365594483-20651-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rhyland,
+On 04/10/2013 05:48 AM, Laxman Dewangan wrote:
+> Nvidia Tegra114 has the new spi controller whose driver
+> is not compatible with older SoCs. The new driver is added
+> for Tegra114 spi controller.
 
-On Wed, Apr 10, 2013 at 01:14:55PM -0400, Rhyland Klein wrote:
-> This patch adds the of_compatible value for the tps65090 charger
-> subnode used when loading the driver to find its properties
-> and of_node.
-> 
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/mfd/tps65090.c |    1 +
->  1 file changed, 1 insertion(+)
-Applied, thanks. And sorry for taking the wrong version.
-
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+These 2, and the other 2 KBC patches you posted, all look reasonable.
+They'll have to wait until 3.11 though.
