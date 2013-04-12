@@ -1,77 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: upstream kernel 3.8.5: tegra_defconfig not working on Seco QSeven
- QuadMo747-X/T20
-Date: Fri, 12 Apr 2013 09:31:57 -0600
-Message-ID: <516828ED.4090403@wwwdotorg.org>
-References: <1039301365682542@web29e.yandex.ru> <1365687847.1938.1.camel@antimon> <5166D633.8060308@wwwdotorg.org> <1688621365751094@web10f.yandex.ru>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/3] ARM: tegra: pcie: Add tegra3 support
+Date: Fri, 12 Apr 2013 09:34:13 -0600
+Message-ID: <51682975.1080302@wwwdotorg.org>
+References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com> <51630852.1000107@wwwdotorg.org> <C79B248886DD134989C8FF6B096A91AB91B36FB2FD@BGMAIL01.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1688621365751094-5488f72fhnJxpj1cXAZ9Bg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikhail Goryunov <gormih78-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B36FB2FD@BGMAIL01.nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Krishna Thota <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Juha Tukkinen <jtukkinen@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/12/2013 01:18 AM, Mikhail Goryunov wrote:
-> 11.04.2013, 19:26, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
->> On 04/11/2013 07:44 AM, Lucas Stach wrote:
->>> Am Donnerstag, den 11.04.2013, 16:15 +0400 schrieb Mikhail Goryunov:
->>>> When building the kernel with the option tegra_defconfig loading occurs in the following way:
-...
->>>> Starting kernel ...
->>>>
->>>> and system freezes
->>> ... You may also want to enable the
->>> earlyconsole support in the kernel to see if it comes up at all.
+On 04/12/2013 08:58 AM, Jay Agarwal wrote:
+>>>  	err = regulator_disable(pcie->pex_clk_supply);
+>>>  	if (err < 0)
+>>> -		dev_err(pcie->dev, "failed to disable pex-clk regulator:
+>> %d\n",
+>>> +		dev_warn(pcie->dev, "failed to disable pex-clk regulator:
+>> %d\n",
+>>>  			err);
+>>>
+>>>  	err = regulator_disable(pcie->vdd_supply);
+>>>  	if (err < 0)
+>>> -		dev_err(pcie->dev, "failed to disable VDD regulator: %d\n",
+>>> +		dev_warn(pcie->dev, "failed to disable VDD regulator:
+>> %d\n",
+>>>  			err);
 >>
->> ie enable the following Kconfig options:
+>> Please explain why that change is correct. If the regulators only exist on
+>> Tegra20, please represent that fact in the SoC data. Regulators must always
+>> exist, so enable/disable should never fail due to missing regulators. Actual
+>> run-time failures seem like something that really is an error.
 >>
->> CONFIG_DEBUG_LL=y
->> CONFIG_EARLY_PRINTK=y
->> CONFIG_TEGRA_DEBUG_UART_XXX=y
->>
->> (where XXX above is the serial port you're using; look in menuconfig)
->>
->> and add "earlyprintk" to the kernel command-line. That should hopefully
->> show the cause of the crash/hang.
->>
->> BTW, what is your kernel command-line?
+> [>] These regulators are needed for both tegra20 & tegra30. Since we are not returning error here, so changed to dev_warn.
 
-> These options are enabled.
-> The argument "earlyprintk" gave no result.
-> My command-line for kernel:
-> 'root=/dev/sda2 rw rootwait console=ttyS0,115200n8 earlyprintk mem=384M@0M mem=512M@512M nvmem=128M@384M vmalloc=248M nohdparm noinitrd init=/sbin/init rootwait loglevel=8 video=tegrafb'
+If the regulators are required, then any failure to operate them should
+be an error, hence dev_err() seems correct.
 
-Many of those options are only useful for downstream kernels. Some may
-be harmful for upstream kernels.
-
-I suggest you try the following simplified command-line:
-
-root=/dev/sda2 rw rootwait console=ttyS0,115200n8 earlyprintk
-init=/sbin/init loglevel=8
-
-Just to confirm:
-
-a) You're using a pure upstream 3.8 kernel with no modifications. If
-not, what modifications have been made?
-
-b) You have written a device tree for your board, and are passing that
-to the kernel.
-
-c) When flashing the bootlaoder, you set the ODMDATA to correctly
-specify the RAM size and serial console UART. Perhaps you can get away
-with specifying the wrong console UART if you pick an explicit
-CONFIG_TEGRA_DEBUG_UART_XXX, rather than the AUTO_ODMDATA option.
-
-d) You're using a bootloader that understands device tree, and you're
-passing both the zImage and DT address to "bootm" or "bootz", and the
-bootloader is filling in the correct parameters in the /memory and
-/chosen (for command-line) nodes.
-
-BTW, I just noticed the following in your previous message:
-
-> Image Type: PowerPC Linux Kernel Image (uncompressed)
-
-That's certainly wrong...
+As to why the code doesn't actually return an error? I'm not sure.
+Perhaps that should be fixed with a separate patch, although I don't
+recall exactly where in the code the above excerpt is; if it's in
+remove(), then continuing on without returning an error would be
+appropriate.
