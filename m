@@ -1,53 +1,77 @@
-From: Jay Agarwal <jagarwal@nvidia.com>
-Subject: RE: [PATCH 2/3] ARM: dts: tegra: Correct PCIe entry
-Date: Fri, 12 Apr 2013 20:33:20 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91B36FB2FE@BGMAIL01.nvidia.com>
-References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
- <1365435688-4179-2-git-send-email-jagarwal@nvidia.com>
- <51630BF4.6000605@wwwdotorg.org>
- <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: upstream kernel 3.8.5: tegra_defconfig not working on Seco QSeven
+ QuadMo747-X/T20
+Date: Fri, 12 Apr 2013 09:31:57 -0600
+Message-ID: <516828ED.4090403@wwwdotorg.org>
+References: <1039301365682542@web29e.yandex.ru> <1365687847.1938.1.camel@antimon> <5166D633.8060308@wwwdotorg.org> <1688621365751094@web10f.yandex.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20130409083050.GQ3572@tbergstrom-lnx.Nvidia.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Krishna Thota <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Juha Tukkinen <jtukkinen@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1688621365751094-5488f72fhnJxpj1cXAZ9Bg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikhail Goryunov <gormih78-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> On Mon, Apr 08, 2013 at 08:27:00PM +0200, Stephen Warren wrote:
-> > On 04/08/2013 09:41 AM, Jay Agarwal wrote:
-> > > Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
-> >
-> > Your s-o-b line should be below the patch description, not above it.
-> > Please see Documentation/SubmittingPatches.
-> >
-> > I also don't see a --- line between the patch description and diffstat.
-> > How are you generating these patch emails? Please see our internal
-> > wiki, or other git documentation.
-> >
-> > > diff --git a/arch/arm/boot/dts/tegra30.dtsi
-> > > b/arch/arm/boot/dts/tegra30.dtsi
-> >
-> > > -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
-> > > +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
-> >
-> > Can you please explain more about this change?
-> >
-> > I see the Tegra clock driver provides both a "cml0" and a "cml1" clock.
-> > Are both of those used for PCIe?
-> >
-> 
-> cml0 is used for pcie and cml1 is used for sata.
-> 
-[>] Yes correct.
+On 04/12/2013 01:18 AM, Mikhail Goryunov wrote:
+> 11.04.2013, 19:26, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
+>> On 04/11/2013 07:44 AM, Lucas Stach wrote:
+>>> Am Donnerstag, den 11.04.2013, 16:15 +0400 schrieb Mikhail Goryunov:
+>>>> When building the kernel with the option tegra_defconfig loading occurs in the following way:
+...
+>>>> Starting kernel ...
+>>>>
+>>>> and system freezes
+>>> ... You may also want to enable the
+>>> earlyconsole support in the kernel to see if it comes up at all.
+>>
+>> ie enable the following Kconfig options:
+>>
+>> CONFIG_DEBUG_LL=y
+>> CONFIG_EARLY_PRINTK=y
+>> CONFIG_TEGRA_DEBUG_UART_XXX=y
+>>
+>> (where XXX above is the serial port you're using; look in menuconfig)
+>>
+>> and add "earlyprintk" to the kernel command-line. That should hopefully
+>> show the cause of the crash/hang.
+>>
+>> BTW, what is your kernel command-line?
+
+> These options are enabled.
+> The argument "earlyprintk" gave no result.
+> My command-line for kernel:
+> 'root=/dev/sda2 rw rootwait console=ttyS0,115200n8 earlyprintk mem=384M@0M mem=512M@512M nvmem=128M@384M vmalloc=248M nohdparm noinitrd init=/sbin/init rootwait loglevel=8 video=tegrafb'
+
+Many of those options are only useful for downstream kernels. Some may
+be harmful for upstream kernels.
+
+I suggest you try the following simplified command-line:
+
+root=/dev/sda2 rw rootwait console=ttyS0,115200n8 earlyprintk
+init=/sbin/init loglevel=8
+
+Just to confirm:
+
+a) You're using a pure upstream 3.8 kernel with no modifications. If
+not, what modifications have been made?
+
+b) You have written a device tree for your board, and are passing that
+to the kernel.
+
+c) When flashing the bootlaoder, you set the ODMDATA to correctly
+specify the RAM size and serial console UART. Perhaps you can get away
+with specifying the wrong console UART if you pick an explicit
+CONFIG_TEGRA_DEBUG_UART_XXX, rather than the AUTO_ODMDATA option.
+
+d) You're using a bootloader that understands device tree, and you're
+passing both the zImage and DT address to "bootm" or "bootz", and the
+bootloader is filling in the correct parameters in the /memory and
+/chosen (for command-line) nodes.
+
+BTW, I just noticed the following in your previous message:
+
+> Image Type: PowerPC Linux Kernel Image (uncompressed)
+
+That's certainly wrong...
