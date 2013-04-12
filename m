@@ -1,30 +1,37 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] drivers: tty: serial: tegra: use devm_ioremap_resource()
-Date: Thu, 11 Apr 2013 13:24:34 -0700
-Message-ID: <20130411202434.GA31078@kroah.com>
-References: <1365710337-12251-1-git-send-email-silviupopescu1990@gmail.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: pm: fix build error w/o PM_SLEEP
+Date: Fri, 12 Apr 2013 09:38:52 +0800
+Message-ID: <1365730733-22701-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1365710337-12251-1-git-send-email-silviupopescu1990@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Silviu-Mihai Popescu <silviupopescu1990@gmail.com>
-Cc: linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 11, 2013 at 10:58:57PM +0300, Silviu-Mihai Popescu wrote:
-> Convert  use of devm_request_and_ioremap() to the newly introduced
-> devm_ioremap_resource() which provides more consistent error handling.
-> 
-> devm_ioremap_resource() provides its own error messages so all explicit
-> error messages can be removed from the failure code paths.
-> 
-> This was found with coccinelle.
+This fixes the building error when the PM_SLEEP is disabled. The fucntional
+defintion of "tegra_pm_validate_suspend_mode" without "static inline"
+would become a multiple definition error.
 
-And it's already in my tree, please always work off of linux-next to
-avoid doing the same thing that others have done.
+Reported-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/pm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-sorry,
-
-greg k-h
+diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+index 9d2d038..778a4aa 100644
+--- a/arch/arm/mach-tegra/pm.h
++++ b/arch/arm/mach-tegra/pm.h
+@@ -39,7 +39,7 @@ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+ 				enum tegra_suspend_mode mode);
+ void tegra_init_suspend(void);
+ #else
+-enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
++static inline enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+ 				enum tegra_suspend_mode mode)
+ {
+ 	return TEGRA_SUSPEND_NONE;
+-- 
+1.8.2
