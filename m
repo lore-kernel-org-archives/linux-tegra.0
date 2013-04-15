@@ -1,21 +1,55 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: pm: fix build error w/o PM_SLEEP
-Date: Mon, 15 Apr 2013 16:53:34 -0600
-Message-ID: <516C84EE.8010204@wwwdotorg.org>
-References: <1365730733-22701-1-git-send-email-josephl@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 3/3] ARM: tegra: make sure the pointer on 4 byte align when THUMB2_KERNEL enabled
+Date: Mon, 15 Apr 2013 16:50:55 -0600
+Message-ID: <1366066255-18192-3-git-send-email-swarren@wwwdotorg.org>
+References: <1366066255-18192-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1365730733-22701-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1366066255-18192-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/11/2013 07:38 PM, Joseph Lo wrote:
-> This fixes the building error when the PM_SLEEP is disabled. The fucntional
-> defintion of "tegra_pm_validate_suspend_mode" without "static inline"
-> would become a multiple definition error.
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks. I have forwarded this to arm-soc to be applied.
+When building kernel with CONFIG_THUMB2_KERNEL, the data pointer in the
+assembly may not on the 4 byte alignment. Then causing a data abort when
+accessing the pointer. This patch add a ".align" flag in the head of the
+pointer. And always using 32-bit ADR Thumb instruction to make sure it
+won't build failure.
+
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/reset-handler.S |    1 +
+ arch/arm/mach-tegra/sleep.h         |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index e6de88a..519a8c5 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -83,6 +83,7 @@ ENDPROC(tegra_resume)
+ 
+ #ifdef CONFIG_CACHE_L2X0
+ 	.globl	l2x0_saved_regs_addr
++	.align
+ l2x0_saved_regs_addr:
+ 	.long	0
+ #endif
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index 4ffae54..8e9b6af 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -92,7 +92,8 @@
+ 
+ #ifdef CONFIG_CACHE_L2X0
+ .macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
+-	adr	\tmp1, \phys_l2x0_saved_regs
++ ARM(	adr	\tmp1, \phys_l2x0_saved_regs )
++ THUMB(	adr.w	\tmp1, \phys_l2x0_saved_regs )
+ 	ldr	\tmp1, [\tmp1]
+ 	ldr	\tmp2, [\tmp1, #L2X0_R_PHY_BASE]
+ 	ldr	\tmp3, [\tmp2, #L2X0_CTRL]
+-- 
+1.7.10.4
