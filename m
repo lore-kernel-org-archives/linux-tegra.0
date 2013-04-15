@@ -1,93 +1,66 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH 1/3] ARM: tegra: pcie: Add tegra3 support
-Date: Sat, 13 Apr 2013 12:23:19 +0200
-Message-ID: <20130413102319.GA30758@avionic-0098.mockup.avionic-design.de>
-References: <1365435688-4179-1-git-send-email-jagarwal@nvidia.com>
- <51630852.1000107@wwwdotorg.org>
- <C79B248886DD134989C8FF6B096A91AB91B36FB2FD@BGMAIL01.nvidia.com>
- <51682975.1080302@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51682975.1080302@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Jay Agarwal <jagarwal@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Krishna Thota <kthota@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Juha Tukkinen <jtukkinen@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH resend 1/2] clk: tegra: remove USB from clk init table
+Date: Mon, 15 Apr 2013 09:31:44 +0200
+Message-ID: <1366011105-2351-1-git-send-email-dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The USB clocks are just clock gates, so no need to set a specific clock.
+In fact trying to set a specific clock is just a NOP if the requested
+clockrate is the same as those of the parent (clk_m) or will trigger a
+WARN_ON() if rates don't match up.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As we are not setting a specific rate, nor activating the clocks at
+init, there is no point in keeping the the usb entries in the clock init
+table.
 
-On Fri, Apr 12, 2013 at 09:34:13AM -0600, Stephen Warren wrote:
-> On 04/12/2013 08:58 AM, Jay Agarwal wrote:
-> >>>  	err =3D regulator_disable(pcie->pex_clk_supply);
-> >>>  	if (err < 0)
-> >>> -		dev_err(pcie->dev, "failed to disable pex-clk regulator:
-> >> %d\n",
-> >>> +		dev_warn(pcie->dev, "failed to disable pex-clk regulator:
-> >> %d\n",
-> >>>  			err);
-> >>>
-> >>>  	err =3D regulator_disable(pcie->vdd_supply);
-> >>>  	if (err < 0)
-> >>> -		dev_err(pcie->dev, "failed to disable VDD regulator: %d\n",
-> >>> +		dev_warn(pcie->dev, "failed to disable VDD regulator:
-> >> %d\n",
-> >>>  			err);
-> >>
-> >> Please explain why that change is correct. If the regulators only exis=
-t on
-> >> Tegra20, please represent that fact in the SoC data. Regulators must a=
-lways
-> >> exist, so enable/disable should never fail due to missing regulators. =
-Actual
-> >> run-time failures seem like something that really is an error.
-> >>
-> > [>] These regulators are needed for both tegra20 & tegra30. Since we ar=
-e not returning error here, so changed to dev_warn.
->=20
-> If the regulators are required, then any failure to operate them should
-> be an error, hence dev_err() seems correct.
->=20
-> As to why the code doesn't actually return an error? I'm not sure.
-> Perhaps that should be fixed with a separate patch, although I don't
-> recall exactly where in the code the above excerpt is; if it's in
-> remove(), then continuing on without returning an error would be
-> appropriate.
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+Trace produced by system with 13MHz clk_m:
 
-That code is from tegra_pcie_power_off(), which is called only during
-error cleanup or from tegra_pcie_put_resources() which in turn is also
-only called in cleanup paths or during module/device removal. Disabling
-as many regulators as possible is still what we want in that case, so
-returning an error prematurely might leave more regulators turned on
-than necessary.
+tegra_init_from_table: Failed to set rate 12000000 of usbd
+------------[ cut here ]------------
+WARNING: at drivers/clk/tegra/clk.c:64
+tegra_init_from_table+0xc0/0x158()
+Modules linked in:
+[<c0013a84>] (unwind_backtrace+0x0/0xf8) from
+[<c0021a24>](warn_slowpath_common+0x4c/0x64)
+[<c0021a24>] (warn_slowpath_common+0x4c/0x64) from [<c0021a58>]
+(warn_slowpath_null+0x1c/0x24)
+[<c0021a58>] (warn_slowpath_null+0x1c/0x24) from [<c069343c>]
+(tegra_init_from_table+0xc0/0x158)
+[<c069343c>] (tegra_init_from_table+0xc0/0x158) from [<c0694878>]
+(tegra20_clock_init+0x1398/0x13d4)
+[<c0694878>] (tegra20_clock_init+0x1398/0x13d4) from [<c0693298>]
+(of_clk_init+0x30/0x58)
+[<c0693298>] (of_clk_init+0x30/0x58) from [<c0681e5c>]
+(tegra_dt_init_irq+0x8/0x1c)
+[<c0681e5c>] (tegra_dt_init_irq+0x8/0x1c) from [<c067d334>]
+(init_IRQ+0x14/0x1c)
+[<c067d334>] (init_IRQ+0x14/0x1c) from [<c067b6b4>]
+(start_kernel+0x1a0/0x2f8)
+[<c067b6b4>] (start_kernel+0x1a0/0x2f8) from [<0000807c>] (0x807c)
+---[ end trace 1b75b31a2719ed1c ]---
+---
+ drivers/clk/tegra/clk-tegra20.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thierry
-
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRaTIXAAoJEN0jrNd/PrOhIKcP/1dW4nFdFzAQqxKDGXy3ig+W
-ZWCpjQ/K6k8pw6DDoWdTTOfnP+VF/1WWzyPDSeUzbCmZgUxCBKKeANh6yxqtL3TV
-EWQi/rLBMhMLgBdo2VSg2AqVIE3mhP7XdJ2UZMt15qxkER46t+GvQr9pW0OeCxsp
-4nQPwX1WlsCAjov7/ZZiIxwBEjH65Mb2GweME/MU9jMBN7AmsyKgx8+l7QZuyj5B
-ps4RkbSJ9YjNLiHgGmu/ivZaDowsplWuI0vb5FnaAxMVS1dqW5yqv+W5D+Z4zSd7
-O3DspYgHkqAP3WQiFiams+NWlBCyKkKLjLnriQ0s7x0/mRQABJF+WPtB6af5PDC/
-njR1gi96tgDigQQZZxPtuMlFFr8Vkp3H99ZsX+EIVKl/i0NpNAYc6h1LxbNITnES
-5g2z4WhgPDeVwiv7PnS6d5WtwIsEeRYQK0WT04cf7jffvLgeUi7FVTgP0bkrd1BP
-d0m0TSsmO7sI4qzeELaO0wrdwXYg6TV6NB0pf3RDm3dApH/n4Ope02iWE16rP1Dz
-7ZdJvmT5Sg4raoCZab9gm7N5KWnue9Tm3f2tgB6bLbDRis1q1dkHMmFXUDy99FKS
-ugr7mzsTD0W6bI9VZhjrVyT8wRw1LHp9oi6ahmSMMzD9Z5HpisK3Ft409JktZtV6
-X70BkMHKl9nPEl7DRoiG
-=yLzJ
------END PGP SIGNATURE-----
-
---fUYQa+Pmc3FrFX/N--
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index f873dce..a73278f 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1259,9 +1259,6 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{uartc, pll_p, 0, 0},
+ 	{uartd, pll_p, 0, 0},
+ 	{uarte, pll_p, 0, 0},
+-	{usbd, clk_max, 12000000, 0},
+-	{usb2, clk_max, 12000000, 0},
+-	{usb3, clk_max, 12000000, 0},
+ 	{pll_a, clk_max, 56448000, 1},
+ 	{pll_a_out0, clk_max, 11289600, 1},
+ 	{cdev1, clk_max, 0, 1},
+-- 
+1.8.1.4
