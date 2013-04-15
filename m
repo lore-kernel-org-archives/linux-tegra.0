@@ -1,50 +1,41 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH resend 2/2] clk: tegra: add ac97 controller clock
-Date: Mon, 15 Apr 2013 14:03:08 +0300
-Message-ID: <20130415110308.GN3572@tbergstrom-lnx.Nvidia.com>
-References: <1366011105-2351-1-git-send-email-dev@lynxeye.de>
- <1366011105-2351-2-git-send-email-dev@lynxeye.de>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/3] ARM: tegra: fix build error when THUMB2_KERNEL enabled
+Date: Mon, 15 Apr 2013 20:42:27 +0800
+Message-ID: <1366029749-16476-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1366011105-2351-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 15, 2013 at 09:31:45AM +0200, Lucas Stach wrote:
-> AC97 controller clock is hardwired to pll_a_out0.
-> 
+This patch fix the build failure when CONFIG_THUBM2_KERNEL enabled. You
+clould see the error message below:
 
-Prashant, did you just forget to add this clock?
+arch/arm/mach-tegra/sleep-tegra30.S:69: Error: shift must be constant --
+`orr r12,r12,r4,lsl r3'
 
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra20.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index a73278f..bbcca91 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -897,6 +897,14 @@ static void __init tegra20_periph_clk_init(void)
->  	struct clk *clk;
->  	int i;
->  
-> +	/* ac97 */
-> +	clk = tegra_clk_register_periph_gate("ac97", "pll_a_out0",
-> +				    TEGRA_PERIPH_ON_APB,
-> +				    clk_base, 0, 3, &periph_l_regs,
-> +				    periph_clk_enb_refcnt);
-> +	clk_register_clkdev(clk, NULL, "tegra20-ac97");
-> +	clks[ac97] = clk;
-> +
->  	/* apbdma */
->  	clk = tegra_clk_register_periph_gate("apbdma", "pclk", 0, clk_base,
->  				    0, 34, &periph_h_regs,
+Reported-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/sleep-tegra30.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Otherwise:
-
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index 63a15bd..d29dfcc 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -66,7 +66,9 @@ ENTRY(tegra30_cpu_shutdown)
+ 		FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG | \
+ 		FLOW_CTRL_CSR_ENABLE
+ 	mov	r4, #(1 << 4)
+-	orr	r12, r12, r4, lsl r3
++ ARM(	orr	r12, r12, r4, lsl r3	)
++ THUMB(	lsl	r4, r4, r3		)
++ THUMB(	orr	r12, r12, r4		)
+ 	str	r12, [r1]
+ 
+ 	/* Halt this CPU. */
+-- 
+1.8.2
