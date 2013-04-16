@@ -1,52 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: solve adr range issue with THUMB2_KERNEL enabled
-Date: Tue, 16 Apr 2013 11:09:09 -0600
-Message-ID: <1366132149-17294-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2] gpio: palmas: add dt support
+Date: Tue, 16 Apr 2013 12:44:59 -0600
+Message-ID: <516D9C2B.302@wwwdotorg.org>
+References: <1366122705-3579-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1366122705-3579-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 04/16/2013 08:31 AM, Laxman Dewangan wrote:
+> Add of_device_id table for Palma GPIO to be enable the
+> driver from DT file.
+> 
+> The driver can be registered from DT file as:
+> 	palmas: tps65913@58 {
+> 		:::::::::::
+> 		palmas_gpio: palmas_gpio {
+> 			compatible = "ti,palmas-gpio";
+> 			gpio-controller;
+> 			#gpio-cells = <2>;
+> 		};
+> 	};
 
-When building the kernel with CONFIG_THUMB2_KERNEL enabled, older
-assemblers may emit the following error:
+So I think this patch looks fine if everyone is agreed that all the
+Palmas sub-modules are represented as explicit child nodes in DT, and
+the probing of the child nodes is based on the top-level Palmas device
+being a bus, and enumerating its children in standard DT style, using
+compatible values. (I'm not sure how the child probing/instantiation
+will work for non-DT systems though).
 
-reset-handler.S:78: Error: invalid immediate for address calculation (value = 0x00000004)
+I'm not 100% sure if an agreement on the top-level structure of the
+Palmas DT bindings was reached though? Can the SlimLogic people confirm
+this? I assume Laxman must be OK with it since he's sending this patch?
 
-Using an explicit adr.w instruction will solve this. Newer assemblers do
-this automatically. Use the W() macro to do this under Thumb mode only.
-
-Inspired-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Suggested-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Olof, Arnd,
-
-Can you please apply this directly to arm-soc. Thanks.
-
-This patch replaces patch 3/3 "ARM: tegra: make sure the pointer on 4
-byte align when THUMB2_KERNEL enabled" which I forwarded yesterday. It
-can be applied to wherever Tegra's for-3.10/fixes branch was applied,
-and doesn't cause any conflicts/merge-issues with any other Tegra patches
-this cycle.
-
- arch/arm/mach-tegra/sleep.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 4ffae54..bb308ea 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -92,7 +92,7 @@
- 
- #ifdef CONFIG_CACHE_L2X0
- .macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
--	adr	\tmp1, \phys_l2x0_saved_regs
-+	W(adr)	\tmp1, \phys_l2x0_saved_regs
- 	ldr	\tmp1, [\tmp1]
- 	ldr	\tmp2, [\tmp1, #L2X0_R_PHY_BASE]
- 	ldr	\tmp3, [\tmp2, #L2X0_CTRL]
--- 
-1.7.10.4
+It might be a good idea to get the final Palmas binding documentation
+reviewed and checked in before changing the drivers/.dts files to match
+what the final bindings might be.
