@@ -1,75 +1,102 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/3] regulator: palmas: clear sleep bits if not selected
-Date: Wed, 17 Apr 2013 15:13:11 +0530
-Message-ID: <1366191793-13934-1-git-send-email-ldewangan@nvidia.com>
+From: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: tegra: make sure the pointer on 4 byte align
+ when THUMB2_KERNEL enabled
+Date: Wed, 17 Apr 2013 11:30:07 +0100
+Message-ID: <20130417102957.GA2249@linaro.org>
+References: <1366066255-18192-1-git-send-email-swarren@wwwdotorg.org>
+ <1366066255-18192-3-git-send-email-swarren@wwwdotorg.org>
+ <20130416141252.GA2229@linaro.org>
+ <516D7A3B.9030404@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <516D7A3B.9030404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Clear the sleep/warm reset bits when it is not selected through
-regulator platform data. This will make sure that configuration
-is inline with the platform data regardless of boot/POR
-configuration.
+On Tue, Apr 16, 2013 at 10:20:11AM -0600, Stephen Warren wrote:
+> On 04/16/2013 08:13 AM, Dave Martin wrote:
+> > On Mon, Apr 15, 2013 at 04:50:55PM -0600, Stephen Warren wrote:
+> >> From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>
+> >> When building kernel with CONFIG_THUMB2_KERNEL, the data pointer in the
+> >> assembly may not on the 4 byte alignment. Then causing a data abort when
+> >> accessing the pointer. This patch add a ".align" flag in the head of the
+> >> pointer. And always using 32-bit ADR Thumb instruction to make sure it
+> >> won't build failure.
+> >>
+> >> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> ---
+> >>  arch/arm/mach-tegra/reset-handler.S |    1 +
+> >>  arch/arm/mach-tegra/sleep.h         |    3 ++-
+> >>  2 files changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+> >> index e6de88a..519a8c5 100644
+> >> --- a/arch/arm/mach-tegra/reset-handler.S
+> >> +++ b/arch/arm/mach-tegra/reset-handler.S
+> >> @@ -83,6 +83,7 @@ ENDPROC(tegra_resume)
+> >>  
+> >>  #ifdef CONFIG_CACHE_L2X0
+> >>  	.globl	l2x0_saved_regs_addr
+> >> +	.align
+> >>  l2x0_saved_regs_addr:
+> >>  	.long	0
+> >>  #endif
+> >> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+> >> index 4ffae54..8e9b6af 100644
+> >> --- a/arch/arm/mach-tegra/sleep.h
+> >> +++ b/arch/arm/mach-tegra/sleep.h
+> >> @@ -92,7 +92,8 @@
+> >>  
+> >>  #ifdef CONFIG_CACHE_L2X0
+> >>  .macro l2_cache_resume, tmp1, tmp2, tmp3, phys_l2x0_saved_regs
+> >> -	adr	\tmp1, \phys_l2x0_saved_regs
+> >> + ARM(	adr	\tmp1, \phys_l2x0_saved_regs )
+> >> + THUMB(	adr.w	\tmp1, \phys_l2x0_saved_regs )
+> > 
+> > Can you give an example of the assembler error you get without this?
+> 
+> arch/arm/mach-tegra/reset-handler.S: Assembler messages:
+> arch/arm/mach-tegra/reset-handler.S:78: Error: invalid immediate for
+> address calculation (value = 0x00000004)
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/regulator/palmas-regulator.c |   18 ++++++++++++------
- 1 files changed, 12 insertions(+), 6 deletions(-)
+The immediate in the 16-bit form of ADR is alignment-sensitive, and
+can't address anything that's not on a word boundary.  What if you just
+have the .align, without adr.w?
 
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index 7c54e31..7c7992b 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -444,24 +444,26 @@ static int palmas_smps_init(struct palmas *palmas, int id,
- 
- 	switch (id) {
- 	case PALMAS_REG_SMPS10:
--		if (reg_init->mode_sleep) {
--			reg &= ~PALMAS_SMPS10_CTRL_MODE_SLEEP_MASK;
-+		reg &= ~PALMAS_SMPS10_CTRL_MODE_SLEEP_MASK;
-+		if (reg_init->mode_sleep)
- 			reg |= reg_init->mode_sleep <<
- 					PALMAS_SMPS10_CTRL_MODE_SLEEP_SHIFT;
--		}
- 		break;
- 	default:
- 		if (reg_init->warm_reset)
- 			reg |= PALMAS_SMPS12_CTRL_WR_S;
-+		else
-+			reg &= ~PALMAS_SMPS12_CTRL_WR_S;
- 
- 		if (reg_init->roof_floor)
- 			reg |= PALMAS_SMPS12_CTRL_ROOF_FLOOR_EN;
-+		else
-+			reg &= ~PALMAS_SMPS12_CTRL_ROOF_FLOOR_EN;
- 
--		if (reg_init->mode_sleep) {
--			reg &= ~PALMAS_SMPS12_CTRL_MODE_SLEEP_MASK;
-+		reg &= ~PALMAS_SMPS12_CTRL_MODE_SLEEP_MASK;
-+		if (reg_init->mode_sleep)
- 			reg |= reg_init->mode_sleep <<
- 					PALMAS_SMPS12_CTRL_MODE_SLEEP_SHIFT;
--		}
- 	}
- 
- 	ret = palmas_smps_write(palmas, addr, reg);
-@@ -507,9 +509,13 @@ static int palmas_ldo_init(struct palmas *palmas, int id,
- 
- 	if (reg_init->warm_reset)
- 		reg |= PALMAS_LDO1_CTRL_WR_S;
-+	else
-+		reg &= ~PALMAS_LDO1_CTRL_WR_S;
- 
- 	if (reg_init->mode_sleep)
- 		reg |= PALMAS_LDO1_CTRL_MODE_SLEEP;
-+	else
-+		reg &= ~PALMAS_LDO1_CTRL_MODE_SLEEP;
- 
- 	ret = palmas_ldo_write(palmas, addr, reg);
- 	if (ret)
--- 
-1.7.1.1
+> This is with gcc-4.5.3, as:
+> GNU assembler (crosstool-NG hg_unknown-Y8jGNvr6ygZCnf0dxYVdog@public.gmane.org) 2.20.1.20100303
+> 
+> > The target symbol is local and the assembler can see where it is,
+> > so it should choose the correct variant for the adr instruction
+> > with no need for the ".w" suffix.
+> > 
+> > If not, it could mean that there is a bug in the version of the
+> > assembler you're using.
+> 
+> True. Switching to the Ubuntu-packaged ARM cross-compiler that ships
+> with Ubuntu 12.10, I do not see this problem.
+> 
+> Still, many people probably still use older compilers.
+> 
+> > If it's definitely needed, you can append a Thumb-only .w suffix with
+> > 
+> > 	W(adr)	\tmp1, \phys_l2x0_saved_regs
+> > 
+> > ...which is slightly neater.
+> 
+> Yes, that certainly works too, even without the .align change in
+> reset-handler.S.
+
+Sure, although the unaligned access is not such a good idea anyway.
+
+Keeping the adr fix is harmless, I just wanted to understand why it's
+needed.
+
+Cheers
+---Dave
