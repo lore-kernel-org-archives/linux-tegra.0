@@ -1,47 +1,190 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] gpio: palmas: add dt support
-Date: Wed, 17 Apr 2013 12:26:42 +0530
-Message-ID: <516E47AA.2060402@nvidia.com>
-References: <1366122705-3579-1-git-send-email-ldewangan@nvidia.com> <516D9C2B.302@wwwdotorg.org>
+Subject: [PATCH 2/3] regulator: palmas: support for external regulator through control outputs
+Date: Wed, 17 Apr 2013 15:13:12 +0530
+Message-ID: <1366191793-13934-2-git-send-email-ldewangan@nvidia.com>
+References: <1366191793-13934-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <516D9C2B.302-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1366191793-13934-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org" <ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>, "j-keerthy-l0cyMroinI0@public.gmane.org" <j-keerthy-l0cyMroinI0@public.gmane.org>, "t-kristo-l0cyMroinI0@public.gmane.org" <t-kristo-l0cyMroinI0@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 17 April 2013 12:14 AM, Stephen Warren wrote:
-> On 04/16/2013 08:31 AM, Laxman Dewangan wrote:
->> Add of_device_id table for Palma GPIO to be enable the
->> driver from DT file.
->>
->> The driver can be registered from DT file as:
->> 	palmas: tps65913@58 {
->> 		:::::::::::
->> 		palmas_gpio: palmas_gpio {
->> 			compatible = "ti,palmas-gpio";
->> 			gpio-controller;
->> 			#gpio-cells = <2>;
->> 		};
->> 	};
-> So I think this patch looks fine if everyone is agreed that all the
-> Palmas sub-modules are represented as explicit child nodes in DT, and
-> the probing of the child nodes is based on the top-level Palmas device
-> being a bus, and enumerating its children in standard DT style, using
-> compatible values. (I'm not sure how the child probing/instantiation
-> will work for non-DT systems though).
->
-> I'm not 100% sure if an agreement on the top-level structure of the
-> Palmas DT bindings was reached though? Can the SlimLogic people confirm
-> this? I assume Laxman must be OK with it since he's sending this patch?
->
+Palmas device have control outputs like REGEN1, REGEN2, REGEN3,
+SYSEN1 and SYSEN2. These control outputs can be used for controlling
+external voltage switches to enabled/disable voltage outputs.
 
-I am fine with this dt approach.
-Similar patch on palma-rtc was acked by Grant.
+Add support of these control outputs through regulator framework.
 
-If Slimlogic/TI team can finalise the DT binding then it will be easy 
-for me to push some more patches to have full support for palma driver 
-on our Tegra platform.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/regulator/palmas-regulator.c |   95 +++++++++++++++++++++++++++++----
+ include/linux/mfd/palmas.h           |    6 ++
+ 2 files changed, 89 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
+index 7c7992b..28080a7 100644
+--- a/drivers/regulator/palmas-regulator.c
++++ b/drivers/regulator/palmas-regulator.c
+@@ -166,6 +166,26 @@ static const struct regs_info palmas_regs_info[] = {
+ 		.vsel_addr	= PALMAS_LDOUSB_VOLTAGE,
+ 		.ctrl_addr	= PALMAS_LDOUSB_CTRL,
+ 	},
++	{
++		.name		= "REGEN1",
++		.ctrl_addr	= PALMAS_REGEN1_CTRL,
++	},
++	{
++		.name		= "REGEN2",
++		.ctrl_addr	= PALMAS_REGEN2_CTRL,
++	},
++	{
++		.name		= "REGEN3",
++		.ctrl_addr	= PALMAS_REGEN3_CTRL,
++	},
++	{
++		.name		= "SYSEN1",
++		.ctrl_addr	= PALMAS_SYSEN1_CTRL,
++	},
++	{
++		.name		= "SYSEN2",
++		.ctrl_addr	= PALMAS_SYSEN2_CTRL,
++	},
+ };
+ 
+ #define SMPS_CTRL_MODE_OFF		0x00
+@@ -423,6 +443,12 @@ static struct regulator_ops palmas_ops_ldo = {
+ 	.map_voltage		= regulator_map_voltage_linear,
+ };
+ 
++static struct regulator_ops palmas_ops_extreg = {
++	.is_enabled		= regulator_is_enabled_regmap,
++	.enable			= regulator_enable_regmap,
++	.disable		= regulator_disable_regmap,
++};
++
+ /*
+  * setup the hardware based sleep configuration of the SMPS/LDO regulators
+  * from the platform data. This is different to the software based control
+@@ -524,6 +550,28 @@ static int palmas_ldo_init(struct palmas *palmas, int id,
+ 	return 0;
+ }
+ 
++static int palmas_extreg_init(struct palmas *palmas, int id,
++		struct palmas_reg_init *reg_init)
++{
++	unsigned int addr;
++	int ret;
++	unsigned int val = 0;
++
++	addr = palmas_regs_info[id].ctrl_addr;
++
++	if (reg_init->mode_sleep)
++		val = PALMAS_REGEN1_CTRL_MODE_SLEEP;
++
++	ret = palmas_update_bits(palmas, PALMAS_RESOURCE_BASE,
++			addr, PALMAS_REGEN1_CTRL_MODE_SLEEP, val);
++	if (ret < 0) {
++		dev_err(palmas->dev, "Resource reg 0x%02x update failed %d\n",
++			addr, ret);
++		return ret;
++	}
++	return 0;
++}
++
+ static struct of_regulator_match palmas_matches[] = {
+ 	{ .name = "smps12", },
+ 	{ .name = "smps123", },
+@@ -546,6 +594,11 @@ static struct of_regulator_match palmas_matches[] = {
+ 	{ .name = "ldo9", },
+ 	{ .name = "ldoln", },
+ 	{ .name = "ldousb", },
++	{ .name = "regen1", },
++	{ .name = "regen2", },
++	{ .name = "regen3", },
++	{ .name = "sysen1", },
++	{ .name = "sysen2", },
+ };
+ 
+ static void palmas_dt_to_pdata(struct device *dev,
+@@ -764,21 +817,34 @@ static int palmas_regulators_probe(struct platform_device *pdev)
+ 		/* Register the regulators */
+ 		pmic->desc[id].name = palmas_regs_info[id].name;
+ 		pmic->desc[id].id = id;
+-		pmic->desc[id].n_voltages = PALMAS_LDO_NUM_VOLTAGES;
+-
+-		pmic->desc[id].ops = &palmas_ops_ldo;
+-
+ 		pmic->desc[id].type = REGULATOR_VOLTAGE;
+ 		pmic->desc[id].owner = THIS_MODULE;
+-		pmic->desc[id].min_uV = 900000;
+-		pmic->desc[id].uV_step = 50000;
+-		pmic->desc[id].linear_min_sel = 1;
+-		pmic->desc[id].vsel_reg = PALMAS_BASE_TO_REG(PALMAS_LDO_BASE,
++
++		if (id < PALMAS_REG_REGEN1) {
++			pmic->desc[id].n_voltages = PALMAS_LDO_NUM_VOLTAGES;
++			pmic->desc[id].ops = &palmas_ops_ldo;
++			pmic->desc[id].min_uV = 900000;
++			pmic->desc[id].uV_step = 50000;
++			pmic->desc[id].linear_min_sel = 1;
++			pmic->desc[id].vsel_reg =
++					PALMAS_BASE_TO_REG(PALMAS_LDO_BASE,
+ 						palmas_regs_info[id].vsel_addr);
+-		pmic->desc[id].vsel_mask = PALMAS_LDO1_VOLTAGE_VSEL_MASK;
+-		pmic->desc[id].enable_reg = PALMAS_BASE_TO_REG(PALMAS_LDO_BASE,
++			pmic->desc[id].vsel_mask =
++					PALMAS_LDO1_VOLTAGE_VSEL_MASK;
++			pmic->desc[id].enable_reg =
++					PALMAS_BASE_TO_REG(PALMAS_LDO_BASE,
++						palmas_regs_info[id].ctrl_addr);
++			pmic->desc[id].enable_mask =
++					PALMAS_LDO1_CTRL_MODE_ACTIVE;
++		} else {
++			pmic->desc[id].n_voltages = 1;
++			pmic->desc[id].ops = &palmas_ops_extreg;
++			pmic->desc[id].enable_reg =
++					PALMAS_BASE_TO_REG(PALMAS_RESOURCE_BASE,
+ 						palmas_regs_info[id].ctrl_addr);
+-		pmic->desc[id].enable_mask = PALMAS_LDO1_CTRL_MODE_ACTIVE;
++			pmic->desc[id].enable_mask =
++					PALMAS_REGEN1_CTRL_MODE_ACTIVE;
++		}
+ 
+ 		if (pdata)
+ 			config.init_data = pdata->reg_data[id];
+@@ -804,7 +870,12 @@ static int palmas_regulators_probe(struct platform_device *pdev)
+ 		if (pdata) {
+ 			reg_init = pdata->reg_init[id];
+ 			if (reg_init) {
+-				ret = palmas_ldo_init(palmas, id, reg_init);
++				if (id < PALMAS_REG_REGEN1)
++					ret = palmas_ldo_init(palmas,
++							id, reg_init);
++				else
++					ret = palmas_extreg_init(palmas,
++							id, reg_init);
+ 				if (ret) {
+ 					regulator_unregister(pmic->rdev[id]);
+ 					goto err_unregister_regulator;
+diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
+index 4a066d0..fb04d07 100644
+--- a/include/linux/mfd/palmas.h
++++ b/include/linux/mfd/palmas.h
+@@ -164,6 +164,12 @@ enum palmas_regulators {
+ 	PALMAS_REG_LDO9,
+ 	PALMAS_REG_LDOLN,
+ 	PALMAS_REG_LDOUSB,
++	/* External regulators */
++	PALMAS_REG_REGEN1,
++	PALMAS_REG_REGEN2,
++	PALMAS_REG_REGEN3,
++	PALMAS_REG_SYSEN1,
++	PALMAS_REG_SYSEN2,
+ 	/* Total number of regulators */
+ 	PALMAS_NUM_REGS,
+ };
+-- 
+1.7.1.1
