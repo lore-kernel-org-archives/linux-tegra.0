@@ -1,37 +1,29 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH resend 1/2] clk: tegra: remove USB from clk init table
-Date: Wed, 17 Apr 2013 09:10:52 -0600
-Message-ID: <516EBB7C.5050903@wwwdotorg.org>
-References: <1366011105-2351-1-git-send-email-dev@lynxeye.de> <516C3D3A.7000508@wwwdotorg.org> <516E9222.4080506@nvidia.com>
+Subject: Re: [PATCH resend 2/2] clk: tegra: add ac97 controller clock
+Date: Wed, 17 Apr 2013 09:11:23 -0600
+Message-ID: <516EBB9B.1000109@wwwdotorg.org>
+References: <1366011105-2351-1-git-send-email-dev@lynxeye.de> <1366011105-2351-2-git-send-email-dev@lynxeye.de> <516E92C7.6070700@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <516E9222.4080506-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <516E92C7.6070700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/17/2013 06:14 AM, Prashant Gaikwad wrote:
-> On Monday 15 April 2013 11:17 PM, Stephen Warren wrote:
->> On 04/15/2013 01:31 AM, Lucas Stach wrote:
->>> The USB clocks are just clock gates, so no need to set a specific clock.
->>> In fact trying to set a specific clock is just a NOP if the requested
->>> clockrate is the same as those of the parent (clk_m) or will trigger a
->>> WARN_ON() if rates don't match up.
->>>
->>> As we are not setting a specific rate, nor activating the clocks at
->>> init, there is no point in keeping the the usb entries in the clock init
->>> table.
->> Peter, Prashant, I'd like to confirm that the usb* clocks really do have
->> clk_m as their parent; we're sure they aren't driven by the 12MHz PLL_U
->> output?
+On 04/17/2013 06:17 AM, Prashant Gaikwad wrote:
+> On Monday 15 April 2013 01:01 PM, Lucas Stach wrote:
+>> AC97 controller clock is hardwired to pll_a_out0.
 >>
->> Either way, I guess it's safe to take this patch since the clock would
->> be fixed rate; I'd just like to make sure the clock driver is accurate.
+>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>> ---
 > 
-> These are controller clocks and are not driven by PLL_U.
+> It was not there in previous implementation neither do we implement it
+> in our downstream kernel.
+> 
+> Lucas, are you using this clock anywhere?
 
-So just to confirm: does that mean that they truly /are/ direct children
-of clk_m, just like the driver says right now?
+Yes, there's an AC'97 driver upstream now, which Lucas wrote. It's used
+on the Colibri T20 board.
