@@ -1,43 +1,31 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] gpio: palmas: add dt support
-Date: Tue, 16 Apr 2013 12:44:59 -0600
-Message-ID: <516D9C2B.302@wwwdotorg.org>
-References: <1366122705-3579-1-git-send-email-ldewangan@nvidia.com>
+From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] power: power_supply: Add core support for
+ supplied_from
+Date: Tue, 16 Apr 2013 18:55:41 -0700
+Message-ID: <20130417015541.GC18418@lizard.mcd26095.sjc.wayport.net>
+References: <1364852755-17425-1-git-send-email-rklein@nvidia.com>
+ <1364852755-17425-3-git-send-email-rklein@nvidia.com>
+ <515B4E32.8080006@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1366122705-3579-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <515B4E32.8080006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, j-keerthy-l0cyMroinI0@public.gmane.org, t-kristo-l0cyMroinI0@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/16/2013 08:31 AM, Laxman Dewangan wrote:
-> Add of_device_id table for Palma GPIO to be enable the
-> driver from DT file.
+On Tue, Apr 02, 2013 at 03:31:30PM -0600, Stephen Warren wrote:
+> On 04/01/2013 03:45 PM, Rhyland Klein wrote:
+> > This patch adds support for supplies to register a list of char *'s
+> > which represent the list of supplies which supply them. This is the
+> > opposite as the supplied_to list.
 > 
-> The driver can be registered from DT file as:
-> 	palmas: tps65913@58 {
-> 		:::::::::::
-> 		palmas_gpio: palmas_gpio {
-> 			compatible = "ti,palmas-gpio";
-> 			gpio-controller;
-> 			#gpio-cells = <2>;
-> 		};
-> 	};
+> This patch resolves the concerns I had before, so,
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-So I think this patch looks fine if everyone is agreed that all the
-Palmas sub-modules are represented as explicit child nodes in DT, and
-the probing of the child nodes is based on the top-level Palmas device
-being a bus, and enumerating its children in standard DT style, using
-compatible values. (I'm not sure how the child probing/instantiation
-will work for non-DT systems though).
+Thanks a lot for the work, folks! With some fixes (see comments for patch
+3/3), this is now in battery-2.6.git tree.
 
-I'm not 100% sure if an agreement on the top-level structure of the
-Palmas DT bindings was reached though? Can the SlimLogic people confirm
-this? I assume Laxman must be OK with it since he's sending this patch?
-
-It might be a good idea to get the final Palmas binding documentation
-reviewed and checked in before changing the drivers/.dts files to match
-what the final bindings might be.
+Anton
