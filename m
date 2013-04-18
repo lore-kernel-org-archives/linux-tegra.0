@@ -1,46 +1,56 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: solve adr range issue with THUMB2_KERNEL
- enabled
-Date: Thu, 18 Apr 2013 09:36:11 -0700
-Message-ID: <20130418163611.GF7083@quad.lixom.net>
-References: <1366132149-17294-1-git-send-email-swarren@wwwdotorg.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] regulator: palma: add ramp delay support through
+ regulator constraints
+Date: Thu, 18 Apr 2013 18:24:28 +0100
+Message-ID: <20130418172428.GO13687@opensource.wolfsonmicro.com>
+References: <1366290168-3921-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8+odlFQADydc3R4z"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1366132149-17294-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1366290168-3921-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: sameo@linux.intel.com, gg@slimlogic.co.uk, ian@slimlogic.co.uk, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 16, 2013 at 11:09:09AM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> When building the kernel with CONFIG_THUMB2_KERNEL enabled, older
-> assemblers may emit the following error:
-> 
-> reset-handler.S:78: Error: invalid immediate for address calculation (value = 0x00000004)
-> 
-> Using an explicit adr.w instruction will solve this. Newer assemblers do
-> this automatically. Use the W() macro to do this under Thumb mode only.
-> 
-> Inspired-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Suggested-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Olof, Arnd,
-> 
-> Can you please apply this directly to arm-soc. Thanks.
-> 
-> This patch replaces patch 3/3 "ARM: tegra: make sure the pointer on 4
-> byte align when THUMB2_KERNEL enabled" which I forwarded yesterday. It
-> can be applied to wherever Tegra's for-3.10/fixes branch was applied,
-> and doesn't cause any conflicts/merge-issues with any other Tegra patches
-> this cycle.
 
+--8+odlFQADydc3R4z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied.
+On Thu, Apr 18, 2013 at 06:32:47PM +0530, Laxman Dewangan wrote:
+> Currently Palma regulator driver support the ramp delay
+> through rail specific platform data.
+>=20
+> As regulator framework support the configuration of ramp
+> delay through regulator constraint, using the framework
+> method and removing the platform specific data approach.
 
+Applied both, thanks.
 
--Olof
+--8+odlFQADydc3R4z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRcCxFAAoJELSic+t+oim9wW0P/2NbOV/DQAEX3Vo33fkafTq1
+yKoRmJRISjQh+QAZX8M/2swHsBwXPKasFB8UR192JC9vZpdkykZd0238J3QUGM6Q
+3HqgvjfavzqH+gf/6TSCVikSg6CT5Jb58GK6mr66aaqDvI7rSIujASc/+w0rRV/W
+wiR/uJe53qhvT1CRujOD+V9udR9N0L4BP616UsiHCE/9A/AsYF4rmnWPjXNMtgZG
+jgAL2u1WyWo6BYZxeaaQhhouGleSevs3vnEpy7jPCOHbxx+lwE4XYYHFBBdecys/
+pkZSFdVQD0T1M4ppOrm1/aYIs0+KSCDzqsuQO/1LGtozlIZVONTFZRcH32vQSoE9
+8SQA4F7ewraAapMIy2pPb4vOUvkDGu9iS1LkJezmKALTofvSHu2cx0fRunD3ie3g
+NLeU2hkjFPULQFYcQ6hKubkl9VcaeH8JIfiNgVda2WalNcSkwbxzfJbeiMXFPJPz
+GgaXk5GS4yf20VEoagXJiAcp0SnrDLWvDp++O4Dwef4C7UQqVtrATGZLZorkyDJe
+kNgpKQK+GgKLEUj/SnJFYz9KUrSR+ylmhbNUbtKfRvVohyHl1tXBgZXlce8FDEO1
+8JecW1Rj9mbwU4qmThGcHd7Ow3crRiRY9of8X3+exG36xw8ebmKWYbyTPfaSheQ6
+/ubqmQAFvzOFGwp6+A8D
+=1LxQ
+-----END PGP SIGNATURE-----
+
+--8+odlFQADydc3R4z--
