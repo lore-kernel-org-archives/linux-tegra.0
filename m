@@ -1,164 +1,37 @@
-From: Graeme Gregory <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
-Subject: Re: [PATCH 2/2] regulator: palmas: preserve modes of rails during
- enable/disable
-Date: Thu, 18 Apr 2013 14:13:56 +0100
-Message-ID: <516FF194.6050704@slimlogic.co.uk>
-References: <1366290168-3921-1-git-send-email-ldewangan@nvidia.com> <1366290168-3921-2-git-send-email-ldewangan@nvidia.com>
+From: Mikhail Goryunov <gormih78-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org>
+Subject: Re: upstream kernel 3.8.5: tegra_defconfig not working on Seco QSeven QuadMo747-X/T20
+Date: Thu, 18 Apr 2013 17:24:50 +0400
+Message-ID: <1013801366291490@web26g.yandex.ru>
+References: <1039301365682542@web29e.yandex.ru> <1365687847.1938.1.camel@antimon> <5166D633.8060308@wwwdotorg.org> <1688621365751094@web10f.yandex.ru> <516828ED.4090403@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1366290168-3921-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <516828ED.4090403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, ian-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This looks good to me.
 
-Acked-by: Graeme Gregory <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
 
-On 18/04/13 14:02, Laxman Dewangan wrote:
-> The Palma device like TPS65913 have the mode mask which is also
-> used for enable/disable the rails. The mode bits are defined as
-> 	00: OFF
-> 	01: AUTO
-> 	10: ECO
-> 	11: Forced PWM
+
+
+12.04.2013, 19:32, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
+> On 04/12/2013 01:18 AM, Mikhail Goryunov wrote:
 >
-> and modes are set accordingly as
-> 	REGULATOR_MODE_NORMAL: AUTO
-> 	REGULATOR_MODE_IDLE: ECO
-> 	REGULATOR_MODE_FAST: PWM
+>> 11.04.2013, 19:26, "Stephen Warren" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
+>>> On 04/11/2013 07:44 AM, Lucas Stach wrote:
+>>>> Am Donnerstag, den 11.04.2013, 16:15 +0400 schrieb Mikhail Goryunov:
+>>>>> When building the kernel with the option tegra_defconfig loading occurs in the following way:
 >
-> Two issue observed:
-> 1. If client calls following sequence:
-> 	regulator_enable(),
-> 	regulator_set_mode(FAST),
-> 	regulator_disable()
+> ...
 >
-> 	and again the regulator_enable() then the mode is reset
-> 	to NORMAL inplace of keeping the mode as FAST.
+
+> BTW, I just noticed the following in your previous message:
 >
-> 	Fixing this by storing the current mode configured by client
-> 	and restoring modes when enable() is called after disable().
+>> Image Type: PowerPC Linux Kernel Image (uncompressed)
 >
-> 2. In following sequence, the regulator get enabled:
-> 	regulator_disable()
-> 	regulator_set_mode(FAST),
->
-> 	Fixing this by updating new mode in register only if it is
-> 	enabled.
->
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/regulator/palmas-regulator.c |   30 +++++++++++++++++++++++-------
->  include/linux/mfd/palmas.h           |    1 +
->  2 files changed, 24 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-> index f5612c3..2948d21 100644
-> --- a/drivers/regulator/palmas-regulator.c
-> +++ b/drivers/regulator/palmas-regulator.c
-> @@ -275,7 +275,10 @@ static int palmas_enable_smps(struct regulator_dev *dev)
->  	palmas_smps_read(pmic->palmas, palmas_regs_info[id].ctrl_addr, &reg);
->  
->  	reg &= ~PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
-> -	reg |= SMPS_CTRL_MODE_ON;
-> +	if (pmic->current_reg_mode[id])
-> +		reg |= pmic->current_reg_mode[id];
-> +	else
-> +		reg |= SMPS_CTRL_MODE_ON;
->  
->  	palmas_smps_write(pmic->palmas, palmas_regs_info[id].ctrl_addr, reg);
->  
-> @@ -297,16 +300,19 @@ static int palmas_disable_smps(struct regulator_dev *dev)
->  	return 0;
->  }
->  
-> -
->  static int palmas_set_mode_smps(struct regulator_dev *dev, unsigned int mode)
->  {
->  	struct palmas_pmic *pmic = rdev_get_drvdata(dev);
->  	int id = rdev_get_id(dev);
->  	unsigned int reg;
-> +	bool rail_enable = true;
->  
->  	palmas_smps_read(pmic->palmas, palmas_regs_info[id].ctrl_addr, &reg);
->  	reg &= ~PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
->  
-> +	if (reg == SMPS_CTRL_MODE_OFF)
-> +		rail_enable = false;
-> +
->  	switch (mode) {
->  	case REGULATOR_MODE_NORMAL:
->  		reg |= SMPS_CTRL_MODE_ON;
-> @@ -320,8 +326,11 @@ static int palmas_set_mode_smps(struct regulator_dev *dev, unsigned int mode)
->  	default:
->  		return -EINVAL;
->  	}
-> -	palmas_smps_write(pmic->palmas, palmas_regs_info[id].ctrl_addr, reg);
->  
-> +	pmic->current_reg_mode[id] = reg & PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
-> +	if (rail_enable)
-> +		palmas_smps_write(pmic->palmas,
-> +			palmas_regs_info[id].ctrl_addr, reg);
->  	return 0;
->  }
->  
-> @@ -331,9 +340,7 @@ static unsigned int palmas_get_mode_smps(struct regulator_dev *dev)
->  	int id = rdev_get_id(dev);
->  	unsigned int reg;
->  
-> -	palmas_smps_read(pmic->palmas, palmas_regs_info[id].ctrl_addr, &reg);
-> -	reg &= PALMAS_SMPS12_CTRL_STATUS_MASK;
-> -	reg >>= PALMAS_SMPS12_CTRL_STATUS_SHIFT;
-> +	reg = pmic->current_reg_mode[id] & PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
->  
->  	switch (reg) {
->  	casThis looks good to me.
->
->
->
-> Acked-by: Graeme Gregory <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>e SMPS_CTRL_MODE_ON:
-> @@ -872,7 +879,8 @@ static int palmas_regulators_probe(struct platform_device *pdev)
->  			/*
->  			 * Read and store the RANGE bit for later use
->  			 * This must be done before regulator is probed,
-> -			 * otherwise we error in probe with unsupportable ranges.
-> +			 * otherwise we error in probe with unsupportable
-> +			 * ranges. Read the current smps mode for later use.
->  			 */
->  			addr = palmas_regs_info[id].vsel_addr;
->  
-> @@ -889,6 +897,14 @@ static int palmas_regulators_probe(struct platform_device *pdev)
->  						palmas_regs_info[id].vsel_addr);
->  			pmic->desc[id].vsel_mask =
->  					PALMAS_SMPS12_VOLTAGE_VSEL_MASK;
-> +This looks good to me.
->
->
->
-> Acked-by: Graeme Gregory <gg-kDsPt+C1G03kYMGBc/C6ZA@public.gmane.org>
-> +			/* Read the smps mode for later use. */
-> +			addr = palmas_regs_info[id].ctrl_addr;
-> +			ret = palmas_smps_read(pmic->palmas, addr, &reg);
-> +			if (ret)
-> +				goto err_unregister_regulator;
-> +			pmic->current_reg_mode[id] = reg &
-> +					PALMAS_SMPS12_CTRL_MODE_ACTIVE_MASK;
->  		}
->  
->  		pmic->desc[id].type = REGULATOR_VOLTAGE;
-> diff --git a/include/linux/mfd/palmas.h b/include/linux/mfd/palmas.h
-> index 91ef60c..8f21daf 100644
-> --- a/include/linux/mfd/palmas.h
-> +++ b/include/linux/mfd/palmas.h
-> @@ -338,6 +338,7 @@ struct palmas_pmic {
->  
->  	int range[PALMAS_REG_SMPS10];
->  	unsigned int ramp_delay[PALMAS_REG_SMPS10];
-> +	unsigned int current_reg_mode[PALMAS_REG_SMPS10];
->  };
->  
->  struct palmas_resource {
+> That's certainly wrong...
+
+A very strange comment. I'm such a sent me letters not found.
