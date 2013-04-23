@@ -1,122 +1,106 @@
-From: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: DT: tegra: pinctrl suspend resume hook
-Date: Tue, 23 Apr 2013 23:39:02 +0530
-Message-ID: <1366740542-26127-2-git-send-email-bbasu@nvidia.com>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: add suspend-resume support
+Date: Tue, 23 Apr 2013 20:43:32 +0200
+Message-ID: <20130423184332.GA31374@avionic-0098.mockup.avionic-design.de>
 References: <1366740542-26127-1-git-send-email-bbasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 In-Reply-To: <1366740542-26127-1-git-send-email-bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make pinmux as the first node of tegra DT
-so as to achieve pinctrl as last device to suspend and
-first device to resume.
 
-Signed-off-by: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114.dtsi | 12 ++++++------
- arch/arm/boot/dts/tegra20.dtsi  | 16 ++++++++--------
- arch/arm/boot/dts/tegra30.dtsi  | 13 +++++++------
- 3 files changed, 21 insertions(+), 20 deletions(-)
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index a58a761..36596ae 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -11,6 +11,12 @@
- 		serial3 = &uartd;
- 	};
- 
-+	pinmux: pinmux {
-+		compatible = "nvidia,tegra114-pinmux";
-+		reg = <0x70000868 0x148		/* Pad control registers */
-+		       0x70003000 0x40c>;	/* Mux registers */
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra114-host1x", "simple-bus";
- 		reg = <0x50000000 0x00028000>;
-@@ -165,12 +171,6 @@
- 		interrupt-controller;
- 	};
- 
--	pinmux: pinmux {
--		compatible = "nvidia,tegra114-pinmux";
--		reg = <0x70000868 0x148		/* Pad control registers */
--		       0x70003000 0x40c>;	/* Mux registers */
--	};
--
- 	/*
- 	 * There are two serial driver i.e. 8250 based simple serial
- 	 * driver and APB DMA based serial driver for higher baudrate
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index a5a9615..6d8a663 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -12,6 +12,14 @@
- 		serial4 = &uarte;
- 	};
- 
-+	pinmux: pinmux {
-+		compatible = "nvidia,tegra20-pinmux";
-+		reg = <0x70000014 0x10   /* Tri-state registers */
-+		       0x70000080 0x20   /* Mux registers */
-+		       0x700000a0 0x14   /* Pull-up/down registers */
-+		       0x70000868 0xa8>; /* Pad control registers */
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -196,14 +204,6 @@
- 		interrupt-controller;
- 	};
- 
--	pinmux: pinmux {
--		compatible = "nvidia,tegra20-pinmux";
--		reg = <0x70000014 0x10   /* Tri-state registers */
--		       0x70000080 0x20   /* Mux registers */
--		       0x700000a0 0x14   /* Pull-up/down registers */
--		       0x70000868 0xa8>; /* Pad control registers */
--	};
--
- 	das {
- 		compatible = "nvidia,tegra20-das";
- 		reg = <0x70000c00 0x80>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 9f33086..b4b79f0 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -12,6 +12,13 @@
- 		serial4 = &uarte;
- 	};
- 
-+	pinmux: pinmux {
-+		compatible = "nvidia,tegra30-pinmux";
-+		reg = <0x70000868 0xd4    /* Pad control registers */
-+		       0x70003000 0x3e4>; /* Mux registers */
-+	};
-+
-+
- 	host1x {
- 		compatible = "nvidia,tegra30-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -216,12 +223,6 @@
- 		interrupt-controller;
- 	};
- 
--	pinmux: pinmux {
--		compatible = "nvidia,tegra30-pinmux";
--		reg = <0x70000868 0xd4    /* Pad control registers */
--		       0x70003000 0x3e4>; /* Mux registers */
--	};
--
- 	/*
- 	 * There are two serial driver i.e. 8250 based simple serial
- 	 * driver and APB DMA based serial driver for higher baudrate
--- 
-1.8.1.5
+> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-te=
+gra.c
+[...]
+> @@ -41,6 +42,8 @@ struct tegra_pmx {
+> =20
+>  	int nbanks;
+>  	void __iomem **regs;
+> +	int *regs_size;
+
+Perhaps this should be unsigned int *. The values stored in this array
+will never be negative, right?
+
+>  int tegra_pinctrl_probe(struct platform_device *pdev,
+>  			const struct tegra_pinctrl_soc_data *soc_data)
+>  {
+> -	struct tegra_pmx *pmx;
+>  	struct resource *res;
+> -	int i;
+> +	struct tegra_pmx *pmx;
+> +	int i, pg_data_size =3D 0;
+
+There's a needless move of the pmx variable declaration here.
+
+> @@ -735,6 +769,21 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>  		return -ENODEV;
+>  	}
+> =20
+> +if (IS_ENABLED(CONFIG_PM_SLEEP))
+> +	pmx->regs_size =3D devm_kzalloc(&pdev->dev,
+> +				pmx->nbanks * sizeof(*(pmx->regs_size)),
+> +				GFP_KERNEL);
+> +	if (!pmx->regs_size) {
+> +		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	pmx->pg_data =3D devm_kzalloc(&pdev->dev, pg_data_size, GFP_KERNEL);
+> +	if (!pmx->pg_data) {
+> +		dev_err(&pdev->dev, "Can't alloc pingroup data pointer\n");
+> +		return -ENODEV;
+> +	}
+
+I don't think this works the way you expect it to. The line
+
+	if (IS_ENABLED(CONFIG_PM_SLEEP))
+
+is a standard conditional and therefore needs to be properly indented
+and use { and } to delimit the block.
+
+> @@ -756,6 +805,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>  			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n", i);
+>  			return -ENODEV;
+>  		}
+> +
+> +if (IS_ENABLED(CONFIG_PM_SLEEP))
+> +		pmx->regs_size[i] =3D resource_size(res);
+
+In this case it will actually work as expected, but the if () should be
+properly indented.
+
+Thierry
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRdtZUAAoJEN0jrNd/PrOh3XUQAJAZ96+yRwyasLSm4dK6qnAm
+wP4hkmbs7BkzYfboasFIUKj5f71biLzHMR4JRv6b59rxLho0ADxoXA4koyK1OS5B
+GoIn+5a8o5qIiP0rSSNnr0c7dZqrZ5FIlV7vwr8F6jI7HZlxSS2uENQubb21Z9tb
+0OC40Q0DOFg70M/H0kCocY9VLFeM4xGhCBR1CqeBp4WHZ34221OhN/H8p5EV8v39
+xhZZ6IU7ihPTwFvx9U1JxWqwRDBH56EFdxqDUEiL/JPGp6Kxlr4u2eAmHYkii6eH
+g8gNdSMyBuHJ+FG3nEQFOiIcGM+sW6cO8r0DywN0Mm6boN/MU/R+O1ErTQQQYwNG
+qlKK21nYvLzR/H3R5pTBHsXqzexMCcZFmIkJ300bi1s0A18aCdlOpfKC8EM3gcUF
+BvMPQOF/0kiRqMvzjTWBpMPC6SozB79Fa/vu2vofO3wL9SUbX//0ag7b8OVsjhgq
+iaBdD+OzAWMaXOli71OG/sKwC2ukyj9crvIRTKjHZMFrBhCfDx0KJgvtBHLmnzWW
+sWGcNyx8O4GQq4Q3jWbjxyYnwHWd087uc2nzb38BJPhs+yXs7VmdsT3renkmG/eo
+iLtCGKn0L48xpcJN66jm5udkLj371KL+achAc3jWJBYmpwZSXNKBO09ykZqiH9tx
+B1I4OAAsxF254HM5HiiG
+=iUHp
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
