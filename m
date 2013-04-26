@@ -1,118 +1,37 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] dma: tegra: implement suspend/resume callbacks
-Date: Wed, 24 Apr 2013 15:24:27 +0530
-Message-ID: <1366797267-29567-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: djbw-b10kYP2dOMg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Emil Goode <emilgoode@gmail.com>
+Subject: [PATCH] drm/tegra: Include header drm/drm.h
+Date: Fri, 26 Apr 2013 19:49:51 +0200
+Message-ID: <1366998591-8508-1-git-send-email-emilgoode@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: airlied@linux.ie, swarren@wwwdotorg.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement suspend/resume callbacks to store APB DMA channel's
-register on suspend and restore APB DMA channel's register on
-resume.
+Include definitions of used types by including drm/drm.h
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sparse output:
+/usr/include/drm/tegra_drm.h:21:
+	found __[us]{8,16,32,64} type without
+	#include <linux/types.h>
+
+Signed-off-by: Emil Goode <emilgoode@gmail.com>
 ---
- drivers/dma/tegra20-apb-dma.c |   65 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 65 insertions(+), 0 deletions(-)
+ include/uapi/drm/tegra_drm.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 5a0b66c..ce19340 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -30,6 +30,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/clk/tegra.h>
-@@ -199,6 +200,7 @@ struct tegra_dma_channel {
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index 6e132a2..73bde4e 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -17,6 +17,8 @@
+ #ifndef _UAPI_TEGRA_DRM_H_
+ #define _UAPI_TEGRA_DRM_H_
  
- 	/* Channel-slave specific configuration */
- 	struct dma_slave_config dma_sconfig;
-+	struct tegra_dma_channel_regs	channel_reg;
- };
- 
- /* tegra_dma: Tegra DMA specific information */
-@@ -1440,11 +1442,74 @@ static int tegra_dma_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra_dma_pm_suspend(struct device *dev)
-+{
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
-+	int i;
-+	int ret;
++#include <drm/drm.h>
 +
-+	/* Enable clock before accessing register */
-+	ret = tegra_dma_runtime_resume(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	tdma->reg_gen = tdma_read(tdma, TEGRA_APBDMA_GENERAL);
-+	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
-+		struct tegra_dma_channel *tdc = &tdma->channels[i];
-+		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
-+
-+		ch_reg->csr = tdc_read(tdc, TEGRA_APBDMA_CHAN_CSR);
-+		ch_reg->ahb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
-+		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
-+		ch_reg->ahb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBSEQ);
-+		ch_reg->apb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBSEQ);
-+	}
-+
-+	/* Disable clock */
-+	tegra_dma_runtime_suspend(dev);
-+	return 0;
-+}
-+
-+static int tegra_dma_pm_resume(struct device *dev)
-+{
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
-+	int i;
-+	int ret;
-+
-+	/* Enable clock before accessing register */
-+	ret = tegra_dma_runtime_resume(dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	tdma_write(tdma, TEGRA_APBDMA_GENERAL, tdma->reg_gen);
-+	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
-+	tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
-+
-+	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
-+		struct tegra_dma_channel *tdc = &tdma->channels[i];
-+		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
-+
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBSEQ, ch_reg->apb_seq);
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_reg->apb_ptr);
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_reg->ahb_seq);
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, ch_reg->ahb_ptr);
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
-+			(ch_reg->csr & ~TEGRA_APBDMA_CSR_ENB));
-+	}
-+
-+	/* Disable clock */
-+	tegra_dma_runtime_suspend(dev);
-+	return 0;
-+}
-+#endif
-+
- static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
- #ifdef CONFIG_PM_RUNTIME
- 	.runtime_suspend = tegra_dma_runtime_suspend,
- 	.runtime_resume = tegra_dma_runtime_resume,
- #endif
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
- };
- 
- static struct platform_driver tegra_dmac_driver = {
+ struct drm_tegra_gem_create {
+ 	__u64 size;
+ 	__u32 flags;
 -- 
-1.7.1.1
+1.7.10.4
