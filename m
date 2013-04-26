@@ -1,37 +1,38 @@
-From: Emil Goode <emilgoode@gmail.com>
-Subject: [PATCH] drm/tegra: Include header drm/drm.h
-Date: Fri, 26 Apr 2013 19:49:51 +0200
-Message-ID: <1366998591-8508-1-git-send-email-emilgoode@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: airlied@linux.ie, swarren@wwwdotorg.org
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Emil Goode <emilgoode@gmail.com>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH v8 0/3] Runtime Interpreted Power Sequences
+Date: Fri, 26 Apr 2013 11:55:35 -0700
+Message-ID: <CAPnjgZ1P6dmRB0sO2qBUtd=WBiNcY339NAit2faaotAfEqQDeQ@mail.gmail.com>
+References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1353047903-14363-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Anton Vorontsov <cbouatmailru@gmail.com>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Mark Zhang <markz@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, David Woodhouse <dwmw2@infradead.org>, Arnd Bergmann <arnd@arndb.de>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Devicetree Discuss <devicetree-discuss@lists.ozlabs.org>, linux-pm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Include definitions of used types by including drm/drm.h
+Hi,
 
-Sparse output:
-/usr/include/drm/tegra_drm.h:21:
-	found __[us]{8,16,32,64} type without
-	#include <linux/types.h>
+On Thu, Nov 15, 2012 at 10:38 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> Hopefully the final series before the feature gets merged. Anton Vorontsov
+> kindly accepted to take it into his tree, so this series is mostly a call for
+> acks, tests and reviews notices before the merge window for 3.8 opens. If you
+> are interested in seeing this feature, please add your name.
+>
+> This series also adds an entry for the subsystem into MAINTAINERS, setting me as
+> the person in charge.
+>
+> Changes from v7:
+> - fix bug reported by Tony Prisk
+> - add MAINTAINERS entry
+>
+> Alexandre Courbot (3):
+>   Runtime Interpreted Power Sequences
+>   pwm_backlight: use power sequences
+>   Take maintainership of power sequences
 
-Signed-off-by: Emil Goode <emilgoode@gmail.com>
----
- include/uapi/drm/tegra_drm.h |    2 ++
- 1 file changed, 2 insertions(+)
+Did this actually land? I can't see it in linux-next.
 
-diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
-index 6e132a2..73bde4e 100644
---- a/include/uapi/drm/tegra_drm.h
-+++ b/include/uapi/drm/tegra_drm.h
-@@ -17,6 +17,8 @@
- #ifndef _UAPI_TEGRA_DRM_H_
- #define _UAPI_TEGRA_DRM_H_
- 
-+#include <drm/drm.h>
-+
- struct drm_tegra_gem_create {
- 	__u64 size;
- 	__u32 flags;
--- 
-1.7.10.4
+Regards,
+Simon
