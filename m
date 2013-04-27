@@ -1,63 +1,68 @@
-From: Emil Goode <emilgoode-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: Include header drm/drm.h
-Date: Sat, 27 Apr 2013 11:49:22 +0200
-Message-ID: <20130427094922.GA6348@debian>
-References: <1366998591-8508-1-git-send-email-emilgoode@gmail.com>
- <20130426192208.GA2945@avionic-0098.mockup.avionic-design.de>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v8 0/3] Runtime Interpreted Power Sequences
+Date: Sun, 28 Apr 2013 00:36:45 +0900
+Message-ID: <CAAVeFuLCoi07-9KWyi+iJ58Zb-aiQg1pgCvq1fmF+FKuzfCRiQ@mail.gmail.com>
+References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com> <CAPnjgZ1P6dmRB0sO2qBUtd=WBiNcY339NAit2faaotAfEqQDeQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130426192208.GA2945-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+In-Reply-To: <CAPnjgZ1P6dmRB0sO2qBUtd=WBiNcY339NAit2faaotAfEqQDeQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+Hi Simon,
 
-I don't know this code well but the drm/drm.h has an #if def so that
-either linux/types.h is included or the __[us]* types are defined in
-a different way with the comment "One of the BSDs".
-Also I sent a patch last year to include linux/types.h in exynos_drm.h
-but it now includes drm/drm.h instead.
+On Sat, Apr 27, 2013 at 3:55 AM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Hi,
+>
+> On Thu, Nov 15, 2012 at 10:38 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> Hopefully the final series before the feature gets merged. Anton Vorontsov
+>> kindly accepted to take it into his tree, so this series is mostly a call for
+>> acks, tests and reviews notices before the merge window for 3.8 opens. If you
+>> are interested in seeing this feature, please add your name.
+>>
+>> This series also adds an entry for the subsystem into MAINTAINERS, setting me as
+>> the person in charge.
+>>
+>> Changes from v7:
+>> - fix bug reported by Tony Prisk
+>> - add MAINTAINERS entry
+>>
+>> Alexandre Courbot (3):
+>>   Runtime Interpreted Power Sequences
+>>   pwm_backlight: use power sequences
+>>   Take maintainership of power sequences
+>
+> Did this actually land? I can't see it in linux-next.
 
-Best regards,
+It has not landed yet, and will not land in the form that I proposed
+initially. There were some obvious issues with describing the
+sequences in the device tree, and I decided to rethink the whole
+thing, study the state of the art some more (especially ACPI) and
+start again from a blank page.
 
-Emil Goode
+The v2 idea is almost ready to be shared, but it needs a cleaner way
+to manage GPIOs, which itself requires gpiolib to be refactored and
+the GENERIC_GPIO option to be removed. These last two items will land
+in 3.10, so I hope to have both the gpiod interface *and* the new
+power seqs ready and approved for 3.11. Then my $@?*^! panel backlight
+will maybe finally switch on (no kidding - that's really what this
+whole thing is about).
 
+The new power seqs will fundamentally work in a similar fashion to v1
+(a simple bytecode that controls power-related items), but will not be
+encoded through the DT. Instead, I'd like to have small power control
+objects that can be referenced by the platform data of pseq-enabled
+drivers, or fetched and associated to the driver through the
+compatible property of the DT. These objects will have, as before,
+power resources they need to request, and power methods that the
+driver can call as needed.
 
-On Fri, Apr 26, 2013 at 09:22:08PM +0200, Thierry Reding wrote:
-> On Fri, Apr 26, 2013 at 07:49:51PM +0200, Emil Goode wrote:
-> > Include definitions of used types by including drm/drm.h
-> > 
-> > Sparse output:
-> > /usr/include/drm/tegra_drm.h:21:
-> > 	found __[us]{8,16,32,64} type without
-> > 	#include <linux/types.h>
-> > 
-> > Signed-off-by: Emil Goode <emilgoode-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >  include/uapi/drm/tegra_drm.h |    2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
-> > index 6e132a2..73bde4e 100644
-> > --- a/include/uapi/drm/tegra_drm.h
-> > +++ b/include/uapi/drm/tegra_drm.h
-> > @@ -17,6 +17,8 @@
-> >  #ifndef _UAPI_TEGRA_DRM_H_
-> >  #define _UAPI_TEGRA_DRM_H_
-> >  
-> > +#include <drm/drm.h>
-> > +
-> 
-> sparse complains about linux/types.h not being included, so I wonder if
-> it makes more sense to include that instead of drm/drm.h. In fact I have
-> a fix that does exactly that in a local branch and was going to put that
-> into my fixes branch. It's a bit more lightweight.
-> 
-> On the other hand, some drivers already include drm/drm.h in the public
-> header so I don't really have any objections to this patch.
-> 
-> Thierry
+I hate to give dates, but my wish is to come with a first version of
+the code by the time the merge window closes. And yes, I still plan to
+use Anton as a trojan horse to get this in. ;)
+
+Thanks,
+Alex.
