@@ -1,68 +1,99 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 0/3] Runtime Interpreted Power Sequences
-Date: Sun, 28 Apr 2013 00:36:45 +0900
-Message-ID: <CAAVeFuLCoi07-9KWyi+iJ58Zb-aiQg1pgCvq1fmF+FKuzfCRiQ@mail.gmail.com>
-References: <1353047903-14363-1-git-send-email-acourbot@nvidia.com> <CAPnjgZ1P6dmRB0sO2qBUtd=WBiNcY339NAit2faaotAfEqQDeQ@mail.gmail.com>
+From: Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/2] pinctrl: tegra: add suspend-resume support
+Date: Sun, 28 Apr 2013 19:08:15 +0530
+Message-ID: <77F7DB30C698A44DA22FB222C89DE941A6692E62BC@BGMAIL01.nvidia.com>
+References: <1366740542-26127-1-git-send-email-bbasu@nvidia.com>
+ <20130423184332.GA31374@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ1P6dmRB0sO2qBUtd=WBiNcY339NAit2faaotAfEqQDeQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20130423184332.GA31374-RM9K5IK7kjIQXX3q8xo1gnVAuStQJXxyR5q1nwbD4aMs9pC9oP6+/A@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Anton Vorontsov <cbouatmailru-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Devicetree Discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Simon,
-
-On Sat, Apr 27, 2013 at 3:55 AM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Hi,
->
-> On Thu, Nov 15, 2012 at 10:38 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Hopefully the final series before the feature gets merged. Anton Vorontsov
->> kindly accepted to take it into his tree, so this series is mostly a call for
->> acks, tests and reviews notices before the merge window for 3.8 opens. If you
->> are interested in seeing this feature, please add your name.
->>
->> This series also adds an entry for the subsystem into MAINTAINERS, setting me as
->> the person in charge.
->>
->> Changes from v7:
->> - fix bug reported by Tony Prisk
->> - add MAINTAINERS entry
->>
->> Alexandre Courbot (3):
->>   Runtime Interpreted Power Sequences
->>   pwm_backlight: use power sequences
->>   Take maintainership of power sequences
->
-> Did this actually land? I can't see it in linux-next.
-
-It has not landed yet, and will not land in the form that I proposed
-initially. There were some obvious issues with describing the
-sequences in the device tree, and I decided to rethink the whole
-thing, study the state of the art some more (especially ACPI) and
-start again from a blank page.
-
-The v2 idea is almost ready to be shared, but it needs a cleaner way
-to manage GPIOs, which itself requires gpiolib to be refactored and
-the GENERIC_GPIO option to be removed. These last two items will land
-in 3.10, so I hope to have both the gpiod interface *and* the new
-power seqs ready and approved for 3.11. Then my $@?*^! panel backlight
-will maybe finally switch on (no kidding - that's really what this
-whole thing is about).
-
-The new power seqs will fundamentally work in a similar fashion to v1
-(a simple bytecode that controls power-related items), but will not be
-encoded through the DT. Instead, I'd like to have small power control
-objects that can be referenced by the platform data of pseq-enabled
-drivers, or fetched and associated to the driver through the
-compatible property of the DT. These objects will have, as before,
-power resources they need to request, and power methods that the
-driver can call as needed.
-
-I hate to give dates, but my wish is to come with a first version of
-the code by the time the merge window closes. And yes, I still plan to
-use Anton as a trojan horse to get this in. ;)
-
-Thanks,
-Alex.
+> -----Original Message-----
+> From: Thierry Reding [mailto:thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org]
+> Sent: Wednesday, April 24, 2013 12:14 AM
+> To: Bibek Basu
+> Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Pritesh Raithatha
+> Subject: Re: [PATCH 1/2] pinctrl: tegra: add suspend-resume support
+> 
+> * PGP Signed by an unknown key
+> 
+> > diff --git a/drivers/pinctrl/pinctrl-tegra.c
+> > b/drivers/pinctrl/pinctrl-tegra.c
+> [...]
+> > @@ -41,6 +42,8 @@ struct tegra_pmx {
+> >
+> >  	int nbanks;
+> >  	void __iomem **regs;
+> > +	int *regs_size;
+> 
+> Perhaps this should be unsigned int *. The values stored in this array will
+> never be negative, right?
+Agree. 
+> 
+> >  int tegra_pinctrl_probe(struct platform_device *pdev,
+> >  			const struct tegra_pinctrl_soc_data *soc_data)  {
+> > -	struct tegra_pmx *pmx;
+> >  	struct resource *res;
+> > -	int i;
+> > +	struct tegra_pmx *pmx;
+> > +	int i, pg_data_size = 0;
+> 
+> There's a needless move of the pmx variable declaration here.
+Agree
+> 
+> > @@ -735,6 +769,21 @@ int tegra_pinctrl_probe(struct platform_device
+> *pdev,
+> >  		return -ENODEV;
+> >  	}
+> >
+> > +if (IS_ENABLED(CONFIG_PM_SLEEP))
+> > +	pmx->regs_size = devm_kzalloc(&pdev->dev,
+> > +				pmx->nbanks * sizeof(*(pmx->regs_size)),
+> > +				GFP_KERNEL);
+> > +	if (!pmx->regs_size) {
+> > +		dev_err(&pdev->dev, "Can't alloc regs pointer\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	pmx->pg_data = devm_kzalloc(&pdev->dev, pg_data_size,
+> GFP_KERNEL);
+> > +	if (!pmx->pg_data) {
+> > +		dev_err(&pdev->dev, "Can't alloc pingroup data pointer\n");
+> > +		return -ENODEV;
+> > +	}
+> 
+> I don't think this works the way you expect it to. The line
+> 
+> 	if (IS_ENABLED(CONFIG_PM_SLEEP))
+> 
+> is a standard conditional and therefore needs to be properly indented and
+> use { and } to delimit the block.
+> 
+My Bad. Will fix
+> > @@ -756,6 +805,9 @@ int tegra_pinctrl_probe(struct platform_device
+> *pdev,
+> >  			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n",
+> i);
+> >  			return -ENODEV;
+> >  		}
+> > +
+> > +if (IS_ENABLED(CONFIG_PM_SLEEP))
+> > +		pmx->regs_size[i] = resource_size(res);
+> 
+> In this case it will actually work as expected, but the if () should be properly
+> indented.
+> 
+> Thierry
+> 
+Thanks for the review
+Bibek
+> * Unknown Key
+> * 0x7F3EB3A1
