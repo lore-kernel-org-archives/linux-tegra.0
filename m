@@ -1,48 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move subsystem
- mutex to pinctrl_dev struct"
-Date: Mon, 29 Apr 2013 13:59:39 -0600
-Message-ID: <517ED12B.8080502@wwwdotorg.org>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com> <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
+From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
+ subsystem mutex to pinctrl_dev struct"
+Date: Mon, 29 Apr 2013 13:54:33 -0700
+Message-ID: <CAK5ve-LtQDvAC9nVvvfU3rvF8d=CYGp9T17FcdNEXBNV65ra2A@mail.gmail.com>
+References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
+ <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com> <517ED12B.8080502@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <517ED12B.8080502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, patrice.chotard-qxv4g6HH51o@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/29/13 12:41, Bryan Wu wrote:
-> Forward to ARM and Tegra mail list.
+On Mon, Apr 29, 2013 at 12:59 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 04/29/13 12:41, Bryan Wu wrote:
+>>
+>> Forward to ARM and Tegra mail list.
+>>
+>> ---------- Forwarded message ----------
+>> From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Date: Mon, Apr 29, 2013 at 11:15 AM
+>> Subject: Tegra 30 System hangs because of commit "pinctrl: move
+>> subsystem mutex to pinctrl_dev struct"
+>> To: patrice.chotard-qxv4g6HH51o@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>,
+>> "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+>>
+>>
+>> Hi Patrice and Linus,
+>>
+>> I'm running linux-next on my Tegra 30 system everyday. But since
+>> next-20130426 release, the linux-next kernel will hang on my Tegra 30
+>> boards like Cardhu and Beaver.
+>>
+>> After some bisect and comparing to next-20130424, I found the commit
+>> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
+>> issue. If I simply revert this patch in next-20130429, system boots up
+>> as before.
+>>
+>> Could you please help to check this?
 >
-> ---------- Forwarded message ----------
-> From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Date: Mon, Apr 29, 2013 at 11:15 AM
-> Subject: Tegra 30 System hangs because of commit "pinctrl: move
-> subsystem mutex to pinctrl_dev struct"
-> To: patrice.chotard-qxv4g6HH51o@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>,
-> "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 >
+> I would suggest simply dropping or reverting this patch; I had pointed out a
+> long time ago that it was unlikely to be correct.
 >
-> Hi Patrice and Linus,
->
-> I'm running linux-next on my Tegra 30 system everyday. But since
-> next-20130426 release, the linux-next kernel will hang on my Tegra 30
-> boards like Cardhu and Beaver.
->
-> After some bisect and comparing to next-20130424, I found the commit
-> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
-> issue. If I simply revert this patch in next-20130429, system boots up
-> as before.
->
-> Could you please help to check this?
+> My guess/suspicion is a recursive lock attempt during processing hogs during
+> pinctrl device registration, or perhaps during dt->map conversion. Bryan,
+> are you able to confirm this?
 
-I would suggest simply dropping or reverting this patch; I had pointed 
-out a long time ago that it was unlikely to be correct.
+Oh, no worries now. It was fixed in pinctrl for-next branch. I guess
+linux-next will be update soon.
 
-My guess/suspicion is a recursive lock attempt during processing hogs 
-during pinctrl device registration, or perhaps during dt->map 
-conversion. Bryan, are you able to confirm this?
+I will keep testing this when new linux-next is out.
+
+-Bryan
