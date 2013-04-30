@@ -1,58 +1,127 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
- subsystem mutex to pinctrl_dev struct"
-Date: Mon, 29 Apr 2013 13:54:33 -0700
-Message-ID: <CAK5ve-LtQDvAC9nVvvfU3rvF8d=CYGp9T17FcdNEXBNV65ra2A@mail.gmail.com>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
- <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com> <517ED12B.8080502@wwwdotorg.org>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] dma: tegra: implement suspend/resume callbacks
+Date: Tue, 30 Apr 2013 16:00:46 +0530
+Message-ID: <20130430103046.GD1960@intel.com>
+References: <1366797267-29567-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <517ED12B.8080502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1366797267-29567-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, patrice.chotard-qxv4g6HH51o@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: djbw-b10kYP2dOMg@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 29, 2013 at 12:59 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 04/29/13 12:41, Bryan Wu wrote:
->>
->> Forward to ARM and Tegra mail list.
->>
->> ---------- Forwarded message ----------
->> From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Date: Mon, Apr 29, 2013 at 11:15 AM
->> Subject: Tegra 30 System hangs because of commit "pinctrl: move
->> subsystem mutex to pinctrl_dev struct"
->> To: patrice.chotard-qxv4g6HH51o@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>,
->> "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
->>
->>
->> Hi Patrice and Linus,
->>
->> I'm running linux-next on my Tegra 30 system everyday. But since
->> next-20130426 release, the linux-next kernel will hang on my Tegra 30
->> boards like Cardhu and Beaver.
->>
->> After some bisect and comparing to next-20130424, I found the commit
->> "pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
->> issue. If I simply revert this patch in next-20130429, system boots up
->> as before.
->>
->> Could you please help to check this?
->
->
-> I would suggest simply dropping or reverting this patch; I had pointed out a
-> long time ago that it was unlikely to be correct.
->
-> My guess/suspicion is a recursive lock attempt during processing hogs during
-> pinctrl device registration, or perhaps during dt->map conversion. Bryan,
-> are you able to confirm this?
+On Wed, Apr 24, 2013 at 03:24:27PM +0530, Laxman Dewangan wrote:
+> Implement suspend/resume callbacks to store APB DMA channel's
+> register on suspend and restore APB DMA channel's register on
+> resume.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/dma/tegra20-apb-dma.c |   65 +++++++++++++++++++++++++++++++++++++++++
+>  1 files changed, 65 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 5a0b66c..ce19340 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/pm.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/slab.h>
+>  #include <linux/clk/tegra.h>
+> @@ -199,6 +200,7 @@ struct tegra_dma_channel {
+>  
+>  	/* Channel-slave specific configuration */
+>  	struct dma_slave_config dma_sconfig;
+> +	struct tegra_dma_channel_regs	channel_reg;
+>  };
+>  
+>  /* tegra_dma: Tegra DMA specific information */
+> @@ -1440,11 +1442,74 @@ static int tegra_dma_runtime_resume(struct device *dev)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra_dma_pm_suspend(struct device *dev)
+> +{
+> +	struct tegra_dma *tdma = dev_get_drvdata(dev);
+> +	int i;
+> +	int ret;
+> +
+> +	/* Enable clock before accessing register */
+> +	ret = tegra_dma_runtime_resume(dev);
+> +	if (ret < 0)
+> +		return ret;
+You dont seem to handle suspend when DMA is active? Otherwise looks fine.
+Stephen, you okay with this patch?
 
-Oh, no worries now. It was fixed in pinctrl for-next branch. I guess
-linux-next will be update soon.
-
-I will keep testing this when new linux-next is out.
-
--Bryan
+--
+~Vinod
+> +
+> +	tdma->reg_gen = tdma_read(tdma, TEGRA_APBDMA_GENERAL);
+> +	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
+> +		struct tegra_dma_channel *tdc = &tdma->channels[i];
+> +		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
+> +
+> +		ch_reg->csr = tdc_read(tdc, TEGRA_APBDMA_CHAN_CSR);
+> +		ch_reg->ahb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
+> +		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
+> +		ch_reg->ahb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBSEQ);
+> +		ch_reg->apb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBSEQ);
+> +	}
+> +
+> +	/* Disable clock */
+> +	tegra_dma_runtime_suspend(dev);
+> +	return 0;
+> +}
+> +
+> +static int tegra_dma_pm_resume(struct device *dev)
+> +{
+> +	struct tegra_dma *tdma = dev_get_drvdata(dev);
+> +	int i;
+> +	int ret;
+> +
+> +	/* Enable clock before accessing register */
+> +	ret = tegra_dma_runtime_resume(dev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	tdma_write(tdma, TEGRA_APBDMA_GENERAL, tdma->reg_gen);
+> +	tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
+> +	tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
+> +
+> +	for (i = 0; i < tdma->chip_data->nr_channels; i++) {
+> +		struct tegra_dma_channel *tdc = &tdma->channels[i];
+> +		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
+> +
+> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBSEQ, ch_reg->apb_seq);
+> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_reg->apb_ptr);
+> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_reg->ahb_seq);
+> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, ch_reg->ahb_ptr);
+> +		tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+> +			(ch_reg->csr & ~TEGRA_APBDMA_CSR_ENB));
+> +	}
+> +
+> +	/* Disable clock */
+> +	tegra_dma_runtime_suspend(dev);
+> +	return 0;
+> +}
+> +#endif
+>  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+>  #ifdef CONFIG_PM_RUNTIME
+>  	.runtime_suspend = tegra_dma_runtime_suspend,
+>  	.runtime_resume = tegra_dma_runtime_resume,
+>  #endif
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+>  };
+>  
+>  static struct platform_driver tegra_dmac_driver = {
+> -- 
+> 1.7.1.1
+> 
