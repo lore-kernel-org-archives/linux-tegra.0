@@ -1,38 +1,72 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
  subsystem mutex to pinctrl_dev struct"
-Date: Fri, 3 May 2013 16:22:41 +0200
-Message-ID: <CACRpkdboCQmV_Aam3EDcSG6PRVnpEmGkC78m3h7rXT68V2a9Qg@mail.gmail.com>
+Date: Sat, 4 May 2013 15:30:04 +0200
+Message-ID: <20130504133004.GC24282@game.jcrosoft.org>
 References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
-	<CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
-	<517ED12B.8080502@wwwdotorg.org>
+ <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
+ <517ED12B.8080502@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <517ED12B.8080502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <517ED12B.8080502@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, linus.walleij@linaro.org, Bryan Wu <cooloney@gmail.com>, patrice.chotard@st.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Apr 29, 2013 at 9:59 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On 13:59 Mon 29 Apr     , Stephen Warren wrote:
+> On 04/29/13 12:41, Bryan Wu wrote:
+> >Forward to ARM and Tegra mail list.
+> >
+> >---------- Forwarded message ----------
+> >From: Bryan Wu <cooloney@gmail.com>
+> >Date: Mon, Apr 29, 2013 at 11:15 AM
+> >Subject: Tegra 30 System hangs because of commit "pinctrl: move
+> >subsystem mutex to pinctrl_dev struct"
+> >To: patrice.chotard@st.com, Linus Walleij <linus.walleij@linaro.org>
+> >Cc: Stephen Warren <swarren@wwwdotorg.org>,
+> >"linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+> >
+> >
+> >Hi Patrice and Linus,
+> >
+> >I'm running linux-next on my Tegra 30 system everyday. But since
+> >next-20130426 release, the linux-next kernel will hang on my Tegra 30
+> >boards like Cardhu and Beaver.
+> >
+> >After some bisect and comparing to next-20130424, I found the commit
+> >"pinctrl: move subsystem mutex to pinctrl_dev struct" introduced this
+> >issue. If I simply revert this patch in next-20130429, system boots up
+> >as before.
+> >
+> >Could you please help to check this?
+> 
+> I would suggest simply dropping or reverting this patch; I had
+> pointed out a long time ago that it was unlikely to be correct.
+> 
+> My guess/suspicion is a recursive lock attempt during processing
+> hogs during pinctrl device registration, or perhaps during dt->map
+> conversion. Bryan, are you able to confirm this?
 
-> I would suggest simply dropping or reverting this patch; I had pointed out a
-> long time ago that it was unlikely to be correct.
->
-> My guess/suspicion is a recursive lock attempt during processing hogs during
-> pinctrl device registration, or perhaps during dt->map conversion. Bryan,
-> are you able to confirm this?
+same issue on at91sam9g45ek
 
-This was not the case at all, it was an mutex_unlock misspelled as
-mutex_lock()... totally unrecursive dual locking :-)
+revert it
 
-I did test the patch quite extensively, albeit not on a system using
-DT to populate the pinctrl tables so I missed this, mea culpa.
-
-I really want to get rid of the big pinctrl lock and make this more
-fine-granular, and that is why the patch is being pushed, bear
-with me.
-
-Yours,
-Linus Walleij
+Best Regards,
+J.
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
