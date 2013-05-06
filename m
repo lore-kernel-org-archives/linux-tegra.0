@@ -1,77 +1,85 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
- subsystem mutex to pinctrl_dev struct"
-Date: Mon, 6 May 2013 22:25:01 +0200
-Message-ID: <20130506202501.GI24282@game.jcrosoft.org>
-References: <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
- <517ED12B.8080502@wwwdotorg.org>
- <20130504133004.GC24282@game.jcrosoft.org>
- <CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com>
- <20130505112819.GD24282@game.jcrosoft.org>
- <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
- <20130505202236.GF24282@game.jcrosoft.org>
- <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
- <20130506194122.GG24282@game.jcrosoft.org>
- <20130506195403.GJ18614@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20130506195403.GJ18614@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: disable LP2 cpuidle state if PCIe is enabled
+Date: Mon,  6 May 2013 14:39:04 -0600
+Message-ID: <1367872744-25002-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Cc: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20:54 Mon 06 May     , Russell King - ARM Linux wrote:
-> On Mon, May 06, 2013 at 09:41:22PM +0200, Jean-Christophe PLAGNIOL-VILLARD wrote:
-> > On 21:29 Mon 06 May     , Linus Walleij wrote:
-> > > On Sun, May 5, 2013 at 10:22 PM, Jean-Christophe PLAGNIOL-VILLARD
-> > > <plagnioj@jcrosoft.com> wrote:
-> > > 
-> > > > I was thinking to put a jenkins to test Linus HEAD all the time
-> > > > And with some automatic test one some hw
-> > > >
-> > > > to detect it more quick
-> > > 
-> > > Hm yeah, I think I need a broader diversity of testsystems too ... I have this
-> > > nice Chromebook so I thought if I could get a mainline kernel running on
-> > > it I'd have a bigger coverage as well.
-> > 
-> > Maybe we could all work together to setup such automatic testing tool
-> > 
-> > I mean all vendors
-> 
-> Don't bother.  We had one, Simtec's Vince Sanders gave us the build side.
-> No one was interested.  No one took any notice of it.  I have one for a
-> limited number of platforms - it even boots the resulting kernels on real
-> hardware.  The only person who looks at it is me.  Again, just one person,
-> so little value.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Could you push the build failled on the arm ML or a specific ML
+Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
+they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
+this, simply disable LP2 if the PCI driver and DT node are both enabled.
 
-I'm really intresting I hate to brake platform support specialy yours
-> 
-> And that same thing will appy to anything else setup by anyone else.
-> 
-> It's a good idea, but it only really works if people can be bothered to
-> derive value from it by checking the results.
-We can have enforce policy if some brake something again and agian we can do
-as Greg did for one of the Linaro dev. Force the patch to be double check by a
-senior Maintainter.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Thierry,
 
-And I think it will help Maintainer (Specially subsystem) to detect runtime
-bug when applying code they can not test
+This patch is physically based on next-20130506 so that it doesn't
+conflict with any of the recent cpuidle cleanup work. I'm sending it with
+the expectation that you'll apply it to your PCIe development branch
+though. If you do that, you'll see some conflicts unless you rebase your
+dev branch onto something more recent than next-20130422; I assume you'll
+do that rebase soon enough anyway, but if you weren't planning to, I can
+resend the patch based on your current dev branch.
 
-So I really hope we could change this and make it work
+ arch/arm/mach-tegra/cpuidle-tegra20.c |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Maybe as you rsaid it will not work but I'm willing to try one more time
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index 0cdba8d..d2c9349 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -25,6 +25,7 @@
+ #include <linux/cpu_pm.h>
+ #include <linux/clockchips.h>
+ #include <linux/clk/tegra.h>
++#include <linux/of.h>
+ 
+ #include <asm/cpuidle.h>
+ #include <asm/proc-fns.h>
+@@ -212,10 +213,39 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+ }
+ #endif
+ 
++static const struct of_device_id pcie_matches[] __initconst = {
++	{ .compatible = "nvidia,tegra20-pcie" },
++	{ }
++};
++
++/*
++ * Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
++ * they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
++ * this, simply disable LP2 if the PCI driver and DT node are both enabled.
++ */
++static void __init tegra20_cpuidle_disable_lp2_with_pcie(void)
++{
++	struct device_node *np;
++
++	if (!IS_ENABLED(CONFIG_PCI_TEGRA))
++		return;
++
++	np = of_find_matching_node(NULL, pcie_matches);
++	if (!np)
++		return;
++
++	if (!of_device_is_available(np))
++		return;
++
++	pr_info("Disabling LP2 cpuidle state, since PCIe is enabled\n");
++	tegra_idle_driver.state_count = 1;
++}
++
+ int __init tegra20_cpuidle_init(void)
+ {
+ #ifdef CONFIG_PM_SLEEP
+ 	tegra_tear_down_cpu = tegra20_tear_down_cpu;
+ #endif
++	tegra20_cpuidle_disable_lp2_with_pcie();
+ 	return cpuidle_register(&tegra_idle_driver, cpu_possible_mask);
+ }
+-- 
+1.7.10.4
