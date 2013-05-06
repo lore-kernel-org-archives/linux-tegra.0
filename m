@@ -1,57 +1,68 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
- subsystem mutex to pinctrl_dev struct"
-Date: Mon, 6 May 2013 13:40:37 -0700
-Message-ID: <CAK5ve-Lu_mrXDHvxv64GvzrxFYGW+2P2+_tOGGFKC9mf0FOpJw@mail.gmail.com>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
- <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
- <517ED12B.8080502@wwwdotorg.org> <20130504133004.GC24282@game.jcrosoft.org>
- <CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com>
- <20130505112819.GD24282@game.jcrosoft.org> <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
- <20130505202236.GF24282@game.jcrosoft.org> <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
- <20130506194122.GG24282@game.jcrosoft.org> <20130506195403.GJ18614@n2100.arm.linux.org.uk>
- <51880F2F.8010102@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: disable LP2 cpuidle state if PCIe is enabled
+Date: Mon, 6 May 2013 22:44:24 +0200
+Message-ID: <20130506204424.GA18286@avionic-0098.adnet.avionic-design.de>
+References: <1367872744-25002-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51880F2F.8010102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1367872744-25002-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 6, 2013 at 1:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 05/06/2013 01:54 PM, Russell King - ARM Linux wrote:
->> On Mon, May 06, 2013 at 09:41:22PM +0200, Jean-Christophe PLAGNIOL-VILLARD wrote:
->>> On 21:29 Mon 06 May     , Linus Walleij wrote:
->>>> On Sun, May 5, 2013 at 10:22 PM, Jean-Christophe PLAGNIOL-VILLARD
->>>> <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org> wrote:
->>>>
->>>>> I was thinking to put a jenkins to test Linus HEAD all the time
->>>>> And with some automatic test one some hw
->>>>>
->>>>> to detect it more quick
-> ...
->> My conclusion is that build and boot test systems just don't work in an
->> open source environment as no one actively checks the results.  Why would
->> they - maintainers already have enough to do with reading 6500+ emails a
->> month on mailing lists.  Why bother going to look at a website as well
->> which might give even more work.
->
-> Couldn't such a system email people pro-actively, so nobody had to do
-> any manual checking? The kisskb(?) build system does that, as does the
-> "zero day build system" thing from Intel, and I find them quite useful.
-> Personally, I do the build/test checks manually myself, so if an
-> automated system were to do it, it'd save me work rather than give me
-> more work.
 
-Yes, this 0day build system rocks. It will pull in specific branches
-in maintainer branch and do building/automatic code checking like
-smack/boot testing. If they find any issues, they will send out emails
-directly to the authors and SoB persons. We just need to add our ARM
-into to their system for such building/booting test.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So for this issue, it should be very easy to find and email to the author.
+On Mon, May 06, 2013 at 02:39:04PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
+> they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
+> this, simply disable LP2 if the PCI driver and DT node are both enabled.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Thierry,
+>=20
+> This patch is physically based on next-20130506 so that it doesn't
+> conflict with any of the recent cpuidle cleanup work. I'm sending it with
+> the expectation that you'll apply it to your PCIe development branch
+> though. If you do that, you'll see some conflicts unless you rebase your
+> dev branch onto something more recent than next-20130422; I assume you'll
+> do that rebase soon enough anyway, but if you weren't planning to, I can
+> resend the patch based on your current dev branch.
 
-Thanks,
--Bryan
+Yes, I'll be rebasing my development branch soon anyway and I'll pull
+this patch into the branch. Thanks for writing it.
+
+Thierry
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRiBYoAAoJEN0jrNd/PrOhScoP/i6HBKFXQ/b1NK9TiceQvLvG
+F63UHEaPSgPx9suJuaRHEhKdSaHkh227rB/zMcvzdM03UxyCKJbJtjwLvrcp9OXd
+Q7sWqQMAS2uOaQ4tssxpunS/cIyNuKVRx42UQvsqAlG9MAz/+1QAKw01iUoPyZXt
+Xn3/UnFEmbWWXxurtQrDca1aP4oUCPZDqGps3qiyPeDHllqOht84xMo4OR+pPRrL
+mhaIBAp/G1ZgxR/MOeqszTT62xYJxPvpyquQ2B8ksBcDR0kFrWj0wi1eOlD0zc91
+rEAVPOQ9SzFmp59ndpn4/jrnyBQKiei5yjsdXRSr7ylIFO7V13DVgm+tuXF+SKs6
+bsbmbp/sf2CkkLPB+kVfF7v2Rschfn545eeHxFmLiZkIQvkZZCWONj9N+WJ0Y6Br
+5tGEkbewoDb3JlVOk+S/WIY2tKzhRg1SE100JiPizIaJ86OmQ6fHjakS0aMNw+wM
++WmviQYJnwwHX1zRNd6/jhtwU6+uPd8b5fFmAZYaxhOz2buxhOaeYAXszVBZUo+x
+IUQDsGTDU88OMDEZVKmvBP57EyRM5LQYLjc2ZvB4108RIKluAv/5kOOpeVmf1Dkt
+1wW6szWaYjU3D8kNKCe19GsnDCwj5/r8IiVzc6RmpCz31bfFTTY2/9pbd3Z+N1Bo
+60I/14eRbdKqDkPFTm62
+=nm7Q
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
