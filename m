@@ -1,130 +1,113 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: disable LP2 cpuidle state if PCIe is enabled
-Date: Wed, 08 May 2013 12:53:38 +0200
-Message-ID: <518A2EB2.70006@linaro.org>
+Date: Wed, 8 May 2013 12:56:19 +0200
+Message-ID: <20130508105619.GA6682@avionic-0098.adnet.avionic-design.de>
 References: <1367872744-25002-1-git-send-email-swarren@wwwdotorg.org>
+ <20130507124849.GM7949@tbergstrom-lnx.Nvidia.com>
+ <20130507130850.GA11202@avionic-0098.adnet.avionic-design.de>
+ <518915A7.1020105@wwwdotorg.org>
+ <20130508094004.GL7949@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1367872744-25002-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130508094004.GL7949-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/06/2013 10:39 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 08, 2013 at 12:40:04PM +0300, Peter De Schrijver wrote:
+> On Tue, May 07, 2013 at 04:54:31PM +0200, Stephen Warren wrote:
+> > On 05/07/2013 07:08 AM, Thierry Reding wrote:
+> > > On Tue, May 07, 2013 at 03:48:49PM +0300, Peter De Schrijver
+> > > wrote:
+> > >> On Mon, May 06, 2013 at 10:39:04PM +0200, Stephen Warren wrote:
+> > >>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >>>=20
+> > >>> Tegra20 HW appears to have a bug such that PCIe device
+> > >>> interrupts, whether they are legacy IRQs or MSI, are lost when
+> > >>> LP2 is enabled. To work around this, simply disable LP2 if the
+> > >>> PCI driver and DT node are both enabled.
+> > >>>=20
+> > >>=20
+> > >> Wouldn't it make more sense to disable LP2 when we actually
+> > >> detect a PCIe device?
+> >=20
+> > I did consider that, but rejected the idea for the reasons Thierry
+> > mentioned.
+> >=20
+> > > I'm not sure a patch to do so would be as simple as this one. For
+> > > one, the cpuidle framework will already have been initialized when
+> > > PCIe enumeration completes. So some way of permanently disabling
+> > > one state at runtime would be required and I don't think cpuidle
+> > > provides an API to do so. I know the latter isn't really a good
+> > > reason, but I don't think adding that kind of API just because
+> > > Tegra20 seems to have a bug would be appropriate.
+> >=20
+> > There is a way to do this, since it can be done via sysfs, but I don't
+> > think it's exposed as an API from cpuidle. I agree it seems a little
+> > silly to expose it just to support this HW bug though.
+> >=20
+> > > Furthermore, it is quite likely that the PCIe controller will only
+> > > be enabled in DT for devices that actually have a PCIe device
+> > > hooked up.
+> >=20
 >=20
-> Tegra20 HW appears to have a bug such that PCIe device interrupts, wh=
-ether
-> they are legacy IRQs or MSI, are lost when LP2 is enabled. To work ar=
-ound
-> this, simply disable LP2 if the PCI driver and DT node are both enabl=
-ed.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Thierry,
->=20
-> This patch is physically based on next-20130506 so that it doesn't
-> conflict with any of the recent cpuidle cleanup work. I'm sending it =
-with
-> the expectation that you'll apply it to your PCIe development branch
-> though. If you do that, you'll see some conflicts unless you rebase y=
-our
-> dev branch onto something more recent than next-20130422; I assume yo=
-u'll
-> do that rebase soon enough anyway, but if you weren't planning to, I =
-can
-> resend the patch based on your current dev branch.
->=20
->  arch/arm/mach-tegra/cpuidle-tegra20.c |   30 +++++++++++++++++++++++=
-+++++++
->  1 file changed, 30 insertions(+)
->=20
-> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-te=
-gra/cpuidle-tegra20.c
-> index 0cdba8d..d2c9349 100644
-> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-> @@ -25,6 +25,7 @@
->  #include <linux/cpu_pm.h>
->  #include <linux/clockchips.h>
->  #include <linux/clk/tegra.h>
-> +#include <linux/of.h>
-> =20
->  #include <asm/cpuidle.h>
->  #include <asm/proc-fns.h>
-> @@ -212,10 +213,39 @@ static int tegra20_idle_lp2_coupled(struct cpui=
-dle_device *dev,
->  }
->  #endif
-> =20
-> +static const struct of_device_id pcie_matches[] __initconst =3D {
-> +	{ .compatible =3D "nvidia,tegra20-pcie" },
-> +	{ }
-> +};
-> +
-> +/*
-> + * Tegra20 HW appears to have a bug such that PCIe device interrupts=
-, whether
-> + * they are legacy IRQs or MSI, are lost when LP2 is enabled. To wor=
-k around
-> + * this, simply disable LP2 if the PCI driver and DT node are both e=
-nabled.
-> + */
-> +static void __init tegra20_cpuidle_disable_lp2_with_pcie(void)
-> +{
-> +	struct device_node *np;
-> +
-> +	if (!IS_ENABLED(CONFIG_PCI_TEGRA))
-> +		return;
-> +
-> +	np =3D of_find_matching_node(NULL, pcie_matches);
-> +	if (!np)
-> +		return;
-> +
-> +	if (!of_device_is_available(np))
-> +		return;
-> +
-> +	pr_info("Disabling LP2 cpuidle state, since PCIe is enabled\n");
-> +	tegra_idle_driver.state_count =3D 1;
+> That's not always true though. Eg Harmony has a miniPCIe slot, so it shou=
+ld be
+> listed in DT, but there is not necessarily a card present in the slot.
 
-Won't be more clear to have the state disabled in the init function lik=
-e
-this ?
+That's true. I suppose one could argue that Harmony is a development
+board and more typical setups wouldn't have user-accessible slots.
 
-int __init tegra20_cpuidle_init(void)
-{
-	...
-	if (tegra20_has_lp2_pcie_bug(void))
-		tegra_idle_driver.states[1].disabled =3D true;
-	...
-}
+Then again it seems like LP2 causes some more fallout like very slow
+output on the serial console and a decrease in FPS for some 2D/3D use-
+cases I've been playing around with. While these are only performance
+issues they still indicate that something is seriously flawed with the
+current LP2 implementation (at least on Tegra20). So maybe it would be
+preferable to disable it altogether if it cannot be fixed otherwise.
 
-It is similar than:
+I was able to mitigate the problems a bit on Tamonten by reducing the
+value of the nvidia,cpu-pwr-good-time and nvidia,cpu-pwr-off-time from
+5000 us to 500 and 100 us respectively. That gives much better
+performance for the serial console and 2D/3D test-cases, but the 2D/3D
+performance is still down by about 10% compared to runs with LP2
+disabled.
 
-https://git.kernel.org/cgit/linux/kernel/git/rafael/linux-pm.git/tree/a=
-rch/sh/kernel/cpu/shmobile/cpuidle.c
+Now the 2D and 3D test-cases aren't very complex and there's certainly
+much that could be improved with regard to job submission and such, but
+neither removes the fundamental issue that LP2 is causing a lot of
+problems that it shouldn't.
 
-> +}
-> +
->  int __init tegra20_cpuidle_init(void)
->  {
->  #ifdef CONFIG_PM_SLEEP
->  	tegra_tear_down_cpu =3D tegra20_tear_down_cpu;
->  #endif
-> +	tegra20_cpuidle_disable_lp2_with_pcie();
->  	return cpuidle_register(&tegra_idle_driver, cpu_possible_mask);
->  }
->=20
+Thierry
 
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+iQIcBAEBAgAGBQJRii9TAAoJEN0jrNd/PrOh9PQP/15tVoWOUf8b+55B5HbDVXCc
+mNpz0QHrGWpR+Rplaj8yDhsuWJtM9J89IwOcFjl6pBh4aU0/IzMmWVGo7kMqvShX
+/osly6Nut6EhyODWzO+A7X88DcwWeHqha4CvKi4LZJjKds6fKnjz7oeP94X2QNJK
+1ws+jC4FBMXbKIB3y8mn8X6CBrCMEzLSzOS7j1kkJXU6g7BoXTaTWM5nTBSFd65I
+riIV4tgksYjxuppxq74jxeadiS0rwZxyUgGMnBNUjCeVie1pqKdOkk3JyjR3M60c
+9fRzbgLc5bqBJGDc/mzSfCP6wi1q+GwKsgcSkpkOrXfY6wsjIdkBV13PUZUo32pW
+msEL0851ciVULLdWmNK1LjJV7AkQIAi4Ksg4nGuyFGf3WV4LPAQQnyg7VbOVNppU
+QzOXsoxupon16bjfOJ3+cyW97uNPImut97gZJg10wMv5L85u+PZBs8DDaHHJmkiB
+Re9xhKh2D0cWjJfr2gu9qadYIye7YEg8NHFMwt1mRT5lPW7oOdGjIqD79e2nBzRo
+T1FSkjy8wmjqKfOGR8MRa2mogV8gsjvPb6hdQS0brGcwV41gLMr+LFf9UEy3dMK0
+A/ZwGh4v8bTdNQ/nTG1X3JUg/z4/Ew9o2xBWYcLbxbSSHGBMqSiqF4fFc7trBgjz
+BV+9pUb3xwVOATwIRDH8
+=Gr7R
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
