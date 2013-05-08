@@ -1,96 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: disable LP2 cpuidle state if PCIe is enabled
-Date: Wed, 08 May 2013 12:44:26 -0600
-Message-ID: <518A9D0A.3010908@wwwdotorg.org>
-References: <1367872744-25002-1-git-send-email-swarren@wwwdotorg.org> <518A2EB2.70006@linaro.org>
+Subject: Re: [PATCH] USB: set device dma_mask without reference to global
+ data
+Date: Wed, 08 May 2013 16:42:04 -0600
+Message-ID: <518AD4BC.6090009@wwwdotorg.org>
+References: <1367967232-10128-1-git-send-email-swarren@wwwdotorg.org> <CAL411-qVnm0_wwdAiAp9eq_hYkXzFSmRMLAmknpSAG7Jb3bM9A@mail.gmail.com> <5189B7BF.8070607@wwwdotorg.org> <CAL411-pY_i19otiE2pLux6eR_OFHhfhK=+6BF=H6wABDsGCP6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <518A2EB2.70006-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <CAL411-pY_i19otiE2pLux6eR_OFHhfhK=+6BF=H6wABDsGCP6Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/08/2013 04:53 AM, Daniel Lezcano wrote:
-> On 05/06/2013 10:39 PM, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 05/07/2013 08:54 PM, Peter Chen wrote:
 >>
->> Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
->> they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
->> this, simply disable LP2 if the PCI driver and DT node are both enabled.
+>> This probably could be initialized from some DT property. However,
+>> there's no such property defined right now, and considering that DT is
+>> supposed to be an ABI, we'd always need the code in this patch as a
+>> fallback for DTs that were created before any such property was defined.
 >>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Thierry,
->>
->> This patch is physically based on next-20130506 so that it doesn't
->> conflict with any of the recent cpuidle cleanup work. I'm sending it with
->> the expectation that you'll apply it to your PCIe development branch
->> though. If you do that, you'll see some conflicts unless you rebase your
->> dev branch onto something more recent than next-20130422; I assume you'll
->> do that rebase soon enough anyway, but if you weren't planning to, I can
->> resend the patch based on your current dev branch.
->>
->>  arch/arm/mach-tegra/cpuidle-tegra20.c |   30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>
->> diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
->> index 0cdba8d..d2c9349 100644
->> --- a/arch/arm/mach-tegra/cpuidle-tegra20.c
->> +++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
->> @@ -25,6 +25,7 @@
->>  #include <linux/cpu_pm.h>
->>  #include <linux/clockchips.h>
->>  #include <linux/clk/tegra.h>
->> +#include <linux/of.h>
->>  
->>  #include <asm/cpuidle.h>
->>  #include <asm/proc-fns.h>
->> @@ -212,10 +213,39 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
->>  }
->>  #endif
->>  
->> +static const struct of_device_id pcie_matches[] __initconst = {
->> +	{ .compatible = "nvidia,tegra20-pcie" },
->> +	{ }
->> +};
->> +
->> +/*
->> + * Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
->> + * they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
->> + * this, simply disable LP2 if the PCI driver and DT node are both enabled.
->> + */
->> +static void __init tegra20_cpuidle_disable_lp2_with_pcie(void)
->> +{
->> +	struct device_node *np;
->> +
->> +	if (!IS_ENABLED(CONFIG_PCI_TEGRA))
->> +		return;
->> +
->> +	np = of_find_matching_node(NULL, pcie_matches);
->> +	if (!np)
->> +		return;
->> +
->> +	if (!of_device_is_available(np))
->> +		return;
->> +
->> +	pr_info("Disabling LP2 cpuidle state, since PCIe is enabled\n");
->> +	tegra_idle_driver.state_count = 1;
+>> Equally, since the data is SoC-specific rather than board-specific, and
+>> is even fairly unlikely to vary between SoC versions since these values
+>> are all 0xffffffff anyway, I don't really see much point in putting it
+>> into DT, rather than just putting the static data into the driver.
 > 
-> Won't be more clear to have the state disabled in the init function like
-> this ?
+> I mean there is already dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> at function of_platform_device_create, why can't add
+> dev->dev.dma_mask = &dev->dev.coherent_dma_mask after that?
 > 
-> int __init tegra20_cpuidle_init(void)
-> {
-> 	...
-> 	if (tegra20_has_lp2_pcie_bug(void))
-> 		tegra_idle_driver.states[1].disabled = true;
-> 	...
-> }
+> If DT core can do above things, can we delete dma_mask assignment
+> at every driver?
 
-I'm not sure that's any clearer on its own. One big advantage of that
-technique is that if we end up with 3 cpuidle states and need to disable
-the one in the middle, this alternative technique does work, whereas the
-one in my patch doesn't. So, I'll convert to this technique.
+Perhaps. However, such a change has a much larger potential for regressions.
+
+I would suggest going with the current patch for 3.10 and any later
+backports in order to reduce risk. We can revisit better cleanup for
+later kernels.
