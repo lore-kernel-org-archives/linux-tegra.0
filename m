@@ -1,29 +1,77 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] USB: set device dma_mask without reference to global data
-Date: Wed, 8 May 2013 17:10:23 +0200
-Message-ID: <201305081710.23489.arnd@arndb.de>
-References: <Pine.LNX.4.44L0.1305081011480.1450-100000@iolanthe.rowland.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/4] ARM: tegra30: clocks: Fix pciex clock registration
+Date: Wed, 08 May 2013 10:36:54 -0600
+Message-ID: <518A7F26.3030605@wwwdotorg.org>
+References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1305081011480.1450-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, ldewangan@nvidia.com, bhelgaas@google.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 08 May 2013, Alan Stern wrote:
-> > The first occurence was apparently in 3.3, but only in ehci-tegra.c,
-> > while the other drivers subsequently copied the bug.
-> 
-> An alternative solution -- perhaps not better but also not relying on
-> coherent_dma_mask -- is to clear pdev->dev.dma_mask in the remove
-> routine if it points to the static mask value.
-> 
+On 05/08/2013 04:57 AM, Jay Agarwal wrote:
+> Registering pciex as peripheral clock instead of fixed clock
+> as tegra_perih_reset_assert(deassert) api of this clock api 
+> gives warning and ultimately does not succeed to assert(deassert).
 
-Yes, I thought about that, but couldn't see any advantage one way
-or the other and this one seemed simpler.
+A few procedural comments: I believe this is at least the second version
+of these patches that have been posted. As such, the email subject
+should say e.e. "PATCH V2" not just "PATCH". You can pass
+--subject-prefix='PATCH V2' to git format-patch to achieve this.
 
-	Arnd
+Since this is an updated version of the patches, each patch should
+describe what changed in the patch, so that people know what issues
+you've fixed in this version. Most people believe that the description
+of changes should be below the --- line, so that it doesn't get included
+in the commit description when the patch is applied.
+
+> Patch is based on remotes/gitorious_thierryreding_linux/tegra/next
+> and should be applied on top of this.
+
+Those two lines should be below the --- line so that they don't get
+included in the commit description when the patch is applied. git
+metadata will provide clues re: who applied the patch and to which
+branch, so there's no need to duplicate this information in the commit
+description itself, but rather include it below --- so that it's still
+present and people can see it.
+
+Some comments on the patch and series below...
+
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+
+> +	/* pciex */
+> +	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
+> +				    74, &periph_u_regs, periph_clk_enb_refcnt);
+> +	clk_register_clkdev(clk, "pciex", NULL);
+> +	clks[pciex] = clk;
+
+Hmmm. This change perhaps isn't technically correct, but is the best we
+can do for now, so it's fine. It's also consistent with how the Tegra20
+clock driver is written.
+
+This clock has a "reset" bit in the CLK_RST_* registers, but not an
+"enable" bit in the CLK_ENB_* registers. Hence, representing this as a
+gated clock isn't correct, since there is not gate control in HW. The
+correct way to handle this would be to implement the new reset
+controller API for Tegra, and expose the reset control only, and not
+touch the clock registration at all. However, we do this exact same
+thing for a number of Tegra clocks right now, hence I think this change
+is fine for now; we'll clean this up, along with some other instances of
+the same issue, once the reset API is implemented for Tegra. Of course,
+if that happens before the PCI code is checked in, then my opinion will
+change.
+
+> @@ -1930,7 +1931,6 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+>  	TEGRA_CLK_DUPLICATE(bsea, "nvavp", "bsea"),
+>  	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
+>  	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
+> -	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
+
+That seems like an unrelated change, and isn't mentioned in the commit
+description. Is the change strictly necessary? Is it cleanup that can
+happen as a separate patch later in the series? Aren't you able to
+remove the CLK_DUPLICATE() entries for other PCIe-related clocks too?
