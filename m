@@ -1,93 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: pcie: Add tegra3 support
-Date: Wed, 08 May 2013 10:53:53 -0600
-Message-ID: <518A8321.6020401@wwwdotorg.org>
-References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com> <1368010660-31465-2-git-send-email-jagarwal@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/4] ARM: dts: tegra: Correct PCIe entry
+Date: Wed, 08 May 2013 10:56:34 -0600
+Message-ID: <518A83C2.3070709@wwwdotorg.org>
+References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com> <1368010660-31465-3-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368010660-31465-2-git-send-email-jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1368010660-31465-3-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, ldewangan@nvidia.com, bhelgaas@google.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 On 05/08/2013 04:57 AM, Jay Agarwal wrote:
-> - Enable PCIe root port 2 for Cardhu
-> - Make private data structure for each SoC
-> - Add required Tegra30 clocks and regulators
-> - Add Tegra30 specific code in enable controller
-
+> - Add interrupt-names property
+> - Correct downstream I/O size
+> - Correct cml clock name for Tegra30
 > - Patch is based on remotes/gitorious_thierryreding_linux/tegra/next
 > - and should be applied on top of this.
 
-Again, those two lines would go below the ---. And since that's all one
-bullet point, why is the second line indented with a "-"?
+Another change that needs to be made to this file (probably as a
+separate change that Thierry can squash into one of his earlier changes)
+is to move the pcie-controller node; it is currently not in the correct
+place in the .dtsi file; it's not sorted by reg addresss.
 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
 
->  	pcie-controller {
->  		vdd-supply = <&pci_vdd_reg>;
->  		pex-clk-supply = <&pci_clk_reg>;
-> +		avdd-supply = <&ldo2_reg>; /* required for tegra30 */
+>  		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
+>  			 <&tegra_car 118>, <&tegra_car 215>;
+> -		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
+> +		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml0";
 
-I would simply drop that comment, and perhaps even the whole line; this
-is just an example after all, and doesn't need to cover the latest SoC.
-Equally, the example SoC DTSI section is an example for Tegra20, so
-making the example board DTS section contain a Tegra30 example would be
-inconsistent. Tegra30 should be capitalized; it's a name.
+You could drop that change if the driver named the clock "cml" rather
+than "cml0", which as I explained in my previous email seems like a good
+idea anyway.
 
-Why is there no change to the "Required Properties" section of this
-document? It should list the set of clocks and regulators that are
-required. That section is the definitive reference, whereas the example
-is just than; an example.
-
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-
-> +/* used to differentiate tegra chips code */
-> +struct tegra_pcie_soc_data {
-> +	unsigned int num_max_ports;
-
-> +	unsigned int pads_pll_ctl;
-> +	unsigned int tx_ref_sel;
-
-Perhaps those 2 values should be u32 to match the readl/writel
-parameters? They're HW register values after all.
-
-> @@ -220,6 +240,7 @@ struct tegra_pcie {
->  	struct clk *afi_clk;
->  	struct clk *pcie_xclk;
->  	struct clk *pll_e;
-> +	struct clk *cml0_clk;
-
-I think this clock should be called "cml" not "cml0". The clocks within
-the driver and DT binding should be named from the perspective of the
-PCI HW unit, and not from the perspective of the system that surrounds
-it and provides those clocks.
-
-The only exception would be if some future Tegra version might end up
-with multiple cml clocks to a single PCIe unit, and we need to number
-them to identify them. However, that seems quite unlikely since the PCIe
-unit already supports multiple ports, and multiple port support would be
-about the only reason that I could think of to have multiple clock
-instances.
-
-I think I mentioned this when I reviewed the previous version of the
-patch, but you didn't respond to the suggestion.
-
-> @@ -749,6 +778,11 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->  	struct tegra_pcie_port *port;
->  	unsigned int timeout;
->  	unsigned long value;
-> +	struct tegra_pcie_soc_data *soc = pcie->soc_data;
-> +
-> +	/* power down to PCIe slot clock bias pad */
-> +	if (soc->pex_bias_ctrl)
-> +		afi_writel(pcie, 0, AFI_PEXBIAS_CTRL_0);
-
-Renaming pex_bias_ctrl to has_pex_bias_ctrl might make it more obvious
-what that variable means.
-
-A similar comment might apply to soc->pex_clkreq_en and
-soc->intr_prsnt_sense.
+Applying the same reasoning, I wonder if for Tegra 20 too, the PCIe
+driver shouldn't expect clock names of just "xclk" and "pll" rather than
+"pcie_xclk" and "pll_e".
