@@ -1,47 +1,72 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
  subsystem mutex to pinctrl_dev struct"
-Date: Thu, 9 May 2013 14:25:18 +0100
-Message-ID: <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
+Date: Thu, 9 May 2013 09:13:08 -0700
+Message-ID: <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ@mail.gmail.com>
 References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
- <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
- <517ED12B.8080502@wwwdotorg.org> <20130504133004.GC24282@game.jcrosoft.org>
- <CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com>
- <20130505112819.GD24282@game.jcrosoft.org> <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
- <20130505202236.GF24282@game.jcrosoft.org> <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
- <20130506194122.GG24282@game.jcrosoft.org> <20130506195403.GJ18614@n2100.arm.linux.org.uk>
- <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
+	<CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
+	<517ED12B.8080502@wwwdotorg.org>
+	<20130504133004.GC24282@game.jcrosoft.org>
+	<CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com>
+	<20130505112819.GD24282@game.jcrosoft.org>
+	<CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
+	<20130505202236.GF24282@game.jcrosoft.org>
+	<CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
+	<20130506194122.GG24282@game.jcrosoft.org>
+	<20130506195403.GJ18614@n2100.arm.linux.org.uk>
+	<CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
+	<CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
-> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
+> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
+>> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>>
+>>> My conclusion is that build and boot test systems just don't work in an
+>>> open source environment as no one actively checks the results.  Why would
+>>> they - maintainers already have enough to do with reading 6500+ emails a
+>>> month on mailing lists.  Why bother going to look at a website as well
+>>> which might give even more work.
+>>
+>> Point taken. I was in a discussion some time back with Greg and some
+>> other people and we concluded that unless the system mails you when
+>> something breaks it won't make a difference. And it mustn't flood you,
+>> just be very precise.
+>>
+>> Actually the autobuilder at kernel.org helped me out but then stopped
+>> building my trees at some point, but that was nice and the same thing
+>> doing boots would be great.
 >
->> My conclusion is that build and boot test systems just don't work in an
->> open source environment as no one actively checks the results.  Why would
->> they - maintainers already have enough to do with reading 6500+ emails a
->> month on mailing lists.  Why bother going to look at a website as well
->> which might give even more work.
->
-> Point taken. I was in a discussion some time back with Greg and some
-> other people and we concluded that unless the system mails you when
-> something breaks it won't make a difference. And it mustn't flood you,
-> just be very precise.
->
-> Actually the autobuilder at kernel.org helped me out but then stopped
-> building my trees at some point, but that was nice and the same thing
-> doing boots would be great.
+> +1 on what has already been stated on this thread; An autobuilder does
+> work if it emails you when something breaks without spamming you. I've
+> also found the 0day build tester actually effective. It has caught
+> things that I've missed and I immediately was able to go an fix.
 
-+1 on what has already been stated on this thread; An autobuilder does
-work if it emails you when something breaks without spamming you. I've
-also found the 0day build tester actually effective. It has caught
-things that I've missed and I immediately was able to go an fix.
+Yes, a builder is quite useful. Several of us do our own builds as well.
 
-g.
+When it comes to boot coverage, I'm not sure how successful a central
+approach would be. It's something where I think Linaro could
+contribute a lot for their member platforms, but I haven't seen much
+engagement there yet.
+
+Beyond there, I'd say the expectation is that each maintainer should
+keep an eye on their own platforms. They _should_ try building and
+booting linux-next on their platforms, to catch regressions early. And
+definitely around now, I'd like to see people boot mainline on their
+platforms to make sure we haven't added any severe regressions in the
+3.10 merge window, etc. Some people are really good at this, others
+less so.
+
+What's the old saying, you can lead a horse to water but you can't
+make him drink? You can build a boot test cluster but you can't make
+anyone pay attention to it. :(
+
+-Olof
