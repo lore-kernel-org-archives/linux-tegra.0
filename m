@@ -1,40 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] USB: set device dma_mask without reference to global
- data
-Date: Wed, 08 May 2013 16:42:04 -0600
-Message-ID: <518AD4BC.6090009@wwwdotorg.org>
-References: <1367967232-10128-1-git-send-email-swarren@wwwdotorg.org> <CAL411-qVnm0_wwdAiAp9eq_hYkXzFSmRMLAmknpSAG7Jb3bM9A@mail.gmail.com> <5189B7BF.8070607@wwwdotorg.org> <CAL411-pY_i19otiE2pLux6eR_OFHhfhK=+6BF=H6wABDsGCP6Q@mail.gmail.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
+ subsystem mutex to pinctrl_dev struct"
+Date: Thu, 9 May 2013 14:25:18 +0100
+Message-ID: <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
+References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com>
+ <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com>
+ <517ED12B.8080502@wwwdotorg.org> <20130504133004.GC24282@game.jcrosoft.org>
+ <CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com>
+ <20130505112819.GD24282@game.jcrosoft.org> <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
+ <20130505202236.GF24282@game.jcrosoft.org> <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
+ <20130506194122.GG24282@game.jcrosoft.org> <20130506195403.GJ18614@n2100.arm.linux.org.uk>
+ <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL411-pY_i19otiE2pLux6eR_OFHhfhK=+6BF=H6wABDsGCP6Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/07/2013 08:54 PM, Peter Chen wrote:
->>
->> This probably could be initialized from some DT property. However,
->> there's no such property defined right now, and considering that DT is
->> supposed to be an ABI, we'd always need the code in this patch as a
->> fallback for DTs that were created before any such property was defined.
->>
->> Equally, since the data is SoC-specific rather than board-specific, and
->> is even fairly unlikely to vary between SoC versions since these values
->> are all 0xffffffff anyway, I don't really see much point in putting it
->> into DT, rather than just putting the static data into the driver.
-> 
-> I mean there is already dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> at function of_platform_device_create, why can't add
-> dev->dev.dma_mask = &dev->dev.coherent_dma_mask after that?
-> 
-> If DT core can do above things, can we delete dma_mask assignment
-> at every driver?
+On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
+> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>
+>> My conclusion is that build and boot test systems just don't work in an
+>> open source environment as no one actively checks the results.  Why would
+>> they - maintainers already have enough to do with reading 6500+ emails a
+>> month on mailing lists.  Why bother going to look at a website as well
+>> which might give even more work.
+>
+> Point taken. I was in a discussion some time back with Greg and some
+> other people and we concluded that unless the system mails you when
+> something breaks it won't make a difference. And it mustn't flood you,
+> just be very precise.
+>
+> Actually the autobuilder at kernel.org helped me out but then stopped
+> building my trees at some point, but that was nice and the same thing
+> doing boots would be great.
 
-Perhaps. However, such a change has a much larger potential for regressions.
++1 on what has already been stated on this thread; An autobuilder does
+work if it emails you when something breaks without spamming you. I've
+also found the 0day build tester actually effective. It has caught
+things that I've missed and I immediately was able to go an fix.
 
-I would suggest going with the current patch for 3.10 and any later
-backports in order to reduce risk. We can revisit better cleanup for
-later kernels.
+g.
