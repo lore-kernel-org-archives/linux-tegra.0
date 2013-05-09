@@ -1,36 +1,45 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] USB: set device dma_mask without reference to global
-	data
-Date: Thu, 9 May 2013 22:39:08 +0100
-Message-ID: <20130509213908.GP21614@n2100.arm.linux.org.uk>
-References: <1367967232-10128-1-git-send-email-swarren@wwwdotorg.org> <5189B7BF.8070607@wwwdotorg.org> <CAL411-pY_i19otiE2pLux6eR_OFHhfhK=+6BF=H6wABDsGCP6Q@mail.gmail.com> <201305080924.44622.arnd@arndb.de>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH 0/2] ARM: tegra: a couple clock bug-fixes
+Date: Thu, 9 May 2013 16:55:33 -0700
+Message-ID: <20130509235533.GA19697@quad.lixom.net>
+References: <1367874671-11474-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <201305080924.44622.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <1367874671-11474-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 08, 2013 at 09:24:44AM +0200, Arnd Bergmann wrote:
-> It probably should. The main thing is that the dma_mask setting in
-> of_platform (and elsewhere) is a mess and that nobody so far had the
-> guts to try to get it right for good.
+On Mon, May 06, 2013 at 03:11:09PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Setting a 32 bit DMA mask is /probably/ the right default on all
-> ARM systems, but there are caveats:
+> Arnd, Olof,
 > 
-> - Once you get to systems with larger than 32 bit addressing (powerpc64,
->   arm64, arm32 with LPAE), it's not so obvious: you may have some devices
->   that need a 32 bit mask and some that need a 64 bit mask.
+> The following two patches fix a couple issues in the Tegra20 clock driver
+> that show up on specific platforms. They were sent a little late for 3.9,
+> and I forgot to include them for 3.10 since they weren't reposted:-(
 
-This is precisely why drivers should be using dma_set_mask() and the
-coherent version to provide the mask for which the driver knows about
-- iow, if the device itself is only capable of 32-bit DMA, then the
-device must use dma_set_mask(dev, DMA_BIT_MASK(32)).
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied to fixes now, sorry for missing them earlier.
+
+> Patch 1 is clearly a bug-fix. Someone pedantic could argue that patch 2
+> is a new feature since it's the last piece to enabling AC'97 support, but
+> I'd argue that it's a bug in the clock driver that it didn't support this
+> clock when it was first written:-)
+
+For very early -rc we can be a bit more flexible, so this is ok with me at the
+moment.
+
+> These patches logically belong to Tegra's for-3.10/clk branch, but feel
+> free to apply them where is easiest; it'd be fine to defer them to a post-
+> 3.10-rc1 fixes branch too if you want.
+
+Postponed in effect due to missing them earlier.
+
+Btw, since the drivers have moved and most of the churn is completed, fixes
+like these really can go straight to Mike Turquette from here on out.
+
+
+-Olof
