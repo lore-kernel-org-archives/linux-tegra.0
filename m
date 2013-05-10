@@ -1,13 +1,13 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [RFC 23/42] drivers/spi: don't check resource with devm_ioremap_resource
-Date: Fri, 10 May 2013 10:17:08 +0200
-Message-ID: <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
+Subject: [RFC 22/42] drivers/rtc: don't check resource with devm_ioremap_resource
+Date: Fri, 10 May 2013 10:17:07 +0200
+Message-ID: <1368173847-5661-23-git-send-email-wsa@the-dreams.de>
 References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Wan ZongShun <mcuos.com@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 devm_ioremap_resource does sanity checks on the given resource. No need to
@@ -15,188 +15,104 @@ duplicate this in the driver.
 
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- drivers/spi/spi-bcm63xx.c        |    8 +-------
- drivers/spi/spi-ep93xx.c         |    8 +-------
- drivers/spi/spi-omap2-mcspi.c    |    7 +------
- drivers/spi/spi-s3c64xx.c        |    7 +------
- drivers/spi/spi-sirf.c           |    7 +------
- drivers/spi/spi-tegra114.c       |    7 +------
- drivers/spi/spi-tegra20-sflash.c |    5 -----
- drivers/spi/spi-tegra20-slink.c  |    7 +------
- 8 files changed, 7 insertions(+), 49 deletions(-)
+ drivers/rtc/rtc-nuc900.c |    6 +-----
+ drivers/rtc/rtc-omap.c   |    5 -----
+ drivers/rtc/rtc-s3c.c    |    5 -----
+ drivers/rtc/rtc-spear.c  |    7 +------
+ drivers/rtc/rtc-tegra.c  |    6 ------
+ 5 files changed, 2 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index a4ec5f4..9804ee0 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -378,13 +378,6 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
- 	struct bcm63xx_spi *bs;
- 	int ret;
+diff --git a/drivers/rtc/rtc-nuc900.c b/drivers/rtc/rtc-nuc900.c
+index f5dfb6e..c0f54ec 100644
+--- a/drivers/rtc/rtc-nuc900.c
++++ b/drivers/rtc/rtc-nuc900.c
+@@ -233,12 +233,8 @@ static int __init nuc900_rtc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "kzalloc nuc900_rtc failed\n");
+ 		return -ENOMEM;
+ 	}
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "platform_get_resource failed\n");
+-		return -ENXIO;
+-	}
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(dev, "no iomem\n");
--		ret = -ENXIO;
--		goto out;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	nuc900_rtc->rtc_reg = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(nuc900_rtc->rtc_reg))
+ 		return PTR_ERR(nuc900_rtc->rtc_reg);
+diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+index 4e1bdb8..b0ba3fc 100644
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@ -347,11 +347,6 @@ static int __init omap_rtc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		pr_debug("%s: RTC resource data missing\n", pdev->name);
+-		return -ENOENT;
 -	}
 -
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		dev_err(dev, "no irq\n");
-@@ -411,6 +404,7 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, master);
- 	bs->pdev = pdev;
+ 	rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(rtc_base))
+ 		return PTR_ERR(rtc_base);
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 14040b2..0b495e8 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -477,11 +477,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 	/* get the memory region */
  
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	bs->regs = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(bs->regs)) {
- 		ret = PTR_ERR(bs->regs);
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index d7bac60..213cb7a3 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -1076,15 +1076,9 @@ static int ep93xx_spi_probe(struct platform_device *pdev)
- 		goto fail_put_clock;
- 	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "failed to get memory region resource\n");
+-		return -ENOENT;
+-	}
+-
+ 	s3c_rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(s3c_rtc_base))
+ 		return PTR_ERR(s3c_rtc_base);
+diff --git a/drivers/rtc/rtc-spear.c b/drivers/rtc/rtc-spear.c
+index 574359c..34eed6a 100644
+--- a/drivers/rtc/rtc-spear.c
++++ b/drivers/rtc/rtc-spear.c
+@@ -358,12 +358,6 @@ static int spear_rtc_probe(struct platform_device *pdev)
+ 	int status = 0;
+ 	int irq;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		dev_err(&pdev->dev, "unable to get iomem resource\n");
--		error = -ENODEV;
--		goto fail_put_clock;
+-		dev_err(&pdev->dev, "no resource defined\n");
+-		return -EBUSY;
 -	}
 -
- 	espi->sspdr_phys = res->start + SSPDR;
+ 	config = devm_kzalloc(&pdev->dev, sizeof(*config), GFP_KERNEL);
+ 	if (!config) {
+ 		dev_err(&pdev->dev, "out of memory\n");
+@@ -385,6 +379,7 @@ static int spear_rtc_probe(struct platform_device *pdev)
+ 		return status;
+ 	}
  
 +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	espi->regs_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(espi->regs_base)) {
- 		error = PTR_ERR(espi->regs_base);
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 86d2158..31c054e 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -1228,16 +1228,11 @@ static int omap2_mcspi_probe(struct platform_device *pdev)
- 	}
- 	regs_offset = pdata->regs_offset;
+ 	config->ioaddr = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(config->ioaddr))
+ 		return PTR_ERR(config->ioaddr);
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index a34315d..76af92a 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -322,12 +322,6 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL) {
--		status = -ENODEV;
--		goto free_master;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev,
+-			"Unable to allocate resources for device.\n");
+-		return -EBUSY;
 -	}
 -
- 	r->start += regs_offset;
- 	r->end += regs_offset;
- 	mcspi->phys = r->start;
- 
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mcspi->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(mcspi->base)) {
- 		status = PTR_ERR(mcspi->base);
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 5000586..fd763cc 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1243,12 +1243,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem_res == NULL) {
--		dev_err(&pdev->dev, "Unable to get SPI MEM resource\n");
--		return -ENXIO;
--	}
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		dev_warn(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-@@ -1318,6 +1312,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	/* the spi->mode bits understood by this driver: */
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
- 
-+	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(sdd->regs)) {
- 		ret = PTR_ERR(sdd->regs);
-diff --git a/drivers/spi/spi-sirf.c b/drivers/spi/spi-sirf.c
-index 0808cd5..318ca5b 100644
---- a/drivers/spi/spi-sirf.c
-+++ b/drivers/spi/spi-sirf.c
-@@ -502,12 +502,6 @@ static int spi_sirfsoc_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, master);
- 	sspi = spi_master_get_devdata(master);
- 
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!mem_res) {
--		dev_err(&pdev->dev, "Unable to get IO resource\n");
--		ret = -ENODEV;
--		goto free_master;
--	}
- 	master->num_chipselect = num_cs;
- 
- 	for (i = 0; i < master->num_chipselect; i++) {
-@@ -534,6 +528,7 @@ static int spi_sirfsoc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sspi->base = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(sspi->base)) {
- 		ret = PTR_ERR(sspi->base);
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 598eb45..fc39365 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -1058,13 +1058,8 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	tspi->dev = &pdev->dev;
- 	spin_lock_init(&tspi->lock);
- 
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "No IO memory resource\n");
--		ret = -ENODEV;
--		goto exit_free_master;
--	}
- 	tspi->phys = r->start;
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	tspi->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(tspi->base)) {
- 		ret = PTR_ERR(tspi->base);
-diff --git a/drivers/spi/spi-tegra20-sflash.c b/drivers/spi/spi-tegra20-sflash.c
-index d65c000..09df8e2 100644
---- a/drivers/spi/spi-tegra20-sflash.c
-+++ b/drivers/spi/spi-tegra20-sflash.c
-@@ -489,11 +489,6 @@ static int tegra_sflash_probe(struct platform_device *pdev)
- 	tegra_sflash_parse_dt(tsd);
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "No IO memory resource\n");
--		ret = -ENODEV;
--		goto exit_free_master;
--	}
- 	tsd->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(tsd->base)) {
- 		ret = PTR_ERR(tsd->base);
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index 3faf88d..46392f0 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -1098,13 +1098,8 @@ static int tegra_slink_probe(struct platform_device *pdev)
- 
- 	tegra_slink_parse_dt(tspi);
- 
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "No IO memory resource\n");
--		ret = -ENODEV;
--		goto exit_free_master;
--	}
- 	tspi->phys = r->start;
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	tspi->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(tspi->base)) {
- 		ret = PTR_ERR(tspi->base);
+ 	info->rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(info->rtc_base))
+ 		return PTR_ERR(info->rtc_base);
 -- 
 1.7.10.4
