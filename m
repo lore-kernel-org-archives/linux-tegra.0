@@ -1,41 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 04/42] drivers/dma: don't check resource with devm_ioremap_resource
-Date: Fri, 10 May 2013 13:25:36 -0600
-Message-ID: <518D49B0.4050901@wwwdotorg.org>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de> <1368173847-5661-5-git-send-email-wsa@the-dreams.de> <518D21D4.6000609@wwwdotorg.org> <20130510175739.GA2912@katana>
+Subject: Re: [PATCH v3 10/10] Usb: Move PORTSC access to PHY
+Date: Fri, 10 May 2013 14:04:26 -0600
+Message-ID: <518D52CA.7000100@wwwdotorg.org>
+References: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com> <1368194051-4925-11-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130510175739.GA2912@katana>
+In-Reply-To: <1368194051-4925-11-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/10/2013 11:57 AM, Wolfram Sang wrote:
-> On Fri, May 10, 2013 at 10:35:32AM -0600, Stephen Warren wrote:
->> On 05/10/2013 02:16 AM, Wolfram Sang wrote:
->>> devm_ioremap_resource does sanity checks on the given resource. No need to
->>> duplicate this in the driver.
->>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>
->>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> -	if (!res) {
->>> -		dev_err(&pdev->dev, "No mem resource for DMA\n");
->>> -		return -EINVAL;
->>> -	}
->>> -
->>>  	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
->>
->> One issue here is that it's not obvious just from reading the code
->> that's left behind that the "missing" error-checking of the
->> platform_get_resource() return value is OK because
->> devm_ioremap_resource() will check it "for us". Everyone now has to
->> mentally maintain a list of exceptions where it's OK not to error-check.
+On 05/10/2013 07:54 AM, Venu Byravarasu wrote:
+> Changes with this patch:
+> 1. As PHY is being registered as separate platform driver & EHCI Tegra
+> is no more calling PHY open, moved tegra_ehci_set_pts & tegra_ehci_set_phcd
+> functions to PHY driver,
 > 
-> My goal is to make not-checking the standard case with devm.
+> 2. Removed unused defines for multiple USB port base addresses
 
-OK, if no parameters passed to any devm function every need to be
-error-checked, that'll certainly be a bit easier to remember.
+This patch (mostly?) is a revert of bbdabdb "usb: add APIs to access
+host registers from Tegra PHY". I don't think we want to revert this[1].
+
+Instead, once patch 9/10 in this series is applied, the Tegra EHCI
+module should no longer directly reference any symbols in the Tegra USB
+PHY module. This is because the functions exposed by the Tegra PHY
+module are now accessed using the new standard PHY APIs, rather than
+directly by symbol name.
+
+Assuming that's true, it is then permissible for the Tegra PHY module to
+once again directly reference symbols exported by the Tegra EHCI module.
+So, instead of moving the functions from the EHCI code to the PHY code,
+keep them in the EHCI code, and call them from the PHY code, but call
+them by function name instead of by function pointer. That way, there's
+no need to pass the function pointers during initialization.
+
+You will have to roll that change into patch 9/10 to make git bisect work.
+
+
+[1] The background is that NVIDIA HW has added some non-standard
+register bits to the PORTSC register, related to PHY control. The PHY
+driver needs to control those bits, but they're in the EHCI register
+space. Since the non-standard bits are controlled by read-modify-write,
+the EHCI driver should implement the register accesses, so the it can
+implement locking against its own read-modify-write of that register if
+required.
