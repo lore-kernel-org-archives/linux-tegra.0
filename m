@@ -1,99 +1,77 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [RFC 10/42] drivers/input/keyboard: don't check resource with devm_ioremap_resource
-Date: Fri, 10 May 2013 10:16:55 +0200
-Message-ID: <1368173847-5661-11-git-send-email-wsa@the-dreams.de>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
+ subsystem mutex to pinctrl_dev struct"
+Date: Fri, 10 May 2013 11:29:24 +0200
+Message-ID: <20130510092924.GJ3041@game.jcrosoft.org>
+References: <20130505112819.GD24282@game.jcrosoft.org>
+ <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
+ <20130505202236.GF24282@game.jcrosoft.org>
+ <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
+ <20130506194122.GG24282@game.jcrosoft.org>
+ <20130506195403.GJ18614@n2100.arm.linux.org.uk>
+ <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
+ <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
+ <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ@mail.gmail.com>
+ <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Fathi Boudra <fathi.boudra@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-devm_ioremap_resource does sanity checks on the given resource. No need to
-duplicate this in the driver.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- drivers/input/keyboard/imx_keypad.c     |    7 +------
- drivers/input/keyboard/spear-keyboard.c |    7 +------
- drivers/input/keyboard/tegra-kbc.c      |    7 +------
- 3 files changed, 3 insertions(+), 18 deletions(-)
+	so we need to consolidate I'll send a proposition during the day
 
-diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
-index 03c8cc5..328cfc1 100644
---- a/drivers/input/keyboard/imx_keypad.c
-+++ b/drivers/input/keyboard/imx_keypad.c
-@@ -442,12 +442,6 @@ static int imx_keypad_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res == NULL) {
--		dev_err(&pdev->dev, "no I/O memory defined in platform data\n");
--		return -EINVAL;
--	}
--
- 	input_dev = devm_input_allocate_device(&pdev->dev);
- 	if (!input_dev) {
- 		dev_err(&pdev->dev, "failed to allocate the input device\n");
-@@ -468,6 +462,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
- 	setup_timer(&keypad->check_matrix_timer,
- 		    imx_keypad_check_for_events, (unsigned long) keypad);
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(keypad->mmio_base))
- 		return PTR_ERR(keypad->mmio_base);
-diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
-index cb1e8f6..b2e77e4 100644
---- a/drivers/input/keyboard/spear-keyboard.c
-+++ b/drivers/input/keyboard/spear-keyboard.c
-@@ -191,12 +191,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 	int irq;
- 	int error;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "no keyboard resource defined\n");
--		return -EBUSY;
--	}
--
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		dev_err(&pdev->dev, "not able to get irq for the device\n");
-@@ -228,6 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
- 		kbd->suspended_rate = pdata->suspended_rate;
- 	}
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	kbd->io_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(kbd->io_base))
- 		return PTR_ERR(kbd->io_base);
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index b46142f..9cd20e6 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -638,12 +638,6 @@ static int tegra_kbc_probe(struct platform_device *pdev)
- 	if (!tegra_kbc_check_pin_cfg(kbc, &num_rows))
- 		return -EINVAL;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "failed to get I/O memory\n");
--		return -ENXIO;
--	}
--
- 	kbc->irq = platform_get_irq(pdev, 0);
- 	if (kbc->irq < 0) {
- 		dev_err(&pdev->dev, "failed to get keyboard IRQ\n");
-@@ -658,6 +652,7 @@ static int tegra_kbc_probe(struct platform_device *pdev)
- 
- 	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long)kbc);
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	kbc->mmio = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(kbc->mmio))
- 		return PTR_ERR(kbc->mmio);
--- 
-1.7.10.4
+Best Regards,
+J.
+On 20:51 Thu 09 May     , Fathi Boudra wrote:
+> On 9 May 2013 19:13, Olof Johansson <olof@lixom.net> wrote:
+> > On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> >> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
+> > Yes, a builder is quite useful. Several of us do our own builds as well.
+> >
+> > When it comes to boot coverage, I'm not sure how successful a central
+> > approach would be. It's something where I think Linaro could
+> > contribute a lot for their member platforms, but I haven't seen much
+> > engagement there yet.
+> 
+> My previous post was lost. Sorry to repost..
+> 
+> We've got a jenkins instance doing daily builds on various trees and
+> boot testing on the few boards we've got in the lab:
+> https://ci.linaro.org/jenkins/view/kernel-ci/
+> 
+> But it hasn't attracted much interest so far... It's been here since a year.
+> 
+> > Beyond there, I'd say the expectation is that each maintainer should
+> > keep an eye on their own platforms. They _should_ try building and
+> > booting linux-next on their platforms, to catch regressions early. And
+> > definitely around now, I'd like to see people boot mainline on their
+> > platforms to make sure we haven't added any severe regressions in the
+> > 3.10 merge window, etc. Some people are really good at this, others
+> > less so.
+> >
+> > What's the old saying, you can lead a horse to water but you can't
+> > make him drink? You can build a boot test cluster but you can't make
+> > anyone pay attention to it. :(
+> >
+> > -Olof
+> 
+> Cheers,
+> 
+> Fathi
