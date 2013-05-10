@@ -1,49 +1,47 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC 27/42] drivers/tty/serial: don't check resource with
- devm_ioremap_resource
-Date: Fri, 10 May 2013 19:58:54 +0200
-Message-ID: <20130510175850.GB2912@katana>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
- <1368173847-5661-28-git-send-email-wsa@the-dreams.de>
- <20130510152636.GJ11227@kroah.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v3 04/10] Revert "usb: phy: tegra: don't call into
+ tegra-ehci directly"
+Date: Fri, 10 May 2013 14:05:30 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1305101402220.1313-100000@iolanthe.rowland.org>
+References: <CAH7OJZtx4-45vzGmzh6B3eW9GOmDEi7794FqZaenDgmcMUXYFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130510152636.GJ11227@kroah.com>
-Sender: linux-serial-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Stephen Warren <swarren@wwwdotorg.org>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAH7OJZtx4-45vzGmzh6B3eW9GOmDEi7794FqZaenDgmcMUXYFg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: BVG Rao <venubyravarasu@gmail.com>
+Cc: gregkh@linuxfoundation.org, swarren@wwwdotorg.org, balbi@ti.com, Venu Byravarasu <vbyravarasu@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 10, 2013 at 08:26:36AM -0700, Greg Kroah-Hartman wrote:
-> On Fri, May 10, 2013 at 10:17:12AM +0200, Wolfram Sang wrote:
-> > devm_ioremap_resource does sanity checks on the given resource. No need to
-> > duplicate this in the driver.
-> > 
-> > Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> > ---
-> >  drivers/tty/serial/serial-tegra.c |    6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-> > index 9799d04..9570b55 100644
-> > --- a/drivers/tty/serial/serial-tegra.c
-> > +++ b/drivers/tty/serial/serial-tegra.c
-> > @@ -1295,13 +1295,9 @@ static int tegra_uart_probe(struct platform_device *pdev)
-> >  	tup->cdata = cdata;
-> >  
-> >  	platform_set_drvdata(pdev, tup);
-> > -	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > -	if (!resource) {
-> > -		dev_err(&pdev->dev, "No IO memory resource\n");
-> > -		return -ENODEV;
-> > -	}
-> >  
-> >  	u->mapbase = resource->start;
-> > +	resource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+On Fri, 10 May 2013, BVG Rao wrote:
+
+> On 10 May 2013 19:56, "Alan Stern" <stern@rowland.harvard.edu> wrote:
+> >
+> > On Fri, 10 May 2013, Venu Byravarasu wrote:
+> >
+> > > This reverts commit ee5d5499edb94cd03738a52a7e234b139da8fd72.
+> > >
+> > > Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+> > > ---
+> > > As PHY is being registered as separate driver, solution proposed with
+> > > this patch cannot work anymore.
+> > > Hence pushed patch 10 of this series to address the issue.
+> >
+> > You can't just revert a change like this -- doing so will recreate the
+> > original problem that ee5d5499ed was meant to fix.
+> >
+> > You have to fix the problem _first_.  Then you can revert that commit.
 > 
-> You need to look at your scripts, as again, this is totally wrong.
+> Hi Alan,
+> 
+> I addressed that as part of patch 10 of the series.
 
-Yes, brown paper bag mistake :( Will fix!
+I know -- that's what I was complaining about.  Patch 4 reverts the old
+fix, and the new fix isn't added until patch 10.  So anybody who builds
+a kernel using only patches 1 - 5 (for example) will end up with a
+broken system.  This can easily happen during bisection testing.
 
+You need to add the new fix either before or in the same patch as where 
+the old fix is reverted.
+
+Alan Stern
