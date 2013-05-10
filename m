@@ -1,49 +1,32 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 10/10] Usb: Move PORTSC access to PHY
-Date: Fri, 10 May 2013 14:04:26 -0600
-Message-ID: <518D52CA.7000100@wwwdotorg.org>
-References: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com> <1368194051-4925-11-git-send-email-vbyravarasu@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] dma: tegra20-apbdma: err message correction
+Date: Sat, 11 May 2013 01:06:53 +0400
+Message-ID: <1368220014-12036-1-git-send-email-digetx@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368194051-4925-11-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/10/2013 07:54 AM, Venu Byravarasu wrote:
-> Changes with this patch:
-> 1. As PHY is being registered as separate platform driver & EHCI Tegra
-> is no more calling PHY open, moved tegra_ehci_set_pts & tegra_ehci_set_phcd
-> functions to PHY driver,
-> 
-> 2. Removed unused defines for multiple USB port base addresses
+Fixed err msg params order on irq request fail.
 
-This patch (mostly?) is a revert of bbdabdb "usb: add APIs to access
-host registers from Tegra PHY". I don't think we want to revert this[1].
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/dma/tegra20-apb-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Instead, once patch 9/10 in this series is applied, the Tegra EHCI
-module should no longer directly reference any symbols in the Tegra USB
-PHY module. This is because the functions exposed by the Tegra PHY
-module are now accessed using the new standard PHY APIs, rather than
-directly by symbol name.
-
-Assuming that's true, it is then permissible for the Tegra PHY module to
-once again directly reference symbols exported by the Tegra EHCI module.
-So, instead of moving the functions from the EHCI code to the PHY code,
-keep them in the EHCI code, and call them from the PHY code, but call
-them by function name instead of by function pointer. That way, there's
-no need to pass the function pointers during initialization.
-
-You will have to roll that change into patch 9/10 to make git bisect work.
-
-
-[1] The background is that NVIDIA HW has added some non-standard
-register bits to the PORTSC register, related to PHY control. The PHY
-driver needs to control those bits, but they're in the EHCI register
-space. Since the non-standard bits are controlled by read-modify-write,
-the EHCI driver should implement the register accesses, so the it can
-implement locking against its own read-modify-write of that register if
-required.
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index ce19340..a84bb7f 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1339,7 +1339,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"request_irq failed with err %d channel %d\n",
+-				i, ret);
++				ret, i);
+ 			goto err_irq;
+ 		}
+ 
+-- 
+1.8.2.1
