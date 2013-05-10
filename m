@@ -1,42 +1,41 @@
-From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH v3 08/10] usb: phy: tegra: Add error handling & clean
- up.
-Date: Fri, 10 May 2013 22:06:48 +0400
-Message-ID: <518D3738.6040402@cogentembedded.com>
-References: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com> <1368194051-4925-9-git-send-email-vbyravarasu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC 04/42] drivers/dma: don't check resource with devm_ioremap_resource
+Date: Fri, 10 May 2013 13:25:36 -0600
+Message-ID: <518D49B0.4050901@wwwdotorg.org>
+References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de> <1368173847-5661-5-git-send-email-wsa@the-dreams.de> <518D21D4.6000609@wwwdotorg.org> <20130510175739.GA2912@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368194051-4925-9-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130510175739.GA2912@katana>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+On 05/10/2013 11:57 AM, Wolfram Sang wrote:
+> On Fri, May 10, 2013 at 10:35:32AM -0600, Stephen Warren wrote:
+>> On 05/10/2013 02:16 AM, Wolfram Sang wrote:
+>>> devm_ioremap_resource does sanity checks on the given resource. No need to
+>>> duplicate this in the driver.
+>>
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+>>
+>>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> -	if (!res) {
+>>> -		dev_err(&pdev->dev, "No mem resource for DMA\n");
+>>> -		return -EINVAL;
+>>> -	}
+>>> -
+>>>  	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
+>>
+>> One issue here is that it's not obvious just from reading the code
+>> that's left behind that the "missing" error-checking of the
+>> platform_get_resource() return value is OK because
+>> devm_ioremap_resource() will check it "for us". Everyone now has to
+>> mentally maintain a list of exceptions where it's OK not to error-check.
+> 
+> My goal is to make not-checking the standard case with devm.
 
-On 05/10/2013 05:54 PM, Venu Byravarasu wrote:
-
-> Check return values from all GPIO APIs and handle errors accordingly.
->
-> Remove the call to clk_disable_unprepare(); this function does not
-> prepare or enable the clock, so the error path should not disable or
-> unprepare it.
->
-> Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[...]
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> index a2a89a9..dce692a 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-[...]
-> @@ -624,24 +632,44 @@ static int	tegra_phy_init(struct usb_phy *x)
-[...]
->   		phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
-> +		if (!phy->ulpi) {
-> +			dev_err(phy->dev, "otg_ulpi_create returned err\n");
-
-    Rather "returned NULL".
-
-WBR, Sergei
+OK, if no parameters passed to any devm function every need to be
+error-checked, that'll certainly be a bit easier to remember.
