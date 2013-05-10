@@ -1,13 +1,13 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [RFC 20/42] drivers/pwm: don't check resource with devm_ioremap_resource
-Date: Fri, 10 May 2013 10:17:05 +0200
-Message-ID: <1368173847-5661-21-git-send-email-wsa@the-dreams.de>
+Subject: [RFC 10/42] drivers/input/keyboard: don't check resource with devm_ioremap_resource
+Date: Fri, 10 May 2013 10:16:55 +0200
+Message-ID: <1368173847-5661-11-git-send-email-wsa@the-dreams.de>
 References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@avionic-design.de>, Stephen Warren <swarren@wwwdotorg.org>, Tony Prisk <linux@prisktech.co.nz>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 devm_ioremap_resource does sanity checks on the given resource. No need to
@@ -15,168 +15,85 @@ duplicate this in the driver.
 
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- drivers/pwm/pwm-imx.c      |    5 -----
- drivers/pwm/pwm-puv3.c     |    5 -----
- drivers/pwm/pwm-pxa.c      |    5 -----
- drivers/pwm/pwm-spear.c    |    7 +------
- drivers/pwm/pwm-tegra.c    |    5 -----
- drivers/pwm/pwm-tiecap.c   |    5 -----
- drivers/pwm/pwm-tiehrpwm.c |    5 -----
- drivers/pwm/pwm-tipwmss.c  |    5 -----
- drivers/pwm/pwm-vt8500.c   |    5 -----
- 9 files changed, 1 insertion(+), 46 deletions(-)
+ drivers/input/keyboard/imx_keypad.c     |    7 +------
+ drivers/input/keyboard/spear-keyboard.c |    7 +------
+ drivers/input/keyboard/tegra-kbc.c      |    7 +------
+ 3 files changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
-index ec28798..c938bae 100644
---- a/drivers/pwm/pwm-imx.c
-+++ b/drivers/pwm/pwm-imx.c
-@@ -265,11 +265,6 @@ static int imx_pwm_probe(struct platform_device *pdev)
- 	imx->chip.npwm = 1;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
- 	imx->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(imx->mmio_base))
- 		return PTR_ERR(imx->mmio_base);
-diff --git a/drivers/pwm/pwm-puv3.c b/drivers/pwm/pwm-puv3.c
-index d1eb499..ed6007b 100644
---- a/drivers/pwm/pwm-puv3.c
-+++ b/drivers/pwm/pwm-puv3.c
-@@ -117,11 +117,6 @@ static int pwm_probe(struct platform_device *pdev)
- 		return PTR_ERR(puv3->clk);
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
- 	puv3->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(puv3->base))
- 		return PTR_ERR(puv3->base);
-diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
-index dee6ab55..dc97175 100644
---- a/drivers/pwm/pwm-pxa.c
-+++ b/drivers/pwm/pwm-pxa.c
-@@ -147,11 +147,6 @@ static int pwm_probe(struct platform_device *pdev)
- 	pwm->chip.npwm = (id->driver_data & HAS_SECONDARY_PWM) ? 2 : 1;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
- 	pwm->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(pwm->mmio_base))
- 		return PTR_ERR(pwm->mmio_base);
-diff --git a/drivers/pwm/pwm-spear.c b/drivers/pwm/pwm-spear.c
-index 6d99e2c..8af6ea8 100644
---- a/drivers/pwm/pwm-spear.c
-+++ b/drivers/pwm/pwm-spear.c
-@@ -178,18 +178,13 @@ static int spear_pwm_probe(struct platform_device *pdev)
- 	int ret;
- 	u32 val;
- 
--	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no memory resources defined\n");
--		return -ENODEV;
--	}
--
- 	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
- 	if (!pc) {
- 		dev_err(&pdev->dev, "failed to allocate memory\n");
- 		return -ENOMEM;
+diff --git a/drivers/input/keyboard/imx_keypad.c b/drivers/input/keyboard/imx_keypad.c
+index 03c8cc5..328cfc1 100644
+--- a/drivers/input/keyboard/imx_keypad.c
++++ b/drivers/input/keyboard/imx_keypad.c
+@@ -442,12 +442,6 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 		return -EINVAL;
  	}
  
-+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pc->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(pc->mmio_base))
- 		return PTR_ERR(pc->mmio_base);
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 3d75f4a..a540293 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -181,11 +181,6 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 	pwm->dev = &pdev->dev;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no memory resources defined\n");
--		return -ENODEV;
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "no I/O memory defined in platform data\n");
+-		return -EINVAL;
 -	}
 -
- 	pwm->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(pwm->mmio_base))
- 		return PTR_ERR(pwm->mmio_base);
-diff --git a/drivers/pwm/pwm-tiecap.c b/drivers/pwm/pwm-tiecap.c
-index 0d65fb2..72ca42d 100644
---- a/drivers/pwm/pwm-tiecap.c
-+++ b/drivers/pwm/pwm-tiecap.c
-@@ -240,11 +240,6 @@ static int ecap_pwm_probe(struct platform_device *pdev)
- 	pc->chip.npwm = 1;
+ 	input_dev = devm_input_allocate_device(&pdev->dev);
+ 	if (!input_dev) {
+ 		dev_err(&pdev->dev, "failed to allocate the input device\n");
+@@ -468,6 +462,7 @@ static int imx_keypad_probe(struct platform_device *pdev)
+ 	setup_timer(&keypad->check_matrix_timer,
+ 		    imx_keypad_check_for_events, (unsigned long) keypad);
  
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(keypad->mmio_base))
+ 		return PTR_ERR(keypad->mmio_base);
+diff --git a/drivers/input/keyboard/spear-keyboard.c b/drivers/input/keyboard/spear-keyboard.c
+index cb1e8f6..b2e77e4 100644
+--- a/drivers/input/keyboard/spear-keyboard.c
++++ b/drivers/input/keyboard/spear-keyboard.c
+@@ -191,12 +191,6 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 	int irq;
+ 	int error;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no keyboard resource defined\n");
+-		return -EBUSY;
 -	}
 -
- 	pc->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(pc->mmio_base))
- 		return PTR_ERR(pc->mmio_base);
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 6a21759..48a485c 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -471,11 +471,6 @@ static int ehrpwm_pwm_probe(struct platform_device *pdev)
- 	pc->chip.npwm = NUM_PWM_CHANNEL;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
- 	pc->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(pc->mmio_base))
- 		return PTR_ERR(pc->mmio_base);
-diff --git a/drivers/pwm/pwm-tipwmss.c b/drivers/pwm/pwm-tipwmss.c
-index c9c3d3a..3b119bc 100644
---- a/drivers/pwm/pwm-tipwmss.c
-+++ b/drivers/pwm/pwm-tipwmss.c
-@@ -70,11 +70,6 @@ static int pwmss_probe(struct platform_device *pdev)
- 	mutex_init(&info->pwmss_lock);
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
--	}
--
- 	info->mmio_base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(info->mmio_base))
- 		return PTR_ERR(info->mmio_base);
-diff --git a/drivers/pwm/pwm-vt8500.c b/drivers/pwm/pwm-vt8500.c
-index 69effd1..323125a 100644
---- a/drivers/pwm/pwm-vt8500.c
-+++ b/drivers/pwm/pwm-vt8500.c
-@@ -230,11 +230,6 @@ static int vt8500_pwm_probe(struct platform_device *pdev)
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "not able to get irq for the device\n");
+@@ -228,6 +222,7 @@ static int spear_kbd_probe(struct platform_device *pdev)
+ 		kbd->suspended_rate = pdata->suspended_rate;
  	}
  
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (r == NULL) {
--		dev_err(&pdev->dev, "no memory resource defined\n");
--		return -ENODEV;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	kbd->io_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(kbd->io_base))
+ 		return PTR_ERR(kbd->io_base);
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index b46142f..9cd20e6 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -638,12 +638,6 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 	if (!tegra_kbc_check_pin_cfg(kbc, &num_rows))
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "failed to get I/O memory\n");
+-		return -ENXIO;
 -	}
 -
- 	chip->base = devm_ioremap_resource(&pdev->dev, r);
- 	if (IS_ERR(chip->base))
- 		return PTR_ERR(chip->base);
+ 	kbc->irq = platform_get_irq(pdev, 0);
+ 	if (kbc->irq < 0) {
+ 		dev_err(&pdev->dev, "failed to get keyboard IRQ\n");
+@@ -658,6 +652,7 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+ 
+ 	setup_timer(&kbc->timer, tegra_kbc_keypress_timer, (unsigned long)kbc);
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	kbc->mmio = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(kbc->mmio))
+ 		return PTR_ERR(kbc->mmio);
 -- 
 1.7.10.4
