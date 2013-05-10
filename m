@@ -1,77 +1,52 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
- subsystem mutex to pinctrl_dev struct"
-Date: Fri, 10 May 2013 11:29:24 +0200
-Message-ID: <20130510092924.GJ3041@game.jcrosoft.org>
-References: <20130505112819.GD24282@game.jcrosoft.org>
- <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
- <20130505202236.GF24282@game.jcrosoft.org>
- <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
- <20130506194122.GG24282@game.jcrosoft.org>
- <20130506195403.GJ18614@n2100.arm.linux.org.uk>
- <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
- <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
- <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ@mail.gmail.com>
- <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 23/42] drivers/spi: don't check resource with
+ devm_ioremap_resource
+Date: Fri, 10 May 2013 11:55:45 +0100
+Message-ID: <20130510105545.GO3200@sirena.org.uk>
+References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+ <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0UhZIN3Sa23/ILEd"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Fathi Boudra <fathi.boudra@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <1368173847-5661-24-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
-	so we need to consolidate I'll send a proposition during the day
+--0UhZIN3Sa23/ILEd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best Regards,
-J.
-On 20:51 Thu 09 May     , Fathi Boudra wrote:
-> On 9 May 2013 19:13, Olof Johansson <olof@lixom.net> wrote:
-> > On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
-> >> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
-> > Yes, a builder is quite useful. Several of us do our own builds as well.
-> >
-> > When it comes to boot coverage, I'm not sure how successful a central
-> > approach would be. It's something where I think Linaro could
-> > contribute a lot for their member platforms, but I haven't seen much
-> > engagement there yet.
-> 
-> My previous post was lost. Sorry to repost..
-> 
-> We've got a jenkins instance doing daily builds on various trees and
-> boot testing on the few boards we've got in the lab:
-> https://ci.linaro.org/jenkins/view/kernel-ci/
-> 
-> But it hasn't attracted much interest so far... It's been here since a year.
-> 
-> > Beyond there, I'd say the expectation is that each maintainer should
-> > keep an eye on their own platforms. They _should_ try building and
-> > booting linux-next on their platforms, to catch regressions early. And
-> > definitely around now, I'd like to see people boot mainline on their
-> > platforms to make sure we haven't added any severe regressions in the
-> > 3.10 merge window, etc. Some people are really good at this, others
-> > less so.
-> >
-> > What's the old saying, you can lead a horse to water but you can't
-> > make him drink? You can build a boot test cluster but you can't make
-> > anyone pay attention to it. :(
-> >
-> > -Olof
-> 
-> Cheers,
-> 
-> Fathi
+On Fri, May 10, 2013 at 10:17:08AM +0200, Wolfram Sang wrote:
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
+
+Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+
+--0UhZIN3Sa23/ILEd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRjNIuAAoJELSic+t+oim9EeAP/3F5K6xUKoR1bkGZRU/CHceB
+yG7qHKrgOSNrzkSa7HR/KlahfszLl8BQ9dCo2CzAEWhpxmbzDtX7Ift3CDG+sI9W
+WxKNxOib39VRHYE2CkbXHAabX/cUWA498zxfMAfkRJzPnLDakkqhq8Vnk8JDDwzq
+cjedISrRRtwIzQLea/dr0l3Ad2ipkI55GJScwv7BGunglTLg4mhoT+w32WqPXC4u
+yTo5r79o2qfF2UkU6o3XJkoWG8Kblr26HAEPRMPwmeVzqjLrNiFT6BhdRVW6nvEq
+KEobD06ZQ6AKrcs4/GZoVN2aAz288vRZLSEOiFVMPA0nQyNa6sEW88DBhhke3LVj
+zzfTiy+0AU0yaJd8Qxxgg8H2Ps4N0C9f+o9YFABWyt0SHKXPldSg6mfIoYyvcKEj
+fRa/k1l2cHaYaFdwPRm8MjjKgRO5Pcrsl4kp/idIwLTQHxr3VztDyeDpwzeeRMZ3
+X2VsjlBlkw+kmlD1BR2FffsaXaJ6QM/YREju97Zzw5A/WrwY5w1AXJo7gTy+R7Vt
+9x79t/3Vr6yujHwfKSnj3pvfbch5Do8RTjXocji3vTxP8KyYvC+sFGYKLTDxwhaB
+pXSC6DIgWxr+uUmiqYJ/UkS16WfgTPrGNNsPQ4MXGL7B8J29D9agEtoqNXDGa82X
+BUEfIfHkMPsyK/ct6wDs
+=kFrz
+-----END PGP SIGNATURE-----
+
+--0UhZIN3Sa23/ILEd--
