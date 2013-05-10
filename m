@@ -1,43 +1,21 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] dma: tegra: avoid channel lock up after free
-Date: Sat, 11 May 2013 01:06:54 +0400
-Message-ID: <1368220014-12036-2-git-send-email-digetx@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] dma: tegra20-apbdma: err message correction
+Date: Fri, 10 May 2013 17:04:43 -0600
+Message-ID: <518D7D0B.3080304@wwwdotorg.org>
 References: <1368220014-12036-1-git-send-email-digetx@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1368220014-12036-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Lock scenario: Channel 1 was allocated and prepared as slave_sg, used and freed.
-Now preparation of cyclic dma on channel 1 will fail with err "DMA configuration
-conflict" because tdc->isr_handler still setted to handle_once_dma_done.
+On 05/10/2013 03:06 PM, Dmitry Osipenko wrote:
+> Fixed err msg params order on irq request fail.
 
-This happens because tegra_dma_abort_all() won't be called on channel freeing
-if pending list is empty and channel not busy. We need to clear isr_handler
-on channel freeing to avoid locking.
-
-Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-I have sent this fix some month ago and Laxman gave his ack, but since that
-time I found that it's not right to include multiple changes in one patch,
-so converted it to trivial change.
-
- drivers/dma/tegra20-apb-dma.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index a84bb7f..c541276 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1191,6 +1191,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	list_splice_init(&tdc->free_dma_desc, &dma_desc_list);
- 	INIT_LIST_HEAD(&tdc->cb_desc);
- 	tdc->config_init = false;
-+	tdc->isr_handler = NULL;
- 	spin_unlock_irqrestore(&tdc->lock, flags);
- 
- 	while (!list_empty(&dma_desc_list)) {
--- 
-1.8.2.1
+These two look fine to me, but patches to DMA drivers should be taken
+through the DMA driver tree; that's Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+and Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>.
