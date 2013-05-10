@@ -1,52 +1,44 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 23/42] drivers/spi: don't check resource with
- devm_ioremap_resource
-Date: Fri, 10 May 2013 11:55:45 +0100
-Message-ID: <20130510105545.GO3200@sirena.org.uk>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
- <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
+From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 00/10] Tegra USB PHY driver series
+Date: Fri, 10 May 2013 19:24:01 +0530
+Message-ID: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0UhZIN3Sa23/ILEd"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1368173847-5661-24-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+delta from v2:
+This patch is prepared as follow up patch of TEGRA USB PHY driver
+patch series discussed at:
+http://marc.info/?l=linux-tegra&m=136497946026787&w=2
 
---0UhZIN3Sa23/ILEd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Venu Byravarasu (10):
+  ARM: tegra: finalize USB EHCI and PHY bindings
+  arm: dt: Tegra20: Modify ULPI reset GPIO properties
+  ARM: tegra: update device trees for USB binding rework
+  Revert "usb: phy: tegra: don't call into tegra-ehci directly"
+  usb: phy: tegra: Get PHY mode using DT
+  usb: phy: tegra: Return correct error value provided by clk_get_sys
+  usb: phy: tegra: get ULPI reset GPIO info using DT.
+  usb: phy: tegra: Add error handling & clean up.
+  usb: phy: registering Tegra USB PHY as platform driver
+  Usb: Move PORTSC access to PHY
 
-On Fri, May 10, 2013 at 10:17:08AM +0200, Wolfram Sang wrote:
-> devm_ioremap_resource does sanity checks on the given resource. No need to
-> duplicate this in the driver.
-
-Acked-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-
---0UhZIN3Sa23/ILEd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRjNIuAAoJELSic+t+oim9EeAP/3F5K6xUKoR1bkGZRU/CHceB
-yG7qHKrgOSNrzkSa7HR/KlahfszLl8BQ9dCo2CzAEWhpxmbzDtX7Ift3CDG+sI9W
-WxKNxOib39VRHYE2CkbXHAabX/cUWA498zxfMAfkRJzPnLDakkqhq8Vnk8JDDwzq
-cjedISrRRtwIzQLea/dr0l3Ad2ipkI55GJScwv7BGunglTLg4mhoT+w32WqPXC4u
-yTo5r79o2qfF2UkU6o3XJkoWG8Kblr26HAEPRMPwmeVzqjLrNiFT6BhdRVW6nvEq
-KEobD06ZQ6AKrcs4/GZoVN2aAz288vRZLSEOiFVMPA0nQyNa6sEW88DBhhke3LVj
-zzfTiy+0AU0yaJd8Qxxgg8H2Ps4N0C9f+o9YFABWyt0SHKXPldSg6mfIoYyvcKEj
-fRa/k1l2cHaYaFdwPRm8MjjKgRO5Pcrsl4kp/idIwLTQHxr3VztDyeDpwzeeRMZ3
-X2VsjlBlkw+kmlD1BR2FffsaXaJ6QM/YREju97Zzw5A/WrwY5w1AXJo7gTy+R7Vt
-9x79t/3Vr6yujHwfKSnj3pvfbch5Do8RTjXocji3vTxP8KyYvC+sFGYKLTDxwhaB
-pXSC6DIgWxr+uUmiqYJ/UkS16WfgTPrGNNsPQ4MXGL7B8J29D9agEtoqNXDGa82X
-BUEfIfHkMPsyK/ct6wDs
-=kFrz
------END PGP SIGNATURE-----
-
---0UhZIN3Sa23/ILEd--
+ .../bindings/usb/nvidia,tegra20-ehci.txt           |   27 +--
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |   40 ++-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi         |    6 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |   10 +-
+ arch/arm/boot/dts/tegra20-iris-512.dts             |    1 -
+ arch/arm/boot/dts/tegra20-paz00.dts                |   10 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   24 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   23 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |   10 +-
+ arch/arm/boot/dts/tegra20-whistler.dts             |   26 ++
+ arch/arm/boot/dts/tegra20.dtsi                     |   46 ++-
+ drivers/usb/host/ehci-tegra.c                      |  143 +++------
+ drivers/usb/phy/phy-tegra-usb.c                    |  349 +++++++++++++-------
+ include/linux/usb/tegra_usb_phy.h                  |    9 +-
+ 14 files changed, 424 insertions(+), 300 deletions(-)
