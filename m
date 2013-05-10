@@ -1,7 +1,7 @@
 From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: [PATCH v3 10/10] Usb: Move PORTSC access to PHY
-Date: Fri, 10 May 2013 19:24:11 +0530
-Message-ID: <1368194051-4925-11-git-send-email-vbyravarasu@nvidia.com>
+Subject: [PATCH v3 05/10] usb: phy: tegra: Get PHY mode using DT
+Date: Fri, 10 May 2013 19:24:06 +0530
+Message-ID: <1368194051-4925-6-git-send-email-vbyravarasu@nvidia.com>
 References: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,185 +12,94 @@ To: gregkh@linuxfoundation.org, swarren@wwwdotorg.org, balbi@ti.com, stern@rowla
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Changes with this patch:
-1. As PHY is being registered as separate platform driver & EHCI Tegra
-is no more calling PHY open, moved tegra_ehci_set_pts & tegra_ehci_set_phcd
-functions to PHY driver,
-
-2. Removed unused defines for multiple USB port base addresses
+Added a new PHY mode to support OTG.
+Obtained Tegra USB PHY mode using DT property.
 
 Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
 ---
-This is a new patch being added into the series, to address the revert done
-with patch#4 of the series.
+delta from v1:
+replaced gadget with peripheral.
 
- drivers/usb/host/ehci-tegra.c     |   49 -------------------------------------
- drivers/usb/phy/phy-tegra-usb.c   |   37 +++++++++++++++++++++++++--
- include/linux/usb/tegra_usb_phy.h |    4 ---
- 3 files changed, 34 insertions(+), 56 deletions(-)
+delta from v2:
+No change
+
+ drivers/usb/host/ehci-tegra.c     |    3 +--
+ drivers/usb/phy/phy-tegra-usb.c   |   13 +++++++++++--
+ include/linux/usb/tegra_usb_phy.h |    3 ++-
+ 3 files changed, 14 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 406abd9..2340d7a 100644
+index ed201ae..f4b2164 100644
 --- a/drivers/usb/host/ehci-tegra.c
 +++ b/drivers/usb/host/ehci-tegra.c
-@@ -30,15 +30,6 @@
- #include <linux/usb/tegra_usb_phy.h>
- #include <linux/clk/tegra.h>
- 
--#define TEGRA_USB_BASE			0xC5000000
--#define TEGRA_USB2_BASE			0xC5004000
--#define TEGRA_USB3_BASE			0xC5008000
--
--/* PORTSC registers */
--#define TEGRA_USB_PORTSC1			0x184
--#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
--#define TEGRA_USB_PORTSC1_PHCD	(1 << 23)
--
- #define TEGRA_USB_DMA_ALIGN 32
- 
- struct tegra_ehci_hcd {
-@@ -608,37 +599,6 @@ static const struct dev_pm_ops tegra_ehci_pm_ops = {
- 
- #endif
- 
--/* Bits of PORTSC1, which will get cleared by writing 1 into them */
--#define TEGRA_PORTSC1_RWC_BITS (PORT_CSC | PORT_PEC | PORT_OCC)
--
--void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
--{
--	unsigned long val;
--	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
--	void __iomem *base = hcd->regs;
--
--	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
--	val &= ~TEGRA_USB_PORTSC1_PTS(3);
--	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
--	writel(val, base + TEGRA_USB_PORTSC1);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
--
--void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
--{
--	unsigned long val;
--	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
--	void __iomem *base = hcd->regs;
--
--	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
--	if (enable)
--		val |= TEGRA_USB_PORTSC1_PHCD;
--	else
--		val &= ~TEGRA_USB_PORTSC1_PHCD;
--	writel(val, base + TEGRA_USB_PORTSC1);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
--
- static u64 tegra_ehci_dma_mask = DMA_BIT_MASK(32);
- 
- static int tegra_ehci_probe(struct platform_device *pdev)
-@@ -731,15 +691,6 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 		goto cleanup_hcd_create;
+@@ -737,8 +737,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
  	}
  
--	u_phy->otg = devm_kzalloc(&pdev->dev, sizeof(struct usb_otg),
--			     GFP_KERNEL);
--	if (!u_phy->otg) {
--		dev_err(&pdev->dev, "Failed to alloc memory for otg\n");
--		err = -ENOMEM;
--		goto cleanup_phy;
--	}
--	u_phy->otg->host = hcd_to_bus(hcd);
--
- 	err = usb_phy_set_suspend(hcd->phy, 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to power on the phy\n");
+ 	tegra->phy = tegra_usb_phy_open(&pdev->dev, instance, hcd->regs,
+-					pdata->phy_config,
+-					TEGRA_USB_PHY_MODE_HOST);
++					pdata->phy_config);
+ 	if (IS_ERR(tegra->phy)) {
+ 		dev_err(&pdev->dev, "Failed to open USB phy\n");
+ 		err = -ENXIO;
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 4d81b19..b2a909f 100644
+index 5487d38..91b6e29 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -33,6 +33,7 @@
- #include <asm/mach-types.h>
- #include <linux/usb/tegra_usb_phy.h>
- #include <linux/module.h>
-+#include <linux/usb/ehci_def.h>
- 
- #define ULPI_VIEWPORT		0x170
- 
-@@ -196,6 +197,36 @@ static struct tegra_utmip_config utmip_default[] = {
- 	},
- };
- 
-+/* PORTSC registers */
-+#define TEGRA_USB_PORTSC1			0x184
-+#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
-+#define TEGRA_USB_PORTSC1_PHCD	(1 << 23)
-+
-+/* Bits of PORTSC1, which will get cleared by writing 1 into them */
-+#define TEGRA_PORTSC1_RWC_BITS (PORT_CSC | PORT_PEC | PORT_OCC)
-+
-+static void tegra_ehci_set_pts(void __iomem *base, u8 pts_val)
-+{
-+	unsigned long val;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	val &= ~TEGRA_USB_PORTSC1_PTS(3);
-+	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+
-+static void tegra_ehci_set_phcd(void __iomem *base, bool enable)
-+{
-+	unsigned long val;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	if (enable)
-+		val |= TEGRA_USB_PORTSC1_PHCD;
-+	else
-+		val &= ~TEGRA_USB_PORTSC1_PHCD;
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+
- static int utmip_pad_open(struct tegra_usb_phy *phy)
- {
- 	phy->pad_clk = devm_clk_get(phy->dev, "utmi-pads");
-@@ -282,7 +313,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		val &= ~USB_SUSP_SET;
- 		writel(val, base + USB_SUSP_CTRL);
- 	} else
--		tegra_ehci_set_phcd(&phy->u_phy, true);
-+		tegra_ehci_set_phcd(base, true);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
- 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
-@@ -304,7 +335,7 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- 		val &= ~USB_SUSP_CLR;
- 		writel(val, base + USB_SUSP_CTRL);
- 	} else
--		tegra_ehci_set_phcd(&phy->u_phy, false);
-+		tegra_ehci_set_phcd(base, false);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
- 						     USB_PHY_CLK_VALID))
-@@ -427,7 +458,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 	utmi_phy_clk_enable(phy);
- 
- 	if (!phy->is_legacy_phy)
--		tegra_ehci_set_pts(&phy->u_phy, 0);
-+		tegra_ehci_set_pts(base, 0);
- 
- 	return 0;
+@@ -688,7 +688,7 @@ static int	tegra_usb_phy_suspend(struct usb_phy *x, int suspend)
  }
+ 
+ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+-	void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode)
++	void __iomem *regs, void *config)
+ {
+ 	struct tegra_usb_phy *phy;
+ 	unsigned long parent_rate;
+@@ -703,7 +703,6 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+ 	phy->instance = instance;
+ 	phy->regs = regs;
+ 	phy->config = config;
+-	phy->mode = phy_mode;
+ 	phy->dev = dev;
+ 	phy->is_legacy_phy =
+ 		of_property_read_bool(np, "nvidia,has-legacy-mode");
+@@ -713,6 +712,16 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+ 	else
+ 		phy->is_ulpi_phy = true;
+ 
++	err = of_property_match_string(np, "dr_mode", "otg");
++	if (err < 0) {
++		err = of_property_match_string(np, "dr_mode", "peripheral");
++		if (err < 0)
++			phy->mode = TEGRA_USB_PHY_MODE_HOST;
++		else
++			phy->mode = TEGRA_USB_PHY_MODE_DEVICE;
++	} else
++		phy->mode = TEGRA_USB_PHY_MODE_OTG;
++
+ 	if (!phy->config) {
+ 		if (phy->is_ulpi_phy) {
+ 			pr_err("%s: ulpi phy configuration missing", __func__);
 diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 0cd15d2..d2ca919 100644
+index 9ebebe9..a7af923 100644
 --- a/include/linux/usb/tegra_usb_phy.h
 +++ b/include/linux/usb/tegra_usb_phy.h
-@@ -76,8 +76,4 @@ void tegra_ehci_phy_restore_start(struct usb_phy *phy,
+@@ -42,6 +42,7 @@ enum tegra_usb_phy_port_speed {
+ enum tegra_usb_phy_mode {
+ 	TEGRA_USB_PHY_MODE_DEVICE,
+ 	TEGRA_USB_PHY_MODE_HOST,
++	TEGRA_USB_PHY_MODE_OTG,
+ };
  
- void tegra_ehci_phy_restore_end(struct usb_phy *phy);
+ struct tegra_xtal_freq;
+@@ -64,7 +65,7 @@ struct tegra_usb_phy {
+ };
  
--void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
--
--void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
--
- #endif /* __TEGRA_USB_PHY_H */
+ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
+-	void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode);
++	void __iomem *regs, void *config);
+ 
+ void tegra_usb_phy_preresume(struct usb_phy *phy);
+ 
 -- 
 1.7.0.4
