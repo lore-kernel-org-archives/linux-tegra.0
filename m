@@ -1,7 +1,7 @@
 From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: [PATCH v3 05/10] usb: phy: tegra: Get PHY mode using DT
-Date: Fri, 10 May 2013 19:24:06 +0530
-Message-ID: <1368194051-4925-6-git-send-email-vbyravarasu@nvidia.com>
+Subject: [PATCH v3 07/10] usb: phy: tegra: get ULPI reset GPIO info using DT.
+Date: Fri, 10 May 2013 19:24:08 +0530
+Message-ID: <1368194051-4925-8-git-send-email-vbyravarasu@nvidia.com>
 References: <1368194051-4925-1-git-send-email-vbyravarasu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,94 +12,86 @@ To: gregkh@linuxfoundation.org, swarren@wwwdotorg.org, balbi@ti.com, stern@rowla
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Venu Byravarasu <vbyravarasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Added a new PHY mode to support OTG.
-Obtained Tegra USB PHY mode using DT property.
+As GPIO information is avail through DT, used it to get Tegra ULPI
+reset GPIO number. Added a new member to tegra_usb_phy structure to
+store this number.
 
 Signed-off-by: Venu Byravarasu <vbyravarasu@nvidia.com>
 ---
-delta from v1:
-replaced gadget with peripheral.
+delta from v1 & v2: no change.
 
-delta from v2:
-No change
+ drivers/usb/phy/phy-tegra-usb.c   |   25 +++++++++++--------------
+ include/linux/usb/tegra_usb_phy.h |    1 +
+ 2 files changed, 12 insertions(+), 14 deletions(-)
 
- drivers/usb/host/ehci-tegra.c     |    3 +--
- drivers/usb/phy/phy-tegra-usb.c   |   13 +++++++++++--
- include/linux/usb/tegra_usb_phy.h |    3 ++-
- 3 files changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index ed201ae..f4b2164 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -737,8 +737,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	}
- 
- 	tegra->phy = tegra_usb_phy_open(&pdev->dev, instance, hcd->regs,
--					pdata->phy_config,
--					TEGRA_USB_PHY_MODE_HOST);
-+					pdata->phy_config);
- 	if (IS_ERR(tegra->phy)) {
- 		dev_err(&pdev->dev, "Failed to open USB phy\n");
- 		err = -ENXIO;
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 5487d38..91b6e29 100644
+index 16851e2..a2a89a9 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -688,7 +688,7 @@ static int	tegra_usb_phy_suspend(struct usb_phy *x, int suspend)
+@@ -541,11 +541,10 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 	int ret;
+ 	unsigned long val;
+ 	void __iomem *base = phy->regs;
+-	struct tegra_ulpi_config *config = phy->config;
+ 
+-	gpio_direction_output(config->reset_gpio, 0);
++	gpio_direction_output(phy->reset_gpio, 0);
+ 	msleep(5);
+-	gpio_direction_output(config->reset_gpio, 1);
++	gpio_direction_output(phy->reset_gpio, 1);
+ 
+ 	clk_prepare_enable(phy->clk);
+ 	msleep(1);
+@@ -603,10 +602,8 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
+ 
+ static int ulpi_phy_power_off(struct tegra_usb_phy *phy)
+ {
+-	struct tegra_ulpi_config *config = phy->config;
+-
+ 	clk_disable(phy->clk);
+-	return gpio_direction_output(config->reset_gpio, 0);
++	return gpio_direction_output(phy->reset_gpio, 0);
  }
  
- struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
--	void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode)
-+	void __iomem *regs, void *config)
- {
- 	struct tegra_usb_phy *phy;
- 	unsigned long parent_rate;
-@@ -703,7 +703,6 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
- 	phy->instance = instance;
- 	phy->regs = regs;
- 	phy->config = config;
--	phy->mode = phy_mode;
- 	phy->dev = dev;
- 	phy->is_legacy_phy =
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
-@@ -713,6 +712,16 @@ struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
- 	else
- 		phy->is_ulpi_phy = true;
- 
-+	err = of_property_match_string(np, "dr_mode", "otg");
-+	if (err < 0) {
-+		err = of_property_match_string(np, "dr_mode", "peripheral");
-+		if (err < 0)
-+			phy->mode = TEGRA_USB_PHY_MODE_HOST;
-+		else
-+			phy->mode = TEGRA_USB_PHY_MODE_DEVICE;
-+	} else
-+		phy->mode = TEGRA_USB_PHY_MODE_OTG;
+ static int	tegra_phy_init(struct usb_phy *x)
+@@ -622,18 +619,18 @@ static int	tegra_phy_init(struct usb_phy *x)
+ 			pr_err("%s: can't get ulpi clock\n", __func__);
+ 			return PTR_ERR(phy->clk);
+ 		}
+-		if (!gpio_is_valid(ulpi_config->reset_gpio))
+-			ulpi_config->reset_gpio =
+-				of_get_named_gpio(phy->dev->of_node,
+-						  "nvidia,phy-reset-gpio", 0);
+-		if (!gpio_is_valid(ulpi_config->reset_gpio)) {
 +
- 	if (!phy->config) {
- 		if (phy->is_ulpi_phy) {
- 			pr_err("%s: ulpi phy configuration missing", __func__);
++		phy->reset_gpio =
++			of_get_named_gpio(phy->dev->of_node,
++					  "nvidia,phy-reset-gpio", 0);
++		if (!gpio_is_valid(phy->reset_gpio)) {
+ 			pr_err("%s: invalid reset gpio: %d\n", __func__,
+-			       ulpi_config->reset_gpio);
++			       phy->reset_gpio);
+ 			err = -EINVAL;
+ 			goto err1;
+ 		}
+-		gpio_request(ulpi_config->reset_gpio, "ulpi_phy_reset_b");
+-		gpio_direction_output(ulpi_config->reset_gpio, 0);
++		gpio_request(phy->reset_gpio, "ulpi_phy_reset_b");
++		gpio_direction_output(phy->reset_gpio, 0);
+ 		phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
+ 		phy->ulpi->io_priv = phy->regs + ULPI_VIEWPORT;
+ 	} else {
 diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 9ebebe9..a7af923 100644
+index a7af923..6cfb8f1 100644
 --- a/include/linux/usb/tegra_usb_phy.h
 +++ b/include/linux/usb/tegra_usb_phy.h
-@@ -42,6 +42,7 @@ enum tegra_usb_phy_port_speed {
- enum tegra_usb_phy_mode {
- 	TEGRA_USB_PHY_MODE_DEVICE,
- 	TEGRA_USB_PHY_MODE_HOST,
-+	TEGRA_USB_PHY_MODE_OTG,
- };
- 
- struct tegra_xtal_freq;
-@@ -64,7 +65,7 @@ struct tegra_usb_phy {
+@@ -62,6 +62,7 @@ struct tegra_usb_phy {
+ 	struct device *dev;
+ 	bool is_legacy_phy;
+ 	bool is_ulpi_phy;
++	int reset_gpio;
  };
  
  struct tegra_usb_phy *tegra_usb_phy_open(struct device *dev, int instance,
--	void __iomem *regs, void *config, enum tegra_usb_phy_mode phy_mode);
-+	void __iomem *regs, void *config);
- 
- void tegra_usb_phy_preresume(struct usb_phy *phy);
- 
 -- 
 1.7.0.4
