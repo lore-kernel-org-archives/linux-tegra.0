@@ -1,101 +1,198 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: [RFC 05/42] drivers/gpio: don't check resource with devm_ioremap_resource
-Date: Fri, 10 May 2013 10:16:50 +0200
-Message-ID: <1368173847-5661-6-git-send-email-wsa@the-dreams.de>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [RFC 09/42] drivers/i2c/busses: don't check resource with devm_ioremap_resource
+Date: Fri, 10 May 2013 10:16:54 +0200
+Message-ID: <1368173847-5661-10-git-send-email-wsa@the-dreams.de>
 References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368173847-5661-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, davinci-linux-open-source@linux.davincidsp.com, linux-i2c@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 devm_ioremap_resource does sanity checks on the given resource. No need to
 duplicate this in the driver.
 
-Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- drivers/gpio/gpio-mvebu.c       |   12 +-----------
- drivers/gpio/gpio-spear-spics.c |    7 +------
- drivers/gpio/gpio-tegra.c       |    5 -----
- 3 files changed, 2 insertions(+), 22 deletions(-)
+ drivers/i2c/busses/i2c-davinci.c            |    6 +-----
+ drivers/i2c/busses/i2c-designware-platdrv.c |    6 +-----
+ drivers/i2c/busses/i2c-imx.c                |    6 +-----
+ drivers/i2c/busses/i2c-omap.c               |    6 +-----
+ drivers/i2c/busses/i2c-rcar.c               |    7 +------
+ drivers/i2c/busses/i2c-s3c2410.c            |    5 -----
+ drivers/i2c/busses/i2c-sirf.c               |    6 ------
+ drivers/i2c/busses/i2c-tegra.c              |    5 -----
+ 8 files changed, 5 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index bf69a7e..60e8c6e 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -566,12 +566,6 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	else
- 		soc_variant = MVEBU_GPIO_SOC_VARIANT_ORION;
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index cf20e06..2ed3e7b 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -647,11 +647,6 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 	int r;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
+-		return -ENODEV;
+-	}
+ 
+ 	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!irq) {
+@@ -697,6 +692,7 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	clk_prepare_enable(dev->clk);
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base)) {
+ 		r = PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 8ec9133..6f3c612 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -87,11 +87,6 @@ static int dw_i2c_probe(struct platform_device *pdev)
+ 	int irq, r;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
+-		return -EINVAL;
+-	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -103,6 +98,7 @@ static int dw_i2c_probe(struct platform_device *pdev)
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base))
+ 		return PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 82f20c6..b274ca1 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -500,17 +500,13 @@ static int __init i2c_imx_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "<%s>\n", __func__);
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		dev_err(&pdev->dev, "Cannot get memory resource\n");
+-		dev_err(&pdev->dev, "can't get device resources\n");
+-		return -ENOENT;
+-	}
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		dev_err(&pdev->dev, "can't get irq number\n");
+ 		return -ENOENT;
+ 	}
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index e02f9e3..8498ab7 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -1085,11 +1085,6 @@ omap_i2c_probe(struct platform_device *pdev)
+ 	u16 minor, major, scheme;
+ 
+ 	/* NOTE: driver uses the static register mapping */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem) {
+-		dev_err(&pdev->dev, "no mem resource?\n");
 -		return -ENODEV;
 -	}
--
- 	mvchip = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_gpio_chip), GFP_KERNEL);
- 	if (!mvchip) {
- 		dev_err(&pdev->dev, "Cannot allocate memory\n");
-@@ -611,6 +605,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	mvchip->chip.dbg_show = mvebu_gpio_dbg_show;
  
- 	spin_lock_init(&mvchip->lock);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	mvchip->membase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(mvchip->membase))
- 		return PTR_ERR(mvchip->membase);
-@@ -619,11 +614,6 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	 * per-CPU registers */
- 	if (soc_variant == MVEBU_GPIO_SOC_VARIANT_ARMADAXP) {
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--		if (!res) {
--			dev_err(&pdev->dev, "Cannot get memory resource\n");
--			return -ENODEV;
--		}
--
- 		mvchip->percpu_membase = devm_ioremap_resource(&pdev->dev,
- 							       res);
- 		if (IS_ERR(mvchip->percpu_membase))
-diff --git a/drivers/gpio/gpio-spear-spics.c b/drivers/gpio/gpio-spear-spics.c
-index 7a4bf7c..e9a0415 100644
---- a/drivers/gpio/gpio-spear-spics.c
-+++ b/drivers/gpio/gpio-spear-spics.c
-@@ -128,18 +128,13 @@ static int spics_gpio_probe(struct platform_device *pdev)
- 	struct resource *res;
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+@@ -1103,6 +1098,7 @@ omap_i2c_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dev->base = devm_ioremap_resource(&pdev->dev, mem);
+ 	if (IS_ERR(dev->base))
+ 		return PTR_ERR(dev->base);
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 4ba4a95..0fc5858 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -623,12 +623,6 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	u32 bus_speed;
  	int ret;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		dev_err(&pdev->dev, "invalid IORESOURCE_MEM\n");
--		return -EBUSY;
--	}
--
- 	spics = devm_kzalloc(&pdev->dev, sizeof(*spics), GFP_KERNEL);
- 	if (!spics) {
- 		dev_err(&pdev->dev, "memory allocation fail\n");
- 		return -ENOMEM;
- 	}
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	spics->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(spics->base))
- 		return PTR_ERR(spics->base);
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index da4cb5b..9a62672 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -463,11 +463,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "Missing MEM resource\n");
+-		dev_err(dev, "no mmio resources\n");
 -		return -ENODEV;
 -	}
 -
- 	regs = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(regs))
- 		return PTR_ERR(regs);
+ 	priv = devm_kzalloc(dev, sizeof(struct rcar_i2c_priv), GFP_KERNEL);
+ 	if (!priv) {
+ 		dev_err(dev, "no mem for private data\n");
+@@ -642,6 +636,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	priv->io = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(priv->io))
+ 		return PTR_ERR(priv->io);
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 6e8ee92..cab1c91 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1082,11 +1082,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	/* map the registers */
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "cannot find IO resource\n");
+-		return -ENOENT;
+-	}
+-
+ 	i2c->regs = devm_ioremap_resource(&pdev->dev, res);
+ 
+ 	if (IS_ERR(i2c->regs))
+diff --git a/drivers/i2c/busses/i2c-sirf.c b/drivers/i2c/busses/i2c-sirf.c
+index 5a7ad24..a63c7d5 100644
+--- a/drivers/i2c/busses/i2c-sirf.c
++++ b/drivers/i2c/busses/i2c-sirf.c
+@@ -303,12 +303,6 @@ static int i2c_sirfsoc_probe(struct platform_device *pdev)
+ 	adap->class = I2C_CLASS_HWMON;
+ 
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (mem_res == NULL) {
+-		dev_err(&pdev->dev, "Unable to get MEM resource\n");
+-		err = -EINVAL;
+-		goto out;
+-	}
+-
+ 	siic->base = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(siic->base)) {
+ 		err = PTR_ERR(siic->base);
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index b60ff90..9aa1b60 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -714,11 +714,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "no mem resource\n");
+-		return -EINVAL;
+-	}
+-
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 -- 
 1.7.10.4
