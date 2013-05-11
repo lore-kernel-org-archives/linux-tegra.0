@@ -1,72 +1,36 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [RFC 23/42] drivers/spi: don't check resource with
- devm_ioremap_resource
-Date: Sat, 11 May 2013 14:24:35 +0900
-Message-ID: <002b01ce4e07$d3087ed0$79197c70$@samsung.com>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
- <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1368173847-5661-24-git-send-email-wsa@the-dreams.de>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Wolfram Sang' <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Grant Likely' <grant.likely@linaro.org>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Barry Song' <baohua.song@csr.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] dma: tegra20-apbdma: err message correction
+Date: Sat, 11 May 2013 20:30:52 +0400
+Message-ID: <1368289853-20011-1-git-send-email-digetx@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, May 10, 2013 5:17 PM, Wolfram Sang wrote:
-> 
-> devm_ioremap_resource does sanity checks on the given resource. No need to
-> duplicate this in the driver.
-> 
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> ---
->  drivers/spi/spi-bcm63xx.c        |    8 +-------
->  drivers/spi/spi-ep93xx.c         |    8 +-------
->  drivers/spi/spi-omap2-mcspi.c    |    7 +------
->  drivers/spi/spi-s3c64xx.c        |    7 +------
->  drivers/spi/spi-sirf.c           |    7 +------
->  drivers/spi/spi-tegra114.c       |    7 +------
->  drivers/spi/spi-tegra20-sflash.c |    5 -----
->  drivers/spi/spi-tegra20-slink.c  |    7 +------
->  8 files changed, 7 insertions(+), 49 deletions(-)
-> 
+Fixed err msg params order on irq request fail.
 
-[.....]
+Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Reposting with dma maintainers cc'd as suggested by Stephen.
+Added Stephen's ack.
 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 5000586..fd763cc 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1243,12 +1243,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
-> 
-> -	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (mem_res == NULL) {
-> -		dev_err(&pdev->dev, "Unable to get SPI MEM resource\n");
-> -		return -ENXIO;
-> -	}
-> -
+ drivers/dma/tegra20-apb-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It breaks 'sdd->sfr_start' assignment as below:
-
-1272         sdd->sfr_start = mem_res->start;
-
-
-Best regards,
-Jingoo Han
-
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0) {
->  		dev_warn(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-> @@ -1318,6 +1312,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->  	/* the spi->mode bits understood by this driver: */
->  	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
-> 
-> +	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	sdd->regs = devm_ioremap_resource(&pdev->dev, mem_res);
->  	if (IS_ERR(sdd->regs)) {
->  		ret = PTR_ERR(sdd->regs);
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index ce19340..a84bb7f 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1339,7 +1339,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"request_irq failed with err %d channel %d\n",
+-				i, ret);
++				ret, i);
+ 			goto err_irq;
+ 		}
+ 
+-- 
+1.8.2.1
