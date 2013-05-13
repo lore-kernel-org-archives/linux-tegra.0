@@ -1,30 +1,79 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] dma: tegra: avoid channel lock up after free
-Date: Mon, 13 May 2013 10:20:36 -0600
-Message-ID: <519112D4.7010004@wwwdotorg.org>
-References: <1368289853-20011-1-git-send-email-digetx@gmail.com> <1368289853-20011-2-git-send-email-digetx@gmail.com>
+Subject: Re: [PATCH 1/6] ARM: tegra20: create a DT header defining CLK IDs
+Date: Mon, 13 May 2013 10:46:27 -0600
+Message-ID: <519118E3.4060907@wwwdotorg.org>
+References: <1368443225-16978-1-git-send-email-hdoyu@nvidia.com> <1368443225-16978-2-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368289853-20011-2-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1368443225-16978-2-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/11/2013 10:30 AM, Dmitry Osipenko wrote:
-> Lock scenario: Channel 1 was allocated and prepared as slave_sg, used and freed.
-> Now preparation of cyclic dma on channel 1 will fail with err "DMA configuration
-> conflict" because tdc->isr_handler still setted to handle_once_dma_done.
+On 05/13/2013 05:07 AM, Hiroshi Doyu wrote:
+> To replace magic number in tegra_car:
 > 
-> This happens because tegra_dma_abort_all() won't be called on channel freeing
-> if pending list is empty and channel not busy. We need to clear isr_handler
-> on channel freeing to avoid locking.
-...
-> Reposting with dma maintainers cc'd as suggested by Stephen.
-> Added Stephen's ack.
+> -               clocks = <&tegra_car 28>;
+> +               clocks = <&tegra_car CLK_HOST1X>;
 
-Just for reference (not need to repost again): You'd usually send the
-messages *to* the DMA maintainers since they will be taking the patches
-through their tree, and then Ccing anyone else.
+I'd like slightly more description of the change here. What about:
+
+=====
+Create a header file to define the clock IDs used by the Tegra20 clock
+binding. Remove the list of definitions from the binding documentation,
+and refer the reader to the header file.
+
+This will allow the same header to be used by both device tree files,
+and drivers implementing this binding, which guarantees that the two
+stay in sync. This also makes device trees more readable by using names
+instead of magic numbers.
+=====
+
+I'm not sure exactly how these patches will get merged. For you
+reference, I anticipate one of two things happening:
+
+1)
+
+* Patches 1, 3, 5 get put into a topic branch, and merged into both the
+clk tree and the Tegra tree.
+
+* Patches 2, 4, 6 get merged into the Tegra tree.
+
+* The patches you're going to create for the drivers/clk code get merged
+into Mike's clk tree
+
+2)
+
+* Mike ack's the patches you're going to create for the drivers/clk code.
+
+* Everything gets merged through the Tegra tree.
+
+This shouldn't impact you much, but just be aware that the drivers/clk
+changes you create shouldn't depend on anything beyond patches 1, 3, 5
+here and 3.10-rc1, then I can work out the merging with Mike without any
+constraints.
+
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.txt
+
+>  This binding uses the common clock binding:
+>  Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  
+> +You can find the actual assignment in "dt-bindings/clk/tegra20-car.h"
+
+Can you move this text down into the description of clock-cells, i.e.
+where you removed the original list of IDs? That'll keep the text in the
+place it's most useful. I would also like to explicitly mention "include
+file" and use <> rather than "", since that matches the syntax that
+should be used in .dts files, i.e.:
+
+=====
+ - #clock-cells : Should be 1.
+   In clock consumers, this cell represents the clock ID exposed by the
+   CAR. The assignments may be found in header file
+   <dt-bindings/clk/tegra20-car.h>.
+=====
+
+Similar comments for patches 3 and 5.
