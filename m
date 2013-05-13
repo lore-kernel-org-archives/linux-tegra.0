@@ -1,57 +1,58 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [RFC 04/42] drivers/dma: don't check resource with
- devm_ioremap_resource
-Date: Mon, 13 May 2013 08:08:46 +0200
-Message-ID: <20130513060842.GA2947@katana>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
- <1368173847-5661-5-git-send-email-wsa@the-dreams.de>
- <518D21D4.6000609@wwwdotorg.org>
- <20130510175739.GA2912@katana>
- <518D49B0.4050901@wwwdotorg.org>
- <20130512160440.GA27639@intel.com>
- <20130512182802.GA2922@katana>
- <20130513021000.GB27639@intel.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/6] CLK: tegra: convert device tree files to use CLK defines
+Date: Mon, 13 May 2013 14:06:59 +0300
+Message-ID: <1368443225-16978-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130513021000.GB27639-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This patchset converts device tree files to use CLK defines.
 
-> > > > >>> devm_ioremap_resource does sanity checks on the given resource. No need to
-> > > > >>> duplicate this in the driver.
-> > > > >>
-> > > > >>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> > > > >>
-> > > > >>>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > > >>> -	if (!res) {
-> > > > >>> -		dev_err(&pdev->dev, "No mem resource for DMA\n");
-> > > > >>> -		return -EINVAL;
-> > > > >>> -	}
-> > > > >>> -
-> > > > >>>  	tdma->base_addr = devm_ioremap_resource(&pdev->dev, res);
-> > > > >>
-> > > > >> One issue here is that it's not obvious just from reading the code
-> > > > >> that's left behind that the "missing" error-checking of the
-> > > > >> platform_get_resource() return value is OK because
-> > > > >> devm_ioremap_resource() will check it "for us". Everyone now has to
-> > > > >> mentally maintain a list of exceptions where it's OK not to error-check.
-> > > > > 
-> > > > > My goal is to make not-checking the standard case with devm.
-> > > > 
-> > > > OK, if no parameters passed to any devm function every need to be
-> > > > error-checked, that'll certainly be a bit easier to remember.
-> > > Okay to remove the log message and move to devm_ but I dont agree with this
-> > > patch not returning error above. We shouldnt supress the error..
-> > 
-> > The error will be reported because devm_ioremap_resource will return an
-> > ERR_PTR.
-> And this patch removed the check on 'res' pointer, so on failure we continue...
+This is against Stephen Warren's linux-next_common branch in:
 
-I don't get it. What is the difference between a manual check of res and
-the directly following devm_ioremap_resource returning ERR_PTR(-EINVAL)
-if res is NULL?
+  git://nv-tegra.nvidia.com/user/swarren/linux-2.6
+
+If this is ok, I'll also convert enum variables to use CLK defines in
+drivers/clk/tegra/clk-tegra{20,30,114}.c
+
+Hiroshi Doyu (6):
+  ARM: tegra20: create a DT header defining CLK IDs
+  ARM: tegra20: convert device tree files to use CLK defines
+  ARM: tegra30: create a DT header defining CLK IDs
+  ARM: tegra30: convert device tree files to use CLK defines
+  ARM: tegra114: create a DT header defining CLK IDs
+  ARM: tegra114: convert device tree files to use CLK defines
+
+ .../bindings/clock/nvidia,tegra114-car.txt         | 250 +--------------
+ .../bindings/clock/nvidia,tegra20-car.txt          | 152 +--------
+ .../bindings/clock/nvidia,tegra30-car.txt          | 209 +------------
+ arch/arm/boot/dts/tegra114-dalmore.dts             |   4 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |  79 ++---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi         |   4 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts          |   4 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |   7 +-
+ arch/arm/boot/dts/tegra20-plutux.dts               |   4 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   4 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |   4 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   4 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-whistler.dts             |   4 +-
+ arch/arm/boot/dts/tegra20.dtsi                     | 103 ++++---
+ arch/arm/boot/dts/tegra30-beaver.dts               |   4 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     | 110 ++++---
+ include/dt-bindings/clk/tegra114-car.h             | 342 +++++++++++++++++++++
+ include/dt-bindings/clk/tegra20-car.h              | 158 ++++++++++
+ include/dt-bindings/clk/tegra30-car.h              | 265 ++++++++++++++++
+ 22 files changed, 979 insertions(+), 744 deletions(-)
+ create mode 100644 include/dt-bindings/clk/tegra114-car.h
+ create mode 100644 include/dt-bindings/clk/tegra20-car.h
+ create mode 100644 include/dt-bindings/clk/tegra30-car.h
+
+-- 
+1.8.1.5
