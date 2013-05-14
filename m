@@ -1,55 +1,54 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH -next] staging: nvec: don't call input_free_device()
- after input_unregister_device()
-Date: Mon, 13 May 2013 17:44:36 -0400
-Message-ID: <20130513214436.GB23743@kroah.com>
-References: <CAPgLHd_XHbS=RBxTJWgoJNm0MfQyzyx4Fr2OHrDCN9VKwOwakA@mail.gmail.com>
- <CALq1K=JiNqAH19H8C9EMFBjQOLJxSX7wwE28sxWRusk9a12YDQ@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra: always use clk_get() in utility code
+Date: Tue, 14 May 2013 08:45:32 +0400
+Message-ID: <20130514044532.GD14811@sirena.org.uk>
+References: <1368473172-10198-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YD3LsXFS42OYHhNZ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CALq1K=JiNqAH19H8C9EMFBjQOLJxSX7wwE28sxWRusk9a12YDQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1368473172-10198-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>
-Cc: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, ac100 <ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 02, 2013 at 11:18:35PM +0300, Leon Romanovsky wrote:
-> On Wed, Apr 24, 2013 at 5:47 AM, Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> >
-> > input_free_device() should only be used if input_register_device()
-> > was not called yet or if it failed. Once device was unregistered
-> > use input_unregister_device() and memory will be freed once last
-> > reference to the device is dropped.
-> >
-> > Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> > ---
-> >  drivers/staging/nvec/nvec_kbd.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
-> > index 7445ce6..bdf5a64 100644
-> > --- a/drivers/staging/nvec/nvec_kbd.c
-> > +++ b/drivers/staging/nvec/nvec_kbd.c
-> > @@ -170,7 +170,6 @@ fail:
-> >  static int nvec_kbd_remove(struct platform_device *pdev)
-> >  {
-> >         input_unregister_device(keys_dev.input);
-> > -       input_free_device(keys_dev.input);
-> >
-> >         return 0;
-> >  }
-> >
-> 
-> Hi Greg and Wei,
-> I sent patch which converts nvec-kbd to managed device (devm_*), so
-> this patch is not needed.
 
-I agree, yours is the correct fix for this, I'll take your patch
-instead.
+--YD3LsXFS42OYHhNZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
+On Mon, May 13, 2013 at 01:26:12PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Now that all of the Tegra device trees have been updated to represent
+> the required audio clocks, remove the compatibility code from the Tegra
+> ASoC utility code, and always use clk_get() rather than clk_get_sys().
 
-greg k-h
+Applied, thanks.
+
+--YD3LsXFS42OYHhNZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRkcFjAAoJELSic+t+oim91vcQAJLrePcu5lL3p+tUUW3F5oND
+4QAIEkLEwrBRRekkkfAefKq+QeFarR4JgDMDtiRC8QdBCtZhC1QwcwmBTYsADspD
+ondQljTG9g1x6pmqkl3EUQ9wjvWPZ7aymk7x2sB+f8c/TU7J83/wFm/fegIpuxuS
+fQMwttaF0jVmXHa9yKmXI+1nj4boNlPJxeuhFthgqlBbM9zAwFa1grmQ79yJdO4U
+IaeIyiymqLgJrk2vixdKXx/heAGpX6bURRS/geiqHPHgqJX1s0UZRZ4yP6nNND1u
+S7XhVo5pLxNYqSxaZyYtWiWeFHEUzIT7bjiwAiwjnbOXNXpwBt0mOPOQGKbCMeae
+1SG48wkL26ksQyzqru0ROkau40VJrx29hPa/HBVTYnkRoW+7dNJ0Gwq1Pmp7HG3A
+fX6rLvJ668mMkJ7sGigFPwT+bzb1MhlUhqKpZTy+Tzl6SNbzxdUnmcMloAhLe5xi
+Nq2lD7WiNZFQLRtwJ33JRLXnLyj1SuoRIfpQY47N72Zqn98WMJlMdZra1grnW3V7
+hiqvA5RjHIPJyHmwPAA91RVsCOIUqD37SXef0hSSEXRyAWJupXWtty6F3f5O9E1x
+aM1hB9WGFbpGg4K20NE3+OMUo6MWzc+35JFCRslbcF/pEaU7jmscXzMVsc8rFAG7
+uFd2QdydWA0p4yuDhBek
+=bj5p
+-----END PGP SIGNATURE-----
+
+--YD3LsXFS42OYHhNZ--
