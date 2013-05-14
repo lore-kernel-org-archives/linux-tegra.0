@@ -1,54 +1,44 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: always use clk_get() in utility code
-Date: Tue, 14 May 2013 08:45:32 +0400
-Message-ID: <20130514044532.GD14811@sirena.org.uk>
-References: <1368473172-10198-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/6] ARM: tegra20: create a DT header defining CLK IDs
+Date: Tue, 14 May 2013 07:59:40 +0200
+Message-ID: <20130514.085940.1807211932170883314.hdoyu@nvidia.com>
+References: <1368443225-16978-1-git-send-email-hdoyu@nvidia.com><1368443225-16978-2-git-send-email-hdoyu@nvidia.com><519118E3.4060907@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YD3LsXFS42OYHhNZ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1368473172-10198-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <519118E3.4060907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Mon, 13 May 2013 18:46:27 +0200:
 
---YD3LsXFS42OYHhNZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> I'm not sure exactly how these patches will get merged. For you
+> reference, I anticipate one of two things happening:
+> 
+> 1)
+> 
+> * Patches 1, 3, 5 get put into a topic branch, and merged into both the
+> clk tree and the Tegra tree.
+> 
+> * Patches 2, 4, 6 get merged into the Tegra tree.
+> 
+> * The patches you're going to create for the drivers/clk code get merged
+> into Mike's clk tree
+> 
+> 2)
+> 
+> * Mike ack's the patches you're going to create for the drivers/clk code.
+> 
+> * Everything gets merged through the Tegra tree.
+> 
+> This shouldn't impact you much, but just be aware that the drivers/clk
+> changes you create shouldn't depend on anything beyond patches 1, 3, 5
+> here and 3.10-rc1, then I can work out the merging with Mike without any
+> constraints.
 
-On Mon, May 13, 2013 at 01:26:12PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Now that all of the Tegra device trees have been updated to represent
-> the required audio clocks, remove the compatibility code from the Tegra
-> ASoC utility code, and always use clk_get() rather than clk_get_sys().
-
-Applied, thanks.
-
---YD3LsXFS42OYHhNZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRkcFjAAoJELSic+t+oim91vcQAJLrePcu5lL3p+tUUW3F5oND
-4QAIEkLEwrBRRekkkfAefKq+QeFarR4JgDMDtiRC8QdBCtZhC1QwcwmBTYsADspD
-ondQljTG9g1x6pmqkl3EUQ9wjvWPZ7aymk7x2sB+f8c/TU7J83/wFm/fegIpuxuS
-fQMwttaF0jVmXHa9yKmXI+1nj4boNlPJxeuhFthgqlBbM9zAwFa1grmQ79yJdO4U
-IaeIyiymqLgJrk2vixdKXx/heAGpX6bURRS/geiqHPHgqJX1s0UZRZ4yP6nNND1u
-S7XhVo5pLxNYqSxaZyYtWiWeFHEUzIT7bjiwAiwjnbOXNXpwBt0mOPOQGKbCMeae
-1SG48wkL26ksQyzqru0ROkau40VJrx29hPa/HBVTYnkRoW+7dNJ0Gwq1Pmp7HG3A
-fX6rLvJ668mMkJ7sGigFPwT+bzb1MhlUhqKpZTy+Tzl6SNbzxdUnmcMloAhLe5xi
-Nq2lD7WiNZFQLRtwJ33JRLXnLyj1SuoRIfpQY47N72Zqn98WMJlMdZra1grnW3V7
-hiqvA5RjHIPJyHmwPAA91RVsCOIUqD37SXef0hSSEXRyAWJupXWtty6F3f5O9E1x
-aM1hB9WGFbpGg4K20NE3+OMUo6MWzc+35JFCRslbcF/pEaU7jmscXzMVsc8rFAG7
-uFd2QdydWA0p4yuDhBek
-=bj5p
------END PGP SIGNATURE-----
-
---YD3LsXFS42OYHhNZ--
+Either way would work. Once Venu's USB patches are merged, mentioned
+in [2/6], I'll resend the update version of this series.
+drivers/clk/tegra replacement will follow, then.
