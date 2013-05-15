@@ -1,46 +1,72 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
-Date: Wed, 15 May 2013 22:58:22 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com>
-References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com>
- <1368010660-31465-4-git-send-email-jagarwal@nvidia.com>
- <518A8596.7070702@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/6] ARM: tegra: add an assembly marco to check Tegra
+ SoC ID
+Date: Wed, 15 May 2013 16:43:48 -0600
+Message-ID: <51940FA4.6050609@wwwdotorg.org>
+References: <1368613644-11863-1-git-send-email-josephl@nvidia.com> <1368613644-11863-2-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <518A8596.7070702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <1368613644-11863-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 05/15/2013 04:27 AM, Joseph Lo wrote:
+> There are some Tegra SoC ID checking code around the low level assembly
+> code. Adding a marco to replace them. For the single image to support all
+> the Tegra series, we may also need the marco in other common code. So we
+> make it become a marco for the usage.
 
-> On 05/08/2013 04:57 AM, Jay Agarwal wrote:
-> > - Enable PCIe controller on Cardhu
-> > - Only port 2 is connected on this board
-> > - Add regulators required for Tegra30
-> > - Patch is based on remotes/gitorious_thierryreding_linux/tegra/next
-> > - and should be applied on top of this.
-> 
-> > diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> > b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> 
-> > +	pcie-controller {
-> > +		status = "okay";
-> > +		pex-clk-supply = <&pex_hvdd_3v3_reg>;
-> > +		vdd-supply = <&ldo1_reg>;
-> > +		avdd-supply = <&ldo2_reg>;
-> > +
-> > +		pci@3,0 {
-> > +			status = "okay";
-> > +		};
-> > +	};
-> 
-> So, if I apply this series, I do see the PCIe bridge and Ethernet device get
-> enumerated, but I don't see the USB3 controller get enumerated. I believe
-> that is a PCIe device behind the same bridge on the same Tegra PCIe port.
-> Shouldn't this device show up?
-[>]  I have also reproduced this problem. I see somehow no non-prefetchable memory is assigned to any of pcie devices.
-Probably that is the reason for USB3 (pci 0000:04:00.0) not getting enumerated since it uses only non-prefetchable memory.
+I'm not sure this patch doesn't obfuscate the code too much. The big
+issue I see is:
+
+> @@ -115,13 +112,9 @@ ENTRY(__tegra_cpu_reset_handler)
+>  
+>  	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
+>  
+> -	mov32	r6, TEGRA_APB_MISC_BASE
+> -	ldr	r6, [r6, #APB_MISC_GP_HIDREV]
+> -	and	r6, r6, #0xff00
+> -#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> -t20_check:
+> -	cmp	r6, #(0x20 << 8)
+> +	tegra_check_soc_id TEGRA20, TEGRA_APB_MISC_BASE, r6, r5
+
+Here, we replace all the code with the new macro, ...
+
+>  #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+>  	/* Are we on Tegra20? */
+> -	cmp	r6, #(0x20 << 8)
+> +	cmp	r6, #(TEGRA20 << 8)
+
+But here we still have to write out the cmp instructions.
+
+It may be reasonable to create a macro to read/mask/shift the SoC ID,
+similar to the existing cpu_id macro, i.e. roughly:
+
+/* Macro to check Tegra revision */
++#define APB_MISC_GP_HIDREV	0x804
++.macro tegra_soc_id base, tmp1, tmp2
++	mov32	\tmp2, \base
++	ldr	\tmp1, [\tmp2, #APB_MISC_GP_HIDREV]
++	and	\tmp1, \tmp1, #0xff00
++.endm
+
+Also, I wonder:
+
+(a) why the need to pass TEGRA_APB_MISC_BASE into the macro; can't the
+macro just hard-code that value since it's always the same?
+
+(b) Why need two registers passed to the macro. At least one of the code
+segments you've replaced with the macro uses a single register instead:
+
+-	mov32	r6, TEGRA_APB_MISC_BASE
+-	ldr	r6, [r6, #APB_MISC_GP_HIDREV]
+-	and	r6, r6, #0xff00
+
+Wouldn't that be a better implementation of the macro? I don't think
+relying on \tmp2 containing "base" after the macro invocation would be a
+good idea, since that's rather like looking inside the black box.
