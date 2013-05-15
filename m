@@ -1,97 +1,20 @@
-From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
- subsystem mutex to pinctrl_dev struct"
-Date: Wed, 15 May 2013 16:13:56 +0200
-Message-ID: <20130515141356.GH22508@game.jcrosoft.org>
-References: <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
- <20130505202236.GF24282@game.jcrosoft.org>
- <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
- <20130506194122.GG24282@game.jcrosoft.org>
- <20130506195403.GJ18614@n2100.arm.linux.org.uk>
- <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
- <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
- <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ@mail.gmail.com>
- <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
- <5192A0E4.2070202@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] Move PCIe node to correct place
+Date: Wed, 15 May 2013 10:21:54 -0600
+Message-ID: <5193B622.9020503@wwwdotorg.org>
+References: <1368626150-25395-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <5192A0E4.2070202@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Fathi Boudra <fathi.boudra@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1368626150-25395-1-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: thierry.reding@avionic-design.de, ldewangan@nvidia.com, pgaikwad@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 15:39 Tue 14 May     , Rob Herring wrote:
-> On 05/09/2013 12:51 PM, Fathi Boudra wrote:
-> > On 9 May 2013 19:13, Olof Johansson <olof@lixom.net> wrote:
-> >> On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
-> >>> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >>>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
-> >> Yes, a builder is quite useful. Several of us do our own builds as well.
-> >>
-> >> When it comes to boot coverage, I'm not sure how successful a central
-> >> approach would be. It's something where I think Linaro could
-> >> contribute a lot for their member platforms, but I haven't seen much
-> >> engagement there yet.
-> > 
-> > My previous post was lost. Sorry to repost..
-> > 
-> > We've got a jenkins instance doing daily builds on various trees and
-> > boot testing on the few boards we've got in the lab:
-> > https://ci.linaro.org/jenkins/view/kernel-ci/
-> > 
-> > But it hasn't attracted much interest so far... It's been here since a year.
-> 
-> Perhaps because there is no useful information there that I can find.
-> Where does it say what failed in the build? I see no artifacts or useful
-> console output.
-> 
-> It seems it was designed with Linaro's needs in mind and not kernel
-> maintainers' needs.
+On 05/15/2013 07:55 AM, Jay Agarwal wrote:
+> Moving PCIe controller node to correct place so
+> that it is sorted by register address in .dtsi file
 
-I was discussing with Fabo and Get in mind to create a Jenkins on kernel.org
-for on our needs (maintainer's)
-
-That will allow any one to add more hw for boot testing
-
-Best Regards,
-J.
-> 
-> Rob
-> 
-> > 
-> >> Beyond there, I'd say the expectation is that each maintainer should
-> >> keep an eye on their own platforms. They _should_ try building and
-> >> booting linux-next on their platforms, to catch regressions early. And
-> >> definitely around now, I'd like to see people boot mainline on their
-> >> platforms to make sure we haven't added any severe regressions in the
-> >> 3.10 merge window, etc. Some people are really good at this, others
-> >> less so.
-> >>
-> >> What's the old saying, you can lead a horse to water but you can't
-> >> make him drink? You can build a boot test cluster but you can't make
-> >> anyone pay attention to it. :(
-> >>
-> >> -Olof
-> > 
-> > Cheers,
-> > 
-> > Fathi
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > 
-> 
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
