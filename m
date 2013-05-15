@@ -1,70 +1,86 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move subsystem
- mutex to pinctrl_dev struct"
-Date: Tue, 14 May 2013 15:39:00 -0500
-Message-ID: <5192A0E4.2070202@gmail.com>
-References: <CAK5ve-KXdS8az=Gtja-mF=Z3_EeZVA7bLYSU0EE2mf5bHmSUKw@mail.gmail.com> <CAK5ve-KBDyvjNRVMcXgfnhYcajdcGsuAKaepzCBt+epiXoYvSw@mail.gmail.com> <517ED12B.8080502@wwwdotorg.org> <20130504133004.GC24282@game.jcrosoft.org> <CACRpkdbBVJtWrRO+J=pWjfLXTcVKX++x-eeJQXGeQn_WOURUNQ@mail.gmail.com> <20130505112819.GD24282@game.jcrosoft.org> <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com> <20130505202236.GF24282@game.jcrosoft.org> <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com> <20130506194122.GG24282@game.jcrosoft.org> <20130506195403.GJ18614@n2100.arm.linux.org.uk> <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com> <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com> <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ
- @mail.gmail.com> <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/6] ARM: tegra: skip SCU and PL310 code when CPU is not Cortex-A9
+Date: Wed, 15 May 2013 18:27:20 +0800
+Message-ID: <1368613644-11863-3-git-send-email-josephl@nvidia.com>
+References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1368613644-11863-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Fathi Boudra <fathi.boudra-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Patrice CHOTARD <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/09/2013 12:51 PM, Fathi Boudra wrote:
-> On 9 May 2013 19:13, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->> On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
->>> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
->> Yes, a builder is quite useful. Several of us do our own builds as well.
->>
->> When it comes to boot coverage, I'm not sure how successful a central
->> approach would be. It's something where I think Linaro could
->> contribute a lot for their member platforms, but I haven't seen much
->> engagement there yet.
-> 
-> My previous post was lost. Sorry to repost..
-> 
-> We've got a jenkins instance doing daily builds on various trees and
-> boot testing on the few boards we've got in the lab:
-> https://ci.linaro.org/jenkins/view/kernel-ci/
-> 
-> But it hasn't attracted much interest so far... It's been here since a year.
+For supporting single image on all Tegra series, we need to skip some HW
+support code for Cortex-A9 only.
 
-Perhaps because there is no useful information there that I can find.
-Where does it say what failed in the build? I see no artifacts or useful
-console output.
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/sleep.S |  8 +++++---
+ arch/arm/mach-tegra/sleep.h | 24 ++++++++++++++++++------
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-It seems it was designed with Linaro's needs in mind and not kernel
-maintainers' needs.
-
-Rob
-
-> 
->> Beyond there, I'd say the expectation is that each maintainer should
->> keep an eye on their own platforms. They _should_ try building and
->> booting linux-next on their platforms, to catch regressions early. And
->> definitely around now, I'd like to see people boot mainline on their
->> platforms to make sure we haven't added any severe regressions in the
->> 3.10 merge window, etc. Some people are really good at this, others
->> less so.
->>
->> What's the old saying, you can lead a horse to water but you can't
->> make him drink? You can build a boot test cluster but you can't make
->> anyone pay attention to it. :(
->>
->> -Olof
-> 
-> Cheers,
-> 
-> Fathi
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
+index 364d845..9daaef2 100644
+--- a/arch/arm/mach-tegra/sleep.S
++++ b/arch/arm/mach-tegra/sleep.S
+@@ -106,9 +106,11 @@ ENTRY(tegra_shut_off_mmu)
+ 	isb
+ #ifdef CONFIG_CACHE_L2X0
+ 	/* Disable L2 cache */
+-	mov32	r4, TEGRA_ARM_PERIF_BASE + 0x3000
+-	mov	r5, #0
+-	str	r5, [r4, #L2X0_CTRL]
++	check_cpu_part_num 0xc09, r9, r10
++	movweq	r4, #:lower16:(TEGRA_ARM_PERIF_BASE + 0x3000)
++	movteq	r4, #:upper16:(TEGRA_ARM_PERIF_BASE + 0x3000)
++	moveq	r5, #0
++	streq	r5, [r4, #L2X0_CTRL]
+ #endif
+ 	mov	pc, r0
+ ENDPROC(tegra_shut_off_mmu)
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index 7e9c9fe..c2cac9a 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -70,19 +70,31 @@
+ 	movt	\reg, #:upper16:\val
+ .endm
+ 
++/* Marco to check CPU part num */
++.macro check_cpu_part_num part_num, tmp1, tmp2
++	mrc	p15, 0, \tmp1, c0, c0, 0
++	ubfx	\tmp1, \tmp1, #4, #12
++	mov32	\tmp2, \part_num
++	cmp	\tmp1, \tmp2
++.endm
++
+ /* Macro to exit SMP coherency. */
+ .macro exit_smp, tmp1, tmp2
+ 	mrc	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
+ 	bic	\tmp1, \tmp1, #(1<<6) | (1<<0)	@ clear ACTLR.SMP | ACTLR.FW
+ 	mcr	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
+ 	isb
+-	cpu_id	\tmp1
+-	mov	\tmp1, \tmp1, lsl #2
+-	mov	\tmp2, #0xf
+-	mov	\tmp2, \tmp2, lsl \tmp1
+-	mov32	\tmp1, TEGRA_ARM_PERIF_VIRT + 0xC
+-	str	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
++#ifdef CONFIG_HAVE_ARM_SCU
++	check_cpu_part_num 0xc09, \tmp1, \tmp2
++	mrceq	p15, 0, \tmp1, c0, c0, 5
++	andeq	\tmp1, \tmp1, #0xF
++	moveq	\tmp1, \tmp1, lsl #2
++	moveq	\tmp2, #0xf
++	moveq	\tmp2, \tmp2, lsl \tmp1
++	ldreq	\tmp1, =(TEGRA_ARM_PERIF_VIRT + 0xC)
++	streq	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
+ 	dsb
++#endif
+ .endm
+ 
+ /* Macro to check Tegra revision */
+-- 
+1.8.2.2
