@@ -1,175 +1,97 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] Move PCIe node to correct place
-Date: Wed, 15 May 2013 19:25:50 +0530
-Message-ID: <1368626150-25395-1-git-send-email-jagarwal@nvidia.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: Fwd: Tegra 30 System hangs because of commit "pinctrl: move
+ subsystem mutex to pinctrl_dev struct"
+Date: Wed, 15 May 2013 16:13:56 +0200
+Message-ID: <20130515141356.GH22508@game.jcrosoft.org>
+References: <CACRpkdZdT8==cUtH4=Y3LC-eVu6ntO2ojFC4bSXNuxa4hMJ=ZA@mail.gmail.com>
+ <20130505202236.GF24282@game.jcrosoft.org>
+ <CACRpkda2EG0O-pfZQ5kLFX=cwSmUSVBJkR7Xvye3ROs3tstv9w@mail.gmail.com>
+ <20130506194122.GG24282@game.jcrosoft.org>
+ <20130506195403.GJ18614@n2100.arm.linux.org.uk>
+ <CACRpkdZtPhzLFicYYZF0SZfp4dMJars+Z-7hTUZQ1JjPExXW3A@mail.gmail.com>
+ <CACxGe6uo60OwRd7buPX4382_vE48MLWJYyB_ka+iS2FfVCa8mw@mail.gmail.com>
+ <CAOesGMiqrXSPdEtUzGCuAuhdE4K7FVe65zMM962XuOrO555hnQ@mail.gmail.com>
+ <CAGNsrLDw0_yX9nkLYDg0e8-551P7r43UxziTp1TXyyxdiKR5nA@mail.gmail.com>
+ <5192A0E4.2070202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <5192A0E4.2070202@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Bryan Wu <cooloney@gmail.com>, Patrice CHOTARD <patrice.chotard@st.com>, Grant Likely <grant.likely@secretlab.ca>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Fathi Boudra <fathi.boudra@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Moving PCIe controller node to correct place so
-that it is sorted by register address in .dtsi file
+On 15:39 Tue 14 May     , Rob Herring wrote:
+> On 05/09/2013 12:51 PM, Fathi Boudra wrote:
+> > On 9 May 2013 19:13, Olof Johansson <olof@lixom.net> wrote:
+> >> On Thu, May 9, 2013 at 6:25 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> >>> On Mon, May 6, 2013 at 9:12 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> >>>> On Mon, May 6, 2013 at 9:54 PM, Russell King - ARM Linux
+> >> Yes, a builder is quite useful. Several of us do our own builds as well.
+> >>
+> >> When it comes to boot coverage, I'm not sure how successful a central
+> >> approach would be. It's something where I think Linaro could
+> >> contribute a lot for their member platforms, but I haven't seen much
+> >> engagement there yet.
+> > 
+> > My previous post was lost. Sorry to repost..
+> > 
+> > We've got a jenkins instance doing daily builds on various trees and
+> > boot testing on the few boards we've got in the lab:
+> > https://ci.linaro.org/jenkins/view/kernel-ci/
+> > 
+> > But it hasn't attracted much interest so far... It's been here since a year.
+> 
+> Perhaps because there is no useful information there that I can find.
+> Where does it say what failed in the build? I see no artifacts or useful
+> console output.
+> 
+> It seems it was designed with Linaro's needs in mind and not kernel
+> maintainers' needs.
 
-Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This patch is based on remotes/gitorious_thierryreding_linux/tegra/next
-and should be applied on top of this.
+I was discussing with Fabo and Get in mind to create a Jenkins on kernel.org
+for on our needs (maintainer's)
 
- arch/arm/boot/dts/tegra30.dtsi |  132 ++++++++++++++++++++--------------------
- 1 files changed, 66 insertions(+), 66 deletions(-)
+That will allow any one to add more hw for boot testing
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 5c1f7c0..a242b2e 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -12,6 +12,72 @@
- 		serial4 = &uarte;
- 	};
- 
-+	pcie-controller {
-+		compatible = "nvidia,tegra30-pcie";
-+		device_type = "pci";
-+		reg = <0x00003000 0x00000800   /* PADS registers */
-+		       0x00003800 0x00000200   /* AFI registers */
-+		       0x10000000 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <0 98 0x04   /* controller interrupt */
-+		              0 99 0x04>; /* MSI interrupt */
-+
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
-+			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
-+			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
-+			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
-+
-+		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
-+			 <&tegra_car 118>, <&tegra_car 215>;
-+		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
-+		status = "disabled";
-+
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+
-+		pci@3,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
-+			reg = <0x001800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra30-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -115,72 +181,6 @@
- 		};
- 	};
- 
--	pcie-controller {
--		compatible = "nvidia,tegra30-pcie";
--		device_type = "pci";
--		reg = <0x00003000 0x00000800   /* PADS registers */
--		       0x00003800 0x00000200   /* AFI registers */
--		       0x10000000 0x10000000>; /* configuration space */
--		reg-names = "pads", "afi", "cs";
--		interrupts = <0 98 0x04   /* controller interrupt */
--		              0 99 0x04>; /* MSI interrupt */
--
--		bus-range = <0x00 0xff>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--
--		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
--			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
--			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
--			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
--			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
--
--		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
--			 <&tegra_car 118>, <&tegra_car 215>;
--		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
--		status = "disabled";
--
--		pci@1,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
--			reg = <0x000800 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--
--		pci@2,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
--			reg = <0x001000 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--
--		pci@3,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
--			reg = <0x001800 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--	};
--
- 	timer@50004600 {
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0x50040600 0x20>;
--- 
-1.7.0.4
+Best Regards,
+J.
+> 
+> Rob
+> 
+> > 
+> >> Beyond there, I'd say the expectation is that each maintainer should
+> >> keep an eye on their own platforms. They _should_ try building and
+> >> booting linux-next on their platforms, to catch regressions early. And
+> >> definitely around now, I'd like to see people boot mainline on their
+> >> platforms to make sure we haven't added any severe regressions in the
+> >> 3.10 merge window, etc. Some people are really good at this, others
+> >> less so.
+> >>
+> >> What's the old saying, you can lead a horse to water but you can't
+> >> make him drink? You can build a boot test cluster but you can't make
+> >> anyone pay attention to it. :(
+> >>
+> >> -Olof
+> > 
+> > Cheers,
+> > 
+> > Fathi
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > 
+> 
