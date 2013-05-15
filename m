@@ -1,33 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/6] ARM: tegra: skip SCU and PL310 code when CPU is not
- Cortex-A9
-Date: Wed, 15 May 2013 16:48:55 -0600
-Message-ID: <519410D7.9060201@wwwdotorg.org>
-References: <1368613644-11863-1-git-send-email-josephl@nvidia.com> <1368613644-11863-3-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 3/6] ARM: tegra: make tegra_resume can work for Tegra114
+Date: Wed, 15 May 2013 16:57:45 -0600
+Message-ID: <519412E9.2080905@wwwdotorg.org>
+References: <1368613644-11863-1-git-send-email-josephl@nvidia.com> <1368613644-11863-4-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368613644-11863-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1368613644-11863-4-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 05/15/2013 04:27 AM, Joseph Lo wrote:
-> For supporting single image on all Tegra series, we need to skip some HW
-> support code for Cortex-A9 only.
+> Tegra114 is an ARM Cortex-A15 based SoC and some of the flow controller
 
-> diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
+I don't think the CPU type is the issue here. The issue is simply that
+Tegra114's flow controller is different. Mentioning the CPU type seems
+misleading.
 
-> +	check_cpu_part_num 0xc09, r9, r10
-> +	movweq	r4, #:lower16:(TEGRA_ARM_PERIF_BASE + 0x3000)
-> +	movteq	r4, #:upper16:(TEGRA_ARM_PERIF_BASE + 0x3000)
-> +	moveq	r5, #0
-> +	streq	r5, [r4, #L2X0_CTRL]
+> hardware behavior and configurations are different with other Tegra series.
+> We fix the common resume function of tegra_resume to make it can work on
+> Tegra114 by checking SoC ID. And also checking CPU primary part number to
+> isolate the support code for Cortex A9 and A15.
 
-Do those conditional instructions need a Thumb iteq wrapped around them
-in order to compile in Thumb2 mode? Same comment for the other change,
-although IIRC iteq only supports 4 instructions at a time, so maybe a
-branch would be better there. Using branches might also reduce the size
-of the diff, and make the change more obvious.
+> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+
+> -#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> +#ifndef CONFIG_ARCH_TEGRA_2x_SOC
+>  	/* Are we on Tegra20? */
+>  	tegra_check_soc_id TEGRA20, TEGRA_APB_MISC_BASE, r6, r7
+>  	beq	1f				@ Yes
+>  	/* Clear the flow controller flags for this CPU. */
+> -	mov32	r2, TEGRA_FLOW_CTRL_BASE + FLOW_CTRL_CPU0_CSR	@ CPU0 CSR
+> -	ldr	r1, [r2]
+> +	cpu_to_csr_req r1, r0
+
+Where is cpu_to_csr_req defined? grep can't find it in next-20130513,
+and I don't see it added in this series.
+
+This presumably changes behaviour on Tegra30; will this cause problems?
+
+> +	mov32	r2, TEGRA_FLOW_CTRL_BASE
+> +	ldr	r1, [r2, r1]
+>  	/* Clear event & intr flag */
+>  	orr	r1, r1, \
+>  		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
+> -	movw	r0, #0x0FFD	@ enable, cluster_switch, immed, & bitmaps
+> +	movw	r0, #0x3FFD	@ enable, cluster_switch, immed, & bitmaps
+
+What does this change do; does the commend need updating to describe the
+new bits that are set?
