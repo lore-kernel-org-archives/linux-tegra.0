@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/6] ARM: tegra114: add power up sequence for warm boot CPU
-Date: Wed, 15 May 2013 18:27:22 +0800
-Message-ID: <1368613644-11863-5-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 6/6] ARM: tegra114: add CPU hotplug support
+Date: Wed, 15 May 2013 18:27:24 +0800
+Message-ID: <1368613644-11863-7-git-send-email-josephl@nvidia.com>
 References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,65 +12,170 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For Tegra114, once the CPUs were powered up by PMC in cold boot flow. The
-flow controller will maintain the power state and control power sequence
-for each CPU by setting event trigger (e.g. CPU hotplug ,idle and
-suspend power down/up).
+The Tegra114 is a quad cores SoC. Each core can be hotplugged including
+CPU0. The hotplug sequence can be controlled by setting event trigger in
+flow controller. Then the flow controller will take care all the power
+sequence that include CPU up and down.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/flowctrl.h |  1 +
- arch/arm/mach-tegra/platsmp.c  | 25 ++++++++++++++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ arch/arm/mach-tegra/Makefile        |  1 +
+ arch/arm/mach-tegra/hotplug.c       |  2 ++
+ arch/arm/mach-tegra/reset-handler.S | 11 ++++++++++-
+ arch/arm/mach-tegra/sleep-tegra30.S | 27 +++++++++++++++++++++++----
+ arch/arm/mach-tegra/sleep.h         |  2 ++
+ 5 files changed, 38 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/flowctrl.h b/arch/arm/mach-tegra/flowctrl.h
-index 67eab56..7a29bae 100644
---- a/arch/arm/mach-tegra/flowctrl.h
-+++ b/arch/arm/mach-tegra/flowctrl.h
-@@ -25,6 +25,7 @@
- #define FLOW_CTRL_WAITEVENT		(2 << 29)
- #define FLOW_CTRL_WAIT_FOR_INTERRUPT	(4 << 29)
- #define FLOW_CTRL_JTAG_RESUME		(1 << 28)
-+#define FLOW_CTRL_SCLK_RESUME		(1 << 27)
- #define FLOW_CTRL_HALT_CPU_IRQ		(1 << 10)
- #define	FLOW_CTRL_HALT_CPU_FIQ		(1 << 8)
- #define FLOW_CTRL_CPU0_CSR		0x8
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index fad4226..554aedc 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -140,8 +140,31 @@ remove_clamps:
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index d011f0a..98b184e 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_HOTPLUG_CPU)               += hotplug.o
+ obj-$(CONFIG_TEGRA_PCI)			+= pcie.o
  
- static int tegra114_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
-+	int ret = 0;
-+
- 	cpu = cpu_logical_map(cpu);
--	return tegra_pmc_cpu_power_on(cpu);
-+
-+	if (cpumask_test_cpu(cpu, &tegra_cpu_init_mask)) {
-+		/*
-+		 * Warm boot flow
-+		 * The flow controller in charge of the power state and
-+		 * control for each CPU.
-+		 */
-+		/* set SCLK as event trigger for flow controller */
-+		flowctrl_write_cpu_csr(cpu, 1);
-+		flowctrl_write_cpu_halt(cpu,
-+				FLOW_CTRL_WAITEVENT | FLOW_CTRL_SCLK_RESUME);
-+	} else {
-+		/*
-+		 * Cold boot flow
-+		 * The CPU is powered up by toggling PMC directly. It will
-+		 * also initial power state in flow controller. After that,
-+		 * the CPU's power state is maintained by flow controller.
-+		 */
-+		ret = tegra_pmc_cpu_power_on(cpu);
-+	}
-+
-+	return ret;
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= tegra114_speedo.o
++obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= sleep-tegra30.o
+ ifeq ($(CONFIG_CPU_IDLE),y)
+ obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= cpuidle-tegra114.o
+ endif
+diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
+index 184914a..d07f152 100644
+--- a/arch/arm/mach-tegra/hotplug.c
++++ b/arch/arm/mach-tegra/hotplug.c
+@@ -55,4 +55,6 @@ void __init tegra_hotplug_init(void)
+ 		tegra_hotplug_shutdown = tegra20_hotplug_shutdown;
+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) && tegra_chip_id == TEGRA30)
+ 		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_114_SOC) && tegra_chip_id == TEGRA114)
++		tegra_hotplug_shutdown = tegra30_hotplug_shutdown;
  }
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index 893f6b7..5af3a7d 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -38,18 +38,24 @@
+  *	  CPU boot vector when restarting the a CPU following
+  *	  an LP2 transition. Also branched to by LP0 and LP1 resume after
+  *	  re-enabling sdram.
++ *
++ *	r6: SoC ID << 8
+  */
+ ENTRY(tegra_resume)
+ 	bl	v7_invalidate_l1
  
- static int __cpuinit tegra_boot_secondary(unsigned int cpu,
+ 	cpu_id	r0
++	tegra_check_soc_id TEGRA114, TEGRA_APB_MISC_BASE, r6, r7
++	beq	no_cpu0_chk
++
+ 	cmp	r0, #0				@ CPU0?
+  THUMB(	it	ne )
+ 	bne	cpu_resume			@ no
++no_cpu0_chk:
+ 
+ #ifndef CONFIG_ARCH_TEGRA_2x_SOC
+ 	/* Are we on Tegra20? */
+-	tegra_check_soc_id TEGRA20, TEGRA_APB_MISC_BASE, r6, r7
++	cmp	r6, #(TEGRA20 << 8)
+ 	beq	1f				@ Yes
+ 	/* Clear the flow controller flags for this CPU. */
+ 	cpu_to_csr_req r1, r0
+@@ -186,8 +192,11 @@ __is_not_lp2:
+ 	 * Can only be secondary boot (initial or hotplug) but CPU 0
+ 	 * cannot be here.
+ 	 */
++	cmp	r6, #(TEGRA114 <<8)
++	beq	__no_cpu0_chk
+ 	cmp	r10, #0
+ 	bleq	__die				@ CPU0 cannot be here
++__no_cpu0_chk:
+ 	ldr	lr, [r12, #RESET_DATA(STARTUP_SECONDARY)]
+ 	cmp	lr, #0
+ 	bleq	__die				@ no secondary startup handler
+diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+index d29dfcc..ae36fbb 100644
+--- a/arch/arm/mach-tegra/sleep-tegra30.S
++++ b/arch/arm/mach-tegra/sleep-tegra30.S
+@@ -19,6 +19,7 @@
+ #include <asm/assembler.h>
+ #include <asm/asm-offsets.h>
+ 
++#include "fuse.h"
+ #include "sleep.h"
+ #include "flowctrl.h"
+ 
+@@ -45,12 +46,17 @@ ENDPROC(tegra30_hotplug_shutdown)
+  * and powergates it -- flags (in R0) indicate the request type.
+  * Must never be called for CPU 0.
+  *
+- * corrupts r0-r4, r12
++ * r10 = SoC ID << 8
++ * corrupts r0-r4, r10-r12
+  */
+ ENTRY(tegra30_cpu_shutdown)
+ 	cpu_id	r3
++	tegra_check_soc_id TEGRA30, TEGRA_APB_MISC_VIRT, r10, r11
++	bne	_no_cpu0_chk	@ It's not Tegra30
++
+ 	cmp	r3, #0
+ 	moveq	pc, lr		@ Must never be called for CPU 0
++_no_cpu0_chk:
+ 
+ 	ldr	r12, =TEGRA_FLOW_CTRL_VIRT
+ 	cpu_to_csr_reg r1, r3
+@@ -65,7 +71,9 @@ ENTRY(tegra30_cpu_shutdown)
+ 	movw	r12, \
+ 		FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG | \
+ 		FLOW_CTRL_CSR_ENABLE
+-	mov	r4, #(1 << 4)
++	cmp	r10, #(TEGRA30 << 8)
++	moveq	r4, #(1 << 4)			@ wfe bitmap
++	movne	r4, #(1 << 8)			@ wfi bitmap
+  ARM(	orr	r12, r12, r4, lsl r3	)
+  THUMB(	lsl	r4, r4, r3		)
+  THUMB(	orr	r12, r12, r4		)
+@@ -79,9 +87,19 @@ delay_1:
+ 	cpsid	a				@ disable imprecise aborts.
+ 	ldr	r3, [r1]			@ read CSR
+ 	str	r3, [r1]			@ clear CSR
++
+ 	tst	r0, #TEGRA30_POWER_HOTPLUG_SHUTDOWN
++	beq	flow_ctrl_setting_for_lp2
++
++	/* flow controller set up for hotplug */
++	mov	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
++	b	flow_ctrl_done
++flow_ctrl_setting_for_lp2:
++	/* flow controller set up for LP2 */
++	cmp	r10, #(TEGRA30 << 8)
+ 	moveq   r3, #FLOW_CTRL_WAIT_FOR_INTERRUPT	@ For LP2
+-	movne	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
++flow_ctrl_done:
++	cmp	r10, #(TEGRA30 << 8)
+ 	str	r3, [r2]
+ 	ldr	r0, [r2]
+ 	b	wfe_war
+@@ -89,7 +107,8 @@ delay_1:
+ __cpu_reset_again:
+ 	dsb
+ 	.align 5
+-	wfe					@ CPU should be power gated here
++	wfeeq					@ CPU should be power gated here
++	wfine
+ wfe_war:
+ 	b	__cpu_reset_again
+ 
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index c2cac9a..92a3f0c 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -25,6 +25,8 @@
+ 					+ IO_PPSB_VIRT)
+ #define TEGRA_CLK_RESET_VIRT (TEGRA_CLK_RESET_BASE - IO_PPSB_PHYS \
+ 					+ IO_PPSB_VIRT)
++#define TEGRA_APB_MISC_VIRT (TEGRA_APB_MISC_BASE - IO_APB_PHYS \
++					+ IO_APB_VIRT)
+ #define TEGRA_PMC_VIRT	(TEGRA_PMC_BASE - IO_APB_PHYS + IO_APB_VIRT)
+ 
+ /* PMC_SCRATCH37-39 and 41 are used for tegra_pen_lock and idle */
 -- 
 1.8.2.2
