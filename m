@@ -1,13 +1,25 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 29/33] arch/arm/mach-tegra: don't check resource with devm_ioremap_resource
-Date: Thu, 16 May 2013 13:15:57 +0200
-Message-ID: <1368702961-4325-30-git-send-email-wsa@the-dreams.de>
+Subject: [PATCH 16/33] drivers/rtc: don't check resource with
+ devm_ioremap_resource
+Date: Thu, 16 May 2013 13:15:44 +0200
+Message-ID: <1368702961-4325-17-git-send-email-wsa@the-dreams.de>
 References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Wan ZongShun <mcuos.com@gmail.com>, rtc-linux@googlegroups.com, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 devm_ioremap_resource does sanity checks on the given resource. No need to
@@ -15,24 +27,76 @@ duplicate this in the driver.
 
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- arch/arm/mach-tegra/tegra2_emc.c |    5 -----
- 1 file changed, 5 deletions(-)
+ drivers/rtc/rtc-nuc900.c |    5 -----
+ drivers/rtc/rtc-omap.c   |    5 -----
+ drivers/rtc/rtc-s3c.c    |    5 -----
+ drivers/rtc/rtc-tegra.c  |    6 ------
+ 4 files changed, 21 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/tegra2_emc.c b/arch/arm/mach-tegra/tegra2_emc.c
-index 9e8bdfa..31e69a0 100644
---- a/arch/arm/mach-tegra/tegra2_emc.c
-+++ b/arch/arm/mach-tegra/tegra2_emc.c
-@@ -307,11 +307,6 @@ static int tegra_emc_probe(struct platform_device *pdev)
+diff --git a/drivers/rtc/rtc-nuc900.c b/drivers/rtc/rtc-nuc900.c
+index f5dfb6e..d592e2f 100644
+--- a/drivers/rtc/rtc-nuc900.c
++++ b/drivers/rtc/rtc-nuc900.c
+@@ -234,11 +234,6 @@ static int __init nuc900_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev, "platform_get_resource failed\n");
+-		return -ENXIO;
+-	}
+-
+ 	nuc900_rtc->rtc_reg = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(nuc900_rtc->rtc_reg))
+ 		return PTR_ERR(nuc900_rtc->rtc_reg);
+diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+index 4e1bdb8..b0ba3fc 100644
+--- a/drivers/rtc/rtc-omap.c
++++ b/drivers/rtc/rtc-omap.c
+@@ -347,11 +347,6 @@ static int __init omap_rtc_probe(struct platform_device *pdev)
  	}
  
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		dev_err(&pdev->dev, "missing register base\n");
--		return -ENOMEM;
+-		pr_debug("%s: RTC resource data missing\n", pdev->name);
+-		return -ENOENT;
 -	}
 -
- 	emc_regbase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(emc_regbase))
- 		return PTR_ERR(emc_regbase);
+ 	rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(rtc_base))
+ 		return PTR_ERR(rtc_base);
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 14040b2..0b495e8 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -477,11 +477,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
+ 	/* get the memory region */
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (res == NULL) {
+-		dev_err(&pdev->dev, "failed to get memory region resource\n");
+-		return -ENOENT;
+-	}
+-
+ 	s3c_rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(s3c_rtc_base))
+ 		return PTR_ERR(s3c_rtc_base);
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index a34315d..76af92a 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -322,12 +322,6 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res) {
+-		dev_err(&pdev->dev,
+-			"Unable to allocate resources for device.\n");
+-		return -EBUSY;
+-	}
+-
+ 	info->rtc_base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(info->rtc_base))
+ 		return PTR_ERR(info->rtc_base);
 -- 
 1.7.10.4
