@@ -1,73 +1,38 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 08/33] drivers/i2c/busses: don't check resource with devm_ioremap_resource
-Date: Thu, 16 May 2013 13:15:36 +0200
-Message-ID: <1368702961-4325-9-git-send-email-wsa@the-dreams.de>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
+Date: Thu, 16 May 2013 14:57:32 +0300
+Message-ID: <1368705452.15764.217.camel@sauron.fi.intel.com>
 References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Reply-To: dedekind1@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devel-bounces@linuxdriverproject.org>
 In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: "devel" <devel-bounces@linuxdriverproject.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mips@linux-mips.org, alsa-devel@alsa-project.org, Alessandro Zummo <a.zummo@towertech.it>, Liam Girdwood <lgirdwood@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Samuel Ortiz <sameo@linux.intel.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Vinod Koul <vinod.koul@intel.com>, linux-pm@vger.kernel.org, cpufreq@vger.ker
 List-Id: linux-tegra@vger.kernel.org
 
-devm_ioremap_resource does sanity checks on the given resource. No need to
-duplicate this in the driver.
+On Thu, 2013-05-16 at 13:15 +0200, Wolfram Sang wrote:
+> Despite various architectures and platform dependencies, I managed to
+> compile
+> test 45 out of 57 modified files locally using heuristics and
+> defconfigs.
+> If somebody knows how to create a minimal .config with a certain
+> kconfig symbol
+> (and its dependencies) set, I'd love to hear about it.
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- drivers/i2c/busses/i2c-s3c2410.c |    5 -----
- drivers/i2c/busses/i2c-sirf.c    |    6 ------
- drivers/i2c/busses/i2c-tegra.c   |    5 -----
- 3 files changed, 16 deletions(-)
+If you find this out, please, share!
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 6e8ee92..cab1c91 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1082,11 +1082,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	/* map the registers */
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res == NULL) {
--		dev_err(&pdev->dev, "cannot find IO resource\n");
--		return -ENOENT;
--	}
--
- 	i2c->regs = devm_ioremap_resource(&pdev->dev, res);
- 
- 	if (IS_ERR(i2c->regs))
-diff --git a/drivers/i2c/busses/i2c-sirf.c b/drivers/i2c/busses/i2c-sirf.c
-index 5a7ad24..a63c7d5 100644
---- a/drivers/i2c/busses/i2c-sirf.c
-+++ b/drivers/i2c/busses/i2c-sirf.c
-@@ -303,12 +303,6 @@ static int i2c_sirfsoc_probe(struct platform_device *pdev)
- 	adap->class = I2C_CLASS_HWMON;
- 
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem_res == NULL) {
--		dev_err(&pdev->dev, "Unable to get MEM resource\n");
--		err = -EINVAL;
--		goto out;
--	}
--
- 	siic->base = devm_ioremap_resource(&pdev->dev, mem_res);
- 	if (IS_ERR(siic->base)) {
- 		err = PTR_ERR(siic->base);
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b60ff90..9aa1b60 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -714,11 +714,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	int ret = 0;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "no mem resource\n");
--		return -EINVAL;
--	}
--
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
 -- 
-1.7.10.4
+Best Regards,
+Artem Bityutskiy
