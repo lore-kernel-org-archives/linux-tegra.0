@@ -1,38 +1,23 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
-Date: Thu, 16 May 2013 14:57:32 +0300
-Message-ID: <1368705452.15764.217.camel@sauron.fi.intel.com>
-References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Reply-To: dedekind1@gmail.com
+From: Barry Song <21cnbao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/33] drivers/i2c/busses: don't check resource with devm_ioremap_resource
+Date: Thu, 16 May 2013 20:22:19 +0800
+Message-ID: <CAGsJ_4zAJpqxjg_rcO1WxS=GLii7YooPnsCgt40frf_5afiY6g@mail.gmail.com>
+References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de> <1368702961-4325-9-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mips@linux-mips.org, alsa-devel@alsa-project.org, Alessandro Zummo <a.zummo@towertech.it>, Liam Girdwood <lgirdwood@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@avionic-design.de>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Samuel Ortiz <sameo@linux.intel.com>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, Vinod Koul <vinod.koul@intel.com>, linux-pm@vger.kernel.org, cpufreq@vger.ker
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1368702961-4325-9-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, DL-SHA-WorkGroupLinux <workgroup.linux-kQvG35nSl+M@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-05-16 at 13:15 +0200, Wolfram Sang wrote:
-> Despite various architectures and platform dependencies, I managed to
-> compile
-> test 45 out of 57 modified files locally using heuristics and
-> defconfigs.
-> If somebody knows how to create a minimal .config with a certain
-> kconfig symbol
-> (and its dependencies) set, I'd love to hear about it.
+2013/5/16 Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>:
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
+>
+> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 
-If you find this out, please, share!
+Acked-by: Barry Song <Baohua.Song-kQvG35nSl+M@public.gmane.org>
 
--- 
-Best Regards,
-Artem Bityutskiy
+-barry
