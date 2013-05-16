@@ -1,32 +1,76 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
-Date: Thu, 16 May 2013 12:29:19 -0600
-Message-ID: <5195257F.3060309@wwwdotorg.org>
-References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 5/6] clk: tegra114: implement wait_for_reset and disable_clock
+ for tegra_cpu_car_ops
+Date: Thu, 16 May 2013 12:17:23 -0700
+Message-ID: <20130516191723.12127.40116@quantum>
+References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
+ <1368613644-11863-6-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
- <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: devel-bounces@linuxdriverproject.org
-Sender: "devel" <devel-bounces@linuxdriverproject.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, "Rafael J. Wysocki" <rjw@sisk.pl>, cpufreq@vger.kernel.org, Eduardo Valentin <eduardo.v>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1368613644-11863-6-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16/2013 05:15 AM, Wolfram Sang wrote:
-> Lately, I have been experimenting how to improve the devm interface to make
-> writing device drivers easier and less error prone while also getting rid of
-> its subtle issues. I think it has more potential but still needs work and
-> definately conistency, especiall in its usage.
-...
+Quoting Joseph Lo (2013-05-15 03:27:23)
+> The conventional CPU hotplug sequence on the other Tegra chips, we will also
+> clock gate the CPU in tegra_cpu_kill() after the CPU was power gated. For
+> Tegra114, the flow controller will clock gate the CPU after the power down
+> sequence. But we still need to implement a empty function for disable_clock
+> to avoid kernel warning message.
+> 
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra parts in patches 4, 5, 8, 15, 16, 17, 29 all,
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+> ---
+>  drivers/clk/tegra/clk-tegra114.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index d78e16e..40d939d 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -250,6 +250,9 @@
+>  #define CLK_SOURCE_XUSB_DEV_SRC 0x60c
+>  #define CLK_SOURCE_EMC 0x19c
+>  
+> +/* Tegra CPU clock and reset control regs */
+> +#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS    0x470
+> +
+>  static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
+>  
+>  static void __iomem *clk_base;
+> @@ -2000,7 +2003,25 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base)
+>         }
+>  }
+>  
+> -static struct tegra_cpu_car_ops tegra114_cpu_car_ops;
+> +/* Tegra114 CPU clock and reset control functions */
+> +static void tegra114_wait_cpu_in_reset(u32 cpu)
+> +{
+> +       unsigned int reg;
+> +
+> +       do {
+> +               reg = readl(clk_base + CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
+> +               cpu_relax();
+> +       } while (!(reg & (1 << cpu)));  /* check CPU been reset or not */
+> +}
+> +static void tegra114_disable_cpu_clock(u32 cpu)
+> +{
+> +       /* flow controller would take care in the power sequence. */
+> +}
+> +
+> +static struct tegra_cpu_car_ops tegra114_cpu_car_ops = {
+> +       .wait_for_reset = tegra114_wait_cpu_in_reset,
+> +       .disable_clock  = tegra114_disable_cpu_clock,
+> +};
+>  
+>  static const struct of_device_id pmc_match[] __initconst = {
+>         { .compatible = "nvidia,tegra114-pmc" },
+> -- 
+> 1.8.2.2
