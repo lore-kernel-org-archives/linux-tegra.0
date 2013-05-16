@@ -1,25 +1,13 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 16/33] drivers/rtc: don't check resource with
- devm_ioremap_resource
-Date: Thu, 16 May 2013 13:15:44 +0200
-Message-ID: <1368702961-4325-17-git-send-email-wsa@the-dreams.de>
+Subject: [PATCH 05/33] drivers/gpio: don't check resource with devm_ioremap_resource
+Date: Thu, 16 May 2013 13:15:33 +0200
+Message-ID: <1368702961-4325-6-git-send-email-wsa@the-dreams.de>
 References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Wan ZongShun <mcuos.com@gmail.com>, rtc-linux@googlegroups.com, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 devm_ioremap_resource does sanity checks on the given resource. No need to
@@ -27,76 +15,41 @@ duplicate this in the driver.
 
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 ---
- drivers/rtc/rtc-nuc900.c |    5 -----
- drivers/rtc/rtc-omap.c   |    5 -----
- drivers/rtc/rtc-s3c.c    |    5 -----
- drivers/rtc/rtc-tegra.c  |    6 ------
- 4 files changed, 21 deletions(-)
+ drivers/gpio/gpio-mvebu.c |    5 -----
+ drivers/gpio/gpio-tegra.c |    5 -----
+ 2 files changed, 10 deletions(-)
 
-diff --git a/drivers/rtc/rtc-nuc900.c b/drivers/rtc/rtc-nuc900.c
-index f5dfb6e..d592e2f 100644
---- a/drivers/rtc/rtc-nuc900.c
-+++ b/drivers/rtc/rtc-nuc900.c
-@@ -234,11 +234,6 @@ static int __init nuc900_rtc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index bf69a7e..3a4816a 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -619,11 +619,6 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+ 	 * per-CPU registers */
+ 	if (soc_variant == MVEBU_GPIO_SOC_VARIANT_ARMADAXP) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-		if (!res) {
+-			dev_err(&pdev->dev, "Cannot get memory resource\n");
+-			return -ENODEV;
+-		}
+-
+ 		mvchip->percpu_membase = devm_ioremap_resource(&pdev->dev,
+ 							       res);
+ 		if (IS_ERR(mvchip->percpu_membase))
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index da4cb5b..9a62672 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -463,11 +463,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
  	}
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "platform_get_resource failed\n");
--		return -ENXIO;
--	}
--
- 	nuc900_rtc->rtc_reg = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(nuc900_rtc->rtc_reg))
- 		return PTR_ERR(nuc900_rtc->rtc_reg);
-diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
-index 4e1bdb8..b0ba3fc 100644
---- a/drivers/rtc/rtc-omap.c
-+++ b/drivers/rtc/rtc-omap.c
-@@ -347,11 +347,6 @@ static int __init omap_rtc_probe(struct platform_device *pdev)
- 	}
  
  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 -	if (!res) {
--		pr_debug("%s: RTC resource data missing\n", pdev->name);
--		return -ENOENT;
+-		dev_err(&pdev->dev, "Missing MEM resource\n");
+-		return -ENODEV;
 -	}
 -
- 	rtc_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(rtc_base))
- 		return PTR_ERR(rtc_base);
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 14040b2..0b495e8 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -477,11 +477,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	/* get the memory region */
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (res == NULL) {
--		dev_err(&pdev->dev, "failed to get memory region resource\n");
--		return -ENOENT;
--	}
--
- 	s3c_rtc_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(s3c_rtc_base))
- 		return PTR_ERR(s3c_rtc_base);
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index a34315d..76af92a 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -322,12 +322,6 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev,
--			"Unable to allocate resources for device.\n");
--		return -EBUSY;
--	}
--
- 	info->rtc_base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(info->rtc_base))
- 		return PTR_ERR(info->rtc_base);
+ 	regs = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(regs))
+ 		return PTR_ERR(regs);
 -- 
 1.7.10.4
