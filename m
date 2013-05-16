@@ -1,40 +1,34 @@
-From: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 4/8] usb: phy: tegra: Return correct error value provided by clk_get_sys
-Date: Thu, 16 May 2013 19:42:58 +0530
-Message-ID: <1368713582-29038-5-git-send-email-vbyravarasu@nvidia.com>
-References: <1368713582-29038-1-git-send-email-vbyravarasu@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
+Date: Thu, 16 May 2013 18:13:58 +0200
+Message-ID: <20130516161355.GA3032@katana>
+References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
+ <1368705452.15764.217.camel@sauron.fi.intel.com>
+ <CAKohpokUy7QfvKkzGH025Zs5VkUhr8zRLeo3caG3LAnLfptzww@mail.gmail.com>
+ <1368709862.15764.224.camel@sauron.fi.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368713582-29038-1-git-send-email-vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mips-bounce@linux-mips.org>
+Content-Disposition: inline
+In-Reply-To: <1368709862.15764.224.camel@sauron.fi.intel.com>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Artem Bityutskiy <dedekind1@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian
 List-Id: linux-tegra@vger.kernel.org
 
-In case if clk_get_sys fails, return correct error value provided by
-the API.
 
-Signed-off-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-delta from v1, v2 & v3: no change.
+> I need a defconfig which would have this driver enabled. 
 
- drivers/usb/phy/phy-tegra-usb.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 17d8112..8bcc12f 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -620,8 +620,7 @@ static int	tegra_phy_init(struct usb_phy *x)
- 		phy->clk = clk_get_sys(NULL, ulpi_config->clk);
- 		if (IS_ERR(phy->clk)) {
- 			pr_err("%s: can't get ulpi clock\n", __func__);
--			err = -ENXIO;
--			goto err1;
-+			return PTR_ERR(phy->clk);
- 		}
- 		if (!gpio_is_valid(ulpi_config->reset_gpio))
- 			ulpi_config->reset_gpio =
--- 
-1.7.0.4
+My wish would be a minimal config. Right now, I try to build the driver
+with the current config and when that fails I grep through the
+(uncompressed) defconfigs for the symbol needed. Gives me 45/57 success
+rate on this series. Not perfect, but the best I could come up with
+without writing a .config-generator myself.
