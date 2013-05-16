@@ -1,62 +1,32 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 6/6] ARM: tegra114: add CPU hotplug support
-Date: Thu, 16 May 2013 12:26:49 -0600
-Message-ID: <519524E9.8000401@wwwdotorg.org>
-References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>  <1368613644-11863-7-git-send-email-josephl@nvidia.com>  <5194162D.7010007@wwwdotorg.org> <1368702862.7403.86.camel@jlo-ubuntu-64.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
+Date: Thu, 16 May 2013 12:29:19 -0600
+Message-ID: <5195257F.3060309@wwwdotorg.org>
+References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368702862.7403.86.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel/>
+List-Post: <mailto:devel@linuxdriverproject.org>
+List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
+ <mailto:devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: devel-bounces@linuxdriverproject.org
+Sender: "devel" <devel-bounces@linuxdriverproject.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, "Rafael J. Wysocki" <rjw@sisk.pl>, cpufreq@vger.kernel.org, Eduardo Valentin <eduardo.v>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16/2013 05:14 AM, Joseph Lo wrote:
-> On Thu, 2013-05-16 at 07:11 +0800, Stephen Warren wrote:
->> On 05/15/2013 04:27 AM, Joseph Lo wrote:
->>> The Tegra114 is a quad cores SoC. Each core can be hotplugged including
->>> CPU0. The hotplug sequence can be controlled by setting event trigger in
->>> flow controller. Then the flow controller will take care all the power
->>> sequence that include CPU up and down.
+On 05/16/2013 05:15 AM, Wolfram Sang wrote:
+> Lately, I have been experimenting how to improve the devm interface to make
+> writing device drivers easier and less error prone while also getting rid of
+> its subtle issues. I think it has more potential but still needs work and
+> definately conistency, especiall in its usage.
+...
 
->>>  	tst	r0, #TEGRA30_POWER_HOTPLUG_SHUTDOWN
->>> +	beq	flow_ctrl_setting_for_lp2
->>> +
->>> +	/* flow controller set up for hotplug */
->>> +	mov	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
->>> +	b	flow_ctrl_done
->>> +flow_ctrl_setting_for_lp2:
->>> +	/* flow controller set up for LP2 */
->>> +	cmp	r10, #(TEGRA30 << 8)
->>>  	moveq   r3, #FLOW_CTRL_WAIT_FOR_INTERRUPT	@ For LP2
->>
->> Do you need e.g. "movne r3, #0" or similar here? Otherwise, I think r3
->> ends up not being initialized.
-> 
-> Yes, I will add the code when I add LP2 support for Tegra114 later.
-> Currently the LP2 code flow only for Tegra30, so it's OK.
-
-Ah, I see. Can we add the extra move to make sure the register is always
-initialized now even though the path won't be used. That way, nobody
-will be confused by this.
-
->>> -	movne	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
->>> +flow_ctrl_done:
->>> +	cmp	r10, #(TEGRA30 << 8)
->>>  	str	r3, [r2]
->>
->> I wonder whether creating a separate tegra114_cpu_shutdown() wouldn't be
->> better, to avoid all the runtime conditional code.
-> 
-> I personally think the conditional code is OK. And the ARM CPU also had
-> hardware for branch detection also.
-> 
-> I had finished some further features for both Tegra30 and Tegra114. And
-> most of the code here can be shared each other at least until now I
-> could see. Once I see if there is a significant difference, then I would
-> prepare maintain the code separately too.
-
-OK, if the function gets larger with more shared, I guess it's fine.
-Right now, the conditional-to-non-conditional code ratio is pretty high.
+The Tegra parts in patches 4, 5, 8, 15, 16, 17, 29 all,
+Acked-by: Stephen Warren <swarren@nvidia.com>
