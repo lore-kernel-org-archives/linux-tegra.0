@@ -1,42 +1,84 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/6] ARM: tegra114: add CPU hotplug support
-Date: Thu, 16 May 2013 17:53:39 +0800
-Message-ID: <1368698019.7403.10.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 1/6] ARM: tegra: add an assembly marco to check Tegra
+ SoC ID
+Date: Thu, 16 May 2013 18:09:48 +0800
+Message-ID: <1368698988.7403.25.camel@jlo-ubuntu-64.nvidia.com>
 References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
-	 <51941C58.9060002@wwwdotorg.org>
+	 <1368613644-11863-2-git-send-email-josephl@nvidia.com>
+	 <51940FA4.6050609@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51941C58.9060002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51940FA4.6050609-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-05-16 at 07:38 +0800, Stephen Warren wrote:
+On Thu, 2013-05-16 at 06:43 +0800, Stephen Warren wrote:
 > On 05/15/2013 04:27 AM, Joseph Lo wrote:
-> > Tegra 114 is different with other Tegra SoC chips. It using ARM Cortex-A15
-> > as CPU core and a enhanced flow controller for CPU power control. So
-> > we need to skip some code that was for Contex-A9 and some other support
-> > code that was for other Tegra SoC chips. Then adding the proper power up
-> > and hot plug control for Tegra114.
+> > There are some Tegra SoC ID checking code around the low level assembly
+> > code. Adding a marco to replace them. For the single image to support all
+> > the Tegra series, we may also need the marco in other common code. So we
+> > make it become a marco for the usage.
 > 
-> This series mostly works OK, but I see one problem: I can't hotunplug
-> CPU0, which the commit descriptions and code changes imply I should be
-> able to do:
+> I'm not sure this patch doesn't obfuscate the code too much. The big
+> issue I see is:
 > 
-> root@localhost:~# echo 0 > /sys/devices/system/cpu/cpu0/online
-> -bash: echo: write error: Operation not permitted
+> > @@ -115,13 +112,9 @@ ENTRY(__tegra_cpu_reset_handler)
+> >  
+> >  	cpsid	aif, 0x13			@ SVC mode, interrupts disabled
+> >  
+> > -	mov32	r6, TEGRA_APB_MISC_BASE
+> > -	ldr	r6, [r6, #APB_MISC_GP_HIDREV]
+> > -	and	r6, r6, #0xff00
+> > -#ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> > -t20_check:
+> > -	cmp	r6, #(0x20 << 8)
+> > +	tegra_check_soc_id TEGRA20, TEGRA_APB_MISC_BASE, r6, r5
+> 
+> Here, we replace all the code with the new macro, ...
+> 
+> >  #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+> >  	/* Are we on Tegra20? */
+> > -	cmp	r6, #(0x20 << 8)
+> > +	cmp	r6, #(TEGRA20 << 8)
+> 
+> But here we still have to write out the cmp instructions.
+> 
+The marco did "cmp" once and move the soc_id into r6. But the flags may
+be changed after running some other codes, we need to "cmp" again to get
+the correct flag.
 
-I want to provide this function originally. But I found the
-tegra_cpu_disable() was removed recently. It was replaced by the common
-cpu_disable() function that didn't allow CPU0 to be un-plugged.
+> It may be reasonable to create a macro to read/mask/shift the SoC ID,
+> similar to the existing cpu_id macro, i.e. roughly:
+> 
+> /* Macro to check Tegra revision */
+> +#define APB_MISC_GP_HIDREV	0x804
+> +.macro tegra_soc_id base, tmp1, tmp2
+> +	mov32	\tmp2, \base
+> +	ldr	\tmp1, [\tmp2, #APB_MISC_GP_HIDREV]
+> +	and	\tmp1, \tmp1, #0xff00
+> +.endm
+> 
+> Also, I wonder:
+> 
+> (a) why the need to pass TEGRA_APB_MISC_BASE into the macro; can't the
+> macro just hard-code that value since it's always the same?
+> 
+Because this marco will be used in virtual address space too, I need to
+pass different base addr here.
 
-But I had verified the CPU0 is OK to be un-plugged on the older
-linux-next branch that tegra_cpu_disable() watn't removed yet.
+> (b) Why need two registers passed to the macro. At least one of the code
+> segments you've replaced with the macro uses a single register instead:
+> 
+> -	mov32	r6, TEGRA_APB_MISC_BASE
+> -	ldr	r6, [r6, #APB_MISC_GP_HIDREV]
+> -	and	r6, r6, #0xff00
+> 
+> Wouldn't that be a better implementation of the macro? I don't think
+> relying on \tmp2 containing "base" after the macro invocation would be a
+> good idea, since that's rather like looking inside the black box.
 
-Do you want me to add them back to support this function for Tegra114?
-
-Thanks,
-Joseph
+OK. I can remove one tmp register here.
