@@ -1,34 +1,68 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 00/33] devm improvement series, part 1, take 2
-Date: Thu, 16 May 2013 18:13:58 +0200
-Message-ID: <20130516161355.GA3032@katana>
-References: <1368702961-4325-1-git-send-email-wsa@the-dreams.de>
- <1368705452.15764.217.camel@sauron.fi.intel.com>
- <CAKohpokUy7QfvKkzGH025Zs5VkUhr8zRLeo3caG3LAnLfptzww@mail.gmail.com>
- <1368709862.15764.224.camel@sauron.fi.intel.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Naming convention DSI + device tree
+Date: Thu, 16 May 2013 12:17:37 -0600
+Message-ID: <519522C1.5010107@wwwdotorg.org>
+References: <20130514181745.GA2762@mail.o2s.ch> <51940C22.4050802@wwwdotorg.org> <20130516071537.GA13573@mail.o2s.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1368709862.15764.224.camel@sauron.fi.intel.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Artem Bityutskiy <dedekind1@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org, linux-mips@linux-mips.org, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Matt Mackall <mpm@selenic.com>, linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, Evgeniy Polyakov <zbr@ioremap.net>, Wan ZongShun <mcuos.com@gmail.com>, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Florian
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130516071537.GA13573-cEukqlNQfh4fv37vnLkPlQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-1?Q?David_Lanzend=F6rfer?= <david.lanzendoerfer-Z7Kmv9EsliU@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 05/16/2013 01:15 AM, David Lanzend=F6rfer wrote:
+> On Wed, May 15, 2013 at 04:28:50PM -0600, Stephen Warren wrote:
+>> On 05/14/2013 12:17 PM, David Lanzend=F6rfer wrote:
+>>> Hello I have the following issue: In order to make the DSI
+>>> controller react at all,
+>>=20
+>> Hmm. In the upstream kernel, we don't even have a DSI driver at
+>> all for Tegra, so control over the panel itself is likely the
+>> least of your worries for now.
+>=20
+> Is there a patch set pending for merge into upstream which will
+> provide this support? And if yes, where can I find these pending
+> patches? I'd like to build up my code based on already existing
+> work which is expected to be in upstream at some later point of
+> time.
 
-> I need a defconfig which would have this driver enabled. 
+No, we haven't yet posted DSI support upstream.
 
-My wish would be a minimal config. Right now, I try to build the driver
-with the current config and when that fails I grep through the
-(uncompressed) defconfigs for the symbol needed. Gives me 45/57 success
-rate on this series. Not perfect, but the best I could come up with
-without writing a .config-generator myself.
+>>> I need to pass him a certain combination of pin states. Until
+>>> now within the code of the original android kernel which was
+>>> using board files this has just been done by doing bit
+>>> banging.
+>>>=20
+>>> namely: gpio_set_value(tf201_lvds_shutdown, 1); ... Now with a
+>>> device tree comes the question: Where should I put this?
+>>=20
+>> Likely, you will need to create a DT binding that represents the=20
+>> particular panel model that you have, and make the Tegra display=20
+>> controller node refer to that panel node. The panel node would
+>> need properties to describe the various GPIOs used to control the
+>> panel. Then, you'd want to write a panel-specific driver that
+>> handles that device tree node.
+>=20
+> That was my thought too. Where should I put this panel-specific
+> driver?
+
+Honestly, I'm not sure. I assume (and it is just an assumption) that
+if you look at the CDF patches, you should find some examples of panel
+drivers that use it, although perhaps there aren't any yet...
+
+>> All of this will likely need to be integrated with the upcoming
+>> Common Display Framework.
+>=20
+> Is this upcoming CDF included within your "linux-next_common"
+> branch?
+
+No. That branch of mine is basd on linux-next, so whatever is in
+linux-next is in my branch, and I certainly haven't applied the CDF
+locally.
+
+I believe the CDF has been posted to various mailing lists a few
+times, but it isn't checked in yet since there isn't a final version.
+I CC'd Alex; he might know the status better than me.
