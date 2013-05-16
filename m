@@ -1,76 +1,87 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 5/6] clk: tegra114: implement wait_for_reset and disable_clock
- for tegra_cpu_car_ops
-Date: Thu, 16 May 2013 12:17:23 -0700
-Message-ID: <20130516191723.12127.40116@quantum>
-References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
- <1368613644-11863-6-git-send-email-josephl@nvidia.com>
+From: David =?iso-8859-1?Q?Lanzend=F6rfer?= <david.lanzendoerfer@o2s.ch>
+Subject: Re: Naming convention DSI + device tree
+Date: Thu, 16 May 2013 21:50:49 +0200
+Message-ID: <20130516195049.GA17092@mail.o2s.ch>
+References: <20130514181745.GA2762@mail.o2s.ch>
+ <51940C22.4050802@wwwdotorg.org>
+ <20130516071537.GA13573@mail.o2s.ch>
+ <519522C1.5010107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368613644-11863-6-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============3561386443356548616=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <519522C1.5010107@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Joseph Lo (2013-05-15 03:27:23)
-> The conventional CPU hotplug sequence on the other Tegra chips, we will also
-> clock gate the CPU in tegra_cpu_kill() after the CPU was power gated. For
-> Tegra114, the flow controller will clock gate the CPU after the power down
-> sequence. But we still need to implement a empty function for disable_clock
-> to avoid kernel warning message.
-> 
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+--===============3561386443356548616==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
 
-> ---
->  drivers/clk/tegra/clk-tegra114.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index d78e16e..40d939d 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -250,6 +250,9 @@
->  #define CLK_SOURCE_XUSB_DEV_SRC 0x60c
->  #define CLK_SOURCE_EMC 0x19c
->  
-> +/* Tegra CPU clock and reset control regs */
-> +#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS    0x470
-> +
->  static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
->  
->  static void __iomem *clk_base;
-> @@ -2000,7 +2003,25 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base)
->         }
->  }
->  
-> -static struct tegra_cpu_car_ops tegra114_cpu_car_ops;
-> +/* Tegra114 CPU clock and reset control functions */
-> +static void tegra114_wait_cpu_in_reset(u32 cpu)
-> +{
-> +       unsigned int reg;
-> +
-> +       do {
-> +               reg = readl(clk_base + CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
-> +               cpu_relax();
-> +       } while (!(reg & (1 << cpu)));  /* check CPU been reset or not */
-> +}
-> +static void tegra114_disable_cpu_clock(u32 cpu)
-> +{
-> +       /* flow controller would take care in the power sequence. */
-> +}
-> +
-> +static struct tegra_cpu_car_ops tegra114_cpu_car_ops = {
-> +       .wait_for_reset = tegra114_wait_cpu_in_reset,
-> +       .disable_clock  = tegra114_disable_cpu_clock,
-> +};
->  
->  static const struct of_device_id pmc_match[] __initconst = {
->         { .compatible = "nvidia,tegra114-pmc" },
-> -- 
-> 1.8.2.2
+
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+> No, we haven't yet posted DSI support upstream.
+Ok.
+
+> Honestly, I'm not sure. I assume (and it is just an assumption) that
+> if you look at the CDF patches, you should find some examples of panel
+> drivers that use it, although perhaps there aren't any yet...
+Ok. If there's an API already flying around somewhere, which will
+be posted to upstream at some point of time, and won't change drastically
+anymore I can work with it.=20
+
+> No. That branch of mine is basd on linux-next, so whatever is in
+> linux-next is in my branch, and I certainly haven't applied the CDF
+> locally.
+Ok.
+
+> I believe the CDF has been posted to various mailing lists a few
+> times, but it isn't checked in yet since there isn't a final version.
+> I CC'd Alex; he might know the status better than me.
+Ok. Thank you very much!
+The best would be a patchset for CDF against linux-next (which will most
+likely be the case anyway) in order to track the changes and post my own
+changes upstream as soon as CDF is in next.
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iEYEARECAAYFAlGVOJgACgkQAeZw77btGjpZUQCfQpT7Yo3+9zVfw88idrmd22Xg
+x/IAoJjByFx8WrKkwmrHbwNInvp6DLp4
+=lUUM
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
+
+
+--===============3561386443356548616==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============3561386443356548616==--
