@@ -1,66 +1,101 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/6] ARM: tegra: make tegra_resume can work for Tegra114
-Date: Thu, 16 May 2013 18:35:33 +0800
-Message-ID: <1368700533.7403.47.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 6/6] ARM: tegra114: add CPU hotplug support
+Date: Thu, 16 May 2013 19:14:22 +0800
+Message-ID: <1368702862.7403.86.camel@jlo-ubuntu-64.nvidia.com>
 References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
-	 <1368613644-11863-4-git-send-email-josephl@nvidia.com>
-	 <519412E9.2080905@wwwdotorg.org>
+	 <1368613644-11863-7-git-send-email-josephl@nvidia.com>
+	 <5194162D.7010007@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <519412E9.2080905-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5194162D.7010007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-05-16 at 06:57 +0800, Stephen Warren wrote:
+On Thu, 2013-05-16 at 07:11 +0800, Stephen Warren wrote:
 > On 05/15/2013 04:27 AM, Joseph Lo wrote:
-> > Tegra114 is an ARM Cortex-A15 based SoC and some of the flow controller
+> > The Tegra114 is a quad cores SoC. Each core can be hotplugged including
+> > CPU0. The hotplug sequence can be controlled by setting event trigger in
+> > flow controller. Then the flow controller will take care all the power
+> > sequence that include CPU up and down.
 > 
-> I don't think the CPU type is the issue here. The issue is simply that
-> Tegra114's flow controller is different. Mentioning the CPU type seems
-> misleading.
+> > diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
 > 
-> > hardware behavior and configurations are different with other Tegra series.
-> > We fix the common resume function of tegra_resume to make it can work on
-> > Tegra114 by checking SoC ID. And also checking CPU primary part number to
-> > isolate the support code for Cortex A9 and A15.
+> > +obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= sleep-tegra30.o
 > 
+> CONFIG_ARCH_TEGRA_3x_SOC also adds that to obj-y. Will including it
+> twice cause problems?
+> 
+Looks the compiler can take care of this. I didn't see any problem here.
+
 > > diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
 > 
-> > -#ifdef CONFIG_ARCH_TEGRA_3x_SOC
-> > +#ifndef CONFIG_ARCH_TEGRA_2x_SOC
-> >  	/* Are we on Tegra20? */
-> >  	tegra_check_soc_id TEGRA20, TEGRA_APB_MISC_BASE, r6, r7
-> >  	beq	1f				@ Yes
-> >  	/* Clear the flow controller flags for this CPU. */
-> > -	mov32	r2, TEGRA_FLOW_CTRL_BASE + FLOW_CTRL_CPU0_CSR	@ CPU0 CSR
-> > -	ldr	r1, [r2]
-> > +	cpu_to_csr_req r1, r0
+> >   *	  CPU boot vector when restarting the a CPU following
+> >   *	  an LP2 transition. Also branched to by LP0 and LP1 resume after
+> >   *	  re-enabling sdram.
+> > + *
+> > + *	r6: SoC ID << 8
 > 
-> Where is cpu_to_csr_req defined? grep can't find it in next-20130513,
-> and I don't see it added in this series.
+> I meant to ask in patch 1: Perhaps the macro could do a >>8 so that code
+> can compare directly against the SoC IDs instead of having to compare
+> against shifted values.
 > 
-The cpu_to_csr_reg macro was defined in "sleep.h". I was used to
-translate the bit offset of CPU number in CSR register. The code here
-was used for CPU0 on Tegra30 only before. Because the Tegra114 had more
-advance CPU power control. Each Core need run through here when power
-gate resume.
+That's more easy to read the code indeed. Will do.
 
-> This presumably changes behaviour on Tegra30; will this cause problems?
+> > +	tegra_check_soc_id TEGRA114, TEGRA_APB_MISC_BASE, r6, r7
+> > +	beq	no_cpu0_chk
 > 
-No, I had verified on Tegra20, Tegra30 and Tegra114 of this series.
+> Does that need a THUMB(it ...) added? Same elsewhere.
+> 
+Will double confirm again later.
 
-> > +	mov32	r2, TEGRA_FLOW_CTRL_BASE
-> > +	ldr	r1, [r2, r1]
-> >  	/* Clear event & intr flag */
-> >  	orr	r1, r1, \
-> >  		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
-> > -	movw	r0, #0x0FFD	@ enable, cluster_switch, immed, & bitmaps
-> > +	movw	r0, #0x3FFD	@ enable, cluster_switch, immed, & bitmaps
+> > +	cmp	r6, #(TEGRA114 <<8)
 > 
-> What does this change do; does the commend need updating to describe the
-> new bits that are set?
-It clear the some extensions for CPU power control on Tegra114.
+> Needs a space after <<.
+> 
+> > diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> 
+> > @@ -45,12 +46,17 @@ ENDPROC(tegra30_hotplug_shutdown)
+> >   * and powergates it -- flags (in R0) indicate the request type.
+> >   * Must never be called for CPU 0.
+> 
+> That comment is wrong now, I think.
+Only true for Tegra30 now. Will fix.
+
+> 
+> >  	tst	r0, #TEGRA30_POWER_HOTPLUG_SHUTDOWN
+> > +	beq	flow_ctrl_setting_for_lp2
+> > +
+> > +	/* flow controller set up for hotplug */
+> > +	mov	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
+> > +	b	flow_ctrl_done
+> > +flow_ctrl_setting_for_lp2:
+> > +	/* flow controller set up for LP2 */
+> > +	cmp	r10, #(TEGRA30 << 8)
+> >  	moveq   r3, #FLOW_CTRL_WAIT_FOR_INTERRUPT	@ For LP2
+> 
+> Do you need e.g. "movne r3, #0" or similar here? Otherwise, I think r3
+> ends up not being initialized.
+
+Yes, I will add the code when I add LP2 support for Tegra114 later.
+Currently the LP2 code flow only for Tegra30, so it's OK.
+
+> 
+> > -	movne	r3, #FLOW_CTRL_WAITEVENT		@ For hotplug
+> > +flow_ctrl_done:
+> > +	cmp	r10, #(TEGRA30 << 8)
+> >  	str	r3, [r2]
+> 
+> I wonder whether creating a separate tegra114_cpu_shutdown() wouldn't be
+> better, to avoid all the runtime conditional code.
+
+I personally think the conditional code is OK. And the ARM CPU also had
+hardware for branch detection also.
+
+I had finished some further features for both Tegra30 and Tegra114. And
+most of the code here can be shared each other at least until now I
+could see. Once I see if there is a significant difference, then I would
+prepare maintain the code separately too.
