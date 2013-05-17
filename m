@@ -1,50 +1,58 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Naming convention DSI + device tree
-Date: Fri, 17 May 2013 14:36:34 +0900
-Message-ID: <5195C1E2.4020009@nvidia.com>
-References: <20130514181745.GA2762@mail.o2s.ch> <51940C22.4050802@wwwdotorg.org> <20130516071537.GA13573@mail.o2s.ch> <519522C1.5010107@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/6] ARM: tegra114: add CPU hotplug support
+Date: Fri, 17 May 2013 18:15:59 +0800
+Message-ID: <1368785759.3174.8.camel@jlo-ubuntu-64.nvidia.com>
+References: <1368613644-11863-1-git-send-email-josephl@nvidia.com>
+	 <51941C58.9060002@wwwdotorg.org>
+	 <1368698019.7403.10.camel@jlo-ubuntu-64.nvidia.com>
+	 <51952344.1090003@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <519522C1.5010107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51952344.1090003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: =?ISO-8859-1?Q?David_Lanzend=F6rfer?= <david.lanzendoerfer-Z7Kmv9EsliU@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/17/2013 03:17 AM, Stephen Warren wrote:
->> Is this upcoming CDF included within your "linux-next_common"
->> branch?
->
-> No. That branch of mine is basd on linux-next, so whatever is in
-> linux-next is in my branch, and I certainly haven't applied the CDF
-> locally.
->
-> I believe the CDF has been posted to various mailing lists a few
-> times, but it isn't checked in yet since there isn't a final version.
-> I CC'd Alex; he might know the status better than me.
+On Fri, 2013-05-17 at 02:19 +0800, Stephen Warren wrote:
+> On 05/16/2013 03:53 AM, Joseph Lo wrote:
+> > On Thu, 2013-05-16 at 07:38 +0800, Stephen Warren wrote:
+> >> On 05/15/2013 04:27 AM, Joseph Lo wrote:
+> >>> Tegra 114 is different with other Tegra SoC chips. It using ARM Cortex-A15
+> >>> as CPU core and a enhanced flow controller for CPU power control. So
+> >>> we need to skip some code that was for Contex-A9 and some other support
+> >>> code that was for other Tegra SoC chips. Then adding the proper power up
+> >>> and hot plug control for Tegra114.
+> >>
+> >> This series mostly works OK, but I see one problem: I can't hotunplug
+> >> CPU0, which the commit descriptions and code changes imply I should be
+> >> able to do:
+> >>
+> >> root@localhost:~# echo 0 > /sys/devices/system/cpu/cpu0/online
+> >> -bash: echo: write error: Operation not permitted
+> > 
+> > I want to provide this function originally. But I found the
+> > tegra_cpu_disable() was removed recently. It was replaced by the common
+> > cpu_disable() function that didn't allow CPU0 to be un-plugged.
+> 
+> Is there a specific reason for that; is there some problem in the core
+> ARM code that implies CPU0 should never be disabled?
+> 
+I think the CPU0 is the boot CPU for most of the case. We always need at
+least one CPU online. That assumes to be the boot CPU.
 
-Current version is RFC v2 - I know Laurent is working on a v3, but it is 
-taking some time. It will probably differ considerably from v2, so be 
-warned if you use it.
+> > But I had verified the CPU0 is OK to be un-plugged on the older
+> > linux-next branch that tegra_cpu_disable() watn't removed yet.
+> > 
+> > Do you want me to add them back to support this function for Tegra114?
+> 
+> If there is a problem removing CPU0 in the core code, the functionality
+> of this series is OK, although it's probably worth removing the parts
+> that attempt to make CPU0 hot-unpluggable to reduce the diff size.
+> 
+> If there's no problem removing CPU0, it'd be good to make it work,
+> although that could be done in followon patches.
 
-Still, if you want to play around with the CDF, you can have a look at 
-the tegra-cdf branch of my github repo: 
-https://github.com/Gnurou/linux/commits/tegra-cdf
-
-It was kind of old so I rebased it on top of 3.10rc1. It includes the 
-CDF v2 patch, adds CDF support to the tegra-drm driver, and also 
-implements a driver for the Tegra 2-based Ventana panel. It's pretty 
-straightforward to read so I guess you can use that as a guide.
-
-I checked whether the rebase worked and it does - you just need to 
-enable host1x/tegradrm support on top of the default settings (Stephen, 
-why aren't these enabled by default?)
-
-So long story short, CDF works well and is small enough to be easy to 
-maintain out-of-tree. A proper panel framework is desperately needed in 
-the kernel, so I hope it will move forward soon.
-
-Hope this helps,
-Alex.
+OK. Thanks.
