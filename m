@@ -1,58 +1,24 @@
-From: Jay Agarwal <jagarwal@nvidia.com>
-Subject: RE: [PATCH 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
-Date: Fri, 17 May 2013 22:21:38 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com>
-References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com>
- <1368010660-31465-4-git-send-email-jagarwal@nvidia.com>
- <518A8596.7070702@wwwdotorg.org>
- <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Naming convention DSI + device tree
+Date: Fri, 17 May 2013 13:39:00 -0600
+Message-ID: <51968754.6050509@wwwdotorg.org>
+References: <20130514181745.GA2762@mail.o2s.ch> <51940C22.4050802@wwwdotorg.org> <20130516071537.GA13573@mail.o2s.ch> <519522C1.5010107@wwwdotorg.org> <5195C1E2.4020009@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Stephen Warren' <swarren@wwwdotorg.org>, "'thierry.reding@avionic-design.de'" <thierry.reding@avionic-design.de>
-Cc: "'linux@arm.linux.org.uk'" <linux@arm.linux.org.uk>, "'bhelgaas@google.com'" <bhelgaas@google.com>, "'olof@lixom.net'" <olof@lixom.net>, "'mturquette@linaro.org'" <mturquette@linaro.org>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>, "'linux-tegra@vger.kernel.org'" <linux-tegra@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-pci@vger.kernel.org'" <linux-pci@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5195C1E2.4020009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: =?ISO-8859-1?Q?David_Lanzend=F6rfer?= <david.lanzendoerfer-Z7Kmv9EsliU@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> > On 05/08/2013 04:57 AM, Jay Agarwal wrote:
-> > > - Enable PCIe controller on Cardhu
-> > > - Only port 2 is connected on this board
-> > > - Add regulators required for Tegra30
-> > > - Patch is based on remotes/gitorious_thierryreding_linux/tegra/next
-> > > - and should be applied on top of this.
-> >
-> > > diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> > > b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> >
-> > > +	pcie-controller {
-> > > +		status = "okay";
-> > > +		pex-clk-supply = <&pex_hvdd_3v3_reg>;
-> > > +		vdd-supply = <&ldo1_reg>;
-> > > +		avdd-supply = <&ldo2_reg>;
-> > > +
-> > > +		pci@3,0 {
-> > > +			status = "okay";
-> > > +		};
-> > > +	};
-> >
-> > So, if I apply this series, I do see the PCIe bridge and Ethernet
-> > device get enumerated, but I don't see the USB3 controller get
-> > enumerated. I believe that is a PCIe device behind the same bridge on the
-> same Tegra PCIe port.
-> > Shouldn't this device show up?
-> I have also reproduced this problem. I see somehow no non-
-> prefetchable memory is assigned to any of pcie devices.
-> Probably that is the reason for USB3 (pci 0000:04:00.0) not getting
-> enumerated since it uses only non-prefetchable memory.
+On 05/16/2013 11:36 PM, Alex Courbot wrote:
+...
+> I checked whether the rebase worked and it does - you just need to
+> enable host1x/tegradrm support on top of the default settings (Stephen,
+> why aren't these enabled by default?)
 
-1. Bus4(on which usb3 device resides) always return 0xffffffff from it's config space. which means device is not present?
-2. That's why it is not assigned any resources and hence no usb3 probe happens.
-3. But same bus does return valid info like vendor/device id etc from it's config space in downstream kernel and hence usb3 probe does happen.
-
-Thierry, Stephen,
-4. Any idea why bus4 should return 0xffffffff values in upstream kernel? Anything missing?
-5. Also, how config space of all pcie devices are mapped? I mean if I change the config space offset in dts file, then also I find correct vendor/device id etc for bus0/device0/fun0.
-    So how this mapping happens that even after changing the config space offset in PCIe address space, it always finds correct vendor/device id.
+I guess it just got overlooked. I see CONFIG_DRM is on though; perhaps
+the default for the Tegra DRM driver changed in Kconfig. Feel free to
+send a patch to tegra_defconfig.
