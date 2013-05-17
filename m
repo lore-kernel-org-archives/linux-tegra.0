@@ -1,114 +1,50 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 3/8] ARM: tegra: update device trees for USB binding
- rework
-Date: Thu, 16 May 2013 17:02:12 -0600
-Message-ID: <51956574.5070206@wwwdotorg.org>
-References: <1368713582-29038-1-git-send-email-vbyravarasu@nvidia.com> <1368713582-29038-4-git-send-email-vbyravarasu@nvidia.com>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Naming convention DSI + device tree
+Date: Fri, 17 May 2013 14:36:34 +0900
+Message-ID: <5195C1E2.4020009@nvidia.com>
+References: <20130514181745.GA2762@mail.o2s.ch> <51940C22.4050802@wwwdotorg.org> <20130516071537.GA13573@mail.o2s.ch> <519522C1.5010107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1368713582-29038-4-git-send-email-vbyravarasu@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Venu Byravarasu <vbyravarasu@nvidia.com>
-Cc: gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <519522C1.5010107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: =?ISO-8859-1?Q?David_Lanzend=F6rfer?= <david.lanzendoerfer-Z7Kmv9EsliU@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16/2013 08:12 AM, Venu Byravarasu wrote:
-> This patch updates all Tegra board files so that they contain all the
-> properties required by the updated USB DT binding. Note that this patch
-> only adds the new properties and does not yet remove the old properties,
-> in order to maintain bisectability. The old properties will be removed
-> once the driver has been updated to assume the new bindings.
+On 05/17/2013 03:17 AM, Stephen Warren wrote:
+>> Is this upcoming CDF included within your "linux-next_common"
+>> branch?
+>
+> No. That branch of mine is basd on linux-next, so whatever is in
+> linux-next is in my branch, and I certainly haven't applied the CDF
+> locally.
+>
+> I believe the CDF has been posted to various mailing lists a few
+> times, but it isn't checked in yet since there isn't a final version.
+> I CC'd Alex; he might know the status better than me.
 
-This series looks almost OK now. The one remaining issue is that in this
-patch, the regulator-name properties don't match the schematics, and in
-the Whistler patch below, both regulators you added have the same
-regulator-name, which causes problems.
+Current version is RFC v2 - I know Laurent is working on a v3, but it is 
+taking some time. It will probably differ considerably from v2, so be 
+warned if you use it.
 
-To fix this, when I apply this patch, I'm going to fold in the patch
-I'll paste below.
+Still, if you want to play around with the CDF, you can have a look at 
+the tegra-cdf branch of my github repo: 
+https://github.com/Gnurou/linux/commits/tegra-cdf
 
-Right now, I can't get Whistler to see the SD card. This is true even
-without your patches. Once I've resolved that and tested Whistler,
-assuming no more problems, I'll apply patches 1-3 to the Tegra tree, and
-set up a branch that can be pulled into the USB tree so the rest of the
-series can be applied there.
+It was kind of old so I rebased it on top of 3.10rc1. It includes the 
+CDF v2 patch, adds CDF support to the tegra-drm driver, and also 
+implements a driver for the Tegra 2-based Ventana panel. It's pretty 
+straightforward to read so I guess you can use that as a guide.
 
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-b/arch/arm/boot/dts/tegra20-seaboard.dts
-index b832088..009dafe 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -822,7 +822,7 @@
- 		vbus_reg: regulator@3 {
- 			compatible = "regulator-fixed";
- 			reg = <3>;
--			regulator-name = "vdd_5v0";
-+			regulator-name = "vdd_vbus_wup1";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
- 			gpio = <&gpio 24 0>; /* PD0 */
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts
-b/arch/arm/boot/dts/tegra20-trimslice.dts
-index d9b58cd..0e65c00e 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -404,7 +404,7 @@
- 		vbus_reg: regulator@2 {
- 			compatible = "regulator-fixed";
- 			reg = <2>;
--			regulator-name = "vdd_5v0";
-+			regulator-name = "usb1_vbus";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
- 			gpio = <&gpio 170 0>; /* PV2 */
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts
-b/arch/arm/boot/dts/tegra20-whistler.dts
-index e405c2f..3c24c9b 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -513,7 +513,7 @@
+I checked whether the rebase worked and it does - you just need to 
+enable host1x/tegradrm support on top of the default settings (Stephen, 
+why aren't these enabled by default?)
 
- 	usb-phy@c5000000 {
- 		status = "okay";
--		vbus-supply = <&vbus_reg1>;
-+		vbus-supply = <&vbus1_reg>;
- 	};
+So long story short, CDF works well and is small enough to be easy to 
+maintain out-of-tree. A proper panel framework is desperately needed in 
+the kernel, so I hope it will move forward soon.
 
- 	usb@c5008000 {
-@@ -523,7 +523,7 @@
-
- 	usb-phy@c5008000 {
- 		status = "okay";
--		vbus-supply = <&vbus_reg2>;
-+		vbus-supply = <&vbus3_reg>;
- 	};
-
- 	sdhci@c8000400 {
-@@ -579,19 +579,19 @@
- 			regulator-always-on;
- 		};
-
--		vbus_reg1: regulator@2 {
-+		vbus1_reg: regulator@2 {
- 			compatible = "regulator-fixed";
- 			reg = <2>;
--			regulator-name = "vdd_5v0";
-+			regulator-name = "vbus1";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
- 			gpio = <&tca6416 0 0>; /* GPIO_PMU0 */
- 		};
-
--		vbus_reg2: regulator@3 {
-+		vbus3_reg: regulator@3 {
- 			compatible = "regulator-fixed";
- 			reg = <3>;
--			regulator-name = "vdd_5v0";
-+			regulator-name = "vbus3";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
- 			gpio = <&tca6416 1 0>; /* GPIO_PMU1 */
--- 
-1.7.10.4
+Hope this helps,
+Alex.
