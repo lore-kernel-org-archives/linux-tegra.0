@@ -1,65 +1,42 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
-Date: Fri, 17 May 2013 13:48:36 -0600
-Message-ID: <51968994.5030408@wwwdotorg.org>
-References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com> <1368010660-31465-4-git-send-email-jagarwal@nvidia.com> <518A8596.7070702@wwwdotorg.org> <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com> <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 3/8] ARM: tegra: update device trees for USB binding
+ rework
+Date: Fri, 17 May 2013 16:06:22 -0600
+Message-ID: <5196A9DE.5080700@wwwdotorg.org>
+References: <1368713582-29038-1-git-send-email-vbyravarasu@nvidia.com> <1368713582-29038-4-git-send-email-vbyravarasu@nvidia.com> <51956574.5070206@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jay Agarwal <jagarwal@nvidia.com>
-Cc: "'thierry.reding@avionic-design.de'" <thierry.reding@avionic-design.de>, "'linux@arm.linux.org.uk'" <linux@arm.linux.org.uk>, "'bhelgaas@google.com'" <bhelgaas@google.com>, "'olof@lixom.net'" <olof@lixom.net>, "'mturquette@linaro.org'" <mturquette@linaro.org>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>, "'linux-tegra@vger.kernel.org'" <linux-tegra@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-pci@vger.kernel.org'" <linux-pci@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51956574.5070206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/17/2013 10:51 AM, Jay Agarwal wrote:
->>> On 05/08/2013 04:57 AM, Jay Agarwal wrote:
->>>> - Enable PCIe controller on Cardhu
->>>> - Only port 2 is connected on this board
->>>> - Add regulators required for Tegra30
->>>> - Patch is based on remotes/gitorious_thierryreding_linux/tegra/next
->>>> - and should be applied on top of this.
-...
->>> So, if I apply this series, I do see the PCIe bridge and Ethernet
->>> device get enumerated, but I don't see the USB3 controller get
->>> enumerated. I believe that is a PCIe device behind the same bridge on the
->>> same Tegra PCIe port.
->>> Shouldn't this device show up?
->>
->> I have also reproduced this problem. I see somehow no non-
->> prefetchable memory is assigned to any of pcie devices.
->> Probably that is the reason for USB3 (pci 0000:04:00.0) not getting
->> enumerated since it uses only non-prefetchable memory.
+On 05/16/2013 05:02 PM, Stephen Warren wrote:
+> On 05/16/2013 08:12 AM, Venu Byravarasu wrote:
+>> This patch updates all Tegra board files so that they contain all the
+>> properties required by the updated USB DT binding. Note that this patch
+>> only adds the new properties and does not yet remove the old properties,
+>> in order to maintain bisectability. The old properties will be removed
+>> once the driver has been updated to assume the new bindings.
 > 
-> 1. Bus4(on which usb3 device resides) always return 0xffffffff from it's config space. which means device is not present?
-> 2. That's why it is not assigned any resources and hence no usb3 probe happens.
-> 3. But same bus does return valid info like vendor/device id etc from it's config space in downstream kernel and hence usb3 probe does happen.
+> This series looks almost OK now. The one remaining issue is that in this
+> patch, the regulator-name properties don't match the schematics, and in
+> the Whistler patch below, both regulators you added have the same
+> regulator-name, which causes problems.
 > 
-> Thierry, Stephen,
-> 4. Any idea why bus4 should return 0xffffffff values in upstream kernel? Anything missing?
+> To fix this, when I apply this patch, I'm going to fold in the patch
+> I'll paste below.
+> 
+> Right now, I can't get Whistler to see the SD card. This is true even
+> without your patches. Once I've resolved that and tested Whistler,
+> assuming no more problems, I'll apply patches 1-3 to the Tegra tree, and
+> set up a branch that can be pulled into the USB tree so the rest of the
+> series can be applied there.
 
-Is there some reset/enable GPIO or regulator that needs to be programmed
-to enable the PCIe USB3 controller? Take a look at the schematic. If you
-can make it work by tweaking those GPIOs/... manually, then we can
-ignore this issue and fix it up later, since it's not directly related
-to the PCIe controller driver patches. It's more important to get this
-Ethernet working than USB, I think.
-
-> 5. Also, how config space of all pcie devices are mapped? I mean if I change the config space offset in dts file, then also I find correct vendor/device id etc for bus0/device0/fun0.
->     So how this mapping happens that even after changing the config space offset in PCIe address space, it always finds correct vendor/device id.
-
-Can you please word-wrap your email less than 80 columns? It's quite
-hard to read.
-
-I don't quite understand your question. The PCIe driver implements the
-functions that access config space. I don't recall that being influenced
-by anything much in the device tree, except for the 3rd entry in the
-top-level PCIe controller's reg property:
-
-        pcie-controller {
-                compatible = "nvidia,tegra30-pcie";
-                device_type = "pci";
-                reg = <0x00003000 0x00000800   /* PADS registers */
-                       0x00003800 0x00000200   /* AFI registers */
-                       0x10000000 0x10000000>; /* configuration space */
+I've made Whistler boot by reverting a few commits entirely unrelated to
+USB or your patch series. I'll investigate those later, but for not your
+patches test out fine on Whistler. So, I'll apply patches 1-3 in the
+series and set up the pull request for the USB tree. Thanks.
