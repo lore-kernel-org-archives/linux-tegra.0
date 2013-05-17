@@ -1,111 +1,154 @@
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/6] gpu: host1x: Fix client_managed type
-Date: Fri, 17 May 2013 14:49:46 +0300
-Message-ID: <1368791388-31441-5-git-send-email-amerilainen@nvidia.com>
+From: Arto Merilainen <amerilainen@nvidia.com>
+Subject: [PATCH 5/6] gpu: host1x: Rework CPU syncpoint increment
+Date: Fri, 17 May 2013 14:49:47 +0300
+Message-ID: <1368791388-31441-6-git-send-email-amerilainen@nvidia.com>
 References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1368791388-31441-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@avionic-design.de, airlied@linux.ie, linux-tegra@vger.kernel.org
+Cc: tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-client_managed field in syncpoint structure was defined as an
-integer. The field holds, however, only a boolean value. This patch
-modifies the type to boolean.
+This patch merges host1x_syncpt_cpu_incr to host1x_syncpt_incr() as
+they are in practise doing the same thing. host1x_syncpt_incr() is also
+modified to return error codes.
 
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
 ---
- drivers/gpu/host1x/drm/gr2d.c |    2 +-
- drivers/gpu/host1x/syncpt.c   |    8 ++++----
- drivers/gpu/host1x/syncpt.h   |    6 +++---
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/host1x/dev.h          |    8 ++++----
+ drivers/gpu/host1x/hw/cdma_hw.c   |    2 +-
+ drivers/gpu/host1x/hw/syncpt_hw.c |   12 +++++-------
+ drivers/gpu/host1x/syncpt.c       |   15 ++-------------
+ drivers/gpu/host1x/syncpt.h       |    7 ++-----
+ 5 files changed, 14 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-index 6a45ae0..6c3a27b 100644
---- a/drivers/gpu/host1x/drm/gr2d.c
-+++ b/drivers/gpu/host1x/drm/gr2d.c
-@@ -281,7 +281,7 @@ static int gr2d_probe(struct platform_device *pdev)
- 	if (!gr2d->channel)
- 		return -ENOMEM;
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index a1607d6..790ddf1 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -73,7 +73,7 @@ struct host1x_syncpt_ops {
+ 	void (*restore_wait_base)(struct host1x_syncpt *syncpt);
+ 	void (*load_wait_base)(struct host1x_syncpt *syncpt);
+ 	u32 (*load)(struct host1x_syncpt *syncpt);
+-	void (*cpu_incr)(struct host1x_syncpt *syncpt);
++	int (*cpu_incr)(struct host1x_syncpt *syncpt);
+ 	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
+ };
  
--	*syncpts = host1x_syncpt_request(dev, 0);
-+	*syncpts = host1x_syncpt_request(dev, false);
- 	if (!(*syncpts)) {
- 		host1x_channel_free(gr2d->channel);
- 		return -ENOMEM;
+@@ -157,10 +157,10 @@ static inline u32 host1x_hw_syncpt_load(struct host1x *host,
+ 	return host->syncpt_op->load(sp);
+ }
+ 
+-static inline void host1x_hw_syncpt_cpu_incr(struct host1x *host,
+-					     struct host1x_syncpt *sp)
++static inline int host1x_hw_syncpt_cpu_incr(struct host1x *host,
++					    struct host1x_syncpt *sp)
+ {
+-	host->syncpt_op->cpu_incr(sp);
++	return host->syncpt_op->cpu_incr(sp);
+ }
+ 
+ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 590b69d..2ee4ad5 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -44,7 +44,7 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
+ 	u32 i;
+ 
+ 	for (i = 0; i < syncpt_incrs; i++)
+-		host1x_syncpt_cpu_incr(cdma->timeout.syncpt);
++		host1x_syncpt_incr(cdma->timeout.syncpt);
+ 
+ 	/* after CPU incr, ensure shadow is up to date */
+ 	host1x_syncpt_load(cdma->timeout.syncpt);
+diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
+index 6117499..0cf6095 100644
+--- a/drivers/gpu/host1x/hw/syncpt_hw.c
++++ b/drivers/gpu/host1x/hw/syncpt_hw.c
+@@ -77,21 +77,19 @@ static u32 syncpt_load(struct host1x_syncpt *sp)
+  * Write a cpu syncpoint increment to the hardware, without touching
+  * the cache.
+  */
+-static void syncpt_cpu_incr(struct host1x_syncpt *sp)
++static int syncpt_cpu_incr(struct host1x_syncpt *sp)
+ {
+ 	struct host1x *host = sp->host;
+ 	u32 reg_offset = sp->id / 32;
+ 
+ 	if (!host1x_syncpt_client_managed(sp) &&
+-	    host1x_syncpt_idle(sp)) {
+-		dev_err(host->dev, "Trying to increment syncpoint id %d beyond max\n",
+-			sp->id);
+-		host1x_debug_dump(sp->host);
+-		return;
+-	}
++	    host1x_syncpt_idle(sp))
++		return -EINVAL;
+ 	host1x_sync_writel(host, BIT_MASK(sp->id),
+ 			   HOST1X_SYNC_SYNCPT_CPU_INCR(reg_offset));
+ 	wmb();
++
++	return 0;
+ }
+ 
+ /* remove a wait pointed to by patch_addr */
 diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 6b7ee88..e560d67 100644
+index e560d67..afb631a 100644
 --- a/drivers/gpu/host1x/syncpt.c
 +++ b/drivers/gpu/host1x/syncpt.c
-@@ -32,7 +32,7 @@
- 
- static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
- 						  struct device *dev,
--						  int client_managed)
-+						  bool client_managed)
- {
- 	int i;
- 	struct host1x_syncpt *sp = host->syncpt;
-@@ -331,7 +331,7 @@ int host1x_syncpt_init(struct host1x *host)
- 	host1x_syncpt_restore(host);
- 
- 	/* Allocate sync point to use for clearing waits for expired fences */
--	host->nop_sp = _host1x_syncpt_alloc(host, NULL, 0);
-+	host->nop_sp = _host1x_syncpt_alloc(host, NULL, false);
- 	if (!host->nop_sp)
- 		return -ENOMEM;
- 
-@@ -339,7 +339,7 @@ int host1x_syncpt_init(struct host1x *host)
+@@ -128,22 +128,11 @@ u32 host1x_syncpt_load_wait_base(struct host1x_syncpt *sp)
  }
  
- struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
--					    int client_managed)
-+					    bool client_managed)
+ /*
+- * Write a cpu syncpoint increment to the hardware, without touching
+- * the cache. Caller is responsible for host being powered.
+- */
+-void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp)
+-{
+-	host1x_hw_syncpt_cpu_incr(sp->host, sp);
+-}
+-
+-/*
+  * Increment syncpoint value from cpu, updating cache
+  */
+-void host1x_syncpt_incr(struct host1x_syncpt *sp)
++int host1x_syncpt_incr(struct host1x_syncpt *sp)
  {
- 	struct host1x *host = dev_get_drvdata(dev->parent);
- 	return _host1x_syncpt_alloc(host, dev, client_managed);
-@@ -353,7 +353,7 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
- 	kfree(sp->name);
- 	sp->dev = NULL;
- 	sp->name = NULL;
--	sp->client_managed = 0;
-+	sp->client_managed = false;
+-	if (host1x_syncpt_client_managed(sp))
+-		host1x_syncpt_incr_max(sp, 1);
+-	host1x_syncpt_cpu_incr(sp);
++	return host1x_hw_syncpt_cpu_incr(sp->host, sp);
  }
  
- void host1x_syncpt_deinit(struct host1x *host)
+ /*
 diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index c998061..d00e758 100644
+index d00e758..267c0b9 100644
 --- a/drivers/gpu/host1x/syncpt.h
 +++ b/drivers/gpu/host1x/syncpt.h
-@@ -36,7 +36,7 @@ struct host1x_syncpt {
- 	atomic_t max_val;
- 	u32 base_val;
- 	const char *name;
--	int client_managed;
-+	bool client_managed;
- 	struct host1x *host;
- 	struct device *dev;
+@@ -115,9 +115,6 @@ static inline bool host1x_syncpt_idle(struct host1x_syncpt *sp)
+ /* Return pointer to struct denoting sync point id. */
+ struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, u32 id);
  
-@@ -94,7 +94,7 @@ static inline bool host1x_syncpt_check_max(struct host1x_syncpt *sp, u32 real)
- }
+-/* Request incrementing a sync point. */
+-void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp);
+-
+ /* Load current value from hardware to the shadow register. */
+ u32 host1x_syncpt_load(struct host1x_syncpt *sp);
  
- /* Return true if sync point is client managed. */
--static inline int host1x_syncpt_client_managed(struct host1x_syncpt *sp)
-+static inline bool host1x_syncpt_client_managed(struct host1x_syncpt *sp)
- {
- 	return sp->client_managed;
- }
-@@ -157,7 +157,7 @@ u32 host1x_syncpt_id(struct host1x_syncpt *sp);
+@@ -133,8 +130,8 @@ void host1x_syncpt_restore(struct host1x *host);
+ /* Read current wait base value into shadow register and return it. */
+ u32 host1x_syncpt_load_wait_base(struct host1x_syncpt *sp);
  
- /* Allocate a sync point for a device. */
- struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
--		int client_managed);
-+					    bool client_managed);
+-/* Increment sync point and its max. */
+-void host1x_syncpt_incr(struct host1x_syncpt *sp);
++/* Request incrementing a sync point. */
++int host1x_syncpt_incr(struct host1x_syncpt *sp);
  
- /* Free a sync point. */
- void host1x_syncpt_free(struct host1x_syncpt *sp);
+ /* Indicate future operations by incrementing the sync point max. */
+ u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
 -- 
 1.7.9.5
