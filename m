@@ -1,38 +1,38 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCH 6/6] drm/tegra: Fix syncpoint increment return code
-Date: Fri, 17 May 2013 14:49:48 +0300
-Message-ID: <1368791388-31441-7-git-send-email-amerilainen@nvidia.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 3/6] gpu: host1x: Fix memory access in syncpt request
+Date: Fri, 17 May 2013 14:49:45 +0300
+Message-ID: <1368791388-31441-4-git-send-email-amerilainen@nvidia.com>
 References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@avionic-design.de, airlied@linux.ie, linux-tegra@vger.kernel.org
-Cc: tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1368791388-31441-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add syncpoint increment to return a proper return code based on the
-return value from host1x.
+This patch fixes a bad memory access in syncpoint request code. If
+no syncpoints were available, the code accessed unreserved memory
+area causing unexpected behaviour.
 
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/drm/drm.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/host1x/syncpt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
-index 2b561c9..1dfd454 100644
---- a/drivers/gpu/host1x/drm/drm.c
-+++ b/drivers/gpu/host1x/drm/drm.c
-@@ -378,8 +378,7 @@ static int tegra_syncpt_incr(struct drm_device *drm, void *data,
- 	if (!sp)
- 		return -EINVAL;
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 5bf5366..6b7ee88 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -40,7 +40,7 @@ static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
  
--	host1x_syncpt_incr(sp);
--	return 0;
-+	return host1x_syncpt_incr(sp);
- }
+ 	for (i = 0; i < host->info->nb_pts && sp->name; i++, sp++)
+ 		;
+-	if (sp->dev)
++	if (i >= host->info->nb_pts)
+ 		return NULL;
  
- static int tegra_syncpt_wait(struct drm_device *drm, void *data,
+ 	name = kasprintf(GFP_KERNEL, "%02d-%s", sp->id,
 -- 
 1.7.9.5
