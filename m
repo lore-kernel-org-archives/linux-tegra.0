@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 4/6] ARM: tegra114: add power up sequence for warm boot CPU
-Date: Mon, 20 May 2013 18:39:27 +0800
-Message-ID: <1369046369-12489-5-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 2/6] ARM: tegra: skip SCU and PL310 code when CPU is not Cortex-A9
+Date: Mon, 20 May 2013 18:39:25 +0800
+Message-ID: <1369046369-12489-3-git-send-email-josephl@nvidia.com>
 References: <1369046369-12489-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,68 +12,78 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-For Tegra114, once the CPUs were powered up by PMC in cold boot flow. The
-flow controller will maintain the power state and control power sequence
-for each CPU by setting event trigger (e.g. CPU hotplug ,idle and
-suspend power down/up).
+For supporting single image on all Tegra series, we need to skip some HW
+support code for Cortex-A9 only.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* no change
+* no change; but double confirmed the patch is OK with THUMB2_KERNEL
 ---
- arch/arm/mach-tegra/flowctrl.h |  1 +
- arch/arm/mach-tegra/platsmp.c  | 25 ++++++++++++++++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ arch/arm/mach-tegra/sleep.S |  8 +++++---
+ arch/arm/mach-tegra/sleep.h | 24 ++++++++++++++++++------
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/flowctrl.h b/arch/arm/mach-tegra/flowctrl.h
-index 67eab56..7a29bae 100644
---- a/arch/arm/mach-tegra/flowctrl.h
-+++ b/arch/arm/mach-tegra/flowctrl.h
-@@ -25,6 +25,7 @@
- #define FLOW_CTRL_WAITEVENT		(2 << 29)
- #define FLOW_CTRL_WAIT_FOR_INTERRUPT	(4 << 29)
- #define FLOW_CTRL_JTAG_RESUME		(1 << 28)
-+#define FLOW_CTRL_SCLK_RESUME		(1 << 27)
- #define FLOW_CTRL_HALT_CPU_IRQ		(1 << 10)
- #define	FLOW_CTRL_HALT_CPU_FIQ		(1 << 8)
- #define FLOW_CTRL_CPU0_CSR		0x8
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index fad4226..554aedc 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -140,8 +140,31 @@ remove_clamps:
+diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
+index 364d845..9daaef2 100644
+--- a/arch/arm/mach-tegra/sleep.S
++++ b/arch/arm/mach-tegra/sleep.S
+@@ -106,9 +106,11 @@ ENTRY(tegra_shut_off_mmu)
+ 	isb
+ #ifdef CONFIG_CACHE_L2X0
+ 	/* Disable L2 cache */
+-	mov32	r4, TEGRA_ARM_PERIF_BASE + 0x3000
+-	mov	r5, #0
+-	str	r5, [r4, #L2X0_CTRL]
++	check_cpu_part_num 0xc09, r9, r10
++	movweq	r4, #:lower16:(TEGRA_ARM_PERIF_BASE + 0x3000)
++	movteq	r4, #:upper16:(TEGRA_ARM_PERIF_BASE + 0x3000)
++	moveq	r5, #0
++	streq	r5, [r4, #L2X0_CTRL]
+ #endif
+ 	mov	pc, r0
+ ENDPROC(tegra_shut_off_mmu)
+diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
+index f9f2164..2269c0d 100644
+--- a/arch/arm/mach-tegra/sleep.h
++++ b/arch/arm/mach-tegra/sleep.h
+@@ -70,19 +70,31 @@
+ 	movt	\reg, #:upper16:\val
+ .endm
  
- static int tegra114_boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
-+	int ret = 0;
++/* Marco to check CPU part num */
++.macro check_cpu_part_num part_num, tmp1, tmp2
++	mrc	p15, 0, \tmp1, c0, c0, 0
++	ubfx	\tmp1, \tmp1, #4, #12
++	mov32	\tmp2, \part_num
++	cmp	\tmp1, \tmp2
++.endm
 +
- 	cpu = cpu_logical_map(cpu);
--	return tegra_pmc_cpu_power_on(cpu);
-+
-+	if (cpumask_test_cpu(cpu, &tegra_cpu_init_mask)) {
-+		/*
-+		 * Warm boot flow
-+		 * The flow controller in charge of the power state and
-+		 * control for each CPU.
-+		 */
-+		/* set SCLK as event trigger for flow controller */
-+		flowctrl_write_cpu_csr(cpu, 1);
-+		flowctrl_write_cpu_halt(cpu,
-+				FLOW_CTRL_WAITEVENT | FLOW_CTRL_SCLK_RESUME);
-+	} else {
-+		/*
-+		 * Cold boot flow
-+		 * The CPU is powered up by toggling PMC directly. It will
-+		 * also initial power state in flow controller. After that,
-+		 * the CPU's power state is maintained by flow controller.
-+		 */
-+		ret = tegra_pmc_cpu_power_on(cpu);
-+	}
-+
-+	return ret;
- }
+ /* Macro to exit SMP coherency. */
+ .macro exit_smp, tmp1, tmp2
+ 	mrc	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
+ 	bic	\tmp1, \tmp1, #(1<<6) | (1<<0)	@ clear ACTLR.SMP | ACTLR.FW
+ 	mcr	p15, 0, \tmp1, c1, c0, 1	@ ACTLR
+ 	isb
+-	cpu_id	\tmp1
+-	mov	\tmp1, \tmp1, lsl #2
+-	mov	\tmp2, #0xf
+-	mov	\tmp2, \tmp2, lsl \tmp1
+-	mov32	\tmp1, TEGRA_ARM_PERIF_VIRT + 0xC
+-	str	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
++#ifdef CONFIG_HAVE_ARM_SCU
++	check_cpu_part_num 0xc09, \tmp1, \tmp2
++	mrceq	p15, 0, \tmp1, c0, c0, 5
++	andeq	\tmp1, \tmp1, #0xF
++	moveq	\tmp1, \tmp1, lsl #2
++	moveq	\tmp2, #0xf
++	moveq	\tmp2, \tmp2, lsl \tmp1
++	ldreq	\tmp1, =(TEGRA_ARM_PERIF_VIRT + 0xC)
++	streq	\tmp2, [\tmp1]			@ invalidate SCU tags for CPU
+ 	dsb
++#endif
+ .endm
  
- static int __cpuinit tegra_boot_secondary(unsigned int cpu,
+ /* Macro to check Tegra revision */
 -- 
 1.8.2.2
