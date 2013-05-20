@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2 3/4] ARM: tegra: convert device tree files to use GPIO defines
-Date: Mon, 20 May 2013 11:10:45 -0600
-Message-ID: <1369069845-7601-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 3/4] ARM: tegra: convert device tree files to use GPIO defines
+Date: Mon, 20 May 2013 11:38:20 -0600
+Message-ID: <1369071500-10513-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -15,12 +15,17 @@ and some interrupts properties. Use standard GPIO flag defines too.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
+v3: Fix some silly mistakes in v2. Now, there are 0 diffs in all .dtb files
+* nvidia,phy-reset-gpio should be ACTIVE_LOW not ACTIVE_HIGH.
+* Don't remove cd-gpios from tegra20-whistler.dts.
+* Whistler's SD slot wp-gpios should be ACTIVE_HIGH not ACTIVE_LOW.
+* Don't s/gpio/gpios/ in Beaver's gpio-leds property names.
 v2: Rebase on recent *.dts changes
 
 Note: I'm only reposting patch 3/4 as V2, since it's the only one that
 changed. Typically I wouldn't do this, but since I'm applying the
 patches, I'm not confusing myself too much doing this:-)
----
+
  arch/arm/boot/dts/tegra114-dalmore.dts     |   12 ++++----
  arch/arm/boot/dts/tegra114.dtsi            |    2 ++
  arch/arm/boot/dts/tegra20-colibri-512.dtsi |   19 +++++++-----
@@ -34,14 +39,14 @@ patches, I'm not confusing myself too much doing this:-)
  arch/arm/boot/dts/tegra20-tec.dts          |    7 +++--
  arch/arm/boot/dts/tegra20-trimslice.dts    |   19 +++++++-----
  arch/arm/boot/dts/tegra20-ventana.dts      |   41 ++++++++++++++-----------
- arch/arm/boot/dts/tegra20-whistler.dts     |   10 +++---
+ arch/arm/boot/dts/tegra20-whistler.dts     |   11 ++++---
  arch/arm/boot/dts/tegra20.dtsi             |    2 ++
  arch/arm/boot/dts/tegra30-beaver.dts       |   24 +++++++--------
  arch/arm/boot/dts/tegra30-cardhu-a02.dts   |   14 ++++-----
  arch/arm/boot/dts/tegra30-cardhu-a04.dts   |   16 +++++-----
  arch/arm/boot/dts/tegra30-cardhu.dtsi      |   39 +++++++++++------------
  arch/arm/boot/dts/tegra30.dtsi             |    2 ++
- 20 files changed, 186 insertions(+), 151 deletions(-)
+ 20 files changed, 187 insertions(+), 151 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
 index acc5257..2571525 100644
@@ -112,7 +117,7 @@ index aeeb53b..6cd6d41 100644
  
  / {
 diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index efd7051..146a65b 100644
+index efd7051..a80be14 100644
 --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
 @@ -14,7 +14,8 @@
@@ -141,13 +146,13 @@ index efd7051..146a65b 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	sdhci@c8000600 {
@@ -166,7 +171,7 @@ index efd7051..146a65b 100644
  	};
  };
 diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index 0f788f9..1ec11a5 100644
+index 0f788f9..8fac82b 100644
 --- a/arch/arm/boot/dts/tegra20-harmony.dts
 +++ b/arch/arm/boot/dts/tegra20-harmony.dts
 @@ -18,7 +18,8 @@
@@ -194,14 +199,14 @@ index 0f788f9..1ec11a5 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb@c5008000 {
@@ -339,7 +344,7 @@ index d7e32fa..3adfbfe 100644
  		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
  		clock-names = "pll_a", "pll_a_out0", "mclk";
 diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index cbbd85a..f223b83 100644
+index cbbd85a..0f267d8 100644
 --- a/arch/arm/boot/dts/tegra20-paz00.dts
 +++ b/arch/arm/boot/dts/tegra20-paz00.dts
 @@ -18,7 +18,8 @@
@@ -367,14 +372,14 @@ index cbbd85a..f223b83 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 168 1>; /* gpio PV0, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 168 1>; /* gpio PV0, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb@c5008000 {
@@ -444,7 +449,7 @@ index 508e56a..3d8e69b 100644
  		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
  		clock-names = "pll_a", "pll_a_out0", "mclk";
 diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 0855b5e..1df2c2a 100644
+index 0855b5e..3952757 100644
 --- a/arch/arm/boot/dts/tegra20-seaboard.dts
 +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
 @@ -18,7 +18,8 @@
@@ -507,14 +512,14 @@ index 0855b5e..1df2c2a 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb@c5008000 {
@@ -636,7 +641,7 @@ index 9a2a6a4..db58bb7 100644
  		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
  		clock-names = "pll_a", "pll_a_out0", "mclk";
 diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index d2966b2..44677ee 100644
+index d2966b2..4257ab4 100644
 --- a/arch/arm/boot/dts/tegra20-trimslice.dts
 +++ b/arch/arm/boot/dts/tegra20-trimslice.dts
 @@ -18,7 +18,8 @@
@@ -664,14 +669,14 @@ index d2966b2..44677ee 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 168 1>; /* gpio PV0, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 168 1>; /* gpio PV0, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb@c5008000 {
@@ -705,7 +710,7 @@ index d2966b2..44677ee 100644
  
  	regulators {
 diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 51feeb4..9568e69 100644
+index 51feeb4..ff8817b 100644
 --- a/arch/arm/boot/dts/tegra20-ventana.dts
 +++ b/arch/arm/boot/dts/tegra20-ventana.dts
 @@ -18,7 +18,8 @@
@@ -742,14 +747,14 @@ index 51feeb4..9568e69 100644
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio 169 1>; /* gpio PV1, active low */
 +		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
-+			GPIO_ACTIVE_HIGH>;
++			GPIO_ACTIVE_LOW>;
  	};
  
  	usb@c5008000 {
@@ -837,7 +842,7 @@ index 51feeb4..9568e69 100644
  		clocks = <&tegra_car 112>, <&tegra_car 113>, <&tegra_car 94>;
  		clock-names = "pll_a", "pll_a_out0", "mclk";
 diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index 1748be5..2b7a655 100644
+index 1748be5..9a773bb 100644
 --- a/arch/arm/boot/dts/tegra20-whistler.dts
 +++ b/arch/arm/boot/dts/tegra20-whistler.dts
 @@ -18,7 +18,8 @@
@@ -868,13 +873,14 @@ index 1748be5..2b7a655 100644
  	};
  
  	usb-phy@c5008000 {
-@@ -528,8 +529,7 @@
+@@ -528,8 +529,8 @@
  
  	sdhci@c8000400 {
  		status = "okay";
 -		cd-gpios = <&gpio 69 1>; /* gpio PI5 */
 -		wp-gpios = <&gpio 173 0>; /* gpio PV5 */
-+		wp-gpios = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_LOW>;
++		cd-gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
++		wp-gpios = <&gpio TEGRA_GPIO(V, 5) GPIO_ACTIVE_HIGH>;
  		bus-width = <8>;
  	};
  
@@ -889,7 +895,7 @@ index cde2f80..673f386 100644
  
  / {
 diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index e86c280..d23d9ed 100644
+index e86c280..40b0bd70 100644
 --- a/arch/arm/boot/dts/tegra30-beaver.dts
 +++ b/arch/arm/boot/dts/tegra30-beaver.dts
 @@ -264,9 +264,9 @@
@@ -973,12 +979,12 @@ index e86c280..d23d9ed 100644
  		gpled1 {
  			label = "LED1"; /* CR5A1 (blue) */
 -			gpios = <&gpio 89 0>; /* gpio PL1 */
-+			gpio = <&gpio TEGRA_GPIO(L, 1) GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio TEGRA_GPIO(L, 1) GPIO_ACTIVE_HIGH>;
  		};
  		gpled2 {
  			label = "LED2"; /* CR4A2 (green) */
 -			gpios = <&gpio 88 0>; /* gpio PL0 */
-+			gpio = <&gpio TEGRA_GPIO(L, 0) GPIO_ACTIVE_HIGH>;
++			gpios = <&gpio TEGRA_GPIO(L, 0) GPIO_ACTIVE_HIGH>;
  		};
  	};
  };
