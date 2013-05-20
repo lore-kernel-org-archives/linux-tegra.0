@@ -1,44 +1,46 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: emc: correction of ram-code parsing from
- dt
-Date: Mon, 20 May 2013 14:06:09 +0400
-Message-ID: <5199F591.80409@gmail.com>
-References: <1368390409-14156-1-git-send-email-digetx@gmail.com> <5196C2EF.2060408@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/6] ARM: tegra114: add CPU hotplug support
+Date: Mon, 20 May 2013 18:39:23 +0800
+Message-ID: <1369046369-12489-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5196C2EF.2060408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-18.05.2013 03:53, Stephen Warren =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On 05/12/2013 02:26 PM, Dmitry Osipenko wrote:
->> Change tegra_emc_ramcode_devnode() to get ram-code from child node i=
-nstead of
->> parent.
->=20
-> I've applied this to Tegra's for-3.11/soc branch.
->=20
+Tegra 114 is different with other Tegra SoC chips. It using ARM Cortex-A15
+as CPU core and a enhanced flow controller for CPU power control. So
+we need to skip some code that was for Contex-A9 and some other support
+code that was for other Tegra SoC chips. Then adding the proper power up
+and hot plug control for Tegra114.
 
-Thanks.
+Verified on Seaboard, Cardhu and Dalmore.
 
->> For me it looks like it should be better to place ram-code inside of=
- table
->> nodes, so num_tables will be incremented if table has valid ram-code=
- and table
->> with invalid ram-code will be skipped on getting table params loop. =
-This avoids
->> placing of #address-cells and #size-cells in nodes with ram-code.
->> If it looks ok, I may send new patch.
->=20
-> That would be a change to the DT binding. DT bindings are supposed to=
- be
-> a stable ABI, so we wouldn't want to change the binding unless there =
-was
-> a strong reason. I don't think there is one here.
->=20
+V2:
+* Double confirmed the patch set is OK with THUMB2_KERNEL enabled.
 
-Ok.
+Joseph Lo (6):
+  ARM: tegra: add an assembly marco to check Tegra SoC ID
+  ARM: tegra: skip SCU and PL310 code when CPU is not Cortex-A9
+  ARM: tegra: make tegra_resume can work for Tegra114
+  ARM: tegra114: add power up sequence for warm boot CPU
+  clk: tegra114: implement wait_for_reset and disable_clock for
+    tegra_cpu_car_ops
+  ARM: tegra114: add CPU hotplug support
+
+ arch/arm/mach-tegra/Makefile        |  1 +
+ arch/arm/mach-tegra/flowctrl.h      |  1 +
+ arch/arm/mach-tegra/fuse.h          | 22 ++++++++--------
+ arch/arm/mach-tegra/hotplug.c       |  2 ++
+ arch/arm/mach-tegra/platsmp.c       | 25 +++++++++++++++++-
+ arch/arm/mach-tegra/reset-handler.S | 51 +++++++++++++++++++++----------------
+ arch/arm/mach-tegra/sleep-tegra30.S | 30 ++++++++++++++++++----
+ arch/arm/mach-tegra/sleep.S         |  8 +++---
+ arch/arm/mach-tegra/sleep.h         | 35 ++++++++++++++++++++-----
+ drivers/clk/tegra/clk-tegra114.c    | 23 ++++++++++++++++-
+ 10 files changed, 150 insertions(+), 48 deletions(-)
+
+-- 
+1.8.2.2
