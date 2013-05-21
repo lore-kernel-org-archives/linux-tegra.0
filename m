@@ -1,48 +1,31 @@
-From: =?koi8-r?Q?=C7=D5=DB=C1?= <habrovec-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Subject: =?koi8-r?Q?=CF=C2=D2=C1=D4=C9=D4=D8_=D6=C9=DA=CE=D8_=DA?=
-	=?koi8-r?Q?=CE=C1=DE=C9=D4=C5=CC=D8=CE=CF_=C2=CF=CC=C5=C5?=
-	=?koi8-r?Q?_=D0=D2=C9=D7=CC=C5=CB=C1=D4=C5=CC=D8=CE=CF=CA?=
-Date: Tue, 21 May 2013 11:05:59 +0200
-Message-ID: <9C85B3AC00264A35B4813ECC38B6AB3D@nmsntr>
-Reply-To: =?koi8-r?Q?=C7=D5=DB=C1?= <bmr2004-SrQw2C1xC5TQ4tFLR8X5nw@public.gmane.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 0/6] ARM: tegra114: add CPU hotplug support
+Date: Tue, 21 May 2013 17:58:02 +0800
+Message-ID: <1369130282.21734.0.camel@jlo-ubuntu-64.nvidia.com>
+References: <1369046369-12489-1-git-send-email-josephl@nvidia.com>
+	 <519AAFCB.8060007@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <519AAFCB.8060007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kondratjuk_ea-NHRZwclvRZA@public.gmane.org, recep-U0/amyKQ0XWxXYMnEHVG5g@public.gmane.org, mosbell-5URONGGNgjI@public.gmane.org, ceminar-o+MxOtu4lMCHXe+LvDLADg@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-=F7=C1=CD =CB=CF=C7=C4=C1 - =CE=C9=C2=D5=C4=D8 =D0=D2=C9=C8=CF=C4=C9=CC=
-=CF=D3=D8 =D3=CC=D5=DE=C1=D4=D8=D3=D1 =D7 =DC=D4=C1=CB=CF=CA =D3=C9=D4=D5=
-=C1=C3=C9=C9, =C8=CF=D4=D8-=CB=CF=C7=C4=C1 =F7=D9 =EC=C9=C3=C5=DA=D2=C9=
-=CC=C9 , =C2=D5=C4=D4=CF =CF=D3=D4=C1=CC=D8=CE=D9=C5 =DA=C1 =DC=D4=CF =D7=
-=D2=C5=CD=D1 =CF=D4=CF=D2=D7=C1=CC=C9=D3=D8 =C4=C1=CC=C5=CB=CF =D7=D0=C5=
-=D2=C5=C4 =C9 =D2=C1=DA=C4=D2=C1=D6=C1=CC=C9=D3=D8 =CE=C1 =D3=C5=C2=D1 =
-=C9=DA - =DA=C1 =D3=C5=C7=CF. =CE=C5 =D7=C9=C4=C5=CC=C9 =CB=C1=CB =D7=D9=
-=CC=C5=DA=D4=C9 =C9=DA =DA=C1=D4=D2=D5=C4=CE=C9=D4=C5=CC=D8=CE=CF=CA =D3=
-=C9=D4=D5=C1=C3=C9=C9, =CB=C1=CB =D0=C5=D2=C5=C2=CF=D2=CF=D4=D8 =D0=D2=C5=
-=D0=D1=D4=D3=D4=D7=C9=C5. =F7=D2=CF=C4=C5 =CE=C1=C8=CF=C4=C9=CC=CF=D3=D8=
- =F7=D3=C5 =D0=CF=D3=D4=C9=D6=C9=CD=CF, =C9 =D0=CC=C1=CE =D0=D2=C9=D3=D5=
-=D4=D3=D4=D7=CF=D7=C1=CC, =C1 =D3 =D0=C5=D2=D7=CF=CE=C1=DE=C1=CC=D8=CE=CF=
-=CA =D0=CF=DA=C9=C3=C9=C9 =D4=D2=CF=CE=D5=D4=D8=D3=D1 =CE=C5 =D5=C4=C1=D7=
-=C1=CC=CF=D3=D8. =D7=C9=C4=C5=CC=C9, =D1=CB=CF =DE=D4=CF =CE=C5=CF=C2=C8=
-=CF=C4=C9=CD=CF =FC=D4=CF =CF=C2=D1=DA=C1=D4=C5=CC=D8=CE=CF =D3=D7=C5=D2=
-=DB=C9=D4=D8, =CE=CF =D5=CC=C5=D4=D5=DE=C9=D7=C1=CC=C1=D3=D8 =CD=CF=D4=C9=
-=D7=C1=C3=C9=D1. Web: http://goo.gl/3fioS?/EyotR =ED=D9 =D7=C5=C4=C9=CD=
- =CB=C1=CB =D0=CF=CD=CF=DE=D8 =F7=C1=CD =C4=CF=D3=D4=C9=DE=D8 =D5=D3=D0=
-=C5=C8=C1! =F4=C1=CB=C9=C5 =D3=C9=D4=D5=C1=C3=C9=C9 =DA=CE=C1=CB=CF=CD=D9=
- =D7=D3=C5=CD. =C9 =CE=C5 =C9=CD=C5=C5=D4 =DA=CE=C1=DE=C5=CE=C9=D1, =CB=
-=C1=CB=CF=D7=D5=C0 =DA=C1=C4=C1=DE=D5 =F7=D9 =D0=D2=C5=C4 =D3=CF=C2=CF=C0=
- =D5=D3=D4=C1=CE=C1=D7=CC=C9=D7=C1=C5=D4=C5 - =D0=C5=D2=C5=CD=C5=CE=C9=D4=
-=D8 =D3=CC=D5=D6=C2=D5, =D5=DE=D2=C5=C4=C9=D4=D8 =CF=D2=C7=C1=CE=C9=DA=C1=
-=C3=C9=C0 =C9=CC=C9 =C9=D3=C8=D5=C4=C1=D4=D8 =CE=C1 1 0 =CB=C9=CC=CF=C7=
-=D2=C1=CD=CD. =ED=D9 =D0=D2=C5=DA=C5=CE=D4=D5=C5=CD =D7=C1=DB=C5=CD=D5 =
-=D7=CE=C9=CD=C1=CE=C9=C0 =CE=CF=D7=C5=CE=D8=CB=D5=C0 =D0=D2=CF=C7=D2=C1=
-=CD=CD=CB=D5 =CC=C0=C4=D1=CD, =CB=CF=C9 =CE=C1=D0=D2=C1=D7=CC=D1=C0=D4=D3=
-=D1 =CB =D3=D7=CF=C9=CD =C3=C5=CC=D1=CD! =CF=CE=C1 =D0=CF=D3=D0=CF=D3=CF=
-=C2=D3=D4=D7=D5=C5=D4 =F7=C1=CD <<=D2=C1=DA=CC=CF=D6=C9=D4=D8 =CF=CB=CF=
-=CE=DE=C1=D4=C5=CC=D8=CE=CF =D0=CF =D0=CF=CC=CF=DE=CB=C1=CD>> =C9 =D3=CF=
-=D3=D2=C5=C4=CF=D4=CF=DE=C9=D4=D8 =D3=CB=D2=D9=D4=D9=C5 =D2=C5=DA=C5=D2=
-=D7=D9 =CE=C1 =CF=D3=CE=CF=D7=CE=CF=CD - =CE=C1 =F7=C1=DB=C5=CA =C3=C5=CC=
-=C9!
+On Tue, 2013-05-21 at 07:20 +0800, Stephen Warren wrote:
+> On 05/20/2013 04:39 AM, Joseph Lo wrote:
+> > Tegra 114 is different with other Tegra SoC chips. It using ARM Cortex-A15
+> > as CPU core and a enhanced flow controller for CPU power control. So
+> > we need to skip some code that was for Contex-A9 and some other support
+> > code that was for other Tegra SoC chips. Then adding the proper power up
+> > and hot plug control for Tegra114.
+> 
+> This version still doesn't enable hotplug of CPU0, yet at least patch
+> 6/6 contains some changes that support enabling that. Are you planning
+> on sending a separate patch to enable this later, or was this an oversight?
+
+I will provide another patch to support it.
+
+Joseph
