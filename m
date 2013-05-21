@@ -1,44 +1,72 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: defconfig fixes
-Date: Mon, 20 May 2013 23:51:13 -0700
-Message-ID: <20130521065113.GJ20453@quad.lixom.net>
-References: <1369076839-31787-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [v2 0/6] CLK: tegra: convert device tree files to use CLK defines
+Date: Tue, 21 May 2013 12:10:44 +0300
+Message-ID: <1369127450-15203-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1369076839-31787-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 20, 2013 at 01:07:19PM -0600, Stephen Warren wrote:
-> From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> 
-> The AK8975 Kconfig option was renamed during the 3.10 merge window.
-> Adjust tegra_defconfig to enable the new name, so it's not missing
-> useful features.
-> 
-> Tegra DRM support used to be enabled in the default Tegra configuration,
-> but it now depends on CONFIG_TEGRA_HOST1X which is disabled by default.
-> Enable CONFIG_TEGRA_HOST1X so that DRM support is compiled in again.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [swarren, squashed Alex's and my changes together]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Olof, Arnd,
-> 
-> Can this be taken into 3.10? Hopefully Linus won't mind defconfig changes
-> sneaking in now. If not, let me know, and I'll for it into Tegra's
-> for-3.11/dt branch instead. Thanks.
+This patchset converts device tree files to use CLK defines. This
+version was updated along with the latest DT changes.
 
-Since people actually use the defconfigs it does make sense to keep them
-working and regression-free.
+The following changes since commit 7479d8bb5650f43053d0e82fa44db668cf968f11:
 
-I think we'll be fine with a rare occurrance of it. We'll find out. :)
+  TESTING: Build Tegra USB as a module (2013-05-20 13:11:19 -0600)
 
+are available in the git repository at:
 
+  git://nv-tegra.nvidia.com/user/hdoyu/linux.git dt-replace-clkid
 
--Olof
+for you to fetch changes up to cfafa8272866ecc3e8baad7f3066921b279890fe:
+
+  ARM: tegra114: convert device tree files to use CLK defines (2013-05-21 11:16:47 +0300)
+
+----------------------------------------------------------------
+Hiroshi Doyu (6):
+      ARM: tegra20: create a DT header defining CLK IDs
+      ARM: tegra20: convert device tree files to use CLK defines
+      ARM: tegra30: create a DT header defining CLK IDs
+      ARM: tegra30: convert device tree files to use CLK defines
+      ARM: tegra114: create a DT header defining CLK IDs
+      ARM: tegra114: convert device tree files to use CLK defines
+
+ .../bindings/clock/nvidia,tegra114-car.txt         | 252 +--------------
+ .../bindings/clock/nvidia,tegra20-car.txt          | 154 +---------
+ .../bindings/clock/nvidia,tegra30-car.txt          | 211 +------------
+ arch/arm/boot/dts/tegra114-dalmore.dts             |   4 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |  79 ++---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi         |   4 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts          |   4 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |   4 +-
+ arch/arm/boot/dts/tegra20-plutux.dts               |   4 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   4 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |   4 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   4 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-whistler.dts             |   4 +-
+ arch/arm/boot/dts/tegra20.dtsi                     | 116 +++----
+ arch/arm/boot/dts/tegra30-beaver.dts               |   4 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     | 110 ++++---
+ include/dt-bindings/clk/tegra114-car.h             | 342 +++++++++++++++++++++
+ include/dt-bindings/clk/tegra20-car.h              | 158 ++++++++++
+ include/dt-bindings/clk/tegra30-car.h              | 265 ++++++++++++++++
+ 22 files changed, 984 insertions(+), 755 deletions(-)
+ create mode 100644 include/dt-bindings/clk/tegra114-car.h
+ create mode 100644 include/dt-bindings/clk/tegra20-car.h
+ create mode 100644 include/dt-bindings/clk/tegra30-car.h
