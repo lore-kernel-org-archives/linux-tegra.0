@@ -1,37 +1,32 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: disable host1x on multiplatform if Tegrais
- not selected
-Date: Wed, 22 May 2013 15:02:06 -0600
-Message-ID: <519D324E.9030905@wwwdotorg.org>
-References: <c4e0a1015f6f1e2d5104dd3a7ef1a35f0a88bd72.1369253144.git.marvin24@gmx.de> <519D2638.8090203@wwwdotorg.org> <6893533.OPXKV14rt0@fb07-iapwap2.physik.uni-giessen.de>
+Subject: Re: [v3 1/6] ARM: tegra20: create a DT header defining CLK IDs
+Date: Wed, 22 May 2013 15:16:23 -0600
+Message-ID: <519D35A7.5090102@wwwdotorg.org>
+References: <1369241136-21903-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6893533.OPXKV14rt0-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1369241136-21903-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/22/2013 02:24 PM, Marc Dietrich wrote:
-> Am Mittwoch, 22. Mai 2013, 14:10:32 schrieb Stephen Warren:
->> On 05/22/2013 02:07 PM, Marc Dietrich wrote:
->>> host1x needs Tegra clock support which is only enabled if ARCH_TEGRA
->>> is selected.
->>
->> You should send this patch to the drives/gpu maintainer and mailing list
->> (although perhaps Thierry sends pull requests for host1x?). And probably
->> explain why it's necessary.
+On 05/22/2013 10:45 AM, Hiroshi Doyu wrote:
+> Create a header file to define the clock IDs used by the Tegra20 clock
+> binding. Remove the list of definitions from the binding documentation,
+> and refer the reader to the header file.
 > 
-> Well, there is no drivers/gpu maintainer, maybe you meant drivers/gpu/drm, but 
-> I don't know if host1x fits there. What's unclear in the patch description?
+> This will allow the same header to be used by both device tree files,
+> and drivers implementing this binding, which guarantees that the two
+> stay in sync. This also makes device trees more readable by using names
+> instead of magic numbers.
 
-It looks like the MAINTAINERS entry wasn't updated when the host1x code
-was added, and drivers/gpu/drm/tegra moved to drivers/gpu/host1x. I
-guess Thierry is applying patches for this directory.
+I have applied patches 1, 3, 5 to Tegra's for-3.11/deps-for-clk branch,
+merged that into Tegra's for-3.11/dt branch, and then applied patches 2,
+4, 6 to Tegra's for-3.11/dt branch.
 
-The commit description would typically mention the compile error that
-this solves and/or exactly why Tegra clock support is needed, rather
-than just the clock core which would typically provide all the APIs
-drivers need.
+Once you send the drivers/clk changes that build on top of this, I'll
+create a tag and send a pull request to Mike to pick up the headers so
+he can apply the clk changes.
