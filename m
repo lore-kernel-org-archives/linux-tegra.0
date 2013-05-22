@@ -1,60 +1,86 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: add cpu_disable for hotplug
-Date: Wed, 22 May 2013 12:03:04 +0300
-Message-ID: <20130522090304.GT21944@tbergstrom-lnx.Nvidia.com>
-References: <1369131215-2920-1-git-send-email-josephl@nvidia.com>
- <519B9DB4.7070106@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [v2 0/6] CLK: tegra: convert device tree files to use CLK
+ defines
+Date: Wed, 22 May 2013 12:07:30 +0200
+Message-ID: <20130522.130730.1153046210420942555.hdoyu@nvidia.com>
+References: <1369127450-15203-1-git-send-email-hdoyu@nvidia.com><519B9B5D.4050402@wwwdotorg.org><20130522091248.b3acd9c56ab66535d75b8fd1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <519B9DB4.7070106@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Joseph Lo <josephl@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130522091248.b3acd9c56ab66535d75b8fd1-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 21, 2013 at 06:15:48PM +0200, Stephen Warren wrote:
-> On 05/21/2013 04:13 AM, Joseph Lo wrote:
-> > The Tegra114 could hotplug the CPU0, but the common cpu_disable didn't
-> > support that. Adding a Tegra specific cpu_disable function for it.
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 22 May 2013 08:12:48 +0200:
+
+> On Tue, 21 May 2013 18:05:49 +0200
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> 
+> > On 05/21/2013 03:10 AM, Hiroshi Doyu wrote:
+> > > This patchset converts device tree files to use CLK defines. This
+> > > version was updated along with the latest DT changes.
+> > > 
+> > > The following changes since commit 7479d8bb5650f43053d0e82fa44db668cf968f11:
+> > > 
+> > >   TESTING: Build Tegra USB as a module (2013-05-20 13:11:19 -0600)
 > > 
-> > Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> > That commit is in my personal work-in-progress branch. This series
+> > should be based on Tegra's for-3.11/dt branch. This will make a
+> > difference (at least) in patch 6/6, where you've edited some DT nodes
+> > that don't yet exist upstream (i.e. Tegra's for-3.11/dt branch) and
+> > hence this series won't apply there.
 > 
-> > diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-> 
-> > +int tegra_cpu_disable(unsigned int cpu)
-> > +{
-> > +	switch (tegra_chip_id) {
-> > +	case TEGRA114:
-> > +		return 0;
-> > +	default:
-> > +		return cpu == 0 ? -EPERM : 0;
-> > +	}
-> > +}
-> 
-> Do we expect all/most future chips to support hotplug of CPU0? Or at
-> least, fewer chips to have the restriction than not? If so, it might be
+> I'll rebase.
 
-Yes. I think we can safely assume future chips will support hotplugging CPU0.
+Rebased on Tegra's for-3.11/dt, including fix: [2/6] over 80 columns.
 
-> more forward-looking to write that as:
-> 
-> if (tegra_chip_id == TEGRA30)
->     return cpu == 0 ? -EPERM : 0;
-> 
+If you want me to send patches again, please let me know.
 
-Also Tegra20 doesn't support hotplugging CPU0?
+The following changes since commit 4d0c81c723f78a2f7f6ef844ff8e1fd174180029:
 
-Cheers,
+  ARM: tegra: Add charger subnode to tps65090 node (2013-05-20 13:14:09 -0600)
 
-Peter.
+are available in the git repository at:
+
+  git://nv-tegra.nvidia.com/user/hdoyu/linux.git dt-replace-clkid3
+
+for you to fetch changes up to 00535ac4b17af0691a73737a70b0cbd78a9d2262:
+
+  ARM: tegra114: convert device tree files to use CLK defines (2013-05-22 12:58:04 +0300)
+
+----------------------------------------------------------------
+Hiroshi Doyu (6):
+      ARM: tegra20: create a DT header defining CLK IDs
+      ARM: tegra20: convert device tree files to use CLK defines
+      ARM: tegra30: create a DT header defining CLK IDs
+      ARM: tegra30: convert device tree files to use CLK defines
+      ARM: tegra114: create a DT header defining CLK IDs
+      ARM: tegra114: convert device tree files to use CLK defines
+
+ .../bindings/clock/nvidia,tegra114-car.txt         | 252 +--------------
+ .../bindings/clock/nvidia,tegra20-car.txt          | 154 +---------
+ .../bindings/clock/nvidia,tegra30-car.txt          | 211 +------------
+ arch/arm/boot/dts/tegra114.dtsi                    |  51 +--
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi         |   4 +-
+ arch/arm/boot/dts/tegra20-harmony.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-medcom-wide.dts          |   4 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |   7 +-
+ arch/arm/boot/dts/tegra20-plutux.dts               |   4 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts             |   4 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |   4 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   4 +-
+ arch/arm/boot/dts/tegra20-ventana.dts              |   4 +-
+ arch/arm/boot/dts/tegra20-whistler.dts             |   4 +-
+ arch/arm/boot/dts/tegra20.dtsi                     | 116 +++----
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     | 110 ++++---
+ include/dt-bindings/clk/tegra114-car.h             | 342 +++++++++++++++++++++
+ include/dt-bindings/clk/tegra20-car.h              | 158 ++++++++++
+ include/dt-bindings/clk/tegra30-car.h              | 265 ++++++++++++++++
+ 20 files changed, 963 insertions(+), 743 deletions(-)
+ create mode 100644 include/dt-bindings/clk/tegra114-car.h
+ create mode 100644 include/dt-bindings/clk/tegra20-car.h
+ create mode 100644 include/dt-bindings/clk/tegra30-car.h
