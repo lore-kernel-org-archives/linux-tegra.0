@@ -1,58 +1,23 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add cpu_disable for hotplug
-Date: Wed, 22 May 2013 15:18:54 -0600
-Message-ID: <519D363E.4000409@wwwdotorg.org>
-References: <1369131215-2920-1-git-send-email-josephl@nvidia.com> <519B9DB4.7070106@wwwdotorg.org> <20130522090304.GT21944@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH V2 0/6] ARM: tegra114: add CPU hotplug support
+Date: Wed, 22 May 2013 15:21:24 -0600
+Message-ID: <519D36D4.3010100@wwwdotorg.org>
+References: <1369046369-12489-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130522090304.GT21944-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1369046369-12489-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/22/2013 03:03 AM, Peter De Schrijver wrote:
-> On Tue, May 21, 2013 at 06:15:48PM +0200, Stephen Warren wrote:
->> On 05/21/2013 04:13 AM, Joseph Lo wrote:
->>> The Tegra114 could hotplug the CPU0, but the common cpu_disable didn't
->>> support that. Adding a Tegra specific cpu_disable function for it.
->>>
->>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->>> diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
->>
->>> +int tegra_cpu_disable(unsigned int cpu)
->>> +{
->>> +	switch (tegra_chip_id) {
->>> +	case TEGRA114:
->>> +		return 0;
->>> +	default:
->>> +		return cpu == 0 ? -EPERM : 0;
->>> +	}
->>> +}
->>
->> Do we expect all/most future chips to support hotplug of CPU0? Or at
->> least, fewer chips to have the restriction than not? If so, it might be
-> 
-> Yes. I think we can safely assume future chips will support hotplugging CPU0.
-> 
->> more forward-looking to write that as:
->>
->> if (tegra_chip_id == TEGRA30)
->>     return cpu == 0 ? -EPERM : 0;
->>
-> 
-> Also Tegra20 doesn't support hotplugging CPU0?
+On 05/20/2013 04:39 AM, Joseph Lo wrote:
+> Tegra 114 is different with other Tegra SoC chips. It using ARM Cortex-A15
+> as CPU core and a enhanced flow controller for CPU power control. So
+> we need to skip some code that was for Contex-A9 and some other support
+> code that was for other Tegra SoC chips. Then adding the proper power up
+> and hot plug control for Tegra114.
 
-Oh right, this isn't a Tegra30+ file. How about just inverting the
-switch so it doesn't need to change later:
-
-	switch (tegra_chip_id) {
-	case TEGRA20:
-	case TEGRA30:
-		return cpu == 0 ? -EPERM : 0;
-	default:
-		return 0;
-	}
+I have applied the series to Tegra's for-3.11/soc branch.
