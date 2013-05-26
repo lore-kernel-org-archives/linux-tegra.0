@@ -1,29 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra114: correctly output clk_32k
-Date: Fri, 24 May 2013 09:30:07 -0600
-Message-ID: <519F877F.3050801@wwwdotorg.org>
-References: <1369379407-12764-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1369379407-12764-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH RESEND] ARM: tegra114: correctly output clk_32k
+Date: Sun, 26 May 2013 11:56:31 +0900
+Message-ID: <1369536991-6111-1-git-send-email-acourbot@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/24/2013 01:10 AM, Alexandre Courbot wrote:
-> Tegra has a blink timer register that allows to modulate the
-> clk_32k clock before outputting it. Since clk_32k is presented to the
-> kernel as a fixed clock, make sure this register does not tamper with
-> the clock frequency and that clk_32k is outputted as-is, similarly to
-> what is done on t20 and t30.
+Tegra has a blink timer register that allows to modulate the
+clk_32k clock before outputting it. Since clk_32k is presented to the
+kernel as a fixed clock, make sure this register does not tamper with
+the clock frequency and that clk_32k is outputted as-is, similarly to
+what is done on t20 and t30.
 
-drivers/clk changes should go to Mike Turquette now that there aren't
-any inter-dependencies between core Tegra and Tegra clk driver patches.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra114.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I CC'd him here, but perhaps he'll want this resent if he doesn't have
-the original email still.
-
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index d78e16e..dc76d67 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -127,6 +127,7 @@
+ #define PMC_DPD_PADS_ORIDE_BLINK_ENB 20
+ #define PMC_CTRL 0
+ #define PMC_CTRL_BLINK_ENB 7
++#define PMC_BLINK_TIMER 0x40
+ 
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+@@ -1625,6 +1626,8 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
+ 	clks[clk_out_3] = clk;
+ 
+ 	/* blink */
++	/* clear the blink timer register to directly output clk_32k */
++	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
+ 	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
+ 				pmc_base + PMC_DPD_PADS_ORIDE,
+ 				PMC_DPD_PADS_ORIDE_BLINK_ENB, 0, NULL);
+-- 
+1.8.2.3
