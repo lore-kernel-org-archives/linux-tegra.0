@@ -1,68 +1,55 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: tegra: fix clk_out parents list
-Date: Mon, 27 May 2013 13:24:39 +0530
-Message-ID: <1369641279-6894-1-git-send-email-pgaikwad@nvidia.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 00/12] dma: various minor clean ups for slave drivers
+Date: Mon, 27 May 2013 15:14:30 +0300
+Message-ID: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Shawn Guo <shawn.guo@linaro.org>, Zhang Wei <zw@zh-kernel.org>, linux-tegra@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-tegra@vger.kernel.org
 
-Number of parents for clk_out_2 and clk_out_3 was incorrectly set
-to clk_out1_parents. Even though it did not break anything since the
-size was same better to fix.
+Here is a set of small independent patches that clean up or fix minor things
+across DMA slave drivers.
 
-Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra114.c |    4 ++--
- drivers/clk/tegra/clk-tegra30.c  |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Andy Shevchenko (12):
+  imx-sdma: remove useless variable
+  mxs-dma: remove useless variable
+  edma: no need to assign residue to 0 explicitly
+  ep93xx_dma: remove useless use of lock
+  fsldma: remove useless use of lock
+  mmp_pdma: remove useless use of lock
+  mpc512x_dma: remove useless use of lock
+  pch_dma: remove useless use of lock
+  tegra20-apb-dma: remove useless use of lock
+  ipu_idmac: re-use dma_cookie_status()
+  mmp_tdma: set cookies as well when asked for tx status
+  txx9dmac: return DMA_SUCCESS immediately from device_tx_status()
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index e0ee077..6d438bb 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1602,7 +1602,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
- 
- 	/* clk_out_2 */
- 	clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
--			       ARRAY_SIZE(clk_out1_parents), 0,
-+			       ARRAY_SIZE(clk_out2_parents), 0,
- 			       pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
- 			       &clk_out_lock);
- 	clks[clk_out_2_mux] = clk;
-@@ -1614,7 +1614,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
- 
- 	/* clk_out_3 */
- 	clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
--			       ARRAY_SIZE(clk_out1_parents), 0,
-+			       ARRAY_SIZE(clk_out3_parents), 0,
- 			       pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
- 			       &clk_out_lock);
- 	clks[clk_out_3_mux] = clk;
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 985ad69..b62e140 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1223,7 +1223,7 @@ static void __init tegra30_pmc_clk_init(void)
- 
- 	/* clk_out_2 */
- 	clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
--			       ARRAY_SIZE(clk_out1_parents), 0,
-+			       ARRAY_SIZE(clk_out2_parents), 0,
- 			       pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
- 			       &clk_out_lock);
- 	clk = clk_register_gate(NULL, "clk_out_2", "clk_out_2_mux", 0,
-@@ -1234,7 +1234,7 @@ static void __init tegra30_pmc_clk_init(void)
- 
- 	/* clk_out_3 */
- 	clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
--			       ARRAY_SIZE(clk_out1_parents), 0,
-+			       ARRAY_SIZE(clk_out3_parents), 0,
- 			       pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
- 			       &clk_out_lock);
- 	clk = clk_register_gate(NULL, "clk_out_3", "clk_out_3_mux", 0,
+ drivers/dma/edma.c            |  2 --
+ drivers/dma/ep93xx_dma.c      | 10 +---------
+ drivers/dma/fsldma.c          | 10 +---------
+ drivers/dma/imx-sdma.c        |  9 +++------
+ drivers/dma/ipu/ipu_idmac.c   |  5 +----
+ drivers/dma/mmp_pdma.c        | 10 +---------
+ drivers/dma/mmp_tdma.c        |  3 ++-
+ drivers/dma/mpc512x_dma.c     | 10 +---------
+ drivers/dma/mxs-dma.c         |  4 +---
+ drivers/dma/pch_dma.c         |  9 +--------
+ drivers/dma/tegra20-apb-dma.c |  8 +++-----
+ drivers/dma/txx9dmac.c        | 13 ++++++-------
+ 12 files changed, 21 insertions(+), 72 deletions(-)
+
 -- 
-1.7.4.1
+1.8.2.rc0.22.gb3600c3
