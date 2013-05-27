@@ -1,284 +1,57 @@
-From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] drm/tegra: add support for runtime pm
-Date: Mon, 27 May 2013 19:19:28 +0530
-Message-ID: <1369662568-22390-1-git-send-email-mkulkarni@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: fix clk_out parents list
+Date: Mon, 27 May 2013 16:55:57 +0200
+Message-ID: <20130527145557.GB9460@mithrandir>
+References: <1369641279-6894-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1369641279-6894-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-- as of now host1x and gr2d module's clocks are enabled
-in their driver's .probe and never disabled
-- this commit adds support for runtime pm in host1x and
-gr2d drivers
-- during boot-up clocks are enabled in .probe and disabled
-on its exit
-- when new work is submitted, clocks are enabled in submit
-and disabled when submit completes
-- parent->child relation between host1x and gr2d ensures
-that host1x clock is also enabled before enabling gr2d clock
-and it is turned off after gr2d clock is turned off
 
-Signed-off-by: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/host1x/channel.c  |  5 ++++
- drivers/gpu/host1x/dev.c      | 58 ++++++++++++++++++++++++++++++++++++++----
- drivers/gpu/host1x/drm/gr2d.c | 59 ++++++++++++++++++++++++++++++++++++++-----
- drivers/gpu/host1x/intr.c     |  9 +++++--
- 4 files changed, 118 insertions(+), 13 deletions(-)
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index 83ea51b..b71caec 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -18,6 +18,7 @@
- 
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
- 
- #include "channel.h"
- #include "dev.h"
-@@ -41,6 +42,10 @@ int host1x_job_submit(struct host1x_job *job)
- {
- 	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
- 
-+	/* enable clocks
-+	 * they will be disabled in action_submit_complete */
-+	pm_runtime_get_sync(job->channel->dev);
-+
- 	return host1x_hw_channel_submit(host, job);
- }
- 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 28e28a2..93d9d72 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -23,6 +23,7 @@
- #include <linux/of_device.h>
- #include <linux/clk.h>
- #include <linux/io.h>
-+#include <linux/pm_runtime.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/host1x.h>
-@@ -143,11 +144,11 @@ static int host1x_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	err = clk_prepare_enable(host->clk);
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to enable clock\n");
--		return err;
--	}
-+	/* enable runtime pm */
-+	pm_runtime_enable(&pdev->dev);
-+
-+	/* enable clocks */
-+	pm_runtime_get_sync(&pdev->dev);
- 
- 	err = host1x_syncpt_init(host);
- 	if (err) {
-@@ -165,6 +166,9 @@ static int host1x_probe(struct platform_device *pdev)
- 
- 	host1x_drm_alloc(pdev);
- 
-+	/* disable clocks */
-+	pm_runtime_put(&pdev->dev);
-+
- 	return 0;
- 
- fail_deinit_syncpt:
-@@ -183,6 +187,47 @@ static int __exit host1x_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_RUNTIME
-+static int host1x_runtime_suspend(struct device *dev)
-+{
-+	struct host1x *host;
-+
-+	host = dev_get_drvdata(dev);
-+	if (IS_ERR_OR_NULL(host))
-+		return -EINVAL;
-+
-+	clk_disable_unprepare(host->clk);
-+
-+	return 0;
-+}
-+
-+static int host1x_runtime_resume(struct device *dev)
-+{
-+	int err = 0;
-+	struct host1x *host;
-+
-+	host = dev_get_drvdata(dev);
-+	if (IS_ERR_OR_NULL(host))
-+		return -EINVAL;
-+
-+	err = clk_prepare_enable(host->clk);
-+	if (err < 0)
-+		dev_err(dev, "failed to enable clock\n");
-+
-+	return err;
-+}
-+#endif /* CONFIG_PM_RUNTIME */
-+
-+#ifdef CONFIG_PM
-+static const struct dev_pm_ops host1x_pm_ops = {
-+#ifdef CONFIG_PM_RUNTIME
-+	.runtime_suspend = host1x_runtime_suspend,
-+	.runtime_resume = host1x_runtime_resume,
-+#endif
-+};
-+
-+#endif /* CONFIG_PM */
-+
- static struct platform_driver tegra_host1x_driver = {
- 	.probe = host1x_probe,
- 	.remove = __exit_p(host1x_remove),
-@@ -190,6 +235,9 @@ static struct platform_driver tegra_host1x_driver = {
- 		.owner = THIS_MODULE,
- 		.name = "tegra-host1x",
- 		.of_match_table = host1x_of_match,
-+#ifdef CONFIG_PM
-+		.pm = &host1x_pm_ops,
-+#endif
- 	},
- };
- 
-diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-index 6a45ae0..172a654 100644
---- a/drivers/gpu/host1x/drm/gr2d.c
-+++ b/drivers/gpu/host1x/drm/gr2d.c
-@@ -22,6 +22,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/clk.h>
-+#include <linux/pm_runtime.h>
- 
- #include "channel.h"
- #include "drm.h"
-@@ -271,11 +272,13 @@ static int gr2d_probe(struct platform_device *pdev)
- 		return PTR_ERR(gr2d->clk);
- 	}
- 
--	err = clk_prepare_enable(gr2d->clk);
--	if (err) {
--		dev_err(dev, "cannot turn on clock\n");
--		return err;
--	}
-+	platform_set_drvdata(pdev, gr2d);
-+
-+	/* enable runtime pm */
-+	pm_runtime_enable(&pdev->dev);
-+
-+	/* enable clocks */
-+	pm_runtime_get_sync(&pdev->dev);
- 
- 	gr2d->channel = host1x_channel_request(dev);
- 	if (!gr2d->channel)
-@@ -301,7 +304,8 @@ static int gr2d_probe(struct platform_device *pdev)
- 
- 	gr2d_init_addr_reg_map(dev, gr2d);
- 
--	platform_set_drvdata(pdev, gr2d);
-+	/* disable clocks */
-+	pm_runtime_put(&pdev->dev);
- 
- 	return 0;
- }
-@@ -328,6 +332,46 @@ static int __exit gr2d_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_RUNTIME
-+static int gr2d_runtime_suspend(struct device *dev)
-+{
-+	struct gr2d *gr2d;
-+
-+	gr2d = dev_get_drvdata(dev);
-+	if (IS_ERR_OR_NULL(gr2d))
-+		return -EINVAL;
-+
-+	clk_disable_unprepare(gr2d->clk);
-+
-+	return 0;
-+}
-+
-+static int gr2d_runtime_resume(struct device *dev)
-+{
-+	int err = 0;
-+	struct gr2d *gr2d;
-+
-+	gr2d = dev_get_drvdata(dev);
-+	if (IS_ERR_OR_NULL(gr2d))
-+		return -EINVAL;
-+
-+	err = clk_prepare_enable(gr2d->clk);
-+	if (err < 0)
-+		dev_err(dev, "failed to enable clock\n");
-+
-+	return err;
-+}
-+#endif /* CONFIG_PM_RUNTIME */
-+
-+#ifdef CONFIG_PM
-+static const struct dev_pm_ops gr2d_pm_ops = {
-+#ifdef CONFIG_PM_RUNTIME
-+	.runtime_suspend = gr2d_runtime_suspend,
-+	.runtime_resume = gr2d_runtime_resume,
-+#endif
-+};
-+#endif /* CONFIG_PM */
-+
- struct platform_driver tegra_gr2d_driver = {
- 	.probe = gr2d_probe,
- 	.remove = __exit_p(gr2d_remove),
-@@ -335,5 +379,8 @@ struct platform_driver tegra_gr2d_driver = {
- 		.owner = THIS_MODULE,
- 		.name = "gr2d",
- 		.of_match_table = gr2d_match,
-+#ifdef CONFIG_PM
-+		.pm = &gr2d_pm_ops,
-+#endif
- 	}
- };
-diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-index 2491bf8..c23fb64 100644
---- a/drivers/gpu/host1x/intr.c
-+++ b/drivers/gpu/host1x/intr.c
-@@ -20,6 +20,7 @@
- #include <linux/interrupt.h>
- #include <linux/slab.h>
- #include <linux/irq.h>
-+#include <linux/pm_runtime.h>
- 
- #include <trace/events/host1x.h>
- #include "channel.h"
-@@ -109,14 +110,18 @@ static void reset_threshold_interrupt(struct host1x *host,
- 
- static void action_submit_complete(struct host1x_waitlist *waiter)
- {
-+	int completed = waiter->count;
- 	struct host1x_channel *channel = waiter->data;
- 
-+	/* disable clocks for all the submits that got completed in this lot */
-+	while (completed--)
-+		pm_runtime_put(channel->dev);
-+
- 	host1x_cdma_update(&channel->cdma);
- 
--	/*  Add nr_completed to trace */
-+	/* Add nr_completed to trace */
- 	trace_host1x_channel_submit_complete(dev_name(channel->dev),
- 					     waiter->count, waiter->thresh);
--
- }
- 
- static void action_wakeup(struct host1x_waitlist *waiter)
--- 
-1.8.1.5
+On Mon, May 27, 2013 at 01:24:39PM +0530, Prashant Gaikwad wrote:
+> Number of parents for clk_out_2 and clk_out_3 was incorrectly set
+> to clk_out1_parents. Even though it did not break anything since the
+> size was same better to fix.
+
+This last part of the sentence is hard to understand, I think you meant:
+
+	Even though it did not break anything since the size was the
+	same, it should still be fixed.
+
+Other than that:
+
+Reviewed-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRo3P8AAoJEN0jrNd/PrOhT+8P+wTNC5E1IeZNRPfVRwvYFdKb
+UrrgVRdohf5tIpOAlFnRCStL/PgtiWPK+YOLdLku8UzO86VRVY2/c/GinRq93Ycc
+lnEmXiZnoiQ7kVJw9mPds1t/a/sVIr07BN2F/cRBF71Dd2sdaWRCSJrnW6aFbTwr
+HTIBHbq6S0evG1yEEcsUPWPUgFjHeEfhknbhSFYaj+snuHk9fNrG3MQYaTmSfyK1
+YNk2Pi2TVad2O9YeTBqIF3SZYPMHk2y7/wCZMFfnw+5WOHftRR3VrE18o8gweRla
+B4vikI5ZODVnxcQHf/+a25T728vo/wVVNbmawHT7LauYlsmUzfvbvaMmNqZcxm/b
+s+ayt2nempGcM5z+PJ0GLp7FW0P2+uhYUGgVmS/48bKfT3Dh/T0DlMIO50QbFim1
+QwbWS75yPPwCLeyMzh6fCII4nE5BNeRAS6xTwKN8mzawU1sZGFQ48at0X4eFdxI6
+V7cHjYKWEoSqcpl9cSsrqJfYpbCiDQAP4LF+dctT7avBQ1X1MVtvJwuH+qruNI+X
+41ebgcsZMZABgs9gV5TIP1wLYq8mi6KDOGi4S8+b9zGVjOLuQ2XwKqCCPsTBxrtw
+tOOg9ocTtszyxGlmlqMcDbI1nPCAWzVFGS7xzobwwYsfqAYymLF31VILxWjrh2sq
+vFbPCiIJFFvCDBV70RsH
+=btuK
+-----END PGP SIGNATURE-----
+
+--wq9mPyueHGvFACwf--
