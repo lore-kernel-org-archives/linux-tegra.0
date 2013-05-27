@@ -1,55 +1,44 @@
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 00/12] dma: various minor clean ups for slave drivers
-Date: Mon, 27 May 2013 15:14:30 +0300
-Message-ID: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+Subject: [PATCH 09/12] tegra20-apb-dma: remove useless use of lock
+Date: Mon, 27 May 2013 15:14:39 +0300
+Message-ID: <1369656882-25241-10-git-send-email-andriy.shevchenko@linux.intel.com>
+References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Shawn Guo <shawn.guo@linaro.org>, Zhang Wei <zw@zh-kernel.org>, linux-tegra@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linuxppc-dev@lists.ozlabs.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here is a set of small independent patches that clean up or fix minor things
-across DMA slave drivers.
+Accordingly to dma_cookie_status() description locking is not required.
 
-Andy Shevchenko (12):
-  imx-sdma: remove useless variable
-  mxs-dma: remove useless variable
-  edma: no need to assign residue to 0 explicitly
-  ep93xx_dma: remove useless use of lock
-  fsldma: remove useless use of lock
-  mmp_pdma: remove useless use of lock
-  mpc512x_dma: remove useless use of lock
-  pch_dma: remove useless use of lock
-  tegra20-apb-dma: remove useless use of lock
-  ipu_idmac: re-use dma_cookie_status()
-  mmp_tdma: set cookies as well when asked for tx status
-  txx9dmac: return DMA_SUCCESS immediately from device_tx_status()
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org
+---
+ drivers/dma/tegra20-apb-dma.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
- drivers/dma/edma.c            |  2 --
- drivers/dma/ep93xx_dma.c      | 10 +---------
- drivers/dma/fsldma.c          | 10 +---------
- drivers/dma/imx-sdma.c        |  9 +++------
- drivers/dma/ipu/ipu_idmac.c   |  5 +----
- drivers/dma/mmp_pdma.c        | 10 +---------
- drivers/dma/mmp_tdma.c        |  3 ++-
- drivers/dma/mpc512x_dma.c     | 10 +---------
- drivers/dma/mxs-dma.c         |  4 +---
- drivers/dma/pch_dma.c         |  9 +--------
- drivers/dma/tegra20-apb-dma.c |  8 +++-----
- drivers/dma/txx9dmac.c        | 13 ++++++-------
- 12 files changed, 21 insertions(+), 72 deletions(-)
-
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 33f59ec..019ccfa 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -767,13 +767,11 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+ 	unsigned long flags;
+ 	unsigned int residual;
+ 
+-	spin_lock_irqsave(&tdc->lock, flags);
+-
+ 	ret = dma_cookie_status(dc, cookie, txstate);
+-	if (ret == DMA_SUCCESS) {
+-		spin_unlock_irqrestore(&tdc->lock, flags);
++	if (ret == DMA_SUCCESS)
+ 		return ret;
+-	}
++
++	spin_lock_irqsave(&tdc->lock, flags);
+ 
+ 	/* Check on wait_ack desc status */
+ 	list_for_each_entry(dma_desc, &tdc->free_dma_desc, node) {
 -- 
 1.8.2.rc0.22.gb3600c3
