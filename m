@@ -1,180 +1,68 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: [PATCH v2] clk: tegra: Use common of_clk_init function
-Date: Mon, 27 May 2013 13:10:09 +0530
-Message-ID: <1369640409-1981-1-git-send-email-pgaikwad@nvidia.com>
+From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: fix clk_out parents list
+Date: Mon, 27 May 2013 13:24:39 +0530
+Message-ID: <1369641279-6894-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: mturquette@linaro.org, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use common of_clk_init() function for clocks initialization.
+Number of parents for clk_out_2 and clk_out_3 was incorrectly set
+to clk_out1_parents. Even though it did not break anything since the
+size was same better to fix.
 
-Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
+Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
+ drivers/clk/tegra/clk-tegra114.c |    4 ++--
+ drivers/clk/tegra/clk-tegra30.c  |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Included initialization for T114 in V2.
-
----
- arch/arm/mach-tegra/common.c     |    4 ++--
- drivers/clk/tegra/clk-tegra114.c |    3 ++-
- drivers/clk/tegra/clk-tegra20.c  |    3 ++-
- drivers/clk/tegra/clk-tegra30.c  |    3 ++-
- drivers/clk/tegra/clk.c          |   12 ------------
- drivers/clk/tegra/clk.h          |   18 ------------------
- include/linux/clk/tegra.h        |    1 -
- 7 files changed, 8 insertions(+), 36 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 9f852c6..95ce2a0 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -23,7 +23,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/irqchip.h>
--#include <linux/clk/tegra.h>
-+#include <linux/clk-provider.h>
- 
- #include <asm/hardware/cache-l2x0.h>
- 
-@@ -59,7 +59,7 @@ u32 tegra_uart_config[4] = {
- #ifdef CONFIG_OF
- void __init tegra_dt_init_irq(void)
- {
--	tegra_clocks_init();
-+	of_clk_init(NULL);
- 	tegra_pmc_init();
- 	tegra_init_irq();
- 	irqchip_init();
 diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index d78e16e..e0ee077 100644
+index e0ee077..6d438bb 100644
 --- a/drivers/clk/tegra/clk-tegra114.c
 +++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -2030,7 +2030,7 @@ static void __init tegra114_clock_apply_init_table(void)
- 	tegra_init_from_table(init_table, clks, clk_max);
- }
+@@ -1602,7 +1602,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
  
--void __init tegra114_clock_init(struct device_node *np)
-+static void __init tegra114_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
- 	int i;
-@@ -2083,3 +2083,4 @@ void __init tegra114_clock_init(struct device_node *np)
+ 	/* clk_out_2 */
+ 	clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
+-			       ARRAY_SIZE(clk_out1_parents), 0,
++			       ARRAY_SIZE(clk_out2_parents), 0,
+ 			       pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
+ 			       &clk_out_lock);
+ 	clks[clk_out_2_mux] = clk;
+@@ -1614,7 +1614,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
  
- 	tegra_cpu_car_ops = &tegra114_cpu_car_ops;
- }
-+CLK_OF_DECLARE(tegra114, "nvidia,tegra114-car", tegra114_clock_init);
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 8292a00..a25e07c 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1282,7 +1282,7 @@ static const struct of_device_id pmc_match[] __initconst = {
- 	{},
- };
- 
--void __init tegra20_clock_init(struct device_node *np)
-+static void __init tegra20_clock_init(struct device_node *np)
- {
- 	int i;
- 	struct device_node *node;
-@@ -1334,3 +1334,4 @@ void __init tegra20_clock_init(struct device_node *np)
- 
- 	tegra_cpu_car_ops = &tegra20_cpu_car_ops;
- }
-+CLK_OF_DECLARE(tegra20, "nvidia,tegra20-car", tegra20_clock_init);
+ 	/* clk_out_3 */
+ 	clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
+-			       ARRAY_SIZE(clk_out1_parents), 0,
++			       ARRAY_SIZE(clk_out3_parents), 0,
+ 			       pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
+ 			       &clk_out_lock);
+ 	clks[clk_out_3_mux] = clk;
 diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c6921f5..985ad69 100644
+index 985ad69..b62e140 100644
 --- a/drivers/clk/tegra/clk-tegra30.c
 +++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1953,7 +1953,7 @@ static const struct of_device_id pmc_match[] __initconst = {
- 	{},
- };
+@@ -1223,7 +1223,7 @@ static void __init tegra30_pmc_clk_init(void)
  
--void __init tegra30_clock_init(struct device_node *np)
-+static void __init tegra30_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
- 	int i;
-@@ -2004,3 +2004,4 @@ void __init tegra30_clock_init(struct device_node *np)
+ 	/* clk_out_2 */
+ 	clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
+-			       ARRAY_SIZE(clk_out1_parents), 0,
++			       ARRAY_SIZE(clk_out2_parents), 0,
+ 			       pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
+ 			       &clk_out_lock);
+ 	clk = clk_register_gate(NULL, "clk_out_2", "clk_out_2_mux", 0,
+@@ -1234,7 +1234,7 @@ static void __init tegra30_pmc_clk_init(void)
  
- 	tegra_cpu_car_ops = &tegra30_cpu_car_ops;
- }
-+CLK_OF_DECLARE(tegra30, "nvidia,tegra30-car", tegra30_clock_init);
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index 923ca7e..86581ac 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -74,18 +74,6 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
- 	}
- }
- 
--static const struct of_device_id tegra_dt_clk_match[] = {
--	{ .compatible = "nvidia,tegra20-car", .data = tegra20_clock_init },
--	{ .compatible = "nvidia,tegra30-car", .data = tegra30_clock_init },
--	{ .compatible = "nvidia,tegra114-car", .data = tegra114_clock_init },
--	{ }
--};
--
--void __init tegra_clocks_init(void)
--{
--	of_clk_init(tegra_dt_clk_match);
--}
--
- tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- 
- void __init tegra_clocks_apply_init_table(void)
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index e056562..11278a8 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -571,24 +571,6 @@ void tegra_init_from_table(struct tegra_clk_init_table *tbl,
- void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
- 		struct clk *clks[], int clk_max);
- 
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
--void tegra20_clock_init(struct device_node *np);
--#else
--static inline void tegra20_clock_init(struct device_node *np) {}
--#endif /* CONFIG_ARCH_TEGRA_2x_SOC */
--
--#ifdef CONFIG_ARCH_TEGRA_3x_SOC
--void tegra30_clock_init(struct device_node *np);
--#else
--static inline void tegra30_clock_init(struct device_node *np) {}
--#endif /* CONFIG_ARCH_TEGRA_3x_SOC */
--
--#ifdef CONFIG_ARCH_TEGRA_114_SOC
--void tegra114_clock_init(struct device_node *np);
--#else
--static inline void tegra114_clock_init(struct device_node *np) {}
--#endif /* CONFIG_ARCH_TEGRA114_SOC */
--
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
- 
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 642789b..3670a4f 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -122,7 +122,6 @@ static inline void tegra_cpu_clock_resume(void)
- 
- void tegra_periph_reset_deassert(struct clk *c);
- void tegra_periph_reset_assert(struct clk *c);
--void tegra_clocks_init(void);
- void tegra_clocks_apply_init_table(void);
- 
- #endif /* __LINUX_CLK_TEGRA_H_ */
+ 	/* clk_out_3 */
+ 	clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
+-			       ARRAY_SIZE(clk_out1_parents), 0,
++			       ARRAY_SIZE(clk_out3_parents), 0,
+ 			       pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
+ 			       &clk_out_lock);
+ 	clk = clk_register_gate(NULL, "clk_out_3", "clk_out_3_mux", 0,
 -- 
 1.7.4.1
