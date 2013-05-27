@@ -1,57 +1,51 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: fix clk_out parents list
-Date: Mon, 27 May 2013 16:55:57 +0200
-Message-ID: <20130527145557.GB9460@mithrandir>
-References: <1369641279-6894-1-git-send-email-pgaikwad@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2] clk: tegra: Use common of_clk_init function
+Date: Mon, 27 May 2013 17:10:07 +0200
+Message-ID: <20130527151006.GC9460@mithrandir>
+References: <1369640409-1981-1-git-send-email-pgaikwad@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1369641279-6894-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1369640409-1981-1-git-send-email-pgaikwad@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: mturquette@linaro.org, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wq9mPyueHGvFACwf
+--oJ71EGRlYNjSvfq7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 27, 2013 at 01:24:39PM +0530, Prashant Gaikwad wrote:
-> Number of parents for clk_out_2 and clk_out_3 was incorrectly set
-> to clk_out1_parents. Even though it did not break anything since the
-> size was same better to fix.
+On Mon, May 27, 2013 at 01:10:09PM +0530, Prashant Gaikwad wrote:
+> Use common of_clk_init() function for clocks initialization.
+>=20
+> Signed-off-by: Prashant Gaikwad <pgaikwad@nvidia.com>
 
-This last part of the sentence is hard to understand, I think you meant:
+Reviewed-by: Thierry Reding <thierry.reding@gmail.com>
 
-	Even though it did not break anything since the size was the
-	same, it should still be fixed.
-
-Other than that:
-
-Reviewed-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
---wq9mPyueHGvFACwf
+--oJ71EGRlYNjSvfq7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRo3P8AAoJEN0jrNd/PrOhT+8P+wTNC5E1IeZNRPfVRwvYFdKb
-UrrgVRdohf5tIpOAlFnRCStL/PgtiWPK+YOLdLku8UzO86VRVY2/c/GinRq93Ycc
-lnEmXiZnoiQ7kVJw9mPds1t/a/sVIr07BN2F/cRBF71Dd2sdaWRCSJrnW6aFbTwr
-HTIBHbq6S0evG1yEEcsUPWPUgFjHeEfhknbhSFYaj+snuHk9fNrG3MQYaTmSfyK1
-YNk2Pi2TVad2O9YeTBqIF3SZYPMHk2y7/wCZMFfnw+5WOHftRR3VrE18o8gweRla
-B4vikI5ZODVnxcQHf/+a25T728vo/wVVNbmawHT7LauYlsmUzfvbvaMmNqZcxm/b
-s+ayt2nempGcM5z+PJ0GLp7FW0P2+uhYUGgVmS/48bKfT3Dh/T0DlMIO50QbFim1
-QwbWS75yPPwCLeyMzh6fCII4nE5BNeRAS6xTwKN8mzawU1sZGFQ48at0X4eFdxI6
-V7cHjYKWEoSqcpl9cSsrqJfYpbCiDQAP4LF+dctT7avBQ1X1MVtvJwuH+qruNI+X
-41ebgcsZMZABgs9gV5TIP1wLYq8mi6KDOGi4S8+b9zGVjOLuQ2XwKqCCPsTBxrtw
-tOOg9ocTtszyxGlmlqMcDbI1nPCAWzVFGS7xzobwwYsfqAYymLF31VILxWjrh2sq
-vFbPCiIJFFvCDBV70RsH
-=btuK
+iQIcBAEBAgAGBQJRo3dOAAoJEN0jrNd/PrOh/kkQAK8cfw1xwygR8sCEn8MvaB0G
+3hM6SlNRPfEcWVsQgDdat5PK3sX81xFHLezDaNCVmefOHo6DDaqG7nOCRK5UCcY0
+Kf0tl6PPqVHtAskgGdUPuzNCkRFJSqJia5nivI/CofwabQbtgIHIXVi2CY6ihYoO
+z1NgsbmH5wLkJygvVKz5v/ybZaVnRWNUILQBNnyXMsMvp0QMfXVQeDP2OovLoucK
+WVHZtRdNHgwLghXjJEZW3EgXY0bu9yy38cpiZWtI9wXymk0YB/OrqQNmLKAY1/qn
+792yGRlo8pGkhx49dcGJXJN4P0PKZS7u+H57Vr0rWuH41DOh7BaE/kgnY6LVCjow
+k5ZYblPg4Z+DBUAmy9zym/EgIwpqb8uPsfMa82csH5AciU/8OuSTFVbuaRMrS75i
+fLZIxovHcKdAqvXDeO8FxlWmWo0twnRrPBlk79eIoAkvPNZfS5DV0vIFdQX/N6ze
+zPZT3/Z6lYAr64JhVuJkrIq/HZYIlxKaHp9zeMUDAmr8IW+7HB3e7O5kSmj3yHf8
+w8QnH+6EAeh6yqKAIr6/ga8OVD3lA8xmzvIiCN2g55CeQbrtHKFiVLulW86M82OW
+xXINdcE3UaibCZAeK43GRa9yaIOvO6ctaDUFszEl13BPM61RSEaVFaFC9xtA46Cj
+nHbN124qU4Tsu112h4wq
+=koMe
 -----END PGP SIGNATURE-----
 
---wq9mPyueHGvFACwf--
+--oJ71EGRlYNjSvfq7--
