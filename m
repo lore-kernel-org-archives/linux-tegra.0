@@ -1,82 +1,39 @@
-From: Keith Packard <keithp@keithp.com>
-Subject: Re: [PATCH 2/6] gpu: host1x: Fix syncpoint wait return value
-Date: Tue, 28 May 2013 13:12:12 -0600
-Message-ID: <86y5ay6hrn.fsf@miki.keithp.com>
-References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
-	<1368791388-31441-3-git-send-email-amerilainen@nvidia.com>
-	<20130526101243.GB1652@mithrandir> <51A30372.6080907@nvidia.com>
-	<20130528103927.GB11547@mithrandir>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: rebuild tegra_defconfig
+Date: Tue, 28 May 2013 15:30:29 -0600
+Message-ID: <51A521F5.2010206@wwwdotorg.org>
+References: <1369761972-31986-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1014009621=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <20130528103927.GB11547@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Thierry Reding <thierry.reding@gmail.com>, Arto Merilainen <amerilainen@nvidia.com>
-Cc: Terje Bergstrom <tbergstrom@nvidia.com>, xorg-devel@lists.x.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1369761972-31986-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
---===============1014009621==
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+On 05/28/2013 11:26 AM, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+> 
+> This simply rebuilds tegra_defconfig on top of next-20130520. As such, it
+> should introduce no changes; simply moving entries around due to Kconfig
+> ordering changes. The apparent exceptions are:
+> 
+> AUTO_ZRELADDR: Selected by ARM multi-platform support.
+> MTD_CHAR: Removed in Kconfig.
+> 
+> This should make it easier to create future defconfig patches on top of
+> linux-next, since all the extraneous diffs have been removed. It also
+> makes it more likely that once 3.12 comes around, this defconfig will
+> already match what's required there.
 
---=-=-=
-Content-Transfer-Encoding: quoted-printable
-
-Thierry Reding <thierry.reding@gmail.com> writes:
-
-
-> That doesn't sound right. Maybe drmIoctl() needs fixing instead. Looking
-> at the history, drmIoctl() was introduced to automatically loop if a
-> signal was received (commit 8b9ab108ec1f2ba2b503f713769c4946849b3cb2).
-> However the ioctl(3p) manpage doesn't mention that ioctl() returns
-> EAGAIN in case it is interrupted by a signal.
-
-EAGAIN is being returned when the GPU is wedged to ask the application
-to re-submit the request, which will presumably be held until the  GPU
-is un-wedged.
-
-=2D-=20
-keith.packard@intel.com
-
---=-=-=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIVAwUBUaUBjTYtFsjWk68qAQh4wRAA2GDdsxUzZaRePb/FK8WlGEydhgsSRbAJ
-QDd4BTOd/ueu5uGon/nWc1T8gQ1QCLO62a+H06+VuYzERDnD1v9M6uc2/LESNUz9
-YHFZsJj9RDUBLbyTVxF8aXP1WC1Xj182dDGHGrgaAux2HSNTThI3y+hxV3K6tUub
-sFDBd7Qp1gN382exPYDyi/AFDdp3HgO8C3tMgHHTJIRNVklY9R4rVYSIhjgzlLh2
-bL1DxsJqiMXBKNlh88kZYurkB6xrZQczb4DRsXxTCTo8MdUD1r7nygzsVYirEW6c
-gvr9fFsWvS89L4Dl+7dWKGITQwJ1PVMr+0UBoSIvpyLHGr3tsYQOGSs+CzntieOK
-Ax1l62YME7dpaM4maepuz8CAlltHgh3bEbPnlhpmlj5qAKmri5bBdAI8Il2sR5Pw
-KcwVIEKNtVCBmywuqFH/yA8o4CjBwVXLVYChphalnE4hO7Vy7iLsuvOMXn/upJUQ
-jeVJBuHv7yOGjPwzLAvPKijmD5NcFPGJC9BXGLUooSJ+fyHF+SmNCbEOZRr/Oz9B
-NOIS3TSkXwhcp5GxFGPelP86SDRz1IbGOcTcs+5r/OKWUOlW+BaDWdSf0EgjKPzt
-YLY16VeD+pLnHIWRcBOOQZYpkelTKGTRO2QkplQohTjh+lNatAWh5NKHYKHzXFOm
-DoPiXzk14RE=
-=4Zdj
------END PGP SIGNATURE-----
---=-=-=--
-
---===============1014009621==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1014009621==--
+I've applied this (squashed it into) Tegra's for-3.11/defconfig branch.
