@@ -1,182 +1,82 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] drm/tegra: add support for runtime pm
-Date: Mon, 27 May 2013 17:45:40 +0200
-Message-ID: <20130527154539.GD9460@mithrandir>
-References: <1369662568-22390-1-git-send-email-mkulkarni@nvidia.com>
+Date: Tue, 28 May 2013 08:45:03 +0300
+Message-ID: <51A4445F.1000201@nvidia.com>
+References: <1369662568-22390-1-git-send-email-mkulkarni@nvidia.com> <20130527154539.GD9460@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IMjqdzrDRly81ofr"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1369662568-22390-1-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130527154539.GD9460@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 27.05.2013 18:45, Thierry Reding wrote:
+> On Mon, May 27, 2013 at 07:19:28PM +0530, Mayuresh Kulkarni wrote:
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +static int host1x_runtime_suspend(struct device *dev)
+>> +{
+>> +	struct host1x *host;
+>> +
+>> +	host = dev_get_drvdata(dev);
+>> +	if (IS_ERR_OR_NULL(host))
+> 
+> I think a simple
+> 
+> 	if (!host)
+> 		return -EINVAL;
+> 
+> would be enough here. The driver-data of the device should never be an
+> ERR_PTR()-encoded value, but either a valid pointer to a host1x object
+> or NULL.
 
---IMjqdzrDRly81ofr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+True, we should avoid IS_ERR_OR_NULL() like plague. We always know if
+the called API returns a NULL on error or an error code. In case of
+error code we should just propagate that.
 
-On Mon, May 27, 2013 at 07:19:28PM +0530, Mayuresh Kulkarni wrote:
-> - as of now host1x and gr2d module's clocks are enabled
-> in their driver's .probe and never disabled
-> - this commit adds support for runtime pm in host1x and
-> gr2d drivers
-> - during boot-up clocks are enabled in .probe and disabled
-> on its exit
-> - when new work is submitted, clocks are enabled in submit
-> and disabled when submit completes
-> - parent->child relation between host1x and gr2d ensures
-> that host1x clock is also enabled before enabling gr2d clock
-> and it is turned off after gr2d clock is turned off
+> Same comments apply here. Also I think it might be a good idea to split
+> the host1x and gr2d changes into separate patches.
 
-I think this format is a little odd and hard to follow for a commit
-message. You can easily turn these into proper sentences and hence make
-it much easier to read.
+That's a bit tricky, but doable. We just need to enable it for 2D first,
+and then host1x to keep bisectability.
 
-> diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-[...]
-> @@ -41,6 +42,10 @@ int host1x_job_submit(struct host1x_job *job)
->  {
->  	struct host1x *host =3D dev_get_drvdata(job->channel->dev->parent);
-> =20
-> +	/* enable clocks
-> +	 * they will be disabled in action_submit_complete */
-> +	pm_runtime_get_sync(job->channel->dev);
+>>  static void action_submit_complete(struct host1x_waitlist *waiter)
+>>  {
+>> +	int completed = waiter->count;
+>>  	struct host1x_channel *channel = waiter->data;
+>>  
+>> +	/* disable clocks for all the submits that got completed in this lot */
+>> +	while (completed--)
+>> +		pm_runtime_put(channel->dev);
+>> +
+>>  	host1x_cdma_update(&channel->cdma);
+>>  
+>> -	/*  Add nr_completed to trace */
+>> +	/* Add nr_completed to trace */
+>>  	trace_host1x_channel_submit_complete(dev_name(channel->dev),
+>>  					     waiter->count, waiter->thresh);
+>> -
+>>  }
+> 
+> This feels hackish. But I can't see any better place to do this. Terje,
+> Arto: any ideas how we can do this in a cleaner way? If there's nothing
+> better then maybe moving the code into a separate function, say
+> host1x_waitlist_complete(), might make this less awkward?
 
-This comment is misleading. Runtime PM could be used for more than just
-enabling clocks. Also it should be following the format defined in the
-CodingStyle document, like so:
+Yeah, it's a bit awkward. action_submit_complete() actually does handle
+completion of multiple jobs, and we do one pm_runtime_get() per job.
 
-	/*
-	 * Enable clocks...
-	 * ...
-	 */
+We could do pm_runtime_put() in host1x_cdma_update(). It anyway goes
+through each job that is completed, so while freeing the job it could as
+well call runtime PM. That way we could even remove the waiter->count
+variable altogether as it's not needed anymore.
 
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-[...]
-> @@ -143,11 +144,11 @@ static int host1x_probe(struct platform_device *pde=
-v)
->  		return err;
->  	}
-> =20
-> -	err =3D clk_prepare_enable(host->clk);
-> -	if (err < 0) {
-> -		dev_err(&pdev->dev, "failed to enable clock\n");
-> -		return err;
-> -	}
-> +	/* enable runtime pm */
-> +	pm_runtime_enable(&pdev->dev);
-> +
-> +	/* enable clocks */
-> +	pm_runtime_get_sync(&pdev->dev);
+The not-so-beautiful aspect is that we do pm_runtime_get() in
+host1x_channel.c and pm_runtime_put() in host1x_cdma.c. For code
+readability it's be great to have them in the same file. I actually get
+questions every now and then because in downstream because of doing
+these operations in different files.
 
-I think the comments can be dropped. They don't add any useful
-information.
-
-> @@ -165,6 +166,9 @@ static int host1x_probe(struct platform_device *pdev)
-> =20
->  	host1x_drm_alloc(pdev);
-> =20
-> +	/* disable clocks */
-> +	pm_runtime_put(&pdev->dev);
-
-Same here.
-
-> +#ifdef CONFIG_PM_RUNTIME
-> +static int host1x_runtime_suspend(struct device *dev)
-> +{
-> +	struct host1x *host;
-> +
-> +	host =3D dev_get_drvdata(dev);
-> +	if (IS_ERR_OR_NULL(host))
-
-I think a simple
-
-	if (!host)
-		return -EINVAL;
-
-would be enough here. The driver-data of the device should never be an
-ERR_PTR()-encoded value, but either a valid pointer to a host1x object
-or NULL.
-
-> +#ifdef CONFIG_PM
-> +static const struct dev_pm_ops host1x_pm_ops =3D {
-> +#ifdef CONFIG_PM_RUNTIME
-> +	.runtime_suspend =3D host1x_runtime_suspend,
-> +	.runtime_resume =3D host1x_runtime_resume,
-> +#endif
-
-SET_RUNTIME_PM_OPS?
-
-> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-[...]
-
-Same comments apply here. Also I think it might be a good idea to split
-the host1x and gr2d changes into separate patches.
-
-> diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-> index 2491bf8..c23fb64 100644
-> --- a/drivers/gpu/host1x/intr.c
-> +++ b/drivers/gpu/host1x/intr.c
-> @@ -20,6 +20,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/slab.h>
->  #include <linux/irq.h>
-> +#include <linux/pm_runtime.h>
-> =20
->  #include <trace/events/host1x.h>
->  #include "channel.h"
-> @@ -109,14 +110,18 @@ static void reset_threshold_interrupt(struct host1x=
- *host,
-> =20
->  static void action_submit_complete(struct host1x_waitlist *waiter)
->  {
-> +	int completed =3D waiter->count;
->  	struct host1x_channel *channel =3D waiter->data;
-> =20
-> +	/* disable clocks for all the submits that got completed in this lot */
-> +	while (completed--)
-> +		pm_runtime_put(channel->dev);
-> +
->  	host1x_cdma_update(&channel->cdma);
-> =20
-> -	/*  Add nr_completed to trace */
-> +	/* Add nr_completed to trace */
->  	trace_host1x_channel_submit_complete(dev_name(channel->dev),
->  					     waiter->count, waiter->thresh);
-> -
->  }
-
-This feels hackish. But I can't see any better place to do this. Terje,
-Arto: any ideas how we can do this in a cleaner way? If there's nothing
-better then maybe moving the code into a separate function, say
-host1x_waitlist_complete(), might make this less awkward?
-
-Thierry
-
---IMjqdzrDRly81ofr
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRo3+jAAoJEN0jrNd/PrOhdtkQAMKRrNmtVQyxCFWKx+6Enij0
-vvMVnxcBw14zd5be0WGPALsmh21stPbFwXmEGypqszC3PM1ACEQoY25EHINVmZYO
-jRgS20bb2/rJ+JHLEv2jTCg9rJTMkhdlEm3dzRpmZw9bNXA1B0YczYNzLv6+aykJ
-rb+ovh0tKYr4Khd7+4V3C7Rc+4POXWtci42oypW1R42WMgyNO7DorigsWnkMfyZE
-B6uGTcS1+eJC5oyCSCH+6xHzvc8QbaONMX+bu37+dqdctTb8UTQ07DPbZBv767BB
-2x1Q+HQsdKvCtFWsxB9g7nNIPECrbSj5FEF3+CiMv0hyqMZ+6ufKZC26cR6uB4dx
-uu6T4x+ix27pfKOOB+Ft3KnfSpkpo9nTpUjbJltDEmSemHKKM6Jf2Dk31cFIivNm
-OeqRlVMFROJcWDtKw9CbPBwfxvOLgPofQu7yOQ9PVjcEEK3Ho/ucMbGFqmaqy7fe
-kJuaGNVjz8E+6SfukZxrgXXHMJiYkLIVbvcOjfzQYa404JyNFSI/+RcVVqmSs+ny
-3Cit0gQhpvMXIj20ZyxaQfIzmrzrmdKdOy2yJMUqRZD34nihvBocS5m93ZnGLjFn
-ael0OHsGBQ7akX9lqIS6QIBa1g0OG0NnEb7FdRB55WcYY2slu+n+lJ08rGYhfY0Q
-vlPfg+y9HUG6zT81hHg+
-=Vvpf
------END PGP SIGNATURE-----
-
---IMjqdzrDRly81ofr--
+Terje
