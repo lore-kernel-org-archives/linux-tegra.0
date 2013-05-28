@@ -1,103 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add audio-related nodes to Tegra114 DT
-Date: Tue, 28 May 2013 11:43:51 -0600
-Message-ID: <1369763031-13687-1-git-send-email-swarren@wwwdotorg.org>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [GIT PULL] ARM: tegra: DT-related fixes needed by the USB tree
+Date: Tue, 28 May 2013 20:47:04 +0300
+Message-ID: <20130528174704.GH15794@arwen.pp.htv.fi>
+References: <1368831045-19105-1-git-send-email-swarren@wwwdotorg.org>
+ <51A4E62D.7020206@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4C6bbPZ6c/S1npyF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51A4E62D.7020206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--4C6bbPZ6c/S1npyF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add nodes for the Tegra114 AHUB and I2S controllers.
+On Tue, May 28, 2013 at 11:15:25AM -0600, Stephen Warren wrote:
+> On 05/17/2013 04:50 PM, Stephen Warren wrote:
+> > Felipe, (and Alan, Greg),
+> >=20
+> > These are the changes from the Tegra tree that need to be merged
+> > before the Tegra USB driver patches 4-8 from Venu can be applied. Recall
+> > that we had previously agreed on this approach for v3.9, but Venu's
+> > patches didn't end up being ready until now, unfortunately. I note
+> > that Venu's patches affect both the Tegra USB and PHY drivers.
+>=20
+> Felipe, do you know when you plan to pull this into the USB tree, and
+> apply Venu's patches? Thanks.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114.dtsi |   71 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+got 35 commits testing right now. This pull is in my list for tomorrow.
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 2eab52e..4ce77ba 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -327,6 +327,77 @@
- 		nvidia,ahb = <&ahb>;
- 	};
- 
-+	ahub {
-+		compatible = "nvidia,tegra114-ahub";
-+		reg = <0x70080000 0x200>,
-+		      <0x70080200 0x100>,
-+		      <0x70081000 0x200>;
-+		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+		nvidia,dma-request-selector = <&apbdma 1>, <&apbdma 2>,
-+			<&apbdma 3>, <&apbdma 4>, <&apbdma 6>, <&apbdma 7>,
-+			<&apbdma 12>, <&apbdma 13>, <&apbdma 14>,
-+			<&apbdma 29>;
-+		clocks = <&tegra_car TEGRA114_CLK_D_AUDIO>,
-+			 <&tegra_car TEGRA114_CLK_APBIF>,
-+			 <&tegra_car TEGRA114_CLK_I2S0>,
-+			 <&tegra_car TEGRA114_CLK_I2S1>,
-+			 <&tegra_car TEGRA114_CLK_I2S2>,
-+			 <&tegra_car TEGRA114_CLK_I2S3>,
-+			 <&tegra_car TEGRA114_CLK_I2S4>,
-+			 <&tegra_car TEGRA114_CLK_DAM0>,
-+			 <&tegra_car TEGRA114_CLK_DAM1>,
-+			 <&tegra_car TEGRA114_CLK_DAM2>,
-+			 <&tegra_car TEGRA114_CLK_SPDIF_IN>,
-+			 <&tegra_car TEGRA114_CLK_AMX>,
-+			 <&tegra_car TEGRA114_CLK_ADX>;
-+		clock-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
-+			      "i2s3", "i2s4", "dam0", "dam1", "dam2",
-+			      "spdif_in", "amx", "adx";
-+		ranges;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		tegra_i2s0: i2s@70080300 {
-+			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
-+			reg = <0x70080300 0x100>;
-+			nvidia,ahub-cif-ids = <4 4>;
-+			clocks = <&tegra_car TEGRA114_CLK_I2S0>;
-+			status = "disabled";
-+		};
-+
-+		tegra_i2s1: i2s@70080400 {
-+			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
-+			reg = <0x70080400 0x100>;
-+			nvidia,ahub-cif-ids = <5 5>;
-+			clocks = <&tegra_car TEGRA114_CLK_I2S1>;
-+			status = "disabled";
-+		};
-+
-+		tegra_i2s2: i2s@70080500 {
-+			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
-+			reg = <0x70080500 0x100>;
-+			nvidia,ahub-cif-ids = <6 6>;
-+			clocks = <&tegra_car TEGRA114_CLK_I2S2>;
-+			status = "disabled";
-+		};
-+
-+		tegra_i2s3: i2s@70080600 {
-+			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
-+			reg = <0x70080600 0x100>;
-+			nvidia,ahub-cif-ids = <7 7>;
-+			clocks = <&tegra_car TEGRA114_CLK_I2S3>;
-+			status = "disabled";
-+		};
-+
-+		tegra_i2s4: i2s@70080700 {
-+			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
-+			reg = <0x70080700 0x100>;
-+			nvidia,ahub-cif-ids = <8 8>;
-+			clocks = <&tegra_car TEGRA114_CLK_I2S4>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	sdhci@78000000 {
- 		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
- 		reg = <0x78000000 0x200>;
--- 
-1.7.10.4
+sorry for the delay, have been on a trip for the last 3 weeks and now
+I'm catching up with emails during my vacations (next 2 weeks).
+
+--=20
+balbi
+
+--4C6bbPZ6c/S1npyF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRpO2YAAoJEIaOsuA1yqREzNMQAJgAdlo8eOXVgPggcHSj6cTO
+2Iq4rScNmxs231pL9tyBtsBr5T179H5KCiqB1KWFMWJYpoirXeEuTvIwaKKYnv2P
+ltGlpOi5vWp/gyHBJ4u7wbNZvayYLqkVz/iAr3/cb96YZ2nnsDMPd05i0qSWaMJg
+CV5XiTjaXDF7vJIXe3QZFuD3HL2mU+GRKlJMLTvfVGfKZU3pRzo34xibiN83x2Qn
+iFMXSreTh4N3K6OpXXvdg8T3P2nrBVivPFfXZi5XSdlwFembiZTh6E8OnUTfRg50
+ekBgK8cHIhTROKOlKLQM20CjjLXQ93N2f1pcobmDLMquk0GTVw4A47bkd6iKuIAz
+0frrThacbANqhHuNcg2JcbwiiOcDtXcaZQUif3lVAiLoD9WWKaMuWJ5zDucc4d5j
+z+3r9o+Hojs9J8jABzEooWhZ/6joAyU2tl5b3nOzhjSshVNeGkMgUv8rxYvO3UFD
+kUmdQDOS6MTuE6a46DFCXpIZuNCJn5UBeBVmiFBbRngH1HI+4xh/B5E0I6Mu27Mq
++LiJ+rxx00Nx1FW3w4svjaR3dspEV4+vbrfBWXHUHaLXEIWWw3IEFaN3jjyfyNTu
+RD84zwTkJi9UOAkF041Vu4rWMriXc1XzjjBSE0QwE43AiRQfGXKUpukAi8fuS7iB
+83yj0+pWryJ3Tx2IcsoR
+=VceN
+-----END PGP SIGNATURE-----
+
+--4C6bbPZ6c/S1npyF--
