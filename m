@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: rebuild tegra_defconfig
-Date: Tue, 28 May 2013 11:26:12 -0600
-Message-ID: <1369761972-31986-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: add audio-related nodes to Tegra114 DT
+Date: Tue, 28 May 2013 11:43:51 -0600
+Message-ID: <1369763031-13687-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,93 +10,94 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This simply rebuilds tegra_defconfig on top of next-20130520. As such, it
-should introduce no changes; simply moving entries around due to Kconfig
-ordering changes. The apparent exceptions are:
-
-AUTO_ZRELADDR: Selected by ARM multi-platform support.
-MTD_CHAR: Removed in Kconfig.
-
-This should make it easier to create future defconfig patches on top of
-linux-next, since all the extraneous diffs have been removed. It also
-makes it more likely that once 3.12 comes around, this defconfig will
-already match what's required there.
+Add nodes for the Tegra114 AHUB and I2S controllers.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/configs/tegra_defconfig |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/tegra114.dtsi |   71 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 4dbcd9f..e45fe32 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -21,8 +21,8 @@ CONFIG_MODULE_FORCE_UNLOAD=y
- CONFIG_PARTITION_ADVANCED=y
- # CONFIG_IOSCHED_DEADLINE is not set
- # CONFIG_IOSCHED_CFQ is not set
--CONFIG_ARCH_TEGRA=y
- CONFIG_GPIO_PCA953X=y
-+CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
-@@ -36,7 +36,6 @@ CONFIG_HIGHMEM=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
- CONFIG_KEXEC=y
--CONFIG_AUTO_ZRELADDR=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPU_IDLE=y
-@@ -81,7 +80,6 @@ CONFIG_DEVTMPFS_MOUNT=y
- # CONFIG_FIRMWARE_IN_KERNEL is not set
- CONFIG_CMA=y
- CONFIG_MTD=y
--CONFIG_MTD_CHAR=y
- CONFIG_MTD_M25P80=y
- CONFIG_PROC_DEVICETREE=y
- CONFIG_BLK_DEV_LOOP=y
-@@ -105,8 +103,8 @@ CONFIG_BRCMFMAC=m
- CONFIG_RT2X00=y
- CONFIG_RT2800USB=m
- CONFIG_INPUT_EVDEV=y
--CONFIG_KEYBOARD_TEGRA=y
- CONFIG_KEYBOARD_GPIO=y
-+CONFIG_KEYBOARD_TEGRA=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
- # CONFIG_LEGACY_PTYS is not set
-@@ -134,11 +132,11 @@ CONFIG_CHARGER_TPS65090=y
- CONFIG_POWER_RESET=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_SENSORS_LM90=y
--CONFIG_MFD_TPS6586X=y
--CONFIG_MFD_TPS65910=y
- CONFIG_MFD_MAX8907=y
--CONFIG_MFD_TPS65090=y
- CONFIG_MFD_PALMAS=y
-+CONFIG_MFD_TPS65090=y
-+CONFIG_MFD_TPS6586X=y
-+CONFIG_MFD_TPS65910=y
- CONFIG_REGULATOR=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
-@@ -211,7 +209,6 @@ CONFIG_TEGRA20_APB_DMA=y
- CONFIG_STAGING=y
- CONFIG_SENSORS_ISL29018=y
- CONFIG_SENSORS_ISL29028=y
--CONFIG_AK8975=y
- CONFIG_MFD_NVEC=y
- CONFIG_KEYBOARD_NVEC=y
- CONFIG_SERIO_NVEC_PS2=y
-@@ -221,6 +218,7 @@ CONFIG_TEGRA_IOMMU_GART=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_MEMORY=y
- CONFIG_IIO=y
-+CONFIG_AK8975=y
- CONFIG_PWM=y
- CONFIG_PWM_TEGRA=y
- CONFIG_EXT2_FS=y
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 2eab52e..4ce77ba 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -327,6 +327,77 @@
+ 		nvidia,ahb = <&ahb>;
+ 	};
+ 
++	ahub {
++		compatible = "nvidia,tegra114-ahub";
++		reg = <0x70080000 0x200>,
++		      <0x70080200 0x100>,
++		      <0x70081000 0x200>;
++		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++		nvidia,dma-request-selector = <&apbdma 1>, <&apbdma 2>,
++			<&apbdma 3>, <&apbdma 4>, <&apbdma 6>, <&apbdma 7>,
++			<&apbdma 12>, <&apbdma 13>, <&apbdma 14>,
++			<&apbdma 29>;
++		clocks = <&tegra_car TEGRA114_CLK_D_AUDIO>,
++			 <&tegra_car TEGRA114_CLK_APBIF>,
++			 <&tegra_car TEGRA114_CLK_I2S0>,
++			 <&tegra_car TEGRA114_CLK_I2S1>,
++			 <&tegra_car TEGRA114_CLK_I2S2>,
++			 <&tegra_car TEGRA114_CLK_I2S3>,
++			 <&tegra_car TEGRA114_CLK_I2S4>,
++			 <&tegra_car TEGRA114_CLK_DAM0>,
++			 <&tegra_car TEGRA114_CLK_DAM1>,
++			 <&tegra_car TEGRA114_CLK_DAM2>,
++			 <&tegra_car TEGRA114_CLK_SPDIF_IN>,
++			 <&tegra_car TEGRA114_CLK_AMX>,
++			 <&tegra_car TEGRA114_CLK_ADX>;
++		clock-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
++			      "i2s3", "i2s4", "dam0", "dam1", "dam2",
++			      "spdif_in", "amx", "adx";
++		ranges;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		tegra_i2s0: i2s@70080300 {
++			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
++			reg = <0x70080300 0x100>;
++			nvidia,ahub-cif-ids = <4 4>;
++			clocks = <&tegra_car TEGRA114_CLK_I2S0>;
++			status = "disabled";
++		};
++
++		tegra_i2s1: i2s@70080400 {
++			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
++			reg = <0x70080400 0x100>;
++			nvidia,ahub-cif-ids = <5 5>;
++			clocks = <&tegra_car TEGRA114_CLK_I2S1>;
++			status = "disabled";
++		};
++
++		tegra_i2s2: i2s@70080500 {
++			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
++			reg = <0x70080500 0x100>;
++			nvidia,ahub-cif-ids = <6 6>;
++			clocks = <&tegra_car TEGRA114_CLK_I2S2>;
++			status = "disabled";
++		};
++
++		tegra_i2s3: i2s@70080600 {
++			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
++			reg = <0x70080600 0x100>;
++			nvidia,ahub-cif-ids = <7 7>;
++			clocks = <&tegra_car TEGRA114_CLK_I2S3>;
++			status = "disabled";
++		};
++
++		tegra_i2s4: i2s@70080700 {
++			compatible = "nvidia,tegra114-i2s", "nvidia,tegra30-i2s";
++			reg = <0x70080700 0x100>;
++			nvidia,ahub-cif-ids = <8 8>;
++			clocks = <&tegra_car TEGRA114_CLK_I2S4>;
++			status = "disabled";
++		};
++	};
++
+ 	sdhci@78000000 {
+ 		compatible = "nvidia,tegra114-sdhci", "nvidia,tegra30-sdhci";
+ 		reg = <0x78000000 0x200>;
 -- 
 1.7.10.4
