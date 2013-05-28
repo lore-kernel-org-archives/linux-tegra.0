@@ -1,68 +1,82 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] ARM: tegra: add cpu_disable for hotplug
-Date: Tue, 28 May 2013 12:14:41 -0600
-Message-ID: <1369764881-20520-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Keith Packard <keithp@keithp.com>
+Subject: Re: [PATCH 2/6] gpu: host1x: Fix syncpoint wait return value
+Date: Tue, 28 May 2013 13:12:12 -0600
+Message-ID: <86y5ay6hrn.fsf@miki.keithp.com>
+References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
+	<1368791388-31441-3-git-send-email-amerilainen@nvidia.com>
+	<20130526101243.GB1652@mithrandir> <51A30372.6080907@nvidia.com>
+	<20130528103927.GB11547@mithrandir>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1014009621=="
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20130528103927.GB11547@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Thierry Reding <thierry.reding@gmail.com>, Arto Merilainen <amerilainen@nvidia.com>
+Cc: Terje Bergstrom <tbergstrom@nvidia.com>, xorg-devel@lists.x.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--===============1014009621==
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 
-The Tegra114 could hotplug the CPU0, but the common cpu_disable didn't
-support that. Adding a Tegra specific cpu_disable function for it.
+--=-=-=
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[swarren: adjusted the switch statement to be future-proof]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/common.h  |    1 +
- arch/arm/mach-tegra/hotplug.c |   11 +++++++++++
- arch/arm/mach-tegra/platsmp.c |    1 +
- 3 files changed, 13 insertions(+)
+Thierry Reding <thierry.reding@gmail.com> writes:
 
-diff --git a/arch/arm/mach-tegra/common.h b/arch/arm/mach-tegra/common.h
-index 5900cc4..32f8eb3 100644
---- a/arch/arm/mach-tegra/common.h
-+++ b/arch/arm/mach-tegra/common.h
-@@ -2,3 +2,4 @@ extern struct smp_operations tegra_smp_ops;
- 
- extern int tegra_cpu_kill(unsigned int cpu);
- extern void tegra_cpu_die(unsigned int cpu);
-+extern int tegra_cpu_disable(unsigned int cpu);
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index d07f152..a52c10e 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -46,6 +46,17 @@ void __ref tegra_cpu_die(unsigned int cpu)
- 	BUG();
- }
- 
-+int tegra_cpu_disable(unsigned int cpu)
-+{
-+	switch (tegra_chip_id) {
-+	case TEGRA20:
-+	case TEGRA30:
-+		return cpu == 0 ? -EPERM : 0;
-+	default:
-+		return 0;
-+	}
-+}
-+
- void __init tegra_hotplug_init(void)
- {
- 	if (!IS_ENABLED(CONFIG_HOTPLUG_CPU))
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index 554aedc..24db4ac 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -196,5 +196,6 @@ struct smp_operations tegra_smp_ops __initdata = {
- #ifdef CONFIG_HOTPLUG_CPU
- 	.cpu_kill		= tegra_cpu_kill,
- 	.cpu_die		= tegra_cpu_die,
-+	.cpu_disable		= tegra_cpu_disable,
- #endif
- };
--- 
-1.7.10.4
+
+> That doesn't sound right. Maybe drmIoctl() needs fixing instead. Looking
+> at the history, drmIoctl() was introduced to automatically loop if a
+> signal was received (commit 8b9ab108ec1f2ba2b503f713769c4946849b3cb2).
+> However the ioctl(3p) manpage doesn't mention that ioctl() returns
+> EAGAIN in case it is interrupted by a signal.
+
+EAGAIN is being returned when the GPU is wedged to ask the application
+to re-submit the request, which will presumably be held until the  GPU
+is un-wedged.
+
+=2D-=20
+keith.packard@intel.com
+
+--=-=-=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIVAwUBUaUBjTYtFsjWk68qAQh4wRAA2GDdsxUzZaRePb/FK8WlGEydhgsSRbAJ
+QDd4BTOd/ueu5uGon/nWc1T8gQ1QCLO62a+H06+VuYzERDnD1v9M6uc2/LESNUz9
+YHFZsJj9RDUBLbyTVxF8aXP1WC1Xj182dDGHGrgaAux2HSNTThI3y+hxV3K6tUub
+sFDBd7Qp1gN382exPYDyi/AFDdp3HgO8C3tMgHHTJIRNVklY9R4rVYSIhjgzlLh2
+bL1DxsJqiMXBKNlh88kZYurkB6xrZQczb4DRsXxTCTo8MdUD1r7nygzsVYirEW6c
+gvr9fFsWvS89L4Dl+7dWKGITQwJ1PVMr+0UBoSIvpyLHGr3tsYQOGSs+CzntieOK
+Ax1l62YME7dpaM4maepuz8CAlltHgh3bEbPnlhpmlj5qAKmri5bBdAI8Il2sR5Pw
+KcwVIEKNtVCBmywuqFH/yA8o4CjBwVXLVYChphalnE4hO7Vy7iLsuvOMXn/upJUQ
+jeVJBuHv7yOGjPwzLAvPKijmD5NcFPGJC9BXGLUooSJ+fyHF+SmNCbEOZRr/Oz9B
+NOIS3TSkXwhcp5GxFGPelP86SDRz1IbGOcTcs+5r/OKWUOlW+BaDWdSf0EgjKPzt
+YLY16VeD+pLnHIWRcBOOQZYpkelTKGTRO2QkplQohTjh+lNatAWh5NKHYKHzXFOm
+DoPiXzk14RE=
+=4Zdj
+-----END PGP SIGNATURE-----
+--=-=-=--
+
+--===============1014009621==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1014009621==--
