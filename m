@@ -1,176 +1,170 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv2 3/7] gpu: host1x: Don't reset firewall between gathers
-Date: Wed, 29 May 2013 13:26:04 +0300
-Message-ID: <1369823168-5396-4-git-send-email-amerilainen@nvidia.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv2 7/7] gpu: host1x: Rework CPU syncpoint increment
+Date: Wed, 29 May 2013 13:26:08 +0300
+Message-ID: <1369823168-5396-8-git-send-email-amerilainen@nvidia.com>
 References: <1369823168-5396-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1369823168-5396-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: tbergstrom@nvidia.com, linux-kernel@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1369823168-5396-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Terje Bergstrom <tbergstrom@nvidia.com>
+This patch merges host1x_syncpt_cpu_incr to host1x_syncpt_incr() as
+they are in practise doing the same thing. host1x_syncpt_incr() is
+also modified to return error codes. User space interface is modified
+accordingly to pass return values.
 
-The firewall was reinitialised for each gather. Because the filter
-was reinitialised, it did not track the class over gather boundaries.
-This allowed the user application to set host1x class to one class
-in one gather and use that class in another gather without firewall
-having knowledge about that.
-
-Signed-off-by: Terje Bergstrom <tbergstrom@nvidia.com>
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/job.c | 73 ++++++++++++++++++++++--------------------------
- 1 file changed, 34 insertions(+), 39 deletions(-)
+ drivers/gpu/host1x/dev.h          |  8 ++++----
+ drivers/gpu/host1x/drm/drm.c      |  3 +--
+ drivers/gpu/host1x/hw/cdma_hw.c   |  2 +-
+ drivers/gpu/host1x/hw/syncpt_hw.c | 12 +++++-------
+ drivers/gpu/host1x/syncpt.c       | 15 ++-------------
+ drivers/gpu/host1x/syncpt.h       |  7 ++-----
+ 6 files changed, 15 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 83804fd..028d2d4 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -376,69 +376,60 @@ static int check_nonincr(struct host1x_firewall *fw)
- 	return 0;
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index a1607d6..790ddf1 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -73,7 +73,7 @@ struct host1x_syncpt_ops {
+ 	void (*restore_wait_base)(struct host1x_syncpt *syncpt);
+ 	void (*load_wait_base)(struct host1x_syncpt *syncpt);
+ 	u32 (*load)(struct host1x_syncpt *syncpt);
+-	void (*cpu_incr)(struct host1x_syncpt *syncpt);
++	int (*cpu_incr)(struct host1x_syncpt *syncpt);
+ 	int (*patch_wait)(struct host1x_syncpt *syncpt, void *patch_addr);
+ };
+ 
+@@ -157,10 +157,10 @@ static inline u32 host1x_hw_syncpt_load(struct host1x *host,
+ 	return host->syncpt_op->load(sp);
  }
  
--static int validate(struct host1x_job *job, struct device *dev,
--		    struct host1x_job_gather *g)
-+static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+-static inline void host1x_hw_syncpt_cpu_incr(struct host1x *host,
+-					     struct host1x_syncpt *sp)
++static inline int host1x_hw_syncpt_cpu_incr(struct host1x *host,
++					    struct host1x_syncpt *sp)
  {
- 	u32 *cmdbuf_base;
- 	int err = 0;
--	struct host1x_firewall fw;
--
--	fw.job = job;
--	fw.dev = dev;
--	fw.reloc = job->relocarray;
--	fw.num_relocs = job->num_relocs;
--	fw.cmdbuf_id = g->bo;
--
--	fw.offset = 0;
--	fw.class = 0;
- 
--	if (!job->is_addr_reg)
-+	if (!fw->job->is_addr_reg)
- 		return 0;
- 
- 	cmdbuf_base = host1x_bo_mmap(g->bo);
- 	if (!cmdbuf_base)
- 		return -ENOMEM;
-+	fw->words = g->words;
-+	fw->cmdbuf_id = g->bo;
-+	fw->offset = 0;
- 
--	fw.words = g->words;
--	while (fw.words && !err) {
--		u32 word = cmdbuf_base[fw.offset];
-+	while (fw->words && !err) {
-+		u32 word = cmdbuf_base[fw->offset];
- 		u32 opcode = (word & 0xf0000000) >> 28;
- 
--		fw.mask = 0;
--		fw.reg = 0;
--		fw.count = 0;
--		fw.words--;
--		fw.offset++;
-+		fw->mask = 0;
-+		fw->reg = 0;
-+		fw->count = 0;
-+		fw->words--;
-+		fw->offset++;
- 
- 		switch (opcode) {
- 		case 0:
--			fw.class = word >> 6 & 0x3ff;
--			fw.mask = word & 0x3f;
--			fw.reg = word >> 16 & 0xfff;
--			err = check_mask(&fw);
-+			fw->class = word >> 6 & 0x3ff;
-+			fw->mask = word & 0x3f;
-+			fw->reg = word >> 16 & 0xfff;
-+			err = check_mask(fw);
- 			if (err)
- 				goto out;
- 			break;
- 		case 1:
--			fw.reg = word >> 16 & 0xfff;
--			fw.count = word & 0xffff;
--			err = check_incr(&fw);
-+			fw->reg = word >> 16 & 0xfff;
-+			fw->count = word & 0xffff;
-+			err = check_incr(fw);
- 			if (err)
- 				goto out;
- 			break;
- 
- 		case 2:
--			fw.reg = word >> 16 & 0xfff;
--			fw.count = word & 0xffff;
--			err = check_nonincr(&fw);
-+			fw->reg = word >> 16 & 0xfff;
-+			fw->count = word & 0xffff;
-+			err = check_nonincr(fw);
- 			if (err)
- 				goto out;
- 			break;
- 
- 		case 3:
--			fw.mask = word & 0xffff;
--			fw.reg = word >> 16 & 0xfff;
--			err = check_mask(&fw);
-+			fw->mask = word & 0xffff;
-+			fw->reg = word >> 16 & 0xfff;
-+			err = check_mask(fw);
- 			if (err)
- 				goto out;
- 			break;
-@@ -453,12 +444,10 @@ static int validate(struct host1x_job *job, struct device *dev,
- 	}
- 
- 	/* No relocs should remain at this point */
--	if (fw.num_relocs)
-+	if (fw->num_relocs)
- 		err = -EINVAL;
- 
- out:
--	host1x_bo_munmap(g->bo, cmdbuf_base);
--
- 	return err;
+-	host->syncpt_op->cpu_incr(sp);
++	return host->syncpt_op->cpu_incr(sp);
  }
  
-@@ -508,8 +497,15 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 	int err;
- 	unsigned int i, j;
- 	struct host1x *host = dev_get_drvdata(dev->parent);
-+	struct host1x_firewall fw;
- 	DECLARE_BITMAP(waitchk_mask, host1x_syncpt_nb_pts(host));
+ static inline int host1x_hw_syncpt_patch_wait(struct host1x *host,
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+index 2b561c9..1dfd454 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -378,8 +378,7 @@ static int tegra_syncpt_incr(struct drm_device *drm, void *data,
+ 	if (!sp)
+ 		return -EINVAL;
  
-+	fw.job = job;
-+	fw.dev = dev;
-+	fw.reloc = job->relocarray;
-+	fw.num_relocs = job->num_relocs;
-+	fw.class = 0;
+-	host1x_syncpt_incr(sp);
+-	return 0;
++	return host1x_syncpt_incr(sp);
+ }
+ 
+ static int tegra_syncpt_wait(struct drm_device *drm, void *data,
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 590b69d..2ee4ad5 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -44,7 +44,7 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
+ 	u32 i;
+ 
+ 	for (i = 0; i < syncpt_incrs; i++)
+-		host1x_syncpt_cpu_incr(cdma->timeout.syncpt);
++		host1x_syncpt_incr(cdma->timeout.syncpt);
+ 
+ 	/* after CPU incr, ensure shadow is up to date */
+ 	host1x_syncpt_load(cdma->timeout.syncpt);
+diff --git a/drivers/gpu/host1x/hw/syncpt_hw.c b/drivers/gpu/host1x/hw/syncpt_hw.c
+index 6117499..0cf6095 100644
+--- a/drivers/gpu/host1x/hw/syncpt_hw.c
++++ b/drivers/gpu/host1x/hw/syncpt_hw.c
+@@ -77,21 +77,19 @@ static u32 syncpt_load(struct host1x_syncpt *sp)
+  * Write a cpu syncpoint increment to the hardware, without touching
+  * the cache.
+  */
+-static void syncpt_cpu_incr(struct host1x_syncpt *sp)
++static int syncpt_cpu_incr(struct host1x_syncpt *sp)
+ {
+ 	struct host1x *host = sp->host;
+ 	u32 reg_offset = sp->id / 32;
+ 
+ 	if (!host1x_syncpt_client_managed(sp) &&
+-	    host1x_syncpt_idle(sp)) {
+-		dev_err(host->dev, "Trying to increment syncpoint id %d beyond max\n",
+-			sp->id);
+-		host1x_debug_dump(sp->host);
+-		return;
+-	}
++	    host1x_syncpt_idle(sp))
++		return -EINVAL;
+ 	host1x_sync_writel(host, BIT_MASK(sp->id),
+ 			   HOST1X_SYNC_SYNCPT_CPU_INCR(reg_offset));
+ 	wmb();
 +
- 	bitmap_zero(waitchk_mask, host1x_syncpt_nb_pts(host));
- 	for (i = 0; i < job->num_waitchk; i++) {
- 		u32 syncpt_id = job->waitchk[i].syncpt_id;
-@@ -543,7 +539,7 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 		err = 0;
++	return 0;
+ }
  
- 		if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
--			err = validate(job, dev, g);
-+			err = validate(&fw, g);
+ /* remove a wait pointed to by patch_addr */
+diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
+index 27201b5..409745b 100644
+--- a/drivers/gpu/host1x/syncpt.c
++++ b/drivers/gpu/host1x/syncpt.c
+@@ -129,22 +129,11 @@ u32 host1x_syncpt_load_wait_base(struct host1x_syncpt *sp)
+ }
  
- 		if (err)
- 			dev_err(dev, "Job invalid (err=%d)\n", err);
-@@ -553,7 +549,6 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 
- 		if (!err)
- 			err = do_waitchks(job, host, g->bo);
+ /*
+- * Write a cpu syncpoint increment to the hardware, without touching
+- * the cache. Caller is responsible for host being powered.
+- */
+-void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp)
+-{
+-	host1x_hw_syncpt_cpu_incr(sp->host, sp);
+-}
 -
- 		if (err)
- 			break;
- 	}
+-/*
+  * Increment syncpoint value from cpu, updating cache
+  */
+-void host1x_syncpt_incr(struct host1x_syncpt *sp)
++int host1x_syncpt_incr(struct host1x_syncpt *sp)
+ {
+-	if (host1x_syncpt_client_managed(sp))
+-		host1x_syncpt_incr_max(sp, 1);
+-	host1x_syncpt_cpu_incr(sp);
++	return host1x_hw_syncpt_cpu_incr(sp->host, sp);
+ }
+ 
+ /*
+diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
+index d00e758..267c0b9 100644
+--- a/drivers/gpu/host1x/syncpt.h
++++ b/drivers/gpu/host1x/syncpt.h
+@@ -115,9 +115,6 @@ static inline bool host1x_syncpt_idle(struct host1x_syncpt *sp)
+ /* Return pointer to struct denoting sync point id. */
+ struct host1x_syncpt *host1x_syncpt_get(struct host1x *host, u32 id);
+ 
+-/* Request incrementing a sync point. */
+-void host1x_syncpt_cpu_incr(struct host1x_syncpt *sp);
+-
+ /* Load current value from hardware to the shadow register. */
+ u32 host1x_syncpt_load(struct host1x_syncpt *sp);
+ 
+@@ -133,8 +130,8 @@ void host1x_syncpt_restore(struct host1x *host);
+ /* Read current wait base value into shadow register and return it. */
+ u32 host1x_syncpt_load_wait_base(struct host1x_syncpt *sp);
+ 
+-/* Increment sync point and its max. */
+-void host1x_syncpt_incr(struct host1x_syncpt *sp);
++/* Request incrementing a sync point. */
++int host1x_syncpt_incr(struct host1x_syncpt *sp);
+ 
+ /* Indicate future operations by incrementing the sync point max. */
+ u32 host1x_syncpt_incr_max(struct host1x_syncpt *sp, u32 incrs);
 -- 
 1.8.1.5
