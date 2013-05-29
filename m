@@ -1,37 +1,48 @@
-From: Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: [PATCH] gpu/host1x: Remove DRIVER_BUS_PLATFORM from driver_features
-Date: Wed, 29 May 2013 07:44:34 +0200
-Message-ID: <1369806274-19046-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: RE: [PATCH 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
+Date: Wed, 29 May 2013 15:40:17 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BE9B@BGMAIL01.nvidia.com>
+References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com>
+ <1368010660-31465-4-git-send-email-jagarwal@nvidia.com>
+ <518A8596.7070702@wwwdotorg.org>
+ <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com>
+ <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Stephen Warren' <swarren@wwwdotorg.org>, "'thierry.reding@avionic-design.de'" <thierry.reding@avionic-design.de>
+Cc: "'linux@arm.linux.org.uk'" <linux@arm.linux.org.uk>, "'bhelgaas@google.com'" <bhelgaas@google.com>, "'olof@lixom.net'" <olof@lixom.net>, "'mturquette@linaro.org'" <mturquette@linaro.org>, "'linux-arm-kernel@lists.infradead.org'" <linux-arm-kernel@lists.infradead.org>, "'linux-tegra@vger.kernel.org'" <linux-tegra@vger.kernel.org>, "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'linux-pci@vger.kernel.org'" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> > > So, if I apply this series, I do see the PCIe bridge and Ethernet
+> > > device get enumerated, but I don't see the USB3 controller get
+> > > enumerated. I believe that is a PCIe device behind the same bridge
+> > > on the
+> > same Tegra PCIe port.
+> > > Shouldn't this device show up?
+> > I have also reproduced this problem. I see somehow no non-
+> > prefetchable memory is assigned to any of pcie devices.
+> > Probably that is the reason for USB3 (pci 0000:04:00.0) not getting
+> > enumerated since it uses only non-prefetchable memory.
+> 
+> 1. Bus4(on which usb3 device resides) always return 0xffffffff from it's
+> config space. which means device is not present?
+> 2. That's why it is not assigned any resources and hence no usb3 probe
+> happens.
+> 3. But same bus does return valid info like vendor/device id etc from it's
+> config space in downstream kernel and hence usb3 probe does happen.
+> 
+> Thierry, Stephen,
+> 4. Any idea why bus4 should return 0xffffffff values in upstream kernel?
+> Anything missing?
+> 5. Also, how config space of all pcie devices are mapped? I mean if I change
+> the config space offset in dts file, then also I find correct vendor/device id
+> etc for bus0/device0/fun0.
+>     So how this mapping happens that even after changing the config space
+> offset in PCIe address space, it always finds correct vendor/device id.
 
-DRIVER_BUS_PLATFORM is not a DRM driver feature flag, it must not be set
-in the driver's driver_features field.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
----
- drivers/gpu/host1x/drm/drm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
-index 2b561c9..e658a2a 100644
---- a/drivers/gpu/host1x/drm/drm.c
-+++ b/drivers/gpu/host1x/drm/drm.c
-@@ -605,7 +605,7 @@ static void tegra_debugfs_cleanup(struct drm_minor *minor)
- #endif
- 
- struct drm_driver tegra_drm_driver = {
--	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
-+	.driver_features = DRIVER_MODESET | DRIVER_GEM,
- 	.load = tegra_drm_load,
- 	.unload = tegra_drm_unload,
- 	.open = tegra_drm_open,
--- 
-Regards,
-
-Laurent Pinchart
+ Any idea on this?
