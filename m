@@ -1,159 +1,61 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv2 4/7] gpu: host1x: Copy gathers before verification
-Date: Wed, 29 May 2013 13:26:05 +0300
-Message-ID: <1369823168-5396-5-git-send-email-amerilainen@nvidia.com>
-References: <1369823168-5396-1-git-send-email-amerilainen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpu/host1x: Remove DRIVER_BUS_PLATFORM from
+ driver_features
+Date: Wed, 29 May 2013 12:50:40 +0200
+Message-ID: <20130529105039.GA30742@manwe>
+References: <1369806274-19046-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1369823168-5396-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: tbergstrom@nvidia.com, linux-kernel@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1369806274-19046-1-git-send-email-laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The firewall verified gather buffers before copying them. This
-allowed a malicious application to rewrite the buffer content by
-timing the rewrite carefully.
 
-This patch makes the buffer validation occur after copying the
-buffers.
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
-Signed-off-by: Terje Bergstrom <tbergstrom@nvidia.com>
----
- drivers/gpu/host1x/job.c | 50 +++++++++++++++++++-----------------------------
- 1 file changed, 20 insertions(+), 30 deletions(-)
+On Wed, May 29, 2013 at 07:44:34AM +0200, Laurent Pinchart wrote:
+> From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+>=20
+> DRIVER_BUS_PLATFORM is not a DRM driver feature flag, it must not be set
+> in the driver's driver_features field.
+>=20
+> Signed-off-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/drm/drm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 028d2d4..cc80766 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -228,17 +228,15 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 	void *cmdbuf_page_addr = NULL;
- 
- 	/* pin & patch the relocs for one gather */
--	while (i < job->num_relocs) {
-+	for (i = 0; i < job->num_relocs; i++) {
- 		struct host1x_reloc *reloc = &job->relocarray[i];
- 		u32 reloc_addr = (job->reloc_addr_phys[i] +
- 			reloc->target_offset) >> reloc->shift;
- 		u32 *target;
- 
- 		/* skip all other gathers */
--		if (!(reloc->cmdbuf && cmdbuf == reloc->cmdbuf)) {
--			i++;
-+		if (cmdbuf != reloc->cmdbuf)
- 			continue;
--		}
- 
- 		if (last_page != reloc->cmdbuf_offset >> PAGE_SHIFT) {
- 			if (cmdbuf_page_addr)
-@@ -257,9 +255,6 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
- 
- 		target = cmdbuf_page_addr + (reloc->cmdbuf_offset & ~PAGE_MASK);
- 		*target = reloc_addr;
--
--		/* mark this gather as handled */
--		reloc->cmdbuf = 0;
- 	}
- 
- 	if (cmdbuf_page_addr)
-@@ -378,15 +373,13 @@ static int check_nonincr(struct host1x_firewall *fw)
- 
- static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- {
--	u32 *cmdbuf_base;
-+	u32 *cmdbuf_base = (u32 *)fw->job->gather_copy_mapped +
-+		(g->offset / sizeof(u32));
- 	int err = 0;
- 
- 	if (!fw->job->is_addr_reg)
- 		return 0;
- 
--	cmdbuf_base = host1x_bo_mmap(g->bo);
--	if (!cmdbuf_base)
--		return -ENOMEM;
- 	fw->words = g->words;
- 	fw->cmdbuf_id = g->bo;
- 	fw->offset = 0;
-@@ -453,10 +446,17 @@ out:
- 
- static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- {
-+	struct host1x_firewall fw;
- 	size_t size = 0;
- 	size_t offset = 0;
- 	int i;
- 
-+	fw.job = job;
-+	fw.dev = dev;
-+	fw.reloc = job->relocarray;
-+	fw.num_relocs = job->num_relocs;
-+	fw.class = 0;
-+
- 	for (i = 0; i < job->num_gathers; i++) {
- 		struct host1x_job_gather *g = &job->gathers[i];
- 		size += g->words * sizeof(u32);
-@@ -477,14 +477,19 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- 		struct host1x_job_gather *g = &job->gathers[i];
- 		void *gather;
- 
-+		/* Copy the gather */
- 		gather = host1x_bo_mmap(g->bo);
- 		memcpy(job->gather_copy_mapped + offset, gather + g->offset,
- 		       g->words * sizeof(u32));
- 		host1x_bo_munmap(g->bo, gather);
- 
-+		/* Store the location in the buffer */
- 		g->base = job->gather_copy;
- 		g->offset = offset;
--		g->bo = NULL;
-+
-+		/* Validate the job */
-+		if (validate(&fw, g))
-+			return -EINVAL;
- 
- 		offset += g->words * sizeof(u32);
- 	}
-@@ -497,15 +502,8 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 	int err;
- 	unsigned int i, j;
- 	struct host1x *host = dev_get_drvdata(dev->parent);
--	struct host1x_firewall fw;
- 	DECLARE_BITMAP(waitchk_mask, host1x_syncpt_nb_pts(host));
- 
--	fw.job = job;
--	fw.dev = dev;
--	fw.reloc = job->relocarray;
--	fw.num_relocs = job->num_relocs;
--	fw.class = 0;
--
- 	bitmap_zero(waitchk_mask, host1x_syncpt_nb_pts(host));
- 	for (i = 0; i < job->num_waitchk; i++) {
- 		u32 syncpt_id = job->waitchk[i].syncpt_id;
-@@ -536,19 +534,11 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
- 			if (job->gathers[j].bo == g->bo)
- 				job->gathers[j].handled = true;
- 
--		err = 0;
--
--		if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
--			err = validate(&fw, g);
--
-+		err = do_relocs(job, g->bo);
- 		if (err)
--			dev_err(dev, "Job invalid (err=%d)\n", err);
--
--		if (!err)
--			err = do_relocs(job, g->bo);
-+			break;
- 
--		if (!err)
--			err = do_waitchks(job, host, g->bo);
-+		err = do_waitchks(job, host, g->bo);
- 		if (err)
- 			break;
- 	}
--- 
-1.8.1.5
+Applied, thanks. I did modify the subject's prefix to "drm/tegra: " for
+consistency, though.
+
+Thierry
+
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRpd1/AAoJEN0jrNd/PrOhB9EQAKmkiN95ZCuHJ/1hwLOmIaJM
+MOErR4/jcKtv9WvHZVMAhBX3vul1XM5J/auIoooFuemBolGVB/B8cDm5RvXXxbCU
+WOtaM6T82Kf9PazetwljSnSYeINsJfFQIrB6dO/cwZsu3tP9Vc/oGYSEqk8WvG+L
+NjDhPl1wYzstlwVa13GK+n/889FAxWuZ2h2C9lVCX4TRcZ2mohqE+fjlT9jdfn+c
+JAEI7AiAeVRiw7DU3xFksTqrI+79XqSeMvtqaKMJD6noobJxqCdR5bVH2gFrTKZB
+gJ6TZsqmCzW2VfSa18zILNstjunOcICOS3DyCqsbwCIiGhYNaeafWzAHzZxPfkoz
+Vf4yxz5doztbVvfJVJkDrHow6k4tPtRgsjQQYGT8NizCTFz3QJBsXpFAHHhlCu95
+n8VE9cak87hKhMhPNrWhcL+F5nQPw3mgDRaoq6Vf7et1w+2wmeQvQ4gK/PQZ7dOe
+7FKR1Qa2e03zEhdHegELNT+He2+cR29d45NwPTqVGbSwKk4dGWH4rZzl9t2ZKEnJ
+YnzLfd8RkGZauYB1tD+CabrKHxHZ0dpWqh1xwRsRiR6aZAy0toXz1byto3/n8gyr
+y6JihMmL0i2eUf5aBOCVN/sWskwEaY+C75zQHxPzac2uWyNNlb3fkCf70h8u01HN
+eoR37hkFxFJETReBbtth
+=eJR3
+-----END PGP SIGNATURE-----
+
+--tKW2IUtsqtDRztdT--
