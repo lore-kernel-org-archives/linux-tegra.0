@@ -1,40 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [v3 1/6] ARM: tegra20: create a DT header defining CLK IDs
-Date: Tue, 28 May 2013 16:09:38 -0600
-Message-ID: <51A52B22.6080402@wwwdotorg.org>
-References: <1369241136-21903-1-git-send-email-hdoyu@nvidia.com> <519D35A7.5090102@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: [PATCH] gpu/host1x: Remove DRIVER_BUS_PLATFORM from driver_features
+Date: Wed, 29 May 2013 07:44:34 +0200
+Message-ID: <1369806274-19046-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <519D35A7.5090102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/22/2013 03:16 PM, Stephen Warren wrote:
-> On 05/22/2013 10:45 AM, Hiroshi Doyu wrote:
->> Create a header file to define the clock IDs used by the Tegra20 clock
->> binding. Remove the list of definitions from the binding documentation,
->> and refer the reader to the header file.
->>
->> This will allow the same header to be used by both device tree files,
->> and drivers implementing this binding, which guarantees that the two
->> stay in sync. This also makes device trees more readable by using names
->> instead of magic numbers.
-> 
-> I have applied patches 1, 3, 5 to Tegra's for-3.11/deps-for-clk branch,
-> merged that into Tegra's for-3.11/dt branch, and then applied patches 2,
-> 4, 6 to Tegra's for-3.11/dt branch.
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 
-Oops. I actually forgot to apply patches 2, 4, 6 before. I just applied
-them. I noticed one issue: The new headers were added to
-<dt-bindings/clk/>. However, some other similar files have since shown
-up in <dt-bindings/clock/>. Since the latter location better matches the
-path-names of the DT bindings themselves, I moved the header files while
-applying the patches, and fixed up the usage.
+DRIVER_BUS_PLATFORM is not a DRM driver feature flag, it must not be set
+in the driver's driver_features field.
 
-> Once you send the drivers/clk changes that build on top of this, I'll
-> create a tag and send a pull request to Mike to pick up the headers so
-> he can apply the clk changes.
+Signed-off-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+---
+ drivers/gpu/host1x/drm/drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+index 2b561c9..e658a2a 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -605,7 +605,7 @@ static void tegra_debugfs_cleanup(struct drm_minor *minor)
+ #endif
+ 
+ struct drm_driver tegra_drm_driver = {
+-	.driver_features = DRIVER_BUS_PLATFORM | DRIVER_MODESET | DRIVER_GEM,
++	.driver_features = DRIVER_MODESET | DRIVER_GEM,
+ 	.load = tegra_drm_load,
+ 	.unload = tegra_drm_unload,
+ 	.open = tegra_drm_open,
+-- 
+Regards,
+
+Laurent Pinchart
