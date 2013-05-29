@@ -1,7 +1,7 @@
 From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv2 5/7] gpu: host1x: Fix memory access in syncpt request
-Date: Wed, 29 May 2013 13:26:06 +0300
-Message-ID: <1369823168-5396-6-git-send-email-amerilainen@nvidia.com>
+Subject: [PATCHv2 4/7] gpu: host1x: Copy gathers before verification
+Date: Wed, 29 May 2013 13:26:05 +0300
+Message-ID: <1369823168-5396-5-git-send-email-amerilainen@nvidia.com>
 References: <1369823168-5396-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,28 +12,148 @@ To: thierry.reding@gmail.com, airlied@linux.ie, linux-tegra@vger.kernel.org, dri
 Cc: tbergstrom@nvidia.com, linux-kernel@vger.kernel.org, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch fixes a bad memory access in syncpoint request code. If
-no syncpoints were available, the code accessed unreserved memory
-area causing unexpected behaviour.
+The firewall verified gather buffers before copying them. This
+allowed a malicious application to rewrite the buffer content by
+timing the rewrite carefully.
+
+This patch makes the buffer validation occur after copying the
+buffers.
 
 Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+Signed-off-by: Terje Bergstrom <tbergstrom@nvidia.com>
 ---
- drivers/gpu/host1x/syncpt.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/host1x/job.c | 50 +++++++++++++++++++-----------------------------
+ 1 file changed, 20 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 4b49345..2b03f1b 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -40,7 +40,8 @@ static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 028d2d4..cc80766 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -228,17 +228,15 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
+ 	void *cmdbuf_page_addr = NULL;
  
- 	for (i = 0; i < host->info->nb_pts && sp->name; i++, sp++)
- 		;
--	if (sp->dev)
+ 	/* pin & patch the relocs for one gather */
+-	while (i < job->num_relocs) {
++	for (i = 0; i < job->num_relocs; i++) {
+ 		struct host1x_reloc *reloc = &job->relocarray[i];
+ 		u32 reloc_addr = (job->reloc_addr_phys[i] +
+ 			reloc->target_offset) >> reloc->shift;
+ 		u32 *target;
+ 
+ 		/* skip all other gathers */
+-		if (!(reloc->cmdbuf && cmdbuf == reloc->cmdbuf)) {
+-			i++;
++		if (cmdbuf != reloc->cmdbuf)
+ 			continue;
+-		}
+ 
+ 		if (last_page != reloc->cmdbuf_offset >> PAGE_SHIFT) {
+ 			if (cmdbuf_page_addr)
+@@ -257,9 +255,6 @@ static unsigned int do_relocs(struct host1x_job *job, struct host1x_bo *cmdbuf)
+ 
+ 		target = cmdbuf_page_addr + (reloc->cmdbuf_offset & ~PAGE_MASK);
+ 		*target = reloc_addr;
+-
+-		/* mark this gather as handled */
+-		reloc->cmdbuf = 0;
+ 	}
+ 
+ 	if (cmdbuf_page_addr)
+@@ -378,15 +373,13 @@ static int check_nonincr(struct host1x_firewall *fw)
+ 
+ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+ {
+-	u32 *cmdbuf_base;
++	u32 *cmdbuf_base = (u32 *)fw->job->gather_copy_mapped +
++		(g->offset / sizeof(u32));
+ 	int err = 0;
+ 
+ 	if (!fw->job->is_addr_reg)
+ 		return 0;
+ 
+-	cmdbuf_base = host1x_bo_mmap(g->bo);
+-	if (!cmdbuf_base)
+-		return -ENOMEM;
+ 	fw->words = g->words;
+ 	fw->cmdbuf_id = g->bo;
+ 	fw->offset = 0;
+@@ -453,10 +446,17 @@ out:
+ 
+ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ {
++	struct host1x_firewall fw;
+ 	size_t size = 0;
+ 	size_t offset = 0;
+ 	int i;
+ 
++	fw.job = job;
++	fw.dev = dev;
++	fw.reloc = job->relocarray;
++	fw.num_relocs = job->num_relocs;
++	fw.class = 0;
 +
-+	if (i >= host->info->nb_pts)
- 		return NULL;
+ 	for (i = 0; i < job->num_gathers; i++) {
+ 		struct host1x_job_gather *g = &job->gathers[i];
+ 		size += g->words * sizeof(u32);
+@@ -477,14 +477,19 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+ 		struct host1x_job_gather *g = &job->gathers[i];
+ 		void *gather;
  
- 	name = kasprintf(GFP_KERNEL, "%02d-%s", sp->id,
++		/* Copy the gather */
+ 		gather = host1x_bo_mmap(g->bo);
+ 		memcpy(job->gather_copy_mapped + offset, gather + g->offset,
+ 		       g->words * sizeof(u32));
+ 		host1x_bo_munmap(g->bo, gather);
+ 
++		/* Store the location in the buffer */
+ 		g->base = job->gather_copy;
+ 		g->offset = offset;
+-		g->bo = NULL;
++
++		/* Validate the job */
++		if (validate(&fw, g))
++			return -EINVAL;
+ 
+ 		offset += g->words * sizeof(u32);
+ 	}
+@@ -497,15 +502,8 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 	int err;
+ 	unsigned int i, j;
+ 	struct host1x *host = dev_get_drvdata(dev->parent);
+-	struct host1x_firewall fw;
+ 	DECLARE_BITMAP(waitchk_mask, host1x_syncpt_nb_pts(host));
+ 
+-	fw.job = job;
+-	fw.dev = dev;
+-	fw.reloc = job->relocarray;
+-	fw.num_relocs = job->num_relocs;
+-	fw.class = 0;
+-
+ 	bitmap_zero(waitchk_mask, host1x_syncpt_nb_pts(host));
+ 	for (i = 0; i < job->num_waitchk; i++) {
+ 		u32 syncpt_id = job->waitchk[i].syncpt_id;
+@@ -536,19 +534,11 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 			if (job->gathers[j].bo == g->bo)
+ 				job->gathers[j].handled = true;
+ 
+-		err = 0;
+-
+-		if (IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL))
+-			err = validate(&fw, g);
+-
++		err = do_relocs(job, g->bo);
+ 		if (err)
+-			dev_err(dev, "Job invalid (err=%d)\n", err);
+-
+-		if (!err)
+-			err = do_relocs(job, g->bo);
++			break;
+ 
+-		if (!err)
+-			err = do_waitchks(job, host, g->bo);
++		err = do_waitchks(job, host, g->bo);
+ 		if (err)
+ 			break;
+ 	}
 -- 
 1.8.1.5
