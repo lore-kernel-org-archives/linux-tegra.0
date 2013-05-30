@@ -1,52 +1,24 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [GIT PULL] ARM: tegra: DT-related fixes needed by the USB tree
-Date: Wed, 29 May 2013 12:02:22 -0600
-Message-ID: <51A642AE.1070905@wwwdotorg.org>
-References: <1368831045-19105-1-git-send-email-swarren@wwwdotorg.org> <51A4E62D.7020206@wwwdotorg.org> <20130528174704.GH15794@arwen.pp.htv.fi> <20130529175508.GF21290@arwen.pp.htv.fi>
+From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH] Move PCIe node to correct place
+Date: Thu, 30 May 2013 11:47:02 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BE9E@BGMAIL01.nvidia.com>
+References: <1368626150-25395-1-git-send-email-jagarwal@nvidia.com>
+ <5193B622.9020503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130529175508.GF21290-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+In-Reply-To: <5193B622.9020503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/29/2013 11:55 AM, Felipe Balbi wrote:
-> Hi,
+> On 05/15/2013 07:55 AM, Jay Agarwal wrote:
+> > Moving PCIe controller node to correct place so that it is sorted by
+> > register address in .dtsi file
 > 
-> On Tue, May 28, 2013 at 08:47:04PM +0300, Felipe Balbi wrote:
->> On Tue, May 28, 2013 at 11:15:25AM -0600, Stephen Warren wrote:
->>> On 05/17/2013 04:50 PM, Stephen Warren wrote:
->>>> Felipe, (and Alan, Greg),
->>>> 
->>>> These are the changes from the Tegra tree that need to be
->>>> merged before the Tegra USB driver patches 4-8 from Venu can
->>>> be applied. Recall that we had previously agreed on this
->>>> approach for v3.9, but Venu's patches didn't end up being
->>>> ready until now, unfortunately. I note that Venu's patches
->>>> affect both the Tegra USB and PHY drivers.
->>> 
->>> Felipe, do you know when you plan to pull this into the USB
->>> tree, and apply Venu's patches? Thanks.
->> 
->> got 35 commits testing right now. This pull is in my list for
->> tomorrow.
->> 
->> sorry for the delay, have been on a trip for the last 3 weeks and
->> now I'm catching up with emails during my vacations (next 2
->> weeks).
-> 
-> the tag is not pushed to where you pointed me to. Please make sure
-> to git push it.
-> 
-> $ git fetch
-> git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git
-> tag tegra-for-3.11-deps-for-usb fatal: Couldn't find remote ref
-> refs/tags/tegra-for-3.11-deps-for-usb
-
-Sorry about that. I could have sworn I checked that, but obviously not.
-
-Anyway, I've pushed it now, and the command you quoted above works for
-me, so I think it's replicated out already.
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Thierry,
+If reviews are done, Can you please include this into your repository?
