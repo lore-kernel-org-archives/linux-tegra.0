@@ -1,36 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
-Date: Thu, 30 May 2013 12:04:20 -0600
-Message-ID: <51A794A4.1010502@wwwdotorg.org>
-References: <1368010660-31465-1-git-send-email-jagarwal@nvidia.com> <1368010660-31465-4-git-send-email-jagarwal@nvidia.com> <518A8596.7070702@wwwdotorg.org> <C79B248886DD134989C8FF6B096A91AB91B4886B5D@BGMAIL01.nvidia.com> <C79B248886DD134989C8FF6B096A91AB91B4886B6C@BGMAIL01.nvidia.com> <C79B248886DD134989C8FF6B096A91AB91B616BE9B@BGMAIL01.nvidia.com> <51A62042.7070304@wwwdotorg.org> <C79B248886DD134989C8FF6B096A91AB91B616BEA6@BGMAIL01.nvidia.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 00/12] dma: various minor clean ups for slave drivers
+Date: Thu, 30 May 2013 23:17:27 +0530
+Message-ID: <20130530174727.GE3767@intel.com>
+References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B616BEA6-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1369656882-25241-1-git-send-email-andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "'thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org'" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "'linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org'" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "'bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org'" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "'olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org'" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "'mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org'" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "'linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org'" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Andy Shevchenko <andriy.shevchenko-b5Z7lJ3WibVrdx17CPfAsdBPR1lH4CV8@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, Li Yang <leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Zhang Wei <zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/30/2013 11:37 AM, Jay Agarwal wrote:
-...
-> I have taken care of all your comments, but Ethernet device is not working for me neither on cardhu nor harmony. 
-> Could be related to my process or board, Currently debugging this.
+On Mon, May 27, 2013 at 03:14:30PM +0300, Andy Shevchenko wrote:
+> Here is a set of small independent patches that clean up or fix minor things
+> across DMA slave drivers.
+The series looks fine. I am going to wait a day more and apply, pls speak up if
+you disagree and ack if you agree
 
-Are you talking about a PCIe-based Ethernet device on Harmony, or the
-one that's built into the board?
+--
+~Vinod
+> 
+> Andy Shevchenko (12):
+>   imx-sdma: remove useless variable
+>   mxs-dma: remove useless variable
+>   edma: no need to assign residue to 0 explicitly
+>   ep93xx_dma: remove useless use of lock
+>   fsldma: remove useless use of lock
+>   mmp_pdma: remove useless use of lock
+>   mpc512x_dma: remove useless use of lock
+>   pch_dma: remove useless use of lock
+>   tegra20-apb-dma: remove useless use of lock
+>   ipu_idmac: re-use dma_cookie_status()
+>   mmp_tdma: set cookies as well when asked for tx status
+>   txx9dmac: return DMA_SUCCESS immediately from device_tx_status()
+> 
+>  drivers/dma/edma.c            |  2 --
+>  drivers/dma/ep93xx_dma.c      | 10 +---------
+>  drivers/dma/fsldma.c          | 10 +---------
+>  drivers/dma/imx-sdma.c        |  9 +++------
+>  drivers/dma/ipu/ipu_idmac.c   |  5 +----
+>  drivers/dma/mmp_pdma.c        | 10 +---------
+>  drivers/dma/mmp_tdma.c        |  3 ++-
+>  drivers/dma/mpc512x_dma.c     | 10 +---------
+>  drivers/dma/mxs-dma.c         |  4 +---
+>  drivers/dma/pch_dma.c         |  9 +--------
+>  drivers/dma/tegra20-apb-dma.c |  8 +++-----
+>  drivers/dma/txx9dmac.c        | 13 ++++++-------
+>  12 files changed, 21 insertions(+), 72 deletions(-)
+> 
+> -- 
+> 1.8.2.rc0.22.gb3600c3
+> 
 
-The on-board Ethernet device is USB, and should work fine already, and
-irrespective of any PCIe patches.
-
-I have only tried an XHCI USB controller in the PCIe slot on Harmony, so
-I can't say if Ethernet not working is a regression or not. Does the
-Ethernet device work with just Thierry's patches and not yours?
-
-> Parallely, should I push my patches for review so that it is clear from other aspects?
-
-Well, if the patches don't work, I suppose there's not much use posting
-them since they'll just need changes before they can be usefully applied
-anyway. IIRC, most of my comments last time were fairly minor, so there
-isn't much need for a separate review of them, right?
+-- 
