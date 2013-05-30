@@ -1,24 +1,38 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH] Move PCIe node to correct place
-Date: Thu, 30 May 2013 11:47:02 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BE9E@BGMAIL01.nvidia.com>
-References: <1368626150-25395-1-git-send-email-jagarwal@nvidia.com>
- <5193B622.9020503@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] ARM: tegra114: cpuidle: add power down state
+Date: Thu, 30 May 2013 19:19:39 +0800
+Message-ID: <1369912782-30663-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5193B622.9020503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> On 05/15/2013 07:55 AM, Jay Agarwal wrote:
-> > Moving PCIe controller node to correct place so that it is sorted by
-> > register address in .dtsi file
-> 
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Hi Thierry,
-If reviews are done, Can you please include this into your repository?
+This series introduce CPU core power down state for CPU idle. When CPU go
+into this state, it saves it's context and needs a proper configuration
+in flow controller to power gate the CPU when CPU runs into WFI
+instruction. And the CPU also needs to set the IRQ as CPU power down idle
+wake up event in flow controller.
+
+To prevent race conditions and ensure proper interrupt routing on
+Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
+call-back to reprogram the GIC CPU interface on PM entry. The
+GIC CPU interface will be reset back to its normal state by
+the common GIC CPU PM exit callback when the CPU wakes up.
+
+Joseph Lo (3):
+  ARM: tegra114: Reprogram GIC CPU interface to bypass IRQ on CPU PM
+    entry
+  ARM: tegra114: add low level support for CPU idle powered-down mode
+  ARM: tegra114: cpuidle: add powered-down state
+
+ arch/arm/mach-tegra/cpuidle-tegra114.c | 62 +++++++++++++++++++++++++++++++++-
+ arch/arm/mach-tegra/flowctrl.h         |  2 ++
+ arch/arm/mach-tegra/irq.c              | 40 ++++++++++++++++++++++
+ arch/arm/mach-tegra/sleep-tegra30.S    |  2 ++
+ 4 files changed, 105 insertions(+), 1 deletion(-)
+
+-- 
+1.8.3
