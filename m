@@ -1,78 +1,57 @@
 From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: fix clk_out parents list
-Date: Fri, 31 May 2013 12:23:06 -0700
-Message-ID: <20130531192306.21525.67464@quantum>
-References: <1369641279-6894-1-git-send-email-pgaikwad@nvidia.com>
+Subject: Re: [PATCH RESEND] ARM: tegra114: correctly output clk_32k
+Date: Fri, 31 May 2013 12:25:28 -0700
+Message-ID: <20130531192528.21525.46053@quantum>
+References: <1369536991-6111-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1369641279-6894-1-git-send-email-pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1369536991-6111-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Prashant Gaikwad (2013-05-27 00:54:39)
-> Number of parents for clk_out_2 and clk_out_3 was incorrectly set
-> to clk_out1_parents. Even though it did not break anything since the
-> size was same better to fix.
+Quoting Alexandre Courbot (2013-05-25 19:56:31)
+> Tegra has a blink timer register that allows to modulate the
+> clk_32k clock before outputting it. Since clk_32k is presented to the
+> kernel as a fixed clock, make sure this register does not tamper with
+> the clock frequency and that clk_32k is outputted as-is, similarly to
+> what is done on t20 and t30.
 > 
-> Signed-off-by: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Taken into clk-next since this fix doesn't appear to fix anything.
+Taken into clk-next.
 
-Thanks,
+Regards,
 Mike
 
 > ---
->  drivers/clk/tegra/clk-tegra114.c |    4 ++--
->  drivers/clk/tegra/clk-tegra30.c  |    4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
+>  drivers/clk/tegra/clk-tegra114.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index e0ee077..6d438bb 100644
+> index d78e16e..dc76d67 100644
 > --- a/drivers/clk/tegra/clk-tegra114.c
 > +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1602,7 +1602,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
+> @@ -127,6 +127,7 @@
+>  #define PMC_DPD_PADS_ORIDE_BLINK_ENB 20
+>  #define PMC_CTRL 0
+>  #define PMC_CTRL_BLINK_ENB 7
+> +#define PMC_BLINK_TIMER 0x40
 >  
->         /* clk_out_2 */
->         clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
-> -                              ARRAY_SIZE(clk_out1_parents), 0,
-> +                              ARRAY_SIZE(clk_out2_parents), 0,
->                                pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
->                                &clk_out_lock);
->         clks[clk_out_2_mux] = clk;
-> @@ -1614,7 +1614,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
+>  #define OSC_CTRL                       0x50
+>  #define OSC_CTRL_OSC_FREQ_SHIFT                28
+> @@ -1625,6 +1626,8 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
+>         clks[clk_out_3] = clk;
 >  
->         /* clk_out_3 */
->         clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
-> -                              ARRAY_SIZE(clk_out1_parents), 0,
-> +                              ARRAY_SIZE(clk_out3_parents), 0,
->                                pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
->                                &clk_out_lock);
->         clks[clk_out_3_mux] = clk;
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 985ad69..b62e140 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1223,7 +1223,7 @@ static void __init tegra30_pmc_clk_init(void)
->  
->         /* clk_out_2 */
->         clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
-> -                              ARRAY_SIZE(clk_out1_parents), 0,
-> +                              ARRAY_SIZE(clk_out2_parents), 0,
->                                pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
->                                &clk_out_lock);
->         clk = clk_register_gate(NULL, "clk_out_2", "clk_out_2_mux", 0,
-> @@ -1234,7 +1234,7 @@ static void __init tegra30_pmc_clk_init(void)
->  
->         /* clk_out_3 */
->         clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
-> -                              ARRAY_SIZE(clk_out1_parents), 0,
-> +                              ARRAY_SIZE(clk_out3_parents), 0,
->                                pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
->                                &clk_out_lock);
->         clk = clk_register_gate(NULL, "clk_out_3", "clk_out_3_mux", 0,
+>         /* blink */
+> +       /* clear the blink timer register to directly output clk_32k */
+> +       writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
+>         clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
+>                                 pmc_base + PMC_DPD_PADS_ORIDE,
+>                                 PMC_DPD_PADS_ORIDE_BLINK_ENB, 0, NULL);
 > -- 
-> 1.7.4.1
+> 1.8.2.3
