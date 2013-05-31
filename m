@@ -1,31 +1,24 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH RESEND] ARM: tegra114: correctly output clk_32k
-Date: Fri, 31 May 2013 12:26:23 -0700
-Message-ID: <20130531192623.21525.89041@quantum>
-References: <1369536991-6111-1-git-send-email-acourbot@nvidia.com>
- <51A4CAF9.4000305@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V2 3/6] ARM: tegra: make tegra_resume can work for Tegra114
+Date: Sat, 1 Jun 2013 00:41:07 +0200
+Message-ID: <201306010041.07230.arnd@arndb.de>
+References: <1369046369-12489-1-git-send-email-josephl@nvidia.com> <1369046369-12489-4-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51A4CAF9.4000305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1369046369-12489-4-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-05-28 08:19:21)
-> On 05/25/2013 08:56 PM, Alexandre Courbot wrote:
-> > Tegra has a blink timer register that allows to modulate the
-> > clk_32k clock before outputting it. Since clk_32k is presented to the
-> > kernel as a fixed clock, make sure this register does not tamper with
-> > the clock frequency and that clk_32k is outputted as-is, similarly to
-> > what is done on t20 and t30.
-> 
-> The patch subject here should be "clk: tegra:" rather than "ARM:
-> tegra114". I assume Mike can fix this up when applying it.
+On Monday 20 May 2013, Joseph Lo wrote:
+> +       cpu_to_csr_req r1, r0
+> +       mov32   r2, TEGRA_FLOW_CTRL_BASE
+> +       ldr     r1, [r2, r1]
 
-I fixed it up.  Been fixing up lots of s/ARM/clk/ lately.
+This causes build errors now, since cpu_to_csr_req is not defined anywhere.
 
-Regards,
-Mike
+	Arnd
