@@ -1,30 +1,40 @@
-From: Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>
-Subject: Re: [PATCH 00/12] dma: various minor clean ups for slave drivers
-Date: Fri, 31 May 2013 17:09:51 -0700
-Message-ID: <CAA9_cmdNiLfJjv-8Mh-Xb1ifZb4aw_9NGCVW6aWsfq6BN-DYyQ@mail.gmail.com>
-References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	<20130530174727.GE3767@intel.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V2 3/6] ARM: tegra: make tegra_resume can work for Tegra114
+Date: Sat, 1 Jun 2013 11:47:30 +0200
+Message-ID: <201306011147.30379.arnd@arndb.de>
+References: <1369046369-12489-1-git-send-email-josephl@nvidia.com> <201306010041.07230.arnd@arndb.de> <51A9364B.4090002@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130530174727.GE3767-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <51A9364B.4090002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-b5Z7lJ3WibVrdx17CPfAsdBPR1lH4CV8@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Li Yang <leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Zhang Wei <zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org>, linuxppc-dev <linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 30, 2013 at 10:47 AM, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, May 27, 2013 at 03:14:30PM +0300, Andy Shevchenko wrote:
->> Here is a set of small independent patches that clean up or fix minor things
->> across DMA slave drivers.
-> The series looks fine. I am going to wait a day more and apply, pls speak up if
-> you disagree and ack if you agree
+On Saturday 01 June 2013, Stephen Warren wrote:
+> On 05/31/2013 04:41 PM, Arnd Bergmann wrote:
+> > On Monday 20 May 2013, Joseph Lo wrote:
+> >> +       cpu_to_csr_req r1, r0
+> >> +       mov32   r2, TEGRA_FLOW_CTRL_BASE
+> >> +       ldr     r1, [r2, r1]
+> > 
+> > This causes build errors now, since cpu_to_csr_req is not defined anywhere.
+> 
+> What build error are you seeing? I built next-20130531 earlier today
+> without any issue.
+> 
+> I do remember making a similar comment during review of this patch that
+> cpu_to_csr_req wasn't defined anywhere, but IIRC Joseph pointed me to
+> another patch in the series which had added it, or something like that.
 
-Looks ok to me.  Reminds we can probably take this one step further
-and provide a generic implementation for the common case.  It's just a
-bit inconsistent though that some engines will poll the completion
-handler (try to advance the state of the last completed cookie)
-whereas others just assume things will be completed asynchronously.
+Sorry, I should have mentioned it was using randconfig, all the defconfig
+builds work fine. The code is inside of "#ifndef CONFIG_ARCH_TEGRA_2x_SOC",
+but Tegra2 is normally enabled in defconfig, so it does not get built.
 
---
-Dan
+I suspect the #ifdef is wrong as well, and should have been "if tegra3
+or tegra4" instead. Joseph, can you clarify the intent of this?
+
+	Arnd
