@@ -1,45 +1,39 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH 4/6] USB: EHCI: export symbols for ehci-hcd sub-drivers
-Date: Mon, 3 Jun 2013 16:57:15 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1306031647590.1304-100000@iolanthe.rowland.org>
-References: <1370287290-21579-5-git-send-email-swarren@wwwdotorg.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: tegra: remove the ifdef of ARCH SoC in the
+ tegra_resume
+Date: Tue, 4 Jun 2013 00:48:13 +0200
+Message-ID: <201306040048.13612.arnd@arndb.de>
+References: <1370247004-31846-1-git-send-email-josephl@nvidia.com>
+ <51ACB59D.9030005@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370287290-21579-5-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <51ACB59D.9030005@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 3 Jun 2013, Stephen Warren wrote:
+On Monday 03 June 2013, Stephen Warren wrote:
+> Was that ifdef completely incorrect before? I can see why the cmp/beq
+> might be ifdef'd (although it's not worth it), but I assume the code
+> after that beq was intended to run on all chips after Tegra20. The ifdef
+> as it was written does something rather different; it prevents any of
+> that code from running unless the kernel doesn't have Tegra20 support.
+> So, I think that the removal of the ifdef is more of a bug-fix that
+> "because we always build with all Tegra SoCs support. Let me know, and
+> I'll re-write the commit description to something more accurate...
 
-> From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> In order to split ehci-hcd.c into separate modules, various symbols must
-> be exported. Also, rename the symbols to add an ehci_ prefix, to avoid
-> any naming clashes.
+The #ifdef was recently changed from #if TEGRA3 to #if !TEGRA2, which support
+for TEGRA4 was added. I think this is where it broke.
 
-I have my doubts about this.  Some of the exports are okay, but not 
-others.  Renaming and exporting ehci_handshake is fine.  ehci_tdi_reset 
-maybe; I'm not sure.  ehci_reset and ehci_halt are rather doubtful, and 
-ehci_hub_control is definitely wrong.
-
-A better idea is to export ehci_hc_driver.  Then the tegra module could 
-call ehci_hc_driver->hub_control rather than directly accessing 
-ehci_hub_control (this is another example of something which should be 
-difficult, not easy).
-
-As for ehci_reset and ehci_halt (and possible ehci_tdi_reset), I rather
-suspect that ehci-tegra shouldn't be calling them at all.  In fact, the
-whole implementation of suspend/resume in ehci-tegra (which is where
-these things get used) looks pretty dodgy.  If the controller can't be
-suspended without invoking these private routines, then ... well, maybe
-it shouldn't be suspended, period.
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
