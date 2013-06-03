@@ -1,30 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: check processor id in tegra_{set,clear}_cpu_in_lp2
-Date: Mon, 03 Jun 2013 14:35:02 -0600
-Message-ID: <51ACFDF6.5050602@wwwdotorg.org>
-References: <1370258267-30184-1-git-send-email-josephl@nvidia.com> <1370258267-30184-5-git-send-email-josephl@nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH 3/6] USB: EHCI: expand struct ehci_driver_overrides
+Date: Mon, 3 Jun 2013 16:47:50 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1306031642310.1304-100000@iolanthe.rowland.org>
+References: <1370287290-21579-4-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370258267-30184-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370287290-21579-4-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/03/2013 05:17 AM, Joseph Lo wrote:
-> The tegra_set_cpu_in_lp2 was used in the Tegra reset handler to know the
-> CPU were coming up with which state then redirect to the appropriate
-> handler. So we need to pass the processor id every time when we use the
-> function. Now moving the code into the function.
+On Mon, 3 Jun 2013, Stephen Warren wrote:
 
-That description makes very little sense. To me, the second sentence
-actually implies the opposite code change to the content of this patch.
-I think the following would be better:
+> From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+> Some EHCI HCD drivers may need to override additional fields in struct
+> hc_driver, such as map_urb_for_dma, unmap_urb_for_dma, hub_control. Add
+> fields to struct ehci_driver_overrides to allow them to do so.
+> 
+> These new overrides will be used at least by the Tegra EHCI driver.
 
-ARM: tegra: don't pass CPU ID to tegra_{set,clear}_cpu_in_lp2
+This is not a good approach.  ehci-tegra is the only driver that needs 
+to muck around with these things, so they should not be part of a 
+standardized override structure.
 
-tegra_{set,clear}_cpu_in_lp2 can easily determine which CPU ID they are
-running on; there is no need to pass the CPU ID into those functions.
-So, remove their CPU ID function parameter.
+Indeed, so strong is my feeling that platforms shouldn't have to do 
+this sort of thing that I want to make it difficult, not easy.
+
+Instead of adding extra fields to ehci_driver_overrides, let's force 
+ehci-tegra to manually insert its own values into the 
+tegra_ehci_hc_driver structure.  Then this patch won't be necessary at 
+all.
+
+Alan Stern
