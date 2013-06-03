@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/4] ARM: tegra: cpuidle: using IS_ENABLED for multi SoCs management in init func
-Date: Mon, 3 Jun 2013 19:17:46 +0800
-Message-ID: <1370258267-30184-4-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 4/4] ARM: tegra: check processor id in tegra_{set,clear}_cpu_in_lp2
+Date: Mon, 3 Jun 2013 19:17:47 +0800
+Message-ID: <1370258267-30184-5-git-send-email-josephl@nvidia.com>
 References: <1370258267-30184-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,70 +12,141 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Clean up the Tegra CPUidle init function by using IS_ENABLED for multi
-SoCs management in the init function.
+The tegra_set_cpu_in_lp2 was used in the Tegra reset handler to know the
+CPU were coming up with which state then redirect to the appropriate
+handler. So we need to pass the processor id every time when we use the
+function. Now moving the code into the function.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/cpuidle.c | 13 +++----------
- arch/arm/mach-tegra/cpuidle.h | 17 +----------------
- 2 files changed, 4 insertions(+), 26 deletions(-)
+ arch/arm/mach-tegra/cpuidle-tegra20.c |  7 +++----
+ arch/arm/mach-tegra/cpuidle-tegra30.c |  7 +++----
+ arch/arm/mach-tegra/pm.c              | 10 ++++++----
+ arch/arm/mach-tegra/pm.h              |  4 ++--
+ 4 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
-index 4a7a788..55e88c8 100644
---- a/arch/arm/mach-tegra/cpuidle.c
-+++ b/arch/arm/mach-tegra/cpuidle.c
-@@ -29,17 +29,10 @@
- 
- void __init tegra_cpuidle_init(void)
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
+index d667513..706aa42 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra20.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
+@@ -177,7 +177,6 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+ 				    struct cpuidle_driver *drv,
+ 				    int index)
  {
--	switch (tegra_chip_id) {
--	case TEGRA20:
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC) && tegra_chip_id == TEGRA20)
- 		tegra20_cpuidle_init();
--		break;
--	case TEGRA30:
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) && tegra_chip_id == TEGRA30)
- 		tegra30_cpuidle_init();
--		break;
--	case TEGRA114:
-+	if (IS_ENABLED(CONFIG_ARCH_TEGRA_114_SOC) && tegra_chip_id == TEGRA114)
- 		tegra114_cpuidle_init();
--		break;
--	default:
--		break;
--	}
- }
-diff --git a/arch/arm/mach-tegra/cpuidle.h b/arch/arm/mach-tegra/cpuidle.h
-index 9bcf61f..9ec2c1a 100644
---- a/arch/arm/mach-tegra/cpuidle.h
-+++ b/arch/arm/mach-tegra/cpuidle.h
-@@ -17,25 +17,10 @@
- #ifndef __MACH_TEGRA_CPUIDLE_H
- #define __MACH_TEGRA_CPUIDLE_H
+-	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
+ 	bool entered_lp2 = false;
  
--#ifdef CONFIG_ARCH_TEGRA_2x_SOC
-+#ifdef CONFIG_CPU_IDLE
- int tegra20_cpuidle_init(void);
--#else
--static inline int tegra20_cpuidle_init(void) { return -ENODEV; }
--#endif
--
--#ifdef CONFIG_ARCH_TEGRA_3x_SOC
- int tegra30_cpuidle_init(void);
--#else
--static inline int tegra30_cpuidle_init(void) { return -ENODEV; }
--#endif
--
--#ifdef CONFIG_ARCH_TEGRA_114_SOC
- int tegra114_cpuidle_init(void);
--#else
--static inline int tegra114_cpuidle_init(void) { return -ENODEV; }
--#endif
--
--#ifdef CONFIG_CPU_IDLE
- void tegra_cpuidle_init(void);
- #else
- static inline void tegra_cpuidle_init(void) {}
+ 	if (tegra_pending_sgi())
+@@ -193,16 +192,16 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
+ 
+ 	local_fiq_disable();
+ 
+-	tegra_set_cpu_in_lp2(cpu);
++	tegra_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
+-	if (cpu == 0)
++	if (dev->cpu == 0)
+ 		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
+ 	else
+ 		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
+ 
+ 	cpu_pm_exit();
+-	tegra_clear_cpu_in_lp2(cpu);
++	tegra_clear_cpu_in_lp2();
+ 
+ 	local_fiq_enable();
+ 
+diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
+index 9d9f554..ed2a2a7 100644
+--- a/arch/arm/mach-tegra/cpuidle-tegra30.c
++++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
+@@ -114,16 +114,15 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
+ 			    struct cpuidle_driver *drv,
+ 			    int index)
+ {
+-	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
+ 	bool entered_lp2 = false;
+ 	bool last_cpu;
+ 
+ 	local_fiq_disable();
+ 
+-	last_cpu = tegra_set_cpu_in_lp2(cpu);
++	last_cpu = tegra_set_cpu_in_lp2();
+ 	cpu_pm_enter();
+ 
+-	if (cpu == 0) {
++	if (dev->cpu == 0) {
+ 		if (last_cpu)
+ 			entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv,
+ 								     index);
+@@ -134,7 +133,7 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
+ 	}
+ 
+ 	cpu_pm_exit();
+-	tegra_clear_cpu_in_lp2(cpu);
++	tegra_clear_cpu_in_lp2();
+ 
+ 	local_fiq_enable();
+ 
+diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+index 779dbb4..8f8678b 100644
+--- a/arch/arm/mach-tegra/pm.c
++++ b/arch/arm/mach-tegra/pm.c
+@@ -99,8 +99,9 @@ static void suspend_cpu_complex(void)
+ 	flowctrl_cpu_suspend_enter(cpu);
+ }
+ 
+-void tegra_clear_cpu_in_lp2(int phy_cpu_id)
++void tegra_clear_cpu_in_lp2(void)
+ {
++	int phy_cpu_id = cpu_logical_map(smp_processor_id());
+ 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
+ 
+ 	spin_lock(&tegra_lp2_lock);
+@@ -111,8 +112,9 @@ void tegra_clear_cpu_in_lp2(int phy_cpu_id)
+ 	spin_unlock(&tegra_lp2_lock);
+ }
+ 
+-bool tegra_set_cpu_in_lp2(int phy_cpu_id)
++bool tegra_set_cpu_in_lp2(void)
+ {
++	int phy_cpu_id = cpu_logical_map(smp_processor_id());
+ 	bool last_cpu = false;
+ 	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
+ 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
+@@ -200,7 +202,7 @@ static int __cpuinit tegra_suspend_enter(suspend_state_t state)
+ 	suspend_cpu_complex();
+ 	switch (mode) {
+ 	case TEGRA_SUSPEND_LP2:
+-		tegra_set_cpu_in_lp2(0);
++		tegra_set_cpu_in_lp2();
+ 		break;
+ 	default:
+ 		break;
+@@ -210,7 +212,7 @@ static int __cpuinit tegra_suspend_enter(suspend_state_t state)
+ 
+ 	switch (mode) {
+ 	case TEGRA_SUSPEND_LP2:
+-		tegra_clear_cpu_in_lp2(0);
++		tegra_clear_cpu_in_lp2();
+ 		break;
+ 	default:
+ 		break;
+diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
+index 778a4aa..94c4b9d 100644
+--- a/arch/arm/mach-tegra/pm.h
++++ b/arch/arm/mach-tegra/pm.h
+@@ -28,8 +28,8 @@ extern unsigned long l2x0_saved_regs_addr;
+ void save_cpu_arch_register(void);
+ void restore_cpu_arch_register(void);
+ 
+-void tegra_clear_cpu_in_lp2(int phy_cpu_id);
+-bool tegra_set_cpu_in_lp2(int phy_cpu_id);
++void tegra_clear_cpu_in_lp2(void);
++bool tegra_set_cpu_in_lp2(void);
+ 
+ void tegra_idle_lp2_last(void);
+ extern void (*tegra_tear_down_cpu)(void);
 -- 
 1.8.3
