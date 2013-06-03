@@ -1,152 +1,56 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] ARM: tegra: check processor id in tegra_{set,clear}_cpu_in_lp2
-Date: Mon, 3 Jun 2013 19:17:47 +0800
-Message-ID: <1370258267-30184-5-git-send-email-josephl@nvidia.com>
-References: <1370258267-30184-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: remove the ifdef of ARCH SoC in the tegra_resume
+Date: Mon, 03 Jun 2013 09:26:21 -0600
+Message-ID: <51ACB59D.9030005@wwwdotorg.org>
+References: <1370247004-31846-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370258267-30184-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370247004-31846-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra_set_cpu_in_lp2 was used in the Tegra reset handler to know the
-CPU were coming up with which state then redirect to the appropriate
-handler. So we need to pass the processor id every time when we use the
-function. Now moving the code into the function.
+On 06/03/2013 02:10 AM, Joseph Lo wrote:
+> Removing the ifdef of ARCH_TEGRA_SoC in the tegra_resume function. Because
+> we always build with all Tegra SoCs support and had a runtime chip
+> detection code there. And we expect most of the chips would need the code
+> in the future.
+> 
+> We also fix a typo of a macro name that cause a build error.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/cpuidle-tegra20.c |  7 +++----
- arch/arm/mach-tegra/cpuidle-tegra30.c |  7 +++----
- arch/arm/mach-tegra/pm.c              | 10 ++++++----
- arch/arm/mach-tegra/pm.h              |  4 ++--
- 4 files changed, 14 insertions(+), 14 deletions(-)
+OK, this fixes the build issue, but this patch raises some questions
+about the code...
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra20.c b/arch/arm/mach-tegra/cpuidle-tegra20.c
-index d667513..706aa42 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra20.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra20.c
-@@ -177,7 +177,6 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 				    struct cpuidle_driver *drv,
- 				    int index)
- {
--	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
- 	bool entered_lp2 = false;
- 
- 	if (tegra_pending_sgi())
-@@ -193,16 +192,16 @@ static int tegra20_idle_lp2_coupled(struct cpuidle_device *dev,
- 
- 	local_fiq_disable();
- 
--	tegra_set_cpu_in_lp2(cpu);
-+	tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
- 
--	if (cpu == 0)
-+	if (dev->cpu == 0)
- 		entered_lp2 = tegra20_cpu_cluster_power_down(dev, drv, index);
- 	else
- 		entered_lp2 = tegra20_idle_enter_lp2_cpu_1(dev, drv, index);
- 
- 	cpu_pm_exit();
--	tegra_clear_cpu_in_lp2(cpu);
-+	tegra_clear_cpu_in_lp2();
- 
- 	local_fiq_enable();
- 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra30.c b/arch/arm/mach-tegra/cpuidle-tegra30.c
-index 9d9f554..ed2a2a7 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra30.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra30.c
-@@ -114,16 +114,15 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
- 			    struct cpuidle_driver *drv,
- 			    int index)
- {
--	u32 cpu = is_smp() ? cpu_logical_map(dev->cpu) : dev->cpu;
- 	bool entered_lp2 = false;
- 	bool last_cpu;
- 
- 	local_fiq_disable();
- 
--	last_cpu = tegra_set_cpu_in_lp2(cpu);
-+	last_cpu = tegra_set_cpu_in_lp2();
- 	cpu_pm_enter();
- 
--	if (cpu == 0) {
-+	if (dev->cpu == 0) {
- 		if (last_cpu)
- 			entered_lp2 = tegra30_cpu_cluster_power_down(dev, drv,
- 								     index);
-@@ -134,7 +133,7 @@ static int tegra30_idle_lp2(struct cpuidle_device *dev,
- 	}
- 
- 	cpu_pm_exit();
--	tegra_clear_cpu_in_lp2(cpu);
-+	tegra_clear_cpu_in_lp2();
- 
- 	local_fiq_enable();
- 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 779dbb4..8f8678b 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -99,8 +99,9 @@ static void suspend_cpu_complex(void)
- 	flowctrl_cpu_suspend_enter(cpu);
- }
- 
--void tegra_clear_cpu_in_lp2(int phy_cpu_id)
-+void tegra_clear_cpu_in_lp2(void)
- {
-+	int phy_cpu_id = cpu_logical_map(smp_processor_id());
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
- 
- 	spin_lock(&tegra_lp2_lock);
-@@ -111,8 +112,9 @@ void tegra_clear_cpu_in_lp2(int phy_cpu_id)
- 	spin_unlock(&tegra_lp2_lock);
- }
- 
--bool tegra_set_cpu_in_lp2(int phy_cpu_id)
-+bool tegra_set_cpu_in_lp2(void)
- {
-+	int phy_cpu_id = cpu_logical_map(smp_processor_id());
- 	bool last_cpu = false;
- 	cpumask_t *cpu_lp2_mask = tegra_cpu_lp2_mask;
- 	u32 *cpu_in_lp2 = tegra_cpu_lp2_mask;
-@@ -200,7 +202,7 @@ static int __cpuinit tegra_suspend_enter(suspend_state_t state)
- 	suspend_cpu_complex();
- 	switch (mode) {
- 	case TEGRA_SUSPEND_LP2:
--		tegra_set_cpu_in_lp2(0);
-+		tegra_set_cpu_in_lp2();
- 		break;
- 	default:
- 		break;
-@@ -210,7 +212,7 @@ static int __cpuinit tegra_suspend_enter(suspend_state_t state)
- 
- 	switch (mode) {
- 	case TEGRA_SUSPEND_LP2:
--		tegra_clear_cpu_in_lp2(0);
-+		tegra_clear_cpu_in_lp2();
- 		break;
- 	default:
- 		break;
-diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
-index 778a4aa..94c4b9d 100644
---- a/arch/arm/mach-tegra/pm.h
-+++ b/arch/arm/mach-tegra/pm.h
-@@ -28,8 +28,8 @@ extern unsigned long l2x0_saved_regs_addr;
- void save_cpu_arch_register(void);
- void restore_cpu_arch_register(void);
- 
--void tegra_clear_cpu_in_lp2(int phy_cpu_id);
--bool tegra_set_cpu_in_lp2(int phy_cpu_id);
-+void tegra_clear_cpu_in_lp2(void);
-+bool tegra_set_cpu_in_lp2(void);
- 
- void tegra_idle_lp2_last(void);
- extern void (*tegra_tear_down_cpu)(void);
--- 
-1.8.3
+> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+
+> -#ifndef CONFIG_ARCH_TEGRA_2x_SOC
+>  	/* Are we on Tegra20? */
+>  	cmp	r6, #TEGRA20
+>  	beq	1f				@ Yes
+
+Was that ifdef completely incorrect before? I can see why the cmp/beq
+might be ifdef'd (although it's not worth it), but I assume the code
+after that beq was intended to run on all chips after Tegra20. The ifdef
+as it was written does something rather different; it prevents any of
+that code from running unless the kernel doesn't have Tegra20 support.
+So, I think that the removal of the ifdef is more of a bug-fix that
+"because we always build with all Tegra SoCs support. Let me know, and
+I'll re-write the commit description to something more accurate...
+
+>  	/* Clear the flow controller flags for this CPU. */
+> -	cpu_to_csr_req r1, r0
+> +	cpu_to_csr_reg r1, r0
+>  	mov32	r2, TEGRA_FLOW_CTRL_BASE
+>  	ldr	r1, [r2, r1]
+>  	/* Clear event & intr flag */
+> @@ -70,7 +69,6 @@ no_cpu0_chk:
+>  	bic	r1, r1, r0
+>  	str	r1, [r2]
+>  1:
+> -#endif
+>  
+>  	check_cpu_part_num 0xc09, r8, r9
+>  	bne	not_ca9
