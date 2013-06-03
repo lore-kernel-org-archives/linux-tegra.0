@@ -1,54 +1,48 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] ASoC: tegra: implement suspend/resume for Tegra30
- AHUB
-Date: Mon, 3 Jun 2013 19:53:26 +0100
-Message-ID: <20130603185326.GT31367@sirena.org.uk>
-References: <1370281062-15238-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TYjWXklH5JTzT8n9"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1370281062-15238-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/6] usb: phy: export ulpi_viewport_access_ops
+Date: Mon,  3 Jun 2013 13:21:25 -0600
+Message-ID: <1370287290-21579-2-git-send-email-swarren@wwwdotorg.org>
+References: <1370287290-21579-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1370287290-21579-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
---TYjWXklH5JTzT8n9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In order to build a ULPI PHY driver as a module, this symbol needs to
+be exported.
 
-On Mon, Jun 03, 2013 at 11:37:41AM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Add tegra30_ahub_{suspend,resume}. These use regcache functions to
-> restore all HW registers after power loss during a suspend/resume cycle.
+Signed-off-by: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+[swarren, reworked Manjunath's patches to split them more logically]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/phy/phy-ulpi-viewport.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Applied both, thanks.
+diff --git a/drivers/usb/phy/phy-ulpi-viewport.c b/drivers/usb/phy/phy-ulpi-viewport.c
+index c5ba7e5..4442425 100644
+--- a/drivers/usb/phy/phy-ulpi-viewport.c
++++ b/drivers/usb/phy/phy-ulpi-viewport.c
+@@ -13,6 +13,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/usb.h>
+ #include <linux/io.h>
+ #include <linux/usb/otg.h>
+@@ -78,3 +79,4 @@ struct usb_phy_io_ops ulpi_viewport_access_ops = {
+ 	.read	= ulpi_viewport_read,
+ 	.write	= ulpi_viewport_write,
+ };
++EXPORT_SYMBOL_GPL(ulpi_viewport_access_ops);
+-- 
+1.7.10.4
 
---TYjWXklH5JTzT8n9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRrOYjAAoJELSic+t+oim9TRYP+gP7HGe883Uw9ET2OZf7KkSl
-0Z3z4NmJwCUfaplxHFd3pfhIjtfXhjLxgrhLYjbj+5M4KHGNiVa77q+PJM8fwN76
-4DP8TO+lxJ/aPdWiuvXjM00sleOxJo26n5o7a69/RFSM//ZYFWrCvhYAPDbm8D+2
-E83Mm/tQ8Wqd8YWx/b+BdOkG3th8WZyOD0dUPacJE5EDrcrPAR/o5KgFt8i7OaId
-1caRAslYoMfp1m9KKLyeSJsi0BR8KPFwKyuk0avuUeRtmEHMAgvjmK4Nqd17x89+
-sJJhrSBYvtBzCdMMFd1SUOOcuPocVsbulgOD8CGLfUqPxZPILoLkuNm/gKJiES8j
-nO14oQMV2tbfNIo9ECDg5ddffQrHgjfqJVw1tNxI4idiz9AwIIQhPELMjn4+8PqM
-c3ZiQUhIywjDL1sN1g4KKBQG5euf4isp8YaUU+69ikstJ4dO6OQQDsFejTu9mPy1
-uqtoiPKjDWYGlRmvAAaBIwQae/9ziYGai73cVn5+inOcl+RfMuj26jZiFyD61s5t
-cn8yyI1xvfEMSkXFV8Xma1sdjSbuSwOluGePdgdaUzuBrpb1BnRhUxgzTHAVDs5C
-fc0/sajnNSHgS47zv92S0UCJvq7kiBIgfobkC3FYV5qnyx7m+S0d9mTETc2+8K2o
-HVJxgghl2iL46WnShZHR
-=skxU
------END PGP SIGNATURE-----
-
---TYjWXklH5JTzT8n9--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
