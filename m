@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 1/4] ARM: tegra: cpuidle: move the init function behind the suspend init function
-Date: Tue, 4 Jun 2013 18:47:32 +0800
-Message-ID: <1370342855-32705-2-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 3/4] ARM: tegra: cpuidle: using IS_ENABLED for multi SoCs management in init func
+Date: Tue, 4 Jun 2013 18:47:34 +0800
+Message-ID: <1370342855-32705-4-git-send-email-josephl@nvidia.com>
 References: <1370342855-32705-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,90 +12,74 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-One of the state of CPUidle on Tegra can power gate the CPU and the
-vdd_cpu rail. But it depends on some configurations from DT and a common
-hook function for different Tegra SoCs to power gate the CPU rail. And
-these stuffs are initialized after common Tegra suspend init function. So
-we move the CPUidle init behind the suspend init function. And making the
-CPUidle driver more generic.
+Clean up the Tegra CPUidle init function by using IS_ENABLED for multi
+SoCs management in the init function.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* no change
+* fix the coding style of the runtime chip selection
 ---
- arch/arm/mach-tegra/common.c  |  2 ++
- arch/arm/mach-tegra/cpuidle.c | 14 ++++----------
- arch/arm/mach-tegra/cpuidle.h |  6 ++++++
- 3 files changed, 12 insertions(+), 10 deletions(-)
+ arch/arm/mach-tegra/cpuidle.c | 11 ++++++-----
+ arch/arm/mach-tegra/cpuidle.h | 17 +----------------
+ 2 files changed, 7 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 95ce2a0..b25153e 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -29,6 +29,7 @@
- 
- #include "board.h"
- #include "common.h"
-+#include "cpuidle.h"
- #include "fuse.h"
- #include "iomap.h"
- #include "irq.h"
-@@ -108,5 +109,6 @@ void __init tegra_init_early(void)
- void __init tegra_init_late(void)
- {
- 	tegra_init_suspend();
-+	tegra_cpuidle_init();
- 	tegra_powergate_debugfs_init();
- }
 diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
-index 4b744c4..4a7a788 100644
+index 4a7a788..e85973c 100644
 --- a/arch/arm/mach-tegra/cpuidle.c
 +++ b/arch/arm/mach-tegra/cpuidle.c
-@@ -27,25 +27,19 @@
- #include "fuse.h"
- #include "cpuidle.h"
- 
--static int __init tegra_cpuidle_init(void)
-+void __init tegra_cpuidle_init(void)
+@@ -31,15 +31,16 @@ void __init tegra_cpuidle_init(void)
  {
--	int ret;
--
  	switch (tegra_chip_id) {
  	case TEGRA20:
--		ret = tegra20_cpuidle_init();
-+		tegra20_cpuidle_init();
+-		tegra20_cpuidle_init();
++		if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
++			tegra20_cpuidle_init();
  		break;
  	case TEGRA30:
--		ret = tegra30_cpuidle_init();
-+		tegra30_cpuidle_init();
+-		tegra30_cpuidle_init();
++		if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC))
++			tegra30_cpuidle_init();
  		break;
  	case TEGRA114:
--		ret = tegra114_cpuidle_init();
-+		tegra114_cpuidle_init();
- 		break;
- 	default:
--		ret = -ENODEV;
+-		tegra114_cpuidle_init();
+-		break;
+-	default:
++		if (IS_ENABLED(CONFIG_ARCH_TEGRA_114_SOC))
++			tegra114_cpuidle_init();
  		break;
  	}
--
--	return ret;
  }
--device_initcall(tegra_cpuidle_init);
 diff --git a/arch/arm/mach-tegra/cpuidle.h b/arch/arm/mach-tegra/cpuidle.h
-index d733f75..9bcf61f 100644
+index 9bcf61f..9ec2c1a 100644
 --- a/arch/arm/mach-tegra/cpuidle.h
 +++ b/arch/arm/mach-tegra/cpuidle.h
-@@ -35,4 +35,10 @@ int tegra114_cpuidle_init(void);
- static inline int tegra114_cpuidle_init(void) { return -ENODEV; }
- #endif
+@@ -17,25 +17,10 @@
+ #ifndef __MACH_TEGRA_CPUIDLE_H
+ #define __MACH_TEGRA_CPUIDLE_H
  
+-#ifdef CONFIG_ARCH_TEGRA_2x_SOC
 +#ifdef CONFIG_CPU_IDLE
-+void tegra_cpuidle_init(void);
-+#else
-+static inline void tegra_cpuidle_init(void) {}
-+#endif
-+
- #endif
+ int tegra20_cpuidle_init(void);
+-#else
+-static inline int tegra20_cpuidle_init(void) { return -ENODEV; }
+-#endif
+-
+-#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+ int tegra30_cpuidle_init(void);
+-#else
+-static inline int tegra30_cpuidle_init(void) { return -ENODEV; }
+-#endif
+-
+-#ifdef CONFIG_ARCH_TEGRA_114_SOC
+ int tegra114_cpuidle_init(void);
+-#else
+-static inline int tegra114_cpuidle_init(void) { return -ENODEV; }
+-#endif
+-
+-#ifdef CONFIG_CPU_IDLE
+ void tegra_cpuidle_init(void);
+ #else
+ static inline void tegra_cpuidle_init(void) {}
 -- 
 1.8.3
