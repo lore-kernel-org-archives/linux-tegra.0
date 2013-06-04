@@ -1,101 +1,35 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Tue, 4 Jun 2013 18:48:00 +0800
-Message-ID: <1370342880-422-4-git-send-email-josephl@nvidia.com>
-References: <1370342880-422-1-git-send-email-josephl@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra114: Fix msenc clock register
+Date: Tue, 4 Jun 2013 14:25:43 +0300
+Message-ID: <1370345143-4885-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370342880-422-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This supports CPU core power down on each CPU when CPU idle. When CPU go
-into this state, it saves it's context and needs a proper configuration
-in flow controller to power gate the CPU when CPU runs into WFI
-instruction. And the CPU also needs to set the IRQ as CPU power down idle
-wake up event in flow controller.
+The msenc clock's register was set to the usb3 clock's register.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V2:
-* remove some redundant code of memory barrier
-* remove the function declaration by rearranging the coding sequence 
----
- arch/arm/mach-tegra/cpuidle-tegra114.c | 51 +++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra114.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index 1d1c602..e0b8730 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -17,15 +17,64 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/cpuidle.h>
-+#include <linux/cpu_pm.h>
-+#include <linux/clockchips.h>
- 
- #include <asm/cpuidle.h>
-+#include <asm/suspend.h>
-+#include <asm/smp_plat.h>
-+
-+#include "pm.h"
-+#include "sleep.h"
-+
-+#ifdef CONFIG_PM_SLEEP
-+#define TEGRA114_MAX_STATES 2
-+#else
-+#define TEGRA114_MAX_STATES 1
-+#endif
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra114_idle_power_down(struct cpuidle_device *dev,
-+				    struct cpuidle_driver *drv,
-+				    int index)
-+{
-+	local_fiq_disable();
-+
-+	tegra_set_cpu_in_lp2();
-+	cpu_pm_enter();
-+
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
-+
-+	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
-+
-+	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
-+
-+	cpu_pm_exit();
-+	tegra_clear_cpu_in_lp2();
-+
-+	local_fiq_enable();
-+
-+	return index;
-+}
-+#endif
- 
- static struct cpuidle_driver tegra_idle_driver = {
- 	.name = "tegra_idle",
- 	.owner = THIS_MODULE,
--	.state_count = 1,
-+	.state_count = TEGRA114_MAX_STATES,
- 	.states = {
- 		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
-+#ifdef CONFIG_PM_SLEEP
-+		[1] = {
-+			.enter			= tegra114_idle_power_down,
-+			.exit_latency		= 500,
-+			.target_residency	= 1000,
-+			.power_usage		= 0,
-+			.flags			= CPUIDLE_FLAG_TIME_VALID,
-+			.name			= "powered-down",
-+			.desc			= "CPU power gated",
-+		},
-+#endif
- 	},
- };
- 
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index d78e16e..c4f2e0a 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1747,7 +1747,7 @@ static struct tegra_periph_init_data tegra_periph_clk_list[] = {
+ 	TEGRA_INIT_DATA_MUX("vi_sensor", "vi_sensor", "tegra_camera", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, &periph_l_regs, TEGRA_PERIPH_NO_RESET, vi_sensor),
+ 	TEGRA_INIT_DATA_INT8("vi", "vi", "tegra_camera", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI, 20, &periph_l_regs, 0, vi),
+ 	TEGRA_INIT_DATA_INT8("epp", NULL, "epp", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_EPP, 19, &periph_l_regs, 0, epp),
+-	TEGRA_INIT_DATA_INT8("msenc", NULL, "msenc", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_MSENC, 91, &periph_h_regs, TEGRA_PERIPH_WAR_1005168, msenc),
++	TEGRA_INIT_DATA_INT8("msenc", NULL, "msenc", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_MSENC, 91, &periph_u_regs, TEGRA_PERIPH_WAR_1005168, msenc),
+ 	TEGRA_INIT_DATA_INT8("tsec", NULL, "tsec", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_TSEC, 83, &periph_u_regs, 0, tsec),
+ 	TEGRA_INIT_DATA_INT8("host1x", NULL, "host1x", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_HOST1X, 28, &periph_l_regs, 0, host1x),
+ 	TEGRA_INIT_DATA_MUX8("hdmi", NULL, "hdmi", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_HDMI, 51, &periph_h_regs, 0, hdmi),
 -- 
-1.8.3
+1.8.1.5
