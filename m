@@ -1,69 +1,59 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 1/4] ARM: tegra30: clocks: Fix pciex clock registration
-Date: Wed, 5 Jun 2013 00:27:29 +0530
-Message-ID: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: [PATCH V3 4/4] ARM: tegra: pcie: Enable PCIe controller on Cardhu
+Date: Wed, 5 Jun 2013 00:27:32 +0530
+Message-ID: <1370372252-4332-4-git-send-email-jagarwal@nvidia.com>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: jtukkinen@nvidia.com, kthota@nvidia.com, jagarwal@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Registering pciex as peripheral clock instead of fixed clock
-as tegra_perih_reset_assert(deassert) api of this clock api
-gives warning and ultimately does not succeed to assert(deassert).
+- Enable PCIe controller on Cardhu
+- Only port 2 is connected on this board
+- Add regulators required for Tegra30
 
-Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
 ---
 Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
 
 Changes in V3:
-- Avoid removing pciex duplicate clock as per review comment
-- Corrected tegra pcie driver name for duplicate clocks
+- Added num-lanes property for cardhu as per review comments
 
- drivers/clk/tegra/clk-tegra30.c |   15 ++++++++-------
- 1 files changed, 8 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |   18 ++++++++++++++++++
+ 1 files changed, 18 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c6921f5..edb2b9b 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1598,6 +1598,12 @@ static void __init tegra30_periph_clk_init(void)
- 	clk_register_clkdev(clk, "afi", "tegra-pcie");
- 	clks[afi] = clk;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 8ad4841..b6270e3 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -27,6 +27,24 @@
+ 	model = "NVIDIA Tegra30 Cardhu evaluation board";
+ 	compatible = "nvidia,cardhu", "nvidia,tegra30";
  
-+	/* pciex */
-+	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
-+				    74, &periph_u_regs, periph_clk_enb_refcnt);
-+	clk_register_clkdev(clk, "pciex", "tegra-pcie");
-+	clks[pciex] = clk;
++	pcie-controller {
++		status = "okay";
++		pex-clk-supply = <&pex_hvdd_3v3_reg>;
++		vdd-supply = <&ldo1_reg>;
++		avdd-supply = <&ldo2_reg>;
 +
- 	/* kfuse */
- 	clk = tegra_clk_register_periph_gate("kfuse", "clk_m",
- 				    TEGRA_PERIPH_ON_APB,
-@@ -1716,11 +1722,6 @@ static void __init tegra30_fixed_clk_init(void)
- 				1, 0, &cml_lock);
- 	clk_register_clkdev(clk, "cml1", NULL);
- 	clks[cml1] = clk;
--
--	/* pciex */
--	clk = clk_register_fixed_rate(NULL, "pciex", "pll_e", 0, 100000000);
--	clk_register_clkdev(clk, "pciex", NULL);
--	clks[pciex] = clk;
- }
- 
- static void __init tegra30_osc_clk_init(void)
-@@ -1942,8 +1943,8 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
- 	TEGRA_CLK_DUPLICATE(bsea, "tegra-aes", "bsea"),
- 	TEGRA_CLK_DUPLICATE(bsea, "nvavp", "bsea"),
- 	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
--	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
--	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
-+	TEGRA_CLK_DUPLICATE(cml0, "tegra-pcie", "cml"),
-+	TEGRA_CLK_DUPLICATE(pciex, "tegra-pcie", "pciex"),
- 	TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
- 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
- };
++		pci@1,0 {
++			nvidia,num-lanes = <4>;
++		};
++		pci@2,0 {
++			nvidia,num-lanes = <1>;
++		};
++		pci@3,0 {
++			status = "okay";
++			nvidia,num-lanes = <1>;
++		};
++	};
++
+ 	host1x {
+ 		dc@54200000 {
+ 			rgb {
 -- 
 1.7.0.4
