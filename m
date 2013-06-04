@@ -1,62 +1,34 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: add runtime PM to resume functions
-Date: Tue,  4 Jun 2013 12:58:14 -0600
-Message-ID: <1370372294-25844-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 1/4] ARM: tegra30: clocks: Fix pciex clock registration
+Date: Tue, 04 Jun 2013 13:08:08 -0600
+Message-ID: <51AE3B18.9010604@wwwdotorg.org>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jay Agarwal <jagarwal@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 06/04/2013 12:57 PM, Jay Agarwal wrote:
+> Registering pciex as peripheral clock instead of fixed clock
+> as tegra_perih_reset_assert(deassert) api of this clock api
+> gives warning and ultimately does not succeed to assert(deassert).
+> 
+> Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+> ---
+> Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
 
-Tegra HW needs clocks etc. active when touching registers. Make sure they
-are active during resume, by calling pm_runtime_get_sync() before touching
-HW.
+For this change, Mike may as well apply it directly to the clock tree.
+Thierry can then pick it up when he rebases his tegra/next tree.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- sound/soc/tegra/tegra30_ahub.c | 4 ++++
- sound/soc/tegra/tegra30_i2s.c  | 9 ++++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 0f4787c..d554d46 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -640,8 +640,12 @@ static int tegra30_ahub_resume(struct device *dev)
- {
- 	int ret;
- 
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
-+		return ret;
- 	ret = regcache_sync(ahub->regmap_ahub);
- 	ret |= regcache_sync(ahub->regmap_apbif);
-+	pm_runtime_put(dev);
- 
- 	return ret;
- }
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index bd0ebc0..d04146c 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -527,8 +527,15 @@ static int tegra30_i2s_suspend(struct device *dev)
- static int tegra30_i2s_resume(struct device *dev)
- {
- 	struct tegra30_i2s *i2s = dev_get_drvdata(dev);
-+	int ret;
- 
--	return regcache_sync(i2s->regmap);
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
-+		return ret;
-+	ret = regcache_sync(i2s->regmap);
-+	pm_runtime_put(dev);
-+
-+	return ret;
- }
- #endif
- 
--- 
-1.8.1.5
+That said, I don't think you should need any of the
+TEGRA_CLK_DUPLICATE() entries; the PCIe driver should get its clocks
+from device tree now, and hence the driver name in the clock
+registration shouldn't be necessary. All of these TEGRA_CLK_DUPLICATE()
+entries should be removed en mass sometime soon with luck. So, can you
+simply leave the two TEGRA_CLK_DUPLICATE() entries untouched, rather
+than changing them?
