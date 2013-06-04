@@ -1,76 +1,125 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: add runtime PM to resume
-	functions
-Date: Tue, 4 Jun 2013 20:47:44 +0100
-Message-ID: <20130604194744.GU31367@sirena.org.uk>
-References: <1370372294-25844-1-git-send-email-swarren@wwwdotorg.org>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
+Date: Tue, 04 Jun 2013 23:40:51 +0200
+Message-ID: <51AE5EE3.3010607@linaro.org>
+References: <1370342880-422-1-git-send-email-josephl@nvidia.com> <1370342880-422-4-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4149228403671627032=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1370372294-25844-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1370342880-422-4-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============4149228403671627032==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kPvmKZRaHW6UEX9w"
-Content-Disposition: inline
-
-
---kPvmKZRaHW6UEX9w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 04, 2013 at 12:58:14PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On 06/04/2013 12:48 PM, Joseph Lo wrote:
+> This supports CPU core power down on each CPU when CPU idle. When CPU=
+ go
+> into this state, it saves it's context and needs a proper configurati=
+on
+> in flow controller to power gate the CPU when CPU runs into WFI
+> instruction. And the CPU also needs to set the IRQ as CPU power down =
+idle
+> wake up event in flow controller.
 >=20
-> Tegra HW needs clocks etc. active when touching registers. Make sure they
-> are active during resume, by calling pm_runtime_get_sync() before touching
-> HW.
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied, thanks.
+I would like to understand why there is a WARN with the
+CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure i=
+t
+is not the tree hiding the forest.
 
---kPvmKZRaHW6UEX9w
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks
+  -- Daniel
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+> ---
+> V2:
+> * remove some redundant code of memory barrier
+> * remove the function declaration by rearranging the coding sequence=20
+> ---
+>  arch/arm/mach-tegra/cpuidle-tegra114.c | 51 ++++++++++++++++++++++++=
++++++++++-
+>  1 file changed, 50 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-t=
+egra/cpuidle-tegra114.c
+> index 1d1c602..e0b8730 100644
+> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> @@ -17,15 +17,64 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/cpuidle.h>
+> +#include <linux/cpu_pm.h>
+> +#include <linux/clockchips.h>
+> =20
+>  #include <asm/cpuidle.h>
+> +#include <asm/suspend.h>
+> +#include <asm/smp_plat.h>
+> +
+> +#include "pm.h"
+> +#include "sleep.h"
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +#define TEGRA114_MAX_STATES 2
+> +#else
+> +#define TEGRA114_MAX_STATES 1
+> +#endif
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra114_idle_power_down(struct cpuidle_device *dev,
+> +				    struct cpuidle_driver *drv,
+> +				    int index)
+> +{
+> +	local_fiq_disable();
+> +
+> +	tegra_set_cpu_in_lp2();
+> +	cpu_pm_enter();
+> +
+> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_ENTER, &dev->cpu);
+> +
+> +	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+> +
+> +	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT, &dev->cpu);
+> +
+> +	cpu_pm_exit();
+> +	tegra_clear_cpu_in_lp2();
+> +
+> +	local_fiq_enable();
+> +
+> +	return index;
+> +}
+> +#endif
+> =20
+>  static struct cpuidle_driver tegra_idle_driver =3D {
+>  	.name =3D "tegra_idle",
+>  	.owner =3D THIS_MODULE,
+> -	.state_count =3D 1,
+> +	.state_count =3D TEGRA114_MAX_STATES,
+>  	.states =3D {
+>  		[0] =3D ARM_CPUIDLE_WFI_STATE_PWR(600),
+> +#ifdef CONFIG_PM_SLEEP
+> +		[1] =3D {
+> +			.enter			=3D tegra114_idle_power_down,
+> +			.exit_latency		=3D 500,
+> +			.target_residency	=3D 1000,
+> +			.power_usage		=3D 0,
+> +			.flags			=3D CPUIDLE_FLAG_TIME_VALID,
+> +			.name			=3D "powered-down",
+> +			.desc			=3D "CPU power gated",
+> +		},
+> +#endif
+>  	},
+>  };
+> =20
+>=20
 
-iQIbBAEBAgAGBQJRrkRdAAoJELSic+t+oim9dtcP920sOsCI9jDs8J4YjQjWBbYo
-3WhOCONeJ5MwtlWObJ1Rg9oGynRkqIpG/k8U7TTRlV6S+QY/igtjDKRbeCgriHLl
-KS4aSeun+PA8gKjUVxuIxPaklGdf8FMnQayzq6iPLFBKWc+zmE1XJt6TQNdJfitY
-2WzEcGP2/riDHO9ygvW82yJzdGhaxyfAi2gmsZ9PeXPTwVJsBq0tj5h1Q+sHxxp3
-MTfXySvzv1R79wkfl7b8Zt+9/0yqjiB47ifa8YvspKLv6gCKx8HFG4Sf2+OouhaR
-DoY1hA90yGq9rbepH1LEjswb5KFBzROSRLGZXkkLTzuDD+YtTnN3li/dqqlqLgHv
-eApmi8hYQ14hA6LevRCazWA6ILGf5OxkB/l2sh74vCpMD0L+iiKjich9dkCIitS/
-sv+08v/B5eHxcwDq5lToU/ZI0sb4fo7HMcO7/8pKYZJ5FvhQXQKbh0QdNPXcv75R
-09LmkOSuE47oqStX0AZecSwKkIIuLaWgW0CunQRjsy6ywnHO1Ocx7JZQfNASf/fn
-62LJhCGGlQ5QQVG7ptne+CHuFukYtIBj0IX1kOJLFlT5MsWPBEfulEwNYhZNzHEB
-jaqzc+9wCaG3gJU50VVWAmJsAh+1J7oIMBoa6bFWja4KJ9PttyQdLu9JW5nz4qkD
-qRDabRP7qUSHZ6UNUVo=
-=Ob0h
------END PGP SIGNATURE-----
 
---kPvmKZRaHW6UEX9w--
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
 
---===============4149228403671627032==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4149228403671627032==--
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
