@@ -1,88 +1,76 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
-Date: Tue, 04 Jun 2013 13:17:15 -0600
-Message-ID: <51AE3D3B.6080102@wwwdotorg.org>
-References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com> <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: tegra: add runtime PM to resume
+	functions
+Date: Tue, 4 Jun 2013 20:47:44 +0100
+Message-ID: <20130604194744.GU31367@sirena.org.uk>
+References: <1370372294-25844-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jay Agarwal <jagarwal@nvidia.com>
-Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
+Content-Type: multipart/mixed; boundary="===============4149228403671627032=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1370372294-25844-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2013 12:57 PM, Jay Agarwal wrote:
-> - Enable PCIe root port 2 for Cardhu
-> - Make private data structure for each SoC
-> - Add required Tegra30 clocks and regulators
-> - Add Tegra30 specific code in enable controller
-> - Corrected logic in read/write config space to
->   display right device number on bus 0
-> - Fixed unnecessary freeing of tegra_pcie_bus structure in tegra_pcie_remove
-> - Added Tegra30 specific properties in pci binding document
 
-> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-
-> +- avdd-supply: Power supply for controller (1.05V)
-
-> +  "cml": The Tegra clock of that name
-
-Both those changes need to mention that those additions are only
-required for Tegra30, not Tegra20. In other words,
-
-+- avdd-supply: Power supply for controller (1.05V) (not required for
-Tegra20)
-
-+  "cml": The Tegra clock of that name (not required for Tegra20)
-
-You probably also want to explicitly mention nvidia,tegra30-pcie as a
-legal compatible value.
-
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-
-> +/* used to differentiate tegra chips code */
-> +struct tegra_pcie_soc_data {
-> +	unsigned int num_max_ports;
-
-nit: "num max" seems redundant. max_ports or num_ports would be better.
-
->  struct tegra_pcie_port {
-> @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus *bus, unsigned int devfn,
->  		struct tegra_pcie_port *port;
->  
->  		list_for_each_entry(port, &pcie->ports, list) {
-> -			if (port->index + 1 == slot) {
-> +			if (port->index == slot) {
-
-This and the equivalent change in tegra_pcie_write_conf() seem like a
-bug-fix unrelated to the addition of Tegra30 support. Hence, they should
-be a separate patch.
+--===============4149228403671627032==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kPvmKZRaHW6UEX9w"
+Content-Disposition: inline
 
 
-> @@ -398,7 +422,6 @@ static int tegra_pcie_read_conf(struct pci_bus *bus, unsigned int devfn,
->  			*value = 0xffffffff;
->  			return PCIBIOS_DEVICE_NOT_FOUND;
->  		}
-> -
->  		addr += tegra_pcie_conf_offset(devfn, where);
+--kPvmKZRaHW6UEX9w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unnecessary white-space change.
+On Tue, Jun 04, 2013 at 12:58:14PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> Tegra HW needs clocks etc. active when touching registers. Make sure they
+> are active during resume, by calling pm_runtime_get_sync() before touching
+> HW.
 
-> @@ -1549,10 +1660,9 @@ static int tegra_pcie_remove(struct platform_device *pdev)
->  	struct tegra_pcie_bus *bus;
->  	int err;
->  
-> -	list_for_each_entry(bus, &pcie->busses, list) {
-> +	list_for_each_entry(bus, &pcie->busses, list)
->  		vunmap(bus->area->addr);
-> -		kfree(bus);
-> -	}
-> +	kfree(bus);
+Applied, thanks.
 
-This doesn't look right. Can you please explain it further? This is
-looping over every bus in a dynamic list, so surely each entry needs to
-be freed? Did you do this to avoid a crash? If so, the issue is likely
-that the loop should use list_for_each_entry_safe() rather than
-list_for_each_entry().
+--kPvmKZRaHW6UEX9w
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIbBAEBAgAGBQJRrkRdAAoJELSic+t+oim9dtcP920sOsCI9jDs8J4YjQjWBbYo
+3WhOCONeJ5MwtlWObJ1Rg9oGynRkqIpG/k8U7TTRlV6S+QY/igtjDKRbeCgriHLl
+KS4aSeun+PA8gKjUVxuIxPaklGdf8FMnQayzq6iPLFBKWc+zmE1XJt6TQNdJfitY
+2WzEcGP2/riDHO9ygvW82yJzdGhaxyfAi2gmsZ9PeXPTwVJsBq0tj5h1Q+sHxxp3
+MTfXySvzv1R79wkfl7b8Zt+9/0yqjiB47ifa8YvspKLv6gCKx8HFG4Sf2+OouhaR
+DoY1hA90yGq9rbepH1LEjswb5KFBzROSRLGZXkkLTzuDD+YtTnN3li/dqqlqLgHv
+eApmi8hYQ14hA6LevRCazWA6ILGf5OxkB/l2sh74vCpMD0L+iiKjich9dkCIitS/
+sv+08v/B5eHxcwDq5lToU/ZI0sb4fo7HMcO7/8pKYZJ5FvhQXQKbh0QdNPXcv75R
+09LmkOSuE47oqStX0AZecSwKkIIuLaWgW0CunQRjsy6ywnHO1Ocx7JZQfNASf/fn
+62LJhCGGlQ5QQVG7ptne+CHuFukYtIBj0IX1kOJLFlT5MsWPBEfulEwNYhZNzHEB
+jaqzc+9wCaG3gJU50VVWAmJsAh+1J7oIMBoa6bFWja4KJ9PttyQdLu9JW5nz4qkD
+qRDabRP7qUSHZ6UNUVo=
+=Ob0h
+-----END PGP SIGNATURE-----
+
+--kPvmKZRaHW6UEX9w--
+
+--===============4149228403671627032==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4149228403671627032==--
