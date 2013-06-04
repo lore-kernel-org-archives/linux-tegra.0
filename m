@@ -1,24 +1,69 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [RFC 09/42] drivers/i2c/busses: don't check resource with devm_ioremap_resource
-Date: Tue, 04 Jun 2013 11:34:15 -0700
-Message-ID: <87txldzpw8.fsf@linaro.org>
-References: <1368173847-5661-1-git-send-email-wsa@the-dreams.de>
-	<1368173847-5661-10-git-send-email-wsa@the-dreams.de>
+From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 1/4] ARM: tegra30: clocks: Fix pciex clock registration
+Date: Wed, 5 Jun 2013 00:27:29 +0530
+Message-ID: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1368173847-5661-10-git-send-email-wsa@the-dreams.de> (Wolfram
-	Sang's message of "Fri, 10 May 2013 10:16:54 +0200")
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Tony Lindgren <tony@atomide.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Barry Song <baohua.song@csr.com>, Stephen Warren <swarren@wwwdotorg.org>, davinci-linux-open-source@linux.davincidsp.com, linux-i2c@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Wolfram Sang <wsa@the-dreams.de> writes:
+Registering pciex as peripheral clock instead of fixed clock
+as tegra_perih_reset_assert(deassert) api of this clock api
+gives warning and ultimately does not succeed to assert(deassert).
 
-> devm_ioremap_resource does sanity checks on the given resource. No need to
-> duplicate this in the driver.
->
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
 
-Acked-by: Kevin Hilman <khilman@linaro.org>  # for i2c-omap.c
+Changes in V3:
+- Avoid removing pciex duplicate clock as per review comment
+- Corrected tegra pcie driver name for duplicate clocks
+
+ drivers/clk/tegra/clk-tegra30.c |   15 ++++++++-------
+ 1 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index c6921f5..edb2b9b 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1598,6 +1598,12 @@ static void __init tegra30_periph_clk_init(void)
+ 	clk_register_clkdev(clk, "afi", "tegra-pcie");
+ 	clks[afi] = clk;
+ 
++	/* pciex */
++	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
++				    74, &periph_u_regs, periph_clk_enb_refcnt);
++	clk_register_clkdev(clk, "pciex", "tegra-pcie");
++	clks[pciex] = clk;
++
+ 	/* kfuse */
+ 	clk = tegra_clk_register_periph_gate("kfuse", "clk_m",
+ 				    TEGRA_PERIPH_ON_APB,
+@@ -1716,11 +1722,6 @@ static void __init tegra30_fixed_clk_init(void)
+ 				1, 0, &cml_lock);
+ 	clk_register_clkdev(clk, "cml1", NULL);
+ 	clks[cml1] = clk;
+-
+-	/* pciex */
+-	clk = clk_register_fixed_rate(NULL, "pciex", "pll_e", 0, 100000000);
+-	clk_register_clkdev(clk, "pciex", NULL);
+-	clks[pciex] = clk;
+ }
+ 
+ static void __init tegra30_osc_clk_init(void)
+@@ -1942,8 +1943,8 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+ 	TEGRA_CLK_DUPLICATE(bsea, "tegra-aes", "bsea"),
+ 	TEGRA_CLK_DUPLICATE(bsea, "nvavp", "bsea"),
+ 	TEGRA_CLK_DUPLICATE(cml1, "tegra_sata_cml", NULL),
+-	TEGRA_CLK_DUPLICATE(cml0, "tegra_pcie", "cml"),
+-	TEGRA_CLK_DUPLICATE(pciex, "tegra_pcie", "pciex"),
++	TEGRA_CLK_DUPLICATE(cml0, "tegra-pcie", "cml"),
++	TEGRA_CLK_DUPLICATE(pciex, "tegra-pcie", "pciex"),
+ 	TEGRA_CLK_DUPLICATE(vcp, "nvavp", "vcp"),
+ 	TEGRA_CLK_DUPLICATE(clk_max, NULL, NULL), /* MUST be the last entry */
+ };
+-- 
+1.7.0.4
