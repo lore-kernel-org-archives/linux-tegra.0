@@ -1,22 +1,24 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] Add support for Tegra114 SPI boot device
-Date: Wed, 05 Jun 2013 11:32:50 -0600
-Message-ID: <51AF7642.7090501@wwwdotorg.org>
-References: <1370421333-2748-1-git-send-email-pchiu@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: remove the ifdef of ARCH SoC in the tegra_resume
+Date: Wed, 05 Jun 2013 11:44:24 -0600
+Message-ID: <51AF78F8.8040609@wwwdotorg.org>
+References: <1370247004-31846-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370421333-2748-1-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370247004-31846-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/05/2013 02:35 AM, Penny-u79uwXL29TY76Z2rM5mHXA@public.gmane.org wrote:
-> From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 06/03/2013 02:10 AM, Joseph Lo wrote:
+> Removing the ifdef of ARCH_TEGRA_SoC in the tegra_resume function. Because
+> we always build with all Tegra SoCs support and had a runtime chip
+> detection code there. And we expect most of the chips would need the code
+> in the future.
 > 
-> This patch adds SpiFlashParams to generate/dump BCT for SPI flash.
-> 
-> Change-Id: Icf256caade8d0aa2d1639541377fa0aa71786eda
+> We also fix a typo of a macro name that cause a build error.
 
-Oh, you should remove that line before posting patches upstream.
+Applied to Tegra's for-3.11/soc, with re-written commit description.
