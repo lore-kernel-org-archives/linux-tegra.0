@@ -1,206 +1,197 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3 5/7] USB: EHCI: tegra: fix circular module dependencies
-Date: Wed,  5 Jun 2013 14:03:07 -0600
-Message-ID: <1370462589-3090-6-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 7/7] USB: EHCI: tegra: make use of ehci->priv
+Date: Wed,  5 Jun 2013 14:03:09 -0600
+Message-ID: <1370462589-3090-8-git-send-email-swarren@wwwdotorg.org>
 References: <1370462589-3090-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1370462589-3090-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra EHCI driver directly calls various functions in the Tegra USB
-PHY driver. The reverse is also true; the PHY driver calls into the EHCI
-driver. This is problematic when the two are built as modules.
-
-The calls from the PHY to EHCI driver were originally added in commit
-bbdabdb "usb: add APIs to access host registers from Tegra PHY", for the
-following reasons:
-
-1) The register being touched is an EHCI register, so logically only the
-   EHCI driver should touch it.
-2) (1) implies that some locking may be needed to correctly implement the
-   r/m/w access to this shared register.
-3) We were expecting to pass only the PHY register space to the Tegra PHY
-   driver, and hence it would not have access to touch the shared
-   registers.
-
-To solve this, that commit added functions in the EHCI driver to touch the
-shared register on behalf of the PHY driver.
-
-In practice, we ended up not having any locking in the implementaiton of
-those functions, and I've been led to believe this is safe. Equally, (3)
-did not happen either. Hence, it is possible for the PHY driver to touch
-the shared register directly.
-
-Given that, this patch moves the code to touch the shared register back
-into the PHY driver, to eliminate the module problems. If we actually
-need locking or co-ordination in the future, I propose we put the lock
-support into some pre-existing core module, or into a third separate
-module, in order to avoid the circular dependencies.
-
-I apologize for my contribution to code churn here.
+Rather than allocating struct tegra_ehci_hcd separately, use struct
+ehci_hcd's priv field instead.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 ---
-v3: No change.
-v2: No change; just rebased on new versions of earlier patches.
+v3: New patch.
 ---
- drivers/usb/host/ehci-tegra.c     | 36 ------------------------------------
- drivers/usb/phy/phy-tegra-usb.c   | 39 ++++++++++++++++++++++++++++++++++++---
- include/linux/usb/tegra_usb_phy.h |  4 ----
- 3 files changed, 36 insertions(+), 43 deletions(-)
+ drivers/usb/host/ehci-tegra.c | 70 +++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
 diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index dde5189..8063429 100644
+index 338c8a5..8dac5e4 100644
 --- a/drivers/usb/host/ehci-tegra.c
 +++ b/drivers/usb/host/ehci-tegra.c
-@@ -34,11 +34,6 @@
- #define TEGRA_USB2_BASE			0xC5004000
- #define TEGRA_USB3_BASE			0xC5008000
- 
--/* PORTSC registers */
--#define TEGRA_USB_PORTSC1			0x184
--#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
--#define TEGRA_USB_PORTSC1_PHCD	(1 << 23)
--
- #define TEGRA_USB_DMA_ALIGN 32
+@@ -56,7 +56,6 @@ static int (*orig_hub_control)(struct usb_hcd *hcd,
+ 				char *buf, u16 wLength);
  
  struct tegra_ehci_hcd {
-@@ -380,37 +375,6 @@ static int setup_vbus_gpio(struct platform_device *pdev,
+-	struct ehci_hcd *ehci;
+ 	struct tegra_usb_phy *phy;
+ 	struct clk *clk;
+ 	struct usb_phy *transceiver;
+@@ -139,8 +138,8 @@ static int tegra_ehci_hub_control(
+ 	u16		wLength
+ )
+ {
+-	struct ehci_hcd	*ehci = hcd_to_ehci(hcd);
+-	struct tegra_ehci_hcd *tegra = dev_get_drvdata(hcd->self.controller);
++	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
++	struct tegra_ehci_hcd *tegra = (struct tegra_ehci_hcd *)ehci->priv;
+ 	u32 __iomem	*status_reg;
+ 	u32		temp;
+ 	unsigned long	flags;
+@@ -354,6 +353,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct usb_hcd *hcd;
++	struct ehci_hcd *ehci;
+ 	struct tegra_ehci_hcd *tegra;
+ 	struct tegra_ehci_platform_data *pdata;
+ 	int err = 0;
+@@ -378,20 +378,29 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 
+ 	setup_vbus_gpio(pdev, pdata);
+ 
+-	tegra = devm_kzalloc(&pdev->dev, sizeof(struct tegra_ehci_hcd),
+-			     GFP_KERNEL);
+-	if (!tegra)
+-		return -ENOMEM;
++	hcd = usb_create_hcd(&tegra_ehci_hc_driver, &pdev->dev,
++					dev_name(&pdev->dev));
++	if (!hcd) {
++		dev_err(&pdev->dev, "Unable to create HCD\n");
++		err = -ENOMEM;
++		goto cleanup_vbus_gpio;
++	}
++	platform_set_drvdata(pdev, hcd);
++	ehci = hcd_to_ehci(hcd);
++	tegra = (struct tegra_ehci_hcd *)ehci->priv;
++
++	hcd->has_tt = 1;
+ 
+ 	tegra->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(tegra->clk)) {
+ 		dev_err(&pdev->dev, "Can't get ehci clock\n");
+-		return PTR_ERR(tegra->clk);
++		err = PTR_ERR(tegra->clk);
++		goto cleanup_hcd_create;
+ 	}
+ 
+ 	err = clk_prepare_enable(tegra->clk);
+ 	if (err)
+-		return err;
++		goto cleanup_clk_get;
+ 
+ 	tegra_periph_reset_assert(tegra->clk);
+ 	udelay(1);
+@@ -400,35 +409,24 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	np_phy = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
+ 	if (!np_phy) {
+ 		err = -ENODEV;
+-		goto cleanup_clk;
++		goto cleanup_clk_en;
+ 	}
+ 
+ 	u_phy = tegra_usb_get_phy(np_phy);
+ 	if (IS_ERR(u_phy)) {
+ 		err = PTR_ERR(u_phy);
+-		goto cleanup_clk;
++		goto cleanup_clk_en;
+ 	}
++	hcd->phy = u_phy;
+ 
+ 	tegra->needs_double_reset = of_property_read_bool(pdev->dev.of_node,
+ 		"nvidia,needs-double-reset");
+ 
+-	hcd = usb_create_hcd(&tegra_ehci_hc_driver, &pdev->dev,
+-					dev_name(&pdev->dev));
+-	if (!hcd) {
+-		dev_err(&pdev->dev, "Unable to create HCD\n");
+-		err = -ENOMEM;
+-		goto cleanup_clk;
+-	}
+-	tegra->ehci = hcd_to_ehci(hcd);
+-
+-	hcd->has_tt = 1;
+-	hcd->phy = u_phy;
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "Failed to get I/O memory\n");
+ 		err = -ENXIO;
+-		goto cleanup_hcd_create;
++		goto cleanup_clk_en;
+ 	}
+ 	hcd->rsrc_start = res->start;
+ 	hcd->rsrc_len = resource_size(res);
+@@ -436,14 +434,14 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	if (!hcd->regs) {
+ 		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+ 		err = -ENOMEM;
+-		goto cleanup_hcd_create;
++		goto cleanup_clk_en;
+ 	}
+-	tegra->ehci->caps = hcd->regs + 0x100;
++	ehci->caps = hcd->regs + 0x100;
+ 
+ 	err = usb_phy_init(hcd->phy);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to initialize phy\n");
+-		goto cleanup_hcd_create;
++		goto cleanup_clk_en;
+ 	}
+ 
+ 	u_phy->otg = devm_kzalloc(&pdev->dev, sizeof(struct usb_otg),
+@@ -477,8 +475,6 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 		tegra->transceiver = ERR_PTR(-ENODEV);
+ 	}
+ 
+-	platform_set_drvdata(pdev, tegra);
+-
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+@@ -492,17 +488,22 @@ cleanup_phy:
+ 		otg_set_host(tegra->transceiver->otg, NULL);
+ 
+ 	usb_phy_shutdown(hcd->phy);
++cleanup_clk_en:
++	clk_disable_unprepare(tegra->clk);
++cleanup_clk_get:
++	clk_put(tegra->clk);
+ cleanup_hcd_create:
+ 	usb_put_hcd(hcd);
+-cleanup_clk:
+-	clk_disable_unprepare(tegra->clk);
++cleanup_vbus_gpio:
++	/* FIXME: Undo setup_vbus_gpio() here */
  	return err;
  }
  
--/* Bits of PORTSC1, which will get cleared by writing 1 into them */
--#define TEGRA_PORTSC1_RWC_BITS (PORT_CSC | PORT_PEC | PORT_OCC)
--
--void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
--{
--	unsigned long val;
--	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
--	void __iomem *base = hcd->regs;
--
--	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
--	val &= ~TEGRA_USB_PORTSC1_PTS(3);
--	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
--	writel(val, base + TEGRA_USB_PORTSC1);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
--
--void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
--{
--	unsigned long val;
--	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
--	void __iomem *base = hcd->regs;
--
--	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
--	if (enable)
--		val |= TEGRA_USB_PORTSC1_PHCD;
--	else
--		val &= ~TEGRA_USB_PORTSC1_PHCD;
--	writel(val, base + TEGRA_USB_PORTSC1);
--}
--EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
--
- static int tegra_ehci_probe(struct platform_device *pdev)
+ static int tegra_ehci_remove(struct platform_device *pdev)
  {
- 	struct resource *res;
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index f0727f2..3446245 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -32,11 +32,20 @@
- #include <linux/usb/otg.h>
- #include <linux/usb/ulpi.h>
- #include <asm/mach-types.h>
-+#include <linux/usb/ehci_def.h>
- #include <linux/usb/tegra_usb_phy.h>
- #include <linux/module.h>
+-	struct tegra_ehci_hcd *tegra = platform_get_drvdata(pdev);
+-	struct usb_hcd *hcd = ehci_to_hcd(tegra->ehci);
++	struct usb_hcd *hcd = platform_get_drvdata(pdev);
++	struct tegra_ehci_hcd *tegra =
++		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
  
- #define ULPI_VIEWPORT		0x170
+ 	if (!IS_ERR(tegra->transceiver))
+ 		otg_set_host(tegra->transceiver->otg, NULL);
+@@ -518,8 +519,7 @@ static int tegra_ehci_remove(struct platform_device *pdev)
  
-+/* PORTSC registers */
-+#define TEGRA_USB_PORTSC1				0x184
-+#define TEGRA_USB_PORTSC1_PTS(x)			(((x) & 0x3) << 30)
-+#define TEGRA_USB_PORTSC1_PHCD				(1 << 23)
-+
-+/* Bits of PORTSC1, which will get cleared by writing 1 into them */
-+#define TEGRA_PORTSC1_RWC_BITS	(PORT_CSC | PORT_PEC | PORT_OCC)
-+
- #define USB_SUSP_CTRL		0x400
- #define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
- #define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
-@@ -197,6 +206,30 @@ static struct tegra_utmip_config utmip_default[] = {
- 	},
- };
- 
-+static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
-+{
-+	void __iomem *base = phy->regs;
-+	unsigned long val;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	val &= ~TEGRA_USB_PORTSC1_PTS(3);
-+	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+
-+static void set_phcd(struct tegra_usb_phy *phy, bool enable)
-+{
-+	void __iomem *base = phy->regs;
-+	unsigned long val;
-+
-+	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
-+	if (enable)
-+		val |= TEGRA_USB_PORTSC1_PHCD;
-+	else
-+		val &= ~TEGRA_USB_PORTSC1_PHCD;
-+	writel(val, base + TEGRA_USB_PORTSC1);
-+}
-+
- static int utmip_pad_open(struct tegra_usb_phy *phy)
+ static void tegra_ehci_hcd_shutdown(struct platform_device *pdev)
  {
- 	phy->pad_clk = devm_clk_get(phy->dev, "utmi-pads");
-@@ -283,7 +316,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- 		val &= ~USB_SUSP_SET;
- 		writel(val, base + USB_SUSP_CTRL);
- 	} else
--		tegra_ehci_set_phcd(&phy->u_phy, true);
-+		set_phcd(phy, true);
+-	struct tegra_ehci_hcd *tegra = platform_get_drvdata(pdev);
+-	struct usb_hcd *hcd = ehci_to_hcd(tegra->ehci);
++	struct usb_hcd *hcd = platform_get_drvdata(pdev);
  
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
- 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
-@@ -305,7 +338,7 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- 		val &= ~USB_SUSP_CLR;
- 		writel(val, base + USB_SUSP_CTRL);
- 	} else
--		tegra_ehci_set_phcd(&phy->u_phy, false);
-+		set_phcd(phy, false);
- 
- 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
- 						     USB_PHY_CLK_VALID))
-@@ -428,7 +461,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 	utmi_phy_clk_enable(phy);
- 
- 	if (!phy->is_legacy_phy)
--		tegra_ehci_set_pts(&phy->u_phy, 0);
-+		set_pts(phy, 0);
- 
- 	return 0;
- }
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 0cd15d2..d2ca919 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -76,8 +76,4 @@ void tegra_ehci_phy_restore_start(struct usb_phy *phy,
- 
- void tegra_ehci_phy_restore_end(struct usb_phy *phy);
- 
--void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
--
--void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
+ 	if (hcd->driver->shutdown)
+ 		hcd->driver->shutdown(hcd);
+-- 
+1.8.1.5
