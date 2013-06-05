@@ -1,166 +1,31 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] clk: tegra: Use override bits when needed
-Date: Wed, 5 Jun 2013 17:08:29 +0300
-Message-ID: <1370441329-8619-5-git-send-email-pdeschrijver@nvidia.com>
-References: <1370441329-8619-1-git-send-email-pdeschrijver@nvidia.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH V2 3/6] USB: EHCI: export ehci_handshake for ehci-hcd
+ sub-drivers
+Date: Wed, 5 Jun 2013 10:12:20 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1306051011260.1078-100000@iolanthe.rowland.org>
+References: <1370390014-25452-4-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370441329-8619-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370390014-25452-4-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-PLLM has override bits in the PMC. Use those when PLLM_OVERRIDE_ENABLE
-is set.
+On Tue, 4 Jun 2013, Stephen Warren wrote:
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-pll.c |   82 +++++++++++++++++++++++++-----------------
- 1 files changed, 49 insertions(+), 33 deletions(-)
+> From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+> In order to split ehci-hcd.c into separate modules, handshake() must be
+> exported. Rename the symbol to add an ehci_ prefix, to avoid any naming
+> clashes.
+> 
+> Signed-off-by: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> [swarren, split Manjunath's patches more logically, limit this change
+> to export just handshake()]
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: Only export handshake(), not reset/tdi_reset/halt.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 3b778d3..4293643 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -117,10 +117,6 @@
- #define PLLCX_MISC2_DEFAULT 0x30211200
- #define PLLCX_MISC3_DEFAULT 0x200
- 
--#define PMC_PLLM_WB0_OVERRIDE	0x1dc
--#define PMC_PLLM_WB0_OVERRIDE_2	0x2b0
--#define PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK BIT(27)
--
- #define PMC_SATA_PWRGT 0x1ac
- #define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
- #define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
-@@ -128,10 +124,12 @@
- #define pll_readl(offset, p) readl_relaxed(p->clk_base + offset)
- #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
- #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
-+#define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
- 
- #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
- #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
- #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
-+#define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
- 
- #define mask(w) ((1 << (w)) - 1)
- #define divm_mask(p) mask(p->params->div_nmp->divm_width)
-@@ -413,29 +411,61 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 			    struct tegra_clk_pll_freq_table *cfg)
- {
- 	u32 val;
-+	struct tegra_clk_pll_params *params = pll->params;
-+	struct div_nmp *div_nmp = params->div_nmp;
-+
-+	if ((pll->flags & TEGRA_PLLM) &&
-+		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
-+			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
-+		val = pll_override_readl(params->pmc_divp_reg, pll);
-+		val &= ~(divp_mask(pll) << div_nmp->override_divp_shift);
-+		val |= cfg->p << div_nmp->override_divp_shift;
-+		pll_override_writel(val, params->pmc_divp_reg, pll);
-+
-+		val = pll_override_readl(params->pmc_divnm_reg, pll);
-+		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
-+			~(divn_mask(pll) << div_nmp->override_divn_shift);
-+		val |= (cfg->m << div_nmp->override_divm_shift) |
-+			(cfg->n << div_nmp->override_divn_shift);
-+		pll_override_writel(val, params->pmc_divnm_reg, pll);
-+	} else {
-+		val = pll_readl_base(pll);
- 
--	val = pll_readl_base(pll);
-+		val &= ~((divm_mask(pll) << div_nmp->divm_shift) |
-+		 (divn_mask(pll) << div_nmp->divn_shift) |
-+		 (divp_mask(pll) << div_nmp->divp_shift));
- 
--	val &= ~((divm_mask(pll) << pll->params->div_nmp->divm_shift) |
--		 (divn_mask(pll) << pll->params->div_nmp->divn_shift) |
--		 (divp_mask(pll) << pll->params->div_nmp->divp_shift));
--	val |= ((cfg->m << pll->params->div_nmp->divm_shift) |
--		(cfg->n << pll->params->div_nmp->divn_shift) |
--		(cfg->p << pll->params->div_nmp->divp_shift));
-+		val |= ((cfg->m << div_nmp->divm_shift) |
-+			(cfg->n << div_nmp->divn_shift) |
-+			(cfg->p << div_nmp->divp_shift));
- 
--	pll_writel_base(val, pll);
-+		pll_writel_base(val, pll);
-+	}
- }
- 
- static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 			 struct tegra_clk_pll_freq_table *cfg)
- {
- 	u32 val;
-+	struct tegra_clk_pll_params *params = pll->params;
-+	struct div_nmp *div_nmp = params->div_nmp;
-+
-+	if ((pll->flags & TEGRA_PLLM) &&
-+		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
-+			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
-+		val = pll_override_readl(params->pmc_divp_reg, pll);
-+		cfg->p = (val >> div_nmp->override_divp_shift) & divp_mask(pll);
-+
-+		val = pll_override_readl(params->pmc_divnm_reg, pll);
-+		cfg->m = (val >> div_nmp->override_divm_shift) & divm_mask(pll);
-+		cfg->n = (val >> div_nmp->override_divn_shift) & divn_mask(pll);
-+	}  else {
-+		val = pll_readl_base(pll);
- 
--	val = pll_readl_base(pll);
--
--	cfg->m = (val >> pll->params->div_nmp->divm_shift) & (divm_mask(pll));
--	cfg->n = (val >> pll->params->div_nmp->divn_shift) & (divn_mask(pll));
--	cfg->p = (val >> pll->params->div_nmp->divp_shift) & (divp_mask(pll));
-+		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
-+		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
-+		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
-+	}
- }
- 
- static void _update_pll_cpcon(struct tegra_clk_pll *pll,
-@@ -883,7 +913,6 @@ static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	unsigned long flags = 0;
- 	int state, ret = 0;
--	u32 val;
- 
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
-@@ -902,21 +931,7 @@ static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (ret < 0)
- 		goto out;
- 
--	val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--	if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) {
--		val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE_2);
--		val = cfg.p ? (val | PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK) :
--			(val & ~PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK);
--		writel_relaxed(val, pll->pmc + PMC_PLLM_WB0_OVERRIDE_2);
--
--		val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--		val &= ~(divn_mask(pll) | divm_mask(pll));
--		val |= (cfg.m << pll->params->div_nmp->divm_shift) |
--			(cfg.n << pll->params->div_nmp->divn_shift);
--		writel_relaxed(val, pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--	} else
--		_update_pll_mnp(pll, &cfg);
--
-+	_update_pll_mnp(pll, &cfg);
- 
- out:
- 	if (pll->lock)
-@@ -1461,6 +1476,7 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 
- 	pll_flags |= TEGRA_PLL_BYPASS;
- 	pll_flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+	pll_flags |= TEGRA_PLLM;
- 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
- 			      freq_table, lock);
- 	if (IS_ERR(pll))
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
