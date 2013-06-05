@@ -1,127 +1,177 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH V2 6/6] USB: EHCI: make ehci-tegra a separate driver
-Date: Wed, 5 Jun 2013 10:41:24 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1306051030430.1078-100000@iolanthe.rowland.org>
-References: <1370390014-25452-7-git-send-email-swarren@wwwdotorg.org>
+From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] ARM: dts: tegra: Move PCIe node to correct place
+Date: Wed, 5 Jun 2013 20:20:02 +0530
+Message-ID: <1370443802-11189-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370390014-25452-7-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 4 Jun 2013, Stephen Warren wrote:
+Moving PCIe controller node to correct place so
+that it is sorted by register address in .dtsi file
 
-> From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> Separate the Tegra on-chip host controller driver from
-> ehci-hcd host code so that it can be built as a separate driver module.
-> This work is part of enabling multi-platform kernels on ARM.
-> 
-> Signed-off-by: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> [swarren, reworked Manjunath's patches to split them more logically,
-> minor re-order of added lines to better match layout of other split-up
-> HCD drivers and existing code, add MODULE_DEVICE_TABLE, fix
-> MODULE_LICENSE.]
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2:
-> * Set non-standard fields in tegra_ehci_hc_driver manually, rather than
->   relying on an expanded struct ehci_driver_overrides.
-> * Save orig_hub_control rather than relying on ehci_hub_control being
->   exported.
-> * Rebased on new versions of earlier patches.
+Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
 
-Considering the changes recommended for the 4/6 patch, this needs a few 
-updates too.
+changes in V2:
+Corrected patch synopsis
 
-> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-> index c8dc687..b164757 100644
-> --- a/drivers/usb/host/ehci-tegra.c
-> +++ b/drivers/usb/host/ehci-tegra.c
+ arch/arm/boot/dts/tegra30.dtsi |  132 ++++++++++++++++++++--------------------
+ 1 files changed, 66 insertions(+), 66 deletions(-)
 
->  struct tegra_ehci_hcd {
->  	struct ehci_hcd *ehci;
->  	struct tegra_usb_phy *phy;
-
-Since you're doing the conversion, it makes sense also to convert this
-structure from being separately allocated to using the private area at
-the end of ehci_hcd.  (As part of that, the platform_set/get_drvdata
-calls would store/retrieve the address of the ehci_hcd structure
-instead of the tegra_ehci_hcd.)  Manjunath has already done this for
-other drivers.
-
-I suppose this could be added on in a separate patch.
-
-> -static void tegra_ehci_shutdown(struct usb_hcd *hcd)
-> -{
-> -	struct tegra_ehci_hcd *tegra = dev_get_drvdata(hcd->self.controller);
-> -
-> -	/* ehci_shutdown touches the USB controller registers, make sure
-> -	 * controller has clocks to it */
-> -	if (!tegra->host_resumed)
-> -		tegra_ehci_power_up(hcd);
-> -
-> -	ehci_shutdown(hcd);
-> -}
-
-Of course, this routine should already be gone.
-
-> @@ -462,6 +429,9 @@ static int tegra_ehci_probe(struct platform_device *pdev)
->  		err = -ENOMEM;
->  		goto cleanup_clk;
->  	}
-> +	tegra->ehci = hcd_to_ehci(hcd);
-
-When the private data structure is moved to the private area, there 
-will be no need for this back-pointer.  The "ehci" field can be 
-eliminated.
-
-> @@ -563,6 +533,12 @@ static void tegra_ehci_hcd_shutdown(struct platform_device *pdev)
->  	struct tegra_ehci_hcd *tegra = platform_get_drvdata(pdev);
->  	struct usb_hcd *hcd = ehci_to_hcd(tegra->ehci);
->  
-> +	/*
-> +	 * ehci_shutdown touches the USB controller registers, make sure
-> +	 * controller has clocks to it
-> +	 */
-> +	if (!tegra->host_resumed)
-> +		tegra_ehci_power_up(hcd);
-
-This doesn't need to go here.  Since all the power management has been 
-removed, the controller will never be suspended or powered down.  Hence 
-there's no need to check or to power it back up.
-
-> +static struct ehci_driver_overrides tegra_overrides __initdata = {
-> +	.extra_priv_size	= sizeof(struct tegra_ehci_hcd),
-> +};
-
-The annotation should be __initconst rather than __initdata.
-
-> +
-> +static int __init ehci_tegra_init(void)
-> +{
-> +	if (usb_disabled())
-> +		return -ENODEV;
-> +
-> +	pr_info(DRV_NAME ": " DRIVER_DESC "\n");
-> +
-> +	ehci_init_driver(&tegra_ehci_hc_driver, &tegra_overrides);
-> +
-> +	orig_hub_control = tegra_ehci_hc_driver.hub_control;
-> +
-> +	tegra_ehci_hc_driver.map_urb_for_dma = tegra_ehci_map_urb_for_dma;
-> +	tegra_ehci_hc_driver.unmap_urb_for_dma = tegra_ehci_unmap_urb_for_dma;
-> +	tegra_ehci_hc_driver.hub_control = tegra_ehci_hub_control;
-
-You might want to add a comment explaining the reason for these manual 
-overrides.  It's up to you.
-
-Alan Stern
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 5c1f7c0..a242b2e 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -12,6 +12,72 @@
+ 		serial4 = &uarte;
+ 	};
+ 
++	pcie-controller {
++		compatible = "nvidia,tegra30-pcie";
++		device_type = "pci";
++		reg = <0x00003000 0x00000800   /* PADS registers */
++		       0x00003800 0x00000200   /* AFI registers */
++		       0x10000000 0x10000000>; /* configuration space */
++		reg-names = "pads", "afi", "cs";
++		interrupts = <0 98 0x04   /* controller interrupt */
++		              0 99 0x04>; /* MSI interrupt */
++
++		bus-range = <0x00 0xff>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
++			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
++			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
++			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
++			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
++			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
++
++		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
++			 <&tegra_car 118>, <&tegra_car 215>;
++		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
++		status = "disabled";
++
++		pci@1,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
++			reg = <0x000800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
++		};
++
++		pci@2,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
++			reg = <0x001000 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
++		};
++
++		pci@3,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
++			reg = <0x001800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
++		};
++	};
++
+ 	host1x {
+ 		compatible = "nvidia,tegra30-host1x", "simple-bus";
+ 		reg = <0x50000000 0x00024000>;
+@@ -115,72 +181,6 @@
+ 		};
+ 	};
+ 
+-	pcie-controller {
+-		compatible = "nvidia,tegra30-pcie";
+-		device_type = "pci";
+-		reg = <0x00003000 0x00000800   /* PADS registers */
+-		       0x00003800 0x00000200   /* AFI registers */
+-		       0x10000000 0x10000000>; /* configuration space */
+-		reg-names = "pads", "afi", "cs";
+-		interrupts = <0 98 0x04   /* controller interrupt */
+-		              0 99 0x04>; /* MSI interrupt */
+-
+-		bus-range = <0x00 0xff>;
+-		#address-cells = <3>;
+-		#size-cells = <2>;
+-
+-		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
+-			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
+-			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
+-			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
+-			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
+-			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
+-
+-		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
+-			 <&tegra_car 118>, <&tegra_car 215>;
+-		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
+-		status = "disabled";
+-
+-		pci@1,0 {
+-			device_type = "pci";
+-			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
+-			reg = <0x000800 0 0 0 0>;
+-			status = "disabled";
+-
+-			#address-cells = <3>;
+-			#size-cells = <2>;
+-			ranges;
+-
+-			nvidia,num-lanes = <2>;
+-		};
+-
+-		pci@2,0 {
+-			device_type = "pci";
+-			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
+-			reg = <0x001000 0 0 0 0>;
+-			status = "disabled";
+-
+-			#address-cells = <3>;
+-			#size-cells = <2>;
+-			ranges;
+-
+-			nvidia,num-lanes = <2>;
+-		};
+-
+-		pci@3,0 {
+-			device_type = "pci";
+-			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
+-			reg = <0x001800 0 0 0 0>;
+-			status = "disabled";
+-
+-			#address-cells = <3>;
+-			#size-cells = <2>;
+-			ranges;
+-
+-			nvidia,num-lanes = <2>;
+-		};
+-	};
+-
+ 	timer@50004600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0x50040600 0x20>;
+-- 
+1.7.0.4
