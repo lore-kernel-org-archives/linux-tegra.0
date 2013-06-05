@@ -1,177 +1,87 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: dts: tegra: Move PCIe node to correct place
-Date: Wed, 5 Jun 2013 20:20:02 +0530
-Message-ID: <1370443802-11189-1-git-send-email-jagarwal@nvidia.com>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: RE: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
+Date: Wed, 5 Jun 2013 20:27:44 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BECE@BGMAIL01.nvidia.com>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
+ <51AE3D3B.6080102@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <51AE3D3B.6080102@wwwdotorg.org>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Stephen Warren' <swarren@wwwdotorg.org>
+Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "bhelgaas@google.com" <bhelgaas@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Moving PCIe controller node to correct place so
-that it is sorted by register address in .dtsi file
-
-Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
-
-changes in V2:
-Corrected patch synopsis
-
- arch/arm/boot/dts/tegra30.dtsi |  132 ++++++++++++++++++++--------------------
- 1 files changed, 66 insertions(+), 66 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 5c1f7c0..a242b2e 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -12,6 +12,72 @@
- 		serial4 = &uarte;
- 	};
- 
-+	pcie-controller {
-+		compatible = "nvidia,tegra30-pcie";
-+		device_type = "pci";
-+		reg = <0x00003000 0x00000800   /* PADS registers */
-+		       0x00003800 0x00000200   /* AFI registers */
-+		       0x10000000 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <0 98 0x04   /* controller interrupt */
-+		              0 99 0x04>; /* MSI interrupt */
-+
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
-+			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
-+			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
-+			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
-+
-+		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
-+			 <&tegra_car 118>, <&tegra_car 215>;
-+		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
-+		status = "disabled";
-+
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+
-+		pci@3,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
-+			reg = <0x001800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+	};
-+
- 	host1x {
- 		compatible = "nvidia,tegra30-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
-@@ -115,72 +181,6 @@
- 		};
- 	};
- 
--	pcie-controller {
--		compatible = "nvidia,tegra30-pcie";
--		device_type = "pci";
--		reg = <0x00003000 0x00000800   /* PADS registers */
--		       0x00003800 0x00000200   /* AFI registers */
--		       0x10000000 0x10000000>; /* configuration space */
--		reg-names = "pads", "afi", "cs";
--		interrupts = <0 98 0x04   /* controller interrupt */
--		              0 99 0x04>; /* MSI interrupt */
--
--		bus-range = <0x00 0xff>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--
--		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
--			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
--			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
--			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
--			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
--
--		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
--			 <&tegra_car 118>, <&tegra_car 215>;
--		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
--		status = "disabled";
--
--		pci@1,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
--			reg = <0x000800 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--
--		pci@2,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
--			reg = <0x001000 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--
--		pci@3,0 {
--			device_type = "pci";
--			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
--			reg = <0x001800 0 0 0 0>;
--			status = "disabled";
--
--			#address-cells = <3>;
--			#size-cells = <2>;
--			ranges;
--
--			nvidia,num-lanes = <2>;
--		};
--	};
--
- 	timer@50004600 {
- 		compatible = "arm,cortex-a9-twd-timer";
- 		reg = <0x50040600 0x20>;
--- 
-1.7.0.4
+> > diff --git
+> > a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> 
+> > +- avdd-supply: Power supply for controller (1.05V)
+> 
+> > +  "cml": The Tegra clock of that name
+> 
+> Both those changes need to mention that those additions are only required
+> for Tegra30, not Tegra20. In other words,
+> 
+> +- avdd-supply: Power supply for controller (1.05V) (not required for
+> Tegra20)
+> 
+> +  "cml": The Tegra clock of that name (not required for Tegra20)
+> 
+> You probably also want to explicitly mention nvidia,tegra30-pcie as a legal
+> compatible value.
+> 
+> > diff --git a/drivers/pci/host/pci-tegra.c
+> > b/drivers/pci/host/pci-tegra.c
+> 
+> > +/* used to differentiate tegra chips code */ struct
+> > +tegra_pcie_soc_data {
+> > +	unsigned int num_max_ports;
+> 
+> nit: "num max" seems redundant. max_ports or num_ports would be better.
+> 
+> >  struct tegra_pcie_port {
+> > @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus *bus,
+> unsigned int devfn,
+> >  		struct tegra_pcie_port *port;
+> >
+> >  		list_for_each_entry(port, &pcie->ports, list) {
+> > -			if (port->index + 1 == slot) {
+> > +			if (port->index == slot) {
+> 
+> This and the equivalent change in tegra_pcie_write_conf() seem like a bug-
+> fix unrelated to the addition of Tegra30 support. Hence, they should be a
+> separate patch.
+> 
+> 
+> > @@ -398,7 +422,6 @@ static int tegra_pcie_read_conf(struct pci_bus *bus,
+> unsigned int devfn,
+> >  			*value = 0xffffffff;
+> >  			return PCIBIOS_DEVICE_NOT_FOUND;
+> >  		}
+> > -
+> >  		addr += tegra_pcie_conf_offset(devfn, where);
+> 
+> Unnecessary white-space change.
+> 
+> > @@ -1549,10 +1660,9 @@ static int tegra_pcie_remove(struct
+> platform_device *pdev)
+> >  	struct tegra_pcie_bus *bus;
+> >  	int err;
+> >
+> > -	list_for_each_entry(bus, &pcie->busses, list) {
+> > +	list_for_each_entry(bus, &pcie->busses, list)
+> >  		vunmap(bus->area->addr);
+> > -		kfree(bus);
+> > -	}
+> > +	kfree(bus);
+> 
+> This doesn't look right. Can you please explain it further? This is looping
+> over every bus in a dynamic list, so surely each entry needs to be freed? Did
+> you do this to avoid a crash? If so, the issue is likely that the loop should use
+> list_for_each_entry_safe() rather than list_for_each_entry().
+Yes you are right, it is not required. I will revert it along with taking care of other comments.
