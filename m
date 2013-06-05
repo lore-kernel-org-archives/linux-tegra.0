@@ -1,25 +1,29 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/2] PLL m,n,p init from SoC files
-Date: Wed, 5 Jun 2013 16:54:45 +0300
-Message-ID: <20130605135445.GP3847@tbergstrom-lnx.Nvidia.com>
-References: <1370440301-3562-1-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH 0/4] Override bits for PLLM
+Date: Wed, 5 Jun 2013 17:08:25 +0300
+Message-ID: <1370441329-8619-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1370440301-3562-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, Stephen Warren <swarren@wwwdotorg.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 05, 2013 at 03:51:24PM +0200, Peter De Schrijver wrote:
-> The m,n,p fields don't have the same bit offset and width across all PLLs.
-> This patchset allows SoC specific files to indicate the offset and width.
-> It also provides the data for Tegra114.
-> 
+PLLM has override bits on Tegra30 and Tegra114. This patchset implements
+support for them for both Tegra30 and Tegra114.
 
-Depends on 'clk: tegra: pllc and pllxc should use pdiv_map'
+Peter De Schrijver (4):
+  CHROMIUM: clk: tegra: Add fields for override bits
+  CHROMIUM: clk: tegra: override bits for Tegra114 PLLM
+  CHROMIUM: clk: tegra: override bits for Tegra30 PLLM
+  CHROMIUM: clk: tegra: Use override bits when needed
 
-Cheers,
+ drivers/clk/tegra/clk-pll.c      |   82 ++++++++++++++++++++++---------------
+ drivers/clk/tegra/clk-tegra114.c |   15 +++++++
+ drivers/clk/tegra/clk-tegra30.c  |   18 ++++++++
+ drivers/clk/tegra/clk.h          |    8 ++++
+ 4 files changed, 90 insertions(+), 33 deletions(-)
 
-Peter.
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
