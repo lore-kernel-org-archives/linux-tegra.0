@@ -1,43 +1,91 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/4] clk: tegra: override bits for Tegra114 PLLM
-Date: Thu, 6 Jun 2013 11:15:42 +0300
-Message-ID: <20130606081542.GS3847@tbergstrom-lnx.Nvidia.com>
-References: <1370441329-8619-1-git-send-email-pdeschrijver@nvidia.com>
- <1370441329-8619-3-git-send-email-pdeschrijver@nvidia.com>
- <51AF5FCE.6090501@wwwdotorg.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
+Date: Thu, 6 Jun 2013 10:35:25 +0100
+Message-ID: <20130606093524.GM18614@n2100.arm.linux.org.uk>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <51AF5FCE.6090501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1370503687-17767-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 05, 2013 at 05:57:02PM +0200, Stephen Warren wrote:
-> On 06/05/2013 08:08 AM, Peter De Schrijver wrote:
->=20
-> Commit description?
->=20
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/c=
-lk-tegra114.c
->=20
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static struct cpu_clk_suspend_context {
-> > +	u32 clk_csite_src;
-> > +} tegra114_cpu_clk_sctx;
-> > +#endif
->=20
-> That generates:
->=20
-> drivers/clk/tegra/clk-tegra114.c:263:3: warning: =E2=80=98tegra114_cp=
-u_clk_sctx=E2=80=99
-> defined but not used [-Wunused-variable]
+On Thu, Jun 06, 2013 at 04:28:07PM +0900, Alexandre Courbot wrote:
+> +static int __attribute__((used)) __tegra_smc_stack[10];
+> +
+> +/*
+> + * With EABI, subtype and arg already end up in r0, r1 and r2 as they are
+> + * function arguments, but we prefer to play safe here and explicitly move
+> + * these values into the expected registers anyway. mov instructions without
+> + * any side-effect are turned into nops by the assembler, which limits
+> + * overhead.
 
-Ah. This should not be part of this patch indeed...
+No they aren't.  They will be preserved as:
+	mov r0, r0
+	mov r1, r1
+	mov r2, r2
 
-Cheers,
+Moreover, things will go wrong if the compiler decides for whatever reason
+to move 'arg' into r0 before calling your code sequence.  So really this
+is quite fragile.
 
-Peter.
+There's also no point in mentioning EABI in the above paragraph; all ARM
+ABIs under Linux have always placed the arguments in r0..r3 and then on
+the stack.  You can assert that this is always true by using the __asmeq()
+macro.
+
+Also...
+
+> + */
+> +static void tegra_generic_smc(u32 type, u32 subtype, u32 arg)
+> +{
+> +	asm volatile(
+> +		".arch_extension	sec\n\t"
+> +		"ldr	r3, =__tegra_smc_stack\n\t"
+> +		"stmia	r3, {r4-r12, lr}\n\t"
+
+using a statically allocated area to save the registers in this way is
+probably a bad move; although the hotplug code guarantees that there
+will be no concurrency between CPU hotplug operations, this sets a
+precident for it being used in places where no such protection exists.
+
+What is wrong with stacking r4-r12, lr onto the SVC stack?  You don't
+save the SVC stack pointer, so one can only assume that your SMC
+implmentation preserves this (if it doesn't, that's yet another bug
+with this assembly code.)
+
+Combining these two issues, you're probably far better off using an
+__attribute__((naked)) function for this - which means you get to
+write the entire function in assembly code without any compiler
+interference:
+
+static void __attribute__((naked)) tegra_generic_smc(u32 type, u32 subtype, u32 arg)
+{
+	asm volatile(
+		".arch_extension	sec\n\t"
+		"stmfd	sp!, {r4 - r12, lr}\n\t"
+		__asmeq("%0", "r0")
+		__asmeq("%1", "r1")
+		__asmeq("%2", "r2")
+		"mov	r3, #0\n\t"
+		"mov	r4, #0\n\t"
+		"dsb\n\t"
+		"smc	#0\n\t"
+		"ldmfd	sp!, {r4 - r12, pc}"
+		:
+		: "r" (type), "r" (subtype), "r" (arg)
+		: "memory");
+}
