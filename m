@@ -1,166 +1,289 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 4/4] clk: tegra: Use override bits when needed
-Date: Thu, 6 Jun 2013 13:47:31 +0300
-Message-ID: <1370515677-6807-5-git-send-email-pdeschrijver@nvidia.com>
-References: <1370515677-6807-1-git-send-email-pdeschrijver@nvidia.com>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
+Date: Thu, 6 Jun 2013 12:02:51 +0100
+Message-ID: <20130606110240.GA3320@localhost.localdomain>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1370515677-6807-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, Stephen Warren <swarren@wwwdotorg.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1370503687-17767-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-PLLM has override bits in the PMC. Use those when PLLM_OVERRIDE_ENABLE
-is set.
+On Thu, Jun 06, 2013 at 04:28:07PM +0900, Alexandre Courbot wrote:
+> Boot loaders on some Tegra devices can be unlocked but do not let the
+> system operate without SecureOS. SecureOS prevents access to some
+> registers and requires the operating system to perform certain
+> operations through Secure Monitor Calls instead of directly accessing
+> the hardware.
+> 
+> This patch introduces basic SecureOS support for Tegra. SecureOS support
+> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
+> node of the device tree.
+> 
+> Currently, only the bringup of secondary CPUs is performed by SMCs, but
+> more operations will be added later.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.txt |  8 +++
+>  arch/arm/configs/tegra_defconfig                |  1 +
+>  arch/arm/mach-tegra/Kconfig                     | 11 ++++
+>  arch/arm/mach-tegra/Makefile                    |  2 +
+>  arch/arm/mach-tegra/common.c                    |  2 +
+>  arch/arm/mach-tegra/reset.c                     | 30 +++++++----
+>  arch/arm/mach-tegra/secureos.c                  | 70 +++++++++++++++++++++++++
+>  arch/arm/mach-tegra/secureos.h                  | 31 +++++++++++
+>  8 files changed, 145 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm/mach-tegra/secureos.c
+>  create mode 100644 arch/arm/mach-tegra/secureos.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> index ed9c853..b543091 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> @@ -32,3 +32,11 @@ board-specific compatible values:
+>    nvidia,whistler
+>    toradex,colibri_t20-512
+>    toradex,iris
+> +
+> +Global properties
+> +-------------------------------------------
+> +
+> +The following properties can be specified into the "chosen" root
+> +node:
+> +
+> +  nvidia,secure-os: enable SecureOS.
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index f7ba3161..f6ed0f5 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -28,6 +28,7 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
+>  CONFIG_ARCH_TEGRA_114_SOC=y
+>  CONFIG_TEGRA_PCI=y
+>  CONFIG_TEGRA_EMC_SCALING_ENABLE=y
+> +CONFIG_TEGRA_SECUREOS=y
+>  CONFIG_SMP=y
+>  CONFIG_PREEMPT=y
+>  CONFIG_AEABI=y
+> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+> index 84d72fc..acb5d0a 100644
+> --- a/arch/arm/mach-tegra/Kconfig
+> +++ b/arch/arm/mach-tegra/Kconfig
+> @@ -87,4 +87,15 @@ config TEGRA_AHB
+>  config TEGRA_EMC_SCALING_ENABLE
+>  	bool "Enable scaling the memory frequency"
+>  
+> +config TEGRA_SECUREOS
+> +	bool "Enable SecureOS support"
+> +	help
+> +	  Support for Tegra devices which bootloader sets up a
+> +	  SecureOS environment. This will use Secure Monitor Calls
+> +	  instead of directly accessing the hardware for some protected
+> +	  operations.
+> +
+> +	  SecureOS support is enabled by declaring a "nvidia,secure-os"
+> +	  property into the "chosen" node of the device tree.
+> +
+>  endmenu
+> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+> index d011f0a..3adafe6 100644
+> --- a/arch/arm/mach-tegra/Makefile
+> +++ b/arch/arm/mach-tegra/Makefile
+> @@ -37,3 +37,5 @@ endif
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
+>  
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
+> +
+> +obj-$(CONFIG_TEGRA_SECUREOS)		+= secureos.o
+> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+> index 9f852c6..b7eea02 100644
+> --- a/arch/arm/mach-tegra/common.c
+> +++ b/arch/arm/mach-tegra/common.c
+> @@ -37,6 +37,7 @@
+>  #include "sleep.h"
+>  #include "pm.h"
+>  #include "reset.h"
+> +#include "secureos.h"
+>  
+>  /*
+>   * Storage for debug-macro.S's state.
+> @@ -97,6 +98,7 @@ static void __init tegra_init_cache(void)
+>  
+>  void __init tegra_init_early(void)
+>  {
+> +	tegra_init_secureos();
+>  	tegra_cpu_reset_handler_init();
+>  	tegra_apb_io_init();
+>  	tegra_init_fuse();
+> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+> index 1ac434e..4b9ebf9 100644
+> --- a/arch/arm/mach-tegra/reset.c
+> +++ b/arch/arm/mach-tegra/reset.c
+> @@ -21,38 +21,32 @@
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> +#include <asm/firmware.h>
+>  
+>  #include "iomap.h"
+>  #include "irammap.h"
+>  #include "reset.h"
+>  #include "sleep.h"
+>  #include "fuse.h"
+> +#include "secureos.h"
+>  
+>  #define TEGRA_IRAM_RESET_BASE (TEGRA_IRAM_BASE + \
+>  				TEGRA_IRAM_RESET_HANDLER_OFFSET)
+>  
+>  static bool is_enabled;
+>  
+> -static void __init tegra_cpu_reset_handler_enable(void)
+> +static void __init tegra_cpu_reset_handler_set(const u32 reset_address)
+>  {
+> -	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+>  	void __iomem *evp_cpu_reset =
+>  		IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE + 0x100);
+>  	void __iomem *sb_ctrl = IO_ADDRESS(TEGRA_SB_BASE);
+>  	u32 reg;
+>  
+> -	BUG_ON(is_enabled);
+> -	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+> -
+> -	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+> -			tegra_cpu_reset_handler_size);
+> -
+>  	/*
+>  	 * NOTE: This must be the one and only write to the EVP CPU reset
+>  	 *       vector in the entire system.
+>  	 */
+> -	writel(TEGRA_IRAM_RESET_BASE + tegra_cpu_reset_handler_offset,
+> -			evp_cpu_reset);
+> +	writel(reset_address, evp_cpu_reset);
+>  	wmb();
+>  	reg = readl(evp_cpu_reset);
+>  
+> @@ -66,6 +60,22 @@ static void __init tegra_cpu_reset_handler_enable(void)
+>  		writel(reg, sb_ctrl);
+>  		wmb();
+>  	}
+> +}
+> +
+> +static void __init tegra_cpu_reset_handler_enable(void)
+> +{
+> +	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+> +	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
+> +						tegra_cpu_reset_handler_offset;
+> +
+> +	BUG_ON(is_enabled);
+> +	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+> +
+> +	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+> +			tegra_cpu_reset_handler_size);
+> +
+> +	if (call_firmware_op(set_cpu_boot_addr, 0, reset_address) == -ENOSYS)
+> +		tegra_cpu_reset_handler_set(reset_address);
+>  
+>  	is_enabled = true;
+>  }
+> diff --git a/arch/arm/mach-tegra/secureos.c b/arch/arm/mach-tegra/secureos.c
+> new file mode 100644
+> index 0000000..44c3514
+> --- /dev/null
+> +++ b/arch/arm/mach-tegra/secureos.c
+> @@ -0,0 +1,70 @@
+> +/*
+> + * SecureOS support for Tegra CPUs
+> + *
+> + * Copyright (c) 2013, NVIDIA Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <asm/firmware.h>
+> +
+> +static int __attribute__((used)) __tegra_smc_stack[10];
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-pll.c |   82 +++++++++++++++++++++++++-----------------
- 1 files changed, 49 insertions(+), 33 deletions(-)
+Use __used instead of using GCC attributes directly.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 3b778d3..4293643 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -117,10 +117,6 @@
- #define PLLCX_MISC2_DEFAULT 0x30211200
- #define PLLCX_MISC3_DEFAULT 0x200
- 
--#define PMC_PLLM_WB0_OVERRIDE	0x1dc
--#define PMC_PLLM_WB0_OVERRIDE_2	0x2b0
--#define PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK BIT(27)
--
- #define PMC_SATA_PWRGT 0x1ac
- #define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
- #define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
-@@ -128,10 +124,12 @@
- #define pll_readl(offset, p) readl_relaxed(p->clk_base + offset)
- #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
- #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
-+#define pll_override_readl(offset, p) readl_relaxed(p->pmc + offset)
- 
- #define pll_writel(val, offset, p) writel_relaxed(val, p->clk_base + offset)
- #define pll_writel_base(val, p) pll_writel(val, p->params->base_reg, p)
- #define pll_writel_misc(val, p) pll_writel(val, p->params->misc_reg, p)
-+#define pll_override_writel(val, offset, p) writel(val, p->pmc + offset)
- 
- #define mask(w) ((1 << (w)) - 1)
- #define divm_mask(p) mask(p->params->div_nmp->divm_width)
-@@ -413,29 +411,61 @@ static void _update_pll_mnp(struct tegra_clk_pll *pll,
- 			    struct tegra_clk_pll_freq_table *cfg)
- {
- 	u32 val;
-+	struct tegra_clk_pll_params *params = pll->params;
-+	struct div_nmp *div_nmp = params->div_nmp;
-+
-+	if ((pll->flags & TEGRA_PLLM) &&
-+		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
-+			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
-+		val = pll_override_readl(params->pmc_divp_reg, pll);
-+		val &= ~(divp_mask(pll) << div_nmp->override_divp_shift);
-+		val |= cfg->p << div_nmp->override_divp_shift;
-+		pll_override_writel(val, params->pmc_divp_reg, pll);
-+
-+		val = pll_override_readl(params->pmc_divnm_reg, pll);
-+		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
-+			~(divn_mask(pll) << div_nmp->override_divn_shift);
-+		val |= (cfg->m << div_nmp->override_divm_shift) |
-+			(cfg->n << div_nmp->override_divn_shift);
-+		pll_override_writel(val, params->pmc_divnm_reg, pll);
-+	} else {
-+		val = pll_readl_base(pll);
- 
--	val = pll_readl_base(pll);
-+		val &= ~((divm_mask(pll) << div_nmp->divm_shift) |
-+		 (divn_mask(pll) << div_nmp->divn_shift) |
-+		 (divp_mask(pll) << div_nmp->divp_shift));
- 
--	val &= ~((divm_mask(pll) << pll->params->div_nmp->divm_shift) |
--		 (divn_mask(pll) << pll->params->div_nmp->divn_shift) |
--		 (divp_mask(pll) << pll->params->div_nmp->divp_shift));
--	val |= ((cfg->m << pll->params->div_nmp->divm_shift) |
--		(cfg->n << pll->params->div_nmp->divn_shift) |
--		(cfg->p << pll->params->div_nmp->divp_shift));
-+		val |= ((cfg->m << div_nmp->divm_shift) |
-+			(cfg->n << div_nmp->divn_shift) |
-+			(cfg->p << div_nmp->divp_shift));
- 
--	pll_writel_base(val, pll);
-+		pll_writel_base(val, pll);
-+	}
- }
- 
- static void _get_pll_mnp(struct tegra_clk_pll *pll,
- 			 struct tegra_clk_pll_freq_table *cfg)
- {
- 	u32 val;
-+	struct tegra_clk_pll_params *params = pll->params;
-+	struct div_nmp *div_nmp = params->div_nmp;
-+
-+	if ((pll->flags & TEGRA_PLLM) &&
-+		(pll_override_readl(PMC_PLLP_WB0_OVERRIDE, pll) &
-+			PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)) {
-+		val = pll_override_readl(params->pmc_divp_reg, pll);
-+		cfg->p = (val >> div_nmp->override_divp_shift) & divp_mask(pll);
-+
-+		val = pll_override_readl(params->pmc_divnm_reg, pll);
-+		cfg->m = (val >> div_nmp->override_divm_shift) & divm_mask(pll);
-+		cfg->n = (val >> div_nmp->override_divn_shift) & divn_mask(pll);
-+	}  else {
-+		val = pll_readl_base(pll);
- 
--	val = pll_readl_base(pll);
--
--	cfg->m = (val >> pll->params->div_nmp->divm_shift) & (divm_mask(pll));
--	cfg->n = (val >> pll->params->div_nmp->divn_shift) & (divn_mask(pll));
--	cfg->p = (val >> pll->params->div_nmp->divp_shift) & (divp_mask(pll));
-+		cfg->m = (val >> div_nmp->divm_shift) & divm_mask(pll);
-+		cfg->n = (val >> div_nmp->divn_shift) & divn_mask(pll);
-+		cfg->p = (val >> div_nmp->divp_shift) & divp_mask(pll);
-+	}
- }
- 
- static void _update_pll_cpcon(struct tegra_clk_pll *pll,
-@@ -883,7 +913,6 @@ static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	unsigned long flags = 0;
- 	int state, ret = 0;
--	u32 val;
- 
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
-@@ -902,21 +931,7 @@ static int clk_pllm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (ret < 0)
- 		goto out;
- 
--	val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--	if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) {
--		val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE_2);
--		val = cfg.p ? (val | PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK) :
--			(val & ~PMC_PLLM_WB0_OVERRIDE_2_DIVP_MASK);
--		writel_relaxed(val, pll->pmc + PMC_PLLM_WB0_OVERRIDE_2);
--
--		val = readl_relaxed(pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--		val &= ~(divn_mask(pll) | divm_mask(pll));
--		val |= (cfg.m << pll->params->div_nmp->divm_shift) |
--			(cfg.n << pll->params->div_nmp->divn_shift);
--		writel_relaxed(val, pll->pmc + PMC_PLLM_WB0_OVERRIDE);
--	} else
--		_update_pll_mnp(pll, &cfg);
--
-+	_update_pll_mnp(pll, &cfg);
- 
- out:
- 	if (pll->lock)
-@@ -1461,6 +1476,7 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
- 
- 	pll_flags |= TEGRA_PLL_BYPASS;
- 	pll_flags |= TEGRA_PLL_HAS_LOCK_ENABLE;
-+	pll_flags |= TEGRA_PLLM;
- 	pll = _tegra_init_pll(clk_base, pmc, fixed_rate, pll_params, pll_flags,
- 			      freq_table, lock);
- 	if (IS_ERR(pll))
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> +
+> +/*
+> + * With EABI, subtype and arg already end up in r0, r1 and r2 as they are
+> + * function arguments, but we prefer to play safe here and explicitly move
+> + * these values into the expected registers anyway. mov instructions without
+> + * any side-effect are turned into nops by the assembler, which limits
+> + * overhead.
+> + */
+> +static void tegra_generic_smc(u32 type, u32 subtype, u32 arg)
+> +{
+> +	asm volatile(
+> +		".arch_extension	sec\n\t"
+> +		"ldr	r3, =__tegra_smc_stack\n\t"
+
+ldr= should be avoided in inline asm, because GCC can't guess it's size,
+and can't guarantee that the literal pool word is close enough to be
+addressable (though for small compilation units it's unlikely to be a
+problem).
+
+If you follow Russell's approach and define a naked function for this,
+you can put an explicit literal word after the return:
+
+		ldr	r3, 1f
+
+		/* ... */
+
+		/* return instruction */
+
+		.align	2
+	1:	.long	__tegra_smc_stack
+
+> +		"stmia	r3, {r4-r12, lr}\n\t"
+> +		"mov	r0, %[type]\n\t"
+> +		"mov	r1, %[subtype]\n\t"
+> +		"mov	r2, %[arg]\n\t"
+> +		"mov	r3, #0\n\t"
+> +		"mov	r4, #0\n\t"
+> +		"dsb\n\t"
+
+Can you explain what this DSB is for?
+
+> +		"smc	#0\n\t"
+> +		"ldr	r3, =__tegra_smc_stack\n\t"
+> +		"ldmia	r3, {r4-r12, lr}"
+> +			:
+> +			: [type]    "r" (type),
+> +			  [subtype] "r" (subtype),
+> +			  [arg]     "r" (arg)
+> +			: "r0", "r1", "r2", "r3", "r4", "memory");
+
+If r5-r12 are not clobbered, why do you save and restore them?
+
+In the ARM ABI, r12 is a caller-save register, so you probably
+don't need to save/restore that even if it is clobbered.
+
+Cheers
+---Dave
