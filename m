@@ -1,31 +1,82 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH V3 7/7] USB: EHCI: tegra: make use of ehci->priv
-Date: Wed, 5 Jun 2013 16:20:18 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1306051620000.1078-100000@iolanthe.rowland.org>
-References: <1370462589-3090-8-git-send-email-swarren@wwwdotorg.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.10-rc1
+Date: Thu, 6 Jun 2013 04:34:47 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1306060421250.15042@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1306050558430.13098@utopia.booyaka.com> <51AF5698.5050106@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370462589-3090-8-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51AF5698.5050106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
+
+Hi Stephen,
+
+thanks very much for the review -
 
 On Wed, 5 Jun 2013, Stephen Warren wrote:
 
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Rather than allocating struct tegra_ehci_hcd separately, use struct
-> ehci_hcd's priv field instead.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v3: New patch.
+> On 06/04/2013 11:59 PM, Paul Walmsley wrote:
+> > 
+> > Here are some basic Tegra test results for Linux v3.10-rc1.
+> > Logs and other details at:
+> > 
+> >     http://www.pwsan.com/tegra/testlogs/test_v3.10-rc1/20130518212204/
+>
+> That URL is 404, although going up one directory manually lets me find
+> the logs.
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Indeed - this is now fixed in the copy of the README.txt that's on the 
+server.  The correct URL should be:
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+http://www.pwsan.com/tegra/testlogs/test_v3.10-rc1/20130519152115/
+
+Looks like the -rc2 through -rc4 URLs are correct.
+
+> I can access all the log files there, but can't download the zImage; I
+> get permission denied. I can download the .dtb file. Is this deliberate?
+
+For the moment, yes.  I haven't gotten comfortable with distributing 
+executable code yet.  
+
+> I'm curious what the difference is between the "t33beaver" and
+> "tegra30-beaver" path entries is, in the following URL:
+> 
+> http://www.pwsan.com/tegra/testlogs/test_v3.10-rc1/20130519152115/boot/t33beaver/tegra30-beaver/
+> 
+> It might be better to call this board just "tegra30-beaver" for
+> consistency with other upstream tools like cbootimage-configs and the
+> DTB filename.
+
+In the boot test environment here, "t33beaver" uniquely identifies the 
+board, while "tegra30-beaver" identifies the DTB used to boot it.  
+So if an alternate DTB were used, the boot test path would be:
+
+../boot/t33beaver/tegra30-beaver-alternate/
+
+If it's important to you, I'll change it.  Otherwise, I'd prefer not to 
+call the board 'tegra30-beaver' -- mostly to avoid confusing myself 
+between the board name and the DTB name :-)
+
+> In the boot logs, I see:
+> 
+> Tegra30 (Beaver) # setenv bootargs 'console=ttyS0,230400n8
+> lp0_vec=0x00002000@0x9C406000 video=tegrafb mem=1023M@2048M vmalloc=128M
+> noinitrd usbcore.old_scheme_first=1 core_edp_mv=1300 panel=lvds
+> tegraid=30.1.2.0.0 debug_uartport=lsport tegra_fbmem=4104K@0xFF900000
+> max_cpu_cur_ma=10000 root=/dev/mmcblk0p1 rw rootwait gpt'
+> 
+> Most of those options aren't necessary for the upstream kernel.
+> Unfortunately, our downstream kernel requires a bunch of crufty options,
+> but upstream doesn't. It might be worth minimizing the set of options
+> passed to upstream, so there's no possibility that those options ever do
+> anything; most won't since they're custom options no supported upstream,
+> but I wonder if e.g. mem, vmalloc, gpt might have negative effects even now.
+
+Certainly - will figure out which of these are actually needed for the 
+mainline kernel, and will update the kernel command line.
+
+
+- Paul
