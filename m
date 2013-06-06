@@ -1,104 +1,68 @@
 From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Thu, 6 Jun 2013 19:23:35 +0900
-Message-ID: <51B06327.5030508@nvidia.com>
-References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com> <20130606093524.GM18614@n2100.arm.linux.org.uk>
+Date: Thu, 6 Jun 2013 19:37:49 +0900
+Message-ID: <51B0667D.30801@nvidia.com>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com> <1740292.8Sz57ytBcM@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130606093524.GM18614-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <1740292.8Sz57ytBcM@flatron>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/06/2013 06:35 PM, Russell King - ARM Linux wrote:
-> On Thu, Jun 06, 2013 at 04:28:07PM +0900, Alexandre Courbot wrote:
->> +static int __attribute__((used)) __tegra_smc_stack[10];
+Hi Tomasz,
+
+On 06/06/2013 07:17 PM, Tomasz Figa wrote:
+>> +Global properties
+>> +-------------------------------------------
 >> +
->> +/*
->> + * With EABI, subtype and arg already end up in r0, r1 and r2 as they are
->> + * function arguments, but we prefer to play safe here and explicitly move
->> + * these values into the expected registers anyway. mov instructions without
->> + * any side-effect are turned into nops by the assembler, which limits
->> + * overhead.
+>> +The following properties can be specified into the "chosen" root
+>> +node:
+>> +
+>> +  nvidia,secure-os: enable SecureOS.
 >
-> No they aren't.  They will be preserved as:
-> 	mov r0, r0
-> 	mov r1, r1
-> 	mov r2, r2
-
-I'm pretty sure I checked with objdump and saw these replaced by nops at 
-some point, but for some reason I cannot get that behavior again. So 
-simply put, my statement is wrong indeed.
-
-> Moreover, things will go wrong if the compiler decides for whatever reason
-> to move 'arg' into r0 before calling your code sequence.  So really this
-> is quite fragile.
+> Hmm, on Exynos we had something like
 >
-> There's also no point in mentioning EABI in the above paragraph; all ARM
-> ABIs under Linux have always placed the arguments in r0..r3 and then on
-> the stack.  You can assert that this is always true by using the __asmeq()
-> macro.
-
-Good to know, thanks.
-
-> Also...
+>          firmware@0203F000 {
+>                  compatible = "samsung,secure-firmware";
+>                  reg = <0x0203F000 0x1000>;
+>          };
 >
->> + */
->> +static void tegra_generic_smc(u32 type, u32 subtype, u32 arg)
->> +{
->> +	asm volatile(
->> +		".arch_extension	sec\n\t"
->> +		"ldr	r3, =__tegra_smc_stack\n\t"
->> +		"stmia	r3, {r4-r12, lr}\n\t"
+> but your solution might be actually the proper one, since firmware is not
+> a hardware block. (The address in reg property is pointing to SYSRAM
+> memory, which is an additional communication channel with the firmware.)
+
+Yes, I saw your implementation but decided to do it through the chosen 
+node anyway, since that's what it seems to be designed and we don't need 
+any reg parameter.
+
+> I think this patch could be split into several patches:
+>   - add support for firmware
+>   - split reset function
+>   - add reset support using firmware.
+
+Mmm possibly yes, but I wonder if that would not be too much splitting. 
+Stephen?
+
+> Hmm, I wonder if you need all this complexity here. Have a look at our
+> exynos_smc function
 >
-> using a statically allocated area to save the registers in this way is
-> probably a bad move; although the hotplug code guarantees that there
-> will be no concurrency between CPU hotplug operations, this sets a
-> precident for it being used in places where no such protection exists.
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm/mach-exynos/exynos-smc.S?id=refs/tags/next-20130606
 
-Indeed. This function will be called from other places in the future, 
-and for these we cannot assume there will be no concurrency.
+Yes, I just embarrassed myself showing my ignorance of ARM assembler. ;) 
+The fix Russel proposed is pretty close to your version.
 
-> What is wrong with stacking r4-r12, lr onto the SVC stack?
+>> +static const struct firmware_ops tegra_firmware_ops = {
+>> +     .set_cpu_boot_addr = tegra_set_cpu_boot_addr,
+>> +};
+>
+> It's good that this interface is finally getting some user besides Exynos.
 
-Nothing, actually. /o\
+I didn't know about it first but Joseph kindly pointed it out to me and 
+it indeed makes it easier to implement this.
 
-> You don't
-> save the SVC stack pointer, so one can only assume that your SMC
-> implmentation preserves this (if it doesn't, that's yet another bug
-> with this assembly code.)
-
-SVC stack pointer is ok AFAICT.
-
-> Combining these two issues, you're probably far better off using an
-> __attribute__((naked)) function for this - which means you get to
-> write the entire function in assembly code without any compiler
-> interference:
- >
-> static void __attribute__((naked)) tegra_generic_smc(u32 type, u32 subtype, u32 arg)
-> {
-> 	asm volatile(
-> 		".arch_extension	sec\n\t"
-> 		"stmfd	sp!, {r4 - r12, lr}\n\t"
-> 		__asmeq("%0", "r0")
-> 		__asmeq("%1", "r1")
-> 		__asmeq("%2", "r2")
-> 		"mov	r3, #0\n\t"
-> 		"mov	r4, #0\n\t"
-> 		"dsb\n\t"
-> 		"smc	#0\n\t"
-> 		"ldmfd	sp!, {r4 - r12, pc}"
-> 		:
-> 		: "r" (type), "r" (subtype), "r" (arg)
-> 		: "memory");
-> }
-
-Well, that works beautifully indeed, and results in a much smaller 
-function that does nothing more beyond what's needed. On top of that, I 
-feel enlightened.
-
-Thanks, I will resubmit a fixed version soon.
+Thanks,
 Alex.
