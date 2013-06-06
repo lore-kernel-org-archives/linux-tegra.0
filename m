@@ -1,46 +1,50 @@
-From: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Thu, 6 Jun 2013 17:56:53 +0530
-Message-ID: <CABb+yY2SFfejMbbYOebMCUuMtAZF3u-yc+6z_MJTG2oOeSwL_g@mail.gmail.com>
-References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.10-rc1
+Date: Thu, 06 Jun 2013 09:58:14 -0600
+Message-ID: <51B0B196.3040400@wwwdotorg.org>
+References: <alpine.DEB.2.02.1306050558430.13098@utopia.booyaka.com> <51AF5698.5050106@wwwdotorg.org> <alpine.DEB.2.02.1306060421250.15042@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1370503687-17767-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1306060421250.15042-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 6, 2013 at 12:58 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Boot loaders on some Tegra devices can be unlocked but do not let the
-> system operate without SecureOS. SecureOS prevents access to some
-> registers and requires the operating system to perform certain
-> operations through Secure Monitor Calls instead of directly accessing
-> the hardware.
->
-IOW, some critical h/w controls on Tegra are accessible only from
-Secure mode (not unusual). So if we(Linux) run in NS mode we need to
-make calls to the SecureOS, over SMC, to do things for us?
+On 06/05/2013 10:34 PM, Paul Walmsley wrote:
+> Hi Stephen,
+> 
+> thanks very much for the review -
+> 
+> On Wed, 5 Jun 2013, Stephen Warren wrote:
+> 
+>> On 06/04/2013 11:59 PM, Paul Walmsley wrote:
+>>>
+>>> Here are some basic Tegra test results for Linux v3.10-rc1.
+>>> Logs and other details at:
+...
+>> I'm curious what the difference is between the "t33beaver" and
+>> "tegra30-beaver" path entries is, in the following URL:
+>>
+>> http://www.pwsan.com/tegra/testlogs/test_v3.10-rc1/20130519152115/boot/t33beaver/tegra30-beaver/
+>>
+>> It might be better to call this board just "tegra30-beaver" for
+>> consistency with other upstream tools like cbootimage-configs and the
+>> DTB filename.
+> 
+> In the boot test environment here, "t33beaver" uniquely identifies the 
+> board, while "tegra30-beaver" identifies the DTB used to boot it.  
+> So if an alternate DTB were used, the boot test path would be:
+> 
+> ../boot/t33beaver/tegra30-beaver-alternate/
+> 
+> If it's important to you, I'll change it.  Otherwise, I'd prefer not to 
+> call the board 'tegra30-beaver' -- mostly to avoid confusing myself 
+> between the board name and the DTB name :-)
 
-> This patch introduces basic SecureOS support for Tegra. SecureOS support
-> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
-> node of the device tree.
->
-Probably just a nit, but shouldn't it be "nvidia,nonsecure-os"
-instead, denoting the mode Linux is going to run?  (and then I wonder
-if we could detect the mode (S or NS) at runtime and avoid this flag
-at all).
-
-Cheers,
--Jassi
+Could you name the directories
+.../boot/board-tegra30-beaver/tegra30-beaver.dtb/ or
+../boot/board-tegra30-beaver/tegra30-beaver-alternate.dtb/? I'd really
+love not to propagate a different set of names for the boards.
