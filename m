@@ -1,100 +1,70 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Fri, 7 Jun 2013 17:11:40 +0900
-Message-ID: <CAAVeFu+by44HnOzv_85kwgeCx5b9TxiMhr27x69QcUj9GRbk8A@mail.gmail.com>
-References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com> <51B0BC80.9040007@wwwdotorg.org>
+Date: Fri, 7 Jun 2013 14:22:08 +0530
+Message-ID: <CABb+yY38wSqfju0HOfMDpGQxgr1pFYkJGH3aa5fPOz2YpCCGaw@mail.gmail.com>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
+ <CABb+yY2SFfejMbbYOebMCUuMtAZF3u-yc+6z_MJTG2oOeSwL_g@mail.gmail.com>
+ <CAAVeFuKxRuLdhO+-+YHG=c-TNGUUJbDj5AHj+K5e8y1JDEDksg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B0BC80.9040007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAAVeFuKxRuLdhO+-+YHG=c-TNGUUJbDj5AHj+K5e8y1JDEDksg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 7, 2013 at 1:44 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 06/06/2013 01:28 AM, Alexandre Courbot wrote:
->> Boot loaders on some Tegra devices can be unlocked but do not let the
->> system operate without SecureOS. SecureOS prevents access to some
->> registers and requires the operating system to perform certain
->> operations through Secure Monitor Calls instead of directly accessing
->> the hardware.
->>
->> This patch introduces basic SecureOS support for Tegra. SecureOS support
->> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
->> node of the device tree.
+On Fri, Jun 7, 2013 at 12:43 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Jun 6, 2013 at 9:26 PM, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On Thu, Jun 6, 2013 at 12:58 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> Boot loaders on some Tegra devices can be unlocked but do not let the
+>>> system operate without SecureOS. SecureOS prevents access to some
+>>> registers and requires the operating system to perform certain
+>>> operations through Secure Monitor Calls instead of directly accessing
+>>> the hardware.
+>>>
+>> IOW, some critical h/w controls on Tegra are accessible only from
+>> Secure mode (not unusual). So if we(Linux) run in NS mode we need to
+>> make calls to the SecureOS, over SMC, to do things for us?
 >
-> I suspect "SecureOS" here is the name of a specific implementation of a
-> secure monitor, right? It's certainly a very unfortunate name, since it
-> sounds like a generic concept rather than a specific implementation:-(
+> Exactly.
+>
+OK so this just an instance of a situation that is going to be more
+common in future - most modern cpus (CortexA based at least) support
+TrustZone and it's a matter of device functionality before a board
+designer chucks the Linux kernel (that we usually run in Secure mode
+while development) into NS mode and have some
+SecureOS/TrustedOS/Hypervisor et al control access to the secure
+peripherals from Secure Mode.
 
-Right. Using the actual name (Trusted Foundations) is probably better.
-I don't think the SecureOS denomination is used by anyone else but
-NVIDIA.
+>>> This patch introduces basic SecureOS support for Tegra. SecureOS support
+>>> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
+>>> node of the device tree.
+>>>
+>> Probably just a nit, but shouldn't it be "nvidia,nonsecure-os"
+>> instead, denoting the mode Linux is going to run?  (and then I wonder
+>> if we could detect the mode (S or NS) at runtime and avoid this flag
+>> at all).
+>
+> Detection of the secure mode at runtime would only solve half of the
+> issue: we would know that we are running in non-secure mode, but we
+> would still not know what monitor is operating. Detecting that part is
+> impossible AFAIK, so I'm afraid we need to pass that information
+> through the DT here.
+>
+Yes, Stephen's suggestion is far more generally applicable. We should
+go for it, just bearing in mind that ABI need and type is going to be
+board specific.
 
-> There certainly could be (and I believe are in practice?) multiple
-> implementation of a secure monitor for Tegra. Presumably, each of those
-> implementations has (or could have) a different definition for what SVC
-> calls it supports, their parameters, etc.
->
-> I think we need to separate the concept of support for *a* secure
-> monitor, from support for a *particular* secure monitor.
-
-Agreed. In this case, can we assume that support for a specific secure
-monitor is not arch-specific, and that this patch should be moved
-outside of arch-tegra and down to arch/arm? In other words, the ABI of
-a particular secure monitor should be the same no matter the chip,
-shouldn't it?
-
->> +node:
->> +
->> +  nvidia,secure-os: enable SecureOS.
->
-> ... as such, I think some work is needed here to allow specification of
-> which secure monitor is present and/or which secure monitor ABI it
-> implements. The suggestion to use a specific DT node, and hence use
-> compatible values for this, seems reasonable. Alternatively, perhaps:
->
-> nvidia,secure-monitor = "name_of_vendor_or_SMC_ABI";
->
-> might be reasonable, although using a node would allow ABI-specific
-> additional properties to be defined should they be needed, so I guess I
-> would lean towards that.
-
-Considering your previous comment, I agree this seems to make the most sense.
-
-> Similar comments may apply to the CONFIG_ option and description,
-> filenames, etc.
->
->> diff --git a/arch/arm/mach-tegra/secureos.c b/arch/arm/mach-tegra/secureos.c
->
->> +void __init tegra_init_secureos(void)
->> +{
->> +     struct device_node *node = of_find_node_by_path("/chosen");
->> +
->> +     if (node && of_property_read_bool(node, "nvidia,secure-os"))
->> +             register_firmware_ops(&tegra_firmware_ops);
->> +}
->
-> I'm tempted to think that function should /always/ exist an be called
-> (so no dummy inline in secureos.h).
->
-> In particular, what happens when a kernel without CONFIG_SECUREOS
-> enabled is booted under a secure monitor. Presumably we want the init
-> code to explicitly check for this condition, and either BUG(), or do
-> something to disable any features (like SMP) that require SVCs?
->
-> So, the algorithm here might be more like:
->
-> find node
-> if node exists
->     if (!IS_ENABLED(SECURE_OS))
->         BUG/WARN/...
->     else
->         register_firmware_ops()
->
-> ?
-
-Yep, let's do it this way.
-
-Alex.
+Cheers,
+-Jassi
