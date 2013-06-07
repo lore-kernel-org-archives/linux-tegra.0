@@ -1,47 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: disable nonboot CPUs when reboot
-Date: Fri, 07 Jun 2013 10:44:33 -0600
-Message-ID: <51B20DF1.3030207@wwwdotorg.org>
-References: <1370597810-1153-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 2/3] clk: tegra: T114: add DFLL source clocks
+Date: Fri, 07 Jun 2013 10:53:38 -0600
+Message-ID: <51B21012.2030302@wwwdotorg.org>
+References: <20130607121505.21868.72360.stgit@dusk.lan> <20130607121858.21868.73882.stgit@dusk.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370597810-1153-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130607121858.21868.73882.stgit-orwA252wQtA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/07/2013 03:36 AM, Joseph Lo wrote:
-> The normal CPU hotplug flow in kernel and the flow for Tegra we expected,
-> is checking the CPU ID is OK for hotplug by "tegra_cpu_disable", the CPU
-> that would be hotplugged runs into a power-gate state by "tegra_cpu_die",
-> then the other CPU waits for the CPU that was hotplugged in reset and
-> clock gate it by "tegra_cpu_kill". That means we don't support the CPU
-> being stopped or put into offline by trigger "tegra_cpu_kill" directly.
-> It may cause a busy loop for waiting CPU in reset.
+On 06/07/2013 06:19 AM, Paul Walmsley wrote:
+> Add the input clocks needed by the DFLL IP blocks.  Initialize them to
+> 51MHz (as required by the DFLL GFD) and to use the PLL_P clock source.
 > 
-> After the commit "62e930e reboot: rigrate shutdown/reboot to boot cpu",
-> we remove "disable_nonboot_cpus" when kernel_{restart,halt,power_off}.
-> But the ARM kernel trigger "send_smp_stop" when machine_shutdown, that
-> would cause the "tegra_cpu_kill" directly without "tegra_cpu_die" first.
+> This patch is a collaboration with Peter De Schrijver
+> <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 > 
-> We hook "disable_nonboot_cpus" in "reboot_notifier" to avoid that happens.
-> And it can work for reboot, shutdown, halt and kexec.
+> Thanks to Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> for identifying the
+> requirement to keep the DFLL clocks enabled to resolve PWR_I2C timeout
+> issues.
 
-I don't believe this is the correct solution.
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
 
-If the semantics of cpu_kill/cpu_die are such that it's legal to call
-only cpu_kill without having cause cpu_die to run on the killed CPU
-first, then Tegra's implementation is buggy. We should simply fix that,
-rather than avoiding this by forcing a different order for the calls to
-cpu_kill/cpu_die.
+> @@ -792,6 +794,7 @@ enum tegra114_clk {
+>  	audio1, audio2, audio3, audio4, spdif, clk_out_1, clk_out_2, clk_out_3,
+>  	blink, xusb_host_src = 252, xusb_falcon_src, xusb_fs_src, xusb_ss_src,
+>  	xusb_dev_src, xusb_dev, xusb_hs_src, sclk, hclk, pclk, cclk_g, cclk_lp,
+> +	dfll_ref = 264, dfll_soc,
 
-If the semantics of cpu_kill/cpu_die are such that one /must/ cause
-cpu_die to run on the killed CPU before cpu_kill can be used on it, then
-there's a bug in the code that isn't doing that.
+Those values need to be added to the DT binding documentation, or rather
+the header file that now defines the constants for that binding.
 
-I'm CCing a few people in an attempt to find out exactly what the
-expected semantics are for cpu_kill/cpu_die; is it legal to call
-cpu_kill without having first caused cpu_die to execute?
+BTW, I was rather hoping that Hiroshi would have converted the clock
+drivers to actually use that header file by now... Then this requirement
+would have been a lot more obvious. Hiroshi, are patches for that coming
+soon? Paul, if not, are you able to do that?
+
+For reference, include/dt-bindings/clock/tegra*-car.h.
