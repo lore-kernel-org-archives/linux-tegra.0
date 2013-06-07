@@ -1,70 +1,100 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: [PATCH] regulator: core: add regulator_get_linear_step()
-Date: Fri, 7 Jun 2013 08:06:56 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1306070753420.32163@utopia.booyaka.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
+Date: Fri, 7 Jun 2013 17:11:40 +0900
+Message-ID: <CAAVeFu+by44HnOzv_85kwgeCx5b9TxiMhr27x69QcUj9GRbk8A@mail.gmail.com>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com> <51B0BC80.9040007@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Matthew Longnecker <mlongnecker@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51B0BC80.9040007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jun 7, 2013 at 1:44 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 06/06/2013 01:28 AM, Alexandre Courbot wrote:
+>> Boot loaders on some Tegra devices can be unlocked but do not let the
+>> system operate without SecureOS. SecureOS prevents access to some
+>> registers and requires the operating system to perform certain
+>> operations through Secure Monitor Calls instead of directly accessing
+>> the hardware.
+>>
+>> This patch introduces basic SecureOS support for Tegra. SecureOS support
+>> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
+>> node of the device tree.
+>
+> I suspect "SecureOS" here is the name of a specific implementation of a
+> secure monitor, right? It's certainly a very unfortunate name, since it
+> sounds like a generic concept rather than a specific implementation:-(
 
-Add regulator_get_linear_step(), which returns the voltage step size
-between VSEL values for linear regulators.  This is intended for use
-by regulator consumers which build their own voltage-to-VSEL tables.
+Right. Using the actual name (Trusted Foundations) is probably better.
+I don't think the SecureOS denomination is used by anyone else but
+NVIDIA.
 
-Signed-off-by: Paul Walmsley <pwalmsley@nvidia.com>
-Reviewed-by: Andrew Chew <achew@nvidia.com>
-Cc: Matthew Longnecker <mlongnecker@nvidia.com>
----
+> There certainly could be (and I believe are in practice?) multiple
+> implementation of a secure monitor for Tegra. Presumably, each of those
+> implementations has (or could have) a different definition for what SVC
+> calls it supports, their parameters, etc.
+>
+> I think we need to separate the concept of support for *a* secure
+> monitor, from support for a *particular* secure monitor.
 
-Applies on v3.10-rc4.  Will be used by the upcoming Tegra DFLL clocksource 
-driver, which will build its own table of voltage-to-VSEL values by 
-querying the regulator framework.
+Agreed. In this case, can we assume that support for a specific secure
+monitor is not arch-specific, and that this patch should be moved
+outside of arch-tegra and down to arch/arm? In other words, the ABI of
+a particular secure monitor should be the same no matter the chip,
+shouldn't it?
 
- drivers/regulator/core.c           |   15 +++++++++++++++
- include/linux/regulator/consumer.h |    1 +
- 2 files changed, 16 insertions(+)
+>> +node:
+>> +
+>> +  nvidia,secure-os: enable SecureOS.
+>
+> ... as such, I think some work is needed here to allow specification of
+> which secure monitor is present and/or which secure monitor ABI it
+> implements. The suggestion to use a specific DT node, and hence use
+> compatible values for this, seems reasonable. Alternatively, perhaps:
+>
+> nvidia,secure-monitor = "name_of_vendor_or_SMC_ABI";
+>
+> might be reasonable, although using a node would allow ABI-specific
+> additional properties to be defined should they be needed, so I guess I
+> would lean towards that.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 6e50178..f07d7ad 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2135,6 +2135,21 @@ int regulator_list_voltage(struct regulator *regulator, unsigned selector)
- EXPORT_SYMBOL_GPL(regulator_list_voltage);
- 
- /**
-+ * regulator_get_linear_step - return the voltage step size between VSEL values
-+ * @regulator: regulator source
-+ *
-+ * Returns the voltage step size between VSEL values for linear
-+ * regulators, or return 0 if the regulator isn't a linear regulator.
-+ */
-+unsigned int regulator_get_linear_step(struct regulator *regulator)
-+{
-+	struct regulator_dev *rdev = regulator->rdev;
-+
-+	return rdev->desc->uV_step;
-+}
-+EXPORT_SYMBOL_GPL(regulator_get_linear_step);
-+
-+/**
-  * regulator_is_supported_voltage - check if a voltage range can be supported
-  *
-  * @regulator: Regulator to check.
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 145022a..3a76389c 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -165,6 +165,7 @@ int regulator_count_voltages(struct regulator *regulator);
- int regulator_list_voltage(struct regulator *regulator, unsigned selector);
- int regulator_is_supported_voltage(struct regulator *regulator,
- 				   int min_uV, int max_uV);
-+unsigned int regulator_get_linear_step(struct regulator *regulator);
- int regulator_set_voltage(struct regulator *regulator, int min_uV, int max_uV);
- int regulator_set_voltage_time(struct regulator *regulator,
- 			       int old_uV, int new_uV);
--- 
-1.7.10.4
+Considering your previous comment, I agree this seems to make the most sense.
+
+> Similar comments may apply to the CONFIG_ option and description,
+> filenames, etc.
+>
+>> diff --git a/arch/arm/mach-tegra/secureos.c b/arch/arm/mach-tegra/secureos.c
+>
+>> +void __init tegra_init_secureos(void)
+>> +{
+>> +     struct device_node *node = of_find_node_by_path("/chosen");
+>> +
+>> +     if (node && of_property_read_bool(node, "nvidia,secure-os"))
+>> +             register_firmware_ops(&tegra_firmware_ops);
+>> +}
+>
+> I'm tempted to think that function should /always/ exist an be called
+> (so no dummy inline in secureos.h).
+>
+> In particular, what happens when a kernel without CONFIG_SECUREOS
+> enabled is booted under a secure monitor. Presumably we want the init
+> code to explicitly check for this condition, and either BUG(), or do
+> something to disable any features (like SMP) that require SVCs?
+>
+> So, the algorithm here might be more like:
+>
+> find node
+> if node exists
+>     if (!IS_ENABLED(SECURE_OS))
+>         BUG/WARN/...
+>     else
+>         register_firmware_ops()
+>
+> ?
+
+Yep, let's do it this way.
+
+Alex.
