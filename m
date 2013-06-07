@@ -1,124 +1,104 @@
-From: Dave Martin <Dave.Martin@arm.com>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Fri, 7 Jun 2013 18:30:13 +0100
-Message-ID: <20130607173004.GA29344@localhost.localdomain>
+Date: Fri, 7 Jun 2013 18:47:36 +0100
+Message-ID: <20130607174736.GB29344@localhost.localdomain>
 References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
- <20130606110240.GA3320@localhost.localdomain>
- <CAAVeFu+o7oc4Rrn67xxzsgeZ9xrTBkaLd_E4amaVgcNBRsKC_g@mail.gmail.com>
+ <51B0BC80.9040007@wwwdotorg.org>
+ <20130606180824.GC3320@localhost.localdomain>
+ <51B0D4FA.5070500@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAAVeFu+o7oc4Rrn67xxzsgeZ9xrTBkaLd_E4amaVgcNBRsKC_g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Chris Johnson <CJohnson@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Karan Jhavar <kjhavar@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <51B0D4FA.5070500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 07, 2013 at 04:25:07PM +0900, Alexandre Courbot wrote:
-> On Thu, Jun 6, 2013 at 8:02 PM, Dave Martin <Dave.Martin@arm.com> wrote:
+On Thu, Jun 06, 2013 at 12:29:14PM -0600, Stephen Warren wrote:
+> On 06/06/2013 12:08 PM, Dave Martin wrote:
+> > On Thu, Jun 06, 2013 at 10:44:48AM -0600, Stephen Warren wrote:
+> >> On 06/06/2013 01:28 AM, Alexandre Courbot wrote:
+> >>> Boot loaders on some Tegra devices can be unlocked but do not let the
+> >>> system operate without SecureOS. SecureOS prevents access to some
+> >>> registers and requires the operating system to perform certain
+> >>> operations through Secure Monitor Calls instead of directly accessing
+> >>> the hardware.
+> >>>
+> >>> This patch introduces basic SecureOS support for Tegra. SecureOS support
+> >>> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
+> >>> node of the device tree.
+> ...
+> > So, something like
+> > 
+> > 	foo-firmware {
+> > 		compatible = "vendor1,foo-firmware-1.0", "vendor1,foo-firmware";
+> > 		method = "smc";
+> > 
+> > 		// ...
+> > 	};
+> > 
+> > 	bar-firmware {
+> > 		compatible = "vendor2,bar-firmware-1.6", "vendor2,bar-firmware";
+> > 		method = "smc";
+> > 
+> > 		// ...
+> > 	};
+> > 
+> > Could make sense.
 > 
-> >> +static int __attribute__((used)) __tegra_smc_stack[10];
-> >
-> > Use __used instead of using GCC attributes directly.
-> >
-> >> +
-> >> +/*
-> >> + * With EABI, subtype and arg already end up in r0, r1 and r2 as they are
-> >> + * function arguments, but we prefer to play safe here and explicitly move
-> >> + * these values into the expected registers anyway. mov instructions without
-> >> + * any side-effect are turned into nops by the assembler, which limits
-> >> + * overhead.
-> >> + */
-> >> +static void tegra_generic_smc(u32 type, u32 subtype, u32 arg)
-> >> +{
-> >> +     asm volatile(
-> >> +             ".arch_extension        sec\n\t"
-> >> +             "ldr    r3, =__tegra_smc_stack\n\t"
-> >
-> > ldr= should be avoided in inline asm, because GCC can't guess it's size,
-> > and can't guarantee that the literal pool word is close enough to be
-> > addressable (though for small compilation units it's unlikely to be a
-> > problem).
+> I'm not sure if the method property is useful in most cases. For generic
+
+I was mostly illustrating.  It's not useful in most cases, unless we
+have standard code parsing these bindings (probably overkill).
+
+> ABIs such as PSCI that actually support multiple communication paths,
+> yes, it makes sense. However, it seems like for most custom ABIs, such
+> as is presumably implemented by whatever "SecureOS" is on Tegra, the
+> firmware type (or compatible value) directly implies that it operates
+> over SMC not HVC. After all, presumably if the kernel was virtualized,
+> it wouldn't have access to the raw secure monitor? I suppose you could
+> argue that the hypervisor might end up emulating the same ABI over HVC
+> instead? I'm not sure how likely that is. A compromise might be to
+> assume SMC if no property was present, which would allow it to be
+> optionally added later if it turned out to be useful.
+
+Sure.
+
+For most firmware interface bindings, the backend could be implied.
+The binding could be extended later if an alternative backend were needed.
+
+If an SMC-called firmware interface is visible to a guest running under
+a hypervisor at all, it is probably still callable using SMC, since
+hypervisors can trap and proxy/emulate it instead of the call bypassing
+the hypervisor and going straight to the Secure World.
+
+If the interface is not visible, the hypervisor shouldn't put the relevant
+node in the DT supplied to the guest (just as any physical hardware not
+accessible to the guest shouldn't be described in the DT).
+
+
+Firmware interfaces which don't specifically depend on the Security
+Extensions need multiple backends, because hypervisors can't trap SMC on
+ARMv8 platforms which don't implement the Security Extensions  -- this
+was an issue for PSCI, and it's why HVC is used instead by KVM etc.
+
+For "Secure OS" interfaces this won't be an issue since those interfaces
+don't make sense if the Security Extensions aren't there.
+
+> > ...where we would require all new firmware interface bindings to
+> > include the "-firmware" in their node names and compatible strings
+> > (with a version suffix encouraged for the compatible strings, where
+> > relevant).
 > 
-> With Russel's suggested changes this will go away, but that's good to
-> know anyway.
-> 
-> >> +             "dsb\n\t"
-> >
-> > Can you explain what this DSB is for?
-> 
-> Just a safety measure to make sure all memory operations are done
-> before we enter the secure monitor. Is it unnecessary?
+> That's probably a good convention, but I'm not sure it should be
+> required (or at least validated by code). Requiring this by code review
+> might be OK. Node names aren't meant to be interpreted semantically.
 
-Most likely it's either unnecessary, or insufficient.
-
-Just for entering call SMC properly, it's not needed.  If the Secure
-World has its MMU on and maps Normal World memory using the same memory
-types as Linux, then the Normal World and Secure World access the memory
-coherently with no extra barrier needed.
-
-It the Secure World's MMU is off, or if it maps Normal World memory
-as Secure (pagetable NS bit = 0), or if it maps Normal World memory with
-memory types incompatible with the ones Linux is using then you will get
-coherency problems: the Secure and Normal Worlds won't necessarily see
-the same data.
-
-In the latter case, you must do explicit cache maintenance around SMC
-for the data you want to exchange.  This might also be needed in the
-Secure World if caches are enabled over there.  DSB isn't enough by
-itself.
-
-
-If the Secure World doesn't access Normal World memory at all, you
-don't need to do anything special and can remove the DSB.
-
-Otherwise, for performance reasons, it is definitely preferable to have
-the Secure World MMU on if possible, though it's a bit more complex to
-set up.
-
-> >> +             "smc    #0\n\t"
-> >> +             "ldr    r3, =__tegra_smc_stack\n\t"
-> >> +             "ldmia  r3, {r4-r12, lr}"
-> >> +                     :
-> >> +                     : [type]    "r" (type),
-> >> +                       [subtype] "r" (subtype),
-> >> +                       [arg]     "r" (arg)
-> >> +                     : "r0", "r1", "r2", "r3", "r4", "memory");
-> >
-> > If r5-r12 are not clobbered, why do you save and restore them?
-> 
-> The secure monitor might change them.
-
-Sure, but you could just add all the registers to the clobber list,
-and then the compiler would save and restore them for you in the
-function entry/exit sequences, which may be a bit more efficient.
-
-Since you are going to replace this code anyway, it's academic
-though.
-
-> 
-> > In the ARM ABI, r12 is a caller-save register, so you probably
-> > don't need to save/restore that even if it is clobbered.
-> 
-> Right, thanks. Didn't know r12 could be used as a scratch register.
-
-What I said is a bit wrong actually: for the naked version of the
-function you can go ahead and corrupt r12, because naked functions
-are not inlinable and follow the ABI.  Adding "r12" in the clobber
-list would be harmless in this case, but I don't think it's necessary.
-
-asm() in any other context needs to declare all registers that it
-might clobber.
+Agreed: I don't think this makes sense as a formal binding, but rather
+it's a convention we can follow which avoids DTs being unnecessarily
+cryptic.
 
 Cheers
 ---Dave
