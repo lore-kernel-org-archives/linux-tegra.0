@@ -1,8 +1,7 @@
 From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/3] clk: tegra: T114: add FCPU clock shaper programming,
- needed by the DFLL
-Date: Fri, 07 Jun 2013 06:18:58 -0600
-Message-ID: <20130607121851.21868.16993.stgit@dusk.lan>
+Subject: [PATCH 2/3] clk: tegra: T114: add DFLL source clocks
+Date: Fri, 07 Jun 2013 06:19:01 -0600
+Message-ID: <20130607121858.21868.73882.stgit@dusk.lan>
 References: <20130607121505.21868.72360.stgit@dusk.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -11,186 +10,75 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20130607121505.21868.72360.stgit-orwA252wQtA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add clock functions to initialize, enable, and disable the FCPU clock
-shapers, based on the FCPU voltage rail state.  These will be used by
-the DFLL clocksource driver code.
+Add the input clocks needed by the DFLL IP blocks.  Initialize them to
+51MHz (as required by the DFLL GFD) and to use the PLL_P clock source.
 
-This version of the patch contains a fix for a problem noticed by Andrew
-Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, where some of the FINETRIM_R bitfields were
-incorrectly defined.
+This patch is a collaboration with Peter De Schrijver
+<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 
-Based on code originally written by Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
+Thanks to Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> for identifying the
+requirement to keep the DFLL clocks enabled to resolve PWR_I2C timeout
+issues.
 
 Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Reviewed-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra114.c |  118 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk.h          |    4 +
- 2 files changed, 122 insertions(+)
+ drivers/clk/tegra/clk-tegra114.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index eb27764..c6e35d4 100644
+index c6e35d4..b35c78d 100644
 --- a/drivers/clk/tegra/clk-tegra114.c
 +++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/delay.h>
-+#include <linux/export.h>
- #include <linux/clk/tegra.h>
+@@ -269,6 +269,8 @@
+ #define CLK_SOURCE_I2CSLOW 0x3fc
+ #define CLK_SOURCE_SE 0x42c
+ #define CLK_SOURCE_MSELECT 0x3b4
++#define CLK_SOURCE_DFLL_REF 0x62c
++#define CLK_SOURCE_DFLL_SOC 0x630
+ #define CLK_SOURCE_SOC_THERM 0x644
+ #define CLK_SOURCE_XUSB_HOST_SRC 0x600
+ #define CLK_SOURCE_XUSB_FALCON_SRC 0x604
+@@ -792,6 +794,7 @@ enum tegra114_clk {
+ 	audio1, audio2, audio3, audio4, spdif, clk_out_1, clk_out_2, clk_out_3,
+ 	blink, xusb_host_src = 252, xusb_falcon_src, xusb_fs_src, xusb_ss_src,
+ 	xusb_dev_src, xusb_dev, xusb_hs_src, sclk, hclk, pclk, cclk_g, cclk_lp,
++	dfll_ref = 264, dfll_soc,
  
- #include "clk.h"
-@@ -41,8 +42,33 @@
- #define RST_DEVICES_CLR_V		0x434
- #define RST_DEVICES_SET_W		0x438
- #define RST_DEVICES_CLR_W		0x43c
-+#define CPU_FINETRIM_SELECT		0x4d4	/* override default prop dlys */
-+#define CPU_FINETRIM_DR			0x4d8	/* rise->rise prop dly A */
-+#define CPU_FINETRIM_R			0x4e4	/* rise->rise prop dly inc A */
- #define RST_DEVICES_NUM			5
+ 	/* Mux clocks */
  
-+/* CPU_FINETRIM_SELECT and CPU_FINETRIM_DR bitfields */
-+#define CPU_FINETRIM_1_FCPU_1		BIT(0)	/* fcpu0 */
-+#define CPU_FINETRIM_1_FCPU_2		BIT(1)	/* fcpu1 */
-+#define CPU_FINETRIM_1_FCPU_3		BIT(2)	/* fcpu2 */
-+#define CPU_FINETRIM_1_FCPU_4		BIT(3)	/* fcpu3 */
-+#define CPU_FINETRIM_1_FCPU_5		BIT(4)	/* fl2 */
-+#define CPU_FINETRIM_1_FCPU_6		BIT(5)	/* ftop */
-+
-+/* CPU_FINETRIM_R bitfields */
-+#define CPU_FINETRIM_R_FCPU_1_SHIFT	0		/* fcpu0 */
-+#define CPU_FINETRIM_R_FCPU_1_MASK	(0x3 << CPU_FINETRIM_R_FCPU_1_SHIFT)
-+#define CPU_FINETRIM_R_FCPU_2_SHIFT	2		/* fcpu1 */
-+#define CPU_FINETRIM_R_FCPU_2_MASK	(0x3 << CPU_FINETRIM_R_FCPU_2_SHIFT)
-+#define CPU_FINETRIM_R_FCPU_3_SHIFT	4		/* fcpu2 */
-+#define CPU_FINETRIM_R_FCPU_3_MASK	(0x3 << CPU_FINETRIM_R_FCPU_3_SHIFT)
-+#define CPU_FINETRIM_R_FCPU_4_SHIFT	6		/* fcpu3 */
-+#define CPU_FINETRIM_R_FCPU_4_MASK	(0x3 << CPU_FINETRIM_R_FCPU_4_SHIFT)
-+#define CPU_FINETRIM_R_FCPU_5_SHIFT	8		/* fl2 */
-+#define CPU_FINETRIM_R_FCPU_5_MASK	(0x3 << CPU_FINETRIM_R_FCPU_5_SHIFT)
-+#define CPU_FINETRIM_R_FCPU_6_SHIFT	10		/* ftop */
-+#define CPU_FINETRIM_R_FCPU_6_MASK	(0x3 << CPU_FINETRIM_R_FCPU_6_SHIFT)
-+
- #define CLK_OUT_ENB_L			0x010
- #define CLK_OUT_ENB_H			0x014
- #define CLK_OUT_ENB_U			0x018
-@@ -2054,6 +2080,98 @@ static void __init tegra114_clock_apply_init_table(void)
- 	tegra_init_from_table(init_table, clks, clk_max);
- }
+@@ -1796,6 +1799,8 @@ static struct tegra_periph_init_data tegra_periph_clk_list[] = {
+ 	TEGRA_INIT_DATA_MUX("i2cslow", NULL, "i2cslow", mux_pllp_pllc_clk32_clkm, CLK_SOURCE_I2CSLOW, 81, &periph_u_regs, TEGRA_PERIPH_ON_APB, i2cslow),
+ 	TEGRA_INIT_DATA_INT8("se", NULL, "se", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SE, 127, &periph_v_regs, TEGRA_PERIPH_ON_APB, se),
+ 	TEGRA_INIT_DATA_INT_FLAGS("mselect", NULL, "mselect", mux_pllp_clkm, CLK_SOURCE_MSELECT, 99, &periph_v_regs, 0, mselect, CLK_IGNORE_UNUSED),
++	TEGRA_INIT_DATA_MUX("dfll_ref", "ref", "t114_dfll", mux_pllp_clkm, CLK_SOURCE_DFLL_REF, 155, &periph_w_regs, TEGRA_PERIPH_ON_APB, dfll_ref),
++	TEGRA_INIT_DATA_MUX("dfll_soc", "soc", "t114_dfll", mux_pllp_clkm, CLK_SOURCE_DFLL_SOC, 155, &periph_w_regs, TEGRA_PERIPH_ON_APB, dfll_soc),
+ 	TEGRA_INIT_DATA_MUX8("soc_therm", NULL, "soc_therm", mux_pllm_pllc_pllp_plla, CLK_SOURCE_SOC_THERM, 78, &periph_u_regs, TEGRA_PERIPH_ON_APB, soc_therm),
+ 	TEGRA_INIT_DATA_XUSB("xusb_host_src", "host_src", "tegra_xhci", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_HOST_SRC, 143, &periph_w_regs, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, xusb_host_src),
+ 	TEGRA_INIT_DATA_XUSB("xusb_falcon_src", "falcon_src", "tegra_xhci", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_FALCON_SRC, 143, &periph_w_regs, TEGRA_PERIPH_NO_RESET, xusb_falcon_src),
+@@ -2057,6 +2062,10 @@ static const struct of_device_id pmc_match[] __initconst = {
+ 	{},
+ };
  
-+
-+/**
-+ * tegra114_car_barrier - wait for pending writes to the CAR to complete
-+ *
-+ * Wait for any outstanding writes to the CAR MMIO space from this CPU
-+ * to complete before continuing execution.  No return value.
++/*
++ * dfll_soc/dfll_ref apparently must be kept enabled, otherwise I2C5
++ * breaks
 + */
-+static void tegra114_car_barrier(void)
-+{
-+	wmb();		/* probably unnecessary */
-+	readl_relaxed(clk_base + CPU_FINETRIM_SELECT);
-+}
-+
-+/**
-+ * tegra114_clock_tune_cpu_trimmers_high - use high-voltage propagation delays
-+ *
-+ * When the CPU rail voltage is in the high-voltage range, use the
-+ * built-in hardwired clock propagation delays in the CPU clock
-+ * shaper.  No return value.
-+ */
-+void tegra114_clock_tune_cpu_trimmers_high(void)
-+{
-+	u32 select = 0;
-+
-+	/* Use hardwired rise->rise & fall->fall clock propagation delays */
-+	select |= ~(CPU_FINETRIM_1_FCPU_1 | CPU_FINETRIM_1_FCPU_2 |
-+		    CPU_FINETRIM_1_FCPU_3 | CPU_FINETRIM_1_FCPU_4 |
-+		    CPU_FINETRIM_1_FCPU_5 | CPU_FINETRIM_1_FCPU_6);
-+	writel_relaxed(select, clk_base + CPU_FINETRIM_SELECT);
-+
-+	tegra114_car_barrier();
-+}
-+EXPORT_SYMBOL(tegra114_clock_tune_cpu_trimmers_high);
-+
-+/**
-+ * tegra114_clock_tune_cpu_trimmers_low - use low-voltage propagation delays
-+ *
-+ * When the CPU rail voltage is in the low-voltage range, use the
-+ * extended clock propagation delays set by
-+ * tegra114_clock_tune_cpu_trimmers_init().  The intention is to
-+ * maintain the input clock duty cycle that the FCPU subsystem
-+ * expects.  No return value.
-+ */
-+void tegra114_clock_tune_cpu_trimmers_low(void)
-+{
-+	u32 select = 0;
-+
-+	/*
-+	 * Use software-specified rise->rise & fall->fall clock
-+	 * propagation delays (from
-+	 * tegra114_clock_tune_cpu_trimmers_init()
-+	 */
-+	select |= (CPU_FINETRIM_1_FCPU_1 | CPU_FINETRIM_1_FCPU_2 |
-+		   CPU_FINETRIM_1_FCPU_3 | CPU_FINETRIM_1_FCPU_4 |
-+		   CPU_FINETRIM_1_FCPU_5 | CPU_FINETRIM_1_FCPU_6);
-+	writel_relaxed(select, clk_base + CPU_FINETRIM_SELECT);
-+
-+	tegra114_car_barrier();
-+}
-+EXPORT_SYMBOL(tegra114_clock_tune_cpu_trimmers_low);
-+
-+/**
-+ * tegra114_clock_tune_cpu_trimmers_init - set up and enable clk prop delays
-+ *
-+ * Program extended clock propagation delays into the FCPU clock
-+ * shaper and enable them.  XXX Define the purpose - peak current
-+ * reduction?  No return value.
-+ */
-+/* XXX Initial voltage rail state assumption issues? */
-+void tegra114_clock_tune_cpu_trimmers_init(void)
-+{
-+	u32 dr = 0, r = 0;
-+
-+	/* Increment the rise->rise clock delay by four steps */
-+	r |= (CPU_FINETRIM_R_FCPU_1_MASK | CPU_FINETRIM_R_FCPU_2_MASK |
-+	      CPU_FINETRIM_R_FCPU_3_MASK | CPU_FINETRIM_R_FCPU_4_MASK |
-+	      CPU_FINETRIM_R_FCPU_5_MASK | CPU_FINETRIM_R_FCPU_6_MASK);
-+	writel_relaxed(r, clk_base + CPU_FINETRIM_R);
-+
-+	/*
-+	 * Use the rise->rise clock propagation delay specified in the
-+	 * r field
-+	 */
-+	dr |= (CPU_FINETRIM_1_FCPU_1 | CPU_FINETRIM_1_FCPU_2 |
-+	       CPU_FINETRIM_1_FCPU_3 | CPU_FINETRIM_1_FCPU_4 |
-+	       CPU_FINETRIM_1_FCPU_5 | CPU_FINETRIM_1_FCPU_6);
-+	writel_relaxed(dr, clk_base + CPU_FINETRIM_DR);
-+
-+	tegra114_clock_tune_cpu_trimmers_low();
-+}
-+EXPORT_SYMBOL(tegra114_clock_tune_cpu_trimmers_init);
-+
- static void __init tegra114_clock_init(struct device_node *np)
- {
- 	struct device_node *node;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 11278a8..c0b72fc 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -571,6 +571,10 @@ void tegra_init_from_table(struct tegra_clk_init_table *tbl,
- void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
- 		struct clk *clks[], int clk_max);
- 
-+void tegra114_clock_tune_cpu_trimmers_high(void);
-+void tegra114_clock_tune_cpu_trimmers_low(void);
-+void tegra114_clock_tune_cpu_trimmers_init(void);
-+
- typedef void (*tegra_clk_apply_init_table_func)(void);
- extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{uarta, pll_p, 408000000, 0},
+ 	{uartb, pll_p, 408000000, 0},
+@@ -2072,6 +2081,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{i2s2, pll_a_out0, 11289600, 0},
+ 	{i2s3, pll_a_out0, 11289600, 0},
+ 	{i2s4, pll_a_out0, 11289600, 0},
++	{dfll_soc, pll_p, 51000000, 1},
++	{dfll_ref, pll_p, 51000000, 1},
+ 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
+ };
  
