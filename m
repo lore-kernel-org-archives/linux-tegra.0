@@ -1,42 +1,67 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/1] tps65090-charger: Fix AC detect
-Date: Fri, 7 Jun 2013 12:07:39 -0400
-Message-ID: <51B2054B.7030609@nvidia.com>
-References: <1370553163-31804-1-git-send-email-achew@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
+Date: Fri, 07 Jun 2013 10:33:10 -0600
+Message-ID: <51B20B46.4030501@wwwdotorg.org>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com> <51B0BC80.9040007@wwwdotorg.org> <CAAVeFu+by44HnOzv_85kwgeCx5b9TxiMhr27x69QcUj9GRbk8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370553163-31804-1-git-send-email-achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAAVeFu+by44HnOzv_85kwgeCx5b9TxiMhr27x69QcUj9GRbk8A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "cbou-JGs/UdohzUI@public.gmane.org" <cbou-JGs/UdohzUI@public.gmane.org>, "dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/6/2013 5:12 PM, Andrew Chew wrote:
-> The VACG interrupt was not being enabled.  Thus, interrupts were never
-> generated when AC status changes.  In addition, interrupts were never
-> cleared after taking and processing the interrupt.
+On 06/07/2013 02:11 AM, Alexandre Courbot wrote:
+> On Fri, Jun 7, 2013 at 1:44 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 06/06/2013 01:28 AM, Alexandre Courbot wrote:
+>>> Boot loaders on some Tegra devices can be unlocked but do not let the
+>>> system operate without SecureOS. SecureOS prevents access to some
+>>> registers and requires the operating system to perform certain
+>>> operations through Secure Monitor Calls instead of directly accessing
+>>> the hardware.
+>>>
+>>> This patch introduces basic SecureOS support for Tegra. SecureOS support
+>>> can be enabled by adding a "nvidia,secure-os" property to the "chosen"
+>>> node of the device tree.
+>>
+>> I suspect "SecureOS" here is the name of a specific implementation of a
+>> secure monitor, right? It's certainly a very unfortunate name, since it
+>> sounds like a generic concept rather than a specific implementation:-(
 > 
-> Added the register offset for the INTR_MASK register, since this is needed
-> to unmask the VACG interrupt.
+> Right. Using the actual name (Trusted Foundations) is probably better.
+> I don't think the SecureOS denomination is used by anyone else but
+> NVIDIA.
 > 
-> Enabled the VACG interrupt in tps65090_config_charger().
+>> There certainly could be (and I believe are in practice?) multiple
+>> implementation of a secure monitor for Tegra. Presumably, each of those
+>> implementations has (or could have) a different definition for what SVC
+>> calls it supports, their parameters, etc.
+>>
+>> I think we need to separate the concept of support for *a* secure
+>> monitor, from support for a *particular* secure monitor.
 > 
-> Cleared interrupts after processing, in tps65090_charger_isr().
-> 
-> Also removed unused variable "enable" in tps65090_enable_charging(),
-> and fixed a typo in one of the dev_err() prints.
-> 
-> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> Agreed. In this case, can we assume that support for a specific secure
+> monitor is not arch-specific, and that this patch should be moved
+> outside of arch-tegra and down to arch/arm? In other words, the ABI of
+> a particular secure monitor should be the same no matter the chip,
+> shouldn't it?
 
-Great! Tested and it works great on my Dalmore.
+I would like to believe that the Trusted Foundations monitor had the
+same ABI irrespective of which Soc it was running on. However, I have
+absolutely no idea at all if that's true. Even if there's some common
+subset of the ABI that is identical across all SoCs, I wouldn't be too
+surprised if there were custom extensions for each different SoC, or
+just perhaps even each product.
 
-Tested-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Can you research this and find out the answer?
 
--rhyland
+What we can always do is make a compatible property that lists
+everything[1], and have the driver match on the most specific value for
+now, but relax the driver's matching later if it turns out that the ABI
+is indeed common.
 
--- 
-nvpublic
+[1] That'd need to be at least secure OS name, and secure OS version.
+Perhaps the SoC and board data can be deduced from the DT's top-level
+compatible properties; nvidia,tegra114-shield, nvidia,tegra114?
