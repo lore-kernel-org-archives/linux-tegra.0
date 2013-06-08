@@ -1,46 +1,164 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Subject: Re: No HDMI output on AC100
-Date: Sat, 08 Jun 2013 17:12:48 +0200
-Message-ID: <4976225.B4ibccLaIu@ax5200p>
-References: <1370680435.24531.12.camel@localhost.localdomain> <4532876.1zmFKV0LLN@ax5200p> <68C7110D-C493-4A1F-8011-5F9259C2F4E7@m3y3r.de>
+Date: Sat, 08 Jun 2013 18:05:52 +0200
+Message-ID: <1370707552.1829.4.camel@antimon.fritz.box>
+References: <1370680435.24531.12.camel@localhost.localdomain>
+	 <4532876.1zmFKV0LLN@ax5200p>
+	 <68C7110D-C493-4A1F-8011-5F9259C2F4E7@m3y3r.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-7GrvEgT8GX8HT2IvryQi"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <68C7110D-C493-4A1F-8011-5F9259C2F4E7-VsYtu1Qij5c@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>
-Cc: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 08 June 2013 16:21:59 Thomas Meyer wrote:
+
+--=-7GrvEgT8GX8HT2IvryQi
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Am Samstag, den 08.06.2013, 16:21 +0200 schrieb Thomas Meyer:
 > > On Saturday 08 June 2013 10:33:55 Thomas Meyer wrote:
 > >> Kernel version: 3.10.0-0.rc4.git0.1.fc20.armv7hl
-> >> 
+> >>=20
 > >> This is the latest Fedora ARM kernel. Config is available here:
 > >> http://pkgs.fedoraproject.org/cgit/kernel.git/tree/config-armv7
-> >> 
+> >>=20
 > >> This is what I see in the kernel log:
-> >> 
+> >>=20
 > >> $ dmesg |grep hdmi
 > >> [   33.403417] tegra-hdmi 54280000.hdmi: failed to get VDD regulator
-> >> [   33.403441] platform 54280000.hdmi: Driver tegra-hdmi requests probe
-> >> 
+> >> [   33.403441] platform 54280000.hdmi: Driver tegra-hdmi requests prob=
+e
+> >>=20
 > >> any ideas?
-> > 
+> >=20
 > > is the regulator (tps6586x) build-in?
-> 
+>=20
 > No, it's a module.
-> 
-> > The make everything a module path isn't
-> > well tested I guess.
-> 
-> Oh... So how to fix this?!
+>=20
+> > The make everything a module path isn't=20
+> > well tested I guess.=20
+>=20
+It's not the problem here. The driver requests to be probed again and
+comes up once the regulator is there.
 
-mmh, either
+Though the pixel clock looks odd for a HD HDMI monitor. Try looking at
+the Xorg log to see what mode of your monitor get's chosen and why it
+fails.
 
-a) try to load the module in initrd before everything else (but after i2c)
-b) ask the fedora people to make it build-in
-c) ask Thierry (added to cc) if this could be a tegra drm problem
+Regards,
+Lucas
 
-Marc
+--=-7GrvEgT8GX8HT2IvryQi
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIISpjCCBjMw
+ggUboAMCAQICAwZk4jANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcx
+ODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENB
+MB4XDTEzMDQxNDA4MTkxMFoXDTE0MDQxNTE1MjIzNlowUzEZMBcGA1UEDRMQVzBZM3MzM2ZHVmRM
+N1paSjEXMBUGA1UEAwwOZGV2QGx5bnhleWUuZGUxHTAbBgkqhkiG9w0BCQEWDmRldkBseW54ZXll
+LmRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjc3YKE/IXk1HEbR+aIwMbueNy32
+yL+vhBTFm3jfL+iHdj+jBFjeYQPKir/00APafOS5yn+Qzgfy+TRzVv5mzOD8ySW8TE4xPg/+wyt+
+xGWuhLzLIkNxwAghdn6omePL8S55ok0EUsQyb3X7MFNRHEnrk945Yxa6IY6a1ZizHqKqsBqAwSeu
+z0Kl34kcCAYnL4NOD8sqDrtlknFXFcnmMtkxp/R5zFE4YlFVs2RuSjuI85iNvVETbXZYaFKEWDH9
+NB6u0CJaGQUSa6JZejTxJ9rH3QTYSjtqgmQ9QySmRoWe99ncLboJVlxAMKiO9boyzoAB1s9OLUjP
+7IztqMapkwIDAQABo4IC1DCCAtAwCQYDVR0TBAIwADALBgNVHQ8EBAMCBLAwHQYDVR0lBBYwFAYI
+KwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBRHpUJZsGgoLm9G6Z22DdazyY1VYDAfBgNVHSME
+GDAWgBRTcu2SnODaywFcfH6WNU7y1LhRgjAZBgNVHREEEjAQgQ5kZXZAbHlueGV5ZS5kZTCCAUwG
+A1UdIASCAUMwggE/MIIBOwYLKwYBBAGBtTcBAgMwggEqMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3
+LnN0YXJ0c3NsLmNvbS9wb2xpY3kucGRmMIH3BggrBgEFBQcCAjCB6jAnFiBTdGFydENvbSBDZXJ0
+aWZpY2F0aW9uIEF1dGhvcml0eTADAgEBGoG+VGhpcyBjZXJ0aWZpY2F0ZSB3YXMgaXNzdWVkIGFj
+Y29yZGluZyB0byB0aGUgQ2xhc3MgMSBWYWxpZGF0aW9uIHJlcXVpcmVtZW50cyBvZiB0aGUgU3Rh
+cnRDb20gQ0EgcG9saWN5LCByZWxpYW5jZSBvbmx5IGZvciB0aGUgaW50ZW5kZWQgcHVycG9zZSBp
+biBjb21wbGlhbmNlIG9mIHRoZSByZWx5aW5nIHBhcnR5IG9ibGlnYXRpb25zLjA2BgNVHR8ELzAt
+MCugKaAnhiVodHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1MS1jcmwuY3JsMIGOBggrBgEFBQcB
+AQSBgTB/MDkGCCsGAQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMS9j
+bGllbnQvY2EwQgYIKwYBBQUHMAKGNmh0dHA6Ly9haWEuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5j
+bGFzczEuY2xpZW50LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS8w
+DQYJKoZIhvcNAQEFBQADggEBAKb6AtMA7a6sbuRG8oHTFJRD5vsLleuAw+uEOJTYMFCymBRFYqQx
+Oa6+SE+h+9ZYW059GIvnxYaQY+LmpvLIZ6EBgg7TpT37WrJiifLUfvb/U2hignujEgsNeDUobdoj
+Y7hKSW0gJ/7p6Q4VIMTdaEl/PFTfH81yv3ePqHe9NfuWbVYFAsXOIfh8Ii1UOwv+HaVQ7AN99SC4
+bb7CDUVx9ClN271h9TsLgSKgGCzKhvEGTaeV4UrHufp4XLq5bxvht68OjINhTeIr86E7vKxGmRal
+qDFigTV12UmijO2vtBTL23UEt6Ym85nsSF+Uk+33JRhTtJ+P8MTY74K6PZCcrPcwggYzMIIFG6AD
+AgECAgMGZOIwDQYJKoZIhvcNAQEFBQAwgYwxCzAJBgNVBAYTAklMMRYwFAYDVQQKEw1TdGFydENv
+bSBMdGQuMSswKQYDVQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0aWZpY2F0ZSBTaWduaW5nMTgwNgYD
+VQQDEy9TdGFydENvbSBDbGFzcyAxIFByaW1hcnkgSW50ZXJtZWRpYXRlIENsaWVudCBDQTAeFw0x
+MzA0MTQwODE5MTBaFw0xNDA0MTUxNTIyMzZaMFMxGTAXBgNVBA0TEFcwWTNzMzNmR1ZkTDdaWkox
+FzAVBgNVBAMMDmRldkBseW54ZXllLmRlMR0wGwYJKoZIhvcNAQkBFg5kZXZAbHlueGV5ZS5kZTCC
+ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK43N2ChPyF5NRxG0fmiMDG7njct9si/r4QU
+xZt43y/oh3Y/owRY3mEDyoq/9NAD2nzkucp/kM4H8vk0c1b+Zszg/MklvExOMT4P/sMrfsRlroS8
+yyJDccAIIXZ+qJnjy/EueaJNBFLEMm91+zBTURxJ65PeOWMWuiGOmtWYsx6iqrAagMEnrs9Cpd+J
+HAgGJy+DTg/LKg67ZZJxVxXJ5jLZMaf0ecxROGJRVbNkbko7iPOYjb1RE212WGhShFgx/TQertAi
+WhkFEmuiWXo08Sfax90E2Eo7aoJkPUMkpkaFnvfZ3C26CVZcQDCojvW6Ms6AAdbPTi1Iz+yM7ajG
+qZMCAwEAAaOCAtQwggLQMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgSwMB0GA1UdJQQWMBQGCCsGAQUF
+BwMCBggrBgEFBQcDBDAdBgNVHQ4EFgQUR6VCWbBoKC5vRumdtg3Ws8mNVWAwHwYDVR0jBBgwFoAU
+U3Ltkpzg2ssBXHx+ljVO8tS4UYIwGQYDVR0RBBIwEIEOZGV2QGx5bnhleWUuZGUwggFMBgNVHSAE
+ggFDMIIBPzCCATsGCysGAQQBgbU3AQIDMIIBKjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5zdGFy
+dHNzbC5jb20vcG9saWN5LnBkZjCB9wYIKwYBBQUHAgIwgeowJxYgU3RhcnRDb20gQ2VydGlmaWNh
+dGlvbiBBdXRob3JpdHkwAwIBARqBvlRoaXMgY2VydGlmaWNhdGUgd2FzIGlzc3VlZCBhY2NvcmRp
+bmcgdG8gdGhlIENsYXNzIDEgVmFsaWRhdGlvbiByZXF1aXJlbWVudHMgb2YgdGhlIFN0YXJ0Q29t
+IENBIHBvbGljeSwgcmVsaWFuY2Ugb25seSBmb3IgdGhlIGludGVuZGVkIHB1cnBvc2UgaW4gY29t
+cGxpYW5jZSBvZiB0aGUgcmVseWluZyBwYXJ0eSBvYmxpZ2F0aW9ucy4wNgYDVR0fBC8wLTAroCmg
+J4YlaHR0cDovL2NybC5zdGFydHNzbC5jb20vY3J0dTEtY3JsLmNybDCBjgYIKwYBBQUHAQEEgYEw
+fzA5BggrBgEFBQcwAYYtaHR0cDovL29jc3Auc3RhcnRzc2wuY29tL3N1Yi9jbGFzczEvY2xpZW50
+L2NhMEIGCCsGAQUFBzAChjZodHRwOi8vYWlhLnN0YXJ0c3NsLmNvbS9jZXJ0cy9zdWIuY2xhc3Mx
+LmNsaWVudC5jYS5jcnQwIwYDVR0SBBwwGoYYaHR0cDovL3d3dy5zdGFydHNzbC5jb20vMA0GCSqG
+SIb3DQEBBQUAA4IBAQCm+gLTAO2urG7kRvKB0xSUQ+b7C5XrgMPrhDiU2DBQspgURWKkMTmuvkhP
+ofvWWFtOfRiL58WGkGPi5qbyyGehAYIO06U9+1qyYony1H72/1NoYoJ7oxILDXg1KG3aI2O4Sklt
+ICf+6ekOFSDE3WhJfzxU3x/Ncr93j6h3vTX7lm1WBQLFziH4fCItVDsL/h2lUOwDffUguG2+wg1F
+cfQpTdu9YfU7C4EioBgsyobxBk2nleFKx7n6eFy6uW8b4bevDoyDYU3iK/OhO7ysRpkWpagxYoE1
+ddlJooztr7QUy9t1BLemJvOZ7EhflJPt9yUYU7Sfj/DE2O+Cuj2QnKz3MIIGNDCCBBygAwIBAgIB
+HjANBgkqhkiG9w0BAQUFADB9MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjEr
+MCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3Rh
+cnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMDcxMDI0MjEwMTU1WhcNMTcxMDI0MjEw
+MTU1WjCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNl
+Y3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNz
+IDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEAxwmDzM4t2BqxKaQuE6uWvooyg4ymiEGWVUet1G8SD+rqvyNH4QrvnEIaFHxOhESi
+p7vMz39ScLpNLbL1QpOlPW/tFIzNHS3qd2XRNYG5Sv9RcGE+T4qbLtsjjJbi6sL7Ls/f/X9ftTyh
+xvxWkf8KW37iKrueKsxw2HqolH7GM6FX5UfNAwAu4ZifkpmZzU1slBhyWwaQPEPPZRsWoTb7q8hm
+gv6Nv3Hg9rmA1/VPBIOQ6SKRkHXG0Hhmq1dOFoAFI411+a/9nWm5rcVjGcIWZ2v/43Yksq60jExi
+pA4l5uv9/+Hm33mbgmCszdj/Dthf13tgAv2O83hLJ0exTqfrlwIDAQABo4IBrTCCAakwDwYDVR0T
+AQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYEFFNy7ZKc4NrLAVx8fpY1TvLUuFGC
+MB8GA1UdIwQYMBaAFE4L7xqkQFulF2mHMMo0aEPQQa7yMGYGCCsGAQUFBwEBBFowWDAnBggrBgEF
+BQcwAYYbaHR0cDovL29jc3Auc3RhcnRzc2wuY29tL2NhMC0GCCsGAQUFBzAChiFodHRwOi8vd3d3
+LnN0YXJ0c3NsLmNvbS9zZnNjYS5jcnQwWwYDVR0fBFQwUjAnoCWgI4YhaHR0cDovL3d3dy5zdGFy
+dHNzbC5jb20vc2ZzY2EuY3JsMCegJaAjhiFodHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9zZnNjYS5j
+cmwwgYAGA1UdIAR5MHcwdQYLKwYBBAGBtTcBAgEwZjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5z
+dGFydHNzbC5jb20vcG9saWN5LnBkZjA0BggrBgEFBQcCARYoaHR0cDovL3d3dy5zdGFydHNzbC5j
+b20vaW50ZXJtZWRpYXRlLnBkZjANBgkqhkiG9w0BAQUFAAOCAgEACoMIfXirLAZcuGOMXq4cuSN3
+TaFx2H2GvD5VSy/6rV55BYHbWNaPeQn3oBSU8KgQZn/Kck1JxbLpAxVCNtsxeW1R87ifhsYZ0qjd
+rA9anrW2MAWCtosmAOT4OxK9QPoSjCMxM3HbkZCDJgnlE8jMopH21BbyAYr7b5EfGRQJNtgWcvqS
+XwKHnTutR08+Kkn0KAkXCzeQNLeA5LlYUzFyM7kPAp8pIRMQ+seHunmyG642S2+y/qHEdMuGIwpf
+z3eDF1PdctL04qYK/zu+Qg1Bw0RwgigVZs/0c5HP2/e9DBHh7eSwtzYlk4AUr6yxLlcwSjOfOmKE
+Q/Q8tzh0IFiNu9IPuTGAPBn4CPxD0+Ru8T2wg8/s43R/PT3kd1OEqOJUl7q+h+r6fpvU0Fzxd2tC
+8Ga6fDEPme+1Nbi+03pVjuZQKbGwKJ66gEn06WqaxVZC+J8hh/jR0k9mST1iAZPNYulcNJ8tKmVt
+jYsv0L1TSm2+NwON58tO+pIVzu3DWwSEXSf+qkDavQam+QtEOZxLBXI++aMUEapSn+k3Lxm48ZCY
+fAWLb/Xj7F5JQMbZvCexglAbYR0kIHqW5DnsYSdMD/IplJMojx0NBrxJ3fN9dvX2Y6BIXRsF1du4
+qESm4/3CKuyUV7p9DW3mPlHTGLvYxnyKQy7VFBkoLINszBrOUeIxggNvMIIDawIBATCBlDCBjDEL
+MAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdp
+dGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFy
+eSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgMGZOIwCQYFKw4DAhoFAKCCAa8wGAYJKoZIhvcNAQkD
+MQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTMwNjA4MTYwNTUyWjAjBgkqhkiG9w0BCQQx
+FgQUEoQp45dufvjt/I3dEQKrhKSZfPowgaUGCSsGAQQBgjcQBDGBlzCBlDCBjDELMAkGA1UEBhMC
+SUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRp
+ZmljYXRlIFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1l
+ZGlhdGUgQ2xpZW50IENBAgMGZOIwgacGCyqGSIb3DQEJEAILMYGXoIGUMIGMMQswCQYDVQQGEwJJ
+TDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlm
+aWNhdGUgU2lnbmluZzE4MDYGA1UEAxMvU3RhcnRDb20gQ2xhc3MgMSBQcmltYXJ5IEludGVybWVk
+aWF0ZSBDbGllbnQgQ0ECAwZk4jANBgkqhkiG9w0BAQEFAASCAQAEQkwN1tXH3actfy108lK1qauW
+Emss8ZBhMDd2aVzHpbhPGOiH7s7BrE6VKMf8acMJpN/I7RBAWAqIGR6yfrZJPGY5CmQYPfJ9t4Hs
+P0p5yRTmj1hwfJAdzpmwEo5ZX+e7NTd1j02YbzGeeZTaYxIVd/lIZb+vTOjjDjBuCOjBtI8YNiSY
++mXhPL/sUAbuqLbWxyUzY8vtGw2gaAUpsFBDe0M6eVkIE2j5m6X2AbimIuGjpu0XIEu7UsFeqdc0
+2tzpejxnTVDptSaon7VCV1mlEK39/MLKcvZx+45hHeMqhoYEZ0Z9dXLTAifxp1Z8teDP/1cnepft
+X4knh1Fxu149AAAAAAAA
+
+
+--=-7GrvEgT8GX8HT2IvryQi--
