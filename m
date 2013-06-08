@@ -1,54 +1,39 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: disable nonboot CPUs when reboot
-Date: Fri, 7 Jun 2013 23:55:12 +0100
-Message-ID: <20130607225512.GF18614@n2100.arm.linux.org.uk>
-References: <1370597810-1153-1-git-send-email-josephl@nvidia.com> <51B20DF1.3030207@wwwdotorg.org> <20130607181846.GL8111@mudshark.cambridge.arm.com> <51B22CDC.4080200@wwwdotorg.org> <51B25086.6020209@wwwdotorg.org> <20130607221526.GC18614@n2100.arm.linux.org.uk> <51B26124.5060505@wwwdotorg.org>
+From: Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>
+Subject: No HDMI output on AC100
+Date: Sat, 08 Jun 2013 10:33:55 +0200
+Message-ID: <1370680435.24531.12.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51B26124.5060505-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 07, 2013 at 04:39:32PM -0600, Stephen Warren wrote:
-> On 06/07/2013 04:15 PM, Russell King - ARM Linux wrote:
-> > For reboot, the real solution there is not to use software-based
-> > reboot, but bring the other cores to a halt (which is what
-> > ipi_send_stop is doing) and then issue a hardware reset to the whole
-> > system, including the other CPUs.
-> 
-> Ignoring the issues with oops in reboot, I think there's a bug in that
-> when hotplug is enabled, smp_kill_cpus() calls platform_cpu_kill(), but
-> nothing causes the failing CPU to ever execute smp_ops.cpu_die(). Hence,
-> if the implementation of smp_ops.cpu_kill() relies on the target CPU
-> having run smp_ops.cpu_die(), then smp_ops.cpu_kill() may not operate
-> correctly.
+Hi,
 
-Well, smp_kill_cpus() was added to get around the kexec problem -
-transitioning from one kernel to the next kernel without going through
-a hardware reset.  Maybe if we take a step back...
+Kernel version: 3.10.0-0.rc4.git0.1.fc20.armv7hl
 
-1. remove smp_kill_cpus() from smp_send_stop().
-2. remove machine_shutdown() from machine_halt(), machine_power_off()
-   and machine_restart().
-3. call smp_send_stop() only from machine_halt(), machine_power_off() and
-   machine_restart()
-4. require a hardware-based reboot method for all SMP implementations;
-   using soft_reboot() is not an option.
+This is the latest Fedora ARM kernel. Config is available here:
+http://pkgs.fedoraproject.org/cgit/kernel.git/tree/config-armv7
 
-This should get us into the situation where we have a reliable method of
-halting and rebooting the kernel everywhere, leaving kexec as being the
-remaining problem case.
+Package is here:
+http://arm.koji.fedoraproject.org/koji/packageinfo?packageID=3547
 
-Currently, for that we effectively do smp_send_stop() followed by
-smp_kill_cpus().  The no-op change for kexec there is to allow
-smp_kill_cpus() to be called directly from machine_shutdown() - but
-I suspect there will still be stuff that's broken with that...
+After connecting my LC display to the hdmi output, it tells me that the "singal is out of range"
 
-So the ongoing problem remains - how to deal with kexec in a SMP
-environment where it's difficult to reliably take a secondary CPU
-offline to a safe place and then be able to restart it into the
-next kernel...
+This is what I see in the kernel log:
+
+$ dmesg |grep hdmi
+[   33.403417] tegra-hdmi 54280000.hdmi: failed to get VDD regulator
+[   33.403441] platform 54280000.hdmi: Driver tegra-hdmi requests probe deferral
+[   33.429833] +3.3vs_ldo7,avdd_hdmi: 3300 mV 
+[   33.430023] +3.3vs_ldo7,avdd_hdmi: supplied by +3.7vs_sm2,vin_ldo*
+[   33.431246] +1.8vs_ldo8,avdd_hdmi_pll: 1800 mV 
+[   33.431434] +1.8vs_ldo8,avdd_hdmi_pll: supplied by +3.7vs_sm2,vin_ldo*
+[  979.737773] tegra-hdmi 54280000.hdmi: cannot set audio to 44100 at 65000000 pclk
+
+any ideas?
+
+with kind regards
+thomas
