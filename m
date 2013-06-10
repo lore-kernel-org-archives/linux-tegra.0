@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 3/4] power: tps65090-charger: Add dt node to power_supply
-Date: Mon, 10 Jun 2013 17:26:41 -0400
-Message-ID: <1370899602-22123-4-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 1/4] power_supply: Add of_node_put to fix refcount
+Date: Mon, 10 Jun 2013 17:26:39 -0400
+Message-ID: <1370899602-22123-2-git-send-email-rklein@nvidia.com>
 References: <1370899602-22123-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,26 +12,40 @@ To: Anton Vorontsov <cbou@mail.ru>, Stephen Warren <swarren@wwwdotorg.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Passing in the dt node for this charger enables the logic in the core
-to lookup this device, to see if it is supplying another power_supply,
-through dt.
+of_parse_phandle increments the refcount for a dt node before returning
+it. Add of_node_put where needed to properly decrement the refcount
+when we are done using a given node.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/power/tps65090-charger.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/power_supply_core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
-index 77ab856..3f4b9cc 100644
---- a/drivers/power/tps65090-charger.c
-+++ b/drivers/power/tps65090-charger.c
-@@ -230,6 +230,7 @@ static int tps65090_charger_probe(struct platform_device *pdev)
- 	cdata->ac.num_properties	= ARRAY_SIZE(tps65090_ac_props);
- 	cdata->ac.supplied_to		= pdata->supplied_to;
- 	cdata->ac.num_supplicants	= pdata->num_supplicants;
-+	cdata->ac.of_node		= pdev->dev.of_node;
+diff --git a/drivers/power/power_supply_core.c b/drivers/power/power_supply_core.c
+index 1c517c3..3b2d5df 100644
+--- a/drivers/power/power_supply_core.c
++++ b/drivers/power/power_supply_core.c
+@@ -109,8 +109,10 @@ static int __power_supply_populate_supplied_from(struct device *dev,
+ 				psy->name, epsy->name);
+ 			psy->supplied_from[i-1] = (char *)epsy->name;
+ 			psy->num_supplies++;
++			of_node_put(np);
+ 			break;
+ 		}
++		of_node_put(np);
+ 	} while (np);
  
- 	ret = power_supply_register(&pdev->dev, &cdata->ac);
- 	if (ret) {
+ 	return 0;
+@@ -193,8 +195,10 @@ static int power_supply_check_supplies(struct power_supply *psy)
+ 		ret = power_supply_find_supply_from_node(np);
+ 		if (ret) {
+ 			dev_dbg(psy->dev, "Failed to find supply, defer!\n");
++			of_node_put(np);
+ 			return -EPROBE_DEFER;
+ 		}
++		of_node_put(np);
+ 	} while (np);
+ 
+ 	/* All supplies found, allocate char ** array for filling */
 -- 
 1.7.9.5
