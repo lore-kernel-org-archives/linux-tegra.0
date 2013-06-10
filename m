@@ -1,43 +1,82 @@
-From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/1] tps65090-charger: Fix AC detect
-Date: Sun, 9 Jun 2013 10:03:47 -0700
-Message-ID: <20130609170347.GA23128@teo>
-References: <1370553163-31804-1-git-send-email-achew@nvidia.com>
- <51B2054B.7030609@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
+Date: Mon, 10 Jun 2013 16:47:22 +0900
+Message-ID: <CAAVeFuJuf2hrMaM5keoai65vAAg6JLrjDUvYm4e2zQvsw64_8A@mail.gmail.com>
+References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
+ <20130606110240.GA3320@localhost.localdomain> <CAAVeFu+o7oc4Rrn67xxzsgeZ9xrTBkaLd_E4amaVgcNBRsKC_g@mail.gmail.com>
+ <20130607173004.GA29344@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51B2054B.7030609-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130607173004.GA29344@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Chris Johnson <CJohnson@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Karan Jhavar <kjhavar@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 07, 2013 at 12:07:39PM -0400, Rhyland Klein wrote:
-> On 6/6/2013 5:12 PM, Andrew Chew wrote:
-> > The VACG interrupt was not being enabled.  Thus, interrupts were never
-> > generated when AC status changes.  In addition, interrupts were never
-> > cleared after taking and processing the interrupt.
-> > 
-> > Added the register offset for the INTR_MASK register, since this is needed
-> > to unmask the VACG interrupt.
-> > 
-> > Enabled the VACG interrupt in tps65090_config_charger().
-> > 
-> > Cleared interrupts after processing, in tps65090_charger_isr().
-> > 
-> > Also removed unused variable "enable" in tps65090_enable_charging(),
-> > and fixed a typo in one of the dev_err() prints.
-> > 
-> > Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> 
-> Great! Tested and it works great on my Dalmore.
-> 
-> Tested-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Sat, Jun 8, 2013 at 2:30 AM, Dave Martin <Dave.Martin@arm.com> wrote:
+> Most likely it's either unnecessary, or insufficient.
+>
+> Just for entering call SMC properly, it's not needed.  If the Secure
+> World has its MMU on and maps Normal World memory using the same memory
+> types as Linux, then the Normal World and Secure World access the memory
+> coherently with no extra barrier needed.
+>
+> It the Secure World's MMU is off, or if it maps Normal World memory
+> as Secure (pagetable NS bit = 0), or if it maps Normal World memory with
+> memory types incompatible with the ones Linux is using then you will get
+> coherency problems: the Secure and Normal Worlds won't necessarily see
+> the same data.
+>
+> In the latter case, you must do explicit cache maintenance around SMC
+> for the data you want to exchange.  This might also be needed in the
+> Secure World if caches are enabled over there.  DSB isn't enough by
+> itself.
+>
+>
+> If the Secure World doesn't access Normal World memory at all, you
+> don't need to do anything special and can remove the DSB.
+>
+> Otherwise, for performance reasons, it is definitely preferable to have
+> the Secure World MMU on if possible, though it's a bit more complex to
+> set up.
 
-Applied, thanks!
+Thanks for the information. I will try to understand why we put it
+here in the first place.
 
-Anton
+>> >> +             "smc    #0\n\t"
+>> >> +             "ldr    r3, =__tegra_smc_stack\n\t"
+>> >> +             "ldmia  r3, {r4-r12, lr}"
+>> >> +                     :
+>> >> +                     : [type]    "r" (type),
+>> >> +                       [subtype] "r" (subtype),
+>> >> +                       [arg]     "r" (arg)
+>> >> +                     : "r0", "r1", "r2", "r3", "r4", "memory");
+>> >
+>> > If r5-r12 are not clobbered, why do you save and restore them?
+>>
+>> The secure monitor might change them.
+>
+> Sure, but you could just add all the registers to the clobber list,
+> and then the compiler would save and restore them for you in the
+> function entry/exit sequences, which may be a bit more efficient.
+>
+> Since you are going to replace this code anyway, it's academic
+> though.
+
+Right. I suppose you mentioned this in the context of my initial code
+- however if I understand how inline asm works (in case it wasn't
+clear already, I probably don't), turning this function into a naked
+function will make it impossible for the compiler to generate the
+entry/exit sequences since the assembler code will be responsible for
+returning from the function.
+
+One could remove the naked attribute and put there registers into the
+clobber list, but then the function will be inlined and we will have
+to ensure the parameters end up in the right register (and having a
+function that cannot be inlined is convenient in that respect). So as
+far as I can tell, having the function naked and saving the registers
+ourselves seems to be the most convenient way around this.
+
+Thanks,
+Alex.
