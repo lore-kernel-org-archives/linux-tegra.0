@@ -1,41 +1,26 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 1/2] memory: tegra20-mc: Fix hang in IRQ handler.
-Date: Mon, 10 Jun 2013 12:13:43 +0300
-Message-ID: <1370855624-30564-2-git-send-email-ttynkkynen@nvidia.com>
-References: <1370855624-30564-1-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH 0/2] Bugfixes for Tegra memory controllers.
+Date: Mon, 10 Jun 2013 12:13:42 +0300
+Message-ID: <1370855624-30564-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1370855624-30564-1-git-send-email-ttynkkynen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: gregkh@linuxfoundation.org
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In Tegra20 memory controller any MC interrupt would cause an
-infinite loop in the IRQ handler.
+Hi,
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
+Here's two simple bugfixes for the Tegra memory controllers.
+
+Tuomas Tynkkynen (2):
+  memory: tegra20-mc: Fix hang in IRQ handler.
+  memory: tegra30-mc: Fix IRQ handler.
+
  drivers/memory/tegra20-mc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/memory/tegra30-mc.c | 9 ++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
-index 2ca5f28..bd5a553 100644
---- a/drivers/memory/tegra20-mc.c
-+++ b/drivers/memory/tegra20-mc.c
-@@ -193,8 +193,11 @@ static irqreturn_t tegra20_mc_isr(int irq, void *data)
- 	mask &= stat;
- 	if (!mask)
- 		return IRQ_NONE;
--	while ((bit = ffs(mask)) != 0)
-+	while ((bit = ffs(mask)) != 0) {
- 		tegra20_mc_decode(mc, bit - 1);
-+		mask &= BIT(bit);
-+	}
-+
- 	mc_writel(mc, stat, MC_INTSTATUS);
- 	return IRQ_HANDLED;
- }
 -- 
 1.8.1.5
