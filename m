@@ -1,82 +1,124 @@
-From: Alexandre Courbot <gnurou@gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Mon, 10 Jun 2013 16:47:22 +0900
-Message-ID: <CAAVeFuJuf2hrMaM5keoai65vAAg6JLrjDUvYm4e2zQvsw64_8A@mail.gmail.com>
+Date: Mon, 10 Jun 2013 17:05:04 +0900
+Message-ID: <CAAVeFuKsa=GsxexQOSOYPYvkAXaEZXfW1+zRmv25CtFEY=T_GQ@mail.gmail.com>
 References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
- <20130606110240.GA3320@localhost.localdomain> <CAAVeFu+o7oc4Rrn67xxzsgeZ9xrTBkaLd_E4amaVgcNBRsKC_g@mail.gmail.com>
- <20130607173004.GA29344@localhost.localdomain>
+ <51B0BC80.9040007@wwwdotorg.org> <20130606180824.GC3320@localhost.localdomain>
+ <CAAVeFuJkV3VVfeinLrjCCef9ZqJNvKurQwVWnJsW-bZqniTQ1w@mail.gmail.com>
+ <20130607181318.GC29344@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130607173004.GA29344@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Chris Johnson <CJohnson@nvidia.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Karan Jhavar <kjhavar@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20130607181318.GC29344-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Cc: "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 8, 2013 at 2:30 AM, Dave Martin <Dave.Martin@arm.com> wrote:
-> Most likely it's either unnecessary, or insufficient.
+On Sat, Jun 8, 2013 at 3:13 AM, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org> wrote:
+> One way to make the backend generic would be to have something like
+> one of the following (some syntax omitted due to laziness):
 >
-> Just for entering call SMC properly, it's not needed.  If the Secure
-> World has its MMU on and maps Normal World memory using the same memory
-> types as Linux, then the Normal World and Secure World access the memory
-> coherently with no extra barrier needed.
+>         u32 __naked __call_smc(u32 r0, ...)
+>         {
+>                 asm volatile (
+>                         stmfd   sp!, {r4-r11,lr}
+>                         smc     #0
+>                         ldmfd   sp!, {r4-r11,pc}
+>                         ::: "memory"
+>                 );
+>         }
 >
-> It the Secure World's MMU is off, or if it maps Normal World memory
-> as Secure (pagetable NS bit = 0), or if it maps Normal World memory with
-> memory types incompatible with the ones Linux is using then you will get
-> coherency problems: the Secure and Normal Worlds won't necessarily see
-> the same data.
+>         /* The above works for up to 4 u32 arguments */
 >
-> In the latter case, you must do explicit cache maintenance around SMC
-> for the data you want to exchange.  This might also be needed in the
-> Secure World if caches are enabled over there.  DSB isn't enough by
-> itself.
+>         u32 __naked __call_smc(u32 r0, ...)
+>         {
+>                 asm volatile (
+>                         mov     ip, sp
+>                         stmfd   sp!, {r4-r11,lr}
+>                         ldmia   ip, {r4-r11}
+>                         smc     #0
+>                         ldmfd   sp!, {r4-r11,pc}
+>                         ::: "memory"
+>                 );
+>         }
+>
+>         /*
+>          * Works for up to 13 u32 arguments, provided the stack is deep
+>          * enough to provide suitable garbage data to fill the registers
+>          * if the caller supplied fewer arguments (a bit of a hack)
+>          */
+>
+>         u32 __naked __call_smc(struct pt_regs *regs) {
+>
+>                 asm(
+>                         stmfd   sp!, {r4-r11,lr}
+>                         /* load regs from <regs> */
+>                         smc #0
+>                         /* save regs back to <regs> */
+>                         ldmfd   sp!, {r4-r11,pc}
+>                 );
+>         }
+>
+>         /*
+>          * Most generic,  least-efficient version.
+>          * Can return up to 13 u32 results instead of just one.
+>          * For convenience, the r0 value returned by the SMC could be
+>          * left in r0 so that it also determines the return value of the
+>          * function.
+>          *
+>          * Most of the time, SMC shouldn't be called on any hot path,
+>          * otherwise the performance battle is already lost -- so it may
+>          * not be crucial to reach the maximum possible efficiency for
+>          * these calls.
+>          */
 >
 >
-> If the Secure World doesn't access Normal World memory at all, you
-> don't need to do anything special and can remove the DSB.
+> A particular firmware's Linux glue code might have to put extra stuff
+> around calls to generic_smc, but at least generic_smc itself wouldn't
+> need to be reinvented, and the firmware-specific glue code could usually
+> avoid asm.
 >
-> Otherwise, for performance reasons, it is definitely preferable to have
-> the Secure World MMU on if possible, though it's a bit more complex to
-> set up.
-
-Thanks for the information. I will try to understand why we put it
-here in the first place.
-
->> >> +             "smc    #0\n\t"
->> >> +             "ldr    r3, =__tegra_smc_stack\n\t"
->> >> +             "ldmia  r3, {r4-r12, lr}"
->> >> +                     :
->> >> +                     : [type]    "r" (type),
->> >> +                       [subtype] "r" (subtype),
->> >> +                       [arg]     "r" (arg)
->> >> +                     : "r0", "r1", "r2", "r3", "r4", "memory");
->> >
->> > If r5-r12 are not clobbered, why do you save and restore them?
+>> Another example is the function that Tomasz shown
+>> (https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm/mach-exynos/exynos-smc.S?id=refs/tags/next-20130606
+>> ), which preserves r4-r11 but also assumes r3 is an argument - that's
+>> again another slightly different convention.
+>
+> ... for which the above implementations of __call_smc() should work too.
+>
+>> All in all the needs of the various firmwares might end up being just
+>> different enough that we need to have a different backend for each of
+>> them. The firmware_ops defined in arch/arm/include/asm/firmware.h
+>> perform the abstraction at a higher level, which seems more fit here
+>> IMHO.
 >>
->> The secure monitor might change them.
+>> Alex.
 >
-> Sure, but you could just add all the registers to the clobber list,
-> and then the compiler would save and restore them for you in the
-> function entry/exit sequences, which may be a bit more efficient.
+> Indeed.  If you think you could work with one of the above generics, we
+> could try it and see what it looks like though.
 >
-> Since you are going to replace this code anyway, it's academic
-> though.
+> If it's an awkward fit, I might be being too optimistic.
 
-Right. I suppose you mentioned this in the context of my initial code
-- however if I understand how inline asm works (in case it wasn't
-clear already, I probably don't), turning this function into a naked
-function will make it impossible for the compiler to generate the
-entry/exit sequences since the assembler code will be responsible for
-returning from the function.
-
-One could remove the naked attribute and put there registers into the
-clobber list, but then the function will be inlined and we will have
-to ensure the parameters end up in the right register (and having a
-function that cannot be inlined is convenient in that respect). So as
-far as I can tell, having the function naked and saving the registers
-ourselves seems to be the most convenient way around this.
+I agree that your versions would most likely work in our (and probably
+many others) case. But I wonder if individual platforms will not
+prefer to sacrifice the ease of use of a generic version for the
+ability to write faster code that will just preserve what is needed
+(whether that performance gain is justified or not is of course
+subject to debate). I don't have enough hindsight to decide which
+approach is the best, but until we have more examples of firmwares
+that would justify such a factorization, I think I'd like to go with
+our own version first - for there is already more than enough to fix
+in this patch. :)
 
 Thanks,
 Alex.
