@@ -1,84 +1,30 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 2/4] ARM: tegra: pcie: Add tegra3 support
-Date: Mon, 10 Jun 2013 22:09:07 +0200
-Message-ID: <20130610200906.GD25859@mithrandir>
-References: <1370445221-17696-1-git-send-email-jagarwal@nvidia.com>
- <51AF68F1.8080307@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] mfd: tps6586x: correct device name of the regulator cell
+Date: Mon, 10 Jun 2013 14:12:38 -0600
+Message-ID: <51B63336.6000007@wwwdotorg.org>
+References: <89e4451e14f324d8bd480f843fa5960b481e3188.1370894247.git.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fXStkuK2IQBfcDe+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51AF68F1.8080307@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Jay Agarwal <jagarwal@nvidia.com>, linux@arm.linux.org.uk, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <89e4451e14f324d8bd480f843fa5960b481e3188.1370894247.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/10/2013 02:06 PM, Marc Dietrich wrote:
+> Change the device name of the regulator function to the one chosed for
 
---fXStkuK2IQBfcDe+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+nit: s/chosed/chosen/
 
-On Wed, Jun 05, 2013 at 10:36:01AM -0600, Stephen Warren wrote:
-> On 06/05/2013 09:13 AM, Jay Agarwal wrote:
-> > - Make private data structure for each SoC
-> > - Add required Tegra30 clocks and regulators
-> > - Add Tegra30 specific code in enable controller
-> > - Added Tegra30 specific properties in pci binding document
->=20
-> It's a bit odd to send an updated version of just some of the patches;
-> reposting a whole series is much easier for the person applying the
-> patches. However, hopefully Thierry can handle it in this case.
+> MODULE_ALIAS. This fixes kernel module loading for the regulator function.
 
-Yes, I think I can handle it. It might be good to have Jay look at the
-final patches when I'm done, though, to make sure I haven't forgotten
-anything.
+Not "loading" but "auto-loading" (based on a match of the MODULE_ALIAS
+name).
 
-> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.=
-txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
->=20
-> >  Required properties:
-> > -- compatible: "nvidia,tegra20-pcie"
-> > +- compatible: "nvidia,tegra20-pcie" "nvidia,tegra30-pcie"
->=20
-> perhaps add "or" between those two entries?
->=20
-> > +- avdd-supply: Power supply for controller (1.05V) (not required for t=
-egra20)
-> ...
-> > +  "cml": The Tegra clock of that name (not required for tegra20)
->=20
-> Tegra20 should be capitalized in both those two lines.
->=20
-> I assume that Thierry can fix up these nits when he applies the patches,
-> so you don't need to repost. Thierry can correct me if I'm wrong.
+> Also change the name of the platform driver to make everything consistent.
 
-I've found a few other nits that I can take care of myself when
-applying.
-
-Thierry
-
---fXStkuK2IQBfcDe+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRtjJiAAoJEN0jrNd/PrOh3mcP/0f89iNTjFV7Hcu/CqXv9cm0
-cEIdW9/98jwXHQxvkhsKLjkH58khuvi9tTqlzkaNJ1tesUZMNGNsFXz/VyLioKlF
-+rR7XQD0bDhmDJmbrIzT6A2cXz0LttHSSzrisxG3gblyKop4jPW0nLsgOElC+Bfy
-Ih/dadL3mHjoatabXiBM8CgtEuAnbnH+NQndMaIY2pavBvT1JRQiiMR+LP1LnrsG
-5PORPybgvj9SkXNS8RdyDVGJw/CQQ0cGStKxzkRhp2Dp4PmoXKj3gO6XMWGx4Vzs
-ZMUemze+//25Pw3i+a34+P1kwmRxnoNjCDwn/H757KijgtGV17GtpNwPZgg4YfiE
-o1+dM/G4bob1xRGLsMkNw+QXzbH82RREYO+LycwP16pzBiIxbxTK8mMZQjmSK2KF
-pga2VIhfPxJoF9afVjiuqdm0W0LquUGknCNpBcdQ7CNjR4gGQPcrZQpmYqmagwY7
-Nn3DjViptoOybrKSpX9up0OwFV8QIZIX9TONXCJotdrXZV5avxX9nXWpNKejeoV2
-crYYftUufzvZFAO/4OufBNuQZlYN3G58giwcrNQ/gYyKgqxRPCd4aHfVaxCAXFt/
-xzBkMZ40Mo8U9ElRDFhfqdRXhUmah1jLcZkgLLConuDzUhhCWlU3GOPm/TFUobcd
-Yxi30/eOa66xNh3IVPW5
-=sA4U
------END PGP SIGNATURE-----
-
---fXStkuK2IQBfcDe+--
+In this case, not really for consistency; if you didn't do that, it
+simply wouldn't match the entry in tps6586x_cell[], so even with the
+module loaded, the driver wouldn't get probed.
