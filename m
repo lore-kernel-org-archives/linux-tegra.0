@@ -1,57 +1,38 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: add basic SecureOS support
-Date: Mon, 10 Jun 2013 17:11:15 +0900
-Message-ID: <CAAVeFu+UMZikdWO20c9chvBcieOAUgOhz-nTEUpevFWnPNC_ZA@mail.gmail.com>
-References: <1370503687-17767-1-git-send-email-acourbot@nvidia.com>
- <51B0BC80.9040007@wwwdotorg.org> <CAAVeFu+by44HnOzv_85kwgeCx5b9TxiMhr27x69QcUj9GRbk8A@mail.gmail.com>
- <51B20B46.4030501@wwwdotorg.org>
+From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH 1/1] Add support for Tegra114 SPI boot device
+Date: Mon, 10 Jun 2013 17:10:21 +0800
+Message-ID: <E3E235BA220CA845AF2C1512C13F2662E45A228074@HKMAIL02.nvidia.com>
+References: <1370421333-2748-1-git-send-email-pchiu@nvidia.com>
+ <51AF7642.7090501@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51B20B46.4030501@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, Karan Jhavar <kjhavar@nvidia.com>, Varun Wadekar <vwadekar@nvidia.com>, Chris Johnson <CJohnson@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51AF7642.7090501-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 8, 2013 at 1:33 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>> I think we need to separate the concept of support for *a* secure
->>> monitor, from support for a *particular* secure monitor.
->>
->> Agreed. In this case, can we assume that support for a specific secure
->> monitor is not arch-specific, and that this patch should be moved
->> outside of arch-tegra and down to arch/arm? In other words, the ABI of
->> a particular secure monitor should be the same no matter the chip,
->> shouldn't it?
->
-> I would like to believe that the Trusted Foundations monitor had the
-> same ABI irrespective of which Soc it was running on. However, I have
-> absolutely no idea at all if that's true. Even if there's some common
-> subset of the ABI that is identical across all SoCs, I wouldn't be too
-> surprised if there were custom extensions for each different SoC, or
-> just perhaps even each product.
->
-> Can you research this and find out the answer?
+Hi Stephen,
 
-Will do. Information about TF is scarce unfortunately.
-
-> What we can always do is make a compatible property that lists
-> everything[1], and have the driver match on the most specific value for
-> now, but relax the driver's matching later if it turns out that the ABI
-> is indeed common.
->
-> [1] That'd need to be at least secure OS name, and secure OS version.
-> Perhaps the SoC and board data can be deduced from the DT's top-level
-> compatible properties; nvidia,tegra114-shield, nvidia,tegra114?
-
-They can probably, but in theory nothing prevents a board from coming
-with different secure monitors (or none at all). In this case, just
-having the board name might not be enough.
-
-Having a proper node for the firmware like David and Tomasz suggested
-seems to be the best way to make sure we cover all cases - I think I
-will try to do it this way for the next version, and hopefully come
-with a binding that is useful for everyone.
+Please let me know if I need to re-send the patch for fixing these problems.
 
 Thanks,
-Alex.
+Penny
+
+-----Original Message-----
+From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org] 
+Sent: Thursday, June 06, 2013 1:33 AM
+Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Penny Chiu
+Subject: Re: [PATCH 1/1] Add support for Tegra114 SPI boot device
+
+On 06/05/2013 02:35 AM, Penny-u79uwXL29TY76Z2rM5mHXA@public.gmane.org wrote:
+> From: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This patch adds SpiFlashParams to generate/dump BCT for SPI flash.
+> 
+> Change-Id: Icf256caade8d0aa2d1639541377fa0aa71786eda
+
+Oh, you should remove that line before posting patches upstream.
