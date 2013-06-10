@@ -1,33 +1,73 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] Add support for Tegra114 SPI boot device
-Date: Mon, 10 Jun 2013 12:28:39 -0600
-Message-ID: <51B61AD7.3030904@wwwdotorg.org>
-References: <1370421333-2748-1-git-send-email-pchiu@nvidia.com> <51AF7642.7090501@wwwdotorg.org> <E3E235BA220CA845AF2C1512C13F2662E45A228074@HKMAIL02.nvidia.com> <20130610180947.GA5844@badger> <51B6177D.8060506@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
+Date: Mon, 10 Jun 2013 21:50:29 +0200
+Message-ID: <20130610195028.GB25859@mithrandir>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
+ <51AE3D3B.6080102@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B6177D.8060506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <51AE3D3B.6080102@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Jay Agarwal <jagarwal@nvidia.com>, linux@arm.linux.org.uk, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/10/2013 12:14 PM, Stephen Warren wrote:
-> On 06/10/2013 12:09 PM, Allen Martin wrote:
->> On Mon, Jun 10, 2013 at 02:10:21AM -0700, Penny Chiu wrote:
->>> Hi Stephen,
->>>
->>> Please let me know if I need to re-send the patch for fixing these problems.
->>>
->>
->> Yes, please resend with a fixed commit message and you can add:
->>
->> Acked-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Stephen or I can apply to the cbootimage repo
-> 
-> I can fix up the commit description when I apply it. I'll do it in a
-> second...
 
-It's applied now. Is there a need to tag a new version?
+--H1spWtNR+x+ondvy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 04, 2013 at 01:17:15PM -0600, Stephen Warren wrote:
+> On 06/04/2013 12:57 PM, Jay Agarwal wrote:
+[...]
+> >  struct tegra_pcie_port {
+> > @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus *bus=
+, unsigned int devfn,
+> >  		struct tegra_pcie_port *port;
+> > =20
+> >  		list_for_each_entry(port, &pcie->ports, list) {
+> > -			if (port->index + 1 =3D=3D slot) {
+> > +			if (port->index =3D=3D slot) {
+>=20
+> This and the equivalent change in tegra_pcie_write_conf() seem like a
+> bug-fix unrelated to the addition of Tegra30 support. Hence, they should
+> be a separate patch.
+
+What exactly is this change supposed to fix? The description doesn't
+provide any details about why this is required. Furthermore this was
+done on purpose to model the Tegra PCIe controller according to what
+typical Linux systems provide.
+
+Device 0:00.0 is usually the root complex, and device 0:01.0, 0:02.0
+etc are the root ports. The change proposed above makes 0:00.0 the
+first root port, therefore breaking what systems usually expect.
+
+Thierry
+
+--H1spWtNR+x+ondvy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRti4EAAoJEN0jrNd/PrOheKEP/2YMzqZVmy1qIqpFkajuHvxE
+pWNb91OOFiWW73fBrRtu5krgL9u8qG+K6qta55DqgwZCCldanEq0vESaQ/U1thVk
+vOtuzbV7jY1afQmdbeM/Cj5/+BdZcZ4Zrpj/pD5EDz9cBaW/OW5AHitUwMQj6r7x
+kHHGlT39Fg7TlU/b+CFOGqSQF0MMURPa2M0nRLvJ+pryahAg1NHrJeMvXSVwONX7
+QtSEljXjp2/iOMjb+INJoQjep7lJnBSrpk82RkNhzl4oCY0iaZXUNwoYjKRd0rwH
+fdVoJFaWtWAnfRdMcRl3Lkt06O1rIC4qOi5M17LXYrp1Y5RIskGb6RbmvxbPUTg5
+QFPjh4wltNyva6swErkMWYXmUw/GcSnjUktJLR6SYEH7tGAzxArkJWdp3c+T7vsE
+QhFgphWA160/6anrLSrSQqrFIE/JLxxd760kf6QF4DMXTeuulwXgda++y3KPJkVm
+3arbv0ZknrRqNLrhpKG1EdUoPpWMGUUFkxwa7UrOtV6QQeNJCkLHvFdrINRKbJtk
+eJY4qHnijlTbI8Xs7Hlt3SQAPkcPw4MHDh0a2+qcGas6MdO1wQzXvTtDVFNoXJUt
+poos8renfcJ1hpwmmLWHnl1ehO5yD/lexhrqMErdxP0BDThUzPiXxx7Dl9npvad2
+IZz8+5uClV99qR/Z92Fq
+=A5ws
+-----END PGP SIGNATURE-----
+
+--H1spWtNR+x+ondvy--
