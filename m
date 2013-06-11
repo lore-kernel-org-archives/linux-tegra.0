@@ -1,51 +1,69 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] mfd: tps6586x: correct device name of the regulator
- cell
-Date: Tue, 11 Jun 2013 13:00:08 +0100
-Message-ID: <20130611120008.GB1403@sirena.org.uk>
-References: <89e4451e14f324d8bd480f843fa5960b481e3188.1370894247.git.marvin24@gmx.de>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 2/6] gpu: host1x: Fix syncpoint wait return value
+Date: Tue, 11 Jun 2013 14:09:31 +0200
+Message-ID: <CAKMK7uGRW4uqsSaDEehTZwknZH+mNEgyKB6-4TgfgUOaTOcoLA@mail.gmail.com>
+References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
+	<1368791388-31441-3-git-send-email-amerilainen@nvidia.com>
+	<20130526101243.GB1652@mithrandir>
+	<51A30372.6080907@nvidia.com>
+	<20130528103927.GB11547@mithrandir>
+	<86y5ay6hrn.fsf@miki.keithp.com>
+	<20130611104800.GA29395@mithrandir>
+	<CAKMK7uF=A9zZ3VgdwzU3gfOjXaYsCqfCUSPmkLdL98nKX94jFQ@mail.gmail.com>
+	<51B70D52.9060601@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vgqGEEhIUeLzQgKp"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <89e4451e14f324d8bd480f843fa5960b481e3188.1370894247.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51B70D52.9060601@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Keith Packard <keithp@keithp.com>, "X.Org development" <xorg-devel@lists.x.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jun 11, 2013 at 1:43 PM, Terje Bergstr=F6m <tbergstrom@nvidia.c=
+om> wrote:
+> On 11.06.2013 14:00, Daniel Vetter wrote:
+>> We don't use the EAGAIN ioctl restarting to resubmit the batchbuffer
+>> which blew up the gpu (that one has been submitted already in a
+>> different ioctl call), but to be able to restart the ioctl after the
+>> reset has completed: We need to kick every thread which is potential=
+ly
+>> holding GEM locks and make sure that we block them (at a point where
+>> they don't hold any locks) until the reset handler completed. To avo=
+id
+>> a validation nightmare we use the same codepaths as we use for signa=
+l
+>> interrupts, so ioctl restarting is a very natural fit for this.
+>>
+>> Resubmitting victim workloads when a gpu crash happened is something
+>> the reset handler would do (kernel work item currently), not any
+>> userspace process doing an ioctl. But atm we don't resubmit victimiz=
+ed
+>> workloads.
+>
+> I don't understand the end-to-end of how resubmit is supposed to work=
+=2E
+> User space is not supposed to resubmit, but still EAGAIN is returned =
+to
+> user space, and drmIoctl() in user space just calls the came ioctl
+> again. Sounds like drmIoctl() is completely wrong.
 
---vgqGEEhIUeLzQgKp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Maybe it wasn't clear, but -EAGAIN does _not_ resubmit work. -EAGAIN
+is used to restart the ioctl if we had to kick a thread (to make sure
+it doesn't hold any locks), e.g. for a blocking wait on oustanding
+rendering. The codepaths taken work exactly as if the thread is
+interrupt with a signal.
 
-On Mon, Jun 10, 2013 at 10:27:55PM +0200, Marc Dietrich wrote:
-> Change the device name of the regulator function to the one chosen for
-> MODULE_ALIAS. This fixes kernel auto-module loading for the regulator function.
+> In Tegra, when a job blows up, we reset the involved units, and set t=
+he
+> pushbuffer pointer of host1x to point to the next job, and re-enable
+> units. There's no need for anybody to resubmit anything, as kernel
+> already has them.
 
-Applied, thanks.
-
---vgqGEEhIUeLzQgKp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRtxFFAAoJELSic+t+oim9SlEP/RPXlNluJ1tZFbgDrHusaEBD
-9WNecvzDdFf0Vfxp1Bdxk9rGtjHLVW1vymHlKWQo5HkJx+mIsnvC1koNZwtc/jHG
-1najWdJCFe9T0O5qk5wKG8ioBjFbn3iyOCAq3/ICu1JwTaXZGxf2AXJoaI/dMlee
-fQSqFCDbMg9PfbwWdwp1V/mk4wfyJCGRjhfNGcBjEKcTb23mPn+59HhgEQ+ztbNy
-UnmrpfNrNzxlg3sk8sEWN8VaV8JIbhNtwRKhyyGc0V/TIbxO7BgOa21OC3oWw/37
-fM/Nw+MP4wAuNO92V38nBp0D3tKjS53Yb/QvezNCrxqn7mz7fDK1apYMa2Hr7n7c
-MOOOu8RL5DDMUNy1LrtOGPO0PL72XJUQOwmB2Am8Ik1D/vAyj5vgWtfr802v9GX1
-hepYKiMz1jJxxT6G5HeojVcGMkf1q1Wuc0SOA0+b4JnYXX6whLmIKkMvOVIkUmUw
-FVYBRTRyZlgdMxAKhcGbBJ0yYaT6+qQcTeqSxYfLThk3lz16x+4BNBQ2d4QrC4po
-9jb9lxfVKm7asnMc7hP2D7RWzxhayoN+c5/yxmlkqFJxtwLFyMYTnHZ7YKG5sVoF
-1MlX8rHpi7Smy4QC3wXASB90B7/UmnzH5IIIlsheNqerUZJruQUzw7GiDzl3Ci4W
-Kcdzqrp9uhSfmc7y09Ol
-=QLgh
------END PGP SIGNATURE-----
-
---vgqGEEhIUeLzQgKp--
+Yeah, that's how it works in i915.ko, too.
+-Daniel
+--
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
