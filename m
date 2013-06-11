@@ -1,41 +1,37 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] memory: tegra20-mc: Fix hang in IRQ handler.
-Date: Tue, 11 Jun 2013 13:11:18 +0300
-Message-ID: <1370945479-2917-2-git-send-email-ttynkkynen@nvidia.com>
-References: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: [PATCH 0/2 v2] Bugfixes for Tegra memory controllers.
+Date: Tue, 11 Jun 2013 13:11:17 +0300
+Message-ID: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370945479-2917-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: gregkh@linuxfoundation.org
+Cc: linux-tegra@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-In Tegra20 any memory controller interrupt would cause an
-infinite loop in the IRQ handler.
+Hi,
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+Here's two simple bugfixes for the Tegra memory controllers.
+
+v2: Fix a dumb bug in the bit masking.
+
+Tuomas Tynkkynen (2):
+  memory: tegra20-mc: Fix hang in IRQ handler.
+  memory: tegra30-mc: Fix IRQ handler.
+
  drivers/memory/tegra20-mc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/memory/tegra30-mc.c | 9 ++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
-index 2ca5f28..0548eea 100644
---- a/drivers/memory/tegra20-mc.c
-+++ b/drivers/memory/tegra20-mc.c
-@@ -193,8 +193,11 @@ static irqreturn_t tegra20_mc_isr(int irq, void *data)
- 	mask &= stat;
- 	if (!mask)
- 		return IRQ_NONE;
--	while ((bit = ffs(mask)) != 0)
-+	while ((bit = ffs(mask)) != 0) {
- 		tegra20_mc_decode(mc, bit - 1);
-+		mask &= ~BIT(bit - 1);
-+	}
-+
- 	mc_writel(mc, stat, MC_INTSTATUS);
- 	return IRQ_HANDLED;
- }
 -- 
 1.8.1.5
