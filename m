@@ -1,64 +1,54 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>
 Subject: Re: [PATCH 2/6] gpu: host1x: Fix syncpoint wait return value
-Date: Tue, 11 Jun 2013 13:00:50 +0200
-Message-ID: <CAKMK7uF=A9zZ3VgdwzU3gfOjXaYsCqfCUSPmkLdL98nKX94jFQ@mail.gmail.com>
+Date: Tue, 11 Jun 2013 14:43:14 +0300
+Message-ID: <51B70D52.9060601@nvidia.com>
 References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
 	<1368791388-31441-3-git-send-email-amerilainen@nvidia.com>
-	<20130526101243.GB1652@mithrandir>
-	<51A30372.6080907@nvidia.com>
-	<20130528103927.GB11547@mithrandir>
-	<86y5ay6hrn.fsf@miki.keithp.com>
+	<20130526101243.GB1652@mithrandir>	<51A30372.6080907@nvidia.com>
+	<20130528103927.GB11547@mithrandir>	<86y5ay6hrn.fsf@miki.keithp.com>
 	<20130611104800.GA29395@mithrandir>
+	<CAKMK7uF=A9zZ3VgdwzU3gfOjXaYsCqfCUSPmkLdL98nKX94jFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130611104800.GA29395@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Keith Packard <keithp-aN4HjG94KOLQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "X.Org development" <xorg-devel-go0+a7rfsptAfugRpC6u6w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uF=A9zZ3VgdwzU3gfOjXaYsCqfCUSPmkLdL98nKX94jFQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: "X.Org development" <xorg-devel@lists.x.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 11, 2013 at 12:48 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Tue, May 28, 2013 at 01:12:12PM -0600, Keith Packard wrote:
->> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->>
->>
->> > That doesn't sound right. Maybe drmIoctl() needs fixing instead. Looking
->> > at the history, drmIoctl() was introduced to automatically loop if a
->> > signal was received (commit 8b9ab108ec1f2ba2b503f713769c4946849b3cb2).
->> > However the ioctl(3p) manpage doesn't mention that ioctl() returns
->> > EAGAIN in case it is interrupted by a signal.
->>
->> EAGAIN is being returned when the GPU is wedged to ask the application
->> to re-submit the request, which will presumably be held until the  GPU
->> is un-wedged.
->
-> Isn't that a bit risky? What if something special needs to be done to
-> unwedge the GPU other than re-submit the request, or if it just can't
-> be reasonably unwedged. In that case drmIoctl() will keep looping
-> indefinitely.
->
-> If the above is indeed the expected behaviour for drivers, then we need
-> a different error code for the SYNCPT_WAIT ioctl. EAGAIN is the best fit
-> and anything else doesn't quite match the use-case. A different option
-> might be not to use drmIoctl() on Tegra.
+On 11.06.2013 14:00, Daniel Vetter wrote:
+> We don't use the EAGAIN ioctl restarting to resubmit the batchbuffer
+> which blew up the gpu (that one has been submitted already in a
+> different ioctl call), but to be able to restart the ioctl after the
+> reset has completed: We need to kick every thread which is potentially
+> holding GEM locks and make sure that we block them (at a point where
+> they don't hold any locks) until the reset handler completed. To avoid
+> a validation nightmare we use the same codepaths as we use for signal
+> interrupts, so ioctl restarting is a very natural fit for this.
+> 
+> Resubmitting victim workloads when a gpu crash happened is something
+> the reset handler would do (kernel work item currently), not any
+> userspace process doing an ioctl. But atm we don't resubmit victimized
+> workloads.
 
-We don't use the EAGAIN ioctl restarting to resubmit the batchbuffer
-which blew up the gpu (that one has been submitted already in a
-different ioctl call), but to be able to restart the ioctl after the
-reset has completed: We need to kick every thread which is potentially
-holding GEM locks and make sure that we block them (at a point where
-they don't hold any locks) until the reset handler completed. To avoid
-a validation nightmare we use the same codepaths as we use for signal
-interrupts, so ioctl restarting is a very natural fit for this.
+I don't understand the end-to-end of how resubmit is supposed to work.
+User space is not supposed to resubmit, but still EAGAIN is returned to
+user space, and drmIoctl() in user space just calls the came ioctl
+again. Sounds like drmIoctl() is completely wrong.
 
-Resubmitting victim workloads when a gpu crash happened is something
-the reset handler would do (kernel work item currently), not any
-userspace process doing an ioctl. But atm we don't resubmit victimized
-workloads.
--Daniel
---
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+In Tegra, when a job blows up, we reset the involved units, and set the
+pushbuffer pointer of host1x to point to the next job, and re-enable
+units. There's no need for anybody to resubmit anything, as kernel
+already has them.
+
+Terje
