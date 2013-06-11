@@ -1,74 +1,35 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/2 v2] Bugfixes for Tegra memory controllers.
-Date: Tue, 11 Jun 2013 12:33:17 +0200
-Message-ID: <20130611103316.GC932@manwe>
-References: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: RE: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
+Date: Tue, 11 Jun 2013 16:10:43 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BEF3@BGMAIL01.nvidia.com>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
+ <51AE3D3B.6080102@wwwdotorg.org> <20130610195028.GB25859@mithrandir>
+ <C79B248886DD134989C8FF6B096A91AB91B616BEED@BGMAIL01.nvidia.com>
+ <20130611101610.GB932@manwe>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Cc: gregkh@linuxfoundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130611101610.GB932@manwe>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Thierry Reding' <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+> > I have mentioned it in description as -> "Corrected logic in read/write
+> config space to display right device number on bus 0"
+> >
+> > > Device 0:00.0 is usually the root complex, and device 0:01.0, 0:02.0
+> > > etc are the root ports. The change proposed above makes 0:00.0 the
+> > > first root port, therefore breaking what systems usually expect.
+> > >
+> > I was seeing root port 2 in cardhu being enumerated as pci_bus 0000:03,
+> which I thought should be pci_bus 0000:02, so made this change.
+> 
+> Yes, that's done on purpose to mirror what a typical PCI tree looks like, as I
+> already explained. So unless this fixes a real bug I'll just drop it while
+> applying.
 
---p2kqVDKq5asng8Dg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 11, 2013 at 01:11:17PM +0300, Tuomas Tynkkynen wrote:
-> Hi,
->=20
-> Here's two simple bugfixes for the Tegra memory controllers.
->=20
-> v2: Fix a dumb bug in the bit masking.
->=20
-> Tuomas Tynkkynen (2):
->   memory: tegra20-mc: Fix hang in IRQ handler.
->   memory: tegra30-mc: Fix IRQ handler.
->=20
->  drivers/memory/tegra20-mc.c | 5 ++++-
->  drivers/memory/tegra30-mc.c | 9 ++++++---
->  2 files changed, 10 insertions(+), 4 deletions(-)
-
-Both patches:
-
-Reviewed-by: Thierry Reding <thierry.reding@gmail.com>
-
-On a side-note, the subject format looks a bit strange and my guess is
-you had to manually edit it to insert "v2". git can do it for you when
-you generate the patch series using:
-
-	git format-patch --subject-prefix=3D'PATCH v2'
-
-That'll also automatically add the v2 to all individual patches instead
-of just the cover-letter.
-
-Thierry
-
---p2kqVDKq5asng8Dg
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRtvzsAAoJEN0jrNd/PrOhDSoP/ioru5baiKmqnFogqzPuwkp2
-Ohvm8jhu/kKyj7eZlJRzGlm7B6DkvKoVTtGhLovholsMfFYuxNBC3Hc89+Z4qzdC
-d0n1FQ/HYsOa6YrrJHQqWohN24U1b+GYWHfsgZgtQmp7QgsFFM1Oy5aYMiuUnO2B
-OfCT9RpqWOOpFVvC3I68yqp/k3CMMAwnPAdU6mH9yLQOOAYKzCX1dVIVPiQLo0pL
-wrvy73qucZpV+sVf9dbjNxsIhWgpNkf/aXX0oJLAcbb7P4sO5PnqHcCqrAL9WmDd
-DR71zAnw4TAff/k+7jjsoOj3jWQd5o6SJgxvkplB7ypcc8vVLlXyA1W2g7ilcLcQ
-EVPL8/7TB+3qC3QOZm6pWq+5tVqwA4i2KyfHbOi4/87MUNIxdu69rX1hUZZSdllh
-0PkeY17XSiFj0wCx05YIn3bQX6mB0IP3cOSDYKq110J2FLNblRIgMD5h1Z7dblJJ
-agWheMTFLng5XBL5ZXzTcw2FoEY9T8wb3hdmqok4Z/ndrjmM0OHhcW3keKJ88gBR
-rYavKDlLU17pH59cGu7Hrs3wB0jG/AeTQjlrxikYfbT3zqxaA/iWWeF2a78Fs4+E
-2p+GGig2iwbjr8cwgZ2xvL3sw2MvNl563aSwIzY3uTr2btsPkJL8N3gL3w/4wLUD
-P4NrB6whhf0WpKcqhIks
-=FOUi
------END PGP SIGNATURE-----
-
---p2kqVDKq5asng8Dg--
+Please apply V4 patch instead which does not contain this change along with taking care of other review comments.
