@@ -1,40 +1,53 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/4] power: sbs-battery: Add dt to power_supply struct
-Date: Mon, 10 Jun 2013 17:26:40 -0400
-Message-ID: <1370899602-22123-3-git-send-email-rklein@nvidia.com>
-References: <1370899602-22123-1-git-send-email-rklein@nvidia.com>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: RE: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
+Date: Tue, 11 Jun 2013 10:13:38 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BEED@BGMAIL01.nvidia.com>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
+ <51AE3D3B.6080102@wwwdotorg.org> <20130610195028.GB25859@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370899602-22123-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130610195028.GB25859@mithrandir>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Thierry Reding' <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-By passing in the dt node of this device, we enable the logic for
-linking power_supplies together from dt. This is specified by adding
-a "power-supplies" property with a phandle to the charger for a
-given supply.
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jun 04, 2013 at 01:17:15PM -0600, Stephen Warren wrote:
+> > On 06/04/2013 12:57 PM, Jay Agarwal wrote:
+> [...]
+> > >  struct tegra_pcie_port {
+> > > @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus
+> *bus, unsigned int devfn,
+> > >  		struct tegra_pcie_port *port;
+> > >
+> > >  		list_for_each_entry(port, &pcie->ports, list) {
+> > > -			if (port->index + 1 == slot) {
+> > > +			if (port->index == slot) {
+> >
+> > This and the equivalent change in tegra_pcie_write_conf() seem like a
+> > bug-fix unrelated to the addition of Tegra30 support. Hence, they
+> > should be a separate patch.
+> 
+> What exactly is this change supposed to fix? The description doesn't provide
+> any details about why this is required. Furthermore this was done on
+> purpose to model the Tegra PCIe controller according to what typical Linux
+> systems provide.
 
-Enable this logic now for the sbs-battery driver.
+I have mentioned it in description as -> "Corrected logic in read/write config space to display right device number on bus 0"
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/power/sbs-battery.c |    1 +
- 1 file changed, 1 insertion(+)
+> Device 0:00.0 is usually the root complex, and device 0:01.0, 0:02.0 etc are
+> the root ports. The change proposed above makes 0:00.0 the first root port,
+> therefore breaking what systems usually expect.
+> 
+I was seeing root port 2 in cardhu being enumerated as pci_bus 0000:03, which I thought should be pci_bus 0000:02, so made this change.
 
-diff --git a/drivers/power/sbs-battery.c b/drivers/power/sbs-battery.c
-index c8c78a7..b5f2a76 100644
---- a/drivers/power/sbs-battery.c
-+++ b/drivers/power/sbs-battery.c
-@@ -704,6 +704,7 @@ static int sbs_probe(struct i2c_client *client,
- 	chip->power_supply.properties = sbs_properties;
- 	chip->power_supply.num_properties = ARRAY_SIZE(sbs_properties);
- 	chip->power_supply.get_property = sbs_get_property;
-+	chip->power_supply.of_node = client->dev.of_node;
- 	/* ignore first notification of external change, it is generated
- 	 * from the power_supply_register call back
- 	 */
--- 
-1.7.9.5
+> Thierry
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
