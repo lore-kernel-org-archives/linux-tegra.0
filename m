@@ -1,27 +1,36 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v3.10-rc1
-Date: Tue, 11 Jun 2013 12:26:21 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1306111225300.22645@utopia.booyaka.com>
-References: <alpine.DEB.2.02.1306050558430.13098@utopia.booyaka.com> <51AF5698.5050106@wwwdotorg.org> <alpine.DEB.2.02.1306060421250.15042@utopia.booyaka.com> <51B0B196.3040400@wwwdotorg.org>
+From: Jonathan Austin <jonathan.austin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.10-rc5
+Date: Tue, 11 Jun 2013 14:59:06 +0100
+Message-ID: <51B72D2A.6040909@arm.com>
+References: <alpine.DEB.2.02.1306111220490.22645@utopia.booyaka.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B0B196.3040400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1306111220490.22645-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Stephen,
+Hi Paul,
 
-On Thu, 6 Jun 2013, Stephen Warren wrote:
+On 11/06/13 13:24, Paul Walmsley wrote:
+>
+> Here are some basic Tegra test results for Linux v3.10-rc5.
+> Logs and other details at:
+>
+>      http://www.pwsan.com/tegra/testlogs/test_v3.10-rc5/20130611044210/
+>
 
-> Could you name the directories
-> .../boot/board-tegra30-beaver/tegra30-beaver.dtb/ or
-> ../boot/board-tegra30-beaver/tegra30-beaver-alternate.dtb/? I'd really
-> love not to propagate a different set of names for the boards.
+These automated tests look pretty useful - is this some well known tool 
+that's passed me by, or something you've written yourself? Something in 
+between?
 
-The board name has been changed to tegra30-beaver as you requested.
+Particularly, does whatever you have handle boards on serial ports 
+automagically, with a way to add different interfaces for resetting 
+locked boards etc?
 
+Thanks,
 
-- Paul
+Jonny
