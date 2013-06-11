@@ -1,92 +1,74 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
-Date: Tue, 11 Jun 2013 12:16:11 +0200
-Message-ID: <20130611101610.GB932@manwe>
-References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
- <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
- <51AE3D3B.6080102@wwwdotorg.org>
- <20130610195028.GB25859@mithrandir>
- <C79B248886DD134989C8FF6B096A91AB91B616BEED@BGMAIL01.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/2 v2] Bugfixes for Tegra memory controllers.
+Date: Tue, 11 Jun 2013 12:33:17 +0200
+Message-ID: <20130611103316.GC932@manwe>
+References: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <C79B248886DD134989C8FF6B096A91AB91B616BEED-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: gregkh@linuxfoundation.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---xXmbgvnjoT4axfJE
+--p2kqVDKq5asng8Dg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2013 at 10:13:38AM +0530, Jay Agarwal wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Tue, Jun 04, 2013 at 01:17:15PM -0600, Stephen Warren wrote:
-> > > On 06/04/2013 12:57 PM, Jay Agarwal wrote:
-> > [...]
-> > > >  struct tegra_pcie_port {
-> > > > @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus
-> > *bus, unsigned int devfn,
-> > > >  		struct tegra_pcie_port *port;
-> > > >
-> > > >  		list_for_each_entry(port, &pcie->ports, list) {
-> > > > -			if (port->index + 1 =3D=3D slot) {
-> > > > +			if (port->index =3D=3D slot) {
-> > >
-> > > This and the equivalent change in tegra_pcie_write_conf() seem like a
-> > > bug-fix unrelated to the addition of Tegra30 support. Hence, they
-> > > should be a separate patch.
-> >=20
-> > What exactly is this change supposed to fix? The description doesn't pr=
-ovide
-> > any details about why this is required. Furthermore this was done on
-> > purpose to model the Tegra PCIe controller according to what typical Li=
-nux
-> > systems provide.
+On Tue, Jun 11, 2013 at 01:11:17PM +0300, Tuomas Tynkkynen wrote:
+> Hi,
 >=20
-> I have mentioned it in description as -> "Corrected logic in read/write c=
-onfig space to display right device number on bus 0"
+> Here's two simple bugfixes for the Tegra memory controllers.
 >=20
-> > Device 0:00.0 is usually the root complex, and device 0:01.0, 0:02.0 et=
-c are
-> > the root ports. The change proposed above makes 0:00.0 the first root p=
-ort,
-> > therefore breaking what systems usually expect.
-> >=20
-> I was seeing root port 2 in cardhu being enumerated as pci_bus 0000:03, w=
-hich I thought should be pci_bus 0000:02, so made this change.
+> v2: Fix a dumb bug in the bit masking.
+>=20
+> Tuomas Tynkkynen (2):
+>   memory: tegra20-mc: Fix hang in IRQ handler.
+>   memory: tegra30-mc: Fix IRQ handler.
+>=20
+>  drivers/memory/tegra20-mc.c | 5 ++++-
+>  drivers/memory/tegra30-mc.c | 9 ++++++---
+>  2 files changed, 10 insertions(+), 4 deletions(-)
 
-Yes, that's done on purpose to mirror what a typical PCI tree looks
-like, as I already explained. So unless this fixes a real bug I'll just
-drop it while applying.
+Both patches:
+
+Reviewed-by: Thierry Reding <thierry.reding@gmail.com>
+
+On a side-note, the subject format looks a bit strange and my guess is
+you had to manually edit it to insert "v2". git can do it for you when
+you generate the patch series using:
+
+	git format-patch --subject-prefix=3D'PATCH v2'
+
+That'll also automatically add the v2 to all individual patches instead
+of just the cover-letter.
 
 Thierry
 
---xXmbgvnjoT4axfJE
+--p2kqVDKq5asng8Dg
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.19 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRtvjqAAoJEN0jrNd/PrOhgJ8P+QGmdhGRl0aBHM85DO7rCaVu
-oC/g/uBhZbTJ+QBEin7GWFTQ5phHyalwpw+VdrxWcVuHCQcmCF12w+l2c31+IzGo
-phgLru47RrAgx7ahHw+pyxq16COVypYprBSg2HKnDO7sQlimNFge4feqc98n4osj
-M6MvdNGBS+RtY+JSIOS+Q8myDG4qJR37ATpGTHBJh5Sja1bYmG3mJ6bmiNgqHzNv
-ikvIaOodgypsxs+IvDTgMskxlagTY1gXTJu316IaqwTrkKU2kMiiLgxgSiOAWcOc
-y4LwtWV3NNBn5mYQyiwShSSV3q2u/Y0lYK4plqjdW1RfGifkVCeFkM0xE2EuGFE/
-FfuUDov2f9JycA0COHwoz3nItz1NJ3eS4KCh/sQwqBdf1ie9x600qhDTj3RKCMZ+
-qBqD/hBbKkUkJ2Xs1VOhqmVwpD7rST6zYbyAvBhhzSv0eKdMHimOEkQrYQzWo3or
-ocm1iZd++nmsjKpRBJkkjahR/1gSUEjonI1n7rt3bXew3/BAX+BvU+x04vXT6c0W
-lHqwWJaHRlQfOK4zI3PhSb8nUfbmhSVFcHIyBFMO1IYUXPI+HeeVRZWGXbLK+6CO
-S3YTeREvI+krLemFXDF20Pckcd/hjFSk/V3jRtjxEo4QWCBLQFJ5PS/mi0fDqRGh
-YMb4BCXkmBX8V1Xbrj9n
-=8OXp
+iQIcBAEBAgAGBQJRtvzsAAoJEN0jrNd/PrOhDSoP/ioru5baiKmqnFogqzPuwkp2
+Ohvm8jhu/kKyj7eZlJRzGlm7B6DkvKoVTtGhLovholsMfFYuxNBC3Hc89+Z4qzdC
+d0n1FQ/HYsOa6YrrJHQqWohN24U1b+GYWHfsgZgtQmp7QgsFFM1Oy5aYMiuUnO2B
+OfCT9RpqWOOpFVvC3I68yqp/k3CMMAwnPAdU6mH9yLQOOAYKzCX1dVIVPiQLo0pL
+wrvy73qucZpV+sVf9dbjNxsIhWgpNkf/aXX0oJLAcbb7P4sO5PnqHcCqrAL9WmDd
+DR71zAnw4TAff/k+7jjsoOj3jWQd5o6SJgxvkplB7ypcc8vVLlXyA1W2g7ilcLcQ
+EVPL8/7TB+3qC3QOZm6pWq+5tVqwA4i2KyfHbOi4/87MUNIxdu69rX1hUZZSdllh
+0PkeY17XSiFj0wCx05YIn3bQX6mB0IP3cOSDYKq110J2FLNblRIgMD5h1Z7dblJJ
+agWheMTFLng5XBL5ZXzTcw2FoEY9T8wb3hdmqok4Z/ndrjmM0OHhcW3keKJ88gBR
+rYavKDlLU17pH59cGu7Hrs3wB0jG/AeTQjlrxikYfbT3zqxaA/iWWeF2a78Fs4+E
+2p+GGig2iwbjr8cwgZ2xvL3sw2MvNl563aSwIzY3uTr2btsPkJL8N3gL3w/4wLUD
+P4NrB6whhf0WpKcqhIks
+=FOUi
 -----END PGP SIGNATURE-----
 
---xXmbgvnjoT4axfJE--
+--p2kqVDKq5asng8Dg--
