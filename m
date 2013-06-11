@@ -1,73 +1,49 @@
-From: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] clk: tegra: T114: add DFLL DVCO reset control
-Date: Tue, 11 Jun 2013 13:01:05 +0530
-Message-ID: <51B6D239.5030905@nvidia.com>
-References: <20130607121505.21868.72360.stgit@dusk.lan> <20130607121901.21868.65416.stgit@dusk.lan> <51B21105.1080301@wwwdotorg.org> <alpine.DEB.2.02.1306071703050.7753@utopia.booyaka.com>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: [PATCH V3 3/4] ARM: dts: tegra: Correct PCIe entry
+Date: Tue, 11 Jun 2013 10:30:48 +0300
+Message-ID: <20130611073048.GR3847@tbergstrom-lnx.Nvidia.com>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <1370372252-4332-3-git-send-email-jagarwal@nvidia.com>
+ <20130610195511.GC25859@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1306071703050.7753-rwI8Ez+7Ko+d5PgPZx9QOdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20130610195511.GC25859@mithrandir>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, Jay Agarwal <jagarwal@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "thierry.reding@avionic-design.de" <thierry.reding@avionic-design.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krishna Thota <kthota@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, Laxman Dewangan <ldewangan@nvidia.com>, "bhelgaas@google.com" <bhelgaas@google.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Juha Tukkinen <jtukkinen@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Hiroshi Doyu <hdoyu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 07 June 2013 10:36 PM, Paul Walmsley wrote:
-> Hi Stephen,
->
-> On Fri, 7 Jun 2013, Stephen Warren wrote:
->
->> On 06/07/2013 06:19 AM, Paul Walmsley wrote:
->>> Add DFLL DVCO reset line control functions to the CAR IP block driv=
-er.
->>>
->>> The DVCO present in the DFLL IP block has a separate reset line,
->>> exposed via the CAR IP block.  This reset line is asserted upon SoC
->>> reset.  Unless something (such as the DFLL driver) deasserts this
->>> line, the DVCO will not oscillate, although reads and writes to the
->>> DFLL IP block will complete.
->>>
->>> Thanks to Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> for identifying this an=
-d
->>> saving hours of debugging time.
->>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
->>>   void tegra114_clock_tune_cpu_trimmers_high(void);
->>>   void tegra114_clock_tune_cpu_trimmers_low(void);
->>>   void tegra114_clock_tune_cpu_trimmers_init(void);
->>> +void tegra114_clock_assert_dfll_dvco_reset(void);
->>> +void tegra114_clock_deassert_dfll_dvco_reset(void);
->> Where/what is the code that will call these new APIs? If it's going =
-to
->> be something in drivers/clk, that seems fine.
-> That's correct - they'll be used by the DFLL clocksource code, which =
-will
-> live in drivers/clk/tegra.  You've seen the patches already ;-)
+On Mon, Jun 10, 2013 at 09:55:12PM +0200, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Wed, Jun 05, 2013 at 12:27:31AM +0530, Jay Agarwal wrote:
+> [...]
+> > @@ -29,7 +29,7 @@
+> >  		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
+> >  			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
+> >  			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
+> > -			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
+> > +			  0x81000000 0 0          0x02000000 0 0x00100000   /* downstream I/O */
+> >  			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
+> >  			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
+> 
+> That increases the I/O region size from 64 KiB to 1 MiB. Why is that
+> necessary? I/O operations can only address 64 KiB, so I don't think
+> adding more makes any sense.
 
-Why not implement these APIs in DFLL clock driver itself and pass RST=20
-address register to driver?
+At least PCI allows 32bit I/O addresses. No idea if anyone uses them though.
 
->> The reset assert/de-assert functions at least might be worth exposin=
-g
->> using the new generic module reset API. I believe Prashant Gaikwad i=
-s
->> working on converting the Tegra clock driver to be a module reset
->> provider, hence removing the existing custom
->> tegra_periph_reset_{de,}assert() APIs.
-> OK, will take a look to see if this can be done without getting in th=
-e way
-> of Prashant's work.  I'd na=EFvely assume that it might be best to co=
-nvert
-> these as part of his series - that way we won't duplicate effort.
->
-> Prashant, what stage are you at in the conversion?  If you're close t=
-o
-> completion, maybe we can just add this functionality in with your pat=
-ches?
->
+Cheers,
 
-You can continue with this patch. I do not see any need to add this=20
-reset control to generic reset module.
-
-> - Paul
+Peter.
