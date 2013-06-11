@@ -1,25 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] Bump version to 1.1
-Date: Tue, 11 Jun 2013 12:23:03 -0600
-Message-ID: <51B76B07.40705@wwwdotorg.org>
-References: <1370974299-12770-1-git-send-email-amartin@nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH V3 1/4] ARM: tegra30: clocks: Fix pciex clock registration
+Date: Tue, 11 Jun 2013 15:17:09 -0700
+Message-ID: <20130611221709.8816.15602@quantum>
+References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
+ <51AE3B18.9010604@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370974299-12770-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <51AE3B18.9010604@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Jay Agarwal <jagarwal@nvidia.com>
+Cc: linux@arm.linux.org.uk, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jtukkinen@nvidia.com, kthota@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/11/2013 12:11 PM, Allen Martin wrote:
-> Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Quoting Stephen Warren (2013-06-04 12:08:08)
+> On 06/04/2013 12:57 PM, Jay Agarwal wrote:
+> > Registering pciex as peripheral clock instead of fixed clock
+> > as tegra_perih_reset_assert(deassert) api of this clock api
+> > gives warning and ultimately does not succeed to assert(deassert).
+> > 
+> > Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+> > ---
+> > Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
+> 
+> For this change, Mike may as well apply it directly to the clock tree.
+> Thierry can then pick it up when he rebases his tegra/next tree.
+> 
+> That said, I don't think you should need any of the
+> TEGRA_CLK_DUPLICATE() entries; the PCIe driver should get its clocks
+> from device tree now, and hence the driver name in the clock
+> registration shouldn't be necessary. All of these TEGRA_CLK_DUPLICATE()
+> entries should be removed en mass sometime soon with luck. So, can you
+> simply leave the two TEGRA_CLK_DUPLICATE() entries untouched, rather
+> than changing them?
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Ping on this patch.  I can take it through my tree, but is there going
+to be rework based on Stephen's comments?
 
-(although I wonder if we shouldn't just version these things 1, 2, 3...
-but I'm fine with this)
-
-I assume you'll apply this and push out the tag since you already have
-the patch in your tree.
+Regards,
+Mike
