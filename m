@@ -1,37 +1,61 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 0/2 v2] Bugfixes for Tegra memory controllers.
-Date: Tue, 11 Jun 2013 13:11:17 +0300
-Message-ID: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH 2/2] memory: tegra30-mc: Fix IRQ handler.
+Date: Tue, 11 Jun 2013 13:11:19 +0300
+Message-ID: <1370945479-2917-3-git-send-email-ttynkkynen@nvidia.com>
+References: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1370945479-2917-1-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: gregkh@linuxfoundation.org
-Cc: linux-tegra@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+In Tegra30 any memory controller interrupt would cause an infinite loop in the
+IRQ handler. Additionally, a garbage pointer was used to read the MC
+status registers, which causes wrong values to be printed if a MC error
+occurred.
 
-Here's two simple bugfixes for the Tegra memory controllers.
-
-v2: Fix a dumb bug in the bit masking.
-
-Tuomas Tynkkynen (2):
-  memory: tegra20-mc: Fix hang in IRQ handler.
-  memory: tegra30-mc: Fix IRQ handler.
-
- drivers/memory/tegra20-mc.c | 5 ++++-
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+---
  drivers/memory/tegra30-mc.c | 9 ++++++---
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
+index f4ae074..58d2979 100644
+--- a/drivers/memory/tegra30-mc.c
++++ b/drivers/memory/tegra30-mc.c
+@@ -218,7 +218,7 @@ static void tegra30_mc_decode(struct tegra30_mc *mc, int n)
+ 		return;
+ 	}
+ 
+-	err = readl(mc + MC_ERR_STATUS);
++	err = mc_readl(mc, MC_ERR_STATUS);
+ 
+ 	type = (err & MC_ERR_TYPE_MASK) >> MC_ERR_TYPE_SHIFT;
+ 	perm = (err & MC_ERR_INVALID_SMMU_PAGE_MASK) >>
+@@ -235,7 +235,7 @@ static void tegra30_mc_decode(struct tegra30_mc *mc, int n)
+ 	if (cid < ARRAY_SIZE(tegra30_mc_client))
+ 		client = tegra30_mc_client[cid];
+ 
+-	addr = readl(mc + MC_ERR_ADR);
++	addr = mc_readl(mc, MC_ERR_ADR);
+ 
+ 	dev_err_ratelimited(mc->dev, "%s (0x%08x): 0x%08x %s (%s %s %s %s)\n",
+ 			   mc_int_err[idx], err, addr, client,
+@@ -313,8 +313,11 @@ static irqreturn_t tegra30_mc_isr(int irq, void *data)
+ 	mask &= stat;
+ 	if (!mask)
+ 		return IRQ_NONE;
+-	while ((bit = ffs(mask)) != 0)
++	while ((bit = ffs(mask)) != 0) {
+ 		tegra30_mc_decode(mc, bit - 1);
++		mask &= ~BIT(bit - 1);
++	}
++
+ 	mc_writel(mc, stat, MC_INTSTATUS);
+ 	return IRQ_HANDLED;
+ }
 -- 
 1.8.1.5
