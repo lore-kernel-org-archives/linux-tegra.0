@@ -1,53 +1,35 @@
-From: Jay Agarwal <jagarwal@nvidia.com>
-Subject: RE: [PATCH V3 2/4] ARM: tegra: pcie: Add tegra3 support
-Date: Tue, 11 Jun 2013 10:13:38 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BEED@BGMAIL01.nvidia.com>
-References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
- <1370372252-4332-2-git-send-email-jagarwal@nvidia.com>
- <51AE3D3B.6080102@wwwdotorg.org> <20130610195028.GB25859@mithrandir>
+From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH V4 2/4] ARM: tegra: pcie: Add tegra3 support
+Date: Tue, 11 Jun 2013 10:17:52 +0530
+Message-ID: <C79B248886DD134989C8FF6B096A91AB91B616BEEE@BGMAIL01.nvidia.com>
+References: <1370445221-17696-1-git-send-email-jagarwal@nvidia.com>
+ <51AF68F1.8080307@wwwdotorg.org> <20130610200906.GD25859@mithrandir>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130610195028.GB25859@mithrandir>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130610200906.GD25859@mithrandir>
 Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Thierry Reding' <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>, Laxman Dewangan <ldewangan@nvidia.com>, "olof@lixom.net" <olof@lixom.net>, Hiroshi Doyu <hdoyu@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Juha Tukkinen <jtukkinen@nvidia.com>, Krishna Thota <kthota@nvidia.com>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
+
 
 > * PGP Signed by an unknown key
 > 
-> On Tue, Jun 04, 2013 at 01:17:15PM -0600, Stephen Warren wrote:
-> > On 06/04/2013 12:57 PM, Jay Agarwal wrote:
-> [...]
-> > >  struct tegra_pcie_port {
-> > > @@ -384,7 +408,7 @@ static int tegra_pcie_read_conf(struct pci_bus
-> *bus, unsigned int devfn,
-> > >  		struct tegra_pcie_port *port;
-> > >
-> > >  		list_for_each_entry(port, &pcie->ports, list) {
-> > > -			if (port->index + 1 == slot) {
-> > > +			if (port->index == slot) {
+> On Wed, Jun 05, 2013 at 10:36:01AM -0600, Stephen Warren wrote:
+> > On 06/05/2013 09:13 AM, Jay Agarwal wrote:
+> > > - Make private data structure for each SoC
+> > > - Add required Tegra30 clocks and regulators
+> > > - Add Tegra30 specific code in enable controller
+> > > - Added Tegra30 specific properties in pci binding document
 > >
-> > This and the equivalent change in tegra_pcie_write_conf() seem like a
-> > bug-fix unrelated to the addition of Tegra30 support. Hence, they
-> > should be a separate patch.
+> > It's a bit odd to send an updated version of just some of the patches;
+> > reposting a whole series is much easier for the person applying the
+> > patches. However, hopefully Thierry can handle it in this case.
 > 
-> What exactly is this change supposed to fix? The description doesn't provide
-> any details about why this is required. Furthermore this was done on
-> purpose to model the Tegra PCIe controller according to what typical Linux
-> systems provide.
-
-I have mentioned it in description as -> "Corrected logic in read/write config space to display right device number on bus 0"
-
-> Device 0:00.0 is usually the root complex, and device 0:01.0, 0:02.0 etc are
-> the root ports. The change proposed above makes 0:00.0 the first root port,
-> therefore breaking what systems usually expect.
+> Yes, I think I can handle it. It might be good to have Jay look at the final
+> patches when I'm done, though, to make sure I haven't forgotten anything.
 > 
-I was seeing root port 2 in cardhu being enumerated as pci_bus 0000:03, which I thought should be pci_bus 0000:02, so made this change.
-
-> Thierry
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
+Yes, please let me know whenever you have integrated my patches to your repo, so that I can sync, review & verify again.
