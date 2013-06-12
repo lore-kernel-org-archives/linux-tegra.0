@@ -1,42 +1,57 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] Override bits for PLLM
-Date: Tue, 11 Jun 2013 18:01:24 -0700
-Message-ID: <20130612010124.8816.81006@quantum>
-References: <1370515677-6807-1-git-send-email-pdeschrijver@nvidia.com>
+From: Jay Agarwal <jagarwal@nvidia.com>
+Subject: [PATCH V4 1/4] ARM: tegra30: clocks: Fix pciex clock registration
+Date: Wed, 12 Jun 2013 12:43:43 +0530
+Message-ID: <1371021223-6709-1-git-send-email-jagarwal@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370515677-6807-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: jtukkinen@nvidia.com, kthota@nvidia.com, jagarwal@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-06-06 03:47:27)
-> PLLM has override bits on Tegra30 and Tegra114. This patchset implements
-> support for them for both Tegra30 and Tegra114.
-> 
-> Changes since v1:
->  * Remove some stray lines from 'clk: tegra: override bits for Tegra114 PLLM'
+Registering pciex as peripheral clock instead of fixed clock
+as tegra_perih_reset_assert(deassert) api of this clock api
+gives warning and ultimately does not succeed to assert(deassert)
 
-Pulled into clk-next.
+Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+---
+Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
 
-Regards,
-Mike
+Changes in V4:
+- Avoid modifying tegra pcie driver name for duplicate clocks as per review comments
 
-> 
-> Peter De Schrijver (4):
->   clk: tegra: Add fields for override bits
->   clk: tegra: override bits for Tegra114 PLLM
->   clk: tegra: override bits for Tegra30 PLLM
->   clk: tegra: Use override bits when needed
-> 
->  drivers/clk/tegra/clk-pll.c      |   82 ++++++++++++++++++++++---------------
->  drivers/clk/tegra/clk-tegra114.c |    9 ++++
->  drivers/clk/tegra/clk-tegra30.c  |   18 ++++++++
->  drivers/clk/tegra/clk.h          |    8 ++++
->  4 files changed, 84 insertions(+), 33 deletions(-)
-> 
-> -- 
-> 1.7.7.rc0.72.g4b5ea.dirty
+ drivers/clk/tegra/clk-tegra30.c |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index c6921f5..ba99e38 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1598,6 +1598,12 @@ static void __init tegra30_periph_clk_init(void)
+ 	clk_register_clkdev(clk, "afi", "tegra-pcie");
+ 	clks[afi] = clk;
+ 
++	/* pciex */
++	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
++				    74, &periph_u_regs, periph_clk_enb_refcnt);
++	clk_register_clkdev(clk, "pciex", "tegra-pcie");
++	clks[pciex] = clk;
++
+ 	/* kfuse */
+ 	clk = tegra_clk_register_periph_gate("kfuse", "clk_m",
+ 				    TEGRA_PERIPH_ON_APB,
+@@ -1716,11 +1722,6 @@ static void __init tegra30_fixed_clk_init(void)
+ 				1, 0, &cml_lock);
+ 	clk_register_clkdev(clk, "cml1", NULL);
+ 	clks[cml1] = clk;
+-
+-	/* pciex */
+-	clk = clk_register_fixed_rate(NULL, "pciex", "pll_e", 0, 100000000);
+-	clk_register_clkdev(clk, "pciex", NULL);
+-	clks[pciex] = clk;
+ }
+ 
+ static void __init tegra30_osc_clk_init(void)
+-- 
+1.7.0.4
