@@ -1,42 +1,50 @@
-From: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH V3 1/4] ARM: tegra30: clocks: Fix pciex clock
- registration
-Date: Wed, 12 Jun 2013 12:41:38 +0530
-Message-ID: <C79B248886DD134989C8FF6B096A91AB91CF1615C6@BGMAIL01.nvidia.com>
-References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
- <51AE3B18.9010604@wwwdotorg.org> <20130611221709.8816.15602@quantum>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>
+Subject: Re: [PATCH 2/6] gpu: host1x: Fix syncpoint wait return value
+Date: Wed, 12 Jun 2013 13:28:30 +0300
+Message-ID: <51B84D4E.30703@nvidia.com>
+References: <1368791388-31441-1-git-send-email-amerilainen@nvidia.com>
+	<1368791388-31441-3-git-send-email-amerilainen@nvidia.com>
+	<20130526101243.GB1652@mithrandir>	<51A30372.6080907@nvidia.com>
+	<20130528103927.GB11547@mithrandir>	<86y5ay6hrn.fsf@miki.keithp.com>
+	<20130611104800.GA29395@mithrandir>
+	<CAKMK7uF=A9zZ3VgdwzU3gfOjXaYsCqfCUSPmkLdL98nKX94jFQ@mail.gmail.com>
+	<51B70D52.9060601@nvidia.com>
+	<CAKMK7uGRW4uqsSaDEehTZwknZH+mNEgyKB6-4TgfgUOaTOcoLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130611221709.8816.15602@quantum>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Mike Turquette' <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uGRW4uqsSaDEehTZwknZH+mNEgyKB6-4TgfgUOaTOcoLA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: "X.Org development" <xorg-devel@lists.x.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Arto Merilainen <amerilainen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-PiBRdW90aW5nIFN0ZXBoZW4gV2FycmVuICgyMDEzLTA2LTA0IDEyOjA4OjA4KQ0KPiA+IE9uIDA2
-LzA0LzIwMTMgMTI6NTcgUE0sIEpheSBBZ2Fyd2FsIHdyb3RlOg0KPiA+ID4gUmVnaXN0ZXJpbmcg
-cGNpZXggYXMgcGVyaXBoZXJhbCBjbG9jayBpbnN0ZWFkIG9mIGZpeGVkIGNsb2NrIGFzDQo+ID4g
-PiB0ZWdyYV9wZXJpaF9yZXNldF9hc3NlcnQoZGVhc3NlcnQpIGFwaSBvZiB0aGlzIGNsb2NrIGFw
-aSBnaXZlcw0KPiA+ID4gd2FybmluZyBhbmQgdWx0aW1hdGVseSBkb2VzIG5vdCBzdWNjZWVkIHRv
-IGFzc2VydChkZWFzc2VydCkuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogSmF5IEFnYXJ3
-YWwgPGphZ2Fyd2FsQG52aWRpYS5jb20+DQo+ID4gPiAtLS0NCj4gPiA+IFBhdGNoIGlzIGJhc2Vk
-IG9uIHJlbW90ZXMvZ2l0b3Jpb3VzX3RoaWVycnlyZWRpbmdfbGludXgvdGVncmEvbmV4dCBhbmQN
-Cj4gc2hvdWxkIGJlIGFwcGxpZWQgb24gdG9wIG9mIHRoaXMuDQo+ID4NCj4gPiBGb3IgdGhpcyBj
-aGFuZ2UsIE1pa2UgbWF5IGFzIHdlbGwgYXBwbHkgaXQgZGlyZWN0bHkgdG8gdGhlIGNsb2NrIHRy
-ZWUuDQo+ID4gVGhpZXJyeSBjYW4gdGhlbiBwaWNrIGl0IHVwIHdoZW4gaGUgcmViYXNlcyBoaXMg
-dGVncmEvbmV4dCB0cmVlLg0KPiA+DQo+ID4gVGhhdCBzYWlkLCBJIGRvbid0IHRoaW5rIHlvdSBz
-aG91bGQgbmVlZCBhbnkgb2YgdGhlDQo+ID4gVEVHUkFfQ0xLX0RVUExJQ0FURSgpIGVudHJpZXM7
-IHRoZSBQQ0llIGRyaXZlciBzaG91bGQgZ2V0IGl0cyBjbG9ja3MNCj4gPiBmcm9tIGRldmljZSB0
-cmVlIG5vdywgYW5kIGhlbmNlIHRoZSBkcml2ZXIgbmFtZSBpbiB0aGUgY2xvY2sNCj4gPiByZWdp
-c3RyYXRpb24gc2hvdWxkbid0IGJlIG5lY2Vzc2FyeS4gQWxsIG9mIHRoZXNlDQo+ID4gVEVHUkFf
-Q0xLX0RVUExJQ0FURSgpIGVudHJpZXMgc2hvdWxkIGJlIHJlbW92ZWQgZW4gbWFzcyBzb21ldGlt
-ZQ0KPiBzb29uDQo+ID4gd2l0aCBsdWNrLiBTbywgY2FuIHlvdSBzaW1wbHkgbGVhdmUgdGhlIHR3
-byBURUdSQV9DTEtfRFVQTElDQVRFKCkNCj4gPiBlbnRyaWVzIHVudG91Y2hlZCwgcmF0aGVyIHRo
-YW4gY2hhbmdpbmcgdGhlbT8NCj4gDQo+IFBpbmcgb24gdGhpcyBwYXRjaC4gIEkgY2FuIHRha2Ug
-aXQgdGhyb3VnaCBteSB0cmVlLCBidXQgaXMgdGhlcmUgZ29pbmcgdG8gYmUNCj4gcmV3b3JrIGJh
-c2VkIG9uIFN0ZXBoZW4ncyBjb21tZW50cz8NCg0KSGkgTWlrZSwNCkkgaGF2ZSB1cGxvYWRlZCBu
-ZXh0IHZlcnNpb24gVjQgb2YgdGhpcyBwYXRjaCBhZnRlciB0YWtpbmcgY2FyZSBvZiB0aGlzIGNv
-bW1lbnQuDQo=
+On 11.06.2013 15:09, Daniel Vetter wrote:
+> Maybe it wasn't clear, but -EAGAIN does _not_ resubmit work. -EAGAIN
+> is used to restart the ioctl if we had to kick a thread (to make sure
+> it doesn't hold any locks), e.g. for a blocking wait on oustanding
+> rendering. The codepaths taken work exactly as if the thread is
+> interrupt with a signal.
+
+You did make it clear that there's no resubmission, but other parts
+confused me.
+
+So this is used so that a legacy driver which does not do fine-grained
+locking can interrupt all waits for completion for a wedged submit. This
+way a driver-wide lock get unlocked, cleanup code acquires locks, does
+the magic to unwedge GPU, and unlocks. Then user space can re-submit the
+waits as it got -EAGAIN.
+
+Fortunately the error code doesn't really matter as long as it's not
+EAGAIN, so we can just use ETIMEDOUT as Thierry suggested in his follow-up.
+
+Terje
