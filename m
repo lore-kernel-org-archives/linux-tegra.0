@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH tegra-uboot-flasher] README: describe the CROSS_COMPILER variable
-Date: Wed, 12 Jun 2013 16:11:50 -0600
-Message-ID: <1371075110-13843-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [[PATCH flasher] 2/6] Separate out validation of config name
+Date: Wed, 12 Jun 2013 17:30:03 -0600
+Message-ID: <1371079807-16541-2-git-send-email-swarren@wwwdotorg.org>
+References: <1371079807-16541-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1371079807-16541-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,34 +12,50 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The build script uses a cross-compiler. The variable CROSS_COMPILE can
-be set to select one, or a default value will be assumed.
+This function will be used by multiple sub-commands in the future.
 
-Reported-by: Victor Weinstein <vweinstein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README-developer.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ tegra-uboot-flasher | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/README-developer.txt b/README-developer.txt
-index 2525b40..89fcd2c 100644
---- a/README-developer.txt
-+++ b/README-developer.txt
-@@ -72,6 +72,15 @@ Creating Flash Images
- This step creates the target binaries and supporting data files necessary to
- run the tegra-uboot-flasher script. You will always need to perform this step.
+diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+index 447ff37..ef73e2f 100755
+--- a/tegra-uboot-flasher
++++ b/tegra-uboot-flasher
+@@ -75,6 +75,17 @@ gen_flashcmds = {
+     'spi': gen_flashcmd_spi,
+ }
  
-+You will need an ARM cross-compiler in order to compile U-Boot. This may be
-+obtained from a distribution package, or be a custom-built toolchain. The
-+environment variable CROSS_COMPILE should be set to select the compiler to
-+use. CROSS_COMPILE should contain the common prefix of all the binaries in
-+the cross-compiler, for example if gcc is arm-linux-gnueabi-gcc, then
-+CROSS_COMPILE should be set to arm-linux-gnueabi-, or
-+/path/to/arm-linux-gnueabi-. If this variable is not set, then the build
-+script assumes a value of arm-linux-gnueabi-.
++def find_config_dir():
++    if not configs.has_key(args.configname):
++        print 'Unknown config "%s"' % args.configname
++        sys.exit(1)
 +
- cd to the scripts sub-directory (i.e. the directory containing this README),
- and execute:
++    global boardname, socname, out_board_dir
++
++    boardname = configs[args.configname]['board']
++    socname = boards[boardname]['soc']
++    out_board_dir = os.path.join(args.data_dir, boardname)
++
+ parser = argparse.ArgumentParser(description='Write an image to a Tegra board\'s flash')
+ parser.add_argument('--debug', action='store_true',
+                    help='Turn on debugging prints')
+@@ -122,14 +133,7 @@ if args.list_confignames:
+         print configname
+     sys.exit(0)
  
+-if not configs.has_key(args.configname):
+-    print 'Unknown config "%s"' % args.configname
+-    sys.exit(1)
+-
+-boardname = configs[args.configname]['board']
+-socname = boards[boardname]['soc']
+-
+-out_board_dir = os.path.join(args.data_dir, boardname)
++find_config_dir()
+ 
+ u_boot_no_dtb = os.path.join(out_board_dir, 'u-boot-nodtb-tegra.bin')
+ u_boot_no_dtb_size = os.path.getsize(u_boot_no_dtb)
 -- 
 1.8.1.5
