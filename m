@@ -1,35 +1,43 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] Bump version to 1.1
-Date: Wed, 12 Jun 2013 14:44:11 -0700
-Message-ID: <20130612214411.GA32181@badger>
-References: <1370974299-12770-1-git-send-email-amartin@nvidia.com>
- <51B76B07.40705@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH tegra-uboot-flasher] README: describe the CROSS_COMPILER variable
+Date: Wed, 12 Jun 2013 16:11:50 -0600
+Message-ID: <1371075110-13843-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B76B07.40705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 11, 2013 at 11:23:03AM -0700, Stephen Warren wrote:
-> On 06/11/2013 12:11 PM, Allen Martin wrote:
-> > Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> (although I wonder if we shouldn't just version these things 1, 2, 3...
-> but I'm fine with this)
-> 
-> I assume you'll apply this and push out the tag since you already have
-> the patch in your tree.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tagged and pushed to:
+The build script uses a cross-compiler. The variable CROSS_COMPILE can
+be set to select one, or a default value will be assumed.
 
-http://nv-tegra.nvidia.com/gitweb/?p=tools/cbootimage.git;a=summary
+Reported-by: Victor Weinstein <vweinstein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ README-developer.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
--Allen
+diff --git a/README-developer.txt b/README-developer.txt
+index 2525b40..89fcd2c 100644
+--- a/README-developer.txt
++++ b/README-developer.txt
+@@ -72,6 +72,15 @@ Creating Flash Images
+ This step creates the target binaries and supporting data files necessary to
+ run the tegra-uboot-flasher script. You will always need to perform this step.
+ 
++You will need an ARM cross-compiler in order to compile U-Boot. This may be
++obtained from a distribution package, or be a custom-built toolchain. The
++environment variable CROSS_COMPILE should be set to select the compiler to
++use. CROSS_COMPILE should contain the common prefix of all the binaries in
++the cross-compiler, for example if gcc is arm-linux-gnueabi-gcc, then
++CROSS_COMPILE should be set to arm-linux-gnueabi-, or
++/path/to/arm-linux-gnueabi-. If this variable is not set, then the build
++script assumes a value of arm-linux-gnueabi-.
++
+ cd to the scripts sub-directory (i.e. the directory containing this README),
+ and execute:
+ 
 -- 
-nvpublic
+1.8.1.5
