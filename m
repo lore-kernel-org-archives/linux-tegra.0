@@ -1,28 +1,77 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 1/4] ARM: tegra30: clocks: Fix pciex clock registration
-Date: Wed, 12 Jun 2013 09:36:11 -0600
-Message-ID: <51B8956B.8020704@wwwdotorg.org>
-References: <1371021223-6709-1-git-send-email-jagarwal@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 07/12] PCI: tegra: Move PCIe driver to drivers/pci/host
+Date: Wed, 12 Jun 2013 10:09:10 -0600
+Message-ID: <51B89D26.9070605@wwwdotorg.org>
+References: <1365000318-28256-1-git-send-email-thierry.reding@avionic-design.de> <1365000318-28256-8-git-send-email-thierry.reding@avionic-design.de> <516C46BC.2040707@wwwdotorg.org> <20130612122959.GA32444@manwe>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371021223-6709-1-git-send-email-jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20130612122959.GA32444@manwe>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Bjorn Helgaas <bhelgaas@google.com>, Russell King <linux@arm.linux.org.uk>, Andrew Murray <andrew.murray@arm.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/12/2013 01:13 AM, Jay Agarwal wrote:
-> Registering pciex as peripheral clock instead of fixed clock
-> as tegra_perih_reset_assert(deassert) api of this clock api
-> gives warning and ultimately does not succeed to assert(deassert)
+On 06/12/2013 06:30 AM, Thierry Reding wrote:
+> On Mon, Apr 15, 2013 at 12:28:12PM -0600, Stephen Warren wrote:
+>> On 04/03/2013 08:45 AM, Thierry Reding wrote:
+>>> Move the PCIe driver from arch/arm/mach-tegra into the
+>>> drivers/pci/host directory. The motivation is to collect
+>>> various host controller drivers in the same location in order
+>>> to facilitate refactoring.
+>>> 
+>>> The Tegra PCIe driver has been largely rewritten, both in order
+>>> to turn it into a proper platform driver and to add MSI (based
+>>> on code by Krishna Kishore <kthota@nvidia.com>) as well as
+>>> device tree support.
+...
+>>> +static irqreturn_t tegra_pcie_msi_irq(int irq, void *data)
+>> ...
+>>> +	return IRQ_HANDLED;
+>> 
+>> Shouldn't this function return IRQ_NONE if no MSI status bits
+>> were found set?
 > 
-> Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
+> The IRQ isn't marked IRQF_SHARED, so I don't think this is needed.
 
-In this case, it would make more sense to apply this to the clock tree,
-since it's a standalone bug-fix.
+Isn't it still useful to detect unexpected/stuck interrupts?
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> +static int tegra_pcie_enable(struct tegra_pcie *pcie)
+...
+>> 
+>> Why is that needed; when would a port get enabled if it was
+>> already enabled, and if it was already enabled, wouldn't you want
+>> this function to be a no-op rather than destroying everything and
+>> starting again?
+> 
+> I'm not sure I understand what you're saying. The intent of this 
+> function is to enable a port, check that there's a link and disable
+> the port otherwise. That way we don't keep ports around where
+> nothing is connected.
+
+Hmm. I have no idea either now:-( The body of tegra_pcie_enable()
+looks fine.
+
+>>> +static int tegra_pcie_probe(struct platform_device *pdev)
+>> ...
+>>> +	pcibios_min_mem = 0;
+>> 
+>> What does that mean/do? I wonder if that should be set to
+>> 0x80000000 by the Tegra30 patches?
+> 
+> ARM defines PCIBIOS_MIN_MEM to that variable. That macro in turn is
+> only used by pci_bus_alloc_resource() AFAICT, which uses it to
+> override the start of a resource when allocating if res->start ==
+> 0. As such it designates a lower-bound of valid PCI memory
+> addresses, so 0 on Tegra20 and 0x80000000 on Tegra30 don't seem
+> like good values. Maybe we need to set them to the lowest of the
+> prefetchable and non-prefetchable memory areas as defined in the
+> DT?
+> 
+> It doesn't currently seem to matter at all, though, since we never
+> pass in a range that's 0, so the start address of resources can
+> never be 0 and therefore PCIBIOS_MIN_MEM is never used.
+
+Hmmm. I guess ignore it then. If the value won't ever be used, 0 is as
+good a value as any?
