@@ -1,44 +1,42 @@
 From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: fix sclk_parents
-Date: Tue, 11 Jun 2013 17:52:15 -0700
-Message-ID: <20130612005215.8816.58802@quantum>
-References: <1370442573-17512-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v2 0/4] Override bits for PLLM
+Date: Tue, 11 Jun 2013 18:01:24 -0700
+Message-ID: <20130612010124.8816.81006@quantum>
+References: <1370515677-6807-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1370442573-17512-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1370515677-6807-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-06-05 07:29:28)
-> Use the correct parents for sclk according to the TRM.
+Quoting Peter De Schrijver (2013-06-06 03:47:27)
+> PLLM has override bits on Tegra30 and Tegra114. This patchset implements
+> support for them for both Tegra30 and Tegra114.
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Changes since v1:
+>  * Remove some stray lines from 'clk: tegra: override bits for Tegra114 PLLM'
 
-Taken into clk-next.
+Pulled into clk-next.
 
 Regards,
 Mike
 
-> ---
->  drivers/clk/tegra/clk-tegra114.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> index 2774379e..758ba7d 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -1735,7 +1735,7 @@ static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
->  }
->  
->  static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_p_out4",
-> -                              "pll_p_out3", "pll_p_out2", "unused",
-> +                              "pll_p", "pll_p_out2", "unused",
->                                "clk_32k", "pll_m_out1" };
->  
->  static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
+> Peter De Schrijver (4):
+>   clk: tegra: Add fields for override bits
+>   clk: tegra: override bits for Tegra114 PLLM
+>   clk: tegra: override bits for Tegra30 PLLM
+>   clk: tegra: Use override bits when needed
+> 
+>  drivers/clk/tegra/clk-pll.c      |   82 ++++++++++++++++++++++---------------
+>  drivers/clk/tegra/clk-tegra114.c |    9 ++++
+>  drivers/clk/tegra/clk-tegra30.c  |   18 ++++++++
+>  drivers/clk/tegra/clk.h          |    8 ++++
+>  4 files changed, 84 insertions(+), 33 deletions(-)
+> 
 > -- 
 > 1.7.7.rc0.72.g4b5ea.dirty
