@@ -1,31 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Wed, 12 Jun 2013 11:41:28 -0600
-Message-ID: <51B8B2C8.1090006@wwwdotorg.org>
-References: <1370342880-422-1-git-send-email-josephl@nvidia.com> <1370342880-422-4-git-send-email-josephl@nvidia.com> <51AE5EE3.3010607@linaro.org>
+Subject: Re: [PATCH 4/4] arm: tegra: Add power-supplies link between battery
+ and charger
+Date: Wed, 12 Jun 2013 11:44:41 -0600
+Message-ID: <51B8B389.8010105@wwwdotorg.org>
+References: <1370899602-22123-1-git-send-email-rklein@nvidia.com> <1370899602-22123-5-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51AE5EE3.3010607-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <1370899602-22123-5-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Anton Vorontsov <cbou-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
-> On 06/04/2013 12:48 PM, Joseph Lo wrote:
->> This supports CPU core power down on each CPU when CPU idle. When CPU go
->> into this state, it saves it's context and needs a proper configuration
->> in flow controller to power gate the CPU when CPU runs into WFI
->> instruction. And the CPU also needs to set the IRQ as CPU power down idle
->> wake up event in flow controller.
->>
->> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> I would like to understand why there is a WARN with the
-> CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure it
-> is not the tree hiding the forest.
+On 06/10/2013 03:26 PM, Rhyland Klein wrote:
+> The power supply core now supports detecting linkages between batteries
+> and chargers through the use of the power-supplies property. Adding
+> this to the battery, the core will use the phandle list to find
+> the associated charger and pair them up. This facilitates notifications
+> from the charger to the battery when ac power is dissconnected
+> or connected for instance.
 
-Joseph, are you planning to post an updated series or respond to resolve
-Daniel's question?
+Rhyland, if I apply this patch without patches 1-3 being in the same
+branch, will it cause any bugs? If so, I guess 1-3 should go through the
+drivers/power maintainer for 3.11, and I should defer this patch to 3.12?
