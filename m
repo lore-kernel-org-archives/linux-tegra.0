@@ -1,93 +1,63 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [[PATCH flasher] 2/6] Separate out validation of config name
-Date: Thu, 13 Jun 2013 20:36:23 +0200
-Message-ID: <20130613183622.GD32574@mithrandir>
-References: <1371079807-16541-1-git-send-email-swarren@wwwdotorg.org>
- <1371079807-16541-2-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 3/4] gpu: host1x: add runtime pm support for dc
+Date: Thu, 13 Jun 2013 20:49:39 +0200
+Message-ID: <20130613184938.GE32574@mithrandir>
+References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
+ <1371117218-2326-4-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HWvPVVuAAfuRc6SZ"
+	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1371079807-16541-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1371117218-2326-4-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HWvPVVuAAfuRc6SZ
+--WBsA/oQW3eTA3LlM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 12, 2013 at 05:30:03PM -0600, Stephen Warren wrote:
+On Thu, Jun 13, 2013 at 03:23:37PM +0530, Mayuresh Kulkarni wrote:
 [...]
-> diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-> index 447ff37..ef73e2f 100755
-> --- a/tegra-uboot-flasher
-> +++ b/tegra-uboot-flasher
-> @@ -75,6 +75,17 @@ gen_flashcmds =3D {
->      'spi': gen_flashcmd_spi,
->  }
+> diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
+[...]
+> @@ -1128,9 +1129,7 @@ static int tegra_dc_probe(struct platform_device *p=
+dev)
+>  		return PTR_ERR(dc->clk);
+>  	}
 > =20
-> +def find_config_dir():
-> +    if not configs.has_key(args.configname):
-> +        print 'Unknown config "%s"' % args.configname
-> +        sys.exit(1)
-> +
-> +    global boardname, socname, out_board_dir
+> -	err =3D clk_prepare_enable(dc->clk);
+> -	if (err < 0)
+> -		return err;
+> +	platform_set_drvdata(pdev, dc);
 
-Python supports returning touples, so maybe globals can be avoided here?
-
-> +
-> +    boardname =3D configs[args.configname]['board']
-> +    socname =3D boards[boardname]['soc']
-> +    out_board_dir =3D os.path.join(args.data_dir, boardname)
-> +
->  parser =3D argparse.ArgumentParser(description=3D'Write an image to a Te=
-gra board\'s flash')
->  parser.add_argument('--debug', action=3D'store_true',
->                     help=3D'Turn on debugging prints')
-> @@ -122,14 +133,7 @@ if args.list_confignames:
->          print configname
->      sys.exit(0)
-> =20
-> -if not configs.has_key(args.configname):
-> -    print 'Unknown config "%s"' % args.configname
-> -    sys.exit(1)
-> -
-> -boardname =3D configs[args.configname]['board']
-> -socname =3D boards[boardname]['soc']
-> -
-> -out_board_dir =3D os.path.join(args.data_dir, boardname)
-> +find_config_dir()
-
-So this'll turn into something like:
-
-	boardname, socname, out_board_dir =3D find_config_dir()
+Why do you move the call to platform_set_drvdata() up here?
 
 Thierry
 
---HWvPVVuAAfuRc6SZ
+--WBsA/oQW3eTA3LlM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRuhElAAoJEN0jrNd/PrOhWxYP/A+I0S0g9Sq46161VyS6Rec7
-vC4i8d+HIR49NxZ7WQ+HJDai4/ut8wulz8uxMhzAEBbQdR5AWkkZS1OWGZzo6w+g
-XkeVdT3X/0s3tx5UIwlC2pEynrK+uYuAzdV05MnxSSWbyOw2vwIdfnnYwkA2ZI9O
-h6/Bh7g6xH6Icvup5FJG2+J43UG9cGjjEgDpMlJDq9IO/d30dKahjHwYoHaB7eP3
-8sg8vmrx3XuNsnmAwZKXCPWTxK1Yd19IPETGGOB8sDroo8seExP0C2QurqfUjlYx
-hpgDdXf5bfzuGNEns9apVRMK+W7PavQsdIokfg6BS/R2LDqBZHKeNbM3H2/cUE14
-0SrVw90GxdVSRL0lb9WYckMANgKIW65MlMbBDYON8wit/AmeLvu6wcaGQNHC1Q8h
-IIiVKKmR/0eL832rAhAKhpOMP28DuLYQb4j79DphxTtp4pw6Yn21RRkinnhLzmxS
-BoLh4KhRhFz+Q7dctshNge0+jvC6z2AFg8NollpkI8mhur2dLXsLC1UHUuF1w3k8
-Pa1TsUXNlpLqvncUPH/SMVvPgS0pbzU+nN1Di0P01MCbRlcPyP1aq81+6Q8BYUei
-polZ99nAkIi4e+kp0+HoKv4hoaz9Vm3mMa10dKqh+GSvhKVkqjAXLoqIK68sXqn9
-gBlgMWSLAU/ynhMC24Kk
-=o9Vx
+iQIcBAEBAgAGBQJRuhRCAAoJEN0jrNd/PrOhyjQQALJXA7pC8gN5raC6QgJ22FfM
+zy8Sursr8bwcCFePa0vuZG6dGorfBqzWteEEm1dC6Je9Y4DdlmlH/GaY2Z2gVtpW
+q5qnZkuokU/QMPdz1pWURjvC+30y/oLcwgh37cauixZkcfcP+K025o4zrd70jIby
+s5BuJdaZrEe2AoBTXCxhuAlfvcKNj6PKCurknKtR7+5gNUwvyjRB+tWnpVyMnBYA
+glYQBhZOnwcUyO1PwWCCdre3Y/oVpm0cXR5Fj1MTXQXXh9owavIDVcUHLKGwevkz
+WAPzkOoEW8yYCytROqHPGoCyEApglpu4iAF4LkcvhrT4WurC1Fc/dJbdYGf9jlFf
+FS4RBszLOjQVhwV5YGydGuX5QmrDDVCGZRFNxi/Ek7IhACb86ol88SkhbmHSGmKJ
+oNws9R0XUNb07EfaxjPTRSIUKunIvqcRr0e3gnFzs443c76y4L+5ry74LViQXnz9
+57i9fJ8dWt+OpZ4l+WcLt5g2rzYiWLUsND0zEqKwo/OQlfPOpaKlbNfujruaRHtO
+dQ+Z2jxVY383MHHki2hbFSYNYmrET5qE7FR4UCvlhijfSPYqznxJDRXNtj0O0EqH
++xW1CELOxlR31soYXfMnyGyNsiajfBB2eolkmR2OFo8dh2mjAk2jEkR36sBmX1Qo
+VfloWSPNB5riGqrq54ok
+=Bicr
 -----END PGP SIGNATURE-----
 
---HWvPVVuAAfuRc6SZ--
+--WBsA/oQW3eTA3LlM--
