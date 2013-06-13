@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3 REPOST 0/7] USB: tegra: support building as a module
-Date: Thu, 13 Jun 2013 11:24:06 -0600
-Message-ID: <1371144253-21295-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 REPOST 2/7] usb: phy: add MODULE_LICENSE to phy-tegra-usb.c
+Date: Thu, 13 Jun 2013 11:24:08 -0600
+Message-ID: <1371144253-21295-3-git-send-email-swarren@wwwdotorg.org>
+References: <1371144253-21295-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1371144253-21295-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,43 +12,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I'm reposting this because I originally thought Felipe would apply it
-to his PHY tree, since it's based on other work there. Now that tree has
-been merged into Greg's main USB tree, I believe this series can be
-applied there instead. Hence, resending so it shows up in Greg's inbox.
+When this file is built as a module, it needs a MODULE_LICENSE in order
+to access many exported symbols.
 
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+---
+v3: No change.
+v2: No change.
+---
+ drivers/usb/phy/phy-tegra-usb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-ehci-tegra is currently built into the main ehci-hcd driver, rather than
-being a separate module. This causes issues with multi-platform ARM
-kernels. This series separates ehci-tegra into its own module to avoid
-those problems.
-
-Manjunath Goudar originally wrote most of this series. I've since cleaned
-it up, rebased it on Venu's recent changes to the Tegra USB driver, and
-tested it.
-
-Manjunath Goudar (3):
-  usb: phy: export ulpi_viewport_access_ops
-  USB: EHCI: export ehci_handshake for ehci-hcd sub-drivers
-  USB: EHCI: make ehci-tegra a separate driver
-
-Stephen Warren (4):
-  usb: phy: add MODULE_LICENSE to phy-tegra-usb.c
-  USB: EHCI: tegra: remove all power management
-  USB: EHCI: tegra: fix circular module dependencies
-  USB: EHCI: tegra: make use of ehci->priv
-
- drivers/usb/host/Kconfig            |   2 +-
- drivers/usb/host/Makefile           |   1 +
- drivers/usb/host/ehci-hcd.c         |  22 +-
- drivers/usb/host/ehci-hub.c         |   4 +-
- drivers/usb/host/ehci-tegra.c       | 474 ++++++++----------------------------
- drivers/usb/host/ehci.h             |   2 +
- drivers/usb/phy/phy-tegra-usb.c     |  43 +++-
- drivers/usb/phy/phy-ulpi-viewport.c |   2 +
- include/linux/usb/tegra_usb_phy.h   |   4 -
- 9 files changed, 165 insertions(+), 389 deletions(-)
-
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 5d9af11..f0727f2 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -23,6 +23,7 @@
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/export.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+@@ -869,3 +870,6 @@ struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
+ 	return &tegra_phy->u_phy;
+ }
+ EXPORT_SYMBOL_GPL(tegra_usb_get_phy);
++
++MODULE_DESCRIPTION("Tegra USB PHY driver");
++MODULE_LICENSE("GPL v2");
 -- 
 1.8.1.5
 
