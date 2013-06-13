@@ -1,101 +1,347 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Thu, 13 Jun 2013 22:32:40 +0800
-Message-ID: <1371133960.1631.13.camel@jlo-ubuntu-64.nvidia.com>
-References: <1370342880-422-1-git-send-email-josephl@nvidia.com>
-	 <1370342880-422-4-git-send-email-josephl@nvidia.com>
-	 <51AE5EE3.3010607@linaro.org>  <51B8B2C8.1090006@wwwdotorg.org>
-	 <1371089619.1681.21.camel@jlo-ubuntu-64.nvidia.com>
-	 <51B99151.5010107@linaro.org>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] ARM: tegra: basic support for Trusted Foundations
+Date: Thu, 13 Jun 2013 15:35:42 +0100
+Message-ID: <20130613143536.GA18021@localhost.localdomain>
+References: <1371114745-24710-1-git-send-email-acourbot@nvidia.com>
+ <1371114745-24710-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B99151.5010107-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1371114745-24710-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-06-13 at 17:30 +0800, Daniel Lezcano wrote:
-> On 06/13/2013 04:13 AM, Joseph Lo wrote:
-> > On Thu, 2013-06-13 at 01:41 +0800, Stephen Warren wrote:
-> >> On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
-> >>> On 06/04/2013 12:48 PM, Joseph Lo wrote:
-> >>>> This supports CPU core power down on each CPU when CPU idle. When CPU go
-> >>>> into this state, it saves it's context and needs a proper configuration
-> >>>> in flow controller to power gate the CPU when CPU runs into WFI
-> >>>> instruction. And the CPU also needs to set the IRQ as CPU power down idle
-> >>>> wake up event in flow controller.
-> >>>>
-> >>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>
-> >>> I would like to understand why there is a WARN with the
-> >>> CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure it
-> >>> is not the tree hiding the forest.
-> >>
-> >> Joseph, are you planning to post an updated series or respond to resolve
-> >> Daniel's question?
-> > 
-> > I need more time to investigate the detail about what caused the WARN
-> > when apply the flag. And what's the difference if we didn't enable
-> > CONFIG_CPU_IDLE_MULTIPLE_DRIVERS, then it only applies
-> > CLOCK_EVT_NOTIFY_BROADCAST_ON on CPU0.
+On Thu, Jun 13, 2013 at 06:12:23PM +0900, Alexandre Courbot wrote:
+> Add basic support for booting secondary processors on Tegra devices
+> using the Trusted Foundations secure monitor.
 > 
-> I think I got it for this one. It is a bug in the cpuidle driver's code.
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.txt    | 11 +++++
+>  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+>  arch/arm/configs/tegra_defconfig                   |  1 +
+>  arch/arm/mach-tegra/Kconfig                        | 14 ++++++
+>  arch/arm/mach-tegra/Makefile                       |  3 ++
+>  arch/arm/mach-tegra/common.c                       |  2 +
+>  arch/arm/mach-tegra/firmware.c                     | 40 +++++++++++++++++
+>  arch/arm/mach-tegra/firmware.h                     | 19 ++++++++
+>  arch/arm/mach-tegra/trusted_foundations.c          | 51 ++++++++++++++++++++++
+>  9 files changed, 142 insertions(+)
+>  create mode 100644 arch/arm/mach-tegra/firmware.c
+>  create mode 100644 arch/arm/mach-tegra/firmware.h
+>  create mode 100644 arch/arm/mach-tegra/trusted_foundations.c
 > 
-> cpuidle_register_driver does get_cpu => CPU0
-> 
-> Then __cpuidle_register_driver(drv, <CPU0>)
-> 
->  => __cpuidle_driver_init(drv, <CPU0>)
-> 
-> Hence, the timer broadcast is initialized only for cpu0.
-> 
-> That should have been fixed with:
-> 
-OK, thanks.
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> index ed9c853..d59bc19 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> @@ -32,3 +32,14 @@ board-specific compatible values:
+>    nvidia,whistler
+>    toradex,colibri_t20-512
+>    toradex,iris
+> +
+> +Optional nodes
+> +-------------------------------------------
+> +
+> +Trusted Foundations:
+> +Boards using the Trusted Foundations secure monitor should signal its
+> +presence by declaring a node compatible with "tl,trusted-foundations":
+> +
+> +	firmware {
 
-> commit 82467a5a885ddd9f80309682159da8db510e7832
-> Author: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Date:   Fri Jun 7 21:53:09 2013 +0000
+You need to make a clear statement about whether the node name is
+
+I think it shouldn't required to be exactly equal to "firmware", because
+that would lead to problems if there were multiple independent firmware
+APIs present (which is certainly possible, whether or not it is true
+on Tegra).
+
+> +		compatible = "tl,trusted-foundations";
+> +	};
+
+For now, it might make more sense to make this binding tegra-specific,
+and to interpret the node is only implying the presence of the low-
+level SoC functions you are using on Tegra, not TF as a whole. 
+
+Otherwise, it feels too generic.  There is no description of exactly
+what functionality will be available if this node it present: if
+this is going to be a generic binding for TF, then it needs to work
+for all deployments of TF, not just your specific case.  For example,
+how to you find out what functionality is present?  Will there be
+a standard probing ABI for all versions and deployments of TF, or
+would extra information need to be described in the DT?
+
+Partly, this depends on whether the TF_SET_CPU_BOOT_ADDR_SMC call will
+be present, working, and with compatible ABI and semantics, on every SoC
+where an implementation of TF is present.  Someone from Trusted Logic, or
+someone with visibility of the relevant ABI/API specs would need to
+judge on that -- do you have that info?
+
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 6931c43..c21e1e9 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -58,6 +58,7 @@ st	STMicroelectronics
+>  ste	ST-Ericsson
+>  stericsson	ST-Ericsson
+>  ti	Texas Instruments
+> +tl	Trusted Logic
+>  toshiba	Toshiba Corporation
+>  via	VIA Technologies, Inc.
+>  wlf	Wolfson Microelectronics
+> diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+> index 4de3bce..3bf158a 100644
+> --- a/arch/arm/configs/tegra_defconfig
+> +++ b/arch/arm/configs/tegra_defconfig
+> @@ -28,6 +28,7 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
+>  CONFIG_ARCH_TEGRA_114_SOC=y
+>  CONFIG_TEGRA_PCI=y
+>  CONFIG_TEGRA_EMC_SCALING_ENABLE=y
+> +CONFIG_TEGRA_TRUSTED_FOUNDATIONS=y
+>  CONFIG_SMP=y
+>  CONFIG_PREEMPT=y
+>  CONFIG_AEABI=y
+> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+> index 84d72fc..055f496 100644
+> --- a/arch/arm/mach-tegra/Kconfig
+> +++ b/arch/arm/mach-tegra/Kconfig
+> @@ -87,4 +87,18 @@ config TEGRA_AHB
+>  config TEGRA_EMC_SCALING_ENABLE
+>  	bool "Enable scaling the memory frequency"
+>  
+> +config TEGRA_TRUSTED_FOUNDATIONS
+> +	bool "Trusted Foundations secure monitor support"
+> +	help
+> +	  Many Tegra devices are booted with the Trusted Foundations secure
+> +	  monitor active, requiring some core operations to be performed by
+> +	  the secure monitor instead of the kernel.
+> +
+> +	  This option allows the kernel to invoke the secure monitor when
+> +	  required on devices using Trusted Foundations.
+> +
+> +	  Devices using Trusted Foundations should pass a device tree containing
+> +	  a node compatible with "tl,trusted-foundations" to signal the presence
+> +	  of the secure monitor.
+> +
+>  endmenu
+> diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+> index d011f0a..9fdc004 100644
+> --- a/arch/arm/mach-tegra/Makefile
+> +++ b/arch/arm/mach-tegra/Makefile
+> @@ -12,6 +12,7 @@ obj-y					+= pm.o
+>  obj-y					+= reset.o
+>  obj-y					+= reset-handler.o
+>  obj-y					+= sleep.o
+> +obj-y					+= firmware.o
+>  obj-y					+= tegra.o
+>  obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra20_speedo.o
+> @@ -37,3 +38,5 @@ endif
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
+>  
+>  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
+> +
+> +obj-$(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)	+= trusted_foundations.o
+> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+> index 9f852c6..4796bb0 100644
+> --- a/arch/arm/mach-tegra/common.c
+> +++ b/arch/arm/mach-tegra/common.c
+> @@ -37,6 +37,7 @@
+>  #include "sleep.h"
+>  #include "pm.h"
+>  #include "reset.h"
+> +#include "firmware.h"
+>  
+>  /*
+>   * Storage for debug-macro.S's state.
+> @@ -97,6 +98,7 @@ static void __init tegra_init_cache(void)
+>  
+>  void __init tegra_init_early(void)
+>  {
+> +	tegra_init_firmware();
+>  	tegra_cpu_reset_handler_init();
+>  	tegra_apb_io_init();
+>  	tegra_init_fuse();
+> diff --git a/arch/arm/mach-tegra/firmware.c b/arch/arm/mach-tegra/firmware.c
+> new file mode 100644
+> index 0000000..ea861ca
+> --- /dev/null
+> +++ b/arch/arm/mach-tegra/firmware.c
+> @@ -0,0 +1,40 @@
+> +/*
+> + * SecureOS support for Tegra CPUs
+
+Should the name "SecureOS" change in these comment headers? (affects
+multiple files)
+
+> + *
+> + * Copyright (c) 2013, NVIDIA Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/printk.h>
+> +#include <linux/kconfig.h>
+> +#include <linux/of.h>
+> +#include <asm/firmware.h>
+> +
+> +#if IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)
+> +extern const struct firmware_ops tegra_trusted_foundations_ops;
+> +#endif
+> +
+> +void __init tegra_init_firmware(void)
+> +{
+> +	struct device_node *node;
+> +
+> +	if (!of_have_populated_dt())
+> +		return;
+> +
+> +	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+> +	if (node && !IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS))
+> +		pr_warn("Trusted Foundations detected but support missing!\n");
+
+Should this be more than just a warning?
+
+It looks to me like tegra_cpu_reset_handler_set() might either silently
+fail or trigger an external abort in this situation, depending on the
+hardware and on how TF sets things up.
+
+There seems to be no way to signal an error when attempting to set a
+CPU's reset address.
+
+> +#if IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)
+> +	else if (node)
+> +		register_firmware_ops(&tegra_trusted_foundations_ops);
+> +#endif
+> +}
+
+
+IS_ENABLED() allows #ifdefs to be avoided -- maybe this would be clearer
+as:
+
+	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+	if (!node)
+		return;
+
+	if (WARN_ON(!IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS))) {
+		pr_warn("Trusted Foundations detected but support missing!\n");
+		return;
+	}
+
+	register_firmware_ops(&tegra_trusted_foundations_ops);
+	
+
+> diff --git a/arch/arm/mach-tegra/firmware.h b/arch/arm/mach-tegra/firmware.h
+> new file mode 100644
+> index 0000000..77c62fb
+> --- /dev/null
+> +++ b/arch/arm/mach-tegra/firmware.h
+> @@ -0,0 +1,19 @@
+> +/*
+> + * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#ifndef __TEGRA_FIRMWARE_H
+> +#define __TEGRA_FIRMWARE_H
+> +
+> +void tegra_init_firmware(void);
+> +
+> +#endif
+> diff --git a/arch/arm/mach-tegra/trusted_foundations.c b/arch/arm/mach-tegra/trusted_foundations.c
+> new file mode 100644
+> index 0000000..411044f
+> --- /dev/null
+> +++ b/arch/arm/mach-tegra/trusted_foundations.c
+> @@ -0,0 +1,51 @@
+> +/*
+> + * SecureOS support for Tegra CPUs
+> + *
+> + * Copyright (c) 2013, NVIDIA Corporation.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/of.h>
+> +#include <asm/firmware.h>
+> +
+> +#define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
+> +
+> +static void __attribute__((naked)) tegra_tf_generic_smc(u32 type, u32 subtype,
+> +							u32 arg)
+> +{
+> +	asm volatile(
+> +		".arch_extension	sec\n\t"
+> +		"stmfd	sp!, {r3 - r11, lr}\n\t"
+
+I think you don't need to save r3: the ARM PCS makes r3 caller-save, so
+it shouldn't matter if the SMC call causes it to get trashed.
+
+> +		__asmeq("%0", "r0")
+> +		__asmeq("%1", "r1")
+> +		__asmeq("%2", "r2")
+> +		"mov	r3, #0\n\t"
+> +		"mov	r4, #0\n\t"
+> +		"smc	#0\n\t"
+> +		"ldmfd	sp!, {r3 - r11, pc}"
+> +		:
+> +		: "r" (type), "r" (subtype), "r" (arg)
+> +		: "memory");
+> +}
+> +
+> +static int tegra_tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+> +{
+> +	tegra_tf_generic_smc(TF_SET_CPU_BOOT_ADDR_SMC, boot_addr, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct firmware_ops tegra_trusted_foundations_ops = {
+> +	.set_cpu_boot_addr = tegra_tf_set_cpu_boot_addr,
+> +};
+> -- 
+> 1.8.3
 > 
->     cpuidle: simplify multiple driver support
-> 
->     Commit bf4d1b5 (cpuidle: support multiple drivers) introduced support
->     for using multiple cpuidle drivers at the same time.  It added a
->     couple of new APIs to register the driver per CPU, but that led to
->     some unnecessary code complexity related to the kernel config options
->     deciding whether or not the multiple driver support is enabled.  The
->     code has to work as it did before when the multiple driver support is
->     not enabled and the multiple driver support has to be compatible with
->     the previously existing API.
-> 
->     Remove the new API, not used by any driver in the tree yet (but
->     needed for the HMP cpuidle drivers that will be submitted soon), and
->     add a new cpumask pointer to the cpuidle driver structure that will
->     point to the mask of CPUs handled by the given driver.  That will
->     allow the cpuidle_[un]register_driver() API to be used for the
->     multiple driver support along with the cpuidle_[un]register()
->     functions added recently.
-> 
->     [rjw: Changelog]
->     Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> 
-> 
-> > Why if I am moving the
-> > clockevent_notify of CLOCK_EVT_NOTIFY_BROADCAST_EXIT before
-> > "local_irq_enable" in the
-> > "cpuidle_enter_state" (drivers/cpuidle/cpuidle.c), then the warning
-> > message gone?
-> 
-> Is the warning coming immediately, at the first time
-> CLOCK_EVT_NOTIFY_BROADCAST_EXIT is invoked or can it occur at different
-> moment ?
-> 
-Not exactly at the 1st time, it may happen in the 3rd to 10th time. But
-it only happens once. I mean I did check the
-tick_broadcast_pending_mask, it only happens once the CPU didn't clear
-the tick_broadcast_pending_mask after CLOCK_EVT_NOTIFY_BROADCAST_EXIT.
-And cause the warning message. Then I didn't see it happen anymore.
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
