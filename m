@@ -1,125 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [[PATCH flasher] 6/6] Rework cmdline to use sub-commands
-Date: Wed, 12 Jun 2013 17:30:07 -0600
-Message-ID: <1371079807-16541-6-git-send-email-swarren@wwwdotorg.org>
-References: <1371079807-16541-1-git-send-email-swarren@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
+Date: Thu, 13 Jun 2013 10:13:39 +0800
+Message-ID: <1371089619.1681.21.camel@jlo-ubuntu-64.nvidia.com>
+References: <1370342880-422-1-git-send-email-josephl@nvidia.com>
+	 <1370342880-422-4-git-send-email-josephl@nvidia.com>
+	 <51AE5EE3.3010607@linaro.org>  <51B8B2C8.1090006@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371079807-16541-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51B8B2C8.1090006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, 2013-06-13 at 01:41 +0800, Stephen Warren wrote:
+> On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
+> > On 06/04/2013 12:48 PM, Joseph Lo wrote:
+> >> This supports CPU core power down on each CPU when CPU idle. When CPU go
+> >> into this state, it saves it's context and needs a proper configuration
+> >> in flow controller to power gate the CPU when CPU runs into WFI
+> >> instruction. And the CPU also needs to set the IRQ as CPU power down idle
+> >> wake up event in flow controller.
+> >>
+> >> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > I would like to understand why there is a WARN with the
+> > CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure it
+> > is not the tree hiding the forest.
+> 
+> Joseph, are you planning to post an updated series or respond to resolve
+> Daniel's question?
 
-Instead of using options like --list-confignames to select a specific
-sub-command/operation to perform, and assuming a default command of flash
-if none is specified, use explicit sub-commands.
+I need more time to investigate the detail about what caused the WARN
+when apply the flag. And what's the difference if we didn't enable
+CONFIG_CPU_IDLE_MULTIPLE_DRIVERS, then it only applies
+CLOCK_EVT_NOTIFY_BROADCAST_ON on CPU0. Why if I am moving the
+clockevent_notify of CLOCK_EVT_NOTIFY_BROADCAST_EXIT before
+"local_irq_enable" in the
+"cpuidle_enter_state" (drivers/cpuidle/cpuidle.c), then the warning
+message gone?
 
-Old: tegra-uboot-flasher --list-confignames
-New: tegra-uboot-flasher list-configs
+Daniel,
 
-Old: tegra-uboot-flasher CONFIG
-New: tegra-uboot-flasher flash CONFIG
+Because I need more time to figure it out, are you OK if I can post
+another patch to apply CPUIDLE_FLAG_TIMER_STOP flag for all Tegra CPU
+Idle drivers later? (Once we know what's the problem behind this)
 
-Later changes will introduce more sub-commands, e.g. "exec" to simply
-download and execute a bootloader.
+Stephen,
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- README-user.txt     |  4 ++--
- tegra-uboot-flasher | 50 +++++++++++++++++++++++++++++---------------------
- 2 files changed, 31 insertions(+), 23 deletions(-)
+I don't have an update of this series, if Daniel is OK if I can post
+another patch to apply TIMER_STOP flag for all Tegra idle drivers.
 
-diff --git a/README-user.txt b/README-user.txt
-index ce4eaf3..249a096 100644
---- a/README-user.txt
-+++ b/README-user.txt
-@@ -18,7 +18,7 @@ harmony, cardhu-a02-1gb.config, cardhu-a04-1gb.config.
- 
- You may find a list of valid values for configname by executing:
- 
--tegra-uboot-flasher --list-confignames
-+tegra-uboot-flasher list-configs
- 
- Simple Usage
- ============
-@@ -27,7 +27,7 @@ To flash a board, connect a USB cable from your host PC to the Tegra device,
- place that board into USB recovery mode, and execute the following as root
- on the host machine:
- 
--tegra-uboot-flasher configname
-+tegra-uboot-flasher flash CONFIG
- 
- This will download code and data to the Tegra device and execute a flashing
- routine. Once this is complete, the system will reboot into the freshly
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index 630b0fb..aae7f19 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -204,26 +204,37 @@ def func_flash():
-         else:
-             rmtree(workdir)
- 
--parser = argparse.ArgumentParser(description='Write an image to a Tegra board\'s flash')
-+parser = argparse.ArgumentParser(description='Execute a bootloader on a ' +
-+    'Tegra board, possibly modifying it prior to download so as to execute ' +
-+    'commands, such as writing an image to flash.')
-+
- parser.add_argument('--debug', action='store_true',
--                   help='Turn on debugging prints')
-+    help='Turn on debugging prints')
- parser.add_argument('--data-dir', type=str,
--                   help='The directory containing board data')
--parser.add_argument('--work-dir', type=str,
--                   help='The temporary directory used during operation')
--parser.add_argument('--save-work-dir', action='store_true',
--                   help='Don\'t delete the work-dir after execution')
--parser.add_argument('--flash-image', type=str,
--                   help='The flash image to write, instead of U-Boot itself')
--parser.add_argument('--gen-only', action='store_true',
--                   help='Just create the work-dir; don\'t actually flash the image')
-+    help='The directory containing board data')
- parser.add_argument('--force-no-out-dir', action='store_true',
--                   help='Don\'t check for ../_out* directories used in source tree')
--group = parser.add_mutually_exclusive_group(required=True)
--group.add_argument('--list-confignames', action='store_true',
--                   help='List known configuration names, and exit')
--group.add_argument('configname', type=str, nargs='?',
--                   help='The configuration name of the board')
-+    help='Don\'t check for ../_out* directories used in source tree')
-+
-+subparsers = parser.add_subparsers()
-+
-+parser_list_configs = subparsers.add_parser('list-configs',
-+    help='List known board configurations')
-+parser_list_configs.set_defaults(func = func_list_configs)
-+
-+parser_flash = subparsers.add_parser('flash',
-+    help='Write an image, usually U-Boot itself, to flash on the device')
-+parser_flash.set_defaults(func = func_flash)
-+parser_flash.add_argument('--work-dir', type=str,
-+    help='The temporary directory used during operation')
-+parser_flash.add_argument('--save-work-dir', action='store_true',
-+    help='Don\'t delete the work-dir after execution')
-+parser_flash.add_argument('--flash-image', type=str,
-+    help='The flash image to write, instead of U-Boot itself')
-+parser_flash.add_argument('--gen-only', action='store_true',
-+    help='Just create the work-dir; don\'t actually flash the image')
-+parser_flash.add_argument('configname', metavar='CONFIG', type=str,
-+    help='The configuration name of the board')
-+
- args = parser.parse_args()
- if args.debug: print args
- 
-@@ -246,7 +257,4 @@ if not args.data_dir:
- 
- load_configs(os.path.join(args.data_dir, 'configs'))
- 
--if args.list_confignames:
--    func_list_configs()
--else:
--    func_flash()
-+args.func()
--- 
-1.8.1.5
+Thanks,
+Joseph
