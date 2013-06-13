@@ -1,7 +1,7 @@
 From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
-Subject: [PATCH v2 4/4] gpu: host1x: add runtime pm support for host1x
-Date: Thu, 13 Jun 2013 15:23:38 +0530
-Message-ID: <1371117218-2326-5-git-send-email-mkulkarni@nvidia.com>
+Subject: [PATCH v2 2/4] gpu: host1x: add runtime pm support for gr2d
+Date: Thu, 13 Jun 2013 15:23:36 +0530
+Message-ID: <1371117218-2326-3-git-send-email-mkulkarni@nvidia.com>
 References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -14,60 +14,56 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
 ---
- drivers/gpu/host1x/dev.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/gpu/host1x/drm/gr2d.c | 56 ++++++++++++++++++++++++++++++++++++++++++-
+ drivers/gpu/host1x/job.c      |  9 +++++++
+ 2 files changed, 64 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 28e28a2..b43eb29 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -23,6 +23,7 @@
+diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+index 27ffcf1..eb506cd 100644
+--- a/drivers/gpu/host1x/drm/gr2d.c
++++ b/drivers/gpu/host1x/drm/gr2d.c
+@@ -22,6 +22,7 @@
+ #include <linux/of.h>
  #include <linux/of_device.h>
  #include <linux/clk.h>
- #include <linux/io.h>
 +#include <linux/pm_runtime.h>
  
- #define CREATE_TRACE_POINTS
- #include <trace/events/host1x.h>
-@@ -143,11 +144,16 @@ static int host1x_probe(struct platform_device *pdev)
- 		return err;
+ #include "channel.h"
+ #include "drm.h"
+@@ -275,11 +276,18 @@ static int gr2d_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gr2d->clk);
  	}
  
++	platform_set_drvdata(pdev, gr2d);
++
 +#ifdef CONFIG_PM_RUNTIME
 +	pm_runtime_enable(&pdev->dev);
 +	pm_runtime_get_sync(&pdev->dev);
 +#else
- 	err = clk_prepare_enable(host->clk);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to enable clock\n");
+ 	err = clk_prepare_enable(gr2d->clk);
+ 	if (err) {
+ 		dev_err(dev, "cannot turn on clock\n");
  		return err;
  	}
 +#endif
  
- 	err = host1x_syncpt_init(host);
- 	if (err) {
-@@ -165,10 +171,17 @@ static int host1x_probe(struct platform_device *pdev)
+ 	gr2d->channel = host1x_channel_request(dev);
+ 	if (!gr2d->channel)
+@@ -305,7 +313,9 @@ static int gr2d_probe(struct platform_device *pdev)
  
- 	host1x_drm_alloc(pdev);
+ 	gr2d_init_addr_reg_map(dev, gr2d);
  
+-	platform_set_drvdata(pdev, gr2d);
 +#ifdef CONFIG_PM_RUNTIME
 +	pm_runtime_put(&pdev->dev);
 +#endif
-+
+ 
  	return 0;
- 
- fail_deinit_syncpt:
- 	host1x_syncpt_deinit(host);
-+#ifdef CONFIG_PM_RUNTIME
-+	pm_runtime_put(&pdev->dev);
-+#endif
- 	return err;
  }
+@@ -328,10 +338,51 @@ static int __exit gr2d_remove(struct platform_device *pdev)
  
-@@ -179,10 +192,51 @@ static int __exit host1x_remove(struct platform_device *pdev)
- 	host1x_intr_deinit(host);
- 	host1x_syncpt_deinit(host);
- 	clk_disable_unprepare(host->clk);
+ 	host1x_channel_free(gr2d->channel);
+ 	clk_disable_unprepare(gr2d->clk);
 +#ifdef CONFIG_PM_RUNTIME
 +	pm_runtime_disable(&pdev->dev);
 +#endif
@@ -76,29 +72,29 @@ index 28e28a2..b43eb29 100644
 +}
 +
 +#ifdef CONFIG_PM_RUNTIME
-+static int host1x_runtime_suspend(struct device *dev)
++static int gr2d_runtime_suspend(struct device *dev)
 +{
-+	struct host1x *host;
++	struct gr2d *gr2d;
 +
-+	host = dev_get_drvdata(dev);
-+	if (!host)
++	gr2d = dev_get_drvdata(dev);
++	if (!gr2d)
 +		return -EINVAL;
 +
-+	clk_disable_unprepare(host->clk);
++	clk_disable_unprepare(gr2d->clk);
  
  	return 0;
  }
  
-+static int host1x_runtime_resume(struct device *dev)
++static int gr2d_runtime_resume(struct device *dev)
 +{
 +	int err = 0;
-+	struct host1x *host;
++	struct gr2d *gr2d;
 +
-+	host = dev_get_drvdata(dev);
-+	if (!host)
++	gr2d = dev_get_drvdata(dev);
++	if (!gr2d)
 +		return -EINVAL;
 +
-+	err = clk_prepare_enable(host->clk);
++	err = clk_prepare_enable(gr2d->clk);
 +	if (err < 0)
 +		dev_err(dev, "failed to enable clock\n");
 +
@@ -107,24 +103,54 @@ index 28e28a2..b43eb29 100644
 +#endif /* CONFIG_PM_RUNTIME */
 +
 +#ifdef CONFIG_PM
-+static const struct dev_pm_ops host1x_pm_ops = {
-+	SET_RUNTIME_PM_OPS(host1x_runtime_suspend,
-+		host1x_runtime_resume, NULL)
++static const struct dev_pm_ops gr2d_pm_ops = {
++	SET_RUNTIME_PM_OPS(gr2d_runtime_suspend,
++		gr2d_runtime_resume, NULL)
 +};
 +#endif
 +
- static struct platform_driver tegra_host1x_driver = {
- 	.probe = host1x_probe,
- 	.remove = __exit_p(host1x_remove),
-@@ -190,6 +244,9 @@ static struct platform_driver tegra_host1x_driver = {
+ struct platform_driver tegra_gr2d_driver = {
+ 	.probe = gr2d_probe,
+ 	.remove = __exit_p(gr2d_remove),
+@@ -339,5 +390,8 @@ struct platform_driver tegra_gr2d_driver = {
  		.owner = THIS_MODULE,
- 		.name = "tegra-host1x",
- 		.of_match_table = host1x_of_match,
+ 		.name = "gr2d",
+ 		.of_match_table = gr2d_match,
 +#ifdef CONFIG_PM
-+		.pm = &host1x_pm_ops,
++		.pm = &gr2d_pm_ops,
 +#endif
- 	},
+ 	}
  };
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index 05bafa4..a1b05f0 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -23,6 +23,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
++#include <linux/pm_runtime.h>
+ #include <trace/events/host1x.h>
  
+ #include "channel.h"
+@@ -591,10 +592,18 @@ int host1x_job_submit(struct host1x_job *job)
+ {
+ 	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+ 
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_get_sync(job->channel->dev);
++#endif
++
+ 	return host1x_hw_channel_submit(host, job);
+ }
+ 
+ int host1x_job_complete(struct host1x_job *job)
+ {
++#ifdef CONFIG_PM_RUNTIME
++	return pm_runtime_put(job->channel->dev);
++#else
+ 	return 0;
++#endif
+ }
 -- 
 1.8.1.5
