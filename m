@@ -1,135 +1,101 @@
-From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
-Subject: [PATCH v2 3/4] gpu: host1x: add runtime pm support for dc
-Date: Thu, 13 Jun 2013 15:23:37 +0530
-Message-ID: <1371117218-2326-4-git-send-email-mkulkarni@nvidia.com>
-References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
+Date: Thu, 13 Jun 2013 22:32:40 +0800
+Message-ID: <1371133960.1631.13.camel@jlo-ubuntu-64.nvidia.com>
+References: <1370342880-422-1-git-send-email-josephl@nvidia.com>
+	 <1370342880-422-4-git-send-email-josephl@nvidia.com>
+	 <51AE5EE3.3010607@linaro.org>  <51B8B2C8.1090006@wwwdotorg.org>
+	 <1371089619.1681.21.camel@jlo-ubuntu-64.nvidia.com>
+	 <51B99151.5010107@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tbergstrom@nvidia.com, amerilainen@nvidia.com, thierry.reding@avionic-design.de, airlied@redhat.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mayuresh Kulkarni <mkulkarni@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51B99151.5010107-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-As of now, the dc clock is enabled in its .probe via
-runtime pm and disabled in .remove
+On Thu, 2013-06-13 at 17:30 +0800, Daniel Lezcano wrote:
+> On 06/13/2013 04:13 AM, Joseph Lo wrote:
+> > On Thu, 2013-06-13 at 01:41 +0800, Stephen Warren wrote:
+> >> On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
+> >>> On 06/04/2013 12:48 PM, Joseph Lo wrote:
+> >>>> This supports CPU core power down on each CPU when CPU idle. When CPU go
+> >>>> into this state, it saves it's context and needs a proper configuration
+> >>>> in flow controller to power gate the CPU when CPU runs into WFI
+> >>>> instruction. And the CPU also needs to set the IRQ as CPU power down idle
+> >>>> wake up event in flow controller.
+> >>>>
+> >>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>
+> >>> I would like to understand why there is a WARN with the
+> >>> CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure it
+> >>> is not the tree hiding the forest.
+> >>
+> >> Joseph, are you planning to post an updated series or respond to resolve
+> >> Daniel's question?
+> > 
+> > I need more time to investigate the detail about what caused the WARN
+> > when apply the flag. And what's the difference if we didn't enable
+> > CONFIG_CPU_IDLE_MULTIPLE_DRIVERS, then it only applies
+> > CLOCK_EVT_NOTIFY_BROADCAST_ON on CPU0.
+> 
+> I think I got it for this one. It is a bug in the cpuidle driver's code.
+> 
+> cpuidle_register_driver does get_cpu => CPU0
+> 
+> Then __cpuidle_register_driver(drv, <CPU0>)
+> 
+>  => __cpuidle_driver_init(drv, <CPU0>)
+> 
+> Hence, the timer broadcast is initialized only for cpu0.
+> 
+> That should have been fixed with:
+> 
+OK, thanks.
 
-Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
----
- drivers/gpu/host1x/drm/dc.c | 60 +++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 55 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
-index 5360e5a..8e669a9 100644
---- a/drivers/gpu/host1x/drm/dc.c
-+++ b/drivers/gpu/host1x/drm/dc.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/clk/tegra.h>
-+#include <linux/pm_runtime.h>
- 
- #include "host1x_client.h"
- #include "dc.h"
-@@ -1128,9 +1129,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dc->clk);
- 	}
- 
--	err = clk_prepare_enable(dc->clk);
--	if (err < 0)
--		return err;
-+	platform_set_drvdata(pdev, dc);
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	dc->regs = devm_ioremap_resource(&pdev->dev, regs);
-@@ -1147,6 +1146,15 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 	dc->client.ops = &dc_client_ops;
- 	dc->client.dev = &pdev->dev;
- 
-+#ifdef CONFIG_PM_RUNTIME
-+	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_get_sync(&pdev->dev);
-+#else
-+	err = clk_prepare_enable(dc->clk);
-+	if (err < 0)
-+		return err;
-+#endif
-+
- 	err = tegra_dc_rgb_probe(dc);
- 	if (err < 0 && err != -ENODEV) {
- 		dev_err(&pdev->dev, "failed to probe RGB output: %d\n", err);
-@@ -1160,8 +1168,6 @@ static int tegra_dc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	platform_set_drvdata(pdev, dc);
--
- 	return 0;
- }
- 
-@@ -1178,11 +1184,52 @@ static int tegra_dc_remove(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+#ifdef CONFIG_PM_RUNTIME
-+	pm_runtime_put(&pdev->dev);
-+	pm_runtime_disable(&pdev->dev);
-+#endif
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_RUNTIME
-+static int tegra_dc_runtime_suspend(struct device *dev)
-+{
-+	struct tegra_dc *dc;
-+
-+	dc = dev_get_drvdata(dev);
-+	if (!dc)
-+		return -EINVAL;
-+
- 	clk_disable_unprepare(dc->clk);
- 
- 	return 0;
- }
- 
-+static int tegra_dc_runtime_resume(struct device *dev)
-+{
-+	int err = 0;
-+	struct tegra_dc *dc;
-+
-+	dc = dev_get_drvdata(dev);
-+	if (!dc)
-+		return -EINVAL;
-+
-+	err = clk_prepare_enable(dc->clk);
-+	if (err < 0)
-+		dev_err(dev, "failed to enable clock\n");
-+
-+	return err;
-+}
-+#endif /* CONFIG_PM_RUNTIME */
-+
-+#ifdef CONFIG_PM
-+static const struct dev_pm_ops tegra_dc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(tegra_dc_runtime_suspend,
-+		tegra_dc_runtime_resume, NULL)
-+};
-+#endif
-+
- static struct of_device_id tegra_dc_of_match[] = {
- 	{ .compatible = "nvidia,tegra30-dc", },
- 	{ .compatible = "nvidia,tegra20-dc", },
-@@ -1194,6 +1241,9 @@ struct platform_driver tegra_dc_driver = {
- 		.name = "tegra-dc",
- 		.owner = THIS_MODULE,
- 		.of_match_table = tegra_dc_of_match,
-+#ifdef CONFIG_PM
-+		.pm = &tegra_dc_pm_ops,
-+#endif
- 	},
- 	.probe = tegra_dc_probe,
- 	.remove = tegra_dc_remove,
--- 
-1.8.1.5
+> commit 82467a5a885ddd9f80309682159da8db510e7832
+> Author: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Date:   Fri Jun 7 21:53:09 2013 +0000
+> 
+>     cpuidle: simplify multiple driver support
+> 
+>     Commit bf4d1b5 (cpuidle: support multiple drivers) introduced support
+>     for using multiple cpuidle drivers at the same time.  It added a
+>     couple of new APIs to register the driver per CPU, but that led to
+>     some unnecessary code complexity related to the kernel config options
+>     deciding whether or not the multiple driver support is enabled.  The
+>     code has to work as it did before when the multiple driver support is
+>     not enabled and the multiple driver support has to be compatible with
+>     the previously existing API.
+> 
+>     Remove the new API, not used by any driver in the tree yet (but
+>     needed for the HMP cpuidle drivers that will be submitted soon), and
+>     add a new cpumask pointer to the cpuidle driver structure that will
+>     point to the mask of CPUs handled by the given driver.  That will
+>     allow the cpuidle_[un]register_driver() API to be used for the
+>     multiple driver support along with the cpuidle_[un]register()
+>     functions added recently.
+> 
+>     [rjw: Changelog]
+>     Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> 
+> 
+> > Why if I am moving the
+> > clockevent_notify of CLOCK_EVT_NOTIFY_BROADCAST_EXIT before
+> > "local_irq_enable" in the
+> > "cpuidle_enter_state" (drivers/cpuidle/cpuidle.c), then the warning
+> > message gone?
+> 
+> Is the warning coming immediately, at the first time
+> CLOCK_EVT_NOTIFY_BROADCAST_EXIT is invoked or can it occur at different
+> moment ?
+> 
+Not exactly at the 1st time, it may happen in the 3rd to 10th time. But
+it only happens once. I mean I did check the
+tick_broadcast_pending_mask, it only happens once the CPU didn't clear
+the tick_broadcast_pending_mask after CLOCK_EVT_NOTIFY_BROADCAST_EXIT.
+And cause the warning message. Then I didn't see it happen anymore.
