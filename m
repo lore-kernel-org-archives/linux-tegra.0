@@ -1,277 +1,83 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/3] ARM: tegra: basic support for Trusted Foundations
-Date: Thu, 13 Jun 2013 18:12:23 +0900
-Message-ID: <1371114745-24710-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2 2/3] ARM: tegra: split setting of CPU reset handler
+Date: Thu, 13 Jun 2013 18:12:24 +0900
+Message-ID: <1371114745-24710-3-git-send-email-acourbot@nvidia.com>
 References: <1371114745-24710-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1371114745-24710-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1371114745-24710-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Joseph Lo <josephl@nvidia.com>, Karan Jhavar <kjhavar@nvidia.com>, Varun Wadekar <vwadekar@nvidia.com>, Chris Johnson <CJohnson@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>, Jassi Brar <jassisinghbrar@gmail.com>
+Cc: gnurou@gmail.com, devicetree-discuss@lists.ozlabs.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add basic support for booting secondary processors on Tegra devices
-using the Trusted Foundations secure monitor.
+Not all Tegra devices need to set the CPU reset handler in the same way.
+In particular, devices using a TrustZone secure monitor cannot set the
+reset handler directly and need to do it through a firmware operation.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This patch separates the act of setting the reset handler from its
+preparation, so the former can be implemented in a different way.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- Documentation/devicetree/bindings/arm/tegra.txt    | 11 +++++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- arch/arm/configs/tegra_defconfig                   |  1 +
- arch/arm/mach-tegra/Kconfig                        | 14 ++++++
- arch/arm/mach-tegra/Makefile                       |  3 ++
- arch/arm/mach-tegra/common.c                       |  2 +
- arch/arm/mach-tegra/firmware.c                     | 40 +++++++++++++++++
- arch/arm/mach-tegra/firmware.h                     | 19 ++++++++
- arch/arm/mach-tegra/trusted_foundations.c          | 51 ++++++++++++++++++++++
- 9 files changed, 142 insertions(+)
- create mode 100644 arch/arm/mach-tegra/firmware.c
- create mode 100644 arch/arm/mach-tegra/firmware.h
- create mode 100644 arch/arm/mach-tegra/trusted_foundations.c
+ arch/arm/mach-tegra/reset.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-index ed9c853..d59bc19 100644
---- a/Documentation/devicetree/bindings/arm/tegra.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra.txt
-@@ -32,3 +32,14 @@ board-specific compatible values:
-   nvidia,whistler
-   toradex,colibri_t20-512
-   toradex,iris
-+
-+Optional nodes
-+-------------------------------------------
-+
-+Trusted Foundations:
-+Boards using the Trusted Foundations secure monitor should signal its
-+presence by declaring a node compatible with "tl,trusted-foundations":
-+
-+	firmware {
-+		compatible = "tl,trusted-foundations";
-+	};
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 6931c43..c21e1e9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -58,6 +58,7 @@ st	STMicroelectronics
- ste	ST-Ericsson
- stericsson	ST-Ericsson
- ti	Texas Instruments
-+tl	Trusted Logic
- toshiba	Toshiba Corporation
- via	VIA Technologies, Inc.
- wlf	Wolfson Microelectronics
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 4de3bce..3bf158a 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -28,6 +28,7 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_TEGRA_PCI=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
-+CONFIG_TEGRA_TRUSTED_FOUNDATIONS=y
- CONFIG_SMP=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 84d72fc..055f496 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -87,4 +87,18 @@ config TEGRA_AHB
- config TEGRA_EMC_SCALING_ENABLE
- 	bool "Enable scaling the memory frequency"
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index 1ac434e..6964117 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -33,26 +33,18 @@
  
-+config TEGRA_TRUSTED_FOUNDATIONS
-+	bool "Trusted Foundations secure monitor support"
-+	help
-+	  Many Tegra devices are booted with the Trusted Foundations secure
-+	  monitor active, requiring some core operations to be performed by
-+	  the secure monitor instead of the kernel.
-+
-+	  This option allows the kernel to invoke the secure monitor when
-+	  required on devices using Trusted Foundations.
-+
-+	  Devices using Trusted Foundations should pass a device tree containing
-+	  a node compatible with "tl,trusted-foundations" to signal the presence
-+	  of the secure monitor.
-+
- endmenu
-diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
-index d011f0a..9fdc004 100644
---- a/arch/arm/mach-tegra/Makefile
-+++ b/arch/arm/mach-tegra/Makefile
-@@ -12,6 +12,7 @@ obj-y					+= pm.o
- obj-y					+= reset.o
- obj-y					+= reset-handler.o
- obj-y					+= sleep.o
-+obj-y					+= firmware.o
- obj-y					+= tegra.o
- obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= tegra20_speedo.o
-@@ -37,3 +38,5 @@ endif
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-harmony-pcie.o
+ static bool is_enabled;
  
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= board-paz00.o
-+
-+obj-$(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)	+= trusted_foundations.o
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 9f852c6..4796bb0 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -37,6 +37,7 @@
- #include "sleep.h"
- #include "pm.h"
- #include "reset.h"
-+#include "firmware.h"
- 
- /*
-  * Storage for debug-macro.S's state.
-@@ -97,6 +98,7 @@ static void __init tegra_init_cache(void)
- 
- void __init tegra_init_early(void)
+-static void __init tegra_cpu_reset_handler_enable(void)
++static void __init tegra_cpu_reset_handler_set(const u32 reset_address)
  {
-+	tegra_init_firmware();
- 	tegra_cpu_reset_handler_init();
- 	tegra_apb_io_init();
- 	tegra_init_fuse();
-diff --git a/arch/arm/mach-tegra/firmware.c b/arch/arm/mach-tegra/firmware.c
-new file mode 100644
-index 0000000..ea861ca
---- /dev/null
-+++ b/arch/arm/mach-tegra/firmware.c
-@@ -0,0 +1,40 @@
-+/*
-+ * SecureOS support for Tegra CPUs
-+ *
-+ * Copyright (c) 2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/printk.h>
-+#include <linux/kconfig.h>
-+#include <linux/of.h>
-+#include <asm/firmware.h>
-+
-+#if IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)
-+extern const struct firmware_ops tegra_trusted_foundations_ops;
-+#endif
-+
-+void __init tegra_init_firmware(void)
-+{
-+	struct device_node *node;
-+
-+	if (!of_have_populated_dt())
-+		return;
-+
-+	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
-+	if (node && !IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS))
-+		pr_warn("Trusted Foundations detected but support missing!\n");
-+#if IS_ENABLED(CONFIG_TEGRA_TRUSTED_FOUNDATIONS)
-+	else if (node)
-+		register_firmware_ops(&tegra_trusted_foundations_ops);
-+#endif
-+}
-diff --git a/arch/arm/mach-tegra/firmware.h b/arch/arm/mach-tegra/firmware.h
-new file mode 100644
-index 0000000..77c62fb
---- /dev/null
-+++ b/arch/arm/mach-tegra/firmware.h
-@@ -0,0 +1,19 @@
-+/*
-+ * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#ifndef __TEGRA_FIRMWARE_H
-+#define __TEGRA_FIRMWARE_H
-+
-+void tegra_init_firmware(void);
-+
-+#endif
-diff --git a/arch/arm/mach-tegra/trusted_foundations.c b/arch/arm/mach-tegra/trusted_foundations.c
-new file mode 100644
-index 0000000..411044f
---- /dev/null
-+++ b/arch/arm/mach-tegra/trusted_foundations.c
-@@ -0,0 +1,51 @@
-+/*
-+ * SecureOS support for Tegra CPUs
-+ *
-+ * Copyright (c) 2013, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
-+#include <asm/firmware.h>
-+
-+#define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
-+
-+static void __attribute__((naked)) tegra_tf_generic_smc(u32 type, u32 subtype,
-+							u32 arg)
-+{
-+	asm volatile(
-+		".arch_extension	sec\n\t"
-+		"stmfd	sp!, {r3 - r11, lr}\n\t"
-+		__asmeq("%0", "r0")
-+		__asmeq("%1", "r1")
-+		__asmeq("%2", "r2")
-+		"mov	r3, #0\n\t"
-+		"mov	r4, #0\n\t"
-+		"smc	#0\n\t"
-+		"ldmfd	sp!, {r3 - r11, pc}"
-+		:
-+		: "r" (type), "r" (subtype), "r" (arg)
-+		: "memory");
+-	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+ 	void __iomem *evp_cpu_reset =
+ 		IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE + 0x100);
+ 	void __iomem *sb_ctrl = IO_ADDRESS(TEGRA_SB_BASE);
+ 	u32 reg;
+ 
+-	BUG_ON(is_enabled);
+-	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+-
+-	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+-			tegra_cpu_reset_handler_size);
+-
+ 	/*
+ 	 * NOTE: This must be the one and only write to the EVP CPU reset
+ 	 *       vector in the entire system.
+ 	 */
+-	writel(TEGRA_IRAM_RESET_BASE + tegra_cpu_reset_handler_offset,
+-			evp_cpu_reset);
++	writel(reset_address, evp_cpu_reset);
+ 	wmb();
+ 	reg = readl(evp_cpu_reset);
+ 
+@@ -66,6 +58,21 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 		writel(reg, sb_ctrl);
+ 		wmb();
+ 	}
 +}
 +
-+static int tegra_tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
++static void __init tegra_cpu_reset_handler_enable(void)
 +{
-+	tegra_tf_generic_smc(TF_SET_CPU_BOOT_ADDR_SMC, boot_addr, 0);
++	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
++	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
++						tegra_cpu_reset_handler_offset;
 +
-+	return 0;
-+}
++	BUG_ON(is_enabled);
++	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
 +
-+const struct firmware_ops tegra_trusted_foundations_ops = {
-+	.set_cpu_boot_addr = tegra_tf_set_cpu_boot_addr,
-+};
++	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
++			tegra_cpu_reset_handler_size);
++
++	tegra_cpu_reset_handler_set(reset_address);
+ 
+ 	is_enabled = true;
+ }
 -- 
 1.8.3
