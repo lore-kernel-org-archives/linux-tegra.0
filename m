@@ -1,10 +1,8 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH flasher 2/2] Implement exec sub-command
-Date: Thu, 13 Jun 2013 11:05:50 -0600
-Message-ID: <1371143150-3935-2-git-send-email-swarren@wwwdotorg.org>
-References: <1371143150-3935-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH flasher 1/2] Pre-calculate more in find_config_dir()
+Date: Thu, 13 Jun 2013 11:05:49 -0600
+Message-ID: <1371143150-3935-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371143150-3935-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,137 +10,95 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This mode of operation is a very simple wrapper around tegrarcm, which
-eliminates the need to remember which BCT to use for each configuration.
-This can be useful for quickly testing changes to U-Boot without writing
-it to flash every time.
+Set more global variables in find_config_dir(). These remove duplicate
+lookups and/or will be re-used by a future "exec" sub-command.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README-user.txt     | 17 +++++++++++++++--
- tegra-uboot-flasher | 47 +++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 58 insertions(+), 6 deletions(-)
+ tegra-uboot-flasher | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/README-user.txt b/README-user.txt
-index 249a096..b653144 100644
---- a/README-user.txt
-+++ b/README-user.txt
-@@ -20,8 +20,8 @@ You may find a list of valid values for configname by executing:
- 
- tegra-uboot-flasher list-configs
- 
--Simple Usage
--============
-+Simple Usage - Flashing
-+=======================
- 
- To flash a board, connect a USB cable from your host PC to the Tegra device,
- place that board into USB recovery mode, and execute the following as root
-@@ -35,6 +35,19 @@ flashed boot image, and the system will proceed to boot normally. Depending
- on the board and U-Boot support, the flashing process may be observed via the
- debug serial port, or on a built-in LCD panel.
- 
-+Simple Usage - Testing U-Boot
-+=============================
-+
-+If you simply want to download an unmodified U-Boot to the Tegra device and
-+execute it, execute the following as root on the host machine:
-+
-+tegra-uboot-flasher exec CONFIG
-+
-+This can be useful for quickly testing changes to U-Boot without writing it
-+to flash every time. This mode of operation is a very simple wrapper around
-+tegrarcm, which eliminates the need to remember which BCT to use for each
-+board configuration.
-+
- Advanced Options
- ================
- 
 diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index 1bdf944..ac727a0 100755
+index aae7f19..1bdf944 100755
 --- a/tegra-uboot-flasher
 +++ b/tegra-uboot-flasher
-@@ -75,6 +75,15 @@ gen_flashcmds = {
-     'spi': gen_flashcmd_spi,
- }
+@@ -52,7 +52,7 @@ def run(dir, cmd):
+     os.chdir(oldcwd)
  
-+def get_loadaddr():
-+    # 0x00108000 is CONFIG_SYS_TEXT_BASE in U-Boot, minus RAM base
-+    return soc['ram-base'] + 0x00108000
-+
-+def gen_tegrarcm_cmd(bootloader, loadaddr):
-+    if type(loadaddr) != str:
-+        loadaddr = "0x%08x" % loadaddr
-+    return 'tegrarcm --bct=' + bct + ' --bootloader=' + bootloader + ' --loadaddr=' + loadaddr
-+
- def find_config_dir():
-     if not configs.has_key(args.configname):
+ def gen_flashcmd_mmc(flash_image_addr, flash_img_size):
+-    flash_id = configs[args.configname]['flash-id-uboot']
++    flash_id = config['flash-id-uboot']
+     flash_img_size_sectors = flash_img_size / 512
+     flashcmd = 'mmc dev %d 1 ; ' % flash_id
+     flashcmd += 'mmc write 0x%08x 0 0x%x ; ' % (flash_image_addr, flash_img_size_sectors)
+@@ -65,7 +65,7 @@ def gen_flashcmd_nand(flash_image_addr, flash_img_size):
+ 
+ def gen_flashcmd_spi(flash_image_addr, flash_img_size):
+     flashcmd = 'sf probe 0 ; '
+-    flashcmd += 'sf erase 0 0x%08x ; ' % configs[args.configname]['flash-erase-size']
++    flashcmd += 'sf erase 0 0x%08x ; ' % config['flash-erase-size']
+     flashcmd += 'sf write 0x%08x 0 0x%08x ; ' % (flash_image_addr, flash_img_size)
+     return flashcmd
+ 
+@@ -80,11 +80,15 @@ def find_config_dir():
          print 'Unknown config "%s"' % args.configname
-@@ -130,7 +139,7 @@ def func_flash():
+         sys.exit(1)
+ 
+-    global boardname, socname, out_board_dir
++    global config, boardname, board, socname, soc, out_board_dir, bct
+ 
+-    boardname = configs[args.configname]['board']
+-    socname = boards[boardname]['soc']
++    config = configs[args.configname]
++    boardname = config['board']
++    board = boards[boardname]
++    socname = board['soc']
++    soc = socs[socname]
+     out_board_dir = os.path.join(args.data_dir, boardname)
++    bct = os.path.join(out_board_dir, config['bct'])
+ 
+ def func_list_configs():
+     for configname in sorted(configs.keys()):
+@@ -106,13 +110,11 @@ def func_flash():
+     if args.flash_image:
+         flash_img = args.flash_img
+     else:
+-        flash_img = os.path.join(out_board_dir, configs[args.configname]['flash-image'])
++        flash_img = os.path.join(out_board_dir, config['flash-image'])
+     flash_img_size = os.path.getsize(flash_img)
+     if args.debug:
+         print 'flash_img_size %d 0x%x' % (flash_img_size, flash_img_size)
+ 
+-    bct = os.path.join(out_board_dir, configs[args.configname]['bct'])
+-
+     u_boot_plus_dtb_size = u_boot_no_dtb_size + u_boot_dtb_size
+     if args.debug:
+         print 'u_boot_plus_dtb_size %d 0x%x' % (u_boot_plus_dtb_size, u_boot_plus_dtb_size)
+@@ -128,12 +130,12 @@ def func_flash():
          print 'pad_size %d 0x%x' % (pad_size, pad_size)
  
      # 0x00108000 is CONFIG_SYS_TEXT_BASE in U-Boot, minus RAM base
--    loadaddr = soc['ram-base'] + 0x00108000
-+    loadaddr = get_loadaddr()
+-    loadaddr = socs[socname]['ram-base'] + 0x00108000
++    loadaddr = soc['ram-base'] + 0x00108000
      flash_image_addr = loadaddr + padded_size
      if args.debug:
          print 'flash_image_addr %d 0x%x' % (flash_image_addr, flash_image_addr)
-@@ -185,7 +194,7 @@ def func_flash():
-         shutil.copyfileobj(open(flash_img, 'rb'), f)
-         f.close()
  
--        cmd = 'tegrarcm --bct=' + bct + ' --bootloader=' + uboot_flasher + ' --loadaddr=0x%08x' % loadaddr
-+        cmd = gen_tegrarcm_cmd(uboot_flasher, loadaddr)
- 
-         flasher_sh = os.path.join(workdir, 'flasher.sh')
-         f = open(flasher_sh, 'wt')
-@@ -206,6 +215,22 @@ def func_flash():
-         else:
-             rmtree(workdir)
- 
-+def func_exec():
-+    find_config_dir()
-+
-+    if args.bootloader:
-+        bootloader = args.bootloader
-+    else:
-+        bootloader = os.path.join(out_board_dir, 'u-boot-dtb-tegra.bin')
-+
-+    if args.loadaddr:
-+        loadaddr = args.loadaddr
-+    else:
-+        loadaddr = get_loadaddr()
-+
-+    cmd = gen_tegrarcm_cmd(bootloader, loadaddr)
-+    run(scripts_dir, cmd)
-+
- parser = argparse.ArgumentParser(description='Execute a bootloader on a ' +
-     'Tegra board, possibly modifying it prior to download so as to execute ' +
-     'commands, such as writing an image to flash.')
-@@ -234,8 +259,22 @@ parser_flash.add_argument('--flash-image', type=str,
-     help='The flash image to write, instead of U-Boot itself')
- parser_flash.add_argument('--gen-only', action='store_true',
-     help='Just create the work-dir; don\'t actually flash the image')
--parser_flash.add_argument('configname', metavar='CONFIG', type=str,
--    help='The configuration name of the board')
-+
-+parser_exec = subparsers.add_parser('exec',
-+    help='Download and execute an unmodified bootloader binary, named ' +
-+        'u-boot-dtb-tegra.bin by default. This can be useful to simply test ' +
-+        'a U-Boot build without flashing it, or to download something other ' +
-+        'than U-Boot')
-+parser_exec.set_defaults(func = func_exec)
-+parser_exec.add_argument('--bootloader', type=str,
-+    help='The bootloader to download. Defaults to u-boot-dtb-tegra.bin in ' +
-+        'the data directory')
-+parser_exec.add_argument('--loadaddr', type=str,
-+    help='Load address for the bootloader binary')
-+
-+for p in (parser_flash, parser_exec):
-+    p.add_argument('configname', metavar='CONFIG', type=str,
-+        help='The configuration name of the board')
- 
- args = parser.parse_args()
- if args.debug: print args
+-    flash_type = configs[args.configname]['flash-type']
++    flash_type = config['flash-type']
+     if not gen_flashcmds.has_key(flash_type):
+         print 'flash-type "%s" not yet supported' % flash_type
+         sys.exit(1)
+@@ -158,8 +160,8 @@ def func_flash():
+         bootcmd += gen_flashcmd(flash_image_addr, flash_img_size)
+         bootcmd += 'env default -f -a ; '
+         # Perhaps U-Boot should set $boardname based on the ID EEPROM; then we wouldn't need this
+-        if configs[args.configname]['dtbfn-extra'] != '':
+-            bootcmd += 'setenv board ' + boardname + configs[args.configname]['dtbfn-extra'] + ' ; '
++        if config['dtbfn-extra'] != '':
++            bootcmd += 'setenv board ' + boardname + config['dtbfn-extra'] + ' ; '
+         bootcmd += 'saveenv ; '
+         # To update the bootloader, reset.
+         # If wanting to run installer, set installer_args.configname in environment, 'run bootcmd'
 -- 
 1.8.1.5
