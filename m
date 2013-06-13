@@ -1,166 +1,86 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Thu, 13 Jun 2013 17:02:34 +0200
-Message-ID: <51B9DF0A.3020001@linaro.org>
-References: <1370342880-422-1-git-send-email-josephl@nvidia.com>  <1370342880-422-4-git-send-email-josephl@nvidia.com>  <51AE5EE3.3010607@linaro.org>  <51B8B2C8.1090006@wwwdotorg.org>  <1371089619.1681.21.camel@jlo-ubuntu-64.nvidia.com>  <51B99151.5010107@linaro.org> <1371133960.1631.13.camel@jlo-ubuntu-64.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] gpu: host1x: add runtime pm support for gr2d
+Date: Thu, 13 Jun 2013 09:14:58 -0600
+Message-ID: <51B9E1F2.3090404@wwwdotorg.org>
+References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com> <1371117218-2326-3-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371133960.1631.13.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <1371117218-2326-3-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/13/2013 04:32 PM, Joseph Lo wrote:
-> On Thu, 2013-06-13 at 17:30 +0800, Daniel Lezcano wrote:
->> On 06/13/2013 04:13 AM, Joseph Lo wrote:
->>> On Thu, 2013-06-13 at 01:41 +0800, Stephen Warren wrote:
->>>> On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
->>>>> On 06/04/2013 12:48 PM, Joseph Lo wrote:
->>>>>> This supports CPU core power down on each CPU when CPU idle. Whe=
-n CPU go
->>>>>> into this state, it saves it's context and needs a proper config=
-uration
->>>>>> in flow controller to power gate the CPU when CPU runs into WFI
->>>>>> instruction. And the CPU also needs to set the IRQ as CPU power =
-down idle
->>>>>> wake up event in flow controller.
->>>>>>
->>>>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>
->>>>> I would like to understand why there is a WARN with the
->>>>> CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and en=
-sure it
->>>>> is not the tree hiding the forest.
->>>>
->>>> Joseph, are you planning to post an updated series or respond to r=
-esolve
->>>> Daniel's question?
->>>
->>> I need more time to investigate the detail about what caused the WA=
-RN
->>> when apply the flag. And what's the difference if we didn't enable
->>> CONFIG_CPU_IDLE_MULTIPLE_DRIVERS, then it only applies
->>> CLOCK_EVT_NOTIFY_BROADCAST_ON on CPU0.
->>
->> I think I got it for this one. It is a bug in the cpuidle driver's c=
-ode.
->>
->> cpuidle_register_driver does get_cpu =3D> CPU0
->>
->> Then __cpuidle_register_driver(drv, <CPU0>)
->>
->>  =3D> __cpuidle_driver_init(drv, <CPU0>)
->>
->> Hence, the timer broadcast is initialized only for cpu0.
->>
->> That should have been fixed with:
->>
-> OK, thanks.
->=20
->> commit 82467a5a885ddd9f80309682159da8db510e7832
->> Author: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> Date:   Fri Jun 7 21:53:09 2013 +0000
->>
->>     cpuidle: simplify multiple driver support
->>
->>     Commit bf4d1b5 (cpuidle: support multiple drivers) introduced su=
-pport
->>     for using multiple cpuidle drivers at the same time.  It added a
->>     couple of new APIs to register the driver per CPU, but that led =
-to
->>     some unnecessary code complexity related to the kernel config op=
-tions
->>     deciding whether or not the multiple driver support is enabled. =
- The
->>     code has to work as it did before when the multiple driver suppo=
-rt is
->>     not enabled and the multiple driver support has to be compatible=
- with
->>     the previously existing API.
->>
->>     Remove the new API, not used by any driver in the tree yet (but
->>     needed for the HMP cpuidle drivers that will be submitted soon),=
- and
->>     add a new cpumask pointer to the cpuidle driver structure that w=
-ill
->>     point to the mask of CPUs handled by the given driver.  That wil=
-l
->>     allow the cpuidle_[un]register_driver() API to be used for the
->>     multiple driver support along with the cpuidle_[un]register()
->>     functions added recently.
->>
->>     [rjw: Changelog]
->>     Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
->>
->>
->>> Why if I am moving the
->>> clockevent_notify of CLOCK_EVT_NOTIFY_BROADCAST_EXIT before
->>> "local_irq_enable" in the
->>> "cpuidle_enter_state" (drivers/cpuidle/cpuidle.c), then the warning
->>> message gone?
->>
->> Is the warning coming immediately, at the first time
->> CLOCK_EVT_NOTIFY_BROADCAST_EXIT is invoked or can it occur at differ=
-ent
->> moment ?
->>
-> Not exactly at the 1st time, it may happen in the 3rd to 10th time. B=
-ut
-> it only happens once. I mean I did check the
-> tick_broadcast_pending_mask, it only happens once the CPU didn't clea=
-r
-> the tick_broadcast_pending_mask after CLOCK_EVT_NOTIFY_BROADCAST_EXIT=
-=2E
-> And cause the warning message. Then I didn't see it happen anymore.
+On 06/13/2013 03:53 AM, Mayuresh Kulkarni wrote:
 
-I suspect when the CLOCK_EVENT_NOTIFY_EXIT is after the
-local_irq_enable, we have the timer handler executed before where it
-sets the tick_broadcast_pending_mask.
+Patch description?
 
-Hence in the tick_broadcast_oneshot_control function when we fall into
-the condition:
 
- if (dev->next_event.tv64 =3D=3D KTIME_MAX)
-	goto out;
+> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
 
-The tick_broadcast_pending_mask is not cleared and when re-entering wit=
-h
-CLOCK_EVENT_NOTIFY_ENTER, this mask is set and that raises the warning.
+> +#ifdef CONFIG_PM_RUNTIME
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +#else
+>  	err = clk_prepare_enable(gr2d->clk);
+>  	if (err) {
+>  		dev_err(dev, "cannot turn on clock\n");
+>  		return err;
+>  	}
+> +#endif
 
-So, if I am not wrong, the condition to raise this warning would be:
+The #else block here is a cut/paste of the body of
+gr2d_runtime_resume(). It'd be better to call that function instead. The
+following is what I ended up with in the Tegra ASoC driver in order to
+support runtime PM on or off:
 
- 1. use the flag (of course), because the
-CLOCK_EVT_NOTIFY_BROADCAST_EXIT is called after the local_irq_enabled
+        pm_runtime_enable(&pdev->dev);
+        if (!pm_runtime_enabled(&pdev->dev)) {
+                ret = tegra20_i2s_runtime_resume(&pdev->dev);
+                if (ret)
+                        goto err_pm_disable;
+        }
 
- 2. there is no timer planned after the expired one.
+> @@ -328,10 +338,51 @@ static int __exit gr2d_remove(struct platform_device *pdev)
+>  
+>  	host1x_channel_free(gr2d->channel);
+>  	clk_disable_unprepare(gr2d->clk);
 
- 3. a new timer is created and the cpu enters the low power state again
+Don't you need to remove that clk disable, or make it conditional upon
+!PM_RUNTIME?
 
-The first step would be to create a simple program to reproduce easily
-the warning.
+> +#ifdef CONFIG_PM_RUNTIME
+> +	pm_runtime_disable(&pdev->dev);
+> +#endif
 
-=46irst boot the kernel with init=3D/bin/bash (or whatever, the init pr=
-ocess
-is replaced by a shell), thus reducing considerably the number of timer=
-s.
+Similarly, perhaps something like the following here:
 
-Then try to raise the warning with cpu2:
+        pm_runtime_disable(&pdev->dev);
+        if (!pm_runtime_status_suspended(&pdev->dev))
+                tegra20_i2s_runtime_suspend(&pdev->dev);
 
-	taskset 4 /bin/sleep 0.5
+> @ -591,10 +592,18 @@ int host1x_job_submit(struct host1x_job *job)
+>  {
+>  	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+>  
+> +#ifdef CONFIG_PM_RUNTIME
+> +	pm_runtime_get_sync(job->channel->dev);
+> +#endif
+> +
+>  	return host1x_hw_channel_submit(host, job);
+>  }
+>  
+>  int host1x_job_complete(struct host1x_job *job)
+>  {
+> +#ifdef CONFIG_PM_RUNTIME
+> +	return pm_runtime_put(job->channel->dev);
+> +#else
+>  	return 0;
+> +#endif
+>  }
 
-=2E.. several times until the warning appears.
-
-As I don't have the hardware, this is based on assumptions, so may be I
-am wrong.
-
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+I don't think you need any of those ifdefs; simply call the
+pm_runtime_*() functions all the time, and they'll be successful no-ops
+if !PM_RUNTIME.
