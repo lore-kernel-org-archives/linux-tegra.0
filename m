@@ -1,7 +1,7 @@
 From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
-Subject: [PATCH v2 2/4] gpu: host1x: add runtime pm support for gr2d
-Date: Thu, 13 Jun 2013 15:23:36 +0530
-Message-ID: <1371117218-2326-3-git-send-email-mkulkarni@nvidia.com>
+Subject: [PATCH v2 3/4] gpu: host1x: add runtime pm support for dc
+Date: Thu, 13 Jun 2013 15:23:37 +0530
+Message-ID: <1371117218-2326-4-git-send-email-mkulkarni@nvidia.com>
 References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,59 +12,68 @@ To: tbergstrom@nvidia.com, amerilainen@nvidia.com, thierry.reding@avionic-design
 Cc: linux-kernel@vger.kernel.org, Mayuresh Kulkarni <mkulkarni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+As of now, the dc clock is enabled in its .probe via
+runtime pm and disabled in .remove
+
 Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
 ---
- drivers/gpu/host1x/drm/gr2d.c | 56 ++++++++++++++++++++++++++++++++++++++++++-
- drivers/gpu/host1x/job.c      |  9 +++++++
- 2 files changed, 64 insertions(+), 1 deletion(-)
+ drivers/gpu/host1x/drm/dc.c | 60 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 55 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-index 27ffcf1..eb506cd 100644
---- a/drivers/gpu/host1x/drm/gr2d.c
-+++ b/drivers/gpu/host1x/drm/gr2d.c
-@@ -22,6 +22,7 @@
+diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
+index 5360e5a..8e669a9 100644
+--- a/drivers/gpu/host1x/drm/dc.c
++++ b/drivers/gpu/host1x/drm/dc.c
+@@ -13,6 +13,7 @@
  #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/clk.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk/tegra.h>
 +#include <linux/pm_runtime.h>
  
- #include "channel.h"
- #include "drm.h"
-@@ -275,11 +276,18 @@ static int gr2d_probe(struct platform_device *pdev)
- 		return PTR_ERR(gr2d->clk);
+ #include "host1x_client.h"
+ #include "dc.h"
+@@ -1128,9 +1129,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dc->clk);
  	}
  
-+	platform_set_drvdata(pdev, gr2d);
-+
+-	err = clk_prepare_enable(dc->clk);
+-	if (err < 0)
+-		return err;
++	platform_set_drvdata(pdev, dc);
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dc->regs = devm_ioremap_resource(&pdev->dev, regs);
+@@ -1147,6 +1146,15 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	dc->client.ops = &dc_client_ops;
+ 	dc->client.dev = &pdev->dev;
+ 
 +#ifdef CONFIG_PM_RUNTIME
 +	pm_runtime_enable(&pdev->dev);
 +	pm_runtime_get_sync(&pdev->dev);
 +#else
- 	err = clk_prepare_enable(gr2d->clk);
- 	if (err) {
- 		dev_err(dev, "cannot turn on clock\n");
++	err = clk_prepare_enable(dc->clk);
++	if (err < 0)
++		return err;
++#endif
++
+ 	err = tegra_dc_rgb_probe(dc);
+ 	if (err < 0 && err != -ENODEV) {
+ 		dev_err(&pdev->dev, "failed to probe RGB output: %d\n", err);
+@@ -1160,8 +1168,6 @@ static int tegra_dc_probe(struct platform_device *pdev)
  		return err;
  	}
-+#endif
  
- 	gr2d->channel = host1x_channel_request(dev);
- 	if (!gr2d->channel)
-@@ -305,7 +313,9 @@ static int gr2d_probe(struct platform_device *pdev)
- 
- 	gr2d_init_addr_reg_map(dev, gr2d);
- 
--	platform_set_drvdata(pdev, gr2d);
-+#ifdef CONFIG_PM_RUNTIME
-+	pm_runtime_put(&pdev->dev);
-+#endif
- 
+-	platform_set_drvdata(pdev, dc);
+-
  	return 0;
  }
-@@ -328,10 +338,51 @@ static int __exit gr2d_remove(struct platform_device *pdev)
  
- 	host1x_channel_free(gr2d->channel);
- 	clk_disable_unprepare(gr2d->clk);
+@@ -1178,11 +1184,52 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
 +#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_put(&pdev->dev);
 +	pm_runtime_disable(&pdev->dev);
 +#endif
 +
@@ -72,29 +81,29 @@ index 27ffcf1..eb506cd 100644
 +}
 +
 +#ifdef CONFIG_PM_RUNTIME
-+static int gr2d_runtime_suspend(struct device *dev)
++static int tegra_dc_runtime_suspend(struct device *dev)
 +{
-+	struct gr2d *gr2d;
++	struct tegra_dc *dc;
 +
-+	gr2d = dev_get_drvdata(dev);
-+	if (!gr2d)
++	dc = dev_get_drvdata(dev);
++	if (!dc)
 +		return -EINVAL;
 +
-+	clk_disable_unprepare(gr2d->clk);
+ 	clk_disable_unprepare(dc->clk);
  
  	return 0;
  }
  
-+static int gr2d_runtime_resume(struct device *dev)
++static int tegra_dc_runtime_resume(struct device *dev)
 +{
 +	int err = 0;
-+	struct gr2d *gr2d;
++	struct tegra_dc *dc;
 +
-+	gr2d = dev_get_drvdata(dev);
-+	if (!gr2d)
++	dc = dev_get_drvdata(dev);
++	if (!dc)
 +		return -EINVAL;
 +
-+	err = clk_prepare_enable(gr2d->clk);
++	err = clk_prepare_enable(dc->clk);
 +	if (err < 0)
 +		dev_err(dev, "failed to enable clock\n");
 +
@@ -103,54 +112,24 @@ index 27ffcf1..eb506cd 100644
 +#endif /* CONFIG_PM_RUNTIME */
 +
 +#ifdef CONFIG_PM
-+static const struct dev_pm_ops gr2d_pm_ops = {
-+	SET_RUNTIME_PM_OPS(gr2d_runtime_suspend,
-+		gr2d_runtime_resume, NULL)
++static const struct dev_pm_ops tegra_dc_pm_ops = {
++	SET_RUNTIME_PM_OPS(tegra_dc_runtime_suspend,
++		tegra_dc_runtime_resume, NULL)
 +};
 +#endif
 +
- struct platform_driver tegra_gr2d_driver = {
- 	.probe = gr2d_probe,
- 	.remove = __exit_p(gr2d_remove),
-@@ -339,5 +390,8 @@ struct platform_driver tegra_gr2d_driver = {
+ static struct of_device_id tegra_dc_of_match[] = {
+ 	{ .compatible = "nvidia,tegra30-dc", },
+ 	{ .compatible = "nvidia,tegra20-dc", },
+@@ -1194,6 +1241,9 @@ struct platform_driver tegra_dc_driver = {
+ 		.name = "tegra-dc",
  		.owner = THIS_MODULE,
- 		.name = "gr2d",
- 		.of_match_table = gr2d_match,
+ 		.of_match_table = tegra_dc_of_match,
 +#ifdef CONFIG_PM
-+		.pm = &gr2d_pm_ops,
++		.pm = &tegra_dc_pm_ops,
 +#endif
- 	}
- };
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 05bafa4..a1b05f0 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -23,6 +23,7 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/pm_runtime.h>
- #include <trace/events/host1x.h>
- 
- #include "channel.h"
-@@ -591,10 +592,18 @@ int host1x_job_submit(struct host1x_job *job)
- {
- 	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
- 
-+#ifdef CONFIG_PM_RUNTIME
-+	pm_runtime_get_sync(job->channel->dev);
-+#endif
-+
- 	return host1x_hw_channel_submit(host, job);
- }
- 
- int host1x_job_complete(struct host1x_job *job)
- {
-+#ifdef CONFIG_PM_RUNTIME
-+	return pm_runtime_put(job->channel->dev);
-+#else
- 	return 0;
-+#endif
- }
+ 	},
+ 	.probe = tegra_dc_probe,
+ 	.remove = tegra_dc_remove,
 -- 
 1.8.1.5
