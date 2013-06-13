@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3 REPOST 3/7] USB: EHCI: export ehci_handshake for ehci-hcd sub-drivers
-Date: Thu, 13 Jun 2013 11:24:09 -0600
-Message-ID: <1371144253-21295-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V3 REPOST 5/7] USB: EHCI: tegra: fix circular module dependencies
+Date: Thu, 13 Jun 2013 11:24:11 -0600
+Message-ID: <1371144253-21295-6-git-send-email-swarren@wwwdotorg.org>
 References: <1371144253-21295-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1371144253-21295-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,188 +10,197 @@ To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-In order to split ehci-hcd.c into separate modules, handshake() must be
-exported. Rename the symbol to add an ehci_ prefix, to avoid any naming
-clashes.
+The Tegra EHCI driver directly calls various functions in the Tegra USB
+PHY driver. The reverse is also true; the PHY driver calls into the EHCI
+driver. This is problematic when the two are built as modules.
 
-Signed-off-by: Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-[swarren, split Manjunath's patches more logically, limit this change
-to export just handshake()]
+The calls from the PHY to EHCI driver were originally added in commit
+bbdabdb "usb: add APIs to access host registers from Tegra PHY", for the
+following reasons:
+
+1) The register being touched is an EHCI register, so logically only the
+   EHCI driver should touch it.
+2) (1) implies that some locking may be needed to correctly implement the
+   r/m/w access to this shared register.
+3) We were expecting to pass only the PHY register space to the Tegra PHY
+   driver, and hence it would not have access to touch the shared
+   registers.
+
+To solve this, that commit added functions in the EHCI driver to touch the
+shared register on behalf of the PHY driver.
+
+In practice, we ended up not having any locking in the implementaiton of
+those functions, and I've been led to believe this is safe. Equally, (3)
+did not happen either. Hence, it is possible for the PHY driver to touch
+the shared register directly.
+
+Given that, this patch moves the code to touch the shared register back
+into the PHY driver, to eliminate the module problems. If we actually
+need locking or co-ordination in the future, I propose we put the lock
+support into some pre-existing core module, or into a third separate
+module, in order to avoid the circular dependencies.
+
+I apologize for my contribution to code churn here.
+
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 ---
 v3: No change.
-v2: Only export handshake(), not reset/tdi_reset/halt.
+v2: No change; just rebased on new versions of earlier patches.
 ---
- drivers/usb/host/ehci-hcd.c   | 17 ++++++++++-------
- drivers/usb/host/ehci-hub.c   |  4 ++--
- drivers/usb/host/ehci-tegra.c | 12 ++++++------
- drivers/usb/host/ehci.h       |  2 ++
- 4 files changed, 20 insertions(+), 15 deletions(-)
+ drivers/usb/host/ehci-tegra.c     | 36 ------------------------------------
+ drivers/usb/phy/phy-tegra-usb.c   | 39 ++++++++++++++++++++++++++++++++++++---
+ include/linux/usb/tegra_usb_phy.h |  4 ----
+ 3 files changed, 36 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
-index 246e124..e8a6f3d 100644
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -139,7 +139,7 @@ static inline unsigned ehci_read_frame_index(struct ehci_hcd *ehci)
- /*-------------------------------------------------------------------------*/
- 
- /*
-- * handshake - spin reading hc until handshake completes or fails
-+ * ehci_handshake - spin reading hc until handshake completes or fails
-  * @ptr: address of hc register to be read
-  * @mask: bits to look at in result of read
-  * @done: value of those bits when handshake succeeds
-@@ -155,8 +155,8 @@ static inline unsigned ehci_read_frame_index(struct ehci_hcd *ehci)
-  * before driver shutdown. But it also seems to be caused by bugs in cardbus
-  * bridge shutdown:  shutting down the bridge before the devices using it.
-  */
--static int handshake (struct ehci_hcd *ehci, void __iomem *ptr,
--		      u32 mask, u32 done, int usec)
-+int ehci_handshake(struct ehci_hcd *ehci, void __iomem *ptr,
-+		   u32 mask, u32 done, int usec)
- {
- 	u32	result;
- 
-@@ -172,6 +172,7 @@ static int handshake (struct ehci_hcd *ehci, void __iomem *ptr,
- 	} while (usec > 0);
- 	return -ETIMEDOUT;
- }
-+EXPORT_SYMBOL_GPL(ehci_handshake);
- 
- /* check TDI/ARC silicon is in host mode */
- static int tdi_in_host_mode (struct ehci_hcd *ehci)
-@@ -212,7 +213,7 @@ static int ehci_halt (struct ehci_hcd *ehci)
- 	spin_unlock_irq(&ehci->lock);
- 	synchronize_irq(ehci_to_hcd(ehci)->irq);
- 
--	return handshake(ehci, &ehci->regs->status,
-+	return ehci_handshake(ehci, &ehci->regs->status,
- 			  STS_HALT, STS_HALT, 16 * 125);
- }
- 
-@@ -251,7 +252,7 @@ static int ehci_reset (struct ehci_hcd *ehci)
- 	ehci_writel(ehci, command, &ehci->regs->command);
- 	ehci->rh_state = EHCI_RH_HALTED;
- 	ehci->next_statechange = jiffies;
--	retval = handshake (ehci, &ehci->regs->command,
-+	retval = ehci_handshake(ehci, &ehci->regs->command,
- 			    CMD_RESET, 0, 250 * 1000);
- 
- 	if (ehci->has_hostpc) {
-@@ -286,7 +287,8 @@ static void ehci_quiesce (struct ehci_hcd *ehci)
- 
- 	/* wait for any schedule enables/disables to take effect */
- 	temp = (ehci->command << 10) & (STS_ASS | STS_PSS);
--	handshake(ehci, &ehci->regs->status, STS_ASS | STS_PSS, temp, 16 * 125);
-+	ehci_handshake(ehci, &ehci->regs->status, STS_ASS | STS_PSS, temp,
-+			16 * 125);
- 
- 	/* then disable anything that's still active */
- 	spin_lock_irq(&ehci->lock);
-@@ -295,7 +297,8 @@ static void ehci_quiesce (struct ehci_hcd *ehci)
- 	spin_unlock_irq(&ehci->lock);
- 
- 	/* hardware can take 16 microframes to turn off ... */
--	handshake(ehci, &ehci->regs->status, STS_ASS | STS_PSS, 0, 16 * 125);
-+	ehci_handshake(ehci, &ehci->regs->status, STS_ASS | STS_PSS, 0,
-+			16 * 125);
- }
- 
- /*-------------------------------------------------------------------------*/
-diff --git a/drivers/usb/host/ehci-hub.c b/drivers/usb/host/ehci-hub.c
-index b2f6450..2b70277 100644
---- a/drivers/usb/host/ehci-hub.c
-+++ b/drivers/usb/host/ehci-hub.c
-@@ -892,7 +892,7 @@ static int ehci_hub_control (
- 						PORT_SUSPEND | PORT_RESUME);
- 				ehci_writel(ehci, temp, status_reg);
- 				clear_bit(wIndex, &ehci->resuming_ports);
--				retval = handshake(ehci, status_reg,
-+				retval = ehci_handshake(ehci, status_reg,
- 					   PORT_RESUME, 0, 2000 /* 2msec */);
- 				if (retval != 0) {
- 					ehci_err(ehci,
-@@ -918,7 +918,7 @@ static int ehci_hub_control (
- 			/* REVISIT:  some hardware needs 550+ usec to clear
- 			 * this bit; seems too long to spin routinely...
- 			 */
--			retval = handshake(ehci, status_reg,
-+			retval = ehci_handshake(ehci, status_reg,
- 					PORT_RESET, 0, 1000);
- 			if (retval != 0) {
- 				ehci_err (ehci, "port %d reset error %d\n",
 diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 8390c87..289b9b8 100644
+index dde5189..8063429 100644
 --- a/drivers/usb/host/ehci-tegra.c
 +++ b/drivers/usb/host/ehci-tegra.c
-@@ -179,7 +179,7 @@ static int tegra_ehci_hub_control(
- 		 * If a transaction is in progress, there may be a delay in
- 		 * suspending the port. Poll until the port is suspended.
- 		 */
--		if (handshake(ehci, status_reg, PORT_SUSPEND,
-+		if (ehci_handshake(ehci, status_reg, PORT_SUSPEND,
- 						PORT_SUSPEND, 5000))
- 			pr_err("%s: timeout waiting for SUSPEND\n", __func__);
+@@ -34,11 +34,6 @@
+ #define TEGRA_USB2_BASE			0xC5004000
+ #define TEGRA_USB3_BASE			0xC5008000
  
-@@ -227,9 +227,9 @@ static int tegra_ehci_hub_control(
- 		spin_lock_irqsave(&ehci->lock, flags);
+-/* PORTSC registers */
+-#define TEGRA_USB_PORTSC1			0x184
+-#define TEGRA_USB_PORTSC1_PTS(x)	(((x) & 0x3) << 30)
+-#define TEGRA_USB_PORTSC1_PHCD	(1 << 23)
+-
+ #define TEGRA_USB_DMA_ALIGN 32
  
- 		/* Poll until the controller clears RESUME and SUSPEND */
--		if (handshake(ehci, status_reg, PORT_RESUME, 0, 2000))
-+		if (ehci_handshake(ehci, status_reg, PORT_RESUME, 0, 2000))
- 			pr_err("%s: timeout waiting for RESUME\n", __func__);
--		if (handshake(ehci, status_reg, PORT_SUSPEND, 0, 2000))
-+		if (ehci_handshake(ehci, status_reg, PORT_SUSPEND, 0, 2000))
- 			pr_err("%s: timeout waiting for SUSPEND\n", __func__);
+ struct tegra_ehci_hcd {
+@@ -380,37 +375,6 @@ static int setup_vbus_gpio(struct platform_device *pdev,
+ 	return err;
+ }
  
- 		ehci->reset_done[wIndex-1] = 0;
-@@ -511,14 +511,14 @@ static int controller_resume(struct device *dev)
- 	}
+-/* Bits of PORTSC1, which will get cleared by writing 1 into them */
+-#define TEGRA_PORTSC1_RWC_BITS (PORT_CSC | PORT_PEC | PORT_OCC)
+-
+-void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val)
+-{
+-	unsigned long val;
+-	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+-	void __iomem *base = hcd->regs;
+-
+-	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
+-	val &= ~TEGRA_USB_PORTSC1_PTS(3);
+-	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
+-	writel(val, base + TEGRA_USB_PORTSC1);
+-}
+-EXPORT_SYMBOL_GPL(tegra_ehci_set_pts);
+-
+-void tegra_ehci_set_phcd(struct usb_phy *x, bool enable)
+-{
+-	unsigned long val;
+-	struct usb_hcd *hcd = bus_to_hcd(x->otg->host);
+-	void __iomem *base = hcd->regs;
+-
+-	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
+-	if (enable)
+-		val |= TEGRA_USB_PORTSC1_PHCD;
+-	else
+-		val &= ~TEGRA_USB_PORTSC1_PHCD;
+-	writel(val, base + TEGRA_USB_PORTSC1);
+-}
+-EXPORT_SYMBOL_GPL(tegra_ehci_set_phcd);
+-
+ static int tegra_ehci_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index f0727f2..3446245 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -32,11 +32,20 @@
+ #include <linux/usb/otg.h>
+ #include <linux/usb/ulpi.h>
+ #include <asm/mach-types.h>
++#include <linux/usb/ehci_def.h>
+ #include <linux/usb/tegra_usb_phy.h>
+ #include <linux/module.h>
  
- 	/* Poll until CCS is enabled */
--	if (handshake(ehci, &hw->port_status[0], PORT_CONNECT,
-+	if (ehci_handshake(ehci, &hw->port_status[0], PORT_CONNECT,
- 						 PORT_CONNECT, 2000)) {
- 		pr_err("%s: timeout waiting for PORT_CONNECT\n", __func__);
- 		goto restart;
- 	}
+ #define ULPI_VIEWPORT		0x170
  
- 	/* Poll until PE is enabled */
--	if (handshake(ehci, &hw->port_status[0], PORT_PE,
-+	if (ehci_handshake(ehci, &hw->port_status[0], PORT_PE,
- 						 PORT_PE, 2000)) {
- 		pr_err("%s: timeout waiting for USB_PORTSC1_PE\n", __func__);
- 		goto restart;
-@@ -536,7 +536,7 @@ static int controller_resume(struct device *dev)
- 		writel(val, &hw->port_status[0]);
++/* PORTSC registers */
++#define TEGRA_USB_PORTSC1				0x184
++#define TEGRA_USB_PORTSC1_PTS(x)			(((x) & 0x3) << 30)
++#define TEGRA_USB_PORTSC1_PHCD				(1 << 23)
++
++/* Bits of PORTSC1, which will get cleared by writing 1 into them */
++#define TEGRA_PORTSC1_RWC_BITS	(PORT_CSC | PORT_PEC | PORT_OCC)
++
+ #define USB_SUSP_CTRL		0x400
+ #define   USB_WAKE_ON_CNNT_EN_DEV	(1 << 3)
+ #define   USB_WAKE_ON_DISCON_EN_DEV	(1 << 4)
+@@ -197,6 +206,30 @@ static struct tegra_utmip_config utmip_default[] = {
+ 	},
+ };
  
- 		/* Wait until port suspend completes */
--		if (handshake(ehci, &hw->port_status[0], PORT_SUSPEND,
-+		if (ehci_handshake(ehci, &hw->port_status[0], PORT_SUSPEND,
- 							 PORT_SUSPEND, 1000)) {
- 			pr_err("%s: timeout waiting for PORT_SUSPEND\n",
- 								__func__);
-diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.h
-index 7c978b2..64f9a08 100644
---- a/drivers/usb/host/ehci.h
-+++ b/drivers/usb/host/ehci.h
-@@ -800,6 +800,8 @@ struct ehci_driver_overrides {
- extern void	ehci_init_driver(struct hc_driver *drv,
- 				const struct ehci_driver_overrides *over);
- extern int	ehci_setup(struct usb_hcd *hcd);
-+extern int	ehci_handshake(struct ehci_hcd *ehci, void __iomem *ptr,
-+				u32 mask, u32 done, int usec);
++static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
++{
++	void __iomem *base = phy->regs;
++	unsigned long val;
++
++	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
++	val &= ~TEGRA_USB_PORTSC1_PTS(3);
++	val |= TEGRA_USB_PORTSC1_PTS(pts_val & 3);
++	writel(val, base + TEGRA_USB_PORTSC1);
++}
++
++static void set_phcd(struct tegra_usb_phy *phy, bool enable)
++{
++	void __iomem *base = phy->regs;
++	unsigned long val;
++
++	val = readl(base + TEGRA_USB_PORTSC1) & ~TEGRA_PORTSC1_RWC_BITS;
++	if (enable)
++		val |= TEGRA_USB_PORTSC1_PHCD;
++	else
++		val &= ~TEGRA_USB_PORTSC1_PHCD;
++	writel(val, base + TEGRA_USB_PORTSC1);
++}
++
+ static int utmip_pad_open(struct tegra_usb_phy *phy)
+ {
+ 	phy->pad_clk = devm_clk_get(phy->dev, "utmi-pads");
+@@ -283,7 +316,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
+ 		val &= ~USB_SUSP_SET;
+ 		writel(val, base + USB_SUSP_CTRL);
+ 	} else
+-		tegra_ehci_set_phcd(&phy->u_phy, true);
++		set_phcd(phy, true);
  
- #ifdef CONFIG_PM
- extern int	ehci_suspend(struct usb_hcd *hcd, bool do_wakeup);
--- 
-1.8.1.5
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID, 0) < 0)
+ 		pr_err("%s: timeout waiting for phy to stabilize\n", __func__);
+@@ -305,7 +338,7 @@ static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
+ 		val &= ~USB_SUSP_CLR;
+ 		writel(val, base + USB_SUSP_CTRL);
+ 	} else
+-		tegra_ehci_set_phcd(&phy->u_phy, false);
++		set_phcd(phy, false);
+ 
+ 	if (utmi_wait_register(base + USB_SUSP_CTRL, USB_PHY_CLK_VALID,
+ 						     USB_PHY_CLK_VALID))
+@@ -428,7 +461,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
+ 	utmi_phy_clk_enable(phy);
+ 
+ 	if (!phy->is_legacy_phy)
+-		tegra_ehci_set_pts(&phy->u_phy, 0);
++		set_pts(phy, 0);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index 0cd15d2..d2ca919 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -76,8 +76,4 @@ void tegra_ehci_phy_restore_start(struct usb_phy *phy,
+ 
+ void tegra_ehci_phy_restore_end(struct usb_phy *phy);
+ 
+-void tegra_ehci_set_pts(struct usb_phy *x, u8 pts_val);
+-
+-void tegra_ehci_set_phcd(struct usb_phy *x, bool enable);
