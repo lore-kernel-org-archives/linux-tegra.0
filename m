@@ -1,60 +1,31 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH flasher 1/2] Pre-calculate more in find_config_dir()
-Date: Thu, 13 Jun 2013 20:55:11 +0200
-Message-ID: <20130613185510.GF32574@mithrandir>
-References: <1371143150-3935-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] gpu: host1x: add runtime pm support for dc
+Date: Thu, 13 Jun 2013 13:09:35 -0600
+Message-ID: <51BA18EF.4090302@wwwdotorg.org>
+References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com> <1371117218-2326-4-git-send-email-mkulkarni@nvidia.com> <20130613184938.GE32574@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1371143150-3935-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130613184938.GE32574@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/13/2013 12:49 PM, Thierry Reding wrote:
+> On Thu, Jun 13, 2013 at 03:23:37PM +0530, Mayuresh Kulkarni wrote: 
+> [...]
+>> diff --git a/drivers/gpu/host1x/drm/dc.c
+>> b/drivers/gpu/host1x/drm/dc.c
+> [...]
+>> @@ -1128,9 +1129,7 @@ static int tegra_dc_probe(struct
+>> platform_device *pdev) return PTR_ERR(dc->clk); }
+>> 
+>> -	err = clk_prepare_enable(dc->clk); -	if (err < 0) -		return
+>> err; +	platform_set_drvdata(pdev, dc);
+> 
+> Why do you move the call to platform_set_drvdata() up here?
 
---65ImJOski3p8EhYV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 13, 2013 at 11:05:49AM -0600, Stephen Warren wrote:
-[...]
-> diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-[...]
-> @@ -80,11 +80,15 @@ def find_config_dir():
->          print 'Unknown config "%s"' % args.configname
->          sys.exit(1)
-> =20
-> -    global boardname, socname, out_board_dir
-> +    global config, boardname, board, socname, soc, out_board_dir, bct
-
-That'll be a bit ugly to put in a tuple, so maybe you should stick with
-globals after all.
-
-Thierry
-
---65ImJOski3p8EhYV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRuhWOAAoJEN0jrNd/PrOhbcsP/0h27Axh9ZPtXWkTcnjNE7a2
-GWbtOjSE9t697Xpub4XcFbotxLKfS+w6QPTkeejwz1/Wrga/ldAVfdIVrJhD791y
-fjl0RzZObuQPZVAw1en9oaJ18bAsV8smMUqcRDL9mCRBuh94k19VnXYeG11ytxj0
-LLRXO3ZP/Txquxl1W220xl1fAhfV9traqF1LStyG1HhAOlH8nRDunEs3fmwdxUUk
-rI/2C3XmmiIxqK0qsTZNbEFJaD2VFR5lxKNMn6Sl5cM9auWwpfZNHzHVs3aCBW55
-tS0gGlekEjEywysXjzO4By0JELGtV3DoQ3FlMEP6h88q6db3UGX1cjQ6A0MJFOOc
-F5olP6qamoGZboUjz2hndvgv3XoLKE+SdaZbJ1TLUj55vIOX9K27PQ5t22CSGhxc
-LERMZZQ8i+Q90Mc6+6GeOXSdOxue9HwWyaM83fa2PNW1VF4fonS7FyDb4+4lFQB2
-xg4p/6Ea4+ElwGC2E4KB9zclOVEYOpN9nuJ7YXl1cHNXjgLJjBFuj3+yYxu8yrTq
-RXX7Vb8b8EhZ3yq6oxTpCWktYPPkyZd/L2sWnKLN05dSTNt5XAYO/5WW67uqlOu9
-T4+OxvSVy4DHaWe2Epf6N/g+U09NxvpGna8TMoam/s9W5OHEftFb9BHBnsyzvzOf
-qcITRQv8G9JgA0InwU+5
-=W+iE
------END PGP SIGNATURE-----
-
---65ImJOski3p8EhYV--
+Presumably the suspend/resume functions need to get the value out of
+the device they're passed, so it needs to be set up early?
