@@ -1,118 +1,130 @@
-From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/4] gpu: host1x: shuffle job APIs
-Date: Thu, 13 Jun 2013 15:23:35 +0530
-Message-ID: <1371117218-2326-2-git-send-email-mkulkarni@nvidia.com>
+From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
+Subject: [PATCH v2 4/4] gpu: host1x: add runtime pm support for host1x
+Date: Thu, 13 Jun 2013 15:23:38 +0530
+Message-ID: <1371117218-2326-5-git-send-email-mkulkarni@nvidia.com>
 References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371117218-2326-1-git-send-email-mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: tbergstrom@nvidia.com, amerilainen@nvidia.com, thierry.reding@avionic-design.de, airlied@redhat.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Mayuresh Kulkarni <mkulkarni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch moves the API host1x_job_submit to job.c file. It also
-adds a new API host1x_job_complete.
-
-This is in preparation to add runtime PM support to host1x &
-its modules. The idea is to call pm_runtime_get from
-host1x_job_submit and pm_runtime_put from host1x_job_complete.
-
-This way the runtime PM calls are localized to single file &
-easy to maintain as well as debug
-
-Signed-off-by: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
 ---
- drivers/gpu/host1x/cdma.c    |  2 ++
- drivers/gpu/host1x/channel.c |  8 --------
- drivers/gpu/host1x/channel.h |  1 -
- drivers/gpu/host1x/job.c     | 12 ++++++++++++
- drivers/gpu/host1x/job.h     |  3 +++
- 5 files changed, 17 insertions(+), 9 deletions(-)
+ drivers/gpu/host1x/dev.c | 57 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index de72172..910087b 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -252,6 +252,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 				signal = true;
- 		}
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 28e28a2..b43eb29 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -23,6 +23,7 @@
+ #include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
++#include <linux/pm_runtime.h>
  
-+		host1x_job_complete(job);
-+
- 		list_del(&job->list);
- 		host1x_job_put(job);
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/host1x.h>
+@@ -143,11 +144,16 @@ static int host1x_probe(struct platform_device *pdev)
+ 		return err;
  	}
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index 83ea51b..c381441 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -21,7 +21,6 @@
  
- #include "channel.h"
- #include "dev.h"
--#include "job.h"
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_get_sync(&pdev->dev);
++#else
+ 	err = clk_prepare_enable(host->clk);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable clock\n");
+ 		return err;
+ 	}
++#endif
  
- /* Constructor for the host1x device list */
- int host1x_channel_list_init(struct host1x *host)
-@@ -37,13 +36,6 @@ int host1x_channel_list_init(struct host1x *host)
+ 	err = host1x_syncpt_init(host);
+ 	if (err) {
+@@ -165,10 +171,17 @@ static int host1x_probe(struct platform_device *pdev)
+ 
+ 	host1x_drm_alloc(pdev);
+ 
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_put(&pdev->dev);
++#endif
++
+ 	return 0;
+ 
+ fail_deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_put(&pdev->dev);
++#endif
+ 	return err;
+ }
+ 
+@@ -179,10 +192,51 @@ static int __exit host1x_remove(struct platform_device *pdev)
+ 	host1x_intr_deinit(host);
+ 	host1x_syncpt_deinit(host);
+ 	clk_disable_unprepare(host->clk);
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_disable(&pdev->dev);
++#endif
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_RUNTIME
++static int host1x_runtime_suspend(struct device *dev)
++{
++	struct host1x *host;
++
++	host = dev_get_drvdata(dev);
++	if (!host)
++		return -EINVAL;
++
++	clk_disable_unprepare(host->clk);
+ 
  	return 0;
  }
  
--int host1x_job_submit(struct host1x_job *job)
--{
--	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
--
--	return host1x_hw_channel_submit(host, job);
--}
--
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel)
- {
- 	int err = 0;
-diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
-index 48723b8..8401f25 100644
---- a/drivers/gpu/host1x/channel.h
-+++ b/drivers/gpu/host1x/channel.h
-@@ -44,7 +44,6 @@ struct host1x_channel *host1x_channel_request(struct device *dev);
- void host1x_channel_free(struct host1x_channel *channel);
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
- void host1x_channel_put(struct host1x_channel *channel);
--int host1x_job_submit(struct host1x_job *job);
- 
- #define host1x_for_each_channel(host, channel)				\
- 	list_for_each_entry(channel, &host->chlist.list, list)
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index cc80766..05bafa4 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -586,3 +586,15 @@ void host1x_job_dump(struct device *dev, struct host1x_job *job)
- 	dev_dbg(dev, "    NUM_SLOTS   %d\n", job->num_slots);
- 	dev_dbg(dev, "    NUM_HANDLES %d\n", job->num_unpins);
- }
-+
-+int host1x_job_submit(struct host1x_job *job)
++static int host1x_runtime_resume(struct device *dev)
 +{
-+	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
++	int err = 0;
++	struct host1x *host;
 +
-+	return host1x_hw_channel_submit(host, job);
-+}
++	host = dev_get_drvdata(dev);
++	if (!host)
++		return -EINVAL;
 +
-+int host1x_job_complete(struct host1x_job *job)
-+{
-+	return 0;
++	err = clk_prepare_enable(host->clk);
++	if (err < 0)
++		dev_err(dev, "failed to enable clock\n");
++
++	return err;
 +}
-diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
-index fba45f2..e0249c3 100644
---- a/drivers/gpu/host1x/job.h
-+++ b/drivers/gpu/host1x/job.h
-@@ -159,4 +159,7 @@ void host1x_job_unpin(struct host1x_job *job);
-  */
- void host1x_job_dump(struct device *dev, struct host1x_job *job);
++#endif /* CONFIG_PM_RUNTIME */
++
++#ifdef CONFIG_PM
++static const struct dev_pm_ops host1x_pm_ops = {
++	SET_RUNTIME_PM_OPS(host1x_runtime_suspend,
++		host1x_runtime_resume, NULL)
++};
++#endif
++
+ static struct platform_driver tegra_host1x_driver = {
+ 	.probe = host1x_probe,
+ 	.remove = __exit_p(host1x_remove),
+@@ -190,6 +244,9 @@ static struct platform_driver tegra_host1x_driver = {
+ 		.owner = THIS_MODULE,
+ 		.name = "tegra-host1x",
+ 		.of_match_table = host1x_of_match,
++#ifdef CONFIG_PM
++		.pm = &host1x_pm_ops,
++#endif
+ 	},
+ };
  
-+int host1x_job_submit(struct host1x_job *job);
-+int host1x_job_complete(struct host1x_job *job);
-+
- #endif
 -- 
 1.8.1.5
