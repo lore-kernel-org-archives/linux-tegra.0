@@ -1,57 +1,57 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Thu, 13 Jun 2013 10:13:39 +0800
-Message-ID: <1371089619.1681.21.camel@jlo-ubuntu-64.nvidia.com>
-References: <1370342880-422-1-git-send-email-josephl@nvidia.com>
-	 <1370342880-422-4-git-send-email-josephl@nvidia.com>
-	 <51AE5EE3.3010607@linaro.org>  <51B8B2C8.1090006@wwwdotorg.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/3] ARM: tegra: add basic support for Trusted Foundations
+Date: Thu, 13 Jun 2013 18:12:22 +0900
+Message-ID: <1371114745-24710-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B8B2C8.1090006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-06-13 at 01:41 +0800, Stephen Warren wrote:
-> On 06/04/2013 03:40 PM, Daniel Lezcano wrote:
-> > On 06/04/2013 12:48 PM, Joseph Lo wrote:
-> >> This supports CPU core power down on each CPU when CPU idle. When CPU go
-> >> into this state, it saves it's context and needs a proper configuration
-> >> in flow controller to power gate the CPU when CPU runs into WFI
-> >> instruction. And the CPU also needs to set the IRQ as CPU power down idle
-> >> wake up event in flow controller.
-> >>
-> >> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > I would like to understand why there is a WARN with the
-> > CPUIDLE_FLAG_TIMER_STOP flag set before queuing this patch and ensure it
-> > is not the tree hiding the forest.
-> 
-> Joseph, are you planning to post an updated series or respond to resolve
-> Daniel's question?
+New revision of the initial patch, fixed according to the many suggestions
+received. (thanks!)
 
-I need more time to investigate the detail about what caused the WARN
-when apply the flag. And what's the difference if we didn't enable
-CONFIG_CPU_IDLE_MULTIPLE_DRIVERS, then it only applies
-CLOCK_EVT_NOTIFY_BROADCAST_ON on CPU0. Why if I am moving the
-clockevent_notify of CLOCK_EVT_NOTIFY_BROADCAST_EXIT before
-"local_irq_enable" in the
-"cpuidle_enter_state" (drivers/cpuidle/cpuidle.c), then the warning
-message gone?
+Changes since v1:
+- Split patch into logical chunks as suggested by Tomasz
+- Simplified smc function according to comments from Russel and David
+- Use proper "Trusted Foundations" naming for firmware instead of "SecureOS"
+- Very simple firmware infrastructure in mach-tegra to support the use of other
+  firmwares
+- Presence of secure monitor is signaled through a DT node instead of a "chosen"
+  property
+- Complain if support for a declared secure monitor is not compiled in
 
-Daniel,
+Alexandre Courbot (3):
+  ARM: tegra: basic support for Trusted Foundations
+  ARM: tegra: split setting of CPU reset handler
+  ARM: tegra: set CPU reset handler with firmware op
 
-Because I need more time to figure it out, are you OK if I can post
-another patch to apply CPUIDLE_FLAG_TIMER_STOP flag for all Tegra CPU
-Idle drivers later? (Once we know what's the problem behind this)
+ Documentation/devicetree/bindings/arm/tegra.txt    | 11 +++++
+ .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+ arch/arm/configs/tegra_defconfig                   |  1 +
+ arch/arm/mach-tegra/Kconfig                        | 14 ++++++
+ arch/arm/mach-tegra/Makefile                       |  3 ++
+ arch/arm/mach-tegra/common.c                       |  2 +
+ arch/arm/mach-tegra/firmware.c                     | 40 +++++++++++++++++
+ arch/arm/mach-tegra/firmware.h                     | 19 ++++++++
+ arch/arm/mach-tegra/reset.c                        | 40 ++++++++++++-----
+ arch/arm/mach-tegra/trusted_foundations.c          | 51 ++++++++++++++++++++++
+ 10 files changed, 171 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/firmware.c
+ create mode 100644 arch/arm/mach-tegra/firmware.h
+ create mode 100644 arch/arm/mach-tegra/trusted_foundations.c
 
-Stephen,
-
-I don't have an update of this series, if Daniel is OK if I can post
-another patch to apply TIMER_STOP flag for all Tegra idle drivers.
-
-Thanks,
-Joseph
+-- 
+1.8.3
