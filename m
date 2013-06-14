@@ -1,44 +1,47 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 3/3] ARM: tegra: set CPU reset handler with firmware op
-Date: Fri, 14 Jun 2013 17:54:59 +0900
-Message-ID: <CAAVeFuLi6-WnFP9LvEdqfj2cuK7pgW0_pg33i-Ucoobcxb8RSQ@mail.gmail.com>
-References: <1371114745-24710-1-git-send-email-acourbot@nvidia.com>
- <1371114745-24710-4-git-send-email-acourbot@nvidia.com> <51BA1C3D.1010608@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51BA1C3D.1010608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Karan Jhavar <kjhavar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chris Johnson <CJohnson-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] USB: EHCI: tegra: Fix oops in error cleanup
+Date: Fri, 14 Jun 2013 13:21:21 +0200
+Message-ID: <1371208881-26916-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 14, 2013 at 4:23 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 06/13/2013 03:12 AM, Alexandre Courbot wrote:
->> Use a firmware operation to set the CPU reset handler and only resort to
->> doing it ourselves if there is none defined.
->>
->> This supports the booting of secondary CPUs on devices using a TrustZone
->> secure monitor.
->
->> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
->
->> +     err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
->> +     switch (err) {
->> +     case -ENOSYS:
->> +             tegra_cpu_reset_handler_set(reset_address);
->> +             /* pass-through */
->
-> Rather than detecting -ENOSYS and falling back to the custom
-> tegra_cpu_reset_handler_set(), does it make sense to plug in
-> tegra_cpu_reset_handler_set as the firmware op when there is no secure
-> firmware detected? That way, this code wouldn't need the special case;
-> that would be isolated to firmware.c.
+Under some circumstances it happens that the connected PHY can't be
+powered up properly, in which case the cleanup path currently crashes
+because it checks the tegra->transceiver field using !IS_ERR(), which
+will succeed because it is in fact NULL. Dereferencing that pointer
+causes an oops in tegra_ehci_probe().
 
-Mmmm I admit I just followed what Exynos did without thinking much
-about it. I don't see any reason why your suggestion wouldn't work,
-but on second thought tegra_cpu_reset_handler_set() is not a firmware
-operation - wouldn't it be unexpected (and maybe confusing) to have it
-called through call_firmware_op()?
+This patch fixes the issue by adding an additional label into the
+cleanup path to separately take down the PHY and the transceiver.
 
-Alex.
+Signed-off-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+Note: This is based on top of Stephen's latest patch series to allow
+building the driver as a module:
+
+[PATCH V3 REPOST 0/7] USB: tegra: support building as a module
+
+ drivers/usb/host/ehci-tegra.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 8dac5e4..6ee7ef7 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -478,15 +478,15 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
+-		goto cleanup_phy;
++		goto cleanup_transceiver;
+ 	}
+ 
+ 	return err;
+ 
+-cleanup_phy:
++cleanup_transceiver:
+ 	if (!IS_ERR(tegra->transceiver))
+ 		otg_set_host(tegra->transceiver->otg, NULL);
