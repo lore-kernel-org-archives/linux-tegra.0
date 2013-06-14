@@ -1,47 +1,101 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] USB: EHCI: tegra: Fix oops in error cleanup
-Date: Fri, 14 Jun 2013 13:21:21 +0200
-Message-ID: <1371208881-26916-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] gpu: host1x: add runtime pm support for gr2d
+Date: Fri, 14 Jun 2013 20:15:42 +0530
+Message-ID: <51BB2C96.4060608@nvidia.com>
+References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com> <1371117218-2326-3-git-send-email-mkulkarni@nvidia.com> <51B9E1F2.3090404@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51B9E1F2.3090404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Under some circumstances it happens that the connected PHY can't be
-powered up properly, in which case the cleanup path currently crashes
-because it checks the tegra->transceiver field using !IS_ERR(), which
-will succeed because it is in fact NULL. Dereferencing that pointer
-causes an oops in tegra_ehci_probe().
+On Thursday 13 June 2013 08:44 PM, Stephen Warren wrote:
+> On 06/13/2013 03:53 AM, Mayuresh Kulkarni wrote:
+>
+> Patch description?
 
-This patch fixes the issue by adding an additional label into the
-cleanup path to separately take down the PHY and the transceiver.
+I thought the patch subject is sufficient to tell what it is it doing. 
+Description here would be repetition in my opinion.
 
-Signed-off-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-Note: This is based on top of Stephen's latest patch series to allow
-building the driver as a module:
+Also, the cover letter for the patch-set series is verbose enough.
 
-[PATCH V3 REPOST 0/7] USB: tegra: support building as a module
+>
+>
+>> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+>
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	pm_runtime_enable(&pdev->dev);
+>> +	pm_runtime_get_sync(&pdev->dev);
+>> +#else
+>>   	err = clk_prepare_enable(gr2d->clk);
+>>   	if (err) {
+>>   		dev_err(dev, "cannot turn on clock\n");
+>>   		return err;
+>>   	}
+>> +#endif
+>
+> The #else block here is a cut/paste of the body of
+> gr2d_runtime_resume(). It'd be better to call that function instead. The
+> following is what I ended up with in the Tegra ASoC driver in order to
+> support runtime PM on or off:
+>
+>          pm_runtime_enable(&pdev->dev);
+>          if (!pm_runtime_enabled(&pdev->dev)) {
+>                  ret = tegra20_i2s_runtime_resume(&pdev->dev);
+>                  if (ret)
+>                          goto err_pm_disable;
+>          }
+>
 
- drivers/usb/host/ehci-tegra.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks for the tip. Runtime detection is better than compile time here.
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 8dac5e4..6ee7ef7 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -478,15 +478,15 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
--		goto cleanup_phy;
-+		goto cleanup_transceiver;
- 	}
- 
- 	return err;
- 
--cleanup_phy:
-+cleanup_transceiver:
- 	if (!IS_ERR(tegra->transceiver))
- 		otg_set_host(tegra->transceiver->otg, NULL);
+>> @@ -328,10 +338,51 @@ static int __exit gr2d_remove(struct platform_device *pdev)
+>>
+>>   	host1x_channel_free(gr2d->channel);
+>>   	clk_disable_unprepare(gr2d->clk);
+>
+> Don't you need to remove that clk disable, or make it conditional upon
+> !PM_RUNTIME?
+
+Yes you are correct.
+
+>
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	pm_runtime_disable(&pdev->dev);
+>> +#endif
+>
+> Similarly, perhaps something like the following here:
+>
+>          pm_runtime_disable(&pdev->dev);
+>          if (!pm_runtime_status_suspended(&pdev->dev))
+>                  tegra20_i2s_runtime_suspend(&pdev->dev);
+>
+>> @ -591,10 +592,18 @@ int host1x_job_submit(struct host1x_job *job)
+>>   {
+>>   	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+>>
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	pm_runtime_get_sync(job->channel->dev);
+>> +#endif
+>> +
+>>   	return host1x_hw_channel_submit(host, job);
+>>   }
+>>
+>>   int host1x_job_complete(struct host1x_job *job)
+>>   {
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	return pm_runtime_put(job->channel->dev);
+>> +#else
+>>   	return 0;
+>> +#endif
+>>   }
+>
+> I don't think you need any of those ifdefs; simply call the
+> pm_runtime_*() functions all the time, and they'll be successful no-ops
+> if !PM_RUNTIME.
+>
+OK. But I thought it will be better to be verbose (which is not needed).
