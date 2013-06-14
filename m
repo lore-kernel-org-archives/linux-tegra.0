@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH flasher 4/4] flasher: fix assignment of default data_dir
-Date: Fri, 14 Jun 2013 13:52:24 -0600
-Message-ID: <1371239544-26165-4-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH flasher 3/4] build: restrict cmd_build_configs() to enabled objects
+Date: Fri, 14 Jun 2013 13:52:23 -0600
+Message-ID: <1371239544-26165-3-git-send-email-swarren@wwwdotorg.org>
 References: <1371239544-26165-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1371239544-26165-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -12,27 +12,47 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The default value was being assigned to a global rather than a field in
-the argparser result.
+Only install enabled SoC/board/config files in _out/configs. This may
+be useful if you want to create a _out directory containing a limited
+set of binaries; this way, only the relevant limited set of config
+files are installed too.
 
-Reported-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- tegra-uboot-flasher | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ build | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index ac727a0..f1abe54 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -294,7 +294,7 @@ if not args.data_dir and not args.force_no_out_dir:
-         if args.debug: print 'Detected build tree; using ' + out_data_dir + ' as data dir'
-         args.data_dir = out_data_dir
- if not args.data_dir:
--    data_dir = '/usr/share/tegra_uboot_flasher'
-+    args.data_dir = '/usr/share/tegra_uboot_flasher'
+diff --git a/build b/build
+index 924ac88..8f86d32 100755
+--- a/build
++++ b/build
+@@ -183,7 +183,26 @@ def cmd_build_bcts_imgs():
+         build_bct_img_one_board(boardname)
  
- load_configs(os.path.join(args.data_dir, 'configs'))
+ def cmd_build_configs():
+-    run(scripts_dir, 'cp -rp configs ' + out_dir)
++    mkdir(os.path.join(out_dir, 'configs'))
++    boardnames = {}
++    for configname in all_enabled_confignames():
++        fn = configname + '.config'
++        src = os.path.join(scripts_dir, 'configs', fn)
++        dst = os.path.join(out_dir, 'configs', fn)
++        cp(src, dst)
++        boardnames[configs[configname]['board']] = True
++    socnames = {}
++    for boardname in boardnames:
++        fn = boardname + '.board'
++        src = os.path.join(scripts_dir, 'configs', fn)
++        dst = os.path.join(out_dir, 'configs', fn)
++        cp(src, dst)
++        socnames[boards[boardname]['soc']] = True
++    for socname in socnames:
++        fn = socname + '.soc'
++        src = os.path.join(scripts_dir, 'configs', fn)
++        dst = os.path.join(out_dir, 'configs', fn)
++        cp(src, dst)
  
+ def cmd_build():
+     cmd_build_uboots()
 -- 
 1.8.1.5
