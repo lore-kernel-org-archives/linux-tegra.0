@@ -1,101 +1,39 @@
 From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] gpu: host1x: add runtime pm support for gr2d
-Date: Fri, 14 Jun 2013 20:15:42 +0530
-Message-ID: <51BB2C96.4060608@nvidia.com>
-References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com> <1371117218-2326-3-git-send-email-mkulkarni@nvidia.com> <51B9E1F2.3090404@wwwdotorg.org>
+Subject: Re: [PATCH v2 3/4] gpu: host1x: add runtime pm support for dc
+Date: Fri, 14 Jun 2013 20:18:26 +0530
+Message-ID: <51BB2D3A.1050407@nvidia.com>
+References: <1371117218-2326-1-git-send-email-mkulkarni@nvidia.com> <1371117218-2326-4-git-send-email-mkulkarni@nvidia.com> <20130613184938.GE32574@mithrandir> <51BA18EF.4090302@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B9E1F2.3090404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51BA18EF.4090302-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 13 June 2013 08:44 PM, Stephen Warren wrote:
-> On 06/13/2013 03:53 AM, Mayuresh Kulkarni wrote:
->
-> Patch description?
-
-I thought the patch subject is sufficient to tell what it is it doing. 
-Description here would be repetition in my opinion.
-
-Also, the cover letter for the patch-set series is verbose enough.
-
->
->
->> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
->
->> +#ifdef CONFIG_PM_RUNTIME
->> +	pm_runtime_enable(&pdev->dev);
->> +	pm_runtime_get_sync(&pdev->dev);
->> +#else
->>   	err = clk_prepare_enable(gr2d->clk);
->>   	if (err) {
->>   		dev_err(dev, "cannot turn on clock\n");
->>   		return err;
->>   	}
->> +#endif
->
-> The #else block here is a cut/paste of the body of
-> gr2d_runtime_resume(). It'd be better to call that function instead. The
-> following is what I ended up with in the Tegra ASoC driver in order to
-> support runtime PM on or off:
->
->          pm_runtime_enable(&pdev->dev);
->          if (!pm_runtime_enabled(&pdev->dev)) {
->                  ret = tegra20_i2s_runtime_resume(&pdev->dev);
->                  if (ret)
->                          goto err_pm_disable;
->          }
->
-
-Thanks for the tip. Runtime detection is better than compile time here.
-
->> @@ -328,10 +338,51 @@ static int __exit gr2d_remove(struct platform_device *pdev)
+On Friday 14 June 2013 12:39 AM, Stephen Warren wrote:
+> On 06/13/2013 12:49 PM, Thierry Reding wrote:
+>> On Thu, Jun 13, 2013 at 03:23:37PM +0530, Mayuresh Kulkarni wrote:
+>> [...]
+>>> diff --git a/drivers/gpu/host1x/drm/dc.c
+>>> b/drivers/gpu/host1x/drm/dc.c
+>> [...]
+>>> @@ -1128,9 +1129,7 @@ static int tegra_dc_probe(struct
+>>> platform_device *pdev) return PTR_ERR(dc->clk); }
+>>>
+>>> -	err = clk_prepare_enable(dc->clk); -	if (err < 0) -		return
+>>> err; +	platform_set_drvdata(pdev, dc);
 >>
->>   	host1x_channel_free(gr2d->channel);
->>   	clk_disable_unprepare(gr2d->clk);
+>> Why do you move the call to platform_set_drvdata() up here?
 >
-> Don't you need to remove that clk disable, or make it conditional upon
-> !PM_RUNTIME?
+> Presumably the suspend/resume functions need to get the value out of
+> the device they're passed, so it needs to be set up early?
+>
 
-Yes you are correct.
+Yes that is correct, Stephen. The run-time pm call-backs need 2 things: 
+correct driver data pointer and correct clock pointer within it. Hence I 
+had to move this line upper in sequence.
 
->
->> +#ifdef CONFIG_PM_RUNTIME
->> +	pm_runtime_disable(&pdev->dev);
->> +#endif
->
-> Similarly, perhaps something like the following here:
->
->          pm_runtime_disable(&pdev->dev);
->          if (!pm_runtime_status_suspended(&pdev->dev))
->                  tegra20_i2s_runtime_suspend(&pdev->dev);
->
->> @ -591,10 +592,18 @@ int host1x_job_submit(struct host1x_job *job)
->>   {
->>   	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
->>
->> +#ifdef CONFIG_PM_RUNTIME
->> +	pm_runtime_get_sync(job->channel->dev);
->> +#endif
->> +
->>   	return host1x_hw_channel_submit(host, job);
->>   }
->>
->>   int host1x_job_complete(struct host1x_job *job)
->>   {
->> +#ifdef CONFIG_PM_RUNTIME
->> +	return pm_runtime_put(job->channel->dev);
->> +#else
->>   	return 0;
->> +#endif
->>   }
->
-> I don't think you need any of those ifdefs; simply call the
-> pm_runtime_*() functions all the time, and they'll be successful no-ops
-> if !PM_RUNTIME.
->
-OK. But I thought it will be better to be verbose (which is not needed).
+Same is applicable to gr2d and host1x patches as well.
