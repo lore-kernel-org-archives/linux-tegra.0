@@ -1,93 +1,42 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 REPOST 0/7] USB: tegra: support building as a module
-Date: Fri, 14 Jun 2013 19:00:34 +0200
-Message-ID: <20130614170033.GA854@mithrandir>
-References: <1371144253-21295-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1371144253-21295-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Manjunath Goudar <manjunath.goudar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>
+Subject: Re: No HDMI output on AC100
+Date: Fri, 14 Jun 2013 20:27:00 +0200
+Message-ID: <EF2DBD80-3DDD-416F-935C-E48261BF6CF5@m3y3r.de>
+References: <1370680435.24531.12.camel@localhost.localdomain> <68C7110D-C493-4A1F-8011-5F9259C2F4E7@m3y3r.de> <1370707552.1829.4.camel@antimon.fritz.box> <2572002.IOA8y0azF4@ax5200p> <1370767921.2283.8.camel@localhost.localdomain> <20130612105002.GA1940@manwe>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130612105002.GA1940@manwe>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Am 12.06.2013 um 12:50 schrieb Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Sun, Jun 9, 2013 at 10:52 AM, Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org> wrote:
+> [...]
+>> oops! I think everthing did always work correctly! But somehow Fedora 19
+>> fails to spawn a getty on the tty1/fb0 console... so I just did see a
+>> black screen :-)
+> 
+> Just to confirm. This isn't a tegra-drm issue, but rather Fedora 19 not
+> spawning getty? Or is something in tegra-drm causing getty to fail? That
+> would be surprising, but I'm trying to figure out if I need to
+> investigate or not. =)
+> 
+Hi,
 
-On Thu, Jun 13, 2013 at 11:24:06AM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> I'm reposting this because I originally thought Felipe would apply it
-> to his PHY tree, since it's based on other work there. Now that tree has
-> been merged into Greg's main USB tree, I believe this series can be
-> applied there instead. Hence, resending so it shows up in Greg's inbox.
->=20
->=20
-> ehci-tegra is currently built into the main ehci-hcd driver, rather than
-> being a separate module. This causes issues with multi-platform ARM
-> kernels. This series separates ehci-tegra into its own module to avoid
-> those problems.
->=20
-> Manjunath Goudar originally wrote most of this series. I've since cleaned
-> it up, rebased it on Venu's recent changes to the Tegra USB driver, and
-> tested it.
->=20
-> Manjunath Goudar (3):
->   usb: phy: export ulpi_viewport_access_ops
->   USB: EHCI: export ehci_handshake for ehci-hcd sub-drivers
->   USB: EHCI: make ehci-tegra a separate driver
->=20
-> Stephen Warren (4):
->   usb: phy: add MODULE_LICENSE to phy-tegra-usb.c
->   USB: EHCI: tegra: remove all power management
->   USB: EHCI: tegra: fix circular module dependencies
->   USB: EHCI: tegra: make use of ehci->priv
->=20
->  drivers/usb/host/Kconfig            |   2 +-
->  drivers/usb/host/Makefile           |   1 +
->  drivers/usb/host/ehci-hcd.c         |  22 +-
->  drivers/usb/host/ehci-hub.c         |   4 +-
->  drivers/usb/host/ehci-tegra.c       | 474 ++++++++----------------------=
-------
->  drivers/usb/host/ehci.h             |   2 +
->  drivers/usb/phy/phy-tegra-usb.c     |  43 +++-
->  drivers/usb/phy/phy-ulpi-viewport.c |   2 +
->  include/linux/usb/tegra_usb_phy.h   |   4 -
->  9 files changed, 165 insertions(+), 389 deletions(-)
+Please forget the getty thing as it was nonsense. The tegra hdmi driver seems to work, once it decides to output a signal. I was somehow able to trigger this the last time, but I don't know how to reproduce this.
 
-The series:
+So when I boot with the hdmi monitor connected all I get is a blank screen with no backlight ( I'm talking about the external hdmi monitor here, not the LCD panel!)
 
-Tested-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+And some unknow thing (load of a module? Loading udl driver? Restarting getty?) seems to trigger that the tegra hdmi driver starts to output a valid hdmi signal and the external monitor shows the tegra hdmi framebuffer console.
 
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature
+The ac100 is otherwise up and running and I can ssh into it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Any ideas?
 
-iQIcBAEBAgAGBQJRu0wxAAoJEN0jrNd/PrOh8qYQAK004+JaLhGf/cGalj3KaN/S
-1omz1OMguJHLumBxpXrByFDTTP4V9Iy6n2kf3y3dYQsj3EiDTwJy25oboSr9PhVm
-OR5fTLrDAiw5OpVu5LViXTXdkcz/PeSCSzBgxcFx0g3cNu7L4wcXZog9zYtCKQn+
-/mtg0vMnC3KmhFzIKC/GSyiGuPNXpF8Pf30/AVOcc1Cfy9Ls5Ad3e+WD1ku2GuZE
-BXmr8SunOCqpOePphHwnvd7epuC/+/O2k9fnSkfo4ylTXtUpvTwC/Ne6Tj+fh2Jk
-rt/lEVtXiMM6Oraf1dnSCac0zqPnQ1t0CkenR+GhitLbxgKWa4vZ1/72buvEwvCz
-cQtj/4HGil+FBkt4gcwblUysXzIjEOb4QqOkPjM6rNJa2CAVTtVWe9e36BK70H2k
-wz9ZoyMEKtPkTT5eCd/LBh3O6F9zBl6r4qr4jj18tDTWnZXBgpefGGfKVTKD0Wr6
-0/InNnhubQbnTqc4/GdhLOSJLe+uBoYD3LAE5mDDqCevP8BvtqhLQSIdg8pDeOPL
-M/pD7F6ngW4TvnKM8v4Voyh3VJeDTPFDRWe2Jv5q331DXdXJ3XGktTAjbM0CQMKb
-KeECUwhwYcaz/6y1+sOm0QEgOKYyDFar92ei9LOZ0R3ofs+DgMvZL5RD+oGCDGvy
-GyqfsR8dG0DoMz9eFIec
-=mUEk
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thierry
