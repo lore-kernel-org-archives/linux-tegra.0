@@ -1,35 +1,41 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V4 1/4] ARM: tegra30: clocks: Fix pciex clock registration
-Date: Sun, 16 Jun 2013 11:51:33 -0700
-Message-ID: <20130616185132.7541.680@quantum>
-References: <1371021223-6709-1-git-send-email-jagarwal@nvidia.com>
- <51B8956B.8020704@wwwdotorg.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] drm/tegra: Include linux/types.h
+Date: Mon, 17 Jun 2013 13:58:14 +0200
+Message-ID: <1371470294.26299.21.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51B8956B.8020704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-06-12 08:36:11)
-> On 06/12/2013 01:13 AM, Jay Agarwal wrote:
-> > Registering pciex as peripheral clock instead of fixed clock
-> > as tegra_perih_reset_assert(deassert) api of this clock api
-> > gives warning and ultimately does not succeed to assert(deassert)
-> > 
-> > Signed-off-by: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this.
-> 
-> In this case, it would make more sense to apply this to the clock tree,
-> since it's a standalone bug-fix.
-> 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+"make headers_check" complains about include/uapi/drm/tegra_drm.h:
+    [...]/usr/include/drm/tegra_drm.h:21: found __[us]{8,16,32,64} type without #include <linux/types.h>
 
-Pulled into clk-fixes for -rc7.
+So let's include linux/types.h in this header.
 
-Regards,
-Mike
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Tested only with "make headers_check". I don't actually build or run
+code that uses tegra_drm.h.
+
+ include/uapi/drm/tegra_drm.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index 6e132a2..6698e81 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -17,6 +17,8 @@
+ #ifndef _UAPI_TEGRA_DRM_H_
+ #define _UAPI_TEGRA_DRM_H_
+ 
++#include <linux/types.h>
++
+ struct drm_tegra_gem_create {
+ 	__u64 size;
+ 	__u32 flags;
+-- 
+1.8.1.4
