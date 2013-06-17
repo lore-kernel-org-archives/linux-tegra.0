@@ -1,92 +1,54 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 0/2] Fix kernel panics with certain I2C tps6* chips
-Date: Mon, 17 Jun 2013 20:47:35 +0300
-Message-ID: <1371491257-23791-1-git-send-email-ttynkkynen@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] mfd: tps65910: Fix crash in i2c_driver .probe
+Date: Mon, 17 Jun 2013 12:07:28 -0600
+Message-ID: <51BF5060.8060001@wwwdotorg.org>
+References: <1371491257-23791-1-git-send-email-ttynkkynen@nvidia.com> <1371491257-23791-2-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1371491257-23791-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On 06/17/2013 11:47 AM, Tuomas Tynkkynen wrote:
+> Commit "i2c: core: make it possible to match a pure device tree driver"
+> changed semantics of the i2c probing for device tree devices.
+> Device tree probed devices now get a NULL i2c_device_id pointer.
+> This caused kernel panics due to NULL dereference.
 
-Latest linux-next head (next-20130617) seems to have some backwards-incompatible
-changes to the i2c core, which breaks the tps* drivers in our boards and cause
-panics on boot.
+> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
 
-ttynkkynen@ttynkkynen-lnx:~/upstream/kernel$ git bisect bad
-c80f52847c50109ca248c22efbf71ff10553dca4 is the first bad commit
-commit c80f52847c50109ca248c22efbf71ff10553dca4
-Author: Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon May 13 22:18:21 2013 +0200
+>  	pmic_plat_data = dev_get_platdata(&i2c->dev);
+>  
+> -	if (!pmic_plat_data && i2c->dev.of_node) {
+> +	if (id) {
+> +		chip_id = id->driver_data;
+> +	} else if (i2c->dev.of_node) {
+>  		pmic_plat_data = tps65910_parse_dt(i2c, &chip_id);
 
-    i2c: core: make it possible to match a pure device tree driver
-    
-    This tries to address an issue found when writing an MFD driver
-    for the Nomadik STw481x PMICs: as the platform is using device
-    tree exclusively I want to specify the driver matching like
-    this:
-    
-    static const struct of_device_id stw481x_match[] = {
-    	{ .compatible = "st,stw4810", },
-    	{ .compatible = "st,stw4811", },
-    	{},
-    };
-    
-    static struct i2c_driver stw481x_driver = {
-    	.driver = {
-    		.name	= "stw481x",
-    		.of_match_table = stw481x_match,
-    	},
-    	.probe		= stw481x_probe,
-    	.remove		= stw481x_remove,
-    };
-    
-    However that turns out not to be possible: the I2C probe code
-    is written so that the probe() call is always passed a match
-    from i2c_match_id() using non-devicetree matches.
-    
-    This is probably why most devices using device tree for I2C
-    clients currently will pass no .of_match_table *at all* but
-    instead just use .id_table from struct i2c_driver to match
-    the device. As you realize that means that the whole idea with
-    compatible strings is discarded, and that is why we find strange
-    device tree I2C device compatible strings like "product" instead
-    of "vendor,product" as you could expect.
-    
-    Let's figure out how to fix this before the mess spreads. This
-    patch will allow probeing devices with only an of_match_table
-    as per above, and will pass NULL as the second argument to the
-    probe() function. If the driver wants to deduce secondary info
-    from the struct of_device_id .data field, it has to call
-    of_match_device() on its own match table in the probe function
-    device tree probe path.
-    
-    If drivers define both an .of_match_table *AND* a i2c_driver
-    .id_table, the .of_match_table will take precedence, just
-    as is done in the i2c_device_match() function in i2c-core.c.
-    
-    I2C devices probed from device tree should subsequently be
-    fixed to handle the case where of_match_table() is
-    used (I think none of them do that today), and platforms should
-    fix their device trees to use compatible strings for I2C devices
-    instead of setting the name to Linux device driver names as is
-    done in multiple cases today.
-    
-    Cc: Rob Herring <rob.herring@calxeda.com>
-    Cc: Grant Likely <grant.likely@linaro.org>
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+That over-writes pmic_plat_data even if it was already set above. This
+should really only happen if the earlier assignment didn't find any
+pdata, i.e. if (!pmic_plat_data) here.
 
-Tuomas Tynkkynen (2):
-  mfd: tps65910: Fix crash in i2c_driver .probe
-  regulator: tps62360: Fix crash in i2c_driver .probe
+Looking at patch 2/2, the structure in that driver is correct, and
+perhaps could be implemented the same or similarly here?
 
- drivers/mfd/tps65910.c                 | 6 ++++--
- drivers/regulator/tps62360-regulator.c | 8 ++++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+>  		of_pmic_plat_data = pmic_plat_data;
 
--- 
-1.8.1.5
+Or just swap those assignments:
+
+of_pmic_plat_data = tps65910_parse_dt(...);
+if (!pmic_plat_data)
+    pmic_plat_data = of_pmic_plat_data;
+
+(although there's perhaps little point parsing the pdata from DT if it's
+already provided through the device object)
+
+>  	}
+>  
+> -	if (!pmic_plat_data)
+> +	if (!pmic_plat_data || chip_id < 0)
+>  		return -EINVAL;
