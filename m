@@ -1,44 +1,27 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] tegrarcm: Move miniloader files to "miniloader"
- subdir
-Date: Mon, 17 Jun 2013 20:30:46 -0700
-Message-ID: <20130618033045.GA2922@badger>
-References: <1371525937-2713-1-git-send-email-amartin@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] tegrarcm: Add SPI flash support to tegra114 miniloader
+Date: Mon, 17 Jun 2013 21:57:27 -0600
+Message-ID: <51BFDAA7.1080106@wwwdotorg.org>
+References: <1371525987-2799-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371525937-2713-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1371525987-2799-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 17, 2013 at 08:25:36PM -0700, Allen Martin wrote:
-> In preparation of changing the LICENSE file to refer to "miniloader"
-> directory instead of individual filenames, move all miniloader files
-> into "miniloader" subdir.
-> 
-> Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  src/Makefile.am                      |    6 +-
->  src/main.c                           |    6 +-
->  src/miniloader/tegra114-miniloader.h | 9616 ++++++++++++++++++++++++++++++++++
->  src/miniloader/tegra20-miniloader.h  | 8323 +++++++++++++++++++++++++++++
->  src/miniloader/tegra30-miniloader.h  | 8070 ++++++++++++++++++++++++++++
->  src/tegra114-miniloader.h            | 9616 ----------------------------------
->  src/tegra20-miniloader.h             | 8323 -----------------------------
->  src/tegra30-miniloader.h             | 8070 ----------------------------
->  8 files changed, 26015 insertions(+), 26015 deletions(-)
->  create mode 100644 src/miniloader/tegra114-miniloader.h
->  create mode 100644 src/miniloader/tegra20-miniloader.h
->  create mode 100644 src/miniloader/tegra30-miniloader.h
->  delete mode 100644 src/tegra114-miniloader.h
->  delete mode 100644 src/tegra20-miniloader.h
->  delete mode 100644 src/tegra30-miniloader.h
-> 
+On 06/17/2013 09:26 PM, Allen Martin wrote:
+> Update tegra114 miniloader file with a version that supports boot from
+> SPI flash.  The previous version would hang if the board was
+> configured to boot from SPI.
 
-Sorry, forgot to generate patch with '-M' :(
+Out of curiosity, why does it hang? I thought the miniloader would only
+interpret the SDRAM portion of the BCT, and hence the boot flash
+configuration would have no effect on it at all. Does it also enable
+whatever boot flash is in the BCT too?
 
--- 
-nvpublic
+Either way, I guess I have no problem with the patch, so,
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
