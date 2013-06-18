@@ -1,43 +1,42 @@
 From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] tegrarcm: Add version command
-Date: Mon, 17 Jun 2013 21:40:16 -0700
-Message-ID: <20130618044016.GA8973@badger>
-References: <1371525867-2551-1-git-send-email-amartin@nvidia.com>
- <51BFDB01.6030606@wwwdotorg.org>
+Subject: Re: [PATCH] tegrarcm: Bump version to 1.4
+Date: Mon, 17 Jun 2013 21:41:22 -0700
+Message-ID: <20130618044121.GB8973@badger>
+References: <1371526014-2869-1-git-send-email-amartin@nvidia.com>
+ <51BFDB63.3090005@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51BFDB01.6030606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51BFDB63.3090005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 17, 2013 at 08:58:57PM -0700, Stephen Warren wrote:
-> On 06/17/2013 09:24 PM, Allen Martin wrote:
-> > Add command line option "--version" that prints the version number and
-> > exits.
+On Mon, Jun 17, 2013 at 09:00:35PM -0700, Stephen Warren wrote:
+> On 06/17/2013 09:26 PM, Allen Martin wrote:
+> > Bump the version number to 1.4 and update change log.
 > 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> I assume you'll apply all these.
+> This arrived before the miniloader move and license change. I assume
+> it'll be applied after.
 
 yes
 
 > 
-> Although...
+> Assuming the typos below are fixed,
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> > +static void print_version(char *progname)
-> > +{
-> > +	fprintf(stderr, "%s %s\n", PACKAGE_NAME, PACKAGE_VERSION);
-> > +}
+> > diff --git a/README b/README
 > 
-> I wonder if that shouldn't print to stdout; it's the requested output of
-> the command, not some error message.
+> >  Changes (see git logs for complete list):
+> > +V1.4 - Changed licnese for minloader files
+> 
+> typos: license miniloader
+> 
 
-Sounds reasonable.
+oops, thakns :)
 
--Allen
+
 -- 
 nvpublic
