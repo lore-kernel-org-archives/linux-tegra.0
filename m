@@ -1,37 +1,30 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: DMA mapping API(IOMMU) for ARM64?
-Date: Tue, 18 Jun 2013 17:20:45 +0200
-Message-ID: <20130618.182045.1828458783306503680.hdoyu@nvidia.com>
-References: <20130618.140137.1551430695673122122.hdoyu@nvidia.com><20130618125054.GL9930@arm.com><201306181615.27341.arnd@arndb.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] mfd: tps65910: Fix crash in i2c_driver .probe
+Date: Tue, 18 Jun 2013 09:39:33 -0600
+Message-ID: <51C07F35.8070805@wwwdotorg.org>
+References: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com> <1371550481-28126-2-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <201306181615.27341.arnd-r2nGTMty4D4@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "Will.Deacon-5wv7dgnIgG8@public.gmane.org" <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1371550481-28126-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote @ Tue, 18 Jun 2013 16:15:27 +0200:
-
-> On Tuesday 18 June 2013, Catalin Marinas wrote:
-> > > 1, Copy arch/arm/mm/dma-mapping.c arch/arm64/mm/dma-mapping.c(+swiotlb)
-> > > 2, Adapt arch/arm64/mm/dma-mapping.c(+swiotlb) to 64bit compatible.
-> > > 3, Factor out the common code from them into mm/dma-mapping.c
-> > 
-> > Or add the relevant code to something like lib/iommu-helper.c, convert
-> > arm64 to use that and we can work on converting arm and other
-> > architectures afterwards.
+On 06/18/2013 04:14 AM, Tuomas Tynkkynen wrote:
+> Commit "i2c: core: make it possible to match a pure device tree driver"
+> changed semantics of the i2c probing for device tree devices.
+> Device tree probed devices now get a NULL i2c_device_id pointer.
+> This caused kernel panics due to NULL dereference.
 > 
-> Yes, that would work too.
+> Moves the of_match_device call from tps65910_parse_dt to .probe to
+> allow the chip type to be detected from device tree but with the
+> device parameters coming from platform data.
 
-Ok, this seems to be the way to go. Thank you for the guide.
+Reviewed-by: Stephen Warren <swaren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+It's a pity that every driver that supports DT is going to need this
+boiler-plate though. Perhaps the I2C core can acquire a follow-on patch
+that does this for drivers in the future.
