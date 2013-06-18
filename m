@@ -1,94 +1,38 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 0/2] Fix kernel panics with certain I2C tps6* chips
-Date: Tue, 18 Jun 2013 13:14:39 +0300
-Message-ID: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] regulator: tps51632: Get regulator name from i2c_client
+Date: Tue, 18 Jun 2013 13:30:13 +0300
+Message-ID: <1371551413-12346-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Commit "i2c: core: make it possible to match a pure device tree driver"
+changed semantics of the i2c probing for device tree devices.
+Device tree probed devices now get a NULL i2c_device_id pointer.
+This causes the regulator name to be set to NULL and the regulator
+registration to fail.
 
-Latest linux-next head (next-20130617) seems to have some backwards-incompatible
-changes to the i2c core, which breaks the tps* drivers in our boards and cause
-panics on boot.
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/regulator/tps51632-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v2 changes: Don't override platform data from DT in tps65910
-
-ttynkkynen@ttynkkynen-lnx:~/upstream/kernel$ git bisect bad
-c80f52847c50109ca248c22efbf71ff10553dca4 is the first bad commit
-commit c80f52847c50109ca248c22efbf71ff10553dca4
-Author: Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon May 13 22:18:21 2013 +0200
-
-    i2c: core: make it possible to match a pure device tree driver
-    
-    This tries to address an issue found when writing an MFD driver
-    for the Nomadik STw481x PMICs: as the platform is using device
-    tree exclusively I want to specify the driver matching like
-    this:
-    
-    static const struct of_device_id stw481x_match[] = {
-    	{ .compatible = "st,stw4810", },
-    	{ .compatible = "st,stw4811", },
-    	{},
-    };
-    
-    static struct i2c_driver stw481x_driver = {
-    	.driver = {
-    		.name	= "stw481x",
-    		.of_match_table = stw481x_match,
-    	},
-    	.probe		= stw481x_probe,
-    	.remove		= stw481x_remove,
-    };
-    
-    However that turns out not to be possible: the I2C probe code
-    is written so that the probe() call is always passed a match
-    from i2c_match_id() using non-devicetree matches.
-    
-    This is probably why most devices using device tree for I2C
-    clients currently will pass no .of_match_table *at all* but
-    instead just use .id_table from struct i2c_driver to match
-    the device. As you realize that means that the whole idea with
-    compatible strings is discarded, and that is why we find strange
-    device tree I2C device compatible strings like "product" instead
-    of "vendor,product" as you could expect.
-    
-    Let's figure out how to fix this before the mess spreads. This
-    patch will allow probeing devices with only an of_match_table
-    as per above, and will pass NULL as the second argument to the
-    probe() function. If the driver wants to deduce secondary info
-    from the struct of_device_id .data field, it has to call
-    of_match_device() on its own match table in the probe function
-    device tree probe path.
-    
-    If drivers define both an .of_match_table *AND* a i2c_driver
-    .id_table, the .of_match_table will take precedence, just
-    as is done in the i2c_device_match() function in i2c-core.c.
-    
-    I2C devices probed from device tree should subsequently be
-    fixed to handle the case where of_match_table() is
-    used (I think none of them do that today), and platforms should
-    fix their device trees to use compatible strings for I2C devices
-    instead of setting the name to Linux device driver names as is
-    done in multiple cases today.
-    
-    Cc: Rob Herring <rob.herring@calxeda.com>
-    Cc: Grant Likely <grant.likely@linaro.org>
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-
-Tuomas Tynkkynen (2):
-  mfd: tps65910: Fix crash in i2c_driver .probe
-  regulator: tps62360: Fix crash in i2c_driver .probe
-
- drivers/mfd/tps65910.c                 | 39 ++++++++++++++++++----------------
- drivers/regulator/tps62360-regulator.c |  8 +++++--
- 2 files changed, 27 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/regulator/tps51632-regulator.c b/drivers/regulator/tps51632-regulator.c
+index 6e67be7..87c37f8 100644
+--- a/drivers/regulator/tps51632-regulator.c
++++ b/drivers/regulator/tps51632-regulator.c
+@@ -305,7 +305,7 @@ static int tps51632_probe(struct i2c_client *client,
+ 	}
+ 
+ 	tps->dev = &client->dev;
+-	tps->desc.name = id->name;
++	tps->desc.name = client->name;
+ 	tps->desc.id = 0;
+ 	tps->desc.ramp_delay = TPS51632_DEFAULT_RAMP_DELAY;
+ 	tps->desc.min_uV = TPS51632_MIN_VOLATGE;
 -- 
 1.8.1.5
