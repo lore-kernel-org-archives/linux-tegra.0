@@ -1,119 +1,94 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 1/2] mfd: tps65910: Fix crash in i2c_driver .probe
-Date: Tue, 18 Jun 2013 13:14:40 +0300
-Message-ID: <1371550481-28126-2-git-send-email-ttynkkynen@nvidia.com>
-References: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH v2 0/2] Fix kernel panics with certain I2C tps6* chips
+Date: Tue, 18 Jun 2013 13:14:39 +0300
+Message-ID: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit "i2c: core: make it possible to match a pure device tree driver"
-changed semantics of the i2c probing for device tree devices.
-Device tree probed devices now get a NULL i2c_device_id pointer.
-This caused kernel panics due to NULL dereference.
+Hi,
 
-Moves the of_match_device call from tps65910_parse_dt to .probe to
-allow the chip type to be detected from device tree but with the
-device parameters coming from platform data.
+Latest linux-next head (next-20130617) seems to have some backwards-incompatible
+changes to the i2c core, which breaks the tps* drivers in our boards and cause
+panics on boot.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
- v2: Don't overwrite platform data from DT 
+v2 changes: Don't override platform data from DT in tps65910
 
- drivers/mfd/tps65910.c | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
+ttynkkynen@ttynkkynen-lnx:~/upstream/kernel$ git bisect bad
+c80f52847c50109ca248c22efbf71ff10553dca4 is the first bad commit
+commit c80f52847c50109ca248c22efbf71ff10553dca4
+Author: Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon May 13 22:18:21 2013 +0200
 
-diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
-index d792772..61147b4 100644
---- a/drivers/mfd/tps65910.c
-+++ b/drivers/mfd/tps65910.c
-@@ -384,22 +384,13 @@ static struct of_device_id tps65910_of_match[] = {
- MODULE_DEVICE_TABLE(of, tps65910_of_match);
- 
- static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
--						int *chip_id)
-+						int chip_id)
- {
- 	struct device_node *np = client->dev.of_node;
- 	struct tps65910_board *board_info;
- 	unsigned int prop;
--	const struct of_device_id *match;
- 	int ret = 0;
- 
--	match = of_match_device(tps65910_of_match, &client->dev);
--	if (!match) {
--		dev_err(&client->dev, "Failed to find matching dt id\n");
--		return NULL;
--	}
--
--	*chip_id  = (int)match->data;
--
- 	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
- 			GFP_KERNEL);
- 	if (!board_info) {
-@@ -410,13 +401,13 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- 	ret = of_property_read_u32(np, "ti,vmbch-threshold", &prop);
- 	if (!ret)
- 		board_info->vmbch_threshold = prop;
--	else if (*chip_id == TPS65911)
-+	else if (chip_id == TPS65911)
- 		dev_warn(&client->dev, "VMBCH-Threshold not specified");
- 
- 	ret = of_property_read_u32(np, "ti,vmbch2-threshold", &prop);
- 	if (!ret)
- 		board_info->vmbch2_threshold = prop;
--	else if (*chip_id == TPS65911)
-+	else if (chip_id == TPS65911)
- 		dev_warn(&client->dev, "VMBCH2-Threshold not specified");
- 
- 	prop = of_property_read_bool(np, "ti,en-ck32k-xtal");
-@@ -432,7 +423,7 @@ static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
- #else
- static inline
- struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
--					 int *chip_id)
-+					 int chip_id)
- {
- 	return NULL;
- }
-@@ -461,16 +452,28 @@ static int tps65910_i2c_probe(struct i2c_client *i2c,
- 	struct tps65910_board *of_pmic_plat_data = NULL;
- 	struct tps65910_platform_data *init_data;
- 	int ret = 0;
--	int chip_id = id->driver_data;
-+	int chip_id = -1;
- 
- 	pmic_plat_data = dev_get_platdata(&i2c->dev);
- 
--	if (!pmic_plat_data && i2c->dev.of_node) {
--		pmic_plat_data = tps65910_parse_dt(i2c, &chip_id);
--		of_pmic_plat_data = pmic_plat_data;
-+	if (id) {
-+		chip_id = id->driver_data;
-+	} else if (i2c->dev.of_node) {
-+		const struct of_device_id *match;
-+		match = of_match_device(tps65910_of_match, &i2c->dev);
-+		if (!match) {
-+			dev_err(&i2c->dev, "Failed to find matching dt id\n");
-+			return -EINVAL;
-+		}
-+		chip_id  = (int)match->data;
-+
-+		if (!pmic_plat_data) {
-+			pmic_plat_data = tps65910_parse_dt(i2c, chip_id);
-+			of_pmic_plat_data = pmic_plat_data;
-+		}
- 	}
- 
--	if (!pmic_plat_data)
-+	if (!pmic_plat_data || chip_id < 0)
- 		return -EINVAL;
- 
- 	init_data = devm_kzalloc(&i2c->dev, sizeof(*init_data), GFP_KERNEL);
+    i2c: core: make it possible to match a pure device tree driver
+    
+    This tries to address an issue found when writing an MFD driver
+    for the Nomadik STw481x PMICs: as the platform is using device
+    tree exclusively I want to specify the driver matching like
+    this:
+    
+    static const struct of_device_id stw481x_match[] = {
+    	{ .compatible = "st,stw4810", },
+    	{ .compatible = "st,stw4811", },
+    	{},
+    };
+    
+    static struct i2c_driver stw481x_driver = {
+    	.driver = {
+    		.name	= "stw481x",
+    		.of_match_table = stw481x_match,
+    	},
+    	.probe		= stw481x_probe,
+    	.remove		= stw481x_remove,
+    };
+    
+    However that turns out not to be possible: the I2C probe code
+    is written so that the probe() call is always passed a match
+    from i2c_match_id() using non-devicetree matches.
+    
+    This is probably why most devices using device tree for I2C
+    clients currently will pass no .of_match_table *at all* but
+    instead just use .id_table from struct i2c_driver to match
+    the device. As you realize that means that the whole idea with
+    compatible strings is discarded, and that is why we find strange
+    device tree I2C device compatible strings like "product" instead
+    of "vendor,product" as you could expect.
+    
+    Let's figure out how to fix this before the mess spreads. This
+    patch will allow probeing devices with only an of_match_table
+    as per above, and will pass NULL as the second argument to the
+    probe() function. If the driver wants to deduce secondary info
+    from the struct of_device_id .data field, it has to call
+    of_match_device() on its own match table in the probe function
+    device tree probe path.
+    
+    If drivers define both an .of_match_table *AND* a i2c_driver
+    .id_table, the .of_match_table will take precedence, just
+    as is done in the i2c_device_match() function in i2c-core.c.
+    
+    I2C devices probed from device tree should subsequently be
+    fixed to handle the case where of_match_table() is
+    used (I think none of them do that today), and platforms should
+    fix their device trees to use compatible strings for I2C devices
+    instead of setting the name to Linux device driver names as is
+    done in multiple cases today.
+    
+    Cc: Rob Herring <rob.herring@calxeda.com>
+    Cc: Grant Likely <grant.likely@linaro.org>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+
+Tuomas Tynkkynen (2):
+  mfd: tps65910: Fix crash in i2c_driver .probe
+  regulator: tps62360: Fix crash in i2c_driver .probe
+
+ drivers/mfd/tps65910.c                 | 39 ++++++++++++++++++----------------
+ drivers/regulator/tps62360-regulator.c |  8 +++++--
+ 2 files changed, 27 insertions(+), 20 deletions(-)
+
 -- 
 1.8.1.5
