@@ -1,38 +1,44 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Samuel Ortiz <sameo@linux.intel.com>
 Subject: Re: [PATCH v2 1/2] mfd: tps65910: Fix crash in i2c_driver .probe
-Date: Wed, 19 Jun 2013 09:18:59 +0100
-Message-ID: <20130619081859.GA22998@laptop>
+Date: Wed, 19 Jun 2013 10:27:40 +0200
+Message-ID: <20130619082740.GT7161@zurbaran>
 References: <1371550481-28126-1-git-send-email-ttynkkynen@nvidia.com>
  <1371550481-28126-2-git-send-email-ttynkkynen@nvidia.com>
+ <20130619081859.GA22998@laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1371550481-28126-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20130619081859.GA22998@laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 18 Jun 2013, Tuomas Tynkkynen wrote:
+Hi Lee,
 
-> Commit "i2c: core: make it possible to match a pure device tree drive=
-r"
-> changed semantics of the i2c probing for device tree devices.
-> Device tree probed devices now get a NULL i2c_device_id pointer.
-> This caused kernel panics due to NULL dereference.
->=20
-> Moves the of_match_device call from tps65910_parse_dt to .probe to
-> allow the chip type to be detected from device tree but with the
-> device parameters coming from platform data.
->=20
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Wed, Jun 19, 2013 at 09:18:59AM +0100, Lee Jones wrote:
+> On Tue, 18 Jun 2013, Tuomas Tynkkynen wrote:
+> 
+> > Commit "i2c: core: make it possible to match a pure device tree driver"
+> > changed semantics of the i2c probing for device tree devices.
+> > Device tree probed devices now get a NULL i2c_device_id pointer.
+> > This caused kernel panics due to NULL dereference.
+> > 
+> > Moves the of_match_device call from tps65910_parse_dt to .probe to
+> > allow the chip type to be detected from device tree but with the
+> > device parameters coming from platform data.
+> > 
+> > Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+> 
+> Applied with Stephen's Reviewed-by, thanks.
+According to Wolfgang, this is not needed as he will revert the i2c
+commits that are causing those crashes.
+I would not take it for now.
 
-Applied with Stephen's Reviewed-by, thanks.
+Cheers,
+Samuel.
 
---=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
