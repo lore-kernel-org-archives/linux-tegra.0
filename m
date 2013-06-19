@@ -1,36 +1,54 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] clk: tegra: T114: add DFLL DVCO reset control
-Date: Wed, 19 Jun 2013 11:45:42 +0300
-Message-ID: <20130619084542.GB3847@tbergstrom-lnx.Nvidia.com>
-References: <20130607121505.21868.72360.stgit@dusk.lan>
- <20130607121901.21868.65416.stgit@dusk.lan>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 4/9] ARM: dma-mapping: NULLify dev->archdata.mapping
+	pointer on detach
+Date: Wed, 19 Jun 2013 10:59:33 +0200
+Message-ID: <51C172F5.8040500@samsung.com>
+References: <1370889285-22799-1-git-send-email-will.deacon@arm.com>
+	<1370889285-22799-5-git-send-email-will.deacon@arm.com>
+	<20130611.083455.1500863288897785600.hdoyu@nvidia.com>
+	<20130611085015.GC24729@mudshark.cambridge.arm.com>
+	<20130611123933.4d278ff4e056f395788ad060@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130607121901.21868.65416.stgit-orwA252wQtA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20130611123933.4d278ff4e056f395788ad060-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 07, 2013 at 02:19:09PM +0200, Paul Walmsley wrote:
-> Add DFLL DVCO reset line control functions to the CAR IP block driver.
-> 
-> The DVCO present in the DFLL IP block has a separate reset line,
-> exposed via the CAR IP block.  This reset line is asserted upon SoC
-> reset.  Unless something (such as the DFLL driver) deasserts this
-> line, the DVCO will not oscillate, although reads and writes to the
-> DFLL IP block will complete.
-> 
-> Thanks to Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> for identifying this and
-> saving hours of debugging time.
-> 
-> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hello,
 
-Cheers,
+On 6/11/2013 11:39 AM, Hiroshi Doyu wrote:
+> On Tue, 11 Jun 2013 10:50:15 +0200
+> Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote:
+>
+> > On Tue, Jun 11, 2013 at 06:34:55AM +0100, Hiroshi Doyu wrote:
+> > > Hi Will,
+> > >
+> > > Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote @ Mon, 10 Jun 2013 20:34:40 +0200:
+> > >
+> > > > The current code only clobbers a local variable, so the device is left
+> > > > with a stale mapping pointer.
+> > >
+> > > True. This's my bad. Thanks.
+> >
+> > That's alright, it's easy to fix. Mind if I add your ack please?
+>
+> Feel free to add: Acked-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Peter.
+Thanks for spotting the bug. I've taked the patch to my dma-mapping tree.
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung R&D Institute Poland
