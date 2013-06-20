@@ -1,27 +1,33 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: ERROR: Bad of_node_put() on /timer@60005000
-Date: Wed, 19 Jun 2013 20:28:53 +0200
-Message-ID: <20130619.212853.1260378150440043714.hdoyu@nvidia.com>
-References: <20130619.111837.2022797543173602143.hdoyu@nvidia.com><51C1CF01.7080606@wwwdotorg.org>
+From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH -next] usb: phy: tegra: remove duplicated include from phy-tegra-usb.c
+Date: Thu, 20 Jun 2013 08:04:33 +0800
+Message-ID: <CAPgLHd-YLPVAHJaozEGJyLXAV2mi_ZNrYbzSmAUJWCvJ6nNnbA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51C1CF01.7080606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
+Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 19 Jun 2013 17:32:17 +0200:
+From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-> On 06/19/2013 02:18 AM, Hiroshi Doyu wrote:
-> > Hi,
-> > 
-> > With CONFIG_OF_DYNAMIC enabled, I got the following. Is this a known issue?
-> 
-> Well, that option isn't enabled in tegra_defconfig so it's unlikely
-> anyone working on Tegra would have run into it. Best ask on the ARM or
-> devicetree-discuss mailing list if you want, or just send a patch to fix it.
+Remove duplicated include.
 
-Ok, I'll check if refcounting is ok or not.
+Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+---
+ drivers/usb/phy/phy-tegra-usb.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 3446245..cec0855 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -34,7 +34,6 @@
+ #include <asm/mach-types.h>
+ #include <linux/usb/ehci_def.h>
+ #include <linux/usb/tegra_usb_phy.h>
+-#include <linux/module.h>
+ 
+ #define ULPI_VIEWPORT		0x170
+ 
