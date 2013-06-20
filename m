@@ -1,32 +1,76 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] irqchip: gic: call gic_cpu_init() as well in CPU_STARTING_FROZEN case
-Date: Thu, 20 Jun 2013 14:52:33 +0200
-Message-ID: <201306201452.33884.arnd@arndb.de>
-References: <1371036627-13529-1-git-send-email-shawn.guo@linaro.org> <20130619070253.GA3405@S2101-09.ap.freescale.net> <1371694169.2155.12.camel@jlo-ubuntu-64.nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: dma: Drop __GFP_COMP for iommu dma memory
+ allocations
+Date: Thu, 20 Jun 2013 16:35:11 +0200
+Message-ID: <20130620.173511.831032817734076793.hdoyu@nvidia.com>
+References: <1371731460-15316-1-git-send-email-rizhao@nvidia.com><51C2FDE0.4060206@cogentembedded.com><CANg6MZg3A7-oXfdUSarQ8n0PRsS0_BLjqfQ914KUoSzDDtShFg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1371694169.2155.12.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <CANg6MZg3A7-oXfdUSarQ8n0PRsS0_BLjqfQ914KUoSzDDtShFg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org" <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 20 June 2013, Joseph Lo wrote:
-> > > 
-> > > Can you please send the fix for 3.10?  Or are you fine with that I ask
-> > > arm-soc folks to send it?
-> > 
-> > Arnd, Olof,
-> > 
-> > Can you help send the fix for 3.10?
-> > 
-> Shawn's patch fix the suspend/resume regression for Tegra also.
+Richard Zhao <linuxzsc-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Thu, 20 Jun 2013 15:40:50 +0200:
+
+> >> +       /*
+> >> +        * Following is a work-around (a.k.a. hack) to prevent pages
+> >> +        * with __GFP_COMP being passed to split_page() which cannot
+> >> +        * handle them.  The real problem is that this flag probably
+> >> +        * should be 0 on ARM as it is not supported on this
+> >> +        * platform; see CONFIG_HUGETLBFS.
+> >> +        */
+> >> +       gfp &= ~(__GFP_COMP);
+> >
+> >
+> >    Hm, what exactly is the sense you meant in using ()?
 > 
-> Tested-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> It's copy/paste from elsewhere in this file. At least it's consistent? :)
 
-Applied to fixes branch.
+I almost sent the exact same one, actually it was under internal reivew;)
 
-	Arnd
+This patch is similar but is the iommu version of:
+
+
+commit ea2e7057c0234cfb8b09467d8f137760d371fc72
+Author: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date:   Thu Nov 24 00:47:12 2011 +0100
+
+    ARM: 7172/1: dma: Drop GFP_COMP for DMA memory allocations
+    
+    dma_alloc_coherent wants to split pages after allocation in order to
+    reduce the memory footprint. This does not work well with GFP_COMP
+    pages, so drop this flag before allocation.
+    
+    This patch is ported from arch/avr32
+    (commit 3611553ef985ef7c5863c8a94641738addd04cff).
+    
+    [swarren: s/HUGETLB_PAGE/HUGETLBFS/ in comment, minor comment cleanup]
+    
+    Signed-off-by: Sumit Bhattacharya <sumitb-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Tested-by: Varun Colbert <vcolbert-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+    Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index ab58456..1aa664a 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -332,6 +332,15 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
+        struct page *page;
+        void *addr;
+ 
++       /*
++        * Following is a work-around (a.k.a. hack) to prevent pages
++        * with __GFP_COMP being passed to split_page() which cannot
++        * handle them.  The real problem is that this flag probably
++        * should be 0 on ARM as it is not supported on this
++        * platform; see CONFIG_HUGETLBFS.
++        */
++       gfp &= ~(__GFP_COMP);
++
+        *handle = ~0;
+        size = PAGE_ALIGN(size);
