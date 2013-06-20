@@ -1,58 +1,57 @@
-From: Jay Agarwal <jagarwal@nvidia.com>
-Subject: [PATCH V1] ARM: dts: tegra: Modify pcie memory space size
-Date: Thu, 20 Jun 2013 12:44:51 +0530
-Message-ID: <1371712491-31070-1-git-send-email-jagarwal@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Linaro-mm-sig] [RFC 3/3] iommu/tegra: smmu: Support read-only
+ mapping
+Date: Thu, 20 Jun 2013 09:27:17 +0200
+Message-ID: <20130620.102717.424970523102380476.hdoyu@nvidia.com>
+References: <1371707384-30037-1-git-send-email-hdoyu@nvidia.com><1371707384-30037-4-git-send-email-hdoyu@nvidia.com><CAH9JG2VUCJErBNwT0_u_9niaSWUza5gJ-+q8OOJhrrdw5D-hUg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: linux@arm.linux.org.uk, swarren@wwwdotorg.org, thierry.reding@avionic-design.de, bhelgaas@google.com, ldewangan@nvidia.com, olof@lixom.net, hdoyu@nvidia.com, pgaikwad@nvidia.com, mturquette@linaro.org, pdeschrijver@nvidia.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: jtukkinen@nvidia.com, kthota@nvidia.com, jagarwal@nvidia.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAH9JG2VUCJErBNwT0_u_9niaSWUza5gJ-+q8OOJhrrdw5D-hUg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-- decrease non-prefetch memory size to 128 MB
-- increase prefetch memory size to 384 MB
-- above change is done because most pcie devices
-  prefetch memory size requirement is quite higher
-  compared to non-prefetch memory space.
+Hi Kyungmin,
 
-Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
----
-Patch is based on remotes/gitorious_thierryreding_linux/tegra/next and should be applied on top of this
+Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrote @ Thu, 20 Jun 2013 08:50:14 +0200:
 
- arch/arm/boot/dts/tegra20.dtsi |    4 ++--
- arch/arm/boot/dts/tegra30.dtsi |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+> On Thu, Jun 20, 2013 at 2:49 PM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > Support read-only mapping via struct dma_attrs.
+> >
+> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/iommu/tegra-smmu.c | 41 +++++++++++++++++++++++++++++------------
+> >  1 file changed, 29 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> > index fab1f19..3aff4cd 100644
+> > --- a/drivers/iommu/tegra-smmu.c
+> > +++ b/drivers/iommu/tegra-smmu.c
+> > @@ -862,12 +862,13 @@ static size_t __smmu_iommu_unmap_largepage(struct smmu_as *as, dma_addr_t iova)
+> >  }
+> >
+> >  static int __smmu_iommu_map_pfn(struct smmu_as *as, dma_addr_t iova,
+> > -                                unsigned long pfn)
+> > +                               unsigned long pfn, int prot)
+> Can you find 'prot' is used at other arch? In previous patch, you cast
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index fd2a7e1..e09e97f 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -483,8 +483,8 @@
- 		ranges = <0x82000000 0 0x80000000 0x80000000 0 0x00001000   /* port 0 registers */
- 			  0x82000000 0 0x80001000 0x80001000 0 0x00001000   /* port 1 registers */
- 			  0x81000000 0 0          0x82000000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0xa0000000 0xa0000000 0 0x10000000   /* non-prefetchable memory */
--			  0xc2000000 0 0xb0000000 0xb0000000 0 0x10000000>; /* prefetchable memory */
-+			  0x82000000 0 0xa0000000 0xa0000000 0 0x08000000   /* non-prefetchable memory */
-+			  0xc2000000 0 0xa8000000 0xa8000000 0 0x18000000>; /* prefetchable memory */
- 
- 		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
- 			 <&tegra_car 118>;
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e0b96bd..b02bbb4 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -35,8 +35,8 @@
- 			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
- 			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
- 			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
--			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
--			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
-+			  0x82000000 0 0x20000000 0x20000000 0 0x08000000   /* non-prefetchable memory */
-+			  0xc2000000 0 0x28000000 0x28000000 0 0x18000000>; /* prefetchable memory */
- 
- 		clocks = <&tegra_car 70>, <&tegra_car 72>, <&tegra_car 74>,
- 			 <&tegra_car 118>, <&tegra_car 215>;
--- 
-1.7.0.4
+{amd,intel}_iommu_map() take the IOMMU standard flags below and
+translate it into each H/W dependent bits.
+
+#define IOMMU_READ	(1)
+#define IOMMU_WRITE	(2)
+#define IOMMU_CACHE	(4) /* DMA cache coherency */
+
+The others like OMAP/MSM pass their H/W dependent bits all the way. I
+think that they don't use IOMMU via DMA mapping API.
+
+> it as 'int' but below code cast it as 'struct dma_attr' again.
+> doesn't it better to use 'struct dma_attr' as parameter to avoid
+> double cast? Of course you have to modify existing APIs to use 'struct
+> dma_attr'.
+
+If DMA mapping API is considered as the standard frontend of
+IOMMU(API), that may be an option.
