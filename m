@@ -1,43 +1,46 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 0/3] How to pass IOMMU map attr via DMA API?
-Date: Fri, 21 Jun 2013 18:03:44 +0200
-Message-ID: <20130621160344.GM11309@8bytes.org>
-References: <1371707384-30037-1-git-send-email-hdoyu@nvidia.com>
-	<51C3FE27.5070702@samsung.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM:tegra20-colibri-512.dts: Change tristate status for
+ i2c pinmux
+Date: Fri, 21 Jun 2013 10:24:33 -0600
+Message-ID: <51C47E41.6050609@wwwdotorg.org>
+References: <alpine.DEB.2.02.1306202302210.11096@dionysos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51C3FE27.5070702-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1306202302210.11096@dionysos>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Anna-Maria Gleixner <anna-maria-WyZXDcvM26CzQB+pC5nmwQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 21, 2013 at 09:17:59AM +0200, Marek Szyprowski wrote:
-> Using DMA attributes for this seems to be a bad idea. The dma direction
-> parameter is much more appropriate. Will Deacon recently posted a patch
-> which does it right, see:
-> 
-> https://git.linaro.org/gitweb?p=people/mszyprowski/linux-dma-mapping.git;a=commit;h=8fc3749bd31d139db58f874e093255fe62505968
+On 06/20/2013 03:08 PM, Anna-Maria Gleixner wrote:
+> The nvidia,tristate entry for the pinmux of i2c1 an i2c3 was set to
+> tristate. This results in non working i2c, because the i2c pins are
+> not actively driven. Set the entries to "driven".
 
-Agreed, that is one usecase the dma-direction parameter was made for. In
-particular:
+Lucas, can you please comment on this patch? It sounds correct to me,
+but I would have assumed you'd tested I2C already when you wrote the
+original DT?
 
-	DMA_FROM_DEVICE		-> Write only mapping
-	DMA_TO_DEVICE 		-> Read only mapping
-	DMA_BIDIRECTIONAL	-> Read/Write mapping
+Oh actually, now that I look further, I see that tegra20-iris-512.dts
+includes this file, and overrides some of the tristate values there.
+What's the thinking behind that, and does this patch fit into it?
 
-So no need to use the dma attributes for that.
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
 
-
-	Joerg
+>                  nvidia,pins = "rm";
+>                  nvidia,function = "i2c1";
+>                  nvidia,pull = <0>;
+> -                nvidia,tristate = <1>;
+> +                nvidia,tristate = <0>;
+>              };
+>              i2c3 {
+>                  nvidia,pins = "dtf";
+>                  nvidia,function = "i2c3";
+>                  nvidia,pull = <0>;
+> -                nvidia,tristate = <1>;
+> +                nvidia,tristate = <0>;
+>              };
+>              i2cddc {
+>                  nvidia,pins = "ddc";
