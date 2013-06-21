@@ -1,53 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Fix Beaver's PCIe lane configuration
-Date: Fri, 21 Jun 2013 14:23:52 -0600
-Message-ID: <1371846232-31163-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: fix section mismatch in tegra_pmc_parse_dt
+Date: Fri, 21 Jun 2013 16:39:07 -0600
+Message-ID: <1371854347-12091-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Beaver's PCIe lane configuration most closely matches x2 x2 x2 rather
-than x4 x1 x1, since clocks 0 and 2 are used, and lanes 0 and 5 are used,
-and the only way those align is with a x2 x2 x2 configuration.
+tegra_pmc_parse_dt() references __initconst data. Fix it to be __init.
+This matches its only usage; a call from tegra_pmc_init() which is
+already __init. This fixes:
 
-Also, disable root port 1; there's nothing connected to it. Root port 0
-is the on-board PCIe Ethernet, and port 2 is the mini-PCIe slot.
+WARNING: vmlinux.o(.text.unlikely+0x580): Section mismatch in reference
+from the function tegra_pmc_parse_dt() to the (unknown reference)
+.init.rodata:(unknown)
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-This is to be applied to Thierry's WIP PCIe driver branch.
+ arch/arm/mach-tegra/pmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/boot/dts/tegra30-beaver.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index c42dd9b..e0b8e9c 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -18,16 +18,16 @@
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index 32360e5..eb3fa4a 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -234,7 +234,7 @@ static const struct of_device_id matches[] __initconst = {
+ 	{ }
+ };
  
- 		pci@1,0 {
- 			status = "okay";
--			nvidia,num-lanes = <4>;
-+			nvidia,num-lanes = <2>;
- 		};
- 
- 		pci@2,0 {
--			status = "okay";
--			nvidia,num-lanes = <1>;
-+			nvidia,num-lanes = <2>;
- 		};
- 
- 		pci@3,0 {
--			nvidia,num-lanes = <1>;
-+			status = "okay";
-+			nvidia,num-lanes = <2>;
- 		};
- 	};
- 
+-static void tegra_pmc_parse_dt(void)
++static void __init tegra_pmc_parse_dt(void)
+ {
+ 	struct device_node *np;
+ 	u32 prop;
 -- 
 1.8.1.5
