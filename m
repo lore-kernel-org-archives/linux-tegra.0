@@ -1,70 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Fix Beaver's PCIe lane configuration
-Date: Sat, 22 Jun 2013 12:45:45 +0200
-Message-ID: <20130622104545.GA15586@manwe>
-References: <1371846232-31163-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PULL] drm-tegra-fixes
+Date: Sat, 22 Jun 2013 13:07:53 +0200
+Message-ID: <20130622110752.GA17064@manwe>
+References: <20130620103642.GB28263@manwe>
+ <CAPM=9tz_-m+kZo9+BJ1P-3-d01+HDEQkM0-Kvdc4GFVffex5gg@mail.gmail.com>
+ <20130620210710.GA9707@mithrandir>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
+	protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1371846232-31163-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130620210710.GA9707@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---T4sUOijqQbZv57TR
+--0OAP2g/MAC+5xKAE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2013 at 02:23:52PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jun 20, 2013 at 11:07:11PM +0200, Thierry Reding wrote:
+> On Fri, Jun 21, 2013 at 06:37:30AM +1000, Dave Airlie wrote:
+> > >   git://anongit.freedesktop.org/tegra/linux.git drm/fixes
+> > >
+> > > for you to fetch changes up to 2b15aa0fd466a4b2defdfd84c0b5168804b3eb=
+33:
+> > >
+> > >   gpu: host1x: Rework CPU syncpoint increment (2013-06-20 12:21:38 +0=
+200)
+> > >
+> > > I know this comes awfully late and is much bigger than I'd like. It's
+> > > all my fault, though, since I've been travelling a lot lately and just
+> > > didn't find the time to prepare this earlier. I did want to sort out
+> > > patches that didn't warrant to go in before the final 3.10 release, b=
+ut
+> > > all met the criteria as far as I could tell.
+> > >
+> >=20
+> > Don't think I want to submit this to Linus, its way too much at this po=
+int,
+> >=20
+> > User visible oops or regressions is all you get now really.
 >=20
-> Beaver's PCIe lane configuration most closely matches x2 x2 x2 rather
-> than x4 x1 x1, since clocks 0 and 2 are used, and lanes 0 and 5 are used,
-> and the only way those align is with a x2 x2 x2 configuration.
+> Okay, I understand. Can you take this pull request for 3.11 instead?
 
-Looking at the schematics again I have to agree. Thanks for catching
-this.
-
-> Also, disable root port 1; there's nothing connected to it. Root port 0
-> is the on-board PCIe Ethernet, and port 2 is the mini-PCIe slot.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This is to be applied to Thierry's WIP PCIe driver branch.
-
-I've applied this to my tegra/next branch and will squash it into the
-Beaver patch that's already there.
-
-You mention another fix that might be required for PCIe on Tegra30
-(additional write to the PADS_REFCLK_CFG1) register. Did that turn out
-to fix communication of the third port?
+Scratch that. I'll send a proper pull request for 3.11.
 
 Thierry
 
---T4sUOijqQbZv57TR
+--0OAP2g/MAC+5xKAE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRxYBYAAoJEN0jrNd/PrOh6E8P/RQqU+vIta4LPFzygkFlFSWN
-oei752RUCoYZAydw/mdsFofu0FVZmlNBNlWD1fLpKiLPf2szOeNPer7QF/Eu7Pdl
-u3aSBB+ySbx6zeYysHD9xXwEeyfOZOunVE5OZ0VEIyGxAMZgIfBIvNI0jtmlLy+a
-EyfOx+EviiJsiApiSFFjrq3CuwnmjzmxK2PHAbuUAabHpAsl+ZA9AEpDgrZ9Eogt
-M1C7Ho7zh/bO0bOXMYwx5p3Fd2kxjBj5oT1ghzMg5AMA893kMeZFPvQ0+QPZSXXQ
-/YuDQq98TQf6nF8I445ItAXWIX64sGOXWVZRhCJbQmS1tgVRCpgvlsxFgDbEF0b4
-QZHQuW3Dt3O2KjfVbMfMO4HkoJajC0gDqAMuSnHdmGuTMbUy28xEwU0KXlYs6WnI
-anJ1F9+FUWN0860bvDsahdPBmlnhnEameZD27W06zZ3bL2896PfaMs/EMWpIQ+CU
-u1RePqYkr9Yq1ofAFisPYcNU9W06RF7nSvPn6Rj3YDLyt4iy2LvvCOHbKdKOk4bU
-cUly6NcvGKy8l37H2IY6Q0gj9Mcs+MuwMX088xqwQpX0plRHQ3F1NVUCYGWY1M7f
-L/1hdq/zHRoiwwyZaRxlSiqBFZmWFGiz8SeYVO1Pc4GnZ6/hL3d/fntiaisiMi7H
-RSfPrzVn8o25am7BDgXA
-=AMgp
+iQIcBAEBAgAGBQJRxYWIAAoJEN0jrNd/PrOh2ZEP/2n75tUYNSy1NO/Lanmc3Y2N
+HvDc6HB20L7gIBWzfHm7+OMhZ5xtV7uLgkNElp8bEy353yPhL+PyQHqwqVXCPA9C
+evFrLfs2KaCIo8k5Ilvk1/d/ff4eMMMmOzDGItz5Gfyfu/pqd2xMWHTLB03epP7R
+sj0UDH4A2tJ48rZMA0DgXRNHw0TxgqugG4RYfy65adU7mkU9iqcSm9V+aAJ9jvh3
+RTAG6wL372XK7h5aWX7CqUfWXIm0NLRIPei00gmhFP1E3WADGjkgN9mwgJTIWTP1
+oZfPoI76nSqwcRRv+C6YfN1d6uJpZThjru8Gyt3prx+aJqbmGjD0+Ig+fivavj0P
+l725glZWn2QAm1h7fooVRJXPoUNEFj99V+TzdDu41mbQnKqdNzCDoFYdfGiOlHbc
+eHL9CyCtXtKj3b3+Mt8q/9Q9qiKzw6UDx6vMzOgj5bqVdFVYrkpul/qxuRShNqnp
+GFt3Y+wex3CUtpXss4MfpsTZ7VeoX0N+2ZwatjpwKbUe61bKDNEQribMblOtNDvT
+bi1xsJ7ik/WLLjhy8O7AWxUCrYKlhDe3cQuxVjofRhNu0n9BbEnh3mt3k/YkrQ2Y
+frbw6yIJKO7OUcMC/oUmFeNFdWNFoyIE8uL829rQNnghcuvowQx3FX+tHjtAbo02
+Z7/0DnwYOqorwHDTWTAt
+=UYTV
 -----END PGP SIGNATURE-----
 
---T4sUOijqQbZv57TR--
+--0OAP2g/MAC+5xKAE--
