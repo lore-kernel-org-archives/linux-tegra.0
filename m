@@ -1,31 +1,38 @@
-From: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: tegra: Add basic support for carma devkit
-Date: Sun, 23 Jun 2013 13:54:16 +0000 (UTC)
-Message-ID: <loom.20130623T154603-934@post.gmane.org>
-References: <1371994685-4997-1-git-send-email-chris.desjardins@amscins.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH] ARM: tegra: defconfig updates
+Date: Sun, 23 Jun 2013 18:03:01 +0200
+Message-ID: <8e7853ceafe5a53e52ef451e1c0d515a01aae62e.1372003325.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Enable:
+	* SYSVIPC (needed for some apps, e.g. fakeroot)
+	* Elantech touchpad (touchpad on AC100)
 
-Chris Desjardins <chris.desjardins@...> writes:
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> 
-> Signed-off-by: Chris Desjardins <chris.desjardins@...>
-> ---
-
-
-I just wanted to say a couple of things about this patch:
-1) Ethernet is pretty flaky, it works, but when you really start to put a 
-heavy load on it the e1000e driver starts saying that the adapter has reset.
-2) There is some stuff missing for sure, and probably there is some stuff 
-that is not correct, but this is a starting point to just get the board 
-running with a mainline kernel. 
-
-Thanks,
-    Chris D.
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 1effb43..4623eb7 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -1,3 +1,4 @@
++CONFIG_SYSVIPC=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_IKCONFIG=y
+@@ -105,6 +106,7 @@ CONFIG_RT2800USB=m
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_KEYBOARD_TEGRA=y
++CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+ # CONFIG_LEGACY_PTYS is not set
+-- 
+1.7.9.5
