@@ -1,63 +1,36 @@
-From: Mike Turquette <mturquette@linaro.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH] clk: tegra: fix ifdef for tegra_periph_reset_assert inline
-Date: Mon, 24 Jun 2013 14:03:33 -0700
-Message-ID: <20130624210333.23972.95491@quantum>
+Date: Mon, 24 Jun 2013 14:07:19 -0700
+Message-ID: <51C8B507.8020301@nvidia.com>
 References: <1372100756-10448-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1372100756-10448-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372100756-10448-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-06-24 12:05:56)
-> From: Stephen Warren <swarren@nvidia.com>
-> 
+
+On 06/24/2013 12:05 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
 > Commit 7064f6b "clk: tegra: provide tegra_periph_reset_assert
 > alternative" added ifdef'd static inline versions of some functions,
 > but tested ARCH_TEGRA rather than CONFIG_ARCH_TEGRA, thus disabling
 > these function in all cases. In some cases, this caused HW modules to
 > misbehave; for example, the Tegra I2C driver BUG()d during boot on
 > Seaboard.
-> 
-> Reported-by: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+>
+> Reported-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks for the fixup. I had already published the offending commit and
-can't rebase it, so I just applied this patch on top.
+Tested-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> # for the Tegra30 Beaver
+board
 
-Pulled into clk-next for 3.11.
+Stephen pointed me at this patch to fix the boot on Tegra30 Beaver boad
+with linux-next 20130624.  Thanks Stephen!
 
-Regards,
-Mike
-
-> ---
->  include/linux/clk/tegra.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-> index e3cc872..23a0cee 100644
-> --- a/include/linux/clk/tegra.h
-> +++ b/include/linux/clk/tegra.h
-> @@ -120,7 +120,7 @@ static inline void tegra_cpu_clock_resume(void)
->  }
->  #endif
->  
-> -#ifdef ARCH_TEGRA
-> +#ifdef CONFIG_ARCH_TEGRA
->  void tegra_periph_reset_deassert(struct clk *c);
->  void tegra_periph_reset_assert(struct clk *c);
->  #else
-> -- 
-> 1.8.1.5
+- Paul
