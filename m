@@ -1,44 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Fix Beaver's PCIe lane configuration
-Date: Sun, 23 Jun 2013 22:21:07 -0600
-Message-ID: <51C7C933.7020600@wwwdotorg.org>
-References: <1371846232-31163-1-git-send-email-swarren@wwwdotorg.org> <20130622104545.GA15586@manwe>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 0/3] How to pass IOMMU map attr via DMA API?
+Date: Mon, 24 Jun 2013 08:17:59 +0300
+Message-ID: <20130624081759.76e66d42bbf7c2c54ed1975c@nvidia.com>
+References: <1371707384-30037-1-git-send-email-hdoyu@nvidia.com>
+	<51C3FE27.5070702@samsung.com>
+	<20130621160344.GM11309@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130622104545.GA15586@manwe>
+In-Reply-To: <20130621160344.GM11309-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/22/2013 04:45 AM, Thierry Reding wrote:
-> On Fri, Jun 21, 2013 at 02:23:52PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> 
->> Beaver's PCIe lane configuration most closely matches x2 x2 x2
->> rather than x4 x1 x1, since clocks 0 and 2 are used, and lanes 0
->> and 5 are used, and the only way those align is with a x2 x2 x2
->> configuration.
-> 
-> Looking at the schematics again I have to agree. Thanks for
-> catching this.
-> 
->> Also, disable root port 1; there's nothing connected to it. Root
->> port 0 is the on-board PCIe Ethernet, and port 2 is the mini-PCIe
->> slot.
->> 
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> --- This is to
->> be applied to Thierry's WIP PCIe driver branch.
-> 
-> I've applied this to my tegra/next branch and will squash it into
-> the Beaver patch that's already there.
-> 
-> You mention another fix that might be required for PCIe on Tegra30 
-> (additional write to the PADS_REFCLK_CFG1) register. Did that turn
-> out to fix communication of the third port?
+On Fri, 21 Jun 2013 18:03:44 +0200
+Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
 
-Yes, I have the 3rd port working. I'm just waiting on some internal IP
-review in order to say something more useful in the commit description
-than "here's an opaque register write that fixes something".
+> On Fri, Jun 21, 2013 at 09:17:59AM +0200, Marek Szyprowski wrote:
+> > Using DMA attributes for this seems to be a bad idea. The dma direction
+> > parameter is much more appropriate. Will Deacon recently posted a patch
+> > which does it right, see:
+> > 
+> > https://git.linaro.org/gitweb?p=people/mszyprowski/linux-dma-mapping.git;a=commit;h=8fc3749bd31d139db58f874e093255fe62505968
+> 
+> Agreed, that is one usecase the dma-direction parameter was made for. In
+> particular:
+> 
+> 	DMA_FROM_DEVICE		-> Write only mapping
+> 	DMA_TO_DEVICE 		-> Read only mapping
+> 	DMA_BIDIRECTIONAL	-> Read/Write mapping
+> 
+> So no need to use the dma attributes for that.
+
+Ok, thanks. One more question, IOMMU H/W sometimes supports more
+platform specific attributes than READ/WRITE. For example, in OMAP,
+
+  #define IOMMU_FLAG	(IOVMF_ENDIAN_LITTLE | IOVMF_ELSZ_8)
+
+Is there any way to deal with those platform specific attrs from DMA
+mapping API POV?
