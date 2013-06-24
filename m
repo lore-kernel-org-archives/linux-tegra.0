@@ -1,46 +1,34 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 0/3] How to pass IOMMU map attr via DMA API?
-Date: Mon, 24 Jun 2013 09:21:28 +0200
-Message-ID: <20130624072128.GP11309@8bytes.org>
-References: <1371707384-30037-1-git-send-email-hdoyu@nvidia.com>
-	<51C3FE27.5070702@samsung.com> <20130621160344.GM11309@8bytes.org>
-	<20130624081759.76e66d42bbf7c2c54ed1975c@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix section mismatch in tegra_pmc_parse_dt
+Date: Mon, 24 Jun 2013 09:19:10 -0600
+Message-ID: <51C8636E.1030707@wwwdotorg.org>
+References: <1371854347-12091-1-git-send-email-swarren@wwwdotorg.org> <1372041600.12718.4.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130624081759.76e66d42bbf7c2c54ed1975c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372041600.12718.4.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 24, 2013 at 08:17:59AM +0300, Hiroshi Doyu wrote:
-> Ok, thanks. One more question, IOMMU H/W sometimes supports more
-> platform specific attributes than READ/WRITE. For example, in OMAP,
+On 06/23/2013 08:40 PM, Joseph Lo wrote:
+> On Sat, 2013-06-22 at 06:39 +0800, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> tegra_pmc_parse_dt() references __initconst data. Fix it to be __init.
+>> This matches its only usage; a call from tegra_pmc_init() which is
+>> already __init. This fixes:
+>>
+>> WARNING: vmlinux.o(.text.unlikely+0x580): Section mismatch in reference
+>> from the function tegra_pmc_parse_dt() to the (unknown reference)
+>> .init.rodata:(unknown)
+>>
+> Hi Stephen,
 > 
->   #define IOMMU_FLAG	(IOVMF_ENDIAN_LITTLE | IOVMF_ELSZ_8)
-> 
-> Is there any way to deal with those platform specific attrs from DMA
-> mapping API POV?
+> Just curious, I don't see this warning message on my system. Does this
+> cause by some other patch or something else?
 
-Depends on the kind of flag and whether you want to make it changeable
-from the DMA-API. The AMD IOMMU for example has a flag in the
-page-tables to force PCI DMA coherency. This is always set by the
-driver.
-
-For other parameters that should be changeable and don't fit into the
-dma_direction parameter in some way the use of dma_attr would make
-sense.
-
-
-	Joerg
+The warning only shows up with CONFIG_DEBUG_SECTION_MISMATCH=y, which
+isn't in tegra_defconfig.
