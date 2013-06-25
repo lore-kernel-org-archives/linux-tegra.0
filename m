@@ -1,90 +1,142 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: tegra: Add basic support for carma devkit
-Date: Tue, 25 Jun 2013 10:06:50 -0600
-Message-ID: <51C9C01A.70506@wwwdotorg.org>
-References: <1371994685-4997-1-git-send-email-chris.desjardins@amscins.com> <51C87FA5.3000306@wwwdotorg.org> <loom.20130625T165829-570@post.gmane.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC] early init and DT platform devices allocation/registration
+Date: Tue, 25 Jun 2013 18:36:28 +0200
+Message-ID: <20130625.193628.2143557800560690024.hdoyu@nvidia.com>
+References: <20130624163340.GB26084@e102568-lin.cambridge.arm.com><CACxGe6sPaV-sBz=SF46KdUexjAhWKGrMpG_ty+K26f6ZU5iKdg@mail.gmail.com><51C9AF96.3040107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <loom.20130625T165829-570-eS7Uydv5nfjZ+VzJOa5vwg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <51C9AF96.3040107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "Pawel.Moll-5wv7dgnIgG8@public.gmane.org" <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/25/2013 09:47 AM, Chris Desjardins wrote:
-> Stephen Warren <swarren@...> writes:
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 25 Jun 2013 16:56:22 +0200:
+
+> >> How this problem is supposed to be solved in the kernel ?
+> >>
+> >> 1- drivers that are to be up and running at early_initcall time must not
+> >>    rely on the device/driver model (but then they cannot use any API that
+> >>    requires a struct device to function (eg regmap))
+> >> 2- the driver should allocate a platform device at early initcall from
+> >>    a DT compatible node. Do not know how to deal with platform device
+> >>    duplication though, since of_platform_populate() will create another
+> >>    platform device when the node is parsed
+> > 
+> > While I've resisted it in the past, I would be okay with adding struct
+> > device pointer in the device_node structure. I've resisted because I
+> > don't want drivers following the device_node pointer and making an
+> > assumption about what /kind/ of device is pointed to by it. However,
+> > this is an important use case and it makes it feasible to use an early
+> > platform device with of_platform_populate.
 > 
->>
->> On 06/23/2013 07:38 AM, Chris Desjardins wrote:
->>
-> 
->>
->>> +	serial <at> 70006200 {
->>> +		compatible = "ns16550";
->>
->> You shouldn't need to set the compatible value for this node;
->> tegra30.dtsi has already set it.
-> 
-> True, but it is set to "nvidia,tegra30-uart", "nvidia,tegra20-uart" which 
-> causes the nvidia high speed uart driver to be loaded, which sucks when you 
+> Hiroshi (who I have CC'd here) has also been asking about this same
+> issue downstream. The issue for us is that we need to initialize an SMMU
+> driver before any devices that are translated by the SMMU. One option is
+> to force the register/probe of the SMMU driver explicitly, early in the
+> machine's .init_machine() callback, before of_platform_populate(), to
+> ensure the ordering. Then, we run into the same duplicate device issue,
+> and the change Grant mentions above would help solve this.
 
-That compatible value ends up selecting the regular serial driver. Any
-board that wants the HSUART driver needs to override the compatible
-value to "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart" instead (which
-IIRC none do at present).
+Here's my workaround. I need to call of_detach_node() with OF_DYNAMIC
+to avoid duplicated device registration.
 
-So, to be consistent with all other Tegra boards, I still believe this
-compatible value should be removed.
+From f4d88b8521c278b41b72028d326c03cfd2e90af8 Mon Sep 17 00:00:00 2001
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Fri, 14 Jun 2013 15:22:02 +0300
+Subject: [PATCH 1/1] ARM: tegra: Populate AHB/IOMMU earlier than others
 
-(And as an aside, selecting "ns16550" here is going to make the UART
-driver not know that it's dealing with a Tegra port, and hence not apply
-the Tegra-specific WARs/quirks it needs to, which will likely make the
-port unreliable in some circumstances.)
+Populate AHB/IOMMU earlier than others. IOMMU depends on AHB. IOMMU
+needs to be instanciated earlier than others so that IOMMU can
+register other platform devices as IOMMU'able. Once IOMMU is
+populated, IOMMU/AHB nodes are detached to prevent another
+registeration.
 
->>> +		tps62361 {
->> ...
->>> +			regulator-min-microvolt = <500000>;
->>> +			regulator-max-microvolt = <1500000>;
->> ...
->>> +		pmic: tps65911 <at> 2d {
->> ...
->>> +			regulators {
->>> +				vdd1_reg: vdd1 {
->>> +					regulator-name = "vddio_ddr_1v2";
->>> +					regulator-min-microvolt = <1200000>;
->>> +					regulator-max-microvolt = <1200000>;
->>
->> Have you validated all these voltage levels, and *-supply properties
->> against the schematic or other documentation for the board? I want to
->> avoid accepting a DT file that sets up any of the voltages incorrectly,
->> which could potentially cause damage to the board/components.
-> 
-> I have not, I will ask Seco if they can supply such documents or verify the 
-> settings themselves, but the documentation they supply does not include any 
-> information in this area. I can say that my board runs fine with these 
-> settings...
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/Kconfig |  1 +
+ arch/arm/mach-tegra/tegra.c | 24 ++++++++++++++++++++++++
+ drivers/iommu/tegra-smmu.c  |  3 +++
+ 3 files changed, 28 insertions(+)
 
-That may appear to happen even if the settings aren't all correct.
-Perhaps you can validate the values against whatever downstream kernel
-Seco supplies; matching that would be enough.
-
->>> +	clocks {
->>> +		compatible = "simple-bus";
->>> +		#address-cells = <1>;
->>> +		#size-cells = <0>;
->>> +
->>> +		clk32k_in: clock {
->>> +			compatible = "fixed-clock";
->>> +			reg=<0>;
->>> +			#clock-cells = <0>;
->>> +			clock-frequency = <32768>;
->>> +		};
->>> +	};
->>
->> That doesn't seem to be used anywhere.
-> 
-> The clk32k_in is used in tegra30.dtsi...
-
-Yes, indeed.
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index ef3a8da..79905fe 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -15,6 +15,7 @@ config ARCH_TEGRA
+ 	select SOC_BUS
+ 	select SPARSE_IRQ
+ 	select USE_OF
++	select OF_DYNAMIC
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
+ 
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 0d1e412..0c494b5 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -80,6 +80,28 @@ static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+ 	{}
+ };
+ 
++static void tegra_of_platform_populate_iommu(void)
++{
++	int i;
++	struct platform_device *pdev;
++	const char * const dname[] = {"ahb", "iommu", };
++
++	for (i = 0; i < ARRAY_SIZE(dname); i++) {
++		struct device_node *np;
++		char path[NAME_MAX];
++
++		snprintf(path, sizeof(path), "/%s", dname[i]);
++		np  = of_find_node_by_path(path);
++		if (!np)
++			break;
++
++		pdev = of_platform_device_create(np, NULL, NULL);
++		of_node_put(np);
++		if (!pdev)
++			break;
++	}
++}
++
+ static void __init tegra_dt_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
+@@ -107,6 +129,8 @@ static void __init tegra_dt_init(void)
+ 
+ 	parent = soc_device_to_device(soc_dev);
+ 
++	tegra_of_platform_populate_iommu();
++
+ 	/*
+ 	 * Finished with the static registrations now; fill in the missing
+ 	 * devices
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index f6f120e..6c9de3f 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -1238,6 +1238,9 @@ static int tegra_smmu_probe(struct platform_device *pdev)
+ 	smmu_debugfs_create(smmu);
+ 	smmu_handle = smmu;
+ 	bus_set_iommu(&platform_bus_type, &smmu_iommu_ops);
++
++	of_detach_node(dev->of_node);
++	of_detach_node(smmu->ahb);
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.5
