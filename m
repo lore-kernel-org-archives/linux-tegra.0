@@ -1,100 +1,48 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 3/3] ARM: tegra114: cpuidle: add powered-down state
-Date: Tue, 25 Jun 2013 17:24:02 +0800
-Message-ID: <1372152242-16373-5-git-send-email-josephl@nvidia.com>
-References: <1372152242-16373-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 00/11] ARM: tegra114: add support for system suspend
+Date: Tue, 25 Jun 2013 17:27:44 +0800
+Message-ID: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372152242-16373-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This supports CPU core power down on each CPU when CPU idle. When CPU go
-into this state, it saves it's context and needs a proper configuration
-in flow controller to power gate the CPU when CPU runs into WFI
-instruction. And the CPU also needs to set the IRQ as CPU power down idle
-wake up event in flow controller.
+This series introduce system suspend function for Tegra114 and depend on
+the series of "ARM: tegra114: cpuidle: add power down state".
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
-* use CPUIDLE_FLAG_TIMER_STOP flag
-V2:
-* remove some redundant code of memory barrier
-* remove the function declaration by rearranging the coding sequence 
----
- arch/arm/mach-tegra/cpuidle-tegra114.c | 48 +++++++++++++++++++++++++++++++++-
- 1 file changed, 47 insertions(+), 1 deletion(-)
+Verified on Seaboard, Cardhu and Dalmore and with THUMB2_KERNEL as well.
 
-diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
-index 1d1c602..658b205 100644
---- a/arch/arm/mach-tegra/cpuidle-tegra114.c
-+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
-@@ -17,15 +17,61 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/cpuidle.h>
-+#include <linux/cpu_pm.h>
-+#include <linux/clockchips.h>
- 
- #include <asm/cpuidle.h>
-+#include <asm/suspend.h>
-+#include <asm/smp_plat.h>
-+
-+#include "pm.h"
-+#include "sleep.h"
-+
-+#ifdef CONFIG_PM_SLEEP
-+#define TEGRA114_MAX_STATES 2
-+#else
-+#define TEGRA114_MAX_STATES 1
-+#endif
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int tegra114_idle_power_down(struct cpuidle_device *dev,
-+				    struct cpuidle_driver *drv,
-+				    int index)
-+{
-+	local_fiq_disable();
-+
-+	tegra_set_cpu_in_lp2();
-+	cpu_pm_enter();
-+
-+	cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
-+
-+	cpu_pm_exit();
-+	tegra_clear_cpu_in_lp2();
-+
-+	local_fiq_enable();
-+
-+	return index;
-+}
-+#endif
- 
- static struct cpuidle_driver tegra_idle_driver = {
- 	.name = "tegra_idle",
- 	.owner = THIS_MODULE,
--	.state_count = 1,
-+	.state_count = TEGRA114_MAX_STATES,
- 	.states = {
- 		[0] = ARM_CPUIDLE_WFI_STATE_PWR(600),
-+#ifdef CONFIG_PM_SLEEP
-+		[1] = {
-+			.enter			= tegra114_idle_power_down,
-+			.exit_latency		= 500,
-+			.target_residency	= 1000,
-+			.power_usage		= 0,
-+			.flags			= CPUIDLE_FLAG_TIME_VALID |
-+						  CPUIDLE_FLAG_TIMER_STOP,
-+			.name			= "powered-down",
-+			.desc			= "CPU power gated",
-+		},
-+#endif
- 	},
- };
- 
+Joseph Lo (11):
+  ARM: tegra: do v7_invalidate_l1 only when CPU is Cortex-A9 in
+    tegra_resume
+  ARM: tegra: add a flag for tegra_disable_clean_inv_dcache to do LoUIS
+    or ALL
+  ARM: tegra114: set up the correct L2 data RAM latency for Cortex-A15
+  ARM: tegra114: add low level support code for cluster power down
+  ARM: tegra114: shut off the CPU rail when the last CPU in suspend
+  ARM: tegra114: hook tegra_tear_down_cpu function
+  ARM: tegra114: flowctrl: add support for cpu_suspend_enter/exit
+  clk: tegra114: add suspend/resume function for tegar_cpu_car_ops
+  ARM: tegar: remove the limitation that Tegra114 can't support suspend
+  ARM: dts: tegra114: dalmore: add GPIO power key support
+  ARM: dts: tegra114: dalmore: add PM configurations for PMC
+
+ arch/arm/boot/dts/tegra114-dalmore.dts | 18 ++++++++++++++++++
+ arch/arm/mach-tegra/flowctrl.c         |  2 ++
+ arch/arm/mach-tegra/flowctrl.h         |  7 +++++++
+ arch/arm/mach-tegra/hotplug.c          |  2 +-
+ arch/arm/mach-tegra/pm.c               |  5 +----
+ arch/arm/mach-tegra/pmc.c              | 10 ++++++++++
+ arch/arm/mach-tegra/reset-handler.S    |  8 ++++++--
+ arch/arm/mach-tegra/sleep-tegra20.S    |  1 +
+ arch/arm/mach-tegra/sleep-tegra30.S    |  7 ++++++-
+ arch/arm/mach-tegra/sleep.S            | 29 ++++++++++++++++++++++++++++-
+ arch/arm/mach-tegra/sleep.h            |  6 +++++-
+ drivers/clk/tegra/clk-tegra114.c       | 26 ++++++++++++++++++++++++++
+ 12 files changed, 111 insertions(+), 10 deletions(-)
+
 -- 
 1.8.3.1
