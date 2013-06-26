@@ -1,85 +1,71 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] ASoC: tegra-ac97: Do common and clock init prior to component registration
-Date: Wed, 26 Jun 2013 12:28:31 +0100
-Message-ID: <1372246111-15781-1-git-send-email-broonie@kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 18/23] iommu/tegra: smmu: Workaround PCIe IOMMU'able
+Date: Wed, 26 Jun 2013 13:15:37 +0200
+Message-ID: <20130626111537.GR27083@manwe>
+References: <1372238906-9346-19-git-send-email-hdoyu@nvidia.com>
+ <20130626110626.GO27083@manwe>
+ <20130626.140906.1216615781918366349.hdoyu@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q8a9NmTVi5AMeZ2v"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130626.140906.1216615781918366349.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Otherwise we may instantiate and hence have something try to access the
-device while it is still completing initialisation.
+--Q8a9NmTVi5AMeZ2v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- sound/soc/tegra/tegra20_ac97.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+On Wed, Jun 26, 2013 at 01:09:06PM +0200, Hiroshi Doyu wrote:
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Wed, 26 Jun 2013 13:06:=
+27 +0200:
+>=20
+> > * PGP Signed by an unknown key
+> >=20
+> > On Wed, Jun 26, 2013 at 12:28:21PM +0300, Hiroshi Doyu wrote:
+> > > Make PCIe work as it is. IOMMU support can be implemented later.
+> > >=20
+> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  drivers/iommu/tegra-smmu.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> >=20
+> > Can you provide more information about what the problem is here? Why is
+> > PCIe not working when mapped through the IOMMU?
+>=20
+> I haven't had a code to register PCI device as IOMMU'able as
+> ops->add_device() does for platform_devices. I'll add this comment.
 
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index 9043626d..48037f7 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -395,23 +395,9 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 	ac97->capture_dma_data.maxburst = 4;
- 	ac97->capture_dma_data.slave_id = of_dma[0];
- 
--	ret = snd_soc_register_component(&pdev->dev, &tegra20_ac97_component,
--					 &tegra20_ac97_dai, 1);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
--		ret = -ENOMEM;
--		goto err_clk_put;
--	}
--
--	ret = tegra_pcm_platform_register(&pdev->dev);
--	if (ret) {
--		dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
--		goto err_unregister_component;
--	}
--
- 	ret = tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
- 	if (ret)
--		goto err_unregister_pcm;
-+		goto err_clk_put;
- 
- 	ret = tegra_asoc_utils_set_ac97_rate(&ac97->util_data);
- 	if (ret)
-@@ -423,17 +409,31 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 		goto err_asoc_utils_fini;
- 	}
- 
-+	ret = snd_soc_register_component(&pdev->dev, &tegra20_ac97_component,
-+					 &tegra20_ac97_dai, 1);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
-+		ret = -ENOMEM;
-+		goto err_asoc_utils_fini;
-+	}
-+
-+	ret = tegra_pcm_platform_register(&pdev->dev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
-+		goto err_unregister_component;
-+	}
-+
- 	/* XXX: crufty ASoC AC97 API - only one AC97 codec allowed */
- 	workdata = ac97;
- 
- 	return 0;
- 
--err_asoc_utils_fini:
--	tegra_asoc_utils_fini(&ac97->util_data);
- err_unregister_pcm:
- 	tegra_pcm_platform_unregister(&pdev->dev);
- err_unregister_component:
- 	snd_soc_unregister_component(&pdev->dev);
-+err_asoc_utils_fini:
-+	tegra_asoc_utils_fini(&ac97->util_data);
- err_clk_put:
- err:
- 	return ret;
--- 
-1.8.3.1
+Okay, that should be solved then when we merge the PCIe driver. I hope
+that can happen soon.
+
+Thierry
+
+--Q8a9NmTVi5AMeZ2v
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRys1ZAAoJEN0jrNd/PrOhOSYQAMGzs4dTD/mlJ2q8UWGj5+zN
+mhIxG3mpX9yjJDOCmwyB1bN0V+G7x1NmSkWlh5YQoW0WaRBhPoiVwAiIqbttp9k1
+ipHCQr5sIKUBoYftWVLS1CKqM6RDjfGTFbv2mR9qoRftH46lrKlU1JzpQRVp7HJo
+EO0M28WTtBHxSbJvPL2vkW9LstBYolaRg9lOROSGtC95b7gJIcTFGXxHnobWKEst
+h88K7w2I/NagVm4LWiy+CHvqzdocp72XjzztRSwt/PbnpaItLtpK9V5wYG8NkwAp
+0mYyjAOfKIk83qtu57Y+EgNMWrrINXSFyONo4plzicRzB4Xr0n1qpASisG+kpkik
+jR7nRujPK7KfoQ6ShgHQ3wHFLbNbAKNVcWBf+OO9vdD+TO5Xqlu5k5tePVdbvPg+
+iJ2P6I7GsfcZL4i6eW2SaWr/rK0hnyEDHCdCSHUf3GC9WS5Q5x+ETQ64G6S78Jjt
+3V9R8xi9pvSLaK76lK/erRyeAofjVppH5HMiqblL69P4EYacQXTk4MtkZPAStoku
+/27fQZPc862+8Kw8oCvnlTkqwa7VAdBo70xhY13f1HHGLdDwKdOdg7uEKUguxgZJ
+opmamQZffXi7DmtLmaNGMVwQ9+DKfI1nTBYevzl9A/PgHysr8S+fzoFCfMJwkdV4
+VOzVVJjYTQq6OL4Plge2
+=YrJv
+-----END PGP SIGNATURE-----
+
+--Q8a9NmTVi5AMeZ2v--
