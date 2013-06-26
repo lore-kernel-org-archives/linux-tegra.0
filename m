@@ -1,93 +1,92 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: dts: tegra20: Remove obsolete vbus-gpio
- properties
-Date: Wed, 26 Jun 2013 13:23:33 +0300
-Message-ID: <20130626102333.GV12640@arwen.pp.htv.fi>
-References: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com>
- <1372240781-1017-5-git-send-email-mperttunen@nvidia.com>
- <20130626101758.GU12640@arwen.pp.htv.fi>
- <op.wy9625kupdlnwf@mperttunen-lnx>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 02/23] ARM: dt: tegra30: iommu: Add "nvidia,swgroups"
+Date: Wed, 26 Jun 2013 12:24:29 +0200
+Message-ID: <20130626102428.GF27083@manwe>
+References: <1372238906-9346-3-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hW3Q5Oh0pcvvyJMS"
+	protocol="application/pgp-signature"; boundary="GLp9dJVi+aaipsRk"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <op.wy9625kupdlnwf@mperttunen-lnx>
+In-Reply-To: <1372238906-9346-3-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---hW3Q5Oh0pcvvyJMS
+
+--GLp9dJVi+aaipsRk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Wed, Jun 26, 2013 at 01:22:07PM +0300, Mikko Perttunen wrote:
-> On Wed, 26 Jun 2013 13:17:58 +0300, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+On Wed, Jun 26, 2013 at 12:28:05PM +0300, Hiroshi Doyu wrote:
+> This is a bitmap that indicates which HardWare Accelerators(HWA) are
+> supported on Tegra30 SoC.
 >=20
-> >* PGP Signed by an unknown key
-> >
-> >On Wed, Jun 26, 2013 at 12:59:41PM +0300, Mikko Perttunen wrote:
-> >>USB VBUS regulators are now specified with the vbus-supply property
-> >>instead of vbus-gpio, so remove the obsolete properties.
-> >>
-> >>Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>---
-> >> arch/arm/boot/dts/tegra20-seaboard.dts  | 1 -
-> >> arch/arm/boot/dts/tegra20-trimslice.dts | 1 -
-> >> arch/arm/boot/dts/tegra20-whistler.dts  | 2 --
-> >> 3 files changed, 4 deletions(-)
-> >>
-> >>diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts
-> >>b/arch/arm/boot/dts/tegra20-seaboard.dts
-> >>index ab177b4..2ab4775 100644
-> >>--- a/arch/arm/boot/dts/tegra20-seaboard.dts
-> >>+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-> >>@@ -566,7 +566,6 @@
-> >>
-> >> 	usb@c5000000 {
-> >> 		status =3D "okay";
-> >>-		nvidia,vbus-gpio =3D <&gpio TEGRA_GPIO(D, 0) GPIO_ACTIVE_HIGH>;
-> >
-> >silly question but don't you need to put a phandle to the VBUS regulator
-> >here ?
-> >
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt | 6 ++++=
++-
+>  arch/arm/boot/dts/tegra30.dtsi                                  | 1 +
+>  2 files changed, 6 insertions(+), 1 deletion(-)
 >=20
-> It's already there in the corresponding usb-phy node. They were added by
-> Venu Byravarasu in commit 4c94c8b5 "ARM: tegra: update device trees for
-> USB binding rework".
+> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.=
+txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+> index 89fb543..6be51f6 100644
+> --- a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+> @@ -8,14 +8,18 @@ Required properties:
+>  - nvidia,#asids : # of ASIDs
+>  - dma-window : IOVA start address and length.
+>  - nvidia,ahb : phandle to the ahb bus connected to SMMU.
+> +- nvidia,swgroups: A bit map of supported HardWare Accelerators(HWA).
 
-aaa alright, my bad :-)
+Nit: you use the spelling "bitmap" in the subject but "bit map" here.
+Both are correct but perhaps we should stick to one.
 
-cheers
+> +  Each bit represents one sgroup. The assignments may be found in header
 
---=20
-balbi
+Nit: "swgroup"
 
---hW3Q5Oh0pcvvyJMS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> -	smmu {
+> +	iommu {
+
+This change isn't really related, but given that the tegra30.dtsi
+already uses it I guess we can keep it as part of this patch.
+
+>  		compatible =3D "nvidia,tegra30-smmu";
+>  		reg =3D <0x7000f010 0x02c
+>  		       0x7000f1f0 0x010
+>  		       0x7000f228 0x05c>;
+>  		nvidia,#asids =3D <4>;		/* # of ASIDs */
+>  		dma-window =3D <0 0x40000000>;	/* IOVA start & length */
+> +		nvidia,swgroups =3D <0x00000000 0x000779ff>;
+
+Perhaps this should be a symbolic name too? Perhaps something like
+TEGRA30_SWGID_ALL?
+
+Thierry
+
+--GLp9dJVi+aaipsRk
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRysElAAoJEIaOsuA1yqREndsP/i0I8cPJRt0g+Rv/T4/cDBdy
-2y/71f3GnNftTU3b/YyDkDn4Tqpy3CvGqGfmghiJQaKl1XREHvlQBtPsNHV4S1tU
-baGsp1BLPn7sV1Z0aLNMJeNf1ABTt5MNVA+g5i5/50ohoWoodkb1FugUwnM2mm0E
-ON/RrOdoP2YxzB7qL4/eC88qgEDmK/STQJXezskcXbxpXLIEKaa9XwIq699qF5iD
-KJVzNIFJ5CLrEH5MwTPOyp9J0MXiX8ecT8pddcKhLS6z4H3MIed6hTsZiDOJahkJ
-Ps0fuyFC5njsuTWYIj/yllttf1aJNKsULfKDQeWKH88nufmDfcBO5ZmoTPoza6sI
-ASrMDHqxBJlpWLhZ25NE2VnDWwLfMwEtbY6m/VnlliQH3xZRSFcqfGRdkoG8VuZg
-elBGLYWaTZzn6Ah8+CQ3GPB/aGN+SuR5qElkTAkcP6z+k1meY71QCjS/dRR2vdhn
-v0/h8Ugm9qPiCshrrWdvCmsgx/xZfVYaH0VX2/jZfeBaO1+zuoj0AYGTanqeTcOQ
-IfiQ1wsfV6MaigsBx9dc4V2CAyPDiIx8Z5S4iC35M63M8G0VH95iV0fR29sWgnqn
-cDr5jhkzXetGsWxswWJd5S7a7AokKl6XQNRk5AES0/85P25MVDKdC6la54jlrRMm
-k3Oxf7CjvgK+DAqT18i1
-=TDXa
+iQIcBAEBAgAGBQJRysFcAAoJEN0jrNd/PrOhFdkQAI7tZpTPjW5Afm/9ETziP12t
+6oGoLDqAZCiRlNOgbhUmTffMERHyP3ZvjM4K+Cu6hJIl0NfzAMCRz2oQnOk/RVww
+cMjbfTlHboqxirMddUcgnsZOR9TtCxrlE8tz7zZjZ9hdXpcFqvI2C+Eg7lYj+gjW
+E6LSXWdE4jPr2b7WzrSKG+Ut2TCwH6I3GrL/nPN+GXfbb2Fl7JgBfJ3gohZAZhns
+Pij8RKSuRXyiRsC3/MdK/pneoKPjyJt3YCx0tH873WlRn/2f2VupBOwVYLAgFwc6
+l5K1fWsj4/i7MXo/qo5vR4iqCrSWVWcJ9Gw226kZJGs4psPGngIx0oLqnETKHmEm
+JJqej1IwTKWmfLo6hk97prFmuRfr6RuSLMnrv26aPy15Wj1KdINCwRjTF8aJo7/o
+RQGeXLvY0aJThxW7UsPJghbLoGgn1ad1cyEj30phDsRgQNctmarGK8ulwTwVyx2z
+6bqL43Ak6z2ZqEkW0jelrmDJ9EutpSkQju9QVKdo2CQ8EHKk8KMJCmuJXBj1ND36
+oPc1EXvWedBRnyClr/65vud9Lx3rrjSFEBI9WYE23/XKCAXX+2q0k1K+pMmTk0LI
+zAXHuY5wT+gtM8VqzkY9IwtTfLTOuZsWMyx3Qx2rElfm7xJq4Se8wGCJY5ticbzU
+mFAu7wU4N8nxT4+sZdKD
+=nD1U
 -----END PGP SIGNATURE-----
 
---hW3Q5Oh0pcvvyJMS--
+--GLp9dJVi+aaipsRk--
