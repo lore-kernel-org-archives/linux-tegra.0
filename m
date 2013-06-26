@@ -1,193 +1,54 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] usb: phy: tegra: Read UTMIP parameters from device tree
-Date: Wed, 26 Jun 2013 14:58:47 +0300
-Message-ID: <1372247927-28470-2-git-send-email-mperttunen@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: dts: tegra20: Rename USB UTMI parameters
+ according to new definitions
+Date: Wed, 26 Jun 2013 15:14:42 +0300
+Message-ID: <20130626121442.GB12640@arwen.pp.htv.fi>
 References: <1372247927-28470-1-git-send-email-mperttunen@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GLa4d69Ev2s1FDzP"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 In-Reply-To: <1372247927-28470-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-UTMIP parameters used to be hardcoded into tables in the
-PHY driver. This patch moves them into the device tree
-in accordance with the phy-tegra-usb DT documentation.
+--GLa4d69Ev2s1FDzP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/usb/phy/phy-tegra-usb.c | 129 +++++++++++++++++++++++++++-------------
- 1 file changed, 87 insertions(+), 42 deletions(-)
+On Wed, Jun 26, 2013 at 02:58:46PM +0300, Mikko Perttunen wrote:
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index b3b4809..0352886c 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -185,27 +185,6 @@ static const struct tegra_xtal_freq tegra_freq_table[] = {
- 	},
- };
- 
--static struct tegra_utmip_config utmip_default[] = {
--	[0] = {
--		.hssync_start_delay = 9,
--		.idle_wait_delay = 17,
--		.elastic_limit = 16,
--		.term_range_adj = 6,
--		.xcvr_setup = 9,
--		.xcvr_lsfslew = 1,
--		.xcvr_lsrslew = 1,
--	},
--	[2] = {
--		.hssync_start_delay = 9,
--		.idle_wait_delay = 17,
--		.elastic_limit = 16,
--		.term_range_adj = 6,
--		.xcvr_setup = 9,
--		.xcvr_lsfslew = 2,
--		.xcvr_lsrslew = 2,
--	},
--};
--
- static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
- {
- 	void __iomem *base = phy->regs;
-@@ -727,13 +706,6 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 	int i;
- 	int err;
- 
--	if (!phy->is_ulpi_phy) {
--		if (phy->is_legacy_phy)
--			phy->config = &utmip_default[0];
--		else
--			phy->config = &utmip_default[2];
--	}
--
- 	phy->pll_u = devm_clk_get(phy->dev, "pll_u");
- 	if (IS_ERR(phy->pll_u)) {
- 		pr_err("Can't get pll_u clock\n");
-@@ -808,6 +780,88 @@ void tegra_ehci_phy_restore_end(struct usb_phy *x)
- }
- EXPORT_SYMBOL_GPL(tegra_ehci_phy_restore_end);
- 
-+static int read_utmi_param(struct platform_device *pdev, const char *param,
-+			   u8 *dest)
-+{
-+	u32 value;
-+	int err = of_property_read_u32(pdev->dev.of_node, param, &value);
-+	*dest = (u8)value;
-+	if (err < 0)
-+		dev_err(&pdev->dev, "Failed to read USB UTMI parameter %s: %d\n",
-+			param, err);
-+	return err;
-+}
-+
-+static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
-+			  struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	int err;
-+	struct tegra_utmip_config *config;
-+
-+	tegra_phy->is_ulpi_phy = false;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (!res) {
-+		dev_err(&pdev->dev, "Failed to get UTMI Pad regs\n");
-+		return  -ENXIO;
-+	}
-+
-+	tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
-+		resource_size(res));
-+	if (!tegra_phy->regs) {
-+		dev_err(&pdev->dev, "Failed to remap UTMI Pad regs\n");
-+		return -ENOMEM;
-+	}
-+
-+	tegra_phy->config = devm_kzalloc(&pdev->dev,
-+		sizeof(*tegra_phy->config), GFP_KERNEL);
-+	if (!tegra_phy->config) {
-+		dev_err(&pdev->dev,
-+			"unable to allocate memory for USB UTMIP config\n");
-+		return -ENOMEM;
-+	}
-+
-+	config = tegra_phy->config;
-+
-+	err = read_utmi_param(pdev, "nvidia,hssync-start-delay",
-+		&config->hssync_start_delay);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,elastic-limit",
-+		&config->elastic_limit);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,idle-wait-delay",
-+		&config->idle_wait_delay);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,term-range-adj",
-+		&config->term_range_adj);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,xcvr-setup",
-+		&config->xcvr_setup);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,xcvr-lsfslew",
-+		&config->xcvr_lsfslew);
-+	if (err < 0)
-+		return err;
-+
-+	err = read_utmi_param(pdev, "nvidia,xcvr-lsrslew",
-+		&config->xcvr_lsrslew);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
- static int tegra_usb_phy_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -839,20 +893,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 
- 	err = of_property_match_string(np, "phy_type", "ulpi");
- 	if (err < 0) {
--		tegra_phy->is_ulpi_phy = false;
--
--		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--		if (!res) {
--			dev_err(&pdev->dev, "Failed to get UTMI Pad regs\n");
--			return  -ENXIO;
--		}
--
--		tegra_phy->pad_regs = devm_ioremap(&pdev->dev, res->start,
--			resource_size(res));
--		if (!tegra_phy->regs) {
--			dev_err(&pdev->dev, "Failed to remap UTMI Pad regs\n");
--			return -ENOMEM;
--		}
-+		err = utmi_phy_probe(tegra_phy, pdev);
-+		if (err < 0)
-+			return err;
- 	} else {
- 		tegra_phy->is_ulpi_phy = true;
- 
-@@ -863,6 +906,8 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 				tegra_phy->reset_gpio);
- 			return tegra_phy->reset_gpio;
- 		}
-+
-+		tegra_phy->config = NULL;
- 	}
- 
- 	err = of_property_match_string(np, "dr_mode", "otg");
--- 
-1.8.1.5
+you need a commit log, sorry. Even if obvious
+
+--=20
+balbi
+
+--GLa4d69Ev2s1FDzP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRytsyAAoJEIaOsuA1yqRENHEP/RMFU1o2SXW5DGrvTkSQmXhx
+k1yYlyoCZZWP/vWJmgU4SVpnWSH5iO4lxOQce0MfdvuFkiAwgFXJyB12lQUDECmk
+UP1SDKpvKpaV00iJbiJccRRXFuAY1k1PE/Kk7VGWVApmzGHbAkHKmE7phWRAHVLk
+HxUEpNDpd8SNvef9j29tWIEqqIVMaD9/9WrYkhIEWjDjRyzxQtB2KVYIZEdlSwXn
+34EJEk3rcavy1J4IcswiQva5RtxwAmP0uaAKXYyUuXMbyJ86AJrBGR8a4a59cwpg
+ooSNcQauPlm8S+H9nSIGksDJMpg6hhM9KNn3ITaBT+fuKv63yOAc5F3ra9c58DIQ
+B77Q4EBX/nm45dDiGRmSMbA/mtj0D/sqAIu3TQ9tP1f5A7HE51hiFZPn+sWoAD+X
+yLdUqWG2HclDS4MrSz85ojQ7XXWrd73O6L3l25FETFRiOtlIftbJNouMCnVNNXkJ
+/pQpZLRoocGF72pltH3eBoNJp3uVlRkjoLXgnS4OlyJ0RytVqyNXuce4VpPc7mMp
+bQ6/fL2WvIfHlN9VvFP9KXZRbvoI6aFW4RBPwHWtr/z3C1200Zylf5NzMvMtlrdR
+XItpHFjK2BCqK9Ed9QQryGluf08JbnDGxIZWNxv0A+zJsw9MupphSs5pu5qpbbDi
+/IY7c8Wnjb+GgwtVIyh+
+=XfTY
+-----END PGP SIGNATURE-----
+
+--GLa4d69Ev2s1FDzP--
