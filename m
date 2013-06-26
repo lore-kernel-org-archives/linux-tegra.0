@@ -1,60 +1,24 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/2] ASoC: tegra20-ac97: Convert to
-	devm_clk_get()
-Date: Wed, 26 Jun 2013 12:20:07 +0100
-Message-ID: <1372245608-15596-1-git-send-email-broonie@kernel.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 09/11] ARM: tegar: remove the limitation that Tegra114
+ can't support suspend
+Date: Wed, 26 Jun 2013 19:20:28 +0800
+Message-ID: <1372245628.2986.28.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
+	 <1372152475-18617-10-git-send-email-josephl@nvidia.com>
+	 <20130626104856.GK27083@manwe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130626104856.GK27083@manwe>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Brown <broonie@linaro.org>
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- sound/soc/tegra/tegra20_ac97.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index 2f70ea7..d8c142d 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -327,7 +327,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 	}
- 	dev_set_drvdata(&pdev->dev, ac97);
- 
--	ac97->clk_ac97 = clk_get(&pdev->dev, NULL);
-+	ac97->clk_ac97 = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(ac97->clk_ac97)) {
- 		dev_err(&pdev->dev, "Can't retrieve ac97 clock\n");
- 		ret = PTR_ERR(ac97->clk_ac97);
-@@ -443,7 +443,6 @@ err_unregister_pcm:
- err_unregister_component:
- 	snd_soc_unregister_component(&pdev->dev);
- err_clk_put:
--	clk_put(ac97->clk_ac97);
- err:
- 	return ret;
- }
-@@ -458,7 +457,6 @@ static int tegra20_ac97_platform_remove(struct platform_device *pdev)
- 	tegra_asoc_utils_fini(&ac97->util_data);
- 
- 	clk_disable_unprepare(ac97->clk_ac97);
--	clk_put(ac97->clk_ac97);
- 
- 	return 0;
- }
--- 
-1.8.3.1
+On Wed, 2013-06-26 at 18:48 +0800, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> There's a typo in the subject, it should be prefixed with "ARM: tegra:".
+> 
+Thanks for review.
