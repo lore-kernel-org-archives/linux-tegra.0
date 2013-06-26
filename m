@@ -1,71 +1,31 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/2] ARM: dts: tegra20: Rename USB UTMI parameters according to new definitions
-Date: Wed, 26 Jun 2013 15:34:39 +0300
-Message-ID: <1372250080-10945-2-git-send-email-mperttunen@nvidia.com>
-References: <1372250080-10945-1-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH v2 0/2] usb: phy: tegra: Read UTMI parameters from device tree
+Date: Wed, 26 Jun 2013 15:34:38 +0300
+Message-ID: <1372250080-10945-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372250080-10945-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-l0cyMroinI0@public.gmane.org
 Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch changes the Tegra20 USB PHY nodes to use the UTMI configuration
-parameter names as specified in the device tree binding documentation
-after patch "ARM: tegra: finalize USB EHCI and PHY bindings".
+This patchset moves the USB UTMI interface parameters from hardcoded tables
+in the PHY driver to device tree and adds code to read them from there.
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20.dtsi | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+Mikko Perttunen (2):
+  ARM: dts: tegra20: Rename USB UTMI parameters according to new
+    definitions
+  usb: phy: tegra: Read UTMIP parameters from device tree
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 9653fd8..e457083 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -477,13 +477,13 @@
- 			 <&tegra_car TEGRA20_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
- 		nvidia,has-legacy-mode;
--		hssync_start_delay = <9>;
--		idle_wait_delay = <17>;
--		elastic_limit = <16>;
--		term_range_adj = <6>;
--		xcvr_setup = <9>;
--		xcvr_lsfslew = <1>;
--		xcvr_lsrslew = <1>;
-+		nvidia,hssync-start-delay = <9>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <1>;
-+		nvidia,xcvr-lsrslew = <1>;
- 		status = "disabled";
- 	};
- 
-@@ -527,13 +527,13 @@
- 			 <&tegra_car TEGRA20_CLK_CLK_M>,
- 			 <&tegra_car TEGRA20_CLK_USBD>;
- 		clock-names = "reg", "pll_u", "timer", "utmi-pads";
--		hssync_start_delay = <9>;
--		idle_wait_delay = <17>;
--		elastic_limit = <16>;
--		term_range_adj = <6>;
--		xcvr_setup = <9>;
--		xcvr_lsfslew = <2>;
--		xcvr_lsrslew = <2>;
-+		nvidia,hssync-start-delay = <9>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <2>;
-+		nvidia,xcvr-lsrslew = <2>;
- 		status = "disabled";
- 	};
- 
+ arch/arm/boot/dts/tegra20.dtsi  |  28 ++++-----
+ drivers/usb/phy/phy-tegra-usb.c | 129 +++++++++++++++++++++++++++-------------
+ 2 files changed, 101 insertions(+), 56 deletions(-)
+
 -- 
 1.8.1.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
