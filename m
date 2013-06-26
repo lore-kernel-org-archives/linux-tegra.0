@@ -1,75 +1,66 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC] early init and DT platform devices allocation/registration
-Date: Wed, 26 Jun 2013 14:12:06 +0100
-Message-ID: <CACxGe6u=BfnbwmS=7X5eYqKuSkmGdu9v-StAx+m7fLd+8C69pA@mail.gmail.com>
-References: <51C9AF96.3040107@wwwdotorg.org> <20130625.193628.2143557800560690024.hdoyu@nvidia.com>
- <CACxGe6t9ifg9VRfXKypuhie3pXVPneZqcBy+J1bFpUaUx32P7g@mail.gmail.com>
- <20130626.090030.1519009485651154440.hdoyu@nvidia.com> <CACxGe6te2RzFb6nkSZQFrzVX4fkQo4pyzLJ1D7Lf=440mE+jyg@mail.gmail.com>
- <51CAE235.1000807@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/4] usb: phy: tegra: Add support for device tree-based
+ vbus regulator control
+Date: Wed, 26 Jun 2013 11:14:35 -0600
+Message-ID: <51CB217B.1040308@wwwdotorg.org>
+References: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com> <1372240781-1017-2-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51CAE235.1000807-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1372240781-1017-2-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "Pawel.Moll-5wv7dgnIgG8@public.gmane.org" <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 26, 2013 at 1:44 PM, Sebastian Hesselbarth
-<sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 06/26/13 12:03, Grant Likely wrote:
->>
->> On Wed, Jun 26, 2013 at 7:00 AM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>
->>> Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Tue, 25 Jun 2013
->>> 19:52:33 +0200:
->>>
->>>>> Here's my workaround. I need to call of_detach_node() with OF_DYNAMIC
->>>>> to avoid duplicated device registration.
->>>>
->>>>
->>>> Gah! my eyes!
->>>>
->>>> Don't do that. It is incredibly problematic. Look at inhibiting
->>>> duplicate device creation instead.
->>>
->>>
->>> I may not follow this thread correctly, but could anyone point out the
->>> above "inhibiting duplicate device creation" if there's already such
->>> solution?
->>
->>
->> No, the solution doesn't exist yet, but it wouldn't be hard to
->> implement. What you need to do is to add a struct device pointer to
->> struct device_node, and set the pointer to the struct device when
->> of_platform_device_create creates a device. (it would also need to be
->> set for early_platform_device creation, but that's not something that
->> should affect you). You would also add a check to
->> of_platform_device_create to check if the device pointer is already
->> set. If it is, then skip creation of the device.
->
->
-> Grant,
->
-> What about the other way round, i.e. check if there is a device with
-> .of_node pointed to the struct device_node currently at
-> of_platform_device_create?
->
-> That will avoid adding struct device to struct device_node which you
-> fought against for good reasons.
+On 06/26/2013 03:59 AM, Mikko Perttunen wrote:
+> After this patch, usb vbus regulators for tegra usb phy devices can be specified
+> with the device tree attribute vbus-supply = <&x> where x is a regulator defined
+> in the device tree.
 
-The main thing is that it means searching through the entire list of
-platform devices every time a new platform device is created. That
-seems unnecessarily expensive to me.
+> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
 
->
-> Also, I guess of_platform_device_create could be exported and used
-> by anyone who wants to create platform_devices early.
+> @@ -250,12 +251,24 @@ static int utmip_pad_open(struct tegra_usb_phy *phy)
+>  		return PTR_ERR(phy->pad_clk);
+>  	}
+>  
+> +	phy->vbus = devm_regulator_get(phy->dev, "vbus");
+> +	/* On some boards, the VBUS regulator doesn't need to be controlled */
+> +	if (IS_ERR(phy->vbus)) {
+> +		if (PTR_ERR(phy->vbus) == -ENODEV) {
+> +			dev_notice(phy->dev, "no vbus regulator");
+> +			phy->vbus = NULL;
+> +		} else {
+> +			return PTR_ERR(phy->vbus);
+> +		}
+> +	}
 
-Yes, but in that case it is probably better for them to call
-of_platform_populate early if of_platform_device_create is fixed to
-support early calling. Then you'd just set up all the devices earlier
-in init, allow drivers that support early probing to do so, and then
-everything else uses the normal initcall path.
+I think this code should be added to some more core initialization
+function; IIRC, there are separate utmip_pad_open() and some other
+function for ULPI mode, and in the future there may be more for HSIC, etc.
 
-g.
+For the error-handling, I think it'd be better to do:
+
+* If property doesn't exist, set phy->vbus to some error value, e.g.
+ERR_PTR(-ENODEV).
+* If property does exist, call devm_regulator_get().
+** If devm_regulator_get() returned any error, return it.
+
+Or, does devm_regulator_get() return -ENODEV if-and-only-if the
+vbus-supply DT property does not exist?
+
+and ...
+
+> @@ -280,6 +293,14 @@ static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+>  	spin_unlock_irqrestore(&utmip_pad_lock, flags);
+>  
+>  	clk_disable_unprepare(phy->pad_clk);
+> +
+> +	if (phy->vbus) {
+
+Here, check if (IS_ERR(phy->vbus) instead. The reason is if
+devm_regulator_get() returns either a valid value or an error-pointer,
+then NULL could in theory be a valid value (it's up the the regulator
+API to determine that), and hence this code shouldn't assume that it can
+use NULL to represent "no regulator".
