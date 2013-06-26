@@ -1,75 +1,90 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: dts: tegra20: Remove obsolete vbus-gpio
- properties
-Date: Wed, 26 Jun 2013 13:17:58 +0300
-Message-ID: <20130626101758.GU12640@arwen.pp.htv.fi>
-References: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com>
- <1372240781-1017-5-git-send-email-mperttunen@nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 03/23] ARM: dt: tegra30: iommu: Add
+ "nvidia,memory-clients"
+Date: Wed, 26 Jun 2013 12:18:17 +0200
+Message-ID: <20130626101816.GE27083@manwe>
+References: <1372238906-9346-4-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eUqGrSc0O7wKBRnC"
+	protocol="application/pgp-signature"; boundary="Dzs2zDY0zgkG72+7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1372240781-1017-5-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1372238906-9346-4-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---eUqGrSc0O7wKBRnC
+
+--Dzs2zDY0zgkG72+7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2013 at 12:59:41PM +0300, Mikko Perttunen wrote:
-> USB VBUS regulators are now specified with the vbus-supply property
-> instead of vbus-gpio, so remove the obsolete properties.
->=20
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/boot/dts/tegra20-seaboard.dts  | 1 -
->  arch/arm/boot/dts/tegra20-trimslice.dts | 1 -
->  arch/arm/boot/dts/tegra20-whistler.dts  | 2 --
->  3 files changed, 4 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/t=
-egra20-seaboard.dts
-> index ab177b4..2ab4775 100644
-> --- a/arch/arm/boot/dts/tegra20-seaboard.dts
-> +++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-> @@ -566,7 +566,6 @@
-> =20
->  	usb@c5000000 {
->  		status =3D "okay";
-> -		nvidia,vbus-gpio =3D <&gpio TEGRA_GPIO(D, 0) GPIO_ACTIVE_HIGH>;
+On Wed, Jun 26, 2013 at 12:28:06PM +0300, Hiroshi Doyu wrote:
+[...]
+> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+[...]
+> @@ -23,3 +24,13 @@ Example:
+>  		nvidia,swgroups = <0x00000000 0x000779ff>;
+>  		nvidia,ahb = <&ahb>;
+>  	};
+> +
+> +	host1x {
+> +		compatible = "nvidia,tegra30-host1x", "simple-bus";
+> +		nvidia,memory-clients = <SWGID_HC>;
 
-silly question but don't you need to put a phandle to the VBUS regulator
-here ?
+And this could use the SWGID(HC) to match up with how GPIOs are
+referenced in the DTS files. Though I see that the clocks don't use a
+parameterized version either, so things are inconsistent anyway. But if
+SWGID() isn't used then maybe it shouldn't be provided by the header
+file in the first place.
 
---=20
-balbi
+Oh, one other thing: both GPIO and CAR use the TEGRA_ prefix, perhaps
+this should use it as well?
 
---eUqGrSc0O7wKBRnC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+[...]
+> index 14ec3f9..3fcee3f 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -1,5 +1,6 @@
+>  #include <dt-bindings/clock/tegra30-car.h>
+>  #include <dt-bindings/gpio/tegra-gpio.h>
+> +#include <dt-bindings/iommu/tegra-swgid.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+
+Nit: these includes seem to be ordered alphabetically; if so then iommu
+should go below interrupt-controller.
+
+> @@ -286,6 +300,7 @@
+>  		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
+>  		nvidia,dma-request-selector = <&apbdma 20>;
+>  		clocks = <&tegra_car TEGRA30_CLK_UARTE>;
+> +		nvidia,memory-clients = <14>;
+
+SWGID_PPCS?
+
+Thierry
+
+--Dzs2zDY0zgkG72+7
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRyr/WAAoJEIaOsuA1yqREvjYP/RmRJiNA/0fGJCsgeV5p1bLQ
-3uAB/lcaBWoxps7ztuwNlI4NquUA53YwBFYEuu6zys/wpONDETjSY9MhPLMrPo27
-vUdr0iinTk2DC5sO9HLj57qKOvXuvy4alP2RA6ICq+vVPqQug1S5KvT62kG59s/H
-DRWDF5dVFrbBpIkpdJnEDHgYNu/O4EfLMIdqS1BEWl++t/e8mgqeYGgAyGG5gIMs
-VmmcTbIUZC3LRUSwQ+RRoBiZgtXcbcW2nJ6p0YBApZsui9KyQaBZzsFxifS96SCv
-ZDnkBw9bZuaUYrawHQCcBg1u6o/gEQX/DyEx6Ri+HOUmrnxgTHgb0O1uqacQu5nS
-0AIwLRpAflIpxQlJC6O5EkwcGpx6ezmZ6xh+wx49xISG7Dqxx+pwYDDL+Vjb6Pmh
-z6O8IBi8N8eu7rViMFNvJxsoqOIj1nxxk5WPEat4GyDqPHEhLVX6rqoc3Jm+fBdq
-FAiZJv8SFpMuiXdmLOTkz7qrPyxmfQQNC8wJD0EuTs43YZASU2DH86e5hlGLSR5a
-eC5E4rULOr5X/PGeptAj+Ytlsx7mQqu5UNE89Oe9Sk9FNIOx6kT5oNkPgZhNt5No
-A48aVIrs92xNC2EInrisTanOor3RIJAkTKuRMfUMxOrsSdW9G3LSZBwA8rpQeP5F
-qX0VV/Z90tTy9RuD+RU9
-=3HQO
+iQIcBAEBAgAGBQJRyr/oAAoJEN0jrNd/PrOh1FAP/02Owj95zfivu0SthXrGBTpK
+fJuHQgkHZrseNfN8ymp1XxEEcAPSzev39J0Y5R2fVZJpZOFPcoU2r9bykhFm/p/t
+4bDMEnFfWIwhf7FDdHoM2calUF5GA8YS9FZCsEDz4MaAKFhgeJmiMFdObquIvo1M
+gp24L0iq31UXFP1bkqj3HFNXZamyhhhA9/KaXHE1QrdLdTcWj2fW4MkQ4ICtsJe2
+t0doVVFDxezWk1gLF94oHQ6Ek92llwzyMEhCdtB/Rtz6bF3P3AuIoDwYyLSwIm52
+y0t99mMxPPhA5miVCty596vDCRj4R/GiEKhrSYdSfIt1Ug7jGRC+jUEJ2lo7rDZc
+3yQjkJYYo3EyVm9EemB9tpz1rOo0P091XE9n8aJgrUJ/NxlRyU8FsZTuvF2kYAVE
+HY8BOceGasPZaSUI7bkSLQYgkdn0ySg9LtmIEofMZj2cwrQzTNwdbA6jTnw7lLbz
+DdLea+ge57gwZM/TDnZNU3l5aT0rLSigV3xonUtgbT9qY2GOO6Qhjm7lj/27PfWI
+GGaNLSvDj1OwIjCoiIedFi6+c7l/BhVBSTSJoIhbtvMO4EbGPHf8ulnfLyYmOzj9
+xpABDOV6GJfP2OylabWPx2OmyTvh6SEV+Qmx7YGW1KBJvStbd+2zHJ9FozMZytP2
+jpTSs853RA75YbmK31L6
+=QmRg
 -----END PGP SIGNATURE-----
 
---eUqGrSc0O7wKBRnC--
+--Dzs2zDY0zgkG72+7--
