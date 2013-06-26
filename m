@@ -1,45 +1,34 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 15/23] iommu/tegra: smmu: Calculate ASID register offset by ID
-Date: Wed, 26 Jun 2013 12:28:18 +0300
-Message-ID: <1372238906-9346-16-git-send-email-hdoyu@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] usb: tegra: Replace nvidia,vbus-gpio property with vbus-supply
+Date: Wed, 26 Jun 2013 12:59:37 +0300
+Message-ID: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Calculate ASID register offset by ID so that we can get rid of SoC
-specific MACROs. This is needed for the unified SMMU driver over Tegra
-SoCs.
+This patchset removes the ehci-tegra device tree property nvidia,vbus-gpio
+and adds support for the vbus-supply property to phy-tegra-usb.
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Mikko Perttunen (4):
+  usb: phy: tegra: Add support for device tree-based vbus regulator
+    control
+  usb: host: tegra: Remove direct vbus regulator control using GPIOs
+  Documentation: devicetree: phy-tegra-usb: Add vbus-supply property for
+    host mode PHYs
+  ARM: dts: tegra20: Remove obsolete vbus-gpio properties
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 35f4a16..95c6c80 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -256,7 +256,7 @@ static const u32 smmu_hwgrp_asid_reg[] = {
- 	HWGRP_INIT(VDE),
- 	HWGRP_INIT(VI),
- };
--#define HWGRP_ASID_REG(x) (smmu_hwgrp_asid_reg[x])
-+#define HWGRP_ASID_REG(x) ((x) * sizeof(u32) + SMMU_AFI_ASID)
- 
- /*
-  * Per client for address space
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |  3 ++
+ arch/arm/boot/dts/tegra20-seaboard.dts             |  1 -
+ arch/arm/boot/dts/tegra20-trimslice.dts            |  1 -
+ arch/arm/boot/dts/tegra20-whistler.dts             |  2 --
+ drivers/usb/host/ehci-tegra.c                      | 34 +---------------------
+ drivers/usb/phy/phy-tegra-usb.c                    | 24 +++++++++++++++
+ include/linux/usb/tegra_usb_phy.h                  |  1 +
+ 7 files changed, 29 insertions(+), 37 deletions(-)
+
 -- 
 1.8.1.5
