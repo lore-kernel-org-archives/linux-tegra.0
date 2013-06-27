@@ -1,81 +1,87 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 06/11] ARM: tegra114: hook tegra_tear_down_cpu function
-Date: Thu, 27 Jun 2013 12:13:36 +0200
-Message-ID: <20130627101335.GB15081@mithrandir>
-References: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
- <1372152475-18617-7-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 2/2] ASoC: tegra20-ac97: Convert to
+ devm_ioremap_resource()
+Date: Thu, 27 Jun 2013 12:22:12 +0200
+Message-ID: <20130627102211.GC15081@mithrandir>
+References: <1372245608-15596-1-git-send-email-broonie@kernel.org>
+ <1372245608-15596-2-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QTprm0S8XgL7H0Dt"
+	protocol="application/pgp-signature"; boundary="oTHb8nViIGeoXxdp"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1372152475-18617-7-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1372245608-15596-2-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---QTprm0S8XgL7H0Dt
+--oTHb8nViIGeoXxdp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2013 at 05:27:50PM +0800, Joseph Lo wrote:
-> Hooking tegra_tear_down_cpu for Tegra114 for supporting cluster power
-> down when CPU cluster suspneded in LP2.
+On Wed, Jun 26, 2013 at 12:20:08PM +0100, Mark Brown wrote:
+> From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 >=20
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/pm.c | 1 +
->  1 file changed, 1 insertion(+)
+>  sound/soc/tegra/tegra20_ac97.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
 >=20
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-> index 94e69be..a0668a2 100644
-> --- a/arch/arm/mach-tegra/pm.c
-> +++ b/arch/arm/mach-tegra/pm.c
-> @@ -52,6 +52,7 @@ static void tegra_tear_down_cpu_init(void)
->  			tegra_tear_down_cpu =3D tegra20_tear_down_cpu;
->  		break;
->  	case TEGRA30:
-> +	case TEGRA114:
->  		if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC))
->  			tegra_tear_down_cpu =3D tegra30_tear_down_cpu;
+> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac9=
+7.c
+> index d8c142d..9043626d 100644
+> --- a/sound/soc/tegra/tegra20_ac97.c
+> +++ b/sound/soc/tegra/tegra20_ac97.c
+> @@ -341,18 +341,10 @@ static int tegra20_ac97_platform_probe(struct platf=
+orm_device *pdev)
+>  		goto err_clk_put;
+>  	}
+> =20
+> -	memregion =3D devm_request_mem_region(&pdev->dev, mem->start,
+> -					    resource_size(mem), DRV_NAME);
+> -	if (!memregion) {
+> -		dev_err(&pdev->dev, "Memory region already claimed\n");
+> -		ret =3D -EBUSY;
+> -		goto err_clk_put;
+> -	}
+> -
+> -	regs =3D devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+> -	if (!regs) {
+> -		dev_err(&pdev->dev, "ioremap failed\n");
+> -		ret =3D -ENOMEM;
+> +	regs =3D devm_ioremap_resource(&pdev->dev, mem);
+> +	if (IS_ERR(regs)) {
+> +		ret =3D PTR_ERR(regs);
+> +		dev_err(&pdev->dev, "ioremap failed: %d\n", ret);
 
-This is getting a little weird. Suppose I want to build a Tegra114 only
-kernel. With the above code it means the tegra_tear_down_cpu won't be
-hooked because ARCH_TEGRA_3x_SOC isn't selected.
+Can you please remove this error message as well, please? A message to
+the same effect is already output by devm_ioremap_resource(). Other than
+that, looks good:
 
-Perhaps tegra30_tear_down_cpu() should be built unconditionally so that
-it's always available? I suspect that something similar will need to be
-done for future chips too, further complicating matters.
+Reviewed-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-There are other alternatives like adding another Kconfig symbol which
-doesn't cover all of Tegra30 but only code shared with Tegra114 (and
-possible future chips) or building sleep-tegra30.S if either one of the
-ARCH_TEGRA_3x_SOC or ARCH_TEGRA_114_SOC symbols is selected.
-
-Thierry
-
---QTprm0S8XgL7H0Dt
+--oTHb8nViIGeoXxdp
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRzBBPAAoJEN0jrNd/PrOhSWQP/1cJmWQtt1EKkqU5GaMUATKO
-24/cc6LQcAmIQc3Asu/sNwyAcpaMi/KJieGtIdBGJb+2yfRon7fU5eSqMyCHvvtu
-noHVGzOVh8qJvKo1dd7/2aEWSvkOrBhC94fibAdECnXFFKEXKeNkFh3nbIuvgEcL
-j7TCya3253DcZEHxaoLF3fVuqw3XJTZ/bdBp6Ol2ny2+p7dD6tNP76MUZ0kJvAdv
-IDmrMF8y8MXKaXsUpTJ7V/bQkn+GFNH6DDU+cK/vopvXKONjC3vwJ7HDUI3VY4lK
-gbSL5U+Xn8shx6+1R+H7m2plWvUbkn50mKtmyxFLO+QKhXnLov54i0YW6alIMGyB
-NR1eTmZkKY9P3pXJprJVLgQaU5DHulLfGQ8FFTQy8PHAw1dAcWPmYyXF+HsqAjTJ
-AgNx1lk/xKkRtODLtGC7nIPTqIene3JTEsMaMH2eb9930Jq9oXnrOFX4oykHGwkm
-9HQNZaSvcdcZtROqAkii+7st9jNy2trjXMtyIyJPjkdKG9S87Z6JI44NbeNivG1n
-W12YuEbNIyUFYnrYmVrA00TxuzU56nEQX516ZU4qGCZiSYGTkFFqnalfeyaOVKpw
-i/2NsgHzbKjK+ZhqEsLIaKOd5uz2vtCPozZeCYGBAqk9ICtLgYSAcGxaL3WoT3js
-EA2PjbWsiYKtjLIZCKAl
-=j2N0
+iQIcBAEBAgAGBQJRzBJTAAoJEN0jrNd/PrOhChwP/12A2zxPmMXpZO6xrNiFKvYX
+t7dTRL8NRsNTAg0NwENnlnsqVnTNm+tYmilXQJnISa2Gp6dQD+vrtwNI47t67VDw
+8JVGVQFzsWe9iQnLYT/uGxhRLqtyF8IqOLEJYxbC7MYKDqFyerUDVflHka/lueQE
+CvzDpNMBLB1/4f3X+tWWfDWJXZQT2LtEIyY5xfMydIdMOCDwZzvBN8wqN7mPt8fK
+tVc8ijJiO5UpMr1xweq4dgzrVwvgUlHZeCLa1mG4Aq1yW59gVdX961gSBsuHdyQl
+/EqiBa6vYyEKanBl3uXXE7xX8AVuLXZKthlrYl3skLv1x0OlQbwZM1zHDJOOX9X7
+Ggz/E4re6u86Gw7LaaF+ebRw1WyEr/9NJ6/V0WWq4wBkh2Qb7xwq8rdNdOQP0iir
+0e8DAXEQGB0W5m/R0cDP7tWNmTlz35Wn8ZzhIW8LxPB59l/d2Oc6i4pIe+huewZo
+v2V1RPbcF6QDcqP3Q/ggBR/mvAzADOjYx2YZUUgl23fhKxkwEwZeKJ1ylsX5okq0
+BsSjKykJG1d2YDU/9D0Au7M4as8386KysW6KsizGe+6ITTwrUJpGzDQB2Tmi8apo
+ta46Tqo4Esb4gegbVS9L66g/js8RxvogbYKlQ+Y+Gmz5JBHxVE8cpcREIE2h6ZNT
+tk7BWa9a8QP6UrQYK5p9
+=Xj2a
 -----END PGP SIGNATURE-----
 
---QTprm0S8XgL7H0Dt--
+--oTHb8nViIGeoXxdp--
