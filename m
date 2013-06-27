@@ -1,62 +1,76 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 06/11] ARM: tegra114: hook tegra_tear_down_cpu function
-Date: Thu, 27 Jun 2013 18:22:37 +0800
-Message-ID: <1372328557.9389.40.camel@jlo-ubuntu-64.nvidia.com>
-References: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
-	 <1372152475-18617-7-git-send-email-josephl@nvidia.com>
-	 <20130627101335.GB15081@mithrandir>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: tegra20-ac97: Convert to
+ devm_ioremap_resource()
+Date: Thu, 27 Jun 2013 12:11:06 +0100
+Message-ID: <20130627111106.GW27646@sirena.org.uk>
+References: <1372245608-15596-1-git-send-email-broonie@kernel.org>
+ <1372245608-15596-2-git-send-email-broonie@kernel.org>
+ <20130627102211.GC15081@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130627101335.GB15081@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============4326638614458409942=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20130627102211.GC15081@mithrandir>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-06-27 at 18:13 +0800, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Jun 25, 2013 at 05:27:50PM +0800, Joseph Lo wrote:
-> > Hooking tegra_tear_down_cpu for Tegra114 for supporting cluster power
-> > down when CPU cluster suspneded in LP2.
-> > 
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm/mach-tegra/pm.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-> > index 94e69be..a0668a2 100644
-> > --- a/arch/arm/mach-tegra/pm.c
-> > +++ b/arch/arm/mach-tegra/pm.c
-> > @@ -52,6 +52,7 @@ static void tegra_tear_down_cpu_init(void)
-> >  			tegra_tear_down_cpu = tegra20_tear_down_cpu;
-> >  		break;
-> >  	case TEGRA30:
-> > +	case TEGRA114:
-> >  		if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC))
-> >  			tegra_tear_down_cpu = tegra30_tear_down_cpu;
-> 
-> This is getting a little weird. Suppose I want to build a Tegra114 only
-> kernel. With the above code it means the tegra_tear_down_cpu won't be
-> hooked because ARCH_TEGRA_3x_SOC isn't selected.
-> 
-Oops. You are right. Will fix.
 
-> Perhaps tegra30_tear_down_cpu() should be built unconditionally so that
-> it's always available?
-The tegra30_tear_down_cpu will be built for both Tegra30 or Tegra114.
+--===============4326638614458409942==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hImnF3KMhyKrbB+/"
+Content-Disposition: inline
 
-> 
-> There are other alternatives like adding another Kconfig symbol which
-> doesn't cover all of Tegra30 but only code shared with Tegra114 (and
-> possible future chips) or building sleep-tegra30.S if either one of the
-> ARCH_TEGRA_3x_SOC or ARCH_TEGRA_114_SOC symbols is selected.
-> 
-Yes, we building "sleep-tegra30.S" when either one of the
-ARCH_TEGRA_3x_SOC or ARCH_TEGRA_114_SOC symbols is selected.
 
-Thanks,
-Joseph
+--hImnF3KMhyKrbB+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Jun 27, 2013 at 12:22:12PM +0200, Thierry Reding wrote:
+
+> Can you please remove this error message as well, please? A message to
+> the same effect is already output by devm_ioremap_resource(). Other than
+> that, looks good:
+
+Too late, send an incremental patch please.
+
+--hImnF3KMhyKrbB+/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRzB3HAAoJELSic+t+oim9WZwP/Amxsuy8FlTxzzC/Vn3mPAeT
+yAkh28l0hbL8dK+kS7BqrPOmAGJ7yDjDcSxUMgNlvUsBwE9dRTC/9N5uybYeaTiG
+adAPaeQbll4cP+DjKUYnvlQbvJ30ZbjC1TIHsbyobJD2CVkPfos7sl42+u/qs4mb
+hyS+mT92A5tic34F7zSoIRCj+KOiCejWxucC8X1oj1IYftE9i5pnPQWVzqasgxO7
+svftltA+L7TrRBMEbJsp//Op8vxzO1bBlqTJuKo/21CZst0t1XjcOFh+lsolK3YM
+cHnCm6bM/vcvhJXanPf7kDIUlITelicOa6D3Lzxy9pS0kAJzuxJfpBvF3MlMCi81
+Yh4bYNhxhbB0Rn+gNkQMm5TwzBCoo9mhofEG5OgaGujjAiBKpvoCse99o9CIr089
+612tfusH77cZrDI1P0BhbTZICz3ZPG2RPDuHjSDgJByMy/02VdpfVH1rAXREadDI
+UIZ4ZmE5ajS5n7fqKiz2UO3M8ZLZznF/ZMminq3RmPTeki8+Ze7WGyEV4UGTmwFC
+A3BCZq50pjb8P9foNkDq4kYs5fWLBxNKk2mb08r6Qacwvh1Axh6FS+Zgvl3/gRpV
+56WqvXmNoukYy4/XCQS7IURkQTcGoOFH0B/1NoU85v83MJ32Z+4DjnrC9TLtbZkD
+BnKDAQE29ykov98mLmzK
+=nOAL
+-----END PGP SIGNATURE-----
+
+--hImnF3KMhyKrbB+/--
+
+--===============4326638614458409942==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4326638614458409942==--
