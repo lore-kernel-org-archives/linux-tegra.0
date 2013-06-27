@@ -1,29 +1,40 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] usb: phy: tegra: Read UTMIP parameters from device
- tree
-Date: Thu, 27 Jun 2013 10:41:35 +0300
-Message-ID: <51CBECAF.8050200@nvidia.com>
-References: <1372250080-10945-1-git-send-email-mperttunen@nvidia.com> <1372250080-10945-3-git-send-email-mperttunen@nvidia.com> <51CB2A04.9020103@wwwdotorg.org>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [PATCH] gpu/host1x: Remove DRIVER_BUS_PLATFORM from driver_features
+Date: Thu, 27 Jun 2013 11:09:39 +0200
+Message-ID: <2786016.HggCTvYnMZ@avalon>
+References: <1369806274-19046-1-git-send-email-laurent.pinchart+renesas@ideasonboard.com> <20130529105039.GA30742@manwe>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51CB2A04.9020103-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130529105039.GA30742@manwe>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/26/2013 08:51 PM, Stephen Warren wrote:
-> On 06/26/2013 06:34 AM, Mikko Perttunen wrote:
->> UTMIP parameters used to be hardcoded into tables in the
->> PHY driver. This patch reads them from the device tree instead
->> in accordance with the phy-tegra-usb DT documentation.
->
-> This looks fine, although I'd like to have a chance to test all these
-> patches before actually ack'ing them.
->
+Hi Thierry,
 
-Yeah, I haven't tested these patches on any Tegra20 devices either,
-just with my Dalmore. I guess I could scavenge a T20 device from
-somewhere..
+On Wednesday 29 May 2013 12:50:40 Thierry Reding wrote:
+> On Wed, May 29, 2013 at 07:44:34AM +0200, Laurent Pinchart wrote:
+> > From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> > 
+> > DRIVER_BUS_PLATFORM is not a DRM driver feature flag, it must not be set
+> > in the driver's driver_features field.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+> > ---
+> > 
+> >  drivers/gpu/host1x/drm/drm.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Applied, thanks. I did modify the subject's prefix to "drm/tegra: " for
+> consistency, though.
+
+Do you plan to push the patch to v3.11 through Dave's tree ? I can't find it 
+in drm-next.
+
+-- 
+Regards,
+
+Laurent Pinchart
