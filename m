@@ -1,51 +1,58 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 06/11] ARM: tegra114: hook tegra_tear_down_cpu function
-Date: Thu, 27 Jun 2013 11:48:49 -0600
-Message-ID: <51CC7B01.30503@wwwdotorg.org>
-References: <1372152475-18617-1-git-send-email-josephl@nvidia.com> <1372152475-18617-7-git-send-email-josephl@nvidia.com> <20130627101335.GB15081@mithrandir>
+Subject: Re: [PATCH 1/1] ARM: tegra: Add basic support for carma devkit
+Date: Thu, 27 Jun 2013 11:51:20 -0600
+Message-ID: <51CC7B98.5090103@wwwdotorg.org>
+References: <1371994685-4997-1-git-send-email-chris.desjardins@amscins.com> <51CC6F83.2010606@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130627101335.GB15081@mithrandir>
+In-Reply-To: <51CC6F83.2010606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/27/2013 04:13 AM, Thierry Reding wrote:
-> On Tue, Jun 25, 2013 at 05:27:50PM +0800, Joseph Lo wrote:
->> Hooking tegra_tear_down_cpu for Tegra114 for supporting cluster
->> power down when CPU cluster suspneded in LP2.
->> 
->> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> --- 
->> arch/arm/mach-tegra/pm.c | 1 + 1 file changed, 1 insertion(+)
->> 
->> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c 
->> index 94e69be..a0668a2 100644 --- a/arch/arm/mach-tegra/pm.c +++
->> b/arch/arm/mach-tegra/pm.c @@ -52,6 +52,7 @@ static void
->> tegra_tear_down_cpu_init(void) tegra_tear_down_cpu =
->> tegra20_tear_down_cpu; break; case TEGRA30: +	case TEGRA114: if
->> (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC)) tegra_tear_down_cpu =
->> tegra30_tear_down_cpu;
+On 06/27/2013 10:59 AM, Eric Brower wrote:
+> On 06/23/2013 06:38 AM, Chris Desjardins wrote:
+>>
+>> Signed-off-by: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/tegra30-carma.dts |  461
+>> +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 461 insertions(+)
+>>   create mode 100644 arch/arm/boot/dts/tegra30-carma.dts
+>>
+>> diff --git a/arch/arm/boot/dts/tegra30-carma.dts
+>> b/arch/arm/boot/dts/tegra30-carma.dts
+>> new file mode 100644
+>> index 0000000..e88134e
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/tegra30-carma.dts
+>> @@ -0,0 +1,461 @@
+>> +/dts-v1/;
+>> +#include "tegra30.dtsi"
+>> +
+>> +/**
+>> + * This file contains common DT entry for Carma
+>> + */
+>> +
+>> +/ {
+>> +       model = "NVIDIA Tegra30 Carma evaluation board";
+>> +       compatible = "nvidia,carma", "nvidia,tegra30";
 > 
-> This is getting a little weird. Suppose I want to build a Tegra114
-> only kernel. With the above code it means the tegra_tear_down_cpu
-> won't be hooked because ARCH_TEGRA_3x_SOC isn't selected.
+> Chris,
 > 
-> Perhaps tegra30_tear_down_cpu() should be built unconditionally so
-> that it's always available? I suspect that something similar will
-> need to be done for future chips too, further complicating
-> matters.
+> This is not an NVIDIA board, it's a Seco board.  I'd suggest:
 > 
-> There are other alternatives like adding another Kconfig symbol
-> which doesn't cover all of Tegra30 but only code shared with
-> Tegra114 (and possible future chips) or building sleep-tegra30.S if
-> either one of the ARCH_TEGRA_3x_SOC or ARCH_TEGRA_114_SOC symbols
-> is selected.
+> model = "Seco Tegra30 Carma development board";
+> compatible = "seco,carma", "nvidia,tegra30";
+> 
+> But you might want to check with Seco regarding preference of prefix for
+> "seco,carma" above.  I see no precedent for it after a quick check.
 
-To be honest, I wonder if we should just get rid of ARCH_TEGRA_*_SOC,
-and build everything if ARCH_TEGRA is defined. tegra_defconfig enables
-all ARCH_TEGRA_*_SOC anyway, and I'm afraid I don't test other
-configurations very often, and I assume that distros will enable
-everything...
+That's a good point. The seco prefix should be added to
+Documentation/devicetree/bindings/vendor-prefixes.txt. I believe the
+rule for vendor prefixes is to use the company's stock ticker symbol if
+there is one and it makes sense, else fall back to name. "seco" is short
+enough it's probably fine either way.
