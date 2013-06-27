@@ -1,70 +1,98 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: tegra20: Rename USB UTMI parameters
- according to new definitions
-Date: Thu, 27 Jun 2013 09:50:07 +0300
-Message-ID: <20130627065006.GJ15455@arwen.pp.htv.fi>
-References: <1372247927-28470-1-git-send-email-mperttunen@nvidia.com>
- <51CB289A.2070506@wwwdotorg.org>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] usb: phy: tegra: Add support for device tree-based
+ vbus regulator control
+Date: Thu, 27 Jun 2013 10:20:43 +0300
+Message-ID: <op.wzbtct1hpdlnwf@mperttunen-lnx>
+References: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com>
+ <1372240781-1017-2-git-send-email-mperttunen@nvidia.com>
+ <51CB217B.1040308@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lYetfuAxy9ic4HK3"
+Content-Type: text/plain; charset="utf-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51CB289A.2070506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51CB217B.1040308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---lYetfuAxy9ic4HK3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 26 Jun 2013 20:14:35 +0300, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>  
+wrote:
 
-On Wed, Jun 26, 2013 at 11:44:58AM -0600, Stephen Warren wrote:
-> On 06/26/2013 05:58 AM, Mikko Perttunen wrote:
-> > Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Damn. I thought that Venu had converted the *.dts files completely to
-> match the new binding definition in the last series he sent. I guess he
-> missed these because the driver doesn't use them yet and he wasn't
-> paying attention. Grrr.
->=20
-> So, this change is fine (modulo missing description as Felipe pointed
-> out), but will again mean that the USB tree needs to take some Tegra
-> *.dts changes:-( I don't expect this will cause any conflicts, so it
-> probably won't require any cross-subsystem merge, but it'd be best to
-> apply all these Tegra changes in a separate topic branch just in case...
->=20
-> Felipe, let me know if you want me to actually do the patch application
-> for that topic branch to save you the hassle.
+> On 06/26/2013 03:59 AM, Mikko Perttunen wrote:
+>> After this patch, usb vbus regulators for tegra usb phy devices can be  
+>> specified
+>> with the device tree attribute vbus-supply = <&x> where x is a  
+>> regulator defined
+>> in the device tree.
+>
+>> diff --git a/drivers/usb/phy/phy-tegra-usb.c  
+>> b/drivers/usb/phy/phy-tegra-usb.c
+>
+>> @@ -250,12 +251,24 @@ static int utmip_pad_open(struct tegra_usb_phy  
+>> *phy)
+>>  		return PTR_ERR(phy->pad_clk);
+>>  	}
+>>
+>> +	phy->vbus = devm_regulator_get(phy->dev, "vbus");
+>> +	/* On some boards, the VBUS regulator doesn't need to be controlled */
+>> +	if (IS_ERR(phy->vbus)) {
+>> +		if (PTR_ERR(phy->vbus) == -ENODEV) {
+>> +			dev_notice(phy->dev, "no vbus regulator");
+>> +			phy->vbus = NULL;
+>> +		} else {
+>> +			return PTR_ERR(phy->vbus);
+>> +		}
+>> +	}
+>
+> I think this code should be added to some more core initialization
+> function; IIRC, there are separate utmip_pad_open() and some other
+> function for ULPI mode, and in the future there may be more for HSIC,  
+> etc.
 
-if it works for you, then I just merge your branch, cheers.
+I don't think ULPI and VBUS have a VBUS pin, though. The pinmux doesn't
+even list a pin for USB2 which is a ULPI/HSIC only controller.
 
---=20
-balbi
+>
+> For the error-handling, I think it'd be better to do:
+>
+> * If property doesn't exist, set phy->vbus to some error value, e.g.
+> ERR_PTR(-ENODEV).
+> * If property does exist, call devm_regulator_get().
+> ** If devm_regulator_get() returned any error, return it.
+>
+> Or, does devm_regulator_get() return -ENODEV if-and-only-if the
+> vbus-supply DT property does not exist?
 
---lYetfuAxy9ic4HK3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Yes, devm_regulator_get uses regulator_dev_lookup which returns -ENODEV
+if of_reg_regulator returns NULL, and there is no other place a -ENODEV
+could be returned from. Comment in regulator_dev_lookup:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+	/*
+	 * If we couldn't even get the node then it's
+	 * not just that the device didn't register
+	 * yet, there's no node and we'll never
+	 * succeed.
+	 */
+	*ret = -ENODEV;
 
-iQIcBAEBAgAGBQJRy+CeAAoJEIaOsuA1yqREgjIQAJ9kG/0zcI+vXBd0kZ44S0XD
-LmTE+J8sG56y1mv1a0qoSxu2jc5YuK9Kpjm5DgJf9SkG0msIXJwFiJ75u+658oxM
-ZjsxvG6dr0jO+WUGc9WA/mEtpG07oTRUjRI7PfmoWNMavPkxNYC8IHwgBs+MTtTN
-1hl80QFSNwEnsBtC0kaBpquAn6q0GMSfzHyBVhO91JchtrQz6BTooMDo17U+WLkP
-R6uUWF1/TwvP4BjO+TS2m8Yn2+VTk1qMFC2xx89KRXtLymEB3EqfEsXvGnRM8UVi
-c7mcsb2AW8ftS5aPO7UhdQQw/chnDSU+dJCSD4Vxle6nE1OSVpsmB3GhjWWCf5+8
-zq8mT0f7rPL2vYuUaSIkJdJLFrdaF9Rev5aEhQO05biO2pXuAdxJCoM7yfBsS2bh
-VGSTX9szqJI79FgbqpMP7rJpSw+lm7HlenYnGZPQ0uNG6an/v4MDSPwSweJY9m/E
-hXQSTjmqVfW4K04c+xfRYfA+OrZjBuS0IAr1O1e8W/6lf5tjhWb/6hCHQaPZZDCG
-2fe0DuouHRE2GZEqV6l7kqvDaQZwGMAlLedyyJSUnOCwlkFFOKcvvTcKXjSf84Am
-cvpZLrn3ktkdu+zZlu62Gc1OAeu1wuxwfx+uy5wsWYm13zIB3L562o2HZL5AD+Dt
-bgdGWAvV5n6Fv0dBQUhk
-=OOp0
------END PGP SIGNATURE-----
+>
+> and ...
+>
+>> @@ -280,6 +293,14 @@ static void utmip_pad_power_on(struct  
+>> tegra_usb_phy *phy)
+>>  	spin_unlock_irqrestore(&utmip_pad_lock, flags);
+>>
+>>  	clk_disable_unprepare(phy->pad_clk);
+>> +
+>> +	if (phy->vbus) {
+>
+> Here, check if (IS_ERR(phy->vbus) instead. The reason is if
+> devm_regulator_get() returns either a valid value or an error-pointer,
+> then NULL could in theory be a valid value (it's up the the regulator
+> API to determine that), and hence this code shouldn't assume that it can
+> use NULL to represent "no regulator".
 
---lYetfuAxy9ic4HK3--
+I'll fix this along with the problems with the other patches.
+
+- Mikko
