@@ -1,35 +1,3042 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] ASoC: tegra20-ac97: Remove unused variable
-Date: Fri, 28 Jun 2013 21:53:25 +0200
-Message-ID: <1372449205-22231-2-git-send-email-thierry.reding@gmail.com>
-References: <1372449205-22231-1-git-send-email-thierry.reding@gmail.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20 configurations
+Date: Fri, 28 Jun 2013 22:27:44 +0200
+Message-ID: <1372451264-13049-1-git-send-email-dev@lynxeye.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372449205-22231-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-With the conversion to devm_ioremap_resource() the memregion variable is
-no longer used so it can be dropped.
+The Colibri T20 COM comes in two different versions, which can both
+boot from NAND or SD-Card.
 
-Signed-off-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 ---
- sound/soc/tegra/tegra20_ac97.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Submission is done with the consent of Toradex.
+---
+ tegra20/toradex/colibri-t20/build.sh               |  41 ++
+ .../colibri-t20/colibri-t20_256_hsmmc.bct.cfg      | 452 ++++++++++++++++++++
+ .../colibri-t20/colibri-t20_256_hsmmc.img.cfg      |  22 +
+ .../colibri-t20/colibri-t20_256_v11_nand.bct.cfg   | 460 +++++++++++++++++++++
+ .../colibri-t20/colibri-t20_256_v11_nand.img.cfg   |  22 +
+ .../colibri-t20/colibri-t20_256_v12_nand.bct.cfg   | 460 +++++++++++++++++++++
+ .../colibri-t20/colibri-t20_256_v12_nand.img.cfg   |  22 +
+ .../colibri-t20/colibri-t20_512_hsmmc.bct.cfg      | 452 ++++++++++++++++++++
+ .../colibri-t20/colibri-t20_512_hsmmc.img.cfg      |  22 +
+ .../colibri-t20/colibri-t20_512_v11_nand.bct.cfg   | 460 +++++++++++++++++++++
+ .../colibri-t20/colibri-t20_512_v11_nand.img.cfg   |  22 +
+ .../colibri-t20/colibri-t20_512_v12_nand.bct.cfg   | 460 +++++++++++++++++++++
+ .../colibri-t20/colibri-t20_512_v12_nand.img.cfg   |  22 +
+ 13 files changed, 2917 insertions(+)
+ create mode 100755 tegra20/toradex/colibri-t20/build.sh
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.img.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.img.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.img.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.img.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.img.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.bct.cfg
+ create mode 100644 tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.img.cfg
 
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index c1f08f3..0fef1b4 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -313,7 +313,7 @@ static const struct regmap_config tegra20_ac97_regmap_config = {
- static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- {
- 	struct tegra20_ac97 *ac97;
--	struct resource *mem, *memregion;
-+	struct resource *mem;
- 	u32 of_dma[2];
- 	void __iomem *regs;
- 	int ret = 0;
+diff --git a/tegra20/toradex/colibri-t20/build.sh b/tegra20/toradex/colibri-t20/build.sh
+new file mode 100755
+index 0000000..ca950b1
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/build.sh
+@@ -0,0 +1,41 @@
++#!/bin/sh
++
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++set -e
++set -x
++
++cbootimage -gbct colibri-t20_256_hsmmc.bct.cfg colibri-t20_256_hsmmc.bct
++cbootimage colibri-t20_256_hsmmc.img.cfg colibri-t20_256_hsmmc.img
++
++cbootimage -gbct colibri-t20_512_hsmmc.bct.cfg colibri-t20_512_hsmmc.bct
++cbootimage colibri-t20_512_hsmmc.img.cfg colibri-t20_512_hsmmc.img
++
++cbootimage -gbct colibri-t20_256_v11_nand.bct.cfg colibri-t20_256_v11_nand.bct
++cbootimage colibri-t20_256_v11_nand.img.cfg colibri-t20_256_v11_nand.img
++
++cbootimage -gbct colibri-t20_256_v12_nand.bct.cfg colibri-t20_256_v12_nand.bct
++cbootimage colibri-t20_256_v12_nand.img.cfg colibri-t20_256_v12_nand.img
++
++cbootimage -gbct colibri-t20_512_v11_nand.bct.cfg colibri-t20_512_v11_nand.bct
++cbootimage colibri-t20_512_v11_nand.img.cfg colibri-t20_512_v11_nand.img
++
++cbootimage -gbct colibri-t20_512_v12_nand.bct.cfg colibri-t20_512_v12_nand.bct
++cbootimage colibri-t20_512_v12_nand.img.cfg colibri-t20_512_v12_nand.img
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg
+new file mode 100644
+index 0000000..e47ad00
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg
+@@ -0,0 +1,452 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 16777216;
++BlockSize     = 16384;
++PageSize      = 512;
++OdmData       = 0x200C0000;
++
++DevType[0] = Sdmmc;
++DeviceParam[0].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[0].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[0].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[1] = Sdmmc;
++DeviceParam[1].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[1].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[1].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[2] = Sdmmc;
++DeviceParam[2].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[2].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[2].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[3] = Sdmmc;
++DeviceParam[3].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[3].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[3].SdmmcParams.MaxPowerClassSupported = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x0000002b;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000005;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000c;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000003;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000004;
++SDRAM[0].EmcQUse                                  = 0x00000005;
++SDRAM[0].EmcQRst                                  = 0x00000004;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000d;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000f;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x0000000c;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x00000008;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x20202020;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x50465046;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000183;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x00000a6a;
++SDRAM[0].EmcEmrs                                  = 0x00100006;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00060303;
++SDRAM[0].EmcAdrCfg1                               = 0x00060303;
++SDRAM[0].McEmemCfg                                = 0x00040000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x80000001;
++SDRAM[0].EmcOdtRead                               = 0x80000001;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x0000002b;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000005;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000c;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000003;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000004;
++SDRAM[1].EmcQUse                                  = 0x00000005;
++SDRAM[1].EmcQRst                                  = 0x00000004;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000d;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000f;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x0000000c;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x00000008;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x20202020;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x50465046;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000183;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x00000a6a;
++SDRAM[1].EmcEmrs                                  = 0x00100006;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00060303;
++SDRAM[1].EmcAdrCfg1                               = 0x00060303;
++SDRAM[1].McEmemCfg                                = 0x00040000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x80000001;
++SDRAM[1].EmcOdtRead                               = 0x80000001;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x0000002b;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000005;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000c;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000003;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000004;
++SDRAM[2].EmcQUse                                  = 0x00000005;
++SDRAM[2].EmcQRst                                  = 0x00000004;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000d;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000f;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x0000000c;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x00000008;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x20202020;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x50465046;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000183;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x00000a6a;
++SDRAM[2].EmcEmrs                                  = 0x00100006;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00060303;
++SDRAM[2].EmcAdrCfg1                               = 0x00060303;
++SDRAM[2].McEmemCfg                                = 0x00040000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x80000001;
++SDRAM[2].EmcOdtRead                               = 0x80000001;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x0000002b;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000005;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000c;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000003;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000004;
++SDRAM[3].EmcQUse                                  = 0x00000005;
++SDRAM[3].EmcQRst                                  = 0x00000004;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000d;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000f;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x0000000c;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x00000008;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x20202020;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x50465046;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000183;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x00000a6a;
++SDRAM[3].EmcEmrs                                  = 0x00100006;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00060303;
++SDRAM[3].EmcAdrCfg1                               = 0x00060303;
++SDRAM[3].McEmemCfg                                = 0x00040000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x80000001;
++SDRAM[3].EmcOdtRead                               = 0x80000001;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.img.cfg
+new file mode 100644
+index 0000000..541a02d
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_256_hsmmc.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.bct.cfg
+new file mode 100644
+index 0000000..7829ac1
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.bct.cfg
+@@ -0,0 +1,460 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 8388608;
++BlockSize     = 524288;
++PageSize      = 4096;
++OdmData       = 0x200C0000;
++
++DevType[0] = Nand;
++DeviceParam[0].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[0].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[0].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[0].NandParams.BlockSizeLog2 = 0;
++DeviceParam[0].NandParams.PageSizeLog2  = 0;
++
++DevType[1] = Nand;
++DeviceParam[1].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[1].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[1].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[1].NandParams.BlockSizeLog2 = 0;
++DeviceParam[1].NandParams.PageSizeLog2  = 0;
++
++DevType[2] = Nand;
++DeviceParam[2].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[2].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[2].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[2].NandParams.BlockSizeLog2 = 0;
++DeviceParam[2].NandParams.PageSizeLog2  = 0;
++
++DevType[3] = Nand;
++DeviceParam[3].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[3].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[3].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[3].NandParams.BlockSizeLog2 = 0;
++DeviceParam[3].NandParams.PageSizeLog2  = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x0000002b;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000004;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000a;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000004;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000003;
++SDRAM[0].EmcQUse                                  = 0x00000004;
++SDRAM[0].EmcQRst                                  = 0x00000003;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000c;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000e;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x00000011;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x00000006;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000083;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x0000085a;
++SDRAM[0].EmcEmrs                                  = 0x00100002;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00060303;
++SDRAM[0].EmcAdrCfg1                               = 0x00060303;
++SDRAM[0].McEmemCfg                                = 0x00040000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x00000000;
++SDRAM[0].EmcOdtRead                               = 0x00000000;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x0000002b;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000004;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000a;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000004;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000003;
++SDRAM[1].EmcQUse                                  = 0x00000004;
++SDRAM[1].EmcQRst                                  = 0x00000003;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000c;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000e;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x00000011;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x00000006;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000083;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x0000085a;
++SDRAM[1].EmcEmrs                                  = 0x00100002;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00060303;
++SDRAM[1].EmcAdrCfg1                               = 0x00060303;
++SDRAM[1].McEmemCfg                                = 0x00040000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x00000000;
++SDRAM[1].EmcOdtRead                               = 0x00000000;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x0000002b;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000004;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000a;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000004;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000003;
++SDRAM[2].EmcQUse                                  = 0x00000004;
++SDRAM[2].EmcQRst                                  = 0x00000003;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000c;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000e;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x00000011;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x00000006;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000083;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x0000085a;
++SDRAM[2].EmcEmrs                                  = 0x00100002;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00060303;
++SDRAM[2].EmcAdrCfg1                               = 0x00060303;
++SDRAM[2].McEmemCfg                                = 0x00040000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x00000000;
++SDRAM[2].EmcOdtRead                               = 0x00000000;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x0000002b;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000004;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000a;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000004;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000003;
++SDRAM[3].EmcQUse                                  = 0x00000004;
++SDRAM[3].EmcQRst                                  = 0x00000003;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000c;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000e;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x00000011;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x00000006;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000083;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x0000085a;
++SDRAM[3].EmcEmrs                                  = 0x00100002;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00060303;
++SDRAM[3].EmcAdrCfg1                               = 0x00060303;
++SDRAM[3].McEmemCfg                                = 0x00040000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x00000000;
++SDRAM[3].EmcOdtRead                               = 0x00000000;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.img.cfg
+new file mode 100644
+index 0000000..ad3e2a5
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_v11_nand.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_256_v11_nand.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.bct.cfg
+new file mode 100644
+index 0000000..b0280b9
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.bct.cfg
+@@ -0,0 +1,460 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 8388608;
++BlockSize     = 262144;
++PageSize      = 4096;
++OdmData       = 0x200C0000;
++
++DevType[0] = Nand;
++DeviceParam[0].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[0].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[0].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[0].NandParams.BlockSizeLog2 = 0;
++DeviceParam[0].NandParams.PageSizeLog2  = 0;
++
++DevType[1] = Nand;
++DeviceParam[1].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[1].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[1].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[1].NandParams.BlockSizeLog2 = 0;
++DeviceParam[1].NandParams.PageSizeLog2  = 0;
++
++DevType[2] = Nand;
++DeviceParam[2].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[2].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[2].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[2].NandParams.BlockSizeLog2 = 0;
++DeviceParam[2].NandParams.PageSizeLog2  = 0;
++
++DevType[3] = Nand;
++DeviceParam[3].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[3].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[3].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[3].NandParams.BlockSizeLog2 = 0;
++DeviceParam[3].NandParams.PageSizeLog2  = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x0000002b;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000004;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000a;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000004;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000003;
++SDRAM[0].EmcQUse                                  = 0x00000004;
++SDRAM[0].EmcQRst                                  = 0x00000003;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000c;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000e;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x00000011;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x00000006;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000083;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x0000085a;
++SDRAM[0].EmcEmrs                                  = 0x00100002;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00060303;
++SDRAM[0].EmcAdrCfg1                               = 0x00060303;
++SDRAM[0].McEmemCfg                                = 0x00040000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x00000000;
++SDRAM[0].EmcOdtRead                               = 0x00000000;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x0000002b;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000004;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000a;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000004;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000003;
++SDRAM[1].EmcQUse                                  = 0x00000004;
++SDRAM[1].EmcQRst                                  = 0x00000003;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000c;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000e;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x00000011;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x00000006;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000083;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x0000085a;
++SDRAM[1].EmcEmrs                                  = 0x00100002;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00060303;
++SDRAM[1].EmcAdrCfg1                               = 0x00060303;
++SDRAM[1].McEmemCfg                                = 0x00040000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x00000000;
++SDRAM[1].EmcOdtRead                               = 0x00000000;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x0000002b;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000004;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000a;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000004;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000003;
++SDRAM[2].EmcQUse                                  = 0x00000004;
++SDRAM[2].EmcQRst                                  = 0x00000003;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000c;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000e;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x00000011;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x00000006;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000083;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x0000085a;
++SDRAM[2].EmcEmrs                                  = 0x00100002;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00060303;
++SDRAM[2].EmcAdrCfg1                               = 0x00060303;
++SDRAM[2].McEmemCfg                                = 0x00040000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x00000000;
++SDRAM[2].EmcOdtRead                               = 0x00000000;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x0000002b;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000004;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000a;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000004;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000003;
++SDRAM[3].EmcQUse                                  = 0x00000004;
++SDRAM[3].EmcQRst                                  = 0x00000003;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000c;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000e;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x00000011;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x00000006;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000083;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x0000085a;
++SDRAM[3].EmcEmrs                                  = 0x00100002;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00060303;
++SDRAM[3].EmcAdrCfg1                               = 0x00060303;
++SDRAM[3].McEmemCfg                                = 0x00040000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x00000000;
++SDRAM[3].EmcOdtRead                               = 0x00000000;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.img.cfg
+new file mode 100644
+index 0000000..09e2445
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_256_v12_nand.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_256_v12_nand.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg
+new file mode 100644
+index 0000000..a5ca795
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg
+@@ -0,0 +1,452 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 16777216;
++BlockSize     = 16384;
++PageSize      = 512;
++OdmData       = 0x400C0000;
++
++DevType[0] = Sdmmc;
++DeviceParam[0].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[0].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[0].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[1] = Sdmmc;
++DeviceParam[1].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[1].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[1].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[2] = Sdmmc;
++DeviceParam[2].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[2].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[2].SdmmcParams.MaxPowerClassSupported = 0;
++
++DevType[3] = Sdmmc;
++DeviceParam[3].SdmmcParams.ClockDivider           = 12; # 432/24 = 18MHz.
++DeviceParam[3].SdmmcParams.DataWidth              = NvBootSdmmcDataWidth_4Bit;
++DeviceParam[3].SdmmcParams.MaxPowerClassSupported = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x00000041;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000004;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000a;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000004;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000003;
++SDRAM[0].EmcQUse                                  = 0x00000004;
++SDRAM[0].EmcQRst                                  = 0x00000003;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000c;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000e;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x00000011;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x0000000c;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000083;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x0000085a;
++SDRAM[0].EmcEmrs                                  = 0x00100002;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00070303;
++SDRAM[0].EmcAdrCfg1                               = 0x00070303;
++SDRAM[0].McEmemCfg                                = 0x00080000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x00000000;
++SDRAM[0].EmcOdtRead                               = 0x00000000;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x00000041;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000004;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000a;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000004;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000003;
++SDRAM[1].EmcQUse                                  = 0x00000004;
++SDRAM[1].EmcQRst                                  = 0x00000003;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000c;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000e;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x00000011;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x0000000c;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000083;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x0000085a;
++SDRAM[1].EmcEmrs                                  = 0x00100002;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00070303;
++SDRAM[1].EmcAdrCfg1                               = 0x00070303;
++SDRAM[1].McEmemCfg                                = 0x00080000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x00000000;
++SDRAM[1].EmcOdtRead                               = 0x00000000;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x00000041;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000004;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000a;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000004;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000003;
++SDRAM[2].EmcQUse                                  = 0x00000004;
++SDRAM[2].EmcQRst                                  = 0x00000003;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000c;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000e;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x00000011;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x0000000c;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000083;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x0000085a;
++SDRAM[2].EmcEmrs                                  = 0x00100002;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00070303;
++SDRAM[2].EmcAdrCfg1                               = 0x00070303;
++SDRAM[2].McEmemCfg                                = 0x00080000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x00000000;
++SDRAM[2].EmcOdtRead                               = 0x00000000;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x00000041;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000004;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000a;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000004;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000003;
++SDRAM[3].EmcQUse                                  = 0x00000004;
++SDRAM[3].EmcQRst                                  = 0x00000003;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000c;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000e;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x00000011;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x0000000c;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000083;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x0000085a;
++SDRAM[3].EmcEmrs                                  = 0x00100002;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00070303;
++SDRAM[3].EmcAdrCfg1                               = 0x00070303;
++SDRAM[3].McEmemCfg                                = 0x00080000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x00000000;
++SDRAM[3].EmcOdtRead                               = 0x00000000;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.img.cfg
+new file mode 100644
+index 0000000..e97e3e2
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_512_hsmmc.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.bct.cfg
+new file mode 100644
+index 0000000..24c9194
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.bct.cfg
+@@ -0,0 +1,460 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 8388608;
++BlockSize     = 524288;
++PageSize      = 4096;
++OdmData       = 0x400C0000;
++
++DevType[0] = Nand;
++DeviceParam[0].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[0].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[0].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[0].NandParams.BlockSizeLog2 = 0;
++DeviceParam[0].NandParams.PageSizeLog2  = 0;
++
++DevType[1] = Nand;
++DeviceParam[1].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[1].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[1].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[1].NandParams.BlockSizeLog2 = 0;
++DeviceParam[1].NandParams.PageSizeLog2  = 0;
++
++DevType[2] = Nand;
++DeviceParam[2].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[2].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[2].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[2].NandParams.BlockSizeLog2 = 0;
++DeviceParam[2].NandParams.PageSizeLog2  = 0;
++
++DevType[3] = Nand;
++DeviceParam[3].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[3].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[3].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[3].NandParams.BlockSizeLog2 = 0;
++DeviceParam[3].NandParams.PageSizeLog2  = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x00000041;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000004;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000a;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000004;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000003;
++SDRAM[0].EmcQUse                                  = 0x00000004;
++SDRAM[0].EmcQRst                                  = 0x00000003;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000c;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000e;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x00000011;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x0000000c;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000083;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x0000085a;
++SDRAM[0].EmcEmrs                                  = 0x00100002;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00070303;
++SDRAM[0].EmcAdrCfg1                               = 0x00070303;
++SDRAM[0].McEmemCfg                                = 0x00080000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x00000000;
++SDRAM[0].EmcOdtRead                               = 0x00000000;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x00000041;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000004;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000a;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000004;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000003;
++SDRAM[1].EmcQUse                                  = 0x00000004;
++SDRAM[1].EmcQRst                                  = 0x00000003;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000c;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000e;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x00000011;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x0000000c;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000083;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x0000085a;
++SDRAM[1].EmcEmrs                                  = 0x00100002;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00070303;
++SDRAM[1].EmcAdrCfg1                               = 0x00070303;
++SDRAM[1].McEmemCfg                                = 0x00080000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x00000000;
++SDRAM[1].EmcOdtRead                               = 0x00000000;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x00000041;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000004;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000a;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000004;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000003;
++SDRAM[2].EmcQUse                                  = 0x00000004;
++SDRAM[2].EmcQRst                                  = 0x00000003;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000c;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000e;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x00000011;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x0000000c;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000083;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x0000085a;
++SDRAM[2].EmcEmrs                                  = 0x00100002;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00070303;
++SDRAM[2].EmcAdrCfg1                               = 0x00070303;
++SDRAM[2].McEmemCfg                                = 0x00080000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x00000000;
++SDRAM[2].EmcOdtRead                               = 0x00000000;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x00000041;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000004;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000a;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000004;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000003;
++SDRAM[3].EmcQUse                                  = 0x00000004;
++SDRAM[3].EmcQRst                                  = 0x00000003;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000c;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000e;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x00000011;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x0000000c;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000083;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x0000085a;
++SDRAM[3].EmcEmrs                                  = 0x00100002;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00070303;
++SDRAM[3].EmcAdrCfg1                               = 0x00070303;
++SDRAM[3].McEmemCfg                                = 0x00080000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x00000000;
++SDRAM[3].EmcOdtRead                               = 0x00000000;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.img.cfg
+new file mode 100644
+index 0000000..9ae818d
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_v11_nand.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_512_v11_nand.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.bct.cfg
+new file mode 100644
+index 0000000..928627f
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.bct.cfg
+@@ -0,0 +1,460 @@
++# Copyright (c) 2013, Toradex AG.  All rights reserved.
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++PartitionSize = 8388608;
++BlockSize     = 262144;
++PageSize      = 4096;
++OdmData       = 0x400C0000;
++
++DevType[0] = Nand;
++DeviceParam[0].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[0].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[0].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[0].NandParams.BlockSizeLog2 = 0;
++DeviceParam[0].NandParams.PageSizeLog2  = 0;
++
++DevType[1] = Nand;
++DeviceParam[1].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[1].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[1].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[1].NandParams.BlockSizeLog2 = 0;
++DeviceParam[1].NandParams.PageSizeLog2  = 0;
++
++DevType[2] = Nand;
++DeviceParam[2].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[2].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[2].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[2].NandParams.BlockSizeLog2 = 0;
++DeviceParam[2].NandParams.PageSizeLog2  = 0;
++
++DevType[3] = Nand;
++DeviceParam[3].NandParams.ClockDivider  = 0x4;        # Clock source of 108MHz
++DeviceParam[3].NandParams.NandTiming2   = 0xA;        # For 108MHz clock
++DeviceParam[3].NandParams.NandTiming    = 0x3B269213; # For 108MHz clock
++DeviceParam[3].NandParams.BlockSizeLog2 = 0;
++DeviceParam[3].NandParams.PageSizeLog2  = 0;
++
++SDRAM[0].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[0].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[0].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[0].PllMInputDivider                         = 0x0000000d;
++SDRAM[0].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[0].PllMPostDivider                          = 0x00000000;
++SDRAM[0].PllMStableTime                           = 0x0000012c;
++SDRAM[0].EmcClockDivider                          = 0x00000001;
++SDRAM[0].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[0].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[0].EmcAutoCalWait                           = 0x00000000;
++SDRAM[0].EmcPinProgramWait                        = 0x00000000;
++SDRAM[0].EmcRc                                    = 0x00000014;
++SDRAM[0].EmcRfc                                   = 0x00000041;
++SDRAM[0].EmcRas                                   = 0x0000000f;
++SDRAM[0].EmcRp                                    = 0x00000005;
++SDRAM[0].EmcR2w                                   = 0x00000004;
++SDRAM[0].EmcW2r                                   = 0x00000005;
++SDRAM[0].EmcR2p                                   = 0x00000003;
++SDRAM[0].EmcW2p                                   = 0x0000000a;
++SDRAM[0].EmcRdRcd                                 = 0x00000005;
++SDRAM[0].EmcWrRcd                                 = 0x00000005;
++SDRAM[0].EmcRrd                                   = 0x00000004;
++SDRAM[0].EmcRext                                  = 0x00000001;
++SDRAM[0].EmcWdv                                   = 0x00000003;
++SDRAM[0].EmcQUse                                  = 0x00000004;
++SDRAM[0].EmcQRst                                  = 0x00000003;
++SDRAM[0].EmcQSafe                                 = 0x00000009;
++SDRAM[0].EmcRdv                                   = 0x0000000c;
++SDRAM[0].EmcRefresh                               = 0x000009ff;
++SDRAM[0].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[0].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[0].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[0].EmcPChg2Pden                             = 0x00000005;
++SDRAM[0].EmcAct2Pden                              = 0x00000005;
++SDRAM[0].EmcAr2Pden                               = 0x00000001;
++SDRAM[0].EmcRw2Pden                               = 0x0000000e;
++SDRAM[0].EmcTxsr                                  = 0x000000c8;
++SDRAM[0].EmcTcke                                  = 0x00000003;
++SDRAM[0].EmcTfaw                                  = 0x00000011;
++SDRAM[0].EmcTrpab                                 = 0x00000006;
++SDRAM[0].EmcTClkStable                            = 0x0000000c;
++SDRAM[0].EmcTClkStop                              = 0x00000002;
++SDRAM[0].EmcTRefBw                                = 0x00000000;
++SDRAM[0].EmcQUseExtra                             = 0x00000000;
++SDRAM[0].EmcFbioCfg1                              = 0x00000000;
++SDRAM[0].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[0].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[0].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[0].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[0].EmcFbioCfg5                              = 0x00000083;
++SDRAM[0].EmcFbioCfg6                              = 0x00000002;
++SDRAM[0].EmcFbioSpare                             = 0x00000000;
++SDRAM[0].EmcMrs                                   = 0x0000085a;
++SDRAM[0].EmcEmrs                                  = 0x00100002;
++SDRAM[0].EmcMrw1                                  = 0x00000000;
++SDRAM[0].EmcMrw2                                  = 0x00000000;
++SDRAM[0].EmcMrw3                                  = 0x00000000;
++SDRAM[0].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[0].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[0].EmcAdrCfg                                = 0x00070303;
++SDRAM[0].EmcAdrCfg1                               = 0x00070303;
++SDRAM[0].McEmemCfg                                = 0x00080000;
++SDRAM[0].McLowLatencyConfig                       = 0x80000003;
++SDRAM[0].EmcCfg                                   = 0x0301ff00;
++SDRAM[0].EmcCfg2                                  = 0x00000405;
++SDRAM[0].EmcDbg                                   = 0x01000400;
++SDRAM[0].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[0].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[0].EmcDllXformDqs                           = 0x00000010;
++SDRAM[0].EmcDllXformQUse                          = 0x00000008;
++SDRAM[0].WarmBootWait                             = 0x00000002;
++SDRAM[0].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[0].EmcOdtWrite                              = 0x00000000;
++SDRAM[0].EmcOdtRead                               = 0x00000000;
++SDRAM[0].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[0].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[0].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[0].EmcMrsResetDll                           = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[0].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[0].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[0].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[0].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[0].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[0].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[0].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[0].EmcDdr2Wait                              = 0x00000002;
++SDRAM[0].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[0].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[0].PmcDdrPwr                                = 0x00000001;
++SDRAM[0].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[0].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[0].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[0].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[0].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[1].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[1].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[1].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[1].PllMInputDivider                         = 0x0000000d;
++SDRAM[1].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[1].PllMPostDivider                          = 0x00000000;
++SDRAM[1].PllMStableTime                           = 0x0000012c;
++SDRAM[1].EmcClockDivider                          = 0x00000001;
++SDRAM[1].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[1].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[1].EmcAutoCalWait                           = 0x00000000;
++SDRAM[1].EmcPinProgramWait                        = 0x00000000;
++SDRAM[1].EmcRc                                    = 0x00000014;
++SDRAM[1].EmcRfc                                   = 0x00000041;
++SDRAM[1].EmcRas                                   = 0x0000000f;
++SDRAM[1].EmcRp                                    = 0x00000005;
++SDRAM[1].EmcR2w                                   = 0x00000004;
++SDRAM[1].EmcW2r                                   = 0x00000005;
++SDRAM[1].EmcR2p                                   = 0x00000003;
++SDRAM[1].EmcW2p                                   = 0x0000000a;
++SDRAM[1].EmcRdRcd                                 = 0x00000005;
++SDRAM[1].EmcWrRcd                                 = 0x00000005;
++SDRAM[1].EmcRrd                                   = 0x00000004;
++SDRAM[1].EmcRext                                  = 0x00000001;
++SDRAM[1].EmcWdv                                   = 0x00000003;
++SDRAM[1].EmcQUse                                  = 0x00000004;
++SDRAM[1].EmcQRst                                  = 0x00000003;
++SDRAM[1].EmcQSafe                                 = 0x00000009;
++SDRAM[1].EmcRdv                                   = 0x0000000c;
++SDRAM[1].EmcRefresh                               = 0x000009ff;
++SDRAM[1].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[1].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[1].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[1].EmcPChg2Pden                             = 0x00000005;
++SDRAM[1].EmcAct2Pden                              = 0x00000005;
++SDRAM[1].EmcAr2Pden                               = 0x00000001;
++SDRAM[1].EmcRw2Pden                               = 0x0000000e;
++SDRAM[1].EmcTxsr                                  = 0x000000c8;
++SDRAM[1].EmcTcke                                  = 0x00000003;
++SDRAM[1].EmcTfaw                                  = 0x00000011;
++SDRAM[1].EmcTrpab                                 = 0x00000006;
++SDRAM[1].EmcTClkStable                            = 0x0000000c;
++SDRAM[1].EmcTClkStop                              = 0x00000002;
++SDRAM[1].EmcTRefBw                                = 0x00000000;
++SDRAM[1].EmcQUseExtra                             = 0x00000000;
++SDRAM[1].EmcFbioCfg1                              = 0x00000000;
++SDRAM[1].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[1].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[1].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[1].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[1].EmcFbioCfg5                              = 0x00000083;
++SDRAM[1].EmcFbioCfg6                              = 0x00000002;
++SDRAM[1].EmcFbioSpare                             = 0x00000000;
++SDRAM[1].EmcMrs                                   = 0x0000085a;
++SDRAM[1].EmcEmrs                                  = 0x00100002;
++SDRAM[1].EmcMrw1                                  = 0x00000000;
++SDRAM[1].EmcMrw2                                  = 0x00000000;
++SDRAM[1].EmcMrw3                                  = 0x00000000;
++SDRAM[1].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[1].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[1].EmcAdrCfg                                = 0x00070303;
++SDRAM[1].EmcAdrCfg1                               = 0x00070303;
++SDRAM[1].McEmemCfg                                = 0x00080000;
++SDRAM[1].McLowLatencyConfig                       = 0x80000003;
++SDRAM[1].EmcCfg                                   = 0x0301ff00;
++SDRAM[1].EmcCfg2                                  = 0x00000405;
++SDRAM[1].EmcDbg                                   = 0x01000400;
++SDRAM[1].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[1].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[1].EmcDllXformDqs                           = 0x00000010;
++SDRAM[1].EmcDllXformQUse                          = 0x00000008;
++SDRAM[1].WarmBootWait                             = 0x00000002;
++SDRAM[1].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[1].EmcOdtWrite                              = 0x00000000;
++SDRAM[1].EmcOdtRead                               = 0x00000000;
++SDRAM[1].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[1].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[1].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[1].EmcMrsResetDll                           = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[1].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[1].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[1].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[1].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[1].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[1].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[1].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[1].EmcDdr2Wait                              = 0x00000002;
++SDRAM[1].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[1].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[1].PmcDdrPwr                                = 0x00000001;
++SDRAM[1].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[1].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[1].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[1].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[1].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[2].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[2].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[2].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[2].PllMInputDivider                         = 0x0000000d;
++SDRAM[2].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[2].PllMPostDivider                          = 0x00000000;
++SDRAM[2].PllMStableTime                           = 0x0000012c;
++SDRAM[2].EmcClockDivider                          = 0x00000001;
++SDRAM[2].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[2].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[2].EmcAutoCalWait                           = 0x00000000;
++SDRAM[2].EmcPinProgramWait                        = 0x00000000;
++SDRAM[2].EmcRc                                    = 0x00000014;
++SDRAM[2].EmcRfc                                   = 0x00000041;
++SDRAM[2].EmcRas                                   = 0x0000000f;
++SDRAM[2].EmcRp                                    = 0x00000005;
++SDRAM[2].EmcR2w                                   = 0x00000004;
++SDRAM[2].EmcW2r                                   = 0x00000005;
++SDRAM[2].EmcR2p                                   = 0x00000003;
++SDRAM[2].EmcW2p                                   = 0x0000000a;
++SDRAM[2].EmcRdRcd                                 = 0x00000005;
++SDRAM[2].EmcWrRcd                                 = 0x00000005;
++SDRAM[2].EmcRrd                                   = 0x00000004;
++SDRAM[2].EmcRext                                  = 0x00000001;
++SDRAM[2].EmcWdv                                   = 0x00000003;
++SDRAM[2].EmcQUse                                  = 0x00000004;
++SDRAM[2].EmcQRst                                  = 0x00000003;
++SDRAM[2].EmcQSafe                                 = 0x00000009;
++SDRAM[2].EmcRdv                                   = 0x0000000c;
++SDRAM[2].EmcRefresh                               = 0x000009ff;
++SDRAM[2].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[2].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[2].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[2].EmcPChg2Pden                             = 0x00000005;
++SDRAM[2].EmcAct2Pden                              = 0x00000005;
++SDRAM[2].EmcAr2Pden                               = 0x00000001;
++SDRAM[2].EmcRw2Pden                               = 0x0000000e;
++SDRAM[2].EmcTxsr                                  = 0x000000c8;
++SDRAM[2].EmcTcke                                  = 0x00000003;
++SDRAM[2].EmcTfaw                                  = 0x00000011;
++SDRAM[2].EmcTrpab                                 = 0x00000006;
++SDRAM[2].EmcTClkStable                            = 0x0000000c;
++SDRAM[2].EmcTClkStop                              = 0x00000002;
++SDRAM[2].EmcTRefBw                                = 0x00000000;
++SDRAM[2].EmcQUseExtra                             = 0x00000000;
++SDRAM[2].EmcFbioCfg1                              = 0x00000000;
++SDRAM[2].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[2].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[2].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[2].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[2].EmcFbioCfg5                              = 0x00000083;
++SDRAM[2].EmcFbioCfg6                              = 0x00000002;
++SDRAM[2].EmcFbioSpare                             = 0x00000000;
++SDRAM[2].EmcMrs                                   = 0x0000085a;
++SDRAM[2].EmcEmrs                                  = 0x00100002;
++SDRAM[2].EmcMrw1                                  = 0x00000000;
++SDRAM[2].EmcMrw2                                  = 0x00000000;
++SDRAM[2].EmcMrw3                                  = 0x00000000;
++SDRAM[2].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[2].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[2].EmcAdrCfg                                = 0x00070303;
++SDRAM[2].EmcAdrCfg1                               = 0x00070303;
++SDRAM[2].McEmemCfg                                = 0x00080000;
++SDRAM[2].McLowLatencyConfig                       = 0x80000003;
++SDRAM[2].EmcCfg                                   = 0x0301ff00;
++SDRAM[2].EmcCfg2                                  = 0x00000405;
++SDRAM[2].EmcDbg                                   = 0x01000400;
++SDRAM[2].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[2].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[2].EmcDllXformDqs                           = 0x00000010;
++SDRAM[2].EmcDllXformQUse                          = 0x00000008;
++SDRAM[2].WarmBootWait                             = 0x00000002;
++SDRAM[2].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[2].EmcOdtWrite                              = 0x00000000;
++SDRAM[2].EmcOdtRead                               = 0x00000000;
++SDRAM[2].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[2].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[2].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[2].EmcMrsResetDll                           = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[2].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[2].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[2].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[2].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[2].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[2].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[2].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[2].EmcDdr2Wait                              = 0x00000002;
++SDRAM[2].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[2].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[2].PmcDdrPwr                                = 0x00000001;
++SDRAM[2].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[2].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[2].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[2].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[2].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
++SDRAM[3].MemoryType                               = NvBootMemoryType_Ddr2;
++SDRAM[3].PllMChargePumpSetupControl               = 0x00000008;
++SDRAM[3].PllMLoopFilterSetupControl               = 0x00000000;
++SDRAM[3].PllMInputDivider                         = 0x0000000d;
++SDRAM[3].PllMFeedbackDivider                      = 0x0000029a;
++SDRAM[3].PllMPostDivider                          = 0x00000000;
++SDRAM[3].PllMStableTime                           = 0x0000012c;
++SDRAM[3].EmcClockDivider                          = 0x00000001;
++SDRAM[3].EmcAutoCalInterval                       = 0x00000000;
++SDRAM[3].EmcAutoCalConfig                         = 0xe0a61111;
++SDRAM[3].EmcAutoCalWait                           = 0x00000000;
++SDRAM[3].EmcPinProgramWait                        = 0x00000000;
++SDRAM[3].EmcRc                                    = 0x00000014;
++SDRAM[3].EmcRfc                                   = 0x00000041;
++SDRAM[3].EmcRas                                   = 0x0000000f;
++SDRAM[3].EmcRp                                    = 0x00000005;
++SDRAM[3].EmcR2w                                   = 0x00000004;
++SDRAM[3].EmcW2r                                   = 0x00000005;
++SDRAM[3].EmcR2p                                   = 0x00000003;
++SDRAM[3].EmcW2p                                   = 0x0000000a;
++SDRAM[3].EmcRdRcd                                 = 0x00000005;
++SDRAM[3].EmcWrRcd                                 = 0x00000005;
++SDRAM[3].EmcRrd                                   = 0x00000004;
++SDRAM[3].EmcRext                                  = 0x00000001;
++SDRAM[3].EmcWdv                                   = 0x00000003;
++SDRAM[3].EmcQUse                                  = 0x00000004;
++SDRAM[3].EmcQRst                                  = 0x00000003;
++SDRAM[3].EmcQSafe                                 = 0x00000009;
++SDRAM[3].EmcRdv                                   = 0x0000000c;
++SDRAM[3].EmcRefresh                               = 0x000009ff;
++SDRAM[3].EmcBurstRefreshNum                       = 0x00000000;
++SDRAM[3].EmcPdEx2Wr                               = 0x00000003;
++SDRAM[3].EmcPdEx2Rd                               = 0x00000003;
++SDRAM[3].EmcPChg2Pden                             = 0x00000005;
++SDRAM[3].EmcAct2Pden                              = 0x00000005;
++SDRAM[3].EmcAr2Pden                               = 0x00000001;
++SDRAM[3].EmcRw2Pden                               = 0x0000000e;
++SDRAM[3].EmcTxsr                                  = 0x000000c8;
++SDRAM[3].EmcTcke                                  = 0x00000003;
++SDRAM[3].EmcTfaw                                  = 0x00000011;
++SDRAM[3].EmcTrpab                                 = 0x00000006;
++SDRAM[3].EmcTClkStable                            = 0x0000000c;
++SDRAM[3].EmcTClkStop                              = 0x00000002;
++SDRAM[3].EmcTRefBw                                = 0x00000000;
++SDRAM[3].EmcQUseExtra                             = 0x00000000;
++SDRAM[3].EmcFbioCfg1                              = 0x00000000;
++SDRAM[3].EmcFbioDqsibDly                          = 0x1c1c1c1c;
++SDRAM[3].EmcFbioDqsibDlyMsb                       = 0x00000000;
++SDRAM[3].EmcFbioQuseDly                           = 0x74747474;
++SDRAM[3].EmcFbioQuseDlyMsb                        = 0x00000000;
++SDRAM[3].EmcFbioCfg5                              = 0x00000083;
++SDRAM[3].EmcFbioCfg6                              = 0x00000002;
++SDRAM[3].EmcFbioSpare                             = 0x00000000;
++SDRAM[3].EmcMrs                                   = 0x0000085a;
++SDRAM[3].EmcEmrs                                  = 0x00100002;
++SDRAM[3].EmcMrw1                                  = 0x00000000;
++SDRAM[3].EmcMrw2                                  = 0x00000000;
++SDRAM[3].EmcMrw3                                  = 0x00000000;
++SDRAM[3].EmcMrwResetCommand                       = 0x00000000;
++SDRAM[3].EmcMrwResetNInitWait                     = 0x00000000;
++SDRAM[3].EmcAdrCfg                                = 0x00070303;
++SDRAM[3].EmcAdrCfg1                               = 0x00070303;
++SDRAM[3].McEmemCfg                                = 0x00080000;
++SDRAM[3].McLowLatencyConfig                       = 0x80000003;
++SDRAM[3].EmcCfg                                   = 0x0301ff00;
++SDRAM[3].EmcCfg2                                  = 0x00000405;
++SDRAM[3].EmcDbg                                   = 0x01000400;
++SDRAM[3].AhbArbitrationXbarCtrl                   = 0x00010000;
++SDRAM[3].EmcCfgDigDll                             = 0xf0000313;
++SDRAM[3].EmcDllXformDqs                           = 0x00000010;
++SDRAM[3].EmcDllXformQUse                          = 0x00000008;
++SDRAM[3].WarmBootWait                             = 0x00000002;
++SDRAM[3].EmcCttTermCtrl                           = 0x00000802;
++SDRAM[3].EmcOdtWrite                              = 0x00000000;
++SDRAM[3].EmcOdtRead                               = 0x00000000;
++SDRAM[3].EmcZcalRefCnt                            = 0x00000000;
++SDRAM[3].EmcZcalWaitCnt                           = 0x00000000;
++SDRAM[3].EmcZcalMrwCmd                            = 0x00000000;
++SDRAM[3].EmcMrsResetDll                           = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev0                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitDev1                         = 0x00000000;
++SDRAM[3].EmcMrwZqInitWait                         = 0x00000000;
++SDRAM[3].EmcMrsResetDllWait                       = 0x00000000;
++SDRAM[3].EmcEmrsEmr2                              = 0x00200000;
++SDRAM[3].EmcEmrsEmr3                              = 0x00300000;
++SDRAM[3].EmcEmrsDdr2DllEnable                     = 0x00100000;
++SDRAM[3].EmcMrsDdr2DllReset                       = 0x00000100;
++SDRAM[3].EmcEmrsDdr2OcdCalib                      = 0x00100386;
++SDRAM[3].EmcDdr2Wait                              = 0x00000002;
++SDRAM[3].EmcCfgClktrim0                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim1                           = 0x00000000;
++SDRAM[3].EmcCfgClktrim2                           = 0x00000000;
++SDRAM[3].PmcDdrPwr                                = 0x00000001;
++SDRAM[3].ApbMiscGpXm2CfgAPadCtrl                  = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgCPadCtrl2                 = 0x08080079;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl                  = 0x77fffff0;
++SDRAM[3].ApbMiscGpXm2CfgDPadCtrl2                 = 0x44440009;
++SDRAM[3].ApbMiscGpXm2ClkCfgPadCtrl                = 0x77ffc000;
++SDRAM[3].ApbMiscGpXm2CompPadCtrl                  = 0x01f1f008;
++SDRAM[3].ApbMiscGpXm2VttGenPadCtrl                = 0x07076600;
++
+diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.img.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.img.cfg
+new file mode 100644
+index 0000000..e1e1694
+--- /dev/null
++++ b/tegra20/toradex/colibri-t20/colibri-t20_512_v12_nand.img.cfg
+@@ -0,0 +1,22 @@
++# Copyright (c) 2013, Lucas Stach
++#
++# This software is provided 'as-is', without any express or implied
++# warranty. In no event will the authors be held liable for any damages
++# arising from the use of this software.
++#
++# Permission is granted to anyone to use this software for any purpose,
++# including commercial applications, and to alter it and redistribute it
++# freely, subject to the following restrictions:
++#
++# 1. The origin of this software must not be misrepresented; you must not
++#    claim that you wrote the original software. If you use this software
++#    in a product, an acknowledgment in the product documentation would be
++#    appreciated but is not required.
++# 2. Altered source versions must be plainly marked as such, and must not be
++#    misrepresented as being the original software.
++# 3. This notice may not be removed or altered from any source distribution.
++
++Version       = 0x00020001;
++Bctcopy       = 1;
++Bctfile       = colibri-t20_512_v12_nand.bct;
++BootLoader    = u-boot.bin,0x00108000,0x00108000,Complete;
 -- 
 1.8.3.1
