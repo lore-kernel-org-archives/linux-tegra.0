@@ -1,72 +1,162 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [RFC] early init and DT platform devices allocation/registration
-Date: Fri, 28 Jun 2013 13:27:15 +0100
-Message-ID: <CACxGe6vkM+awN94kU2GYfbXPdR=MgYwr=PbqmtD+=i5vmuVSnA@mail.gmail.com>
-References: <CACxGe6t9ifg9VRfXKypuhie3pXVPneZqcBy+J1bFpUaUx32P7g@mail.gmail.com>
- <20130626.090030.1519009485651154440.hdoyu@nvidia.com> <CACxGe6te2RzFb6nkSZQFrzVX4fkQo4pyzLJ1D7Lf=440mE+jyg@mail.gmail.com>
- <20130628.114915.1341075505557760886.hdoyu@nvidia.com> <20130628103826.GA17680@mithrandir>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/3] usb: phy,host: tegra: Use regulators instead of GPIOs for USB PHY VBUS
+Date: Fri, 28 Jun 2013 15:33:14 +0300
+Message-ID: <1372422796-23524-2-git-send-email-mperttunen@nvidia.com>
+References: <1372422796-23524-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130628103826.GA17680@mithrandir>
+In-Reply-To: <1372422796-23524-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Pawel.Moll-5wv7dgnIgG8@public.gmane.org" <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jun 28, 2013 at 11:38 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Fri, Jun 28, 2013 at 10:49:15AM +0200, Hiroshi Doyu wrote:
->> Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Wed, 26 Jun 2013 12:03:20 +0200:
->>
->> > On Wed, Jun 26, 2013 at 7:00 AM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> > > Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Tue, 25 Jun 2013 19:52:33 +0200:
->> > >
->> > >> > Here's my workaround. I need to call of_detach_node() with OF_DYNAMIC
->> > >> > to avoid duplicated device registration.
->> > >>
->> > >> Gah! my eyes!
->> > >>
->> > >> Don't do that. It is incredibly problematic. Look at inhibiting
->> > >> duplicate device creation instead.
->> > >
->> > > I may not follow this thread correctly, but could anyone point out the
->> > > above "inhibiting duplicate device creation" if there's already such
->> > > solution?
->> >
->> > No, the solution doesn't exist yet, but it wouldn't be hard to
->> > implement. What you need to do is to add a struct device pointer to
->> > struct device_node, and set the pointer to the struct device when
->> > of_platform_device_create creates a device. (it would also need to be
->> > set for early_platform_device creation, but that's not something that
->> > should affect you). You would also add a check to
->> > of_platform_device_create to check if the device pointer is already
->> > set. If it is, then skip creation of the device.
->>
->> Implemented as Grant suggested. At least this works for our case,
->> where IOMMU needs to be instanciated earlier than other device[1].
->> early_platform_device case still need to be covered.
->
-> I think we arrived at a different conclusion in another branch of this
-> thread. With the patch below every driver needs to explicitly allocate
-> the platform device and set the struct device_node's .dev field, which
-> has other side-effects such as the device hierarchy getting messed up.
->
-> A better alternative would be to have of_platform_populate() run early
-> such that the .dev field in the struct device_node can be set by core
-> code, which would not require every driver to be changed.
->
-> I'm not sure exactly what needs to be done to make this work, however.
-> Grant, can you provide some guidance here as to how this may be fixed?
-> Where would we have to call of_platform_populate() from and what makes
-> this break with the current implementation?
+The tegra ehci driver has enabled USB vbus regulators directly using
+GPIOs and the device tree attribute nvidia,vbus-gpio. This is ugly
+and causes error messages on boot when both the regulator driver
+and the ehci driver want access to the same GPIO.
 
-Try it and see!  :-) I cannot give a definite answer, but I suspect
-that it will fall down when registering the devices on to the
-platform_bus because it isn't initialized yet. If called early, the
-code would need to hold the platform_device in some kind of deferred
-list until the platform bus was initialize, and then have a cleanup
-function at initcall time to finish the registration of all early
-devices.
+After this patch, usb vbus regulators for tegra usb phy devices are specified
+with the device tree attribute vbus-supply = <&x> where x is a regulator defined
+in the device tree. The old nvidia,vbus-gpio property is no longer supported.
 
-g.
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/host/ehci-tegra.c     | 34 +---------------------------------
+ drivers/usb/phy/phy-tegra-usb.c   | 23 +++++++++++++++++++++++
+ include/linux/usb/tegra_usb_phy.h |  1 +
+ 3 files changed, 25 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index a1cec77..51cf1d2 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -328,33 +328,6 @@ static void tegra_ehci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
+ 	free_dma_aligned_buffer(urb);
+ }
+ 
+-static int setup_vbus_gpio(struct platform_device *pdev,
+-			   struct tegra_ehci_platform_data *pdata)
+-{
+-	int err = 0;
+-	int gpio;
+-
+-	gpio = pdata->vbus_gpio;
+-	if (!gpio_is_valid(gpio))
+-		gpio = of_get_named_gpio(pdev->dev.of_node,
+-					 "nvidia,vbus-gpio", 0);
+-	if (!gpio_is_valid(gpio))
+-		return 0;
+-
+-	err = gpio_request(gpio, "vbus_gpio");
+-	if (err) {
+-		dev_err(&pdev->dev, "can't request vbus gpio %d", gpio);
+-		return err;
+-	}
+-	err = gpio_direction_output(gpio, 1);
+-	if (err) {
+-		dev_err(&pdev->dev, "can't enable vbus\n");
+-		return err;
+-	}
+-
+-	return err;
+-}
+-
+ static int tegra_ehci_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+@@ -382,14 +355,11 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	if (!pdev->dev.coherent_dma_mask)
+ 		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+ 
+-	setup_vbus_gpio(pdev, pdata);
+-
+ 	hcd = usb_create_hcd(&tegra_ehci_hc_driver, &pdev->dev,
+ 					dev_name(&pdev->dev));
+ 	if (!hcd) {
+ 		dev_err(&pdev->dev, "Unable to create HCD\n");
+-		err = -ENOMEM;
+-		goto cleanup_vbus_gpio;
++		return -ENOMEM;
+ 	}
+ 	platform_set_drvdata(pdev, hcd);
+ 	ehci = hcd_to_ehci(hcd);
+@@ -505,8 +475,6 @@ cleanup_clk_get:
+ 	clk_put(tegra->clk);
+ cleanup_hcd_create:
+ 	usb_put_hcd(hcd);
+-cleanup_vbus_gpio:
+-	/* FIXME: Undo setup_vbus_gpio() here */
+ 	return err;
+ }
+ 
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index d7d6bd7..cae96ee 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -34,6 +34,7 @@
+ #include <asm/mach-types.h>
+ #include <linux/usb/ehci_def.h>
+ #include <linux/usb/tegra_usb_phy.h>
++#include <linux/regulator/consumer.h>
+ 
+ #define ULPI_VIEWPORT		0x170
+ 
+@@ -673,6 +674,9 @@ static void tegra_usb_phy_close(struct usb_phy *x)
+ {
+ 	struct tegra_usb_phy *phy = container_of(x, struct tegra_usb_phy, u_phy);
+ 
++	if (!IS_ERR(phy->vbus))
++		regulator_disable(phy->vbus);
++
+ 	clk_disable_unprepare(phy->pll_u);
+ }
+ 
+@@ -772,6 +776,15 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
+ 		goto fail;
+ 	}
+ 
++	if (!IS_ERR(phy->vbus)) {
++		err = regulator_enable(phy->vbus);
++		if (err) {
++			dev_err(phy->dev,
++				"failed to enable usb vbus regulator: %d\n", err);
++			goto fail;
++		}
++	}
++
+ 	if (phy->is_ulpi_phy)
+ 		err = ulpi_open(phy);
+ 	else
+@@ -890,6 +903,16 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	} else
+ 		tegra_phy->mode = TEGRA_USB_PHY_MODE_OTG;
+ 
++	/* On some boards, the VBUS regulator doesn't need to be controlled */
++	if (of_find_property(np, "vbus-supply", NULL)) {
++		tegra_phy->vbus = devm_regulator_get(&pdev->dev, "vbus");
++		if (IS_ERR(tegra_phy->vbus))
++			return PTR_ERR(tegra_phy->vbus);
++	} else {
++		dev_notice(&pdev->dev, "no vbus regulator");
++		tegra_phy->vbus = ERR_PTR(-ENODEV);
++	}
++
+ 	tegra_phy->dev = &pdev->dev;
+ 	err = tegra_usb_phy_init(tegra_phy);
+ 	if (err < 0)
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index d2ca919..2b5fa94 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -55,6 +55,7 @@ struct tegra_usb_phy {
+ 	struct clk *clk;
+ 	struct clk *pll_u;
+ 	struct clk *pad_clk;
++	struct regulator *vbus;
+ 	enum tegra_usb_phy_mode mode;
+ 	void *config;
+ 	struct usb_phy *ulpi;
+-- 
+1.8.1.5
