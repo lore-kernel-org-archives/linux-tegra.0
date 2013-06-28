@@ -1,91 +1,142 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: binding for nvec mfd device
-Date: Fri, 28 Jun 2013 20:51:03 +0200
-Message-ID: <20130628185102.GB15416@manwe>
-References: <1690589.tt8Uan1NDT@ax5200p>
- <51CDA822.3090005@wwwdotorg.org>
+Subject: Re: [PATCH] pci: tegra: set up PADS_REFCLK_CFG1
+Date: Fri, 28 Jun 2013 21:33:19 +0200
+Message-ID: <20130628193318.GA21290@manwe>
+References: <1372365722-3318-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
+	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <51CDA822.3090005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1372365722-3318-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---7iMSBzlTiPOCCT2k
+--IJpNTDwzlM2Ie8A6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2013 at 09:13:38AM -0600, Stephen Warren wrote:
-> On 06/27/2013 12:26 PM, Marc Dietrich wrote:
-[...]
-> > Another question is how the children will get their platform data. I gu=
-ess=20
-> > they will just walk the device tree of their parent node and search for=
- it,=20
-> > but maybe there is a better way?
+On Thu, Jun 27, 2013 at 02:42:02PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> In option (a), there will be a separate struct device for each child
-> node, instantiated directly from the child DT node. Hence, the driver
-> (chosen from the compatible value just like any other) would simply
-> parse dev.of_node just like any other driver. The only difference would
-> be that the driver would have to go to the parent node, and search for a
-> driver for it, and ask that driver for any "supporting resources", such
-> as a device handle that allowed you to all APIs to send/receive bytes
-> over the protocol. Perhaps the parent device might just pre-create
-> regmaps for all the child devices if that abstraction works. That would
-> save the child devices even having to look for the parent device.
+> The registers PADS_REFCLK_CFG are an array of 16-bit data, one entry per
+> PCIe root port. For Tegra30, we therefore need to write a 3rd entry in
+> this array. Doing so mays the mini-PCIe slot on Beaver operate correctly.
+>=20
+> While we're at it, add some #defines to partially document the fields
+> within these 16-bit values.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> This is for Thierry to squash into his Tegra PCIe driver staging branch.
+>=20
+>  drivers/pci/host/pci-tegra.c | 30 +++++++++++++++++++++++++-----
+>  1 file changed, 25 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 2888307..cb069f5 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -195,6 +195,26 @@
+>  #define PADS_REFCLK_CFG0			0x000000C8
+>  #define PADS_REFCLK_CFG1			0x000000CC
+> =20
+> +/*
+> + * Fields in PADS_REFCLK_CFG*. Those registers form an array of 16-bit
+> + * entries, one entry per PCIe port. These field definitions and desired
+> + * values aren't in the TRM, but do come from NVIDIA.
+> + */
+> +
+> +#define PADS_REFCLK_CFG_REFCLK2_TERM		2  /* 6:2 */
+> +#define PADS_REFCLK_CFG_REFCLK2_E_TERM		7
+> +#define PADS_REFCLK_CFG_REFCLK2_PREDI		8  /* 11:8 */
+> +#define PADS_REFCLK_CFG_REFCLK2_DRVI		12 /* 15:12 */
 
-I've often seen a much easier method employed and something similar is
-also done in host1x/tegra-drm. Child devices directly pass dev->parent
-to some API provided by the parent. The API then takes care of checking
-and extracting the driver-specific data of the parent from the struct
-device before performing the operation. Or you could provide an API to
-cast from a struct device to the parent's type.
+I'd prefer to make these macros that mask and shift. Either that or
+suffix them with _SHIFT to make it more explicit that they shift. Having
+an additional mask encoded in the macro has the nice advantage that it
+makes the comments obsolete. And why are they named *_REFCLK2_*? Could
+they be named PADS_REFCLK_CFG_{TERM,E_TERM,PREDI,DRVI} instead?
 
-So in the specific case of nvec this would translate to either making
-the nvec_write_{sync,async}() functions take a struct device * instead
-of the struct nvec_chip as first parameter, then do something like:
+Also can we make sure that these make it into the next version of the
+TRM? It's good already to have symbolic names, but a description of what
+they mean would be even better.
 
-	struct nvec_chip *nvec =3D dev_get_drvdata(dev);
+> +/* 0xfa5c */
 
-Or provide a function such as this:
+Maybe change this comment into something like: "default value provided
+by hardware engineering: 0xfa5c"?
 
-	struct nvec_chip *nvec_chip_from_device(struct device *dev)
-	{
-		/* perhaps do some validation */
-		return dev_get_drvdata(dev);
-	}
+> +#define PADS_REFCLK_CFG_VALUE \
 
-which can be called from child drivers before calling nvec_write_sync()
-or nvec_write_async().
+Perhaps "PADS_REFCLK_CFG_DEFAULT"?
+
+> +	( \
+> +		(0x17 << PADS_REFCLK_CFG_REFCLK2_TERM)   | \
+> +		(0    << PADS_REFCLK_CFG_REFCLK2_E_TERM) | \
+> +		(0xa  << PADS_REFCLK_CFG_REFCLK2_PREDI)  | \
+> +		(0xf  << PADS_REFCLK_CFG_REFCLK2_DRVI)     \
+> +	)
+> +
+>  struct tegra_msi {
+>  	struct msi_chip chip;
+>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> @@ -814,11 +834,11 @@ static int tegra_pcie_enable_controller(struct tegr=
+a_pcie *pcie)
+>  	value |=3D PADS_PLL_CTL_RST_B4SM;
+>  	pads_writel(pcie, value, soc->pads_pll_ctl);
+> =20
+> -	/*
+> -	 * Hack, set the clock voltage to the DEFAULT provided by hw folks.
+> -	 * This doesn't exist in the documentation.
+> -	 */
+> -	pads_writel(pcie, 0xfa5cfa5c, PADS_REFCLK_CFG0);
+> +	/* Configure the reference clock driver */
+> +	pads_writel(pcie,
+> +		PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16),
+> +		PADS_REFCLK_CFG0);
+
+Nit: Other parts in the driver use a temporary variable to avoid having
+to split these calls, like so:
+
+	value =3D (PADS_REFCLK_CFG_DEFAULT << 16) | PADS_REFCLK_CFG_DEFAULT;
+	pads_writel(pcie, value, PADS_REFCLK_CFG0);
+
+> +	pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
+
+If using an intermediary variable as shown above, would it hurt if we
+wrote the same value again for ports 2 and 3 instead of leaving the
+higher 16 bits unset? Given that we can write the entry for port 2 on
+Tegra20 which doesn't have a third one I'd expect the same to be true
+for port 3. That way, perhaps if some future generation of Tegra gets
+a fourth port the code won't have to be updated. And of course we save
+a few characters and instructions by reusing the "value" variable.
 
 Thierry
 
---7iMSBzlTiPOCCT2k
+--IJpNTDwzlM2Ie8A6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRzdsWAAoJEN0jrNd/PrOheBEP/2M5CvudNEtqM7dNNIOxm5zP
-ks4qwhJrifi2DzSvrB70+TxQJavGQCzLDKB3bSbh5sY/+4xcN1XB/V8yHCbzIfJk
-UPLLIjm99cZQrAURTnPy/TigxDLXj0WwMUUDU1NrPA3lYYZ4wOwjIsE/+ZmVpeNm
-VE9KVKmgUaaOmFJgX1jz+CjbbIiIOXKZ2Km/+IffISsXd32GP1kz7O01zDAb1KWx
-7z3HsFSuJOfKQEUVvroat1x2OgAGAh8KSqeG/XTlvsHR6k+ct3L+mMseE87g5wNK
-OWhI1HBWHthSK6Iz9Xaptap7B2zy2Wn2jqkVlMh5i5OplvLXYY3/Kv/0Ude4gk2K
-x2U0V6UZL2inQoWWm6amjrIw861TKRkoJz2HPG4wW+v8mDKzjqX2GVlccElgzh+/
-J6Op+POFuljkwuy4cg+V/e2+9Z9NAWER3td/cEDkVGUpT+QOmoRQKHyH9HqnPyUa
-1gSiOlub/9RrHCr98E8iQ6VSvamAzhWHG564o34x7q3vZux6HYw9mAfkJuUbWBGA
-5YDmEhlpHlR0Mtfqm89pv/BwGSuXgX/mfy2SXF5649oM3T6Mock1CNDDt9acqMW3
-nN1kpe2euH+uCKy2TFqG04uBYz/ECge6Y8s0sqL4XOd8iThKO57L1F4d/VbX8Reg
-Dh/AxXaaKpMcWStc81+u
-=xSto
+iQIcBAEBAgAGBQJRzeT+AAoJEN0jrNd/PrOhpMAQALx2D666yDvtK7LkBij/sJCG
+joC2knucOAtfEGIVCc4Pu5wvQEf1z0uctR7YUio+K5Ud6eRTxLvrSnFFACq+k3I/
+S7QxgCWKF6iC/S9ki7VgbivNrI8QT5ig5EXbTUt5PTeK4N4prkWakEe2SA7IjUX8
+hFUqp743329afcxe+YBStyXUyDb2HaZj548TBzXbjUvSLHFC7ajYTSils37auhcZ
+E2ddsJijchEY58RiUQi9dImCqqnOq923JzPjrbztfFBN28XFrbddHtK8I5Ewkf7z
+wG7806WG2srkP6BbW2KVFrKKdklbcbcIFE+HLWahmp4f1Im/El2TEwPrCH/Hl3uP
+xBHVROOP7wt9FLg4YX+xeTSEYqm2a24AN4YlkWik7RckmNNzENDROEcr9oggrFjU
+cXQ/ooBxChRedOAyS3ZctdzU/vs3qa67NPWL4v4UubVXXnnGtuOxv5Ckd7UKQPoW
+7M5e7UX1NxpZnCJ553uUZqpaOfrIzlFgdp8Lllgez/roWVmNNEyPg1rpFtaiFhod
+XZmXNzzYjktQJ2LAEVAYM4G4MzCAZdI3fdl1xNhaACcTBa2q/FuWOpeDkZFKqYY3
+ssy6tQ546ck3jv8GQO2+4mdQbQH+1ObFMtv2s0Q7NCTe/lpjjlXh0a/BLCUPVPgt
+7NjJsiEQjxRWgqyJKVrs
+=ubfz
 -----END PGP SIGNATURE-----
 
---7iMSBzlTiPOCCT2k--
+--IJpNTDwzlM2Ie8A6--
