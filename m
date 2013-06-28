@@ -1,72 +1,69 @@
 From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 8/9] usb: phy: tegra: Use DT helpers for phy_type
-Date: Sat, 29 Jun 2013 00:37:06 +0300
-Message-ID: <1372455427-20898-9-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH 5/9] usb: phy: tegra: Register as an USB PHY.
+Date: Sat, 29 Jun 2013 00:37:03 +0300
+Message-ID: <1372455427-20898-6-git-send-email-ttynkkynen@nvidia.com>
 References: <1372455427-20898-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1372455427-20898-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: balbi-l0cyMroinI0@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the new of_usb_get_phy_mode helper function for parsing phy_type
-from the device tree.
+Register the Tegra PHY device instances with the PHY subsystem so that
+the Tegra EHCI driver can locate a PHY via the standard APIs.
 
 Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 2cba13e..13049ce 100644
+index ddcac0b..b81310d 100644
 --- a/drivers/usb/phy/phy-tegra-usb.c
 +++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -31,6 +31,7 @@
- #include <linux/of_gpio.h>
- #include <linux/usb/otg.h>
- #include <linux/usb/ulpi.h>
-+#include <linux/usb/of.h>
- #include <asm/mach-types.h>
- #include <linux/usb/ehci_def.h>
- #include <linux/usb/tegra_usb_phy.h>
-@@ -859,6 +860,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct tegra_usb_phy *tegra_phy = NULL;
- 	struct device_node *np = pdev->dev.of_node;
-+	enum usb_phy_interface phy_type;
- 	int err;
+@@ -927,6 +927,12 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	if (err < 0)
+ 		return err;
  
- 	tegra_phy = devm_kzalloc(&pdev->dev, sizeof(*tegra_phy), GFP_KERNEL);
-@@ -883,12 +885,12 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	tegra_phy->is_legacy_phy =
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
++	err = usb_add_phy_dev(&tegra_phy->u_phy);
++	if (err < 0) {
++		tegra_usb_phy_close(&tegra_phy->u_phy);
++		return err;
++	}
++
+ 	tegra_phy->u_phy.shutdown = tegra_usb_phy_close;
+ 	tegra_phy->u_phy.set_suspend = tegra_usb_phy_suspend;
  
--	err = of_property_match_string(np, "phy_type", "ulpi");
--	if (err < 0) {
-+	phy_type = of_usb_get_phy_mode(np);
-+	if (phy_type == USBPHY_INTERFACE_MODE_UTMI) {
- 		err = utmi_phy_probe(tegra_phy, pdev);
- 		if (err < 0)
- 			return err;
--	} else {
-+	} else if (phy_type == USBPHY_INTERFACE_MODE_ULPI) {
- 		tegra_phy->is_ulpi_phy = true;
+@@ -934,6 +940,14 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 		tegra_phy->reset_gpio =
-@@ -898,8 +900,10 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 				tegra_phy->reset_gpio);
- 			return tegra_phy->reset_gpio;
- 		}
--
- 		tegra_phy->config = NULL;
-+	} else {
-+		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
-+		return -EINVAL;
- 	}
++static int tegra_usb_phy_remove(struct platform_device *pdev)
++{
++	struct tegra_usb_phy *tegra_phy = platform_get_drvdata(pdev);
++
++	usb_remove_phy(&tegra_phy->u_phy);
++	return 0;
++}
++
+ static struct of_device_id tegra_usb_phy_id_table[] = {
+ 	{ .compatible = "nvidia,tegra20-usb-phy", },
+ 	{ },
+@@ -942,6 +956,7 @@ MODULE_DEVICE_TABLE(of, tegra_usb_phy_id_table);
  
- 	err = of_property_match_string(np, "dr_mode", "otg");
+ static struct platform_driver tegra_usb_phy_driver = {
+ 	.probe		= tegra_usb_phy_probe,
++	.remove		= tegra_usb_phy_remove,
+ 	.driver		= {
+ 		.name	= "tegra-phy",
+ 		.owner	= THIS_MODULE,
 -- 
 1.8.1.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
