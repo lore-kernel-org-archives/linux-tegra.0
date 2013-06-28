@@ -1,147 +1,94 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: binding for nvec mfd device
-Date: Fri, 28 Jun 2013 09:13:38 -0600
-Message-ID: <51CDA822.3090005@wwwdotorg.org>
-References: <1690589.tt8Uan1NDT@ax5200p>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 06/11] ARM: tegra114: hook tegra_tear_down_cpu function
+Date: Fri, 28 Jun 2013 20:34:24 +0200
+Message-ID: <20130628183423.GA15416@manwe>
+References: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
+ <1372152475-18617-7-git-send-email-josephl@nvidia.com>
+ <20130627101335.GB15081@mithrandir>
+ <51CC7B01.30503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1690589.tt8Uan1NDT@ax5200p>
+Content-Disposition: inline
+In-Reply-To: <51CC7B01.30503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Leon Romanovsky <leon-2ukJVAZIZ/Y@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/27/2013 12:26 PM, Marc Dietrich wrote:
-> Hi,
 
-(CC'ing linux-tegra)
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I'm puzzling for some time now to find a binding for a mfd device. So let's 
-> start with something I think I have learned already, let's describe the 
-> hardware.
-> 
-> Here the problem starts, because the nvec (nvidia [protocol] compliant 
-> embedded controller) isn't a well defined piece of silicon at all, but more a 
-> protocol which specifies how to communicate with certain devices (keyboard, 
-> mouse, gpio, system state, battery, oem specific hw ...). Even worse, the 
-> number of "attached" devices may vary for each implementation and there is no 
-> way to sanely probe which which devices exist or not.
-> 
-> For example, the "hardware" in my case is an ENE KB926 keyboard controller 
-> with an additional ps/2 port (for the touchpad) and a number of gpio's for 
-> connecting leds, spi bus, a charger chip and some other stuff. Most gpio's 
-> cannot be controlled directly, but only through certain ec commands. The i2c 
-> protocol used for communication with the host cpu is handled by a good old 
-> 8051 type integrated in the keyboard controller.
-> 
-> Other vendors may implement this in totally different hardware, keeping only 
-> the protocol. So I think this is a case where the "describe the hardware" 
-> principle just fails.
+On Thu, Jun 27, 2013 at 11:48:49AM -0600, Stephen Warren wrote:
+> On 06/27/2013 04:13 AM, Thierry Reding wrote:
+> > On Tue, Jun 25, 2013 at 05:27:50PM +0800, Joseph Lo wrote:
+> >> Hooking tegra_tear_down_cpu for Tegra114 for supporting cluster
+> >> power down when CPU cluster suspneded in LP2.
+> >>=20
+> >> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> ---=20
+> >> arch/arm/mach-tegra/pm.c | 1 + 1 file changed, 1 insertion(+)
+> >>=20
+> >> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c=20
+> >> index 94e69be..a0668a2 100644 --- a/arch/arm/mach-tegra/pm.c +++
+> >> b/arch/arm/mach-tegra/pm.c @@ -52,6 +52,7 @@ static void
+> >> tegra_tear_down_cpu_init(void) tegra_tear_down_cpu =3D
+> >> tegra20_tear_down_cpu; break; case TEGRA30: +	case TEGRA114: if
+> >> (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC)) tegra_tear_down_cpu =3D
+> >> tegra30_tear_down_cpu;
+> >=20
+> > This is getting a little weird. Suppose I want to build a Tegra114
+> > only kernel. With the above code it means the tegra_tear_down_cpu
+> > won't be hooked because ARCH_TEGRA_3x_SOC isn't selected.
+> >=20
+> > Perhaps tegra30_tear_down_cpu() should be built unconditionally so
+> > that it's always available? I suspect that something similar will
+> > need to be done for future chips too, further complicating
+> > matters.
+> >=20
+> > There are other alternatives like adding another Kconfig symbol
+> > which doesn't cover all of Tegra30 but only code shared with
+> > Tegra114 (and possible future chips) or building sleep-tegra30.S if
+> > either one of the ARCH_TEGRA_3x_SOC or ARCH_TEGRA_114_SOC symbols
+> > is selected.
+>=20
+> To be honest, I wonder if we should just get rid of ARCH_TEGRA_*_SOC,
+> and build everything if ARCH_TEGRA is defined. tegra_defconfig enables
+> all ARCH_TEGRA_*_SOC anyway, and I'm afraid I don't test other
+> configurations very often, and I assume that distros will enable
+> everything...
 
-I think "describe the HW" should work quite well. However, it's a matter
-of interpretation what that means:-) I take it to mean describing the
-SW-visible aspects of that HW, which in this case is the protocol used
-to talk to that HW.
+The same thing had occurred to me as well. Obviously there could be some
+savings in executable code for people that really only need one specific
+generation. But, without having any concrete numbers, I suspect that all
+the ARCH_TEGRA code is less than 100 KiB in total so I don't think it
+matters that much given that there aren't any devices with less than 256
+MiB of RAM (that I've heard of at least).
 
-> So I thought ok - forget this principle for now and describe it from a higher 
-> protocol point of view. We currently have something like this:
-> 
->         nvec@7000c500 {
->                 compatible = "nvidia,nvec";
->                 reg = <0x7000c500 0x100>;
->                 interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->                 clock-frequency = <80000>;
->                 request-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
->                 slave-addr = <138>;
->                 clocks = <&tegra_car TEGRA20_CLK_I2C3>,
->                          <&tegra_car TEGRA20_CLK_PLL_P_OUT3>;
->                 clock-names = "div-clk", "fast-clk";
->         };
+Thierry
 
-I would eventually like to do the following:
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature
 
-* Have a node that represents the I2C slave controller HW module in Tegra.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-* Have a node (or nodes) (perhaps a child node of that) which represents
-the protocol that "binds" to the slave controller. This would have its
-own compatible value that describes which protocol to instantiate.
+iQIcBAEBAgAGBQJRzdcvAAoJEN0jrNd/PrOhqd8QAKHf1+WydDKqOPoMzCrkxi+2
+hiz4t9vkifnQ4Z86gJk/31i+f7N3aUNGsIxiEnnUJp6vtl6uGQheOR8I57YtTbmk
+lwCHGHK/UbiQu1ttUVPZlyKF5ErBn6bSsaIhotG0MnI/zus7TlFrAcbFSHS3uk36
+i5iXqU3ycVByaOudPFqN10B2GlL4YAWxZQx1YY5RwqR63yHLEiPyyFTdbwdvOvkI
+BrjQAR6Y6IG5Tv4dmwGzqIeRZfY0biGuFegu6zbjYc6HCQnCqm0gO5Tmw7PfPmLY
+yfd0xiI9jHdWv7TV8PniqIudTAJQ6Re38f/Wvrb9Sm24rNZWcQgoXzvYDQhXflgT
+Pr1qbP/bVf78arwZPFlMvOzOt16HvldLPWdrX5YXMgkff6hFXyVBayl3A6zTC6PV
+kZNcVmxOJglz5jYlduZw1BNQAnFcsiekIDOAGCDlG0GdLSMhU5JBWNcyPNbVDSBh
+L+QHTY0JrfipzkdvC5BIbhqD9lUVfHXxEXRMjaJDVL4ay3xbK5cBGfIyNpc1MR+6
+ULBSIEGI5YJszJvQuty4ApBRj8rMwZm1oeLgc/Z22qSTEvtiiv+zapXhiUIPGkIc
+mEMnwuUoUw97Dl5v4WpIrcEaH1SlGTj+LszavgpJoAHsCtED9bSsMFqtPLMiXbQN
+E3hNXeaBl4Y0Hm6C546K
+=o9Eh
+-----END PGP SIGNATURE-----
 
-This will separate the driver for the I2C slave HW from the driver for
-the protocol, so that you could even run the same protocol with a
-different I2C slave device if needed.
-
-> which describes how the host cpu should setup the i2c communication. The 
-> devices are currently hard coded in the driver, but I like to make them more 
-> flexible through a device tree binding, eg. something like this:
-> 
-> 		nvec {
-> 				...
-> 				<properties from above>
-> 				...
-> 
-> 				keyboard {
-> 						<add some key bindings here>
-> 				};
-> 
-> 				ps2 {
-> 						packet-size = 6; /* for the ac100 tp */
-> 				};
-... (more child nodes)
-> 		};
-> 
-> One question is now how to instantiate the mfd children from this. I see three 
-> different methods used in different drivers:
-> 
-> 		a) just add a "compatible =" property to the child nodes and a 
-> 			"simple-bus" property to the the driver
-
-(or instead of simple-bus, have the top-level node's probe() do the
-following at the end:
-
-        of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-
-That's what sounds/soc/tegra/tegra30_ahub.c does.
-
-> 		b) search for sub-nodes and instantiate the children "manually" by
-> 			"guessing" some driver name from the node name and use 
-> 			platform_add_device
-> 		c) use an mfd_cell struct hard coded in the driver and "enable" only
-> 			the children found in the sub-node list and use mfd_add_devices.
->
-> All these methods above have their advantages and disadvantages. But lets 
-> ignore them for now and ask what's the preferred way to do this?
-
-I'm not sure if there is a preferred way as a global rule.
-
-I prefer either:
-
-1) The existing method of entirely hard-coding everything in the
-top-level device driver, since it is a driver for the particular HW
-setup, it knows exactly what is there, and so it's fine to hard-code
-everything. The disadvantage here is that any configuration for all the
-child nodes gets merged together into the one top-level node though,
-which could get messy.
-
-2) Your option a. I believe if we're going to break down the MFD device
-into chunks, the way we do it should mirror existing DT techniques as
-closely as possible, and using nodes with compatible values to represent
-the child devices seems most consistent with existing techniques.
-
-> Another question is how the children will get their platform data. I guess 
-> they will just walk the device tree of their parent node and search for it, 
-> but maybe there is a better way?
-
-In option (a), there will be a separate struct device for each child
-node, instantiated directly from the child DT node. Hence, the driver
-(chosen from the compatible value just like any other) would simply
-parse dev.of_node just like any other driver. The only difference would
-be that the driver would have to go to the parent node, and search for a
-driver for it, and ask that driver for any "supporting resources", such
-as a device handle that allowed you to all APIs to send/receive bytes
-over the protocol. Perhaps the parent device might just pre-create
-regmaps for all the child devices if that abstraction works. That would
-save the child devices even having to look for the parent device.
+--FCuugMFkClbJLl1L--
