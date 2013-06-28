@@ -1,35 +1,79 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: fix ifdef for tegra_periph_reset_assert inline
-Date: Thu, 27 Jun 2013 16:59:04 -0600
-Message-ID: <51CCC3B8.80909@wwwdotorg.org>
-References: <1372100756-10448-1-git-send-email-swarren@wwwdotorg.org> <20130624210333.23972.95491@quantum>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] usb: phy: tegra: Add support for device tree-based
+ vbus regulator control
+Date: Fri, 28 Jun 2013 10:17:15 +0300
+Message-ID: <20130628071715.GA3847@tbergstrom-lnx.Nvidia.com>
+References: <1372240781-1017-1-git-send-email-mperttunen@nvidia.com>
+ <1372240781-1017-2-git-send-email-mperttunen@nvidia.com>
+ <51CB217B.1040308@wwwdotorg.org>
+ <op.wzbtct1hpdlnwf@mperttunen-lnx>
+ <51CC6506.4000503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130624210333.23972.95491@quantum>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51CC6506.4000503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/24/2013 03:03 PM, Mike Turquette wrote:
-> Quoting Stephen Warren (2013-06-24 12:05:56)
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Commit 7064f6b "clk: tegra: provide tegra_periph_reset_assert
->> alternative" added ifdef'd static inline versions of some functions,
->> but tested ARCH_TEGRA rather than CONFIG_ARCH_TEGRA, thus disabling
->> these function in all cases. In some cases, this caused HW modules to
->> misbehave; for example, the Tegra I2C driver BUG()d during boot on
->> Seaboard.
->>
->> Reported-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Jun 27, 2013 at 06:15:02PM +0200, Stephen Warren wrote:
+> On 06/27/2013 01:20 AM, Mikko Perttunen wrote:
+> > On Wed, 26 Jun 2013 20:14:35 +0300, Stephen Warren
+> > <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> > 
+> >> On 06/26/2013 03:59 AM, Mikko Perttunen wrote:
+> >>> After this patch, usb vbus regulators for tegra usb phy devices can
+> >>> be specified
+> >>> with the device tree attribute vbus-supply = <&x> where x is a
+> >>> regulator defined
+> >>> in the device tree.
+> >>
+> >>> diff --git a/drivers/usb/phy/phy-tegra-usb.c
+> >>> b/drivers/usb/phy/phy-tegra-usb.c
+> >>
+> >>> @@ -250,12 +251,24 @@ static int utmip_pad_open(struct tegra_usb_phy
+> >>> *phy)
+> >>>          return PTR_ERR(phy->pad_clk);
+> >>>      }
+> >>>
+> >>> +    phy->vbus = devm_regulator_get(phy->dev, "vbus");
+> >>> +    /* On some boards, the VBUS regulator doesn't need to be
+> >>> controlled */
+> >>> +    if (IS_ERR(phy->vbus)) {
+> >>> +        if (PTR_ERR(phy->vbus) == -ENODEV) {
+> >>> +            dev_notice(phy->dev, "no vbus regulator");
+> >>> +            phy->vbus = NULL;
+> >>> +        } else {
+> >>> +            return PTR_ERR(phy->vbus);
+> >>> +        }
+> >>> +    }
+> >>
+> >> I think this code should be added to some more core initialization
+> >> function; IIRC, there are separate utmip_pad_open() and some other
+> >> function for ULPI mode, and in the future there may be more for HSIC,
+> >> etc.
+> > 
+> > I don't think ULPI and VBUS have a VBUS pin, though. The pinmux doesn't
+> > even list a pin for USB2 which is a ULPI/HSIC only controller.
 > 
-> Thanks for the fixup. I had already published the offending commit and
-> can't rebase it, so I just applied this patch on top.
+> IIUC, ULPI, UTMI, and HSIC are just different physical layers for the
+> USB data signals between Tegra and whatever is connected. Any of those
+> could be translated to regular USB ports on the board. Certainly, UTMI
+> is the common one for external ports, and we have Tegra boards with ULPI
+> PHYs that translate to regular external ports. I don't know about HSIC;
+> it's less common, but I see no reason one couldn't have a PHY that
+> translates it to an external USB socket just like the rest.
 > 
-> Pulled into clk-next for 3.11.
 
-Did that get pushed out to the git server? The patch isn't in next-20130627.
+AFAIK HSIC is meant to attach eg modems or other onboard peripherals to USB
+without having the (power) overhead of a PHY on both host and device side.
+
+Cheers,
+
+Peter.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
