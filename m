@@ -1,7 +1,7 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 2/9] usb: host: tegra: Remove leftover code
-Date: Sat, 29 Jun 2013 00:37:00 +0300
-Message-ID: <1372455427-20898-3-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH 4/9] ARM: tegra: Remove USB platform data
+Date: Sat, 29 Jun 2013 00:37:02 +0300
+Message-ID: <1372455427-20898-5-git-send-email-ttynkkynen@nvidia.com>
 References: <1372455427-20898-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,70 +12,133 @@ To: balbi@ti.com
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-ehci-tegra calls devm_usb_get_phy, which will never succeed since the Tegra
-PHY does not register itself with the PHY subsystem. It is also completely
-redundant since the code has already located a PHY via an internal API.
-
-Call otg_set_host unconditionally to simplify the code since it should
-be safe to do so.
+USB-related platform data is not used anymore in the Tegra USB drivers,
+so remove all of it.
 
 Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 ---
- drivers/usb/host/ehci-tegra.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ arch/arm/mach-tegra/tegra.c             | 38 +--------------------------------
+ include/linux/platform_data/tegra_usb.h | 32 ---------------------------
+ include/linux/usb/tegra_usb_phy.h       |  5 -----
+ 3 files changed, 1 insertion(+), 74 deletions(-)
+ delete mode 100644 include/linux/platform_data/tegra_usb.h
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index 14c1f35..06e8feb 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -58,7 +58,6 @@ static int (*orig_hub_control)(struct usb_hcd *hcd,
- struct tegra_ehci_hcd {
- 	struct tegra_usb_phy *phy;
- 	struct clk *clk;
--	struct usb_phy *transceiver;
- 	int port_resuming;
- 	bool needs_double_reset;
- 	enum tegra_usb_phy_port_speed port_speed;
-@@ -436,26 +435,18 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 		goto cleanup_phy;
- 	}
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 0d1e412..fc97cfd 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -29,7 +29,6 @@
+ #include <linux/of_fdt.h>
+ #include <linux/of_platform.h>
+ #include <linux/pda_power.h>
+-#include <linux/platform_data/tegra_usb.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+ #include <linux/sys_soc.h>
+@@ -46,40 +45,6 @@
+ #include "fuse.h"
+ #include "iomap.h"
  
--	if (pdata->operating_mode == TEGRA_USB_OTG) {
--		tegra->transceiver =
--			devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
--		if (!IS_ERR(tegra->transceiver))
--			otg_set_host(tegra->transceiver->otg, &hcd->self);
--	} else {
--		tegra->transceiver = ERR_PTR(-ENODEV);
--	}
-+	otg_set_host(u_phy->otg, &hcd->self);
+-static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
+-	.operating_mode = TEGRA_USB_OTG,
+-	.power_down_on_bus_suspend = 1,
+-	.vbus_gpio = -1,
+-};
+-
+-static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
+-	.reset_gpio = -1,
+-	.clk = "cdev2",
+-};
+-
+-static struct tegra_ehci_platform_data tegra_ehci2_pdata = {
+-	.phy_config = &tegra_ehci2_ulpi_phy_config,
+-	.operating_mode = TEGRA_USB_HOST,
+-	.power_down_on_bus_suspend = 1,
+-	.vbus_gpio = -1,
+-};
+-
+-static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
+-	.operating_mode = TEGRA_USB_HOST,
+-	.power_down_on_bus_suspend = 1,
+-	.vbus_gpio = -1,
+-};
+-
+-static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5000000, "tegra-ehci.0",
+-		       &tegra_ehci1_pdata),
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5004000, "tegra-ehci.1",
+-		       &tegra_ehci2_pdata),
+-	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5008000, "tegra-ehci.2",
+-		       &tegra_ehci3_pdata),
+-	{}
+-};
+-
+ static void __init tegra_dt_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
+@@ -112,8 +77,7 @@ static void __init tegra_dt_init(void)
+ 	 * devices
+ 	 */
+ out:
+-	of_platform_populate(NULL, of_default_bus_match_table,
+-				tegra20_auxdata_lookup, parent);
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
+ }
  
- 	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to add USB HCD\n");
--		goto cleanup_transceiver;
-+		goto cleanup_otg_set_host;
- 	}
+ static void __init trimslice_init(void)
+diff --git a/include/linux/platform_data/tegra_usb.h b/include/linux/platform_data/tegra_usb.h
+deleted file mode 100644
+index 66c673f..0000000
+--- a/include/linux/platform_data/tegra_usb.h
++++ /dev/null
+@@ -1,32 +0,0 @@
+-/*
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef _TEGRA_USB_H_
+-#define _TEGRA_USB_H_
+-
+-enum tegra_usb_operating_modes {
+-	TEGRA_USB_DEVICE,
+-	TEGRA_USB_HOST,
+-	TEGRA_USB_OTG,
+-};
+-
+-struct tegra_ehci_platform_data {
+-	enum tegra_usb_operating_modes operating_mode;
+-	/* power down the phy on bus suspend */
+-	int power_down_on_bus_suspend;
+-	void *phy_config;
+-	int vbus_gpio;
+-};
+-
+-#endif /* _TEGRA_USB_H_ */
+diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
+index c2bc710..8474153 100644
+--- a/include/linux/usb/tegra_usb_phy.h
++++ b/include/linux/usb/tegra_usb_phy.h
+@@ -28,11 +28,6 @@ struct tegra_utmip_config {
+ 	u8 xcvr_lsrslew;
+ };
  
- 	return err;
- 
--cleanup_transceiver:
--	if (!IS_ERR(tegra->transceiver))
--		otg_set_host(tegra->transceiver->otg, NULL);
-+cleanup_otg_set_host:
-+	otg_set_host(u_phy->otg, NULL);
- cleanup_phy:
- 	usb_phy_shutdown(hcd->phy);
- cleanup_clk_en:
-@@ -473,8 +464,7 @@ static int tegra_ehci_remove(struct platform_device *pdev)
- 	struct tegra_ehci_hcd *tegra =
- 		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
- 
--	if (!IS_ERR(tegra->transceiver))
--		otg_set_host(tegra->transceiver->otg, NULL);
-+	otg_set_host(hcd->phy->otg, NULL);
- 
- 	usb_phy_shutdown(hcd->phy);
- 	usb_remove_hcd(hcd);
+-struct tegra_ulpi_config {
+-	int reset_gpio;
+-	const char *clk;
+-};
+-
+ enum tegra_usb_phy_port_speed {
+ 	TEGRA_USB_PHY_PORT_SPEED_FULL = 0,
+ 	TEGRA_USB_PHY_PORT_SPEED_LOW,
 -- 
 1.8.1.5
