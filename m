@@ -1,7 +1,7 @@
 From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 4/9] ARM: tegra: Remove USB platform data
-Date: Sat, 29 Jun 2013 00:37:02 +0300
-Message-ID: <1372455427-20898-5-git-send-email-ttynkkynen@nvidia.com>
+Subject: [PATCH 7/9] usb: phy: tegra: Remove custom PHY locating APIs
+Date: Sat, 29 Jun 2013 00:37:05 +0300
+Message-ID: <1372455427-20898-8-git-send-email-ttynkkynen@nvidia.com>
 References: <1372455427-20898-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,133 +12,61 @@ To: balbi@ti.com
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-USB-related platform data is not used anymore in the Tegra USB drivers,
-so remove all of it.
+The Tegra EHCI driver is no longer using these custom functions, so they
+can be removed.
 
 Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
 ---
- arch/arm/mach-tegra/tegra.c             | 38 +--------------------------------
- include/linux/platform_data/tegra_usb.h | 32 ---------------------------
- include/linux/usb/tegra_usb_phy.h       |  5 -----
- 3 files changed, 1 insertion(+), 74 deletions(-)
- delete mode 100644 include/linux/platform_data/tegra_usb.h
+ drivers/usb/phy/phy-tegra-usb.c   | 24 ------------------------
+ include/linux/usb/tegra_usb_phy.h |  2 --
+ 2 files changed, 26 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 0d1e412..fc97cfd 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -29,7 +29,6 @@
- #include <linux/of_fdt.h>
- #include <linux/of_platform.h>
- #include <linux/pda_power.h>
--#include <linux/platform_data/tegra_usb.h>
- #include <linux/io.h>
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
-@@ -46,40 +45,6 @@
- #include "fuse.h"
- #include "iomap.h"
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index b81310d..2cba13e 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -965,29 +965,5 @@ static struct platform_driver tegra_usb_phy_driver = {
+ };
+ module_platform_driver(tegra_usb_phy_driver);
  
--static struct tegra_ehci_platform_data tegra_ehci1_pdata = {
--	.operating_mode = TEGRA_USB_OTG,
--	.power_down_on_bus_suspend = 1,
--	.vbus_gpio = -1,
--};
+-static int tegra_usb_phy_match(struct device *dev, void *data)
+-{
+-	struct tegra_usb_phy *tegra_phy = dev_get_drvdata(dev);
+-	struct device_node *dn = data;
 -
--static struct tegra_ulpi_config tegra_ehci2_ulpi_phy_config = {
--	.reset_gpio = -1,
--	.clk = "cdev2",
--};
+-	return (tegra_phy->u_phy.dev->of_node == dn) ? 1 : 0;
+-}
 -
--static struct tegra_ehci_platform_data tegra_ehci2_pdata = {
--	.phy_config = &tegra_ehci2_ulpi_phy_config,
--	.operating_mode = TEGRA_USB_HOST,
--	.power_down_on_bus_suspend = 1,
--	.vbus_gpio = -1,
--};
+-struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
+-{
+-	struct device *dev;
+-	struct tegra_usb_phy *tegra_phy;
 -
--static struct tegra_ehci_platform_data tegra_ehci3_pdata = {
--	.operating_mode = TEGRA_USB_HOST,
--	.power_down_on_bus_suspend = 1,
--	.vbus_gpio = -1,
--};
+-	dev = driver_find_device(&tegra_usb_phy_driver.driver, NULL, dn,
+-				 tegra_usb_phy_match);
+-	if (!dev)
+-		return ERR_PTR(-EPROBE_DEFER);
 -
--static struct of_dev_auxdata tegra20_auxdata_lookup[] __initdata = {
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5000000, "tegra-ehci.0",
--		       &tegra_ehci1_pdata),
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5004000, "tegra-ehci.1",
--		       &tegra_ehci2_pdata),
--	OF_DEV_AUXDATA("nvidia,tegra20-ehci", 0xC5008000, "tegra-ehci.2",
--		       &tegra_ehci3_pdata),
--	{}
--};
+-	tegra_phy = dev_get_drvdata(dev);
 -
- static void __init tegra_dt_init(void)
- {
- 	struct soc_device_attribute *soc_dev_attr;
-@@ -112,8 +77,7 @@ static void __init tegra_dt_init(void)
- 	 * devices
- 	 */
- out:
--	of_platform_populate(NULL, of_default_bus_match_table,
--				tegra20_auxdata_lookup, parent);
-+	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
- }
- 
- static void __init trimslice_init(void)
-diff --git a/include/linux/platform_data/tegra_usb.h b/include/linux/platform_data/tegra_usb.h
-deleted file mode 100644
-index 66c673f..0000000
---- a/include/linux/platform_data/tegra_usb.h
-+++ /dev/null
-@@ -1,32 +0,0 @@
--/*
-- * Copyright (C) 2010 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- */
+-	return &tegra_phy->u_phy;
+-}
+-EXPORT_SYMBOL_GPL(tegra_usb_get_phy);
 -
--#ifndef _TEGRA_USB_H_
--#define _TEGRA_USB_H_
--
--enum tegra_usb_operating_modes {
--	TEGRA_USB_DEVICE,
--	TEGRA_USB_HOST,
--	TEGRA_USB_OTG,
--};
--
--struct tegra_ehci_platform_data {
--	enum tegra_usb_operating_modes operating_mode;
--	/* power down the phy on bus suspend */
--	int power_down_on_bus_suspend;
--	void *phy_config;
--	int vbus_gpio;
--};
--
--#endif /* _TEGRA_USB_H_ */
+ MODULE_DESCRIPTION("Tegra USB PHY driver");
+ MODULE_LICENSE("GPL v2");
 diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index c2bc710..8474153 100644
+index 8474153..a095c98 100644
 --- a/include/linux/usb/tegra_usb_phy.h
 +++ b/include/linux/usb/tegra_usb_phy.h
-@@ -28,11 +28,6 @@ struct tegra_utmip_config {
- 	u8 xcvr_lsrslew;
+@@ -60,8 +60,6 @@ struct tegra_usb_phy {
+ 	int reset_gpio;
  };
  
--struct tegra_ulpi_config {
--	int reset_gpio;
--	const char *clk;
--};
+-struct usb_phy *tegra_usb_get_phy(struct device_node *dn);
 -
- enum tegra_usb_phy_port_speed {
- 	TEGRA_USB_PHY_PORT_SPEED_FULL = 0,
- 	TEGRA_USB_PHY_PORT_SPEED_LOW,
+ void tegra_usb_phy_preresume(struct usb_phy *phy);
+ 
+ void tegra_usb_phy_postresume(struct usb_phy *phy);
 -- 
 1.8.1.5
