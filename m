@@ -1,78 +1,52 @@
-From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4] power_supply: Add of_node_put to fix refcount
-Date: Fri, 28 Jun 2013 18:22:55 -0700
-Message-ID: <20130629012255.GA20924@lizard>
-References: <1370899602-22123-1-git-send-email-rklein@nvidia.com>
- <1370899602-22123-2-git-send-email-rklein@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20
+ configurations
+Date: Sat, 29 Jun 2013 10:16:36 +0200
+Message-ID: <1372493796.1610.8.camel@tellur>
+References: <1372451264-13049-1-git-send-email-dev@lynxeye.de>
+	 <51CE0D43.2020508@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1370899602-22123-2-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <51CE0D43.2020508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 10, 2013 at 05:26:39PM -0400, Rhyland Klein wrote:
-> of_parse_phandle increments the refcount for a dt node before returni=
-ng
-> it. Add of_node_put where needed to properly decrement the refcount
-> when we are done using a given node.
->=20
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+Hi Stephen,
 
-With CONFIG_OF=3Dn I got this:
+Am Freitag, den 28.06.2013, 16:25 -0600 schrieb Stephen Warren:
+> On 06/28/2013 02:27 PM, Lucas Stach wrote:
+> > The Colibri T20 COM comes in two different versions, which can both
+> > boot from NAND or SD-Card.
+> > 
+> > Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> > ---
+> > Submission is done with the consent of Toradex.
+> 
+> Lucas, is it possible to have someone from Toradex reply with a
+> Signed-off-by line, in order to indicate their authorization to license
+> the *.bct.cfg files (which are copyright Toradex in this patch) under
+> the specified license? Thanks.
 
-  CC      drivers/power/sbs-battery.o
-  drivers/power/sbs-battery.c: In function =E2=80=98sbs_probe=E2=80=99:
-  drivers/power/sbs-battery.c:707:20: error: =E2=80=98struct power_supp=
-ly=E2=80=99 has no
-  member named =E2=80=98of_node=E2=80=99
-  make[1]: *** [drivers/power/sbs-battery.o] Error 1
+Ok, I'm forwarding this to Toradex, but depending on the workload of the
+relevant people it may take some time until there is a reply.
 
-I fixed this by the patch below and applied your 1-3 series.
+On the other hand the submitted .bct.cfg files are not extracted from
+some binary BCTs, but I explicitly received them from Toradex with the
+appropriate licence header on top. So according to the Linux developer
+certificate of origin [1] my singed-off-by should be enough to clear up
+the legal things.
 
-Thanks!
+> 
+> It's nice to see more vendor boards being supported here:-)
 
-Anton
-
-commit b50df95c8f0703c95625181d2eaf53855c5ebee5
-Author: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-Date:   Fri Jun 28 18:17:22 2013 -0700
-
-    power_supply: Move of_node out of the #ifdef CONFIG_OF
-   =20
-    Similar to linux/device.h, move of_node struct member out of the #i=
-fdef
-    CONFIG_OF so that the drivers won't have to mess with #ifdefs in .c=
- files.
-   =20
-    Signed-off-by: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
-
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.=
-h
-index 3828cef..804b906 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -162,6 +162,8 @@ union power_supply_propval {
- 	const char *strval;
- };
-=20
-+struct device_node;
-+
- struct power_supply {
- 	const char *name;
- 	enum power_supply_type type;
-@@ -173,9 +175,7 @@ struct power_supply {
-=20
- 	char **supplied_from;
- 	size_t num_supplies;
--#ifdef CONFIG_OF
- 	struct device_node *of_node;
--#endif
-=20
- 	int (*get_property)(struct power_supply *psy,
- 			    enum power_supply_property psp,
+[1]
+(b) The contribution is based upon previous work that, to the best of my
+knowledge, is covered under an appropriate open source license and I
+have the right under that license to submit that work with
+modifications, whether created in whole or in part by me, under the same
+open source license (unless I am permitted to submit under a different
+license), as indicated in the file
