@@ -1,51 +1,78 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: tegra: fix ifdef for tegra_periph_reset_assert inline
-Date: Fri, 28 Jun 2013 15:29:32 -0700
-Message-ID: <20130628222932.14831.47972@quantum>
-References: <1372100756-10448-1-git-send-email-swarren@wwwdotorg.org>
- <20130624210333.23972.95491@quantum> <51CCC3B8.80909@wwwdotorg.org>
+From: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/4] power_supply: Add of_node_put to fix refcount
+Date: Fri, 28 Jun 2013 18:22:55 -0700
+Message-ID: <20130629012255.GA20924@lizard>
+References: <1370899602-22123-1-git-send-email-rklein@nvidia.com>
+ <1370899602-22123-2-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51CCC3B8.80909@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1370899602-22123-2-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-06-27 15:59:04)
-> On 06/24/2013 03:03 PM, Mike Turquette wrote:
-> > Quoting Stephen Warren (2013-06-24 12:05:56)
-> >> From: Stephen Warren <swarren@nvidia.com>
-> >>
-> >> Commit 7064f6b "clk: tegra: provide tegra_periph_reset_assert
-> >> alternative" added ifdef'd static inline versions of some functions,
-> >> but tested ARCH_TEGRA rather than CONFIG_ARCH_TEGRA, thus disabling
-> >> these function in all cases. In some cases, this caused HW modules to
-> >> misbehave; for example, the Tegra I2C driver BUG()d during boot on
-> >> Seaboard.
-> >>
-> >> Reported-by: Olof Johansson <olof@lixom.net>
-> >> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> > 
-> > Thanks for the fixup. I had already published the offending commit and
-> > can't rebase it, so I just applied this patch on top.
-> > 
-> > Pulled into clk-next for 3.11.
-> 
-> Did that get pushed out to the git server? The patch isn't in next-20130627.
+On Mon, Jun 10, 2013 at 05:26:39PM -0400, Rhyland Klein wrote:
+> of_parse_phandle increments the refcount for a dt node before returni=
+ng
+> it. Add of_node_put where needed to properly decrement the refcount
+> when we are done using a given node.
+>=20
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
 
-It was sitting in my local tree. Sorry about that. Pushed to the public
-tree now.
+With CONFIG_OF=3Dn I got this:
 
-Regards,
-Mike
+  CC      drivers/power/sbs-battery.o
+  drivers/power/sbs-battery.c: In function =E2=80=98sbs_probe=E2=80=99:
+  drivers/power/sbs-battery.c:707:20: error: =E2=80=98struct power_supp=
+ly=E2=80=99 has no
+  member named =E2=80=98of_node=E2=80=99
+  make[1]: *** [drivers/power/sbs-battery.o] Error 1
+
+I fixed this by the patch below and applied your 1-3 series.
+
+Thanks!
+
+Anton
+
+commit b50df95c8f0703c95625181d2eaf53855c5ebee5
+Author: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+Date:   Fri Jun 28 18:17:22 2013 -0700
+
+    power_supply: Move of_node out of the #ifdef CONFIG_OF
+   =20
+    Similar to linux/device.h, move of_node struct member out of the #i=
+fdef
+    CONFIG_OF so that the drivers won't have to mess with #ifdefs in .c=
+ files.
+   =20
+    Signed-off-by: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.=
+h
+index 3828cef..804b906 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -162,6 +162,8 @@ union power_supply_propval {
+ 	const char *strval;
+ };
+=20
++struct device_node;
++
+ struct power_supply {
+ 	const char *name;
+ 	enum power_supply_type type;
+@@ -173,9 +175,7 @@ struct power_supply {
+=20
+ 	char **supplied_from;
+ 	size_t num_supplies;
+-#ifdef CONFIG_OF
+ 	struct device_node *of_node;
+-#endif
+=20
+ 	int (*get_property)(struct power_supply *psy,
+ 			    enum power_supply_property psp,
