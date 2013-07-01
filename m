@@ -1,62 +1,86 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pci: tegra: set up PADS_REFCLK_CFG1
-Date: Mon, 01 Jul 2013 09:52:49 -0600
-Message-ID: <51D1A5D1.8020906@wwwdotorg.org>
-References: <1372365722-3318-1-git-send-email-swarren@wwwdotorg.org> <20130628193318.GA21290@manwe>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] power_supply: Add of_node_put to fix refcount
+Date: Mon, 1 Jul 2013 12:13:18 -0400
+Message-ID: <51D1AA9E.2000909@nvidia.com>
+References: <1370899602-22123-1-git-send-email-rklein@nvidia.com> <1370899602-22123-2-git-send-email-rklein@nvidia.com> <20130629012255.GA20924@lizard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130628193318.GA21290@manwe>
+In-Reply-To: <20130629012255.GA20924@lizard>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/28/2013 01:33 PM, Thierry Reding wrote:
-> On Thu, Jun 27, 2013 at 02:42:02PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> 
->> The registers PADS_REFCLK_CFG are an array of 16-bit data, one
->> entry per PCIe root port. For Tegra30, we therefore need to write
->> a 3rd entry in this array. Doing so mays the mini-PCIe slot on
->> Beaver operate correctly.
->> 
->> While we're at it, add some #defines to partially document the
->> fields within these 16-bit values.
+On 6/28/2013 9:22 PM, Anton Vorontsov wrote:
+> On Mon, Jun 10, 2013 at 05:26:39PM -0400, Rhyland Klein wrote:
+>> of_parse_phandle increments the refcount for a dt node before return=
+ing
+>> it. Add of_node_put where needed to properly decrement the refcount
+>> when we are done using a given node.
+>>
+>> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>=20
+> With CONFIG_OF=3Dn I got this:
+>=20
+>   CC      drivers/power/sbs-battery.o
+>   drivers/power/sbs-battery.c: In function =E2=80=98sbs_probe=E2=80=99=
+:
+>   drivers/power/sbs-battery.c:707:20: error: =E2=80=98struct power_su=
+pply=E2=80=99 has no
+>   member named =E2=80=98of_node=E2=80=99
+>   make[1]: *** [drivers/power/sbs-battery.o] Error 1
+>=20
+> I fixed this by the patch below and applied your 1-3 series.
+>=20
+> Thanks!
+>=20
+> Anton
+>=20
+> commit b50df95c8f0703c95625181d2eaf53855c5ebee5
+> Author: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+> Date:   Fri Jun 28 18:17:22 2013 -0700
+>=20
+>     power_supply: Move of_node out of the #ifdef CONFIG_OF
+>    =20
+>     Similar to linux/device.h, move of_node struct member out of the =
+#ifdef
+>     CONFIG_OF so that the drivers won't have to mess with #ifdefs in =
+=2Ec files.
+>    =20
+>     Signed-off-by: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>
+>=20
+> diff --git a/include/linux/power_supply.h b/include/linux/power_suppl=
+y.h
+> index 3828cef..804b906 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -162,6 +162,8 @@ union power_supply_propval {
+>  	const char *strval;
+>  };
+> =20
+> +struct device_node;
+> +
+>  struct power_supply {
+>  	const char *name;
+>  	enum power_supply_type type;
+> @@ -173,9 +175,7 @@ struct power_supply {
+> =20
+>  	char **supplied_from;
+>  	size_t num_supplies;
+> -#ifdef CONFIG_OF
+>  	struct device_node *of_node;
+> -#endif
+> =20
+>  	int (*get_property)(struct power_supply *psy,
+>  			    enum power_supply_property psp,
+>=20
 
->> diff --git a/drivers/pci/host/pci-tegra.c
->> b/drivers/pci/host/pci-tegra.c
+Thanks!
 
->> +#define PADS_REFCLK_CFG_REFCLK2_TERM		2  /* 6:2 */ +#define
->> PADS_REFCLK_CFG_REFCLK2_E_TERM		7 +#define
->> PADS_REFCLK_CFG_REFCLK2_PREDI		8  /* 11:8 */ +#define
->> PADS_REFCLK_CFG_REFCLK2_DRVI		12 /* 15:12 */
-...
-> Also can we make sure that these make it into the next version of
-> the TRM? It's good already to have symbolic names, but a
-> description of what they mean would be even better.
+-rhyland
 
-These registers will probably make it into a TRM for a future chip,
-but it's quite unlikely we'll release updated TRMs for existing chips:-(
-
->> +	/* Configure the reference clock driver */ +	pads_writel(pcie, 
->> +		PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16), +
->> PADS_REFCLK_CFG0); +	pads_writel(pcie, PADS_REFCLK_CFG_VALUE,
->> PADS_REFCLK_CFG1);
-> 
-> If using an intermediary variable as shown above, would it hurt if
-> we wrote the same value again for ports 2 and 3 instead of leaving
-> the higher 16 bits unset? Given that we can write the entry for
-> port 2 on Tegra20 which doesn't have a third one I'd expect the
-> same to be true for port 3. That way, perhaps if some future
-> generation of Tegra gets a fourth port the code won't have to be
-> updated. And of course we save a few characters and instructions by
-> reusing the "value" variable.
-
-I actually meant to guard the additional write based on the number of
-ports in HW. I'd certainly prefer not to write to port 3's registers
-when port 3 doesn't exist. I doubt I'd be able to get a solid sign-off
-that this would be guaranteed problem-free.
-
-I'll fix up the other issues and repost.
+--=20
+nvpublic
