@@ -1,79 +1,70 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] pci: tegra: set up PADS_REFCLK_CFG1
-Date: Mon,  1 Jul 2013 10:14:31 -0600
-Message-ID: <1372695271-3541-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 0/3] ARM: tegra114: cpuidle: add power down state
+Date: Mon, 01 Jul 2013 11:38:53 -0600
+Message-ID: <51D1BEAD.6060003@wwwdotorg.org>
+References: <1372152242-16373-1-git-send-email-josephl@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372152242-16373-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> This series introduce CPU core power down state for CPU idle. When CPU go
+> into this state, it saves it's context and needs a proper configuration
+> in flow controller to power gate the CPU when CPU runs into WFI
+> instruction. And the CPU also needs to set the IRQ as CPU power down idle
+> wake up event in flow controller.
+> 
+> To prevent race conditions and ensure proper interrupt routing on
+> Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
+> call-back to reprogram the GIC CPU interface on PM entry. The
+> GIC CPU interface will be reset back to its normal state by
+> the common GIC CPU PM exit callback when the CPU wakes up.
+> 
+> This series depends on the patch of "tick:  Fix
+> tick_broadcast_pending_mask not cleared".
 
-The registers PADS_REFCLK_CFG are an array of 16-bit data, one entry per
-PCIe root port. For Tegra30, we therefore need to write a 3rd entry in
-this array. Doing so mays the mini-PCIe slot on Beaver operate correctly.
+Joseph, I applied all 3 of your patches/series on top of next-20130701,
+which does include dependency "tick:  Fix tick_broadcast_pending_mask
+not cleared":
 
-While we're at it, add some #defines to partially document the fields
-within these 16-bit values.
+* ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+* This series
+* ARM: tegra114: add support for system suspend
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This is to be applied to Thierry's PCIe driver staging branch.
+I find that at least on on Tegra114/Dalmore, CPU hotplug doesn't work
+correctly.
 
-v2:
-* Write to PADS_REFCLK_CFG1 only when there are 3 PCIe root ports.
-* Various cosmetic cleanups.
----
- drivers/pci/host/pci-tegra.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+If I unplug CPU0, I get an immediate system hang:
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 2888307..522fd9c 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -195,6 +195,25 @@
- #define PADS_REFCLK_CFG0			0x000000C8
- #define PADS_REFCLK_CFG1			0x000000CC
- 
-+/*
-+ * Fields in PADS_REFCLK_CFG*. Those registers form an array of 16-bit
-+ * entries, one entry per PCIe port. These field definitions and desired
-+ * values aren't in the TRM, but do come from NVIDIA.
-+ */
-+#define PADS_REFCLK_CFG_TERM_SHIFT		2  /* 6:2 */
-+#define PADS_REFCLK_CFG_E_TERM_SHIFT		7
-+#define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
-+#define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
-+
-+/* Default value provided by HW engineering is 0xfa5c */
-+#define PADS_REFCLK_CFG_VALUE \
-+	( \
-+		(0x17 << PADS_REFCLK_CFG_TERM_SHIFT)   | \
-+		(0    << PADS_REFCLK_CFG_E_TERM_SHIFT) | \
-+		(0xa  << PADS_REFCLK_CFG_PREDI_SHIFT)  | \
-+		(0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
-+	)
-+
- struct tegra_msi {
- 	struct msi_chip chip;
- 	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-@@ -814,11 +833,11 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- 	value |= PADS_PLL_CTL_RST_B4SM;
- 	pads_writel(pcie, value, soc->pads_pll_ctl);
- 
--	/*
--	 * Hack, set the clock voltage to the DEFAULT provided by hw folks.
--	 * This doesn't exist in the documentation.
--	 */
--	pads_writel(pcie, 0xfa5cfa5c, PADS_REFCLK_CFG0);
-+	/* Configure the reference clock driver */
-+	value = PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16);
-+	pads_writel(pcie, value, PADS_REFCLK_CFG0);
-+	if (soc->num_ports > 2)
-+		pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
- 
- 	/* wait for the PLL to lock */
- 	timeout = 300;
--- 
-1.8.1.5
+root@localhost:~# ./cpuonline.py
+echo 0 > /sys/devices/system/cpu/cpu0/online
+[   73.555696] IRQ73 no longer affine to CPU0
+[   73.561965] CPU0: shutdown
+
+If I adjust my script not to hotplug CPU0, I get a hang when plugging a
+CPU back in:
+
+root@localhost:~# ./cpuonline.py
+echo 0 > /sys/devices/system/cpu/cpu2/online
+[   87.141128] CPU2: shutdown
+echo 0 > /sys/devices/system/cpu/cpu1/online
+[   89.227597] CPU1: shutdown
+echo 0 > /sys/devices/system/cpu/cpu3/online
+[   91.253870] CPU3: shutdown
+echo 1 > /sys/devices/system/cpu/cpu1/online
+
+or simpler:
+
+root@localhost:~# echo 0 > /sys/devices/system/cpu/cpu1/online
+[   80.767825] CPU1: shutdown
+root@localhost:~# echo 1 > /sys/devices/system/cpu/cpu1/online
+
+Finally, if I boot afresh and enter system suspend, I see the system
+suspend OK, but pressing the power button on either the board itself or
+the attached PM342 debug board will not wake the system from sleep.
