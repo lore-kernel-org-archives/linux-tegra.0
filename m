@@ -1,38 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20 configurations
-Date: Tue, 02 Jul 2013 09:31:57 -0600
-Message-ID: <51D2F26D.4000405@wwwdotorg.org>
-References: <1372451264-13049-1-git-send-email-dev@lynxeye.de>
+From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Subject: Re: [PATCH 07/32] arm: delete __cpuinit/__CPUINIT usage from all ARM
+ users
+Date: Tue, 2 Jul 2013 13:53:00 -0400
+Message-ID: <20130702175257.GC21817@windriver.com>
+References: <1372102237-8757-1-git-send-email-paul.gortmaker@windriver.com>
+ <1372102237-8757-8-git-send-email-paul.gortmaker@windriver.com>
+ <1372755120.2874.18.camel@jlo-ubuntu-64.nvidia.com>
+ <20130702085818.GD24642@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372451264-13049-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130702085818.GD24642-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/28/2013 02:27 PM, Lucas Stach wrote:
-> The Colibri T20 COM comes in two different versions, which can both
-> boot from NAND or SD-Card.
+[Re: [PATCH 07/32] arm: delete __cpuinit/__CPUINIT usage from all ARM users] On 02/07/2013 (Tue 09:58) Russell King - ARM Linux wrote:
 
-> diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg
-...
-> +OdmData       = 0x200C0000;
+> On Tue, Jul 02, 2013 at 04:52:00PM +0800, Joseph Lo wrote:
+> > I just tested this series on Tegra platform. It looks broken CPU hotplug
+> > function for Tegra at least. The CPU can't plug-in after unplugging. And
+> > the system resume function also not working when "enable_nonboot_cpus".
+> > 
+> > Both of the issue cause system hang up. Are we missing something for
+> > __cpuinit removal work?
+> 
+> Check that any assembly code you're using where the __CPUINIT* marker has
+> been removed is not preceded by an __INIT or similar.   This code needs
+> to end up in the normal .text, .data or .bss sections now.
 
-> diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg
-...
-> +OdmData       = 0x400C0000;
+Yes, As Russell says it is entirely possible that the earlier section
+was __INIT and there was already a missing __FINIT (or .previous).
 
-Those ODMDATA values don't look correct. The first nibble should be set
-as follows:
+Hence what was __cpuinit got grandfathered into __INIT instead of
+.text/.data/.bss
 
-1: 256MiB
-2: 512MiB
-3: 1GiB
+I'm offline at the moment but will double check myself later this
+evening if nothing obvious has been found by then.
 
-... and I assume that the "256" and "515" in the filenames represent the
-RAM size?
-
-Nit: Many files have an extra blank line at the end.
+Thanks,
+Paul.
+--
