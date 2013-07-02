@@ -1,28 +1,49 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] usb: tegra: Replace nvidia,vbus-gpio property
- with vbus-supply
-Date: Tue, 2 Jul 2013 09:22:05 +0300
-Message-ID: <51D2718D.4070701@nvidia.com>
-References: <1372422796-23524-1-git-send-email-mperttunen@nvidia.com> <51D1EFE0.8070107@wwwdotorg.org>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [Fwd: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri
+ T20 configurations]
+Date: Tue, 2 Jul 2013 09:36:06 +0200
+Message-ID: <51D282E6.3000005@toradex.com>
+References: <1372749473.3055.5.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51D1EFE0.8070107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1372749473.3055.5.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks for testing!
+On 07/02/2013 09:17 AM, Lucas Stach wrote:
+> Marcel, could you please respond with a Singed-off-by line to this
+> message to signify that you provided me with the bct.cfg files?
+>
+> Please CC both
+> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>
+> Thanks,
+> Lucas
+>
+> -------- Weitergeleitete Nachricht --------
+> Von: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> An: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> Betreff: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20
+> configurations
+> Datum: Fri, 28 Jun 2013 16:25:07 -0600
+>
+> On 06/28/2013 02:27 PM, Lucas Stach wrote:
+>> The Colibri T20 COM comes in two different versions, which can both
+>> boot from NAND or SD-Card.
+>>
+>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>> ---
+>> Submission is done with the consent of Toradex.
+> Lucas, is it possible to have someone from Toradex reply with a
+> Signed-off-by line, in order to indicate their authorization to license
+> the *.bct.cfg files (which are copyright Toradex in this patch) under
+> the specified license? Thanks.
+>
+> It's nice to see more vendor boards being supported here:-)
 
-On 07/02/2013 12:08 AM, Stephen Warren wrote:
-> On 06/28/2013 06:33 AM, Mikko Perttunen wrote:
->> This patchset removes the ehci-tegra device tree property nvidia,vbus-gpio
->> and adds support for the vbus-supply property to phy-tegra-usb.
->
-> With bug-fix patch "ARM: tegra: fix VBUS regulator GPIO polarity in DT"
-> (which I just sent) applied first, this series,
->
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
