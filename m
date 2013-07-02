@@ -1,45 +1,40 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: Re: [PATCH 07/32] arm: delete __cpuinit/__CPUINIT usage from all ARM
- users
-Date: Tue, 2 Jul 2013 13:53:00 -0400
-Message-ID: <20130702175257.GC21817@windriver.com>
-References: <1372102237-8757-1-git-send-email-paul.gortmaker@windriver.com>
- <1372102237-8757-8-git-send-email-paul.gortmaker@windriver.com>
- <1372755120.2874.18.camel@jlo-ubuntu-64.nvidia.com>
- <20130702085818.GD24642@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130702085818.GD24642-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: move body of head-common.S back to text section
+Date: Tue,  2 Jul 2013 16:53:49 -0600
+Message-ID: <1372805629-18382-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-[Re: [PATCH 07/32] arm: delete __cpuinit/__CPUINIT usage from all ARM users] On 02/07/2013 (Tue 09:58) Russell King - ARM Linux wrote:
+From: Stephen Warren <swarren@nvidia.com>
 
-> On Tue, Jul 02, 2013 at 04:52:00PM +0800, Joseph Lo wrote:
-> > I just tested this series on Tegra platform. It looks broken CPU hotplug
-> > function for Tegra at least. The CPU can't plug-in after unplugging. And
-> > the system resume function also not working when "enable_nonboot_cpus".
-> > 
-> > Both of the issue cause system hang up. Are we missing something for
-> > __cpuinit removal work?
-> 
-> Check that any assembly code you're using where the __CPUINIT* marker has
-> been removed is not preceded by an __INIT or similar.   This code needs
-> to end up in the normal .text, .data or .bss sections now.
+Commit 281ecb7 "arm: delete __cpuinit/__CPUINIT usage from all ARM
+users" removed a __CPUINIT from head-common.S. However, the code
+immediately before the removed tag was marked __INIT, and was missing
+a match __FINIT. This caused code after the removed __CPUINIT to end
+up in the init section rather than the main text section as desired.
+This caused issues such as secondary CPU boot failures or crashes.
+Add the missing __FINIT to solve this.
 
-Yes, As Russell says it is entirely possible that the earlier section
-was __INIT and there was already a missing __FINIT (or .previous).
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ arch/arm/kernel/head-common.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Hence what was __cpuinit got grandfathered into __INIT instead of
-.text/.data/.bss
-
-I'm offline at the moment but will double check myself later this
-evening if nothing obvious has been found by then.
-
-Thanks,
-Paul.
---
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 529ce99..a9dc804 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -122,6 +122,8 @@ __mmap_switched_data:
+ 	.long	init_thread_union + THREAD_START_SP @ sp
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
+ 
++	__FINIT
++
+ /*
+  * This provides a C-API version of __lookup_processor_type
+  */
+-- 
+1.8.1.5
