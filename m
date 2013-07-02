@@ -1,49 +1,72 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [Fwd: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri
- T20 configurations]
-Date: Tue, 2 Jul 2013 09:36:06 +0200
-Message-ID: <51D282E6.3000005@toradex.com>
-References: <1372749473.3055.5.camel@tellur>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: Re: [PATCH 07/32] arm: delete __cpuinit/__CPUINIT usage from all
+ ARM users
+Date: Tue, 2 Jul 2013 16:52:00 +0800
+Message-ID: <1372755120.2874.18.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372102237-8757-1-git-send-email-paul.gortmaker@windriver.com>
+	 <1372102237-8757-8-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372749473.3055.5.camel@tellur>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1372102237-8757-8-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Will Deacon <will.deacon@arm.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/02/2013 09:17 AM, Lucas Stach wrote:
-> Marcel, could you please respond with a Singed-off-by line to this
-> message to signify that you provided me with the bct.cfg files?
->
-> Please CC both
-> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->
-> Thanks,
-> Lucas
->
-> -------- Weitergeleitete Nachricht --------
-> Von: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> An: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> Betreff: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20
-> configurations
-> Datum: Fri, 28 Jun 2013 16:25:07 -0600
->
-> On 06/28/2013 02:27 PM, Lucas Stach wrote:
->> The Colibri T20 COM comes in two different versions, which can both
->> boot from NAND or SD-Card.
->>
->> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->> ---
->> Submission is done with the consent of Toradex.
-> Lucas, is it possible to have someone from Toradex reply with a
-> Signed-off-by line, in order to indicate their authorization to license
-> the *.bct.cfg files (which are copyright Toradex in this patch) under
-> the specified license? Thanks.
->
-> It's nice to see more vendor boards being supported here:-)
+Adding linux-tegra in Cc.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+On Tue, 2013-06-25 at 03:30 +0800, Paul Gortmaker wrote:
+> The __cpuinit type of throwaway sections might have made sense
+> some time ago when RAM was more constrained, but now the savings
+> do not offset the cost and complications.  For example, the fix in
+> commit 5e427ec2d0 ("x86: Fix bit corruption at CPU resume time")
+> is a good example of the nasty type of bugs that can be created
+> with improper use of the various __init prefixes.
+> 
+> After a discussion on LKML[1] it was decided that cpuinit should go
+> the way of devinit and be phased out.  Once all the users are gone,
+> we can then finally remove the macros themselves from linux/init.h.
+> 
+> Note that some harmless section mismatch warnings may result, since
+> notify_cpu_starting() and cpu_up() are arch independent (kernel/cpu.c)
+> and are flagged as __cpuinit  -- so if we remove the __cpuinit from
+> the arch specific callers, we will also get section mismatch warnings.
+> As an intermediate step, we intend to turn the linux/init.h cpuinit
+> related content into no-ops as early as possible, since that will get
+> rid of these warnings.  In any case, they are temporary and harmless.
+> 
+> This removes all the ARM uses of the __cpuinit macros from C code,
+> and all __CPUINIT from assembly code.  It also had two ".previous"
+> section statements that were paired off against __CPUINIT
+> (aka .section ".cpuinit.text") that also get removed here.
+> 
+> [1] https://lkml.org/lkml/2013/5/20/589
+> 
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+> 
+> [This commit is part of the __cpuinit removal work.  If you don't see
+>  any problems with it, then you don't have to do anything ; it will be
+>  submitted with all the rest of the __cpuinit removal work.  On the
+>  other hand, if you want to carry this patch in with your other pending
+>  changes so as to handle conflicts with other pending work yourself, then
+>  that is fine too, as the commits can largely be treated independently.
+>  For more information, please see: https://lkml.org/lkml/2013/6/20/513 ]
+> 
+
+Hi Paul,
+
+I just tested this series on Tegra platform. It looks broken CPU hotplug
+function for Tegra at least. The CPU can't plug-in after unplugging. And
+the system resume function also not working when "enable_nonboot_cpus".
+
+Both of the issue cause system hang up. Are we missing something for
+__cpuinit removal work?
+
+Thanks,
+Joseph
