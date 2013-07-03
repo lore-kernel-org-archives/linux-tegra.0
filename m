@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 02/11] ARM: tegra: add a flag for tegra_disable_clean_inv_dcache to do LoUIS or ALL
-Date: Wed, 3 Jul 2013 17:50:38 +0800
-Message-ID: <1372845047-25147-3-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 04/11] ARM: tegra114: add low level support code for cluster power down
+Date: Wed, 3 Jul 2013 17:50:40 +0800
+Message-ID: <1372845047-25147-5-git-send-email-josephl@nvidia.com>
 References: <1372845047-25147-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,112 +12,50 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adding a flag for tegra_disable_clean_inv_dcache to flush cache as LoUIS
-or ALL. After this patch, the v7_flush_dcache_louis is used for CPU hotplug
-and CPU suspend in CPU power down (e.g. CPU idle power-down mode) case. And
-the v7_flush_dcache_all is used for CPU cluster power down (e.g. suspend to
-LP2 mode).
+When the CPU cluster power down, the vGIC is powered down too. The
+flow controller needs to monitor the legacy interrupt controller to
+wake up CPU. So setting up the appropriate wake up event in flow
+controller.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* change the define value of TEGRA_FLUSH_CACHE_LOUIS and ALL to 0 and 1
+* no change
 ---
- arch/arm/mach-tegra/hotplug.c       | 2 +-
- arch/arm/mach-tegra/sleep-tegra20.S | 1 +
- arch/arm/mach-tegra/sleep-tegra30.S | 1 +
- arch/arm/mach-tegra/sleep.S         | 7 ++++++-
- arch/arm/mach-tegra/sleep.h         | 6 +++++-
- 5 files changed, 14 insertions(+), 3 deletions(-)
+ arch/arm/mach-tegra/flowctrl.h      | 2 ++
+ arch/arm/mach-tegra/sleep-tegra30.S | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/hotplug.c b/arch/arm/mach-tegra/hotplug.c
-index a52c10e..4687ec0 100644
---- a/arch/arm/mach-tegra/hotplug.c
-+++ b/arch/arm/mach-tegra/hotplug.c
-@@ -37,7 +37,7 @@ int tegra_cpu_kill(unsigned cpu)
- void __ref tegra_cpu_die(unsigned int cpu)
- {
- 	/* Clean L1 data cache */
--	tegra_disable_clean_inv_dcache();
-+	tegra_disable_clean_inv_dcache(TEGRA_FLUSH_CACHE_LOUIS);
- 
- 	/* Shut down the current CPU. */
- 	tegra_hotplug_shutdown();
-diff --git a/arch/arm/mach-tegra/sleep-tegra20.S b/arch/arm/mach-tegra/sleep-tegra20.S
-index e3f2417..f87721d 100644
---- a/arch/arm/mach-tegra/sleep-tegra20.S
-+++ b/arch/arm/mach-tegra/sleep-tegra20.S
-@@ -191,6 +191,7 @@ ENTRY(tegra20_sleep_cpu_secondary_finish)
- 	mrc	p15, 0, r11, c1, c0, 1  @ save actlr before exiting coherency
- 
- 	/* Flush and disable the L1 data cache */
-+	mov	r0, #TEGRA_FLUSH_CACHE_LOUIS
- 	bl	tegra_disable_clean_inv_dcache
- 
- 	mov32	r0, TEGRA_PMC_VIRT + PMC_SCRATCH41
+diff --git a/arch/arm/mach-tegra/flowctrl.h b/arch/arm/mach-tegra/flowctrl.h
+index e56a950..de0acb9 100644
+--- a/arch/arm/mach-tegra/flowctrl.h
++++ b/arch/arm/mach-tegra/flowctrl.h
+@@ -28,6 +28,8 @@
+ #define FLOW_CTRL_SCLK_RESUME		(1 << 27)
+ #define FLOW_CTRL_HALT_CPU_IRQ		(1 << 10)
+ #define	FLOW_CTRL_HALT_CPU_FIQ		(1 << 8)
++#define FLOW_CTRL_HALT_LIC_IRQ		(1 << 11)
++#define FLOW_CTRL_HALT_LIC_FIQ		(1 << 10)
+ #define FLOW_CTRL_HALT_GIC_IRQ		(1 << 9)
+ #define FLOW_CTRL_HALT_GIC_FIQ		(1 << 8)
+ #define FLOW_CTRL_CPU0_CSR		0x8
 diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 5877f26..6744161 100644
+index 6744161..ecad4ea 100644
 --- a/arch/arm/mach-tegra/sleep-tegra30.S
 +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -137,6 +137,7 @@ ENTRY(tegra30_sleep_cpu_secondary_finish)
- 	mov	r7, lr
+@@ -175,8 +175,12 @@ tegra30_enter_sleep:
+ 	orr	r0, r0, #FLOW_CTRL_CSR_ENABLE
+ 	str	r0, [r6, r2]
  
- 	/* Flush and disable the L1 data cache */
-+	mov 	r0, #TEGRA_FLUSH_CACHE_LOUIS
- 	bl	tegra_disable_clean_inv_dcache
- 
- 	/* Powergate this CPU. */
-diff --git a/arch/arm/mach-tegra/sleep.S b/arch/arm/mach-tegra/sleep.S
-index 9daaef2..6d6600d 100644
---- a/arch/arm/mach-tegra/sleep.S
-+++ b/arch/arm/mach-tegra/sleep.S
-@@ -56,7 +56,9 @@ ENTRY(tegra_disable_clean_inv_dcache)
- 	isb
- 
- 	/* Flush the D-cache */
--	bl	v7_flush_dcache_louis
-+	cmp	r0, #TEGRA_FLUSH_CACHE_ALL
-+	blne	v7_flush_dcache_louis
-+	bleq	v7_flush_dcache_all
- 
- 	/* Trun off coherency */
- 	exit_smp r4, r5
-@@ -73,9 +75,12 @@ ENDPROC(tegra_disable_clean_inv_dcache)
-  * tegra?_tear_down_cpu
-  */
- ENTRY(tegra_sleep_cpu_finish)
-+	mov	r4, r0
- 	/* Flush and disable the L1 data cache */
-+	mov	r0, #TEGRA_FLUSH_CACHE_ALL
- 	bl	tegra_disable_clean_inv_dcache
- 
-+	mov	r0, r4
- 	mov32	r6, tegra_tear_down_cpu
- 	ldr	r1, [r6]
- 	add	r1, r1, r0
-diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-index 98b7da6..e907e40 100644
---- a/arch/arm/mach-tegra/sleep.h
-+++ b/arch/arm/mach-tegra/sleep.h
-@@ -41,6 +41,10 @@
- #define CPU_NOT_RESETTABLE	0
- #endif
- 
-+/* flag of tegra_disable_clean_inv_dcache to do LoUIS or all */
-+#define TEGRA_FLUSH_CACHE_LOUIS	0
-+#define TEGRA_FLUSH_CACHE_ALL	1
++	tegra_get_soc_id TEGRA_APB_MISC_BASE, r10
++	cmp	r10, #TEGRA30
+ 	mov	r0, #FLOW_CTRL_WAIT_FOR_INTERRUPT
+-	orr	r0, r0, #FLOW_CTRL_HALT_CPU_IRQ | FLOW_CTRL_HALT_CPU_FIQ
++	orreq	r0, r0, #FLOW_CTRL_HALT_CPU_IRQ | FLOW_CTRL_HALT_CPU_FIQ
++	orrne   r0, r0, #FLOW_CTRL_HALT_LIC_IRQ | FLOW_CTRL_HALT_LIC_FIQ
 +
- #ifdef __ASSEMBLY__
- /* returns the offset of the flow controller halt register for a cpu */
- .macro cpu_to_halt_reg rd, rcpu
-@@ -144,7 +148,7 @@ void tegra_pen_lock(void);
- void tegra_pen_unlock(void);
- void tegra_resume(void);
- int tegra_sleep_cpu_finish(unsigned long);
--void tegra_disable_clean_inv_dcache(void);
-+void tegra_disable_clean_inv_dcache(u32 flag);
- 
- #ifdef CONFIG_HOTPLUG_CPU
- void tegra20_hotplug_shutdown(void);
+ 	cpu_to_halt_reg r2, r1
+ 	str	r0, [r6, r2]
+ 	dsb
 -- 
 1.8.3.2
