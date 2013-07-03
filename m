@@ -1,41 +1,35 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 09/11] ARM: tegra: remove the limitation that Tegra114 can't support suspend
-Date: Wed, 3 Jul 2013 17:50:45 +0800
-Message-ID: <1372845047-25147-10-git-send-email-josephl@nvidia.com>
-References: <1372845047-25147-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH] ARM: tegra114: Enable Cortex-A15 errata 798181
+Date: Wed, 3 Jul 2013 17:55:48 +0800
+Message-ID: <1372845348-27089-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372845047-25147-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra114 can support suspend function now, removing the limitation.
+The commit 93dc688 (ARM: 7684/1: errata: Workaround for Cortex-A15
+erratum 798181 (TLBI/DSB operations)) introduecd a workaround for
+Cortex-A15 errata 798181. Enabling it for Tegra114.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-V2:
-* no change
----
- arch/arm/mach-tegra/pm.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/mach-tegra/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-index 3d07cd5..5792872 100644
---- a/arch/arm/mach-tegra/pm.c
-+++ b/arch/arm/mach-tegra/pm.c
-@@ -173,10 +173,6 @@ void tegra_idle_lp2_last(void)
- enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
- 				enum tegra_suspend_mode mode)
- {
--	/* Tegra114 didn't support any suspending mode yet. */
--	if (tegra_chip_id == TEGRA114)
--		return TEGRA_SUSPEND_NONE;
--
- 	/*
- 	 * The Tegra devices only support suspending to LP2 currently.
- 	 */
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index ef3a8da..add345e 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -59,6 +59,7 @@ config ARCH_TEGRA_3x_SOC
+ config ARCH_TEGRA_114_SOC
+ 	bool "Enable support for Tegra114 family"
+ 	select HAVE_ARM_ARCH_TIMER
++	select ARM_ERRATA_798181
+ 	select ARM_GIC
+ 	select ARM_L1_CACHE_SHIFT_6
+ 	select CPU_V7
 -- 
 1.8.3.2
