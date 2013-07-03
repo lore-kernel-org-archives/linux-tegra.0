@@ -1,35 +1,52 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra114: Enable Cortex-A15 errata 798181
-Date: Wed, 3 Jul 2013 17:55:48 +0800
-Message-ID: <1372845348-27089-1-git-send-email-josephl@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: move body of head-common.S back to text section
+Date: Wed, 3 Jul 2013 11:00:44 +0100
+Message-ID: <20130703100044.GG24642@n2100.arm.linux.org.uk>
+References: <1372805629-18382-1-git-send-email-swarren@wwwdotorg.org> <20130702232259.GH11625@codeaurora.org> <51D39004.9000907@wwwdotorg.org> <20130703051907.GA22702@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130703051907.GA22702@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The commit 93dc688 (ARM: 7684/1: errata: Workaround for Cortex-A15
-erratum 798181 (TLBI/DSB operations)) introduecd a workaround for
-Cortex-A15 errata 798181. Enabling it for Tegra114.
+On Wed, Jul 03, 2013 at 01:19:07AM -0400, Paul Gortmaker wrote:
+> As an aside, I'm now thinking any __INIT that implicitly rely on EOF for
+> closure are nasty traps waiting to happen and it might be worthwhile to
+> audit and explicitly __FINIT them before someone appends to the file...
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+That hides a different kind of bug though - I hate __FINIT for exactly
+that reason.  Consider this:
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index ef3a8da..add345e 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -59,6 +59,7 @@ config ARCH_TEGRA_3x_SOC
- config ARCH_TEGRA_114_SOC
- 	bool "Enable support for Tegra114 family"
- 	select HAVE_ARM_ARCH_TIMER
-+	select ARM_ERRATA_798181
- 	select ARM_GIC
- 	select ARM_L1_CACHE_SHIFT_6
- 	select CPU_V7
--- 
-1.8.3.2
+	.text
+	blah blah blah
+	__INIT
+	lots of init stuff
+	__FINIT
+	more .text stuff
+
+Now, someone comes along and modifies this to be:
+
+	.text
+	blah blah blah
+	.data
+	something else
+	__INIT
+	lots of init stuff
+	__FINIT
+	more .text stuff
+
+Now, what is the effect of that __FINIT now?  You get the following .text
+emitted into the .data section instead.  This is basically the same problem
+you've just encounted.
+
+Maybe:
+
+	__FINIT
+	.text
+
+is the safest solution - and __FINIT becomes just a no-op marker to avoid
+anyone relying on its properties.
