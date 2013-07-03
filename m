@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 05/11] ARM: tegra114: shut off the CPU rail when the last CPU in suspend
-Date: Wed, 3 Jul 2013 17:50:41 +0800
-Message-ID: <1372845047-25147-6-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 08/11] clk: tegra114: add suspend/resume function for tegra_cpu_car_ops
+Date: Wed, 3 Jul 2013 17:50:44 +0800
+Message-ID: <1372845047-25147-9-git-send-email-josephl@nvidia.com>
 References: <1372845047-25147-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,78 +9,68 @@ Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1372845047-25147-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When the last CPU core in suspend, the CPU power rail can be turned off
-by setting flags to flow controller. Then the flow controller will inform
-PMC to turn off the CPU rail when the last CPU goes into suspend.
+Adding suspend/resume function for tegra_cpu_car_ops. We only save and
+restore the setting of the clock of CoreSight. Other clocks still need
+to be taken care by clock driver.
 
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* presumably we need to code the cut off the CRAIL after Tegra114, modify the
-  code for that
+* fix the coding style
 ---
- arch/arm/mach-tegra/flowctrl.h |  5 +++++
- arch/arm/mach-tegra/pmc.c      | 16 +++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra114.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/flowctrl.h b/arch/arm/mach-tegra/flowctrl.h
-index de0acb9..c89aac6 100644
---- a/arch/arm/mach-tegra/flowctrl.h
-+++ b/arch/arm/mach-tegra/flowctrl.h
-@@ -35,6 +35,11 @@
- #define FLOW_CTRL_CPU0_CSR		0x8
- #define	FLOW_CTRL_CSR_INTR_FLAG		(1 << 15)
- #define FLOW_CTRL_CSR_EVENT_FLAG	(1 << 14)
-+#define FLOW_CTRL_CSR_ENABLE_EXT_CRAIL	(1 << 13)
-+#define FLOW_CTRL_CSR_ENABLE_EXT_NCPU	(1 << 12)
-+#define FLOW_CTRL_CSR_ENABLE_EXT_MASK ( \
-+		FLOW_CTRL_CSR_ENABLE_EXT_NCPU | \
-+		FLOW_CTRL_CSR_ENABLE_EXT_CRAIL)
- #define FLOW_CTRL_CSR_ENABLE		(1 << 0)
- #define FLOW_CTRL_HALT_CPU1_EVENTS	0x14
- #define FLOW_CTRL_CPU1_CSR		0x18
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index eb3fa4a..8345fcd 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -21,6 +21,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 9839e86..0908fcd 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -290,6 +290,12 @@
+ #define PMC_PLLM_WB0_OVERRIDE 0x1dc
+ #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
  
-+#include "flowctrl.h"
- #include "fuse.h"
- #include "pm.h"
- #include "pmc.h"
-@@ -195,13 +196,26 @@ enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
- 
- void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
- {
--	u32 reg;
-+	u32 reg, csr_reg;
- 	unsigned long rate = 0;
- 
- 	reg = tegra_pmc_readl(PMC_CTRL);
- 	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
- 	reg &= ~TEGRA_POWER_EFFECT_LP0;
- 
-+	switch (tegra_chip_id) {
-+	case TEGRA20:
-+	case TEGRA30:
-+		break;
-+	default:
-+		/* Turn off CRAIL */
-+		csr_reg = flowctrl_read_cpu_csr(0);
-+		csr_reg &= ~FLOW_CTRL_CSR_ENABLE_EXT_MASK;
-+		csr_reg |= FLOW_CTRL_CSR_ENABLE_EXT_CRAIL;
-+		flowctrl_write_cpu_csr(0, csr_reg);
-+		break;
-+	}
++#ifdef CONFIG_PM_SLEEP
++static struct cpu_clk_suspend_context {
++	u32 clk_csite_src;
++} tegra114_cpu_clk_sctx;
++#endif
 +
- 	switch (mode) {
- 	case TEGRA_SUSPEND_LP2:
- 		rate = clk_get_rate(tegra_pclk);
+ static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
+ 
+ static void __iomem *clk_base;
+@@ -2142,9 +2148,29 @@ static void tegra114_disable_cpu_clock(u32 cpu)
+ 	/* flow controller would take care in the power sequence. */
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static void tegra114_cpu_clock_suspend(void)
++{
++	/* switch coresite to clk_m, save off original source */
++	tegra114_cpu_clk_sctx.clk_csite_src =
++				readl(clk_base + CLK_SOURCE_CSITE);
++	writel(3 << 30, clk_base + CLK_SOURCE_CSITE);
++}
++
++static void tegra114_cpu_clock_resume(void)
++{
++	writel(tegra114_cpu_clk_sctx.clk_csite_src,
++					clk_base + CLK_SOURCE_CSITE);
++}
++#endif
++
+ static struct tegra_cpu_car_ops tegra114_cpu_car_ops = {
+ 	.wait_for_reset	= tegra114_wait_cpu_in_reset,
+ 	.disable_clock	= tegra114_disable_cpu_clock,
++#ifdef CONFIG_PM_SLEEP
++	.suspend	= tegra114_cpu_clock_suspend,
++	.resume		= tegra114_cpu_clock_resume,
++#endif
+ };
+ 
+ static const struct of_device_id pmc_match[] __initconst = {
 -- 
 1.8.3.2
