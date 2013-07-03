@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 07/11] ARM: tegra114: flowctrl: add support for cpu_suspend_enter/exit
-Date: Wed, 3 Jul 2013 17:50:43 +0800
-Message-ID: <1372845047-25147-8-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 11/11] ARM: dts: tegra114: dalmore: add PM configurations for PMC
+Date: Wed, 3 Jul 2013 17:50:47 +0800
+Message-ID: <1372845047-25147-12-git-send-email-josephl@nvidia.com>
 References: <1372845047-25147-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,40 +12,33 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The flow controller can help CPU to go into suspend mode (powered-down
-state). When CPU goes into powered-down state, it needs some careful
-settings before getting into and after leaving. The enter and exit
-functions do that by configuring appropriate mode for flow controller.
-
-For Tegra114, the setting is compatible with Tegra30.
+Adding the PM configurations for PMC to support platform suspend.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
 * no change
 ---
- arch/arm/mach-tegra/flowctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/tegra114-dalmore.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/flowctrl.c b/arch/arm/mach-tegra/flowctrl.c
-index b477ef3..5348543 100644
---- a/arch/arm/mach-tegra/flowctrl.c
-+++ b/arch/arm/mach-tegra/flowctrl.c
-@@ -86,6 +86,7 @@ void flowctrl_cpu_suspend_enter(unsigned int cpuid)
- 		reg |= TEGRA20_FLOW_CTRL_CSR_WFE_CPU0 << cpuid;
- 		break;
- 	case TEGRA30:
-+	case TEGRA114:
- 		/* clear wfe bitmap */
- 		reg &= ~TEGRA30_FLOW_CTRL_CSR_WFE_BITMAP;
- 		/* clear wfi bitmap */
-@@ -123,6 +124,7 @@ void flowctrl_cpu_suspend_exit(unsigned int cpuid)
- 		reg &= ~TEGRA20_FLOW_CTRL_CSR_WFI_BITMAP;
- 		break;
- 	case TEGRA30:
-+	case TEGRA114:
- 		/* clear wfe bitmap */
- 		reg &= ~TEGRA30_FLOW_CTRL_CSR_WFE_BITMAP;
- 		/* clear wfi bitmap */
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index b97a8cc..625bf3a 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -850,6 +850,13 @@
+ 
+ 	pmc {
+ 		nvidia,invert-interrupt;
++		nvidia,suspend-mode = <2>;
++		nvidia,cpu-pwr-good-time = <500>;
++		nvidia,cpu-pwr-off-time = <300>;
++		nvidia,core-pwr-good-time = <641 3845>;
++		nvidia,core-pwr-off-time = <61036>;
++		nvidia,core-power-req-active-high;
++		nvidia,sys-clock-req-active-high;
+ 	};
+ 
+ 	ahub {
 -- 
 1.8.3.2
