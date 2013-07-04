@@ -1,52 +1,99 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH V2] ARM: add missing __FINIT to head-common.S to match __INIT
-Date: Wed,  3 Jul 2013 12:12:54 -0600
-Message-ID: <1372875174-26812-1-git-send-email-swarren@wwwdotorg.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] ARM: move body of head-common.S back to text section
+Date: Wed, 3 Jul 2013 20:22:35 -0400
+Message-ID: <20130704002235.GL22702@windriver.com>
+References: <1372805629-18382-1-git-send-email-swarren@wwwdotorg.org>
+ <20130702232259.GH11625@codeaurora.org>
+ <51D39004.9000907@wwwdotorg.org>
+ <20130703051907.GA22702@windriver.com>
+ <20130703100044.GG24642@n2100.arm.linux.org.uk>
+ <20130703153012.GK22702@windriver.com>
+ <20130703172001.GH24642@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130703172001.GH24642@n2100.arm.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+[Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 18:20) Russell King - ARM Linux wrote:
 
-Macro __INIT is used to place various code in head-common.S into the init
-section. This should be matched by a closing __FINIT at the end of the
-code destined for the init section. Add this missing macro.
+> On Wed, Jul 03, 2013 at 11:30:12AM -0400, Paul Gortmaker wrote:
+> > [Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 11:00) Russell King - ARM Linux wrote:
+> > 
+> > > On Wed, Jul 03, 2013 at 01:19:07AM -0400, Paul Gortmaker wrote:
+> > > > As an aside, I'm now thinking any __INIT that implicitly rely on EOF for
+> > > > closure are nasty traps waiting to happen and it might be worthwhile to
+> > > > audit and explicitly __FINIT them before someone appends to the file...
+> > > 
+> > > That hides a different kind of bug though - I hate __FINIT for exactly
+> > > that reason.  Consider this:
+> > 
+> > Agreed - perhaps masking that it is a ".previous" just hides the fact
+> > that it is more like a pop operation vs. an on/off operation, or per
+> > function as we have in C.
+> 
+> I read the info pages, because I thought it was a pop operation too.
+> I was concerned that .section didn't push the previous section onto the
+> stack.
+> 
+> However, .popsection is the pseudio-op which pops.  .previous just toggles
+> the current section with the section immediately before it.
+> 
+> So:
+> 
+> 	.text
+> 	.data
+> 	.previous
+> 	/* this is .text */
+> 	.previous
+> 	/* this is .data */
+> 	.previous
+> 	/* this is .text */
+> 	.previous
+> 	/* this is .data */
 
-This historically caused no problem, because macro __CPUINIT was used at
-the exact location where __FINIT was missing, which then placed following
-code into the cpuinit section. However, with commit 22f0a2736 "init.h:
-remove __cpuinit sections from the kernel" applied, __CPUINIT becomes a
-no-op, thus leaving all this code in the init section, rather than the
-regular text section. This caused issues such as secondary CPU boot
-failures or crashes.
+Cool -- I bet we weren't the only ones thinking it was a pop.  Thanks.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Acked-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
-v2: Moved __FINIT after lookup_processor_type, to correctly match the
-location of __CPUINIT.
+Does that make __FINIT less evil than we previously assumed?  I think
+your example was the following pseudo-patch:
 
-Russell, I assume I should add this to the ARM patch tracker.
 
-This version is based on v3.10.
----
- arch/arm/kernel/head-common.S | 2 ++
- 1 file changed, 2 insertions(+)
+	.text
+	<some text>
++	.data
++ 	<some data>
+	__INIT
+	<big hunk of init>
+	__FINIT
+	/* this below used to be text */
+	<more stuff that was originally meant for text>
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 5b391a6..1fb887d 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -133,6 +133,8 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
- 
-+	__FINIT
-+
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
--- 
-1.8.1.5
+Even if it is a toggle (vs. pop), the end text will now become data,
+so the no-op __FINIT with an explicit section called out just below
+it may still be the most unambiguous way to indicate what is going on.
+
+> 
+> > That seems reasonable to me.  I can't think of any self auditing that is
+> > reasonably simple to implement.  One downside of __FINIT as a no-op vs.
+> > what it is today, is that a dangling __FINIT in a file with no other
+> > previous sections will emit a warning.  But that is a small low value
+> > corner case I think.
+> 
+> That warning from __FINIT will only happen if there has been no section
+> or .text or .data statement in the file at all.  As soon as you have any
+> statement setting any kind of section, .previous doesn't warn.
+> 
+> So:
+> 
+> 	.text
+> 	...
+> 	__FINIT
+> 
+> produces no warning.o
+
+Yep -- we are both saying the same thing here - hence why I called it a
+small low value corner case.
