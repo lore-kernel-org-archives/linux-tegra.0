@@ -1,99 +1,74 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH] ARM: move body of head-common.S back to text section
-Date: Wed, 3 Jul 2013 20:22:35 -0400
-Message-ID: <20130704002235.GL22702@windriver.com>
-References: <1372805629-18382-1-git-send-email-swarren@wwwdotorg.org>
- <20130702232259.GH11625@codeaurora.org>
- <51D39004.9000907@wwwdotorg.org>
- <20130703051907.GA22702@windriver.com>
- <20130703100044.GG24642@n2100.arm.linux.org.uk>
- <20130703153012.GK22702@windriver.com>
- <20130703172001.GH24642@n2100.arm.linux.org.uk>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/3] hwmon: (lm90) add support to handle irq
+Date: Thu, 4 Jul 2013 15:57:49 +0800
+Message-ID: <1372924670-16355-3-git-send-email-wni@nvidia.com>
+References: <1372924670-16355-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130703172001.GH24642@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372924670-16355-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 18:20) Russell King - ARM Linux wrote:
+Add support to handle irq. When the temperature touch
+the limit value, the driver can handle the interrupt.
 
-> On Wed, Jul 03, 2013 at 11:30:12AM -0400, Paul Gortmaker wrote:
-> > [Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 11:00) Russell King - ARM Linux wrote:
-> > 
-> > > On Wed, Jul 03, 2013 at 01:19:07AM -0400, Paul Gortmaker wrote:
-> > > > As an aside, I'm now thinking any __INIT that implicitly rely on EOF for
-> > > > closure are nasty traps waiting to happen and it might be worthwhile to
-> > > > audit and explicitly __FINIT them before someone appends to the file...
-> > > 
-> > > That hides a different kind of bug though - I hate __FINIT for exactly
-> > > that reason.  Consider this:
-> > 
-> > Agreed - perhaps masking that it is a ".previous" just hides the fact
-> > that it is more like a pop operation vs. an on/off operation, or per
-> > function as we have in C.
-> 
-> I read the info pages, because I thought it was a pop operation too.
-> I was concerned that .section didn't push the previous section onto the
-> stack.
-> 
-> However, .popsection is the pseudio-op which pops.  .previous just toggles
-> the current section with the section immediately before it.
-> 
-> So:
-> 
-> 	.text
-> 	.data
-> 	.previous
-> 	/* this is .text */
-> 	.previous
-> 	/* this is .data */
-> 	.previous
-> 	/* this is .text */
-> 	.previous
-> 	/* this is .data */
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/hwmon/lm90.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Cool -- I bet we weren't the only ones thinking it was a pop.  Thanks.
-
-Does that make __FINIT less evil than we previously assumed?  I think
-your example was the following pseudo-patch:
-
-
-	.text
-	<some text>
-+	.data
-+ 	<some data>
-	__INIT
-	<big hunk of init>
-	__FINIT
-	/* this below used to be text */
-	<more stuff that was originally meant for text>
-
-Even if it is a toggle (vs. pop), the end text will now become data,
-so the no-op __FINIT with an explicit section called out just below
-it may still be the most unambiguous way to indicate what is going on.
-
-> 
-> > That seems reasonable to me.  I can't think of any self auditing that is
-> > reasonably simple to implement.  One downside of __FINIT as a no-op vs.
-> > what it is today, is that a dangling __FINIT in a file with no other
-> > previous sections will emit a warning.  But that is a small low value
-> > corner case I think.
-> 
-> That warning from __FINIT will only happen if there has been no section
-> or .text or .data statement in the file at all.  As soon as you have any
-> statement setting any kind of section, .previous doesn't warn.
-> 
-> So:
-> 
-> 	.text
-> 	...
-> 	__FINIT
-> 
-> produces no warning.o
-
-Yep -- we are both saying the same thing here - hence why I called it a
-small low value corner case.
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index 2cb7f8e..fce9dfa 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -89,6 +89,7 @@
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/interrupt.h>
+ 
+ /*
+  * Addresses to scan
+@@ -1423,6 +1424,18 @@ static void lm90_init_client(struct i2c_client *client)
+ 		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
+ }
+ 
++static void lm90_alert(struct i2c_client *client, unsigned int flag);
++
++static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
++{
++	struct lm90_data *data = dev_id;
++	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
++
++	lm90_alert(client, 0);
++
++	return IRQ_HANDLED;
++}
++
+ static int lm90_probe(struct i2c_client *client,
+ 		      const struct i2c_device_id *id)
+ {
+@@ -1499,6 +1512,18 @@ static int lm90_probe(struct i2c_client *client,
+ 		goto exit_remove_files;
+ 	}
+ 
++	if (client->irq >= 0) {
++		dev_dbg(dev, "lm90 irq: %d\n", client->irq);
++		err = devm_request_threaded_irq(dev, client->irq,
++						NULL, lm90_irq_thread,
++						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++						"lm90", data);
++		if (err < 0) {
++			dev_err(dev, "cannot request interrupt\n");
++			goto exit_remove_files;
++		}
++	}
++
+ 	return 0;
+ 
+ exit_remove_files:
+-- 
+1.7.9.5
