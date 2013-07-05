@@ -1,29 +1,42 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
-Date: Fri, 5 Jul 2013 12:47:28 -0700
-Message-ID: <20130705194728.GA24946@roeck-us.net>
-References: <1372924670-16355-1-git-send-email-wni@nvidia.com>
- <1372924670-16355-3-git-send-email-wni@nvidia.com>
- <51D703C9.1060607@wwwdotorg.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V3] ARM: add missing linker section markup to
+	head-common.S
+Date: Fri, 5 Jul 2013 22:32:15 +0100
+Message-ID: <20130705213214.GK24642@n2100.arm.linux.org.uk>
+References: <1373047855-24145-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <51D703C9.1060607-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1373047855-24145-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 05, 2013 at 11:35:05AM -0600, Stephen Warren wrote:
-> On 07/04/2013 01:57 AM, Wei Ni wrote:
-> > Add support to handle irq. When the temperature touch
-> > the limit value, the driver can handle the interrupt.
+On Fri, Jul 05, 2013 at 12:10:55PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
-> > +	if (client->irq >= 0) {
+> Macro __INIT is used to place various code in head-common.S into the init
+> section. This should be matched by a closing __FINIT. Also, add an
+> explicit ".text" to ensure subsequent code is placed into the correct
+> section; __FINIT is simply a closing marker to match __INIT and doesn't
+> guarantee to revert to .text.
 > 
-> 0 isn't a valid IRQ, so you can write that as simply if (client->irq).
+> This historically caused no problem, because macro __CPUINIT was used at
+> the exact location where __FINIT was missing, which then placed following
+> code into the cpuinit section. However, with commit 22f0a2736 "init.h:
+> remove __cpuinit sections from the kernel" applied, __CPUINIT becomes a
+> no-op, thus leaving all this code in the init section, rather than the
+> regular text section. This caused issues such as secondary CPU boot
+> failures or crashes.
 > 
-If I recall correctly, it is valid on some platforms.
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Acked-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+> v3: Added .text after __FINIT to force the correct section.
+> v2: Moved __FINIT after lookup_processor_type, to correctly match the
+> location of __CPUINIT.
 
-Guenter
+Much better, thanks.  Please put it in the patch system and I'll send it
+along, thanks.
