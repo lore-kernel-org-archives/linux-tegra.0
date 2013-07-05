@@ -1,52 +1,46 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3] ARM: add missing linker section markup to head-common.S
-Date: Fri,  5 Jul 2013 12:10:55 -0600
-Message-ID: <1373047855-24145-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: enable gpio-keys on dalmore
+Date: Fri, 05 Jul 2013 12:43:05 -0600
+Message-ID: <51D713B9.40205@wwwdotorg.org>
+References: <1373028111-24246-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1373028111-24246-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/05/2013 06:41 AM, Laxman Dewangan wrote:
+> Dalmore have the keys mounted on board which are connected
+> to different pins of Tegra.
+> 
+> Add the keys entry in DTS file to enable key functionality.
+> This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
+> KEY_VOLUMEDOWN.
 
-Macro __INIT is used to place various code in head-common.S into the init
-section. This should be matched by a closing __FINIT. Also, add an
-explicit ".text" to ensure subsequent code is placed into the correct
-section; __FINIT is simply a closing marker to match __INIT and doesn't
-guarantee to revert to .text.
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
 
-This historically caused no problem, because macro __CPUINIT was used at
-the exact location where __FINIT was missing, which then placed following
-code into the cpuinit section. However, with commit 22f0a2736 "init.h:
-remove __cpuinit sections from the kernel" applied, __CPUINIT becomes a
-no-op, thus leaving all this code in the init section, rather than the
-regular text section. This caused issues such as secondary CPU boot
-failures or crashes.
+>  			 <&tegra_car TEGRA114_CLK_EXTERN1>;
+>  		clock-names = "pll_a", "pll_a_out0", "mclk";
+>  	};
+> +
+> +	gpio-keys {
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
----
-v3: Added .text after __FINIT to force the correct section.
-v2: Moved __FINIT after lookup_processor_type, to correctly match the
-location of __CPUINIT.
----
- arch/arm/kernel/head-common.S | 3 +++
- 1 file changed, 3 insertions(+)
+The node above is "sound". This node should be before that node so
+they're alphabetically sorted.
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 529ce99..47cd974 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -133,6 +133,9 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
- 
-+	__FINIT
-+	.text
-+
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
--- 
-1.8.1.5
+> +		compatible = "gpio-keys";
+> +
+> +		power {
+> +			label = "Power";
+> +			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
+> +			linux,code = <116>; /* KEY_POWER */
+> +			gpio-key,wakeup;
+> +		};
+> +
+> +		home {
+
+Similarly, the nodes inside gpio-keys should also be sorted alphabetically.
