@@ -1,132 +1,22 @@
-From: Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] ARM: move body of head-common.S back to text section
-Date: Fri, 5 Jul 2013 16:10:02 +0100
-Message-ID: <20130705151001.GF2932@localhost.localdomain>
-References: <1372805629-18382-1-git-send-email-swarren@wwwdotorg.org>
- <20130702232259.GH11625@codeaurora.org>
- <51D39004.9000907@wwwdotorg.org>
- <20130703051907.GA22702@windriver.com>
- <20130703100044.GG24642@n2100.arm.linux.org.uk>
- <20130703153012.GK22702@windriver.com>
- <20130703172001.GH24642@n2100.arm.linux.org.uk>
- <20130704002235.GL22702@windriver.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
+Date: Fri, 05 Jul 2013 11:35:05 -0600
+Message-ID: <51D703C9.1060607@wwwdotorg.org>
+References: <1372924670-16355-1-git-send-email-wni@nvidia.com> <1372924670-16355-3-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130704002235.GL22702-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+In-Reply-To: <1372924670-16355-3-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 03, 2013 at 08:22:35PM -0400, Paul Gortmaker wrote:
-> [Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 18:20) Russell King - ARM Linux wrote:
-> 
-> > On Wed, Jul 03, 2013 at 11:30:12AM -0400, Paul Gortmaker wrote:
-> > > [Re: [PATCH] ARM: move body of head-common.S back to text section] On 03/07/2013 (Wed 11:00) Russell King - ARM Linux wrote:
-> > > 
-> > > > On Wed, Jul 03, 2013 at 01:19:07AM -0400, Paul Gortmaker wrote:
-> > > > > As an aside, I'm now thinking any __INIT that implicitly rely on EOF for
-> > > > > closure are nasty traps waiting to happen and it might be worthwhile to
-> > > > > audit and explicitly __FINIT them before someone appends to the file...
-> > > > 
-> > > > That hides a different kind of bug though - I hate __FINIT for exactly
-> > > > that reason.  Consider this:
-> > > 
-> > > Agreed - perhaps masking that it is a ".previous" just hides the fact
-> > > that it is more like a pop operation vs. an on/off operation, or per
-> > > function as we have in C.
-> > 
-> > I read the info pages, because I thought it was a pop operation too.
-> > I was concerned that .section didn't push the previous section onto the
-> > stack.
-> > 
-> > However, .popsection is the pseudio-op which pops.  .previous just toggles
-> > the current section with the section immediately before it.
-> > 
-> > So:
-> > 
-> > 	.text
-> > 	.data
-> > 	.previous
-> > 	/* this is .text */
-> > 	.previous
-> > 	/* this is .data */
-> > 	.previous
-> > 	/* this is .text */
-> > 	.previous
-> > 	/* this is .data */
-> 
-> Cool -- I bet we weren't the only ones thinking it was a pop.  Thanks.
-> 
-> Does that make __FINIT less evil than we previously assumed?  I think
-> your example was the following pseudo-patch:
-> 
-> 
-> 	.text
-> 	<some text>
-> +	.data
-> + 	<some data>
-> 	__INIT
-> 	<big hunk of init>
-> 	__FINIT
-> 	/* this below used to be text */
-> 	<more stuff that was originally meant for text>
-> 
-> Even if it is a toggle (vs. pop), the end text will now become data,
-> so the no-op __FINIT with an explicit section called out just below
-> it may still be the most unambiguous way to indicate what is going on.
-> 
-> > 
-> > > That seems reasonable to me.  I can't think of any self auditing that is
-> > > reasonably simple to implement.  One downside of __FINIT as a no-op vs.
-> > > what it is today, is that a dangling __FINIT in a file with no other
-> > > previous sections will emit a warning.  But that is a small low value
-> > > corner case I think.
-> > 
-> > That warning from __FINIT will only happen if there has been no section
-> > or .text or .data statement in the file at all.  As soon as you have any
-> > statement setting any kind of section, .previous doesn't warn.
-> > 
-> > So:
-> > 
-> > 	.text
-> > 	...
-> > 	__FINIT
-> > 
-> > produces no warning.o
-> 
-> Yep -- we are both saying the same thing here - hence why I called it a
-> small low value corner case.
+On 07/04/2013 01:57 AM, Wei Ni wrote:
+> Add support to handle irq. When the temperature touch
+> the limit value, the driver can handle the interrupt.
 
-Note that .previous has another important gotcha.  Consider:
+> +	if (client->irq >= 0) {
 
-	__INIT
-	/* now in .text.init */
-	ALT_UP(...)
-	/* now in .text.init */
-	__FINIT
-
-	/* now in .alt.smp.text! */
-
-
-.previous (or macros containing a dangling .previous) shouldn't be used
-unless you're absolutely certain what the previous section was.
-
-In general:
-
-	label:
-		<stuff>
-
-		.previous
-
-restores to the section which was current at label, only if there are
-no section directives in <stuff>, nor anything which could contain a
-section directive after macro expansion.
-
-The same goes for the hidden, dangling .previous embedded in __FINIT
-and friends.
-
-Cheers
----Dave
+0 isn't a valid IRQ, so you can write that as simply if (client->irq).
