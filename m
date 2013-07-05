@@ -1,30 +1,64 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 00/22] Unified SMMU driver among Tegra SoCs
-Date: Fri, 5 Jul 2013 13:08:36 +0200
-Message-ID: <20130705.140836.1744157186948281659.hdoyu@nvidia.com>
-References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com><4999563.JlU6BysXQl@fb07-iapwap2.physik.uni-giessen.de>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: enable gpio-keys on dalmore
+Date: Fri, 5 Jul 2013 18:11:51 +0530
+Message-ID: <1373028111-24246-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4999563.JlU6BysXQl-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "marvin24-Mmb7MZpHnFY@public.gmane.org" <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marc,
+Dalmore have the keys mounted on board which are connected
+to different pins of Tegra.
 
-Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote @ Fri, 5 Jul 2013 13:03:58 +0200:
+Add the keys entry in DTS file to enable key functionality.
+This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
+KEY_VOLUMEDOWN.
 
-> Am Freitag, 5. Juli 2013, 13:44:35 schrieb Hiroshi Doyu:
-> > Hi,
-> > 
-> > This series provides:
-> > 
-> > (1) Unified SMMU driver among Tegra SoCs
-> 
-> does this affect tegra2 in any way?
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts |   29 +++++++++++++++++++++++++++++
+ 1 files changed, 29 insertions(+), 0 deletions(-)
 
-No, at all for Tegra 20.
-This driver should work with Tegra 30, 114 and 148.
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index cb640eb..886b66d 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -976,4 +976,33 @@
+ 			 <&tegra_car TEGRA114_CLK_EXTERN1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "Power";
++			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
++			linux,code = <116>; /* KEY_POWER */
++			gpio-key,wakeup;
++		};
++
++		home {
++			label = "Home";
++			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
++			linux,code = <102>; /* KEY_HOME */
++		};
++
++		volume_up {
++			label = "VolumeUp";
++			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
++			linux,code = <115>; /* KEY_VOLUMEUP */
++		};
++
++		volume_down {
++			label = "VolumeDown";
++			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
++			linux,code = <114>; /* KEY_VOLUMEDOWN */
++		};
++	};
+ };
+-- 
+1.7.1.1
