@@ -1,42 +1,75 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V3] ARM: add missing linker section markup to
-	head-common.S
-Date: Fri, 5 Jul 2013 22:32:15 +0100
-Message-ID: <20130705213214.GK24642@n2100.arm.linux.org.uk>
-References: <1373047855-24145-1-git-send-email-swarren@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] ARM: tegra: enable gpio-keys on dalmore
+Date: Sat, 6 Jul 2013 14:44:29 +0530
+Message-ID: <1373102069-5641-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1373047855-24145-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 05, 2013 at 12:10:55PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> Macro __INIT is used to place various code in head-common.S into the init
-> section. This should be matched by a closing __FINIT. Also, add an
-> explicit ".text" to ensure subsequent code is placed into the correct
-> section; __FINIT is simply a closing marker to match __INIT and doesn't
-> guarantee to revert to .text.
-> 
-> This historically caused no problem, because macro __CPUINIT was used at
-> the exact location where __FINIT was missing, which then placed following
-> code into the cpuinit section. However, with commit 22f0a2736 "init.h:
-> remove __cpuinit sections from the kernel" applied, __CPUINIT becomes a
-> no-op, thus leaving all this code in the init section, rather than the
-> regular text section. This caused issues such as secondary CPU boot
-> failures or crashes.
-> 
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> Acked-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
-> v3: Added .text after __FINIT to force the correct section.
-> v2: Moved __FINIT after lookup_processor_type, to correctly match the
-> location of __CPUINIT.
+Dalmore have the keys mounted on board which are connected
+to different pins of Tegra.
 
-Much better, thanks.  Please put it in the patch system and I'll send it
-along, thanks.
+Add the keys entry in DTS file to enable key functionality.
+This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
+KEY_VOLUMEDOWN.
+
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes from V1:
+- Reorder the nodes.
+
+ arch/arm/boot/dts/tegra114-dalmore.dts |   30 ++++++++++++++++++++++++++++++
+ 1 files changed, 30 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index cb640eb..259b517 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -883,6 +883,35 @@
+ 		};
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		home {
++			label = "Home";
++			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
++			linux,code = <102>; /* KEY_HOME */
++		};
++
++		power {
++			label = "Power";
++			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
++			linux,code = <116>; /* KEY_POWER */
++			gpio-key,wakeup;
++		};
++
++		volume_down {
++			label = "VolumeDown";
++			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
++			linux,code = <114>; /* KEY_VOLUMEDOWN */
++		};
++
++		volume_up {
++			label = "VolumeUp";
++			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
++			linux,code = <115>; /* KEY_VOLUMEUP */
++		};
++	};
++
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -976,4 +1005,5 @@
+ 			 <&tegra_car TEGRA114_CLK_EXTERN1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
++
+ };
+-- 
+1.7.1.1
