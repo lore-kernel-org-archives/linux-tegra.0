@@ -1,62 +1,244 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [lm-sensors] [PATCH 1/2] ARM: dt: t30 cardhu: add dt entry for
- lm90
-Date: Mon, 8 Jul 2013 06:14:21 -0700
-Message-ID: <20130708131421.GB21638@roeck-us.net>
-References: <1372928979-26938-1-git-send-email-wni@nvidia.com>
- <1372928979-26938-2-git-send-email-wni@nvidia.com>
- <51D70483.70203@wwwdotorg.org>
- <51DA6BD4.1040300@nvidia.com>
- <20130708095024.041a6d57@endymion.delvare>
- <51DA8805.50709@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH] ARM: tegra: enable palmas device for dalmore
+Date: Mon, 8 Jul 2013 19:08:08 +0530
+Message-ID: <1373290688-2257-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51DA8805.50709-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: swarren@wwwdotorg.org
+Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 08, 2013 at 05:36:05PM +0800, Wei Ni wrote:
-> On 07/08/2013 03:50 PM, Jean Delvare wrote:
-> > On Mon, 8 Jul 2013 15:35:48 +0800, Wei Ni wrote:
-> >> On 07/06/2013 01:38 AM, Stephen Warren wrote:
-> >>> On 07/04/2013 03:09 AM, Wei Ni wrote:
-> >>>> Enable thermal sensor lm90 for t30 cardhu.
-> >>>
-> >>>> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-> >>>
-> >>>> +		nct1008: nct1008 {
-> >>>> +			compatible = "lm90,nct1008";
-> >>>
-> >>> "lm90" isn't a valid vendor prefix. I believe the value you want is
-> >>> "onnn,nct1008". Same comment for patch 2/2.
-> >>
-> >> The lm90 doesn't support device tree very well.
-> > 
-> > I doubt it, but if this is the case, then please fix it, instead of
-> > working the problem around in a different place.
-> > 
-> >> In the DT, we need to
-> >> named as "lm90" so that the lm90 driver can be loaded,
-> > 
-> > Not that I am an expert with regards to DT, but this doesn't make any
-> > sense to me. AFAIK DT is about devices, not which drivers handle them.
-> > 
-> >> and we also need
-> >> to add "nct1008" to indicate this is the nct1008 device, so that the
-> >> lm90 driver can be loaded with the right i2c_device_id->driver_data.
-> >>
-> >> I set the " compatible = "lm90,nct1008" ", this is the simplest way, and
-> >> we doesn't need to change the lm90.c.
-> > 
-> > There's no problem with changing the lm90 driver, if this is the right
-> > thing to do.
-> 
-> Ok, I will add DT support in the lm90.c in my next version patch.
-> 
-Only if you can show that it is necessary.
+Make the entry of Dalmore Power Management Unit device TPS65913
+in dalmore DTS file. The Palma driver support this device.
 
-Guenter
+Enable following submodule of the TPS65913:
+- GPIO driver
+- RTC driver.
+- Power regulator driver.
+
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts |  183 +++++++++++++++++++++++++++++++-
+ 1 files changed, 182 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 886b66d..53f30c0 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -791,7 +791,7 @@
+ 					regulator-boot-on;
+ 				};
+ 
+-				dcdc3 {
++				tps65090_dcdc3_reg: dcdc3 {
+ 					regulator-name = "vdd-ao";
+ 					regulator-always-on;
+ 					regulator-boot-on;
+@@ -836,6 +836,177 @@
+ 				};
+ 			};
+ 		};
++
++		palmas: tps65913@58 {
++			compatible = "ti,palmas";
++			reg = <0x58>;
++			interrupts = <0 86 0x4>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			palmas_gpio: palmas_gpio {
++				compatible = "ti,palmas-gpio";
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			palmas_rtc {
++				compatible = "ti,palmas-rtc";
++				interrupt-parent = <&palmas>;
++				interrupts = <8 0>;
++			};
++
++			palmas_pmic {
++			    compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
++			    smps1-in-supply = <&tps65090_dcdc3_reg>;
++			    smps3-in-supply = <&tps65090_dcdc3_reg>;
++			    smps4-in-supply = <&tps65090_dcdc2_reg>;
++			    smps7-in-supply = <&tps65090_dcdc2_reg>;
++			    smps8-in-supply = <&tps65090_dcdc2_reg>;
++			    smps9-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo1-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo2-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo3-in-supply = <&palmas_smps3_reg>;
++			    ldo4-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo5-in-supply = <&vdd_ac_bat_reg>;
++			    ldo6-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo7-in-supply = <&tps65090_dcdc2_reg>;
++			    ldo8-in-supply = <&tps65090_dcdc3_reg>;
++			    ldo9-in-supply = <&palmas_smps9_reg>;
++			    ldoln-in-supply = <&tps65090_dcdc1_reg>;
++			    ldousb-in-supply = <&tps65090_dcdc1_reg>;
++			    regulators {
++				smps12 {
++					regulator-name = "vddio-ddr";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				palmas_smps3_reg: smps3 {
++					regulator-name = "vddio-1v8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				smps45 {
++					regulator-name = "vdd-core";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				smps457 {
++					regulator-name = "vdd-core";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				smps8 {
++					regulator-name = "avdd-pll";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				palmas_smps9_reg: smps9 {
++					regulator-name = "sdhci-vdd-sd-slot";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo1 {
++					regulator-name = "avdd-cam1";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo2 {
++					regulator-name = "avdd-cam2";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo3 {
++					regulator-name = "avdd-dsi-csi";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo4 {
++					regulator-name = "vpp-fuse";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				ldo6 {
++					regulator-name = "vdd-sensor-2v85";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++				};
++
++				ldo7 {
++					regulator-name = "vdd-af-cam1";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo8 {
++					regulator-name = "vdd-rtc";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <900000>;
++					regulator-always-on;
++					regulator-boot-on;
++					ti,enable-ldo8-tracking;
++				};
++
++				ldo9 {
++					regulator-name = "vddio-sdmmc-2";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldoln {
++					regulator-name = "hvdd-usb";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldousb {
++					regulator-name = "avdd-usb";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				regen1 {
++					regulator-name = "rail-3v3";
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				regen2 {
++					regulator-name = "rail-5v0";
++					regulator-max-microvolt = <5000000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++			    };
++			};
++		};
+ 	};
+ 
+ 	spi@7000da00 {
+@@ -951,6 +1122,16 @@
+ 			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
+ 			vin-supply = <&tps65090_dcdc1_reg>;
+ 		};
++
++		vdd_cam_1v8_reg: regulator@6 {
++			compatible = "regulator-fixed";
++			reg = <6>;
++			regulator-name = "vdd_cam_1v8_reg";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			enable-active-high;
++			gpio = <&palmas_gpio 6 0>; /* Palmas GPIO6 */
++		};
+ 	};
+ 
+ 	sound {
+-- 
+1.7.1.1
