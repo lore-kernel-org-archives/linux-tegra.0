@@ -1,75 +1,37 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: tegra: enable gpio-keys on dalmore
-Date: Sat, 6 Jul 2013 14:44:29 +0530
-Message-ID: <1373102069-5641-1-git-send-email-ldewangan@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: dt: t30 cardhu: add dt entry for lm90
+Date: Mon, 8 Jul 2013 15:35:48 +0800
+Message-ID: <51DA6BD4.1040300@nvidia.com>
+References: <1372928979-26938-1-git-send-email-wni@nvidia.com> <1372928979-26938-2-git-send-email-wni@nvidia.com> <51D70483.70203@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51D70483.70203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dalmore have the keys mounted on board which are connected
-to different pins of Tegra.
+On 07/06/2013 01:38 AM, Stephen Warren wrote:
+> On 07/04/2013 03:09 AM, Wei Ni wrote:
+>> Enable thermal sensor lm90 for t30 cardhu.
+> 
+>> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+> 
+>> +		nct1008: nct1008 {
+>> +			compatible = "lm90,nct1008";
+> 
+> "lm90" isn't a valid vendor prefix. I believe the value you want is
+> "onnn,nct1008". Same comment for patch 2/2.
+> 
+The lm90 doesn't support device tree very well. In the DT, we need to
+named as "lm90" so that the lm90 driver can be loaded, and we also need
+to add "nct1008" to indicate this is the nct1008 device, so that the
+lm90 driver can be loaded with the right i2c_device_id->driver_data.
 
-Add the keys entry in DTS file to enable key functionality.
-This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
-KEY_VOLUMEDOWN.
+I set the " compatible = "lm90,nct1008" ", this is the simplest way, and
+we doesn't need to change the lm90.c.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes from V1:
-- Reorder the nodes.
-
- arch/arm/boot/dts/tegra114-dalmore.dts |   30 ++++++++++++++++++++++++++++++
- 1 files changed, 30 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index cb640eb..259b517 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -883,6 +883,35 @@
- 		};
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		home {
-+			label = "Home";
-+			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
-+			linux,code = <102>; /* KEY_HOME */
-+		};
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
-+			linux,code = <116>; /* KEY_POWER */
-+			gpio-key,wakeup;
-+		};
-+
-+		volume_down {
-+			label = "VolumeDown";
-+			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
-+			linux,code = <114>; /* KEY_VOLUMEDOWN */
-+		};
-+
-+		volume_up {
-+			label = "VolumeUp";
-+			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
-+			linux,code = <115>; /* KEY_VOLUMEUP */
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -976,4 +1005,5 @@
- 			 <&tegra_car TEGRA114_CLK_EXTERN1>;
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
- 	};
-+
- };
--- 
-1.7.1.1
+Thanks.
+Wei.
