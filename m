@@ -1,244 +1,31 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] ARM: tegra: enable palmas device for dalmore
-Date: Mon, 8 Jul 2013 19:08:08 +0530
-Message-ID: <1373290688-2257-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
+Date: Mon, 08 Jul 2013 09:46:41 -0600
+Message-ID: <51DADEE1.1030408@wwwdotorg.org>
+References: <1372924670-16355-1-git-send-email-wni@nvidia.com> <1372924670-16355-3-git-send-email-wni@nvidia.com> <51D703C9.1060607@wwwdotorg.org> <20130705194728.GA24946@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130705194728.GA24946-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Make the entry of Dalmore Power Management Unit device TPS65913
-in dalmore DTS file. The Palma driver support this device.
+On 07/05/2013 01:47 PM, Guenter Roeck wrote:
+> On Fri, Jul 05, 2013 at 11:35:05AM -0600, Stephen Warren wrote:
+>> On 07/04/2013 01:57 AM, Wei Ni wrote:
+>>> Add support to handle irq. When the temperature touch
+>>> the limit value, the driver can handle the interrupt.
+>>
+>>> +	if (client->irq >= 0) {
+>>
+>> 0 isn't a valid IRQ, so you can write that as simply if (client->irq).
+>>
+> If I recall correctly, it is valid on some platforms.
 
-Enable following submodule of the TPS65913:
-- GPIO driver
-- RTC driver.
-- Power regulator driver.
-
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- arch/arm/boot/dts/tegra114-dalmore.dts |  183 +++++++++++++++++++++++++++++++-
- 1 files changed, 182 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 886b66d..53f30c0 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -791,7 +791,7 @@
- 					regulator-boot-on;
- 				};
- 
--				dcdc3 {
-+				tps65090_dcdc3_reg: dcdc3 {
- 					regulator-name = "vdd-ao";
- 					regulator-always-on;
- 					regulator-boot-on;
-@@ -836,6 +836,177 @@
- 				};
- 			};
- 		};
-+
-+		palmas: tps65913@58 {
-+			compatible = "ti,palmas";
-+			reg = <0x58>;
-+			interrupts = <0 86 0x4>;
-+
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			palmas_gpio: palmas_gpio {
-+				compatible = "ti,palmas-gpio";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+			};
-+
-+			palmas_rtc {
-+				compatible = "ti,palmas-rtc";
-+				interrupt-parent = <&palmas>;
-+				interrupts = <8 0>;
-+			};
-+
-+			palmas_pmic {
-+			    compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
-+			    smps1-in-supply = <&tps65090_dcdc3_reg>;
-+			    smps3-in-supply = <&tps65090_dcdc3_reg>;
-+			    smps4-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps7-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps8-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps9-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo1-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo2-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo3-in-supply = <&palmas_smps3_reg>;
-+			    ldo4-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo5-in-supply = <&vdd_ac_bat_reg>;
-+			    ldo6-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo7-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo8-in-supply = <&tps65090_dcdc3_reg>;
-+			    ldo9-in-supply = <&palmas_smps9_reg>;
-+			    ldoln-in-supply = <&tps65090_dcdc1_reg>;
-+			    ldousb-in-supply = <&tps65090_dcdc1_reg>;
-+			    regulators {
-+				smps12 {
-+					regulator-name = "vddio-ddr";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				palmas_smps3_reg: smps3 {
-+					regulator-name = "vddio-1v8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps45 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps457 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps8 {
-+					regulator-name = "avdd-pll";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				palmas_smps9_reg: smps9 {
-+					regulator-name = "sdhci-vdd-sd-slot";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo1 {
-+					regulator-name = "avdd-cam1";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo2 {
-+					regulator-name = "avdd-cam2";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo3 {
-+					regulator-name = "avdd-dsi-csi";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				ldo4 {
-+					regulator-name = "vpp-fuse";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				ldo6 {
-+					regulator-name = "vdd-sensor-2v85";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+				};
-+
-+				ldo7 {
-+					regulator-name = "vdd-af-cam1";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo8 {
-+					regulator-name = "vdd-rtc";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <900000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					ti,enable-ldo8-tracking;
-+				};
-+
-+				ldo9 {
-+					regulator-name = "vddio-sdmmc-2";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldoln {
-+					regulator-name = "hvdd-usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldousb {
-+					regulator-name = "avdd-usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				regen1 {
-+					regulator-name = "rail-3v3";
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				regen2 {
-+					regulator-name = "rail-5v0";
-+					regulator-max-microvolt = <5000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			    };
-+			};
-+		};
- 	};
- 
- 	spi@7000da00 {
-@@ -951,6 +1122,16 @@
- 			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
- 			vin-supply = <&tps65090_dcdc1_reg>;
- 		};
-+
-+		vdd_cam_1v8_reg: regulator@6 {
-+			compatible = "regulator-fixed";
-+			reg = <6>;
-+			regulator-name = "vdd_cam_1v8_reg";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			enable-active-high;
-+			gpio = <&palmas_gpio 6 0>; /* Palmas GPIO6 */
-+		};
- 	};
- 
- 	sound {
--- 
-1.7.1.1
+I thought ARM (just some ARM sub-architectures?) might have been the
+last architecture, and even irrespective of that, we were trying not to
+introduce any new code that relies on this strangeness, so it doesn't
+propagate?
