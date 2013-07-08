@@ -1,35 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 00/22] Unified SMMU driver among Tegra SoCs
-Date: Mon, 08 Jul 2013 11:37:51 -0600
-Message-ID: <51DAF8EF.2030702@wwwdotorg.org>
-References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com><20130708.114736.1280783845180530098.hdoyu@nvidia.com><51DADF91.30009@wwwdotorg.org> <20130708.201148.1964850060334610089.hdoyu@nvidia.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
+Date: Mon, 8 Jul 2013 13:06:23 -0700
+Message-ID: <20130708200623.GA1506@roeck-us.net>
+References: <1372924670-16355-1-git-send-email-wni@nvidia.com>
+ <1372924670-16355-3-git-send-email-wni@nvidia.com>
+ <51D703C9.1060607@wwwdotorg.org>
+ <20130705194728.GA24946@roeck-us.net>
+ <51DADEE1.1030408@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130708.201148.1964850060334610089.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51DADEE1.1030408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/08/2013 11:11 AM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Mon, 8 Jul 2013 17:49:37 +0200:
+On Mon, Jul 08, 2013 at 09:46:41AM -0600, Stephen Warren wrote:
+> On 07/05/2013 01:47 PM, Guenter Roeck wrote:
+> > On Fri, Jul 05, 2013 at 11:35:05AM -0600, Stephen Warren wrote:
+> >> On 07/04/2013 01:57 AM, Wei Ni wrote:
+> >>> Add support to handle irq. When the temperature touch
+> >>> the limit value, the driver can handle the interrupt.
+> >>
+> >>> +	if (client->irq >= 0) {
+> >>
+> >> 0 isn't a valid IRQ, so you can write that as simply if (client->irq).
+> >>
+> > If I recall correctly, it is valid on some platforms.
 > 
->>> For tegra device driver maintainers, please try this series to make
->>> your device work with IOMMU enabled. I guess that some of drivers may
->>> need to set its swgroup ID correctly in DT, and also you may need to
->>> check the usage of DMA mapping API correctly. For your convenience,
->>> you can get this series by git fetch:
->>
->> So are you saying this series will break some device drivers unless some
->> driver changes and/or DT additions are made? If so, those changes should
->> be (an early) part of this series; we can't break functionality.
+> I thought ARM (just some ARM sub-architectures?) might have been the
+> last architecture, and even irrespective of that, we were trying not to
+> introduce any new code that relies on this strangeness, so it doesn't
+> propagate?
 > 
-> Agree. Do we have any list of tests to run, especially for device drivers?
+Sounds good to me. Another problem, though, may be that NO_IRQ is sometimes
+defined as -1, sometimes as 0, sometimes as 0xffffffff, and sometimes as INT_MAX.
+Which of course is another mess :(.
 
-The best bet is to look through arch/arm/boot/dts/tegra*.dtsi, find the
-list of all Tegra devices, and test each driver, on all chips.
-
-I'll also send you a link to our internal Wiki with the test-cases I
-typically run.
+Guenter
