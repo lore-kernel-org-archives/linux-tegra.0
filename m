@@ -1,47 +1,48 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
-Date: Tue, 9 Jul 2013 15:54:51 +0800
-Message-ID: <51DBC1CB.8070407@nvidia.com>
-References: <1372924670-16355-1-git-send-email-wni@nvidia.com> <1372924670-16355-3-git-send-email-wni@nvidia.com> <51D703C9.1060607@wwwdotorg.org> <20130705194728.GA24946@roeck-us.net> <51DADEE1.1030408@wwwdotorg.org> <20130708200623.GA1506@roeck-us.net>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [lm-sensors] [PATCH 1/2] ARM: dt: t30 cardhu: add dt entry for
+  lm90
+Date: Tue, 9 Jul 2013 09:55:25 +0200
+Message-ID: <20130709095525.5158a0a5@endymion.delvare>
+References: <1372928979-26938-1-git-send-email-wni@nvidia.com>
+	<1372928979-26938-2-git-send-email-wni@nvidia.com>
+	<51D70483.70203@wwwdotorg.org>
+	<51DA6BD4.1040300@nvidia.com>
+	<20130708095024.041a6d57@endymion.delvare>
+	<51DA8805.50709@nvidia.com>
+	<20130708131421.GB21638@roeck-us.net>
+	<20130709062112.GC17499@mithrandir>
+	<51DBC058.2040904@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130708200623.GA1506-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+In-Reply-To: <51DBC058.2040904-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org" <linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2013 04:06 AM, Guenter Roeck wrote:
-> On Mon, Jul 08, 2013 at 09:46:41AM -0600, Stephen Warren wrote:
->> On 07/05/2013 01:47 PM, Guenter Roeck wrote:
->>> On Fri, Jul 05, 2013 at 11:35:05AM -0600, Stephen Warren wrote:
->>>> On 07/04/2013 01:57 AM, Wei Ni wrote:
->>>>> Add support to handle irq. When the temperature touch
->>>>> the limit value, the driver can handle the interrupt.
->>>>
->>>>> +	if (client->irq >= 0) {
->>>>
->>>> 0 isn't a valid IRQ, so you can write that as simply if (client->irq).
->>>>
->>> If I recall correctly, it is valid on some platforms.
->>
->> I thought ARM (just some ARM sub-architectures?) might have been the
->> last architecture, and even irrespective of that, we were trying not to
->> introduce any new code that relies on this strangeness, so it doesn't
->> propagate?
->>
-> Sounds good to me. Another problem, though, may be that NO_IRQ is sometimes
-> defined as -1, sometimes as 0, sometimes as 0xffffffff, and sometimes as INT_MAX.
-> Which of course is another mess :(.
+On Tue, 9 Jul 2013 15:48:40 +0800, Wei Ni wrote:
+> On 07/09/2013 02:21 PM, Thierry Reding wrote:
+> > It should work out of the box. As a matter of fact the same chip is used
+> > on Tamonten and the DTS files use "onnn,nct1008". That used to work. If
+> > it no longer does then that's a regression.
 > 
-> Guenter
-> 
+> I synced the linux-next from:
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> and use the tag v3.10-rc7, but in the lm90.c it doesn't have DT support,
+> such as "onnn,nct1008".
+> I googled it and found there has patch:
+> [PATCH] hwmon: (lm90) Add device tree support , which is in:
+> http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038099.html
+> , but it didn't be merged into the linux-next.
 
-Ok, so I will use the "if (client->irq)".
+It was not, because of the next reply in the same thread:
+http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038100.html
 
-Thanks.
-Wei.
+> which git repository and branch should I use ?
 
-> 
+It is supposed to just work. What doesn't work for you exactly?
+
+-- 
+Jean Delvare
