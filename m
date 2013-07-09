@@ -1,99 +1,49 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] hwmon: (lm90) add support to handle irq
-Date: Tue, 9 Jul 2013 15:58:54 +0800
-Message-ID: <51DBC2BE.6050000@nvidia.com>
-References: <1372924670-16355-1-git-send-email-wni@nvidia.com> <1372924670-16355-3-git-send-email-wni@nvidia.com> <20130709061514.GB17499@mithrandir>
+Subject: Re: [lm-sensors] [PATCH 1/2] ARM: dt: t30 cardhu: add dt entry for
+ lm90
+Date: Tue, 9 Jul 2013 16:58:51 +0800
+Message-ID: <51DBD0CB.2000504@nvidia.com>
+References: <1372928979-26938-1-git-send-email-wni@nvidia.com> <1372928979-26938-2-git-send-email-wni@nvidia.com> <51D70483.70203@wwwdotorg.org>	<51DA6BD4.1040300@nvidia.com> <20130708095024.041a6d57@endymion.delvare>	<51DA8805.50709@nvidia.com> <20130708131421.GB21638@roeck-us.net>	<20130709062112.GC17499@mithrandir> <51DBC058.2040904@nvidia.com> <20130709095525.5158a0a5@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130709061514.GB17499@mithrandir>
+In-Reply-To: <20130709095525.5158a0a5-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org" <linux-kernel-u79uwXL29TZX6JHB/w77yyCwEArCW2h5@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2013 02:15 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Jul 04, 2013 at 03:57:49PM +0800, Wei Ni wrote:
->> Add support to handle irq. When the temperature touch
-> 
-> Nit: This first sentence can be dropped. It merely repeats the subject.
-> And another nit: "irq" -> "IRQ"
-
-Ok, I will update in my next version.
-
-> 
->> the limit value, the driver can handle the interrupt.
+On 07/09/2013 03:55 PM, Jean Delvare wrote:
+> On Tue, 9 Jul 2013 15:48:40 +0800, Wei Ni wrote:
+>> On 07/09/2013 02:21 PM, Thierry Reding wrote:
+>>> It should work out of the box. As a matter of fact the same chip is used
+>>> on Tamonten and the DTS files use "onnn,nct1008". That used to work. If
+>>> it no longer does then that's a regression.
 >>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/hwmon/lm90.c |   25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
->>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index 2cb7f8e..fce9dfa 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -89,6 +89,7 @@
->>  #include <linux/err.h>
->>  #include <linux/mutex.h>
->>  #include <linux/sysfs.h>
->> +#include <linux/interrupt.h>
->>  
->>  /*
->>   * Addresses to scan
->> @@ -1423,6 +1424,18 @@ static void lm90_init_client(struct i2c_client *client)
->>  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
->>  }
->>  
->> +static void lm90_alert(struct i2c_client *client, unsigned int flag);
+>> I synced the linux-next from:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>> and use the tag v3.10-rc7, but in the lm90.c it doesn't have DT support,
+>> such as "onnn,nct1008".
+>> I googled it and found there has patch:
+>> [PATCH] hwmon: (lm90) Add device tree support , which is in:
+>> http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038099.html
+>> , but it didn't be merged into the linux-next.
 > 
-> Any reason why the implementation of lm90_alert() can't be moved here.
-> Granted, it'll make the diff larger but at least it'll allow us to get
-> rid of the forward declaration.
+> It was not, because of the next reply in the same thread:
+> http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038100.html
+> 
+>> which git repository and branch should I use ?
+> 
+> It is supposed to just work. What doesn't work for you exactly?
+> 
 
-Ok, you are right, I will move it.
+Oh, yes, the "onnn,nct1008" can work. I read the i2c driver and the
+of_i2c.c carefully, I understand why the lm90 can be loaded by setting
+"onnn,nct1008". Indeed, we can set the vendor string to anything, even
+"xxx,nct1008", the lm90 also can be loaded correctly.
 
-> 
->> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
->> +{
->> +	struct lm90_data *data = dev_id;
->> +	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
->> +
->> +	lm90_alert(client, 0);
->> +
->> +	return IRQ_HANDLED;
->> +}
-> 
-> Isn't this potentially dangerous, since if the IRQ was shared, IRQ
-> processing will always stop after this handler. Shouldn't you check
-> whether the device actually triggered an interrupt (by reading the
-> interrupt status register)?
+Anyway, I will use the "onnn,nct1008" in my next version.
 
-Yes, it has potential dangerous, I didn't consider it carefully.
-I will check the interrupt status.
-
-> 
->> +
->>  static int lm90_probe(struct i2c_client *client,
->>  		      const struct i2c_device_id *id)
->>  {
->> @@ -1499,6 +1512,18 @@ static int lm90_probe(struct i2c_client *client,
->>  		goto exit_remove_files;
->>  	}
->>  
->> +	if (client->irq >= 0) {
->> +		dev_dbg(dev, "lm90 irq: %d\n", client->irq);
-> 
-> Nit: "irq" -> "IRQ"
-
-Ok, got it.
-
-> 
-> Thierry
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
-> 
+Thanks for your comments.
+Wei.
