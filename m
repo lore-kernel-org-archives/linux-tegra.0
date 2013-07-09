@@ -1,82 +1,99 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: CPU hotplug issue w/ 0647065 clocksource: Add generic dummy
- timer driver
-Date: Mon, 8 Jul 2013 17:58:37 -0700
-Message-ID: <20130709005837.GC830@codeaurora.org>
-References: <51DAF895.1020700@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: tegra: enable gpio-keys on dalmore
+Date: Tue, 9 Jul 2013 08:04:49 +0200
+Message-ID: <20130709060447.GA17499@mithrandir>
+References: <1373102069-5641-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <51DAF895.1020700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1373102069-5641-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/08, Stephen Warren wrote:
-> CPU hotplug (replug) on Tegra HW seems to be occasionally broken due to
-> commit 0647065 "clocksource: Add generic dummy timer driver" in
-> linux-next. Reverting that commit solves the issue.
 
-We found some breakage during boot that has been fixed by two
-commits in linus' tree already. Do you know if you have these two
-patches
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-1f73a9806bdd07a5106409bbcab3884078bd34fe
-07bd1172902e782f288e4d44b1fde7dec0f08b6f
+On Sat, Jul 06, 2013 at 02:44:29PM +0530, Laxman Dewangan wrote:
+> Dalmore have the keys mounted on board which are connected
+> to different pins of Tegra.
+>=20
+> Add the keys entry in DTS file to enable key functionality.
+> This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
+> KEY_VOLUMEDOWN.
+>=20
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes from V1:
+> - Reorder the nodes.
+>=20
+>  arch/arm/boot/dts/tegra114-dalmore.dts |   30 ++++++++++++++++++++++++++=
+++++
+>  1 files changed, 30 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/t=
+egra114-dalmore.dts
+> index cb640eb..259b517 100644
+> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
+> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+> @@ -883,6 +883,35 @@
+>  		};
+>  	};
+> =20
+> +	gpio-keys {
+> +		compatible =3D "gpio-keys";
+> +
+> +		home {
+> +			label =3D "Home";
+> +			gpios =3D <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
+> +			linux,code =3D <102>; /* KEY_HOME */
 
-?
+I wonder if these should maybe go into a header file as well so that
+symbolic names can be used. That'll make the value self-descriptive and
+allow the comment to be dropped.
 
-> 
-> The symptom is that ~10% of the time, when re-plugging CPU1 (in a 2-core
-> system, after unplugging it about 1 second before), I'll see the
-> following WARN trigger in clockevents_program_event():
-> 
-> > int clockevents_program_event(struct clock_event_device *dev, ktime_t expires,
-> > 			      bool force)
-> > {
-> > 	unsigned long long clc;
-> > 	int64_t delta;
-> > 	int rc;
-> > 
-> > 	if (unlikely(expires.tv64 < 0)) {
-> > 		WARN_ON_ONCE(1);
-> > 		return -ETIME;
-> > 	}
-> 
-> This appears to be because in tick_handle_periodic_broadcast(),
-> dev->next_event == KTIME_MAX. The system then hangs; I think that loop
-> just keeps adding tick_period onto next_event, which doesn't manage to
-> get to an acceptable value for a long time, if ever!
-> 
-> Do you have any idea why this could happen? I assume that during
-> switching between the dummy timer added by that patch, and the real
-> Tegra timer (drivers/clocksource/tegra20_timer.c) the Tegra timer's
-> dev->next_event is temporarily set to KTIME_MAX, but somehow the timer
-> IRQ handling goes off while the device is in this temporary state? The
-> timer core seems to take steps to prevent this though, i.e. callilng
-> spin_lock_irqsave() in places.
+> +		volume_down {
+> +			label =3D "VolumeDown";
+> +			gpios =3D <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
+> +			linux,code =3D <114>; /* KEY_VOLUMEDOWN */
+> +		};
+> +
+> +		volume_up {
+> +			label =3D "VolumeUp";
+> +			gpios =3D <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
+> +			linux,code =3D <115>; /* KEY_VOLUMEUP */
+> +		};
+> +	};
 
-If you have the TWD then the dummy should only be used when you
-notify clockevents core about hitting "C3". Are you seeing this
-during idle or only during hotplug?
+Nit: Perhaps the labels should be "Volume Down" and "Volume Up" here?
 
-> 
-> If I modify tick_handle_periodic_broadcast() to check for a negative
-> dev->next_event and simply return in that case, the system seems to work
-> fine, and I do see tick_handle_periodic_broadcast() being called at a
-> later time, so obviously something is coming along later and programming
-> the HW to generate additional events. On this HW, I believe struct
-> clock_event_device.set_next_event is being used to emulate the periodic
-> broadcast using a one-shot timer, rather than using the HW's native
-> periodic capability, probably due to CONFIG_NO_HZ.
+Thierry
 
-This sounds very much like the bug that was fixed. I don't see
-why your broadcast timer would be emulating periodic mode instead
-of just using oneshot mode unless it was started before the
-system ever hit C3.
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR26f/AAoJEN0jrNd/PrOh2/wP+gLTfq2anKTC6WRi8p29BWtv
+a0PpZdpIn+4HN0eDRzw2huEk+ik1Te+SlLvb4YuVJxihEfWlx27lktx8gctTNhDr
+5f7k+Y0EHOIPKqW73wPLeRGdrCZ0chUFmde7wNftlKbCMVw+ozJk4K7p/hKbfhr+
+GdeELuNfe7Tc0ItOb2Q0uSxouQYUcWBQJYpcEu2gGXLOMX0RaCVvY/8KFBFwTmFL
+pI0Ef7WFaek+HO9Nq6A6KZfAVb/a6YdOcWrUJyrIXNpSt5k8roOPF4p1wdGd0O0G
+dwmsN/k1GaOD3w9BBYwXqvx7m0/Y+soLflGKZNP18OF1CXr6r0cDRB0mUkq1sAFL
+dqYeI/51+2IovxYnSnC6oxXwC/sJgbpInp+fFtc2UMsrWxsr0j5DvOMT2ju1xvhc
+ror8sw5gSt4YQHH6vt1B9W+dclyV9L9plxPDJl0v7p5QHKMSqCkh3FFQiYEvy7mM
+nQNdi7SYkCCrmSxl3/TVtdDE1J2kwuHFQx3mQEXiirn3V4sGGsqAIsS+WNDEH+nb
+Cbr5idbNjXSGnEp0Q/1zpa/v4MhrMOPh93OEUwnd8h7BaUjnfg+G5kkcBf5KxK0P
+m4FjMm8stFemp5+0X5h/2azAe2FeyW6dQqi6WJDDrZdKdJETvG4CutEW/njFf/dC
+ebCbQn//H0+2q4HVGRq+
+=NrhK
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
