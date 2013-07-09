@@ -1,49 +1,31 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [lm-sensors] [PATCH 1/2] ARM: dt: t30 cardhu: add dt entry for
- lm90
-Date: Tue, 9 Jul 2013 16:58:51 +0800
-Message-ID: <51DBD0CB.2000504@nvidia.com>
-References: <1372928979-26938-1-git-send-email-wni@nvidia.com> <1372928979-26938-2-git-send-email-wni@nvidia.com> <51D70483.70203@wwwdotorg.org>	<51DA6BD4.1040300@nvidia.com> <20130708095024.041a6d57@endymion.delvare>	<51DA8805.50709@nvidia.com> <20130708131421.GB21638@roeck-us.net>	<20130709062112.GC17499@mithrandir> <51DBC058.2040904@nvidia.com> <20130709095525.5158a0a5@endymion.delvare>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: CPU hotplug issue w/ 0647065 clocksource: Add generic dummy timer
+ driver
+Date: Tue, 09 Jul 2013 10:05:01 -0600
+Message-ID: <51DC34AD.30009@wwwdotorg.org>
+References: <51DAF895.1020700@wwwdotorg.org> <20130709005837.GC830@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130709095525.5158a0a5-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+In-Reply-To: <20130709005837.GC830-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09/2013 03:55 PM, Jean Delvare wrote:
-> On Tue, 9 Jul 2013 15:48:40 +0800, Wei Ni wrote:
->> On 07/09/2013 02:21 PM, Thierry Reding wrote:
->>> It should work out of the box. As a matter of fact the same chip is used
->>> on Tamonten and the DTS files use "onnn,nct1008". That used to work. If
->>> it no longer does then that's a regression.
->>
->> I synced the linux-next from:
->> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->> and use the tag v3.10-rc7, but in the lm90.c it doesn't have DT support,
->> such as "onnn,nct1008".
->> I googled it and found there has patch:
->> [PATCH] hwmon: (lm90) Add device tree support , which is in:
->> http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038099.html
->> , but it didn't be merged into the linux-next.
+On 07/08/2013 06:58 PM, Stephen Boyd wrote:
+> On 07/08, Stephen Warren wrote:
+>> CPU hotplug (replug) on Tegra HW seems to be occasionally broken due to
+>> commit 0647065 "clocksource: Add generic dummy timer driver" in
+>> linux-next. Reverting that commit solves the issue.
 > 
-> It was not, because of the next reply in the same thread:
-> http://lists.lm-sensors.org/pipermail/lm-sensors/2013-February/038100.html
+> We found some breakage during boot that has been fixed by two
+> commits in linus' tree already. Do you know if you have these two
+> patches
 > 
->> which git repository and branch should I use ?
-> 
-> It is supposed to just work. What doesn't work for you exactly?
-> 
+> 1f73a9806bdd07a5106409bbcab3884078bd34fe
+> 07bd1172902e782f288e4d44b1fde7dec0f08b6f
 
-Oh, yes, the "onnn,nct1008" can work. I read the i2c driver and the
-of_i2c.c carefully, I understand why the lm90 can be loaded by setting
-"onnn,nct1008". Indeed, we can set the vendor string to anything, even
-"xxx,nct1008", the lm90 also can be loaded correctly.
-
-Anyway, I will use the "onnn,nct1008" in my next version.
-
-Thanks for your comments.
-Wei.
+I didn't before since I was using next-20130705, but I just tried
+next-20130709 which does have those two commits, and I still see the issue.
