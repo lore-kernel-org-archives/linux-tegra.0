@@ -1,161 +1,65 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] hwmon: (lm90) add support to handle IRQ.
-Date: Wed, 10 Jul 2013 10:05:53 -0700
-Message-ID: <20130710170552.GA15665@dhcp-172-17-186-34.nvidia.com>
-References: <1373455539-2831-1-git-send-email-wni@nvidia.com>
- <1373455539-2831-3-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH v2 1/2] ARM: dt: t30 cardhu: add dt entry for nct1008
+Date: Wed, 10 Jul 2013 10:13:20 -0700
+Message-ID: <20130710171319.GB15665@dhcp-172-17-186-34.nvidia.com>
+References: <1373455798-2944-1-git-send-email-wni@nvidia.com>
+ <1373455798-2944-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+	protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1373455539-2831-3-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1373455798-2944-2-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---J/dobhs11T7y2rNN
+--eAbsdosE1cNLO4uF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2013 at 07:25:38PM +0800, Wei Ni wrote:
-> When the temperature exceed the limit range value,
-> the driver can handle the interrupt.
->=20
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/hwmon/lm90.c |   77 +++++++++++++++++++++++++++++++++++++++++---=
-------
->  1 file changed, 64 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index 2cb7f8e..88ff362 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -89,6 +89,7 @@
->  #include <linux/err.h>
->  #include <linux/mutex.h>
->  #include <linux/sysfs.h>
-> +#include <linux/interrupt.h>
-> =20
->  /*
->   * Addresses to scan
-> @@ -179,6 +180,19 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max=
-6659, adt7461, max6680,
->  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
->  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
-> =20
-> +/* LM90 status */
-> +#define LM90_LTHRM	(1 << 0)	/* local THERM limit tripped */
-> +#define LM90_RTHRM	(1 << 1)	/* remote THERM limit tripped */
-> +#define LM90_OPEN	(1 << 2)	/* remote is an open circuit */
-> +#define LM90_RLOW	(1 << 3)	/* remote low temp limit tripped */
-> +#define LM90_RHIGH	(1 << 4)	/* remote high temp limit tripped */
-> +#define LM90_LLOW	(1 << 5)	/* local low temp limit tripped */
-> +#define LM90_LHIGH	(1 << 6)	/* local high temp limit tripped */
-> +#define LM90_BUSY	(1 << 7)	/* ADC is converting */
+On Wed, Jul 10, 2013 at 07:29:57PM +0800, Wei Ni wrote:
+> Enable thermal sensor nct1008 for t30 cardhu.
+
+Nit: "Tegra30 Cardhu"
+
+> diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+[...]
+>  				};
+>  			};
+>  		};
 > +
-> +#define MAX6696_RLOW	(1 << 3)	/* remote2 low temp limit tripped */
-> +#define MAX6696_RHIGH	(1 << 4)	/* remote2 high temp limit tripped */
+> +		nct1008: nct1008 {
 
-I think this is a nice cleanup, but I'll leave it up to Guenter or Jean
-to decide if they want to have this. One problem with the above is that
-it's not immediately clear which register contains these bits. That's
-often solved by using the register name as prefix but that will in turn
-make the names for these bits rather long:
-
-	#define LM90_REG_R_STATUS_LTHRM	(1 << 0)
-	...
-
-Perhaps something like
-
-	#define LM90_STATUS_LTHRM	(1 << 0)
-
-would be a good compromise?
-
-Also if Guenter and Jean agree that this is a nice cleanup, it should
-probably go into a separate patch since it isn't directly related to the
-IRQ support.
-
->  /*
->   * Driver data (common to all clients)
->   */
-> @@ -1423,6 +1437,43 @@ static void lm90_init_client(struct i2c_client *cl=
-ient)
->  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
->  }
-> =20
-> +static void lm90_alarm_status(struct i2c_client *client,
-> +			      u8 alarms, u8 alarms_max6696)
-> +{
-> +	if (alarms & (LM90_LLOW | LM90_LHIGH | LM90_LTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 1);
-> +	if (alarms & (LM90_RLOW | LM90_RHIGH | LM90_RTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 2);
-> +	if (alarms & LM90_OPEN)
-> +		dev_warn(&client->dev,
-> +			 "temp%d diode open, please check!\n", 2);
-> +
-> +	if (alarms_max6696 & (MAX6696_RLOW | MAX6696_RHIGH))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 3);
-> +}
-> +
-> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
-> +{
-> +	struct lm90_data *data =3D dev_id;
-> +	struct i2c_client *client =3D to_i2c_client(data->hwmon_dev->parent);
-> +	u8 alarms, alarms_max6696 =3D 0;
-> +
-> +	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-> +
-> +	if (data->kind =3D=3D max6696)
-> +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms_max6696);
-> +
-> +	if ((alarms & 0x7f) =3D=3D 0 && (alarms_max6696 & 0xfe) =3D=3D 0) {
-> +		return IRQ_NONE;
-
-For non-MAX6696 chips this will evaluate to:
-
-	if ((alarms & 0x7f) =3D=3D 0 && (0 & 0xfe) =3D=3D 0)
-
-and therefore be true for any value of "alarms" and therefore always
-result in IRQ_NONE being returned.
-
-One other thing that slightly bugs me about this is that it's a little
-tedious to pass alarms_max6696 around like this. Suppose yet another
-slightly different variant is supported by this chip in the future,
-it's possible it will require another alarms_XYZ variable that has to be
-passed around. I don't have a better suggestion though, so maybe it can
-remain like this and be rewritten at some point should the need arise.
+I don't think it's very likely that this chip will need to be referenced
+by a phandle, in which case the "nct1008:" label can be dropped. Even if
+it was used at some point in the future, it's better to add it at that
+time.
 
 Thierry
 
---J/dobhs11T7y2rNN
+--eAbsdosE1cNLO4uF
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR3ZRwAAoJEN0jrNd/PrOhkMcP/0AcwDcLGTcyrfM1aGo8t6+L
-WIYvzldk2EcCbk657ZCmA7BKv1oG3bF4/nkKJ+/TWGYpDFMcg0LtCNkFLkPNxHwg
-wCuzwwaAU4j2t//y2Q//DThYOkE4JbC3LclXwOuAn10LS6L5ll5vL2NybrlMv1/4
-THT+299PB0BPt3WUtzusPKzEb61K3+5PR7P7mEbBAuYSpE0HLl9kBhELYsvJ4m0l
-wrJ765PHdotKOWKjtNdeeuxmfi5HeeGrc26v8EhqXFPBdJjZVoL4d8T8X0KAZ3zA
-AX5tXqo81h9c3H86sqUPgIx1M633uI7wco9lrYt4rSN41IP0PDc2fvVhXiXIsxXm
-8yT4lagR3qwn1WKJwDMb0RdCeQ94bPKNeiWIC7NXxBpD3wDYeTCEp95GzIu8f6ub
-rCekujrx+jloG8FJQHp3JOMsyJ80IfdB4lIapjEOm2SVQsjdb2dpU2dk0X3wEB2m
-ZEga6P3u5dc6/QmnrtqFcpLpxYmbXONTnX7m2Gc0kCok7sP+YMwCfeWEhvNVgeRN
-C9mY8lWRy1ZB96IxcTKj9uV9Oa1u06ON2MugsVAqE2Rwfb2tfWm4P++/rj70dPAB
-ly8XCyM3yuLpDktaDXLUgs/QTPD4puQPDpCK3C7ic0qIsTuj6zCDkFSQQD+yue97
-As+cmvnRgFJVJ6l7H/xU
-=w7Yo
+iQIcBAEBAgAGBQJR3ZYvAAoJEN0jrNd/PrOhbrkP/2e6u1DFpkaI19FxiXu1zh38
+Wk1hbEfwC0UA/v2Pmxfo3yVtCpu7vgj8bm3tJ/qUVdLs2r1xmAdbBc7AhfN2qnat
+OcX1OnnZ734R9Ob6/Em8hAZOwjnVYbBtzqFLBEkgPGDD84hog6VdltUZX+WzFZtJ
+S+mfYgBkxap0/8bYZniPwOVvGyFBvLuKNJRwyGz6mGmjNkmmj672QyCDa/LaIBFr
+FvHvhsLtHfkn8re36COyO0ZRKB3/dwZbjkr6ccJcQYSgLuYo5oGaoOHu41O2iqd2
+saGIf1nyy5OhVtjINI4pJkk+DeX2mem5ggnYPy8Kg/HoyS68VcpzbCANYMjZwKG/
+0cMNw1ckRoWIZ144AaCS8xbt+4SB9L8vNCRQ1gmWRxZVUy/goUNEca1N3W65vNgB
+Iva5bMXxShU8nem/W/hiFux7MMmTlo4ymax3R0XpazQF6BObKfqSqqTZK1BkmTsx
+R2lsqdTJw9qNHStAHyKxxlWABbdyizC0ErOTvxH4QatVpnYvBT0f1pWZFVslxII6
+tY94zV0v7HI/dY3c8C+lpPl7Suz6U0PEjffS0FIB5c511WmHyAMDYtZVs45r/4xI
+ODYPQYKRhob0ekv0oeyK3eUu66rWdY96qwSiI9lKI+unXvkXQwfpujWvbPcQsu8z
+w8fPMJQBoSFAwdM0wIPh
+=e6gy
 -----END PGP SIGNATURE-----
 
---J/dobhs11T7y2rNN--
+--eAbsdosE1cNLO4uF--
