@@ -1,65 +1,140 @@
-From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 00/12] dma: various minor clean ups for slave drivers
-Date: Wed, 10 Jul 2013 10:54:34 +0300
-Message-ID: <1373442874.24799.215.camel@smile>
-References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
-	 <20130530174727.GE3767@intel.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 2/3] hwmon: (lm90) add support to handle IRQ.
+Date: Wed, 10 Jul 2013 19:25:38 +0800
+Message-ID: <1373455539-2831-3-git-send-email-wni@nvidia.com>
+References: <1373455539-2831-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130530174727.GE3767-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1373455539-2831-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-b5Z7lJ3WibVrdx17CPfAsdBPR1lH4CV8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, Li Yang <leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Zhang Wei <zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-05-30 at 23:17 +0530, Vinod Koul wrote: 
-> On Mon, May 27, 2013 at 03:14:30PM +0300, Andy Shevchenko wrote:
-> > Here is a set of small independent patches that clean up or fix minor things
-> > across DMA slave drivers.
-> The series looks fine. I am going to wait a day more and apply, pls speak up if
-> you disagree and ack if you agree
+When the temperature exceed the limit range value,
+the driver can handle the interrupt.
 
-Kindly remind about this series.
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/hwmon/lm90.c |   77 +++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 64 insertions(+), 13 deletions(-)
 
-> 
-> --
-> ~Vinod
-> > 
-> > Andy Shevchenko (12):
-> >   imx-sdma: remove useless variable
-> >   mxs-dma: remove useless variable
-> >   edma: no need to assign residue to 0 explicitly
-> >   ep93xx_dma: remove useless use of lock
-> >   fsldma: remove useless use of lock
-> >   mmp_pdma: remove useless use of lock
-> >   mpc512x_dma: remove useless use of lock
-> >   pch_dma: remove useless use of lock
-> >   tegra20-apb-dma: remove useless use of lock
-> >   ipu_idmac: re-use dma_cookie_status()
-> >   mmp_tdma: set cookies as well when asked for tx status
-> >   txx9dmac: return DMA_SUCCESS immediately from device_tx_status()
-> > 
-> >  drivers/dma/edma.c            |  2 --
-> >  drivers/dma/ep93xx_dma.c      | 10 +---------
-> >  drivers/dma/fsldma.c          | 10 +---------
-> >  drivers/dma/imx-sdma.c        |  9 +++------
-> >  drivers/dma/ipu/ipu_idmac.c   |  5 +----
-> >  drivers/dma/mmp_pdma.c        | 10 +---------
-> >  drivers/dma/mmp_tdma.c        |  3 ++-
-> >  drivers/dma/mpc512x_dma.c     | 10 +---------
-> >  drivers/dma/mxs-dma.c         |  4 +---
-> >  drivers/dma/pch_dma.c         |  9 +--------
-> >  drivers/dma/tegra20-apb-dma.c |  8 +++-----
-> >  drivers/dma/txx9dmac.c        | 13 ++++++-------
-> >  12 files changed, 21 insertions(+), 72 deletions(-)
-> > 
-> > -- 
-> > 1.8.2.rc0.22.gb3600c3
-> > 
-> 
-
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index 2cb7f8e..88ff362 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -89,6 +89,7 @@
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/interrupt.h>
+ 
+ /*
+  * Addresses to scan
+@@ -179,6 +180,19 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+ #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
+ #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
+ 
++/* LM90 status */
++#define LM90_LTHRM	(1 << 0)	/* local THERM limit tripped */
++#define LM90_RTHRM	(1 << 1)	/* remote THERM limit tripped */
++#define LM90_OPEN	(1 << 2)	/* remote is an open circuit */
++#define LM90_RLOW	(1 << 3)	/* remote low temp limit tripped */
++#define LM90_RHIGH	(1 << 4)	/* remote high temp limit tripped */
++#define LM90_LLOW	(1 << 5)	/* local low temp limit tripped */
++#define LM90_LHIGH	(1 << 6)	/* local high temp limit tripped */
++#define LM90_BUSY	(1 << 7)	/* ADC is converting */
++
++#define MAX6696_RLOW	(1 << 3)	/* remote2 low temp limit tripped */
++#define MAX6696_RHIGH	(1 << 4)	/* remote2 high temp limit tripped */
++
+ /*
+  * Driver data (common to all clients)
+  */
+@@ -1423,6 +1437,43 @@ static void lm90_init_client(struct i2c_client *client)
+ 		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
+ }
+ 
++static void lm90_alarm_status(struct i2c_client *client,
++			      u8 alarms, u8 alarms_max6696)
++{
++	if (alarms & (LM90_LLOW | LM90_LHIGH | LM90_LTHRM))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 1);
++	if (alarms & (LM90_RLOW | LM90_RHIGH | LM90_RTHRM))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 2);
++	if (alarms & LM90_OPEN)
++		dev_warn(&client->dev,
++			 "temp%d diode open, please check!\n", 2);
++
++	if (alarms_max6696 & (MAX6696_RLOW | MAX6696_RHIGH))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 3);
++}
++
++static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
++{
++	struct lm90_data *data = dev_id;
++	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
++	u8 alarms, alarms_max6696 = 0;
++
++	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
++
++	if (data->kind == max6696)
++		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms_max6696);
++
++	if ((alarms & 0x7f) == 0 && (alarms_max6696 & 0xfe) == 0) {
++		return IRQ_NONE;
++	} else {
++		lm90_alarm_status(client, alarms, alarms_max6696);
++		return IRQ_HANDLED;
++	}
++}
++
+ static int lm90_probe(struct i2c_client *client,
+ 		      const struct i2c_device_id *id)
+ {
+@@ -1499,6 +1550,18 @@ static int lm90_probe(struct i2c_client *client,
+ 		goto exit_remove_files;
+ 	}
+ 
++	if (client->irq >= 0) {
++		dev_dbg(dev, "lm90 IRQ: %d\n", client->irq);
++		err = devm_request_threaded_irq(dev, client->irq,
++						NULL, lm90_irq_thread,
++						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++						"lm90", data);
++		if (err < 0) {
++			dev_err(dev, "cannot request interrupt\n");
++			goto exit_remove_files;
++		}
++	}
++
+ 	return 0;
+ 
+ exit_remove_files:
+@@ -1532,19 +1595,7 @@ static void lm90_alert(struct i2c_client *client, unsigned int flag)
+ 	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
+ 		dev_info(&client->dev, "Everything OK\n");
+ 	} else {
+-		if (alarms & 0x61)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 1);
+-		if (alarms & 0x1a)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 2);
+-		if (alarms & 0x04)
+-			dev_warn(&client->dev,
+-				 "temp%d diode open, please check!\n", 2);
+-
+-		if (alarms2 & 0x18)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 3);
++		lm90_alarm_status(client, alarms, alarms2);
+ 
+ 		/*
+ 		 * Disable ALERT# output, because these chips don't implement
 -- 
-Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Intel Finland Oy
+1.7.9.5
