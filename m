@@ -1,73 +1,35 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] ARM: tegra: enable gpio-keys on dalmore
-Date: Wed, 10 Jul 2013 12:30:43 +0530
-Message-ID: <1373439643-16633-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH V2] ARM: tegra: enable gpio-keys on dalmore
+Date: Wed, 10 Jul 2013 12:33:51 +0530
+Message-ID: <51DD0757.8060406@nvidia.com>
+References: <1373102069-5641-1-git-send-email-ldewangan@nvidia.com> <20130709060447.GA17499@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130709060447.GA17499@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dalmore have the keys mounted on board which are connected
-to different pins of Tegra.
-
-Add the keys entry in DTS file to enable key functionality.
-This will enable KEY_POWER, KEY_HOME, KEY_VOLUMEUP and
-KEY_VOLUMEDOWN.
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes from V1:
-- Reorder the nodes
-
-Changes from V2:
-- Remove unwanted line insertion.
-- Rename VolumeUP/Volume down lables.
-
- arch/arm/boot/dts/tegra114-dalmore.dts |   29 +++++++++++++++++++++++++++++
- 1 files changed, 29 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index cb640eb..a42bfa4 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -883,6 +883,35 @@
- 		};
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		home {
-+			label = "Home";
-+			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
-+			linux,code = <102>; /* KEY_HOME */
-+		};
-+
-+		power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
-+			linux,code = <116>; /* KEY_POWER */
-+			gpio-key,wakeup;
-+		};
-+
-+		volume_down {
-+			label = "Volume Down";
-+			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
-+			linux,code = <114>; /* KEY_VOLUMEDOWN */
-+		};
-+
-+		volume_up {
-+			label = "Volume Up";
-+			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
-+			linux,code = <115>; /* KEY_VOLUMEUP */
-+		};
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
--- 
-1.7.1.1
+On Tuesday 09 July 2013 11:34 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Sat, Jul 06, 2013 at 02:44:29PM +0530, Laxman Dewangan wrote:
+>> D
+>> +
+>> +		home {
+>> +			label = "Home";
+>> +			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
+>> +			linux,code = <102>; /* KEY_HOME */
+> I wonder if these should maybe go into a header file as well so that
+> symbolic names can be used. That'll make the value self-descriptive and
+> allow the comment to be dropped.
+>
+Currently there is no header for input.h in dt-binding include. We need 
+to add them first and then use it.
+Probably it can be done along with all cleanups on dts file atleast for 
+Tegra.
+I can start this if no one faster than me for this activity but for this 
+patch, I like to go on legacy way.
