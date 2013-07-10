@@ -1,41 +1,34 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 2/2] ARM: dt: t114 dalmore: add dt entry for nct1008
-Date: Wed, 10 Jul 2013 19:29:58 +0800
-Message-ID: <1373455798-2944-3-git-send-email-wni@nvidia.com>
-References: <1373455798-2944-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v2 0/2] Enable lm90 in Tegra30 and Tegra114.
+Date: Wed, 10 Jul 2013 19:29:56 +0800
+Message-ID: <1373455798-2944-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1373455798-2944-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org, swarren@wwwdotorg.org, linux@roeck-us.net, thierry.reding@gmail.com
+Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable thermal sensor nct1008 for t114 dalmore.
+Enable thermal sensor lm90 for Tegra30 Cardhu and Tegra114 Dalmore.
 
-Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+This series is v2, previous version patches:
+[RFC 1/9]: http://thread.gmane.org/gmane.linux.power-management.general/31056
+[v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11713/
+
+Changes from v1:
+1. add vendor strings "onnn" for nct1008 node.
+
+Changes from RFC:
+1. Enable it for Tegra114 Dalmore.
+
+Wei Ni (2):
+  ARM: dt: t30 cardhu: add dt entry for nct1008
+  ARM: dt: t114 dalmore: add dt entry for nct1008
+
  arch/arm/boot/dts/tegra114-dalmore.dts |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi  |    7 +++++++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index cb640eb..95c5079 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -738,6 +738,13 @@
- 			realtek,ldo1-en-gpios =
- 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
- 		};
-+
-+		nct1008: nct1008 {
-+			compatible = "onnn,nct1008";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
-+		};
- 	};
- 
- 	i2c@7000d000 {
 -- 
 1.7.9.5
