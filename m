@@ -1,59 +1,161 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Exposing GPU information for userspace processes
-Date: Wed, 10 Jul 2013 12:11:39 -0400
-Message-ID: <51DD87BB.8070307@nvidia.com>
-References: <51DC8493.9090405@nvidia.com> <CAPM=9tyCTF_+Z0S0+TKxio94LCRpJeWJ6U2EcozUj8tjmMESNg@mail.gmail.com> <20130710060949.GG18285@phenom.ffwll.local>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] hwmon: (lm90) add support to handle IRQ.
+Date: Wed, 10 Jul 2013 10:05:53 -0700
+Message-ID: <20130710170552.GA15665@dhcp-172-17-186-34.nvidia.com>
+References: <1373455539-2831-1-git-send-email-wni@nvidia.com>
+ <1373455539-2831-3-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130710060949.GG18285-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1373455539-2831-3-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7/10/2013 2:09 AM, Daniel Vetter wrote:
-> On Wed, Jul 10, 2013 at 04:01:49PM +1000, Dave Airlie wrote:
->> On Wed, Jul 10, 2013 at 7:45 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> We are currently looking into exporting some information from the linux
->>> kernel to userspace about the GPU. This information is specific per
->>> board as the data can vary depending on the fuses burnt on the board.
->>>
->>> Right now we are leaning towards adding sysfs properties to our existing
->>> nodes to share this information.
->>>
->>> Before we write up the patches and update our userspace apps to check
->>> the new locations, we wanted to make sure there wasn't a more
->>> accepted/proper way to export information already.
->>>
->>> Right now for instance we want to export a property to say how many
->>> pixel pipes there are. This could then be exported in something like:
->>>
->>> /sys/bus/platform/drivers/gr3d/54180000.gr3d/num_pixel_pipes
->>>
->>> Is this the best approach to take right now or is there another way we
->>> should export this and similar HW specific information?
->>
->> All the x86 GPU drivers use gpu specific get param ioctls for this so far.
->>
->> e.g. drivers/gpu/drm/radeon/radeon_kms.c:radeon_info_ioctl
-> 
-> In drm/i915 we also expose a bunch of thing to sysfs, but everything that
-> the userspace drivers need for operation is exposed through the getparam
-> ioctl. We add sysfs interfaces on top if there's a legit reason for the
-> user to script changes (e.g. gpu error state collection or tuning the
-> frequency scaling and related read-only statistics).
-> -Daniel
-> 
 
-Thank you both for your helpful responses. I was considering an ioctl as
-another option, and it seems that is likely the best approach to take
-for this type of information.
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Wed, Jul 10, 2013 at 07:25:38PM +0800, Wei Ni wrote:
+> When the temperature exceed the limit range value,
+> the driver can handle the interrupt.
+>=20
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/hwmon/lm90.c |   77 +++++++++++++++++++++++++++++++++++++++++---=
+------
+>  1 file changed, 64 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+> index 2cb7f8e..88ff362 100644
+> --- a/drivers/hwmon/lm90.c
+> +++ b/drivers/hwmon/lm90.c
+> @@ -89,6 +89,7 @@
+>  #include <linux/err.h>
+>  #include <linux/mutex.h>
+>  #include <linux/sysfs.h>
+> +#include <linux/interrupt.h>
+> =20
+>  /*
+>   * Addresses to scan
+> @@ -179,6 +180,19 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max=
+6659, adt7461, max6680,
+>  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
+>  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
+> =20
+> +/* LM90 status */
+> +#define LM90_LTHRM	(1 << 0)	/* local THERM limit tripped */
+> +#define LM90_RTHRM	(1 << 1)	/* remote THERM limit tripped */
+> +#define LM90_OPEN	(1 << 2)	/* remote is an open circuit */
+> +#define LM90_RLOW	(1 << 3)	/* remote low temp limit tripped */
+> +#define LM90_RHIGH	(1 << 4)	/* remote high temp limit tripped */
+> +#define LM90_LLOW	(1 << 5)	/* local low temp limit tripped */
+> +#define LM90_LHIGH	(1 << 6)	/* local high temp limit tripped */
+> +#define LM90_BUSY	(1 << 7)	/* ADC is converting */
+> +
+> +#define MAX6696_RLOW	(1 << 3)	/* remote2 low temp limit tripped */
+> +#define MAX6696_RHIGH	(1 << 4)	/* remote2 high temp limit tripped */
 
--rhyland
+I think this is a nice cleanup, but I'll leave it up to Guenter or Jean
+to decide if they want to have this. One problem with the above is that
+it's not immediately clear which register contains these bits. That's
+often solved by using the register name as prefix but that will in turn
+make the names for these bits rather long:
 
--- 
-nvpublic
+	#define LM90_REG_R_STATUS_LTHRM	(1 << 0)
+	...
+
+Perhaps something like
+
+	#define LM90_STATUS_LTHRM	(1 << 0)
+
+would be a good compromise?
+
+Also if Guenter and Jean agree that this is a nice cleanup, it should
+probably go into a separate patch since it isn't directly related to the
+IRQ support.
+
+>  /*
+>   * Driver data (common to all clients)
+>   */
+> @@ -1423,6 +1437,43 @@ static void lm90_init_client(struct i2c_client *cl=
+ient)
+>  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
+>  }
+> =20
+> +static void lm90_alarm_status(struct i2c_client *client,
+> +			      u8 alarms, u8 alarms_max6696)
+> +{
+> +	if (alarms & (LM90_LLOW | LM90_LHIGH | LM90_LTHRM))
+> +		dev_warn(&client->dev,
+> +			 "temp%d out of range, please check!\n", 1);
+> +	if (alarms & (LM90_RLOW | LM90_RHIGH | LM90_RTHRM))
+> +		dev_warn(&client->dev,
+> +			 "temp%d out of range, please check!\n", 2);
+> +	if (alarms & LM90_OPEN)
+> +		dev_warn(&client->dev,
+> +			 "temp%d diode open, please check!\n", 2);
+> +
+> +	if (alarms_max6696 & (MAX6696_RLOW | MAX6696_RHIGH))
+> +		dev_warn(&client->dev,
+> +			 "temp%d out of range, please check!\n", 3);
+> +}
+> +
+> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
+> +{
+> +	struct lm90_data *data =3D dev_id;
+> +	struct i2c_client *client =3D to_i2c_client(data->hwmon_dev->parent);
+> +	u8 alarms, alarms_max6696 =3D 0;
+> +
+> +	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
+> +
+> +	if (data->kind =3D=3D max6696)
+> +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms_max6696);
+> +
+> +	if ((alarms & 0x7f) =3D=3D 0 && (alarms_max6696 & 0xfe) =3D=3D 0) {
+> +		return IRQ_NONE;
+
+For non-MAX6696 chips this will evaluate to:
+
+	if ((alarms & 0x7f) =3D=3D 0 && (0 & 0xfe) =3D=3D 0)
+
+and therefore be true for any value of "alarms" and therefore always
+result in IRQ_NONE being returned.
+
+One other thing that slightly bugs me about this is that it's a little
+tedious to pass alarms_max6696 around like this. Suppose yet another
+slightly different variant is supported by this chip in the future,
+it's possible it will require another alarms_XYZ variable that has to be
+passed around. I don't have a better suggestion though, so maybe it can
+remain like this and be rewritten at some point should the need arise.
+
+Thierry
+
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR3ZRwAAoJEN0jrNd/PrOhkMcP/0AcwDcLGTcyrfM1aGo8t6+L
+WIYvzldk2EcCbk657ZCmA7BKv1oG3bF4/nkKJ+/TWGYpDFMcg0LtCNkFLkPNxHwg
+wCuzwwaAU4j2t//y2Q//DThYOkE4JbC3LclXwOuAn10LS6L5ll5vL2NybrlMv1/4
+THT+299PB0BPt3WUtzusPKzEb61K3+5PR7P7mEbBAuYSpE0HLl9kBhELYsvJ4m0l
+wrJ765PHdotKOWKjtNdeeuxmfi5HeeGrc26v8EhqXFPBdJjZVoL4d8T8X0KAZ3zA
+AX5tXqo81h9c3H86sqUPgIx1M633uI7wco9lrYt4rSN41IP0PDc2fvVhXiXIsxXm
+8yT4lagR3qwn1WKJwDMb0RdCeQ94bPKNeiWIC7NXxBpD3wDYeTCEp95GzIu8f6ub
+rCekujrx+jloG8FJQHp3JOMsyJ80IfdB4lIapjEOm2SVQsjdb2dpU2dk0X3wEB2m
+ZEga6P3u5dc6/QmnrtqFcpLpxYmbXONTnX7m2Gc0kCok7sP+YMwCfeWEhvNVgeRN
+C9mY8lWRy1ZB96IxcTKj9uV9Oa1u06ON2MugsVAqE2Rwfb2tfWm4P++/rj70dPAB
+ly8XCyM3yuLpDktaDXLUgs/QTPD4puQPDpCK3C7ic0qIsTuj6zCDkFSQQD+yue97
+As+cmvnRgFJVJ6l7H/xU
+=w7Yo
+-----END PGP SIGNATURE-----
+
+--J/dobhs11T7y2rNN--
