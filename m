@@ -1,87 +1,30 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: CPU hotplug issue w/ 0647065 clocksource: Add generic dummy
- timer driver
-Date: Tue, 9 Jul 2013 16:05:28 -0700
-Message-ID: <20130709230528.GE830@codeaurora.org>
-References: <51DAF895.1020700@wwwdotorg.org>
- <20130709005837.GC830@codeaurora.org>
- <51DC34AD.30009@wwwdotorg.org>
- <20130709163518.GD830@codeaurora.org>
- <51DC3FD2.9070308@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 10/11] ARM: dts: tegra114: dalmore: add GPIO power
+ key support
+Date: Wed, 10 Jul 2013 09:06:49 +0800
+Message-ID: <1373418409.1755.1.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372845047-25147-1-git-send-email-josephl@nvidia.com>
+	 <1372845047-25147-11-git-send-email-josephl@nvidia.com>
+	 <51DC4274.8040607@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51DC3FD2.9070308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51DC4274.8040607-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09, Stephen Warren wrote:
-> On 07/09/2013 10:35 AM, Stephen Boyd wrote:
-> > On 07/09, Stephen Warren wrote:
-> >> On 07/08/2013 06:58 PM, Stephen Boyd wrote:
-> >>> On 07/08, Stephen Warren wrote:
-> >>>> CPU hotplug (replug) on Tegra HW seems to be occasionally broken due to
-> >>>> commit 0647065 "clocksource: Add generic dummy timer driver" in
-> >>>> linux-next. Reverting that commit solves the issue.
-> >>>
-> >>> We found some breakage during boot that has been fixed by two
-> >>> commits in linus' tree already. Do you know if you have these two
-> >>> patches
-> >>>
-> >>> 1f73a9806bdd07a5106409bbcab3884078bd34fe
-> >>> 07bd1172902e782f288e4d44b1fde7dec0f08b6f
-> >>
-> >> I didn't before since I was using next-20130705, but I just tried
-> >> next-20130709 which does have those two commits, and I still see the issue.
-> >>
-> > 
-> > Ok can you get the output of /proc/timer_list and send it back
+On Wed, 2013-07-10 at 01:03 +0800, Stephen Warren wrote:
+> On 07/03/2013 03:50 AM, Joseph Lo wrote:
+> > Adding the GPIO power key and enabling the wake up function.
 > 
-> Sure, it's below. I took another snapshot after unplugging then
-> re-plugging CPU1, and there was no difference except in the actual time
-> values and list of queued events (at ~line 12). The set of timers,
-> modes, etc. were all the same.
+> I think I'll skip this one patch, because Laxman posted a more complete
+> patch "[PATCH V2] ARM: tegra: enable gpio-keys on dalmore". which
+> includes this change, plus defines another 3 keys.
 
-Ok I think I understand the problem now. The dummy timer is
-registered with the cpu hotplug notifier first. Then the TWD is
-registered, so what we get is a clockevent_register(dummy)
-followed by a clockevent_register(twd) on every hotplug (probably
-something we should optimize later). Regardless, when we hotplug
-out the CPU, the broadcast device is in oneshot mode. When we
-hotplug back in the CPU, the dummy event gets added first and
-fills in the per-cpu tickdevice slot for CPU1.
+OK, I agree your decision.
 
-When this happens we have to start the broadcast timer and the
-code there just forces the broadcast device to use the periodic
-broadcast handler (see tick_device_uses_broadcast()) without
-checking to see if the mode is periodic. Once that event handler
-is assigned to periodic broadcast we're in danger of getting an
-interrupt and trying to emulate oneshot mode when we shouldn't
-be.
-
-Can you try this patch?
-
-
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index 6d3f916..218bcb5 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -157,7 +157,10 @@ int tick_device_uses_broadcast(struct clock_event_device *dev, int cpu)
- 		dev->event_handler = tick_handle_periodic;
- 		tick_device_setup_broadcast_func(dev);
- 		cpumask_set_cpu(cpu, tick_broadcast_mask);
--		tick_broadcast_start_periodic(bc);
-+		if (tick_broadcast_device.mode == TICKDEV_MODE_PERIODIC)
-+			tick_broadcast_start_periodic(bc);
-+		else
-+			tick_broadcast_setup_oneshot(bc);
- 		ret = 1;
- 	} else {
- 		/*
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Thanks,
+Joseph
