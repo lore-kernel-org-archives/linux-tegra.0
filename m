@@ -1,242 +1,65 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] ARM: tegra: enable palmas device for dalmore
-Date: Wed, 10 Jul 2013 13:07:32 +0530
-Message-ID: <1373441852-27176-1-git-send-email-ldewangan@nvidia.com>
+From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Subject: Re: [PATCH 00/12] dma: various minor clean ups for slave drivers
+Date: Wed, 10 Jul 2013 10:54:34 +0300
+Message-ID: <1373442874.24799.215.camel@smile>
+References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
+	 <20130530174727.GE3767@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130530174727.GE3767-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Andy Shevchenko <andriy.shevchenko-b5Z7lJ3WibVrdx17CPfAsdBPR1lH4CV8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <djbw-b10kYP2dOMg@public.gmane.org>, Li Yang <leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Zhang Wei <zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org>, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Make the entry of Dalmore Power Management Unit device TPS65913
-in dalmore DTS file. The Palma driver support this device.
+On Thu, 2013-05-30 at 23:17 +0530, Vinod Koul wrote: 
+> On Mon, May 27, 2013 at 03:14:30PM +0300, Andy Shevchenko wrote:
+> > Here is a set of small independent patches that clean up or fix minor things
+> > across DMA slave drivers.
+> The series looks fine. I am going to wait a day more and apply, pls speak up if
+> you disagree and ack if you agree
 
-Enable following submodule of the TPS65913:
-- GPIO driver
-- RTC driver.
-- Power regulator driver.
+Kindly remind about this series.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes from V1:
-- renames nodes from palams_* to simple as gpio, rtc, pmic etc.
-- Added line gap properly.
-- Remove comment for palams-gpio reference as the entry itself explain.
-- Remove unit address for tps65913.
+> 
+> --
+> ~Vinod
+> > 
+> > Andy Shevchenko (12):
+> >   imx-sdma: remove useless variable
+> >   mxs-dma: remove useless variable
+> >   edma: no need to assign residue to 0 explicitly
+> >   ep93xx_dma: remove useless use of lock
+> >   fsldma: remove useless use of lock
+> >   mmp_pdma: remove useless use of lock
+> >   mpc512x_dma: remove useless use of lock
+> >   pch_dma: remove useless use of lock
+> >   tegra20-apb-dma: remove useless use of lock
+> >   ipu_idmac: re-use dma_cookie_status()
+> >   mmp_tdma: set cookies as well when asked for tx status
+> >   txx9dmac: return DMA_SUCCESS immediately from device_tx_status()
+> > 
+> >  drivers/dma/edma.c            |  2 --
+> >  drivers/dma/ep93xx_dma.c      | 10 +---------
+> >  drivers/dma/fsldma.c          | 10 +---------
+> >  drivers/dma/imx-sdma.c        |  9 +++------
+> >  drivers/dma/ipu/ipu_idmac.c   |  5 +----
+> >  drivers/dma/mmp_pdma.c        | 10 +---------
+> >  drivers/dma/mmp_tdma.c        |  3 ++-
+> >  drivers/dma/mpc512x_dma.c     | 10 +---------
+> >  drivers/dma/mxs-dma.c         |  4 +---
+> >  drivers/dma/pch_dma.c         |  9 +--------
+> >  drivers/dma/tegra20-apb-dma.c |  8 +++-----
+> >  drivers/dma/txx9dmac.c        | 13 ++++++-------
+> >  12 files changed, 21 insertions(+), 72 deletions(-)
+> > 
+> > -- 
+> > 1.8.2.rc0.22.gb3600c3
+> > 
+> 
 
- arch/arm/boot/dts/tegra114-dalmore.dts |  184 +++++++++++++++++++++++++++++++-
- 1 files changed, 183 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index a42bfa4..7bdad77 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -791,7 +791,7 @@
- 					regulator-boot-on;
- 				};
- 
--				dcdc3 {
-+				tps65090_dcdc3_reg: dcdc3 {
- 					regulator-name = "vdd-ao";
- 					regulator-always-on;
- 					regulator-boot-on;
-@@ -836,6 +836,178 @@
- 				};
- 			};
- 		};
-+
-+		palmas: tps65913 {
-+			compatible = "ti,palmas";
-+			reg = <0x58>;
-+			interrupts = <0 86 0x4>;
-+
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			palmas_gpio: gpio {
-+				compatible = "ti,palmas-gpio";
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+			};
-+
-+			rtc {
-+				compatible = "ti,palmas-rtc";
-+				interrupt-parent = <&palmas>;
-+				interrupts = <8 0>;
-+			};
-+
-+			pmic {
-+			    compatible = "ti,tps65913-pmic", "ti,palmas-pmic";
-+			    smps1-in-supply = <&tps65090_dcdc3_reg>;
-+			    smps3-in-supply = <&tps65090_dcdc3_reg>;
-+			    smps4-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps7-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps8-in-supply = <&tps65090_dcdc2_reg>;
-+			    smps9-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo1-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo2-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo3-in-supply = <&palmas_smps3_reg>;
-+			    ldo4-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo5-in-supply = <&vdd_ac_bat_reg>;
-+			    ldo6-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo7-in-supply = <&tps65090_dcdc2_reg>;
-+			    ldo8-in-supply = <&tps65090_dcdc3_reg>;
-+			    ldo9-in-supply = <&palmas_smps9_reg>;
-+			    ldoln-in-supply = <&tps65090_dcdc1_reg>;
-+			    ldousb-in-supply = <&tps65090_dcdc1_reg>;
-+
-+			    regulators {
-+				smps12 {
-+					regulator-name = "vddio-ddr";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				palmas_smps3_reg: smps3 {
-+					regulator-name = "vddio-1v8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps45 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps457 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				smps8 {
-+					regulator-name = "avdd-pll";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				palmas_smps9_reg: smps9 {
-+					regulator-name = "sdhci-vdd-sd-slot";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo1 {
-+					regulator-name = "avdd-cam1";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo2 {
-+					regulator-name = "avdd-cam2";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo3 {
-+					regulator-name = "avdd-dsi-csi";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				ldo4 {
-+					regulator-name = "vpp-fuse";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
-+				ldo6 {
-+					regulator-name = "vdd-sensor-2v85";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+				};
-+
-+				ldo7 {
-+					regulator-name = "vdd-af-cam1";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+				};
-+
-+				ldo8 {
-+					regulator-name = "vdd-rtc";
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt = <900000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					ti,enable-ldo8-tracking;
-+				};
-+
-+				ldo9 {
-+					regulator-name = "vddio-sdmmc-2";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldoln {
-+					regulator-name = "hvdd-usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+				};
-+
-+				ldousb {
-+					regulator-name = "avdd-usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				regen1 {
-+					regulator-name = "rail-3v3";
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				regen2 {
-+					regulator-name = "rail-5v0";
-+					regulator-max-microvolt = <5000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			    };
-+			};
-+		};
- 	};
- 
- 	spi@7000da00 {
-@@ -980,6 +1152,16 @@
- 			gpio = <&gpio TEGRA_GPIO(K, 1) GPIO_ACTIVE_HIGH>;
- 			vin-supply = <&tps65090_dcdc1_reg>;
- 		};
-+
-+		vdd_cam_1v8_reg: regulator@6 {
-+			compatible = "regulator-fixed";
-+			reg = <6>;
-+			regulator-name = "vdd_cam_1v8_reg";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			enable-active-high;
-+			gpio = <&palmas_gpio 6 0>;
-+		};
- 	};
- 
- 	sound {
 -- 
-1.7.1.1
+Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Intel Finland Oy
