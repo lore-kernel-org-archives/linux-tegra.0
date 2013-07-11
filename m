@@ -1,241 +1,99 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] hwmon: (lm90) split set&show temp as common codes
-Date: Thu, 11 Jul 2013 16:42:01 +0800
-Message-ID: <51DE6FD9.8080206@nvidia.com>
-References: <1373455539-2831-1-git-send-email-wni@nvidia.com> <1373455539-2831-2-git-send-email-wni@nvidia.com> <20130710182154.GC22430@roeck-us.net>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: CPU hotplug issue w/ 0647065 clocksource: Add generic dummy
+ timer driver
+Date: Thu, 11 Jul 2013 07:00:59 -0700
+Message-ID: <20130711140059.GA27430@codeaurora.org>
+References: <51DAF895.1020700@wwwdotorg.org>
+ <20130709005837.GC830@codeaurora.org>
+ <51DC34AD.30009@wwwdotorg.org>
+ <20130709163518.GD830@codeaurora.org>
+ <51DC3FD2.9070308@wwwdotorg.org>
+ <20130709230528.GE830@codeaurora.org>
+ <51DD872D.7020101@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130710182154.GC22430-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51DD872D.7020101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/11/2013 02:21 AM, Guenter Roeck wrote:
-> On Wed, Jul 10, 2013 at 07:25:37PM +0800, Wei Ni wrote:
->> Split set&show temp codes as common functions, so we can use it directly when
->> implement linux thermal framework.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/hwmon/lm90.c |  118 ++++++++++++++++++++++++++++++++------------------
->>  1 file changed, 75 insertions(+), 43 deletions(-)
->>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index 8eeb141..2cb7f8e 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -702,29 +702,37 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
->>   * Sysfs stuff
->>   */
->>
->> -static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
->> -                       char *buf)
->> +static int read_temp8(struct device *dev, int index)
->>  {
->> -     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->> -     struct lm90_data *data = lm90_update_device(dev);
->>       int temp;
->> +     struct lm90_data *data = lm90_update_device(dev);
->>
-> Why this reordering of variables ?
+On 07/10, Stephen Warren wrote:
+> On 07/09/2013 05:05 PM, Stephen Boyd wrote:
+> > On 07/09, Stephen Warren wrote:
+> >> On 07/09/2013 10:35 AM, Stephen Boyd wrote:
+> >>> On 07/09, Stephen Warren wrote:
+> >>>> On 07/08/2013 06:58 PM, Stephen Boyd wrote:
+> >>>>> On 07/08, Stephen Warren wrote:
+> >>>>>> CPU hotplug (replug) on Tegra HW seems to be occasionally broken due to
+> >>>>>> commit 0647065 "clocksource: Add generic dummy timer driver" in
+> >>>>>> linux-next. Reverting that commit solves the issue.
+> ...
+> > Can you try this patch?
+> 
+> That seems to work great, thanks! I successfully unpugged/replugged CPU1
+> about 200 times, whereas without the patch I'd usually see the problem
+> about 10% of replug attempts.
+> 
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
 
-Oh, I didn't noticed it yet, thanks for your review, I will change it.
+Thomas, here's the full patch:
 
-> 
->>       if (data->kind == adt7461)
->> -             temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
->> +             temp = temp_from_u8_adt7461(data, data->temp8[index]);
->>       else if (data->kind == max6646)
->> -             temp = temp_from_u8(data->temp8[attr->index]);
->> +             temp = temp_from_u8(data->temp8[index]);
->>       else
->> -             temp = temp_from_s8(data->temp8[attr->index]);
->> +             temp = temp_from_s8(data->temp8[index]);
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 && attr->index == 3)
->> +     if (data->kind == lm99 && index == 3)
->>               temp += 16000;
->>
->> +     return temp;
->> +}
->> +
->> +static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
->> +                       char *buf)
->> +{
->> +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->> +     int temp;
->> +
->> +     temp = read_temp8(dev, attr->index);
->> +
->>       return sprintf(buf, "%d\n", temp);
-> 
-> Might as well simplify with
->         return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
+---8<----
+Subject: [PATCH] tick: Fix hotplug confusing the broadcast mode
 
-Ok, I will update it.
+On ARM systems the dummy clockevent is registered with the cpu
+hotplug notifier chain before any other per-cpu clockevent. This
+has the side-effect of causing the dummy clockevent to be
+registered first in every hotplug sequence. Because the dummy is
+first, we'll try to turn the broadcast source on but the code in
+tick_device_uses_broadcast() assumes the broadcast source is in
+periodic mode and calls tick_broadcast_start_periodic()
+unconditionally.
 
-> 
->>  }
->>
->> -static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->> -                      const char *buf, size_t count)
->> +static void write_temp8(struct device *dev, int index, long val)
->>  {
->>       static const u8 reg[8] = {
->>               LM90_REG_W_LOCAL_LOW,
->> @@ -737,60 +745,76 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->>               MAX6659_REG_W_REMOTE_EMERG,
->>       };
->>
->> -     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->>       struct i2c_client *client = to_i2c_client(dev);
->>       struct lm90_data *data = i2c_get_clientdata(client);
->> -     int nr = attr->index;
->> -     long val;
->> -     int err;
->> -
->> -     err = kstrtol(buf, 10, &val);
->> -     if (err < 0)
->> -             return err;
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 && attr->index == 3)
->> +     if (data->kind == lm99 && index == 3)
->>               val -= 16000;
->>
->>       mutex_lock(&data->update_lock);
->>       if (data->kind == adt7461)
->> -             data->temp8[nr] = temp_to_u8_adt7461(data, val);
->> +             data->temp8[index] = temp_to_u8_adt7461(data, val);
->>       else if (data->kind == max6646)
->> -             data->temp8[nr] = temp_to_u8(val);
->> +             data->temp8[index] = temp_to_u8(val);
->>       else
->> -             data->temp8[nr] = temp_to_s8(val);
->> +             data->temp8[index] = temp_to_s8(val);
->>
->> -     lm90_select_remote_channel(client, data, nr >= 6);
->> -     i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
->> +     lm90_select_remote_channel(client, data, index >= 6);
->> +     i2c_smbus_write_byte_data(client, reg[index], data->temp8[index]);
->>       lm90_select_remote_channel(client, data, 0);
->>
->>       mutex_unlock(&data->update_lock);
->> +}
->> +
->> +static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->> +                      const char *buf, size_t count)
->> +{
->> +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->> +     int index = attr->index;
->> +     long val;
->> +     int err;
->> +
->> +     err = kstrtol(buf, 10, &val);
->> +     if (err < 0)
->> +             return err;
->> +
->> +     write_temp8(dev, index, val);
->> +
->>       return count;
->>  }
->>
->> -static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
->> -                        char *buf)
->> +static int read_temp11(struct device *dev, int index)
->>  {
->> -     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->> -     struct lm90_data *data = lm90_update_device(dev);
->>       int temp;
->> +     struct lm90_data *data = lm90_update_device(dev);
->>
-> Another unnecessary variable reorder.
-> 
->>       if (data->kind == adt7461)
->> -             temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
->> +             temp = temp_from_u16_adt7461(data, data->temp11[index]);
->>       else if (data->kind == max6646)
->> -             temp = temp_from_u16(data->temp11[attr->index]);
->> +             temp = temp_from_u16(data->temp11[index]);
->>       else
->> -             temp = temp_from_s16(data->temp11[attr->index]);
->> +             temp = temp_from_s16(data->temp11[index]);
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 &&  attr->index <= 2)
->> +     if (data->kind == lm99 &&  index <= 2)
->>               temp += 16000;
->>
->> +     return temp;
->> +}
->> +
->> +static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
->> +                        char *buf)
->> +{
->> +     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->> +     int temp;
->> +
->> +     temp = read_temp11(dev, attr->index);
->> +
->>       return sprintf(buf, "%d\n", temp);
-> 
-> Same simplification as above.
-> 
->>  }
->>
->> -static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->> -                       const char *buf, size_t count)
->> +static void write_temp11(struct device *dev, int nr, int index, long val)
->>  {
->>       struct {
->>               u8 high;
->> @@ -804,17 +828,8 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->>               { LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
->>       };
->>
->> -     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->>       struct i2c_client *client = to_i2c_client(dev);
->>       struct lm90_data *data = i2c_get_clientdata(client);
->> -     int nr = attr->nr;
->> -     int index = attr->index;
->> -     long val;
->> -     int err;
->> -
->> -     err = kstrtol(buf, 10, &val);
->> -     if (err < 0)
->> -             return err;
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->>       if (data->kind == lm99 && index <= 2)
->> @@ -839,6 +854,23 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->>       lm90_select_remote_channel(client, data, 0);
->>
->>       mutex_unlock(&data->update_lock);
->> +}
->> +
->> +static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->> +                       const char *buf, size_t count)
->> +{
->> +     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->> +     int nr = attr->nr;
->> +     int index = attr->index;
->> +     long val;
->> +     int err;
->> +
->> +     err = kstrtol(buf, 10, &val);
->> +     if (err < 0)
->> +             return err;
->> +
->> +     write_temp11(dev, nr, index, val);
->> +
->>       return count;
->>  }
->>
->> --
->> 1.7.9.5
->>
->>
+On boot this isn't a problem because we typically haven't
+switched into oneshot mode yet (if at all). During hotplug, if
+the broadcast source isn't in periodic mode we'll replace the
+broadcast oneshot handler with the broadcast periodic handler and
+start emulating oneshot mode when we shouldn't. Due to the way
+the broadcast oneshot handler programs the next_event it's
+possible for it to contain KTIME_MAX and cause us to hang the
+system when the periodic handler tries to program the next tick.
+Fix this by using the appropriate function to start the broadcast
+source.
+
+Reported-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+---
+ kernel/time/tick-broadcast.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
+index 6d3f916..218bcb5 100644
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -157,7 +157,10 @@ int tick_device_uses_broadcast(struct clock_event_device *dev, int cpu)
+ 		dev->event_handler = tick_handle_periodic;
+ 		tick_device_setup_broadcast_func(dev);
+ 		cpumask_set_cpu(cpu, tick_broadcast_mask);
+-		tick_broadcast_start_periodic(bc);
++		if (tick_broadcast_device.mode == TICKDEV_MODE_PERIODIC)
++			tick_broadcast_start_periodic(bc);
++		else
++			tick_broadcast_setup_oneshot(bc);
+ 		ret = 1;
+ 	} else {
+ 		/*
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
+
+
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
