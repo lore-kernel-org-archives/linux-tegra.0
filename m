@@ -1,99 +1,127 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: CPU hotplug issue w/ 0647065 clocksource: Add generic dummy
- timer driver
-Date: Thu, 11 Jul 2013 07:00:59 -0700
-Message-ID: <20130711140059.GA27430@codeaurora.org>
-References: <51DAF895.1020700@wwwdotorg.org>
- <20130709005837.GC830@codeaurora.org>
- <51DC34AD.30009@wwwdotorg.org>
- <20130709163518.GD830@codeaurora.org>
- <51DC3FD2.9070308@wwwdotorg.org>
- <20130709230528.GE830@codeaurora.org>
- <51DD872D.7020101@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status bit
+Date: Fri, 12 Jul 2013 15:48:05 +0800
+Message-ID: <1373615287-18502-3-git-send-email-wni@nvidia.com>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51DD872D.7020101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1373615287-18502-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/10, Stephen Warren wrote:
-> On 07/09/2013 05:05 PM, Stephen Boyd wrote:
-> > On 07/09, Stephen Warren wrote:
-> >> On 07/09/2013 10:35 AM, Stephen Boyd wrote:
-> >>> On 07/09, Stephen Warren wrote:
-> >>>> On 07/08/2013 06:58 PM, Stephen Boyd wrote:
-> >>>>> On 07/08, Stephen Warren wrote:
-> >>>>>> CPU hotplug (replug) on Tegra HW seems to be occasionally broken due to
-> >>>>>> commit 0647065 "clocksource: Add generic dummy timer driver" in
-> >>>>>> linux-next. Reverting that commit solves the issue.
-> ...
-> > Can you try this patch?
-> 
-> That seems to work great, thanks! I successfully unpugged/replugged CPU1
-> about 200 times, whereas without the patch I'd usually see the problem
-> about 10% of replug attempts.
-> 
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+Add bit defines for the status register.
 
-Thomas, here's the full patch:
-
----8<----
-Subject: [PATCH] tick: Fix hotplug confusing the broadcast mode
-
-On ARM systems the dummy clockevent is registered with the cpu
-hotplug notifier chain before any other per-cpu clockevent. This
-has the side-effect of causing the dummy clockevent to be
-registered first in every hotplug sequence. Because the dummy is
-first, we'll try to turn the broadcast source on but the code in
-tick_device_uses_broadcast() assumes the broadcast source is in
-periodic mode and calls tick_broadcast_start_periodic()
-unconditionally.
-
-On boot this isn't a problem because we typically haven't
-switched into oneshot mode yet (if at all). During hotplug, if
-the broadcast source isn't in periodic mode we'll replace the
-broadcast oneshot handler with the broadcast periodic handler and
-start emulating oneshot mode when we shouldn't. Due to the way
-the broadcast oneshot handler programs the next_event it's
-possible for it to contain KTIME_MAX and cause us to hang the
-system when the periodic handler tries to program the next tick.
-Fix this by using the appropriate function to start the broadcast
-source.
-
-Reported-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- kernel/time/tick-broadcast.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/hwmon/lm90.c |   72 ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 49 insertions(+), 23 deletions(-)
 
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index 6d3f916..218bcb5 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -157,7 +157,10 @@ int tick_device_uses_broadcast(struct clock_event_device *dev, int cpu)
- 		dev->event_handler = tick_handle_periodic;
- 		tick_device_setup_broadcast_func(dev);
- 		cpumask_set_cpu(cpu, tick_broadcast_mask);
--		tick_broadcast_start_periodic(bc);
-+		if (tick_broadcast_device.mode == TICKDEV_MODE_PERIODIC)
-+			tick_broadcast_start_periodic(bc);
-+		else
-+			tick_broadcast_setup_oneshot(bc);
- 		ret = 1;
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index 5f30f90..c90037f 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -179,6 +179,19 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+ #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
+ #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
+ 
++/* LM90 status */
++#define LM90_STATUS_LTHRM	(1 << 0) /* local THERM limit tripped */
++#define LM90_STATUS_RTHRM	(1 << 1) /* remote THERM limit tripped */
++#define LM90_STATUS_OPEN	(1 << 2) /* remote is an open circuit */
++#define LM90_STATUS_RLOW	(1 << 3) /* remote low temp limit tripped */
++#define LM90_STATUS_RHIGH	(1 << 4) /* remote high temp limit tripped */
++#define LM90_STATUS_LLOW	(1 << 5) /* local low temp limit tripped */
++#define LM90_STATUS_LHIGH	(1 << 6) /* local high temp limit tripped */
++#define LM90_STATUS_BUSY	(1 << 7) /* ADC is converting */
++
++#define MAX6696_STATUS2_RLOW	(1 << 3) /* remote2 low temp limit tripped */
++#define MAX6696_STATUS2_RHIGH	(1 << 4) /* remote2 high temp limit tripped */
++
+ /*
+  * Driver data (common to all clients)
+  */
+@@ -1417,6 +1430,36 @@ static void lm90_init_client(struct i2c_client *client)
+ 		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
+ }
+ 
++static bool lm90_is_tripped(struct i2c_client *client)
++{
++	struct lm90_data *data = i2c_get_clientdata(client);
++	u8 status, status2 = 0;
++
++	lm90_read_reg(client, LM90_REG_R_STATUS, &status);
++
++	if (data->kind == max6696)
++		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &status2);
++
++	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
++		return false;
++
++	if (status & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 1);
++	if (status & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 2);
++	if (status & LM90_STATUS_OPEN)
++		dev_warn(&client->dev,
++			 "temp%d diode open, please check!\n", 2);
++
++	if (status2 & (MAX6696_STATUS2_RLOW | MAX6696_STATUS2_RHIGH))
++		dev_warn(&client->dev,
++			 "temp%d out of range, please check!\n", 3);
++
++	return true;
++}
++
+ static int lm90_probe(struct i2c_client *client,
+ 		      const struct i2c_device_id *id)
+ {
+@@ -1515,36 +1558,19 @@ static int lm90_remove(struct i2c_client *client)
+ 
+ static void lm90_alert(struct i2c_client *client, unsigned int flag)
+ {
+-	struct lm90_data *data = i2c_get_clientdata(client);
+-	u8 config, alarms, alarms2 = 0;
+-
+-	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
+-
+-	if (data->kind == max6696)
+-		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms2);
+-
+-	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
++	if (!lm90_is_tripped(client)) {
+ 		dev_info(&client->dev, "Everything OK\n");
  	} else {
+-		if (alarms & 0x61)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 1);
+-		if (alarms & 0x1a)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 2);
+-		if (alarms & 0x04)
+-			dev_warn(&client->dev,
+-				 "temp%d diode open, please check!\n", 2);
+-
+-		if (alarms2 & 0x18)
+-			dev_warn(&client->dev,
+-				 "temp%d out of range, please check!\n", 3);
+-
  		/*
+ 		 * Disable ALERT# output, because these chips don't implement
+ 		 * SMBus alert correctly; they should only hold the alert line
+ 		 * low briefly.
+ 		 */
++		struct lm90_data *data = i2c_get_clientdata(client);
++		u8 config, alarms;
++
++		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
++
+ 		if ((data->flags & LM90_HAVE_BROKEN_ALERT)
+ 		 && (alarms & data->alert_alarms)) {
+ 			dev_dbg(&client->dev, "Disabling ALERT#\n");
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
-
-
-
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+1.7.9.5
