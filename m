@@ -1,45 +1,88 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v3 0/4] Lm90 Enhancements
-Date: Fri, 12 Jul 2013 15:48:03 +0800
-Message-ID: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
+Date: Fri, 12 Jul 2013 15:48:06 +0800
+Message-ID: <1373615287-18502-4-git-send-email-wni@nvidia.com>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <lm-sensors-bounces@lm-sensors.org>
+In-Reply-To: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
+List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
+List-Post: <mailto:lm-sensors@lm-sensors.org>
+List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
+List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
+	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
+Sender: lm-sensors-bounces@lm-sensors.org
+Errors-To: lm-sensors-bounces@lm-sensors.org
 To: khali@linux-fr.org, linux@roeck-us.net, thierry.reding@gmail.com
-Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch set enhance the lm90 driver,
-it make the driver more readable and easier to use thermal framework.
+When the temperature exceed the limit range value,
+the driver can handle the interrupt.
 
-This series is v2, previous version patches:
-[RFC]: http://thread.gmane.org/gmane.linux.power-management.general/31056
-[v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11710/
-[v2]: http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg465555.html
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ drivers/hwmon/lm90.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Changes from v2:
-1. update the defines for status bit, and go into a separate patch.
-2. introduce the new lm90_is_tripped() for lm90_irq_thread and lm90_alert.
-
-Changes from v1:
-1. change the string "irq" to "IRQ"
-2. add macro defines for the alarm status
-3. consider the shared IRQ.
-
-Changes from RFC:
-1. change _show_temp() to read_temp(), _set_temp() to write_temp().
-2. simply return value for the read_temp(), not use pointer.
-3. use devm_request_threaded_irq() to request irq and set flag IRQF_ONESHOT.
-
-Wei Ni (4):
-  hwmon: (lm90) split set&show temp as common codes
-  hwmon: (lm90) use macro defines for the status bit
-  hwmon: (lm90) add support to handle IRQ
-  hwmon: (lm90) use enums for the indexes of temp8 and temp11
-
- drivers/hwmon/lm90.c |  387 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 256 insertions(+), 131 deletions(-)
-
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index c90037f..1cc3d19 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -89,6 +89,7 @@
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/interrupt.h>
+ 
+ /*
+  * Addresses to scan
+@@ -1460,6 +1461,17 @@ static bool lm90_is_tripped(struct i2c_client *client)
+ 	return true;
+ }
+ 
++static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
++{
++	struct lm90_data *data = dev_id;
++	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
++
++	if (lm90_is_tripped(client))
++		return IRQ_HANDLED;
++	else
++		return IRQ_NONE;
++}
++
+ static int lm90_probe(struct i2c_client *client,
+ 		      const struct i2c_device_id *id)
+ {
+@@ -1536,6 +1548,18 @@ static int lm90_probe(struct i2c_client *client,
+ 		goto exit_remove_files;
+ 	}
+ 
++	if (client->irq >= 0) {
++		dev_dbg(dev, "lm90 IRQ: %d\n", client->irq);
++		err = devm_request_threaded_irq(dev, client->irq,
++						NULL, lm90_irq_thread,
++						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++						"lm90", data);
++		if (err < 0) {
++			dev_err(dev, "cannot request interrupt\n");
++			goto exit_remove_files;
++		}
++	}
++
+ 	return 0;
+ 
+ exit_remove_files:
 -- 
 1.7.9.5
+
+
+_______________________________________________
+lm-sensors mailing list
+lm-sensors@lm-sensors.org
+http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
