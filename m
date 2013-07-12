@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v3 1/2] ARM: dt: t30 cardhu: add dt entry for nct1008
-Date: Fri, 12 Jul 2013 15:49:23 +0800
-Message-ID: <1373615364-18559-2-git-send-email-wni@nvidia.com>
+Subject: [PATCH v3 2/2] ARM: dt: t114 dalmore: add dt entry for nct1008
+Date: Fri, 12 Jul 2013 15:49:24 +0800
+Message-ID: <1373615364-18559-3-git-send-email-wni@nvidia.com>
 References: <1373615364-18559-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,30 +12,30 @@ To: khali@linux-fr.org, swarren@wwwdotorg.org, linux@roeck-us.net, thierry.redin
 Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable thermal sensor nct1008 for t30 cardhu.
+Enable thermal sensor nct1008 for t114 dalmore.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30-cardhu.dtsi |    7 +++++++
+ arch/arm/boot/dts/tegra114-dalmore.dts |    7 +++++++
  1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index f65b53d..e5759ca 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -286,6 +286,13 @@
- 				};
- 			};
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index cb640eb..47ec7eb 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -738,6 +738,13 @@
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
  		};
 +
 +		nct1008 {
 +			compatible = "onnn,nct1008";
 +			reg = <0x4c>;
 +			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_LEVEL_LOW>;
++			interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
 +		};
  	};
  
- 	spi@7000da00 {
+ 	i2c@7000d000 {
 -- 
 1.7.9.5
