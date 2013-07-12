@@ -1,229 +1,41 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as
-	common codes
-Date: Fri, 12 Jul 2013 15:48:04 +0800
-Message-ID: <1373615287-18502-2-git-send-email-wni@nvidia.com>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH v3 1/2] ARM: dt: t30 cardhu: add dt entry for nct1008
+Date: Fri, 12 Jul 2013 15:49:23 +0800
+Message-ID: <1373615364-18559-2-git-send-email-wni@nvidia.com>
+References: <1373615364-18559-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <lm-sensors-bounces@lm-sensors.org>
-In-Reply-To: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-List-Unsubscribe: <http://lists.lm-sensors.org/mailman/options/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=unsubscribe>
-List-Archive: <http://lists.lm-sensors.org/pipermail/lm-sensors/>
-List-Post: <mailto:lm-sensors@lm-sensors.org>
-List-Help: <mailto:lm-sensors-request@lm-sensors.org?subject=help>
-List-Subscribe: <http://lists.lm-sensors.org/mailman/listinfo/lm-sensors>,
-	<mailto:lm-sensors-request@lm-sensors.org?subject=subscribe>
-Sender: lm-sensors-bounces@lm-sensors.org
-Errors-To: lm-sensors-bounces@lm-sensors.org
-To: khali@linux-fr.org, linux@roeck-us.net, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1373615364-18559-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org, swarren@wwwdotorg.org, linux@roeck-us.net, thierry.reding@gmail.com
+Cc: lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Split set&show temp codes as common functions, so we can use it directly when
-implement linux thermal framework.
+Enable thermal sensor nct1008 for t30 cardhu.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/hwmon/lm90.c |  112 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 69 insertions(+), 43 deletions(-)
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index 8eeb141..5f30f90 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -702,29 +702,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
-  * Sysfs stuff
-  */
- 
--static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
--			  char *buf)
-+static int read_temp8(struct device *dev, int index)
- {
--	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
- 	struct lm90_data *data = lm90_update_device(dev);
- 	int temp;
- 
- 	if (data->kind == adt7461)
--		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
-+		temp = temp_from_u8_adt7461(data, data->temp8[index]);
- 	else if (data->kind == max6646)
--		temp = temp_from_u8(data->temp8[attr->index]);
-+		temp = temp_from_u8(data->temp8[index]);
- 	else
--		temp = temp_from_s8(data->temp8[attr->index]);
-+		temp = temp_from_s8(data->temp8[index]);
- 
- 	/* +16 degrees offset for temp2 for the LM99 */
--	if (data->kind == lm99 && attr->index == 3)
-+	if (data->kind == lm99 && index == 3)
- 		temp += 16000;
- 
--	return sprintf(buf, "%d\n", temp);
-+	return temp;
- }
- 
--static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
--			 const char *buf, size_t count)
-+static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
-+			  char *buf)
-+{
-+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index f65b53d..e5759ca 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -286,6 +286,13 @@
+ 				};
+ 			};
+ 		};
 +
-+	return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
-+}
-+
-+static void write_temp8(struct device *dev, int index, long val)
- {
- 	static const u8 reg[8] = {
- 		LM90_REG_W_LOCAL_LOW,
-@@ -737,60 +742,73 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
- 		MAX6659_REG_W_REMOTE_EMERG,
++		nct1008 {
++			compatible = "onnn,nct1008";
++			reg = <0x4c>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(CC, 2) IRQ_TYPE_LEVEL_LOW>;
++		};
  	};
  
--	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct lm90_data *data = i2c_get_clientdata(client);
--	int nr = attr->index;
--	long val;
--	int err;
--
--	err = kstrtol(buf, 10, &val);
--	if (err < 0)
--		return err;
- 
- 	/* +16 degrees offset for temp2 for the LM99 */
--	if (data->kind == lm99 && attr->index == 3)
-+	if (data->kind == lm99 && index == 3)
- 		val -= 16000;
- 
- 	mutex_lock(&data->update_lock);
- 	if (data->kind == adt7461)
--		data->temp8[nr] = temp_to_u8_adt7461(data, val);
-+		data->temp8[index] = temp_to_u8_adt7461(data, val);
- 	else if (data->kind == max6646)
--		data->temp8[nr] = temp_to_u8(val);
-+		data->temp8[index] = temp_to_u8(val);
- 	else
--		data->temp8[nr] = temp_to_s8(val);
-+		data->temp8[index] = temp_to_s8(val);
- 
--	lm90_select_remote_channel(client, data, nr >= 6);
--	i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
-+	lm90_select_remote_channel(client, data, index >= 6);
-+	i2c_smbus_write_byte_data(client, reg[index], data->temp8[index]);
- 	lm90_select_remote_channel(client, data, 0);
- 
- 	mutex_unlock(&data->update_lock);
-+}
-+
-+static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
-+			 const char *buf, size_t count)
-+{
-+	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-+	int index = attr->index;
-+	long val;
-+	int err;
-+
-+	err = kstrtol(buf, 10, &val);
-+	if (err < 0)
-+		return err;
-+
-+	write_temp8(dev, index, val);
-+
- 	return count;
- }
- 
--static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
--			   char *buf)
-+static int read_temp11(struct device *dev, int index)
- {
--	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
- 	struct lm90_data *data = lm90_update_device(dev);
- 	int temp;
- 
- 	if (data->kind == adt7461)
--		temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
-+		temp = temp_from_u16_adt7461(data, data->temp11[index]);
- 	else if (data->kind == max6646)
--		temp = temp_from_u16(data->temp11[attr->index]);
-+		temp = temp_from_u16(data->temp11[index]);
- 	else
--		temp = temp_from_s16(data->temp11[attr->index]);
-+		temp = temp_from_s16(data->temp11[index]);
- 
- 	/* +16 degrees offset for temp2 for the LM99 */
--	if (data->kind == lm99 &&  attr->index <= 2)
-+	if (data->kind == lm99 &&  index <= 2)
- 		temp += 16000;
- 
--	return sprintf(buf, "%d\n", temp);
-+	return temp;
- }
- 
--static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
--			  const char *buf, size_t count)
-+static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
-+			   char *buf)
-+{
-+	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-+
-+	return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
-+}
-+
-+static void write_temp11(struct device *dev, int nr, int index, long val)
- {
- 	struct {
- 		u8 high;
-@@ -804,17 +822,8 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
- 		{ LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
- 	};
- 
--	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
- 	struct i2c_client *client = to_i2c_client(dev);
- 	struct lm90_data *data = i2c_get_clientdata(client);
--	int nr = attr->nr;
--	int index = attr->index;
--	long val;
--	int err;
--
--	err = kstrtol(buf, 10, &val);
--	if (err < 0)
--		return err;
- 
- 	/* +16 degrees offset for temp2 for the LM99 */
- 	if (data->kind == lm99 && index <= 2)
-@@ -839,6 +848,23 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
- 	lm90_select_remote_channel(client, data, 0);
- 
- 	mutex_unlock(&data->update_lock);
-+}
-+
-+static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
-+			  const char *buf, size_t count)
-+{
-+	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-+	int nr = attr->nr;
-+	int index = attr->index;
-+	long val;
-+	int err;
-+
-+	err = kstrtol(buf, 10, &val);
-+	if (err < 0)
-+		return err;
-+
-+	write_temp11(dev, nr, index, val);
-+
- 	return count;
- }
- 
+ 	spi@7000da00 {
 -- 
 1.7.9.5
-
-
-_______________________________________________
-lm-sensors mailing list
-lm-sensors@lm-sensors.org
-http://lists.lm-sensors.org/mailman/listinfo/lm-sensors
