@@ -1,78 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: remove tegra114-pluto.dts
-Date: Mon, 15 Jul 2013 12:55:47 -0600
-Message-ID: <1373914547-6075-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/9] Tegra USB cleanup series
+Date: Mon, 15 Jul 2013 22:53:40 +0300
+Message-ID: <1373918029-28977-1-git-send-email-ttynkkynen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi,
 
-Early upstream work on Tegra114 was performed on the Pluto board.
-However, it's not used any more, and the DT doesn't contain anything
-beyond a serial port, so the file isn't useful either. Remove it.
+Here's a V2 of the few cleanup patches for the Tegra USB drivers, to be applied
+on top of Mikko's two patch sets. It mostly deals with removing all usage of
+platform data and using standard helpers and enums instead of Tegra-specific
+ones.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/Makefile           |  3 +--
- arch/arm/boot/dts/tegra114-pluto.dts | 33 ---------------------------------
- 2 files changed, 1 insertion(+), 35 deletions(-)
- delete mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
+V2 Diff:
+Patch 5: Do the usb_add_phy_dev as the very last thing in .probe
+Patch 9: Default to host mode if the property didn't exist
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 2cec2ff..4130237 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -228,8 +228,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
- 	tegra30-beaver.dtb \
- 	tegra30-cardhu-a02.dtb \
- 	tegra30-cardhu-a04.dtb \
--	tegra114-dalmore.dtb \
--	tegra114-pluto.dtb
-+	tegra114-dalmore.dtb
- dtb-$(CONFIG_ARCH_VERSATILE) += versatile-ab.dtb \
- 	versatile-pb.dtb
- dtb-$(CONFIG_ARCH_U300) += ste-u300.dtb
-diff --git a/arch/arm/boot/dts/tegra114-pluto.dts b/arch/arm/boot/dts/tegra114-pluto.dts
-deleted file mode 100644
-index d5f8d3e..0000000
---- a/arch/arm/boot/dts/tegra114-pluto.dts
-+++ /dev/null
-@@ -1,33 +0,0 @@
--/dts-v1/;
--
--#include "tegra114.dtsi"
--
--/ {
--	model = "NVIDIA Tegra114 Pluto evaluation board";
--	compatible = "nvidia,pluto", "nvidia,tegra114";
--
--	memory {
--		reg = <0x80000000 0x40000000>;
--	};
--
--	serial@70006300 {
--		status = "okay";
--	};
--
--	pmc {
--		nvidia,invert-interrupt;
--	};
--
--	clocks {
--		compatible = "simple-bus";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		clk32k_in: clock {
--			compatible = "fixed-clock";
--			reg=<0>;
--			#clock-cells = <0>;
--			clock-frequency = <32768>;
--		};
--	};
--};
+Tuomas Tynkkynen (9):
+  usb: phy: tegra: Remove unnecessary 'dev' field
+  usb: host: tegra: Remove leftover code
+  usb: tegra: host: Remove references to plat data
+  ARM: tegra: Remove USB platform data
+  usb: phy: tegra: Register as an USB PHY.
+  usb: host: tegra: Locate a PHY via standard API
+  usb: phy: tegra: Remove custom PHY locating APIs
+  usb: phy: tegra: Use DT helpers for phy_type
+  usb: phy: tegra: Use DT helpers for dr_mode
+
+ arch/arm/mach-tegra/tegra.c             |  38 +-----------
+ drivers/usb/host/ehci-tegra.c           |  37 ++----------
+ drivers/usb/phy/phy-tegra-usb.c         | 102 ++++++++++++++++----------------
+ include/linux/platform_data/tegra_usb.h |  32 ----------
+ include/linux/usb/tegra_usb_phy.h       |  16 +----
+ 5 files changed, 59 insertions(+), 166 deletions(-)
+ delete mode 100644 include/linux/platform_data/tegra_usb.h
+
 -- 
 1.8.1.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
