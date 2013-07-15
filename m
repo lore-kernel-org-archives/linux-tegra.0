@@ -1,38 +1,47 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 00/12] dma: various minor clean ups for slave drivers
-Date: Mon, 15 Jul 2013 15:29:42 +0530
-Message-ID: <20130715095942.GQ16653@intel.com>
-References: <1369656882-25241-1-git-send-email-andriy.shevchenko@linux.intel.com>
- <20130530174727.GE3767@intel.com>
- <CAHp75VcZCVskWnQuNeO4A0keZJS27vaWe5zTDomAgSa_ezyUQQ@mail.gmail.com>
- <20130715093748.GO16653@intel.com>
- <1373883677.24799.243.camel@smile>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/3] usb: tegra: Replace nvidia,vbus-gpio property
+ with vbus-supply
+Date: Mon, 15 Jul 2013 14:57:57 +0300
+Message-ID: <51E3E3C5.5060906@nvidia.com>
+References: <1372422796-23524-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1373883677.24799.243.camel@smile>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.jf.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dan Williams <djbw@fb.com>, Li Yang <leoli@freescale.com>, Zhang Wei <zw@melbourneit.hotkeysparking.com>, linuxppc-dev@lists.ozlabs.org, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372422796-23524-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 15, 2013 at 01:21:17PM +0300, Andy Shevchenko wrote:
-> On Mon, 2013-07-15 at 15:07 +0530, Vinod Koul wrote: 
-> > On Thu, May 30, 2013 at 09:32:19PM +0300, Andy Shevchenko wrote:
-> > > >> Here is a set of small independent patches that clean up or fix minor things
-> > > >> across DMA slave drivers.
-> > 
-> > Applied thanks
-> 
-> Thank you. You were faster than me, I was just about to send rebased
-> version.
-:)
+Hey Felipe/Stephen,
 
-I suspected changes are trivial and it should apply or with slight modfications.
-it did apply cleanly so no reason to delay applying on shiny new -rc1
+what's the status of this patchset and the other one
+("usb: phy: tegra: Read UTMI parameters from device tree")?
+Can I consider them accepted/pulled for 3.12?
 
-For folks in this part of world, monday morning Linus drops the rc1 usually, so
-get staright to it!
+Thanks, Mikko
 
+On 06/28/2013 03:33 PM, Mikko Perttunen wrote:
+> This patchset removes the ehci-tegra device tree property nvidia,vbus-gpio
+> and adds support for the vbus-supply property to phy-tegra-usb.
+>
+> Mikko Perttunen (3):
+>    usb: phy,host: tegra: Use regulators instead of GPIOs for USB PHY VBUS
+>    Documentation: devicetree: phy-tegra-usb: Add vbus-supply property for
+>      host mode PHYs
+>    ARM: dts: tegra20: Remove obsolete nvidia,vbus-gpio properties
+>
+>   .../bindings/usb/nvidia,tegra20-usb-phy.txt        |  2 +-
+>   arch/arm/boot/dts/tegra20-seaboard.dts             |  1 -
+>   arch/arm/boot/dts/tegra20-trimslice.dts            |  1 -
+>   arch/arm/boot/dts/tegra20-whistler.dts             |  2 --
+>   drivers/usb/host/ehci-tegra.c                      | 34 +---------------------
+>   drivers/usb/phy/phy-tegra-usb.c                    | 23 +++++++++++++++
+>   include/linux/usb/tegra_usb_phy.h                  |  1 +
+>   7 files changed, 26 insertions(+), 38 deletions(-)
+>
 --
-~Vinod
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
