@@ -1,38 +1,21 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
-Date: Mon, 15 Jul 2013 12:04:44 -0600
-Message-ID: <51E439BC.9030608@wwwdotorg.org>
-References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra114: Enable Cortex-A15 errata 798181
+Date: Mon, 15 Jul 2013 12:27:36 -0600
+Message-ID: <51E43F18.4090508@wwwdotorg.org>
+References: <1372845348-27089-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1372152228-16199-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1372845348-27089-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/25/2013 03:23 AM, Joseph Lo wrote:
-> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
-> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
-> this state.
+On 07/03/2013 03:55 AM, Joseph Lo wrote:
+> The commit 93dc688 (ARM: 7684/1: errata: Workaround for Cortex-A15
+> erratum 798181 (TLBI/DSB operations)) introduecd a workaround for
+> Cortex-A15 errata 798181. Enabling it for Tegra114.
 
-I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
-cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
-tegra114: add support for system suspend", all on top of v3.11-rc1.
-
-On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
-values in the sysfs cpuidle "usage" file for all defined cpuidle
-states), but I don't see the "CPU VDD off" LED light up; I'm not
-convinced that the CPU is actually being powered off in the idle mode.
-
-With these patches applies, Harmony acts very strangely. After
-hot-unplug and re-plug of CPU1, the system is hung or almost hung. The
-patches appear to reduce the amount of time CPU VDD is off judging by
-the LEDs. The patches might cause issues with system suspend too, but
-I'm not 100% sure.
-
-As such, I haven't applied any of these. Can you please test boards for
-all of Tegra20/30/114, and validate that on Dalmore the CPU power is
-actually being turned off, and report back? Thanks.
+Applied to Tegra's for-3.12/soc branch.
