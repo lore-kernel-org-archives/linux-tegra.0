@@ -1,42 +1,78 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-cbootimage-configs] Add Toradex Colibri T20 configurations
-Date: Mon, 15 Jul 2013 12:30:31 -0600
-Message-ID: <51E43FC7.10507@wwwdotorg.org>
-References: <1372451264-13049-1-git-send-email-dev@lynxeye.de> <51D2F26D.4000405@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: remove tegra114-pluto.dts
+Date: Mon, 15 Jul 2013 12:55:47 -0600
+Message-ID: <1373914547-6075-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51D2F26D.4000405-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/02/2013 09:31 AM, Stephen Warren wrote:
-> On 06/28/2013 02:27 PM, Lucas Stach wrote:
->> The Colibri T20 COM comes in two different versions, which can both
->> boot from NAND or SD-Card.
-> 
->> diff --git a/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_256_hsmmc.bct.cfg
-> ...
->> +OdmData       = 0x200C0000;
-> 
->> diff --git a/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg b/tegra20/toradex/colibri-t20/colibri-t20_512_hsmmc.bct.cfg
-> ...
->> +OdmData       = 0x400C0000;
-> 
-> Those ODMDATA values don't look correct. The first nibble should be set
-> as follows:
-> 
-> 1: 256MiB
-> 2: 512MiB
-> 3: 1GiB
-> 
-> ... and I assume that the "256" and "515" in the filenames represent the
-> RAM size?
-> 
-> Nit: Many files have an extra blank line at the end.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Lucas, any comment on the ODMDATA setting? That's all that's preventing
-this patch from being merged.
+Early upstream work on Tegra114 was performed on the Pluto board.
+However, it's not used any more, and the DT doesn't contain anything
+beyond a serial port, so the file isn't useful either. Remove it.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/Makefile           |  3 +--
+ arch/arm/boot/dts/tegra114-pluto.dts | 33 ---------------------------------
+ 2 files changed, 1 insertion(+), 35 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 2cec2ff..4130237 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -228,8 +228,7 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra30-beaver.dtb \
+ 	tegra30-cardhu-a02.dtb \
+ 	tegra30-cardhu-a04.dtb \
+-	tegra114-dalmore.dtb \
+-	tegra114-pluto.dtb
++	tegra114-dalmore.dtb
+ dtb-$(CONFIG_ARCH_VERSATILE) += versatile-ab.dtb \
+ 	versatile-pb.dtb
+ dtb-$(CONFIG_ARCH_U300) += ste-u300.dtb
+diff --git a/arch/arm/boot/dts/tegra114-pluto.dts b/arch/arm/boot/dts/tegra114-pluto.dts
+deleted file mode 100644
+index d5f8d3e..0000000
+--- a/arch/arm/boot/dts/tegra114-pluto.dts
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/dts-v1/;
+-
+-#include "tegra114.dtsi"
+-
+-/ {
+-	model = "NVIDIA Tegra114 Pluto evaluation board";
+-	compatible = "nvidia,pluto", "nvidia,tegra114";
+-
+-	memory {
+-		reg = <0x80000000 0x40000000>;
+-	};
+-
+-	serial@70006300 {
+-		status = "okay";
+-	};
+-
+-	pmc {
+-		nvidia,invert-interrupt;
+-	};
+-
+-	clocks {
+-		compatible = "simple-bus";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		clk32k_in: clock {
+-			compatible = "fixed-clock";
+-			reg=<0>;
+-			#clock-cells = <0>;
+-			clock-frequency = <32768>;
+-		};
+-	};
+-};
+-- 
+1.8.1.5
