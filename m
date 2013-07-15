@@ -1,173 +1,30 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status
- bit
-Date: Mon, 15 Jul 2013 18:57:27 +0200
-Message-ID: <20130715185727.4ebde8c4@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
- <1373615287-18502-3-git-send-email-wni@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 0/2] Enable lm90 in Tegra30 and Tegra114.
+Date: Mon, 15 Jul 2013 11:13:20 -0600
+Message-ID: <51E42DB0.8090006@wwwdotorg.org>
+References: <1373615364-18559-1-git-send-email-wni@nvidia.com> <51E427F1.9010106@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1373615287-18502-3-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: thierry.reding@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51E427F1.9010106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei, Guenter,
-
-On Fri, 12 Jul 2013 15:48:05 +0800, Wei Ni wrote:
-> Add bit defines for the status register.
-
-Regarding the subject: for me these are constants, not macros. AFAIK
-the term "macro" refers to defines with parameters only.
-
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  drivers/hwmon/lm90.c |   72 ++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 49 insertions(+), 23 deletions(-)
+On 07/15/2013 10:48 AM, Stephen Warren wrote:
+> On 07/12/2013 01:49 AM, Wei Ni wrote:
+>> Enable thermal sensor lm90 for Tegra30 Cardhu and Tegra114 Dalmore.
 > 
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index 5f30f90..c90037f 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -179,6 +179,19 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
->  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
->  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
->  
-> +/* LM90 status */
-> +#define LM90_STATUS_LTHRM	(1 << 0) /* local THERM limit tripped */
-> +#define LM90_STATUS_RTHRM	(1 << 1) /* remote THERM limit tripped */
-> +#define LM90_STATUS_OPEN	(1 << 2) /* remote is an open circuit */
-> +#define LM90_STATUS_RLOW	(1 << 3) /* remote low temp limit tripped */
-> +#define LM90_STATUS_RHIGH	(1 << 4) /* remote high temp limit tripped */
-> +#define LM90_STATUS_LLOW	(1 << 5) /* local low temp limit tripped */
-> +#define LM90_STATUS_LHIGH	(1 << 6) /* local high temp limit tripped */
-> +#define LM90_STATUS_BUSY	(1 << 7) /* ADC is converting */
+> I have applied the series to Tegra's for-3.12/dt branch.
 
-LM90_STATUS_BUSY is never used anywhere so please don't define it.
+Actually, I see the following on Dalmore (although Cardhu works):
 
-> +
-> +#define MAX6696_STATUS2_RLOW	(1 << 3) /* remote2 low temp limit tripped */
-> +#define MAX6696_STATUS2_RHIGH	(1 << 4) /* remote2 high temp limit tripped */
-> +
->  /*
->   * Driver data (common to all clients)
->   */
-> @@ -1417,6 +1430,36 @@ static void lm90_init_client(struct i2c_client *client)
->  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
->  }
->  
-> +static bool lm90_is_tripped(struct i2c_client *client)
-> +{
-> +	struct lm90_data *data = i2c_get_clientdata(client);
-> +	u8 status, status2 = 0;
-> +
-> +	lm90_read_reg(client, LM90_REG_R_STATUS, &status);
-> +
-> +	if (data->kind == max6696)
-> +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &status2);
-> +
-> +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
-> +		return false;
+[   29.448539] lm90 0-004c: Register 0x4 read failed (-121)
+[   29.453930] lm90 0-004c: Failed to read convrate register!
+[   29.460034] lm90 0-004c: Register 0x3 read failed (-121)
+[   29.465408] lm90 0-004c: Initialization failed!
 
-It's a bit disappointing to not use the freshly introduced constants.
-That being said I agree it would make the code hard to read, so you can
-leave it as is.
-
-Unrelated to this patch, but Guenter, I am worried about the MAX6696
-handling here. I realize that I am the one who accepted your code, but
-now it looks wrong. Specifically:
-* We check for (status2 & 0xfe) i.e. 7 alarm bits, but the code below
-  only reports 2 alarms bits. So if any of the 5 other alarm bits in
-  STATUS2 are, we may return true (chip is tripped) but not print the
-  cause.
-* At least bits 1 and 2 of STATUS 2 fit totally fine in the driver as
-  it currently exists, so I can't think of any reason for not handling
-  them. Why are we not? Ideally we should print a message for every
-  alarm bit so that we never return "true" without printing a message.
-  Even though OT2 limits aren't handled by the driver...
-* If you think this piece of code shouldn't deal with OT/THERM limits
-  because they do not trigger an SMBus alarm, this can be discussed,
-  but all chips should be handled the same in this respect then.
-* Why in the first place is max6696's data->alert_alarms set to 0x187c
-  and not 0x1c7c? Including 1OPEN but not 2OPEN makes no sense.
-
-> +
-> +	if (status & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 1);
-> +	if (status & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 2);
-> +	if (status & LM90_STATUS_OPEN)
-> +		dev_warn(&client->dev,
-> +			 "temp%d diode open, please check!\n", 2);
-> +
-> +	if (status2 & (MAX6696_STATUS2_RLOW | MAX6696_STATUS2_RHIGH))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 3);
-> +
-> +	return true;
-> +}
-> +
->  static int lm90_probe(struct i2c_client *client,
->  		      const struct i2c_device_id *id)
->  {
-> @@ -1515,36 +1558,19 @@ static int lm90_remove(struct i2c_client *client)
->  
->  static void lm90_alert(struct i2c_client *client, unsigned int flag)
->  {
-> -	struct lm90_data *data = i2c_get_clientdata(client);
-> -	u8 config, alarms, alarms2 = 0;
-> -
-> -	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-> -
-> -	if (data->kind == max6696)
-> -		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms2);
-> -
-> -	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
-> +	if (!lm90_is_tripped(client)) {
-
-You could swap the success and failure cases to avoid this negation.
-
->  		dev_info(&client->dev, "Everything OK\n");
->  	} else {
-> -		if (alarms & 0x61)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 1);
-> -		if (alarms & 0x1a)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 2);
-> -		if (alarms & 0x04)
-> -			dev_warn(&client->dev,
-> -				 "temp%d diode open, please check!\n", 2);
-> -
-> -		if (alarms2 & 0x18)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 3);
-> -
->  		/*
->  		 * Disable ALERT# output, because these chips don't implement
->  		 * SMBus alert correctly; they should only hold the alert line
->  		 * low briefly.
->  		 */
-> +		struct lm90_data *data = i2c_get_clientdata(client);
-> +		u8 config, alarms;
-> +
-> +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-
-You end up reading LM90_REG_R_STATUS, which is not OK. This register
-contains self-clearing bits, so there is no guarantee that the second
-read will return the same value as the first read. You'll have to come
-up with a different approach that reads LM90_REG_R_STATUS only once.
-
-> +
->  		if ((data->flags & LM90_HAVE_BROKEN_ALERT)
->  		 && (alarms & data->alert_alarms)) {
->  			dev_dbg(&client->dev, "Disabling ALERT#\n");
-
-
--- 
-Jean Delvare
+So, there's something wrong here, and I've dropped the patch for
+Dalmore. Does this patch actually work for you?
