@@ -1,68 +1,38 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common
- codes
-Date: Mon, 15 Jul 2013 19:52:52 +0200
-Message-ID: <20130715195252.5d2064d7@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-	<1373615287-18502-2-git-send-email-wni@nvidia.com>
-	<20130712152615.23464a6b@endymion.delvare>
-	<20130712135000.GA3386@roeck-us.net>
-	<20130712163034.1fc1cd66@endymion.delvare>
-	<20130712144011.GC3629@roeck-us.net>
-	<51E395D9.6070000@nvidia.com>
-	<20130715092415.6d082aa2@endymion.delvare>
-	<51E3BD5F.6060806@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Mon, 15 Jul 2013 12:04:44 -0600
+Message-ID: <51E439BC.9030608@wwwdotorg.org>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E3BD5F.6060806-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1372152228-16199-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
+On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> this state.
 
-On Mon, 15 Jul 2013 17:14:07 +0800, Wei Ni wrote:
-> On 07/15/2013 03:24 PM, Jean Delvare wrote:
-> > On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
-> >> I think we can decide it in the DT, we can add a dt property in the lm90
-> >> device node, such as:
-> >> sys-interface = SYS_HWMON;
-> >> or
-> >> sys-interface = SYS_THERMAL;
-> >> So we register it as the hwmon or thermal device
-> > 
-> > This is an option, but please keep in mind that DT is not the only way
-> > to instantiate LM90-like devices, and we should not expose duplicate
-> > inputs by default. It is fine with me if the default is to create only a
-> > HWMON device (as the lm90 driver was doing so far), and only
-> > DT-instantiated devices have the choice.
-> 
-> Yes, we should not expose duplicate inputs, we may have tree permutation:
-> 1. only hwmon device:
-> for this items, we just need to call hwmon_device_register().
-> 2. only thermal device + virtual hwmon device:
-> for this items, we just need to call thermal_zone_device_register().
-> 
-> We can set #1 as the default, and if use DT, we provide option to choice
-> #1 or #2.
+I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
+cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
+tegra114: add support for system suspend", all on top of v3.11-rc1.
 
-#2 makes little sense IMHO, for a driver which properly implements
-hwmon support. The point of the virtual hwmon device created for
-thermal zones was to not put an extra burden on thermal driver authors
-by asking them to additionally implement the hwmon interface. But the
-hwmon interface it richer than the thermal interface in some respects
-so native hwmon implementations are preferred when available. Thus I
-think your option #3 below is what we want in addition to #1, and we
-don't need #2.
+On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
+values in the sysfs cpuidle "usage" file for all defined cpuidle
+states), but I don't see the "CPU VDD off" LED light up; I'm not
+convinced that the CPU is actually being powered off in the idle mode.
 
-> 3. hwmon device + thermal device:
-> for this items, we doesn't need the virtual hwmon which registered by
-> the thermal fw, how to handle this one? Add flag when register as
-> thermal device to indicate if want virtual hwmon device or not,
-> something like your below another option.
+With these patches applies, Harmony acts very strangely. After
+hot-unplug and re-plug of CPU1, the system is hung or almost hung. The
+patches appear to reduce the amount of time CPU VDD is off judging by
+the LEDs. The patches might cause issues with system suspend too, but
+I'm not 100% sure.
 
--- 
-Jean Delvare
+As such, I haven't applied any of these. Can you please test boards for
+all of Tegra20/30/114, and validate that on Dalmore the CPU power is
+actually being turned off, and report back? Thanks.
