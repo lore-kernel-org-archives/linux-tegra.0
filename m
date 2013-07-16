@@ -1,27 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 4/9] ARM: tegra: Remove USB platform data
-Date: Mon, 15 Jul 2013 17:22:58 -0600
-Message-ID: <51E48452.8010600@wwwdotorg.org>
-References: <1373918029-28977-1-git-send-email-ttynkkynen@nvidia.com> <1373918029-28977-5-git-send-email-ttynkkynen@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Tue, 16 Jul 2013 13:19:17 +0300
+Message-ID: <20130716101917.GZ21962@tbergstrom-lnx.Nvidia.com>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+ <51E439BC.9030608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1373918029-28977-5-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51E439BC.9030608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/15/2013 01:53 PM, Tuomas Tynkkynen wrote:
-> USB-related platform data is not used anymore in the Tegra USB drivers,
-> so remove all of it.
+On Mon, Jul 15, 2013 at 08:04:44PM +0200, Stephen Warren wrote:
+> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> > Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> > to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> > this state.
+> 
+> I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
+> cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
+> tegra114: add support for system suspend", all on top of v3.11-rc1.
+> 
+> On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
+> values in the sysfs cpuidle "usage" file for all defined cpuidle
+> states), but I don't see the "CPU VDD off" LED light up; I'm not
+> convinced that the CPU is actually being powered off in the idle mode.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The current patchset only powergates the individual cores on Tegra114. The
+entire cluster (including L2 cache etc) isn't railgated as a CPUidle state.
+Hence the CPU VDD off LED will never be on.
 
-(I said that for v1 too. Tuomas, you can cut/paste that ack into the
-commit description to keep it for any future postings).
+Cheers,
 
-I think it's best to take this patch through the USB tree along with the
-rest. Otherwise, we'd have to wait for 3.13 to apply it. I don't believe
-this will cause any conflicts.
+Peter.
