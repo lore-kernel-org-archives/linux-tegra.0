@@ -1,37 +1,65 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 0/2] Enable lm90 in Tegra30 and Tegra114.
-Date: Tue, 16 Jul 2013 19:14:48 +0800
-Message-ID: <51E52B28.9090708@nvidia.com>
-References: <1373615364-18559-1-git-send-email-wni@nvidia.com> <51E427F1.9010106@wwwdotorg.org> <51E42DB0.8090006@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Tue, 16 Jul 2013 19:17:27 +0800
+Message-ID: <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+	 <51E439BC.9030608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E42DB0.8090006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51E439BC.9030608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/16/2013 01:13 AM, Stephen Warren wrote:
-> On 07/15/2013 10:48 AM, Stephen Warren wrote:
->> On 07/12/2013 01:49 AM, Wei Ni wrote:
->>> Enable thermal sensor lm90 for Tegra30 Cardhu and Tegra114 Dalmore.
->>
->> I have applied the series to Tegra's for-3.12/dt branch.
+On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
+> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> > Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> > to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> > this state.
 > 
-> Actually, I see the following on Dalmore (although Cardhu works):
+> I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
+> cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
+> tegra114: add support for system suspend", all on top of v3.11-rc1.
 > 
-> [   29.448539] lm90 0-004c: Register 0x4 read failed (-121)
-> [   29.453930] lm90 0-004c: Failed to read convrate register!
-> [   29.460034] lm90 0-004c: Register 0x3 read failed (-121)
-> [   29.465408] lm90 0-004c: Initialization failed!
+> On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
+> values in the sysfs cpuidle "usage" file for all defined cpuidle
+> states), but I don't see the "CPU VDD off" LED light up; I'm not
+> convinced that the CPU is actually being powered off in the idle mode.
 > 
-> So, there's something wrong here, and I've dropped the patch for
-> Dalmore. Does this patch actually work for you?
+The LED of the CPU Vdd indicates the power of CPU cluster. But the
+series of CPU idle power down mode support for Tegra114 only supports
+per core power down. It did not support cluster power down yet in idle
+mode. That needs some extra work to support cluster power down in idle
+mode.
+There are some items that I plat to do:
+1. integrate the MCPM (multi cluster power management) code into Tegra
+CPU PM code
+2. integrate coupled CPUidle framework into Tegra CPU idle driver
+3. normalize the Tegra CPU idle driver to single one
+
+> With these patches applies, Harmony acts very strangely. After
+> hot-unplug and re-plug of CPU1, the system is hung or almost hung. The
+> patches appear to reduce the amount of time CPU VDD is off judging by
+> the LEDs. The patches might cause issues with system suspend too, but
+> I'm not 100% sure.
 > 
-I test it with the Chrome u-boot, the lm90 works fine.
-But today, if I tried to use the uboot from
-git://git.denx.de/u-boot-tegra.git, I can repo your errors, it seems the
-i2c can't work, the lm90 driver read register failed.
-I traced it, but can't find the root cause yet.
+Actually I didn't add anything about hotplug or something can increase
+the loading or make regressions. But I think you are testing with USB
+device attached, right? That might cause some extra loading. You can
+give it a try after just removing USB device. And I double confirm that
+on Seaboard. Except that, the test result looks OK for me.
+
+> As such, I haven't applied any of these. Can you please test boards for
+> all of Tegra20/30/114, and validate that on Dalmore the CPU power is
+> actually being turned off, and report back? Thanks.
+
+I have tested all these patches based on next-20130716. And verified the
+functions on Seaboard, Cardhu and Dalmore. Looks good for me. And the
+per core power down in idle is OK too. The cluster power down only
+support when the system goes into suspend mode right now for Tegra114.
+
+Thanks,
+Joseph
