@@ -1,62 +1,76 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status
- bit
-Date: Wed, 17 Jul 2013 11:46:39 +0200
-Message-ID: <20130717114639.3a348931@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-	<1373615287-18502-3-git-send-email-wni@nvidia.com>
-	<20130715185727.4ebde8c4@endymion.delvare>
-	<51E641C7.4000107@nvidia.com>
-	<20130717102803.6ee36313@endymion.delvare>
-	<51E663FC.5050209@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
+Date: Wed, 17 Jul 2013 17:54:54 +0800
+Message-ID: <51E669EE.6000705@nvidia.com>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com> <1373615287-18502-2-git-send-email-wni@nvidia.com> <20130712152615.23464a6b@endymion.delvare> <20130712135000.GA3386@roeck-us.net> <20130712163034.1fc1cd66@endymion.delvare> <20130712144011.GC3629@roeck-us.net>	<51E395D9.6070000@nvidia.com> <20130715092415.6d082aa2@endymion.delvare> <20130717042618.GA11359@mithrandir>	<20130717051409.GA16413@roeck-us.net> <51E6392E.5080906@nvidia.com> <20130717111144.491e9958@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E663FC.5050209-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20130717111144.491e9958@endymion.delvare>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
-
-On Wed, 17 Jul 2013 17:29:32 +0800, Wei Ni wrote:
-> On 07/17/2013 04:28 PM, Jean Delvare wrote:
-> > I do maintain the lm90 driver, so the decision is up to me. Guenter did
-> > a preliminary review of your patches and I am grateful for that, but I
-> > do not intend to wait for his return to continue with your patches.
-> > Otherwise he will have to do the same when he returns and I am gone,
-> > and this may end up delaying your patches by one kernel version.
+On 07/17/2013 05:11 PM, Jean Delvare wrote:
+> On Wed, 17 Jul 2013 14:26:54 +0800, Wei Ni wrote:
+>> On 07/17/2013 01:14 PM, Guenter Roeck wrote:
+>>> On Wed, Jul 17, 2013 at 06:26:20AM +0200, Thierry Reding wrote:
+>>>> On Mon, Jul 15, 2013 at 09:24:15AM +0200, Jean Delvare wrote:
+>>>>> On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
+>>>>>> I think we can decide it in the DT, we can add a dt property in the lm90
+>>>>>> device node, such as:
+>>>>>> sys-interface = SYS_HWMON;
+>>>>>> or
+>>>>>> sys-interface = SYS_THERMAL;
+>>>>>> So we register it as the hwmon or thermal device
+>>>>>
+>>>>> This is an option, but please keep in mind that DT is not the only way
+>>>>> to instantiate LM90-like devices, and we should not expose duplicate
+>>>>> inputs by default. It is fine with me if the default is to create only a
+>>>>> HWMON device (as the lm90 driver was doing so far), and only
+>>>>> DT-instantiated devices have the choice.
+>>>>
+>>>> I don't think this information belongs in the device tree. Whether the
+>>>> device is exposed as hwmon or thermal device (or both) is entirely a
+>>>> software issue whereas DT is a means to describe the hardware.
+>>>>
+>>> Correct; this is exactly the type of information which does _not_ belong int
+>>> devicetree.
+>>>
+>>>> It seems to me that the earlier proposal of communicating to the bridge
+>>>> whether or not a device should be exposed as hwmon device is the right
+>>>> thing to do here.
+>>>
+>>> Agreed..
+>>
+>> Sorry, what's the "bridge" mean,
 > 
-> I will send out patches soon :)
-
-You may want to wait until I'm done reviewing the whole v3 patch set. I
-hope to have the time to do that today.
-
-> >> (...)
-> >> Oh, yes, this is a problem, I didn't noticed it.
-> >> How about to use this:
-> >> bool lm90_alarms_tripped(*client, *status);
-> >> bool lm90_alarms2_tripped(*client, *status2);
-> >> So we can read the status only once and pass it.
-> > 
-> > This is a good idea but you only need status, not status2, so it can be
-> > made simpler:
-> > bool lm90_is_tripped(*client, *status);
-> > (handling both status and status 2 as you already do.)
+> The code which creates a virtual hwmon input when a new thermal zone is
+> registered (this code is in thermal_core.c.)
 > 
-> Yes this is simpler, but I think in the future we may need to handle the
-> status2, how to handle it ? Or we can define the status as
-> bit[0~7]->status and bit[8~15]->status2 .
+>> does it mean we need to add a flag in
+>> the thermal_zone_device_register() to indicate if we want to register
+>> virtual hwmon device or not?
+> 
+> I think so, yes.
+> 
+> Alternatively the flag could be added to struct
+> thermal_zone_device_ops, so that you don't have to update all the
+> callers. But I admit it's a hack as the flag doesn't really belong
+> there, so I suppose we don't really want to do that.
 
-I hope we will never have to. We need it to work around a hardware
-implementation bug, and I hope that newer chips implementing status2
-will not have this bug.
+I think it's better to add it to struct thermal_zone_params, the
+thermal_zone_device_ops is for the callback functions.
+And I ask it with thermal fw engineers in
+http://thread.gmane.org/gmane.linux.power-management.general/35874.
+May be you can look it.
 
-That being said, yes, returning status and status2 combined in a 16-bit
-value would make sense. We end up comparing with data->alert_alarms
-which has exactly this format anyway (and so does data->alarms too.)
+> 
+> I have been thinking of an automatic approach, based on comparing the
+> type string passed to thermal_zone_device_register() with already
+> registered hwmon devices, but I couldn't come up with something good
+> and robust enough, so let's forget about it.
+> 
 
--- 
-Jean Delvare
