@@ -1,76 +1,71 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
-Date: Wed, 17 Jul 2013 17:54:54 +0800
-Message-ID: <51E669EE.6000705@nvidia.com>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com> <1373615287-18502-2-git-send-email-wni@nvidia.com> <20130712152615.23464a6b@endymion.delvare> <20130712135000.GA3386@roeck-us.net> <20130712163034.1fc1cd66@endymion.delvare> <20130712144011.GC3629@roeck-us.net>	<51E395D9.6070000@nvidia.com> <20130715092415.6d082aa2@endymion.delvare> <20130717042618.GA11359@mithrandir>	<20130717051409.GA16413@roeck-us.net> <51E6392E.5080906@nvidia.com> <20130717111144.491e9958@endymion.delvare>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Wed, 17 Jul 2013 18:15:30 +0800
+Message-ID: <1374056130.10997.16.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+	 <51E439BC.9030608@wwwdotorg.org>
+	 <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
+	 <51E5A438.10004@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20130717111144.491e9958@endymion.delvare>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51E5A438.10004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/17/2013 05:11 PM, Jean Delvare wrote:
-> On Wed, 17 Jul 2013 14:26:54 +0800, Wei Ni wrote:
->> On 07/17/2013 01:14 PM, Guenter Roeck wrote:
->>> On Wed, Jul 17, 2013 at 06:26:20AM +0200, Thierry Reding wrote:
->>>> On Mon, Jul 15, 2013 at 09:24:15AM +0200, Jean Delvare wrote:
->>>>> On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
->>>>>> I think we can decide it in the DT, we can add a dt property in the lm90
->>>>>> device node, such as:
->>>>>> sys-interface = SYS_HWMON;
->>>>>> or
->>>>>> sys-interface = SYS_THERMAL;
->>>>>> So we register it as the hwmon or thermal device
->>>>>
->>>>> This is an option, but please keep in mind that DT is not the only way
->>>>> to instantiate LM90-like devices, and we should not expose duplicate
->>>>> inputs by default. It is fine with me if the default is to create only a
->>>>> HWMON device (as the lm90 driver was doing so far), and only
->>>>> DT-instantiated devices have the choice.
->>>>
->>>> I don't think this information belongs in the device tree. Whether the
->>>> device is exposed as hwmon or thermal device (or both) is entirely a
->>>> software issue whereas DT is a means to describe the hardware.
->>>>
->>> Correct; this is exactly the type of information which does _not_ belong int
->>> devicetree.
->>>
->>>> It seems to me that the earlier proposal of communicating to the bridge
->>>> whether or not a device should be exposed as hwmon device is the right
->>>> thing to do here.
->>>
->>> Agreed..
->>
->> Sorry, what's the "bridge" mean,
+On Wed, 2013-07-17 at 03:51 +0800, Stephen Warren wrote:
+> On 07/16/2013 05:17 AM, Joseph Lo wrote:
+> > On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
+> >> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> >>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> >>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> >>> this state.
+> > or something can increase
+> > the loading or make regressions. But I think you are testing with USB
+> > device attached, right? That might cause some extra loading. You can
+> > give it a try after just removing USB device. And I double confirm that
+> > on Seaboard. Except that, the test result looks OK for me.
 > 
-> The code which creates a virtual hwmon input when a new thermal zone is
-> registered (this code is in thermal_core.c.)
+> Yes, having a USB device plugged in does affect the issue. In summary:
 > 
->> does it mean we need to add a flag in
->> the thermal_zone_device_register() to indicate if we want to register
->> virtual hwmon device or not?
+> next-20130716, with or without USB devices plugged in: Works fine.
 > 
-> I think so, yes.
+> next-20130716 with your patches, without USB device plugged in:
+> Occasional short problems (detailed below).
 > 
-> Alternatively the flag could be added to struct
-> thermal_zone_device_ops, so that you don't have to update all the
-> callers. But I admit it's a hack as the flag doesn't really belong
-> there, so I suppose we don't really want to do that.
+> next-20130716 with your patches, with USB device plugged in: Continual
+> long problems (detailed below).
+> 
+> The testing I did was to log in over the serial console, hit <enter>
+> around five times, and watch the shell prompt echo back, then type
+> "ls<enter" and watch the (directory listing appear (I have about 20
+> files in my directory, with long-ish names), then repeat. With plain
+> next-20130716, this is nice and fast and there are no pauses. With your
+> patches applied, there are occasional or continual pauses, which last
+> for either a short time (tenths of a second), or even a second or two,
+> both depending on whether a USB device is plugged in or not.
+> 
+> I believe this is the same issue I saw when I applied your patches to
+> the Tegra tree on top of v3.11-rc1.
+> 
+OK. I did more stress tests last night and today. I found it cause by
+the patch "ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag" and
+only impact the Tegra20 platform. The hot plug regression seems due to
+this patch. After dropping this patch on top of v3.11-rc1, the Tegra20
+can back to normal.
 
-I think it's better to add it to struct thermal_zone_params, the
-thermal_zone_device_ops is for the callback functions.
-And I ask it with thermal fw engineers in
-http://thread.gmane.org/gmane.linux.power-management.general/35874.
-May be you can look it.
+And the hop plug and suspend stress test can pass on Tegra30/114 too.
 
-> 
-> I have been thinking of an automatic approach, based on comparing the
-> type string passed to thermal_zone_device_register() with already
-> registered hwmon devices, but I couldn't come up with something good
-> and robust enough, so let's forget about it.
-> 
+Can the other two patch series for Tegra114 to support CPU idle power
+down mode and system suspend still moving forward, not be blocked by
+this patch?
 
+Looks the CPUIDLE_FLAG_TIMER_STOP flag still cause some other issue for
+hot plug on Tegra20, I will continue to check this. You can just drop
+this patch.
+
+Thanks,
+Joseph
