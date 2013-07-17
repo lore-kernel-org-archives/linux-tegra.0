@@ -1,77 +1,54 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Exposing GPU information for userspace processes
-Date: Wed, 17 Jul 2013 07:40:26 +0200
-Message-ID: <20130717054024.GF11359@mithrandir>
-References: <51DC8493.9090405@nvidia.com>
- <CAPM=9tyCTF_+Z0S0+TKxio94LCRpJeWJ6U2EcozUj8tjmMESNg@mail.gmail.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Wed, 17 Jul 2013 14:19:14 +0800
+Message-ID: <1374041954.10997.1.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+	 <51E439BC.9030608@wwwdotorg.org>
+	 <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
+	 <51E53858.6090207@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+ts6NCQ4mrNQIV8p"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAPM=9tyCTF_+Z0S0+TKxio94LCRpJeWJ6U2EcozUj8tjmMESNg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <51E53858.6090207-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, 2013-07-16 at 20:11 +0800, Daniel Lezcano wrote:
+> On 07/16/2013 01:17 PM, Joseph Lo wrote:
+> > On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
+> >> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> >>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> >>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> >>> this state.
+> >>
+> >> I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
+> >> cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
+> >> tegra114: add support for system suspend", all on top of v3.11-rc1.
+> >>
+> >> On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
+> >> values in the sysfs cpuidle "usage" file for all defined cpuidle
+> >> states), but I don't see the "CPU VDD off" LED light up; I'm not
+> >> convinced that the CPU is actually being powered off in the idle mode.
+> >>
+> > The LED of the CPU Vdd indicates the power of CPU cluster. But the
+> > series of CPU idle power down mode support for Tegra114 only supports
+> > per core power down. It did not support cluster power down yet in idle
+> > mode. That needs some extra work to support cluster power down in idle
+> > mode.
+> > There are some items that I plat to do:
+> > 1. integrate the MCPM (multi cluster power management) code into Tegra
+> > CPU PM code
+> 
+> +1
+> 
+> > 2. integrate coupled CPUidle framework into Tegra CPU idle driver
+> 
+> If you are using the MCPM, I suggest you rely on the MCPM to replace the
+> coupled idle state by it. The code will look much more consistent.
+> 
+Yes, true. Thanks for your advise.
 
---+ts6NCQ4mrNQIV8p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 10, 2013 at 04:01:49PM +1000, Dave Airlie wrote:
-> On Wed, Jul 10, 2013 at 7:45 AM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > We are currently looking into exporting some information from the linux
-> > kernel to userspace about the GPU. This information is specific per
-> > board as the data can vary depending on the fuses burnt on the board.
-> >
-> > Right now we are leaning towards adding sysfs properties to our existing
-> > nodes to share this information.
-> >
-> > Before we write up the patches and update our userspace apps to check
-> > the new locations, we wanted to make sure there wasn't a more
-> > accepted/proper way to export information already.
-> >
-> > Right now for instance we want to export a property to say how many
-> > pixel pipes there are. This could then be exported in something like:
-> >
-> > /sys/bus/platform/drivers/gr3d/54180000.gr3d/num_pixel_pipes
-> >
-> > Is this the best approach to take right now or is there another way we
-> > should export this and similar HW specific information?
->=20
-> All the x86 GPU drivers use gpu specific get param ioctls for this so far.
->=20
-> e.g. drivers/gpu/drm/radeon/radeon_kms.c:radeon_info_ioctl
-
-If we want to add an IOCTL for it then we should take some care to craft
-it properly so we don't have to keep adding new ones because we forgot
-to provide half the information. Something like what radeon does looks
-like it's extensible enough for us not to have to worry too much.
-
-Thierry
-
---+ts6NCQ4mrNQIV8p
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR5i5IAAoJEN0jrNd/PrOhG7sP+wTsNWL5uS+8JhXO+7p8fl45
-eBR9bpMTZ03+aJZp2ilvy/yl0pvfjOJ3tJjU+QIL1FhYg0KwxvzLjjze9Fpx7i5b
-YPQEr1Hu6YQ+/wC+ExEjJLNWff5QCQnOhtgkqxyozSmo81QOLxdWqw6ySgKrwewi
-wFOSsCOh0EQuzJcukzV/eV8QmZWRCUUmapq0pj0gAUQc0Q9+tLi2nodiBOGLHelS
-E9AHRbZAl/V5rtkO2ht5QGn4VD/WyN1LmjwmnC6qnPMDJ1pjDcDOS/xRwnIeDOfd
-OG0SwIS+45KR9T7+0aXs5IAGpp1XV/YdnnLu26S0l8fzxeiVdLCpONwF//3O+zHW
-CnyAw/sfzse2Jrmi9/ge7ly2tuMPLHBPb1YdxHhKxMxsVTprFXOEBjyxlZ4Romr0
-34cHTdR6zkPJPDGOMaCzhFdTucJ3nLMuBggVPzw8mJuC5BUKIia1AxBxW4GxbUEm
-NfMHLDLS6NmxNWVPcD/70olKijx9vvBE7/TpHh2oafwr/k/DsBj3nMiWszGPdZoR
-ilG9RtL0GgFXYqKc5RSYmVpsu1JD+d6uFmIywQr226mqnq0+Bm7BfvR3gV1oFYDD
-DzvMpHKF4DqcdYQzyQ5Yhd+CCl3FtPVbuj9DS4hisPyelDvZAUAkaa57AJrQpNRY
-wxu4lVVX4eASGMXrMAO5
-=akaR
------END PGP SIGNATURE-----
-
---+ts6NCQ4mrNQIV8p--
+Joseph
