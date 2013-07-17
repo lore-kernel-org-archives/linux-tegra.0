@@ -1,81 +1,42 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
-Date: Wed, 17 Jul 2013 18:29:34 +0800
-Message-ID: <1374056974.1000.1.camel@jlo-ubuntu-64.nvidia.com>
-References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
-	 <51E439BC.9030608@wwwdotorg.org>
-	 <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
-	 <51E5A438.10004@wwwdotorg.org>
-	 <1374056130.10997.16.camel@jlo-ubuntu-64.nvidia.com>
-	 <51E6701E.2070909@linaro.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra: depend on ARCH_TEGRA, not ARCH_TEGRA_*
+Date: Wed, 17 Jul 2013 11:01:30 -0600
+Message-ID: <51E6CDEA.7060003@wwwdotorg.org>
+References: <1374013667-21435-1-git-send-email-swarren@wwwdotorg.org> <20130717083003.GA22506@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E6701E.2070909-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20130717083003.GA22506-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-07-17 at 18:21 +0800, Daniel Lezcano wrote:
-> On 07/17/2013 12:15 PM, Joseph Lo wrote:
-> > On Wed, 2013-07-17 at 03:51 +0800, Stephen Warren wrote:
-> >> On 07/16/2013 05:17 AM, Joseph Lo wrote:
-> >>> On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
-> >>>> On 06/25/2013 03:23 AM, Joseph Lo wrote:
-> >>>>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
-> >>>>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
-> >>>>> this state.
-> >>> or something can increase
-> >>> the loading or make regressions. But I think you are testing with USB
-> >>> device attached, right? That might cause some extra loading. You can
-> >>> give it a try after just removing USB device. And I double confirm that
-> >>> on Seaboard. Except that, the test result looks OK for me.
-> >>
-> >> Yes, having a USB device plugged in does affect the issue. In summary:
-> >>
-> >> next-20130716, with or without USB devices plugged in: Works fine.
-> >>
-> >> next-20130716 with your patches, without USB device plugged in:
-> >> Occasional short problems (detailed below).
-> >>
-> >> next-20130716 with your patches, with USB device plugged in: Continual
-> >> long problems (detailed below).
-> >>
-> >> The testing I did was to log in over the serial console, hit <enter>
-> >> around five times, and watch the shell prompt echo back, then type
-> >> "ls<enter" and watch the (directory listing appear (I have about 20
-> >> files in my directory, with long-ish names), then repeat. With plain
-> >> next-20130716, this is nice and fast and there are no pauses. With your
-> >> patches applied, there are occasional or continual pauses, which last
-> >> for either a short time (tenths of a second), or even a second or two,
-> >> both depending on whether a USB device is plugged in or not.
-> >>
-> >> I believe this is the same issue I saw when I applied your patches to
-> >> the Tegra tree on top of v3.11-rc1.
-> >>
-> > OK. I did more stress tests last night and today. I found it cause by
-> > the patch "ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag" and
-> > only impact the Tegra20 platform. The hot plug regression seems due to
-> > this patch. After dropping this patch on top of v3.11-rc1, the Tegra20
-> > can back to normal.
-> > 
-> > And the hop plug and suspend stress test can pass on Tegra30/114 too.
-> > 
-> > Can the other two patch series for Tegra114 to support CPU idle power
-> > down mode and system suspend still moving forward, not be blocked by
-> > this patch?
-> > 
-> > Looks the CPUIDLE_FLAG_TIMER_STOP flag still cause some other issue for
-> > hot plug on Tegra20, I will continue to check this. You can just drop
-> > this patch.
+On 07/17/2013 02:30 AM, Mark Brown wrote:
+> On Tue, Jul 16, 2013 at 04:27:47PM -0600, Stephen Warren wrote:
 > 
-> Please in the future Cc me when problems occur with some patches I
-> submitted. That would be easier for me to track the issues and fix them
-> when they happen.
+>> Stop selecting I2S/AC97/SPDIF controller drivers from the machine
+>> driver config options; this doesn't really work if we don't know
+>> which specific SoC(s) we're building for. However, set their
+>> default values based on SND_SOC_TEGRA, since most people will
+>> probably want to enable support for all SoCs. This also avoids
+>> the need to change any defconfig files.
 > 
-Ah, sorry for that. I should always Cc you. Will do next time. Thanks
-for take care.
+> This doesn't seem terribly clever and is definitely not idiomatic
+> for ASoC.  If you want to just select all CPUs that'd be fine but
+> forcing the user to select the individual components isn't the
+> style anything else uses.
 
-Joseph
+So I think what you're saying is that machine drivers should be
+changed like:
+
+-       select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
+-       select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
++       select SND_SOC_TEGRA20_I2S
++       select SND_SOC_TEGRA30_I2S
+
+But then, it won't be possible to disable support for older SoCs,
+since simply enabling a machine driver that might support Tegra20
+would force ASoC support for Tegra20 to be enabled, even if the user
+only cares about Tegra30.
