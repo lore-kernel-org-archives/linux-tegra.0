@@ -1,83 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 3/4] ARM: dts: tegra: Correct PCIe entry
-Date: Wed, 17 Jul 2013 06:56:08 +0200
-Message-ID: <20130717045607.GC11359@mithrandir>
-References: <1370372252-4332-1-git-send-email-jagarwal@nvidia.com>
- <1370372252-4332-3-git-send-email-jagarwal@nvidia.com>
- <20130610195511.GC25859@mithrandir>
- <20130611073048.GR3847@tbergstrom-lnx.Nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
+Date: Tue, 16 Jul 2013 22:14:09 -0700
+Message-ID: <20130717051409.GA16413@roeck-us.net>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+ <1373615287-18502-2-git-send-email-wni@nvidia.com>
+ <20130712152615.23464a6b@endymion.delvare>
+ <20130712135000.GA3386@roeck-us.net>
+ <20130712163034.1fc1cd66@endymion.delvare>
+ <20130712144011.GC3629@roeck-us.net>
+ <51E395D9.6070000@nvidia.com>
+ <20130715092415.6d082aa2@endymion.delvare>
+ <20130717042618.GA11359@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MnLPg7ZWsaic7Fhd"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20130611073048.GR3847-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org" <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Juha Tukkinen <jtukkinen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krishna Thota <kthota-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130717042618.GA11359@mithrandir>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jean Delvare <khali@linux-fr.org>, Wei Ni <wni@nvidia.com>, rui.zhang@intel.com, lm-sensors@lm-sensors.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Jul 17, 2013 at 06:26:20AM +0200, Thierry Reding wrote:
+> On Mon, Jul 15, 2013 at 09:24:15AM +0200, Jean Delvare wrote:
+> > On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
+> > > On 07/12/2013 10:40 PM, Guenter Roeck wrote:
+> > > > On Fri, Jul 12, 2013 at 04:30:34PM +0200, Jean Delvare wrote:
+> > > >> If that means that for example the ACPI thermal zone is no longer
+> > > >> displayed by "sensors", then I strongly object - unless it is
+> > > >> explicitly registered as a separate hwmon device from now on, of course.
+> > > >
+> > > > If I recall correctly that was the idea. Of course, in practice that will mean
+> > > > that devices will _not_ get exposed as hwmon devices, as implementers won't
+> > > > bother doing both.
+> > > > 
+> > > >> My idea was to make the bridge optional - you decide when you register
+> > > >> a thermal device if it should be exposed as hwmon or not.
+> > > >
+> > > > Yes, that would be a much better solution.
+> > > 
+> > > I think we can decide it in the DT, we can add a dt property in the lm90
+> > > device node, such as:
+> > > sys-interface = SYS_HWMON;
+> > > or
+> > > sys-interface = SYS_THERMAL;
+> > > So we register it as the hwmon or thermal device
+> > 
+> > This is an option, but please keep in mind that DT is not the only way
+> > to instantiate LM90-like devices, and we should not expose duplicate
+> > inputs by default. It is fine with me if the default is to create only a
+> > HWMON device (as the lm90 driver was doing so far), and only
+> > DT-instantiated devices have the choice.
+> 
+> I don't think this information belongs in the device tree. Whether the
+> device is exposed as hwmon or thermal device (or both) is entirely a
+> software issue whereas DT is a means to describe the hardware.
+> 
+Correct; this is exactly the type of information which does _not_ belong int
+devicetree.
 
---MnLPg7ZWsaic7Fhd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> It seems to me that the earlier proposal of communicating to the bridge
+> whether or not a device should be exposed as hwmon device is the right
+> thing to do here.
+> 
+Agreed..
 
-On Tue, Jun 11, 2013 at 10:30:48AM +0300, Peter De Schrijver wrote:
-> On Mon, Jun 10, 2013 at 09:55:12PM +0200, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Wed, Jun 05, 2013 at 12:27:31AM +0530, Jay Agarwal wrote:
-> > [...]
-> > > @@ -29,7 +29,7 @@
-> > >  		ranges =3D <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* p=
-ort 0 configuration space */
-> > >  			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 con=
-figuration space */
-> > >  			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 con=
-figuration space */
-> > > -			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream=
- I/O */
-> > > +			  0x81000000 0 0          0x02000000 0 0x00100000   /* downstream=
- I/O */
-> > >  			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefet=
-chable memory */
-> > >  			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchab=
-le memory */
-> >=20
-> > That increases the I/O region size from 64 KiB to 1 MiB. Why is that
-> > necessary? I/O operations can only address 64 KiB, so I don't think
-> > adding more makes any sense.
->=20
-> At least PCI allows 32bit I/O addresses. No idea if anyone uses them thou=
-gh.
+Guenter
 
-I just realized that we are constrained to 64 KiB by the implementation
-of pci_ioremap_io(), which assumes each mapping is 64 KiB. Not that it
-couldn't be changed, but unless there actually is a use-case where more
-than 64 KiB are required I don't think we should worry about it.
-
-Thierry
-
---MnLPg7ZWsaic7Fhd
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR5iPmAAoJEN0jrNd/PrOhrBMP/0vz8TPy4041QDMywygKLoBd
-wqq4TzpO3Tq3y8m8zk8anVQ9CtSdXiJVzbvum9IehAeWUUYoPVK2ENcaC6Atkzi2
-pWDfSICda40hZyEukwUXh0ncOLwM5+sK5Shz0hCk2lOr2HTk34LgGr0I0Nb9eSM+
-KkCFSqLPaH2QZuGxvTPgMKP2EcrGdcMYVDB7pZ1ENu8WKwHJmDZLRz6QisXqYIVF
-osKhmUIuVpuP7RafvjU0wOHghx2yZD9FZG5x1guiAiWox78MvrYwJNULzRlq1IPA
-nxvnasLM3ZOUk7YQYJkD6WE184MJYYXmGUNwymyfdWFNe17xEGy0j2y4fOxkb87a
-TUytPwi5RuidPu/FNlCcb0sCxdbbjuwxzBUDvR/zQ6i5YUPPvVXwADCOV/i6WoPI
-FIY3JhiqKkapo5YSWOrlskImpQZPGfLOJXTH2TiGAHc6oBF18OjielG+xUAPbX1A
-GcOSg5leYEHjIihC/BEvXYun2vBa4yca6F0mcOiTIjFHAbB7s8OYQFGSX84htwmT
-bgw+2869EtP5LJUnTMONM/FZv487/UWICqLNXEmlNHFrmwuxOzyfQk6WxHtiYiVS
-eY4SjpJ/HfDS5VClFESozo0SkzG2nG5ogQvsUnrEjtkPnIINnK2qXOSU6Cks9Q+G
-BLC2lvtmjh1SNFBYMzso
-=Rjk/
------END PGP SIGNATURE-----
-
---MnLPg7ZWsaic7Fhd--
