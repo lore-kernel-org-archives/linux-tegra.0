@@ -1,42 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: depend on ARCH_TEGRA, not ARCH_TEGRA_*
-Date: Wed, 17 Jul 2013 11:01:30 -0600
-Message-ID: <51E6CDEA.7060003@wwwdotorg.org>
-References: <1374013667-21435-1-git-send-email-swarren@wwwdotorg.org> <20130717083003.GA22506@sirena.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 0/2] Enable lm90 in Tegra30 and Tegra114.
+Date: Wed, 17 Jul 2013 11:05:09 -0600
+Message-ID: <51E6CEC5.7050402@wwwdotorg.org>
+References: <1373615364-18559-1-git-send-email-wni@nvidia.com> <51E427F1.9010106@wwwdotorg.org> <51E42DB0.8090006@wwwdotorg.org> <51E52B28.9090708@nvidia.com> <51E65309.6000101@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130717083003.GA22506-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51E65309.6000101@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: "khali@linux-fr.org" <khali@linux-fr.org>, "linux@roeck-us.net" <linux@roeck-us.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/17/2013 02:30 AM, Mark Brown wrote:
-> On Tue, Jul 16, 2013 at 04:27:47PM -0600, Stephen Warren wrote:
+On 07/17/2013 02:17 AM, Wei Ni wrote:
+> On 07/16/2013 07:14 PM, Wei Ni wrote:
+>> On 07/16/2013 01:13 AM, Stephen Warren wrote:
+>>> On 07/15/2013 10:48 AM, Stephen Warren wrote:
+>>>> On 07/12/2013 01:49 AM, Wei Ni wrote:
+>>>>> Enable thermal sensor lm90 for Tegra30 Cardhu and Tegra114 Dalmore.
+>>>>
+>>>> I have applied the series to Tegra's for-3.12/dt branch.
+>>>
+>>> Actually, I see the following on Dalmore (although Cardhu works):
+>>>
+>>> [   29.448539] lm90 0-004c: Register 0x4 read failed (-121)
+>>> [   29.453930] lm90 0-004c: Failed to read convrate register!
+>>> [   29.460034] lm90 0-004c: Register 0x3 read failed (-121)
+>>> [   29.465408] lm90 0-004c: Initialization failed!
+>>>
+>>> So, there's something wrong here, and I've dropped the patch for
+>>> Dalmore. Does this patch actually work for you?
+>>>
+>> I test it with the Chrome u-boot, the lm90 works fine.
+>> But today, if I tried to use the uboot from
+>> git://git.denx.de/u-boot-tegra.git, I can repo your errors, it seems the
+>> i2c can't work, the lm90 driver read register failed.
+>> I traced it, but can't find the root cause yet.
 > 
->> Stop selecting I2S/AC97/SPDIF controller drivers from the machine
->> driver config options; this doesn't really work if we don't know
->> which specific SoC(s) we're building for. However, set their
->> default values based on SND_SOC_TEGRA, since most people will
->> probably want to enable support for all SoCs. This also avoids
->> the need to change any defconfig files.
-> 
-> This doesn't seem terribly clever and is definitely not idiomatic
-> for ASoC.  If you want to just select all CPUs that'd be fine but
-> forcing the user to select the individual components isn't the
-> style anything else uses.
+> Hi, Stephen
+> I found the root cause.
+> In the Chrome u-boot, it will turn on the regulator for the lm90, but in
+> the upstream u-boot, it didn't do it.
 
-So I think what you're saying is that machine drivers should be
-changed like:
+> I think this regulator should be handled in the kernel driver, but it
+> seems the regulator palmas tps65913 didn't be supported on the dalmore yet.
+> So may be we have to wait the palmas ready on dalmore.
 
--       select SND_SOC_TEGRA20_I2S if ARCH_TEGRA_2x_SOC
--       select SND_SOC_TEGRA30_I2S if ARCH_TEGRA_3x_SOC
-+       select SND_SOC_TEGRA20_I2S
-+       select SND_SOC_TEGRA30_I2S
-
-But then, it won't be possible to disable support for older SoCs,
-since simply enabling a machine driver that might support Tegra20
-would force ASoC support for Tegra20 to be enabled, even if the user
-only cares about Tegra30.
+Yes, I agree. (although Laxman's regulator patch caused the SD card to
+stop working, so that needs to be fixed up, but hopefully it's a simple
+issue).
