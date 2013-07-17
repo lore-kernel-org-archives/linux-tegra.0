@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 3/3] ARM: tegra: Remove obsolete nvidia,vbus-gpio properties
-Date: Wed, 17 Jul 2013 10:37:51 +0300
-Message-ID: <1374046671-21134-4-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH v3 2/3] usb: tegra: Add vbus-supply property for host mode PHYs
+Date: Wed, 17 Jul 2013 10:37:50 +0300
+Message-ID: <1374046671-21134-3-git-send-email-mperttunen@nvidia.com>
 References: <1374046671-21134-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,66 +12,26 @@ To: balbi-l0cyMroinI0@public.gmane.org
 Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-USB VBUS regulators are now specified with the vbus-supply property
-instead of nvidia,vbus-gpio, so remove the obsolete properties.
-
-The equivalent vbus-supply properties were already added in patch
-"ARM: tegra: update device trees for USB binding rework".
+Document vbus-supply as an optional property for host mode phy-tegra-usb PHYs.
 
 Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-seaboard.dts  | 1 -
- arch/arm/boot/dts/tegra20-trimslice.dts | 1 -
- arch/arm/boot/dts/tegra20-whistler.dts  | 2 --
- 3 files changed, 4 deletions(-)
+ Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 365760b..52526c9 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -566,7 +566,6 @@
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+index c4c9e9e..59c4854 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
+@@ -48,5 +48,5 @@ Optional properties:
+       peripheral means it is device controller
+       otg means it can operate as either ("on the go")
  
- 	usb@c5000000 {
- 		status = "okay";
--		nvidia,vbus-gpio = <&gpio TEGRA_GPIO(D, 0) GPIO_ACTIVE_HIGH>;
- 		dr_mode = "otg";
- 	};
- 
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index ed4b901..3e57b87 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -312,7 +312,6 @@
- 
- 	usb@c5000000 {
- 		status = "okay";
--		nvidia,vbus-gpio = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
- 	};
- 
- 	usb-phy@c5000000 {
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index ab67c94..a6b1b5b 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -509,7 +509,6 @@
- 
- 	usb@c5000000 {
- 		status = "okay";
--		nvidia,vbus-gpio = <&tca6416 0 GPIO_ACTIVE_HIGH>;
- 	};
- 
- 	usb-phy@c5000000 {
-@@ -519,7 +518,6 @@
- 
- 	usb@c5008000 {
- 		status = "okay";
--		nvidia,vbus-gpio = <&tca6416 1 GPIO_ACTIVE_HIGH>;
- 	};
- 
- 	usb-phy@c5008000 {
+-Required properties for dr_mode == otg:
++VBUS control (required for dr_mode == host, optional for dr_mode == otg):
+   - vbus-supply: regulator for VBUS
 -- 
 1.8.1.5
 
