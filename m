@@ -1,80 +1,95 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common
- codes
-Date: Wed, 17 Jul 2013 11:11:44 +0200
-Message-ID: <20130717111144.491e9958@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-	<1373615287-18502-2-git-send-email-wni@nvidia.com>
-	<20130712152615.23464a6b@endymion.delvare>
-	<20130712135000.GA3386@roeck-us.net>
-	<20130712163034.1fc1cd66@endymion.delvare>
-	<20130712144011.GC3629@roeck-us.net>
-	<51E395D9.6070000@nvidia.com>
-	<20130715092415.6d082aa2@endymion.delvare>
-	<20130717042618.GA11359@mithrandir>
-	<20130717051409.GA16413@roeck-us.net>
-	<51E6392E.5080906@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status
+ bit
+Date: Wed, 17 Jul 2013 17:29:32 +0800
+Message-ID: <51E663FC.5050209@nvidia.com>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com> <1373615287-18502-3-git-send-email-wni@nvidia.com> <20130715185727.4ebde8c4@endymion.delvare>	<51E641C7.4000107@nvidia.com> <20130717102803.6ee36313@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51E6392E.5080906@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, rui.zhang@intel.com, lm-sensors@lm-sensors.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130717102803.6ee36313@endymion.delvare>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 17 Jul 2013 14:26:54 +0800, Wei Ni wrote:
-> On 07/17/2013 01:14 PM, Guenter Roeck wrote:
-> > On Wed, Jul 17, 2013 at 06:26:20AM +0200, Thierry Reding wrote:
-> >> On Mon, Jul 15, 2013 at 09:24:15AM +0200, Jean Delvare wrote:
-> >>> On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
-> >>>> I think we can decide it in the DT, we can add a dt property in the lm90
-> >>>> device node, such as:
-> >>>> sys-interface = SYS_HWMON;
-> >>>> or
-> >>>> sys-interface = SYS_THERMAL;
-> >>>> So we register it as the hwmon or thermal device
-> >>>
-> >>> This is an option, but please keep in mind that DT is not the only way
-> >>> to instantiate LM90-like devices, and we should not expose duplicate
-> >>> inputs by default. It is fine with me if the default is to create only a
-> >>> HWMON device (as the lm90 driver was doing so far), and only
-> >>> DT-instantiated devices have the choice.
-> >>
-> >> I don't think this information belongs in the device tree. Whether the
-> >> device is exposed as hwmon or thermal device (or both) is entirely a
-> >> software issue whereas DT is a means to describe the hardware.
-> >>
-> > Correct; this is exactly the type of information which does _not_ belong int
-> > devicetree.
-> > 
-> >> It seems to me that the earlier proposal of communicating to the bridge
-> >> whether or not a device should be exposed as hwmon device is the right
-> >> thing to do here.
-> >
-> > Agreed..
+On 07/17/2013 04:28 PM, Jean Delvare wrote:
+> Hi Wei,
 > 
-> Sorry, what's the "bridge" mean,
+> On Wed, 17 Jul 2013 15:03:35 +0800, Wei Ni wrote:
+>> On 07/16/2013 12:57 AM, Jean Delvare wrote:
+>>> On Fri, 12 Jul 2013 15:48:05 +0800, Wei Ni wrote:
+>>>> Add bit defines for the status register.
+>>>
+>>> Regarding the subject: for me these are constants, not macros. AFAIK
+>>> the term "macro" refers to defines with parameters only.
+>>
+>> How about "Introduce status bits"
+> 
+> I'd say "Define status bits" as this is exactly what you're doing ;-)
+> That being said, your patch actually does more than this, as you are
+> moving code around and to a separate function. The patch description
+> should say that and explain why.
 
-The code which creates a virtual hwmon input when a new thermal zone is
-registered (this code is in thermal_core.c.)
+ok, I will update it in my next version.
 
-> does it mean we need to add a flag in
-> the thermal_zone_device_register() to indicate if we want to register
-> virtual hwmon device or not?
+> 
+>>>> (...)
+>>>> +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
+>>>> +		return false;
+>>>
+>>> It's a bit disappointing to not use the freshly introduced constants.
+>>> That being said I agree it would make the code hard to read, so you can
+>>> leave it as is.
+>>
+>> Sorry, I forgot it.
+>> How about to define:
+>> #define LM90_STATUS_MASK 0x7f
+>> #define MAX6696_STATUS2_MASK 0xfe
+> 
+> I wouldn't bother. I suspect that this code will have to be reworked
+> soon anyway and these constants may no longer be needed then.
 
-I think so, yes.
+Ok, let's leave it as is.
 
-Alternatively the flag could be added to struct
-thermal_zone_device_ops, so that you don't have to update all the
-callers. But I admit it's a hack as the flag doesn't really belong
-there, so I suppose we don't really want to do that.
+> 
+>> Or since Guenter is for vacation, I can just leave it as is, and wait
+>> him back to talk about below issue.
+> 
+> I do maintain the lm90 driver, so the decision is up to me. Guenter did
+> a preliminary review of your patches and I am grateful for that, but I
+> do not intend to wait for his return to continue with your patches.
+> Otherwise he will have to do the same when he returns and I am gone,
+> and this may end up delaying your patches by one kernel version.
 
-I have been thinking of an automatic approach, based on comparing the
-type string passed to thermal_zone_device_register() with already
-registered hwmon devices, but I couldn't come up with something good
-and robust enough, so let's forget about it.
+I will send out patches soon :)
 
--- 
-Jean Delvare
+> 
+>>>> (...)
+>>>> +		struct lm90_data *data = i2c_get_clientdata(client);
+>>>> +		u8 config, alarms;
+>>>> +
+>>>> +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
+>>>
+>>> You end up reading LM90_REG_R_STATUS, which is not OK. This register
+>>> contains self-clearing bits, so there is no guarantee that the second
+>>> read will return the same value as the first read. You'll have to come
+>>> up with a different approach that reads LM90_REG_R_STATUS only once.
+>>
+>> Oh, yes, this is a problem, I didn't noticed it.
+>> How about to use this:
+>> bool lm90_alarms_tripped(*client, *status);
+>> bool lm90_alarms2_tripped(*client, *status2);
+>> So we can read the status only once and pass it.
+> 
+> This is a good idea but you only need status, not status2, so it can be
+> made simpler:
+> bool lm90_is_tripped(*client, *status);
+> (handling both status and status 2 as you already do.)
+
+Yes this is simpler, but I think in the future we may need to handle the
+status2, how to handle it ? Or we can define the status as
+bit[0~7]->status and bit[8~15]->status2 .
+
+> 
