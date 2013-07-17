@@ -1,54 +1,71 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
-Date: Wed, 17 Jul 2013 14:19:14 +0800
-Message-ID: <1374041954.10997.1.camel@jlo-ubuntu-64.nvidia.com>
-References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
-	 <51E439BC.9030608@wwwdotorg.org>
-	 <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
-	 <51E53858.6090207@linaro.org>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v3 1/4] hwmon: (lm90) split set&show temp as common codes
+Date: Wed, 17 Jul 2013 14:26:54 +0800
+Message-ID: <51E6392E.5080906@nvidia.com>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com> <1373615287-18502-2-git-send-email-wni@nvidia.com> <20130712152615.23464a6b@endymion.delvare> <20130712135000.GA3386@roeck-us.net> <20130712163034.1fc1cd66@endymion.delvare> <20130712144011.GC3629@roeck-us.net> <51E395D9.6070000@nvidia.com> <20130715092415.6d082aa2@endymion.delvare> <20130717042618.GA11359@mithrandir> <20130717051409.GA16413@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E53858.6090207-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20130717051409.GA16413@roeck-us.net>
+Sender: linux-pm-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Jean Delvare <khali@linux-fr.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-07-16 at 20:11 +0800, Daniel Lezcano wrote:
-> On 07/16/2013 01:17 PM, Joseph Lo wrote:
-> > On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
-> >> On 06/25/2013 03:23 AM, Joseph Lo wrote:
-> >>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
-> >>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
-> >>> this state.
-> >>
-> >> I tried applying this patch, your series "[PATCH V3 0/3] ARM: tegra114:
-> >> cpuidle: add power down state", and your series "[PATCH V2 00/11] ARM:
-> >> tegra114: add support for system suspend", all on top of v3.11-rc1.
-> >>
-> >> On Dalmore, the new cpuidle mode /appears/ to work (I see increasing
-> >> values in the sysfs cpuidle "usage" file for all defined cpuidle
-> >> states), but I don't see the "CPU VDD off" LED light up; I'm not
-> >> convinced that the CPU is actually being powered off in the idle mode.
-> >>
-> > The LED of the CPU Vdd indicates the power of CPU cluster. But the
-> > series of CPU idle power down mode support for Tegra114 only supports
-> > per core power down. It did not support cluster power down yet in idle
-> > mode. That needs some extra work to support cluster power down in idle
-> > mode.
-> > There are some items that I plat to do:
-> > 1. integrate the MCPM (multi cluster power management) code into Tegra
-> > CPU PM code
+On 07/17/2013 01:14 PM, Guenter Roeck wrote:
+> On Wed, Jul 17, 2013 at 06:26:20AM +0200, Thierry Reding wrote:
+>> On Mon, Jul 15, 2013 at 09:24:15AM +0200, Jean Delvare wrote:
+>>> On Mon, 15 Jul 2013 14:25:29 +0800, Wei Ni wrote:
+>>>> On 07/12/2013 10:40 PM, Guenter Roeck wrote:
+>>>>> On Fri, Jul 12, 2013 at 04:30:34PM +0200, Jean Delvare wrote:
+>>>>>> If that means that for example the ACPI thermal zone is no longer
+>>>>>> displayed by "sensors", then I strongly object - unless it is
+>>>>>> explicitly registered as a separate hwmon device from now on, of course.
+>>>>>
+>>>>> If I recall correctly that was the idea. Of course, in practice that will mean
+>>>>> that devices will _not_ get exposed as hwmon devices, as implementers won't
+>>>>> bother doing both.
+>>>>>
+>>>>>> My idea was to make the bridge optional - you decide when you register
+>>>>>> a thermal device if it should be exposed as hwmon or not.
+>>>>>
+>>>>> Yes, that would be a much better solution.
+>>>>
+>>>> I think we can decide it in the DT, we can add a dt property in the lm90
+>>>> device node, such as:
+>>>> sys-interface = SYS_HWMON;
+>>>> or
+>>>> sys-interface = SYS_THERMAL;
+>>>> So we register it as the hwmon or thermal device
+>>>
+>>> This is an option, but please keep in mind that DT is not the only way
+>>> to instantiate LM90-like devices, and we should not expose duplicate
+>>> inputs by default. It is fine with me if the default is to create only a
+>>> HWMON device (as the lm90 driver was doing so far), and only
+>>> DT-instantiated devices have the choice.
+>>
+>> I don't think this information belongs in the device tree. Whether the
+>> device is exposed as hwmon or thermal device (or both) is entirely a
+>> software issue whereas DT is a means to describe the hardware.
+>>
+> Correct; this is exactly the type of information which does _not_ belong int
+> devicetree.
 > 
-> +1
-> 
-> > 2. integrate coupled CPUidle framework into Tegra CPU idle driver
-> 
-> If you are using the MCPM, I suggest you rely on the MCPM to replace the
-> coupled idle state by it. The code will look much more consistent.
-> 
-Yes, true. Thanks for your advise.
+>> It seems to me that the earlier proposal of communicating to the bridge
+>> whether or not a device should be exposed as hwmon device is the right
+>> thing to do here.
+>>
+> Agreed..
 
-Joseph
+Sorry, what's the "bridge" mean, does it mean we need to add a flag in
+the thermal_zone_device_register() to indicate if we want to register
+virtual hwmon device or not?
+
+Thanks.
+Wei.
+
+> 
+> Guenter
+> 
+
