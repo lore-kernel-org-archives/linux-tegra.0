@@ -1,177 +1,157 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: No HDMI output on AC100
-Date: Wed, 17 Jul 2013 21:24 +0200
-Message-ID: <2335952.AzgfRvEkyz@ax5200p>
-References: <2572002.IOA8y0azF4@ax5200p> <1371308577.2480.6.camel@localhost.localdomain> <20130717043939.GB11359@mithrandir>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Wed, 17 Jul 2013 14:31:07 -0600
+Message-ID: <51E6FF0B.5000708@wwwdotorg.org>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>  <51E439BC.9030608@wwwdotorg.org>  <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>  <51E5A438.10004@wwwdotorg.org> <1374056130.10997.16.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130717043939.GB11359@mithrandir>
+In-Reply-To: <1374056130.10997.16.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thomas Meyer <thomas-VsYtu1Qij5c@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 17 July 2013 06:39:41 Thierry Reding wrote:
-> On Sat, Jun 15, 2013 at 05:02:57PM +0200, Thomas Meyer wrote:
-> > Am Samstag, den 15.06.2013, 11:43 +0200 schrieb Thierry Reding:
-> > > On Sat, Jun 15, 2013 at 11:37:46AM +0200, Thomas Meyer wrote:
-> > > > Am Freitag, den 14.06.2013, 23:26 +0200 schrieb Thierry Reding:
-> > > > > On Fri, Jun 14, 2013 at 10:59:00PM +0200, Thomas Meyer wrote:
-> > > > > > Am 14.06.2013 um 22:37 schrieb Thierry Reding 
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> > > > > [...]
-> > > > > 
-> > > > > > > I think I've seen a similar issue
-> > > > > > > when that's not loaded, in which case DRM will turn off all
-> > > > > > > outputs
-> > > > > > > because there's nothing to display. Alternatively you could try
-> > > > > > > to run
-> > > > > > > an X server using the xf86-video-opentegra or
-> > > > > > > xf86-video-modesetting
-> > > > > > > drivers. That should definitely get you output on HDMI.
-> > > > > > 
-> > > > > > I did login blindly on tty2 and started xfce using the open tegra
-> > > > > > driver,
-> > > > > > but still no hdmi output. I can send you the Xorg log file if you
-> > > > > > want
-> > > > > > to.
-> > > > > 
-> > > > > Yes, Xorg output would be good. Additionally, dmesg output might
-> > > > > help.
-> > > > > Don't forget to pass drm.debug=0xf on the kernel command-line.
-> > > > > 
-> > > > > > Xfce seems to run correctly, as far as I can see all necessary
-> > > > > > processes
-> > > > > > are running. The monitor I connect to the hdmi is an dvi monitor
-> > > > > > using
-> > > > > > an dvi to hdmi adapter, so no sound is connected. But that
-> > > > > > shouldn't be
-> > > > > > a problem.
-> > > > 
-> > > > btw. switching the mode with
-> > > > $ xrandr  -d :0 --output HDMI-0 --mode 1680x1050
-> > > > 
-> > > > makes the external monitor output the display correctly...
-> > > > 
-> > > > also switching to the highest possible resolution works after the
-> > > > first
-> > > > mode switch:
-> > > > $ xrandr  -d :0 --output HDMI-0 --mode 1920x1080
-> > > 
-> > > So perhaps the default configuration chosen at startup isn't one that
-> > > tegra-drm can properly deal with. Can you provide the output of
-> > > 
-> > > 	$ xrandr --query
-> > > 
-> > > run immediately after booting (that is with the default configuration
-> > > before you make it work by setting a 1680x1050 mode).
-> > 
-> > sorry, I wasn't able to get the infos. xrandr refused to connect to the
-> > X server spawned by lightdm but I don't know why. Maybe some missing
-> > Xauthority or something like that.
-> > 
-> > But I got these infos, after a fresh boot:
-> > 
-> > $ fbset -i
-> > 
-> > mode "1920x1080"
-> > 
-> >     geometry 1920 1080 1920 1080 32
-> >     timings 0 0 0 0 0 0 0
-> >     accel true
-> >     rgba 8/16,8/8,8/0,0/0
-> > 
-> > endmode
-> > 
-> > Frame buffer device information:
-> >     Name        :
-> >     Address     : 0x1a100000
-> >     Size        : 8294400
-> >     Type        : PACKED PIXELS
-> >     Visual      : TRUECOLOR
-> >     XPanStep    : 1
-> >     YPanStep    : 1
-> >     YWrapStep   : 0
-> >     LineLength  : 7680
-> >     Accelerator : No
-> > 
-> > $ fbset -i -fb /dev/fb1
-> > 
-> > mode "1024x768"
-> > 
-> >     geometry 1024 768 1024 768 16
-> >     timings 0 0 0 0 0 0 0
-> >     accel true
-> >     rgba 5/11,6/5,5/0,0/0
-> > 
-> > endmode
-> > 
-> > Frame buffer device information:
-> >     Name        : udldrmfb
-> >     Address     : 0xe0dbc000
-> >     Size        : 1572864
-> >     Type        : PACKED PIXELS
-> >     Visual      : TRUECOLOR
-> >     XPanStep    : 1
-> >     YPanStep    : 1
-> >     YWrapStep   : 0
-> >     LineLength  : 2048
-> >     Accelerator : No
-> > 
-> > When I add the boot option "video=HDMI-A-1:1680x1050" I get a working fb
-> > console even while booting up. Later on I can start X manually and then
-> > X switches to 1920x1080 and everything works okay.
+On 07/17/2013 04:15 AM, Joseph Lo wrote:
+> On Wed, 2013-07-17 at 03:51 +0800, Stephen Warren wrote:
+>> On 07/16/2013 05:17 AM, Joseph Lo wrote:
+>>> On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
+>>>> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+>>>>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+>>>>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+>>>>> this state.
+... [ discussion of issues with Joesph's patches applied]
+>
+> OK. I did more stress tests last night and today. I found it cause by
+> the patch "ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag" and
+> only impact the Tegra20 platform. The hot plug regression seems due to
+> this patch. After dropping this patch on top of v3.11-rc1, the Tegra20
+> can back to normal.
 > 
-> Hi Thomas,
+> And the hop plug and suspend stress test can pass on Tegra30/114 too.
 > 
-> This fell off the table. I discussed a similar issue with Marc on IRC
-> today. The issue, IIUC, seems to be that with HDMI connected, the system
-> comes up and when X starts it tries to find the best match amongst the
-> various combinations of video modes on all existing heads in an attempt
-> to clone the desktop to all outputs. It turns out that this causes the
-> HDMI output to be configured with a resolution we don't support on Tegra
-> because the clock can't provide the right frequency.
+> Can the other two patch series for Tegra114 to support CPU idle power
+> down mode and system suspend still moving forward, not be blocked by
+> this patch?
 > 
-> There may be reasons (which I'm not aware of) for X to behave the way it
-> does. It also points to an issue that we should be more clever within
-> the kernel to flag as bad all the modes for which we can't provide a
-> proper clock. I will have to look into that.
-> 
-> In the meantime I think Marc had some success setting up a more useful
-> output configuration using xrandr. Perhaps he can provide more
-> information on exactly what he had to do to make this work and you
-> (Thomas) can try to reproduce whether that gets you a usable system.
-> 
+> Looks the CPUIDLE_FLAG_TIMER_STOP flag still cause some other issue for
+> hot plug on Tegra20, I will continue to check this. You can just drop
+> this patch.
 
-I got dualhead working by using the following xorg.conf entries:
+OK, if I drop that patch, then everything on Tegra20 and Tegra30 seems
+fine again.
 
-Section "Device"                                                                
-    Identifier "gpu"                                                            
-    Driver "opentegra"                                                          
-EndSection                                                                      
-                                                                                
-Section "Monitor"                                                               
-    Identifier "LVDS-0"                                                         
-EndSection                                                                      
-                                                                                
-Section "Monitor"                                                               
-    Identifier "HDMI-0"                                                         
-    Option "LeftOf" "LVDS-0"                                                    
-EndSection                                                                      
-                                                                                
-Section "Screen"                                                                
-    Identifier "Screen0"                                                        
-    Device "gpu"                                                                
-    Monitor "HDMI-0"                                                            
-    SubSection "Display"                                                        
-        Modes "1920x1200"                                                       
-    EndSubSection                                                               
-EndSection 
+However, I've found some new and exciting issue on Tegra114!
 
-HDMI is the primary screen in this case.
+With unmodified v3.11-rc1, I can do the following without issue:
 
-I hope this helps.
+* Unplug/replug CPUs, so that I had all combinations of CPU 1, 2, 3
+plugged/unpplugged (with CPU 0 always plugged).
 
-Marc
+* Unplug/replug CPUs, so that I had all combinations of CPU 0, 1, 2, 3
+plugged/unpplugged (with the obvious exception of never having all CPUs
+unplugged).
+
+However, if I try this with your Tegra114 cpuidle and suspend patches
+applied, I see the following issues:
+
+1) If I boot, unplug CPU 0, then replug CPU 0, the system immediately
+hard-hangs.
+
+2) If I run the hotplug test script, leaving CPU 0 always present, I
+sometimes see:
+
+> root@localhost:~# for i in `seq 1 50`; do echo ITERATION $i; ./cpuonline.py; done
+> ITERATION 1
+> echo 0 > /sys/devices/system/cpu/cpu2/online
+> [  458.910054] CPU2: shutdown
+> echo 0 > /sys/devices/system/cpu/cpu1/online
+> [  461.004371] CPU1: shutdown
+> echo 0 > /sys/devices/system/cpu/cpu3/online
+> [  463.027341] CPU3: shutdown
+> echo 1 > /sys/devices/system/cpu/cpu1/online
+> [  465.061412] CPU1: Booted secondary processor
+> echo 1 > /sys/devices/system/cpu/cpu2/online
+> [  467.095313] CPU2: Booted secondary processor
+> [  467.113243] ------------[ cut here ]------------
+> [  467.117948] WARNING: CPU: 2 PID: 0 at kernel/time/tick-broadcast.c:667 tick_broadcast_oneshot_control+0x19c/0x1c4()
+> [  467.128352] Modules linked in:
+> [  467.131455] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 3.11.0-rc1-00022-g7487363-dirty #49
+> [  467.139678] [<c0015620>] (unwind_backtrace+0x0/0xf8) from [<c001154c>] (show_stack+0x10/0x14)
+> [  467.148228] [<c001154c>] (show_stack+0x10/0x14) from [<c05135a8>] (dump_stack+0x80/0xc4)
+> [  467.156336] [<c05135a8>] (dump_stack+0x80/0xc4) from [<c0024590>] (warn_slowpath_common+0x64/0x88)
+> [  467.165300] [<c0024590>] (warn_slowpath_common+0x64/0x88) from [<c00245d0>] (warn_slowpath_null+0x1c/0x24)
+> [  467.174959] [<c00245d0>] (warn_slowpath_null+0x1c/0x24) from [<c00695e4>] (tick_broadcast_oneshot_control+0x19c/0x1c4)
+> [  467.185659] [<c00695e4>] (tick_broadcast_oneshot_control+0x19c/0x1c4) from [<c0067cdc>] (clockevents_notify+0x1b0/0x1dc)
+> [  467.196538] [<c0067cdc>] (clockevents_notify+0x1b0/0x1dc) from [<c034f348>] (cpuidle_idle_call+0x11c/0x168)
+> [  467.206292] [<c034f348>] (cpuidle_idle_call+0x11c/0x168) from [<c000f134>] (arch_cpu_idle+0x8/0x38)
+> [  467.215359] [<c000f134>] (arch_cpu_idle+0x8/0x38) from [<c0061038>] (cpu_startup_entry+0x60/0x134)
+> [  467.224325] [<c0061038>] (cpu_startup_entry+0x60/0x134) from [<800083d8>] (0x800083d8)
+> [  467.232227] ---[ end trace ea579be22a00e7fb ]---
+> echo 0 > /sys/devices/system/cpu/cpu1/online
+> [  469.126682] CPU1: shutdown
+
+I have found no solution for (1) (although I didn't look hard!).
+
+(2) can be solved with the following (at least 50 iterations of my test
+script worked with this patch applied):
+
+> diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> index 658b205..896408d 100644
+> --- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> +++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> @@ -66,8 +66,7 @@ static struct cpuidle_driver tegra_idle_driver = {
+>                         .exit_latency           = 500,
+>                         .target_residency       = 1000,
+>                         .power_usage            = 0,
+> -                       .flags                  = CPUIDLE_FLAG_TIME_VALID |
+> -                                                 CPUIDLE_FLAG_TIMER_STOP,
+> +                       .flags                  = CPUIDLE_FLAG_TIME_VALID,
+>                         .name                   = "powered-down",
+>                         .desc                   = "CPU power gated",
+>                 },
+
+Here's my test script for reference:
+
+#!/usr/bin/env python
+
+import multiprocessing
+import os
+import sys
+import time
+
+cpus = multiprocessing.cpu_count()
+if cpus == 4:
+  socf = file('/sys/devices/soc0/soc_id')
+  soc = socf.readline().strip()
+  socf.close()
+  if True: #soc == '48':
+    gc = (11, 9, 1, 3, 7, 5, 13, 15)
+  else:
+    gc = (14, 10, 11, 9, 8, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15)
+elif cpus == 2:
+  gc = (1, 3)
+else:
+  raise Exception("Invalid CPU count %d" % cpus)
+
+oldidx = len(gc) - 1
+oldmask = gc[oldidx]
+
+for newidx in range(len(gc)):
+  newmask = gc[newidx]
+  for cpu in range(cpus):
+    oldon = oldmask & (1 << cpu)
+    newon = newmask & (1 << cpu)
+    if oldon != newon:
+      if newon:
+        newonval = 1
+      else:
+        newonval = 0
+      cmd = "echo %d > /sys/devices/system/cpu/cpu%d/online" \
+% (newonval, cpu)
+      print cmd
+      os.system(cmd)
+  time.sleep(2)
+  oldidx = newidx
+  oldmask = newmask
