@@ -1,69 +1,85 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: Re: [PATCH v3 0/2] Enable lm90 in Tegra30 and Tegra114.
-Date: Wed, 17 Jul 2013 11:23:54 +0300
-Message-ID: <51E6549A.1010006@nvidia.com>
-References: <1373615364-18559-1-git-send-email-wni@nvidia.com> <51E427F1.9010106@wwwdotorg.org> <51E42DB0.8090006@wwwdotorg.org> <51E52B28.9090708@nvidia.com> <51E65309.6000101@nvidia.com>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status
+ bit
+Date: Wed, 17 Jul 2013 10:28:03 +0200
+Message-ID: <20130717102803.6ee36313@endymion.delvare>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+	<1373615287-18502-3-git-send-email-wni@nvidia.com>
+	<20130715185727.4ebde8c4@endymion.delvare>
+	<51E641C7.4000107@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51E65309.6000101@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "linux@roeck-us.net" <linux@roeck-us.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51E641C7.4000107-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/17/2013 11:17 AM, Wei Ni wrote:
-> On 07/16/2013 07:14 PM, Wei Ni wrote:
->> On 07/16/2013 01:13 AM, Stephen Warren wrote:
->>> On 07/15/2013 10:48 AM, Stephen Warren wrote:
->>>> On 07/12/2013 01:49 AM, Wei Ni wrote:
->>>>> Enable thermal sensor lm90 for Tegra30 Cardhu and Tegra114 Dalmore.
->>>>
->>>> I have applied the series to Tegra's for-3.12/dt branch.
->>>
->>> Actually, I see the following on Dalmore (although Cardhu works):
->>>
->>> [   29.448539] lm90 0-004c: Register 0x4 read failed (-121)
->>> [   29.453930] lm90 0-004c: Failed to read convrate register!
->>> [   29.460034] lm90 0-004c: Register 0x3 read failed (-121)
->>> [   29.465408] lm90 0-004c: Initialization failed!
->>>
->>> So, there's something wrong here, and I've dropped the patch for
->>> Dalmore. Does this patch actually work for you?
->>>
->> I test it with the Chrome u-boot, the lm90 works fine.
->> But today, if I tried to use the uboot from
->> git://git.denx.de/u-boot-tegra.git, I can repo your errors, it seems the
->> i2c can't work, the lm90 driver read register failed.
->> I traced it, but can't find the root cause yet.
->
-> Hi, Stephen
-> I found the root cause.
-> In the Chrome u-boot, it will turn on the regulator for the lm90, but in
-> the upstream u-boot, it didn't do it.
-> I think this regulator should be handled in the kernel driver, but it
-> seems the regulator palmas tps65913 didn't be supported on the dalmore yet.
-> So may be we have to wait the palmas ready on dalmore.
+Hi Wei,
 
-A patch to enable tps65913 on dalmore has already been posted a couple 
-of days
-ago by Laxman Dewangan, so this shouldn't be too problematic.
+On Wed, 17 Jul 2013 15:03:35 +0800, Wei Ni wrote:
+> On 07/16/2013 12:57 AM, Jean Delvare wrote:
+> > On Fri, 12 Jul 2013 15:48:05 +0800, Wei Ni wrote:
+> >> Add bit defines for the status register.
+> > 
+> > Regarding the subject: for me these are constants, not macros. AFAIK
+> > the term "macro" refers to defines with parameters only.
+> 
+> How about "Introduce status bits"
 
->
-> Do you have any suggestions?
->
-> Thanks.
-> Wei.
->
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+I'd say "Define status bits" as this is exactly what you're doing ;-)
+That being said, your patch actually does more than this, as you are
+moving code around and to a separate function. The patch description
+should say that and explain why.
+
+> >> (...)
+> >> +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
+> >> +		return false;
+> > 
+> > It's a bit disappointing to not use the freshly introduced constants.
+> > That being said I agree it would make the code hard to read, so you can
+> > leave it as is.
+> 
+> Sorry, I forgot it.
+> How about to define:
+> #define LM90_STATUS_MASK 0x7f
+> #define MAX6696_STATUS2_MASK 0xfe
+
+I wouldn't bother. I suspect that this code will have to be reworked
+soon anyway and these constants may no longer be needed then.
+
+> Or since Guenter is for vacation, I can just leave it as is, and wait
+> him back to talk about below issue.
+
+I do maintain the lm90 driver, so the decision is up to me. Guenter did
+a preliminary review of your patches and I am grateful for that, but I
+do not intend to wait for his return to continue with your patches.
+Otherwise he will have to do the same when he returns and I am gone,
+and this may end up delaying your patches by one kernel version.
+
+> >> (...)
+> >> +		struct lm90_data *data = i2c_get_clientdata(client);
+> >> +		u8 config, alarms;
+> >> +
+> >> +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
+> > 
+> > You end up reading LM90_REG_R_STATUS, which is not OK. This register
+> > contains self-clearing bits, so there is no guarantee that the second
+> > read will return the same value as the first read. You'll have to come
+> > up with a different approach that reads LM90_REG_R_STATUS only once.
+> 
+> Oh, yes, this is a problem, I didn't noticed it.
+> How about to use this:
+> bool lm90_alarms_tripped(*client, *status);
+> bool lm90_alarms2_tripped(*client, *status2);
+> So we can read the status only once and pass it.
+
+This is a good idea but you only need status, not status2, so it can be
+made simpler:
+bool lm90_is_tripped(*client, *status);
+(handling both status and status 2 as you already do.)
+
+-- 
+Jean Delvare
