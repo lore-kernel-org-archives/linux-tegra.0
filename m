@@ -1,32 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: expose config options for individual
- SoCs
-Date: Thu, 18 Jul 2013 11:00:38 -0600
-Message-ID: <51E81F36.3030802@wwwdotorg.org>
-References: <1374014077-22536-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 11/22] iommu/tegra: smmu: Add Tegra 114 support
+Date: Thu, 18 Jul 2013 14:01:36 -0600
+Message-ID: <51E849A0.6040508@wwwdotorg.org>
+References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com>
+	<1373021097-32420-12-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374014077-22536-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1373021097-32420-12-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/16/2013 04:34 PM, Stephen Warren wrote:
-> I'm planning to remove CONFIG_ARCH_TEGRA_*_SOC, leaving just ARCH_TEGRA.
-> This will reduce the number of configurations that need to be supported
-> by core Tegra code, e.g. CPU idle, hotplug. As a precursor, we need to
-> update Kconfig for all Tegra drivers not to reference ARCH_TEGRA_*_SOC.
-> 
-> The Tegra pinctrl driver contains a fairly large amount of SoC-specific
-> code and data. Introduce explicit config options so that the user can
-> trim the set of supported SoCs if they wish. Default these to on, since
-> most people will probably want to enable support for all SoCs. This also
-> avoids the need to change any defconfig files.
+On 07/05/2013 04:44 AM, Hiroshi Doyu wrote:
+> Tegra 114 SMMU uses the almost same logic as one in Tegra 30 except
+> that they have different HaredWare Accelerators(HWA). Those difference
+> is provided from DT.
 
-I'd like to defer actually applying this patch. There is some discussion
-(in the thread for the equivalent ASoC patches) re: the best way to
-handle the ARCH_TEGRA_*_SOC Kconfig options which might affect this
-patch. Any review comment is still appreciated.
+> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+
+>  Required properties:
+> -- compatible : "nvidia,tegra30-smmu"
+> +- compatible : "nvidia,tegra114-smmu", "nvidia,tegra30-smmu"
+
+So that we don't have to list every single chip in that list, we've
+often written that as:
+
+compatible : "nvidia,tegra<chip>-smmu".
+
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+
+>  static struct of_device_id tegra_smmu_of_match[] = {
+> +	{ .compatible = "nvidia,tegra114-smmu", },
+>  	{ .compatible = "nvidia,tegra30-smmu", },
+
+So, there are no HW differences, and hence no driver changes required?
+In that case, there's no point making the driver explicitly support
+nvidia,tegra114-smmu, since the DT will always be:
+
+compatible = "nvidia,tegra114-smmu", "nvidia,tegra30-smmu";
+
+... and hence always match on the existing nvidia,tegra30-smmu entry in
+that table.
