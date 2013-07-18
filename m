@@ -1,123 +1,36 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
-Date: Thu, 18 Jul 2013 17:58:22 +0200
-Message-ID: <20130718175822.62c358bf@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-	<1373615287-18502-4-git-send-email-wni@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ASoC: tegra: depend on ARCH_TEGRA, not ARCH_TEGRA_*
+Date: Thu, 18 Jul 2013 10:58:46 -0600
+Message-ID: <51E81EC6.2040802@wwwdotorg.org>
+References: <1374013667-21435-1-git-send-email-swarren@wwwdotorg.org> <20130717083003.GA22506@sirena.org.uk> <51E6CDEA.7060003@wwwdotorg.org> <20130717175701.GY22506@sirena.org.uk> <51E6E107.8020300@wwwdotorg.org> <20130717223309.GZ22506@sirena.org.uk> <51E7203A.2020007@wwwdotorg.org> <20130718095815.GE22506@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1373615287-18502-4-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: linux@roeck-us.net, thierry.reding@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130718095815.GE22506-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
-
-On Fri, 12 Jul 2013 15:48:06 +0800, Wei Ni wrote:
-> When the temperature exceed the limit range value,
-> the driver can handle the interrupt.
+On 07/18/2013 03:58 AM, Mark Brown wrote:
+> On Wed, Jul 17, 2013 at 04:52:42PM -0600, Stephen Warren wrote:
 > 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  drivers/hwmon/lm90.c |   24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>> The key to enable tegra30_i2s.c should really be
+>> ARCH_TEGRA_3x_SOC || ARCH_TEGRA_114_SOC, which gets a bit
+>> unwieldy once you have, say, 4 different SoCs in that list and a
+>> similar list starts to apply to a lot of different
+>> HW-modules/drivers. Even creating an ARCH_TEGRA_30_OR_LATER_SOC
+>> will get problematic, since defining "or later" will likely
+>> become progressively more complex over time, as we start putting
+>> our more SoCs. What are your thoughts on the best way to solve
+>> that?
 > 
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index c90037f..1cc3d19 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -89,6 +89,7 @@
->  #include <linux/err.h>
->  #include <linux/mutex.h>
->  #include <linux/sysfs.h>
-> +#include <linux/interrupt.h>
->  
->  /*
->   * Addresses to scan
-> @@ -1460,6 +1461,17 @@ static bool lm90_is_tripped(struct i2c_client *client)
->  	return true;
->  }
->  
-> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
-> +{
-> +	struct lm90_data *data = dev_id;
-> +	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
+> Can't you just say Tegra 20 or later is Tegra 20 plus Tegra 30 or
+> later and so on?
 
-Why are you passing data as the dev_id in the first place, instead of
-client? It's easier to get the data when you have the client
-(i2c_get_clientdata) than the other way around.
-
-> +
-> +	if (lm90_is_tripped(client))
-> +		return IRQ_HANDLED;
-> +	else
-> +		return IRQ_NONE;
-> +}
-> +
->  static int lm90_probe(struct i2c_client *client,
->  		      const struct i2c_device_id *id)
->  {
-> @@ -1536,6 +1548,18 @@ static int lm90_probe(struct i2c_client *client,
->  		goto exit_remove_files;
->  	}
->  
-> +	if (client->irq >= 0) {
-
-I though you had agreed to just check for (client->irq)?
-
-> +		dev_dbg(dev, "lm90 IRQ: %d\n", client->irq);
-
-The "lm90" is redundant, dev_dbg will use the chip name as a prefix.
-
-> +		err = devm_request_threaded_irq(dev, client->irq,
-> +						NULL, lm90_irq_thread,
-> +						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-> +						"lm90", data);
-> +		if (err < 0) {
-> +			dev_err(dev, "cannot request interrupt\n");
-
-You should include the IRQ number in the error message, it is useful
-for investigating the issue. Not everyone will have the debugging
-message above enabled.
-
-> +			goto exit_remove_files;
-> +		}
-> +	}
-> +
->  	return 0;
->  
->  exit_remove_files:
-
-That's it for the code. Now I'm not sure I understand what you are
-trying to do and what this is all good for.
-
-First of all, how is the chip wired on your system? You are using an
-NCT1008, right? Which output of the chip is connected to your interrupt
-line, THERM or ALERT/THERM2? ALERT is normally used for SMBus Alert but
-I suppose it could be used for an interrupt too. THERM and THERM2 OTOH
-are comparator outputs, they stay low as long as the temperature are
-above the therm limits. Reading the status register won't bring them
-back up as I understand it, and contrary to the ALERT output, they
-can't be masked. Won't this result in an interrupt flood if using
-IRQF_TRIGGER_LOW? Have you tested your code already?
-
-Also I don't think just logging an error message is the right thing to
-do in the case of overheating. The code to handle SMBus alerts is from
-me, and it does indeed just log the problems, but it was really only
-meant as a proof of concept when I first added support for SMBus Alert.
-Today we could do better than this, starting with issuing sysfs
-notifications to the relevant alarm files (several other hwmon drivers
-are doing that already.)
-
-For a real system, if the THERM output is connected to an interrupt line
-(instead of directly to a fan controller) I would expect the platform
-to provide a callback to handle thermal events and take whatever
-appropriate measure is needed (e.g. throttling.) Just logging the
-problem won't save the system, by the time someone looks at the log it
-might be too late.
-
--- 
-Jean Delvare
+For the chips that are supported upstream right now, that would work.
+However, I'm not sure that life will be quite so linear in the future.
+In other words, what is "or later" for, say, the SDHCI controller may
+not be the same as what is "or later" for, say, the I2C controller.
+(feel free to substitute arbitrary HW modules into that statement).
