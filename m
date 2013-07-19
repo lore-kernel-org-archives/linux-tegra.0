@@ -1,167 +1,103 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
-Date: Fri, 19 Jul 2013 14:41:54 +0800
-Message-ID: <51E8DFB2.9070701@nvidia.com>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com> <1373615287-18502-4-git-send-email-wni@nvidia.com> <20130718175822.62c358bf@endymion.delvare>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag
+Date: Fri, 19 Jul 2013 15:14:24 +0800
+Message-ID: <1374218064.24607.1.camel@jlo-ubuntu-64.nvidia.com>
+References: <1372152228-16199-1-git-send-email-josephl@nvidia.com>
+	 <51E439BC.9030608@wwwdotorg.org>
+	 <1373973447.8538.80.camel@jlo-ubuntu-64.nvidia.com>
+	 <51E5A438.10004@wwwdotorg.org>
+	 <1374056130.10997.16.camel@jlo-ubuntu-64.nvidia.com>
+	 <51E6FF0B.5000708@wwwdotorg.org>
+	 <1374145726.5610.73.camel@jlo-ubuntu-64.nvidia.com>
+	 <51E7E27B.9090605@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130718175822.62c358bf-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+In-Reply-To: <51E7E27B.9090605-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/18/2013 11:58 PM, Jean Delvare wrote:
-> Hi Wei,
+On Thu, 2013-07-18 at 20:41 +0800, Daniel Lezcano wrote:
+> On 07/18/2013 01:08 PM, Joseph Lo wrote:
+> > On Thu, 2013-07-18 at 04:31 +0800, Stephen Warren wrote:
+> >> On 07/17/2013 04:15 AM, Joseph Lo wrote:
+> >>> On Wed, 2013-07-17 at 03:51 +0800, Stephen Warren wrote:
+> >>>> On 07/16/2013 05:17 AM, Joseph Lo wrote:
+> >>>>> On Tue, 2013-07-16 at 02:04 +0800, Stephen Warren wrote:
+> >>>>>> On 06/25/2013 03:23 AM, Joseph Lo wrote:
+> >>>>>>> Use the CPUIDLE_FLAG_TIMER_STOP and let the cpuidle framework
+> >>>>>>> to handle the CLOCK_EVT_NOTIFY_BROADCAST_ENTER/EXIT when entering
+> >>>>>>> this state.
+> >> ... [ discussion of issues with Joesph's patches applied]
+> >>>
+> >>> OK. I did more stress tests last night and today. I found it cause by
+> >>> the patch "ARM: tegra: cpuidle: use CPUIDLE_FLAG_TIMER_STOP flag" and
+> >>> only impact the Tegra20 platform. The hot plug regression seems due to
+> >>> this patch. After dropping this patch on top of v3.11-rc1, the Tegra20
+> >>> can back to normal.
+> >>>
+> >>> And the hop plug and suspend stress test can pass on Tegra30/114 too.
+> >>>
+> >>> Can the other two patch series for Tegra114 to support CPU idle power
+> >>> down mode and system suspend still moving forward, not be blocked by
+> >>> this patch?
+> >>>
+> >>> Looks the CPUIDLE_FLAG_TIMER_STOP flag still cause some other issue for
+> >>> hot plug on Tegra20, I will continue to check this. You can just drop
+> >>> this patch.
+> >>
+> >> OK, if I drop that patch, then everything on Tegra20 and Tegra30 seems
+> >> fine again.
+> >>
+> >> However, I've found some new and exciting issue on Tegra114!
+> >>
+> >> With unmodified v3.11-rc1, I can do the following without issue:
+> >>
+> >> * Unplug/replug CPUs, so that I had all combinations of CPU 1, 2, 3
+> >> plugged/unpplugged (with CPU 0 always plugged).
+> >>
+> >> * Unplug/replug CPUs, so that I had all combinations of CPU 0, 1, 2, 3
+> >> plugged/unpplugged (with the obvious exception of never having all CPUs
+> >> unplugged).
+> >>
+> >> However, if I try this with your Tegra114 cpuidle and suspend patches
+> >> applied, I see the following issues:
+> >>
+> >> 1) If I boot, unplug CPU 0, then replug CPU 0, the system immediately
+> >> hard-hangs.
+> >>
+> > Sorry, I didn't apply the hotplug stress test on CPU0 too much. Because
+> > all of our use cases and stress tests are focused on secondary CPUs
+> > only.
+> >
+> > After doing some tests, here is my summary. This issue happens after we
+> > support CPU idle power-down mode and relates to PMC or flow controller I
+> > believe.
+> >
+> > i) on top of v3.11-rc1 (only support WFI in CPU idle)
+> > When hot unplug CPU0, the PMC can power gate and put it into reset
+> > state. This is what I expect and also true on all the other secondary
+> > CPUs. The flow controller can maintain the CPU power state machine as
+> > what we want.
+> >
+> > ii) on top of v3.11-rc1 + CPU idle power down mode support
+> > a) I saw most of the time the CPU0,1,2,3 were in power down and reset
+> > status. That means the idle power down mode works fine.
+> >
+> > b) Testing with the CPU hotplug stress test with the secondary CPUs (not
+> > include CPU0), the result is good too.
+> >
+> > c) Testing hot plug on CPU0 with CPUIDLE_FLAG_TIMER_STOP apply or not
+> > apply (Note 1), the result shows not good to me. The CPU0 have already
+> > gone into WFI and the flow controller is set as WAITFOREVENT mode. But
+> > the PMC always can't power gate CPU0 and sometimes can put it into
+> > reset, but sometimes can't. That's why you can see it hanging after
+> > unplug CPU0 sometimes.
 > 
-> On Fri, 12 Jul 2013 15:48:06 +0800, Wei Ni wrote:
->> When the temperature exceed the limit range value,
->> the driver can handle the interrupt.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/hwmon/lm90.c |   24 ++++++++++++++++++++++++
->>  1 file changed, 24 insertions(+)
->>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index c90037f..1cc3d19 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -89,6 +89,7 @@
->>  #include <linux/err.h>
->>  #include <linux/mutex.h>
->>  #include <linux/sysfs.h>
->> +#include <linux/interrupt.h>
->>  
->>  /*
->>   * Addresses to scan
->> @@ -1460,6 +1461,17 @@ static bool lm90_is_tripped(struct i2c_client *client)
->>  	return true;
->>  }
->>  
->> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
->> +{
->> +	struct lm90_data *data = dev_id;
->> +	struct i2c_client *client = to_i2c_client(data->hwmon_dev->parent);
-> 
-> Why are you passing data as the dev_id in the first place, instead of
-> client? It's easier to get the data when you have the client
-> (i2c_get_clientdata) than the other way around.
+> Are sure coupled idle state support hotplug and especially the cpu0
+> hotplug ?
 
-Oh, I'm stupid :)
-I will pass the client.
-
-> 
->> +
->> +	if (lm90_is_tripped(client))
->> +		return IRQ_HANDLED;
->> +	else
->> +		return IRQ_NONE;
->> +}
->> +
->>  static int lm90_probe(struct i2c_client *client,
->>  		      const struct i2c_device_id *id)
->>  {
->> @@ -1536,6 +1548,18 @@ static int lm90_probe(struct i2c_client *client,
->>  		goto exit_remove_files;
->>  	}
->>  
->> +	if (client->irq >= 0) {
-> 
-> I though you had agreed to just check for (client->irq)?
-
-Oh, yes, I forgot to change it, thanks, I will update it.
-
-> 
->> +		dev_dbg(dev, "lm90 IRQ: %d\n", client->irq);
-> 
-> The "lm90" is redundant, dev_dbg will use the chip name as a prefix.
-
-Ok, I will remove it.
-
-> 
->> +		err = devm_request_threaded_irq(dev, client->irq,
->> +						NULL, lm90_irq_thread,
->> +						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> +						"lm90", data);
->> +		if (err < 0) {
->> +			dev_err(dev, "cannot request interrupt\n");
-> 
-> You should include the IRQ number in the error message, it is useful
-> for investigating the issue. Not everyone will have the debugging
-> message above enabled.
-
-Yes, you are right, I will add the IRQ number.
-
-> 
->> +			goto exit_remove_files;
->> +		}
->> +	}
->> +
->>  	return 0;
->>  
->>  exit_remove_files:
-> 
-> That's it for the code. Now I'm not sure I understand what you are
-> trying to do and what this is all good for.
-> 
-> First of all, how is the chip wired on your system? You are using an
-> NCT1008, right? Which output of the chip is connected to your interrupt
-> line, THERM or ALERT/THERM2? ALERT is normally used for SMBus Alert but
-> I suppose it could be used for an interrupt too. THERM and THERM2 OTOH
-> are comparator outputs, they stay low as long as the temperature are
-> above the therm limits. Reading the status register won't bring them
-> back up as I understand it, and contrary to the ALERT output, they
-> can't be masked. Won't this result in an interrupt flood if using
-> IRQF_TRIGGER_LOW? Have you tested your code already?
-
-Let me explain why I want to add the IRQ thread.
-In our tegra30 platform, we use an NCT1008, and in our downstream tree,
-it programmed as following:
-1. The pin THERM is connected to the PMIC, we will set the THERM limit
-in the initialization, once the this limit is tripped, it will trigged
-the PMIC, and the PMIC will shutdown the system immediately.
-2. The pin ALERT/THERM2 is configured as ALERT, and it is connected to
-the interrupt line. In the platform init, we will prepare some trip
-temps, such as 20C, 40C,60C, 80C, and we will set 20C to the
-remote-low-temp-limit, and set 40C to remote-high-temp-limit. When the
-temperature exceed this rang, it will interrupt the system, then we will
-update the low/high limit to next rang, for example, if the temp raise
-to 50C, we will set 40C to low-limit, and set 60C to hight-limit, then
-we will run the throttle functions, and update cooling state.
-
-We wish to upstream these codes, but as you know, it's difficult to use
-current lm90.c and thermal framework to implement it, and these codes
-related many other things, such as throttling cpufreq, other clock freq.
-So at first, I want to update the lm90.c, so that I can add it to the
-thermal fw and use interrupt handler easily. And at the same time I
-followed the thermal framework thread, there has new infrastructure
-posted, which is more easy to add lm90 to thermal fw.
-
-> 
-> Also I don't think just logging an error message is the right thing to
-> do in the case of overheating. The code to handle SMBus alerts is from
-> me, and it does indeed just log the problems, but it was really only
-> meant as a proof of concept when I first added support for SMBus Alert.
-> Today we could do better than this, starting with issuing sysfs
-> notifications to the relevant alarm files (several other hwmon drivers
-> are doing that already.)
-
-yes, I can try to use sysfs_notify() for the alarm.
-
-> 
-> For a real system, if the THERM output is connected to an interrupt line
-> (instead of directly to a fan controller) I would expect the platform
-> to provide a callback to handle thermal events and take whatever
-> appropriate measure is needed (e.g. throttling.) Just logging the
-> problem won't save the system, by the time someone looks at the log it
-> might be too late.
-
-In our downstream tree, we write a new driver nct1008.c, whci can handle
-these interrupts and all other things, but as you know this driver can't
-be upstreamed, because there already has the lm90.c :).
-Anyway I think this patch is the first step of the implementation.
-
-> 
+Tegra114 didn't use coupled idle framework.
