@@ -1,35 +1,77 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: [PATCH tegra-cbootimage] Add automake option subdir-objects to
- prevent warnings
-Date: Sun, 21 Jul 2013 23:25:28 +0200
-Message-ID: <ba99c86b9074ac9053f665350e6b4985@agner.ch>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4] ASOC: tegra: move AC97 clock defines
+ to the controller node
+Date: Mon, 22 Jul 2013 00:36:51 +0100
+Message-ID: <20130721233651.GZ9858@sirena.org.uk>
+References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>
+ <1374442132-24040-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============4874319888583621358=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1374442132-24040-2-git-send-email-dev@lynxeye.de>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Lucas Stach <dev@lynxeye.de>
+Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The SoC specific code is in subdirectories which leads to warnings in
-newer
-automake versions. The option subdir-objects prevents those warnings.
 
-Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
----
- src/Makefile.am | 2 ++
- 1 file changed, 2 insertions(+)
+--===============4874319888583621358==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+vcRm3WFmV0Q/ShD"
+Content-Disposition: inline
 
-diff --git a/src/Makefile.am b/src/Makefile.am
-index 6fcc0d8..6fecfc7 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -1,3 +1,5 @@
-+AUTOMAKE_OPTIONS = subdir-objects
-+
- AM_CFLAGS = -Wall -std=c99
- 
- bin_PROGRAMS = cbootimage bct_dump
--- 
-1.8.3.3
+
+--+vcRm3WFmV0Q/ShD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, Jul 21, 2013 at 11:28:49PM +0200, Lucas Stach wrote:
+> Different from other Tegra sound controllers drivers, the AC97
+> controller driver uses the tegra asoc utils directly to request the
+> needed clocks, as they are needed at AC97 init time. Move the DT clock
+> defines to the right place.
+
+I'm sorry but I just don't understand what this change is supposed to do
+- what is the current place, what is wrong with it and what is the
+correct place?
+
+--+vcRm3WFmV0Q/ShD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR7HCQAAoJELSic+t+oim9EqYP/jA+8bI5VbwcrnAlP9EswNiI
+flYoTObJnrztAUvpB42AbN5cKsCNropXcXOOcE1upqZ7fJ1DPEXRmakYtSrxc/0U
+94CDzZXydbk7GuSLFbUUIP0YES3OPMaa6CY/IzOk5nKznB4QDgWn6PVpHKp5VDLO
+z8D8a5S484jh1LtBh0N/HMPgRoSZq9T9TSUnzINLSN0/9isYCrDh/y+YWNudNd7i
+E65egOjZ8II7mKnj8K9dBF5H+BIAusywELrDzRwFn8GlXYI1p+q8KGu7vn3x4zvP
+CCHknDIdq4yWlHtj2JD1rmM3A0SmnFF2Qfi2eElBkYarJBBZolRyk6U1c3KgmeGQ
+3NgU070BwdJmjEGS4ACbKKQf2mvOW4Wp3WFJiNmio7owrVLmH3oRKYwaTcFe2bw/
+bqA9jKcSQZRNdSNHhDngo4UrNdmFPf5TWZ+6UktBPvO05XmpnYvPbKTsQ+D1Xs7C
+O2WMIAZqVkUw6Ca3HTM7rz2qzeDYby2BWbMlbxTfQ9h0pQ0tLn5sPG8DNQ7qOMkz
+vDLlyPP1CnUlhDmWU1+57ntrruPpHLpL7Zg5HLDzbILV7ArFIIJFypSBz43ftGUY
+g9U1mmLZOxxAJ9357Qg+lwga2IQfqM9osWCdaEuuJxqGRHIb4oYMsA2driIA5bSh
+wWpHqGxpyE3GB+6AtyIy
+=mVXe
+-----END PGP SIGNATURE-----
+
+--+vcRm3WFmV0Q/ShD--
+
+--===============4874319888583621358==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4874319888583621358==--
