@@ -1,14 +1,13 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/4] ASOC: tegra: move AC97 clock defines
- to the controller node
-Date: Mon, 22 Jul 2013 00:36:51 +0100
-Message-ID: <20130721233651.GZ9858@sirena.org.uk>
-References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>
- <1374442132-24040-2-git-send-email-dev@lynxeye.de>
+Subject: Re: [PATCH] ASoC: tegra: correct playback_dma_data
+	setup
+Date: Mon, 22 Jul 2013 00:57:08 +0100
+Message-ID: <20130721235708.GF9858@sirena.org.uk>
+References: <1374374049-30732-1-git-send-email-rizhao@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4874319888583621358=="
+Content-Type: multipart/mixed; boundary="===============8342678663186895762=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1374442132-24040-2-git-send-email-dev@lynxeye.de>
+In-Reply-To: <1374374049-30732-1-git-send-email-rizhao@nvidia.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -18,60 +17,57 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
 Errors-To: alsa-devel-bounces@alsa-project.org
 Sender: alsa-devel-bounces@alsa-project.org
-To: Lucas Stach <dev@lynxeye.de>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@wwwdotorg.org>
+To: Richard Zhao <rizhao@nvidia.com>
+Cc: alsa-devel@alsa-project.org, lars@metafoo.de, swarren@wwwdotorg.org, tiwai@suse.de, lgirdwood@gmail.com, stable@vger.kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============4874319888583621358==
+--===============8342678663186895762==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+vcRm3WFmV0Q/ShD"
+	protocol="application/pgp-signature"; boundary="jk/5KjyVsvxWSMIA"
 Content-Disposition: inline
 
 
---+vcRm3WFmV0Q/ShD
+--jk/5KjyVsvxWSMIA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Jul 21, 2013 at 11:28:49PM +0200, Lucas Stach wrote:
-> Different from other Tegra sound controllers drivers, the AC97
-> controller driver uses the tegra asoc utils directly to request the
-> needed clocks, as they are needed at AC97 init time. Move the DT clock
-> defines to the right place.
+On Sun, Jul 21, 2013 at 10:34:09AM +0800, Richard Zhao wrote:
+> The errors were caused by copy/paste mistake in below commit
+> since v3.10:
+> 3489d50 ASoC: tegra: Use common DAI DMA data struct
 
-I'm sorry but I just don't understand what this change is supposed to do
-- what is the current place, what is wrong with it and what is the
-correct place?
+Applied, thanks.
 
---+vcRm3WFmV0Q/ShD
+--jk/5KjyVsvxWSMIA
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR7HCQAAoJELSic+t+oim9EqYP/jA+8bI5VbwcrnAlP9EswNiI
-flYoTObJnrztAUvpB42AbN5cKsCNropXcXOOcE1upqZ7fJ1DPEXRmakYtSrxc/0U
-94CDzZXydbk7GuSLFbUUIP0YES3OPMaa6CY/IzOk5nKznB4QDgWn6PVpHKp5VDLO
-z8D8a5S484jh1LtBh0N/HMPgRoSZq9T9TSUnzINLSN0/9isYCrDh/y+YWNudNd7i
-E65egOjZ8II7mKnj8K9dBF5H+BIAusywELrDzRwFn8GlXYI1p+q8KGu7vn3x4zvP
-CCHknDIdq4yWlHtj2JD1rmM3A0SmnFF2Qfi2eElBkYarJBBZolRyk6U1c3KgmeGQ
-3NgU070BwdJmjEGS4ACbKKQf2mvOW4Wp3WFJiNmio7owrVLmH3oRKYwaTcFe2bw/
-bqA9jKcSQZRNdSNHhDngo4UrNdmFPf5TWZ+6UktBPvO05XmpnYvPbKTsQ+D1Xs7C
-O2WMIAZqVkUw6Ca3HTM7rz2qzeDYby2BWbMlbxTfQ9h0pQ0tLn5sPG8DNQ7qOMkz
-vDLlyPP1CnUlhDmWU1+57ntrruPpHLpL7Zg5HLDzbILV7ArFIIJFypSBz43ftGUY
-g9U1mmLZOxxAJ9357Qg+lwga2IQfqM9osWCdaEuuJxqGRHIb4oYMsA2driIA5bSh
-wWpHqGxpyE3GB+6AtyIy
-=mVXe
+iQIcBAEBAgAGBQJR7HVRAAoJELSic+t+oim9nBUP/1I/JJRLwLPRn9m31DUBPUIz
+97m7wJcd6PwdeWBVPejfB3z0k2muFY+n7fuzac2T4Rxj+j4ukpl4GBPzZ23Jm+2n
+aa8OC4ZI+uJY7Z3rnLcFHJ6a0sU3emzlXPVKpGBtlz45ofduE1kR2EjAea+hbB+o
+JmUDSycl8Q+wvps+C8zCCzbsLCywzXtpuOIOb/c04nYZEklRpdBlsqhxYr5vyKgK
+UrxmMfcgWIHRopvUZiHUZmUNQ8PR51jM/LPBHUxgFnYq5iCPa1g/ysv92WAY0/Fh
+eNfT4Is7HJRjsdRYeEYTwOnK89tSMG/Qq1nFsoXItJUX5mq+R9NINBo4a7Wm8+ao
+Lv5JHVtPrfcFCei2fwkwIj+3m9M1EovP12MYNBzAMvNVurioYhAnd9w0IITeaE3F
+04OVPvafdvLBKCuPACp898TGrWX4u6NGfIC7AC20sK4yMCc6cu0wCVFyOjJ7ugWO
+vpFq7gv0LwwM0a/Uhtn9EcMBvcx5KmKhT6w6xsLaVpOcQXVdrsf6aw2SFNJm5iI4
+7776QcWUgWWY+xA4BpXXFqbrstgLrnGSe7j9amLRuIKn0txVGtm9NCNr6mobpa5q
+dTH73xTATpRHftyvz4U7pFtGAjYqF4i84vVJ5rbD+eRP/2PVF6VVXE1e29e3HanY
+a827qClwXqfsSqQ1Fjk5
+=mvcU
 -----END PGP SIGNATURE-----
 
---+vcRm3WFmV0Q/ShD--
+--jk/5KjyVsvxWSMIA--
 
---===============4874319888583621358==
+--===============8342678663186895762==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============4874319888583621358==--
+--===============8342678663186895762==--
