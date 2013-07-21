@@ -1,65 +1,98 @@
 From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: correct playback_dma_data setup
-Date: Sun, 21 Jul 2013 15:02:29 +0200
-Message-ID: <1374411749.1633.1.camel@tellur>
-References: <1374374049-30732-1-git-send-email-rizhao@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 4/4] ARM: tegra: correct Colibri T20 regulator settings
+Date: Sun, 21 Jul 2013 23:28:52 +0200
+Message-ID: <1374442132-24040-5-git-send-email-dev@lynxeye.de>
+References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374374049-30732-1-git-send-email-rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1374442132-24040-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Sonntag, den 21.07.2013, 10:34 +0800 schrieb Richard Zhao:
-> The errors were caused by copy/paste mistake in below commit
-> since v3.10:
-> 3489d50 ASoC: tegra: Use common DAI DMA data struct
-> 
-> It also corrects slave_id initialization in tegra20_ac97 driver.
-> 
-> Signed-off-by: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # 3.10
+Core and CPU voltage settings were a bit on the safe side. The actually
+used chips on the Colibri allow for lower voltages and work just fine
+this way.
 
-Acked-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+SM2 is not a the parent of LDO regs, but actually the DDR regulator. The
+Colibri uses a different version of the TPS with other voltage mapping
+tables for SM2, currently we cheat by setting a fake 3,2V which results
+in 1,8V physical.
 
-> ---
->  sound/soc/tegra/tegra20_ac97.c  | 6 +++---
->  sound/soc/tegra/tegra20_spdif.c | 4 ++--
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-> index e58233f..6c48662 100644
-> --- a/sound/soc/tegra/tegra20_ac97.c
-> +++ b/sound/soc/tegra/tegra20_ac97.c
-> @@ -389,9 +389,9 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
->  	ac97->capture_dma_data.slave_id = of_dma[1];
->  
->  	ac97->playback_dma_data.addr = mem->start + TEGRA20_AC97_FIFO_TX1;
-> -	ac97->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> -	ac97->capture_dma_data.maxburst = 4;
-> -	ac97->capture_dma_data.slave_id = of_dma[0];
-> +	ac97->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	ac97->playback_dma_data.maxburst = 4;
-> +	ac97->playback_dma_data.slave_id = of_dma[1];
->  
->  	ret = tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
->  	if (ret)
-> diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-> index 5eaa12c..551b3c9 100644
-> --- a/sound/soc/tegra/tegra20_spdif.c
-> +++ b/sound/soc/tegra/tegra20_spdif.c
-> @@ -323,8 +323,8 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->  	}
->  
->  	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
-> -	spdif->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> -	spdif->capture_dma_data.maxburst = 4;
-> +	spdif->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	spdif->playback_dma_data.maxburst = 4;
->  	spdif->playback_dma_data.slave_id = dmareq->start;
->  
->  	pm_runtime_enable(&pdev->dev);
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+The issue with the used version of the PMIC having a different voltage
+mapping for SM2 should be resolved properly. As this needs some bigger
+adjustments at the regulator driver this quick fix is just aimed at
+stopping slight overvolting of the ram with 3.11 kernels. A proper fix
+should land in time for 3.12.
+---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 33 ++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 92551ba..9b56dcb 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -226,14 +226,14 @@
+ 			gpio-controller;
+ 
+ 			sys-supply = <&vdd_5v0_reg>;
+-			vin-sm0-supply = <&sys_reg>;
+-			vin-sm1-supply = <&sys_reg>;
+-			vin-sm2-supply = <&sys_reg>;
+-			vinldo01-supply = <&sm2_reg>;
+-			vinldo23-supply = <&sm2_reg>;
+-			vinldo4-supply = <&sm2_reg>;
+-			vinldo678-supply = <&sm2_reg>;
+-			vinldo9-supply = <&sm2_reg>;
++			vin-sm0-supply = <&vdd_5v0_reg>;
++			vin-sm1-supply = <&vdd_5v0_reg>;
++			vin-sm2-supply = <&vdd_5v0_reg>;
++			vinldo01-supply = <&vdd_5v0_reg>;
++			vinldo23-supply = <&vdd_5v0_reg>;
++			vinldo4-supply = <&vdd_5v0_reg>;
++			vinldo678-supply = <&vdd_5v0_reg>;
++			vinldo9-supply = <&vdd_5v0_reg>;
+ 
+ 			regulators {
+ 				#address-cells = <1>;
+@@ -250,8 +250,8 @@
+ 					reg = <1>;
+ 					regulator-compatible = "sm0";
+ 					regulator-name = "vdd_sm0,vdd_core";
+-					regulator-min-microvolt = <1275000>;
+-					regulator-max-microvolt = <1275000>;
++					regulator-min-microvolt = <1225000>;
++					regulator-max-microvolt = <1225000>;
+ 					regulator-always-on;
+ 				};
+ 
+@@ -259,17 +259,20 @@
+ 					reg = <2>;
+ 					regulator-compatible = "sm1";
+ 					regulator-name = "vdd_sm1,vdd_cpu";
+-					regulator-min-microvolt = <1100000>;
+-					regulator-max-microvolt = <1100000>;
++					regulator-min-microvolt = <1025000>;
++					regulator-max-microvolt = <1025000>;
+ 					regulator-always-on;
+ 				};
+ 
+ 				sm2_reg: regulator@3 {
+ 					reg = <3>;
+ 					regulator-compatible = "sm2";
+-					regulator-name = "vdd_sm2,vin_ldo*";
+-					regulator-min-microvolt = <3700000>;
+-					regulator-max-microvolt = <3700000>;
++					regulator-name = "vdd_sm2,vdd_ddr";
++					/* The voltage is lying, but results
++					in the desired 1,8V on the TPS version
++					used on the Colibri */
++					regulator-min-microvolt = <3200000>;
++					regulator-max-microvolt = <3200000>;
+ 					regulator-always-on;
+ 				};
+ 
+-- 
+1.8.3.1
