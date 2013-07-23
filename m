@@ -1,38 +1,51 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: correct Colibri T20 regulator settings
-Date: Tue, 23 Jul 2013 11:07:37 -0700
-Message-ID: <51EEC669.9050703@wwwdotorg.org>
-References: <1374442132-24040-1-git-send-email-dev@lynxeye.de> <1374442132-24040-5-git-send-email-dev@lynxeye.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374442132-24040-5-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 10/27] drivers/memory: don't check resource with devm_ioremap_resource
+Date: Tue, 23 Jul 2013 20:01:43 +0200
+Message-ID: <1374602524-3398-11-git-send-email-wsa@the-dreams.de>
+References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/21/2013 02:28 PM, Lucas Stach wrote:
-> Core and CPU voltage settings were a bit on the safe side. The actually
-> used chips on the Colibri allow for lower voltages and work just fine
-> this way.
+devm_ioremap_resource does sanity checks on the given resource. No need to
+duplicate this in the driver.
 
-That sounds like a non-critical issue. Shouldn't that part be separated
-out into a patch for 3.12?
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+Please apply via the subsystem-tree.
 
-> SM2 is not a the parent of LDO regs, but actually the DDR regulator. The
-> Colibri uses a different version of the TPS with other voltage mapping
-> tables for SM2, currently we cheat by setting a fake 3,2V which results
-> in 1,8V physical.
+ drivers/memory/tegra20-mc.c |    2 --
+ drivers/memory/tegra30-mc.c |    2 --
+ 2 files changed, 4 deletions(-)
 
-That's quite unfortunate. Since DT is supposed to be an ABI, the
-existing DT should continue to work for arbitrary kernels, and the
-modified DT should also work for arbitrary kernels. Clearly that isn't
-possible if we start putting incorrect voltage values into the DT. Isn't
-there some way to make an isolated fix to the PMIC driver itself so that
-it actually programs the HW correctly? Even if that patch is larger than
-this patch, it still seems more likely to be acceptable for 3.11.
-
-But is this a regression? If not, how far back in CC: stable should this
-change go?
+diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
+index 0548eea..7cd82b8 100644
+--- a/drivers/memory/tegra20-mc.c
++++ b/drivers/memory/tegra20-mc.c
+@@ -218,8 +218,6 @@ static int tegra20_mc_probe(struct platform_device *pdev)
+ 		struct resource *res;
+ 
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			return -ENODEV;
+ 		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(mc->regs[i]))
+ 			return PTR_ERR(mc->regs[i]);
+diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
+index 58d2979..ef79345 100644
+--- a/drivers/memory/tegra30-mc.c
++++ b/drivers/memory/tegra30-mc.c
+@@ -340,8 +340,6 @@ static int tegra30_mc_probe(struct platform_device *pdev)
+ 		struct resource *res;
+ 
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res)
+-			return -ENODEV;
+ 		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(mc->regs[i]))
+ 			return PTR_ERR(mc->regs[i]);
+-- 
+1.7.10.4
