@@ -1,51 +1,37 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 10/27] drivers/memory: don't check resource with devm_ioremap_resource
-Date: Tue, 23 Jul 2013 20:01:43 +0200
-Message-ID: <1374602524-3398-11-git-send-email-wsa@the-dreams.de>
-References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: enable ULPI phy on Colibri T20
+Date: Tue, 23 Jul 2013 11:11:45 -0700
+Message-ID: <1374603105-21226-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-devm_ioremap_resource does sanity checks on the given resource. No need to
-duplicate this in the driver.
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+This was missed when splitting out the phy from the controller node in
+commit 9dffe3be3f32 (ARM: tegra: modify ULPI reset GPIO properties).
+
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Please apply via the subsystem-tree.
+Olof, Arnd, this is a fix for 3.11. Thanks!
 
- drivers/memory/tegra20-mc.c |    2 --
- drivers/memory/tegra30-mc.c |    2 --
- 2 files changed, 4 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
-index 0548eea..7cd82b8 100644
---- a/drivers/memory/tegra20-mc.c
-+++ b/drivers/memory/tegra20-mc.c
-@@ -218,8 +218,6 @@ static int tegra20_mc_probe(struct platform_device *pdev)
- 		struct resource *res;
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 2fcb3f2..5592be6 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -457,6 +457,7 @@
+ 	};
  
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		if (!res)
--			return -ENODEV;
- 		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(mc->regs[i]))
- 			return PTR_ERR(mc->regs[i]);
-diff --git a/drivers/memory/tegra30-mc.c b/drivers/memory/tegra30-mc.c
-index 58d2979..ef79345 100644
---- a/drivers/memory/tegra30-mc.c
-+++ b/drivers/memory/tegra30-mc.c
-@@ -340,8 +340,6 @@ static int tegra30_mc_probe(struct platform_device *pdev)
- 		struct resource *res;
- 
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
--		if (!res)
--			return -ENODEV;
- 		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
- 		if (IS_ERR(mc->regs[i]))
- 			return PTR_ERR(mc->regs[i]);
+ 	usb-phy@c5004000 {
++		status = "okay";
+ 		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+ 			GPIO_ACTIVE_LOW>;
+ 	};
 -- 
 1.7.10.4
