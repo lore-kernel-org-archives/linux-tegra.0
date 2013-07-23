@@ -1,87 +1,81 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 2/4] ARM: tegra114: Reprogram GIC CPU interface to
- bypass IRQ on CPU PM entry
-Date: Tue, 23 Jul 2013 08:44:39 -0700
-Message-ID: <20130723154438.GA2864@dhcp-172-17-186-34.nvidia.com>
-References: <1374225926-26832-1-git-send-email-josephl@nvidia.com>
- <1374225926-26832-3-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH tegra-cbootimage] Add automake option subdir-objects to
+ prevent warnings
+Date: Tue, 23 Jul 2013 08:49:19 -0700
+Message-ID: <20130723154918.GB2864@dhcp-172-17-186-34.nvidia.com>
+References: <ba99c86b9074ac9053f665350e6b4985@agner.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+	protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1374225926-26832-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <ba99c86b9074ac9053f665350e6b4985-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2013 at 05:25:24PM +0800, Joseph Lo wrote:
-> There is a difference between GICv1 and v2 when CPU in power management
-> mode (aka CPU power down on Tegra). For GICv1, IRQ/FIQ interrupt lines
-> going to CPU are same lines which are also used for wake-interrupt.
-> Therefore, we cannot disable the GIC CPU interface if we need to use same
-> interrupts for CPU wake purpose. This creates a race condition for CPU
-> power off entry. Also, in GICv1, disabling GICv1 CPU interface puts GICv1
-> into bypass mode such that incoming legacy IRQ/FIQ are sent to CPU, which
-> means disabling GIC CPU interface doesn't really disable IRQ/FIQ to CPU.
+On Sun, Jul 21, 2013 at 11:25:28PM +0200, Stefan Agner wrote:
+> The SoC specific code is in subdirectories which leads to warnings in
+> newer
+> automake versions. The option subdir-objects prevents those warnings.
 >=20
-> GICv2 provides a wake IRQ/FIQ (for wake-event purpose), which are not
-> disabled by GIC CPU interface. This is done by adding a bypass override
-> capability when the interrupts are disabled at the CPU interface. To
-> support this, there are four bits about IRQ/FIQ BypassDisable in CPU
-> interface Control Register. When the IRQ/FIQ not being driver by the
-> CPU interface, each interrupt output signal can be deasserted rather
-> than being driven by the legacy interrupt input.
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+>  src/Makefile.am | 2 ++
+>  1 file changed, 2 insertions(+)
 >=20
-> So the wake-event can be used as wakeup signals to SoC (system power
-> controller).
->=20
-> To prevent race conditions and ensure proper interrupt routing on
-> Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
-> call-back to reprogram the GIC CPU interface on PM entry. The
-> GIC CPU interface will be reset back to its normal state by
-> the common GIC CPU PM exit callback when the CPU wakes up.
->=20
-> Based on the work by: Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> diff --git a/src/Makefile.am b/src/Makefile.am
+> index 6fcc0d8..6fecfc7 100644
+> --- a/src/Makefile.am
+> +++ b/src/Makefile.am
+> @@ -1,3 +1,5 @@
+> +AUTOMAKE_OPTIONS =3D subdir-objects
+> +
+>  AM_CFLAGS =3D -Wall -std=3Dc99
+> =20
+>  bin_PROGRAMS =3D cbootimage bct_dump
 
-Hi Joseph,
+Hi Stefan,
 
-We've had a rather long-standing issue with PCIe and MSI related to LP2
-on Tegra20. I wonder if that's somehow related to this. Given that this
-is marked as Tegra114 patch explicitly I suppose not, but it certainly
-sounds very similar to the description above.
+Thanks for the patch. Generally this looks good to me, though automake
+now complains:
 
+	src/Makefile.am:36: compiling `t114/parse_t114.c' in subdir requires `AM_P=
+ROG_CC_C_O' in `configure.ac'
+
+Which can quite easily be solved by adding that line in configure.ac.
+Immediately following the AC_PROG_CC looks like a good place for it.
+
+Thanks,
 Thierry
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR7qTmAAoJEN0jrNd/PrOh2vYP/iO2JBXmfRDFBMPkdieR7Tr0
-37lFvk5lCLxkGQIappka5ZT6NKrqBJO12oCO/wowLG6D+FDIuh4XNmuhAHxyIzLx
-ATt+OWNT1cHwPh+o/lc6gAdYBOj0bU/AejXyqt9v6TyXDfbOaWwQtc6fHiW0o/tq
-bZkmdGxuv8KF7bijup0vJ/pyQvjUALMNNXQb5K0UygQUKWMtqxptRBS8z7P/C/B5
-CIqnw+IYhDRQqr9IYRhFMT7uxjVkBboNlkp+/RYLf7T1xofc7kUl3NcQxLRuSL43
-kRJSK94FQT0aIIkinG2Hw+s68Yxd4cRInjZBzq7bExGvgP87VAS7lUsRZeAqhTWk
-c+D49c7d6AdwHCUASzLtvAopiBHgPhvohiJhVzMaBTiVhPJj/6X31dmwtvOpVARX
-VoL0B4DJQoOiL355/YK9KCwLbxcTE+W25FzKhCwB5gEj7Pq6xGB+lTV5X9X2RMz+
-03kncxhXnpWtOCAxxcKEqoniwl+1YcbWZEl1iyBVWE8vKJ6MeRVzKxb32MWyDMVV
-GKlpJ4ds2ovRiw4ymKOdXlz7qPQKMVEIFMrWCwObYlUzlC+urojwfB+HSyZCNvay
-/voKt7+V9X2CnX5yqpa6YleO0oRFVcWGuU/OJXU1x1TGKyKmjk+I65QbrUGy4WlO
-Rxho2lM4BfCQXKV+hLb7
-=znPL
+iQIcBAEBAgAGBQJR7qX+AAoJEN0jrNd/PrOhAkQQAJDbicm26mw9TvL3zsZIz0OB
+AOBEogaTbUAMHFCSfnJQ8iGUhQe8P6rRv8ENJ71jw6UXqf+DS+1ahbb1V2QtjVBJ
+8kR4j7fc4QzWSyqY/0pSV5Px6vlfHT+dRK9b2K+I3L/kOQC6ZDu+I1mMC3Xm6CQG
+BLvc/AA/D43s8fC0rC//wqb3t7zeDIOEMHlbR0fn4eEOBcEFyzA1shYjjIKyo0Cv
+m1EhxliByVQDZugEQZg9jbdgjYwLUs9Agr8sac3CuWU616JPVhSM7HllGfhDCdyQ
+Rdi9zyMtKA9BKQKIZXM8R2yRtrai3/dBuhUMF1ih+tEhCJ+HEuNS0DCXirDv2HSm
+V5TXczMraa6RXkfsd5eqzQJLHhl32y1FVbkNEQFvtp8WhVSHq1DIdytF8nNO9pKJ
+I8M/IO5pEw3cLaJYzHSWNMyudJgOgTkYOJmscHogw7e5WKkUsX/3Arn5WPvWeFJi
+iAZ71BlBlPt0pb975h9iN6cPeW3CIonsmpGL6XEReXGc/0Lb2T6/TlRAqGCRiTRQ
+Z6ZPem+CymKgz3erkxlcMb7TmnBABrOhrWcH4UFC7DR1k/AZGDSIftMLza+08u4Y
+mgeRj5obmgoFdAhbSViX6bTp2iXpD1NHLY/STqelBWIA5BkdOol6KZs9hxkFpBeK
+cH8pMD01y/pg1kWl6/SK
+=7+WJ
 -----END PGP SIGNATURE-----
 
---ew6BAiZeqk4r7MaW--
+--zx4FCpZtqtKETZ7O--
