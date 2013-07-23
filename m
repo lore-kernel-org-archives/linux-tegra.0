@@ -1,43 +1,37 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 1/4] ASOC: tegra: move AC97 clock defines to the
- controller node
-Date: Tue, 23 Jul 2013 22:37:47 +0200
-Message-ID: <1374611867.1712.8.camel@tellur>
-References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>
-	 <1374442132-24040-2-git-send-email-dev@lynxeye.de>
-	 <51EEB3A6.1060507@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: tegra: correct Colibri T20 regulator settings
+Date: Tue, 23 Jul 2013 13:53:53 -0700
+Message-ID: <51EEED61.1070300@wwwdotorg.org>
+References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>  <1374442132-24040-5-git-send-email-dev@lynxeye.de>  <51EEC669.9050703@wwwdotorg.org> <1374611752.1712.6.camel@tellur>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51EEB3A6.1060507-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1374611752.1712.6.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag, den 23.07.2013, 09:47 -0700 schrieb Stephen Warren:
-> On 07/21/2013 02:28 PM, Lucas Stach wrote:
-> > Different from other Tegra sound controllers drivers, the AC97
-> > controller driver uses the tegra asoc utils directly to request the
-> > needed clocks, as they are needed at AC97 init time. Move the DT clock
-> > defines to the right place.
+On 07/23/2013 01:35 PM, Lucas Stach wrote:
+> Am Dienstag, den 23.07.2013, 11:07 -0700 schrieb Stephen Warren:
+>> On 07/21/2013 02:28 PM, Lucas Stach wrote:
+...
+>>> SM2 is not a the parent of LDO regs, but actually the DDR regulator. The
+>>> Colibri uses a different version of the TPS with other voltage mapping
+>>> tables for SM2, currently we cheat by setting a fake 3,2V which results
+>>> in 1,8V physical.
+...
+>> But is this a regression? If not, how far back in CC: stable should this
+>> change go?
 > 
-> I'm not convinced this is the correct approach.
-> 
-> The machine driver needs to manage these clocks, so that it can
-> co-ordinate between different audio paths. For example, consider a
-> system that supports two different I2S paths. In HW, if both are active
-> at once, these need to both run at a derivative of 48KHz or both run at
-> a derivative of 44.1KHz. The machine driver is the central place that
-> enforces that, and should eventually automatically place constraints on
-> one stream when another is configured for a specific sample rate. By the
-> same argument, AC'97 can't be a special case here, in case there's some
-> system with both AC'97 and I2S hooked up.
+> This is not a regression. It was introduced with the original Colibri
+> T20 commit and was caused by Toradex not providing any schematics for
+> the Module plus me not physically checking this voltage rail before
+> pushing things out.
 
-I find it highly unlikely to find any Tegra 20 board with such a
-configuration. But as your argument is technically correct, I'll try to
-fix things up the right way and see how big the impact is.
-
-Regards,
-Lucas
+FYI, the reason I ask is that there's more push-back on adding patches
+late in the rc cycle (or after release, to -stable) for things that are
+not regressions. A safety issue like over-voltage might well still
+qualify to be accepted, but fixes for regressions are even more likely
+to be accepted.
