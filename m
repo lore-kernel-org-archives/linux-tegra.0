@@ -1,64 +1,68 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 2/4] ARM: tegra114: Reprogram GIC CPU interface to
- bypass IRQ on CPU PM entry
-Date: Wed, 24 Jul 2013 19:46:58 +0800
-Message-ID: <1374666419.23756.55.camel@jlo-ubuntu-64.nvidia.com>
-References: <1374225926-26832-1-git-send-email-josephl@nvidia.com>
-	 <1374225926-26832-3-git-send-email-josephl@nvidia.com>
-	 <20130723154438.GA2864@dhcp-172-17-186-34.nvidia.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 0/9] Tegra USB cleanup series
+Date: Wed, 24 Jul 2013 15:32:29 +0300
+Message-ID: <20130724123229.GE17962@radagast>
+References: <1372455427-20898-1-git-send-email-ttynkkynen@nvidia.com>
+ <51D1FCBD.6070104@wwwdotorg.org>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130723154438.GA2864-RcKxWJ4Cfj3FNiLNb7+IINdj8bHVeoWogfoxzgwHRXE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KJY2Ze80yH5MUxol"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <51D1FCBD.6070104@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, balbi@ti.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-07-23 at 23:44 +0800, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Jul 19, 2013 at 05:25:24PM +0800, Joseph Lo wrote:
-> > There is a difference between GICv1 and v2 when CPU in power management
-> > mode (aka CPU power down on Tegra). For GICv1, IRQ/FIQ interrupt lines
-> > going to CPU are same lines which are also used for wake-interrupt.
-> > Therefore, we cannot disable the GIC CPU interface if we need to use same
-> > interrupts for CPU wake purpose. This creates a race condition for CPU
-> > power off entry. Also, in GICv1, disabling GICv1 CPU interface puts GICv1
-> > into bypass mode such that incoming legacy IRQ/FIQ are sent to CPU, which
-> > means disabling GIC CPU interface doesn't really disable IRQ/FIQ to CPU.
-> > 
-> > GICv2 provides a wake IRQ/FIQ (for wake-event purpose), which are not
-> > disabled by GIC CPU interface. This is done by adding a bypass override
-> > capability when the interrupts are disabled at the CPU interface. To
-> > support this, there are four bits about IRQ/FIQ BypassDisable in CPU
-> > interface Control Register. When the IRQ/FIQ not being driver by the
-> > CPU interface, each interrupt output signal can be deasserted rather
-> > than being driven by the legacy interrupt input.
-> > 
-> > So the wake-event can be used as wakeup signals to SoC (system power
-> > controller).
-> > 
-> > To prevent race conditions and ensure proper interrupt routing on
-> > Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
-> > call-back to reprogram the GIC CPU interface on PM entry. The
-> > GIC CPU interface will be reset back to its normal state by
-> > the common GIC CPU PM exit callback when the CPU wakes up.
-> > 
-> > Based on the work by: Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Hi Joseph,
-> 
-> We've had a rather long-standing issue with PCIe and MSI related to LP2
-> on Tegra20. I wonder if that's somehow related to this. Given that this
-> is marked as Tegra114 patch explicitly I suppose not, but it certainly
-> sounds very similar to the description above.
-> 
-For LP2 + PCIe + MSI, I believe it need some other SW support if the HW
-really support MSI and runtime power down CPU domain that include SCU
-and BIU. According to TRM, the PCIe pass data through the unit to
-memory. I have no idea does the HW really support this function. I also
-need more information about this. 
+--KJY2Ze80yH5MUxol
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, Jul 01, 2013 at 04:03:41PM -0600, Stephen Warren wrote:
+> On 06/28/2013 03:36 PM, Tuomas Tynkkynen wrote:
+> > Hi,
+> >=20
+> > Here's a few cleanup patches for the Tegra USB drivers, to be applied o=
+n top
+> > of Mikko's two patch sets. It mostly deals with removing all usage of p=
+latform
+> > data and using standard helpers and enums instead of Tegra-specific one=
+s.
+>=20
+> With the issues in patches 5/9 and 9/9 fixed as I mentioned, this series,
+>=20
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+
+so, do you want me to apply these myself ?
+
+--=20
+balbi
+
+--KJY2Ze80yH5MUxol
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR78ldAAoJEIaOsuA1yqREUlgP/iiKDniH1mdj7o9YkBWEDIIn
+TilCUbtwagjEaoh81R7qiKaUBEisvmM2Dek//eNkEZ4zU4U8MLgMuzcuQDyQMNNI
+jmncQVJAaVqVwmulgbfUfzGaGChZ+XGkTOXX6If/9udSn/Q+m/dHoHxnAot5J5i0
+f6ZbLg9QOC9YsRYY+xUlLP/zwBXreWqwRPJnBj7LMMYpXqzISbXVMsa5Zu8dVJ7o
+M8uGm+kHxelmsyNfKmUccLoL02fFQJt0PF5mygybwAtHJ89827m3IXuo5oKc6VNK
+/am5yhxbegLS2AVgwH+CkUWa1nekGsFYpA9omZ02fEf9FV0LKjYaAb23b4aitF+H
+Up+FYT7XLAcd+a5KV9BhE8mfIQB2RvSgX5+z2xYyV+kiBn9Z6XD6Zrp84LkotAPx
+tldWLhIaGMJArZwOy7lwC+SOUOOR4m8NzbJLrLbTVhH/ASb8wEs/+bLnaaFxO5VB
+7GFmiMzVHQgMYLbi2CKgMKV09/knlijgPuM//wq9mXHCOyzU+dlkHykeotv5vd/p
+yPWSfv2ZBYJcBSIQD6q4e6/w67mEqupdNNujysB+i+fcK317Ny3Tldm8m8xcS5+Y
+winExlPbP1z3aaWLk8dBLLDKq6rOxlj0Jxf/evqfw+J8zy51AW3konwXUy5nSmjn
+AvlHD33Wq4q8bVWbesHX
+=rxUk
+-----END PGP SIGNATURE-----
+
+--KJY2Ze80yH5MUxol--
