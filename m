@@ -1,63 +1,70 @@
-From: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 10/27] drivers/memory: don't check resource with
- devm_ioremap_resource
-Date: Tue, 23 Jul 2013 18:38:39 -0700
-Message-ID: <1374629919.10171.26.camel@joe-AO722>
-References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
-	 <1374602524-3398-11-git-send-email-wsa@the-dreams.de>
-	 <1374603925.3387.26.camel@joe-AO722> <51EF2D9D.8030904@wwwdotorg.org>
+From: Richard Zhao <rizhao@nvidia.com>
+Subject: [PATCH 0/9] ARM: tegra: move to generic DMA DT binding
+Date: Wed, 24 Jul 2013 12:09:53 +0800
+Message-ID: <1374639002-16753-1-git-send-email-rizhao@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51EF2D9D.8030904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: dev@lynxeye.de, swarren@wwwdotorg.org, vinod.koul@intel.com, gregkh@linuxfoundation.org, lgirdwood@gmail.com, rob.herring@calxeda.com, broonie@kernel.org, ldewangan@nvidia.com, rob@landley.net, djbw@fb.com, grant.likely@linaro.org, rizhao@nvidia.com, linuxzsc@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-07-23 at 18:27 -0700, Stephen Warren wrote:
-> On 07/23/2013 11:25 AM, Joe Perches wrote:
-> > On Tue, 2013-07-23 at 20:01 +0200, Wolfram Sang wrote:
-> >> devm_ioremap_resource does sanity checks on the given resource. No need to
-> >> duplicate this in the driver.
-[]
-> > This is the first and only one of the patch series I looked at.
-> > 
-> >> diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
-> > []
-> >> @@ -218,8 +218,6 @@ static int tegra20_mc_probe(struct platform_device *pdev)
-> >>  		struct resource *res;
-> >>  
-> >>  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-> >> -		if (!res)
-> >> -			return -ENODEV;
-> >>  		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
-> > 
-> > I'm not so sure this is appropriate.
-> > 
-> > devm_ioremap_resource returns ERR_PTR(-EINVAL) for
-> > null resource so this changes the return.
-> 
-> I think the exact return value is probably pretty arbitrary here.
+The patch series aim to move apbdma to generic DT binding.
 
-I think so as well, but it takes code inspection to
-determine whether or not there's any code impact.
+Changes:
+- It add dmas/dma-names properties while leave
+  nvidia,dma-request-selector to be compatible.
+- update apbdma driver and dma client drivers
+- ASoC tegra adds a new struct to pass device and dma-name.
+- at last, remove legacy nvidia,dma-request-selector
 
-I want to make sure Wolfram has done that inspection.
+Richard Zhao (9):
+  ARM: dts: add generic DMA DT binding for tegra apbdma
+  dma: tegra20-apbdma: move to generic device tree bindings
+  spi: tegra114: move to generic dma DT binding
+  spi: tegra20-slink: move to generic dma DT binding
+  spi: tegra20-sflash: move to generic dma DT binding
+  serial: tegra: move to generic dma DT binding
+  ASoC: tegra: move to generic DMA DT binding
+  ARM: dts: tegra: remove legacy nvidia,dma-request-selector properties
+  dma: tegra20-apbdma: remove legacy nvidia,dma-request-selector support
 
-> > devm_ioremap_resource also emits a noisy dev_err
-> > message when resource is NULL.
-> > 
-> > It's a probe and before the message log would be silent
-> > but now there's a new dmesg.
-> 
-> I think those changes are fine, at least for this driver. It's a bug if
-> the required resources are missing, and having probe() actively point
-> out why it's failing can only be a good thing in my book.
+ .../devicetree/bindings/dma/tegra20-apbdma.txt     |  1 +
+ .../bindings/serial/nvidia,tegra20-hsuart.txt      |  8 ++--
+ .../bindings/sound/nvidia,tegra20-ac97.txt         |  8 ++--
+ .../bindings/sound/nvidia,tegra20-i2s.txt          |  8 ++--
+ .../bindings/sound/nvidia,tegra30-ahub.txt         | 12 +++---
+ .../bindings/spi/nvidia,tegra114-spi.txt           | 10 +++--
+ .../bindings/spi/nvidia,tegra20-sflash.txt         | 10 +++--
+ .../bindings/spi/nvidia,tegra20-slink.txt          | 10 +++--
+ arch/arm/boot/dts/tegra114.dtsi                    | 41 +++++++++++++-------
+ arch/arm/boot/dts/tegra20.dtsi                     | 40 +++++++++++++-------
+ arch/arm/boot/dts/tegra30.dtsi                     | 37 ++++++++++++------
+ drivers/dma/tegra20-apb-dma.c                      | 38 ++++++++++++++++++-
+ drivers/spi/spi-tegra114.c                         | 16 +++-----
+ drivers/spi/spi-tegra20-slink.c                    | 16 +++-----
+ drivers/tty/serial/serial-tegra.c                  | 16 +-------
+ sound/soc/tegra/tegra20_ac97.c                     | 17 +++------
+ sound/soc/tegra/tegra20_ac97.h                     |  2 +
+ sound/soc/tegra/tegra20_i2s.c                      | 26 ++++---------
+ sound/soc/tegra/tegra20_i2s.h                      |  2 +
+ sound/soc/tegra/tegra30_ahub.c                     | 25 +++++-------
+ sound/soc/tegra/tegra30_ahub.h                     | 11 +++---
+ sound/soc/tegra/tegra30_i2s.c                      | 44 +++++++++++++++-------
+ sound/soc/tegra/tegra30_i2s.h                      |  2 +
+ sound/soc/tegra/tegra_pcm.c                        | 14 +++++++
+ sound/soc/tegra/tegra_pcm.h                        | 13 +++++++
+ 25 files changed, 260 insertions(+), 167 deletions(-)
 
-Again, I haven't looked at _all_ the paths for all
-of these patches, I just picked one at random.
-
-Extra dmesg output with some device probes that are
-expected to fail is not good.
+-- 
+1.8.1.5
