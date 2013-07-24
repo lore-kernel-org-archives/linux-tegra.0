@@ -1,67 +1,55 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V4 2/4] ARM: tegra114: Reprogram GIC CPU interface to
- bypass IRQ on CPU PM entry
-Date: Wed, 24 Jul 2013 10:02:34 -0700
-Message-ID: <51F008AA.2030101@wwwdotorg.org>
-References: <1374225926-26832-1-git-send-email-josephl@nvidia.com>  <1374225926-26832-3-git-send-email-josephl@nvidia.com>  <20130723154438.GA2864@dhcp-172-17-186-34.nvidia.com> <1374666419.23756.55.camel@jlo-ubuntu-64.nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] regulator: palmas: fix pdata ptr not be updated after it
+ has been allocated
+Date: Wed, 24 Jul 2013 18:02:15 +0100
+Message-ID: <20130724170215.GP9858@sirena.org.uk>
+References: <1374683282-17517-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lnCRbaW8TcgsIoW0"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374666419.23756.55.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1374683282-17517-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/24/2013 04:46 AM, Joseph Lo wrote:
-> On Tue, 2013-07-23 at 23:44 +0800, Thierry Reding wrote:
->> * PGP Signed by an unknown key
->>
->> On Fri, Jul 19, 2013 at 05:25:24PM +0800, Joseph Lo wrote:
->>> There is a difference between GICv1 and v2 when CPU in power management
->>> mode (aka CPU power down on Tegra). For GICv1, IRQ/FIQ interrupt lines
->>> going to CPU are same lines which are also used for wake-interrupt.
->>> Therefore, we cannot disable the GIC CPU interface if we need to use same
->>> interrupts for CPU wake purpose. This creates a race condition for CPU
->>> power off entry. Also, in GICv1, disabling GICv1 CPU interface puts GICv1
->>> into bypass mode such that incoming legacy IRQ/FIQ are sent to CPU, which
->>> means disabling GIC CPU interface doesn't really disable IRQ/FIQ to CPU.
->>>
->>> GICv2 provides a wake IRQ/FIQ (for wake-event purpose), which are not
->>> disabled by GIC CPU interface. This is done by adding a bypass override
->>> capability when the interrupts are disabled at the CPU interface. To
->>> support this, there are four bits about IRQ/FIQ BypassDisable in CPU
->>> interface Control Register. When the IRQ/FIQ not being driver by the
->>> CPU interface, each interrupt output signal can be deasserted rather
->>> than being driven by the legacy interrupt input.
->>>
->>> So the wake-event can be used as wakeup signals to SoC (system power
->>> controller).
->>>
->>> To prevent race conditions and ensure proper interrupt routing on
->>> Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
->>> call-back to reprogram the GIC CPU interface on PM entry. The
->>> GIC CPU interface will be reset back to its normal state by
->>> the common GIC CPU PM exit callback when the CPU wakes up.
->>>
->>> Based on the work by: Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Hi Joseph,
->>
->> We've had a rather long-standing issue with PCIe and MSI related to LP2
->> on Tegra20. I wonder if that's somehow related to this. Given that this
->> is marked as Tegra114 patch explicitly I suppose not, but it certainly
->> sounds very similar to the description above.
->>
-> For LP2 + PCIe + MSI, I believe it need some other SW support if the HW
-> really support MSI and runtime power down CPU domain that include SCU
-> and BIU. According to TRM, the PCIe pass data through the unit to
-> memory. I have no idea does the HW really support this function. I also
-> need more information about this. 
 
-Joseph, this is NVIDIA bug 1268311. Let's continue any discussion on
-this topic internally (i.e. debug the problem) in that bug, until we
-have something useful to report back upstream?
+--lnCRbaW8TcgsIoW0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jul 24, 2013 at 12:28:02PM -0400, Rhyland Klein wrote:
+
+> +	/* Store the pdata pointer after everything else passes */
+> +	pdev->dev.platform_data = pdata;
+
+No, this is bad - the driver should not be modifying the platform_data
+pointer, it's owned by the thing that created the device.  If the
+platform data needs to be modified it should be copied somewhere in the
+driver data.
+
+--lnCRbaW8TcgsIoW0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR8AiUAAoJELSic+t+oim9FlsQAIBi3RQKryKif7cc/B4lQAsu
+tIaEDnE0zkscnMDiq+zhJjQFV6B8uG+v1ASk5TPHgpDYM3jTunQMnMybF+Erq0ld
+wj7mwmxbix31k/1yS0kNuvE3Jlmo231snhe4ytboOtowmQkCGDDqTV6mlgMMQjhA
+JlO/HRKnU4Va4/6JcU7VKiGPbUzBtVD9qSx43Iri1BEHUB1YJRTDTBKgG+RHtVzs
+4vSttSdvruKhNtIO+Hx0CfDmSv4A0I/+DyBhcQsjN+RWIVIgpxbI0YQ2W7hsFy7T
+RuhMQwrwmm3iq6+v9jEuxRSoN9t/kZWKgfALszUmKydEkbs8gftwMYICQtMfI9dB
+A6StW4N+3cidVXQUbtZpLDde6XcKMUhuhx/MVB3v/fP7wh74dW6ckl6NeKvhUaQv
+ERS5TaSdFaY7p2rcqMh3EobRiuxQ7fDFszEAhEVZZH2Wc1ku1UXfVBOwAnNLul6a
+M3X/iQ155DV5/WVFzsKwUJo7AbZujPdPrtjYaY+NqIJvaQqF5ebqum/SpUGFx7G6
+jx2FBXy9t3u8J622buWY91gAxl5mKAVumwi5lMMZikT7c9lkZwG3hkmnAAmZU1KV
+1T5IAxFLmOpywnqjrsCPuXtY/Gex3sihfj0vU1mL2+POBo28+HqzP1AaaWoX97VB
+bJ979T4SkFLaPScT6KJ9
+=EoX9
+-----END PGP SIGNATURE-----
+
+--lnCRbaW8TcgsIoW0--
