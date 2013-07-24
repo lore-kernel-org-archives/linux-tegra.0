@@ -1,44 +1,67 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] regulator: palmas: fix pdata ptr not be updated after it has been allocated
-Date: Wed, 24 Jul 2013 12:28:02 -0400
-Message-ID: <1374683282-17517-1-git-send-email-rklein@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V4 2/4] ARM: tegra114: Reprogram GIC CPU interface to
+ bypass IRQ on CPU PM entry
+Date: Wed, 24 Jul 2013 10:02:34 -0700
+Message-ID: <51F008AA.2030101@wwwdotorg.org>
+References: <1374225926-26832-1-git-send-email-josephl@nvidia.com>  <1374225926-26832-3-git-send-email-josephl@nvidia.com>  <20130723154438.GA2864@dhcp-172-17-186-34.nvidia.com> <1374666419.23756.55.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1374666419.23756.55.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The pmic platform data wasn't updated to dev.platform_data after it had
-been allocated. That can cause the driver crash when using it.
-This patch fixes the issue.
+On 07/24/2013 04:46 AM, Joseph Lo wrote:
+> On Tue, 2013-07-23 at 23:44 +0800, Thierry Reding wrote:
+>> * PGP Signed by an unknown key
+>>
+>> On Fri, Jul 19, 2013 at 05:25:24PM +0800, Joseph Lo wrote:
+>>> There is a difference between GICv1 and v2 when CPU in power management
+>>> mode (aka CPU power down on Tegra). For GICv1, IRQ/FIQ interrupt lines
+>>> going to CPU are same lines which are also used for wake-interrupt.
+>>> Therefore, we cannot disable the GIC CPU interface if we need to use same
+>>> interrupts for CPU wake purpose. This creates a race condition for CPU
+>>> power off entry. Also, in GICv1, disabling GICv1 CPU interface puts GICv1
+>>> into bypass mode such that incoming legacy IRQ/FIQ are sent to CPU, which
+>>> means disabling GIC CPU interface doesn't really disable IRQ/FIQ to CPU.
+>>>
+>>> GICv2 provides a wake IRQ/FIQ (for wake-event purpose), which are not
+>>> disabled by GIC CPU interface. This is done by adding a bypass override
+>>> capability when the interrupts are disabled at the CPU interface. To
+>>> support this, there are four bits about IRQ/FIQ BypassDisable in CPU
+>>> interface Control Register. When the IRQ/FIQ not being driver by the
+>>> CPU interface, each interrupt output signal can be deasserted rather
+>>> than being driven by the legacy interrupt input.
+>>>
+>>> So the wake-event can be used as wakeup signals to SoC (system power
+>>> controller).
+>>>
+>>> To prevent race conditions and ensure proper interrupt routing on
+>>> Cortex-A15 CPUs when they are power-gated, add a CPU PM notifier
+>>> call-back to reprogram the GIC CPU interface on PM entry. The
+>>> GIC CPU interface will be reset back to its normal state by
+>>> the common GIC CPU PM exit callback when the CPU wakes up.
+>>>
+>>> Based on the work by: Scott Williams <scwilliams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Hi Joseph,
+>>
+>> We've had a rather long-standing issue with PCIe and MSI related to LP2
+>> on Tegra20. I wonder if that's somehow related to this. Given that this
+>> is marked as Tegra114 patch explicitly I suppose not, but it certainly
+>> sounds very similar to the description above.
+>>
+> For LP2 + PCIe + MSI, I believe it need some other SW support if the HW
+> really support MSI and runtime power down CPU domain that include SCU
+> and BIU. According to TRM, the PCIe pass data through the unit to
+> memory. I have no idea does the HW really support this function. I also
+> need more information about this. 
 
-We need to update the pdata pointer at the end of probe because if
-probe should fail for some reason, for instance if an in-supply
-isn't ready yet, then probe will defer. However, the pdata is allocated
-with devm, and so is freed when probe is deferred.
-
-Based on work by Joseph Lo.
-
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/regulator/palmas-regulator.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/regulator/palmas-regulator.c b/drivers/regulator/palmas-regulator.c
-index d0c8785..e11b762 100644
---- a/drivers/regulator/palmas-regulator.c
-+++ b/drivers/regulator/palmas-regulator.c
-@@ -1027,6 +1027,8 @@ static int palmas_regulators_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	/* Store the pdata pointer after everything else passes */
-+	pdev->dev.platform_data = pdata;
- 
- 	return 0;
- 
--- 
-1.7.9.5
+Joseph, this is NVIDIA bug 1268311. Let's continue any discussion on
+this topic internally (i.e. debug the problem) in that bug, until we
+have something useful to report back upstream?
