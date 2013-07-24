@@ -1,37 +1,50 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: tegra: correct Colibri T20 regulator settings
-Date: Tue, 23 Jul 2013 13:53:53 -0700
-Message-ID: <51EEED61.1070300@wwwdotorg.org>
-References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>  <1374442132-24040-5-git-send-email-dev@lynxeye.de>  <51EEC669.9050703@wwwdotorg.org> <1374611752.1712.6.camel@tellur>
+Subject: Re: [PATCH 10/27] drivers/memory: don't check resource with devm_ioremap_resource
+Date: Tue, 23 Jul 2013 18:27:57 -0700
+Message-ID: <51EF2D9D.8030904@wwwdotorg.org>
+References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>  <1374602524-3398-11-git-send-email-wsa@the-dreams.de> <1374603925.3387.26.camel@joe-AO722>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374611752.1712.6.camel@tellur>
+In-Reply-To: <1374603925.3387.26.camel@joe-AO722>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joe Perches <joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/23/2013 01:35 PM, Lucas Stach wrote:
-> Am Dienstag, den 23.07.2013, 11:07 -0700 schrieb Stephen Warren:
->> On 07/21/2013 02:28 PM, Lucas Stach wrote:
-...
->>> SM2 is not a the parent of LDO regs, but actually the DDR regulator. The
->>> Colibri uses a different version of the TPS with other voltage mapping
->>> tables for SM2, currently we cheat by setting a fake 3,2V which results
->>> in 1,8V physical.
-...
->> But is this a regression? If not, how far back in CC: stable should this
->> change go?
+On 07/23/2013 11:25 AM, Joe Perches wrote:
+> On Tue, 2013-07-23 at 20:01 +0200, Wolfram Sang wrote:
+>> devm_ioremap_resource does sanity checks on the given resource. No need to
+>> duplicate this in the driver.
 > 
-> This is not a regression. It was introduced with the original Colibri
-> T20 commit and was caused by Toradex not providing any schematics for
-> the Module plus me not physically checking this voltage rail before
-> pushing things out.
+> Hi Wolfram:
+> 
+> This is the first and only one of the patch series I looked at.
+> 
+>> diff --git a/drivers/memory/tegra20-mc.c b/drivers/memory/tegra20-mc.c
+> []
+>> @@ -218,8 +218,6 @@ static int tegra20_mc_probe(struct platform_device *pdev)
+>>  		struct resource *res;
+>>  
+>>  		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+>> -		if (!res)
+>> -			return -ENODEV;
+>>  		mc->regs[i] = devm_ioremap_resource(&pdev->dev, res);
+> 
+> I'm not so sure this is appropriate.
+> 
+> devm_ioremap_resource returns ERR_PTR(-EINVAL) for
+> null resource so this changes the return.
 
-FYI, the reason I ask is that there's more push-back on adding patches
-late in the rc cycle (or after release, to -stable) for things that are
-not regressions. A safety issue like over-voltage might well still
-qualify to be accepted, but fixes for regressions are even more likely
-to be accepted.
+I think the exact return value is probably pretty arbitrary here.
+
+> devm_ioremap_resource also emits a noisy dev_err
+> message when resource is NULL.
+> 
+> It's a probe and before the message log would be silent
+> but now there's a new dmesg.
+
+I think those changes are fine, at least for this driver. It's a bug if
+the required resources are missing, and having probe() actively point
+out why it's failing can only be a good thing in my book.
