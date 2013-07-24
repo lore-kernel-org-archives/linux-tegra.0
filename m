@@ -1,68 +1,74 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 0/9] Tegra USB cleanup series
-Date: Wed, 24 Jul 2013 15:32:29 +0300
-Message-ID: <20130724123229.GE17962@radagast>
-References: <1372455427-20898-1-git-send-email-ttynkkynen@nvidia.com>
- <51D1FCBD.6070104@wwwdotorg.org>
-Reply-To: <balbi@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 25/27] sound/soc/tegra: don't check
+ resource with devm_ioremap_resource
+Date: Wed, 24 Jul 2013 15:37:03 +0100
+Message-ID: <20130724143703.GH9858@sirena.org.uk>
+References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de>
+ <1374602524-3398-26-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KJY2Ze80yH5MUxol"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51D1FCBD.6070104@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, balbi@ti.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org
+Content-Type: multipart/mixed; boundary="===============0472147094908951809=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1374602524-3398-26-git-send-email-wsa@the-dreams.de>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@wwwdotorg.org>, Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
---KJY2Ze80yH5MUxol
+
+--===============0472147094908951809==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CHpW5YICyLt6224O"
+Content-Disposition: inline
+
+
+--CHpW5YICyLt6224O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Jul 23, 2013 at 08:01:58PM +0200, Wolfram Sang wrote:
+> devm_ioremap_resource does sanity checks on the given resource. No need to
+> duplicate this in the driver.
 
-On Mon, Jul 01, 2013 at 04:03:41PM -0600, Stephen Warren wrote:
-> On 06/28/2013 03:36 PM, Tuomas Tynkkynen wrote:
-> > Hi,
-> >=20
-> > Here's a few cleanup patches for the Tegra USB drivers, to be applied o=
-n top
-> > of Mikko's two patch sets. It mostly deals with removing all usage of p=
-latform
-> > data and using standard helpers and enums instead of Tegra-specific one=
-s.
->=20
-> With the issues in patches 5/9 and 9/9 fixed as I mentioned, this series,
->=20
-> Tested-by: Stephen Warren <swarren@nvidia.com>
+This doesn't seem to apply against my current branch, can you please
+check and resend?
 
-so, do you want me to apply these myself ?
-
---=20
-balbi
-
---KJY2Ze80yH5MUxol
+--CHpW5YICyLt6224O
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR78ldAAoJEIaOsuA1yqREUlgP/iiKDniH1mdj7o9YkBWEDIIn
-TilCUbtwagjEaoh81R7qiKaUBEisvmM2Dek//eNkEZ4zU4U8MLgMuzcuQDyQMNNI
-jmncQVJAaVqVwmulgbfUfzGaGChZ+XGkTOXX6If/9udSn/Q+m/dHoHxnAot5J5i0
-f6ZbLg9QOC9YsRYY+xUlLP/zwBXreWqwRPJnBj7LMMYpXqzISbXVMsa5Zu8dVJ7o
-M8uGm+kHxelmsyNfKmUccLoL02fFQJt0PF5mygybwAtHJ89827m3IXuo5oKc6VNK
-/am5yhxbegLS2AVgwH+CkUWa1nekGsFYpA9omZ02fEf9FV0LKjYaAb23b4aitF+H
-Up+FYT7XLAcd+a5KV9BhE8mfIQB2RvSgX5+z2xYyV+kiBn9Z6XD6Zrp84LkotAPx
-tldWLhIaGMJArZwOy7lwC+SOUOOR4m8NzbJLrLbTVhH/ASb8wEs/+bLnaaFxO5VB
-7GFmiMzVHQgMYLbi2CKgMKV09/knlijgPuM//wq9mXHCOyzU+dlkHykeotv5vd/p
-yPWSfv2ZBYJcBSIQD6q4e6/w67mEqupdNNujysB+i+fcK317Ny3Tldm8m8xcS5+Y
-winExlPbP1z3aaWLk8dBLLDKq6rOxlj0Jxf/evqfw+J8zy51AW3konwXUy5nSmjn
-AvlHD33Wq4q8bVWbesHX
-=rxUk
+iQIcBAEBAgAGBQJR7+aMAAoJELSic+t+oim9uosP/2t1J9JW/4junv7CHj5eGwCa
+i4NzP6WT6UHYGfMQWOdW92c34wFHrv/U7ioebl1Py0IT2zteMUsF4sQ7ogWiwRVr
+ab74QbKC4hBrRoq5gtr/SLa0kDcaFWuxf1XUFrVXZbg/pxZGosWp9ihTJ8b1r3lG
+yDiQIMRvtq/QIz/RLnaokVGq87rhHwG55+ute3lk4SEMAkOrJdEdTnYretB5xOhm
+BAefrVdjgkZhqA+x2VjYlrbjbhnAdD7ZmhvXdRb+FBd8eLTbPnDsr4ML9UPF6NeD
+vq9mckgl/hm1KKwQhrw99caCnooips6eSc+kK7PT8RiwmMB3y8BDfJobWp+svKnk
+CxzAFc6iSn/1CU24FOt25YhwYDmCBh6J2pJyZBJPJkQ5Gph3hCn+cCSdpCsaq7/i
+tGLimFSn6X4NYKyNPMsoE3XRX1cQJ4NDBilgqyP7hHymE9hCCMHvPRWF4VJzlE1M
+JtOgpKOr7kLs/vJrl5cTHZlyO7ToDj3RN1/xNL7bY78AC28VZxaW25ry9MaTpS6h
+K+9wOXdRj8H4irFixkpWjWYwGhQ80MbBrNMgD6Tfu4ajC/b31AWiHjcWklVaeY7n
+4f7lfZhRtyqlXfAAyiIJT5K00JaxsUyo8vo9ZosYAG2TkXDQbVM7ACKYxFVg61C8
+h7c+55FX4rE8YpX58PC8
+=RTgd
 -----END PGP SIGNATURE-----
 
---KJY2Ze80yH5MUxol--
+--CHpW5YICyLt6224O--
+
+--===============0472147094908951809==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0472147094908951809==--
