@@ -1,56 +1,45 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 11/16] ARM: tegra: Enable PCIe controller on Cardhu
-Date: Thu, 25 Jul 2013 10:53:25 -0700
-Message-ID: <1374774810-18459-12-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v5 14/16] ARM: tegra: Update default configuration (PCIe)
+Date: Thu, 25 Jul 2013 10:53:28 -0700
+Message-ID: <1374774810-18459-15-git-send-email-thierry.reding@gmail.com>
 References: <1374774810-18459-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
 In-Reply-To: <1374774810-18459-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-pci-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>
 Cc: Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jay Agarwal <jagarwal@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Jay Agarwal <jagarwal@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Root port 2 is routed to the bottom connector on Cardhu and is used by
-the development dock to provide gigabit ethernet and USB functionality.
+Enable PCI and MSI support as well as the new Tegra PCIe controller
+driver.
 
-Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30-cardhu.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Changes in v5:
+- enable PCI Express support (CONFIG_PCIEPORTBUS)
 
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index c011b67..ee8fff8 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -31,6 +31,26 @@
- 		reg = <0x80000000 0x40000000>;
- 	};
- 
-+	pcie-controller {
-+		status = "okay";
-+		pex-clk-supply = <&pex_hvdd_3v3_reg>;
-+		vdd-supply = <&ldo1_reg>;
-+		avdd-supply = <&ldo2_reg>;
-+
-+		pci@1,0 {
-+			nvidia,num-lanes = <4>;
-+		};
-+
-+		pci@2,0 {
-+			nvidia,num-lanes = <1>;
-+		};
-+
-+		pci@3,0 {
-+			status = "okay";
-+			nvidia,num-lanes = <1>;
-+		};
-+	};
-+
- 	pinmux {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
+ arch/arm/configs/tegra_defconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 36ad70c..1586dda 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -27,8 +27,11 @@ CONFIG_ARCH_TEGRA=y
+ CONFIG_ARCH_TEGRA_2x_SOC=y
+ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_ARCH_TEGRA_114_SOC=y
+-CONFIG_TEGRA_PCI=y
+ CONFIG_TEGRA_EMC_SCALING_ENABLE=y
++CONFIG_PCI=y
++CONFIG_PCI_MSI=y
++CONFIG_PCI_TEGRA=y
++CONFIG_PCIEPORTBUS=y
+ CONFIG_SMP=y
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
 -- 
 1.8.1.5
