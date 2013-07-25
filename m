@@ -1,81 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 04/16] ARM: tegra: tamonten: Add PCIe support
-Date: Thu, 25 Jul 2013 10:53:18 -0700
-Message-ID: <1374774810-18459-5-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH v5 15/16] ARM: dts: tegra: Increase prefetchable PCI memory space
+Date: Thu, 25 Jul 2013 10:53:29 -0700
+Message-ID: <1374774810-18459-16-git-send-email-thierry.reding@gmail.com>
 References: <1374774810-18459-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1374774810-18459-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Jay Agarwal <jagarwal@nvidia.com>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jay Agarwal <jagarwal@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@avionic-design.de>
+From: Jay Agarwal <jagarwal@nvidia.com>
 
-Add properties common to all Tamonten-derived boards to the Tamonten
-DTSI and add the fixed 1.05 V regulator.
+Instead of evenly splitting the 512 MiB area between prefetchable and
+non-prefetchable memory spaces, increase the prefetchable memory space
+to 384 MiB while at the same time decreasing the non-prefetchable memory
+space to 128 MiB. This is a more useful default as most PCIe devices
+require more prefetchable than non-prefetchable memory.
 
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
+Tested-by: Stephen Warren <swarren@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- add properties common to all Tamonten boards
-- add fixed 1.05 V regulator
+ arch/arm/boot/dts/tegra20.dtsi | 4 ++--
+ arch/arm/boot/dts/tegra30.dtsi | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
- arch/arm/boot/dts/tegra20-tamonten.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index c54faae..5ee674b 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -366,7 +366,7 @@
- 					regulator-always-on;
- 				};
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index ecd016a..3add9ac2 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -473,8 +473,8 @@
+ 		ranges = <0x82000000 0 0x80000000 0x80000000 0 0x00001000   /* port 0 registers */
+ 			  0x82000000 0 0x80001000 0x80001000 0 0x00001000   /* port 1 registers */
+ 			  0x81000000 0 0          0x82000000 0 0x00010000   /* downstream I/O */
+-			  0x82000000 0 0xa0000000 0xa0000000 0 0x10000000   /* non-prefetchable memory */
+-			  0xc2000000 0 0xb0000000 0xb0000000 0 0x10000000>; /* prefetchable memory */
++			  0x82000000 0 0xa0000000 0xa0000000 0 0x08000000   /* non-prefetchable memory */
++			  0xc2000000 0 0xa8000000 0xa8000000 0 0x18000000>; /* prefetchable memory */
  
--				ldo0 {
-+				pci_clk_reg: ldo0 {
- 					regulator-name = "vdd_ldo0,vddio_pex_clk";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -467,6 +467,11 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
+ 		clocks = <&tegra_car TEGRA20_CLK_PEX>,
+ 			 <&tegra_car TEGRA20_CLK_AFI>,
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index c8facca..d81c52e 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -35,8 +35,8 @@
+ 			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
+ 			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
+ 			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
+-			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
+-			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
++			  0x82000000 0 0x20000000 0x20000000 0 0x08000000   /* non-prefetchable memory */
++			  0xc2000000 0 0x28000000 0x28000000 0 0x18000000>; /* prefetchable memory */
  
-+	pcie-controller {
-+		pex-clk-supply = <&pci_clk_reg>;
-+		vdd-supply = <&pci_vdd_reg>;
-+	};
-+
- 	usb@c5008000 {
- 		status = "okay";
- 	};
-@@ -509,5 +514,15 @@
- 			regulator-max-microvolt = <5000000>;
- 			regulator-always-on;
- 		};
-+
-+		pci_vdd_reg: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "vdd_1v05";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			gpio = <&pmic 2 0>;
-+			enable-active-high;
-+		};
- 	};
- };
+ 		clocks = <&tegra_car TEGRA30_CLK_PCIE>,
+ 			 <&tegra_car TEGRA30_CLK_AFI>,
 -- 
 1.8.1.5
