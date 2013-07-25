@@ -1,81 +1,72 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 Subject: Re: [PATCH v3 8/9] usb: phy: tegra: Use DT helpers for phy_type
-Date: Thu, 25 Jul 2013 22:11:16 +0300
-Message-ID: <1374779476-16025-1-git-send-email-ttynkkynen@nvidia.com>
+Date: Thu, 25 Jul 2013 22:17:34 +0300
+Message-ID: <20130725191734.GB26858@radagast>
 References: <20130725190023.GA26858@radagast>
+ <1374779476-16025-1-git-send-email-ttynkkynen@nvidia.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130725190023.GA26858@radagast>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1374779476-16025-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the new of_usb_get_phy_mode helper function for parsing phy_type
-from the device tree.
+--jho1yZJdad60DJr+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Here's the version with switch().
+Hi,
 
- drivers/usb/phy/phy-tegra-usb.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+On Thu, Jul 25, 2013 at 10:11:16PM +0300, Tuomas Tynkkynen wrote:
+> Use the new of_usb_get_phy_mode helper function for parsing phy_type
+> from the device tree.
+>=20
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Here's the version with switch().
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index fb5bc8c..41b67e2 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -31,6 +31,7 @@
- #include <linux/of_gpio.h>
- #include <linux/usb/otg.h>
- #include <linux/usb/ulpi.h>
-+#include <linux/usb/of.h>
- #include <asm/mach-types.h>
- #include <linux/usb/ehci_def.h>
- #include <linux/usb/tegra_usb_phy.h>
-@@ -860,6 +861,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct tegra_usb_phy *tegra_phy = NULL;
- 	struct device_node *np = pdev->dev.of_node;
-+	enum usb_phy_interface phy_type;
- 	int err;
- 
- 	tegra_phy = devm_kzalloc(&pdev->dev, sizeof(*tegra_phy), GFP_KERNEL);
-@@ -884,12 +886,15 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	tegra_phy->is_legacy_phy =
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
- 
--	err = of_property_match_string(np, "phy_type", "ulpi");
--	if (err < 0) {
-+	phy_type = of_usb_get_phy_mode(np);
-+	switch (phy_type) {
-+	case USBPHY_INTERFACE_MODE_UTMI:
- 		err = utmi_phy_probe(tegra_phy, pdev);
- 		if (err < 0)
- 			return err;
--	} else {
-+		break;
-+
-+	case USBPHY_INTERFACE_MODE_ULPI:
- 		tegra_phy->is_ulpi_phy = true;
- 
- 		tegra_phy->reset_gpio =
-@@ -899,8 +904,12 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 				tegra_phy->reset_gpio);
- 			return tegra_phy->reset_gpio;
- 		}
--
- 		tegra_phy->config = NULL;
-+		break;
-+
-+	default:
-+		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
-+		return -EINVAL;
- 	}
- 
- 	err = of_property_match_string(np, "dr_mode", "otg");
--- 
-1.8.1.5
+I guess you misunderstood me, I have applied your original patch,
+conversion to switch is a separate patch since it has nothing to do with
+use usb_of_get_phy_mode() ;-)
+
+an interdiff between this and the previous version should be enough to
+generate a patch converting to switch.
+
+--=20
+balbi
+
+--jho1yZJdad60DJr+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR8XnOAAoJEIaOsuA1yqREy6EP/RlqIabyzy8tkrEUsCg+v2Dr
+JqNaCNU7JHvwNWD7qredlTh6ahfYqmY1gq6AxsB3V+ooXZaVIft/GUEJMxpuv7Nb
+6GWcs2O6dABkwnpF2P52pRtKxjuQKHWNKP6QkZcPaprgVUIjgxfkfx53z7HPuIW8
+nGDU08T/MElUfz33wGoQ9oI0eRDuIKcJGOScOed60q7jU9F18+I82kpYq9NOrCYv
+Ekseg+b2qV3LXIgX9H3VrlkNM0dwRjvP5Ren9pYCrWpaoHi3k27swjPcnx3Plwdu
+c2eOeKQ+/FLgpL3ga2/Si13pf1RCs4wO8Bjr+4HpfbR7tHur/tmDK1CkHIF7K7GU
+H01fyxT/GbqgdU0aS5n90+AY9UbX/G6/2STM9oblA+D3F6bdFKYxO03IeAE3a1dP
+KyOstBbfxW4qr4j6VYCUNEoVcknDOUocLT6jLfNUSiIJAHLQTLqLLAOSGqSzk19n
+wSqYUBHgtT9j2rW17AlV6WdzMMucV3Q7bYEaHYiE79pXGZ5PoRXDDlKqXaSeeUvU
+gr43wwId7p4rbqOC0M4Kpa1AtUuFYVJ+UX9gx1OBXIfo/hGePO44FLsJw5rsFWjB
+LV0fI8GIbKHc5WIewBW+8ea4PksYN39lXz9tyg1PlEUl/do6DFTbGj6zhzFJEDH+
+z6f/eQWstFV44bvGjb9q
+=D/q1
+-----END PGP SIGNATURE-----
+
+--jho1yZJdad60DJr+--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
