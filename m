@@ -1,143 +1,51 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v3 1/9] usb: phy: tegra: Remove unnecessary 'dev' field
-Date: Thu, 25 Jul 2013 21:38:01 +0300
-Message-ID: <1374777489-13093-2-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 3/9] usb: tegra: host: Remove references to plat data
+Date: Thu, 25 Jul 2013 21:38:03 +0300
+Message-ID: <1374777489-13093-4-git-send-email-ttynkkynen@nvidia.com>
 References: <1374777489-13093-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1374777489-13093-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1374777489-13093-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-struct usb_phy already has a field for the device pointer, so this
-unnecessary field can be removed.
+Platform data is not used in tegra-ehci anymore, so remove all
+references to it.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
-Tested-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v3 diff: A whitespace change in v3 of Mikko's regulator patch
- drivers/usb/phy/phy-tegra-usb.c   | 27 +++++++++++++++------------
- include/linux/usb/tegra_usb_phy.h |  1 -
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ drivers/usb/host/ehci-tegra.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index d92a63a..311fe03 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -211,7 +211,7 @@ static void set_phcd(struct tegra_usb_phy *phy, bool enable)
+diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+index 06e8feb..a208cea 100644
+--- a/drivers/usb/host/ehci-tegra.c
++++ b/drivers/usb/host/ehci-tegra.c
+@@ -27,7 +27,6 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+-#include <linux/platform_data/tegra_usb.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/usb/ehci_def.h>
+@@ -327,18 +326,11 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+ 	struct usb_hcd *hcd;
+ 	struct ehci_hcd *ehci;
+ 	struct tegra_ehci_hcd *tegra;
+-	struct tegra_ehci_platform_data *pdata;
+ 	int err = 0;
+ 	int irq;
+ 	struct device_node *np_phy;
+ 	struct usb_phy *u_phy;
  
- static int utmip_pad_open(struct tegra_usb_phy *phy)
- {
--	phy->pad_clk = devm_clk_get(phy->dev, "utmi-pads");
-+	phy->pad_clk = devm_clk_get(phy->u_phy.dev, "utmi-pads");
- 	if (IS_ERR(phy->pad_clk)) {
- 		pr_err("%s: can't get utmip pad clock\n", __func__);
- 		return PTR_ERR(phy->pad_clk);
-@@ -540,13 +540,15 @@ static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- 
- 	ret = gpio_direction_output(phy->reset_gpio, 0);
- 	if (ret < 0) {
--		dev_err(phy->dev, "gpio %d not set to 0\n", phy->reset_gpio);
-+		dev_err(phy->u_phy.dev, "gpio %d not set to 0\n",
-+			phy->reset_gpio);
- 		return ret;
- 	}
- 	msleep(5);
- 	ret = gpio_direction_output(phy->reset_gpio, 1);
- 	if (ret < 0) {
--		dev_err(phy->dev, "gpio %d not set to 1\n", phy->reset_gpio);
-+		dev_err(phy->u_phy.dev, "gpio %d not set to 1\n",
-+			phy->reset_gpio);
- 		return ret;
- 	}
- 
-@@ -649,29 +651,30 @@ static int ulpi_open(struct tegra_usb_phy *phy)
- {
- 	int err;
- 
--	phy->clk = devm_clk_get(phy->dev, "ulpi-link");
-+	phy->clk = devm_clk_get(phy->u_phy.dev, "ulpi-link");
- 	if (IS_ERR(phy->clk)) {
- 		pr_err("%s: can't get ulpi clock\n", __func__);
- 		return PTR_ERR(phy->clk);
- 	}
- 
--	err = devm_gpio_request(phy->dev, phy->reset_gpio, "ulpi_phy_reset_b");
-+	err = devm_gpio_request(phy->u_phy.dev, phy->reset_gpio,
-+		"ulpi_phy_reset_b");
- 	if (err < 0) {
--		dev_err(phy->dev, "request failed for gpio: %d\n",
-+		dev_err(phy->u_phy.dev, "request failed for gpio: %d\n",
- 		       phy->reset_gpio);
- 		return err;
- 	}
- 
- 	err = gpio_direction_output(phy->reset_gpio, 0);
- 	if (err < 0) {
--		dev_err(phy->dev, "gpio %d direction not set to output\n",
-+		dev_err(phy->u_phy.dev, "gpio %d direction not set to output\n",
- 		       phy->reset_gpio);
- 		return err;
- 	}
- 
- 	phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
- 	if (!phy->ulpi) {
--		dev_err(phy->dev, "otg_ulpi_create returned NULL\n");
-+		dev_err(phy->u_phy.dev, "otg_ulpi_create returned NULL\n");
- 		err = -ENOMEM;
- 		return err;
- 	}
-@@ -686,7 +689,7 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 	int i;
- 	int err;
- 
--	phy->pll_u = devm_clk_get(phy->dev, "pll_u");
-+	phy->pll_u = devm_clk_get(phy->u_phy.dev, "pll_u");
- 	if (IS_ERR(phy->pll_u)) {
- 		pr_err("Can't get pll_u clock\n");
- 		return PTR_ERR(phy->pll_u);
-@@ -712,7 +715,7 @@ static int tegra_usb_phy_init(struct tegra_usb_phy *phy)
- 	if (!IS_ERR(phy->vbus)) {
- 		err = regulator_enable(phy->vbus);
- 		if (err) {
--			dev_err(phy->dev,
-+			dev_err(phy->u_phy.dev,
- 				"failed to enable usb vbus regulator: %d\n",
- 				err);
- 			goto fail;
-@@ -920,7 +923,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 		tegra_phy->vbus = ERR_PTR(-ENODEV);
- 	}
- 
--	tegra_phy->dev = &pdev->dev;
-+	tegra_phy->u_phy.dev = &pdev->dev;
- 	err = tegra_usb_phy_init(tegra_phy);
- 	if (err < 0)
- 		return err;
-@@ -953,7 +956,7 @@ static int tegra_usb_phy_match(struct device *dev, void *data)
- 	struct tegra_usb_phy *tegra_phy = dev_get_drvdata(dev);
- 	struct device_node *dn = data;
- 
--	return (tegra_phy->dev->of_node == dn) ? 1 : 0;
-+	return (tegra_phy->u_phy.dev->of_node == dn) ? 1 : 0;
- }
- 
- struct usb_phy *tegra_usb_get_phy(struct device_node *dn)
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 2b5fa94..c2bc710 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -60,7 +60,6 @@ struct tegra_usb_phy {
- 	void *config;
- 	struct usb_phy *ulpi;
- 	struct usb_phy u_phy;
--	struct device *dev;
- 	bool is_legacy_phy;
- 	bool is_ulpi_phy;
- 	int reset_gpio;
--- 
-1.8.1.5
+-	pdata = pdev->dev.platform_data;
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "Platform data missing\n");
+-		return -EINVAL;
+-	}
