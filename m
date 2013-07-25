@@ -1,31 +1,48 @@
 From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 0/9] Tegra USB cleanup series
-Date: Thu, 25 Jul 2013 21:22:49 +0300
-Message-ID: <51F16CF9.1070704@nvidia.com>
-References: <1373918029-28977-1-git-send-email-ttynkkynen@nvidia.com> <51E485B8.5050502@wwwdotorg.org> <20130725175133.GM25415@radagast>
+Subject: [PATCH v3 0/9] Tegra USB cleanup series
+Date: Thu, 25 Jul 2013 21:38:00 +0300
+Message-ID: <1374777489-13093-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130725175133.GM25415@radagast>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/25/2013 08:51 PM, Felipe Balbi wrote:
+Hi,
 
-> 
-> series doesn't apply on top of Mikko's patches. Please rebase on my
-> testing branch on kernel.org.
+Here's a V3 of the few cleanup patches for the Tegra USB drivers, to be applied
+on top of Mikko's two patch sets. It mostly deals with removing all usage of
+platform data and using standard helpers and enums instead of Tegra-specific
+ones.
 
-Ah, the regulator patch got a v3 after I sent out these. Will do.
+v3 diff:
+    Rebased on v3 of Mikko's regulator patch (just a whitespace change)
+    Added Stephen's Reviewed & Tested-bys & Ack to Patch 4
 
-> 
-> When resending, please put Stephen's reviewed-by, tested-by and acked-by
-> in the patches to make my life a little easier :-)
-> 
+v2 diff:
+    Patch 5: Do the usb_add_phy_dev as the very last thing in .probe
+    Patch 9: Default to host mode if the property didn't exist
 
-Will do.
+Tuomas Tynkkynen (9):
+  usb: phy: tegra: Remove unnecessary 'dev' field
+  usb: host: tegra: Remove leftover code
+  usb: tegra: host: Remove references to plat data
+  ARM: tegra: Remove USB platform data
+  usb: phy: tegra: Register as an USB PHY.
+  usb: host: tegra: Locate a PHY via standard API
+  usb: phy: tegra: Remove custom PHY locating APIs
+  usb: phy: tegra: Use DT helpers for phy_type
+  usb: phy: tegra: Use DT helpers for dr_mode
 
-- Tuomas
+ arch/arm/mach-tegra/tegra.c             |  38 +-----------
+ drivers/usb/host/ehci-tegra.c           |  37 ++----------
+ drivers/usb/phy/phy-tegra-usb.c         | 102 ++++++++++++++++----------------
+ include/linux/platform_data/tegra_usb.h |  32 ----------
+ include/linux/usb/tegra_usb_phy.h       |  16 +----
+ 5 files changed, 59 insertions(+), 166 deletions(-)
+ delete mode 100644 include/linux/platform_data/tegra_usb.h
+
+-- 
+1.8.1.5
