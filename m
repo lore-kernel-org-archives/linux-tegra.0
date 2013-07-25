@@ -1,98 +1,81 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v3 8/9] usb: phy: tegra: Use DT helpers for phy_type
-Date: Thu, 25 Jul 2013 22:00:23 +0300
-Message-ID: <20130725190023.GA26858@radagast>
-References: <1374777489-13093-1-git-send-email-ttynkkynen@nvidia.com>
- <1374777489-13093-9-git-send-email-ttynkkynen@nvidia.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+Date: Thu, 25 Jul 2013 22:11:16 +0300
+Message-ID: <1374779476-16025-1-git-send-email-ttynkkynen@nvidia.com>
+References: <20130725190023.GA26858@radagast>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1374777489-13093-9-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130725190023.GA26858@radagast>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use the new of_usb_get_phy_mode helper function for parsing phy_type
+from the device tree.
 
-Hi,
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Here's the version with switch().
 
-On Thu, Jul 25, 2013 at 09:38:08PM +0300, Tuomas Tynkkynen wrote:
-> Use the new of_usb_get_phy_mode helper function for parsing phy_type
-> from the device tree.
->=20
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-=
-usb.c
-> index fb5bc8c..fb469f1 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -31,6 +31,7 @@
->  #include <linux/of_gpio.h>
->  #include <linux/usb/otg.h>
->  #include <linux/usb/ulpi.h>
-> +#include <linux/usb/of.h>
->  #include <asm/mach-types.h>
->  #include <linux/usb/ehci_def.h>
->  #include <linux/usb/tegra_usb_phy.h>
-> @@ -860,6 +861,7 @@ static int tegra_usb_phy_probe(struct platform_device=
- *pdev)
->  	struct resource *res;
->  	struct tegra_usb_phy *tegra_phy =3D NULL;
->  	struct device_node *np =3D pdev->dev.of_node;
-> +	enum usb_phy_interface phy_type;
->  	int err;
-> =20
->  	tegra_phy =3D devm_kzalloc(&pdev->dev, sizeof(*tegra_phy), GFP_KERNEL);
-> @@ -884,12 +886,12 @@ static int tegra_usb_phy_probe(struct platform_devi=
-ce *pdev)
->  	tegra_phy->is_legacy_phy =3D
->  		of_property_read_bool(np, "nvidia,has-legacy-mode");
-> =20
-> -	err =3D of_property_match_string(np, "phy_type", "ulpi");
-> -	if (err < 0) {
-> +	phy_type =3D of_usb_get_phy_mode(np);
-> +	if (phy_type =3D=3D USBPHY_INTERFACE_MODE_UTMI) {
+ drivers/usb/phy/phy-tegra-usb.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-can you add one more patch to your series converting this to a switch ?
-I can apply this one as is, but this really looks like a good fit for a
-switch statement
-
---=20
-balbi
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR8XXHAAoJEIaOsuA1yqRE2cAP/3XTtv/WdmrqXIGZB7Oh5mHG
-wLkj7dqZxsPqyWy3sIcG6efKT9igUrBGpNtV+8oLfi1Yc6iqytIiWWYAWkko5l26
-332pLzGQ+YWQr8lIeMDsbfsMs9ManZk7nFYjnQAPSV80b1odbOXo02UsY/8QXRva
-XQZEFfBRGBKM/35Xa6i0ndIAfNZZQWOjcZH7ZZLX1nRgUZsOLgLWJorM/3j36sOf
-lvH6uhJ2GSgJgiJO9V61oQBo7wWXyDfVM8hujFALnHgK7xfpGwzackD5GLynUUrL
-+OhHW0SNBaz+vO1V0ePS5m+RH47epSvHwXx9CF/YiORGMzjx8zvSxE9WlQjR0voX
-bO2AvA5c4n/LsJnZ1cdLcGrRiNefK0baWnMsbHKKtAp2kDqtKEGr884VMNwaCnDt
-lSwiHyShlO/jOg/7r9nLU52KTpf56EImVlgpnxX8rHsAB2w27GQoHH39tyjDz5VE
-3yD4lqJG0PfSYg6ovph8WDqa3FGH/QFxGp9hHCSs2pORdJc4WJswaJ1U7Tv8C3lF
-RY0OR4NuQu4LoCwAJSmaVfET3nTqhJkXZEnVt7zCqo1WbPCUruzldcKoWcjtJm6S
-3gPQuvx4nc+EqyaSJqFi3LssgZ9pHgAeOAkcVm8dfiyDTGCzJ8lc1QgffwsCUxqL
-rr4wg1o8IeriY21b7YJu
-=yJWk
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index fb5bc8c..41b67e2 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -31,6 +31,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/usb/otg.h>
+ #include <linux/usb/ulpi.h>
++#include <linux/usb/of.h>
+ #include <asm/mach-types.h>
+ #include <linux/usb/ehci_def.h>
+ #include <linux/usb/tegra_usb_phy.h>
+@@ -860,6 +861,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct tegra_usb_phy *tegra_phy = NULL;
+ 	struct device_node *np = pdev->dev.of_node;
++	enum usb_phy_interface phy_type;
+ 	int err;
+ 
+ 	tegra_phy = devm_kzalloc(&pdev->dev, sizeof(*tegra_phy), GFP_KERNEL);
+@@ -884,12 +886,15 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	tegra_phy->is_legacy_phy =
+ 		of_property_read_bool(np, "nvidia,has-legacy-mode");
+ 
+-	err = of_property_match_string(np, "phy_type", "ulpi");
+-	if (err < 0) {
++	phy_type = of_usb_get_phy_mode(np);
++	switch (phy_type) {
++	case USBPHY_INTERFACE_MODE_UTMI:
+ 		err = utmi_phy_probe(tegra_phy, pdev);
+ 		if (err < 0)
+ 			return err;
+-	} else {
++		break;
++
++	case USBPHY_INTERFACE_MODE_ULPI:
+ 		tegra_phy->is_ulpi_phy = true;
+ 
+ 		tegra_phy->reset_gpio =
+@@ -899,8 +904,12 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 				tegra_phy->reset_gpio);
+ 			return tegra_phy->reset_gpio;
+ 		}
+-
+ 		tegra_phy->config = NULL;
++		break;
++
++	default:
++		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
++		return -EINVAL;
+ 	}
+ 
+ 	err = of_property_match_string(np, "dr_mode", "otg");
+-- 
+1.8.1.5
