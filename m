@@ -1,84 +1,31 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v5 09/16] PCI: tegra: set up PADS_REFCLK_CFG1
-Date: Thu, 25 Jul 2013 12:01:05 -0600
-Message-ID: <CAErSpo5v0ajACxAZnUQtL5LbY=JW1Xdw+cRf=wtqvJuQDxfAow@mail.gmail.com>
-References: <1374774810-18459-1-git-send-email-thierry.reding@gmail.com> <1374774810-18459-10-git-send-email-thierry.reding@gmail.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/9] Tegra USB cleanup series
+Date: Thu, 25 Jul 2013 21:22:49 +0300
+Message-ID: <51F16CF9.1070704@nvidia.com>
+References: <1373918029-28977-1-git-send-email-ttynkkynen@nvidia.com> <51E485B8.5050502@wwwdotorg.org> <20130725175133.GM25415@radagast>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1374774810-18459-10-git-send-email-thierry.reding@gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Jason Cooper <jason@lakedaemon.net>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jay Agarwal <jagarwal@nvidia.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, devicetree@vger.kernel.org, linux-arm <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130725175133.GM25415@radagast>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 25, 2013 at 11:53 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->
-> The registers PADS_REFCLK_CFG are an array of 16-bit data, one entry per
-> PCIe root port. For Tegra30, we therefore need to write a 3rd entry in
-> this array. Doing so mays the mini-PCIe slot on Beaver operate correctly.
->
-> While we're at it, add some #defines to partially document the fields
-> within these 16-bit values.
->
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+On 07/25/2013 08:51 PM, Felipe Balbi wrote:
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> series doesn't apply on top of Mikko's patches. Please rebase on my
+> testing branch on kernel.org.
 
-> ---
->  drivers/pci/host/pci-tegra.c | 29 ++++++++++++++++++++++++-----
->  1 file changed, 24 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 5347d7d..0c84c67 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -196,6 +196,25 @@
->  #define PADS_REFCLK_CFG0                       0x000000C8
->  #define PADS_REFCLK_CFG1                       0x000000CC
->
-> +/*
-> + * Fields in PADS_REFCLK_CFG*. Those registers form an array of 16-bit
-> + * entries, one entry per PCIe port. These field definitions and desired
-> + * values aren't in the TRM, but do come from NVIDIA.
-> + */
-> +#define PADS_REFCLK_CFG_TERM_SHIFT             2  /* 6:2 */
-> +#define PADS_REFCLK_CFG_E_TERM_SHIFT           7
-> +#define PADS_REFCLK_CFG_PREDI_SHIFT            8  /* 11:8 */
-> +#define PADS_REFCLK_CFG_DRVI_SHIFT             12 /* 15:12 */
-> +
-> +/* Default value provided by HW engineering is 0xfa5c */
-> +#define PADS_REFCLK_CFG_VALUE \
-> +       ( \
-> +               (0x17 << PADS_REFCLK_CFG_TERM_SHIFT)   | \
-> +               (0    << PADS_REFCLK_CFG_E_TERM_SHIFT) | \
-> +               (0xa  << PADS_REFCLK_CFG_PREDI_SHIFT)  | \
-> +               (0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
-> +       )
-> +
->  struct tegra_msi {
->         struct msi_chip chip;
->         DECLARE_BITMAP(used, INT_PCI_MSI_NR);
-> @@ -809,11 +828,11 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->         value |= PADS_PLL_CTL_RST_B4SM;
->         pads_writel(pcie, value, soc->pads_pll_ctl);
->
-> -       /*
-> -        * Hack, set the clock voltage to the DEFAULT provided by hw folks.
-> -        * This doesn't exist in the documentation.
-> -        */
-> -       pads_writel(pcie, 0xfa5cfa5c, PADS_REFCLK_CFG0);
-> +       /* Configure the reference clock driver */
-> +       value = PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16);
-> +       pads_writel(pcie, value, PADS_REFCLK_CFG0);
-> +       if (soc->num_ports > 2)
-> +               pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
->
->         /* wait for the PLL to lock */
->         timeout = 300;
-> --
-> 1.8.1.5
->
+Ah, the regulator patch got a v3 after I sent out these. Will do.
+
+> 
+> When resending, please put Stephen's reviewed-by, tested-by and acked-by
+> in the patches to make my life a little easier :-)
+> 
+
+Will do.
+
+- Tuomas
