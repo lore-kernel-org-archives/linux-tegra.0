@@ -1,57 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/9] dma: tegra20-apbdma: move to generic device tree
- bindings
-Date: Fri, 26 Jul 2013 13:27:58 -0600
-Message-ID: <51F2CDBE.40802@wwwdotorg.org>
-References: <1374639002-16753-1-git-send-email-rizhao@nvidia.com> <1374639002-16753-3-git-send-email-rizhao@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/9] spi: tegra114: move to generic dma DT binding
+Date: Fri, 26 Jul 2013 13:34:43 -0600
+Message-ID: <51F2CF53.30002@wwwdotorg.org>
+References: <1374639002-16753-1-git-send-email-rizhao@nvidia.com> <1374639002-16753-4-git-send-email-rizhao@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374639002-16753-3-git-send-email-rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, djbw-b10kYP2dOMg@public.gmane.org
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <1374639002-16753-4-git-send-email-rizhao@nvidia.com>
+Sender: linux-serial-owner@vger.kernel.org
+To: Richard Zhao <rizhao@nvidia.com>
+Cc: devicetree@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-tegra@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, linux-arm-kernel@lists.infradead.org, Mark Rutland <Mark.Rutland@arm.com>, linux-serial@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, rob.herring@calxeda.com, vinod.koul@intel.com, djbw@fb.com
 List-Id: linux-tegra@vger.kernel.org
 
-(Stripping the Cc list a lot)
+(Stripping CC list a bit)
 
 On 07/23/2013 10:09 PM, Richard Zhao wrote:
-> Update tegra20-apbdma driver to adopt generic DMA device tree bindings.
-> It calls of_dma_controller_register() with of_dma_simple_xlate to get
-> the generic DMA device tree helper support. The #dma-cells for apbdma
-> must be 1, which is slave ID.
-> 
-> The existing nvidia,dma-request-selector still works there, and the
-> support will be removed after all clients get converted to generic DMA
-> device tree helper.
+> - driver: remove use of nvidia,dma-request-selector
+> 	  use dma_request_slave_channel to request channel
+> - if dmas/dma-names are missing, it still supports cpu based transfer
+> - update binding doc and specify dmas/dma-names properties as optional
 
-(BTW, I would like to take this series through the Tegra tree to
-simplify dependencies. So, I'm looking for ack's on the drivers rather
-than for them to be applied. I had hoped Richard would point this out
-when posting the patches)
+I'll simply repeat the comments I already made downstream:
 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+Most commit messages aren't written as bullet points. This might be
+better written as:
 
-> +static bool tegra_dma_filter_fn(struct dma_chan *dc, void *param)
-> +{
-> +	if (dc->device->dev->driver == &tegra_dmac_driver.driver) {
-> +		struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
-> +		unsigned req = *(unsigned *)param;
-> +
-> +		tdc->slave_id = req;
-> +
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static struct of_dma_filter_info tegra_dma_info = {
-> +	.filter_fn = tegra_dma_filter_fn,
-> +};
+----------
+Convert the Tegra114 SPI driver to support the standard DMA device-tree
+bindings.
 
-Why does this driver need to define a filter function? I thought the
-dmaengine's DT support would already match DMA clients/engines based on
-the phandle in DT? Isn't the need to pass the slave channel ID into
-drivers something pretty fundamental to dmaengine, and hence something
-it already supports?
+Note that DMA mode is optional; if the DT properties required to support
+DMA are missing, then the driver will fall back to pure CPU operation.
+----------
+
+> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+
+> +Optional properties:
+> +- dmas : The Tegra DMA controller's phandle and request selector for
+> +  this SPI controller.
+> +- dma-names : Should be "rx-tx".
+
+This should reference dma.txt which defines the DMA DT bindings. How about:
+
+----------
+Optional properties:
+- dmas, dma-names : The DMA channel to use for DMA-mode operation. See
+  dma.txt for the definition of these properties. A single entry named
+  "rx-tx" must be specified.
+----------
+
