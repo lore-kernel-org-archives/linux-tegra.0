@@ -1,176 +1,41 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 8/8] ARM: dts: tegra: enable LP1 suspend mode
-Date: Fri, 26 Jul 2013 17:15:10 +0800
-Message-ID: <1374830110-30685-9-git-send-email-josephl@nvidia.com>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: dts: tegra114: dalmore: fix the irq trigger type
+ of Palmas MFD device
+Date: Fri, 26 Jul 2013 09:16:36 -0600
+Message-ID: <51F292D4.9030208@wwwdotorg.org>
+References: <1374663272-9937-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374830110-30685-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1374663272-9937-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enabling the LP1 suspend mode for Tegra devices.
+On 07/24/2013 04:54 AM, Joseph Lo wrote:
+> The IRQ trigger type of Palmas MFD device (tps65913) is edge trigger. The
+> wrong configuration would cause an interrupt storm when booting the
+> system. Fixing it in DT with appropriate interrupt type.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114-dalmore.dts     | 2 +-
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 2 +-
- arch/arm/boot/dts/tegra20-harmony.dts      | 2 +-
- arch/arm/boot/dts/tegra20-paz00.dts        | 2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts     | 2 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi    | 2 +-
- arch/arm/boot/dts/tegra20-trimslice.dts    | 2 +-
- arch/arm/boot/dts/tegra20-ventana.dts      | 2 +-
- arch/arm/boot/dts/tegra20-whistler.dts     | 2 +-
- arch/arm/boot/dts/tegra30-beaver.dts       | 2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi      | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index aeda147..a2a1b5f 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1024,7 +1024,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <500>;
- 		nvidia,cpu-pwr-off-time = <300>;
- 		nvidia,core-pwr-good-time = <641 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 2fcb3f2..06c5fa0 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -363,7 +363,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index d9f89cd..d44cf90 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index cfd1276..8d71fc9 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <0>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 365760b..152dfb7 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -518,7 +518,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index c54faae..f00febe 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -459,7 +459,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index ed4b901..3e4eefb 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -302,7 +302,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 7f8c28d..aab872c 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -494,7 +494,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <100>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index ab67c94..3899cae 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -497,7 +497,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <1000>;
- 		nvidia,core-pwr-good-time = <0 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 87c5f7b..7378927 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -262,7 +262,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index c011b67..d78c90c 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -314,7 +314,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
--- 
-1.8.3.4
+>  		palmas: tps65913 {
+>  			compatible = "ti,palmas";
+>  			reg = <0x58>;
+> -			interrupts = <0 86 0x4>;
+> +			interrupts = <0 86 0x0>;
+
+The legal values for that final cell are:
+
+    - bits[3:0] trigger type and level flags
+        1 = low-to-high edge triggered
+        2 = high-to-low edge triggered
+        4 = active high level-sensitive
+        8 = active low level-sensitive
+
+0 isn't one of those values. This patch can't be correct.
+
+BTW, this cell should use the constants from
+<dt-bindings/interrupt-controller/irq.h>.
