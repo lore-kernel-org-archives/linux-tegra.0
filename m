@@ -1,62 +1,68 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] usb: phy: tegra: Use switch instead of if-else
-Date: Thu, 25 Jul 2013 22:24:09 +0300
-Message-ID: <1374780249-22207-1-git-send-email-ttynkkynen@nvidia.com>
-References: <20130725191734.GB26858@radagast>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/8] ARM: tegra: support LP1 suspend mode
+Date: Fri, 26 Jul 2013 17:15:02 +0800
+Message-ID: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130725191734.GB26858@radagast>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use switch() instead of if-else when checking for the PHY type.
+This series adds the support of LP1 suspend mode for Tegra.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Ah :). Here.
+Verified on Seaboard, Cardhu and Dalmore.
+And tested with THUMB2_KERNEL as well.
 
- drivers/usb/phy/phy-tegra-usb.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+P.S.
+A known issue on Dalmore, the LP1 resume may take 10 ~ 15 seconds due to
+the 792MHz BCT. It can't be reproduced on Seaboard or Cardhu. And the
+root cause of this is about the default settings of EMC registers that
+cause the DRAM can't leave self-refresh mode immediately. If you want
+to test with quick LP1 resume on Dalmore, I can provide another HACK for
+this.
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 01c30ff..49fa2da 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -887,11 +887,14 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 		of_property_read_bool(np, "nvidia,has-legacy-mode");
- 
- 	phy_type = of_usb_get_phy_mode(np);
--	if (phy_type == USBPHY_INTERFACE_MODE_UTMI) {
-+	switch (phy_type) {
-+	case USBPHY_INTERFACE_MODE_UTMI:
- 		err = utmi_phy_probe(tegra_phy, pdev);
- 		if (err < 0)
- 			return err;
--	} else if (phy_type == USBPHY_INTERFACE_MODE_ULPI) {
-+		break;
-+
-+	case USBPHY_INTERFACE_MODE_ULPI:
- 		tegra_phy->is_ulpi_phy = true;
- 
- 		tegra_phy->reset_gpio =
-@@ -902,7 +905,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 			return tegra_phy->reset_gpio;
- 		}
- 		tegra_phy->config = NULL;
--	} else {
-+		break;
-+
-+	default:
- 		dev_err(&pdev->dev, "phy_type is invalid or unsupported\n");
- 		return -EINVAL;
- 	}
+Joseph Lo (8):
+  ARM: tegra: add common resume handling code for LP1 resuming
+  ARM: tegra: config the polarity of the request of sys clock
+  clk: tegra114: add LP1 suspend/resume support
+  ARM: tegra: add common LP1 suspend support
+  ARM: tegra30: add LP1 suspend support
+  ARM: tegra20: add LP1 suspend support
+  ARM: tegra114: add LP1 suspend support
+  ARM: dts: tegra: enable LP1 suspend mode
+
+ arch/arm/boot/dts/tegra114-dalmore.dts     |   2 +-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi |   2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts      |   2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts        |   2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts     |   2 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    |   2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts    |   2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts      |   2 +-
+ arch/arm/boot/dts/tegra20-whistler.dts     |   2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts       |   2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi      |   2 +-
+ arch/arm/mach-tegra/Makefile               |   3 +
+ arch/arm/mach-tegra/iomap.h                |   6 +
+ arch/arm/mach-tegra/pm-tegra20.c           |  37 ++
+ arch/arm/mach-tegra/pm-tegra30.c           |  37 ++
+ arch/arm/mach-tegra/pm.c                   | 121 +++++-
+ arch/arm/mach-tegra/pm.h                   |  23 ++
+ arch/arm/mach-tegra/pmc.c                  |  36 +-
+ arch/arm/mach-tegra/pmc.h                  |   3 +
+ arch/arm/mach-tegra/reset-handler.S        |  13 +
+ arch/arm/mach-tegra/reset.c                |   2 +
+ arch/arm/mach-tegra/reset.h                |   4 +
+ arch/arm/mach-tegra/sleep-tegra20.S        | 300 ++++++++++++++
+ arch/arm/mach-tegra/sleep-tegra30.S        | 615 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/sleep.S                |   8 +-
+ arch/arm/mach-tegra/sleep.h                |  18 +
+ drivers/clk/tegra/clk-tegra114.c           |  32 ++
+ 27 files changed, 1259 insertions(+), 21 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/pm-tegra20.c
+ create mode 100644 arch/arm/mach-tegra/pm-tegra30.c
+
 -- 
-1.8.1.5
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.8.3.4
