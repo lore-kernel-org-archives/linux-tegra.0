@@ -1,404 +1,137 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 4/4] hwmon: (lm90) use enums for the indexes of temp8
- and temp11
-Date: Sat, 27 Jul 2013 17:38:30 +0200
-Message-ID: <20130727173830.14cb5b21@endymion.delvare>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
+Date: Sat, 27 Jul 2013 17:02:12 +0200
+Message-ID: <20130727170212.29297696@endymion.delvare>
 References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
-	<1373615287-18502-5-git-send-email-wni@nvidia.com>
+ <1373615287-18502-4-git-send-email-wni@nvidia.com>
+ <20130718175822.62c358bf@endymion.delvare>
+ <51E8DFB2.9070701@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1373615287-18502-5-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51E8DFB2.9070701@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: linux@roeck-us.net, thierry.reding@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 Hi Wei,
 
-On Fri, 12 Jul 2013 15:48:07 +0800, Wei Ni wrote:
-> Using enums for the indexes and nrs of temp8 and temp11.
-> This make the code much more readable.
+Sorry for the late reply.
 
-I can't say I'm thrilled by this patch. The improved readability is
-questionable. In the original code, each line already had one constant
-which made it clear what the code was doing. So the gain is marginal,
-I'd say, and this costs almost 50 lines of code.
-
-Let me review it nevertheless:
-
+On Fri, 19 Jul 2013 14:41:54 +0800, Wei Ni wrote:
+> On 07/18/2013 11:58 PM, Jean Delvare wrote:
+> > First of all, how is the chip wired on your system? You are using an
+> > NCT1008, right? Which output of the chip is connected to your interrupt
+> > line, THERM or ALERT/THERM2? ALERT is normally used for SMBus Alert but
+> > I suppose it could be used for an interrupt too. THERM and THERM2 OTOH
+> > are comparator outputs, they stay low as long as the temperature are
+> > above the therm limits. Reading the status register won't bring them
+> > back up as I understand it, and contrary to the ALERT output, they
+> > can't be masked. Won't this result in an interrupt flood if using
+> > IRQF_TRIGGER_LOW? Have you tested your code already?
 > 
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/hwmon/lm90.c |  179 ++++++++++++++++++++++++++++++++------------------
->  1 file changed, 114 insertions(+), 65 deletions(-)
+> Let me explain why I want to add the IRQ thread.
+> In our tegra30 platform, we use an NCT1008, and in our downstream tree,
+> it programmed as following:
+> 1. The pin THERM is connected to the PMIC, we will set the THERM limit
+> in the initialization, once the this limit is tripped, it will trigged
+> the PMIC, and the PMIC will shutdown the system immediately.
+
+OK, this is what the chip is designed for, good.
+
+> 2. The pin ALERT/THERM2 is configured as ALERT, and it is connected to
+> the interrupt line.
+
+Why don't you use the SMBus alert mechanism then? It is already
+implemented and allows you to reuse the interrupt of the SMBus
+controller.
+
+Of course this is a question for the hardware designers, not you... If
+the board uses a separate interrupt pin for the NCT1008's ALERT output,
+then the driver has to handle that interrupt explicitly, as done in your
+patch.
+
+One thing which worries me though is this explanation in the NCT1008
+datasheet:
+
+"The ALERT interrupt latch is not reset by reading the
+status register. It resets when the ALERT output has been
+serviced by the master reading the device address, provided
+the error condition has gone away and the status register flag
+bits are reset."
+
+This suggests that connecting the ALERT output to a separate interrupt
+pin will not work, as the ALERT output will never be de-asserted even
+if the fault conditions are gone and the status register was read. But
+as you say this is how your system is supposed to work, can you explain
+how it can work?
+
+> In the platform init, we will prepare some trip
+> temps, such as 20C, 40C,60C, 80C, and we will set 20C to the
+> remote-low-temp-limit, and set 40C to remote-high-temp-limit. When the
+> temperature exceed this rang, it will interrupt the system, then we will
+> update the low/high limit to next rang, for example, if the temp raise
+> to 50C, we will set 40C to low-limit, and set 60C to hight-limit, then
+> we will run the throttle functions, and update cooling state.
+
+Hu ho, I have seen this kind of design in the past, and I must say I
+don't quite like it. Moving critical thermal management handling to the
+software makes me feel unsafe. System thermal safety should not rely on
+the OS IMHO. It is best handled by the hardware, or if that can't be
+done, by the BIOS. And these limit updates are tricky, they could fail
+and then you're in trouble. Imagine for example that another chip on
+the SMBus hugs the bus and delays or even plain prevents the change of
+limits...
+
+But once again I guess you're not responsible for this.
+
+Another problem with this design, even if no such problem happens, is
+that the limits are user(-space)-writable in the lm90 driver, while
+with your design these limits are under full control of the platform
+management code. You definitely don't want the user to come and adjust
+the limits, this could result in overheating of the system. So, do you
+have a plan to optionally switch limits to read only in the lm90
+driver? If not, how do you intend to solve the problem?
+
+The more I think about it, the more I wonder if a custom thermal driver
+wouldn't be better for your case. Exposing a few read-only values to
+user-space through the thermal/hwmon bridge would IMHO make more sense
+than cluttering the lm90 driver with conditionals to limit what it
+exposes to user-space.
+
+> We wish to upstream these codes, but as you know, it's difficult to use
+> current lm90.c and thermal framework to implement it, and these codes
+> related many other things, such as throttling cpufreq, other clock freq.
+> So at first, I want to update the lm90.c, so that I can add it to the
+> thermal fw and use interrupt handler easily. And at the same time I
+> followed the thermal framework thread, there has new infrastructure
+> posted, which is more easy to add lm90 to thermal fw.
+
+Don't get me wrong, I'm very happy with your efforts to upstream your
+code, this is very welcome. And I am also very happy that you split it
+into small chunks which are easier to review. But I also need to know
+the big picture to see where you're ultimately going.
+
+> > (...)
+> > For a real system, if the THERM output is connected to an interrupt line
+> > (instead of directly to a fan controller) I would expect the platform
+> > to provide a callback to handle thermal events and take whatever
+> > appropriate measure is needed (e.g. throttling.) Just logging the
+> > problem won't save the system, by the time someone looks at the log it
+> > might be too late.
 > 
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index 1cc3d19..8cb5dd0 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -310,6 +310,59 @@ static const struct lm90_params lm90_params[] = {
->  };
->  
->  /*
-> + * TEMP8 register index
-> + */
-> +enum lm90_temp8_reg_index {
-> +	TEMP8_LOCAL_LOW = 0,	/* 0: local low limit */
-> +	TEMP8_LOCAL_HIGH,	/* 1: local high limit */
-> +	TEMP8_LOCAL_CRIT,	/* 2: local critical limit */
-> +	TEMP8_REMOTE_CRIT,	/* 3: remote critical limit */
-> +	TEMP8_LOCAL_EMERG,	/* 4: local emergency limit
-> +				 * (max6659 and max6695/96)
-> +				 */
-> +	TEMP8_REMOTE_EMERG,	/* 5: remote emergency limit
-> +				 * (max6659 and max6695/96)
-> +				 */
-> +	TEMP8_REMOTE2_CRIT,	/* 6: remote 2 critical limit
-> +				 * (max6695/96 only)
-> +				 */
-> +	TEMP8_REMOTE2_EMERG,	/* 7: remote 2 emergency limit
-> +				 * (max6695/96 only)
-> +				 */
-> +	TEMP8_REG_NUM
-> +};
-> +
-> +/*
-> + * TEMP11 register index
-> + */
-> +enum lm90_temp11_reg_index {
-> +	TEMP11_REMOTE_TEMP = 0,	/* 0: remote input */
-> +	TEMP11_REMOTE_LOW,	/* 1: remote low limit */
-> +	TEMP11_REMOTE_HIGH,	/* 2: remote high limit */
-> +	TEMP11_REMOTE_OFFSET,	/* 3: remote offset
-> +				 * (except max6646, max6657/58/59,
-> +				 *  and max6695/96)
-> +				 */
-> +	TEMP11_LOCAL_TEMP,	/* 4: local input */
-> +	TEMP11_REMOTE2_TEMP,	/* 5: remote 2 input (max6695/96 only) */
-> +	TEMP11_REMOTE2_LOW,	/* 6: remote 2 low limit (max6695/96 only) */
-> +	TEMP11_REMOTE2_HIGH,	/* 7: remote 2 high limit (max6695/96 only) */
-> +	TEMP11_REG_NUM
-> +};
+> In our downstream tree, we write a new driver nct1008.c, whci can handle
+> these interrupts and all other things, but as you know this driver can't
+> be upstreamed, because there already has the lm90.c :).
+> Anyway I think this patch is the first step of the implementation.
 
-The "TEMP8_" and "TEMP11_" prefixes aren't really needed, as there is no
-overlapping between both sets. Removing these prefixes (except for the
-terminators, where they are needed and make sense) would make the rest
-of the code more readable IMHO, as it would avoid redundant information
-on most lines, and avoid line splitting in some cases.
-
-Also, the comments are mostly useless now, they were there to document
-what each number was referring to, but now this is exactly what the new
-constants are doing.
-
-> +
-> +/*
-> + * TEMP11 register NR
-> + */
-> +enum lm90_temp11_reg_nr {
-> +	NR_CHAN_0_REMOTE_LOW = 0,	/* 0: channel 0, remote low limit */
-> +	NR_CHAN_0_REMOTE_HIGH,		/* 1: channel 0, remote high limit */
-> +	NR_CHAN_0_REMOTE_OFFSET,	/* 2: channel 0, remote offset */
-> +	NR_CHAN_1_REMOTE_LOW,		/* 3: channel 1, remote low limit */
-> +	NR_CHAN_1_REMOTE_HIGH,		/* 4: channel 1, remote high limit */
-
-The conventions used in the descriptions diverge from the ones used
-above. "channel 0 remote" here is just "remove" above, and "channel 1
-remote" is "remote 2" above. This is quite confusing.
-
-> +	NR_NUM				/* number of the NRs for temp11 */
-
-The fact that you were unable to come up with a proper name for this
-number is a clear indication that this enum should not exist in the
-first place.
-
-These numbers are used only once, to pass specific information to
-set_temp11. This was easy enough when these were just numbers and I
-really had no reason not to do that.
-
-If you now want to use clean constants, this should be done with logic
-and consistency. Your proposal makes sense for the data->temp8 and
-data->temp11 array indexing, because they are used more than once. But
-introducing a new set of constants with weird names just for one use
-case doesn't help readability, it makes things worse actually.
-
-So if you insist of making the code more readable by the means of named
-constants, then you should simply adjust the reg array in write_temp11
-so that it can be indexed with your TEMP11_* constants above (as is
-data->temp11.) This will leave some holes in the array but I don't
-think we care about a few lost bytes here.
-
-> +};
-> +
-> +/*
->   * Client data (each client gets its own)
->   */
->  
-> @@ -331,25 +384,8 @@ struct lm90_data {
->  	u8 reg_local_ext;	/* local extension register offset */
->  
->  	/* registers values */
-> -	s8 temp8[8];	/* 0: local low limit
-> -			 * 1: local high limit
-> -			 * 2: local critical limit
-> -			 * 3: remote critical limit
-> -			 * 4: local emergency limit (max6659 and max6695/96)
-> -			 * 5: remote emergency limit (max6659 and max6695/96)
-> -			 * 6: remote 2 critical limit (max6695/96 only)
-> -			 * 7: remote 2 emergency limit (max6695/96 only)
-> -			 */
-> -	s16 temp11[8];	/* 0: remote input
-> -			 * 1: remote low limit
-> -			 * 2: remote high limit
-> -			 * 3: remote offset (except max6646, max6657/58/59,
-> -			 *		     and max6695/96)
-> -			 * 4: local input
-> -			 * 5: remote 2 input (max6695/96 only)
-> -			 * 6: remote 2 low limit (max6695/96 only)
-> -			 * 7: remote 2 high limit (max6695/96 only)
-> -			 */
-> +	s8 temp8[TEMP8_REG_NUM];
-> +	s16 temp11[TEMP11_REG_NUM];
->  	u8 temp_hyst;
->  	u16 alarms; /* bitvector (upper 8 bits for max6695/96) */
->  };
-> @@ -491,37 +527,42 @@ static struct lm90_data *lm90_update_device(struct device *dev)
->  		u8 alarms;
->  
->  		dev_dbg(&client->dev, "Updating lm90 data.\n");
-> -		lm90_read_reg(client, LM90_REG_R_LOCAL_LOW, &data->temp8[0]);
-> -		lm90_read_reg(client, LM90_REG_R_LOCAL_HIGH, &data->temp8[1]);
-> -		lm90_read_reg(client, LM90_REG_R_LOCAL_CRIT, &data->temp8[2]);
-> -		lm90_read_reg(client, LM90_REG_R_REMOTE_CRIT, &data->temp8[3]);
-> +		lm90_read_reg(client, LM90_REG_R_LOCAL_LOW,
-> +			      &data->temp8[TEMP8_LOCAL_LOW]);
-> +		lm90_read_reg(client, LM90_REG_R_LOCAL_HIGH,
-> +			      &data->temp8[TEMP8_LOCAL_HIGH]);
-> +		lm90_read_reg(client, LM90_REG_R_LOCAL_CRIT,
-> +			      &data->temp8[TEMP8_LOCAL_CRIT]);
-> +		lm90_read_reg(client, LM90_REG_R_REMOTE_CRIT,
-> +			      &data->temp8[TEMP8_REMOTE_CRIT]);
->  		lm90_read_reg(client, LM90_REG_R_TCRIT_HYST, &data->temp_hyst);
->  
->  		if (data->reg_local_ext) {
->  			lm90_read16(client, LM90_REG_R_LOCAL_TEMP,
->  				    data->reg_local_ext,
-> -				    &data->temp11[4]);
-> +				    &data->temp11[TEMP11_LOCAL_TEMP]);
->  		} else {
->  			if (lm90_read_reg(client, LM90_REG_R_LOCAL_TEMP,
->  					  &h) == 0)
-> -				data->temp11[4] = h << 8;
-> +				data->temp11[TEMP11_LOCAL_TEMP] = h << 8;
->  		}
->  		lm90_read16(client, LM90_REG_R_REMOTE_TEMPH,
-> -			    LM90_REG_R_REMOTE_TEMPL, &data->temp11[0]);
-> +			LM90_REG_R_REMOTE_TEMPL,
-> +			&data->temp11[TEMP11_REMOTE_TEMP]);
-
-Please don't break alignment.
-
->  
->  		if (lm90_read_reg(client, LM90_REG_R_REMOTE_LOWH, &h) == 0) {
-> -			data->temp11[1] = h << 8;
-> +			data->temp11[TEMP11_REMOTE_LOW] = h << 8;
->  			if ((data->flags & LM90_HAVE_REM_LIMIT_EXT)
->  			 && lm90_read_reg(client, LM90_REG_R_REMOTE_LOWL,
->  					  &l) == 0)
-> -				data->temp11[1] |= l;
-> +				data->temp11[TEMP11_REMOTE_LOW] |= l;
->  		}
->  		if (lm90_read_reg(client, LM90_REG_R_REMOTE_HIGHH, &h) == 0) {
-> -			data->temp11[2] = h << 8;
-> +			data->temp11[TEMP11_REMOTE_HIGH] = h << 8;
->  			if ((data->flags & LM90_HAVE_REM_LIMIT_EXT)
->  			 && lm90_read_reg(client, LM90_REG_R_REMOTE_HIGHL,
->  					  &l) == 0)
-> -				data->temp11[2] |= l;
-> +				data->temp11[TEMP11_REMOTE_HIGH] |= l;
->  		}
->  
->  		if (data->flags & LM90_HAVE_OFFSET) {
-> @@ -529,13 +570,14 @@ static struct lm90_data *lm90_update_device(struct device *dev)
->  					  &h) == 0
->  			 && lm90_read_reg(client, LM90_REG_R_REMOTE_OFFSL,
->  					  &l) == 0)
-> -				data->temp11[3] = (h << 8) | l;
-> +				data->temp11[TEMP11_REMOTE_OFFSET] =
-> +								(h << 8) | l;
->  		}
->  		if (data->flags & LM90_HAVE_EMERGENCY) {
->  			lm90_read_reg(client, MAX6659_REG_R_LOCAL_EMERG,
-> -				      &data->temp8[4]);
-> +				      &data->temp8[TEMP8_LOCAL_EMERG]);
->  			lm90_read_reg(client, MAX6659_REG_R_REMOTE_EMERG,
-> -				      &data->temp8[5]);
-> +				      &data->temp8[TEMP8_REMOTE_EMERG]);
->  		}
->  		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
->  		data->alarms = alarms;	/* save as 16 bit value */
-> @@ -543,15 +585,16 @@ static struct lm90_data *lm90_update_device(struct device *dev)
->  		if (data->kind == max6696) {
->  			lm90_select_remote_channel(client, data, 1);
->  			lm90_read_reg(client, LM90_REG_R_REMOTE_CRIT,
-> -				      &data->temp8[6]);
-> +				      &data->temp8[TEMP8_REMOTE2_CRIT]);
->  			lm90_read_reg(client, MAX6659_REG_R_REMOTE_EMERG,
-> -				      &data->temp8[7]);
-> +				      &data->temp8[TEMP8_REMOTE2_EMERG]);
->  			lm90_read16(client, LM90_REG_R_REMOTE_TEMPH,
-> -				    LM90_REG_R_REMOTE_TEMPL, &data->temp11[5]);
-> +					LM90_REG_R_REMOTE_TEMPL,
-> +					&data->temp11[TEMP11_REMOTE2_TEMP]);
-
-Please don't break alignment.
-
->  			if (!lm90_read_reg(client, LM90_REG_R_REMOTE_LOWH, &h))
-> -				data->temp11[6] = h << 8;
-> +				data->temp11[TEMP11_REMOTE2_LOW] = h << 8;
->  			if (!lm90_read_reg(client, LM90_REG_R_REMOTE_HIGHH, &h))
-> -				data->temp11[7] = h << 8;
-> +				data->temp11[TEMP11_REMOTE2_HIGH] = h << 8;
->  			lm90_select_remote_channel(client, data, 0);
->  
->  			if (!lm90_read_reg(client, MAX6696_REG_R_STATUS2,
-> @@ -745,7 +788,7 @@ static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
->  
->  static void write_temp8(struct device *dev, int index, long val)
->  {
-> -	static const u8 reg[8] = {
-> +	static const u8 reg[TEMP8_REG_NUM] = {
->  		LM90_REG_W_LOCAL_LOW,
->  		LM90_REG_W_LOCAL_HIGH,
->  		LM90_REG_W_LOCAL_CRIT,
-> @@ -828,7 +871,7 @@ static void write_temp11(struct device *dev, int nr, int index, long val)
->  		u8 high;
->  		u8 low;
->  		int channel;
-> -	} reg[5] = {
-> +	} reg[NR_NUM] = {
->  		{ LM90_REG_W_REMOTE_LOWH, LM90_REG_W_REMOTE_LOWL, 0 },
->  		{ LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 0 },
->  		{ LM90_REG_W_REMOTE_OFFSH, LM90_REG_W_REMOTE_OFFSL, 0 },
-> @@ -919,11 +962,12 @@ static ssize_t set_temphyst(struct device *dev, struct device_attribute *dummy,
->  
->  	mutex_lock(&data->update_lock);
->  	if (data->kind == adt7461)
-> -		temp = temp_from_u8_adt7461(data, data->temp8[2]);
-> +		temp = temp_from_u8_adt7461(data,
-> +					data->temp8[TEMP8_LOCAL_CRIT]);
-
-Please align on opening parenthesis.
-
->  	else if (data->kind == max6646)
-> -		temp = temp_from_u8(data->temp8[2]);
-> +		temp = temp_from_u8(data->temp8[TEMP8_LOCAL_CRIT]);
->  	else
-> -		temp = temp_from_s8(data->temp8[2]);
-> +		temp = temp_from_s8(data->temp8[TEMP8_LOCAL_CRIT]);
->  
->  	data->temp_hyst = hyst_to_reg(temp - val);
->  	i2c_smbus_write_byte_data(client, LM90_REG_W_TCRIT_HYST,
-> @@ -977,25 +1021,28 @@ static ssize_t set_update_interval(struct device *dev,
->  	return count;
->  }
->  
-> -static SENSOR_DEVICE_ATTR_2(temp1_input, S_IRUGO, show_temp11, NULL, 0, 4);
-> -static SENSOR_DEVICE_ATTR_2(temp2_input, S_IRUGO, show_temp11, NULL, 0, 0);
-> +static SENSOR_DEVICE_ATTR_2(temp1_input, S_IRUGO, show_temp11, NULL,
-> +	NR_CHAN_0_REMOTE_LOW, TEMP11_LOCAL_TEMP);
-> +static SENSOR_DEVICE_ATTR_2(temp2_input, S_IRUGO, show_temp11, NULL,
-> +	NR_CHAN_0_REMOTE_LOW, TEMP11_REMOTE_TEMP);
-
-NR_CHAN_0_REMOTE_LOW makes no sense for read-only attributes, as the
-number is only used in write_temp11(). The original "0" was only
-because we can't leave the parameter empty.
-
->  static SENSOR_DEVICE_ATTR(temp1_min, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 0);
-> +	set_temp8, TEMP8_LOCAL_LOW);
->  static SENSOR_DEVICE_ATTR_2(temp2_min, S_IWUSR | S_IRUGO, show_temp11,
-> -	set_temp11, 0, 1);
-> +	set_temp11, NR_CHAN_0_REMOTE_LOW, TEMP11_REMOTE_LOW);
->  static SENSOR_DEVICE_ATTR(temp1_max, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 1);
-> +	set_temp8, TEMP8_LOCAL_HIGH);
->  static SENSOR_DEVICE_ATTR_2(temp2_max, S_IWUSR | S_IRUGO, show_temp11,
-> -	set_temp11, 1, 2);
-> +	set_temp11, NR_CHAN_0_REMOTE_HIGH, TEMP11_REMOTE_HIGH);
->  static SENSOR_DEVICE_ATTR(temp1_crit, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 2);
-> +	set_temp8, TEMP8_LOCAL_CRIT);
->  static SENSOR_DEVICE_ATTR(temp2_crit, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 3);
-> +	set_temp8, TEMP8_REMOTE_CRIT);
->  static SENSOR_DEVICE_ATTR(temp1_crit_hyst, S_IWUSR | S_IRUGO, show_temphyst,
-> -	set_temphyst, 2);
-> -static SENSOR_DEVICE_ATTR(temp2_crit_hyst, S_IRUGO, show_temphyst, NULL, 3);
-> +	set_temphyst, TEMP8_LOCAL_CRIT);
-> +static SENSOR_DEVICE_ATTR(temp2_crit_hyst, S_IRUGO, show_temphyst, NULL,
-> +	TEMP8_REMOTE_CRIT);
->  static SENSOR_DEVICE_ATTR_2(temp2_offset, S_IWUSR | S_IRUGO, show_temp11,
-> -	set_temp11, 2, 3);
-> +	set_temp11, NR_CHAN_0_REMOTE_OFFSET, TEMP11_REMOTE_OFFSET);
->  
->  /* Individual alarm files */
->  static SENSOR_DEVICE_ATTR(temp1_crit_alarm, S_IRUGO, show_alarm, NULL, 0);
-> @@ -1043,13 +1090,13 @@ static const struct attribute_group lm90_group = {
->   * Additional attributes for devices with emergency sensors
->   */
->  static SENSOR_DEVICE_ATTR(temp1_emergency, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 4);
-> +	set_temp8, TEMP8_LOCAL_EMERG);
->  static SENSOR_DEVICE_ATTR(temp2_emergency, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 5);
-> +	set_temp8, TEMP8_REMOTE_EMERG);
->  static SENSOR_DEVICE_ATTR(temp1_emergency_hyst, S_IRUGO, show_temphyst,
-> -			  NULL, 4);
-> +			  NULL, TEMP8_LOCAL_EMERG);
->  static SENSOR_DEVICE_ATTR(temp2_emergency_hyst, S_IRUGO, show_temphyst,
-> -			  NULL, 5);
-> +			  NULL, TEMP8_REMOTE_EMERG);
->  
->  static struct attribute *lm90_emergency_attributes[] = {
->  	&sensor_dev_attr_temp1_emergency.dev_attr.attr,
-> @@ -1079,18 +1126,20 @@ static const struct attribute_group lm90_emergency_alarm_group = {
->  /*
->   * Additional attributes for devices with 3 temperature sensors
->   */
-> -static SENSOR_DEVICE_ATTR_2(temp3_input, S_IRUGO, show_temp11, NULL, 0, 5);
-> +static SENSOR_DEVICE_ATTR_2(temp3_input, S_IRUGO, show_temp11, NULL,
-> +	NR_CHAN_0_REMOTE_LOW, TEMP11_REMOTE2_TEMP);
-
-Here again this NR_CHAN_0_REMOTE_LOW makes no sense for a read-only
-attribute, it was really "0" for "we don't care".
-
->  static SENSOR_DEVICE_ATTR_2(temp3_min, S_IWUSR | S_IRUGO, show_temp11,
-> -	set_temp11, 3, 6);
-> +	set_temp11, NR_CHAN_1_REMOTE_LOW, TEMP11_REMOTE2_LOW);
->  static SENSOR_DEVICE_ATTR_2(temp3_max, S_IWUSR | S_IRUGO, show_temp11,
-> -	set_temp11, 4, 7);
-> +	set_temp11, NR_CHAN_1_REMOTE_HIGH, TEMP11_REMOTE2_HIGH);
->  static SENSOR_DEVICE_ATTR(temp3_crit, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 6);
-> -static SENSOR_DEVICE_ATTR(temp3_crit_hyst, S_IRUGO, show_temphyst, NULL, 6);
-> +	set_temp8, TEMP8_REMOTE2_CRIT);
-> +static SENSOR_DEVICE_ATTR(temp3_crit_hyst, S_IRUGO, show_temphyst, NULL,
-> +	TEMP8_REMOTE2_CRIT);
->  static SENSOR_DEVICE_ATTR(temp3_emergency, S_IWUSR | S_IRUGO, show_temp8,
-> -	set_temp8, 7);
-> +	set_temp8, TEMP8_REMOTE2_EMERG);
->  static SENSOR_DEVICE_ATTR(temp3_emergency_hyst, S_IRUGO, show_temphyst,
-> -			  NULL, 7);
-> +			  NULL, TEMP8_REMOTE2_EMERG);
->  
->  static SENSOR_DEVICE_ATTR(temp3_crit_alarm, S_IRUGO, show_alarm, NULL, 9);
->  static SENSOR_DEVICE_ATTR(temp3_fault, S_IRUGO, show_alarm, NULL, 10);
-
-Will all these changes done, I may consider apply the modified patch,
-but no guarantee, as I'm still not sure I like it. I'll make my mind
-when I see the result.
+I'm curious how the nct1008 driver "handles these interrupts." IMHO
+only the platform code knows what needs to be done upon reception of an
+interrupt, in particular in your case where you'll do some magic with the
+limit registers. There's no way this can be hard-coded in a hwmon
+driver, lm90 or any other.
 
 -- 
 Jean Delvare
