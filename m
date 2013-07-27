@@ -1,137 +1,150 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
-Date: Sat, 27 Jul 2013 17:02:12 +0200
-Message-ID: <20130727170212.29297696@endymion.delvare>
-References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
- <1373615287-18502-4-git-send-email-wni@nvidia.com>
- <20130718175822.62c358bf@endymion.delvare>
- <51E8DFB2.9070701@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 0/8] ARM: tegra: support LP1 suspend mode
+Date: Sat, 27 Jul 2013 18:12:10 +0200
+Message-ID: <2389689.JgQlW00RdN@ax5200p>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <51E8DFB2.9070701@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: linux@roeck-us.net, thierry.reding@gmail.com, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1374830110-30685-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
-
-Sorry for the late reply.
-
-On Fri, 19 Jul 2013 14:41:54 +0800, Wei Ni wrote:
-> On 07/18/2013 11:58 PM, Jean Delvare wrote:
-> > First of all, how is the chip wired on your system? You are using an
-> > NCT1008, right? Which output of the chip is connected to your interrupt
-> > line, THERM or ALERT/THERM2? ALERT is normally used for SMBus Alert but
-> > I suppose it could be used for an interrupt too. THERM and THERM2 OTOH
-> > are comparator outputs, they stay low as long as the temperature are
-> > above the therm limits. Reading the status register won't bring them
-> > back up as I understand it, and contrary to the ALERT output, they
-> > can't be masked. Won't this result in an interrupt flood if using
-> > IRQF_TRIGGER_LOW? Have you tested your code already?
+On Friday 26 July 2013 17:15:02 Joseph Lo wrote:
+> This series adds the support of LP1 suspend mode for Tegra.
 > 
-> Let me explain why I want to add the IRQ thread.
-> In our tegra30 platform, we use an NCT1008, and in our downstream tree,
-> it programmed as following:
-> 1. The pin THERM is connected to the PMIC, we will set the THERM limit
-> in the initialization, once the this limit is tripped, it will trigged
-> the PMIC, and the PMIC will shutdown the system immediately.
+> Verified on Seaboard, Cardhu and Dalmore.
 
-OK, this is what the chip is designed for, good.
+tested on AC100 and worked fine, except
 
-> 2. The pin ALERT/THERM2 is configured as ALERT, and it is connected to
-> the interrupt line.
+[   68.448007] PM: Syncing filesystems ... done.
+[   71.370086] Freezing user space processes ... (elapsed 0.001 seconds) done.
+[   71.370088] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) 
+done.
+[   71.371253] Suspending console(s) (use no_console_suspend to debug)
+[   71.638481] PM: suspend of devices complete after 266.604 msecs
+[   71.638905] PM: late suspend of devices complete after 0.417 msecs
+[   71.639477] PM: noirq suspend of devices complete after 0.568 msecs
+[   71.639480] Disabling non-boot CPUs ...
+[   71.640242] CPU1: shutdown
+[   71.641216] Entering suspend state LP1
+[   71.641267] Enabling non-boot CPUs ...
+[   71.643125] CPU1: Booted secondary processor
+[   71.643449] CPU1 is up
+[   71.643786] PM: noirq resume of devices complete after 0.331 msecs
+[   71.644300] PM: early resume of devices complete after 0.364 msecs
+[   71.648038] ------------[ cut here ]------------
+[   71.648061] WARNING: CPU: 0 PID: 1025 at kernel/irq/manage.c:529 
+irq_set_irq_wake+0xb8/0xf0()
+[   71.648064] Unbalanced IRQ 384 wake disable
+[   71.648068] Modules linked in:
+[   71.648075] CPU: 0 PID: 1025 Comm: bash Not tainted 3.11.0-rc2-
+next-20130726-00008-gef01509-dirty #6
+[   71.648107] [<c001551c>] (unwind_backtrace+0x0/0xf8) from [<c001154c>] 
+(show_stack+0x10/0x14)
+[   71.648128] [<c001154c>] (show_stack+0x10/0x14) from [<c0515288>] 
+(dump_stack+0x80/0xc4)
+[   71.648142] [<c0515288>] (dump_stack+0x80/0xc4) from [<c0025340>] 
+(warn_slowpath_common+0x64/0x88)
+[   71.648151] [<c0025340>] (warn_slowpath_common+0x64/0x88) from [<c00253f8>] 
+(warn_slowpath_fmt+0x30/0x40)
+[   71.648161] [<c00253f8>] (warn_slowpath_fmt+0x30/0x40) from [<c007ff8c>] 
+(irq_set_irq_wake+0xb8/0xf0)
+[   71.648178] [<c007ff8c>] (irq_set_irq_wake+0xb8/0xf0) from [<c0334d00>] 
+(tps6586x_rtc_resume+0x30/0x38)
+[   71.648192] [<c0334d00>] (tps6586x_rtc_resume+0x30/0x38) from [<c02951d0>] 
+(platform_pm_resume+0x2c/0x4c)
+[   71.648202] [<c02951d0>] (platform_pm_resume+0x2c/0x4c) from [<c0299d40>] 
+(dpm_run_callback.isra.5+0x18/0x38)
+[   71.648211] [<c0299d40>] (dpm_run_callback.isra.5+0x18/0x38) from 
+[<c029a044>] (device_resume+0xb0/0x170)
+[   71.648219] [<c029a044>] (device_resume+0xb0/0x170) from [<c029aeb4>] 
+(dpm_resume+0xe8/0x20c)
+[   71.648227] [<c029aeb4>] (dpm_resume+0xe8/0x20c) from [<c029b174>] 
+(dpm_resume_end+0xc/0x18)
+[   71.648245] [<c029b174>] (dpm_resume_end+0xc/0x18) from [<c005e480>] 
+(suspend_devices_and_enter+0xdc/0x2f8)
+[   71.648256] [<c005e480>] (suspend_devices_and_enter+0xdc/0x2f8) from 
+[<c005e810>] (pm_suspend+0x174/0x1e8)
+[   71.648265] [<c005e810>] (pm_suspend+0x174/0x1e8) from [<c005d710>] 
+(state_store+0x6c/0xbc)
+[   71.648285] [<c005d710>] (state_store+0x6c/0xbc) from [<c01eca78>] 
+(kobj_attr_store+0x14/0x20)
+[   71.648298] [<c01eca78>] (kobj_attr_store+0x14/0x20) from [<c011e970>] 
+(sysfs_write_file+0x168/0x198)
+[   71.648312] [<c011e970>] (sysfs_write_file+0x168/0x198) from [<c00cd060>] 
+(vfs_write+0xb0/0x188)
+[   71.648321] [<c00cd060>] (vfs_write+0xb0/0x188) from [<c00cd410>] 
+(SyS_write+0x3c/0x70)
+[   71.648330] [<c00cd410>] (SyS_write+0x3c/0x70) from [<c000e560>] 
+(ret_fast_syscall+0x0/0x30)
+[   71.648334] ---[ end trace e5ed8212ac4db5da ]---
+[   72.063578] mmc1: power class selection to bus width 8 failed
+[   72.297753] usb 2-1: reset high-speed USB device number 2 using tegra-ehci
+[   72.567736] usb 3-1: reset high-speed USB device number 2 using tegra-ehci
+[   73.022058] usb 3-1.3: reset high-speed USB device number 4 using tegra-
+ehci
+[   73.216064] usb 3-1.2: reset high-speed USB device number 3 using tegra-
+ehci
+[   73.360225] PM: resume of devices complete after 1715.937 msecs
+[   73.361008] Restarting tasks ... done.
 
-Why don't you use the SMBus alert mechanism then? It is already
-implemented and allows you to reuse the interrupt of the SMBus
-controller.
+and sdcard being offline after resume (fixed by CONFIG_MMC_UNSAFE_RESUME=y). 
+Anyway, thanks for your great work!
 
-Of course this is a question for the hardware designers, not you... If
-the board uses a separate interrupt pin for the NCT1008's ALERT output,
-then the driver has to handle that interrupt explicitly, as done in your
-patch.
+Tested-By: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-One thing which worries me though is this explanation in the NCT1008
-datasheet:
-
-"The ALERT interrupt latch is not reset by reading the
-status register. It resets when the ALERT output has been
-serviced by the master reading the device address, provided
-the error condition has gone away and the status register flag
-bits are reset."
-
-This suggests that connecting the ALERT output to a separate interrupt
-pin will not work, as the ALERT output will never be de-asserted even
-if the fault conditions are gone and the status register was read. But
-as you say this is how your system is supposed to work, can you explain
-how it can work?
-
-> In the platform init, we will prepare some trip
-> temps, such as 20C, 40C,60C, 80C, and we will set 20C to the
-> remote-low-temp-limit, and set 40C to remote-high-temp-limit. When the
-> temperature exceed this rang, it will interrupt the system, then we will
-> update the low/high limit to next rang, for example, if the temp raise
-> to 50C, we will set 40C to low-limit, and set 60C to hight-limit, then
-> we will run the throttle functions, and update cooling state.
-
-Hu ho, I have seen this kind of design in the past, and I must say I
-don't quite like it. Moving critical thermal management handling to the
-software makes me feel unsafe. System thermal safety should not rely on
-the OS IMHO. It is best handled by the hardware, or if that can't be
-done, by the BIOS. And these limit updates are tricky, they could fail
-and then you're in trouble. Imagine for example that another chip on
-the SMBus hugs the bus and delays or even plain prevents the change of
-limits...
-
-But once again I guess you're not responsible for this.
-
-Another problem with this design, even if no such problem happens, is
-that the limits are user(-space)-writable in the lm90 driver, while
-with your design these limits are under full control of the platform
-management code. You definitely don't want the user to come and adjust
-the limits, this could result in overheating of the system. So, do you
-have a plan to optionally switch limits to read only in the lm90
-driver? If not, how do you intend to solve the problem?
-
-The more I think about it, the more I wonder if a custom thermal driver
-wouldn't be better for your case. Exposing a few read-only values to
-user-space through the thermal/hwmon bridge would IMHO make more sense
-than cluttering the lm90 driver with conditionals to limit what it
-exposes to user-space.
-
-> We wish to upstream these codes, but as you know, it's difficult to use
-> current lm90.c and thermal framework to implement it, and these codes
-> related many other things, such as throttling cpufreq, other clock freq.
-> So at first, I want to update the lm90.c, so that I can add it to the
-> thermal fw and use interrupt handler easily. And at the same time I
-> followed the thermal framework thread, there has new infrastructure
-> posted, which is more easy to add lm90 to thermal fw.
-
-Don't get me wrong, I'm very happy with your efforts to upstream your
-code, this is very welcome. And I am also very happy that you split it
-into small chunks which are easier to review. But I also need to know
-the big picture to see where you're ultimately going.
-
-> > (...)
-> > For a real system, if the THERM output is connected to an interrupt line
-> > (instead of directly to a fan controller) I would expect the platform
-> > to provide a callback to handle thermal events and take whatever
-> > appropriate measure is needed (e.g. throttling.) Just logging the
-> > problem won't save the system, by the time someone looks at the log it
-> > might be too late.
+> And tested with THUMB2_KERNEL as well.
 > 
-> In our downstream tree, we write a new driver nct1008.c, whci can handle
-> these interrupts and all other things, but as you know this driver can't
-> be upstreamed, because there already has the lm90.c :).
-> Anyway I think this patch is the first step of the implementation.
-
-I'm curious how the nct1008 driver "handles these interrupts." IMHO
-only the platform code knows what needs to be done upon reception of an
-interrupt, in particular in your case where you'll do some magic with the
-limit registers. There's no way this can be hard-coded in a hwmon
-driver, lm90 or any other.
-
--- 
-Jean Delvare
+> P.S.
+> A known issue on Dalmore, the LP1 resume may take 10 ~ 15 seconds due to
+> the 792MHz BCT. It can't be reproduced on Seaboard or Cardhu. And the
+> root cause of this is about the default settings of EMC registers that
+> cause the DRAM can't leave self-refresh mode immediately. If you want
+> to test with quick LP1 resume on Dalmore, I can provide another HACK for
+> this.
+> 
+> Joseph Lo (8):
+>   ARM: tegra: add common resume handling code for LP1 resuming
+>   ARM: tegra: config the polarity of the request of sys clock
+>   clk: tegra114: add LP1 suspend/resume support
+>   ARM: tegra: add common LP1 suspend support
+>   ARM: tegra30: add LP1 suspend support
+>   ARM: tegra20: add LP1 suspend support
+>   ARM: tegra114: add LP1 suspend support
+>   ARM: dts: tegra: enable LP1 suspend mode
+> 
+>  arch/arm/boot/dts/tegra114-dalmore.dts     |   2 +-
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi |   2 +-
+>  arch/arm/boot/dts/tegra20-harmony.dts      |   2 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts        |   2 +-
+>  arch/arm/boot/dts/tegra20-seaboard.dts     |   2 +-
+>  arch/arm/boot/dts/tegra20-tamonten.dtsi    |   2 +-
+>  arch/arm/boot/dts/tegra20-trimslice.dts    |   2 +-
+>  arch/arm/boot/dts/tegra20-ventana.dts      |   2 +-
+>  arch/arm/boot/dts/tegra20-whistler.dts     |   2 +-
+>  arch/arm/boot/dts/tegra30-beaver.dts       |   2 +-
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi      |   2 +-
+>  arch/arm/mach-tegra/Makefile               |   3 +
+>  arch/arm/mach-tegra/iomap.h                |   6 +
+>  arch/arm/mach-tegra/pm-tegra20.c           |  37 ++
+>  arch/arm/mach-tegra/pm-tegra30.c           |  37 ++
+>  arch/arm/mach-tegra/pm.c                   | 121 +++++-
+>  arch/arm/mach-tegra/pm.h                   |  23 ++
+>  arch/arm/mach-tegra/pmc.c                  |  36 +-
+>  arch/arm/mach-tegra/pmc.h                  |   3 +
+>  arch/arm/mach-tegra/reset-handler.S        |  13 +
+>  arch/arm/mach-tegra/reset.c                |   2 +
+>  arch/arm/mach-tegra/reset.h                |   4 +
+>  arch/arm/mach-tegra/sleep-tegra20.S        | 300 ++++++++++++++
+>  arch/arm/mach-tegra/sleep-tegra30.S        | 615
+> +++++++++++++++++++++++++++++ arch/arm/mach-tegra/sleep.S                | 
+>  8 +-
+>  arch/arm/mach-tegra/sleep.h                |  18 +
+>  drivers/clk/tegra/clk-tegra114.c           |  32 ++
+>  27 files changed, 1259 insertions(+), 21 deletions(-)
+>  create mode 100644 arch/arm/mach-tegra/pm-tegra20.c
+>  create mode 100644 arch/arm/mach-tegra/pm-tegra30.c
