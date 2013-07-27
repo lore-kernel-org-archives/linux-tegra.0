@@ -1,94 +1,55 @@
-From: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/8] ARM: tegra: support LP1 suspend mode
-Date: Sat, 27 Jul 2013 23:11:29 +0400
-Message-ID: <51F41B61.7030402@gmail.com>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com> <4555938.6N2HxzJnNO@ax5200p> <51F410BE.3000904@gmail.com> <1515727.YuaSFu1ggc@ax5200p>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] spi/tegra114: Factor runtime PM out into transfer
+ prepare/unprepare
+Date: Sat, 27 Jul 2013 20:18:17 +0100
+Message-ID: <20130727191817.GK9858@sirena.org.uk>
+References: <1374924187-29715-1-git-send-email-broonie@kernel.org>
+ <51F3BAD7.6080303@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lvRZZFMRNRLg22E3"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1515727.YuaSFu1ggc@ax5200p>
+Content-Disposition: inline
+In-Reply-To: <51F3BAD7.6080303-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-27.07.2013 23:03, Marc Dietrich =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> On Saturday 27 July 2013 22:26:06 Dmitry Osipenko wrote:
->> 27.07.2013 22:09, Marc Dietrich =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On Saturday 27 July 2013 20:20:38 Dmitry Osipenko wrote:
->>>> 27.07.2013 20:12, Marc Dietrich =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> On Friday 26 July 2013 17:15:02 Joseph Lo wrote:
->>>>>> This series adds the support of LP1 suspend mode for Tegra.
->>>>>>
->>>>>> Verified on Seaboard, Cardhu and Dalmore.
->>>>>
->>>>> tested on AC100 and worked fine, except
->>>>>
->>>>> [   68.448007] PM: Syncing filesystems ... done.
->>>>> [   71.370086] Freezing user space processes ... (elapsed 0.001 s=
-econds)
->>>>> done. [   71.370088] Freezing remaining freezable tasks ... (elap=
-sed
->>>>> 0.001 seconds) done.
->>>>> [   71.371253] Suspending console(s) (use no_console_suspend to d=
-ebug)
->>>>> [   71.638481] PM: suspend of devices complete after 266.604 msec=
-s
->>>>> [   71.638905] PM: late suspend of devices complete after 0.417 m=
-secs
->>>>> [   71.639477] PM: noirq suspend of devices complete after 0.568 =
-msecs
->>>>> [   71.639480] Disabling non-boot CPUs ...
->>>>> [   71.640242] CPU1: shutdown
->>>>> [   71.641216] Entering suspend state LP1
->>>>> [   71.641267] Enabling non-boot CPUs ...
->>>>> [   71.643125] CPU1: Booted secondary processor
->>>>> [   71.643449] CPU1 is up
->>>>> [   71.643786] PM: noirq resume of devices complete after 0.331 m=
-secs
->>>>> [   71.644300] PM: early resume of devices complete after 0.364 m=
-secs
->>>>> [   71.648038] ------------[ cut here ]------------
->>>>> [   71.648061] WARNING: CPU: 0 PID: 1025 at kernel/irq/manage.c:5=
-29
->>>>> irq_set_irq_wake+0xb8/0xf0()
->>>>> [   71.648064] Unbalanced IRQ 384 wake disable
->>>>> [   71.648068] Modules linked in:
->>>>> [   71.648075] CPU: 0 PID: 1025 Comm: bash Not tainted 3.11.0-rc2=
--
->>>>> next-20130726-00008-gef01509-dirty #6
->=20
->>> Stephen Warren said on IRC that this is known and on the internal b=
-ug
->>> tracker already. I just posted it so others are not surprised. Well=
-, I
->>> should have added that it's a know problem. Sorry for that.
->>
->> It might be a known problem only for those who faced with it. Since =
-it's on
->> their internal irc, it wasn't a known issue.
->>
->> It also would be interesting to know if suspend with thumb2 works co=
-rrectly.
->> On 3.8 I've ported lp0 suspend and it works fine with arm compiled k=
-ernel,
->> thumb2 also works but only for about 5-10 hours (resuming on each 5-=
-30
->> minutes, default android behavior) and after I'm getting pmd corrupt=
-ion. I
->> have no idea from where that corruption comes from without ability f=
-or hw
->> debugging.
->=20
-> I don't think anyone can comment on this because lp0 support for main=
-line is=20
-> not published yet. On the other hand, if you have patches for which y=
-ou want=20
-> some review, feel free to post them here.
->=20
-> Marc
->=20
-I'm not expecting comment on it, just for notice :) I'll try this patch=
-es in
-some near future.
+
+--lvRZZFMRNRLg22E3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sat, Jul 27, 2013 at 05:49:35PM +0530, Laxman Dewangan wrote:
+
+> The reason I kept this in transfer_one() is because
+> prepare/unprepare was getting called in atomic context. But after
+> the change,
+
+With something like that the best thing to do is to query why there's a
+restriction and/or fix it - it's a fairly obvious thing to want to do.
+
+--lvRZZFMRNRLg22E3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR9Bz2AAoJELSic+t+oim9aIsP/070l6fyr7DiS6U/5JjLgIpa
+chulvrRE5rhF9/JIhpg4CrnGiM/V5VB4X9fJd1OwSBgEXoBv28dOQMkGCsa1PRDf
+ahHrwPh/CJoP3FB4Lg8X+tlHzHq3yiSDASWCKtsKTiwXiwJRe0fsT40sQtw5UG4U
+sQJ+rhwCeZ5wzuVQFOBgvGztUWwkiYaI9W4G5MLkdDt+hnlfL4a/D8+v4JuUBxdx
++1QFx9rMDxZp2fq4m8VhyiDywNcsp8fMiaDGK8M3pUo7uiH3jkcJMegi5DOmtuC4
+iPlDcfat55U6ZizRlq3WSOLYV3ZYoTsoETeNPXVH/5s0+CHxr4sP4Z3NuEp/nJV5
+NnHwKv34PBpamdbp/mdbJPTWXYLoN/7PJWX7FX5ff8yo2lKuAk7qOaTTx6G/oxAA
+X/6DBQyk0W1XpAr88WsPdn0xL6MJ/z/YIB8Qr8cY4hyb4HObjWUWJBhaLTq9do/M
+JphzKtTaftLEzmhKM/bgjTEKkJVs2mErPpkc/2fcat1+lIJEnRtFrMo9j+lctKt/
+m1xkh3iD8WM4FlzL9z1YV/v3dBY7pDFc8q8nLzROSIEmttt61LMBTu34/OvO4qhp
+nk4Kyidmk0OTC+6rKjmQ1mD7/LWhA14sj367Xm4UlFC2tL9bb+VDLGwDWO1qQ71X
+xsMRH0NKcjXIxOYsxSef
+=qbFJ
+-----END PGP SIGNATURE-----
+
+--lvRZZFMRNRLg22E3--
