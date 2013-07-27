@@ -1,28 +1,29 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] spi/tegra-sflash: Factor runtime PM out into transfer
+Subject: Re: [PATCH] spi/tegra-slink: Factor runtime PM out into transfer
  prepare/unprepare
-Date: Sat, 27 Jul 2013 17:50:32 +0530
-Message-ID: <51F3BB10.6000501@nvidia.com>
-References: <1374924661-31306-1-git-send-email-broonie@kernel.org>
+Date: Sat, 27 Jul 2013 17:51:06 +0530
+Message-ID: <51F3BB32.6040000@nvidia.com>
+References: <1374924901-32499-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374924661-31306-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <1374924901-32499-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 27 July 2013 05:01 PM, Mark Brown wrote:
+On Saturday 27 July 2013 05:05 PM, Mark Brown wrote:
 > From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 >
-> Currently the tegra sflash driver acquires a runtime PM reference for the
+> Currently the tegra slink driver acquires a runtime PM reference for the
 > duration of each transfer. This may result in the IP being powered down
 > between transfers which would be at best wasteful. Instead it is better
 > to do this in the callbacks that are generated before and after starting
 > a series of transfers, keeping the IP powered throughout.
 >
 > Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
+
+
 Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
