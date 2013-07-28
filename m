@@ -1,75 +1,39 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 09/11] spi/tegra114: Use core runtime PM
-Date: Sun, 28 Jul 2013 15:43:24 +0100
-Message-ID: <1375022606-7576-9-git-send-email-broonie@kernel.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 01/11] spi: Provide core support for runtime PM during transfers
+Date: Sun, 28 Jul 2013 22:51:31 +0200
+Message-ID: <CACRpkdZuUiG0MydJ_k4Br5_10hXr-x4xqNLjWP8D_KFyMPg-zQ@mail.gmail.com>
 References: <1375022606-7576-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1375022606-7576-1-git-send-email-broonie@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375022606-7576-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linaro-kernel <linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Brown <broonie@linaro.org>
+On Sun, Jul 28, 2013 at 4:43 PM, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- drivers/spi/spi-tegra114.c | 26 +-------------------------
- 1 file changed, 1 insertion(+), 25 deletions(-)
+> Most SPI drivers that implement runtime PM support use identical code to
+> do so: they acquire a runtime PM lock in prepare_transfer_hardware() and
+> then they release it in unprepare_transfer_hardware(). The variations in
+> this are mostly missing error checking and the choice to use autosuspend.
+>
+> Since these runtime PM calls are normally the only thing in the prepare
+> and unprepare callbacks and the autosuspend API transparently does the
+> right thing on devices with autosuspend disabled factor all of this out
+> into the core with a flag to enable the behaviour.
+>
+> Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index e7d48a1..2e208dc 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -803,20 +803,6 @@ static int tegra_spi_setup(struct spi_device *spi)
- 	return 0;
- }
- 
--static int tegra_spi_prepare_transfer(struct spi_master *spi)
--{
--	struct tegra_spi_data *tspi = spi_master_get_devdata(spi);
--	int ret;
--
--	ret = pm_runtime_get_sync(tspi->dev);
--	if (ret < 0) {
--		dev_err(tspi->dev, "runtime PM get failed: %d\n", ret);
--		return ret;
--	}
--
--	return ret;
--}
--
- static int tegra_spi_transfer_one_message(struct spi_master *master,
- 			struct spi_message *msg)
- {
-@@ -870,15 +856,6 @@ exit:
- 	return ret;
- }
- 
--static int tegra_spi_unprepare_transfer(struct spi_master *spi)
--{
--	struct tegra_spi_data *tspi = spi_master_get_devdata(spi);
--
--	pm_runtime_put(tspi->dev);
--
--	return 0;
--}
--
- static irqreturn_t handle_cpu_based_xfer(struct tegra_spi_data *tspi)
- {
- 	struct spi_transfer *t = tspi->curr_xfer;
-@@ -1064,11 +1041,10 @@ static int tegra_spi_probe(struct platform_device *pdev)
- 	/* the spi->mode bits understood by this driver: */
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
- 	master->setup = tegra_spi_setup;
--	master->prepare_transfer_hardware = tegra_spi_prepare_transfer;
- 	master->transfer_one_message = tegra_spi_transfer_one_message;
--	master->unprepare_transfer_hardware = tegra_spi_unprepare_transfer;
- 	master->num_chipselect = MAX_CHIP_SELECT;
- 	master->bus_num = -1;
-+	master->auto_runtime_pm = true;
- 
- 	tspi->master = master;
- 	tspi->dev = &pdev->dev;
--- 
-1.8.3.2
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+> + * @auto_runtime_pm: the core should ensure a runtime PM reference is held
+> + *                   while the hardware is prepared
+
+I'd mention here that the reference is taken on the parent
+device of the SPI master, i.e. the very platform or AMBA
+device, so that it will hit upwards to the bus.
+
+Yours,
+Linus Walleij
