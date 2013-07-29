@@ -1,65 +1,99 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH v6 4/5] clk: add CLK_SET_RATE_NO_REPARENT flag
-Date: Mon, 29 Jul 2013 08:50:16 -0700
-Message-ID: <36053e73-faf4-47c6-9ff5-3e451361ef75@CH1EHSMHS012.ehs.local>
-References: <1375097102-28892-1-git-send-email-james.hogan@imgtec.com>
- <1375097102-28892-5-git-send-email-james.hogan@imgtec.com>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 3/4] hwmon: (lm90) add support to handle IRQ
+Date: Mon, 29 Jul 2013 17:58:35 +0200
+Message-ID: <20130729175835.795dba2b@endymion.delvare>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+	<1373615287-18502-4-git-send-email-wni@nvidia.com>
+	<20130718175822.62c358bf@endymion.delvare>
+	<51E8DFB2.9070701@nvidia.com>
+	<20130727170212.29297696@endymion.delvare>
+	<51F640A0.4040809@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1375097102-28892-5-git-send-email-james.hogan@imgtec.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Catalin Marinas <catalin.marinas@arm.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chao Xie <xiechao.mail@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, spear-devel@list.st.com, linux-samsung-soc@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infrad
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51F640A0.4040809-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sw-mobile-therm-Lp/cVzEoVyZDw2glCA4ptUEOCMrvLtNR@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBKdWwgMjksIDIwMTMgYXQgMTI6MjU6MDFQTSArMDEwMCwgSmFtZXMgSG9nYW4gd3Jv
-dGU6Cj4gQWRkIGEgQ0xLX1NFVF9SQVRFX05PX1JFUEFSRU5UIGNsb2NrIGZsYWcsIHdoaWNoIHdp
-bGwgcHJldmVudCBtdXhlcwo+IGJlaW5nIHJlcGFyZW50ZWQgZHVyaW5nIGNsa19zZXRfcmF0ZS4K
-PiAKPiBUbyBhdm9pZCBicmVha2luZyBleGlzdGluZyBwbGF0Zm9ybXMsIGFsbCBjYWxsZXJzIG9m
-IGNsa19yZWdpc3Rlcl9tdXgoKQo+IGFyZSBhZGp1c3RlZCB0byBwYXNzIHRoZSBuZXcgZmxhZy4g
-UGxhdGZvcm0gbWFpbnRhaW5lcnMgYXJlIGVuY291cmFnZWQKPiB0byByZW1vdmUgdGhlIGZsYWcg
-aWYgdGhleSB3aXNoIHRvIGFsbG93IG11eCByZXBhcmVudGluZyBvbiBzZXRfcmF0ZS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBKYW1lcyBIb2dhbiA8amFtZXMuaG9nYW5AaW1ndGVjLmNvbT4KPiBSZXZp
-ZXdlZC1ieTogU3RlcGhlbiBCb3lkIDxzYm95ZEBjb2RlYXVyb3JhLm9yZz4KPiBDYzogTWlrZSBU
-dXJxdWV0dGUgPG10dXJxdWV0dGVAbGluYXJvLm9yZz4KPiBDYzogUnVzc2VsbCBLaW5nIDxsaW51
-eEBhcm0ubGludXgub3JnLnVrPgo+IENjOiBTYXNjaGEgSGF1ZXIgPGtlcm5lbEBwZW5ndXRyb25p
-eC5kZT4KPiBDYzogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5Ad3d3ZG90b3JnLm9yZz4KPiBDYzog
-VmlyZXNoIEt1bWFyIDx2aXJlc2gubGludXhAZ21haWwuY29tPgo+IENjOiBLdWtqaW4gS2ltIDxr
-Z2VuZS5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6IEhhb2ppYW4gWmh1YW5nIDxoYW9qaWFuLnpodWFu
-Z0BsaW5hcm8ub3JnPgo+IENjOiBDaGFvIFhpZSA8eGllY2hhby5tYWlsQGdtYWlsLmNvbT4KPiBD
-YzogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KPiBDYzogIkVtaWxpbyBMw7NwZXoiIDxl
-bWlsaW9AZWxvcGV6LmNvbS5hcj4KPiBDYzogR3JlZ29yeSBDTEVNRU5UIDxncmVnb3J5LmNsZW1l
-bnRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlwYXJk
-QGZyZWUtZWxlY3Ryb25zLmNvbT4KPiBDYzogUHJhc2hhbnQgR2Fpa3dhZCA8cGdhaWt3YWRAbnZp
-ZGlhLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4K
-PiBDYzogUGV0ZXIgRGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4KPiBDYzog
-UGF3ZWwgTW9sbCA8cGF3ZWwubW9sbEBhcm0uY29tPgo+IENjOiBDYXRhbGluIE1hcmluYXMgPGNh
-dGFsaW4ubWFyaW5hc0Bhcm0uY29tPgo+IENjOiBBbmRyZXcgQ2hldyA8YWNoZXdAbnZpZGlhLmNv
-bT4KPiBDYzogRG91ZyBBbmRlcnNvbiA8ZGlhbmRlcnNAY2hyb21pdW0ub3JnPgo+IENjOiBIZWlr
-byBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgo+IENjOiBQYXVsIFdhbG1zbGV5IDxwd2FsbXNs
-ZXlAbnZpZGlhLmNvbT4KPiBDYzogU29yZW4gQnJpbmttYW5uIDxzb3Jlbi5icmlua21hbm5AeGls
-aW54LmNvbT4KPiBDYzogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29t
-Pgo+IENjOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFzLmFicmFoYW1AbGluYXJvLm9yZz4KPiBDYzog
-VG9tYXN6IEZpZ2EgPHQuZmlnYUBzYW1zdW5nLmNvbT4KPiBDYzogbGludXgtYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnCj4gQ2M6IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9y
-Zwo+IENjOiBzcGVhci1kZXZlbEBsaXN0LnN0LmNvbQo+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtl
-cm5lbC5vcmcKPiBUZXN0ZWQtYnk6IEhhb2ppYW4gWmh1YW5nIDxoYW9qaWFuLnpodWFuZ0BnbWFp
-bC5jb20+Cj4gQWNrZWQtYnk6IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQG52aWRpYS5jb20+IFt0
-ZWdyYV0KPiBBY2tlZC1ieTogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0
-cm9ucy5jb20+IFtzdW54aV0KQUNLIGZvciBaeW5xLgoKSSdsbCBoYXZlIHRvIGxvb2sgYXQgdGhl
-IGRldGFpbHMgYW5kIGRvIHNvbWUgdGVzdGluZyB0byBzZWUgd2hldGhlciB3ZQpjYW4gcmVtb3Zl
-IHRoZSBmbGFnIGxhdGVyLgoKCVPDtnJlbgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Hi Wei,
+
+On Mon, 29 Jul 2013 18:14:56 +0800, Wei Ni wrote:
+> On 07/27/2013 11:02 PM, Jean Delvare wrote:
+> > On Fri, 19 Jul 2013 14:41:54 +0800, Wei Ni wrote:
+> >> 2. The pin ALERT/THERM2 is configured as ALERT, and it is connected to
+> >> the interrupt line.
+> > 
+> > Why don't you use the SMBus alert mechanism then? It is already
+> > implemented and allows you to reuse the interrupt of the SMBus
+> > controller.
+> > 
+> > Of course this is a question for the hardware designers, not you... If
+> > the board uses a separate interrupt pin for the NCT1008's ALERT output,
+> > then the driver has to handle that interrupt explicitly, as done in your
+> > patch.
+> > 
+> > One thing which worries me though is this explanation in the NCT1008
+> > datasheet:
+> > 
+> > "The ALERT interrupt latch is not reset by reading the
+> > status register. It resets when the ALERT output has been
+> > serviced by the master reading the device address, provided
+> > the error condition has gone away and the status register flag
+> > bits are reset."
+> > 
+> > This suggests that connecting the ALERT output to a separate interrupt
+> > pin will not work, as the ALERT output will never be de-asserted even
+> > if the fault conditions are gone and the status register was read. But
+> > as you say this is how your system is supposed to work, can you explain
+> > how it can work?
+> 
+> Yes, we had met this problems, to fix this issue, we enabled one-shot
+> mode in the bottom half handler of nct interrupts to force a
+> conversion/comparison. This effectively stops repeated nct interrupts.
+> We will do following things in the IRQ thread:
+> 1. stand by the nct1008. (set configure register bit 6)
+> 2. update the limit value if needed.
+> 3. write to one-shot resister.
+> 4. give hardware necessary time to finish conversion
+> 5. run the nct1008 (clear configure register bit 6)
+
+Doh, this is so ugly :(
+
+Why don't you configure the pin as THERM2 instead of ALERT then? I'd
+expect this to make things easier.
+
+> (...)
+> These trip-temps are not critical temperature, we used these temps to
+> update cooling states. For the critical-temp, we handle it like my
+> mentioned in #1.
+
+I understand. But even if these interrupts are only used for managing
+cooling states, a misbehavior could still have annoying consequences,
+such as causing the thermal shutdown to trigger when this could have
+been avoided, or throttling to stay enabled even though the system has
+cooled down enough.
+
+> Yes, it's not safe to rely on the software, so on our tegra114, we will
+> have soc thermal, which can handle these trip-temps on hardware.
+
+OK, good :)
+
+> (...)
+> Yes, absolutely agree, we can't add any private codes to the generic driver.
+> I had talked about it with Durgadoss in his "[PATCH] Thermal Framework
+> Enhancements" series, and in his v3 series, it introduced threshold
+> concept, which used to set limit value, and the "framework is notified
+> about this interrupt to take appropriate action". But this function
+> still didn't be completed yet.
+> I think the thermal fw can expose callback like thermal_zone->alert, and
+> in the irq_thread, we can notify the thermal fw to call this alert
+> callback function, then the platform code can do anything in this callback.
+
+I didn't follow the discussions closely, but something like this would
+be needed, yes.
+
+-- 
+Jean Delvare
