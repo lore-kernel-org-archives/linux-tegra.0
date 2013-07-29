@@ -1,105 +1,63 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 16/22] iommu/tegra: smmu: Get "nvidia,swgroup" from
- DT
-Date: Mon, 29 Jul 2013 12:00:06 -0600
-Message-ID: <51F6ADA6.3040006@wwwdotorg.org>
-References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com><1373021097-32420-17-git-send-email-hdoyu@nvidia.com><51E84FFA.8020509@wwwdotorg.org> <20130729.143950.524913713971518557.hdoyu@nvidia.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] Documentation: devicetree: phy-tegra-usb: Add
+ vbus-supply property for host mode PHYs
+Date: Tue, 30 Jul 2013 00:19:32 +0300
+Message-ID: <20130729211932.GA6901@radagast>
+References: <1372422796-23524-1-git-send-email-mperttunen@nvidia.com>
+ <1372422796-23524-3-git-send-email-mperttunen@nvidia.com>
+ <51F6893E.6070604@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130729.143950.524913713971518557.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51F6893E.6070604-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/29/2013 05:39 AM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 18 Jul 2013 22:28:42 +0200:
-> 
->> On 07/05/2013 04:44 AM, Hiroshi Doyu wrote:
->>> This provides the info about which H/W Accelerators are supported on
->>> Tegra SoC. This info is passed from DT. This is necessary to have the
->>> unified SMMU driver among Tegra SoCs. Instead of using platform data,
->>> DT passes "nvidia,swgroup" now. DT is mandatory in Tegra.
->>
->>> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
->>
->>> +- nvidia,swgroups: A bitmap of supported HardWare Accelerators(HWA).
->>> +  Each bit represents one swgroup. The assignments may be found in header
->>> +  file <dt-bindings/memory/tegra-swgroup.h>.
->>
->> There needs to be a default for this field if one is not specified so
->> that existing DTs continue to work without modification.
-> 
-> Only enabling PPCS(AHB) can be an option because PPCS has SD/MMC where
-> rootfs can be located ususally.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There's no reason that the root filesystem has to be on SD/MMC. Either
-way, the DT binding shouldn't be influenced by the root fs location at all.
+On Mon, Jul 29, 2013 at 09:24:46AM -0600, Stephen Warren wrote:
+> On 06/28/2013 06:33 AM, Mikko Perttunen wrote:
+> > Add vbus-supply as an optional property for host mode phy-tegra-usb PHY=
+s.
+>=20
+> Felipe, I see that you didn't merge this one patch from this series. Was
+> there a reason for that? At this stage, I would consider it reasonable
+> for DT binding documentation changes to go through the same tree as
+> driver changes.
 
-I think more explanation of exactly what this property does and why is
-required.
+no reason, just missed it. Will apply now.
 
->> How many cells big is this property?
-> 
-> 64
+--=20
+balbi
 
-I assume that's bits, so 2 cells? To be clear: the document needs to
-include this information, not just this email thread.
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->> Is this really a bitmap of HWAs? Surely it's a bitmap of SMMU client
->> IDs?
-> 
-> At least this info can be used for PMC too.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-How and why? A complete explanation of how the SMMU and PMC are expected
-to interact is required.
+iQIcBAEBAgAGBQJR9txkAAoJEIaOsuA1yqRE5owP/0W+SgBwEk3JJnkt2/texnzz
+9ni1UUtNtHyK8hbwcPeaYUewhJwkWJxbX/tGbJSR6eEWp0JI4UtwQ/zVOsg9HDdB
+bciSTBupKQa/Q6eax4b5EQyKlPDwlGzx7ouDuD7F6opZOJCtonTdRFwPHbImbxki
+zzV2pL5w8Tle+aXfvZeTBis+kjS/qq/dUdCg8tI0ePHiPI6p7K2RR9c1c2fcf6LT
+k9COVNOqyYMYAryHmXBPlMK+QFxy5f/WsDNLyViPvWSKgg9sOyrpeNVCbxNXrpL1
+I3cZbIgnadER7R1r8GDvXxUr84M8pIp5R6lID7tMWkAAGQsQ0d2vanx1RuQYpC26
+540kJ7t48MxBDaj8wjAObii0INroBMu7pcQCKYerPmMUAmkz/enxBudPMMjhlGEU
+cOVIMPl8e7wHsvJVsATV70RNrzn54uuO5cx8Rb6XGjXLQwOBsCukHMfHmy63xbgv
+FnzEAJrZMIm6AP7rwAmcJolxQG4flcT1g4juvEt+TIktZyJVUIgTYI+x15aV5L0d
+L3mjWhMt2RNH7gOKpMT5IwcaL0f8GpVM0MIAQq5nwjerGeXIM+sHBhk/e6xkQ7W8
+H2X+a/zIvjbqnCLG2VVOxbDHKaPzLmJW9PQ40/uR39VXvv9DlLtEWNGSBlCnO3XV
+faKYSiI7NXDFIkPi1p2p
+=vD7x
+-----END PGP SIGNATURE-----
 
-The PMC DT binding should include all information related to the PMC;
-the binding definitions probably shouldn't expect a PMC driver to go
-grovelling in an SMMU node to find information.
-
-> .....
->>> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
->>
->>> @@ -265,7 +265,7 @@ struct smmu_client {
->>>  	struct device		*dev;
->>>  	struct list_head	list;
->>>  	struct smmu_as		*as;
->>> -	u32			hwgrp;
->>> +	u64			hwgrp;
->>
->> Why is that "hwgrp" not "swgrp"? Don't they represent the same
->> thing?
-> 
-> They are same but initial SMMU driver used the term "hwgroup". Should
-> this be renamed with another patch or can it be left as it is?
-
-I thought there had already been a patch to do this rename. Was it not
-complete? If so, that work should probably be completed.
-
-> ....
->>>  static int __smmu_client_set_hwgrp(struct smmu_client *c,
->>> -				   unsigned long map, int on)
->>> +				   u64 map, int on)
->>>  {
->>>  	int i;
->>>  	struct smmu_as *as = c->as;
->>> @@ -398,12 +400,11 @@ static int __smmu_client_set_hwgrp(struct smmu_client *c,
->>>  	if (!on)
->>>  		map = smmu_client_hwgrp(c);
->>>  
->>> -	for_each_set_bit(i, &map, HWGRP_COUNT) {
->>> +	for_each_set_bit(i, (unsigned long *)&map,
->>> +			 sizeof(map) * BITS_PER_BYTE) {
->>
->> Why change the type if it just forces you to add this cast?
-> 
-> u32 map; -> u64 map;
-> 
-> for_each_set_bit() expects "unsigned long *" for any length of bitmap.
-
-Shouldn't the map just be an "unsigned long map[]" then, so no casts are
-needed anywhere? Equally, that pointer could just be passed to the
-function rather than copying the data to the stack?
+--ReaqsoxgOBHFXBhH--
