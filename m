@@ -1,67 +1,48 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/8] ARM: tegra: add common resume handling code for LP1
- resuming
-Date: Mon, 29 Jul 2013 16:38:59 -0600
-Message-ID: <51F6EF03.9000003@wwwdotorg.org>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com> <1374830110-30685-2-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 2/8] ARM: tegra: config the polarity of the request of
+ sys clock
+Date: Mon, 29 Jul 2013 16:47:37 -0600
+Message-ID: <51F6F109.8010102@wwwdotorg.org>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com> <1374830110-30685-3-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374830110-30685-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1374830110-30685-3-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 07/26/2013 03:15 AM, Joseph Lo wrote:
-> The common LP1 resuming procedures of LP1 on Tegra was checking the LP1
-> mask first. The LP1 mask indicated that the Tegra device was in LP1 then
-> we need to resume the Tegra from the LP1 reset handler.
-> 
-> And the LP1 was putting the SDRAM to self-refresh mode, the SDRAM wasn't
-> accessible when resuming from LP1. We need to copy the LP1 reset handler
-> to IRAM before suspending. That's why you can see the address of LP1
-> reset handler was located in IRAM.
+> When suspending to LP1 mode, the SYSCLK will be clock gated. And different
+> board may have different polarity of the request of SYSCLK, this patch
+> configure the polarity from the DT for the board.
 
-That's rather hard to understand. How about:
+> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
 
-==========
-Add support to the Tegra CPU reset vector to detect whether the CPU is
-resuming from LP1 suspend state. If it is, branch to the LP1-specific
-resume code.
+> @@ -238,6 +240,20 @@ void tegra_pmc_suspend_init(void)
+>  	reg = tegra_pmc_readl(PMC_CTRL);
+>  	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
+>  	tegra_pmc_writel(reg, PMC_CTRL);
+> +
+> +	reg = tegra_pmc_readl(PMC_CTRL);
+> +
+> +	if (!pmc_pm_data.sysclkreq_high)
+> +		reg |= TEGRA_POWER_SYSCLK_POLARITY;
+> +	else
+> +		reg &= ~TEGRA_POWER_SYSCLK_POLARITY;
+> +
+> +	/* configure the output inverts while the request is tristated */
+> +	tegra_pmc_writel(reg, PMC_CTRL);
 
-When Tegra enters the LP1 suspend state, the SDRAM controller is placed
-into a self-refresh state. For this reason, we must place the LP1 resume
-code into IRAM, so that it is accessible before SDRAM access has been
-re-enabled.
-==========
+I think s/inverts/polarity/ in that comment would make a lot more sense.
 
-Talking about *copying* the LP1 resume code to IRAM isn't appropriate
-here, since nothing in this patch performs any copying of the resume code.
+Must _OE be disabled for the code to work correctly? If so, should the
+code explicitly clear _OE first, since who knows what state it was
+originally in? Can't we just set the new polarity and enable _OE in a
+single register write?
 
-> diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
-
-> @@ -182,6 +182,19 @@ after_errata:
->  1:
->  #endif
->  
-> +	/* Waking up from LP1? */
-> +	ldr	r8, [r12, #RESET_DATA(MASK_LP1)]
-> +	tst	r8, r11				@ if in_lp1
-> +	beq	__is_not_lp1
-> +	cmp	r10, #0
-> +	bne	__die				@ only CPU0 can be here
-> +	ldr	lr, [r12, #RESET_DATA(STARTUP_LP1)]
-> + THUMB(	add	lr, lr, #1 )			@ switch to Thumb mode
-> +	cmp	lr, #0
-> +	bleq	__die				@ no LP1 startup handler
-
-On thumb, lr==#1 at this point. I think you want to move the THUMB()
-instruction after the bleq.
-
-> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
-
-> +#define TEGRA_IRAM_CODE_AREA	(TEGRA_IRAM_BASE + SZ_4K)
-
-The layout of IRAM should be described in irammap.h not sleep.h.
+> +	/* now enable the request */
+> +	reg |= TEGRA_POWER_SYSCLK_OE;
+> +	tegra_pmc_writel(reg, PMC_CTRL);
