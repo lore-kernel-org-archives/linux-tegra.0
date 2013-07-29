@@ -1,55 +1,56 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 05/11] spi/pl022: Convert to core runtime PM
-Date: Mon, 29 Jul 2013 07:04:31 +0100
-Message-ID: <20130729060431.GP9858@sirena.org.uk>
-References: <1375022606-7576-1-git-send-email-broonie@kernel.org>
- <1375022606-7576-5-git-send-email-broonie@kernel.org>
- <CACRpkdYRdO5C2_mumUcMd6naCA6JaHetFSnC5u6wO0FV8BZhHQ@mail.gmail.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 01/22] [HACK] of: dev_node has struct device pointer
+Date: Mon, 29 Jul 2013 12:13:44 +0200
+Message-ID: <20130729.131344.1221933042559369096.hdoyu@nvidia.com>
+References: <1373021097-32420-2-git-send-email-hdoyu@nvidia.com><51E5CFBF.5080407@wwwdotorg.org><20130716231629.GA12189@dhcp-172-17-186-34.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e0rzCtfzeQKTRplb"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYRdO5C2_mumUcMd6naCA6JaHetFSnC5u6wO0FV8BZhHQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20130716231629.GA12189-RcKxWJ4Cfj3FNiLNb7+IINdj8bHVeoWogfoxzgwHRXE@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Wed, 17 Jul 2013 01:16:30 +0200:
 
---e0rzCtfzeQKTRplb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jul 16, 2013 at 04:57:03PM -0600, Stephen Warren wrote:
+> > On 07/05/2013 04:44 AM, Hiroshi Doyu wrote:
+> > > To prevent of_platform_populate() from trying to populate duplicate
+> > > devices if a device has been already populated.
+> > 
+> > You need to send drivers/of patches to the DT maintainer and
+> > devicetree-discuss mailing list.
+> > 
+> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > > Need to take care of early_platform_devices, or alternative solution.
+> > 
+> > I assume that's a TODO item... Are you planning on fleshing out this
+> > patch to address that issue?
+>
+> There was some more discussion about it, which can be found in the
+> following thread:
+> 
+> 	https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-June/036934.html
+> 
+> That's one of the last messages and it should have most of the
+> background. If not you may have to walk up the thread for more context.
+> In a nutshell I raised the question as to why we can't simply call
+> of_platform_populate() earlier and side-step all the workarounds that
+> have found their way into the kernel to side-step the issue of their not
+> being a struct device associated with the struct device_node.
 
-On Sun, Jul 28, 2013 at 10:52:38PM +0200, Linus Walleij wrote:
-
-> Someone moaned about oneline commit messages in
-> the last LWN...
-
-I saw that (and even followed up).  To be honest for this sort of patch
-I'm not that concerned about it - it's fairly clear what's going on and
-why it might be a good idea.
-
---e0rzCtfzeQKTRplb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR9gXsAAoJELSic+t+oim9kxYP/j+FTnDaYH8yWhLdSZLPZWbq
-5zO+RzDlJ1ykGwWDjDLkc8R9qv8GB1tXmZVtI80lkk+sEdDQglu3ZgUOkQJCRVLp
-QnseGPLRHA7Z4n34GYjDQgxCoN4Y9aXCKyzBnQyk1aiuM4T+pzqPFSoPEsHSBy3/
-flGqZm+rZ6YZABIQ25m8y4JoDLdQF+wis4pF9+aiPvWwHzdaIL67cZt2k9WWVxlP
-HoDEsFcECwxAlXzFMghwhYVjNT4pa6pWMIhTF98cQupxhap/LqE93PUzdwYKTusN
-e6FzcjrC5J7l2wJby4f3dR2OhU8BGW00guBvyL/krKFghJkUAvs5NapxKSfScJ7+
-SbPkwd+uKy7o6xn8NLIe/YQxdKap3Oq3hxeNZ2wYcGTVdbznYDdhB+CF4JfyIi4b
-tO6AzPcEdsGpERmrMLDW15p5Q1U+afnNrQN6ixg5RC1Jx0osP3KTxcyRvRzp/pI8
-H6kHovF5C4WfZujFCjlvW/rruIaXtYj39uRA3bvAekeWEca4h5mw9KeOl/HHaW3U
-Ekn9/vs6IPlgl0aXHioEpOZW+gomaDwsJcypagKx265rHADo00tne2eKp9WpjfWD
-tYjj2WjxdLjT7r3fPowsssFaZwK9NlZdG7ELoc/iiGJEM9Vd1MI8Dg4JL8MOvB+6
-2r1StcVPugVsEnGVqFg9
-=mhh+
------END PGP SIGNATURE-----
-
---e0rzCtfzeQKTRplb--
+This is the thread which Lorenzo started originally. He may have some
+plan to implement/proceed with this, Lorenzo?
