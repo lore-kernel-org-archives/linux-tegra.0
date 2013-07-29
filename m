@@ -1,125 +1,181 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/8] ARM: tegra: add common LP1 suspend support
-Date: Mon, 29 Jul 2013 17:13:41 -0600
-Message-ID: <51F6F725.6000106@wwwdotorg.org>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com> <1374830110-30685-5-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 5/8] ARM: tegra30: add LP1 suspend support
+Date: Mon, 29 Jul 2013 17:45:13 -0600
+Message-ID: <51F6FE89.4060402@wwwdotorg.org>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com> <1374830110-30685-6-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1374830110-30685-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1374830110-30685-6-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 07/26/2013 03:15 AM, Joseph Lo wrote:
-> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
-> clock gated and SDRAM in self-refresh mode. That means the low level LP1
-> suspending and resuming code couldn't be run on DRAM and the CPU must
-> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
-> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
-> The LP1 low level handling code need to be moved to IRAM area first. And
-> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
-> power timer needs to be re-calculated based on 32KHz that was originally
-> based on PCLK.
+> The LP1 suspend mode will power off the CPU, clock gated the PLLs and put
+> SDRAM to self-refresh mode. Any interrupt can wake up device from LP1. The
+> sequence when LP1 suspending:
 
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> diff --git a/arch/arm/mach-tegra/pm-tegra30.c b/arch/arm/mach-tegra/pm-tegra30.c
 
->  #ifdef CONFIG_PM_SLEEP
->  static DEFINE_SPINLOCK(tegra_lp2_lock);
-> +static void __iomem *iram_code = IO_ADDRESS(TEGRA_IRAM_CODE_AREA);
-> +static u32 iram_save_size;
-> +static void *iram_save_addr;
-> +struct tegra_lp1_iram *tegra_lp1_iram;
->  void (*tegra_tear_down_cpu)(void);
-> +void (*tegra_sleep_core_finish)(unsigned long v2p);
-
-I'm not sure all of those are required to be global variables. For
-example, iram_code is just a constant, so you could easily just use it
-directly in code.
-
-> @@ -174,14 +180,75 @@ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
->  				enum tegra_suspend_mode mode)
->  {
->  	/*
-> -	 * The Tegra devices only support suspending to LP2 currently.
-> +	 * The Tegra devices only support suspending to LP1 currently.
-
-That now says that only LP1 is supported. That's not true; both LP1 and
-LP2 are supported. How about s/LP1/LP1 or lower/ or s:LP1:LP1/LP2: ?
-
-> +static bool tegra_sleep_core_init(void)
+> +void tegra30_lp1_iram_hook(void)
 > +{
-> +	if (!tegra_sleep_core_finish)
-> +		return false;
-> +
-> +	return true;
-> +}
+> +	tegra30_lp1_iram.start_addr = &tegra30_iram_start;
+> +	tegra30_lp1_iram.end_addr = &tegra30_iram_end;
 
-That function seems a little pointless. Why not just check the value of
-tegra_sleep_core_finish directly in tegra_init_suspend()?
+If you need to fill in the values in that struct dynamically anyway, why
+not make tegra_lp1_iram be a struct rather than a pointer, and write
+directly to it?
 
-> +static void tegra_suspend_enter_lp1(void)
-> +{
-> +	tegra_pmc_suspend();
-> +
-> +	/* copy the reset vector & SDRAM shutdown code into IRAM */
-> +	memcpy(iram_save_addr, iram_code, iram_save_size);
-> +	memcpy(iram_code, tegra_lp1_iram->start_addr, iram_save_size);
-> +
-> +	*((u32 *)tegra_cpu_lp1_mask) = 1;
+That said, aren't tegra30_iram_start constants that the linker can work
+out, so I think you can just initialize the structure at compile-time,
+and save some code.
+
+> +	tegra_lp1_iram = &tegra30_lp1_iram;
 > +}
 > +
-> +static void tegra_suspend_exit_lp1(void)
+> +void tegra30_sleep_core_init(void)
 > +{
-> +	tegra_pmc_resume();
-> +
-> +	/* restore IRAM */
-> +	memcpy(iram_code, iram_save_addr, iram_save_size);
-> +
-> +	*(u32 *)tegra_cpu_lp1_mask = 0;
+> +	tegra_sleep_core_finish = tegra30_sleep_core_finish;
 > +}
 
-I'm not really sure I like that, but I suppose it's OK. It sure seems
-like a performance limiter, but I suppose LP1 is so slow it doesn't
-matter, due to the need to ramp power rails, PLLs, SDRAM controller, etc.
+Is there a need to have separate iram_hook()/sleep_core_init()
+functions? Perhaps they can be combined into a single function for
+simplicity.
 
-It'd be nice to simply reserve more IRAM for the kernel's use. Right
-now, only 1K is reserved, and presumably the code running on the AVP
-can't use the rest of that page anyway, or can it?
+> diff --git a/arch/arm/mach-tegra/pm.h b/arch/arm/mach-tegra/pm.h
 
-> @@ -212,9 +282,15 @@ static int tegra_suspend_enter(suspend_state_t state)
->  		break;
->  	}
->  
-> -	cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-> +	if (mode == TEGRA_SUSPEND_LP2)
-> +		cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_cpu);
-> +	else
-> +		cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, &tegra_sleep_core);
+> +#ifdef CONFIG_ARCH_TEGRA_3x_SOC
+> +void tegra30_lp1_iram_hook(void);
+> +void tegra30_sleep_core_init(void);
+> +#else
+> +static inline void tegra30_lp1_iram_hook(void) {}
+> +static inline void void tegra30_sleep_core_init(void) {}
+> +#endif
 
-Nit: It might be slightly simpler to simply calculate the parameter to
-cpu_suspend(), but then take the same code-path:
+It'd be nice to be consistent re: whether we define dummy static
+inlines, or use IS_ENABLED() at the call-site. IIRC, there's lots of use
+of IS_ENABLED() in the Tegra PM code now, so perhaps these patches
+should use that instead?
 
-if (mode == TEGRA_SUSPEND_LP2)
-	sleep_func = tegra_sleep_cpu;
-else
-	sleep_func = tegra_sleep_core;
-cpu_suspend(PHYS_OFFSET - PAGE_OFFSET, sleep_func);
+> diff --git a/arch/arm/mach-tegra/sleep.h b/arch/arm/mach-tegra/sleep.h
 
-That way, it's a little more obvious that the code always calls
-cpu_suspend() in the same way, but simply passes a different function to
-it to power things down at the end.
+> +/* waits until the microsecond counter (base) ticks, for exact timing loops */
+> +.macro wait_for_us, rd, base, tmp
+> +	ldr	\rd, [\base]
+> +1001:	ldr	\tmp, [\base]
+> +	cmp	\rd, \tmp
+> +	beq	1001b
+> +.endm
 
-> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+Doesn't this wait any amount of time from 0..1uS, and hence it actually
+/isn't/ very exact?
 
->  void tegra_pmc_pm_set(enum tegra_suspend_mode mode)
->  {
->  	u32 reg, csr_reg;
-> -	unsigned long rate = 0;
-> +	unsigned long rate = 32768;
+> +/* waits until the microsecond counter (base) is > rn */
+> +.macro wait_until, rn, base, tmp
+> +	add	\rn, \rn, #1
+> +1002:	ldr	\tmp, [\base]
+> +	cmp	\tmp, \rn
+> +	bmi	1002b
+> +.endm
 
-That's LP1-specific. You should add a "case TEGRA_SUSPEND_LP1:" to the
-switch statement that calculates rate instead; after all, that's the
-whole point of having that switch statement.
+Parameter "rn" could be renamed to make its purpose clear from the name.
+How about target_us or wait_until_this_time? "wait_until" is also rather
+a generic name; wait_until_us would be much better, which would require
+renaming wait_until_us above, which I think might be better deleted, or
+renamed to wait_until_next_us?
+
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+
+> +ENTRY(tegra30_sleep_core_finish)
+
+> +	/*
+> +	 * Preload all the address literals that are needed for the
+> +	 * CPU power-gating process, to avoid loading from SDRAM which
+> +	 * are not supported once SDRAM is put into self-refresh.
+> +	 * LP0 / LP1 use physical address, since the MMU needs to be
+> +	 * disalbed before putting SDRAM into self-refresh to avoid
+
+s/disalbed/disabled/
+
+> +/*
+> + * tegra30_lp1_reset
+> + *
+> + * reset vector for LP1 restore; copied into IRAM during suspend.
+> + * Brings the system back up to a safe staring point (SDRAM out of
+> + * self-refresh, PLLC, PLLM and PLLP reenabled, CPU running on PLLX,
+> + * system clock running on the same PLL that it suspended at), and
+> + * jumps to tegra_resume to restore virtual addressing.
+> + * The physical address of tegra_resume expected to be stored in
+> + * PMC_SCRATCH41.
+> + *
+> + * NOTE: THIS *MUST* BE RELOCATED TO TEGRA_IRAM_CODE_AREA AND MUST BE FIRST.
+
+What does "AND MUST BE FIRST" mean?
+
+> +ENTRY(tegra30_lp1_reset)
+> +	/*
+> +	 * The CPU and system bus are running at 32KHz and executing from
+> +	 * IRAM when this code is executed; immediately switch to CLKM and
+> +	 * enable PLLP, PLLM, PLLC, PLLA and PLLX.
+> +	 */
+> +	mov32	r0, TEGRA_CLK_RESET_BASE
+> +
+> +	mov	r1, #(1 << 28)
+
+Some #defines for the various magic values used in this code would be
+useful.
+
+> +tegra30_sdram_pad_save:
+> +	.word	0
+> +	.word	0
+> +	.word	0
+> +	.word	0
+> +	.word	0
+> +	.word	0
+> +	.word	0
+> +	.word	0
+
+This might be simpler, and easier to validate it's the right length:
+
+        .rept   8
+        .long   0
+        .endr
+
+> +tegra30_sdram_pad_address:
+> +	.word	TEGRA_EMC_BASE + EMC_CFG				@0x0
+> +	.word	TEGRA_EMC_BASE + EMC_ZCAL_INTERVAL			@0x4
+> +	.word	TEGRA_EMC_BASE + EMC_AUTO_CAL_INTERVAL			@0x8
+> +	.word	TEGRA_EMC_BASE + EMC_XM2VTTGENPADCTRL			@0xc
+> +	.word	TEGRA_EMC_BASE + EMC_XM2VTTGENPADCTRL2			@0x10
+> +	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
+> +	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
+> +	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
+> +
+> +tegra30_sdram_pad_size:
+> +	.word	tegra30_sdram_pad_address - tegra30_sdram_pad_save
+
+Perhaps if you swapp the order of declaring tegra30_sdram_pad_save and
+tegra30_sdram_pad_address, you can even do something like:
+
+	.rept (tegra30_sdram_pad_addr_end - tegra30_sdram_pad_addr) / 4
+
+?
+
+> +tegra30_switch_cpu_to_clk32k:
+> +	/*
+> +	 * start by jumping to CLKM to safely disable PLLs, then jump to
+
+jumping sounds like a CPU program counter operation.
+s/jumping/switching/ ?
+
+> +	/* 2uS delay delay between changing SCLK and CCLK */
+> +	wait_for_us r1, r7, r9
+> +	add	r1, r1, #2
+> +	wait_until r1, r7, r9
+
+Ah, I see how wait_for_us is used now. Perhaps rename it
+wait_for_us_boundary or wait_for_us_tick? Alternatively, perhaps
+wait_until can just incorporate that logic itself?
