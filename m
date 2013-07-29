@@ -1,80 +1,65 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 16/22] iommu/tegra: smmu: Get "nvidia,swgroup" from DT
-Date: Mon, 29 Jul 2013 13:39:50 +0200
-Message-ID: <20130729.143950.524913713971518557.hdoyu@nvidia.com>
-References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com><1373021097-32420-17-git-send-email-hdoyu@nvidia.com><51E84FFA.8020509@wwwdotorg.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 01/22] [HACK] of: dev_node has struct device pointer
+Date: Mon, 29 Jul 2013 14:13:44 +0100
+Message-ID: <20130729131344.GB6184@e102568-lin.cambridge.arm.com>
+References: <1373021097-32420-2-git-send-email-hdoyu@nvidia.com>
+ <51E5CFBF.5080407@wwwdotorg.org>
+ <20130716231629.GA12189@dhcp-172-17-186-34.nvidia.com>
+ <20130729.131344.1221933042559369096.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51E84FFA.8020509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130729.131344.1221933042559369096.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 18 Jul 2013 22:28:42 +0200:
+Hi Hiroshi,
 
-> On 07/05/2013 04:44 AM, Hiroshi Doyu wrote:
-> > This provides the info about which H/W Accelerators are supported on
-> > Tegra SoC. This info is passed from DT. This is necessary to have the
-> > unified SMMU driver among Tegra SoCs. Instead of using platform data,
-> > DT passes "nvidia,swgroup" now. DT is mandatory in Tegra.
+On Mon, Jul 29, 2013 at 11:13:44AM +0100, Hiroshi Doyu wrote:
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Wed, 17 Jul 2013 01:16:30 +0200:
 > 
-> > diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
+> > * PGP Signed by an unknown key
+> > 
+> > On Tue, Jul 16, 2013 at 04:57:03PM -0600, Stephen Warren wrote:
+> > > On 07/05/2013 04:44 AM, Hiroshi Doyu wrote:
+> > > > To prevent of_platform_populate() from trying to populate duplicate
+> > > > devices if a device has been already populated.
+> > > 
+> > > You need to send drivers/of patches to the DT maintainer and
+> > > devicetree-discuss mailing list.
+> > > 
+> > > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > ---
+> > > > Need to take care of early_platform_devices, or alternative solution.
+> > > 
+> > > I assume that's a TODO item... Are you planning on fleshing out this
+> > > patch to address that issue?
+> >
+> > There was some more discussion about it, which can be found in the
+> > following thread:
+> > 
+> > 	https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-June/036934.html
+> > 
+> > That's one of the last messages and it should have most of the
+> > background. If not you may have to walk up the thread for more context.
+> > In a nutshell I raised the question as to why we can't simply call
+> > of_platform_populate() earlier and side-step all the workarounds that
+> > have found their way into the kernel to side-step the issue of their not
+> > being a struct device associated with the struct device_node.
 > 
-> > +- nvidia,swgroups: A bitmap of supported HardWare Accelerators(HWA).
-> > +  Each bit represents one swgroup. The assignments may be found in header
-> > +  file <dt-bindings/memory/tegra-swgroup.h>.
-> 
-> There needs to be a default for this field if one is not specified so
-> that existing DTs continue to work without modification.
+> This is the thread which Lorenzo started originally. He may have some
+> plan to implement/proceed with this, Lorenzo?
 
-Only enabling PPCS(AHB) can be an option because PPCS has SD/MMC where
-rootfs can be located ususally.
+I was trying to raise the issue and apparently I succeeded. For now,
+I put in place yet-another-temporary-solution to the problem in one
+of the drivers I need for power management, but certainly the problem is
+not solved, and I can't allocate time to do it myself unfortunately.
 
-> How many cells big is this property?
+I am more than happy to review patches though.
 
-64
-
-> Is this really a bitmap of HWAs? Surely it's a bitmap of SMMU client
-> IDs?
-
-At least this info can be used for PMC too.
-
-.....
-> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> 
-> > @@ -265,7 +265,7 @@ struct smmu_client {
-> >  	struct device		*dev;
-> >  	struct list_head	list;
-> >  	struct smmu_as		*as;
-> > -	u32			hwgrp;
-> > +	u64			hwgrp;
-> 
-> Why is that "hwgrp" not "swgrp"? Don't they represent the same
-> thing?
-
-They are same but initial SMMU driver used the term "hwgroup". Should
-this be renamed with another patch or can it be left as it is?
-
-....
-> >  static int __smmu_client_set_hwgrp(struct smmu_client *c,
-> > -				   unsigned long map, int on)
-> > +				   u64 map, int on)
-> >  {
-> >  	int i;
-> >  	struct smmu_as *as = c->as;
-> > @@ -398,12 +400,11 @@ static int __smmu_client_set_hwgrp(struct smmu_client *c,
-> >  	if (!on)
-> >  		map = smmu_client_hwgrp(c);
-> >  
-> > -	for_each_set_bit(i, &map, HWGRP_COUNT) {
-> > +	for_each_set_bit(i, (unsigned long *)&map,
-> > +			 sizeof(map) * BITS_PER_BYTE) {
-> 
-> Why change the type if it just forces you to add this cast?
-
-u32 map; -> u64 map;
-
-for_each_set_bit() expects "unsigned long *" for any length of bitmap.
+Thanks,
+Lorenzo
