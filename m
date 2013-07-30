@@ -1,36 +1,29 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] usb: tegra: Fix typo in tegra20-usb-phy documentation
-Date: Tue, 30 Jul 2013 09:47:57 +0300
-Message-ID: <1375166877-14183-1-git-send-email-mperttunen@nvidia.com>
-References: <20130730063303.GJ9155@radagast>
+Subject: Re: [PATCH] Fix switched around host, otg in tegra20-usb-phy documentation
+Date: Tue, 30 Jul 2013 09:49:09 +0300
+Message-ID: <51F761E5.2030304@nvidia.com>
+References: <20130730063303.GJ9155@radagast> <1375166324-30521-1-git-send-email-mperttunen@nvidia.com> <20130730064412.GL9155@radagast>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130730063303.GJ9155@radagast>
+In-Reply-To: <20130730064412.GL9155@radagast>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The device tree binding documentation for tegra20-usb-phy used to claim
-that the vbus-supply property is required for host phys and optional
-for otg phys. This should be the other way around.
+On 07/30/2013 09:44 AM, Felipe Balbi wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Jul 30, 2013 at 09:38:44AM +0300, Mikko Perttunen wrote:
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> return -ENOLOG;
+>
+> sorry, I can't apply without a commit log. Please mention that the
+> previous commit had a typo which you're fixing.
+>
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-index 59c4854..4c8ade8 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra20-usb-phy.txt
-@@ -48,5 +48,5 @@ Optional properties:
-       peripheral means it is device controller
-       otg means it can operate as either ("on the go")
- 
--VBUS control (required for dr_mode == host, optional for dr_mode == otg):
-+VBUS control (required for dr_mode == otg, optional for dr_mode == host):
-   - vbus-supply: regulator for VBUS
--- 
-1.8.1.5
+Sorry, for some reason I was thinking you could squash it. But of course 
+that's not advisable since the repo is public.
