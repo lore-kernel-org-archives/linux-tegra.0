@@ -1,96 +1,106 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra: add valid function name on DT document
-Date: Tue, 30 Jul 2013 16:34:21 +0530
-Message-ID: <1375182261-30946-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: dts: tegra114: dalmore: fix the irq trigger type
+ of Palmas MFD device
+Date: Tue, 30 Jul 2013 10:24:21 -0600
+Message-ID: <51F7E8B5.6030009@wwwdotorg.org>
+References: <1374663272-9937-1-git-send-email-josephl@nvidia.com>  <51F292D4.9030208@wwwdotorg.org> <1375177568.1239.16.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375177568.1239.16.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add valid property name for the property "nvidia,function" in
-DT binding document of Tegra pincontrol.
+On 07/30/2013 03:46 AM, Joseph Lo wrote:
+> On Fri, 2013-07-26 at 23:16 +0800, Stephen Warren wrote:
+>> On 07/24/2013 04:54 AM, Joseph Lo wrote:
+>>> The IRQ trigger type of Palmas MFD device (tps65913) is edge trigger. The
+>>> wrong configuration would cause an interrupt storm when booting the
+>>> system. Fixing it in DT with appropriate interrupt type.
+>>
+>>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+>>
+>>>  		palmas: tps65913 {
+>>>  			compatible = "ti,palmas";
+>>>  			reg = <0x58>;
+>>> -			interrupts = <0 86 0x4>;
+>>> +			interrupts = <0 86 0x0>;
+>>
+>> The legal values for that final cell are:
+>>
+>>     - bits[3:0] trigger type and level flags
+>>         1 = low-to-high edge triggered
+>>         2 = high-to-low edge triggered
+>>         4 = active high level-sensitive
+>>         8 = active low level-sensitive
+>>
+>> 0 isn't one of those values. This patch can't be correct.
+>>
+>> BTW, this cell should use the constants from
+>> <dt-bindings/interrupt-controller/irq.h>.
+> 
+> Oops. I made a wrong description in the commit message.
+> 
+> Update my test result again.
+> 
+>> 1 = low-to-high edge triggered
+> No IRQ storm, but the system always auto wake up by Palmas RTC.
+>> 2 = high-to-low edge triggered
+> No IRQ storm, but the GIC didn't support this trigger type. The flag
+> would be re-configured as 0x0.
+>> 4 = active high level-sensitive
+> There is a IRQ storm when system booting.
+>> 8 = active low level-sensitive
+> No IRQ strom, but the GIC didn't support this trigger type. The flag
+> would be re-configured as 0x0.
+> 
+>> nvidia, invert-interrupt
+> Removing this can fix IRQ storm too, but the system always auto wake up
+> by Palmas RTC.
+> 
+> So we can only three trigger type here.
+> IRQ_TYPE_NONE 0
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../bindings/pinctrl/nvidia,tegra114-pinmux.txt    |   10 ++++++++++
- .../bindings/pinctrl/nvidia,tegra20-pinmux.txt     |   11 +++++++++++
- .../bindings/pinctrl/nvidia,tegra30-pinmux.txt     |   11 +++++++++++
- 3 files changed, 32 insertions(+), 0 deletions(-)
+That's not a valid value; it just means that the GIC driver doesn't
+explicitly set the type, and the HW probably defaults to active high?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
-index e204d00..b28bdee 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
-@@ -69,6 +69,16 @@ Valid values for pin and group names are:
-     gpio_w2_aud_pw2, gpio_w3_aud_pw3, usb_vbus_en0_pn4, usb_vbus_en1_pn5,
-     sdmmc3_clk_lb_in_pee5, sdmmc3_clk_lb_out_pee4, reset_out_n.
- 
-+The valid names for the nvidia,functions are:
-+    blink, cec, cldvfs, clk12, cpu, dap, dap1, dap2, dev3, displaya,
-+    displaya_alt, displayb, dtv, emc_dll, extperiph1, extperiph2,
-+    extperiph3, gmi, gmi_alt, hda, hsi, i2c1, i2c2, i2c3, i2c4, i2cpwr,
-+    i2s0, i2s1, i2s2, i2s3, i2s4, irda, kbc, nand, nand_alt, owr, pmi,
-+    pwm0, pwm1, pwm2, pwm3, pwron, reset_out_n, rsvd1, rsvd2, rsvd3,
-+    rsvd4, sdmmc1, sdmmc2, sdmmc3, sdmmc4, soc, spdif, spi1, spi2, spi3,
-+    spi4, spi5, spi6, sysclk, trace, uarta, uartb, uartc, uartd, ulpi,
-+    usb, vgp1, vgp2, vgp3, vgp4, vgp5, vgp6, vi, vi_alt1, vi_alt3
-+
-   drive groups:
- 
-     These all support nvidia,pull-down-strength, nvidia,pull-up-strength,
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
-index 683fde9..ba6f2c4 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
-@@ -82,6 +82,7 @@ Valid values for pin and group names are:
-     spdo, spia, spib, spic, spid, spie, spif, spig, spih, uaa, uab, uac, uad,
-     uca, ucb, uda.
- 
-+
-   tristate groups:
- 
-     These only support nvidia,pull.
-@@ -103,6 +104,16 @@ Valid values for pin and group names are:
-     drive_gma, drive_gmb, drive_gmc, drive_gmd, drive_gme, drive_owr,
-     drive_uda.
- 
-+The valid names for the nvidia,functions are:
-+    ahb_clk, apb_clk, audio_sync, crt, dap1, dap2, dap3, dap4, dap5,
-+    displaya, displayb, emc_test0_dll, emc_test1_dll, gmi, gmi_int,
-+    hdmi, i2cp, i2c1, i2c2, i2c3, ide, irda, kbc, mio, mipi_hs, nand,
-+    osc, owr, pcie, plla_out, pllc_out1, pllm_out1, pllp_out2, pllp_out3,
-+    pllp_out4, pwm, pwr_intr, pwr_on, rsvd1, rsvd2, rsvd3, rsvd4, rtck,
-+    sdio1, sdio2, sdio3, sdio4, sflash, spdif, spi1, spi2, spi2_alt,
-+    spi3, spi4, trace, twc, uarta, uartb, uartc, uartd, uarte, ulpi,
-+    vi, vi_sensor_clk, xio
-+
- Example:
- 
- 	pinctrl@70000000 {
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
-index 6f426ed..909d491 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra30-pinmux.txt
-@@ -80,6 +80,17 @@ Valid values for pin and group names are:
-     clk1_req_pee2, hdmi_cec_pee3, clk_32k_in, core_pwr_req, cpu_pwr_req, owr,
-     pwr_int_n.
- 
-+The valid names for the nvidia,functions are:
-+    blink, cec, clk_12m_out, clk_32k_in, core_pwr_req, cpu_pwr_req, crt,
-+    dap, ddr, dev3, displaya, displayb, dtv, extperiph1, extperiph2,
-+    extperiph3, gmi, gmi_alt, hda, hdcp, hdmi, hsi, i2c1, i2c2, i2c3,
-+    i2c4, i2cpwr, i2s0, i2s1, i2s2, i2s3, i2s4, invalid, kbc, mio, nand,
-+    nand_alt, owr, pcie, pwm0, pwm1, pwm2, pwm3, pwr_int_n, rsvd1, rsvd2,
-+    rsvd3, rsvd4, rtck, sata, sdmmc1, sdmmc2, sdmmc3, sdmmc4, spdif, spi1,
-+    spi2, spi2_alt, spi3, spi4, spi5, spi6, sysclk, test, trace, uarta,
-+    uartb, uartc, uartd, uarte, ulpi, vgp1, vgp2, vgp3, vgp4, vgp5, vgp6,
-+    vi, vi_alt1, vi_alt2, vi_alt3
-+
-   drive groups:
- 
-     These all support nvidia,pull-down-strength, nvidia,pull-up-strength,
--- 
-1.7.1.1
+> IRQ_TYPE_EDGE_FALLING 2
+> IRQ_TYPE_LEVEL_LOW 8
+> 
+> But using IRQ_TYPE_EDGE_FALLING or IRQ_TYPE_LEVEL_LOW, it would
+> configure to IRQ_TYPE_NONE. Because the PMIC is low level trigger to PMC
+> on Dalmore, I would prefer to use IRQ_TYPE_LEVEL_LOW just like the v1.
+> Any comments?
+
+Comments no, I just have confusion!
+
+We should simply set this flag to the correct value. Does the PMIC
+output an edge-sensitive or level-sensitive signal? Is the signal
+active-high/rising or active-low/falling? Those are the only things that
+should be considered when selecting the correct value for the IRQ flags.
+This information can be determined by reading the data sheet for the
+PMIC; while the test results you mention above are interesting, the HW
+documentation should drive the value we select here, unless the
+documentation has a known bug.
+
+If there is an IRQ storm, then that sounds like a bug in the code. That
+needs to be fixed too, not worked around by setting an incorrect IRQ
+flags value.
+
+To be clear, here is what I would expect depending on what kind of IRQ
+signal the PMIC outputs:
+
+active-low:
+GIC: active-high, PMC: nvidia,invert-interrupt
+
+active-high:
+GIC: active-high, PMC: NO nvidia,invert-interrupt
+
+falling-edge:
+GIC: rising-edge-triggered, PMC: nvidia,invert-interrupt
+
+rising-edge:
+GIC: rising-edge-triggered, PMC: NO nvidia,invert-interrupt
