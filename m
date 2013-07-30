@@ -1,62 +1,84 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra: add valid function name on DT document
-Date: Tue, 30 Jul 2013 12:16:16 -0600
-Message-ID: <51F802F0.3030907@wwwdotorg.org>
-References: <1375182261-30946-1-git-send-email-ldewangan@nvidia.com>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 08/11] clk: tegra114: add suspend/resume function for
+ tegar_cpu_car_ops
+Date: Tue, 30 Jul 2013 14:21:00 -0700
+Message-ID: <20130730212100.5270.53947@quantum>
+References: <1372152475-18617-1-git-send-email-josephl@nvidia.com>
+ <1372152475-18617-9-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1375182261-30946-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: grant.likely@linaro.org, rob.herring@calxeda.com, linus.walleij@linaro.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1372152475-18617-9-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/30/2013 05:04 AM, Laxman Dewangan wrote:
-> Add valid property name for the property "nvidia,function" in
-> DT binding document of Tegra pincontrol.
+Quoting Joseph Lo (2013-06-25 02:27:52)
+> Adding suspend/resume function for tegra_cpu_car_ops. We only save and
+> restore the setting of the clock of CoreSight. Other clocks still need
+> to be taken care by clock driver.
+> 
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I have applied this to Tegra's for-3.12/dt branch, but I fixed up quite
-a few issues along the way...
+Change looks OK to me, besides Stephen's comments. I was waiting for a
+V2 to hit the list but I never saw it. Any plans?
 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra114-pinmux.txt
+Regards,
+Mike
 
-> @@ -69,6 +69,16 @@ Valid values for pin and group names are:
->      gpio_w2_aud_pw2, gpio_w3_aud_pw3, usb_vbus_en0_pn4, usb_vbus_en1_pn5,
->      sdmmc3_clk_lb_in_pee5, sdmmc3_clk_lb_out_pee4, reset_out_n.
+> ---
+>  drivers/clk/tegra/clk-tegra114.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index dbd0428..cd51d75 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -258,6 +258,12 @@
+>  #define PMC_PLLM_WB0_OVERRIDE 0x1dc
+>  #define PMC_PLLM_WB0_OVERRIDE_2 0x2b0
 >  
-> +The valid names for the nvidia,functions are:
-> +    blink, cec, cldvfs, clk12, cpu, dap, dap1, dap2, dev3, displaya,
-
-For consistency with other lists in the document, I added a blank line
-between those two lines, and reworded the first of those lines to be
-written in the same style as equivalent text for other lists.
-
-> +    displaya_alt, displayb, dtv, emc_dll, extperiph1, extperiph2,
-> +    extperiph3, gmi, gmi_alt, hda, hsi, i2c1, i2c2, i2c3, i2c4, i2cpwr,
-> +    i2s0, i2s1, i2s2, i2s3, i2s4, irda, kbc, nand, nand_alt, owr, pmi,
-> +    pwm0, pwm1, pwm2, pwm3, pwron, reset_out_n, rsvd1, rsvd2, rsvd3,
-> +    rsvd4, sdmmc1, sdmmc2, sdmmc3, sdmmc4, soc, spdif, spi1, spi2, spi3,
-> +    spi4, spi5, spi6, sysclk, trace, uarta, uartb, uartc, uartd, ulpi,
-> +    usb, vgp1, vgp2, vgp3, vgp4, vgp5, vgp6, vi, vi_alt1, vi_alt3
+> +#ifdef CONFIG_PM_SLEEP
+> +static struct cpu_clk_suspend_context {
+> +       u32 clk_csite_src;
+> +} tegra114_cpu_clk_sctx;
+> +#endif
 > +
->    drive groups:
-
-There is a list of valid pin/group names in the document, and that list
-is divided into two sub-lists, for mux and drive groups. You inserted
-the list of function names between the two sub-lists rather than after
-the top-level list. Hence, I moved your additions to the correct place,
-and also removed 2 characters of indent, since it's a top-level list,
-not a sub-list of pin groups.
-
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra20-pinmux.txt
-
-> @@ -82,6 +82,7 @@ Valid values for pin and group names are:
->      spdo, spia, spib, spic, spid, spie, spif, spig, spih, uaa, uab, uac, uad,
->      uca, ucb, uda.
+>  static int periph_clk_enb_refcnt[CLK_OUT_ENB_NUM * 32];
 >  
+>  static void __iomem *clk_base;
+> @@ -2107,9 +2113,29 @@ static void tegra114_disable_cpu_clock(u32 cpu)
+>         /* flow controller would take care in the power sequence. */
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static void tegra114_cpu_clock_suspend(void)
+> +{
+> +       /* switch coresite to clk_m, save off original source */
+> +       tegra114_cpu_clk_sctx.clk_csite_src =
+> +                               readl(clk_base + CLK_SOURCE_CSITE);
+> +       writel(3<<30, clk_base + CLK_SOURCE_CSITE);
+> +}
 > +
->    tristate groups:
-
-I undid that change.
+> +static void tegra114_cpu_clock_resume(void)
+> +{
+> +       writel(tegra114_cpu_clk_sctx.clk_csite_src,
+> +                                       clk_base + CLK_SOURCE_CSITE);
+> +}
+> +#endif
+> +
+>  static struct tegra_cpu_car_ops tegra114_cpu_car_ops = {
+>         .wait_for_reset = tegra114_wait_cpu_in_reset,
+>         .disable_clock  = tegra114_disable_cpu_clock,
+> +#ifdef CONFIG_PM_SLEEP
+> +       .suspend        = tegra114_cpu_clock_suspend,
+> +       .resume         = tegra114_cpu_clock_resume,
+> +#endif
+>  };
+>  
+>  static const struct of_device_id pmc_match[] __initconst = {
+> -- 
+> 1.8.3.1
