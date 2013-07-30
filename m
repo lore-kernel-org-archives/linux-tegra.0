@@ -1,106 +1,63 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: dts: tegra114: dalmore: fix the irq trigger type
- of Palmas MFD device
-Date: Tue, 30 Jul 2013 10:24:21 -0600
-Message-ID: <51F7E8B5.6030009@wwwdotorg.org>
-References: <1374663272-9937-1-git-send-email-josephl@nvidia.com>  <51F292D4.9030208@wwwdotorg.org> <1375177568.1239.16.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 2/9] dma: tegra20-apbdma: move to generic device tree
+ bindings
+Date: Tue, 30 Jul 2013 10:44:18 -0600
+Message-ID: <51F7ED62.4060404@wwwdotorg.org>
+References: <1374639002-16753-1-git-send-email-rizhao@nvidia.com> <1374639002-16753-3-git-send-email-rizhao@nvidia.com> <51F2CDBE.40802@wwwdotorg.org> <20130730030644.GJ15855@rizhao-lap>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375177568.1239.16.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <20130730030644.GJ15855@rizhao-lap>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "djbw-b10kYP2dOMg@public.gmane.org" <djbw-b10kYP2dOMg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/30/2013 03:46 AM, Joseph Lo wrote:
-> On Fri, 2013-07-26 at 23:16 +0800, Stephen Warren wrote:
->> On 07/24/2013 04:54 AM, Joseph Lo wrote:
->>> The IRQ trigger type of Palmas MFD device (tps65913) is edge trigger. The
->>> wrong configuration would cause an interrupt storm when booting the
->>> system. Fixing it in DT with appropriate interrupt type.
+On 07/29/2013 09:06 PM, Richard Zhao wrote:
+> On Sat, Jul 27, 2013 at 03:27:58AM +0800, Stephen Warren wrote:
+>> (Stripping the Cc list a lot)
 >>
->>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+>> On 07/23/2013 10:09 PM, Richard Zhao wrote:
+>>> Update tegra20-apbdma driver to adopt generic DMA device tree bindings.
+>>> It calls of_dma_controller_register() with of_dma_simple_xlate to get
+>>> the generic DMA device tree helper support. The #dma-cells for apbdma
+>>> must be 1, which is slave ID.
+>>>
+>>> The existing nvidia,dma-request-selector still works there, and the
+>>> support will be removed after all clients get converted to generic DMA
+>>> device tree helper.
+
+>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
 >>
->>>  		palmas: tps65913 {
->>>  			compatible = "ti,palmas";
->>>  			reg = <0x58>;
->>> -			interrupts = <0 86 0x4>;
->>> +			interrupts = <0 86 0x0>;
+>>> +static bool tegra_dma_filter_fn(struct dma_chan *dc, void *param)
+>>> +{
+>>> +	if (dc->device->dev->driver == &tegra_dmac_driver.driver) {
+>>> +		struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>>> +		unsigned req = *(unsigned *)param;
+>>> +
+>>> +		tdc->slave_id = req;
+>>> +
+>>> +		return true;
+>>> +	}
+>>> +	return false;
+>>> +}
+>>> +
+>>> +static struct of_dma_filter_info tegra_dma_info = {
+>>> +	.filter_fn = tegra_dma_filter_fn,
+>>> +};
 >>
->> The legal values for that final cell are:
->>
->>     - bits[3:0] trigger type and level flags
->>         1 = low-to-high edge triggered
->>         2 = high-to-low edge triggered
->>         4 = active high level-sensitive
->>         8 = active low level-sensitive
->>
->> 0 isn't one of those values. This patch can't be correct.
->>
->> BTW, this cell should use the constants from
->> <dt-bindings/interrupt-controller/irq.h>.
-> 
-> Oops. I made a wrong description in the commit message.
-> 
-> Update my test result again.
-> 
->> 1 = low-to-high edge triggered
-> No IRQ storm, but the system always auto wake up by Palmas RTC.
->> 2 = high-to-low edge triggered
-> No IRQ storm, but the GIC didn't support this trigger type. The flag
-> would be re-configured as 0x0.
->> 4 = active high level-sensitive
-> There is a IRQ storm when system booting.
->> 8 = active low level-sensitive
-> No IRQ strom, but the GIC didn't support this trigger type. The flag
-> would be re-configured as 0x0.
-> 
->> nvidia, invert-interrupt
-> Removing this can fix IRQ storm too, but the system always auto wake up
-> by Palmas RTC.
-> 
-> So we can only three trigger type here.
-> IRQ_TYPE_NONE 0
+>> Why does this driver need to define a filter function? I thought the
+>> dmaengine's DT support would already match DMA clients/engines based on
+>> the phandle in DT? Isn't the need to pass the slave channel ID into
+>> drivers something pretty fundamental to dmaengine, and hence something
+>> it already supports?
+>
+> of_dma_simple_xlate only pass slave id to filter function. It needs
+> change to pass dt node too. I didn't start work on the common code
+> change yet. Do you think we need to hold it until common code change?
 
-That's not a valid value; it just means that the GIC driver doesn't
-explicitly set the type, and the HW probably defaults to active high?
-
-> IRQ_TYPE_EDGE_FALLING 2
-> IRQ_TYPE_LEVEL_LOW 8
-> 
-> But using IRQ_TYPE_EDGE_FALLING or IRQ_TYPE_LEVEL_LOW, it would
-> configure to IRQ_TYPE_NONE. Because the PMIC is low level trigger to PMC
-> on Dalmore, I would prefer to use IRQ_TYPE_LEVEL_LOW just like the v1.
-> Any comments?
-
-Comments no, I just have confusion!
-
-We should simply set this flag to the correct value. Does the PMIC
-output an edge-sensitive or level-sensitive signal? Is the signal
-active-high/rising or active-low/falling? Those are the only things that
-should be considered when selecting the correct value for the IRQ flags.
-This information can be determined by reading the data sheet for the
-PMIC; while the test results you mention above are interesting, the HW
-documentation should drive the value we select here, unless the
-documentation has a known bug.
-
-If there is an IRQ storm, then that sounds like a bug in the code. That
-needs to be fixed too, not worked around by setting an incorrect IRQ
-flags value.
-
-To be clear, here is what I would expect depending on what kind of IRQ
-signal the PMIC outputs:
-
-active-low:
-GIC: active-high, PMC: nvidia,invert-interrupt
-
-active-high:
-GIC: active-high, PMC: NO nvidia,invert-interrupt
-
-falling-edge:
-GIC: rising-edge-triggered, PMC: nvidia,invert-interrupt
-
-rising-edge:
-GIC: rising-edge-triggered, PMC: NO nvidia,invert-interrupt
+Oh dear, I can't see how the core DT DMA support can work for anyone
+without the ability to limit DMA clients to the specific DMA controller
+that's specified in DT. If that functionality truly is missing, then it
+certainly needs to be added first.
