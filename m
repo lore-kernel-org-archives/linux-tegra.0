@@ -1,131 +1,191 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [RFC] binding for nvec mfd device
-Date: Wed, 31 Jul 2013 18:52:58 +0200
-Message-ID: <2910047.nJ4yDntMXS@ax5200p>
-References: <1416005.VvfEeGuSWa@ax5200p> <6071437.eL7j9JF89s@fb07-iapwap2.physik.uni-giessen.de> <20130731153322.GQ29859@e106331-lin.cambridge.arm.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: dts: tegra114: dalmore: fix the irq trigger type
+ of Palmas MFD device
+Date: Wed, 31 Jul 2013 11:08:10 -0600
+Message-ID: <51F9447A.3090008@wwwdotorg.org>
+References: <1374663272-9937-1-git-send-email-josephl@nvidia.com>  <51F292D4.9030208@wwwdotorg.org>  <1375177568.1239.16.camel@jlo-ubuntu-64.nvidia.com>  <51F7E8B5.6030009@wwwdotorg.org> <1375261841.1231.166.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130731153322.GQ29859-NuALmloUBlrZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+In-Reply-To: <1375261841.1231.166.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 31 July 2013 16:33:22 Mark Rutland wrote:
-> On Wed, Jul 31, 2013 at 03:57:13PM +0100, Marc Dietrich wrote:
-> > Am Mittwoch, 31. Juli 2013, 15:13:14 schrieb Mark Rutland:
-> > > On Mon, Jul 29, 2013 at 10:59:26PM +0100, Stephen Warren wrote:
-> > > > (Also Cc'ing the DT binding maintainers and hence quoting this in
-> > > > full)
-> > > 
-> > > Cheers.
-> > > 
-> > > > On 07/27/2013 07:23 AM, Marc Dietrich wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > this is an RFC for an mfd device introduced here [1]. I didn't got
-> > > > > much
-> > > > > response, except from Stephen, but that bothered me enough already
-> > > > > ;-)
-> > > > > 
-> > > > > I'm going describe the hw again shortly, for a more complete
-> > > > > description, see [1]. What we have here is an EC which communicates
-> > > > > to
-> > > > > the host cpu (NVIDIA Tegra) via I2C. The unusual part is that the EC
-> > > > > is
-> > > > > I2C master while the host cpu is the slave. The EC has several ports
-> > > > > to
-> > > > > connect peripherals like keyboard, mouse, ... and also to control
-> > > > > some
-> > > > > system states (suspend, low bat, power key, ...). Ok, so much for
-> > > > > the
-> > > > > hardware description, now the binding. I think I integrated all
-> > > > > comments made by Stephen in [2].
-> > > > > 
-> > > > > i2c-slave@7000c500 {
-> > > > > 
-> > > > > 	compatible = "nvidia,tegra20-i2c-slave", "simple-bus";
-> > > > 
-> > > > Thinking more about this, I don't think simple-bus is appropriate
-> > > > here,
-> > > > for the same reasons that i2c-master bindings don't specify simple-bus
-> > > > here.
-> > > > 
-> > > > "simple-bus" is usually used in a case where the node in question is
-> > > > pretty much just a simple aggregation of some child nodes, and the
-> > > > child
-> > > > nodes are the same "type" of node as the node that is the simple-bus.
-> > > > For example, when grouping a variety of memory-mapped peripherals
-> > > > together to provide some structure to a larger memory-mapped bus,
-> > > > perhaps with a "ranges" property etc. to do some remapping. In this
-> > > > case, the child nodes are basically independent of the simple-bus
-> > > > node,
-> > > > just relying on it for a bit of DT parsing, but not at run-time.
-> > > 
-> > > I'd expect any simple-bus node to be completely ignorable - if it
-> > > *requires* any configuration to child nodes to be usable, or child node
-> > > require any information from the bus (other than some addresss
-> > > translation via the ranges property), then the node is clearly not
-> > > compatible with the simple-bus concept.
-> > > 
-> > > If you need to instantiate child nodes as Linux platform devices, this
-> > > should be done in the driver for the bus. Relying on simple-bus to do
-> > > this is a hack.
-> > 
-> > ok, I'll rip this off from both nodes. I guess I should use
-> > of_platform_populate instead and keeping the compatible node in the childs
-> > - right?
-> 
-> I believe that would be a correct way of handling this.
+On 07/31/2013 03:10 AM, Joseph Lo wrote:
+> On Wed, 2013-07-31 at 00:24 +0800, Stephen Warren wrote:
+>> On 07/30/2013 03:46 AM, Joseph Lo wrote:
+>>> On Fri, 2013-07-26 at 23:16 +0800, Stephen Warren wrote:
+>>>> On 07/24/2013 04:54 AM, Joseph Lo wrote:
+>>>>> The IRQ trigger type of Palmas MFD device (tps65913) is edge trig=
+ger. The
+>>>>> wrong configuration would cause an interrupt storm when booting t=
+he
+>>>>> system. Fixing it in DT with appropriate interrupt type.
+>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/bo=
+ot/dts/tegra114-dalmore.dts
+>>>>
+>>>>>  		palmas: tps65913 {
+>>>>>  			compatible =3D "ti,palmas";
+>>>>>  			reg =3D <0x58>;
+>>>>> -			interrupts =3D <0 86 0x4>;
+>>>>> +			interrupts =3D <0 86 0x0>;
+>>>>
+>>>> The legal values for that final cell are:
+>>>>
+>>>>     - bits[3:0] trigger type and level flags
+>>>>         1 =3D low-to-high edge triggered
+>>>>         2 =3D high-to-low edge triggered
+>>>>         4 =3D active high level-sensitive
+>>>>         8 =3D active low level-sensitive
+>>>>
+>>>> 0 isn't one of those values. This patch can't be correct.
+>>>>
+>>>> BTW, this cell should use the constants from
+>>>> <dt-bindings/interrupt-controller/irq.h>.
+>>>
+>>> Oops. I made a wrong description in the commit message.
+>>>
+>>> Update my test result again.
+>>>
+>>>> 1 =3D low-to-high edge triggered
+>>> No IRQ storm, but the system always auto wake up by Palmas RTC.
+>>>> 2 =3D high-to-low edge triggered
+>>> No IRQ storm, but the GIC didn't support this trigger type. The fla=
+g
+>>> would be re-configured as 0x0.
+>>>> 4 =3D active high level-sensitive
+>>> There is a IRQ storm when system booting.
+>>>> 8 =3D active low level-sensitive
+>>> No IRQ strom, but the GIC didn't support this trigger type. The fla=
+g
+>>> would be re-configured as 0x0.
+>>>
+>>>> nvidia, invert-interrupt
+>>> Removing this can fix IRQ storm too, but the system always auto wak=
+e up
+>>> by Palmas RTC.
+>>>
+>>> So we can only three trigger type here.
+>>> IRQ_TYPE_NONE 0
+>>
+>> That's not a valid value; it just means that the GIC driver doesn't
+>> explicitly set the type, and the HW probably defaults to active high=
+?
+>>
+> oh,yes. May be.
+>=20
+>>> IRQ_TYPE_EDGE_FALLING 2
+>>> IRQ_TYPE_LEVEL_LOW 8
+>>>
+>>> But using IRQ_TYPE_EDGE_FALLING or IRQ_TYPE_LEVEL_LOW, it would
+>>> configure to IRQ_TYPE_NONE. Because the PMIC is low level trigger t=
+o PMC
+>>> on Dalmore, I would prefer to use IRQ_TYPE_LEVEL_LOW just like the =
+v1.
+>>> Any comments?
+>>
+>> Comments no, I just have confusion!
+>>
+>> We should simply set this flag to the correct value. Does the PMIC
+>> output an edge-sensitive or level-sensitive signal? Is the signal
+>> active-high/rising or active-low/falling? Those are the only things =
+that
+>> should be considered when selecting the correct value for the IRQ fl=
+ags.
+>> This information can be determined by reading the data sheet for the
+>> PMIC; while the test results you mention above are interesting, the =
+HW
+>> documentation should drive the value we select here, unless the
+>> documentation has a known bug.
+>>
+> OK, the PMIC(Palmas here) only support level-sensitive and default is
+> active low.
+>=20
+> But it was being configured as active high in the Dalmore's DT. And y=
+es,
+> it can work fine with the configuration you mentioned below. The susp=
+end
+> mode of LP1/LP2 that could be woken up by IRQ is OK in this case.
+>=20
+> But if checking the PMU_INT signal in the schematic of Dalmore, it on=
+ly
+> supports active low. It was connected to !PWR_INT of Tegra114 that wi=
+ll
+> cause the system wake up automatically when syspended to LP0 if activ=
+e
+> high.
+>=20
+> That's why my change is setting the IRQ type of PMIC to active low an=
+d
+> keep the "nvidia,invert-interrupt". And it can make the LP0/1/2 work
+> proper.
 
-Great. Thinking about a really generic dt representation of an i2c bus (with 
-multi-slave, slave and master controllers can act in parallel), something like 
-this came into my mind:
+OK, the explanation all basically makes sense. We do clearly need to fi=
+x
+the DT so that the Palmas IRQ signal polarity matches what we've
+configured the Tegra PMC/GIC to expect.
 
+However, your patch was:
 
-i2c@xxxxxxx {
-		compatible = "nvidia,tegra-i2c", "simple-bus"; /* This time it is 
-truly a simple bus, because there is no higher control instance */
+		palmas:=C2=B7tps65913=C2=B7{
+			compatible=C2=B7=3D=C2=B7"ti,palmas";
+			reg=C2=B7=3D=C2=B7<0x58>;
+-			interrupts=C2=B7=3D=C2=B7<0=C2=B786=C2=B70x4>;
++			interrupts=C2=B7=3D=C2=B7<0=C2=B786=C2=B70x0>;
 
-		... common master/slave resources ...
+0 isn't valid. The replacement shouldn't be 0, but instead should be
+IRQ_TYPE_LEVEL_LOW.
 
-		master {
-				compatible = "nvidia,tegra-i2c-master";
-				... resources ??? ....
+Alternatively, it sounds fine to leave that interrupts property as-is,
+and remove the pmc's nvidia,invert-interrupt. Either sound like they
+should work fine, although perhaps one polarity might cause glitches
+before the inversion/... is programmed in the PMIC and/or based on
+whatever pull-ups/downs are on the board?
 
-			 	client1@xx {
-						...
-				};
+>> If there is an IRQ storm, then that sounds like a bug in the code. T=
+hat
+>> needs to be fixed too, not worked around by setting an incorrect IRQ
+>> flags value.
+>>
+> By the way, don't you see IRQ storm like below(You use "if" here)?
+>=20
+> [   87.054085] irq 118: nobody cared (try booting with the "irqpoll" =
+option)
+> [   87.060862] CPU: 0 PID: 41 Comm: irq/118-palmas Not tainted 3.11.0=
+-rc2-next-20130722-00011-gadb202a-dirty #11
+> [   87.070811] [<c0012161>] (unwind_backtrace+0x1/0x98) from [<c000f0=
+7b>] (show_stack+0xb/0xc)
+> [   87.079134] [<c000f07b>] (show_stack+0xb/0xc) from [<c038af89>] (d=
+ump_stack+0x59/0x8c)
+> [   87.087035] [<c038af89>] (dump_stack+0x59/0x8c) from [<c005eef9>] =
+(__report_bad_irq+0x15/0x80)
+> [   87.095676] [<c005eef9>] (__report_bad_irq+0x15/0x80) from [<c005f=
+22d>] (note_interrupt+0x139/0x17c)
+> [   87.104782] [<c005f22d>] (note_interrupt+0x139/0x17c) from [<c005e=
+4d7>] (irq_thread+0xc3/0xd4)
+> [   87.113424] [<c005e4d7>] (irq_thread+0xc3/0xd4) from [<c002f87b>] =
+(kthread+0x6b/0x74)
+> [   87.121237] [<c002f87b>] (kthread+0x6b/0x74) from [<c000ccfd>] (re=
+t_from_fork+0x11/0x34)
+> [   87.121325] vdd-sensor-2v85: disabling
+> [   87.133064] handlers:
+> [   87.135335] [<c005dd85>] irq_default_primary_handler threaded [<c0=
+1dbd99>] regmap_irq_thread
+> [   87.143762] Disabling IRQ #118
 
-			 	client2@xx {
-						...
-				};
+I don't recall seeing that.
 
-				...
-		}
+>            CPU0       CPU1       CPU2       CPU3      =20
+> ...
+>  85:     804308          0          0          0       GIC  85  i2c
+> 118:     100001          0          0          0       GIC 118  palma=
+s
+> 122:        152          0          0          0       GIC 122  seria=
+l
+> ...
 
-		slave1@xxx {
-				compatible = "nvidia,tegra-i2c-slave";
-				... resources ??? ...
-
-				client1@xx {
-						...
-				};
-		};
-
-		slave2@xxx {
-				compatible = "nvidia,tegra-i2c-slave";
-				... resources ??? ...
-
-				client1@xx {
-						...
-				};
-
-		};
-
-		....
-};
-
-Marc
+I didn't check that.
