@@ -1,38 +1,92 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: [PATCH 1/6] usb: host: add has_tdi_phy_lpm capability bit
-Date: Wed, 31 Jul 2013 14:35:47 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1307311435340.1546-100000@iolanthe.rowland.org>
-References: <1375292522-7855-2-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+Subject: Re: [PATCH 2/2] ARM: dts: USB for Tegra114 Dalmore
+Date: Wed, 31 Jul 2013 22:31:24 +0300
+Message-ID: <51F9660C.6090604@iki.fi>
+References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com> <1375292543-7896-3-git-send-email-ttynkkynen@nvidia.com> <51F9550F.3080503@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375292522-7855-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Matthieu CASTET <matthieu.castet-ITF29qwbsa/QT0dZR+AlfA@public.gmane.org>, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51F9550F.3080503@cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Tuomas Tynkkynen <ttynkkynen@nvidia.com>, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 31 Jul 2013, Tuomas Tynkkynen wrote:
+Hello,
 
-> The has_hostpc capability bit indicates that the host controller has the
-> HOSTPC register extensions, but at the same time enables clock disabling
-> power saving features with the PHY Low Power Clock Disable (PHCD) bit.
-> 
-> However, some host controllers have the HOSTPC extensions but don't
-> support the low-power feature, so the PHCD bit must not be set on those
-> controllers. Add a separate capability bit for the low-power feature
-> instead, and change all existing users of has_hostpc to use this new
-> capability bit.
-> 
-> The idea for this commit is taken from an old 2012 commit that never got
-> merged ("disociate chipidea PHY low power suspend control from hostpc")
-> 
-> Inspired-by: Matthieu CASTET <matthieu.castet-ITF29qwbsa/QT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 31/07/13 21:18, Sergei Shtylyov wrote:
+> Hello.
+>
+> On 07/31/2013 09:42 PM, Tuomas Tynkkynen wrote:
+>
+>> From: Mikko Perttunen <mperttunen@nvidia.com>
+>
+>> Device tree entries for the three EHCI controllers on Tegra114.
+>> Enables the the third controller (USB host) on Dalmore.
+>
+>     I would have done the board patch separately from the SoC one.
+>
+>> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+> [...]
+>
+>> diff --git a/arch/arm/boot/dts/tegra114.dtsi
+>> b/arch/arm/boot/dts/tegra114.dtsi
+>> index abf6c40..2905145 100644
+>> --- a/arch/arm/boot/dts/tegra114.dtsi
+>> +++ b/arch/arm/boot/dts/tegra114.dtsi
+>> @@ -430,6 +430,68 @@
+>>           status = "disable";
+>>       };
+>>
+>> +    usb@7d000000 {
+>> +        compatible = "nvidia,tegra30-ehci", "usb-ehci";
+>> +        reg = <0x7d000000 0x4000>;
+>> +        interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+>> +        phy_type = "utmi";
+>> +        clocks = <&tegra_car TEGRA114_CLK_USBD>;
+>> +        nvidia,phy = <&phy1>;
+>> +        status = "disabled";
+>> +    };
+>> +
+>> +    phy1: usb-phy@7d000000 {
+>
+>     At the same address as the previous node?
 
-Acked-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Yes. The first node is for the EHCI driver and the second for the PHY 
+driver. There is some overlap in the exact registers used, so both 
+drives map the whole USB controller block.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>> +        compatible = "nvidia,tegra30-usb-phy";
+>> +        reg = <0x7d000000 0x4000 0x7d000000 0x4000>;
+>
+>     Hm, there must be some mistake: two similar register ranges.
+
+The second range is used to configure the UTMI pad registers. All the 
+UTMI pad registers are located in the first USB controller's range.
+
+>> +    usb@7d008000 {
+>> +        compatible = "nvidia,tegra30-ehci", "usb-ehci";
+>> +        reg = <0x7d008000 0x4000>;
+>> +        interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+>> +        phy_type = "utmi";
+>> +        clocks = <&tegra_car TEGRA114_CLK_USB3>;
+>> +        nvidia,phy = <&phy3>;
+>> +        status = "disabled";
+>> +    };
+>> +
+>> +    phy3: usb-phy@7d008000 {
+>
+>     Again at the same address as previous node?
+>
+>> +        compatible = "nvidia,tegra30-usb-phy";
+>> +        reg = <0x7d008000 0x4000 0x7d000000 0x4000>;
+>
+>     Second range conflicts with previous nodes.
+>
+> WBR, Sergei
+
+All these entries mapping the same address are expected. See
+arch/arm/boot/dts/tegra20.dtsi for an existing example of Tegra USB 
+bindings.
