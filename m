@@ -1,76 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: allow DEBUG_UNCOMPRESS for Tegra
-Date: Tue, 30 Jul 2013 16:28:13 -0600
-Message-ID: <1375223293-13115-1-git-send-email-swarren@wwwdotorg.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.10-rc5
+Date: Wed, 31 Jul 2013 00:53:51 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1307310037530.22504@utopia.booyaka.com>
+References: <alpine.DEB.2.02.1306111220490.22645@utopia.booyaka.com> <51B72D2A.6040909@arm.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51B72D2A.6040909-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jonathan Austin <jonathan.austin-5wv7dgnIgG8@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Jonathan,
 
-DEBUG_UNCOMPRESS was previously disallowed for Tegra due to tegra.S's
-use of global data that was not linked into the decompressor. Solve this
-by declaring this symbol in tegra.S when it is being built into the
-decompressor. For the kernel proper, leave the declaration in
-mach-tegra/common.c as explained in the comment.
+I'm sorry it's taken me so long to respond -
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/Kconfig.debug         |  3 +--
- arch/arm/include/debug/tegra.S | 28 ++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 2 deletions(-)
+On Tue, 11 Jun 2013, Jonathan Austin wrote:
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 38c92d7..d8ff7f7 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -1046,8 +1046,7 @@ config DEBUG_UART_8250_FLOW_CONTROL
- config DEBUG_UNCOMPRESS
- 	bool
- 	depends on ARCH_MULTIPLATFORM
--	default y if DEBUG_LL && !DEBUG_OMAP2PLUS_UART && \
--		     !DEBUG_TEGRA_UART
-+	default y if DEBUG_LL && !DEBUG_OMAP2PLUS_UART
- 	help
- 	  This option influences the normal decompressor output for
- 	  multiplatform kernels.  Normally, multiplatform kernels disable
-diff --git a/arch/arm/include/debug/tegra.S b/arch/arm/include/debug/tegra.S
-index 883d7c2..1ebe9aa 100644
---- a/arch/arm/include/debug/tegra.S
-+++ b/arch/arm/include/debug/tegra.S
-@@ -221,3 +221,31 @@
- 1002:
- #endif
- 		.endm
-+
-+/*
-+ * Storage for the state maintained by the macros above.
-+ *
-+ * In the kernel proper, this data is located in arch/arm/mach-tegra/common.c.
-+ * That's because this header is included from multiple files, and we only
-+ * want a single copy of the data. In particular, the UART probing code above
-+ * assumes it's running using physical addresses. This is true when this file
-+ * is included from head.o, but not when included from debug.o. So we need
-+ * to share the probe results between the two copies, rather than having
-+ * to re-run the probing again later.
-+ *
-+ * In the decompressor, we put the symbol/storage right here, since common.c
-+ * isn't included in the decompressor build. This symbol gets put in .text
-+ * even though it's really data, since .data is discarded from the
-+ * decompressor. Luckily, .text is writeable in the decompressor!
-+ */
-+#if defined(ZIMAGE)
-+tegra_uart_config:
-+	/* Debug UART initialization required */
-+	.word 1
-+	/* Debug UART physical address */
-+	.word 0
-+	/* Debug UART virtual address */
-+	.word 0
-+	/* Scratch space for debug macro */
-+	.word 0
-+#endif
--- 
-1.8.1.5
+> On 11/06/13 13:24, Paul Walmsley wrote:
+> > 
+> > Here are some basic Tegra test results for Linux v3.10-rc5.
+> > Logs and other details at:
+> > 
+> >      http://www.pwsan.com/tegra/testlogs/test_v3.10-rc5/20130611044210/
+> > 
+> 
+> These automated tests look pretty useful - is this some well known tool that's
+> passed me by, or something you've written yourself? Something in between?
+
+A little of both.  The OMAP version of this is built on modified versions 
+of Minicom and dtach, along with some Perl and shell scripts.  An early, 
+extremely ugly version has been released to a few people under the GPL.  
+A wider release is planned, once it's cleaned up.  The code changes 
+required by the recent DT boot changes and kernel message text changes 
+have consumed a large amount of time here.
+
+If there's interest in the serial interaction scripts, e.g., the scripts 
+that do PM testing once the board is booted, such as
+
+http://www.pwsan.com/omap/testlogs/test_v3.11-rc1/20130721020309/pm/37xxevm/
+
+those can be released sooner.  Maybe folks can even contribute new test 
+scenarios for use in the testbed?
+
+> Particularly, does whatever you have handle boards on serial ports
+> automagically, with a way to add different interfaces for resetting locked
+> boards etc?
+
+All the console captures and command interaction is from the board serial 
+consoles.  The board power inputs are connected to Ethernet-controlled AC 
+or DC relays, and are automatically controlled by the scripts.  
+
+
+Thanks for the interest,
+
+- Paul
