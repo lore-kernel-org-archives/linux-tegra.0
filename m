@@ -1,191 +1,81 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 4/6] usb: phy: tegra: Program new PHY parameters
-Date: Wed, 31 Jul 2013 20:42:00 +0300
-Message-ID: <1375292522-7855-5-git-send-email-ttynkkynen@nvidia.com>
-References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
+From: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: dts: USB for Tegra114 Dalmore
+Date: Wed, 31 Jul 2013 22:18:55 +0400
+Message-ID: <51F9550F.3080503@cogentembedded.com>
+References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com> <1375292543-7896-3-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375292543-7896-3-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra30 TRM recommends configuration of certain PHY parameters for
-optimal quality. Program the following registers based on device tree
-parameters:
+Hello.
 
-- UTMIP_XCVR_HSSLEW: HS slew rate control.
-- UTMIP_HSSQUELCH_LEVEL: HS squelch detector level
-- UTMIP_HSDISCON_LEVEL: HS disconnect detector level.
+On 07/31/2013 09:42 PM, Tuomas Tynkkynen wrote:
 
-These registers exist in Tegra20, but programming them hasn't been
-necessary, so these parameters won't be set on Tegra20 to keep the
-device trees backward compatible.
+> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Additionally, the UTMIP_XCVR_SETUP parameter can be set from fuses
-instead of a software-programmed value, as the optimal value can
-vary between invidual boards. The boolean property
-nvidia,xcvr-setup-use-fuses can be used to enable this behaviour.
+> Device tree entries for the three EHCI controllers on Tegra114.
+> Enables the the third controller (USB host) on Dalmore.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
----
- drivers/usb/phy/phy-tegra-usb.c   | 75 +++++++++++++++++++++++++++++----------
- include/linux/usb/tegra_usb_phy.h |  4 +++
- 2 files changed, 61 insertions(+), 18 deletions(-)
+    I would have done the board patch separately from the SoC one.
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 85ec70e..5a34b45 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -99,11 +99,15 @@
- #define   UTMIP_FORCE_PD2_POWERDOWN		(1 << 16)
- #define   UTMIP_FORCE_PDZI_POWERDOWN		(1 << 18)
- #define   UTMIP_XCVR_LSBIAS_SEL			(1 << 21)
--#define   UTMIP_XCVR_HSSLEW_MSB(x)		(((x) & 0x7f) << 25)
-+#define   UTMIP_XCVR_HSSLEW(x)			(((x) & 0x3) << 4)
-+#define   UTMIP_XCVR_HSSLEW_MSB(x)		((((x) & 0x1ff) >> 2) << 25)
- 
- #define UTMIP_BIAS_CFG0		0x80c
- #define   UTMIP_OTGPD			(1 << 11)
- #define   UTMIP_BIASPD			(1 << 10)
-+#define   UTMIP_HSSQUELCH_LEVEL(x)	(((x) & 0x3) << 0)
-+#define   UTMIP_HSDISCON_LEVEL(x)	(((x) & 0x3) << 2)
-+#define   UTMIP_HSDISCON_LEVEL_MSB(x)	((((x) & 0x4) >> 2) << 24)
- 
- #define UTMIP_HSRX_CFG0		0x810
- #define   UTMIP_ELASTIC_LIMIT(x)	(((x) & 0x1f) << 10)
-@@ -255,6 +259,7 @@ static void utmip_pad_power_on(struct tegra_usb_phy *phy)
- {
- 	unsigned long val, flags;
- 	void __iomem *base = phy->pad_regs;
-+	struct tegra_utmip_config *config = phy->config;
- 
- 	clk_prepare_enable(phy->pad_clk);
- 
-@@ -262,7 +267,14 @@ static void utmip_pad_power_on(struct tegra_usb_phy *phy)
- 
- 	if (utmip_pad_count++ == 0) {
- 		val = readl(base + UTMIP_BIAS_CFG0);
--		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD);
-+		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD |
-+			UTMIP_HSSQUELCH_LEVEL(~0) |
-+			UTMIP_HSDISCON_LEVEL(~0) |
-+			UTMIP_HSDISCON_LEVEL_MSB(~0));
-+
-+		val |= UTMIP_HSSQUELCH_LEVEL(config->hssquelch_level);
-+		val |= UTMIP_HSDISCON_LEVEL(config->hsdiscon_level);
-+		val |= UTMIP_HSDISCON_LEVEL_MSB(config->hsdiscon_level);
- 		writel(val, base + UTMIP_BIAS_CFG0);
- 	}
- 
-@@ -432,11 +444,16 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 		 UTMIP_FORCE_PDZI_POWERDOWN | UTMIP_XCVR_LSBIAS_SEL |
- 		 UTMIP_XCVR_SETUP(~0) | UTMIP_XCVR_SETUP_MSB(~0) |
- 		 UTMIP_XCVR_LSFSLEW(~0) | UTMIP_XCVR_LSRSLEW(~0) |
--		 UTMIP_XCVR_HSSLEW_MSB(~0));
--	val |= UTMIP_XCVR_SETUP(config->xcvr_setup);
--	val |= UTMIP_XCVR_SETUP_MSB(config->xcvr_setup);
-+		 UTMIP_XCVR_HSSLEW(~0) | UTMIP_XCVR_HSSLEW_MSB(~0));
-+
-+	if (!config->xcvr_setup_use_fuses) {
-+		val |= UTMIP_XCVR_SETUP(config->xcvr_setup);
-+		val |= UTMIP_XCVR_SETUP_MSB(config->xcvr_setup);
-+	}
- 	val |= UTMIP_XCVR_LSFSLEW(config->xcvr_lsfslew);
- 	val |= UTMIP_XCVR_LSRSLEW(config->xcvr_lsrslew);
-+	val |= UTMIP_XCVR_HSSLEW(config->xcvr_hsslew);
-+	val |= UTMIP_XCVR_HSSLEW_MSB(config->xcvr_hsslew);
- 	writel(val, base + UTMIP_XCVR_CFG0);
- 
- 	val = readl(base + UTMIP_XCVR_CFG1);
-@@ -450,14 +467,14 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- 	val |= UTMIP_BIAS_PDTRK_COUNT(0x5);
- 	writel(val, base + UTMIP_BIAS_CFG1);
- 
--	if (phy->is_legacy_phy) {
--		val = readl(base + UTMIP_SPARE_CFG0);
--		if (phy->mode == USB_DR_MODE_PERIPHERAL)
--			val &= ~FUSE_SETUP_SEL;
--		else
--			val |= FUSE_SETUP_SEL;
--		writel(val, base + UTMIP_SPARE_CFG0);
--	} else {
-+	val = readl(base + UTMIP_SPARE_CFG0);
-+	if (config->xcvr_setup_use_fuses)
-+		val |= FUSE_SETUP_SEL;
-+	else
-+		val &= ~FUSE_SETUP_SEL;
-+	writel(val, base + UTMIP_SPARE_CFG0);
-+
-+	if (!phy->is_legacy_phy) {
- 		val = readl(base + USB_SUSP_CTRL);
- 		val |= UTMIP_PHY_ENABLE;
- 		writel(val, base + USB_SUSP_CTRL);
-@@ -888,11 +905,6 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
- 	if (err < 0)
- 		return err;
- 
--	err = read_utmi_param(pdev, "nvidia,xcvr-setup",
--		&config->xcvr_setup);
--	if (err < 0)
--		return err;
--
- 	err = read_utmi_param(pdev, "nvidia,xcvr-lsfslew",
- 		&config->xcvr_lsfslew);
- 	if (err < 0)
-@@ -903,6 +915,33 @@ static int utmi_phy_probe(struct tegra_usb_phy *tegra_phy,
- 	if (err < 0)
- 		return err;
- 
-+	if (tegra_phy->soc_config->requires_extra_tuning_parameters) {
-+		err = read_utmi_param(pdev, "nvidia,xcvr-hsslew",
-+			&config->xcvr_hsslew);
-+		if (err < 0)
-+			return err;
-+
-+		err = read_utmi_param(pdev, "nvidia,hssquelch-level",
-+			&config->hssquelch_level);
-+		if (err < 0)
-+			return err;
-+
-+		err = read_utmi_param(pdev, "nvidia,hsdiscon-level",
-+			&config->hsdiscon_level);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	config->xcvr_setup_use_fuses = of_property_read_bool(
-+		pdev->dev.of_node, "nvidia,xcvr-setup-use-fuses");
-+
-+	if (!config->xcvr_setup_use_fuses) {
-+		err = read_utmi_param(pdev, "nvidia,xcvr-setup",
-+			&config->xcvr_setup);
-+		if (err < 0)
-+			return err;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index d3a63c3..1de16c3 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -41,9 +41,13 @@ struct tegra_utmip_config {
- 	u8 elastic_limit;
- 	u8 idle_wait_delay;
- 	u8 term_range_adj;
-+	bool xcvr_setup_use_fuses;
- 	u8 xcvr_setup;
- 	u8 xcvr_lsfslew;
- 	u8 xcvr_lsrslew;
-+	u8 xcvr_hsslew;
-+	u8 hssquelch_level;
-+	u8 hsdiscon_level;
- };
- 
- enum tegra_usb_phy_port_speed {
--- 
-1.8.1.5
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[...]
+
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index abf6c40..2905145 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -430,6 +430,68 @@
+>   		status = "disable";
+>   	};
+>
+> +	usb@7d000000 {
+> +		compatible = "nvidia,tegra30-ehci", "usb-ehci";
+> +		reg = <0x7d000000 0x4000>;
+> +		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+> +		phy_type = "utmi";
+> +		clocks = <&tegra_car TEGRA114_CLK_USBD>;
+> +		nvidia,phy = <&phy1>;
+> +		status = "disabled";
+> +	};
+> +
+> +	phy1: usb-phy@7d000000 {
+
+    At the same address as the previous node?
+
+> +		compatible = "nvidia,tegra30-usb-phy";
+> +		reg = <0x7d000000 0x4000 0x7d000000 0x4000>;
+
+    Hm, there must be some mistake: two similar register ranges.
+
+> +	usb@7d008000 {
+> +		compatible = "nvidia,tegra30-ehci", "usb-ehci";
+> +		reg = <0x7d008000 0x4000>;
+> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+> +		phy_type = "utmi";
+> +		clocks = <&tegra_car TEGRA114_CLK_USB3>;
+> +		nvidia,phy = <&phy3>;
+> +		status = "disabled";
+> +	};
+> +
+> +	phy3: usb-phy@7d008000 {
+
+    Again at the same address as previous node?
+
+> +		compatible = "nvidia,tegra30-usb-phy";
+> +		reg = <0x7d008000 0x4000 0x7d000000 0x4000>;
+
+    Second range conflicts with previous nodes.
+
+WBR, Sergei
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
