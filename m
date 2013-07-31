@@ -1,109 +1,38 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 6/6] usb: host: tegra: Tegra30 support
-Date: Wed, 31 Jul 2013 20:42:02 +0300
-Message-ID: <1375292522-7855-7-git-send-email-ttynkkynen@nvidia.com>
-References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra30: Don't wait for PLL_U lock bit
+Date: Wed, 31 Jul 2013 20:42:31 +0300
+Message-ID: <1375292551-7933-2-git-send-email-ttynkkynen@nvidia.com>
+References: <1375292551-7933-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375292551-7933-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra30 EHCI controller is mostly compatible with the Tegra20
-controller, except Tegra30 includes the HOSTPC register extension.
-The has_hostpc capability bit must be set in the ehci_hcd structure if
-the controller has such extensions. The new tegra_ehci_soc_config
-structure is added to describe the differences between the SoCs.
+The lock bit on PLL_U does not seem to be working correctly and
+sometimes never gets set when waiting for the PLL to come up.
+Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/usb/host/ehci-tegra.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index db8031f..c0d1f27 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -25,6 +25,7 @@
- #include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -50,6 +51,10 @@
- 
- static struct hc_driver __read_mostly tegra_ehci_hc_driver;
- 
-+struct tegra_ehci_soc_config {
-+	bool has_hostpc;
-+};
-+
- static int (*orig_hub_control)(struct usb_hcd *hcd,
- 				u16 typeReq, u16 wValue, u16 wIndex,
- 				char *buf, u16 wLength);
-@@ -320,8 +325,24 @@ static void tegra_ehci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
- 	free_dma_aligned_buffer(urb);
- }
- 
-+static const struct tegra_ehci_soc_config tegra30_soc_config = {
-+	.has_hostpc = true,
-+};
-+
-+static const struct tegra_ehci_soc_config tegra20_soc_config = {
-+	.has_hostpc = false,
-+};
-+
-+static struct of_device_id tegra_ehci_of_match[] = {
-+	{ .compatible = "nvidia,tegra30-ehci", .data = &tegra30_soc_config },
-+	{ .compatible = "nvidia,tegra20-ehci", .data = &tegra20_soc_config },
-+	{ },
-+};
-+
- static int tegra_ehci_probe(struct platform_device *pdev)
- {
-+	const struct of_device_id *match;
-+	const struct tegra_ehci_soc_config *soc_config;
- 	struct resource *res;
- 	struct usb_hcd *hcd;
- 	struct ehci_hcd *ehci;
-@@ -330,6 +351,13 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 	int irq;
- 	struct usb_phy *u_phy;
- 
-+	match = of_match_device(tegra_ehci_of_match, &pdev->dev);
-+	if (!match) {
-+		dev_err(&pdev->dev, "Error: No device match found\n");
-+		return -ENODEV;
-+	}
-+	soc_config = (struct tegra_ehci_soc_config *)match->data;
-+
- 	/* Right now device-tree probed devices don't get dma_mask set.
- 	 * Since shared usb code relies on it, set it here for now.
- 	 * Once we have dma capability bindings this can go away.
-@@ -391,6 +419,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
- 		goto cleanup_clk_en;
- 	}
- 	ehci->caps = hcd->regs + 0x100;
-+	ehci->has_hostpc = soc_config->has_hostpc;
- 
- 	err = usb_phy_init(hcd->phy);
- 	if (err) {
-@@ -468,11 +497,6 @@ static void tegra_ehci_hcd_shutdown(struct platform_device *pdev)
- 		hcd->driver->shutdown(hcd);
- }
- 
--static struct of_device_id tegra_ehci_of_match[] = {
--	{ .compatible = "nvidia,tegra20-ehci", },
--	{ },
--};
--
- static struct platform_driver tegra_ehci_driver = {
- 	.probe		= tegra_ehci_probe,
- 	.remove		= tegra_ehci_remove,
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index e2c6ca0..9103fc8 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -971,7 +971,7 @@ static void __init tegra30_pll_init(void)
+ 	/* PLLU */
+ 	clk = tegra_clk_register_pll("pll_u", "pll_ref", clk_base, pmc_base, 0,
+ 			    0, &pll_u_params, TEGRA_PLLU | TEGRA_PLL_HAS_CPCON |
+-			    TEGRA_PLL_SET_LFCON | TEGRA_PLL_USE_LOCK,
++			    TEGRA_PLL_SET_LFCON,
+ 			    pll_u_freq_table,
+ 			    NULL);
+ 	clk_register_clkdev(clk, "pll_u", NULL);
 -- 
 1.8.1.5
