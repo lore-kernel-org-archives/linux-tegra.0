@@ -1,45 +1,107 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [RFC] binding for nvec mfd device
-Date: Wed, 31 Jul 2013 14:57:32 -0600
-Message-ID: <51F97A3C.9010409@wwwdotorg.org>
-References: <1416005.VvfEeGuSWa@ax5200p> <51F6E5BE.3080400@wwwdotorg.org> <20130731141314.GO29859@e106331-lin.cambridge.arm.com>
+Date: Wed, 31 Jul 2013 15:03:14 -0600
+Message-ID: <51F97B92.1040707@wwwdotorg.org>
+References: <1416005.VvfEeGuSWa@ax5200p> <6071437.eL7j9JF89s@fb07-iapwap2.physik.uni-giessen.de> <20130731153322.GQ29859@e106331-lin.cambridge.arm.com> <2910047.nJ4yDntMXS@ax5200p>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130731141314.GO29859-NuALmloUBlrZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+In-Reply-To: <2910047.nJ4yDntMXS@ax5200p>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/31/2013 08:13 AM, Mark Rutland wrote:
-> On Mon, Jul 29, 2013 at 10:59:26PM +0100, Stephen Warren wrote:
->> On 07/27/2013 07:23 AM, Marc Dietrich wrote:
->>> Hi,
+On 07/31/2013 10:52 AM, Marc Dietrich wrote:
+> On Wednesday 31 July 2013 16:33:22 Mark Rutland wrote:
+>> On Wed, Jul 31, 2013 at 03:57:13PM +0100, Marc Dietrich wrote:
+>>> Am Mittwoch, 31. Juli 2013, 15:13:14 schrieb Mark Rutland:
+...
+>>>> If you need to instantiate child nodes as Linux platform devices, this
+>>>> should be done in the driver for the bus. Relying on simple-bus to do
+>>>> this is a hack.
 >>>
->>> this is an RFC for an mfd device introduced here [1]. I didn't got much 
->>> response, except from Stephen, but that bothered me enough already ;-)
-
-... [propose binding for Tegra I2C slave controller, and NVEC protocol
-components]
-
->> One question I have here: There is a single I2C HW module on Tegra that
->> can act either as a master or a slave. I don't think it can do both at
->> once. Should we: ...
+>>> ok, I'll rip this off from both nodes. I guess I should use
+>>> of_platform_populate instead and keeping the compatible node in the childs
+>>> - right?
+>>
+>> I believe that would be a correct way of handling this.
 > 
-> Is that configurable at run-time, or an integration decision?
+> Great. Thinking about a really generic dt representation of an i2c bus (with 
+> multi-slave, slave and master controllers can act in parallel), something like 
+> this came into my mind:
+> 
+> 
+> i2c@xxxxxxx {
+> 		compatible = "nvidia,tegra-i2c", "simple-bus"; /* This time it is 
+> truly a simple bus, because there is no higher control instance */
+> 
+> 		... common master/slave resources ...
+> 
+> 		master {
+> 				compatible = "nvidia,tegra-i2c-master";
+> 				... resources ??? ....
+> 
+> 			 	client1@xx {
+> 						...
+> 				};
+> 
+> 			 	client2@xx {
+> 						...
+> 				};
+> 
+> 				...
+> 		}
+> 
+> 		slave1@xxx {
+> 				compatible = "nvidia,tegra-i2c-slave";
+> 				... resources ??? ...
+> 
+> 				client1@xx {
+> 						...
+> 				};
+> 		};
+> 
+> 		slave2@xxx {
+> 				compatible = "nvidia,tegra-i2c-slave";
+> 				... resources ??? ...
+> 
+> 				client1@xx {
+> 						...
+> 				};
+> 
+> 		};
+> 
+> 		....
+> };
 
-It's certainly a run-time decision whether to operate the HW in master
-or slave mode, and this is independent from anything on the board,
-except of course for whether it actually makes sense to use master or
-slave mode purely based on which external components are hooked up to
-the bus.
+The generic I2C bindings already define that the other chips on the I2C
+bus appear directly underneath the I2C controller's DT node. Perhaps it
+isn't a big issue to change that, since each I2C controller can define
+the layout of its own node?
 
-I imagine that at least by appropriately resetting or reconfiguring it,
-you could switch roles at run-time too. I don't know if you can actually
-actively use both the master and slave portions of the HW at the exact
-same time independently though. Marc is right that the diagrams in the
-documentation certainly imply you can use both at the same time,
-although I'm not totally convinced looking at the registers. I'm CCing
-Laxman to answer that question, since he knows the HW better than I.
+Anyway, we can probably get away without introducing multiple levels by
+adding some more bits or cells into the reg address for I2C child nodes:
+
+i2c@xxxxxxxx {
+	compatible = "nvidia,tegra20-i2c";
+	... resources
+	#address-cells = <2>;
+
+	codec {
+		// 0 means external slave, 0x1c is slave's address
+		reg = <0 0x1c>;
+		...
+	};
+
+	tegraslave {
+		// 0 means internal slave, 0x80 is controller's address
+		reg = <1 0x80>;
+		...
+	};
+};
+
+... where each of those child nodes could be repeated N times. We could
+also or in 0x80000000 to the reg values in the child nodes rather than
+using a separate cell if we wanted.
