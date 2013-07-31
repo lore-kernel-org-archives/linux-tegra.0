@@ -1,47 +1,87 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/9] dma: tegra20-apbdma: move to generic device tree
- bindings
-Date: Wed, 31 Jul 2013 15:33:12 -0600
-Message-ID: <51F98298.7000002@wwwdotorg.org>
-References: <1374639002-16753-1-git-send-email-rizhao@nvidia.com> <1374639002-16753-3-git-send-email-rizhao@nvidia.com> <51F2CDBE.40802@wwwdotorg.org> <20130730030644.GJ15855@rizhao-lap> <51F7ED62.4060404@wwwdotorg.org> <20130731035256.GR15855@rizhao-lap>
+Subject: Re: [PATCH 2/2] ARM: dts: USB for Tegra114 Dalmore
+Date: Wed, 31 Jul 2013 16:06:48 -0600
+Message-ID: <51F98A78.9060309@wwwdotorg.org>
+References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com> <1375292543-7896-3-git-send-email-ttynkkynen@nvidia.com> <51F9550F.3080503@cogentembedded.com> <51F9660C.6090604@iki.fi> <51F96B48.10209@cogentembedded.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130731035256.GR15855@rizhao-lap>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "djbw-b10kYP2dOMg@public.gmane.org" <djbw-b10kYP2dOMg@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51F96B48.10209-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/30/2013 09:52 PM, Richard Zhao wrote:
-> On Wed, Jul 31, 2013 at 12:44:18AM +0800, Stephen Warren wrote:
->> On 07/29/2013 09:06 PM, Richard Zhao wrote:
->>> On Sat, Jul 27, 2013 at 03:27:58AM +0800, Stephen Warren wrote:
->>>> (Stripping the Cc list a lot)
->>>>
->>>> On 07/23/2013 10:09 PM, Richard Zhao wrote:
->>>>> Update tegra20-apbdma driver to adopt generic DMA device tree bindings.
->>>>> It calls of_dma_controller_register() with of_dma_simple_xlate to get
->>>>> the generic DMA device tree helper support. The #dma-cells for apbdma
->>>>> must be 1, which is slave ID.
-...
->>>> Why does this driver need to define a filter function? I thought the
->>>> dmaengine's DT support would already match DMA clients/engines based on
->>>> the phandle in DT? Isn't the need to pass the slave channel ID into
->>>> drivers something pretty fundamental to dmaengine, and hence something
->>>> it already supports?
->>>
->>> of_dma_simple_xlate only pass slave id to filter function. It needs
->>> change to pass dt node too. I didn't start work on the common code
->>> change yet. Do you think we need to hold it until common code change?
->>
->> Oh dear, I can't see how the core DT DMA support can work for anyone
->> without the ability to limit DMA clients to the specific DMA controller
->> that's specified in DT. If that functionality truly is missing, then it
->> certainly needs to be added first.
+On 07/31/2013 01:53 PM, Sergei Shtylyov wrote:
+> Hello.
 > 
-> omap-dma uses the same way. 
+> On 07/31/2013 11:31 PM, Tuomas Tynkkynen wrote:
+>>>> Device tree entries for the three EHCI controllers on Tegra114.
+>>>> Enables the the third controller (USB host) on Dalmore.
 
-The fact that some other driver does the same wrong thing isn't really a
-good excuse not to fix it now.
+>>>> diff --git a/arch/arm/boot/dts/tegra114.dtsi
+>>>> b/arch/arm/boot/dts/tegra114.dtsi
+>>>> index abf6c40..2905145 100644
+>>>> --- a/arch/arm/boot/dts/tegra114.dtsi
+>>>> +++ b/arch/arm/boot/dts/tegra114.dtsi
+>>>> @@ -430,6 +430,68 @@
+>>>>           status = "disable";
+>>>>       };
+>>>>
+>>>> +    usb@7d000000 {
+>>>> +        compatible = "nvidia,tegra30-ehci", "usb-ehci";
+>>>> +        reg = <0x7d000000 0x4000>;
+>>>> +        interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+>>>> +        phy_type = "utmi";
+>>>> +        clocks = <&tegra_car TEGRA114_CLK_USBD>;
+>>>> +        nvidia,phy = <&phy1>;
+>>>> +        status = "disabled";
+>>>> +    };
+>>>> +
+>>>> +    phy1: usb-phy@7d000000 {
+> 
+>>>     At the same address as the previous node?
+> 
+>> Yes. The first node is for the EHCI driver and the second for the PHY
+>> driver.
+>> There is some overlap in the exact registers used, so both drives map the
+>> whole USB controller block.
+> 
+>    That's really horrible design.
+
+Yup. Both USB PHY and EHCI controller registers really are interleaved
+in one range.
+
+>>>> +        compatible = "nvidia,tegra30-usb-phy";
+>>>> +        reg = <0x7d000000 0x4000 0x7d000000 0x4000>;
+> 
+>>>     Hm, there must be some mistake: two similar register ranges.
+> 
+>> The second range is used to configure the UTMI pad registers. All the
+>> UTMI pad
+>> registers are located in the first USB controller's range.
+> 
+>    Which second range? This is one and the same range.
+
+Some registers in the USB1 register range actually are "global" and
+relevant to all USB controllers. So:
+
+There are two 2-cell entries in that reg property. The first entry
+defines the registers for this USB PHY, and hence is unique for each USB
+PHY node. The second defines the registers for whichever USB PHY
+contains various shared registers across multiple PHYs, so is expected
+to be identical across all USB PHY DT nodes.
+
+Yes, the HW design really is this screwy.
+
+>    Don't they cause numerous resource conflicts while device nodes being
+> instantiated as the platform devices?
+
+No; the driver knows that the HW is screwy and there's lots of
+register-range sharing going on, so it simply maps the registers, rather
+than reserving the physical address range and mapping it.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
