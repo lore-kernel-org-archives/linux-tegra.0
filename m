@@ -1,38 +1,38 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] ARM: dts: tegra114: dalmore: fix the irq trigger type of Palmas MFD device
-Date: Thu, 1 Aug 2013 17:37:45 +0800
-Message-ID: <1375349865-29816-1-git-send-email-josephl@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 05/27] drivers/gpu/host1x/drm: don't check resource with
+ devm_ioremap_resource
+Date: Thu, 1 Aug 2013 13:20:43 +0300
+Message-ID: <51FA367B.7020805@nvidia.com>
+References: <1374602524-3398-1-git-send-email-wsa@the-dreams.de> <1374602524-3398-6-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1374602524-3398-6-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The IRQ trigger type of Palmas MFD device (tps65913) is designed as
-low-level sensitive on Dalmore. The wrong configuration would cause an
-interrupt storm when booting the system. Fixing it in DT with appropriate
-interrupt type.
+On 23.07.2013 21:01, Wolfram Sang wrote:
+> diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
+> index 01097da..9ffece6 100644
+> --- a/drivers/gpu/host1x/drm/hdmi.c
+> +++ b/drivers/gpu/host1x/drm/hdmi.c
+> @@ -1248,9 +1248,6 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+>  		return err;
+>  
+>  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!regs)
+> -		return -ENXIO;
+> -
+>  	hdmi->regs = devm_ioremap_resource(&pdev->dev, regs);
+>  	if (IS_ERR(hdmi->regs))
+>  		return PTR_ERR(hdmi->regs);
+> 
 
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114-dalmore.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me.
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 2bfeb89..b5a42f0 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -840,7 +840,7 @@
- 		palmas: tps65913 {
- 			compatible = "ti,palmas";
- 			reg = <0x58>;
--			interrupts = <0 86 0x4>;
-+			interrupts = <0 86 IRQ_TYPE_LEVEL_LOW>;
- 
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--- 
-1.8.3.4
+Reviewed-By: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Terje
