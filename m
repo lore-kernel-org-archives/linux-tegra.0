@@ -1,101 +1,46 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH] readme: document dependencies
-Date: Thu,  1 Aug 2013 14:11:04 -0600
-Message-ID: <1375387864-23198-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH tegra-cbootimage] Add automake option subdir-objects to
+ prevent warnings
+Date: Thu, 01 Aug 2013 14:17:54 -0600
+Message-ID: <51FAC272.8040105@wwwdotorg.org>
+References: <ba99c86b9074ac9053f665350e6b4985@agner.ch> <20130723154918.GB2864@dhcp-172-17-186-34.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130723154918.GB2864-RcKxWJ4Cfj3FNiLNb7+IINdj8bHVeoWogfoxzgwHRXE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/23/2013 09:49 AM, Thierry Reding wrote:
+> On Sun, Jul 21, 2013 at 11:25:28PM +0200, Stefan Agner wrote:
+>> The SoC specific code is in subdirectories which leads to
+>> warnings in newer automake versions. The option subdir-objects
+>> prevents those warnings.
+>> 
+>> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org> --- src/Makefile.am
+>> | 2 ++ 1 file changed, 2 insertions(+)
+>> 
+>> diff --git a/src/Makefile.am b/src/Makefile.am index
+>> 6fcc0d8..6fecfc7 100644 --- a/src/Makefile.am +++
+>> b/src/Makefile.am @@ -1,3 +1,5 @@ +AUTOMAKE_OPTIONS =
+>> subdir-objects + AM_CFLAGS = -Wall -std=c99
+>> 
+>> bin_PROGRAMS = cbootimage bct_dump
+> 
+> Hi Stefan,
+> 
+> Thanks for the patch. Generally this looks good to me, though
+> automake now complains:
+> 
+> src/Makefile.am:36: compiling `t114/parse_t114.c' in subdir
+> requires `AM_PROG_CC_C_O' in `configure.ac'
+> 
+> Which can quite easily be solved by adding that line in
+> configure.ac. Immediately following the AC_PROG_CC looks like a
+> good place for it.
 
-In README-developer.txt, document some of the distro packages required to
-build the tools and flash images. Point out issues with libusb versions.
-
-Enhance README-user.txt to mention that the steps in README-developer.txt
-typically need to be followed first, and briefly describe what's contained
-in the flash images this tool handles.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- README-developer.txt | 22 ++++++++++++++++++++++
- README-user.txt      | 23 ++++++++++++++++++++++-
- 2 files changed, 44 insertions(+), 1 deletion(-)
-
-diff --git a/README-developer.txt b/README-developer.txt
-index d59ec07..9feff24 100644
---- a/README-developer.txt
-+++ b/README-developer.txt
-@@ -55,6 +55,28 @@ to specify which you want. Valid values are default.xml (all required
- dependencies) and default-notools.xml (excludes the source to potentially
- distro-packaged utilities cbootimage, tegrarcm, dtc).
- 
-+Pre-requisites
-+==============
-+
-+A number of common tools and libraries required to build tegra-uboot-flasher.
-+Typically, these will be provided by standard distribution packages.
-+
-+For recent Debian-/Ubuntu-based distributions, the following list of packages
-+will be useful:
-+
-+  build-essential
-+  autoconf
-+  automake
-+  libusb-1.0-0-dev
-+  libcrypto++-dev
-+
-+Packages with similar names likely exist for other distributions too.
-+
-+Note: tegrarcm depends on libusb-1.0. On at least current Debian-/Ubuntu-based
-+distributions, the default/unversioned libusb package installed contains
-+libusb-0.1. Make sure that libusb-1.0 is installed by using the explicit
-+versioned package name specified above.
-+
- Compiling Potentially Packaged Utilities
- ========================================
- 
-diff --git a/README-user.txt b/README-user.txt
-index b653144..0071497 100644
---- a/README-user.txt
-+++ b/README-user.txt
-@@ -5,6 +5,27 @@ This project provides scripts and data that provide a simple way of using
- tegrarcm and U-Boot to write U-Boot (or an alternative image) to the boot
- flash of a Tegra device.
- 
-+The flash images handled by this tool include just the bootloader and any
-+other data necessary for the bootloader to execute (i.e. the BCT). Creating or
-+flashing a root filesystem, either on the Tegra device's built-in flash, or on
-+external storage media, is a separate step unrelated to this tool.
-+
-+Pre-requisites
-+==============
-+
-+This document assumes that the instructions in README-developer.txt have
-+already been followed. Those instructions generate various files that the
-+flashing process uses. These include host-based utilities such as tegrarcm,
-+U-Boot binaries that run on the Tegra target device, and the flash images to
-+write to the Tegra device. 
-+
-+If you are using a distribution package of this tool, the development steps
-+have likely already been followed, and you need only follow the instructions
-+in this file.
-+
-+If you are working with the source code to this tool, you almost certainly
-+need to follow the instructions in README-developer.txt first.
-+
- Board Configurations
- ====================
- 
-@@ -14,7 +35,7 @@ Each board may exist in a number of different configurations; perhaps the
- RAM size or speed varies, or a different type of boot flash is supported.
- Each of these configurations is also given a name. tegra-uboot-flasher's
- user-interface uses these configuration names exclusively. Examples are
--harmony, cardhu-a02-1gb.config, cardhu-a04-1gb.config.
-+harmony, cardhu-a02-1gb, cardhu-a04-1gb.
- 
- You may find a list of valid values for configname by executing:
- 
--- 
-1.8.1.5
+Stefan, are you planning on revising the patch based on Thierry's
+suggestion?
