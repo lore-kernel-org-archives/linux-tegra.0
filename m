@@ -1,36 +1,39 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH v2 0/2] Device tree changes for Tegra30 and Tegra114 USB Host support
-Date: Thu, 1 Aug 2013 18:00:16 +0300
-Message-ID: <1375369218-11288-1-git-send-email-ttynkkynen@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: DTS: tegra: Add USB entries for Tegra30
+Date: Thu, 1 Aug 2013 18:15:48 +0300
+Message-ID: <51FA7BA4.8010301@nvidia.com>
+References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com> <1375292543-7896-2-git-send-email-ttynkkynen@nvidia.com> <51F98C27.40904@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51F98C27.40904-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi all,
+On 08/01/2013 01:13 AM, Stephen Warren wrote:
+> On 07/31/2013 11:42 AM, Tuomas Tynkkynen wrote:
+>> Add device tree entries for the 3 USB controllers and PHYs and
+>> enable the third controller on Cardhu and Beaver boards.
+>>
+>> Fix VBUS regulator entries on Beaver. The GPIO pins were wrong.
+> 
+> That much is correct.
+> 
+>> Also, a third GPIO is required to power the pullup resistors that drive
+>> the VBUS voltage switches, so add an regulator entry for that.
+> 
+> That is not true. GMI_AD13 / PH5 / 61 is a signal that pulls up all of
+> USB1 VBUS, USB3 VBUS, and GMI_AD15, which as far as I can tell is
+> entirely unrelated to USB in any way.
 
-Here's the device tree changes required for USB Host support on Tegra30 and
-Tegra114. This enables USB Host on the Cardhu's dock connector port and on the
-single built-in A-ports on Dalmore and Beaver.
+I sent a v2 that enables the internal pullups on those pins.
 
-Diff from v1:
- - Use internal pullups on the VBUS regulator GPIOs on Beaver.
+> This part of the change should be removed. I know you mentioned that
+> downstream does this, but that means very little; there are many
+> mistakes there.
 
-Mikko Perttunen (1):
-  ARM: dts: USB for Tegra114 Dalmore
-
-Tuomas Tynkkynen (1):
-  ARM: DTS: tegra: Add USB entries for Tegra30
-
- arch/arm/boot/dts/tegra114-dalmore.dts |  9 ++++
- arch/arm/boot/dts/tegra114.dtsi        | 62 ++++++++++++++++++++++++
- arch/arm/boot/dts/tegra30-beaver.dts   | 22 ++++++++-
- arch/arm/boot/dts/tegra30-cardhu.dtsi  |  9 ++++
- arch/arm/boot/dts/tegra30.dtsi         | 86 ++++++++++++++++++++++++++++++++++
- 5 files changed, 186 insertions(+), 2 deletions(-)
-
--- 
-1.8.1.5
+It looks like the pullup resistor from PH5 to GMI_AD15 was added in a later board revision,
+so the HW guys are to blame this time.
