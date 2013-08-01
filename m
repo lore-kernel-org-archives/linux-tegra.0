@@ -1,46 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH tegra-cbootimage] Add automake option subdir-objects to
- prevent warnings
-Date: Thu, 01 Aug 2013 14:17:54 -0600
-Message-ID: <51FAC272.8040105@wwwdotorg.org>
-References: <ba99c86b9074ac9053f665350e6b4985@agner.ch> <20130723154918.GB2864@dhcp-172-17-186-34.nvidia.com>
+Subject: Re: [PATCH 2/6] usb: phy: tegra: Fix wrong PHY parameters
+Date: Thu, 01 Aug 2013 15:09:08 -0600
+Message-ID: <51FACE74.3070909@wwwdotorg.org>
+References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com> <1375292522-7855-3-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130723154918.GB2864-RcKxWJ4Cfj3FNiLNb7+IINdj8bHVeoWogfoxzgwHRXE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375292522-7855-3-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/23/2013 09:49 AM, Thierry Reding wrote:
-> On Sun, Jul 21, 2013 at 11:25:28PM +0200, Stefan Agner wrote:
->> The SoC specific code is in subdirectories which leads to
->> warnings in newer automake versions. The option subdir-objects
->> prevents those warnings.
->> 
->> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org> --- src/Makefile.am
->> | 2 ++ 1 file changed, 2 insertions(+)
->> 
->> diff --git a/src/Makefile.am b/src/Makefile.am index
->> 6fcc0d8..6fecfc7 100644 --- a/src/Makefile.am +++
->> b/src/Makefile.am @@ -1,3 +1,5 @@ +AUTOMAKE_OPTIONS =
->> subdir-objects + AM_CFLAGS = -Wall -std=c99
->> 
->> bin_PROGRAMS = cbootimage bct_dump
+On 07/31/2013 11:41 AM, Tuomas Tynkkynen wrote:
+> Some of the PHY parameters are not set according to the TRMs:
 > 
-> Hi Stefan,
-> 
-> Thanks for the patch. Generally this looks good to me, though
-> automake now complains:
-> 
-> src/Makefile.am:36: compiling `t114/parse_t114.c' in subdir
-> requires `AM_PROG_CC_C_O' in `configure.ac'
-> 
-> Which can quite easily be solved by adding that line in
-> configure.ac. Immediately following the AC_PROG_CC looks like a
-> good place for it.
+> - UTMIP_FS_PREABMLE_J should be set, not cleared
+> - UTMIP_XCVR_LSBIAS_SEL should be cleared, not set
+> - UTMIP_PD_CHRG should be set in host mode and cleared in device mode
+> - UTMIP_XCVR_SETUP is a two-part field; the upper bits were not set
 
-Stefan, are you planning on revising the patch based on Thierry's
-suggestion?
+> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+
+>  #define   UTMIP_XCVR_SETUP(x)			(((x) & 0xf) << 0)
+> +#define   UTMIP_XCVR_SETUP_MSB(x)		((((x) & 0x7f) >> 4) << 22)
+
+You may as well s/0x7f/0x70/ since the shift clears the 4 LSBs. I'm
+pretty sure I mentioned this in downstream review. Perhaps check my
+review comments to see if anything else was missed?
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
