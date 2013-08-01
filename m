@@ -1,73 +1,151 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 6/9] serial: tegra: move to generic dma DT binding
-Date: Wed, 31 Jul 2013 21:45:01 -0600
-Message-ID: <51F9D9BD.4080901@wwwdotorg.org>
-References: <1374639002-16753-1-git-send-email-rizhao@nvidia.com> <1374639002-16753-7-git-send-email-rizhao@nvidia.com> <51F2D063.5010505@wwwdotorg.org> <20130730033134.GM15855@rizhao-lap> <51F7EDF2.60700@wwwdotorg.org> <20130731034541.GQ15855@rizhao-lap> <51F98275.6020906@wwwdotorg.org> <20130801033033.GB31469@rizhao-lap>
+From: Matthieu CASTET <matthieu.castet@parrot.com>
+Subject: Re: [PATCH 1/6] usb: host: add has_tdi_phy_lpm capability bit
+Date: Thu, 1 Aug 2013 10:05:44 +0200
+Message-ID: <20130801100544.76233b42@parrot.com>
+References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
+	<1375292522-7855-2-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130801033033.GB31469@rizhao-lap>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Richard Zhao <rizhao-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375292522-7855-2-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: "balbi@ti.com" <balbi@ti.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, Alexander Shishkin <alexander.shishkin@linux.intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/31/2013 09:30 PM, Richard Zhao wrote:
-> On Thu, Aug 01, 2013 at 05:32:37AM +0800, Stephen Warren wrote:
->> On 07/30/2013 09:45 PM, Richard Zhao wrote:
->>> On Wed, Jul 31, 2013 at 12:46:42AM +0800, Stephen Warren wrote:
->>>> On 07/29/2013 09:31 PM, Richard Zhao wrote:
->>>>> On Sat, Jul 27, 2013 at 03:39:15AM +0800, Stephen Warren wrote:
->>>>>> On 07/23/2013 10:09 PM, Richard Zhao wrote:
->>>>>>> - driver: remove use of nvidia,dma-request-selector
->>>>>>> 	  use dma_request_slave_channel to request channel
->>>>>>> - update binding doc
->>>>>>
->>>>>> This patch needs to be amended so that the DMA channel is looked up
->>>>>> during probe() rather than open(), to guarantee that deferred probe
->>>>>> works. It's possible to hold off probe, but not possible AFAIK to hold
->>>>>> off opening the port.
->>>>>
->>>>> How about avoid return -EPROBE_DEFER at open() time? It can be in
->>>>> another patch.
->>>>
->>>> I don't really understand what you mean. -EPROBE_DEFER is something that
->>>> only makes sense for probe() to return (or functions used by probe()).
->>>> It doesn't make sense to return it anywhere else, since probe deferral
->>>> is something that can only happen for probe().
->>>
->>> What I meant is, it might not worth to move request channel to probe
->>> only because we need to check error and return -EPROBE_DEFER.
->>
->> If probe() doesn't attempt to validate that the/a DMA channel provider
->> exists, then there's no guarantee that the DMA provider has probed
->> before the DMA client driver either probes or executes any later code.
-> 
-> I'm not against defer probe, but dma_request_slave_channel might not be
-> the right function. Ideally dma channels are allocated at open() time
-> and dma controller loaded checking is at probe() time. So there's
-> better some function called check_dma_controller_loaded(), or we could
-> also use initcalls to let dma driver probe earlier.
-> 
-> This patch intend to be simple to only change the binding.
-> 
->> So, you could quite easily end up with a situation where the serial
->> driver's open fails because the DMA provider has not yet probed. This is
->> exactly what deferred probe was intended to avoid. This reason alone is
->> enough to make it worth fixing this.
->>
->>> dma_request_slave_channel is better to be called as late as possible to
->>> make better dynamic use of dma channels.
->>
->> probe() could validate that the provider exists in a way that doesn't
->> permanently hold ownership of the DMA channel. For example, request it
->> then immediately release it, in the absence of a dedicated "validate my
->> DMA providers exist" API.
-> 
-> It's ugly but may work. The current driver didn't check dma controller
-> loaded at probe time. Let's leave the task to another patch?
+Hi,
 
-I suppose it's fine to solve this later, although it seems quite
-dangerous. You'd need to undo all the changes that alter where the DMA
-channels are acquired in order to satisfy your argument though.
+Le Wed, 31 Jul 2013 18:41:57 +0100,
+Tuomas Tynkkynen <ttynkkynen@nvidia.com> a =E9crit :
+
+> The has_hostpc capability bit indicates that the host controller has
+> the HOSTPC register extensions, but at the same time enables clock
+> disabling power saving features with the PHY Low Power Clock Disable
+> (PHCD) bit.
+>=20
+> However, some host controllers have the HOSTPC extensions but don't
+> support the low-power feature, so the PHCD bit must not be set on
+> those controllers. Add a separate capability bit for the low-power
+> feature instead, and change all existing users of has_hostpc to use
+> this new capability bit.
+>=20
+> The idea for this commit is taken from an old 2012 commit that never
+> got merged ("disociate chipidea PHY low power suspend control from
+> hostpc")
+Note that because of the different register layout (see "add phy low
+power suspend for older chipidea core" commit in the same series), we
+should not set has_tdi_phy_lpm if has_hostpc =3D=3D 0 with the current =
+code.
+
+May be you should have change the ehci->has_hostpc to (ehci->has_hostpc
+&& ehci->has_tdi_phy_lpm).
+
+BTW Alan make some comment on the commit :
+http://marc.info/?l=3Dlinux-usb&m=3D133701342028213&w=3D2
+
+They may apply to your commit.
+
+>=20
+> Inspired-by: Matthieu CASTET <matthieu.castet@parrot.com>
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+> ---
+>  drivers/usb/chipidea/host.c |  1 +
+>  drivers/usb/host/ehci-hub.c | 14 +++++++-------
+>  drivers/usb/host/ehci.h     |  1 +
+>  3 files changed, 9 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.=
+c
+> index 40d0fda..9b3aaf1 100644
+> --- a/drivers/usb/chipidea/host.c
+> +++ b/drivers/usb/chipidea/host.c
+> @@ -63,6 +63,7 @@ static int host_start(struct ci_hdrc *ci)
+>  	ehci =3D hcd_to_ehci(hcd);
+>  	ehci->caps =3D ci->hw_bank.cap;
+>  	ehci->has_hostpc =3D ci->hw_bank.lpm;
+> +	ehci->has_tdi_phy_lpm =3D ci->hw_bank.lpm;
+> =20
+>  	ret =3D usb_add_hcd(hcd, 0, 0);
+>  	if (ret)
+> diff --git a/drivers/usb/host/ehci-hub.c b/drivers/usb/host/ehci-hub.=
+c
+> index 2b70277..8044a74 100644
+> --- a/drivers/usb/host/ehci-hub.c
+> +++ b/drivers/usb/host/ehci-hub.c
+> @@ -183,7 +183,7 @@ static void ehci_adjust_port_wakeup_flags(struct
+> ehci_hcd *ehci, spin_lock_irq(&ehci->lock);
+> =20
+>  	/* clear phy low-power mode before changing wakeup flags */
+> -	if (ehci->has_hostpc) {
+> +	if (ehci->has_tdi_phy_lpm) {
+>  		port =3D HCS_N_PORTS(ehci->hcs_params);
+>  		while (port--) {
+>  			u32 __iomem	*hostpc_reg =3D
+> &ehci->regs->hostpc[port]; @@ -217,7 +217,7 @@ static void
+> ehci_adjust_port_wakeup_flags(struct ehci_hcd *ehci, }
+> =20
+>  	/* enter phy low-power mode again */
+> -	if (ehci->has_hostpc) {
+> +	if (ehci->has_tdi_phy_lpm) {
+>  		port =3D HCS_N_PORTS(ehci->hcs_params);
+>  		while (port--) {
+>  			u32 __iomem	*hostpc_reg =3D
+> &ehci->regs->hostpc[port]; @@ -309,7 +309,7 @@ static int
+> ehci_bus_suspend (struct usb_hcd *hcd) }
+>  	}
+> =20
+> -	if (changed && ehci->has_hostpc) {
+> +	if (changed && ehci->has_tdi_phy_lpm) {
+>  		spin_unlock_irq(&ehci->lock);
+>  		msleep(5);	/* 5 ms for HCD to enter low-power
+> mode */ spin_lock_irq(&ehci->lock);
+> @@ -435,7 +435,7 @@ static int ehci_bus_resume (struct usb_hcd *hcd)
+>  		goto shutdown;
+> =20
+>  	/* clear phy low-power mode before resume */
+> -	if (ehci->bus_suspended && ehci->has_hostpc) {
+> +	if (ehci->bus_suspended && ehci->has_tdi_phy_lpm) {
+>  		i =3D HCS_N_PORTS(ehci->hcs_params);
+>  		while (i--) {
+>  			if (test_bit(i, &ehci->bus_suspended)) {
+> @@ -788,7 +788,7 @@ static int ehci_hub_control (
+>  				goto error;
+> =20
+>  			/* clear phy low-power mode before resume */
+> -			if (ehci->has_hostpc) {
+> +			if (ehci->has_tdi_phy_lpm) {
+>  				temp1 =3D ehci_readl(ehci, hostpc_reg);
+>  				ehci_writel(ehci, temp1 &
+> ~HOSTPC_PHCD, hostpc_reg);
+> @@ -1031,12 +1031,12 @@ static int ehci_hub_control (
+> =20
+>  			/* After above check the port must be
+> connected.
+>  			 * Set appropriate bit thus could put phy
+> into low power
+> -			 * mode if we have hostpc feature
+> +			 * mode if we have tdi_phy_lpm feature
+>  			 */
+>  			temp &=3D ~PORT_WKCONN_E;
+>  			temp |=3D PORT_WKDISC_E | PORT_WKOC_E;
+>  			ehci_writel(ehci, temp | PORT_SUSPEND,
+> status_reg);
+> -			if (ehci->has_hostpc) {
+> +			if (ehci->has_tdi_phy_lpm) {
+>  				spin_unlock_irqrestore(&ehci->lock,
+> flags); msleep(5);/* 5ms for HCD enter low pwr mode */
+>  				spin_lock_irqsave(&ehci->lock,
+> flags); diff --git a/drivers/usb/host/ehci.h b/drivers/usb/host/ehci.=
+h
+> index 64f9a08..d034d94 100644
+> --- a/drivers/usb/host/ehci.h
+> +++ b/drivers/usb/host/ehci.h
+> @@ -210,6 +210,7 @@ struct ehci_hcd {			/* one
+> per controller */ #define OHCI_HCCTRL_LEN         0x4
+>  	__hc32			*ohci_hcctrl_reg;
+>  	unsigned		has_hostpc:1;
+> +	unsigned		has_tdi_phy_lpm:1;
+>  	unsigned		has_ppcd:1; /* support per-port
+> change bits */ u8			sbrn;		/*
+> packed release number */=20
