@@ -1,86 +1,45 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 0/6] USB tree changes for Tegra30 and Tegra114 USB Host
- support
-Date: Fri, 2 Aug 2013 10:52:57 +0300
-Message-ID: <20130802075257.GL24465@radagast>
-References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
- <51F99C4C.6050508@wwwdotorg.org>
- <51FA5C5A.2080900@nvidia.com>
- <51FA8B3B.8070504@wwwdotorg.org>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
+Date: Fri, 2 Aug 2013 16:09:45 +0800
+Message-ID: <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
+	 <1374830110-30685-4-git-send-email-josephl@nvidia.com>
+	 <51F6F209.2090309@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QWRRbczYj8mXuejp"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <51FA8B3B.8070504-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51F6F209.2090309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---QWRRbczYj8mXuejp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2013-07-30 at 06:51 +0800, Stephen Warren wrote:
+> On 07/26/2013 03:15 AM, Joseph Lo wrote:
+> > When the system suspends to LP1, the clock of the CPU would be switched to
+> > CLK_M (12MHz Oscillator) during suspend/resume flow. The clock driver
+> > needs to restore the clock of CPU after LP1 resume.
+> 
+> It's unclear to me how the code change implements "restore the clock of
+> the CPU". A register name of CCLKG_BURST_POLICY doesn't sound like it's
+> anything to do with enabled/disabling the CPU clock, nor configuring its
+> rate. What exactly does this register do, and hence what does this new
+> code actually restore?
+> 
+When system suspend to LP1, most of the PLLs was clock gated. Because we
+didn't cut off the core power, the settings of PLL still keep there. But
+we switch the clock source of CPU to CLK_M before shut off PLLs by
+CCLKG_BURSY_POLICY register. So we need to resume it back to original
+clock source by CCLKG_BURST_POLICY register. Or it would be keep in low
+rate (CLK_M) after resume.
 
-On Thu, Aug 01, 2013 at 10:22:19AM -0600, Stephen Warren wrote:
-> On 08/01/2013 07:02 AM, Tuomas Tynkkynen wrote:
-> > On 08/01/2013 02:22 AM, Stephen Warren wrote:
-> >> On 07/31/2013 11:41 AM, Tuomas Tynkkynen wrote:
-> >>> Hi all,
-> >>>
-> >>> Here are the patches for the USB tree to enable USB Host support on T=
-egra30 and
-> >>> Tegra114. These are based on my and Mikko's cleanup patches that just=
- got
-> >>> merged to Felipe's tree.
-> >>
-> >> This series works fine for me on Dalmore. However, on Beaver, I see the
-> >> following:
-> >>
-> >> [    2.428480] platform 7d008000.usb: Driver tegra-ehci requests probe
-> >> deferral
-> >>
-> >> ... which never seems to be resolved. You can take a look at my
-> >> linux-next_common branch to repro this. Does Beaver work for you?
-> >>
-> >=20
-> > The clock driver patch is missing from your branch. Applying it should =
-fix that.
->=20
-> Oh so it does. Sorry for forgetting about that patch. Given that, the
-> series,
->=20
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> I'll also try to review/ack the patches ASAP.
+> Why don't Tegra20/30 need a similar change?
+For Tegra20/30, the same code had been implemented in the suspend/resume
+function of tegra_cpu_car_ops. It restores the CPU clock ASAP when CPU
+resume from a suspend state to get quick performance I believe.
 
-I see you requested one minor change, so I'll wait for a new version.
-
---=20
-balbi
-
---QWRRbczYj8mXuejp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR+2VZAAoJEIaOsuA1yqREW0MP/Rb4UbrpHNUYX2104av5kBDy
-biTE8EoEBcyDixkUWCnDshVWdCuKjNcxnPgiy6rtlNsA6zUK4PxU4Oibm84qdj1a
-OI0PVnB4labjT1HvbS0iETt4+m64Zg4yDcT8SYpU6kCFARk++gQSq0ClfPv3t2pS
-yKRf9T3dbP3HAWC1cuRjk1k/xqF9u+jDp4U+KeG9ZNbELvkRXuuXPRefWy4uztHw
-X2Ktp9z3ASqrKM2Qed6vqpLldRGomnyI9PppfYqHEpS/VVvg497MKHwBc9DgS+k3
-C9lxLN/A8YoCsc/TneBVljmU2uCleI4/JJiASuJ+HZaaS8y6Bj/DDpS+HP2Rxx8f
-y4HTwXUvkeXb9JB2hdkLA2dOTxesHPveAj6pq8kwGIJq+g4AVXxl047IsDAn+8Fb
-sLIaSCqh5JWKIocSgPg4ZjScoc0V1rDV/q9mAdm7M1kjas9CqqOkZjAsFi9SovdW
-bj741ZkgfvW+HekFs3zCZTnLYd6+oIKebjW7cmJ7YIU7vRVlxBrDZAsmj3Y/lkmH
-6QkP8JxYtooUb1ODwPCSO/TGmqkGS17eUAzB7/sq5qpA7FGWq1dDAZ3GI6ql+I7O
-VDUS0U/HWtOI+OAJBUwjONv3Nmnleao6UinytlKjVrN85Ze0b2mKNT/R9uLgcDLz
-qr81gBBySntvZu+h37CS
-=SrsH
------END PGP SIGNATURE-----
-
---QWRRbczYj8mXuejp--
+For Tegra114, the resume performance is cool (although we can't see it
+in upstream kernel now, it still need some other functions.). We can
+implement all the clock related suspend/resume function in the clock
+driver.
