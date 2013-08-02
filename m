@@ -1,63 +1,86 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/8] ARM: tegra: config the polarity of the request of
- sys clock
-Date: Fri, 2 Aug 2013 15:48:59 +0800
-Message-ID: <1375429739.6761.31.camel@jlo-ubuntu-64.nvidia.com>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
-	 <1374830110-30685-3-git-send-email-josephl@nvidia.com>
-	 <51F6F109.8010102@wwwdotorg.org>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 0/6] USB tree changes for Tegra30 and Tegra114 USB Host
+ support
+Date: Fri, 2 Aug 2013 10:52:57 +0300
+Message-ID: <20130802075257.GL24465@radagast>
+References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com>
+ <51F99C4C.6050508@wwwdotorg.org>
+ <51FA5C5A.2080900@nvidia.com>
+ <51FA8B3B.8070504@wwwdotorg.org>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QWRRbczYj8mXuejp"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51F6F109.8010102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <51FA8B3B.8070504-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-07-30 at 06:47 +0800, Stephen Warren wrote:
-> On 07/26/2013 03:15 AM, Joseph Lo wrote:
-> > When suspending to LP1 mode, the SYSCLK will be clock gated. And different
-> > board may have different polarity of the request of SYSCLK, this patch
-> > configure the polarity from the DT for the board.
-> 
-> > diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-> 
-> > @@ -238,6 +240,20 @@ void tegra_pmc_suspend_init(void)
-> >  	reg = tegra_pmc_readl(PMC_CTRL);
-> >  	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
-> >  	tegra_pmc_writel(reg, PMC_CTRL);
-> > +
-> > +	reg = tegra_pmc_readl(PMC_CTRL);
-> > +
-> > +	if (!pmc_pm_data.sysclkreq_high)
-> > +		reg |= TEGRA_POWER_SYSCLK_POLARITY;
-> > +	else
-> > +		reg &= ~TEGRA_POWER_SYSCLK_POLARITY;
-> > +
-> > +	/* configure the output inverts while the request is tristated */
-> > +	tegra_pmc_writel(reg, PMC_CTRL);
-> 
-> I think s/inverts/polarity/ in that comment would make a lot more sense.
-> 
-Yes, thanks.
+--QWRRbczYj8mXuejp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Must _OE be disabled for the code to work correctly? If so, should the
-> code explicitly clear _OE first, since who knows what state it was
-> originally in? Can't we just set the new polarity and enable _OE in a
-> single register write?
-> 
-The SYSCLK is super clock that was connected to COP subsystem. It can't
-be disabled when system is running. The boot loader had initialized it
-and brought it to kernel. We follow the HW description in DT of the
-polarity of SCLK to re-configure and re-init again. Then the PMC can
-clock gate it when system go into suspend state.
+On Thu, Aug 01, 2013 at 10:22:19AM -0600, Stephen Warren wrote:
+> On 08/01/2013 07:02 AM, Tuomas Tynkkynen wrote:
+> > On 08/01/2013 02:22 AM, Stephen Warren wrote:
+> >> On 07/31/2013 11:41 AM, Tuomas Tynkkynen wrote:
+> >>> Hi all,
+> >>>
+> >>> Here are the patches for the USB tree to enable USB Host support on T=
+egra30 and
+> >>> Tegra114. These are based on my and Mikko's cleanup patches that just=
+ got
+> >>> merged to Felipe's tree.
+> >>
+> >> This series works fine for me on Dalmore. However, on Beaver, I see the
+> >> following:
+> >>
+> >> [    2.428480] platform 7d008000.usb: Driver tegra-ehci requests probe
+> >> deferral
+> >>
+> >> ... which never seems to be resolved. You can take a look at my
+> >> linux-next_common branch to repro this. Does Beaver work for you?
+> >>
+> >=20
+> > The clock driver patch is missing from your branch. Applying it should =
+fix that.
+>=20
+> Oh so it does. Sorry for forgetting about that patch. Given that, the
+> series,
+>=20
+> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> I'll also try to review/ack the patches ASAP.
 
-And it can't be set it up by a single register write. It's a HW control
-sequence. (Actually lots of PMC code have similar sequence.)
+I see you requested one minor change, so I'll wait for a new version.
 
-> > +	/* now enable the request */
-> > +	reg |= TEGRA_POWER_SYSCLK_OE;
-> > +	tegra_pmc_writel(reg, PMC_CTRL);
-> 
+--=20
+balbi
+
+--QWRRbczYj8mXuejp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR+2VZAAoJEIaOsuA1yqREW0MP/Rb4UbrpHNUYX2104av5kBDy
+biTE8EoEBcyDixkUWCnDshVWdCuKjNcxnPgiy6rtlNsA6zUK4PxU4Oibm84qdj1a
+OI0PVnB4labjT1HvbS0iETt4+m64Zg4yDcT8SYpU6kCFARk++gQSq0ClfPv3t2pS
+yKRf9T3dbP3HAWC1cuRjk1k/xqF9u+jDp4U+KeG9ZNbELvkRXuuXPRefWy4uztHw
+X2Ktp9z3ASqrKM2Qed6vqpLldRGomnyI9PppfYqHEpS/VVvg497MKHwBc9DgS+k3
+C9lxLN/A8YoCsc/TneBVljmU2uCleI4/JJiASuJ+HZaaS8y6Bj/DDpS+HP2Rxx8f
+y4HTwXUvkeXb9JB2hdkLA2dOTxesHPveAj6pq8kwGIJq+g4AVXxl047IsDAn+8Fb
+sLIaSCqh5JWKIocSgPg4ZjScoc0V1rDV/q9mAdm7M1kjas9CqqOkZjAsFi9SovdW
+bj741ZkgfvW+HekFs3zCZTnLYd6+oIKebjW7cmJ7YIU7vRVlxBrDZAsmj3Y/lkmH
+6QkP8JxYtooUb1ODwPCSO/TGmqkGS17eUAzB7/sq5qpA7FGWq1dDAZ3GI6ql+I7O
+VDUS0U/HWtOI+OAJBUwjONv3Nmnleao6UinytlKjVrN85Ze0b2mKNT/R9uLgcDLz
+qr81gBBySntvZu+h37CS
+=SrsH
+-----END PGP SIGNATURE-----
+
+--QWRRbczYj8mXuejp--
