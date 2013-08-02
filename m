@@ -1,74 +1,43 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] ARM: DTS: tegra: Add USB entries for Tegra30
-Date: Fri, 2 Aug 2013 14:30:57 +0200
-Message-ID: <20130802123057.GA10282@manwe>
-References: <1375369218-11288-1-git-send-email-ttynkkynen@nvidia.com>
- <1375369218-11288-2-git-send-email-ttynkkynen@nvidia.com>
- <51FA8F2E.8080105@wwwdotorg.org>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/6] usb: phy: tegra: Program new PHY parameters
+Date: Fri, 2 Aug 2013 17:05:37 +0300
+Message-ID: <51FBBCB1.9060906@nvidia.com>
+References: <1375292522-7855-1-git-send-email-ttynkkynen@nvidia.com> <1375292522-7855-5-git-send-email-ttynkkynen@nvidia.com> <51FAD020.8090306@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51FA8F2E.8080105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <51FAD020.8090306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/02/2013 12:16 AM, Stephen Warren wrote:
+> On 07/31/2013 11:42 AM, Tuomas Tynkkynen wrote:
+>> The Tegra30 TRM recommends configuration of certain PHY parameters for
+>> optimal quality. Program the following registers based on device tree
+>> parameters:
+>>
+>> - UTMIP_XCVR_HSSLEW: HS slew rate control.
+>> - UTMIP_HSSQUELCH_LEVEL: HS squelch detector level
+>> - UTMIP_HSDISCON_LEVEL: HS disconnect detector level.
+>>
+>> These registers exist in Tegra20, but programming them hasn't been
+>> necessary, so these parameters won't be set on Tegra20 to keep the
+>> device trees backward compatible.
+>>
+>> Additionally, the UTMIP_XCVR_SETUP parameter can be set from fuses
+>> instead of a software-programmed value, as the optimal value can
+>> vary between invidual boards. The boolean property
+>> nvidia,xcvr-setup-use-fuses can be used to enable this behaviour.
+> 
+>> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
 
-On Thu, Aug 01, 2013 at 06:39:10PM +0200, Stephen Warren wrote:
-> On 08/01/2013 09:00 AM, Tuomas Tynkkynen wrote:
-> > Add device tree entries for the 3 USB controllers and PHYs and
-> > enable the third controller on Cardhu and Beaver boards.
-> >=20
-> > Fix VBUS regulator entries on Beaver. The GPIO pins were wrong.
-> > Also, internal pullups need to be enabled on those pins.
-> >=20
-> > Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > v2: Use internal pullups on the VBUS regulator GPIOs.
->=20
-> Thanks, this version looks good.
->=20
-> Thierry, can you please validate that the gpv group pull strength change
-> doesn't have any negative affect on your PCIe patches. Thanks.
+> Those two chunks end up clearing some fields in the register now even on
+> earlier chips, whereas before their values were maintained when doing
+> the read/modify/write. Yet, the commit description says the new fields
+> aren't changed on Tegra20. Do the changes above need to be guarded by if
+> (requires_extra_tuning_parameters)?
 
-PCIe on Beaver seems to behave the same way whether that patch is
-applied or not, so:
-
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-I wonder if perhaps a similar change can be made to Cardhu to see if
-that helps with the PCIe link disappearing. I'll see if I can find out
-what the implications are and what the correct values would be for
-Cardhu.
-
-Thierry
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR+6aBAAoJEN0jrNd/PrOh6g0P/ivjQRqyPahZ+7nRc4cwQ+GS
-dMWcD1Ua11AaLSSRJbhzG0JJiavdQY7gjU+9CpPeYaakCBCYDTTzpLw+OvphhkKZ
-7clFvwrbfFXP/k8OG+uF/CeFawZEfga+xEMSorzCyzquiS4C2WPm9iJPRKx/g4s9
-Xfc5qiTJ0gVjn+aS9oo/eSrcUIbEJzVGxnjlXk8WY9YbnV/ni/SBPTBiNhWxj5Y/
-JZrzkphMGaxatMqfy53nyVbl+dtrCKGx+WwVOMIC1X5Z7QpOgEvCmwetX88YuW6k
-V8z1JOv25hPvVzPjYnR6BFWYkHrbbsSKcnYwohtAX/kF9ZOTUaQXI9jKMT5tL+5c
-fBXIQYkak/M4aSORU/TeHjtiSDnFNpx4R/oIMqel51dfcWHrANNnpMMI1Ri5Mkcw
-8tTtGQM7CfV1aAL9JhnSpmjAiNz9gN2W4YT+cEu+7TEaCALzr4cj3D0A64is1D0D
-4ZrFM/m2AOEKkD418hdXhxXHMxFxiMcgBoyCm2TQY1eGC0k9C6V3/M6EHUvgzHGd
-FPc9xqLAQtK4PMiEGfqGvNLldPVXvgBQ3o4/fI7Y6tMD8WkJ4BVKo2j1YQD/tCTB
-v+lLvGdwmrIAutc8MfYArotjSes7KvLc+hlkonqmAmJB2h2aIHjfbixIlBnHp23R
-XPn+ho5ldtP14xUIrBoE
-=1OcS
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
+Oops, you are right. I overlooked that some of those fields have non-zero reset values.
