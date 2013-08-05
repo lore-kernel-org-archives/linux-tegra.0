@@ -1,79 +1,73 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
-Date: Mon, 05 Aug 2013 11:39:47 -0600
-Message-ID: <51FFE363.4080603@wwwdotorg.org>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>  <1374830110-30685-4-git-send-email-josephl@nvidia.com>  <51F6F209.2090309@wwwdotorg.org>  <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>  <51FC1751.9010401@wwwdotorg.org> <1375689749.1731.36.camel@jlo-ubuntu-64.nvidia.com> <51FFDA20.6050403@wwwdotorg.org>
+Subject: Re: [PATCH V2 4/8] ARM: tegra: add common LP1 suspend support
+Date: Mon, 05 Aug 2013 11:48:07 -0600
+Message-ID: <51FFE557.4000103@wwwdotorg.org>
+References: <1375701664-14965-1-git-send-email-josephl@nvidia.com> <1375701664-14965-5-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51FFDA20.6050403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1375701664-14965-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/05/2013 11:00 AM, Stephen Warren wrote:
-> On 08/05/2013 02:02 AM, Joseph Lo wrote:
->> On Sat, 2013-08-03 at 04:32 +0800, Stephen Warren wrote:
->>> On 08/02/2013 02:09 AM, Joseph Lo wrote:
->>>> On Tue, 2013-07-30 at 06:51 +0800, Stephen Warren wrote:
->>>>> On 07/26/2013 03:15 AM, Joseph Lo wrote:
->>>>>> When the system suspends to LP1, the clock of the CPU would be switched to
->>>>>> CLK_M (12MHz Oscillator) during suspend/resume flow. The clock driver
->>>>>> needs to restore the clock of CPU after LP1 resume.
->>>>>
->>>>> It's unclear to me how the code change implements "restore the clock of
->>>>> the CPU". A register name of CCLKG_BURST_POLICY doesn't sound like it's
->>>>> anything to do with enabled/disabling the CPU clock, nor configuring its
->>>>> rate. What exactly does this register do, and hence what does this new
->>>>> code actually restore?
->>>>>
->>>> When system suspend to LP1, most of the PLLs was clock gated. Because we
->>>> didn't cut off the core power, the settings of PLL still keep there. But
->>>> we switch the clock source of CPU to CLK_M before shut off PLLs by
->>>> CCLKG_BURSY_POLICY register. So we need to resume it back to original
->>>> clock source by CCLKG_BURST_POLICY register. Or it would be keep in low
->>>> rate (CLK_M) after resume.
->>>
->>> OK, I guess the register name was badly chosen by HW. I'd like to see
->>> part of your description above in the patch description. How about
->>> replacing the patch description with:
->>>
->>> ----------
->>> When the system suspends to LP1, the CPU clock source is switched to
->>> CLK_M (12MHz Oscillator) during suspend/resume flow[1]. The CPU clock
->>> source is controlled by the CCLKG_BURST_POLICY register, and hence this
->>> register must be restored during LP1 resume.
->>> ----------
->>>
->>> [1] Question: where does this happen? This patch doesn't make that
->>> change. I wonder why the suspend path can't save this register, rather
->>> than implementing a separate suspend syscore op in the clock driver.
->>> Does the HW auto-switch the value in the register itself?
->>
->> If we switch CPU to CLK_M in clock driver, the system will become slowly
->> during the middle of suspending flow. We do this at the very end of the
->> LP1 suspending flow before the CPU disable all the PLL clocks.
+On 08/05/2013 05:21 AM, Joseph Lo wrote:
+> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
+> clock gated and SDRAM in self-refresh mode. That means the low level LP1
+> suspending and resuming code couldn't be run on DRAM and the CPU must
+> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
+> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
+> The LP1 low level handling code need to be moved to IRAM area first. And
+> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
+> power timer needs to be re-calculated based on 32KHz that was originally
+> based on PCLK.
 > 
-> I think you answered "why is the switch to CLK_M performed very late",
-> whereas I asked "where is the code that performs the switch to CLK_M".
+> When resuming from LP1, the LP1 reset handler will resume PLLs and then
+> put DRAM to normal mode. Then jumping to the "tegra_resume" that will
+> restore full context before back to kernel. The "tegra_resume" handler
+> was expected to be found in PMC_SCRATCH41 register.
+> 
+> This is common LP1 procedures for Tegra, so we do these jobs mainly in
+> this patch:
+> * moving LP1 low level handling code to IRAM
+> * marking LP1 mask
+> * copying the physical address of "tegra_resume" to PMC_SCRATCH41
+> * re-calculate the CPU power timer based on 32KHz
 
-To expand on this a bit more, I can't find any reference to register
-CCLKG_BURST_POLICY in arch/arm/mach-tegra/ or drivers/clk/tegra/ except
-for the definition of clock cclk_g, nor any reference to that clock in
-those two directories. And that CCLKG_BURST_POLICY register is what this
-patch saves/restores.
+> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
 
-I do see function tegra30_switch_cpu_to_clk32k in patch 5/8 appears to
-do something related to switching to clk_m and touches some other
-burst-related registers, but not CCLKG_BURST_POLICY...
+> +static void __iomem *iram_code = IO_ADDRESS(TEGRA_IRAM_CODE_AREA);
 
-So, if this syscore_op is attempting to undo some change that happens to
-CCLKG_BURST_POLICY during suspend, I still can't see what change is
-happening to that register during suspemd, nor which piece of code
-causes it.
+I repeat: Why store that value in a global variable? It's constant.
 
-If the issue is that the value in this register is simply lost during
-LP1 because the power is turned off, then I wonder what sets up this
-register during the original boot path?
+> @@ -174,14 +181,75 @@ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+>  				enum tegra_suspend_mode mode)
+>  {
+>  	/*
+> -	 * The Tegra devices only support suspending to LP2 currently.
+> +	 * The Tegra devices support suspending to LP1 or lower currently.
+>  	 */
+> -	if (mode > TEGRA_SUSPEND_LP2)
+> -		return TEGRA_SUSPEND_LP2;
+> +	if (mode > TEGRA_SUSPEND_LP1)
+> +		return TEGRA_SUSPEND_LP1;
+>  
+>  	return mode;
+>  }
+
+I think that change needs to happen after patch 7. At this point in the
+series, LP1 doesn't work on any chip. After patch 7, it will work on all
+chips.
+
+If you don't make that change, you should move this change into patch 5,
+but only enable LP1 for Tegra30, then make patch 6 also enable it for
+Tegra20, then make patch 7 also enable it for Tegra114. That's a lot
+more complex, so just moving the change above into a new patch after
+patch 7 seems better.
+
+Note: You must assume that the DT changes are all checked in before any
+of the code changes, so the code needs to work correctly even if the DT
+contains the data that allows usage of LP1 before the driver actually
+implements LP1.
