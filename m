@@ -1,181 +1,50 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 8/8] ARM: tegra: enable LP1 suspend mode
-Date: Mon, 5 Aug 2013 19:21:04 +0800
-Message-ID: <1375701664-14965-9-git-send-email-josephl@nvidia.com>
-References: <1375701664-14965-1-git-send-email-josephl@nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Subject: Re: [PATCH] clk: tegra30: Don't wait for PLL_U lock bit
+Date: Mon, 5 Aug 2013 16:04:56 +0300
+Message-ID: <51FFA2F8.6040200@nvidia.com>
+References: <1375292551-7933-1-git-send-email-ttynkkynen@nvidia.com> <1375292551-7933-2-git-send-email-ttynkkynen@nvidia.com> <51F97BEA.7040006@wwwdotorg.org> <51FF487F.6000007@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375701664-14965-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51FF487F.6000007@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enabling the LP1 suspend mode for Tegra devices.
+On 08/05/2013 09:38 AM, Prashant Gaikwad wrote:
+> On Thursday 01 August 2013 02:34 AM, Stephen Warren wrote:
+>> On 07/31/2013 11:42 AM, Tuomas Tynkkynen wrote:
+>>> The lock bit on PLL_U does not seem to be working correctly and
+>>> sometimes never gets set when waiting for the PLL to come up.
+>>> Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
+>> Peter, Prashant,
+>>
+>> I think you said that the lock bits should work on Tegra30 (albeit they
+>> don't on Tegra20)? Can you remind me if the do/don't?
+>>
+>> If Peter and Prashant are OK with this patch, feel free to take my ack.
+> 
+> Hi Tuomas,
+> 
+> Sorry for the delayed response. Please make sure that avdd_usb_pll 
+> regulator is enabled before enabling PLLU and utmip parameters are 
+> configured properly.
 
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-[Tegra20 paz00 board]
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V2:
-* no change
----
- arch/arm/boot/dts/tegra114-dalmore.dts     | 2 +-
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 2 +-
- arch/arm/boot/dts/tegra20-harmony.dts      | 2 +-
- arch/arm/boot/dts/tegra20-paz00.dts        | 2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts     | 2 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi    | 2 +-
- arch/arm/boot/dts/tegra20-trimslice.dts    | 2 +-
- arch/arm/boot/dts/tegra20-ventana.dts      | 2 +-
- arch/arm/boot/dts/tegra20-whistler.dts     | 2 +-
- arch/arm/boot/dts/tegra30-beaver.dts       | 2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi      | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+As far as I can see, avdd_usb_pll is connected to the vio_reg regulator on Cardhu,
+which is marked as regulator-always-on. And the same regulator is connected to
+eg. VDDIO_UART on the chip, so I presume almost nothing would work if that regulator
+would not be on...
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index b5a42f0..44873b5 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1024,7 +1024,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <500>;
- 		nvidia,cpu-pwr-off-time = <300>;
- 		nvidia,core-pwr-good-time = <641 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 2fcb3f2..06c5fa0 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -363,7 +363,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index d9f89cd..d44cf90 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index cfd1276..8d71fc9 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <0>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 60137f5..c256c81 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -518,7 +518,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index c54faae..f00febe 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -459,7 +459,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 906e07f..665e504 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -302,7 +302,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 7f8c28d..aab872c 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -494,7 +494,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <100>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index a6b1b5b..608b79a 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -497,7 +497,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <1000>;
- 		nvidia,core-pwr-good-time = <0 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 87c5f7b..7378927 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -262,7 +262,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index c011b67..d78c90c 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -314,7 +314,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
--- 
-1.8.3.4
+> If this this regulator is not enabled then you will get this kind of 
+> timeout when enabling PLLU.
+> 
+> Thanks,
+> Prashant
+> 
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
