@@ -1,113 +1,70 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: Re: [PATCH 4/8] ARM: tegra: add common LP1 suspend support
-Date: Mon, 5 Aug 2013 16:07:15 +0800
-Message-ID: <1375690035.1731.41.camel@jlo-ubuntu-64.nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/8] ARM: tegra: config the polarity of the request of
+ sys clock
+Date: Mon, 5 Aug 2013 16:42:05 +0800
+Message-ID: <1375692125.1731.45.camel@jlo-ubuntu-64.nvidia.com>
 References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
- <1374830110-30685-5-git-send-email-josephl@nvidia.com>
- <51F6F725.6000106@wwwdotorg.org>
- <1375435620.6761.120.camel@jlo-ubuntu-64.nvidia.com>
- <51FC1926.9030103@wwwdotorg.org>
+	 <1374830110-30685-3-git-send-email-josephl@nvidia.com>
+	 <51F6F109.8010102@wwwdotorg.org>
+	 <1375429739.6761.31.camel@jlo-ubuntu-64.nvidia.com>
+	 <51FC1579.50100@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51FC1926.9030103@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51FC1579.50100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 2013-08-03 at 04:40 +0800, Stephen Warren wrote:
-> On 08/02/2013 03:27 AM, Joseph Lo wrote:
-> > On Tue, 2013-07-30 at 07:13 +0800, Stephen Warren wrote:
+On Sat, 2013-08-03 at 04:24 +0800, Stephen Warren wrote:
+> On 08/02/2013 01:48 AM, Joseph Lo wrote:
+> > On Tue, 2013-07-30 at 06:47 +0800, Stephen Warren wrote:
 > >> On 07/26/2013 03:15 AM, Joseph Lo wrote:
-> >>> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
-> >>> clock gated and SDRAM in self-refresh mode. That means the low level LP1
-> >>> suspending and resuming code couldn't be run on DRAM and the CPU must
-> >>> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
-> >>> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
-> >>> The LP1 low level handling code need to be moved to IRAM area first. And
-> >>> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
-> >>> power timer needs to be re-calculated based on 32KHz that was originally
-> >>> based on PCLK.
+> >>> When suspending to LP1 mode, the SYSCLK will be clock gated. And different
+> >>> board may have different polarity of the request of SYSCLK, this patch
+> >>> configure the polarity from the DT for the board.
 > >>
-> >>> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> >>> diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
 > >>
-> >>>  #ifdef CONFIG_PM_SLEEP
-> >>>  static DEFINE_SPINLOCK(tegra_lp2_lock);
-> >>> +static void __iomem *iram_code = IO_ADDRESS(TEGRA_IRAM_CODE_AREA);
-> >>> +static u32 iram_save_size;
-> >>> +static void *iram_save_addr;
-> >>> +struct tegra_lp1_iram *tegra_lp1_iram;
-> >>>  void (*tegra_tear_down_cpu)(void);
-> >>> +void (*tegra_sleep_core_finish)(unsigned long v2p);
+> >>> @@ -238,6 +240,20 @@ void tegra_pmc_suspend_init(void)
+> >>>  	reg = tegra_pmc_readl(PMC_CTRL);
+> >>>  	reg |= TEGRA_POWER_CPU_PWRREQ_OE;
+> >>>  	tegra_pmc_writel(reg, PMC_CTRL);
+> >>> +
+> >>> +	reg = tegra_pmc_readl(PMC_CTRL);
+> >>> +
+> >>> +	if (!pmc_pm_data.sysclkreq_high)
+> >>> +		reg |= TEGRA_POWER_SYSCLK_POLARITY;
+> >>> +	else
+> >>> +		reg &= ~TEGRA_POWER_SYSCLK_POLARITY;
+> >>> +
+> >>> +	/* configure the output inverts while the request is tristated */
+> >>> +	tegra_pmc_writel(reg, PMC_CTRL);
 > >>
-> >> I'm not sure all of those are required to be global variables. For
-> >> example, iram_code is just a constant, so you could easily just use it
-> >> directly in code.
-> >
-> > All of them does not mean the same thing. The LP1 resume code was built
-> > in kernel image and store in RAM.
-> > The tegra_lp1_iram hooks the LP1 resume code for different chips. Before
-> > LP1 suspend, the original stuffs that in the area of IRAM would be store
-> > in the iram_save_addr (RAM). Then copy the LP1 resume code to iram_code
-> > area (IRAM).
+> >> I think s/inverts/polarity/ in that comment would make a lot more sense.
+> >>
+> > Yes, thanks.
+> > 
+> >> Must _OE be disabled for the code to work correctly? If so, should the
+> >> code explicitly clear _OE first, since who knows what state it was
+> >> originally in? Can't we just set the new polarity and enable _OE in a
+> >> single register write?
+> >>
+> > The SYSCLK is super clock that was connected to COP subsystem. It can't
+> > be disabled when system is running. The boot loader had initialized it
+> > and brought it to kernel. We follow the HW description in DT of the
+> > polarity of SCLK to re-configure and re-init again. Then the PMC can
+> > clock gate it when system go into suspend state.
 > 
-> Sure, some of those variable may differ based on the SoC at runtime etc.
+> So it sounds like the bootloader has already configured the clock to a
+> certain polarity. If so, why do we need to reconfigure it again?
 > 
-> But at least the value of iram_code never changes, right?
-Yes.
+> Or, is this code not duplicating something the bootloader must have
+> done, but simply informing some HW in the PMC that's receiving SYSCLK
+> how the clock is configured elsewhere?
 
-> >>> +static void tegra_suspend_enter_lp1(void)
-> >>> +{
-> >>> +	tegra_pmc_suspend();
-> >>> +
-> >>> +	/* copy the reset vector & SDRAM shutdown code into IRAM */
-> >>> +	memcpy(iram_save_addr, iram_code, iram_save_size);
-> >>> +	memcpy(iram_code, tegra_lp1_iram->start_addr, iram_save_size);
-> >>> +
-> >>> +	*((u32 *)tegra_cpu_lp1_mask) = 1;
-> >>> +}
-> >>> +
-> >>> +static void tegra_suspend_exit_lp1(void)
-> >>> +{
-> >>> +	tegra_pmc_resume();
-> >>> +
-> >>> +	/* restore IRAM */
-> >>> +	memcpy(iram_code, iram_save_addr, iram_save_size);
-> >>> +
-> >>> +	*(u32 *)tegra_cpu_lp1_mask = 0;
-> >>> +}
-> >>
-> >> I'm not really sure I like that, but I suppose it's OK. It sure seems
-> >> like a performance limiter, but I suppose LP1 is so slow it doesn't
-> >> matter, due to the need to ramp power rails, PLLs, SDRAM controller, etc.
-> >
-> > That's why we only back up the code size that exactly same with the LP1
-> > resume code of the SoC.
-> >
-> >> It'd be nice to simply reserve more IRAM for the kernel's use. Right
-> >> now, only 1K is reserved, and presumably the code running on the AVP
-> >> can't use the rest of that page anyway, or can it?
-> >
-> > The LP1 resume code still running on the CPU (The LP0 would resume from
-> > AVP).
-> 
-> Sure. However, if the AVP never touched the IRAM region where the LP1
-> resume code is placed, we would only need to copy the LP1 resume code to
-> IRAM once at kernel boot time, rather than every time we enter/leave LP1.
-> 
-> I guess the idea is that once we have an AVP driver, we will force the
-> AVP to suspend first, save the IRAM that it might have been using, do
-> the system suspend/resume, then restore the IRAM. And that changing that
-> sequence so that the AVP never ever touched the LP1 IRAM area would
-> require AVP firmware changes that we can't make?
-Yes, exactly.
+I can't always guarantee the bootloader does the stuffs that kernel
+needs. For this reason, it's better to do what the kernel needs in the
+kernel.
