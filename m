@@ -1,61 +1,83 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
-Date: Tue, 6 Aug 2013 17:19:33 +0800
-Message-ID: <1375780773.2261.72.camel@jlo-ubuntu-64.nvidia.com>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
-	 <1374830110-30685-4-git-send-email-josephl@nvidia.com>
-	 <51F6F209.2090309@wwwdotorg.org>
-	 <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>
-	 <51FC1751.9010401@wwwdotorg.org>
-	 <1375689749.1731.36.camel@jlo-ubuntu-64.nvidia.com>
-	 <51FFDA20.6050403@wwwdotorg.org>
+Subject: Re: [PATCH V2 4/8] ARM: tegra: add common LP1 suspend support
+Date: Tue, 6 Aug 2013 17:41:32 +0800
+Message-ID: <1375782092.2261.92.camel@jlo-ubuntu-64.nvidia.com>
+References: <1375701664-14965-1-git-send-email-josephl@nvidia.com>
+	 <1375701664-14965-5-git-send-email-josephl@nvidia.com>
+	 <51FFE557.4000103@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51FFDA20.6050403-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <51FFE557.4000103-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-08-06 at 01:00 +0800, Stephen Warren wrote:
-> On 08/05/2013 02:02 AM, Joseph Lo wrote:
-> > On Sat, 2013-08-03 at 04:32 +0800, Stephen Warren wrote:
-> >> On 08/02/2013 02:09 AM, Joseph Lo wrote:
-> >>> On Tue, 2013-07-30 at 06:51 +0800, Stephen Warren wrote:
-> >>>> On 07/26/2013 03:15 AM, Joseph Lo wrote:
-> >>>>> When the system suspends to LP1, the clock of the CPU would be switched to
-> >>>>> CLK_M (12MHz Oscillator) during suspend/resume flow. The clock driver
-> >>>>> needs to restore the clock of CPU after LP1 resume.
-> >>>>
-[snip]
-> >>>> Why don't Tegra20/30 need a similar change?
-> >>>
-> >>> For Tegra20/30, the same code had been implemented in the suspend/resume
-> >>> function of tegra_cpu_car_ops. It restores the CPU clock ASAP when CPU
-> >>> resume from a suspend state to get quick performance I believe.
-> >>>
-> >>> For Tegra114, the resume performance is cool (although we can't see it
-> >>> in upstream kernel now, it still need some other functions.). We can
-> >>> implement all the clock related suspend/resume function in the clock
-> >>> driver.
-> >>
-> >> OK, I do see something similar in tegra20/30_cpu_clock_suspend/resume.
-> >> Why can't this new code be part of the equivalent functions; does the
-> >> Tegra114 suspend/resume code in mach-tegra/ not call
-> >> tegra_cpu_car_ops.suspend/resume() in the same way it does on Tegra20/30?
-> >
-> > One of the main reasons is due to DFLL clock. The CPU clock of Tegra114
-> > is going to switch to DFLL to a get higher clock rate. But it depends
-> > some other HW (i.e. I2C), we can't resume it so early when the CPU just
-> > resume like we did in tegra_cpu_car_ops.suspend/resume for Tegra20/30.
+On Tue, 2013-08-06 at 01:48 +0800, Stephen Warren wrote:
+> On 08/05/2013 05:21 AM, Joseph Lo wrote:
+> > The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
+> > clock gated and SDRAM in self-refresh mode. That means the low level LP1
+> > suspending and resuming code couldn't be run on DRAM and the CPU must
+> > switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
+> > the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
+> > The LP1 low level handling code need to be moved to IRAM area first. And
+> > marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
+> > power timer needs to be re-calculated based on 32KHz that was originally
+> > based on PCLK.
+> > 
+> > When resuming from LP1, the LP1 reset handler will resume PLLs and then
+> > put DRAM to normal mode. Then jumping to the "tegra_resume" that will
+> > restore full context before back to kernel. The "tegra_resume" handler
+> > was expected to be found in PMC_SCRATCH41 register.
+> > 
+> > This is common LP1 procedures for Tegra, so we do these jobs mainly in
+> > this patch:
+> > * moving LP1 low level handling code to IRAM
+> > * marking LP1 mask
+> > * copying the physical address of "tegra_resume" to PMC_SCRATCH41
+> > * re-calculate the CPU power timer based on 32KHz
 > 
-> Is there a guarantee that the syscore_ops are run after the call to
-> tegar_cpu_car_ops.resume() would be? Perhaps the mach-tegra/ code should
-> simply call tegra_cpu_car_ops.resume() later on Tegra114 than it does on
-> earlier chips, so it's run at a suitable time?
+> > diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+> 
+> > +static void __iomem *iram_code = IO_ADDRESS(TEGRA_IRAM_CODE_AREA);
+> 
+> I repeat: Why store that value in a global variable? It's constant.
+> 
+Sorry, I forgot this one. I will use a "#define" to replace it.
+> > @@ -174,14 +181,75 @@ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
+> >  				enum tegra_suspend_mode mode)
+> >  {
+> >  	/*
+> > -	 * The Tegra devices only support suspending to LP2 currently.
+> > +	 * The Tegra devices support suspending to LP1 or lower currently.
+> >  	 */
+> > -	if (mode > TEGRA_SUSPEND_LP2)
+> > -		return TEGRA_SUSPEND_LP2;
+> > +	if (mode > TEGRA_SUSPEND_LP1)
+> > +		return TEGRA_SUSPEND_LP1;
+> >  
+> >  	return mode;
+> >  }
+> 
+> I think that change needs to happen after patch 7. At this point in the
+> series, LP1 doesn't work on any chip. After patch 7, it will work on all
+> chips.
+This code is safe here. Because we have some protection code.
+> 
+> If you don't make that change, you should move this change into patch 5,
+> but only enable LP1 for Tegra30, then make patch 6 also enable it for
+> Tegra20, then make patch 7 also enable it for Tegra114. That's a lot
+> more complex, so just moving the change above into a new patch after
+> patch 7 seems better.
+We have the function (tegra_lp1_iram_hook and tegra_sleep_core_init) to
+check if the system didn't support LP1 yet, then it will fall back to
+LP2. I verified this too.
 
-Yes, the tegra_cpu_car_ops.suspend/resume() is hooked to
-suspend_cpu_complex()/resuem_cpu_complex() that in the "pm.c" file. It
-would be the final/first function be invoked when system suspend/resume.
+> 
+> Note: You must assume that the DT changes are all checked in before any
+> of the code changes, so the code needs to work correctly even if the DT
+> contains the data that allows usage of LP1 before the driver actually
+> implements LP1.
+So should I still move them to the last patch?
