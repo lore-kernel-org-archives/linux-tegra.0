@@ -1,52 +1,56 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.11-rc4
-Date: Tue, 6 Aug 2013 11:32:05 -0700
-Message-ID: <52014125.7010003@nvidia.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2 6/6] usb: host: tegra: Tegra30 support
+Date: Tue, 06 Aug 2013 22:35:30 +0400
+Message-ID: <520141F2.4060907@cogentembedded.com>
+References: <1375812518-3847-1-git-send-email-ttynkkynen@nvidia.com> <1375812518-3847-7-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra >> \"linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org\"" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org >>
-	\"linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org\"" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375812518-3847-7-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: balbi@ti.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, swarren@wwwdotorg.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.11-rc4.
-Logs and other details at:
+Hello.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.11-rc4/20130806092219/
+On 08/06/2013 10:08 PM, Tuomas Tynkkynen wrote:
 
-Special thanks to Jon Hunter for pointing out that the column order
-of the boot time memory consumption report headings didn't match the
-data, in previous reports.
+> The Tegra30 EHCI controller is mostly compatible with the Tegra20
+> controller, except Tegra30 includes the HOSTPC register extension.
+> The has_hostpc capability bit must be set in the ehci_hcd structure if
+> the controller has such extensions. The new tegra_ehci_soc_config
+> structure is added to describe the differences between the SoCs.
 
+> Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+> ---
+>   drivers/usb/host/ehci-tegra.c | 34 +++++++++++++++++++++++++++++-----
+>   1 file changed, 29 insertions(+), 5 deletions(-)
 
-Test summary
-------------
+> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
+> index db8031f..c0d1f27 100644
+> --- a/drivers/usb/host/ehci-tegra.c
+> +++ b/drivers/usb/host/ehci-tegra.c
+[...]
+>   static int tegra_ehci_probe(struct platform_device *pdev)
+>   {
+> +	const struct of_device_id *match;
+> +	const struct tegra_ehci_soc_config *soc_config;
+>   	struct resource *res;
+>   	struct usb_hcd *hcd;
+>   	struct ehci_hcd *ehci;
+> @@ -330,6 +351,13 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+>   	int irq;
+>   	struct usb_phy *u_phy;
+>
+> +	match = of_match_device(tegra_ehci_of_match, &pdev->dev);
+> +	if (!match) {
+> +		dev_err(&pdev->dev, "Error: No device match found\n");
+> +		return -ENODEV;
+> +	}
+> +	soc_config = (struct tegra_ehci_soc_config *)match->data;
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+    Aren't casts from 'const void *' automatic?
 
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
-
-
-
-vmlinux object size
-(delta in bytes from test_v3.11-rc3 (5ae90d8e467e625e447000cb4335c4db973b1095)):
-    text     data      bss    total  kernel
-   +1916       -8        0    +1908  multi_v7_defconfig
-    +944      -72      +64     +936  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.11-rc3 (5ae90d8e467e625e447000cb4335c4db973b1095))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-       -4k       4k        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
-      -12k      12k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
-       -4k       4k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-      -12k      12k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+WBR, Sergei
