@@ -1,78 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 4/8] ARM: tegra: add common LP1 suspend support
-Date: Tue, 06 Aug 2013 12:40:10 -0600
-Message-ID: <5201430A.2040408@wwwdotorg.org>
-References: <1375701664-14965-1-git-send-email-josephl@nvidia.com>  <1375701664-14965-5-git-send-email-josephl@nvidia.com>  <51FFE557.4000103@wwwdotorg.org> <1375782092.2261.92.camel@jlo-ubuntu-64.nvidia.com>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] usb: host: tegra: Tegra30 support
+Date: Tue, 6 Aug 2013 22:16:25 +0300
+Message-ID: <52014B89.9040106@nvidia.com>
+References: <1375812518-3847-1-git-send-email-ttynkkynen@nvidia.com> <1375812518-3847-7-git-send-email-ttynkkynen@nvidia.com> <520141F2.4060907@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375782092.2261.92.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <520141F2.4060907-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/06/2013 03:41 AM, Joseph Lo wrote:
-> On Tue, 2013-08-06 at 01:48 +0800, Stephen Warren wrote:
->> On 08/05/2013 05:21 AM, Joseph Lo wrote:
->>> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
->>> clock gated and SDRAM in self-refresh mode. That means the low level LP1
->>> suspending and resuming code couldn't be run on DRAM and the CPU must
->>> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
->>> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
->>> The LP1 low level handling code need to be moved to IRAM area first. And
->>> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
->>> power timer needs to be re-calculated based on 32KHz that was originally
->>> based on PCLK.
->>>
->>> When resuming from LP1, the LP1 reset handler will resume PLLs and then
->>> put DRAM to normal mode. Then jumping to the "tegra_resume" that will
->>> restore full context before back to kernel. The "tegra_resume" handler
->>> was expected to be found in PMC_SCRATCH41 register.
->>>
->>> This is common LP1 procedures for Tegra, so we do these jobs mainly in
->>> this patch:
->>> * moving LP1 low level handling code to IRAM
->>> * marking LP1 mask
->>> * copying the physical address of "tegra_resume" to PMC_SCRATCH41
->>> * re-calculate the CPU power timer based on 32KHz
+On 08/06/2013 09:35 PM, Sergei Shtylyov wrote:
+> Hello.
+> 
+[...]
 >>
->>> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+>> +	match = of_match_device(tegra_ehci_of_match, &pdev->dev);
+>> +	if (!match) {
+>> +		dev_err(&pdev->dev, "Error: No device match found\n");
+>> +		return -ENODEV;
+>> +	}
+>> +	soc_config = (struct tegra_ehci_soc_config *)match->data;
+> 
+>     Aren't casts from 'const void *' automatic?
+> 
+> WBR, Sergei
+> 
 
->>> @@ -174,14 +181,75 @@ enum tegra_suspend_mode tegra_pm_validate_suspend_mode(
->>>  				enum tegra_suspend_mode mode)
->>>  {
->>>  	/*
->>> -	 * The Tegra devices only support suspending to LP2 currently.
->>> +	 * The Tegra devices support suspending to LP1 or lower currently.
->>>  	 */
->>> -	if (mode > TEGRA_SUSPEND_LP2)
->>> -		return TEGRA_SUSPEND_LP2;
->>> +	if (mode > TEGRA_SUSPEND_LP1)
->>> +		return TEGRA_SUSPEND_LP1;
->>>  
->>>  	return mode;
->>>  }
->>
->> I think that change needs to happen after patch 7. At this point in the
->> series, LP1 doesn't work on any chip. After patch 7, it will work on all
->> chips.
->
-> This code is safe here. Because we have some protection code.
-...
-> We have the function (tegra_lp1_iram_hook and tegra_sleep_core_init) to
-> check if the system didn't support LP1 yet, then it will fall back to
-> LP2. I verified this too.
-
-Ah yes, that looks fine. Thanks very much for the explanation.
-
->> Note: You must assume that the DT changes are all checked in before any
->> of the code changes, so the code needs to work correctly even if the DT
->> contains the data that allows usage of LP1 before the driver actually
->> implements LP1.
->
-> So should I still move them to the last patch?
-
-No, I think given the check in tegra_lp1_iram_hook, everything will work
-fine no matter which order the DT and code changes are applied.
+Indeed they are, but those explicit casts seem to be used in many places in the kernel.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
