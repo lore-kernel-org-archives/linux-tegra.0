@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/5] clk: tegra: Set the clock parent of gr2d/gr3d to pll_c2
-Date: Wed, 7 Aug 2013 19:25:08 +0800
-Message-ID: <1375874709-10438-4-git-send-email-markz@nvidia.com>
+Subject: [PATCH 5/5] clk: tegra: Set the clk parent of host1x to pll_p
+Date: Wed, 7 Aug 2013 19:25:09 +0800
+Message-ID: <1375874709-10438-5-git-send-email-markz@nvidia.com>
 References: <1375874709-10438-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,27 +12,30 @@ To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMK
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-pll_m will be the parent of gr2d/gr3d if we don't do this.
-And because pll_m runs at a high rate so gr2d/gr3d will be
-unstable. So change the parent of them to pll_c2.
+From: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+The power-on default parent for this clock is pll_m, which turns out to
+be wrong. Previously, bootloader reparented this clock.  We'll do it in
+the kernel as well, so that there's one less thing that we depend on
+bootloader to initialize.
+
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra114.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-tegra114.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index a45ea68..72976a2 100644
+index 72976a2..100105b 100644
 --- a/drivers/clk/tegra/clk-tegra114.c
 +++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -2199,6 +2199,8 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+@@ -2197,6 +2197,7 @@ static __initdata struct tegra_clk_init_table init_table[] = {
+ 	{i2s2, pll_a_out0, 11289600, 0},
+ 	{i2s3, pll_a_out0, 11289600, 0},
  	{i2s4, pll_a_out0, 11289600, 0},
++	{host1x, pll_p, 136000000, 0},
  	{dfll_soc, pll_p, 51000000, 1},
  	{dfll_ref, pll_p, 51000000, 1},
-+	{gr_2d, pll_c2, 300000000, 0},
-+	{gr_3d, pll_c2, 300000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
- };
- 
+ 	{gr_2d, pll_c2, 300000000, 0},
 -- 
 1.7.9.5
