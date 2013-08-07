@@ -1,26 +1,51 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/2] Add power control for lm90
-Date: Wed, 7 Aug 2013 14:52:36 +0800
-Message-ID: <1375858358-15070-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH 2/2] ARM: dt: t114 dalmore: add dt entry for nct1008
+Date: Wed, 7 Aug 2013 14:52:38 +0800
+Message-ID: <1375858358-15070-3-git-send-email-wni@nvidia.com>
+References: <1375858358-15070-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375858358-15070-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org, swarren@wwwdotorg.org
+Cc: linux@roeck-us.net, MLongnecker@nvidia.com, linux-arm-kernel@lists.infradead.org, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The device lm90 can be controlled by the vdd rail.
-Add function to power on/off the vdd.
-Enable the nct1008 on Tegra114 Dalmore board, and set the vdd-regulator.
+Enable thermal sensor nct1008 for t114 dalmore.
 
-Wei Ni (2):
-  hwmon: (lm90) Add power control
-  ARM: dt: t114 dalmore: add dt entry for nct1008
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
- arch/arm/boot/dts/tegra114-dalmore.dts |   10 +++++-
- drivers/hwmon/lm90.c                   |   52 ++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index b5a42f0..9d4d2b2 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -738,6 +738,14 @@
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
+ 		};
++
++		nct1008 {
++			compatible = "onnn,nct1008";
++			reg = <0x4c>;
++			vdd-supply = <&palmas_ldo6_reg>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
++		};
+ 	};
+ 
+ 	i2c@7000d000 {
+@@ -945,7 +953,7 @@
+ 						regulator-max-microvolt = <1800000>;
+ 					};
+ 
+-					ldo6 {
++					palmas_ldo6_reg: ldo6 {
+ 						regulator-name = "vdd-sensor-2v85";
+ 						regulator-min-microvolt = <2850000>;
+ 						regulator-max-microvolt = <2850000>;
 -- 
 1.7.9.5
