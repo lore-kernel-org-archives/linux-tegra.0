@@ -1,36 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 0/6] USB tree changes for Tegra30 and Tegra114 USB
- Host support
-Date: Tue, 06 Aug 2013 13:46:36 -0600
-Message-ID: <5201529C.5020409@wwwdotorg.org>
-References: <1375812518-3847-1-git-send-email-ttynkkynen@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 2/3] hwmon: (lm90) add support to handle IRQ
+Date: Wed, 7 Aug 2013 14:18:25 +0800
+Message-ID: <1375856306-14415-3-git-send-email-wni@nvidia.com>
+References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375812518-3847-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1375856306-14415-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/06/2013 12:08 PM, Tuomas Tynkkynen wrote:
-> Hi all,
-> 
-> Here are the patches for the USB tree to enable USB Host support on Tegra30 and
-> Tegra114. These are based on my and Mikko's cleanup patches that just got
-> merged to Felipe's tree.
-> 
-> The first one touches the core hub code to prevent certain (non-standard) clock
-> disable features as our controller doesn't support those.
-> The rest are changes to our PHY and EHCI drivers to deal with a few changed
-> register addresses and a few additional PHY parameters that need to be set
-> for proper signal quality.
+When the temperature exceed the limit range value,
+the driver can handle the interrupt.
 
-The series,
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/hwmon/lm90.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-(Tested on all of Tegra20/paz00, Tegra30/Beaver, Tegra114/Dalmore, all
-with a USB NIC only)
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index 1da2eff..2e68773 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -89,6 +89,7 @@
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/interrupt.h>
+ 
+ /*
+  * Addresses to scan
+@@ -1433,6 +1434,16 @@ static bool lm90_is_tripped(struct i2c_client *client)
+ 	return true;
+ }
+ 
++static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
++{
++	struct i2c_client *client = dev_id;
++
++	if (lm90_is_tripped(client))
++		return IRQ_HANDLED;
++	else
++		return IRQ_NONE;
++}
++
+ static int lm90_probe(struct i2c_client *client,
+ 		      const struct i2c_device_id *id)
+ {
+@@ -1509,6 +1520,18 @@ static int lm90_probe(struct i2c_client *client,
+ 		goto exit_remove_files;
+ 	}
+ 
++	if (client->irq) {
++		dev_dbg(dev, "IRQ: %d\n", client->irq);
++		err = devm_request_threaded_irq(dev, client->irq,
++						NULL, lm90_irq_thread,
++						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
++						"lm90", client);
++		if (err < 0) {
++			dev_err(dev, "cannot request IRQ: %d\n", client->irq);
++			goto exit_remove_files;
++		}
++	}
++
+ 	return 0;
+ 
+ exit_remove_files:
+-- 
+1.7.9.5
