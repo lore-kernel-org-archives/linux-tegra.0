@@ -1,72 +1,51 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 2/3] hwmon: (lm90) add support to handle IRQ
-Date: Wed, 7 Aug 2013 14:18:25 +0800
-Message-ID: <1375856306-14415-3-git-send-email-wni@nvidia.com>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v4 0/3] Lm90 Enhancements
+Date: Wed, 7 Aug 2013 14:18:23 +0800
+Message-ID: <1375856306-14415-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375856306-14415-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org
+Cc: linux@roeck-us.net, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When the temperature exceed the limit range value,
-the driver can handle the interrupt.
+This patch set enhance the lm90 driver,
+it make the driver more readable and easier to use thermal framework.
 
-Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/hwmon/lm90.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+This series is v4, previous version patches:
+[RFC]: http://thread.gmane.org/gmane.linux.power-management.general/31056
+[v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11710/
+[v2]: http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg465555.html
+[v3]: http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg466772.html
 
-diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-index 1da2eff..2e68773 100644
---- a/drivers/hwmon/lm90.c
-+++ b/drivers/hwmon/lm90.c
-@@ -89,6 +89,7 @@
- #include <linux/err.h>
- #include <linux/mutex.h>
- #include <linux/sysfs.h>
-+#include <linux/interrupt.h>
- 
- /*
-  * Addresses to scan
-@@ -1433,6 +1434,16 @@ static bool lm90_is_tripped(struct i2c_client *client)
- 	return true;
- }
- 
-+static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
-+{
-+	struct i2c_client *client = dev_id;
-+
-+	if (lm90_is_tripped(client))
-+		return IRQ_HANDLED;
-+	else
-+		return IRQ_NONE;
-+}
-+
- static int lm90_probe(struct i2c_client *client,
- 		      const struct i2c_device_id *id)
- {
-@@ -1509,6 +1520,18 @@ static int lm90_probe(struct i2c_client *client,
- 		goto exit_remove_files;
- 	}
- 
-+	if (client->irq) {
-+		dev_dbg(dev, "IRQ: %d\n", client->irq);
-+		err = devm_request_threaded_irq(dev, client->irq,
-+						NULL, lm90_irq_thread,
-+						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+						"lm90", client);
-+		if (err < 0) {
-+			dev_err(dev, "cannot request IRQ: %d\n", client->irq);
-+			goto exit_remove_files;
-+		}
-+	}
-+
- 	return 0;
- 
- exit_remove_files:
+Changes from v3:
+1. remove the patch "hwmon: (lm90) split set&show temp as common codes",
+and sent it as a separated one.
+2. fix the bug of second read on STATUS register.
+3. fix some code style issue according to Jean's comments.
+
+Changes from v2:
+1. update the defines for status bit, and go into a separate patch.
+2. introduce the new lm90_is_tripped() for lm90_irq_thread and lm90_alert.
+
+Changes from v1:
+1. change the string "irq" to "IRQ"
+2. add macro defines for the alarm status
+3. consider the shared IRQ.
+
+Changes from RFC:
+1. change _show_temp() to read_temp(), _set_temp() to write_temp().
+2. simply return value for the read_temp(), not use pointer.
+3. use devm_request_threaded_irq() to request irq and set flag IRQF_ONESHOT.
+
+Wei Ni (3):
+  hwmon: (lm90) Define status bits
+  hwmon: (lm90) add support to handle IRQ
+  hwmon: (lm90) use enums for the indexes of temp8 and temp11
+
+ drivers/hwmon/lm90.c |  252 ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 163 insertions(+), 89 deletions(-)
+
 -- 
 1.7.9.5
