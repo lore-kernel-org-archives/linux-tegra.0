@@ -1,57 +1,52 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzJdIGh3bW9uOiAobG05MCkgQWRkIHBvd2VyIGNvbnRy?=
- =?UTF-8?B?b2w=?=
-Date: Wed, 07 Aug 2013 11:27:22 +0400
-Message-ID: <1375860442.896960598@f427.i.mail.ru>
-References: <1375858358-15070-1-git-send-email-wni@nvidia.com>
- <1375858358-15070-2-git-send-email-wni@nvidia.com>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] hwmon: (lm90) Add power control
+Date: Wed, 7 Aug 2013 15:32:33 +0800
+Message-ID: <5201F811.9050602@nvidia.com>
+References: <1375858358-15070-1-git-send-email-wni@nvidia.com> <1375858358-15070-2-git-send-email-wni@nvidia.com> <1375860442.896960598@f427.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1375858358-15070-2-git-send-email-wni@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?UTF-8?B?V2VpIE5p?= <wni@nvidia.com>
-Cc: swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, MLongnecker@nvidia.com, linux-arm-kernel@lists.infradead.org, khali@linux-fr.org, linux@roeck-us.net
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375860442.896960598-syZRKAW8O9ZsdVUOrk1QfQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> The device lm90 can be controlled by the vdd rail.
-> Adding the power control support to power on/off the vdd rail.
-> And make sure that power is enabled before accessing the device.
+On 08/07/2013 03:27 PM, Alexander Shiyan wrote:
+>> The device lm90 can be controlled by the vdd rail.
+>> Adding the power control support to power on/off the vdd rail.
+>> And make sure that power is enabled before accessing the device.
+>>
+>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/hwmon/lm90.c |   52 ++++++++++++++++++++++++++++++++++++++++++++++++++
+> [...]
+>> +	if (!data->lm90_reg) {
+>> +		data->lm90_reg = regulator_get(&client->dev, "vdd");
+>> +		if (IS_ERR_OR_NULL(data->lm90_reg)) {
+>> +			if (PTR_ERR(data->lm90_reg) == -ENODEV)
+>> +				dev_info(&client->dev,
+>> +					 "No regulator found for vdd. Assuming vdd is always powered.");
+>> +			else
+>> +				dev_warn(&client->dev,
+>> +					 "Error [%ld] in getting the regulator handle for vdd.\n",
+>> +					 PTR_ERR(data->lm90_reg));
+>> +			data->lm90_reg = NULL;
+>> +			mutex_unlock(&data->update_lock);
+>> +			return -ENODEV;
+>> +		}
+>> +	}
+>> +	if (is_enable) {
+>> +		ret = regulator_enable(data->lm90_reg);
+>> +		msleep(POWER_ON_DELAY);
 > 
-> Signed-off-by: Wei Ni <wni@nvidia.com>
+> Can this delay be handled directly from regulator?
+
+I think it should be handled in the device driver.
+Because there have different delay time to wait devices stable.
+
+> 
+> [...]
 > ---
->  drivers/hwmon/lm90.c |   52 ++++++++++++++++++++++++++++++++++++++++++++++++++
-[...]
-> +	if (!data->lm90_reg) {
-> +		data->lm90_reg = regulator_get(&client->dev, "vdd");
-> +		if (IS_ERR_OR_NULL(data->lm90_reg)) {
-> +			if (PTR_ERR(data->lm90_reg) == -ENODEV)
-> +				dev_info(&client->dev,
-> +					 "No regulator found for vdd. Assuming vdd is always powered.");
-> +			else
-> +				dev_warn(&client->dev,
-> +					 "Error [%ld] in getting the regulator handle for vdd.\n",
-> +					 PTR_ERR(data->lm90_reg));
-> +			data->lm90_reg = NULL;
-> +			mutex_unlock(&data->update_lock);
-> +			return -ENODEV;
-> +		}
-> +	}
-> +	if (is_enable) {
-> +		ret = regulator_enable(data->lm90_reg);
-> +		msleep(POWER_ON_DELAY);
-
-Can this delay be handled directly from regulator?
-
-[...]
----
+> 
