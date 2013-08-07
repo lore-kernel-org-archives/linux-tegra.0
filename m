@@ -1,76 +1,116 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] hwmon: (lm90) Add power control
-Date: Wed, 7 Aug 2013 17:35:05 +0800
-Message-ID: <520214C9.1010200@nvidia.com>
-References: <1375858358-15070-1-git-send-email-wni@nvidia.com> <5201FC2C.4030908@roeck-us.net> <52020047.1080705@nvidia.com> <1375865105.562600640@f434.i.mail.ru>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/5] clk: tegra: Add reset only clock node flag and COP
+Date: Wed, 7 Aug 2013 19:25:06 +0800
+Message-ID: <1375874709-10438-2-git-send-email-markz@nvidia.com>
+References: <1375874709-10438-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375865105.562600640-y1D/hCXJdYBsdVUOrk1QfQ@public.gmane.org>
+In-Reply-To: <1375874709-10438-1-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/07/2013 04:45 PM, Alexander Shiyan wrote:
->> On 08/07/2013 03:50 PM, Guenter Roeck wrote:
->>> On 08/07/2013 12:32 AM, Wei Ni wrote:
->>>> On 08/07/2013 03:27 PM, Alexander Shiyan wrote:
->>>>>> The device lm90 can be controlled by the vdd rail.
->>>>>> Adding the power control support to power on/off the vdd rail.
->>>>>> And make sure that power is enabled before accessing the device.
->>>>>>
->>>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>> ---
->>>>>>   drivers/hwmon/lm90.c |   52 ++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>> [...]
->>>>>> +	if (!data->lm90_reg) {
->>>>>> +		data->lm90_reg = regulator_get(&client->dev, "vdd");
->>>>>> +		if (IS_ERR_OR_NULL(data->lm90_reg)) {
->>>>>> +			if (PTR_ERR(data->lm90_reg) == -ENODEV)
->>>>>> +				dev_info(&client->dev,
->>>>>> +					 "No regulator found for vdd. Assuming vdd is always powered.");
->>>>>> +			else
->>>>>> +				dev_warn(&client->dev,
->>>>>> +					 "Error [%ld] in getting the regulator handle for vdd.\n",
->>>>>> +					 PTR_ERR(data->lm90_reg));
->>>>>> +			data->lm90_reg = NULL;
->>>>>> +			mutex_unlock(&data->update_lock);
->>>>>> +			return -ENODEV;
->>>>>> +		}
->>>>>> +	}
->>>>>> +	if (is_enable) {
->>>>>> +		ret = regulator_enable(data->lm90_reg);
->>>>>> +		msleep(POWER_ON_DELAY);
->>>>>
->>>>> Can this delay be handled directly from regulator?
->>>>
->>>> I think it should be handled in the device driver.
->>>> Because there have different delay time to wait devices stable.
->>>>
->>>
->>> Then why does no other caller of regulator_enable() need this ?
->>> I don't think lm90 is so much different to other users of regulator
->>> functionality.
->>
->> May be I'm wrong. I noticed that in lm90 SPEC, the max of "SMBus Clock
->> Low Time" is 25ms, so I supposed that it may need about 20ms to stable
->> after power on.
->>
->> Anyway, if I remove this delay, the driver also works fine, so I will
->> remove it in my next patch.
-> 
-> I originally had in mind that regulator API contain own delay option.
-> E.g. reg-fixed-voltage && gpio-regulator contains "startup-delay-us" property.
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-As I know the "startup-delay-us" is used for the regulator device, not
-the consumer devices.
-In this patch, msleep(POWER_ON_DELAY) was used to wait the lm90 stable,
-but it seems it's unnecessary now :)
+COP is a reset only clock. So this patch adds NO_CLK support
+then adds the COP clock.
 
-Wei.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-periph-gate.c |   15 +++++++++++++++
+ drivers/clk/tegra/clk-tegra114.c    |    9 ++++++++-
+ drivers/clk/tegra/clk.h             |    2 ++
+ 3 files changed, 25 insertions(+), 1 deletion(-)
 
-> 
-> ---
-> 
+diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+index bafee98..092f256 100644
+--- a/drivers/clk/tegra/clk-periph-gate.c
++++ b/drivers/clk/tegra/clk-periph-gate.c
+@@ -51,6 +51,11 @@ static int clk_periph_is_enabled(struct clk_hw *hw)
+ 	struct tegra_clk_periph_gate *gate = to_clk_periph_gate(hw);
+ 	int state = 1;
+ 
++	if (gate->flags & TEGRA_PERIPH_NO_CLK) {
++		WARN_ON(1);
++		return 0;
++	}
++
+ 	if (!(read_enb(gate) & periph_clk_to_bit(gate)))
+ 		state = 0;
+ 
+@@ -66,6 +71,11 @@ static int clk_periph_enable(struct clk_hw *hw)
+ 	struct tegra_clk_periph_gate *gate = to_clk_periph_gate(hw);
+ 	unsigned long flags = 0;
+ 
++	if (gate->flags & TEGRA_PERIPH_NO_CLK) {
++		WARN_ON(1);
++		return -EINVAL;
++	}
++
+ 	spin_lock_irqsave(&periph_ref_lock, flags);
+ 
+ 	gate->enable_refcnt[gate->clk_num]++;
+@@ -102,6 +112,11 @@ static void clk_periph_disable(struct clk_hw *hw)
+ 	struct tegra_clk_periph_gate *gate = to_clk_periph_gate(hw);
+ 	unsigned long flags = 0;
+ 
++	if (gate->flags & TEGRA_PERIPH_NO_CLK) {
++		WARN_ON(1);
++		return;
++	}
++
+ 	spin_lock_irqsave(&periph_ref_lock, flags);
+ 
+ 	gate->enable_refcnt[gate->clk_num]--;
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 71db736..7172faf 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -863,7 +863,7 @@ static unsigned long tegra114_input_freq[] = {
+ 			mux_d_audio_clk_idx, 0)
+ 
+ enum tegra114_clk {
+-	rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
++	cop = 1, rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
+ 	ndflash = 13, sdmmc1 = 14, sdmmc4 = 15, pwm = 17, i2s2 = 18, epp = 19,
+ 	gr_2d = 21, usbd = 22, isp = 23, gr_3d = 24, disp2 = 26, disp1 = 27,
+ 	host1x = 28, vcp = 29, i2s0 = 30, apbdma = 34, kbc = 36, kfuse = 40,
+@@ -1921,6 +1921,13 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base)
+ 	int i;
+ 	u32 val;
+ 
++	/* cop */
++	clk = tegra_clk_register_periph_gate("cop", NULL, TEGRA_PERIPH_NO_CLK,
++						clk_base, CLK_IGNORE_UNUSED, 1,
++						&periph_l_regs,
++						periph_clk_enb_refcnt);
++	clks[cop] = clk;
++
+ 	/* apbdma */
+ 	clk = tegra_clk_register_periph_gate("apbdma", "clk_m", 0, clk_base,
+ 				  0, 34, &periph_h_regs,
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 07cfacd..0124e11 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -375,6 +375,7 @@ struct tegra_clk_periph_regs {
+  *     bus to flush the write operation in apb bus. This flag indicates
+  *     that this peripheral is in apb bus.
+  * TEGRA_PERIPH_WAR_1005168 - Apply workaround for Tegra114 MSENC bug
++ * TEGRA_PERIPH_NO_CLK - Reset only clock node
+  */
+ struct tegra_clk_periph_gate {
+ 	u32			magic;
+@@ -395,6 +396,7 @@ struct tegra_clk_periph_gate {
+ #define TEGRA_PERIPH_MANUAL_RESET BIT(1)
+ #define TEGRA_PERIPH_ON_APB BIT(2)
+ #define TEGRA_PERIPH_WAR_1005168 BIT(3)
++#define TEGRA_PERIPH_NO_CLK BIT(4)
+ 
+ void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
+ extern const struct clk_ops tegra_clk_periph_gate_ops;
+-- 
+1.7.9.5
