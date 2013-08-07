@@ -1,72 +1,55 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH 1/2] hwmon: (lm90) Add power control
-Date: Wed, 7 Aug 2013 16:07:35 +0800
-Message-ID: <52020047.1080705@nvidia.com>
-References: <1375858358-15070-1-git-send-email-wni@nvidia.com> <1375858358-15070-2-git-send-email-wni@nvidia.com> <1375860442.896960598@f427.i.mail.ru> <5201F811.9050602@nvidia.com> <5201FC2C.4030908@roeck-us.net>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCAxLzJdIGh3bW9uOiAobG05MCkgQWRkIHBvd2VyIGNvbnRy?=
+ =?UTF-8?B?b2w=?=
+Date: Wed, 07 Aug 2013 12:45:05 +0400
+Message-ID: <1375865105.562600640@f434.i.mail.ru>
+References: <1375858358-15070-1-git-send-email-wni@nvidia.com>
+ <5201FC2C.4030908@roeck-us.net>
+ <52020047.1080705@nvidia.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5201FC2C.4030908@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Alexander Shiyan <shc_work@mail.ru>, "khali@linux-fr.org" <khali@linux-fr.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52020047.1080705-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?B?V2VpIE5p?= <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: =?UTF-8?B?R3VlbnRlciBSb2Vjaw==?= <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, =?UTF-8?B?c3dhcnJlbkB3d3dkb3Rvcmcub3Jn?= <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, =?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?= <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?bG0tc2Vuc29yc0BsbS1zZW5zb3JzLm9yZw==?= <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, =?UTF-8?B?bGludXgtdGVncmFAdmdlci5rZXJuZWwub3Jn?= <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?TWF0dGhldyBMb25nbmVja2Vy?= <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?UTF-8?B?a2hhbGlAbGludXgtZnIub3Jn?= <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, =?UTF-8?B?bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn?= <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/07/2013 03:50 PM, Guenter Roeck wrote:
-> On 08/07/2013 12:32 AM, Wei Ni wrote:
->> On 08/07/2013 03:27 PM, Alexander Shiyan wrote:
->>>> The device lm90 can be controlled by the vdd rail.
->>>> Adding the power control support to power on/off the vdd rail.
->>>> And make sure that power is enabled before accessing the device.
->>>>
->>>> Signed-off-by: Wei Ni <wni@nvidia.com>
->>>> ---
->>>>   drivers/hwmon/lm90.c |   52 ++++++++++++++++++++++++++++++++++++++++++++++++++
->>> [...]
->>>> +	if (!data->lm90_reg) {
->>>> +		data->lm90_reg = regulator_get(&client->dev, "vdd");
->>>> +		if (IS_ERR_OR_NULL(data->lm90_reg)) {
->>>> +			if (PTR_ERR(data->lm90_reg) == -ENODEV)
->>>> +				dev_info(&client->dev,
->>>> +					 "No regulator found for vdd. Assuming vdd is always powered.");
->>>> +			else
->>>> +				dev_warn(&client->dev,
->>>> +					 "Error [%ld] in getting the regulator handle for vdd.\n",
->>>> +					 PTR_ERR(data->lm90_reg));
->>>> +			data->lm90_reg = NULL;
->>>> +			mutex_unlock(&data->update_lock);
->>>> +			return -ENODEV;
->>>> +		}
->>>> +	}
->>>> +	if (is_enable) {
->>>> +		ret = regulator_enable(data->lm90_reg);
->>>> +		msleep(POWER_ON_DELAY);
->>>
->>> Can this delay be handled directly from regulator?
->>
->> I think it should be handled in the device driver.
->> Because there have different delay time to wait devices stable.
->>
-> 
-> Then why does no other caller of regulator_enable() need this ?
-> I don't think lm90 is so much different to other users of regulator
-> functionality.
-
-May be I'm wrong. I noticed that in lm90 SPEC, the max of "SMBus Clock
-Low Time" is 25ms, so I supposed that it may need about 20ms to stable
-after power on.
-
-Anyway, if I remove this delay, the driver also works fine, so I will
-remove it in my next patch.
-
-Thanks.
-Wei.
-
-> 
-> Besides that, your delay is unconditional, even for static regulators
-> which are always on. Other callers of regulator_enable() don't need
-> all that complexity, which I take as sign that it is not needed here either.
-> 
-> Guenter
-> 
+PiBPbiAwOC8wNy8yMDEzIDAzOjUwIFBNLCBHdWVudGVyIFJvZWNrIHdyb3RlOgo+ID4gT24gMDgv
+MDcvMjAxMyAxMjozMiBBTSwgV2VpIE5pIHdyb3RlOgo+ID4+IE9uIDA4LzA3LzIwMTMgMDM6Mjcg
+UE0sIEFsZXhhbmRlciBTaGl5YW4gd3JvdGU6Cj4gPj4+PiBUaGUgZGV2aWNlIGxtOTAgY2FuIGJl
+IGNvbnRyb2xsZWQgYnkgdGhlIHZkZCByYWlsLgo+ID4+Pj4gQWRkaW5nIHRoZSBwb3dlciBjb250
+cm9sIHN1cHBvcnQgdG8gcG93ZXIgb24vb2ZmIHRoZSB2ZGQgcmFpbC4KPiA+Pj4+IEFuZCBtYWtl
+IHN1cmUgdGhhdCBwb3dlciBpcyBlbmFibGVkIGJlZm9yZSBhY2Nlc3NpbmcgdGhlIGRldmljZS4K
+PiA+Pj4+Cj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBXZWkgTmkgPHduaUBudmlkaWEuY29tPgo+ID4+
+Pj4gLS0tCj4gPj4+PiAgIGRyaXZlcnMvaHdtb24vbG05MC5jIHwgICA1MiArKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ID4+PiBbLi4uXQo+ID4+Pj4g
+KwlpZiAoIWRhdGEtPmxtOTBfcmVnKSB7Cj4gPj4+PiArCQlkYXRhLT5sbTkwX3JlZyA9IHJlZ3Vs
+YXRvcl9nZXQoJmNsaWVudC0+ZGV2LCAidmRkIik7Cj4gPj4+PiArCQlpZiAoSVNfRVJSX09SX05V
+TEwoZGF0YS0+bG05MF9yZWcpKSB7Cj4gPj4+PiArCQkJaWYgKFBUUl9FUlIoZGF0YS0+bG05MF9y
+ZWcpID09IC1FTk9ERVYpCj4gPj4+PiArCQkJCWRldl9pbmZvKCZjbGllbnQtPmRldiwKPiA+Pj4+
+ICsJCQkJCSAiTm8gcmVndWxhdG9yIGZvdW5kIGZvciB2ZGQuIEFzc3VtaW5nIHZkZCBpcyBhbHdh
+eXMgcG93ZXJlZC4iKTsKPiA+Pj4+ICsJCQllbHNlCj4gPj4+PiArCQkJCWRldl93YXJuKCZjbGll
+bnQtPmRldiwKPiA+Pj4+ICsJCQkJCSAiRXJyb3IgWyVsZF0gaW4gZ2V0dGluZyB0aGUgcmVndWxh
+dG9yIGhhbmRsZSBmb3IgdmRkLlxuIiwKPiA+Pj4+ICsJCQkJCSBQVFJfRVJSKGRhdGEtPmxtOTBf
+cmVnKSk7Cj4gPj4+PiArCQkJZGF0YS0+bG05MF9yZWcgPSBOVUxMOwo+ID4+Pj4gKwkJCW11dGV4
+X3VubG9jaygmZGF0YS0+dXBkYXRlX2xvY2spOwo+ID4+Pj4gKwkJCXJldHVybiAtRU5PREVWOwo+
+ID4+Pj4gKwkJfQo+ID4+Pj4gKwl9Cj4gPj4+PiArCWlmIChpc19lbmFibGUpIHsKPiA+Pj4+ICsJ
+CXJldCA9IHJlZ3VsYXRvcl9lbmFibGUoZGF0YS0+bG05MF9yZWcpOwo+ID4+Pj4gKwkJbXNsZWVw
+KFBPV0VSX09OX0RFTEFZKTsKPiA+Pj4KPiA+Pj4gQ2FuIHRoaXMgZGVsYXkgYmUgaGFuZGxlZCBk
+aXJlY3RseSBmcm9tIHJlZ3VsYXRvcj8KPiA+Pgo+ID4+IEkgdGhpbmsgaXQgc2hvdWxkIGJlIGhh
+bmRsZWQgaW4gdGhlIGRldmljZSBkcml2ZXIuCj4gPj4gQmVjYXVzZSB0aGVyZSBoYXZlIGRpZmZl
+cmVudCBkZWxheSB0aW1lIHRvIHdhaXQgZGV2aWNlcyBzdGFibGUuCj4gPj4KPiA+IAo+ID4gVGhl
+biB3aHkgZG9lcyBubyBvdGhlciBjYWxsZXIgb2YgcmVndWxhdG9yX2VuYWJsZSgpIG5lZWQgdGhp
+cyA/Cj4gPiBJIGRvbid0IHRoaW5rIGxtOTAgaXMgc28gbXVjaCBkaWZmZXJlbnQgdG8gb3RoZXIg
+dXNlcnMgb2YgcmVndWxhdG9yCj4gPiBmdW5jdGlvbmFsaXR5Lgo+IAo+IE1heSBiZSBJJ20gd3Jv
+bmcuIEkgbm90aWNlZCB0aGF0IGluIGxtOTAgU1BFQywgdGhlIG1heCBvZiAiU01CdXMgQ2xvY2sK
+PiBMb3cgVGltZSIgaXMgMjVtcywgc28gSSBzdXBwb3NlZCB0aGF0IGl0IG1heSBuZWVkIGFib3V0
+IDIwbXMgdG8gc3RhYmxlCj4gYWZ0ZXIgcG93ZXIgb24uCj4gCj4gQW55d2F5LCBpZiBJIHJlbW92
+ZSB0aGlzIGRlbGF5LCB0aGUgZHJpdmVyIGFsc28gd29ya3MgZmluZSwgc28gSSB3aWxsCj4gcmVt
+b3ZlIGl0IGluIG15IG5leHQgcGF0Y2guCgpJIG9yaWdpbmFsbHkgaGFkIGluIG1pbmQgdGhhdCBy
+ZWd1bGF0b3IgQVBJIGNvbnRhaW4gb3duIGRlbGF5IG9wdGlvbi4KRS5nLiByZWctZml4ZWQtdm9s
+dGFnZSAmJiBncGlvLXJlZ3VsYXRvciBjb250YWlucyAic3RhcnR1cC1kZWxheS11cyIgcHJvcGVy
+dHkuCgotLS0K
