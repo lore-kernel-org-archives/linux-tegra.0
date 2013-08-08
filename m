@@ -1,66 +1,73 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
-Date: Thu, 8 Aug 2013 20:27:47 +0100
-Message-ID: <20130808192747.GM6427@sirena.org.uk>
-References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
- <1375944991-29182-2-git-send-email-wni@nvidia.com>
- <520359E9.1000600@roeck-us.net>
- <5203D5B6.3060806@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
+Date: Thu, 08 Aug 2013 13:54:14 -0600
+Message-ID: <5203F766.9050100@wwwdotorg.org>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>  <1374830110-30685-4-git-send-email-josephl@nvidia.com>  <51F6F209.2090309@wwwdotorg.org>  <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>  <51FC1751.9010401@wwwdotorg.org>  <1375689749.1731.36.camel@jlo-ubuntu-64.nvidia.com>  <51FFDA20.6050403@wwwdotorg.org>  <51FFE363.4080603@wwwdotorg.org>  <1375780249.2261.63.camel@jlo-ubuntu-64.nvidia.com>  <52014258.9070602@wwwdotorg.org>  <1375866749.8111.57.camel@jlo-ubuntu-64.nvidia.com>  <520279FC.1000006@wwwdotorg.org> <1375928591.1758.66.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n8d7KAgWmJ23Ts4y"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5203D5B6.3060806-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1375928591.1758.66.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/07/2013 08:23 PM, Joseph Lo wrote:
+> On Thu, 2013-08-08 at 00:46 +0800, Stephen Warren wrote:
+..
+>> I still have absolutely no idea why Tegra30 and Tegra114 are different.
+>>
+>> You mentioned something about this low-level code only manipulating the
+>> IDLE state, and the clock driver needing to restore the other 4 states.
+>> This raises yet more questions:
+>>
+>> 1) Do we not need to restore the other 4 states on Tegra30? If not, why
+>> not? If we do, presumably Tegra30 (and Tegra20?) need to the syscore_op
+>> this patch series adds to Tegra114 only? If we don't, then why does
+>> Tegra114 have to restore them?
+>
+> We need to restore all of them for all Tegra chips. For Tegra20/30, we
+> had done it in the tegra_cpu_car_ops.suspend/resume. For Tegra114, the
+> patch was here.
+> 
+> The other reason is:
+> 1) The PLLX is the main CPU clock source in Tegra20/30. We can restore
+> it ASAP to get a better performance.
+> 2) For Tegra114, the PLLX is the CPU clock source when CPU runs at low
+> rates. When CPU in high rate, it uses DFLL as clock source. So it
+> depends on what the clock source of the CPU when it goes into suspend.
+> And the DFLL has its own resume code, it needs to be restored before the
+> CPU uses it as clock source again. It makes the CPU clock restore
+> sequence like this.
 
---n8d7KAgWmJ23Ts4y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+So, we don't yet support the DFLL upstream. Presumably, the CPU is
+always running off PLLX on Tegra114 upstream right now. As such, we can
+hard-code that into the resume path just like we do on earlier chips,
+i.e. using tegra_cpu_car_ops.resume().
 
-On Thu, Aug 08, 2013 at 11:30:30AM -0600, Stephen Warren wrote:
-> On 08/08/2013 02:42 AM, Guenter Roeck wrote:
+Once we do get DFLL support, presumably the DFLL resume path can switch
+the register from PLLX to DFLL, and we still won't need a custom
+syscore_ops.
 
-> > If the regulator subsystem is not configured, you especially don't need
-> > or want
-> > to pollute the log with an error message.
+Will that work?
 
-> DT parsing errors should be reported. However, if there's nothing to
-> parse, it's not an error.
+>> 2) What triggers the HW to switch from IDLE to RUN state? 
+>
+> I also want to know more detail about it. The TRM only said it decided
+> by HW and gave an example about when switching to IRQ or FIQ state.
+>
+>> In other
+>> words, I think you're saying that the existing Tegra30 code:
+>>
+>> 	mov32	r4, ((1 << 28) | (0x8))	@ burst policy is PLLX
+>> 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+>>
+>> doesn't change the clock rate right away. When does it change?
+>
+> The code before this is the PLLX re-enable code. Then it switches to
+> PLLX. The rate is still kept the same when it suspended. The next rate
+> change after resume would be happened in the CPUfreq driver.
 
-> So, I think this should report an error message *if* there is a DT
-> property that defines the regulator to use. If there's no property, just
-> use no regulator. If there is a property, it had better be possible to
-> parse it.
-
-On a DT system you should get this behaviour simply by paying attention
-to the error code from the regualtor API - the core should complain
-loudly if the DT is incomprehensible.
-
---n8d7KAgWmJ23Ts4y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSA/EwAAoJELSic+t+oim9TR4P/37WBWSfsgZOLTVV5ZTrSRrS
-+o1DaSk7HykNQZhG3a+uNJwYeUnt05jOrpIDVXXPphCZoWx7PEdPy834fY0PuBku
-vbbNJnu7l5dTSORL9EonPhkeVTxcsVKCb0GGihvFFqtB+R/suZRZkUvdySJ5+V82
-BuihUkXnZakLrTEgSrjBwY8E/3fYzQYZAVbnJ6cIzm0LFYYduqjMmM4Mjty2zlHr
-z+60/KzSNAkE+lu6Dt+INgssF1JPKzsRrKdX3K8rFVHzmVE2bVuHdkLItTxYs680
-PPyyYv5Cd4ch/trTXxjY3l1woe6edgEVDiLN1x6EHHcGeEm/M/sR+9DwjBkQIT+z
-fSb+GJZCZO03LIILmHKWLrwicR+4J3Dx2WtDoZFmUj62uQfhDPfxs9QxuLye3JR6
-jx1klB1fXp3PlqZsC6Mh30E5bajUtVpkTkt2cLMkfDNgUi4y8dPUDO0APk8da3pM
-lv31J0EmmxpvQa41TaQ68d5UWOeat0TZ3+tW7wfHvhSISeb8vZeKCBTFN7LQELxq
-yrOR2MA8RBY5pJCHBpSJfPp3n3iqGkehQUTaeZvzNCkbFJE7m+C7T9kwAsF0Bgmo
-GcEt6H473uXr1tNH+8bXYx0VCeBpjZkB35UZ9Rh6n2g6UoLN+TgKlyRLpfu2QrVL
-F5MHmPNfOW+rHMpjOKZM
-=rZ0d
------END PGP SIGNATURE-----
-
---n8d7KAgWmJ23Ts4y--
+Sorry, when I wrote "doesn't change the clock rate right away", I really
+meant "doesn't change the clock *source* right away".
