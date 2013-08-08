@@ -1,96 +1,40 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: unify Tegra's Kconfig a bit more
-Date: Wed,  7 Aug 2013 14:39:12 -0600
-Message-ID: <1375907952-24746-1-git-send-email-swarren@wwwdotorg.org>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/5] clk: tegra: Correct sbc mux width & parent
+Date: Thu, 8 Aug 2013 09:26:16 +0800
+Message-ID: <5202F3B8.7010800@nvidia.com>
+References: <1375874709-10438-1-git-send-email-markz@nvidia.com> <52027C22.9080707@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52027C22.9080707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/08/2013 12:56 AM, Stephen Warren wrote:
+> On 08/07/2013 05:25 AM, Mark Zhang wrote:
+>> T114 sbc1-sbc6 have more possible parent clocks than t30.
+>> So correct the parents and mux width for them.
+> 
+> s/T114/Tegra114/ s/t30/Tegra30/
+> 
 
-Move all common select clauses from ARCH_TEGRA_*_SOC to ARCH_TEGRA to
-eliminate duplication. The USB-related selects all should have been
-common too, but were missing from Tegra114 previously. Move these to
-ARCH_TEGRA too. The latter fixes a build break when only Tegra114
-support was enabled, but not Tegra20 or Tegra30 support.
+Got it.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/mach-tegra/Kconfig | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+>> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> 
+>> -	TEGRA_INIT_DATA_MUX("sbc1", NULL, "tegra11-spi.0", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_SBC1, 41, &periph_h_regs, TEGRA_PERIPH_ON_APB, sbc1),
+> ...
+>> +	TEGRA_INIT_DATA_MUX8("sbc1", NULL, "tegra11-spi.0", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_SBC1, 41, &periph_h_regs, TEGRA_PERIPH_ON_APB, sbc1),
+> 
+> This isn't a comment on this patch, but sometime later, can we remove
+> those device names from these entries? They're wrong on many different
+> levels, and shouldn't be required now that all our devices get clocks
+> from DT.
+> 
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 80d3b82..50db6bf 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -2,18 +2,24 @@ config ARCH_TEGRA
- 	bool "NVIDIA Tegra" if ARCH_MULTI_V7
- 	select ARCH_HAS_CPUFREQ
- 	select ARCH_REQUIRE_GPIOLIB
-+	select ARM_GIC
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select CLKSRC_OF
- 	select COMMON_CLK
-+	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select HAVE_CLK
- 	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
-+	select PINCTRL
- 	select SOC_BUS
- 	select SPARSE_IRQ
-+	select USB_ARCH_HAS_EHCI if USB_SUPPORT
-+	select USB_ULPI if USB_PHY
-+	select USB_ULPI_VIEWPORT if USB_PHY
- 	select USE_OF
- 	help
- 	  This enables support for NVIDIA Tegra based systems.
-@@ -27,15 +33,9 @@ config ARCH_TEGRA_2x_SOC
- 	select ARM_ERRATA_720789
- 	select ARM_ERRATA_754327 if SMP
- 	select ARM_ERRATA_764369 if SMP
--	select ARM_GIC
--	select CPU_V7
--	select PINCTRL
- 	select PINCTRL_TEGRA20
- 	select PL310_ERRATA_727915 if CACHE_L2X0
- 	select PL310_ERRATA_769419 if CACHE_L2X0
--	select USB_ARCH_HAS_EHCI if USB_SUPPORT
--	select USB_ULPI if USB_PHY
--	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-@@ -44,14 +44,8 @@ config ARCH_TEGRA_3x_SOC
- 	bool "Enable support for Tegra30 family"
- 	select ARM_ERRATA_754322
- 	select ARM_ERRATA_764369 if SMP
--	select ARM_GIC
--	select CPU_V7
--	select PINCTRL
- 	select PINCTRL_TEGRA30
- 	select PL310_ERRATA_769419 if CACHE_L2X0
--	select USB_ARCH_HAS_EHCI if USB_SUPPORT
--	select USB_ULPI if USB_PHY
--	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Support for NVIDIA Tegra T30 processor family, based on the
- 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
-@@ -60,10 +54,7 @@ config ARCH_TEGRA_114_SOC
- 	bool "Enable support for Tegra114 family"
- 	select HAVE_ARM_ARCH_TIMER
- 	select ARM_ERRATA_798181
--	select ARM_GIC
- 	select ARM_L1_CACHE_SHIFT_6
--	select CPU_V7
--	select PINCTRL
- 	select PINCTRL_TEGRA114
- 	help
- 	  Support for NVIDIA Tegra T114 processor family, based on the
--- 
-1.8.1.5
+Correct. Actually they're useless if all drivers get their clocks via
+DT. Just as you said, we can do it later and will rewrite all clock
+declarations at that time.
