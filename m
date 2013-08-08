@@ -1,41 +1,52 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/2] include: dt-binding: input: create a DT header defining
- key codes.
-Date: Thu, 08 Aug 2013 11:25:27 -0600
-Message-ID: <5203D487.5020507@wwwdotorg.org>
-References: <1375798370-2231-1-git-send-email-ldewangan@nvidia.com> <52014E50.6030508@wwwdotorg.org> <5203D138.4030107@nvidia.com> <20130808171331.GA6960@core.coreip.homeip.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
+Date: Thu, 08 Aug 2013 11:30:30 -0600
+Message-ID: <5203D5B6.3060806@wwwdotorg.org>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-2-git-send-email-wni@nvidia.com> <520359E9.1000600@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20130808171331.GA6960@core.coreip.homeip.net>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <520359E9.1000600-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/08/2013 11:13 AM, Dmitry Torokhov wrote:
-> On Thu, Aug 08, 2013 at 10:41:20PM +0530, Laxman Dewangan wrote:
->> On Wednesday 07 August 2013 12:58 AM, Stephen Warren wrote:
->>> (CC'ing DT bindings maintainers too, hence quoting a bit of the patch)
->>>
->>> On 08/06/2013 08:12 AM, Laxman Dewangan wrote:
->>>> Many of Key device tree bindings uses the constant number as key code
->>>> which matches with kernel header key code and then comment as follows
->>>> for reference/better readability:
->>>> 	linux,code = <102>; /* KEY_HOME */
->>>>
->>>> Create a DT header which defines all the key code so that DT key bindings
->>>> can use it as follows:
->>>> 	linux,code = <KEY_HOME>;
-...
-> I am uncomfortable that we are duplicating the whole list of keycodes
-> here. Do you think we could split keycodes and other event codes from
-> include/uapi/linux/input.h into include/uapi/linux/input-events.h and
-> unclude it directly into DTS?
+On 08/08/2013 02:42 AM, Guenter Roeck wrote:
+> On 08/07/2013 11:56 PM, Wei Ni wrote:
+>> The device lm90 can be controlled by the vdd rail.
+>> Adding the power control support to power on/off the vdd rail.
+>> And make sure that power is enabled before accessing the device.
 
-Device tree files can only include headers in include/dt-bindings.
-Eventually/soon, all the DT files and the headers in the dt-bindings/
-directory will be split out into a separate git tree, which does not
-have access to include/uapi, or indeed any other Linux kernel header files.
+>> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
 
+>>   static int lm90_probe(struct i2c_client *client,
+>>                 const struct i2c_device_id *id)
+>>   {
+>> @@ -1406,6 +1434,20 @@ static int lm90_probe(struct i2c_client *client,
+>>       i2c_set_clientdata(client, data);
+>>       mutex_init(&data->update_lock);
+>>
+>> +    data->lm90_reg = regulator_get(&client->dev, "vdd");
+> 
+> You should use devm_regulator_get(). Then you also don't need the call
+> to regulator_put().
+> 
+>> +    if (IS_ERR_OR_NULL(data->lm90_reg)) {
+> 
+> The function never returns NULL except if the regulator subsystem is not
+> configured,
+> so IS_ERR() is more appropriate.
+> 
+> If the regulator subsystem is not configured, you especially don't need
+> or want
+> to pollute the log with an error message.
+
+DT parsing errors should be reported. However, if there's nothing to
+parse, it's not an error.
+
+So, I think this should report an error message *if* there is a DT
+property that defines the regulator to use. If there's no property, just
+use no regulator. If there is a property, it had better be possible to
+parse it.
