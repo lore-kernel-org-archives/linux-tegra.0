@@ -1,48 +1,82 @@
-From: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Can I put a V4L2 soc camera driver under other subsystem directory?
-Date: Thu, 8 Aug 2013 14:15:01 -0700
-Message-ID: <CAK5ve-KU7Kem91oN=6h5pJ7K8=PXfrBOq2njYzGxubugiLMZJA@mail.gmail.com>
-References: <CAK5ve-J7Sn5wuJ_z6Lqr=_qMQRqF12Aa6GfTv4xBhh=n_28Yjg@mail.gmail.com>
- <Pine.LNX.4.64.1308082225150.29611@axis700.grange>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
+Date: Thu, 8 Aug 2013 22:18:25 +0100
+Message-ID: <20130808211825.GN6427@sirena.org.uk>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
+ <1375944991-29182-2-git-send-email-wni@nvidia.com>
+ <20130808110136.GA6427@sirena.org.uk>
+ <52038035.7030803@roeck-us.net>
+ <20130808130840.GC6427@sirena.org.uk>
+ <5203B78C.7010101@roeck-us.net>
+ <20130808171554.GI6427@sirena.org.uk>
+ <20130808200026.GA18226@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kzMQwe+b+L5ZMwhV"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.64.1308082225150.29611-0199iw4Nj15frtckUFj5Ag@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20130808200026.GA18226-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 8, 2013 at 1:52 PM, Guennadi Liakhovetski
-<g.liakhovetski-Mmb7MZpHnFY@public.gmane.org> wrote:
-> Hi Bryan,
->
-> On Wed, 7 Aug 2013, Bryan Wu wrote:
->
->> Hi Guennadi and LMML,
->>
->> I'm working on a camera controller driver for Tegra, which is using
->> soc_camera. But we also need to use Tegra specific host1x interface
->> like syncpt APIs.
->>
->> Since host1x is quite Tegra specific framework which is in
->> drivers/gpu/host1x and has several host1x's client driver like graphic
->> 2D driver, my v4l2 soc_camera driver is also a host1x client driver.
->> Right now host1x does not expose any global include header files like
->> API in the kernel, because no other users. So we plan to put all
->> host1x related driver together, is that OK for us to put our Tegra
->> soc_camera driver into drivers/gpu/host1x/camera or similar?
->>
->> I guess besides it will introduce some extra maintenance it should be OK, right?
->
-> Exactly, there's already been a precedent:
->
-> http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg56213.html
->
-> It hasn't been finalised yet though.
->
 
-OK, cool. I will try to provide the first version soon.
+--kzMQwe+b+L5ZMwhV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks a lot,
--Bryan
+On Thu, Aug 08, 2013 at 01:00:26PM -0700, Guenter Roeck wrote:
+> On Thu, Aug 08, 2013 at 06:15:54PM +0100, Mark Brown wrote:
+
+> > Sure, that's the transition issues I mentioned - the regulator API does
+> > have stubbing facilities which should cover things and it's very easy to
+> > define stub regulators if you need to.  Like I say I expect this to be a
+> > lot easier after the next merge window as another way of doing stubs is
+> > being added which should make this even easier by avoiding disrupting
+> > drivers that do genuinely want to check for absent supplies and handle
+> > that better.
+
+> We will need to make sure that all dts files using any of the compatible chips
+> are updated accordingly. There are several entries in various dts files for
+> adm1032, adt7461, lm90, and nct1008.
+
+Yes, and probably also board files as well.  Or either just accept
+bisection trouble for now or wait till the better stubbing is in there -
+that will mean that for DT systems the core will just assume the supply
+is really there and not fail requests if it's not in the DT.
+
+> > The names requested by a driver are defined with regard to the device
+> > and should be the names used by the chip itself as defined in the
+
+> 9 votes for vdd, 11 votes for vcc, one undecided (no datasheet available).
+> Guess one is as good as the other ;-).
+
+What I've suggested before is to use the name from the part for which
+the driver is named.  Assuming the vendor doesn't randomly change their
+datasheet (but that causes problems for hardware engineers so tends to
+be avoided).
+
+--kzMQwe+b+L5ZMwhV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSBAseAAoJELSic+t+oim9HdkP/1clAmlXHvLIfuDu7yuIR1Ec
+UABcJ4gtxJBYR8zc729KpJaLhsjS+LxxuKVFI0PFgUAXmOEO1jHpwy+VR9JW5eee
+e7WdPzet8WZpldswORMJNOOHoE0vZpTs+0Qg2gj2dr7CJX9gyKQeb6pGS05qFHkS
+LNCmWGU97sTnruiIqeSTvTVECDUp4ImE6AskOsSHnTwOIBeLiHHtelLQHXaUqSh7
+3MCzj5C1Qy1VyQkFTIPezhW5pl7u7IBkgXkjBW7ki8tIDMC7Ic4wy/X7oEr7BMMx
+fCimtqRXt/lpNcAzb3SdvnFiU7NigzJ2aEawoU9CzfhYcCu0Yf1qo43VDhjDWEkG
+n5wCymITmin+LFZnl4+uZ+uQr9HG3C5AdffIvlmCNblEUzxCruj6DTepilSKoUEy
+thnaLAHqhrvvf/cvyQx3L7bCcpIy6GwUVUzNI+6H/3b6+BIxLYCBbOB6EHufeCLA
+hcTOUOiyrftSlwzy594PqY8svbHkT3nGptDSOobkWJDEtqABPCj/AwrUB2wMYP5u
+Zya/KSAtO5hD3DzUaBmO1o5nhrYwMt1U7fnYEipJudFE/gJSaa3hDZuifSjElrNw
+/seCyI+eThDBP59ZEICqhqpg1ZqbWPveHA+lZgkjlR2l61EJTUhKs8xnAJFtdyT4
+E3SpSfLRmIV9DOuNM9Hd
+=9ID7
+-----END PGP SIGNATURE-----
+
+--kzMQwe+b+L5ZMwhV--
