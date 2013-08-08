@@ -1,91 +1,57 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
-Date: Thu, 8 Aug 2013 18:15:54 +0100
-Message-ID: <20130808171554.GI6427@sirena.org.uk>
-References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
- <1375944991-29182-2-git-send-email-wni@nvidia.com>
- <20130808110136.GA6427@sirena.org.uk>
- <52038035.7030803@roeck-us.net>
- <20130808130840.GC6427@sirena.org.uk>
- <5203B78C.7010101@roeck-us.net>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/2] include: dt-binding: input: create a DT header defining
+ key codes.
+Date: Thu, 8 Aug 2013 23:02:50 +0530
+Message-ID: <5203D642.60405@nvidia.com>
+References: <1375798370-2231-1-git-send-email-ldewangan@nvidia.com> <52014E50.6030508@wwwdotorg.org> <5203D138.4030107@nvidia.com> <20130808171331.GA6960@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zrGaLLVn9NtiuXI2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5203B78C.7010101-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20130808171331.GA6960@core.coreip.homeip.net>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Stephen Warren <swarren@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thursday 08 August 2013 10:43 PM, Dmitry Torokhov wrote:
+> On Thu, Aug 08, 2013 at 10:41:20PM +0530, Laxman Dewangan wrote:
+>> On Wednesday 07 August 2013 12:58 AM, Stephen Warren wrote:
+>>> (CC'ing DT bindings maintainers too, hence quoting a bit of the patch)
+>>>
+>>> On 08/06/2013 08:12 AM, Laxman Dewangan wrote:
+>>>> Many of Key device tree bindings uses the constant number as key code
+>>>> which matches with kernel header key code and then comment as follows
+>>>> for reference/better readability:
+>>>> 	linux,code = <102>; /* KEY_HOME */
+>>>>
+>>>> Create a DT header which defines all the key code so that DT key bindings
+>>>> can use it as follows:
+>>>> 	linux,code = <KEY_HOME>;
+>>> This looks fine to me.
+>>> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>>>
+>>> A comment in support of the patch: This is adding OS-specific content to
+>>> the DT. However, the bindings this header file supports are already
+>>> written that way. There's not really any alternative here, since some
+>>> numbering scheme had to be chosen for keycodes, and it may as well be
+>>> the same set as the first/primary OS that'll use the binding.
+>>>
+>>> As far as merging it, this patch should probably go through the core DT
+>>> tree, perhaps in a topic branch so that e.g. Tegra an MVEBU can merge it
+>>> in to apply your subsequent patches (or we can just wait until the next
+>>> kernel release to merge them in).
+>> Do I need to include anyone for this patch to be applied or can go
+>> through Dmitry's input git branch?
+> I am uncomfortable that we are duplicating the whole list of keycodes
+> here. Do you think we could split keycodes and other event codes from
+> include/uapi/linux/input.h into include/uapi/linux/input-events.h and
+> unclude it directly into DTS?
 
---zrGaLLVn9NtiuXI2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, it will be very much possible to split this but I am not sure it is 
+allowed to include the header in DTS file which is not inside 
+include/dt-bindings.
+If there is no limitation/restriction then we can split this adn amke 
+single header for key code which will be used by code and dts.
 
-On Thu, Aug 08, 2013 at 08:21:48AM -0700, Guenter Roeck wrote:
-> On 08/08/2013 06:08 AM, Mark Brown wrote:
 
-> >I'd be most surprised if the device worked without power, if the driver
-> >fails to get and enable a regulator for it then that's not great
-> >(especially if it does so silently).
-
-> Correct, but it appears that the driver magically worked for a long time
-> without it.
-
-Sure, it'll work in systems that have always on regulators.
-
-> Is it guaranteed that the driver keeps working for all cases where
-> regulator support is enabled in the kernel, and where it used to work
-> so far without mandating the existence of this specific regulator ?
-> My main concern is having to deal with complaints that the driver stopped
-> working for no good reason.
-
-Sure, that's the transition issues I mentioned - the regulator API does
-have stubbing facilities which should cover things and it's very easy to
-define stub regulators if you need to.  Like I say I expect this to be a
-lot easier after the next merge window as another way of doing stubs is
-being added which should make this even easier by avoiding disrupting
-drivers that do genuinely want to check for absent supplies and handle
-that better.
-
-> In this context, is it common practice to name such regulators "vdd"
-> or similar ? What if there are multiple LM90 or compatible chips
-> in a system, connected to different power rails ? Who determines
-> if the regulator is supposed to be named "vdd" or "vcc" or anything
-> else, and to which power rails it is actually connected ? How can
-> and does one guarantee that "vdd" is the correct regulator to use
-> for all systems ? What if some other driver requests "vdd", but the chip
-> it supports happens to be connected to a different power rail ?
-
-That's not what the name means - they are nothing to do with the board.
-The names requested by a driver are defined with regard to the device
-and should be the names used by the chip itself as defined in the
-datasheet.  A board that uses regulators then maps these onto specific
-regulators in the system, the driver doesn't need to know anything about
-this process.
-
---zrGaLLVn9NtiuXI2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSA9JHAAoJELSic+t+oim9zEkP/AoqKLnVDfJ9xDiXXoDvTx3M
-o+XVfEHrrPjBvy8YrVzQqoJJyvr8kPZzvSBBx//zwKdkWMfz6Lr/t/1bSA3Xi71t
-uf2j9aODOPMIM63MBroJ+/QoQ/4JPhSAJBlpvb+lqu3V7VNNW4DHwoUUg6S7uZBm
-n5C7yfEDHN9+/Wh8x8qWCoUMVfdjP9nAH2jxJgjCKwdk4Dyx5QJsEyqdCQ3IcIKF
-wqbRwcfKA5KUsOtLb1EoXg5H2NEsXIM1bm/wkVBavm+VpdeWcDfRAg+Vnj7VFfPg
-PBzx3jlv+OCEREkMQKTb90zqhYIuB4Q92aooSKCz7kMaavR40IiiYg7dSTtv5MF9
-hHzDO/lBohYYDosH3STUNE5bA82GYFg+Pfm7cpKGAl99sTCGsWXnBg50syyfK1T7
-t/BHU2cAeUMrnrLvelSmmpRXbCwtjHjK0xs3DWCnO4eX2oHGMfIHhwcus2NDm0rD
-ukQV24FyZdVLCoQe9OLUof2OJvwZjBVVMsDVQVwdaFDmGQZ1XO92jCHVTEo3oKjQ
-8dxDIme3x9LPyOslYxNZ4xRmCNwatCTxUJMaBpdIv8GPyL8C40iWrGZxC+YWkb5J
-Q0n7+kTNNqoYVU4VO4jvLdC6UyCQ5uwgCGs23O/hmHkYKgUqkeQ+NYoJPduVk+sZ
-RO0zgV3dTvvXmDNCEZ1F
-=nJcN
------END PGP SIGNATURE-----
-
---zrGaLLVn9NtiuXI2--
