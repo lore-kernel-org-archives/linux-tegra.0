@@ -1,26 +1,45 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] clk: tegra114: Fix incorrect placement of __initdata
-Date: Thu, 08 Aug 2013 12:16:55 -0600
-Message-ID: <5203E097.1040502@wwwdotorg.org>
-References: <1375935949-19557-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
+Date: Thu, 08 Aug 2013 12:45:28 -0600
+Message-ID: <5203E748.2050601@wwwdotorg.org>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-2-git-send-email-wni@nvidia.com> <520359E9.1000600@roeck-us.net> <52036920.4050808@nvidia.com> <52037F9A.7070802@roeck-us.net> <5203D659.4050907@wwwdotorg.org> <20130808175918.GA15013@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375935949-19557-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20130808175918.GA15013-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/07/2013 10:25 PM, Sachin Kamat wrote:
-> __initdata should be placed between the variable name and equal
-> sign for the variable to be placed in the intended section.
+On 08/08/2013 11:59 AM, Guenter Roeck wrote:
+> On Thu, Aug 08, 2013 at 11:33:13AM -0600, Stephen Warren wrote:
+>> On 08/08/2013 05:23 AM, Guenter Roeck wrote:
+>>> On 08/08/2013 02:47 AM, Wei Ni wrote:
+>> ...
+>>>> I think get_regulator() will return error values, not only
+>>>> -EPROBE_DEFER, so we should set data->lm90_reg to NULL to handle other
+>>>> error values.
+>>>>
+>>> Matter of opinion if you want to check for IS_ERR or NULL later on.
+>>
+>> No, if regulator returns either:
+>>
+>> * Something valid
+>> * Someting IS_ERR()
+>>
+>> ... then everywhere has to check the value using IS_ERR().
+>>
+>> If regulator returns either:
+>>
+>> * Something valid
+>> * Someting NULL
+>>
+>> ... then everywhere has to check the value against NULL.
+>>
+> Other drivers calling get_regulator() don't check against NULL,
+> so it should not be needed here either.
 
-The series,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Patch 1,
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Mike, I assume you'll take these through the clock tree.
+Right I should have mentioned that I believe regulator falls into the
+first valid-or-IS_ERR case, and not the second valid-or-NULL case.
