@@ -1,79 +1,70 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 6/6] usb: host: tegra: Tegra30 support
-Date: Fri, 9 Aug 2013 16:37:22 +0300
-Message-ID: <20130809133722.GK12041@radagast>
-References: <1375812518-3847-1-git-send-email-ttynkkynen@nvidia.com>
- <1375812518-3847-7-git-send-email-ttynkkynen@nvidia.com>
- <520141F2.4060907@cogentembedded.com>
- <52014B89.9040106@nvidia.com>
- <52014E0F.10404@cogentembedded.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="08ATZu8fEq0x2T3M"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52014E0F.10404-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
-Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v6 00/14] Rewrite Tegra PCIe driver
+Date: Fri,  9 Aug 2013 16:49:18 +0200
+Message-ID: <1376059772-16669-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
---08ATZu8fEq0x2T3M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-On Tue, Aug 06, 2013 at 11:27:11PM +0400, Sergei Shtylyov wrote:
-> Hello.
->=20
-> On 08/06/2013 11:16 PM, Tuomas Tynkkynen wrote:
->=20
-> >[...]
->=20
-> >>>+	match =3D of_match_device(tegra_ehci_of_match, &pdev->dev);
-> >>>+	if (!match) {
-> >>>+		dev_err(&pdev->dev, "Error: No device match found\n");
-> >>>+		return -ENODEV;
-> >>>+	}
-> >>>+	soc_config =3D (struct tegra_ehci_soc_config *)match->data;
->=20
-> >>     Aren't casts from 'const void *' automatic?
->=20
-> >>WBR, Sergei
->=20
-> >Indeed they are, but those explicit casts seem to be used in many places=
- in the kernel.
->=20
->    I suspect people just don't know C well enough. They are also
-> being gradually removed.
+This is the latest version of the Tegra PCIe driver patch series. I've
+dropped the PCI xclk clamping code as discussed and successfully tested
+on Beaver. The patches that touch the PCI subsystem have Bjorn's
+Acked-by and I've tested this on top of next-20130809, which has Jason's
+common branch. Once he's comfortable with making the branch stable you
+should be able to merge that branch and apply these patches on top.
 
-yeah, please resend with the cast removed. Also, put Tested-by, Acked-by
-and Reviewed-by in place.
+Thierry
 
---=20
-balbi
+Jay Agarwal (3):
+  PCI: tegra: Add Tegra 30 PCIe support
+  ARM: tegra: Enable PCIe controller on Cardhu
+  ARM: dts: tegra: Increase prefetchable PCI memory space
 
---08ATZu8fEq0x2T3M
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Stephen Warren (2):
+  PCI: tegra: set up PADS_REFCLK_CFG1
+  ARM: tegra: Fix Beaver's PCIe lane configuration
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Thierry Reding (9):
+  PCI: tegra: Move PCIe driver to drivers/pci/host
+  ARM: tegra: tamonten: Add PCIe support
+  ARM: tegra: tec: Add PCIe support
+  ARM: tegra: harmony: Initialize PCIe from DT
+  ARM: tegra: trimslice: Initialize PCIe from DT
+  ARM: tegra: Add Tegra30 PCIe support
+  ARM: tegra: Enable PCIe controller on Beaver
+  ARM: tegra: Update default configuration (PCIe)
+  MAINTAINERS: Add myself as Tegra PCIe maintainer
 
-iQIcBAEBAgAGBQJSBPCSAAoJEIaOsuA1yqREa0sQAIj05z3tSDaYYvkrmZ1CAX/N
-ADfSDE9jEmtTJV3UlqflQY8HwnrfzgxkJn7ovLsMrde83uMN2VZMGcGYjQ0+WVt+
-RTeXtAcsGQdUTcI66ZuKKLy2Ns+I+BlDe78WsARDukc0dT/ZmoxwdcXWJNLCe2PD
-RNVWkH4kpYVx5pZ7j8DCGBjg1GBcX6amB6hLcFejuoN5o+IeGb8UFP0pgdgF+Eni
-egLJP3fiigby8Vz1qw2C7xM/stRfQHAFX8hBD1h3+93APyhIJm5C4kztz1gC4RuC
-2VDJpsul4ZuR2it93/AMROEHR6WeikaOVfC1JxEacpNgZIMUT/TOX9dkhlOUwZKz
-hpJ3DkkiPensILwVwr6pU+2aNbNrNtcPUWFUOiuSosE0nMjeRe7mTtASuLkRSb4C
-XLGBh4YuiwEswzBMDu2yjtlQe+1zhOGBJiiua5Ja1nETl4b2WTVp1pKKzv+A65YK
-W0jQcUIWN7pyi8LsS9wkRkSPYIN/pgERhCXsHuT13WCAphxrm8tqsiFc7dXvSS7y
-EsJgDBRxex1FZj87eX4Iu0WzqOdwgV7zajesgMAN9STKwn6WHrwmQuRJ94Fc4zNc
-yjVUEJf/o2mG68pVDPucORNEB7LffZMv3vQHq/84Rc5XjvXZP7JquUDGITr1t5ie
-pgBYg36RSy/3Wzt5XRU8
-=aM5V
------END PGP SIGNATURE-----
+ .../bindings/pci/nvidia,tegra20-pcie.txt           |  163 ++
+ MAINTAINERS                                        |    7 +
+ arch/arm/boot/dts/tegra20-harmony.dts              |   20 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi            |   17 +-
+ arch/arm/boot/dts/tegra20-tec.dts                  |    8 +
+ arch/arm/boot/dts/tegra20-trimslice.dts            |   28 +
+ arch/arm/boot/dts/tegra20.dtsi                     |   55 +
+ arch/arm/boot/dts/tegra30-beaver.dts               |   21 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi              |   20 +
+ arch/arm/boot/dts/tegra30.dtsi                     |   70 +
+ arch/arm/configs/tegra_defconfig                   |    5 +-
+ arch/arm/mach-tegra/Kconfig                        |    7 +-
+ arch/arm/mach-tegra/Makefile                       |    3 -
+ arch/arm/mach-tegra/board-harmony-pcie.c           |   89 -
+ arch/arm/mach-tegra/board.h                        |    8 -
+ arch/arm/mach-tegra/iomap.h                        |    3 -
+ arch/arm/mach-tegra/pcie.c                         |  886 ----------
+ arch/arm/mach-tegra/tegra.c                        |   24 -
+ drivers/pci/host/Kconfig                           |    4 +
+ drivers/pci/host/Makefile                          |    1 +
+ drivers/pci/host/pci-tegra.c                       | 1697 ++++++++++++++++++++
+ 21 files changed, 2112 insertions(+), 1024 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+ delete mode 100644 arch/arm/mach-tegra/board-harmony-pcie.c
+ delete mode 100644 arch/arm/mach-tegra/pcie.c
+ create mode 100644 drivers/pci/host/pci-tegra.c
 
---08ATZu8fEq0x2T3M--
+-- 
+1.8.3.4
