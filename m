@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v6 05/14] ARM: tegra: trimslice: Initialize PCIe from DT
-Date: Fri,  9 Aug 2013 16:49:23 +0200
-Message-ID: <1376059772-16669-6-git-send-email-treding@nvidia.com>
+Subject: [PATCH v6 04/14] ARM: tegra: harmony: Initialize PCIe from DT
+Date: Fri,  9 Aug 2013 16:49:22 +0200
+Message-ID: <1376059772-16669-5-git-send-email-treding@nvidia.com>
 References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-pci-owner@vger.kernel.org>
 In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
@@ -19,27 +19,36 @@ file.
 Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v2:
-- add missing dummy regulator nodes by Stephen Warren
-- rename port 0 DT node and disable unused port 1
+ arch/arm/boot/dts/tegra20-harmony.dts | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
- arch/arm/boot/dts/tegra20-trimslice.dts | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 906e07f..cc3e742 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -310,6 +310,16 @@
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index d9f89cd..8724dc7 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -335,7 +335,7 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				ldo0 {
++				pci_clk_reg: ldo0 {
+ 					regulator-name = "vdd_ldo0,vddio_pex_clk";
+ 					regulator-min-microvolt = <3300000>;
+ 					regulator-max-microvolt = <3300000>;
+@@ -425,6 +425,20 @@
  		nvidia,sys-clock-req-active-high;
  	};
  
 +	pcie-controller {
-+		status = "okay";
 +		pex-clk-supply = <&pci_clk_reg>;
 +		vdd-supply = <&pci_vdd_reg>;
++		status = "okay";
 +
 +		pci@1,0 {
++			status = "okay";
++		};
++
++		pci@2,0 {
 +			status = "okay";
 +		};
 +	};
@@ -47,30 +56,23 @@ index 906e07f..cc3e742 100644
  	usb@c5000000 {
  		status = "okay";
  	};
-@@ -412,6 +422,24 @@
+@@ -643,7 +657,7 @@
  			enable-active-high;
- 			gpio = <&gpio TEGRA_GPIO(V, 2) 0>;
  		};
-+
-+		pci_clk_reg: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "pci_clk";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+
-+		pci_vdd_reg: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "pci_vdd";
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1050000>;
-+			regulator-always-on;
-+		};
- 	};
  
- 	sound {
+-		regulator@3 {
++		pci_vdd_reg: regulator@3 {
+ 			compatible = "regulator-fixed";
+ 			reg = <3>;
+ 			regulator-name = "vdd_1v05";
+@@ -651,8 +665,6 @@
+ 			regulator-max-microvolt = <1050000>;
+ 			gpio = <&pmic 2 GPIO_ACTIVE_HIGH>;
+ 			enable-active-high;
+-			/* Hack until board-harmony-pcie.c is removed */
+-			status = "disabled";
+ 		};
+ 
+ 		regulator@4 {
 -- 
 1.8.3.4
