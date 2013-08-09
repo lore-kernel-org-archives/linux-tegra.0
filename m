@@ -1,57 +1,42 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH v6 00/14] Rewrite Tegra PCIe driver
-Date: Fri, 9 Aug 2013 11:08:31 -0400
-Message-ID: <20130809150831.GF25111@titan.lakedaemon.net>
-References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 3/3] Documentation: dt: hwmon: add OF document for
+ lm90
+Date: Fri, 09 Aug 2013 10:35:50 -0600
+Message-ID: <52051A66.1010001@wwwdotorg.org>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-4-git-send-email-wni@nvidia.com> <5203D757.8000208@wwwdotorg.org> <520487C7.5080901@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <520487C7.5080901-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 09, 2013 at 04:49:18PM +0200, Thierry Reding wrote:
-> Hi Stephen,
+On 08/09/2013 12:10 AM, Wei Ni wrote:
+> On 08/09/2013 01:37 AM, Stephen Warren wrote:
+>> On 08/08/2013 12:56 AM, Wei Ni wrote:
+>>> Add OF document for lm90 in Documentation/devicetree/.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt b/Documentation/devicetree/bindings/hwmon/lm90.txt
+
+>>> +- interrupts: lm90 can support interrupt mode, you can set interrupt here.
+>>
+>> You might want to mention that a single entry ("specifier") is expected
+>> in the list.
 > 
-> This is the latest version of the Tegra PCIe driver patch series. I've
-> dropped the PCI xclk clamping code as discussed and successfully tested
-> on Beaver. The patches that touch the PCI subsystem have Bjorn's
-> Acked-by and I've tested this on top of next-20130809, which has Jason's
-> common branch. Once he's comfortable with making the branch stable you
-> should be able to merge that branch and apply these patches on top.
+> Sorry, I didn't get your point, could you explain more?
 
-Just an FYI, I'm mostly happy with what we have now, except that I'd
-like to confirm that the build failure Randy discovered isn't caused by
-us:
+In general, a device may have more than one interrupt output. Hence in
+general, the interrupts property is a list of 1 or more interrupt
+specifiers. In this case, that list should be a single entry. The
+binding should state this. how about:
 
-Randy wrote some time later:
-> On 08/08/13 00:08, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20130807:
-> >
-> 
-> on i386 and x86_64:
-> when CONFIG_PCI_MSI is not enabled:
-> 
-> There are many of these errors:
-> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
-> include/linux/msi.h:65:6: error: expected ')' before numeric constant
-> 
-> because arch/x86/include/asm/pci.h defines:
-> #define default_teardown_msi_irqs NULL
+----------
+Optional properties:
+interrupts: Contains a single interrupt specifier which describes the
+LM90 XXXX output. See interrupt-controller/interrupts.txt for the format.
+----------
 
-I'm having a helluva time reproducing it :(
-
-The next run of linux-next isn't until Sunday evening (AUS Monday
-morning), so we have some time to figure it out.
-
-Also, I've renamed the branch mvebu/msi_pci to more accurately describe
-the changes it contains.
-
-thx,
-
-Jason.
+(where you'd replace XXXX with the pin/signal name from the datasheet).
