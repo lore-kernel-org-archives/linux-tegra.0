@@ -1,72 +1,70 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
-Date: Fri, 9 Aug 2013 17:23:10 +0800
-Message-ID: <1376040190.12024.10.camel@jlo-ubuntu-64.nvidia.com>
-References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
-	 <1374830110-30685-4-git-send-email-josephl@nvidia.com>
-	 <51F6F209.2090309@wwwdotorg.org>
-	 <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>
-	 <51FC1751.9010401@wwwdotorg.org>
-	 <1375689749.1731.36.camel@jlo-ubuntu-64.nvidia.com>
-	 <51FFDA20.6050403@wwwdotorg.org>  <51FFE363.4080603@wwwdotorg.org>
-	 <1375780249.2261.63.camel@jlo-ubuntu-64.nvidia.com>
-	 <52014258.9070602@wwwdotorg.org>
-	 <1375866749.8111.57.camel@jlo-ubuntu-64.nvidia.com>
-	 <520279FC.1000006@wwwdotorg.org>
-	 <1375928591.1758.66.camel@jlo-ubuntu-64.nvidia.com>
-	 <5203F766.9050100@wwwdotorg.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Proposal: I2C device power (Was: hwmon: (lm90) Add power control)
+Date: Fri, 9 Aug 2013 11:27:57 +0100
+Message-ID: <20130809102757.GT6427@sirena.org.uk>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
+ <20130808211825.GN6427@sirena.org.uk>
+ <52040DE2.50201@roeck-us.net>
+ <1376027820.695103970@f416.i.mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5203F766.9050100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yE3esYaFu3yg/VEv"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1376027820.695103970@f416.i.mail.ru>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexander Shiyan <shc_work@mail.ru>
+Cc: Guenter Roeck <linux@roeck-us.net>, Wei Ni <wni@nvidia.com>, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, khali@linux-fr.org, MLongnecker@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 2013-08-09 at 03:54 +0800, Stephen Warren wrote:
-> On 08/07/2013 08:23 PM, Joseph Lo wrote:
-> > On Thu, 2013-08-08 at 00:46 +0800, Stephen Warren wrote:
-> ..
-> >> I still have absolutely no idea why Tegra30 and Tegra114 are different.
-> >>
-> >> You mentioned something about this low-level code only manipulating the
-> >> IDLE state, and the clock driver needing to restore the other 4 states.
-> >> This raises yet more questions:
-> >>
-> >> 1) Do we not need to restore the other 4 states on Tegra30? If not, why
-> >> not? If we do, presumably Tegra30 (and Tegra20?) need to the syscore_op
-> >> this patch series adds to Tegra114 only? If we don't, then why does
-> >> Tegra114 have to restore them?
-> >
-> > We need to restore all of them for all Tegra chips. For Tegra20/30, we
-> > had done it in the tegra_cpu_car_ops.suspend/resume. For Tegra114, the
-> > patch was here.
-> > 
-> > The other reason is:
-> > 1) The PLLX is the main CPU clock source in Tegra20/30. We can restore
-> > it ASAP to get a better performance.
-> > 2) For Tegra114, the PLLX is the CPU clock source when CPU runs at low
-> > rates. When CPU in high rate, it uses DFLL as clock source. So it
-> > depends on what the clock source of the CPU when it goes into suspend.
-> > And the DFLL has its own resume code, it needs to be restored before the
-> > CPU uses it as clock source again. It makes the CPU clock restore
-> > sequence like this.
-> 
-> So, we don't yet support the DFLL upstream. Presumably, the CPU is
-> always running off PLLX on Tegra114 upstream right now. As such, we can
-> hard-code that into the resume path just like we do on earlier chips,
-> i.e. using tegra_cpu_car_ops.resume().
-> 
-> Once we do get DFLL support, presumably the DFLL resume path can switch
-> the register from PLLX to DFLL, and we still won't need a custom
-> syscore_ops.
-> 
-> Will that work?
-Hmm. If we can implement DFLL resume code there, that may be work. But I
-can't confirm right now. I can move them to tegra_cpu_car_ops for now.
-We can re-visit this later when we get more function to support.
 
-Thanks,
-Joseph
+--yE3esYaFu3yg/VEv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Aug 09, 2013 at 09:57:00AM +0400, Alexander Shiyan wrote:
+
+> Instead of adding the support of regulators in each device, let's think about
+> whether it is possible to create a global regulator for any device on the I2C bus.
+
+> I see it like this:
+> We add an extra field in the i2c_board_info structure "power_name" and handle
+> it in the i2c_device_{probe/remove} functions.
+
+This would need to be an array of supplies, relatively few devices need
+only a single power supply.  This is also not something that should be
+handled in I2C, power is not something that's uniquely needed by devices
+on an I2C bus.
+
+> The question remains how to maintain such regulator in the PM functions,
+> but we can discuss it.
+
+Well, there's some basic stuff for this for clocks already - a similar
+pattern should work.  You need to use runtime PM to hook in the power
+management and it's not going to work for everything (especially things
+that can be wake sources) but there's some value in trying to factor out
+the basic use case.
+
+--yE3esYaFu3yg/VEv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSBMQpAAoJELSic+t+oim9cQoP/RcdidXGGHhCkcvMOrc+QtgR
+tneK0C9EATYUhNFc0xGQufplPt8r5TobiyRK/Fxkq5Yl4XTH0y9gca8j5TSldY1v
+oHM0d88qFY0ZaR9k5YKaY3iSYT+Iq1O+ItCcIOXlqYjgOs37sAfMmbUovAXFsEvD
+A7douB517YoaJm2JPsEz7FRrwsNUjgJ4XT+DT9OYcEr2LJp8aU6dZ02bZ82a0l8W
+DdSJgnFrna7G89yKNNQjcxzb+qDSf7SEsg4qXmIa7/E4KsiRB+4BHCb7ujmbLs2A
+dUdRCBdGn4sJaoj0czMMyG9KY2hUih0BX3laa1LrMLSmzTEyFgxU7v/wcb5Si57Y
+hFVdyWx4fgFuueORP0eqwpcSB16g5RQaM6toBRMzW4o8Thm+yhZyE+LVvpZSpOa1
+R9ciYkmiBWvRKHrTz2n8L3BgXRUArTLTm8cG58n4HJwQkrHO+GRz1rQwMTLa9s9e
+WpItvPoSKvJ8ooZapYWygrS7paytX/RQVYH+03URtVYKMA632lnXvljFsi3qlBcY
+ry3/FAD472dFFr/6TC3yH4+ZcPYjz5RYJWs0SReadmXxIfDNihzvDHDuomDZbZhj
+kdb+H13E+K8ivvMQtq6hn5EbTSHidRj/7sIkJzXTuYMAYb1Mp2/hv6j5MmEwPy6/
+BRsIAVyEQjJ3AgIkL94M
+=FlkJ
+-----END PGP SIGNATURE-----
+
+--yE3esYaFu3yg/VEv--
