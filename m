@@ -1,57 +1,40 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v6 10/14] ARM: tegra: Enable PCIe controller on Beaver
-Date: Fri,  9 Aug 2013 16:49:28 +0200
-Message-ID: <1376059772-16669-11-git-send-email-treding@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v6 14/14] MAINTAINERS: Add myself as Tegra PCIe maintainer
+Date: Fri,  9 Aug 2013 16:49:32 +0200
+Message-ID: <1376059772-16669-15-git-send-email-treding@nvidia.com>
 References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376059772-16669-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+I'll be taking on maintainership of the Tegra PCIe driver since it's now
+moved out of arch/arm/mach-tegra.
 
-PCIe lane 0 is connected to an onboard Gigabit Ethernet (RTL8168evl) and
-lane 4 is routed to the board's miniPCIe slot.
-
-Signed-off-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 87c5f7b..4d9fa31 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -10,6 +10,27 @@
- 		reg = <0x80000000 0x7ff00000>;
- 	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cd1b287..26fc20a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6287,6 +6287,13 @@ F:	Documentation/PCI/
+ F:	drivers/pci/
+ F:	include/linux/pci*
  
-+	pcie-controller {
-+		status = "okay";
-+		pex-clk-supply = <&sys_3v3_pexs_reg>;
-+		vdd-supply = <&ldo1_reg>;
-+		avdd-supply = <&ldo2_reg>;
++PCI DRIVER FOR NVIDIA TEGRA
++M:	Thierry Reding <thierry.reding@gmail.com>
++L:	linux-tegra@vger.kernel.org
++S:	Supported
++F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++F:	drivers/pci/host/pci-tegra.c
 +
-+		pci@1,0 {
-+			status = "okay";
-+			nvidia,num-lanes = <4>;
-+		};
-+
-+		pci@2,0 {
-+			status = "okay";
-+			nvidia,num-lanes = <1>;
-+		};
-+
-+		pci@3,0 {
-+			nvidia,num-lanes = <1>;
-+		};
-+	};
-+
- 	pinmux {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&state_default>;
+ PCMCIA SUBSYSTEM
+ P:	Linux PCMCIA Team
+ L:	linux-pcmcia@lists.infradead.org
 -- 
 1.8.3.4
