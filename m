@@ -1,64 +1,63 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
-Date: Fri, 9 Aug 2013 11:56:44 +0100
-Message-ID: <20130809105644.GW6427@sirena.org.uk>
+Subject: Re: Proposal: I2C device power (Was: hwmon: (lm90) Add power control)
+Date: Fri, 9 Aug 2013 12:09:31 +0100
+Message-ID: <20130809110931.GX6427@sirena.org.uk>
 References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
- <1375944991-29182-2-git-send-email-wni@nvidia.com>
- <20130808110136.GA6427@sirena.org.uk>
- <520498F3.8030101@nvidia.com>
+ <1376027820.695103970@f416.i.mail.ru>
+ <20130809102757.GT6427@sirena.org.uk>
+ <1376045411.585130456@f141.i.mail.ru>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hjiPcpt6rcFNGbLy"
+	protocol="application/pgp-signature"; boundary="zN/UJhV2gvyhY9D2"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <520498F3.8030101-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1376045411.585130456-gOtJ1i61JehsdVUOrk1QfQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---hjiPcpt6rcFNGbLy
+--zN/UJhV2gvyhY9D2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Aug 09, 2013 at 03:23:31PM +0800, Wei Ni wrote:
-> On 08/08/2013 07:01 PM, Mark Brown wrote:
+On Fri, Aug 09, 2013 at 02:50:11PM +0400, Alexander Shiyan wrote:
 
-> > You shouldn't just be ignoring errors here, though there are deployment
-> > difficulties with making sure a stub regulator is provided.  These
-> > should be getting easier after the next merge window, the stubs will be
-> > being tweaked slightly to have an "assume it's there" option even when
+> > This would need to be an array of supplies, relatively few devices need
+> > only a single power supply.  This is also not something that should be
+> > handled in I2C, power is not something that's uniquely needed by devices
+> > on an I2C bus.
 
-> Oh, really, could you show me the patch, I wish to take a look :)
+> Additional regulators can be handled in the driver, or "parent"-scheme can
+> be used. Is not it?
 
-No patch quite yet - the basic idea is that for plain regulator_get()
-you'll only ever get -EPROBE_DEFER as an error, not -ENODEV.  If the
-regulator is missing in the DT we assume it's there and provide a dummy
-if the DT doesn't hook it up.  If the consumer genuinely wants to see if
-a supply might not be wired up it should use regulator_get_optional()
-which is in -next at the minute.
+Given how common it is to have multiple supplies it seems sensible to
+just handle that in the core - it's common to have a digital supply and
+an analogue supply for example.  The regulator framework already has
+APIs for working with multiple regulators in a single call so it's not
+going to be much more effort on the framework side.
 
---hjiPcpt6rcFNGbLy
+--zN/UJhV2gvyhY9D2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSBMrpAAoJELSic+t+oim92agP/j5azvH/+9+pcUjPegcAHB1d
-XX79RjQpQnEbtskZxH8tOM10KgWcQqCEzMu+D4L+jCGH592DA398AJl4miVmOAHt
-f3BmcJrmIYH+1HUN6dQGzT2yCZqvJqHuvn3qoTff1j+Lfoo2Izr91befX66UoLG2
-5+zZkK2iCo8RjOl5koMfNTH5yPt4RNff9iZNCnG1YFTO0U6Z9Kel3orLRBlAvBW1
-dffaatc3qKyy8ZZ3O/dpd/nIu5UXo2rASoEaar5atL0mK6iQQ7VqhAnI8HsHphbV
-WzmB3K+AoRxGblewawUVz/GZeHEUpxcgxOeFIXnbsOhs/fZrct0NIKre7LEhmUmm
-6UJOK7TriFNtKTK3dF6hM68SAUJbiENpQo35vYaOZoiARcE06PIRg69v0wQj83zg
-POMZOidZgp9fzI1FisYnTWB+dCFQnSlCJWLQMqrOqFoUjUTUGcSp7vRR8tMUhtL7
-50f2dHPnhNKAEWHRRjCAr8c6wnYh4V2H/dFA5k72xHgbKxIMSgScZSTzaAMbsgJ1
-77o0cT69HMh3H8scRKrfKhBXCn4UzNKZJwR3uoQHzqQIa4FLXrNAooL62PoTgxgq
-U+WjToAlslBAFjQ/QQs83y3bpo27rYfXXEDFgEkv2LHzh6W2ANa5agsXvT5WVtSe
-vypsdOjWv8lEByE1RrQ5
-=lQYp
+iQIcBAEBAgAGBQJSBM3oAAoJELSic+t+oim9lWwP/36VFWFam8wJQbJ17f69Zqdz
+5gFP0wmDN4Wy7uWw73CRYZHq9BkzOYf/I2wl8D88WRAUJIbvnarcbTkg0ykHyedk
+q1HJUEU3tYfOX7y5FUY2VYb32Ax5sUEp/8tNjrDwEC0QX0Xuw8gGgHcnGLkFI4fv
+BCplAVxCRgddnRrpeEpEQ5UDMm4ds1NIfs7M25pXT789D0Cv7hfoVi9vya8SybSm
+Vsj1QNFpw3dsUrjzdrwfv7m/GaqvsWDFk4bZ+Mm7TopG5E1KUmrdMSsKATvJYnUv
+lRkEpwab/WSkyuwM75xA2AlklA8rNFyeehtQBO05A+tLclf/aAhryknHwRibrrmi
+IP9HE6slrn+ZNcBwK3L9sdIj4D9dJKU7PMTFbcsNzjr1h1kKBjUY1fesYLO+lCfk
+XBOfdy2t9n+RREkFdrb0bw2SrL385ucWDmaCkxMjHE/NMnhNE6qxK9VrnHpxhZE9
+Y309BFCcrIGjQ7K8LbZCslM49cmUlHO6TDfgAOFPsMwNnUcjdHFd4K8B+xNRA3G9
+QkmRuxM3Oxv/KwR65/jyTsw0tq2pnoiqLiJy3P+qvb5ibCwTTUO1LcuWbV3sdxI4
+pqvPNzz+tO0w4aj6vyyUe0P5W7VolvtsFY+ggRDroPioTnqOwq+9BnJuknlb+98/
+UmYyb+CSZq94i0NqDHoG
+=EjiJ
 -----END PGP SIGNATURE-----
 
---hjiPcpt6rcFNGbLy--
+--zN/UJhV2gvyhY9D2--
