@@ -1,31 +1,38 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
-Subject: =?UTF-8?B?UHJvcG9zYWw6IEkyQyBkZXZpY2UgcG93ZXIgKFdhczogaHdtb246IChsbTkw?=
- =?UTF-8?B?KSBBZGQgcG93ZXIgY29udHJvbCk=?=
-Date: Fri, 09 Aug 2013 09:57:00 +0400
-Message-ID: <1376027820.695103970@f416.i.mail.ru>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH v2 2/3] ARM: dt: t114 dalmore: add dt entry for nct1008
+Date: Fri, 9 Aug 2013 14:06:13 +0800
+Message-ID: <520486D5.3070109@nvidia.com>
 References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
- <20130808211825.GN6427@sirena.org.uk>
- <52040DE2.50201@roeck-us.net>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work-JGs/UdohzUI@public.gmane.org>
+ <1375944991-29182-3-git-send-email-wni@nvidia.com>
+ <5203D6FF.1060000@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52040DE2.50201-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?R3VlbnRlciBSb2Vjaw==?= <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: =?UTF-8?B?TWFyayBCcm93bg==?= <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?V2VpIE5p?= <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5203D6FF.1060000@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux@roeck-us.net" <linux@roeck-us.net>, "khali@linux-fr.org" <khali@linux-fr.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgYWxsLgoKSW5zdGVhZCBvZiBhZGRpbmcgdGhlIHN1cHBvcnQgb2YgcmVndWxhdG9ycyBpbiBl
-YWNoIGRldmljZSwgbGV0J3MgdGhpbmsgYWJvdXQKd2hldGhlciBpdCBpcyBwb3NzaWJsZSB0byBj
-cmVhdGUgYSBnbG9iYWwgcmVndWxhdG9yIGZvciBhbnkgZGV2aWNlIG9uIHRoZSBJMkMgYnVzLgoK
-SSBzZWUgaXQgbGlrZSB0aGlzOgpXZSBhZGQgYW4gZXh0cmEgZmllbGQgaW4gdGhlIGkyY19ib2Fy
-ZF9pbmZvIHN0cnVjdHVyZSAicG93ZXJfbmFtZSIgYW5kIGhhbmRsZQppdCBpbiB0aGUgaTJjX2Rl
-dmljZV97cHJvYmUvcmVtb3ZlfSBmdW5jdGlvbnMuCgpUaGUgcXVlc3Rpb24gcmVtYWlucyBob3cg
-dG8gbWFpbnRhaW4gc3VjaCByZWd1bGF0b3IgaW4gdGhlIFBNIGZ1bmN0aW9ucywKYnV0IHdlIGNh
-biBkaXNjdXNzIGl0LgoKQ2hhbmdlcyBsaWtlIHRoaXMsIHdpbGwgcmVtb3ZlIGV4aXN0aW5nIHJl
-Z3VsYXRvcnMgZnJvbSBkcml2ZXJzIGFuZCBhbGxvd3MgdG8KdXNlIHBvd2VyIHJlZ3VsYXRvciBm
-b3IgYW55IEkyQyBkZXZpY2UuCklmIHN1Y2ggaWRlYSBpcyBnb29kLCBzdWNoIGNoYW5nZXMgY291
-bGQgYmUgbWFkZSB0byBvdGhlciBkZXZpY2VzIChTUEksIHcxLCBldGMuKS4KVGhhbmtzLgoKLS0t
-Cg==
+On 08/09/2013 01:35 AM, Stephen Warren wrote:
+> On 08/08/2013 12:56 AM, Wei Ni wrote:
+>> Enable thermal sensor nct1008 for t114 dalmore.
+> 
+> It'd be best to remove this patch from the series; send one series to
+> the LM90 maintainer with just the driver and DT binding changes, and
+> another series to the Tegra maintainer with the *.dts changes. You can
+> tell me not to apply the *.dts changes until the driver/binding changes
+> are accepted (or just wait until they are before sending the patch).
+
+Ok, I will do it.
+
+> 
