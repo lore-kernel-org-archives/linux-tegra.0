@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v6 04/14] ARM: tegra: harmony: Initialize PCIe from DT
-Date: Fri,  9 Aug 2013 16:49:22 +0200
-Message-ID: <1376059772-16669-5-git-send-email-treding@nvidia.com>
+Subject: [PATCH v6 08/14] ARM: tegra: Add Tegra30 PCIe support
+Date: Fri,  9 Aug 2013 16:49:26 +0200
+Message-ID: <1376059772-16669-9-git-send-email-treding@nvidia.com>
 References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-pci-owner@vger.kernel.org>
 In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
@@ -10,69 +10,98 @@ To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding@avionic-design.de>
+Add the top-level pcie-controller node for the Tegra30 SoC. Tegra30 has
+three root ports that can use different lane layouts.
 
-With the device tree support in place, probe the PCIe controller from
-the device tree and remove the corresponding workaround in the board
-file.
-
-Signed-off-by: Thierry Reding <thierry.reding@avionic-design.de>
+Signed-off-by: Jay Agarwal <jagarwal@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm/boot/dts/tegra20-harmony.dts | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Changes in v5:
+- use symbolic constants for interrupts and clocks
 
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index d9f89cd..8724dc7 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -335,7 +335,7 @@
- 					regulator-always-on;
- 				};
- 
--				ldo0 {
-+				pci_clk_reg: ldo0 {
- 					regulator-name = "vdd_ldo0,vddio_pex_clk";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
-@@ -425,6 +425,20 @@
- 		nvidia,sys-clock-req-active-high;
+ arch/arm/boot/dts/tegra30.dtsi | 70 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index d8783f0..c8facca 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -16,6 +16,76 @@
+ 		serial4 = &uarte;
  	};
  
 +	pcie-controller {
-+		pex-clk-supply = <&pci_clk_reg>;
-+		vdd-supply = <&pci_vdd_reg>;
-+		status = "okay";
++		compatible = "nvidia,tegra30-pcie";
++		device_type = "pci";
++		reg = <0x00003000 0x00000800   /* PADS registers */
++		       0x00003800 0x00000200   /* AFI registers */
++		       0x10000000 0x10000000>; /* configuration space */
++		reg-names = "pads", "afi", "cs";
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH   /* controller interrupt */
++			      GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
++		interrupt-names = "intr", "msi";
++
++		bus-range = <0x00 0xff>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
++			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
++			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
++			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
++			  0x82000000 0 0x20000000 0x20000000 0 0x10000000   /* non-prefetchable memory */
++			  0xc2000000 0 0x30000000 0x30000000 0 0x10000000>; /* prefetchable memory */
++
++		clocks = <&tegra_car TEGRA30_CLK_PCIE>,
++			 <&tegra_car TEGRA30_CLK_AFI>,
++			 <&tegra_car TEGRA30_CLK_PCIEX>,
++			 <&tegra_car TEGRA30_CLK_PLL_E>,
++			 <&tegra_car TEGRA30_CLK_CML0>;
++		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
++		status = "disabled";
 +
 +		pci@1,0 {
-+			status = "okay";
++			device_type = "pci";
++			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
++			reg = <0x000800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
 +		};
 +
 +		pci@2,0 {
-+			status = "okay";
++			device_type = "pci";
++			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
++			reg = <0x001000 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
++		};
++
++		pci@3,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
++			reg = <0x001800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <2>;
 +		};
 +	};
 +
- 	usb@c5000000 {
- 		status = "okay";
- 	};
-@@ -643,7 +657,7 @@
- 			enable-active-high;
- 		};
- 
--		regulator@3 {
-+		pci_vdd_reg: regulator@3 {
- 			compatible = "regulator-fixed";
- 			reg = <3>;
- 			regulator-name = "vdd_1v05";
-@@ -651,8 +665,6 @@
- 			regulator-max-microvolt = <1050000>;
- 			gpio = <&pmic 2 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
--			/* Hack until board-harmony-pcie.c is removed */
--			status = "disabled";
- 		};
- 
- 		regulator@4 {
+ 	host1x {
+ 		compatible = "nvidia,tegra30-host1x", "simple-bus";
+ 		reg = <0x50000000 0x00024000>;
 -- 
 1.8.3.4
