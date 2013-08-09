@@ -1,47 +1,57 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v6 14/14] MAINTAINERS: Add myself as Tegra PCIe maintainer
-Date: Fri, 9 Aug 2013 08:56:00 -0600
-Message-ID: <CAErSpo7ozQG7R4FLXM0jtGL8F=i80q4CpVcMnA5Qj=Y1t9N4kw@mail.gmail.com>
-References: <1376059772-16669-1-git-send-email-treding@nvidia.com> <1376059772-16669-15-git-send-email-treding@nvidia.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v6 00/14] Rewrite Tegra PCIe driver
+Date: Fri, 9 Aug 2013 11:08:31 -0400
+Message-ID: <20130809150831.GF25111@titan.lakedaemon.net>
+References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1376059772-16669-15-git-send-email-treding@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
 Sender: linux-pci-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Jason Cooper <jason@lakedaemon.net>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 9, 2013 at 8:49 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> I'll be taking on maintainership of the Tegra PCIe driver since it's now
-> moved out of arch/arm/mach-tegra.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Fri, Aug 09, 2013 at 04:49:18PM +0200, Thierry Reding wrote:
+> Hi Stephen,
+> 
+> This is the latest version of the Tegra PCIe driver patch series. I've
+> dropped the PCI xclk clamping code as discussed and successfully tested
+> on Beaver. The patches that touch the PCI subsystem have Bjorn's
+> Acked-by and I've tested this on top of next-20130809, which has Jason's
+> common branch. Once he's comfortable with making the branch stable you
+> should be able to merge that branch and apply these patches on top.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Just an FYI, I'm mostly happy with what we have now, except that I'd
+like to confirm that the build failure Randy discovered isn't caused by
+us:
 
-> ---
->  MAINTAINERS | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cd1b287..26fc20a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6287,6 +6287,13 @@ F:       Documentation/PCI/
->  F:     drivers/pci/
->  F:     include/linux/pci*
->
-> +PCI DRIVER FOR NVIDIA TEGRA
-> +M:     Thierry Reding <thierry.reding@gmail.com>
-> +L:     linux-tegra@vger.kernel.org
-> +S:     Supported
-> +F:     Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-> +F:     drivers/pci/host/pci-tegra.c
-> +
->  PCMCIA SUBSYSTEM
->  P:     Linux PCMCIA Team
->  L:     linux-pcmcia@lists.infradead.org
-> --
-> 1.8.3.4
->
+Randy wrote some time later:
+> On 08/08/13 00:08, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20130807:
+> >
+> 
+> on i386 and x86_64:
+> when CONFIG_PCI_MSI is not enabled:
+> 
+> There are many of these errors:
+> include/linux/msi.h:65:6: error: expected identifier or '(' before 'void'
+> include/linux/msi.h:65:6: error: expected ')' before numeric constant
+> 
+> because arch/x86/include/asm/pci.h defines:
+> #define default_teardown_msi_irqs NULL
+
+I'm having a helluva time reproducing it :(
+
+The next run of linux-next isn't until Sunday evening (AUS Monday
+morning), so we have some time to figure it out.
+
+Also, I've renamed the branch mvebu/msi_pci to more accurately describe
+the changes it contains.
+
+thx,
+
+Jason.
