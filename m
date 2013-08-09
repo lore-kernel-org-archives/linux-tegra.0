@@ -1,62 +1,77 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v2 2/3] ARM: dt: t114 dalmore: add dt entry for nct1008
-Date: Fri, 9 Aug 2013 14:16:22 +0800
-Message-ID: <52048936.9040809@nvidia.com>
-References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-3-git-send-email-wni@nvidia.com> <52040146.7060703@cogentembedded.com> <52040236.2080701@wwwdotorg.org> <52040EB9.2050908@roeck-us.net>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
+Date: Fri, 9 Aug 2013 15:23:31 +0800
+Message-ID: <520498F3.8030101@nvidia.com>
+References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-2-git-send-email-wni@nvidia.com> <20130808110136.GA6427@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52040EB9.2050908@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130808110136.GA6427-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/09/2013 05:33 AM, Guenter Roeck wrote:
-> On 08/08/2013 01:40 PM, Stephen Warren wrote:
->> On 08/08/2013 02:36 PM, Sergei Shtylyov wrote:
->>> Hello.
->>>
->>> On 08/08/2013 10:56 AM, Wei Ni wrote:
->>>
->>>> Enable thermal sensor nct1008 for t114 dalmore.
->>>
->>>> Signed-off-by: Wei Ni <wni@nvidia.com>
->>>> ---
->>>>    arch/arm/boot/dts/tegra114-dalmore.dts |   10 +++++++++-
->>>>    1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>>> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts
->>>> b/arch/arm/boot/dts/tegra114-dalmore.dts
->>>> index b5a42f0..9d4d2b2 100644
->>>> --- a/arch/arm/boot/dts/tegra114-dalmore.dts
->>>> +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
->>>> @@ -738,6 +738,14 @@
->>>>                realtek,ldo1-en-gpios =
->>>>                    <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
->>>>            };
->>>> +
->>>> +        nct1008 {
->>>
->>>     ePAPR [1] says: "the name of a node should be somewhat generic,
->>> reflecting the function of the device and not its precise programming
->>> model". So I suggest "thermal"
->>
->> True, although there's quite some precedent for node-names being the
->> chip name for external chips in existing DTs. If we change this node
->> name, I'd like to see a patch that makes all the other "nct1008" nodes
->> match the new name...
->>
+On 08/08/2013 07:01 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
 > 
-> On the other side, one should not use a bad example as an argument or excuse
-> to make the same mistake again (though I keep hearing it all the time ... ).
-> I for my part tend to use something like temp-sensor or temp-sensor@1c.
-> Advantage of that kind of node name is that it auto-describes the node.
-
-Ok, so I will set the node name as "temp-sensor"
-And I will send out patches to change all other "nct1008" nodes.
-
+> On Thu, Aug 08, 2013 at 02:56:29PM +0800, Wei Ni wrote:
 > 
-> Guenter
+>> +	mutex_lock(&data->update_lock);
+>> +
+>> +	if (is_enable)
+>> +		ret = regulator_enable(data->lm90_reg);
+>> +	else
+>> +		ret = regulator_disable(data->lm90_reg);
+>> +
+>> +	if (ret < 0)
+>> +		dev_err(&client->dev,
+>> +			"Error in %s rail vdd, error %d\n",
+>> +			(is_enable) ? "enabling" : "disabling", ret);
+>> +	else
+>> +		dev_info(&client->dev, "success in %s rail vdd\n",
+>> +			 (is_enable) ? "enabling" : "disabling");
+>> +
+>> +	mutex_unlock(&data->update_lock);
+> 
+> Two things here.  One is that it's not clear what this lokc is
+> protecting since the only thing in the locked region is the regulator
+> operation and that is thread safe.  The other thing is that I'm not
+> seeing anthing that ensures that enables and disables are matched -
+> regulators are reference counted so two enables need two disables.
+> 
+>> +	data->lm90_reg = regulator_get(&client->dev, "vdd");
+>> +	if (IS_ERR_OR_NULL(data->lm90_reg)) {
+> 
+> NULL is a valid regulator, use IS_ERR().
+> 
+>> +		if (PTR_ERR(data->lm90_reg) == -ENODEV)
+>> +			dev_info(&client->dev,
+>> +				 "No regulator found for vdd. Assuming vdd is always powered.");
+>> +		else
+>> +			dev_warn(&client->dev,
+>> +				 "Error [%ld] in getting the regulator handle for vdd.\n",
+>> +				 PTR_ERR(data->lm90_reg));
+> 
+> You shouldn't just be ignoring errors here, though there are deployment
+> difficulties with making sure a stub regulator is provided.  These
+> should be getting easier after the next merge window, the stubs will be
+> being tweaked slightly to have an "assume it's there" option even when
+
+Oh, really, could you show me the patch, I wish to take a look :)
+
+Wei.
+
+> regulators are used.  Especially in cases with device tree you should be
+> paying attention to -EPROBE_DEFER, that will accurately reflect if a
+> regulator is present but not loaded yet.
+> 
+> That said if you *are* going to do this you should request the
+> regulator using devm_regulator_get_optional(), this is intended to
+> support things that don't need regulators (though that's not the case
+> here).
+> 
+> * Unknown Key
+> * 0x7EA229BD
 > 
