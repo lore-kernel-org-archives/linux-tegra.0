@@ -1,63 +1,79 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: Proposal: I2C device power (Was: hwmon: (lm90) Add power control)
-Date: Fri, 9 Aug 2013 12:09:31 +0100
-Message-ID: <20130809110931.GX6427@sirena.org.uk>
-References: <1375944991-29182-1-git-send-email-wni@nvidia.com>
- <1376027820.695103970@f416.i.mail.ru>
- <20130809102757.GT6427@sirena.org.uk>
- <1376045411.585130456@f141.i.mail.ru>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] usb: host: tegra: Tegra30 support
+Date: Fri, 9 Aug 2013 16:37:22 +0300
+Message-ID: <20130809133722.GK12041@radagast>
+References: <1375812518-3847-1-git-send-email-ttynkkynen@nvidia.com>
+ <1375812518-3847-7-git-send-email-ttynkkynen@nvidia.com>
+ <520141F2.4060907@cogentembedded.com>
+ <52014B89.9040106@nvidia.com>
+ <52014E0F.10404@cogentembedded.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zN/UJhV2gvyhY9D2"
+	protocol="application/pgp-signature"; boundary="08ATZu8fEq0x2T3M"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1376045411.585130456-gOtJ1i61JehsdVUOrk1QfQ@public.gmane.org>
+In-Reply-To: <52014E0F.10404-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+To: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>
+Cc: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "balbi-l0cyMroinI0@public.gmane.org" <balbi-l0cyMroinI0@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---zN/UJhV2gvyhY9D2
+--08ATZu8fEq0x2T3M
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 09, 2013 at 02:50:11PM +0400, Alexander Shiyan wrote:
+On Tue, Aug 06, 2013 at 11:27:11PM +0400, Sergei Shtylyov wrote:
+> Hello.
+>=20
+> On 08/06/2013 11:16 PM, Tuomas Tynkkynen wrote:
+>=20
+> >[...]
+>=20
+> >>>+	match =3D of_match_device(tegra_ehci_of_match, &pdev->dev);
+> >>>+	if (!match) {
+> >>>+		dev_err(&pdev->dev, "Error: No device match found\n");
+> >>>+		return -ENODEV;
+> >>>+	}
+> >>>+	soc_config =3D (struct tegra_ehci_soc_config *)match->data;
+>=20
+> >>     Aren't casts from 'const void *' automatic?
+>=20
+> >>WBR, Sergei
+>=20
+> >Indeed they are, but those explicit casts seem to be used in many places=
+ in the kernel.
+>=20
+>    I suspect people just don't know C well enough. They are also
+> being gradually removed.
 
-> > This would need to be an array of supplies, relatively few devices need
-> > only a single power supply.  This is also not something that should be
-> > handled in I2C, power is not something that's uniquely needed by devices
-> > on an I2C bus.
+yeah, please resend with the cast removed. Also, put Tested-by, Acked-by
+and Reviewed-by in place.
 
-> Additional regulators can be handled in the driver, or "parent"-scheme can
-> be used. Is not it?
+--=20
+balbi
 
-Given how common it is to have multiple supplies it seems sensible to
-just handle that in the core - it's common to have a digital supply and
-an analogue supply for example.  The regulator framework already has
-APIs for working with multiple regulators in a single call so it's not
-going to be much more effort on the framework side.
-
---zN/UJhV2gvyhY9D2
+--08ATZu8fEq0x2T3M
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSBM3oAAoJELSic+t+oim9lWwP/36VFWFam8wJQbJ17f69Zqdz
-5gFP0wmDN4Wy7uWw73CRYZHq9BkzOYf/I2wl8D88WRAUJIbvnarcbTkg0ykHyedk
-q1HJUEU3tYfOX7y5FUY2VYb32Ax5sUEp/8tNjrDwEC0QX0Xuw8gGgHcnGLkFI4fv
-BCplAVxCRgddnRrpeEpEQ5UDMm4ds1NIfs7M25pXT789D0Cv7hfoVi9vya8SybSm
-Vsj1QNFpw3dsUrjzdrwfv7m/GaqvsWDFk4bZ+Mm7TopG5E1KUmrdMSsKATvJYnUv
-lRkEpwab/WSkyuwM75xA2AlklA8rNFyeehtQBO05A+tLclf/aAhryknHwRibrrmi
-IP9HE6slrn+ZNcBwK3L9sdIj4D9dJKU7PMTFbcsNzjr1h1kKBjUY1fesYLO+lCfk
-XBOfdy2t9n+RREkFdrb0bw2SrL385ucWDmaCkxMjHE/NMnhNE6qxK9VrnHpxhZE9
-Y309BFCcrIGjQ7K8LbZCslM49cmUlHO6TDfgAOFPsMwNnUcjdHFd4K8B+xNRA3G9
-QkmRuxM3Oxv/KwR65/jyTsw0tq2pnoiqLiJy3P+qvb5ibCwTTUO1LcuWbV3sdxI4
-pqvPNzz+tO0w4aj6vyyUe0P5W7VolvtsFY+ggRDroPioTnqOwq+9BnJuknlb+98/
-UmYyb+CSZq94i0NqDHoG
-=EjiJ
+iQIcBAEBAgAGBQJSBPCSAAoJEIaOsuA1yqREa0sQAIj05z3tSDaYYvkrmZ1CAX/N
+ADfSDE9jEmtTJV3UlqflQY8HwnrfzgxkJn7ovLsMrde83uMN2VZMGcGYjQ0+WVt+
+RTeXtAcsGQdUTcI66ZuKKLy2Ns+I+BlDe78WsARDukc0dT/ZmoxwdcXWJNLCe2PD
+RNVWkH4kpYVx5pZ7j8DCGBjg1GBcX6amB6hLcFejuoN5o+IeGb8UFP0pgdgF+Eni
+egLJP3fiigby8Vz1qw2C7xM/stRfQHAFX8hBD1h3+93APyhIJm5C4kztz1gC4RuC
+2VDJpsul4ZuR2it93/AMROEHR6WeikaOVfC1JxEacpNgZIMUT/TOX9dkhlOUwZKz
+hpJ3DkkiPensILwVwr6pU+2aNbNrNtcPUWFUOiuSosE0nMjeRe7mTtASuLkRSb4C
+XLGBh4YuiwEswzBMDu2yjtlQe+1zhOGBJiiua5Ja1nETl4b2WTVp1pKKzv+A65YK
+W0jQcUIWN7pyi8LsS9wkRkSPYIN/pgERhCXsHuT13WCAphxrm8tqsiFc7dXvSS7y
+EsJgDBRxex1FZj87eX4Iu0WzqOdwgV7zajesgMAN9STKwn6WHrwmQuRJ94Fc4zNc
+yjVUEJf/o2mG68pVDPucORNEB7LffZMv3vQHq/84Rc5XjvXZP7JquUDGITr1t5ie
+pgBYg36RSy/3Wzt5XRU8
+=aM5V
 -----END PGP SIGNATURE-----
 
---zN/UJhV2gvyhY9D2--
+--08ATZu8fEq0x2T3M--
