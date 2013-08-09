@@ -1,77 +1,72 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/3] hwmon: (lm90) Add power control
-Date: Fri, 9 Aug 2013 15:23:31 +0800
-Message-ID: <520498F3.8030101@nvidia.com>
-References: <1375944991-29182-1-git-send-email-wni@nvidia.com> <1375944991-29182-2-git-send-email-wni@nvidia.com> <20130808110136.GA6427@sirena.org.uk>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/8] clk: tegra114: add LP1 suspend/resume support
+Date: Fri, 9 Aug 2013 17:23:10 +0800
+Message-ID: <1376040190.12024.10.camel@jlo-ubuntu-64.nvidia.com>
+References: <1374830110-30685-1-git-send-email-josephl@nvidia.com>
+	 <1374830110-30685-4-git-send-email-josephl@nvidia.com>
+	 <51F6F209.2090309@wwwdotorg.org>
+	 <1375430985.6761.51.camel@jlo-ubuntu-64.nvidia.com>
+	 <51FC1751.9010401@wwwdotorg.org>
+	 <1375689749.1731.36.camel@jlo-ubuntu-64.nvidia.com>
+	 <51FFDA20.6050403@wwwdotorg.org>  <51FFE363.4080603@wwwdotorg.org>
+	 <1375780249.2261.63.camel@jlo-ubuntu-64.nvidia.com>
+	 <52014258.9070602@wwwdotorg.org>
+	 <1375866749.8111.57.camel@jlo-ubuntu-64.nvidia.com>
+	 <520279FC.1000006@wwwdotorg.org>
+	 <1375928591.1758.66.camel@jlo-ubuntu-64.nvidia.com>
+	 <5203F766.9050100@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130808110136.GA6427-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <5203F766.9050100-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/08/2013 07:01 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Fri, 2013-08-09 at 03:54 +0800, Stephen Warren wrote:
+> On 08/07/2013 08:23 PM, Joseph Lo wrote:
+> > On Thu, 2013-08-08 at 00:46 +0800, Stephen Warren wrote:
+> ..
+> >> I still have absolutely no idea why Tegra30 and Tegra114 are different.
+> >>
+> >> You mentioned something about this low-level code only manipulating the
+> >> IDLE state, and the clock driver needing to restore the other 4 states.
+> >> This raises yet more questions:
+> >>
+> >> 1) Do we not need to restore the other 4 states on Tegra30? If not, why
+> >> not? If we do, presumably Tegra30 (and Tegra20?) need to the syscore_op
+> >> this patch series adds to Tegra114 only? If we don't, then why does
+> >> Tegra114 have to restore them?
+> >
+> > We need to restore all of them for all Tegra chips. For Tegra20/30, we
+> > had done it in the tegra_cpu_car_ops.suspend/resume. For Tegra114, the
+> > patch was here.
+> > 
+> > The other reason is:
+> > 1) The PLLX is the main CPU clock source in Tegra20/30. We can restore
+> > it ASAP to get a better performance.
+> > 2) For Tegra114, the PLLX is the CPU clock source when CPU runs at low
+> > rates. When CPU in high rate, it uses DFLL as clock source. So it
+> > depends on what the clock source of the CPU when it goes into suspend.
+> > And the DFLL has its own resume code, it needs to be restored before the
+> > CPU uses it as clock source again. It makes the CPU clock restore
+> > sequence like this.
 > 
-> On Thu, Aug 08, 2013 at 02:56:29PM +0800, Wei Ni wrote:
+> So, we don't yet support the DFLL upstream. Presumably, the CPU is
+> always running off PLLX on Tegra114 upstream right now. As such, we can
+> hard-code that into the resume path just like we do on earlier chips,
+> i.e. using tegra_cpu_car_ops.resume().
 > 
->> +	mutex_lock(&data->update_lock);
->> +
->> +	if (is_enable)
->> +		ret = regulator_enable(data->lm90_reg);
->> +	else
->> +		ret = regulator_disable(data->lm90_reg);
->> +
->> +	if (ret < 0)
->> +		dev_err(&client->dev,
->> +			"Error in %s rail vdd, error %d\n",
->> +			(is_enable) ? "enabling" : "disabling", ret);
->> +	else
->> +		dev_info(&client->dev, "success in %s rail vdd\n",
->> +			 (is_enable) ? "enabling" : "disabling");
->> +
->> +	mutex_unlock(&data->update_lock);
+> Once we do get DFLL support, presumably the DFLL resume path can switch
+> the register from PLLX to DFLL, and we still won't need a custom
+> syscore_ops.
 > 
-> Two things here.  One is that it's not clear what this lokc is
-> protecting since the only thing in the locked region is the regulator
-> operation and that is thread safe.  The other thing is that I'm not
-> seeing anthing that ensures that enables and disables are matched -
-> regulators are reference counted so two enables need two disables.
-> 
->> +	data->lm90_reg = regulator_get(&client->dev, "vdd");
->> +	if (IS_ERR_OR_NULL(data->lm90_reg)) {
-> 
-> NULL is a valid regulator, use IS_ERR().
-> 
->> +		if (PTR_ERR(data->lm90_reg) == -ENODEV)
->> +			dev_info(&client->dev,
->> +				 "No regulator found for vdd. Assuming vdd is always powered.");
->> +		else
->> +			dev_warn(&client->dev,
->> +				 "Error [%ld] in getting the regulator handle for vdd.\n",
->> +				 PTR_ERR(data->lm90_reg));
-> 
-> You shouldn't just be ignoring errors here, though there are deployment
-> difficulties with making sure a stub regulator is provided.  These
-> should be getting easier after the next merge window, the stubs will be
-> being tweaked slightly to have an "assume it's there" option even when
+> Will that work?
+Hmm. If we can implement DFLL resume code there, that may be work. But I
+can't confirm right now. I can move them to tegra_cpu_car_ops for now.
+We can re-visit this later when we get more function to support.
 
-Oh, really, could you show me the patch, I wish to take a look :)
-
-Wei.
-
-> regulators are used.  Especially in cases with device tree you should be
-> paying attention to -EPROBE_DEFER, that will accurately reflect if a
-> regulator is present but not loaded yet.
-> 
-> That said if you *are* going to do this you should request the
-> regulator using devm_regulator_get_optional(), this is intended to
-> support things that don't need regulators (though that's not the case
-> here).
-> 
-> * Unknown Key
-> * 0x7EA229BD
-> 
+Thanks,
+Joseph
