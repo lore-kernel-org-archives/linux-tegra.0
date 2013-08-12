@@ -1,113 +1,53 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3] ARM: tegra: disable LP2 cpuidle state if PCIe is
- enabled
-Date: Mon, 12 Aug 2013 13:09:50 +0200
-Message-ID: <20130812110949.GB12042@ulmo>
-References: <1376078656-1378-1-git-send-email-swarren@wwwdotorg.org>
+From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/6] USB tree changes for Tegra30 and Tegra114 USB Host support
+Date: Mon, 12 Aug 2013 16:06:48 +0300
+Message-ID: <1376312814-18992-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1376078656-1378-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi all,
 
---VrqPEDrXMn8OVzN4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here are the patches for the USB tree to enable USB Host support on Tegra30 and
+Tegra114. These are based on my and Mikko's cleanup patches that just got
+merged to Felipe's tree.
 
-On Fri, Aug 09, 2013 at 02:04:16PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
-> they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
-> this, simply disable LP2 if the PCI driver and DT node are both enabled.
+The first one touches the core hub code to prevent certain (non-standard) clock
+disable features as our controller doesn't support those.
+The rest are changes to our PHY and EHCI drivers to deal with a few changed
+register addresses and a few additional PHY parameters that need to be set
+for proper signal quality.
 
-This description is no longer accurate.
+v2 diff:
+Patch 1: Added Alan's ack
+Patch 2 & 5: Change register bitmasks to not contain shifted-out bits
+Changed the order of patches 4 & 5
+Patch 5: Don't touch new PHY params under T20
 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> I intend to apply this on top of Thierry's Tegra PCIe driver series.
->=20
-> v3: Only disable LP2 if a PCIe device that requests an interrupt is
-> actually present. This prevents the loss of power-saving when the WAR
-> isn't required.
+v3 diff:
+Patch 6: Removed useless cast
+Added Stephen's Reviewed-by & Tested-by to all patches
 
-Currently I see the informational message about LP2 being disabled
-rather early in PCI setup. That's probably caused by the .map_irq()
-being called during enumeration/fixup. So effectively this disables LP2
-as soon as a PCI device is found, whether it needs the IRQ or not. But I
-don't think we can do any better than this, so that's fine.
+Tuomas Tynkkynen (6):
+  usb: host: add has_tdi_phy_lpm capability bit
+  usb: phy: tegra: Fix wrong PHY parameters
+  usb: phy: tegra: Tegra30 support
+  Documentation: New DT parameters for tegra30-usb-phy
+  usb: phy: tegra: Program new PHY parameters
+  usb: host: tegra: Tegra30 support
 
-[...]
-> diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
-[...]
-> +void tegra_cpuidle_pcie_irqs_in_use(void)
-> +{
-> +	switch (tegra_chip_id) {
-> +	case TEGRA20:
-> +		if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-> +			tegra20_cpuidle_pcie_irqs_in_use();
-> +		break;
-> +	}
-> +}
+ .../bindings/usb/nvidia,tegra20-usb-phy.txt        |  15 +-
+ drivers/usb/chipidea/host.c                        |   1 +
+ drivers/usb/host/ehci-hub.c                        |  14 +-
+ drivers/usb/host/ehci-tegra.c                      |  34 +++-
+ drivers/usb/host/ehci.h                            |   1 +
+ drivers/usb/phy/phy-tegra-usb.c                    | 220 ++++++++++++++++-----
+ include/linux/usb/tegra_usb_phy.h                  |  23 +++
+ 7 files changed, 242 insertions(+), 66 deletions(-)
 
-I plan to eventually (3.13 perhaps) support building the pci-tegra
-driver as a module since most or all prerequisites are now in place, so
-we'll need to export this function eventually. But we can do that when
-we actually need it. Perhaps somebody will find a better fix for the LP2
-problem until then.
-
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-[...]
-> @@ -41,6 +41,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> +#include <linux/tegra-cpuidle.h>
-
-That file doesn't exist in any tree I have. Perhaps it's a new file and
-you forgot to add it in this commit?
-
-I've added that file locally to test the patch and verified that it
-works around the issue on TrimSlice while not causing any regressions on
-Beaver (it doesn't run any code on !ARCH_TEGRA_2x_SOC anyway, but better
-safe than sorry).
-
-So with the missing header file added:
-
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-And with an updated commit message:
-
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thierry
-
---VrqPEDrXMn8OVzN4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSCMJ9AAoJEN0jrNd/PrOhdo8P/03p3yqkc3HvN6D+HK87DmwP
-z0tAediv4IAgszwq6k9Vu2PNEGsA+9N40j7tUfRNIfQeUgN5DSig72EnORU35Psm
-IFLt8bEMvets05sE71dyiTNwU0cjIRGNWLmKl75UatSoCWLcCH4dgJ2c7AXwpQwM
-E8QW7WM6NP8r+IAFw64I9JtMOEPQKZzQmZ7q+6i+6nUu+ljBanqGzI9luDfnputK
-xJUgu0PHd+lEGWJVat3TowoH+bqX7PKJ3ON7IzNuFNn3cOI8LotHWWzK6+J35YNG
-bjbGIQxYetCII+SDRThjf6ILq1DIrOjTDqHLNxXeGg7Y493QwMvvVlWN3ZG8r3TH
-8XGj97M8yEJGPnLsg962oPcMt7zrvZRPbGPxgWLDRBur8/J4pyL3UmRIyHHBCjEV
-mGHdcR4R9ufgxbFCr6Dj2RQ7Lg9ExBFvoOQqbx0WLHkAEilMV1g1mEG9Me/iQL6u
-rCBnMobAIA4nfklqemAx6t1o+a8kLl5OLlVzX0kM1K5uBF2MYgTjbcIhXjB5MQV6
-ZAf+m1+w4diAnd+Q3Zcf90XrIF1XSLLtHHeKTt9Kr9Ze2EmT17vpoqSYBMJmdZwh
-/oUJa3kwme5/JWVyh/tw6lymOTxlbOOaX6qsBQkfCNaL1hBGQALQA36vmp0fqmcZ
-lgLYZQCR8B8JPnyw1K20
-=I//w
------END PGP SIGNATURE-----
-
---VrqPEDrXMn8OVzN4--
+-- 
+1.8.1.5
