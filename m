@@ -1,33 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: enable PCIe XHCI controller for testing
-Date: Mon, 12 Aug 2013 15:14:23 -0600
-Message-ID: <1376342063-14405-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v6 00/14] Rewrite Tegra PCIe driver
+Date: Mon, 12 Aug 2013 15:19:42 -0600
+Message-ID: <5209516E.3030507@wwwdotorg.org>
+References: <1376059772-16669-1-git-send-email-treding@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1376059772-16669-1-git-send-email-treding@nvidia.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/09/2013 08:49 AM, Thierry Reding wrote:
+> Hi Stephen,
+> 
+> This is the latest version of the Tegra PCIe driver patch series. I've
+> dropped the PCI xclk clamping code as discussed and successfully tested
+> on Beaver. The patches that touch the PCI subsystem have Bjorn's
+> Acked-by and I've tested this on top of next-20130809, which has Jason's
+> common branch. Once he's comfortable with making the branch stable you
+> should be able to merge that branch and apply these patches on top.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-I intend to squash this into Tegra's for-3.12/defconfig branch immediately.
+I have applied this series, as follows:
 
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+* All code changes to Tegra's for-3.12/soc branch.
+* All *.dts* changes to Tegra's for-3.12/dt branch.
+* All defconfig changes to Tegra's for-3.12/defconfig branch.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 1586dda..8c284ff 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -183,6 +183,7 @@ CONFIG_SND_SOC_TEGRA_WM8903=y
- CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
- CONFIG_SND_SOC_TEGRA_ALC5632=y
- CONFIG_USB=y
-+CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_TEGRA=y
- CONFIG_USB_ACM=y
--- 
-1.8.1.5
+I split patch 1/14 into separate code and DT changes in order to achieve
+the split above. I hope you don't mind. It shouldn't affect
+bisectability, since (a) PCIe support wasn't really useful before this
+series anyway, and (b) the board *.dts changes were separate patches
+anyway, so it wasn't quite fully bisectable in the first place.
+
+Thanks.
