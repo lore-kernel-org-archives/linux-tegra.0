@@ -1,63 +1,20 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 4/8] ARM: tegra: add common LP1 suspend support
-Date: Mon, 12 Aug 2013 13:24:46 -0600
-Message-ID: <5209367E.10900@wwwdotorg.org>
-References: <1376300407-14750-1-git-send-email-josephl@nvidia.com> <1376300407-14750-5-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH V3 0/8] ARM: tegra: support LP1 suspend mode
+Date: Mon, 12 Aug 2013 13:40:19 -0600
+Message-ID: <52093A23.3040008@wwwdotorg.org>
+References: <1376300407-14750-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376300407-14750-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1376300407-14750-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/12/2013 03:40 AM, Joseph Lo wrote:
-> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
-> clock gated and SDRAM in self-refresh mode. That means the low level LP1
-> suspending and resuming code couldn't be run on DRAM and the CPU must
-> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
-> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
-> The LP1 low level handling code need to be moved to IRAM area first. And
-> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
-> power timer needs to be re-calculated based on 32KHz that was originally
-> based on PCLK.
-> 
-> When resuming from LP1, the LP1 reset handler will resume PLLs and then
-> put DRAM to normal mode. Then jumping to the "tegra_resume" that will
-> restore full context before back to kernel. The "tegra_resume" handler
-> was expected to be found in PMC_SCRATCH41 register.
-> 
-> This is common LP1 procedures for Tegra, so we do these jobs mainly in
-> this patch:
-> * moving LP1 low level handling code to IRAM
-> * marking LP1 mask
-> * copying the physical address of "tegra_resume" to PMC_SCRATCH41
-> * re-calculate the CPU power timer based on 32KHz
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3:
-> * using a "#define" of IRAM_CODE to replace original static variable
+On 08/12/2013 03:39 AM, Joseph Lo wrote:
+> This series adds the support of LP1 suspend mode for Tegra.
 
-I didn't mean change the variable to a define, but rather simply to use
-the IO_ADDRESS() define instead of any new define. i.e.:
-
-> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-
-> +#define IRAM_CODE IO_ADDRESS(TEGRA_IRAM_CODE_AREA)
-
-... just don't add that, and ...
-
-> +static void tegra_suspend_enter_lp1(void)
-> +{
-> +	tegra_pmc_suspend();
-> +
-> +	/* copy the reset vector & SDRAM shutdown code into IRAM */
-> +	memcpy(iram_save_addr, IRAM_CODE, iram_save_size);
-> +	memcpy(IRAM_CODE, tegra_lp1_iram.start_addr, iram_save_size);
-
-... and s/IRAM_CODE/IO_ADDRESS(TEGRA_IRAM_CODE_AREA)/ in that code.
-
-I'll make that fixup when applying these patches.
+I have applied patches 1-7 to Tegra's for-3.12/soc and path 8 to Tegra's
+for-3.12/dt branch.
