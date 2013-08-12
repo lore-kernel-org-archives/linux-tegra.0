@@ -1,182 +1,113 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 8/8] ARM: tegra: enable LP1 suspend mode
-Date: Mon, 12 Aug 2013 17:40:07 +0800
-Message-ID: <1376300407-14750-9-git-send-email-josephl@nvidia.com>
-References: <1376300407-14750-1-git-send-email-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] ARM: tegra: disable LP2 cpuidle state if PCIe is
+ enabled
+Date: Mon, 12 Aug 2013 13:09:50 +0200
+Message-ID: <20130812110949.GB12042@ulmo>
+References: <1376078656-1378-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VrqPEDrXMn8OVzN4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376300407-14750-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1376078656-1378-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enabling the LP1 suspend mode for Tegra devices.
 
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> # paz00 board
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-V3:
-* fix the "Tested-by" line
-V2:
-* no change
----
- arch/arm/boot/dts/tegra114-dalmore.dts     | 2 +-
- arch/arm/boot/dts/tegra20-colibri-512.dtsi | 2 +-
- arch/arm/boot/dts/tegra20-harmony.dts      | 2 +-
- arch/arm/boot/dts/tegra20-paz00.dts        | 2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts     | 2 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi    | 2 +-
- arch/arm/boot/dts/tegra20-trimslice.dts    | 2 +-
- arch/arm/boot/dts/tegra20-ventana.dts      | 2 +-
- arch/arm/boot/dts/tegra20-whistler.dts     | 2 +-
- arch/arm/boot/dts/tegra30-beaver.dts       | 2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi      | 2 +-
- 11 files changed, 11 insertions(+), 11 deletions(-)
+--VrqPEDrXMn8OVzN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index b5a42f0..44873b5 100644
---- a/arch/arm/boot/dts/tegra114-dalmore.dts
-+++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1024,7 +1024,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <500>;
- 		nvidia,cpu-pwr-off-time = <300>;
- 		nvidia,core-pwr-good-time = <641 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-index 2fcb3f2..06c5fa0 100644
---- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
-@@ -363,7 +363,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
-index d9f89cd..d44cf90 100644
---- a/arch/arm/boot/dts/tegra20-harmony.dts
-+++ b/arch/arm/boot/dts/tegra20-harmony.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
-index cfd1276..8d71fc9 100644
---- a/arch/arm/boot/dts/tegra20-paz00.dts
-+++ b/arch/arm/boot/dts/tegra20-paz00.dts
-@@ -417,7 +417,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <0>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
-index 60137f5..c256c81 100644
---- a/arch/arm/boot/dts/tegra20-seaboard.dts
-+++ b/arch/arm/boot/dts/tegra20-seaboard.dts
-@@ -518,7 +518,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-index c54faae..f00febe 100644
---- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
-+++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
-@@ -459,7 +459,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
-index 906e07f..665e504 100644
---- a/arch/arm/boot/dts/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/tegra20-trimslice.dts
-@@ -302,7 +302,7 @@
- 	};
- 
- 	pmc {
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <5000>;
- 		nvidia,cpu-pwr-off-time = <5000>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 7f8c28d..aab872c 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -494,7 +494,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <100>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
-index a6b1b5b..608b79a 100644
---- a/arch/arm/boot/dts/tegra20-whistler.dts
-+++ b/arch/arm/boot/dts/tegra20-whistler.dts
-@@ -497,7 +497,7 @@
- 
- 	pmc {
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <1000>;
- 		nvidia,core-pwr-good-time = <0 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 87c5f7b..7378927 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -262,7 +262,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
-diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-index c011b67..d78c90c 100644
---- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
-+++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
-@@ -314,7 +314,7 @@
- 	pmc {
- 		status = "okay";
- 		nvidia,invert-interrupt;
--		nvidia,suspend-mode = <2>;
-+		nvidia,suspend-mode = <1>;
- 		nvidia,cpu-pwr-good-time = <2000>;
- 		nvidia,cpu-pwr-off-time = <200>;
- 		nvidia,core-pwr-good-time = <3845 3845>;
--- 
-1.8.3.4
+On Fri, Aug 09, 2013 at 02:04:16PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra20 HW appears to have a bug such that PCIe device interrupts, whether
+> they are legacy IRQs or MSI, are lost when LP2 is enabled. To work around
+> this, simply disable LP2 if the PCI driver and DT node are both enabled.
+
+This description is no longer accurate.
+
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> I intend to apply this on top of Thierry's Tegra PCIe driver series.
+>=20
+> v3: Only disable LP2 if a PCIe device that requests an interrupt is
+> actually present. This prevents the loss of power-saving when the WAR
+> isn't required.
+
+Currently I see the informational message about LP2 being disabled
+rather early in PCI setup. That's probably caused by the .map_irq()
+being called during enumeration/fixup. So effectively this disables LP2
+as soon as a PCI device is found, whether it needs the IRQ or not. But I
+don't think we can do any better than this, so that's fine.
+
+[...]
+> diff --git a/arch/arm/mach-tegra/cpuidle.c b/arch/arm/mach-tegra/cpuidle.c
+[...]
+> +void tegra_cpuidle_pcie_irqs_in_use(void)
+> +{
+> +	switch (tegra_chip_id) {
+> +	case TEGRA20:
+> +		if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
+> +			tegra20_cpuidle_pcie_irqs_in_use();
+> +		break;
+> +	}
+> +}
+
+I plan to eventually (3.13 perhaps) support building the pci-tegra
+driver as a module since most or all prerequisites are now in place, so
+we'll need to export this function eventually. But we can do that when
+we actually need it. Perhaps somebody will find a better fix for the LP2
+problem until then.
+
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+[...]
+> @@ -41,6 +41,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+> +#include <linux/tegra-cpuidle.h>
+
+That file doesn't exist in any tree I have. Perhaps it's a new file and
+you forgot to add it in this commit?
+
+I've added that file locally to test the patch and verified that it
+works around the issue on TrimSlice while not causing any regressions on
+Beaver (it doesn't run any code on !ARCH_TEGRA_2x_SOC anyway, but better
+safe than sorry).
+
+So with the missing header file added:
+
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+And with an updated commit message:
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thierry
+
+--VrqPEDrXMn8OVzN4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCMJ9AAoJEN0jrNd/PrOhdo8P/03p3yqkc3HvN6D+HK87DmwP
+z0tAediv4IAgszwq6k9Vu2PNEGsA+9N40j7tUfRNIfQeUgN5DSig72EnORU35Psm
+IFLt8bEMvets05sE71dyiTNwU0cjIRGNWLmKl75UatSoCWLcCH4dgJ2c7AXwpQwM
+E8QW7WM6NP8r+IAFw64I9JtMOEPQKZzQmZ7q+6i+6nUu+ljBanqGzI9luDfnputK
+xJUgu0PHd+lEGWJVat3TowoH+bqX7PKJ3ON7IzNuFNn3cOI8LotHWWzK6+J35YNG
+bjbGIQxYetCII+SDRThjf6ILq1DIrOjTDqHLNxXeGg7Y493QwMvvVlWN3ZG8r3TH
+8XGj97M8yEJGPnLsg962oPcMt7zrvZRPbGPxgWLDRBur8/J4pyL3UmRIyHHBCjEV
+mGHdcR4R9ufgxbFCr6Dj2RQ7Lg9ExBFvoOQqbx0WLHkAEilMV1g1mEG9Me/iQL6u
+rCBnMobAIA4nfklqemAx6t1o+a8kLl5OLlVzX0kM1K5uBF2MYgTjbcIhXjB5MQV6
+ZAf+m1+w4diAnd+Q3Zcf90XrIF1XSLLtHHeKTt9Kr9Ze2EmT17vpoqSYBMJmdZwh
+/oUJa3kwme5/JWVyh/tw6lymOTxlbOOaX6qsBQkfCNaL1hBGQALQA36vmp0fqmcZ
+lgLYZQCR8B8JPnyw1K20
+=I//w
+-----END PGP SIGNATURE-----
+
+--VrqPEDrXMn8OVzN4--
