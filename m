@@ -1,51 +1,63 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/2] include: dt-binding: input: create a DT header defining
- key codes.
-Date: Mon, 12 Aug 2013 11:59:53 -0600
-Message-ID: <52092299.4080104@wwwdotorg.org>
-References: <1375798370-2231-1-git-send-email-ldewangan@nvidia.com> <52014E50.6030508@wwwdotorg.org> <5203D138.4030107@nvidia.com> <20130808171331.GA6960@core.coreip.homeip.net> <5203D487.5020507@wwwdotorg.org> <20130812171504.GA31418@core.coreip.homeip.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3 4/8] ARM: tegra: add common LP1 suspend support
+Date: Mon, 12 Aug 2013 13:24:46 -0600
+Message-ID: <5209367E.10900@wwwdotorg.org>
+References: <1376300407-14750-1-git-send-email-josephl@nvidia.com> <1376300407-14750-5-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20130812171504.GA31418@core.coreip.homeip.net>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>, Rob Herring <rob.herring@calxeda.com>
-Cc: Stephen Warren <swarren@nvidia.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1376300407-14750-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/12/2013 11:15 AM, Dmitry Torokhov wrote:
-> On Thu, Aug 08, 2013 at 11:25:27AM -0600, Stephen Warren wrote:
->> On 08/08/2013 11:13 AM, Dmitry Torokhov wrote:
->>> On Thu, Aug 08, 2013 at 10:41:20PM +0530, Laxman Dewangan wrote:
->>>> On Wednesday 07 August 2013 12:58 AM, Stephen Warren wrote:
->>>>> (CC'ing DT bindings maintainers too, hence quoting a bit of the patch)
->>>>>
->>>>> On 08/06/2013 08:12 AM, Laxman Dewangan wrote:
->>>>>> Many of Key device tree bindings uses the constant number as key code
->>>>>> which matches with kernel header key code and then comment as follows
->>>>>> for reference/better readability:
->>>>>> 	linux,code = <102>; /* KEY_HOME */
->>>>>>
->>>>>> Create a DT header which defines all the key code so that DT key bindings
->>>>>> can use it as follows:
->>>>>> 	linux,code = <KEY_HOME>;
->> ...
->>> I am uncomfortable that we are duplicating the whole list of keycodes
->>> here. Do you think we could split keycodes and other event codes from
->>> include/uapi/linux/input.h into include/uapi/linux/input-events.h and
->>> unclude it directly into DTS?
->>
->> Device tree files can only include headers in include/dt-bindings.
->> Eventually/soon, all the DT files and the headers in the dt-bindings/
->> directory will be split out into a separate git tree, which does not
->> have access to include/uapi, or indeed any other Linux kernel header files.
+On 08/12/2013 03:40 AM, Joseph Lo wrote:
+> The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
+> clock gated and SDRAM in self-refresh mode. That means the low level LP1
+> suspending and resuming code couldn't be run on DRAM and the CPU must
+> switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
+> the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
+> The LP1 low level handling code need to be moved to IRAM area first. And
+> marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
+> power timer needs to be re-calculated based on 32KHz that was originally
+> based on PCLK.
 > 
-> OK, that makes it easier for me - please merge through whatever tree
-> that owns include/dt-bindings.
+> When resuming from LP1, the LP1 reset handler will resume PLLs and then
+> put DRAM to normal mode. Then jumping to the "tegra_resume" that will
+> restore full context before back to kernel. The "tegra_resume" handler
+> was expected to be found in PMC_SCRATCH41 register.
+> 
+> This is common LP1 procedures for Tegra, so we do these jobs mainly in
+> this patch:
+> * moving LP1 low level handling code to IRAM
+> * marking LP1 mask
+> * copying the physical address of "tegra_resume" to PMC_SCRATCH41
+> * re-calculate the CPU power timer based on 32KHz
+> 
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V3:
+> * using a "#define" of IRAM_CODE to replace original static variable
 
-Are there any objections to my taking both patches through the Tegra
-tree? Patch 2/2 depends on 1/2 and is Tegra-specific. This should work
-out fine unless anyone else wants to use the new header this kernel
-cycle; if they do, this should go into a topic branch in the DT tree
-that I can pull into the Tegra tree.
+I didn't mean change the variable to a define, but rather simply to use
+the IO_ADDRESS() define instead of any new define. i.e.:
+
+> diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
+
+> +#define IRAM_CODE IO_ADDRESS(TEGRA_IRAM_CODE_AREA)
+
+... just don't add that, and ...
+
+> +static void tegra_suspend_enter_lp1(void)
+> +{
+> +	tegra_pmc_suspend();
+> +
+> +	/* copy the reset vector & SDRAM shutdown code into IRAM */
+> +	memcpy(iram_save_addr, IRAM_CODE, iram_save_size);
+> +	memcpy(IRAM_CODE, tegra_lp1_iram.start_addr, iram_save_size);
+
+... and s/IRAM_CODE/IO_ADDRESS(TEGRA_IRAM_CODE_AREA)/ in that code.
+
+I'll make that fixup when applying these patches.
