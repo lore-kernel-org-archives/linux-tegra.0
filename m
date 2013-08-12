@@ -1,91 +1,76 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 2/3] ASoC: dt: Move RT5640 pin list from Tegra board binding to CODEC binding
-Date: Sun, 11 Aug 2013 19:02:40 +0100
-Message-ID: <1376244161-24206-2-git-send-email-broonie@kernel.org>
-References: <1376244161-24206-1-git-send-email-broonie@kernel.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 0/8] ARM: tegra: support LP1 suspend mode
+Date: Mon, 12 Aug 2013 17:39:59 +0800
+Message-ID: <1376300407-14750-1-git-send-email-josephl@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376244161-24206-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+This series adds the support of LP1 suspend mode for Tegra.
 
-The pin list is the same for any board using the CODEC.
+V3:
+* setting up CCLK burst policy to PLLX in LP1 resume code for Tegra114 too
+* moving the CCLKG burst policy resume code to tegra_cpu_car_ops for Tegra114
+V2:
+* double confirm each patch can be built with all the combination of
+  Tegra SoCs by bisect
+* and make sure the function is still OK with above testing
 
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- .../bindings/sound/nvidia,tegra-audio-rt5640.txt   | 25 ++--------------------
- Documentation/devicetree/bindings/sound/rt5640.txt | 20 +++++++++++++++++
- 2 files changed, 22 insertions(+), 23 deletions(-)
+Verified on Seaboard, Cardhu and Dalmore.
+And tested with THUMB2_KERNEL as well.
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
-index d130818..cba4f88 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
-@@ -11,29 +11,8 @@ Required properties:
- - nvidia,audio-routing : A list of the connections between audio components.
-   Each entry is a pair of strings, the first being the connection's sink,
-   the second being the connection's source. Valid names for sources and
--  sinks are the RT5640's pins, and the jacks on the board:
--
--  RT5640 pins:
--
--  * DMIC1
--  * DMIC2
--  * MICBIAS1
--  * IN1P
--  * IN1R
--  * IN2P
--  * IN2R
--  * HPOL
--  * HPOR
--  * LOUTL
--  * LOUTR
--  * MONOP
--  * MONON
--  * SPOLP
--  * SPOLN
--  * SPORP
--  * SPORN
--
--  Board connectors:
-+  sinks are the RT5640's pins (as documented in its binding), and the jacks
-+  on the board:
- 
-   * Headphones
-   * Speakers
-diff --git a/Documentation/devicetree/bindings/sound/rt5640.txt b/Documentation/devicetree/bindings/sound/rt5640.txt
-index 005bcb2..068a114 100644
---- a/Documentation/devicetree/bindings/sound/rt5640.txt
-+++ b/Documentation/devicetree/bindings/sound/rt5640.txt
-@@ -18,6 +18,26 @@ Optional properties:
- 
- - realtek,ldo1-en-gpios : The GPIO that controls the CODEC's LDO1_EN pin.
- 
-+Pins on the device (for linking into audio routes):
-+
-+  * DMIC1
-+  * DMIC2
-+  * MICBIAS1
-+  * IN1P
-+  * IN1R
-+  * IN2P
-+  * IN2R
-+  * HPOL
-+  * HPOR
-+  * LOUTL
-+  * LOUTR
-+  * MONOP
-+  * MONON
-+  * SPOLP
-+  * SPOLN
-+  * SPORP
-+  * SPORN
-+
- Example:
- 
- rt5640 {
+P.S.
+A known issue on Dalmore, the LP1 resume may take 10 ~ 15 seconds due to
+the 792MHz BCT. It can't be reproduced on Seaboard or Cardhu. And the
+root cause of this is about the default settings of EMC registers that
+cause the DRAM can't leave self-refresh mode immediately. If you want
+to test with quick LP1 resume on Dalmore, I can provide another HACK for
+this.
+
+Joseph Lo (8):
+  ARM: tegra: add common resume handling code for LP1 resuming
+  ARM: tegra: config the polarity of the request of sys clock
+  clk: tegra114: add LP1 suspend/resume support
+  ARM: tegra: add common LP1 suspend support
+  ARM: tegra: add LP1 suspend support for Tegra30
+  ARM: tegra: add LP1 suspend support for Tegra20
+  ARM: tegra: add LP1 suspend support for Tegra114
+  ARM: tegra: enable LP1 suspend mode
+
+ arch/arm/boot/dts/tegra114-dalmore.dts     |   2 +-
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi |   2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts      |   2 +-
+ arch/arm/boot/dts/tegra20-paz00.dts        |   2 +-
+ arch/arm/boot/dts/tegra20-seaboard.dts     |   2 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    |   2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts    |   2 +-
+ arch/arm/boot/dts/tegra20-ventana.dts      |   2 +-
+ arch/arm/boot/dts/tegra20-whistler.dts     |   2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts       |   2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi      |   2 +-
+ arch/arm/mach-tegra/Makefile               |   3 +
+ arch/arm/mach-tegra/iomap.h                |   8 +
+ arch/arm/mach-tegra/pm-tegra20.c           |  34 ++
+ arch/arm/mach-tegra/pm-tegra30.c           |  34 ++
+ arch/arm/mach-tegra/pm.c                   | 138 ++++++-
+ arch/arm/mach-tegra/pm.h                   |  12 +
+ arch/arm/mach-tegra/pmc.c                  |  37 ++
+ arch/arm/mach-tegra/pmc.h                  |   3 +
+ arch/arm/mach-tegra/reset-handler.S        |  13 +
+ arch/arm/mach-tegra/reset.c                |   2 +
+ arch/arm/mach-tegra/reset.h                |   4 +
+ arch/arm/mach-tegra/sleep-tegra20.S        | 296 ++++++++++++++
+ arch/arm/mach-tegra/sleep-tegra30.S        | 607 +++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/sleep.S                |   8 +-
+ arch/arm/mach-tegra/sleep.h                |   8 +
+ drivers/clk/tegra/clk-tegra114.c           |  12 +
+ 27 files changed, 1221 insertions(+), 20 deletions(-)
+ create mode 100644 arch/arm/mach-tegra/pm-tegra20.c
+ create mode 100644 arch/arm/mach-tegra/pm-tegra30.c
+
 -- 
-1.8.4.rc1
+1.8.3.4
