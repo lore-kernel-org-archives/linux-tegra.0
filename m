@@ -1,111 +1,91 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [RFC 3/3] PCI: tegra: Support driver unbinding
-Date: Tue, 13 Aug 2013 13:12:26 +0200
-Message-ID: <1376392346-14127-4-git-send-email-treding@nvidia.com>
-References: <1376392346-14127-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376392346-14127-1-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+From: David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/host1x: stop casting VMA offsets to 32bit
+Date: Tue, 13 Aug 2013 14:19:58 +0200
+Message-ID: <1376396398-13515-1-git-send-email-dh.herrmann@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement the platform driver's .remove() callback to free all resources
-allocated during driver setup and call pci_common_exit() to cleanup ARM
-specific datastructures. Unmap the fixed PCI I/O mapping by calling the
-new pci_iounmap_io() function in the new .teardown() callback.
+VMA offsets are 64bit so do not cast them to "unsigned int". Also remov=
+e
+the (now useless) offset-retrieval helper. The VMA manager provides sim=
+ple
+enough helpers.
 
-Finally, no longer set the .suppress_bind_attrs field to true to allow
-the driver to unbind from a device.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Terje Bergstr=C3=B6m" <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 37 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 36 insertions(+), 1 deletion(-)
+ drivers/gpu/host1x/drm/drm.c | 2 +-
+ drivers/gpu/host1x/drm/gem.c | 7 +------
+ drivers/gpu/host1x/drm/gem.h | 1 -
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 7356741..396f352 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -250,6 +250,7 @@ struct tegra_pcie {
- 	int irq;
- 
- 	struct list_head busses;
-+	struct list_head sys;
- 	struct resource *cs;
- 
- 	struct resource io;
-@@ -666,6 +667,11 @@ static struct pci_bus *tegra_pcie_scan_bus(int nr, struct pci_sys_data *sys)
- 	return bus;
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.=
+c
+index 1371a2b..397ed3f 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -356,7 +356,7 @@ static int tegra_gem_mmap(struct drm_device *drm, v=
+oid *data,
+=20
+ 	bo =3D to_tegra_bo(gem);
+=20
+-	args->offset =3D tegra_bo_get_mmap_offset(bo);
++	args->offset =3D drm_vma_node_offset_addr(&bo->gem.vma_node);
+=20
+ 	drm_gem_object_unreference(gem);
+=20
+diff --git a/drivers/gpu/host1x/drm/gem.c b/drivers/gpu/host1x/drm/gem.=
+c
+index 3c35622..59623de 100644
+--- a/drivers/gpu/host1x/drm/gem.c
++++ b/drivers/gpu/host1x/drm/gem.c
+@@ -106,11 +106,6 @@ static void tegra_bo_destroy(struct drm_device *dr=
+m, struct tegra_bo *bo)
+ 	dma_free_writecombine(drm->dev, bo->gem.size, bo->vaddr, bo->paddr);
  }
- 
-+static void tegra_pcie_teardown(int nr, struct pci_sys_data *sys)
-+{
-+	pci_iounmap_io(nr * SZ_64K);
-+}
-+
- static irqreturn_t tegra_pcie_isr(int irq, void *arg)
+=20
+-unsigned int tegra_bo_get_mmap_offset(struct tegra_bo *bo)
+-{
+-	return (unsigned int)drm_vma_node_offset_addr(&bo->gem.vma_node);
+-}
+-
+ struct tegra_bo *tegra_bo_create(struct drm_device *drm, unsigned int =
+size)
  {
- 	const char *err_msg[] = {
-@@ -1583,7 +1589,9 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
- 	hw.map_irq = tegra_pcie_map_irq;
- 	hw.add_bus = tegra_pcie_add_bus;
- 	hw.scan = tegra_pcie_scan_bus;
-+	hw.teardown = tegra_pcie_teardown;
- 	hw.ops = &tegra_pcie_ops;
-+	hw.sys = &pcie->sys;
- 
- 	pci_common_init_dev(pcie->dev, &hw);
- 
-@@ -1637,6 +1645,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 
- 	INIT_LIST_HEAD(&pcie->busses);
- 	INIT_LIST_HEAD(&pcie->ports);
-+	INIT_LIST_HEAD(&pcie->sys);
- 	pcie->soc_data = match->data;
- 	pcie->dev = &pdev->dev;
- 
-@@ -1686,14 +1695,40 @@ put_resources:
- 	return err;
- }
- 
-+static int tegra_pcie_remove(struct platform_device *pdev)
-+{
-+	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
-+	struct tegra_pcie_bus *bus, *tmp;
-+	int err;
-+
-+	pci_common_exit(&pcie->sys);
-+
-+	list_for_each_entry_safe(bus, tmp, &pcie->busses, list) {
-+		vunmap(bus->area->addr);
-+		kfree(bus);
-+	}
-+
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		err = tegra_pcie_disable_msi(pcie);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	err = tegra_pcie_put_resources(pcie);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
- static struct platform_driver tegra_pcie_driver = {
- 	.driver = {
- 		.name = "tegra-pcie",
- 		.owner = THIS_MODULE,
- 		.of_match_table = tegra_pcie_of_match,
--		.suppress_bind_attrs = true,
- 	},
- 	.probe = tegra_pcie_probe,
-+	.remove = tegra_pcie_remove,
- };
- module_platform_driver(tegra_pcie_driver);
- 
--- 
+ 	struct tegra_bo *bo;
+@@ -227,7 +222,7 @@ int tegra_bo_dumb_map_offset(struct drm_file *file,=
+ struct drm_device *drm,
+=20
+ 	bo =3D to_tegra_bo(gem);
+=20
+-	*offset =3D tegra_bo_get_mmap_offset(bo);
++	*offset =3D drm_vma_node_offset_addr(&bo->gem.vma_node);
+=20
+ 	drm_gem_object_unreference(gem);
+=20
+diff --git a/drivers/gpu/host1x/drm/gem.h b/drivers/gpu/host1x/drm/gem.=
+h
+index 2e93b03..492533a 100644
+--- a/drivers/gpu/host1x/drm/gem.h
++++ b/drivers/gpu/host1x/drm/gem.h
+@@ -44,7 +44,6 @@ struct tegra_bo *tegra_bo_create_with_handle(struct d=
+rm_file *file,
+ 					    unsigned int size,
+ 					    unsigned int *handle);
+ void tegra_bo_free_object(struct drm_gem_object *gem);
+-unsigned int tegra_bo_get_mmap_offset(struct tegra_bo *bo);
+ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm=
+,
+ 			 struct drm_mode_create_dumb *args);
+ int tegra_bo_dumb_map_offset(struct drm_file *file, struct drm_device =
+*drm,
+--=20
 1.8.3.4
