@@ -1,33 +1,25 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: question on possible i2c slave configuration
-Date: Tue, 13 Aug 2013 16:16:03 +0200
-Message-ID: <1674757.GDNdpd4ScH@fb07-iapwap2.physik.uni-giessen.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 0/2] Device tree changes for Tegra30 and Tegra114 USB
+ Host support
+Date: Tue, 13 Aug 2013 12:41:26 -0600
+Message-ID: <520A7DD6.6050309@wwwdotorg.org>
+References: <1375369218-11288-1-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375369218-11288-1-git-send-email-ttynkkynen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Laxman,
+On 08/01/2013 09:00 AM, Tuomas Tynkkynen wrote:
+> Hi all,
+> 
+> Here's the device tree changes required for USB Host support on Tegra30 and
+> Tegra114. This enables USB Host on the Cardhu's dock connector port and on the
+> single built-in A-ports on Dalmore and Beaver.
 
-Stephen and me were discussing about the possible configuration of the i2c 
-slave controller. The question here is if the slave and the master controller 
-of the same port (or instance) can act in parallel.
-
-This is of particular interest when it comes to device tree representation. 
-The Tegra3 TRM mentions a that the master can address its own slave for 
-testing purposes. Also the i2c block diagram suggests that there are two 
-controllers (for master and slave) connected to the same bus.
-
-If this is the case, master and slave mode is not exclusive, or in other 
-words, the i2c master and slave need to share their resources.
-
-Another question is (because this would add a lot of code complexity) if we 
-want to allow such a configuration at all.
-
-Thanks,
-
-Marc
+I've applied this series to Tegra's for-3.12/dt branch, since Felipe has
+applied the driver changes that back it up.
