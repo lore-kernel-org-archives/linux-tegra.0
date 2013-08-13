@@ -1,69 +1,75 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 4/8] ARM: tegra: add common LP1 suspend support
-Date: Tue, 13 Aug 2013 14:58:42 +0800
-Message-ID: <1376377122.18689.252.camel@jlo-ubuntu-64.nvidia.com>
-References: <1376300407-14750-1-git-send-email-josephl@nvidia.com>
-	 <1376300407-14750-5-git-send-email-josephl@nvidia.com>
-	 <5209367E.10900@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4] ARM: tegra: disable LP2 cpuidle state if PCIe is
+ enabled
+Date: Tue, 13 Aug 2013 09:43:52 +0200
+Message-ID: <20130813074351.GB9316@ulmo>
+References: <1376323204-25952-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5209367E.10900-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1376323204-25952-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 2013-08-13 at 03:24 +0800, Stephen Warren wrote:
-> On 08/12/2013 03:40 AM, Joseph Lo wrote:
-> > The LP1 suspending mode on Tegra means CPU rail off, devices and PLLs are
-> > clock gated and SDRAM in self-refresh mode. That means the low level LP1
-> > suspending and resuming code couldn't be run on DRAM and the CPU must
-> > switch to the always on clock domain (a.k.a. CLK_M 12MHz oscillator). And
-> > the system clock (SCLK) would be switched to CLK_S, a 32KHz oscillator.
-> > The LP1 low level handling code need to be moved to IRAM area first. And
-> > marking the LP1 mask for indicating the Tegra device is in LP1. The CPU
-> > power timer needs to be re-calculated based on 32KHz that was originally
-> > based on PCLK.
-> > 
-> > When resuming from LP1, the LP1 reset handler will resume PLLs and then
-> > put DRAM to normal mode. Then jumping to the "tegra_resume" that will
-> > restore full context before back to kernel. The "tegra_resume" handler
-> > was expected to be found in PMC_SCRATCH41 register.
-> > 
-> > This is common LP1 procedures for Tegra, so we do these jobs mainly in
-> > this patch:
-> > * moving LP1 low level handling code to IRAM
-> > * marking LP1 mask
-> > * copying the physical address of "tegra_resume" to PMC_SCRATCH41
-> > * re-calculate the CPU power timer based on 32KHz
-> > 
-> > Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > V3:
-> > * using a "#define" of IRAM_CODE to replace original static variable
-> 
-> I didn't mean change the variable to a define, but rather simply to use
-> the IO_ADDRESS() define instead of any new define. i.e.:
-> 
-> > diff --git a/arch/arm/mach-tegra/pm.c b/arch/arm/mach-tegra/pm.c
-> 
-> > +#define IRAM_CODE IO_ADDRESS(TEGRA_IRAM_CODE_AREA)
-> 
-> ... just don't add that, and ...
-> 
-> > +static void tegra_suspend_enter_lp1(void)
-> > +{
-> > +	tegra_pmc_suspend();
-> > +
-> > +	/* copy the reset vector & SDRAM shutdown code into IRAM */
-> > +	memcpy(iram_save_addr, IRAM_CODE, iram_save_size);
-> > +	memcpy(IRAM_CODE, tegra_lp1_iram.start_addr, iram_save_size);
-> 
-> ... and s/IRAM_CODE/IO_ADDRESS(TEGRA_IRAM_CODE_AREA)/ in that code.
-> 
-> I'll make that fixup when applying these patches.
-OK. Thanks.
 
-Joseph
+--IiVenqGWf+H9Y6IX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Aug 12, 2013 at 10:00:04AM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra20 HW appears to have a bug such that PCIe device interrupts,
+> whether they are legacy IRQs or MSI, are lost when LP2 is enabled. To
+> work around this, simply disable LP2 if any PCIe devices with interrupts
+> are present. Detect this via the IRQ domain map operation. This is
+> slightly over-conservative; if a device with an interrupt is present but
+> the driver does not actually use them, LP2 will still be disabled.
+> However, this is a reasonable trade-off which enables a simpler
+> workaround.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v4: Add missing tegra-cpuidle.h, re-write commit description. Add acks.
+>=20
+> v3: Only disable LP2 if a PCIe device that requests an interrupt is
+> actually present. This prevents the loss of power-saving when the WAR
+> isn't required.
+
+Great, looks good to me and I see that you've applied it to your tree
+already. This has been in the works for (literally!) years and it's
+quite a relief to see it finally merged.
+
+Thanks a lot!
+
+Thierry
+
+--IiVenqGWf+H9Y6IX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCeO3AAoJEN0jrNd/PrOhKE8P/0hBJ6YDJVdzP9eZi7v0RgFh
+0QYvk8KyC8IQs7xf/aDVO0qC14ZzyjjfQ9dPg3GDCpkY6EyWDdA7DYOxbDQdQocu
+OmfPBYOk+QjTIG4usEhlh6MzXg+Q46bd8W5+jRWhVSQx5UpoCI4VFPy4+daFv1f1
+Zw9cWgpRT2gonRdBS6DF6z1kUlMRQOIVFTMbR+4Zp/w3S3Z1l5mGs96nAbWEeqKo
+XjombBElG00QgiRgUFSkW/nz8TEK+hJTy9872RymhQIsdfk2Vjmr197KuA1HkSO6
+qkj5G6UGi6p9TBryTXBhoBsyWHswK16qRZGSetNPtwg4jDqVcxcR3YFJ4AusZXlF
+OyGy2jAAtHc34oKzWKaEtZQhd3zhe6xYF2BA0urwnrO+zOUZ8Ec5kNQHpGbMFuMp
++hF87rIYcRxtTq+BOAN/8xtgsWLW0yUGbsigW4ogH7pkPVb2Anb6Zce2bGrRLbn8
+AQRgcdVaC0MeJWElC3TTFeFS1PDGbvcfj0aJw3Fx9xOnboPHcgMd5zWkuV7VtQ+H
+xM9IMZ8VgIkEIp1wSCnNUIIIMUMaWnNSvQq7de8CMLlYWPN+zQEOg5d2mTGMDJeq
+xXfvtACOFaDdMRmaJhaUQ44FcWFaFVzZzXch9fPVwjd+qC3vV2+v2YtiouGt49qB
+h3FJ3eRRMp21qL/Eq3e2
+=IMZn
+-----END PGP SIGNATURE-----
+
+--IiVenqGWf+H9Y6IX--
