@@ -1,97 +1,29 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 08/12] gpu: host1x: Port the HDMI vendor infoframe code
- the common helpers
-Date: Wed, 14 Aug 2013 14:20:10 +0300
-Message-ID: <20130814112010.GR7159@intel.com>
-References: <1376435848-14584-1-git-send-email-damien.lespiau@intel.com>
- <1376435848-14584-9-git-send-email-damien.lespiau@intel.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 6/29] tegra: simplify use of devm_ioremap_resource
+Date: Wed, 14 Aug 2013 10:49:35 -0600
+Message-ID: <520BB51F.5000707@wwwdotorg.org>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-7-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1376435848-14584-9-git-send-email-damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1376471493-22215-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 14, 2013 at 12:17:24AM +0100, Damien Lespiau wrote:
-> I just wrote the bits to define and pack HDMI vendor specific infofra=
-me.
-> Port the host1x driver to use those so I can refactor the infoframe c=
-ode
-> a bit more.
->=20
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Terje Bergstr=F6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->=20
-> Signed-off-by: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/gpu/host1x/drm/hdmi.c | 24 ++++--------------------
->  1 file changed, 4 insertions(+), 20 deletions(-)
->=20
-> diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/h=
-dmi.c
-> index 01097da..b548918 100644
-> --- a/drivers/gpu/host1x/drm/hdmi.c
-> +++ b/drivers/gpu/host1x/drm/hdmi.c
-> @@ -539,7 +539,7 @@ static void tegra_hdmi_setup_audio_infoframe(stru=
-ct tegra_hdmi *hdmi)
-> =20
->  static void tegra_hdmi_setup_stereo_infoframe(struct tegra_hdmi *hdm=
-i)
->  {
-> -	struct hdmi_vendor_infoframe frame;
-> +	struct hdmi_hdmi_infoframe frame;
->  	unsigned long value;
->  	u8 buffer[10];
->  	ssize_t err;
-> @@ -551,26 +551,10 @@ static void tegra_hdmi_setup_stereo_infoframe(s=
-truct tegra_hdmi *hdmi)
->  		return;
->  	}
-> =20
-> -	memset(&frame, 0, sizeof(frame));
-> +	hdmi_hdmi_infoframe_init(&frame);
-> +	frame.s3d_struct =3D HDMI_3D_STRUCTURE_FRAME_PACKING;
-> =20
-> -	frame.type =3D HDMI_INFOFRAME_TYPE_VENDOR;
-> -	frame.version =3D 0x01;
-> -	frame.length =3D 6;
+On 08/14/2013 03:11 AM, Julia Lawall wrote:
+> From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+> 
+> Remove unneeded error handling on the result of a call to
+> platform_get_resource when the value is passed to devm_ioremap_resource.
 
-This changes the length of the infoframe from 6 to 5, which is enough
-for "frame packing", but maybe the commit msg should still mention that
-small detail.
+I believe that drivers/iommu changes are usually applied by Joerg Roedel
+<joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> and drivers/memory changes by Greg Kroah-Hartman
+<gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, although admittedly neither of those is
+particularly called out by the MAINTAINERS file...
 
-> -
-> -	frame.data[0] =3D 0x03; /* regid0 */
-> -	frame.data[1] =3D 0x0c; /* regid1 */
-> -	frame.data[2] =3D 0x00; /* regid2 */
-> -	frame.data[3] =3D 0x02 << 5; /* video format */
-> -
-> -	/* TODO: 74 MHz limit? */
-> -	if (1) {
-> -		frame.data[4] =3D 0x00 << 4; /* 3D structure */
-> -	} else {
-> -		frame.data[4] =3D 0x08 << 4; /* 3D structure */
-> -		frame.data[5] =3D 0x00 << 4; /* 3D ext. data */
-> -	}
-> -
-> -	err =3D hdmi_vendor_infoframe_pack(&frame, buffer, sizeof(buffer));
-> +	err =3D hdmi_hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
->  	if (err < 0) {
->  		dev_err(hdmi->dev, "failed to pack vendor infoframe: %zd\n",
->  			err);
-> --=20
-> 1.8.3.1
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---=20
-Ville Syrj=E4l=E4
-Intel OTC
+I guess these are simple enough that I can take them through the Tegra
+tree though, since it doesn't look like there will be any conflicts
+doing so for 3.12.
