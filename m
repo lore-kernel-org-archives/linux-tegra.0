@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 1/2] ARM: tegra: add Mic Jack to Beaver device tree
-Date: Wed, 14 Aug 2013 14:27:06 -0600
-Message-ID: <1376512027-28245-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/2] ARM: tegra: add Mic Jack to Cardhu device tree
+Date: Wed, 14 Aug 2013 14:27:07 -0600
+Message-ID: <1376512027-28245-2-git-send-email-swarren@wwwdotorg.org>
+References: <1376512027-28245-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1376512027-28245-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -15,19 +17,19 @@ captured as well as played back.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra30-beaver.dts | 4 +++-
+ arch/arm/boot/dts/tegra114-dalmore.dts | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 4f1f01c..08cad69 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -473,7 +473,9 @@
- 
- 		nvidia,audio-routing =
- 			"Headphones", "HPOR",
--			"Headphones", "HPOL";
-+			"Headphones", "HPOL",
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 402c20b..45056a2 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1193,7 +1193,9 @@
+ 			"Speakers", "SPORP",
+ 			"Speakers", "SPORN",
+ 			"Speakers", "SPOLP",
+-			"Speakers", "SPOLN";
++			"Speakers", "SPOLN",
 +			"Mic Jack", "MICBIAS1",
 +			"IN2P", "Mic Jack";
  
