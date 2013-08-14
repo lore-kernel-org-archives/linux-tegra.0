@@ -1,58 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
-Date: Wed, 14 Aug 2013 15:35:49 -0600
-Message-ID: <520BF835.5080309@wwwdotorg.org>
-References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com> <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: add Mic Jack to Cardhu device tree
+Date: Wed, 14 Aug 2013 23:37:01 +0200
+Message-ID: <20130814213700.GA21728@ulmo>
+References: <1376512027-28245-1-git-send-email-swarren@wwwdotorg.org>
+ <1376512027-28245-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>, Joseph Lo <josephl@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, gnurou@gmail.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1376512027-28245-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/12/2013 08:29 PM, Alexandre Courbot wrote:
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked  using a consistent smc-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
 
-> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +Trusted Foundations
-> +
-> +Boards that use the Trusted Foundations secure monitor can signal its
-> +presence by declaring a node compatible with "tl,trusted-foundations"
-> +(the name and location of the node does not matter).
-> +
-> +Required properties:
-> +- compatible : "tl,trusted-foundations"
+On Wed, Aug 14, 2013 at 02:27:07PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> This enables the microphone input jack, and hence allows audio to be
+> captured as well as played back.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra114-dalmore.dts | 4 +++-
 
-> +- version : Must contain the version number string of the Trusted Foundation
-> +	firmware.
+The commit subject says Cardhu, but you modify the Dalmore DTS here.
 
-Can the version be queried at run-time from the firmware itself?
+Thierry
 
-If not, I wonder if we shouldn't instead encode the version number into
-the compatible value.
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature
 
-Some comments on the exact format of the version property would be
-useful; from the example I assume it's "%02d.%02d" % (major_ver, minor_ver)?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-> diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
+iQIcBAEBAgAGBQJSC/h8AAoJEN0jrNd/PrOh2IkP/jtIvF3lXPBhPvXwG5/AHAGY
+V3KpFXXd7XHgIMLZJFL5UN/Gih0cCsb01HEre3aJAKuEszvQXSWtjTD3PTT3HfEA
+2yj8ZR6CI7Kg8mWSfc2rxPfcjwOam4hL+E8NjdgeLI5whduSyHmujl+Bp1BgKTy+
+39gcKYZQqxhL1loIqGZDckwi3vkR2Ud00vrpZxoO1ODOsbws8jv/MbCUcJYRLtLq
+bC5kdu+dbSlH1qxJ3QkQd1+Qh0WIZFAl61sV/bAtfIx2sD84USBy1LVOvai9kIgi
+v6XB6wF4OogFB5kGQ83DkTHXPUkFw8Rad7W4FSli+wsjuiRPSGdcBzNiEIWFvnMW
+ldqdyptTJmco9z4FP31kXFSd09IDIa6qHeMnjWC27Fct0ApOBjOXjLGq4tM0k1q8
+rRG92tFpRhrLWHAUeFzr5Ix5o1UDbluTZ1RQXnK0HKlf8ouzyhl8fz4CvmvhhUy1
+MNshCHi4apc0AhmwOqafrx805tMOpNXhwlaTFYSFeLFom/CyP/Jk4r90lNlO5rDX
+PpFdbyyVVd94755PNvVUizj5SSGJG8D+37SzeYSdz6UCtTFgaDeHIhOR02kLKB5y
+Ah89P6Th4l1tQz55NxyRR9oPzNwfxW2pxGKb/nu8wvpo1KGFdeaFnVcgSBww1Wfq
+NKb8fq+T1oNjNhAJGxP6
+=JiJE
+-----END PGP SIGNATURE-----
 
-> +config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-> +	bool
-
-Shouldn't that be "config ARCH_SUPPORTS_FIRMWARE", since presumably in
-the future there will be more entries in the menu, and hence we want the
-menu to appear if any of those entries are useful?
-
-> +
-> +menu "Firmware options"
-> +	depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-
-Or perhaps that comment is more appropriate for that "depends".
+--tKW2IUtsqtDRztdT--
