@@ -1,42 +1,49 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] ASoC: tegra: fix Tegra30 I2S capture parameter setup
-Date: Wed, 14 Aug 2013 14:24:16 -0600
-Message-ID: <1376511856-28044-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ASoC: tegra: support a Mic Jack in the Tegra+RT5640 machine driver
+Date: Wed, 14 Aug 2013 14:26:29 -0600
+Message-ID: <1376511989-28187-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra30 I2S driver was writing the AHUB interface parameters to the
-playback path register rather than the capture path register. This
-caused the capture parameters not to be configured at all, so if
-capturing using non-HW-default parameters (e.g. 16-bit stereo rather
-than 8-bit mono) the audio would be corrupted.
+Add a Mic Jack widget to the Tegra+RT5640 machine driver, and document
+this in the DT binding. This enables the DT to include the Mic Jack in
+the audio routing table, and hence enables capture of audio, in addition
+to the previously-working playback.
 
-With this fixed, audio capture from an analog microphone works correctly
-on the Cardhu board.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- sound/soc/tegra/tegra30_i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt | 1 +
+ sound/soc/tegra/tegra_rt5640.c                                        | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index d04146c..47565fd04 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -228,7 +228,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
- 		reg = TEGRA30_I2S_CIF_RX_CTRL;
- 	} else {
- 		val |= TEGRA30_AUDIOCIF_CTRL_DIRECTION_TX;
--		reg = TEGRA30_I2S_CIF_RX_CTRL;
-+		reg = TEGRA30_I2S_CIF_TX_CTRL;
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
+index cba4f88..dc62249 100644
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-rt5640.txt
+@@ -16,6 +16,7 @@ Required properties:
  
- 	regmap_write(i2s->regmap, reg, val);
+   * Headphones
+   * Speakers
++  * Mic Jack
+ 
+ - nvidia,i2s-controller : The phandle of the Tegra I2S controller that's
+   connected to the CODEC.
+diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+index 08794f9..4511c5a 100644
+--- a/sound/soc/tegra/tegra_rt5640.c
++++ b/sound/soc/tegra/tegra_rt5640.c
+@@ -99,6 +99,7 @@ static struct snd_soc_jack_gpio tegra_rt5640_hp_jack_gpio = {
+ static const struct snd_soc_dapm_widget tegra_rt5640_dapm_widgets[] = {
+ 	SND_SOC_DAPM_HP("Headphones", NULL),
+ 	SND_SOC_DAPM_SPK("Speakers", NULL),
++	SND_SOC_DAPM_MIC("Mic Jack", NULL),
+ };
+ 
+ static const struct snd_kcontrol_new tegra_rt5640_controls[] = {
 -- 
 1.8.1.5
