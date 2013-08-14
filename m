@@ -1,43 +1,42 @@
-From: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH RESEND] clk: tegra30: Don't wait for PLL_U lock bit
-Date: Wed, 14 Aug 2013 23:09:39 +0300
-Message-ID: <1376510979-21562-2-git-send-email-ttynkkynen@nvidia.com>
-References: <1376510979-21562-1-git-send-email-ttynkkynen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376510979-21562-1-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] ASoC: tegra: fix Tegra30 I2S capture parameter setup
+Date: Wed, 14 Aug 2013 14:24:16 -0600
+Message-ID: <1376511856-28044-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The lock bit on PLL_U does not seem to be working correctly and
-sometimes never gets set when waiting for the PLL to come up.
-Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
+From: Stephen Warren <swarren@nvidia.com>
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The Tegra30 I2S driver was writing the AHUB interface parameters to the
+playback path register rather than the capture path register. This
+caused the capture parameters not to be configured at all, so if
+capturing using non-HW-default parameters (e.g. 16-bit stereo rather
+than 8-bit mono) the audio would be corrupted.
+
+With this fixed, audio capture from an analog microphone works correctly
+on the Cardhu board.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra30.c | 2 +-
+ sound/soc/tegra/tegra30_i2s.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index e2c6ca0..9103fc8 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -971,7 +971,7 @@ static void __init tegra30_pll_init(void)
- 	/* PLLU */
- 	clk = tegra_clk_register_pll("pll_u", "pll_ref", clk_base, pmc_base, 0,
- 			    0, &pll_u_params, TEGRA_PLLU | TEGRA_PLL_HAS_CPCON |
--			    TEGRA_PLL_SET_LFCON | TEGRA_PLL_USE_LOCK,
-+			    TEGRA_PLL_SET_LFCON,
- 			    pll_u_freq_table,
- 			    NULL);
- 	clk_register_clkdev(clk, "pll_u", NULL);
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index d04146c..47565fd04 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -228,7 +228,7 @@ static int tegra30_i2s_hw_params(struct snd_pcm_substream *substream,
+ 		reg = TEGRA30_I2S_CIF_RX_CTRL;
+ 	} else {
+ 		val |= TEGRA30_AUDIOCIF_CTRL_DIRECTION_TX;
+-		reg = TEGRA30_I2S_CIF_RX_CTRL;
++		reg = TEGRA30_I2S_CIF_TX_CTRL;
+ 	}
+ 
+ 	regmap_write(i2s->regmap, reg, val);
 -- 
 1.8.1.5
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
