@@ -1,78 +1,54 @@
-From: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 08/12] gpu: host1x: Port the HDMI vendor infoframe code the common helpers
-Date: Wed, 14 Aug 2013 00:17:24 +0100
-Message-ID: <1376435848-14584-9-git-send-email-damien.lespiau@intel.com>
-References: <1376435848-14584-1-git-send-email-damien.lespiau@intel.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 0/29] simplify use of devm_ioremap_resource
+Date: Wed, 14 Aug 2013 11:11:04 +0200
+Message-ID: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376435848-14584-1-git-send-email-damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: dri-devel@lists.freedesktop.org
+Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I just wrote the bits to define and pack HDMI vendor specific infoframe=
-=2E
-Port the host1x driver to use those so I can refactor the infoframe cod=
-e
-a bit more.
+devm_ioremap_resource often uses the result of a call to
+platform_get_resource as its last argument.  devm_ioremap_resource does
+appropriate error handling on this argument, so error handling can be
+removed from the call site.  To make the connection between the call to
+platform_get_resource and the call to devm_ioremap_resource more clear, the
+former is also moved down to be adjacent to the latter.
 
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In many cases, this patch changes the specific error value that is
+returned on failure of platform_get_resource.
 
-Signed-off-by: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/host1x/drm/hdmi.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
 
-diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
-i.c
-index 01097da..b548918 100644
---- a/drivers/gpu/host1x/drm/hdmi.c
-+++ b/drivers/gpu/host1x/drm/hdmi.c
-@@ -539,7 +539,7 @@ static void tegra_hdmi_setup_audio_infoframe(struct=
- tegra_hdmi *hdmi)
-=20
- static void tegra_hdmi_setup_stereo_infoframe(struct tegra_hdmi *hdmi)
- {
--	struct hdmi_vendor_infoframe frame;
-+	struct hdmi_hdmi_infoframe frame;
- 	unsigned long value;
- 	u8 buffer[10];
- 	ssize_t err;
-@@ -551,26 +551,10 @@ static void tegra_hdmi_setup_stereo_infoframe(str=
-uct tegra_hdmi *hdmi)
- 		return;
- 	}
-=20
--	memset(&frame, 0, sizeof(frame));
-+	hdmi_hdmi_infoframe_init(&frame);
-+	frame.s3d_struct =3D HDMI_3D_STRUCTURE_FRAME_PACKING;
-=20
--	frame.type =3D HDMI_INFOFRAME_TYPE_VENDOR;
--	frame.version =3D 0x01;
--	frame.length =3D 6;
--
--	frame.data[0] =3D 0x03; /* regid0 */
--	frame.data[1] =3D 0x0c; /* regid1 */
--	frame.data[2] =3D 0x00; /* regid2 */
--	frame.data[3] =3D 0x02 << 5; /* video format */
--
--	/* TODO: 74 MHz limit? */
--	if (1) {
--		frame.data[4] =3D 0x00 << 4; /* 3D structure */
--	} else {
--		frame.data[4] =3D 0x08 << 4; /* 3D structure */
--		frame.data[5] =3D 0x00 << 4; /* 3D ext. data */
--	}
--
--	err =3D hdmi_vendor_infoframe_pack(&frame, buffer, sizeof(buffer));
-+	err =3D hdmi_hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
- 	if (err < 0) {
- 		dev_err(hdmi->dev, "failed to pack vendor infoframe: %zd\n",
- 			err);
---=20
-1.8.3.1
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+(
+  res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+- if (res == NULL) { ... \(goto l;\|return ret;\) }
+  e = devm_ioremap_resource(e1, res);
+|
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res == NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+)
+// </smpl>
