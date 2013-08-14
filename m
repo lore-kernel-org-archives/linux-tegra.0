@@ -1,84 +1,46 @@
-From: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 08/12] gpu: host1x: Port the HDMI vendor infoframe code the common helpers
-Date: Wed, 14 Aug 2013 18:19:11 +0100
-Message-ID: <1376500755-30227-9-git-send-email-damien.lespiau@intel.com>
-References: <1376500755-30227-1-git-send-email-damien.lespiau@intel.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.11-rc5
+Date: Wed, 14 Aug 2013 10:24:21 -0700
+Message-ID: <520BBD45.7090708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376500755-30227-1-git-send-email-damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I just wrote the bits to define and pack HDMI vendor specific infoframe=
-=2E
-Port the host1x driver to use those so I can refactor the infoframe cod=
-e
-a bit more.
+Here are some basic Tegra test results for Linux v3.11-rc5.
+Logs and other details at:
 
-This changes the length of the infoframe payload from 6 to 5, which is
-enough for the "frame packing" stereo format.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.11-rc5/20130811183105/
 
-v2: Pimp up the commit message with the note about the length
-    (Ville Syrj=C3=A4l=C3=A4)
 
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Test summary
+------------
 
-Signed-off-by: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/host1x/drm/hdmi.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
-i.c
-index 01097da..b548918 100644
---- a/drivers/gpu/host1x/drm/hdmi.c
-+++ b/drivers/gpu/host1x/drm/hdmi.c
-@@ -539,7 +539,7 @@ static void tegra_hdmi_setup_audio_infoframe(struct=
- tegra_hdmi *hdmi)
-=20
- static void tegra_hdmi_setup_stereo_infoframe(struct tegra_hdmi *hdmi)
- {
--	struct hdmi_vendor_infoframe frame;
-+	struct hdmi_hdmi_infoframe frame;
- 	unsigned long value;
- 	u8 buffer[10];
- 	ssize_t err;
-@@ -551,26 +551,10 @@ static void tegra_hdmi_setup_stereo_infoframe(str=
-uct tegra_hdmi *hdmi)
- 		return;
- 	}
-=20
--	memset(&frame, 0, sizeof(frame));
-+	hdmi_hdmi_infoframe_init(&frame);
-+	frame.s3d_struct =3D HDMI_3D_STRUCTURE_FRAME_PACKING;
-=20
--	frame.type =3D HDMI_INFOFRAME_TYPE_VENDOR;
--	frame.version =3D 0x01;
--	frame.length =3D 6;
--
--	frame.data[0] =3D 0x03; /* regid0 */
--	frame.data[1] =3D 0x0c; /* regid1 */
--	frame.data[2] =3D 0x00; /* regid2 */
--	frame.data[3] =3D 0x02 << 5; /* video format */
--
--	/* TODO: 74 MHz limit? */
--	if (1) {
--		frame.data[4] =3D 0x00 << 4; /* 3D structure */
--	} else {
--		frame.data[4] =3D 0x08 << 4; /* 3D structure */
--		frame.data[5] =3D 0x00 << 4; /* 3D ext. data */
--	}
--
--	err =3D hdmi_vendor_infoframe_pack(&frame, buffer, sizeof(buffer));
-+	err =3D hdmi_hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
- 	if (err < 0) {
- 		dev_err(hdmi->dev, "failed to pack vendor infoframe: %zd\n",
- 			err);
---=20
-1.8.3.1
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.11-rc4 (c095ba7224d8edc71dcef0d655911399a8bd4a3f)):
+    text     data      bss    total  kernel
+    +628       +8        0     +636  multi_v7_defconfig
+    +588       -8        0     +580  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.11-rc4 (c095ba7224d8edc71dcef0d655911399a8bd4a3f))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
