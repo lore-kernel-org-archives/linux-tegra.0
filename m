@@ -1,88 +1,98 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC 3/3] PCI: tegra: Support driver unbinding
-Date: Thu, 15 Aug 2013 12:34:52 +0200
-Message-ID: <20130815103452.GA13740@ulmo>
-References: <1376392346-14127-1-git-send-email-treding@nvidia.com>
- <1376392346-14127-4-git-send-email-treding@nvidia.com>
- <520BFA0C.5070001@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: dts: USB for Tegra114 Dalmore
+Date: Thu, 15 Aug 2013 12:54:05 +0200
+Message-ID: <20130815105404.GA14301@ulmo>
+References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com>
+ <1375292543-7896-3-git-send-email-ttynkkynen@nvidia.com>
+ <51F9550F.3080503@cogentembedded.com>
+ <51F9660C.6090604@iki.fi>
+ <51F96B48.10209@cogentembedded.com>
+ <51F98A78.9060309@wwwdotorg.org>
+ <51F98D92.3010607@cogentembedded.com>
+ <51F99DE4.7010503@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <520BFA0C.5070001@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+In-Reply-To: <51F99DE4.7010503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---GvXjxJ+pjyke8COw
+--SUOF0GtieIMvvwua
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2013 at 03:43:40PM -0600, Stephen Warren wrote:
-> On 08/13/2013 05:12 AM, Thierry Reding wrote:
-> > Implement the platform driver's .remove() callback to free all resources
-> > allocated during driver setup and call pci_common_exit() to cleanup ARM
-> > specific datastructures. Unmap the fixed PCI I/O mapping by calling the
-> > new pci_iounmap_io() function in the new .teardown() callback.
+On Wed, Jul 31, 2013 at 05:29:40PM -0600, Stephen Warren wrote:
+> On 07/31/2013 04:20 PM, Sergei Shtylyov wrote:
+> > On 08/01/2013 02:06 AM, Stephen Warren wrote:
+> ...
+> >>>     That's really horrible design.
+> >>
+> >> Yup. Both USB PHY and EHCI controller registers really are interleaved
+> >> in one range.
 > >=20
-> > Finally, no longer set the .suppress_bind_attrs field to true to allow
-> > the driver to unbind from a device.
+> >    But the standard EHCI register space has no holes IIRC, so they can't
+> > be really that much interleaved as you're describing (unless you have
+> > some non-standard registers of course)...
 >=20
-> > +static int tegra_pcie_remove(struct platform_device *pdev)
-> > +{
-> > +	struct tegra_pcie *pcie =3D platform_get_drvdata(pdev);
-> > +	struct tegra_pcie_bus *bus, *tmp;
-> > +	int err;
-> > +
-> > +	pci_common_exit(&pcie->sys);
-> > +
-> > +	list_for_each_entry_safe(bus, tmp, &pcie->busses, list) {
-> > +		vunmap(bus->area->addr);
-> > +		kfree(bus);
-> > +	}
-> > +
-> > +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> > +		err =3D tegra_pcie_disable_msi(pcie);
-> > +		if (err < 0)
-> > +			return err;
-> > +	}
+> Yes, there are certainly non-standard registers.
 >=20
-> Wouldn't it make sense to do that as early as possible in the function,
-> to make sure that no MSI accidentally fires after some of the cleanup
-> has already happened?
+> ...
+> >>>     Don't they cause numerous resource conflicts while device nodes
+> >>> being
+> >>> instantiated as the platform devices?
+> >=20
+> >> No; the driver knows that the HW is screwy and there's lots of
+> >> register-range sharing going on, so it simply maps the registers, rath=
+er
+> >> than reserving the physical address range and mapping it.
+> >=20
+> >    Yes, it's clear that the driver should take special measures, I was
+> > asking about the platform device creation phase. What do you see in
+> > /proc/iomem?
+>=20
+> The drivers don't request the memory region since doing so would cause
+> conflicts. Hence, the regions don't show up in /proc/iomem.
+>=20
+> This actually isn't that uncommon for DT-based drivers anyway; many use
+> e.g. of_iomap() which IIRC just looks up the resource and maps it
+> without registering the usage.
 
-I don't think that's strictly necessary in this case. After the call to
-pci_common_exit() there are no PCI devices left, there's not even a bus
-left. All MSI users should have cleaned up after themselves.
+Not being uncommon isn't a good argument. The problem with doing this is
+that it sets a bad example and makes it easier for others to do the same
+thing. I can see that for some drivers providing a proper abstraction or
+encapsulation might be more complicated than necessary. But I've also
+seen this kind of shortcut taken quite often lately and especially often
+in DT-based drivers.
 
-Given that I thought it more useful to mirror the setup done in .probe()
-to make it clearer what's being undone (and potentially what's missing).
+Am I the only one concerned about this development?
 
 Thierry
 
---GvXjxJ+pjyke8COw
+--SUOF0GtieIMvvwua
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSDK7MAAoJEN0jrNd/PrOh0m8QALzBtXwsLkiXEr0+v4xvtudS
-1Vnb6gV6JhHl09DNYs3KYcCX8CsFzs7AJ19wgJj6Q++QuHou0m8kSfvHx8r6k8zO
-UApq3rEsi1ujh6+ICS+7smKZCqKrb+m/rDSmJ68EjyA1zqvbgkXloNganOAD5wxM
-o22uq6DZyi+BhE/pX/51bODLrLw3vrUbn6MCgU1XNgK/A0+YlPj30D2NUNofmVtG
-ejnJ5g9UskhwMOzyZoFoyn7eEgCI0nY4OfoPqWakAQJlc3WHEbkp9lhBN3K924/Y
-ZltIcNyb+CmhSfCgCgcx4w99gyt4QRcSlChaVergD28rG2c3mJWyZc4M6UmgFfbT
-ZeVTaAc1cZu6QwGbUqV4sLTj0bRn5k8CvFLEKf+AIxXPZjV2zdmYYWCaI9Z2jfiK
-sdjoZOEbSlHMIuXW2riDYfg2dFA3BVzax8I4Obffsj8iJ222vOTRR05d7+aKNS2w
-Kzdy1uSQvZIoawqXAQTrHUNojgAID3yDUnsQ5w4bwlglUgtBpFPabeOxY9guNqwv
-uXizyXnggK0ZMNhLyn3lP1nDz63Hv7d0dHsMXOltbGLFuYhWeWV8gL1vtWUa/mJN
-OtaSVXNzzjLRNeHS4iL8S59/pWnwQvIK0Dc/m15wrTgaC8v92NsHQHVs3/YFJiKt
-jF72U0N4upufhDkop6SV
-=vhvx
+iQIcBAEBAgAGBQJSDLNMAAoJEN0jrNd/PrOhhwAQAK9AjWRaNcZLykAhkqcaoG/f
+v3zxgb4k04AIhaYBtzFd6Hbtke+gDZpgCIsRBeitAGPTNxMpu5FcJgyH7iaWr7hw
++E0yV7LvEgoGCt4sTnTA9N0TPGrURV4Zt/9+7nrBphBtadA7QBxq8bmIDEDJ/kak
+FlyWDSJIqXQyxzT9vUx6OR4PXjvVqeqykxEhCJi/i09P9WuyFtEEi/KVVIO473mh
+FL2gxoU3BWCHcvSY/lt2rnPGAQuzqHWYX2HuPiBbiMeDz6fbHl2NlGybIPnHUcjw
+e7SSJ22fV9JaSPOh0O0rGZrmukkJ8B6wNXZhDsmW3rOtT01339WNeJtl0iit2dVz
+OqJbGBlJvV+elLa/1ih1g3NLF2J4RT5P421+feCn3QmAMHVA/WZXrhNCR9gQUUOP
+3Fnnt6qECL3VmOa/nBFtMj71XJIwsyhFTEceyjp5rxLXKWRtpblIGzrwqYVYYLNF
+lRsbhlruWDwRQPtiOaDD+7y4xl/tRJ0giDPLsmFIy290O75kB5Jb8R6ZtQqK0Vkj
+FaF9j5Ok61vxkD7T4LjpMseQflAVwPHUhgEeSbx2ol3NWzerheMUwTejsXe67reN
+Xbqj9BCLyMu/j4T5WNSVmb1j+QvYmvwwwe/hmmJ645+3Fb4ZACDJOYpp3Q/nGvQe
+ypSSJzepvIXh6p9WrBB5
+=E9Ke
 -----END PGP SIGNATURE-----
 
---GvXjxJ+pjyke8COw--
+--SUOF0GtieIMvvwua--
