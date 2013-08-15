@@ -1,77 +1,88 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: support a Mic Jack in the
- Tegra+RT5640 machine driver
-Date: Thu, 15 Aug 2013 11:08:44 +0100
-Message-ID: <20130815100844.GW2401@sirena.org.uk>
-References: <1376511989-28187-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 3/3] PCI: tegra: Support driver unbinding
+Date: Thu, 15 Aug 2013 12:34:52 +0200
+Message-ID: <20130815103452.GA13740@ulmo>
+References: <1376392346-14127-1-git-send-email-treding@nvidia.com>
+ <1376392346-14127-4-git-send-email-treding@nvidia.com>
+ <520BFA0C.5070001@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8979461654543251955=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1376511989-28187-1-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <520BFA0C.5070001@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org
+Cc: Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============8979461654543251955==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="W1uEbMXJ1Mj4g6TI"
-Content-Disposition: inline
-
-
---W1uEbMXJ1Mj4g6TI
+--GvXjxJ+pjyke8COw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2013 at 02:26:29PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On Wed, Aug 14, 2013 at 03:43:40PM -0600, Stephen Warren wrote:
+> On 08/13/2013 05:12 AM, Thierry Reding wrote:
+> > Implement the platform driver's .remove() callback to free all resources
+> > allocated during driver setup and call pci_common_exit() to cleanup ARM
+> > specific datastructures. Unmap the fixed PCI I/O mapping by calling the
+> > new pci_iounmap_io() function in the new .teardown() callback.
+> >=20
+> > Finally, no longer set the .suppress_bind_attrs field to true to allow
+> > the driver to unbind from a device.
 >=20
-> Add a Mic Jack widget to the Tegra+RT5640 machine driver, and document
-> this in the DT binding. This enables the DT to include the Mic Jack in
-> the audio routing table, and hence enables capture of audio, in addition
-> to the previously-working playback.
+> > +static int tegra_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +	struct tegra_pcie *pcie =3D platform_get_drvdata(pdev);
+> > +	struct tegra_pcie_bus *bus, *tmp;
+> > +	int err;
+> > +
+> > +	pci_common_exit(&pcie->sys);
+> > +
+> > +	list_for_each_entry_safe(bus, tmp, &pcie->busses, list) {
+> > +		vunmap(bus->area->addr);
+> > +		kfree(bus);
+> > +	}
+> > +
+> > +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > +		err =3D tegra_pcie_disable_msi(pcie);
+> > +		if (err < 0)
+> > +			return err;
+> > +	}
+>=20
+> Wouldn't it make sense to do that as early as possible in the function,
+> to make sure that no MSI accidentally fires after some of the cleanup
+> has already happened?
 
-Applied, thanks.
+I don't think that's strictly necessary in this case. After the call to
+pci_common_exit() there are no PCI devices left, there's not even a bus
+left. All MSI users should have cleaned up after themselves.
 
---W1uEbMXJ1Mj4g6TI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Given that I thought it more useful to mirror the setup done in .probe()
+to make it clearer what's being undone (and potentially what's missing).
+
+Thierry
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSDKipAAoJELSic+t+oim9GdwQAIEWQKsjWjiLLlorg06uhL4H
-r37wuL1pCosg3IrNe7BNZ3oKxRDEwK92XU8LWKpLt7KVdYs7mIoSNPadoJxJWsPB
-iGHDeXxKR4+kfE9D7SsVdhM7ZbYyJnkR08LjTLzVBqIhJzsZq7+JLRa68U0fIIJW
-QK66befmUlyHzqIFeU0f6KjYCSsUemm91a+hYwbEixtYJ4Azve8wf/dAifHKESzM
-oFayPGNj+YVj5bdq+o1i6IaD+PodL+u99nQcY2FcQlsOOUf7c9zcUuJ0DMJT4Dv1
-F/eYfP2KqQMGIhhclaTsLTXEiQWcSaeHGpnocDkzC4PWnmXkfY0w+RV6ERqRb88I
-doWBErxmMVsxiwvgA0la61jgTv2phL+IrtCF9X6SG2rKmE3WuJOPQ4wuelYRH6Fr
-0pJiGH1yKGrPYCKW+OqPWYN+9iKiq7h9Ej4OSzGLQTsvXdpow1w57OkHuOeoVUoE
-Du0oeDIEHs0EoUuSIhfN74FWL5bDOXsjSw2MUIx+bswEqmP8IoEwpLnPW+4iW0f6
-OH68zy0d75n6PKMNRWSbFQvd4BzkObATJJ+4fYAaTvjaI5HsYFscWR1NaNCiY7y9
-vok3qDVi4Ynij2U4ACJbVFIT//9psAJfZ6vW2p4rPvbvTjf10q5kBcoMajx0ZnYs
-uYbawE7xa+pMIofFDKnp
-=I1np
+iQIcBAEBAgAGBQJSDK7MAAoJEN0jrNd/PrOh0m8QALzBtXwsLkiXEr0+v4xvtudS
+1Vnb6gV6JhHl09DNYs3KYcCX8CsFzs7AJ19wgJj6Q++QuHou0m8kSfvHx8r6k8zO
+UApq3rEsi1ujh6+ICS+7smKZCqKrb+m/rDSmJ68EjyA1zqvbgkXloNganOAD5wxM
+o22uq6DZyi+BhE/pX/51bODLrLw3vrUbn6MCgU1XNgK/A0+YlPj30D2NUNofmVtG
+ejnJ5g9UskhwMOzyZoFoyn7eEgCI0nY4OfoPqWakAQJlc3WHEbkp9lhBN3K924/Y
+ZltIcNyb+CmhSfCgCgcx4w99gyt4QRcSlChaVergD28rG2c3mJWyZc4M6UmgFfbT
+ZeVTaAc1cZu6QwGbUqV4sLTj0bRn5k8CvFLEKf+AIxXPZjV2zdmYYWCaI9Z2jfiK
+sdjoZOEbSlHMIuXW2riDYfg2dFA3BVzax8I4Obffsj8iJ222vOTRR05d7+aKNS2w
+Kzdy1uSQvZIoawqXAQTrHUNojgAID3yDUnsQ5w4bwlglUgtBpFPabeOxY9guNqwv
+uXizyXnggK0ZMNhLyn3lP1nDz63Hv7d0dHsMXOltbGLFuYhWeWV8gL1vtWUa/mJN
+OtaSVXNzzjLRNeHS4iL8S59/pWnwQvIK0Dc/m15wrTgaC8v92NsHQHVs3/YFJiKt
+jF72U0N4upufhDkop6SV
+=vhvx
 -----END PGP SIGNATURE-----
 
---W1uEbMXJ1Mj4g6TI--
-
---===============8979461654543251955==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8979461654543251955==--
+--GvXjxJ+pjyke8COw--
