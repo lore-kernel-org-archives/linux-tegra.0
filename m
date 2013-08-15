@@ -1,56 +1,77 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: fix Tegra30 I2S capture parameter setup
-Date: Thu, 15 Aug 2013 11:08:06 +0100
-Message-ID: <20130815100806.GV2401@sirena.org.uk>
-References: <1376511856-28044-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ASoC: tegra: support a Mic Jack in the
+ Tegra+RT5640 machine driver
+Date: Thu, 15 Aug 2013 11:08:44 +0100
+Message-ID: <20130815100844.GW2401@sirena.org.uk>
+References: <1376511989-28187-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="K5z5w9fsx/Hrkgg3"
-Return-path: <stable-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1376511856-28044-1-git-send-email-swarren@wwwdotorg.org>
-Sender: stable-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8979461654543251955=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1376511989-28187-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---K5z5w9fsx/Hrkgg3
+--===============8979461654543251955==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W1uEbMXJ1Mj4g6TI"
+Content-Disposition: inline
+
+
+--W1uEbMXJ1Mj4g6TI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 14, 2013 at 02:24:16PM -0600, Stephen Warren wrote:
+On Wed, Aug 14, 2013 at 02:26:29PM -0600, Stephen Warren wrote:
 > From: Stephen Warren <swarren@nvidia.com>
 >=20
-> The Tegra30 I2S driver was writing the AHUB interface parameters to the
-> playback path register rather than the capture path register. This
-> caused the capture parameters not to be configured at all, so if
-> capturing using non-HW-default parameters (e.g. 16-bit stereo rather
-> than 8-bit mono) the audio would be corrupted.
+> Add a Mic Jack widget to the Tegra+RT5640 machine driver, and document
+> this in the DT binding. This enables the DT to include the Mic Jack in
+> the audio routing table, and hence enables capture of audio, in addition
+> to the previously-working playback.
 
 Applied, thanks.
 
---K5z5w9fsx/Hrkgg3
+--W1uEbMXJ1Mj4g6TI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSDKiDAAoJELSic+t+oim9yaAP/iwHm4f05BvzHCu+q2Lmiewe
-hpQDLtxFaeQjHbSHsJvvjkvJ1JxSh37RBFnqTsCi5VM/RC5Te8OX/o7DrMnM4Y8m
-ytvVJYr3dd17YkM/l8oMwBjRTzhqO5NEd13AdLfwQG4Ko8Q1A6B2QAgWlDRFT58s
-8R8xR2d6wvCvc++HGFhtH36dBlkcu7mCqukPJZzyzbV1nwBnr0lGVza2kB3/WQyC
-gJ8J5Ec+SoRy+gAslXj1CyYDIJj+FfL15h4WtqSnlSS/NlEF5H6ThDzDOx63yZxY
-VK13GUocTR2X73KRd5aPuK+mqoQdK437+X1LMxvqKtLjs0u0u9p4YFFZtMRGwCfX
-1GdeQxNl1n5tt9rDGPNu/nLK3sTTE1BhslOs6HFzsFSgHofbGULZkT+YdMUb+1pL
-4QrAkWwJ0YblsNf+iA87+lHG/BiwflY/75G4PDNmMTzYL/KJCDbbdyP1O3agVbz/
-ue5cu1SjEWzF+tiZP+GwodtXSrUtdBnK/L8PjYt8FWrRPF4NJWu4qLt58QrSQ1FK
-y8Rc2DjnLAPbZ2jQxM/GDK11b9W4yt7iAEOSDTZKU9i+kEfa71Nzj6GdxHabz39v
-jOZHYLjQRwyofgvqvw9UtjcezfYjuYjudPh+aH1nm/kQ3Ct/gfTC+oajc4XaNxoo
-t+o3iB5OekU/q947nV3z
-=mQp6
+iQIcBAEBAgAGBQJSDKipAAoJELSic+t+oim9GdwQAIEWQKsjWjiLLlorg06uhL4H
+r37wuL1pCosg3IrNe7BNZ3oKxRDEwK92XU8LWKpLt7KVdYs7mIoSNPadoJxJWsPB
+iGHDeXxKR4+kfE9D7SsVdhM7ZbYyJnkR08LjTLzVBqIhJzsZq7+JLRa68U0fIIJW
+QK66befmUlyHzqIFeU0f6KjYCSsUemm91a+hYwbEixtYJ4Azve8wf/dAifHKESzM
+oFayPGNj+YVj5bdq+o1i6IaD+PodL+u99nQcY2FcQlsOOUf7c9zcUuJ0DMJT4Dv1
+F/eYfP2KqQMGIhhclaTsLTXEiQWcSaeHGpnocDkzC4PWnmXkfY0w+RV6ERqRb88I
+doWBErxmMVsxiwvgA0la61jgTv2phL+IrtCF9X6SG2rKmE3WuJOPQ4wuelYRH6Fr
+0pJiGH1yKGrPYCKW+OqPWYN+9iKiq7h9Ej4OSzGLQTsvXdpow1w57OkHuOeoVUoE
+Du0oeDIEHs0EoUuSIhfN74FWL5bDOXsjSw2MUIx+bswEqmP8IoEwpLnPW+4iW0f6
+OH68zy0d75n6PKMNRWSbFQvd4BzkObATJJ+4fYAaTvjaI5HsYFscWR1NaNCiY7y9
+vok3qDVi4Ynij2U4ACJbVFIT//9psAJfZ6vW2p4rPvbvTjf10q5kBcoMajx0ZnYs
+uYbawE7xa+pMIofFDKnp
+=I1np
 -----END PGP SIGNATURE-----
 
---K5z5w9fsx/Hrkgg3--
+--W1uEbMXJ1Mj4g6TI--
+
+--===============8979461654543251955==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8979461654543251955==--
