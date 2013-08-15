@@ -1,287 +1,130 @@
-From: Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
-Date: Thu, 15 Aug 2013 12:52:27 +0100
-Message-ID: <20130815115227.GC2562@localhost.localdomain>
-References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
- <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] early init and DT platform devices allocation/registration
+Date: Thu, 15 Aug 2013 16:23:59 +0200
+Message-ID: <20130815142358.GA25009@ulmo>
+References: <CACxGe6t9ifg9VRfXKypuhie3pXVPneZqcBy+J1bFpUaUx32P7g@mail.gmail.com>
+ <20130626.090030.1519009485651154440.hdoyu@nvidia.com>
+ <CACxGe6te2RzFb6nkSZQFrzVX4fkQo4pyzLJ1D7Lf=440mE+jyg@mail.gmail.com>
+ <20130628.114915.1341075505557760886.hdoyu@nvidia.com>
+ <20130628103826.GA17680@mithrandir>
+ <CACxGe6vkM+awN94kU2GYfbXPdR=MgYwr=PbqmtD+=i5vmuVSnA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: gnurou@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, devicetree-discuss@lists.ozlabs.org, Jassi Brar <jassisinghbrar@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <CACxGe6vkM+awN94kU2GYfbXPdR=MgYwr=PbqmtD+=i5vmuVSnA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Pawel.Moll-5wv7dgnIgG8@public.gmane.org" <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 13, 2013 at 11:29:48AM +0900, Alexandre Courbot wrote:
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked  using a consistent smc-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  .../arm/firmware/tl,trusted-foundations.txt        | 16 ++++++
->  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
->  arch/arm/Kconfig                                   |  2 +
->  arch/arm/Makefile                                  |  1 +
->  arch/arm/firmware/Kconfig                          | 22 ++++++++
->  arch/arm/firmware/Makefile                         |  1 +
->  arch/arm/firmware/trusted_foundations.c            | 58 ++++++++++++++++++++++
->  arch/arm/include/asm/trusted_foundations.h         | 36 ++++++++++++++
->  8 files changed, 137 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
->  create mode 100644 arch/arm/firmware/Kconfig
->  create mode 100644 arch/arm/firmware/Makefile
->  create mode 100644 arch/arm/firmware/trusted_foundations.c
->  create mode 100644 arch/arm/include/asm/trusted_foundations.h
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
-> new file mode 100644
-> index 0000000..2609f78
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
-> @@ -0,0 +1,16 @@
-> +Trusted Foundations
-> +
-> +Boards that use the Trusted Foundations secure monitor can signal its
-> +presence by declaring a node compatible with "tl,trusted-foundations"
-> +(the name and location of the node does not matter).
 
-We shouldn't encougrage people to arrange DT nodes at random.
+--82I3+IH0IqGh5yIs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unless there's a good reason not to, this should just be a child
-of /, with the meaning that the firmware is callable (at least to
-the point of discoverability) on all CPUs.
+On Fri, Jun 28, 2013 at 01:27:15PM +0100, Grant Likely wrote:
+> On Fri, Jun 28, 2013 at 11:38 AM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > On Fri, Jun 28, 2013 at 10:49:15AM +0200, Hiroshi Doyu wrote:
+> >> Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Wed, 26 Jun 2013 12:0=
+3:20 +0200:
+> >>
+> >> > On Wed, Jun 26, 2013 at 7:00 AM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> >> > > Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Tue, 25 Jun 2013 =
+19:52:33 +0200:
+> >> > >
+> >> > >> > Here's my workaround. I need to call of_detach_node() with OF_D=
+YNAMIC
+> >> > >> > to avoid duplicated device registration.
+> >> > >>
+> >> > >> Gah! my eyes!
+> >> > >>
+> >> > >> Don't do that. It is incredibly problematic. Look at inhibiting
+> >> > >> duplicate device creation instead.
+> >> > >
+> >> > > I may not follow this thread correctly, but could anyone point out=
+ the
+> >> > > above "inhibiting duplicate device creation" if there's already su=
+ch
+> >> > > solution?
+> >> >
+> >> > No, the solution doesn't exist yet, but it wouldn't be hard to
+> >> > implement. What you need to do is to add a struct device pointer to
+> >> > struct device_node, and set the pointer to the struct device when
+> >> > of_platform_device_create creates a device. (it would also need to be
+> >> > set for early_platform_device creation, but that's not something that
+> >> > should affect you). You would also add a check to
+> >> > of_platform_device_create to check if the device pointer is already
+> >> > set. If it is, then skip creation of the device.
+> >>
+> >> Implemented as Grant suggested. At least this works for our case,
+> >> where IOMMU needs to be instanciated earlier than other device[1].
+> >> early_platform_device case still need to be covered.
+> >
+> > I think we arrived at a different conclusion in another branch of this
+> > thread. With the patch below every driver needs to explicitly allocate
+> > the platform device and set the struct device_node's .dev field, which
+> > has other side-effects such as the device hierarchy getting messed up.
+> >
+> > A better alternative would be to have of_platform_populate() run early
+> > such that the .dev field in the struct device_node can be set by core
+> > code, which would not require every driver to be changed.
+> >
+> > I'm not sure exactly what needs to be done to make this work, however.
+> > Grant, can you provide some guidance here as to how this may be fixed?
+> > Where would we have to call of_platform_populate() from and what makes
+> > this break with the current implementation?
+>=20
+> Try it and see!  :-) I cannot give a definite answer, but I suspect
+> that it will fall down when registering the devices on to the
+> platform_bus because it isn't initialized yet. If called early, the
+> code would need to hold the platform_device in some kind of deferred
+> list until the platform bus was initialize, and then have a cleanup
+> function at initcall time to finish the registration of all early
+> devices.
 
-The meaning of the node should be left unspecified if it is in any
-other location.
+So what I did is move the call to of_platform_populate() on Tegra from
+=2Einit_machine() to .init_early(). The problem with .init_early() is that
+the Slab allocator isn't available yet. One can use bootmem to work
+around that, but it involves sprinkling a lot of slab_is_available() and
+alloc_bootmem() where otherwise just kmalloc() (or one of its variants)
+would be called.
 
-This is the convention already adopted for things like arm,psci (though
-to be fair, the arm,psci binding documentation fails to mention that
-also -- nonetheless, the node is placed in /).
+What I ended up doing was implement early_kmalloc() and early_kfree() to
+replace some occurrences in code that was called at some point from
+of_platform_populate(). That got me quite far, though I haven't fully
+completed the conversion. I'm not sure if it's really worth it either
+because that code is unlikely to ever get merged.
 
-> +
-> +Required properties:
-> +- compatible : "tl,trusted-foundations"
-> +- version : Must contain the version number string of the Trusted Foundation
-> +	firmware.
+Instead I'll try to move the call to of_platform_populate() shortly
+after the slab has been initialized, which happens to be around the time
+that .init_irq() is called and see if that makes things any easier.
 
-Are you sure there is no low-level way to probe vendor and version info?
-If there is, then the DT should describe nothing except the fact that
-the probe interface exists.
+Thierry
 
-I also worry that two integrations on different SoCs might have the
-same version number, yet still be different due to vendor-specific
-features and options.
+--82I3+IH0IqGh5yIs
+Content-Type: application/pgp-signature
 
-> +
-> +Example:
-> +	firmware {
-> +		compatible = "tl,trusted-foundations";
-> +		version = "02.08";
-> +	};
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 366ce9b..20d61f3 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -63,6 +63,7 @@ ste	ST-Ericsson
->  stericsson	ST-Ericsson
->  toumaz	Toumaz
->  ti	Texas Instruments
-> +tl	Trusted Logic
->  toshiba	Toshiba Corporation
->  v3	V3 Semiconductor
->  via	VIA Technologies, Inc.
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 43594d5..7fbe800 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1074,6 +1074,8 @@ config ARM_TIMER_SP804
->  	select CLKSRC_MMIO
->  	select CLKSRC_OF if OF
->  
-> +source "arch/arm/firmware/Kconfig"
-> +
->  source arch/arm/mm/Kconfig
->  
->  config ARM_NR_BANKS
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index 6fd2cea..a48de17 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -267,6 +267,7 @@ core-$(CONFIG_KVM_ARM_HOST) 	+= arch/arm/kvm/
->  core-y				+= arch/arm/kernel/ arch/arm/mm/ arch/arm/common/
->  core-y				+= arch/arm/net/
->  core-y				+= arch/arm/crypto/
-> +core-y				+= arch/arm/firmware/
->  core-y				+= $(machdirs) $(platdirs)
->  
->  drivers-$(CONFIG_OPROFILE)      += arch/arm/oprofile/
-> diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
-> new file mode 100644
-> index 0000000..ad0eb6c
-> --- /dev/null
-> +++ b/arch/arm/firmware/Kconfig
-> @@ -0,0 +1,22 @@
-> +config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-> +	bool
-> +
-> +menu "Firmware options"
-> +	depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-> +
-> +config TRUSTED_FOUNDATIONS
-> +	bool "Trusted Foundations secure monitor support"
-> +	depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-> +	help
-> +	  Some devices are booted with the Trusted Foundations secure monitor
-> +	  active, requiring some core operations to be performed by the secure
-> +	  monitor instead of the kernel.
-> +
-> +	  This option allows the kernel to invoke the secure monitor whenever
-> +	  required on devices using Trusted Foundations.
-> +
-> +	  Devices using Trusted Foundations should pass a device tree containing
-> +	  a node compatible with "tl,trusted-foundations" to signal the presence
-> +	  of the secure monitor.
-> +
-> +endmenu
-> diff --git a/arch/arm/firmware/Makefile b/arch/arm/firmware/Makefile
-> new file mode 100644
-> index 0000000..a71f165
-> --- /dev/null
-> +++ b/arch/arm/firmware/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_TRUSTED_FOUNDATIONS)	+= trusted_foundations.o
-> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-> new file mode 100644
-> index 0000000..051482d
-> --- /dev/null
-> +++ b/arch/arm/firmware/trusted_foundations.c
-> @@ -0,0 +1,58 @@
-> +/*
-> + * Trusted Foundations support for ARM CPUs
-> + *
-> + * Copyright (c) 2013, NVIDIA Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/of.h>
-> +#include <asm/firmware.h>
-> +
-> +#define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
-> +
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-Better to use __naked instead of an explicit attribute.
+iQIcBAEBAgAGBQJSDOR+AAoJEN0jrNd/PrOho5IP/RCgbHijBa++R+LwD0XW2b2V
+CYuZ/BIRZpSxXyDjBnkXVj0dLebjUlYc67OtAXvQjQ+5Cv5XaPcnJYR7vKC3d6MV
+7oML9TqVFPhoGA5Klsz9G6HZnsIbdlOUeXGR8PfNwJiNcVI4bABfROiqsskPj4eg
+2ryIPVbCA+ZegDaPl4hld1gIfYOvyb12h7hbNC3BD4gJ2BwoBOE8YmKWNi03Tz9U
+qSV+kDlwM2tGSw9qXmHcibNt4Iz5TdA3mvRqk1xQcQHFdE0Af2tetZ/S0fsSO4tn
+Con3LVRkiMKMQOzioNA1hbfpG6K+Yw6xdEKjlpOBVDtijp95IpFlebJv7/gqxuUT
+TGp4H0/G7ktw2l7slkJhjGaHsYYW2XHnZKKbtWmCv4//3nAZdApw2Q0q8O096XIJ
+FTPoxPDmc+gdrOZ6mP9wFmQBi+bBBTYyeww0lv8LkvwXSmtjHK4DaLNwGt9d3eFi
+ZqSpe+VZ/EqTWOZQ/4+I6HVbAsnGKpthXTd5cj6t+LM4YNC8YZdTwA3q9q55D83D
+7AwPrEiH/5jXiHPuJBXm1SFuGi65zFdQEH2c0/4BJ4jw2azUmGK7A5hucnWE2MsF
+B8ahdZkCk3Tss9IVnLMH53LsRW3p2pyBk7YnCW0Z4KEls3dcW29hWrLjeLvjixf3
+jcAJnPyXQLUXUO0sVUV8
+=Hkzz
+-----END PGP SIGNATURE-----
 
-> +static void __attribute__((naked)) tf_generic_smc(u32 type, u32 subtype,
-> +							u32 arg)
-> +{
-> +	asm volatile(
-> +		".arch_extension	sec\n\t"
-> +		"stmfd	sp!, {r4 - r11, lr}\n\t"
-> +		__asmeq("%0", "r0")
-> +		__asmeq("%1", "r1")
-> +		__asmeq("%2", "r2")
-> +		"mov	r3, #0\n\t"
-> +		"mov	r4, #0\n\t"
-> +		"smc	#0\n\t"
-> +		"ldmfd	sp!, {r4 - r11, pc}"
-> +		:
-> +		: "r" (type), "r" (subtype), "r" (arg)
-> +		: "memory");
-> +}
-> +
-> +static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
-> +{
-> +	tf_generic_smc(TF_SET_CPU_BOOT_ADDR_SMC, boot_addr, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct firmware_ops trusted_foundations_ops = {
-> +	.set_cpu_boot_addr = tf_set_cpu_boot_addr,
-> +};
-> +
-> +void register_trusted_foundations(const char *version)
-> +{
-> +	/* we are not using version information for now since currently
-> +	 * supported SMCs are compatible with all TF releases */
-
-I think it would be wise at least to sanity-check the version,
-even if there's only one major version supported for now.
-
-> +	register_firmware_ops(&trusted_foundations_ops);
-> +}
-> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-> new file mode 100644
-> index 0000000..d187905
-> --- /dev/null
-> +++ b/arch/arm/include/asm/trusted_foundations.h
-> @@ -0,0 +1,36 @@
-> +/*
-> + * Copyright (c) 2013, NVIDIA Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#ifndef __ASM_ARM_TRUSTED_FOUNDATIONS_H
-> +#define __ASM_ARM_TRUSTED_FOUNDATIONS_H
-> +
-> +#include <linux/kconfig.h>
-> +#include <linux/printk.h>
-> +#include <asm/bug.h>
-> +
-> +#if IS_ENABLED(CONFIG_TRUSTED_FOUNDATIONS)
-> +
-> +void register_trusted_foundations(const char *version);
-> +
-> +#else
-> +
-> +static inline void register_trusted_foundations(const char *version)
-> +{
-> +	pr_crit("No support for Trusted Foundations, stopping...\n");
-> +	BUG();
-> +}
-> +
-> +#endif /* IS_ENABLED(CONFIG_TRUSTED_FOUNDATIONS) */
-> +
-> +#endif
-> -- 
-> 1.8.3.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--82I3+IH0IqGh5yIs--
