@@ -1,53 +1,23 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 3/3] PCI: tegra: Support driver unbinding
-Date: Thu, 15 Aug 2013 09:21:53 -0600
-Message-ID: <520CF211.6060003@wwwdotorg.org>
-References: <1376392346-14127-1-git-send-email-treding@nvidia.com> <1376392346-14127-4-git-send-email-treding@nvidia.com> <520BFA0C.5070001@wwwdotorg.org> <20130815103452.GA13740@ulmo>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: add Mic Jack to Beaver device tree
+Date: Thu, 15 Aug 2013 09:37:51 -0600
+Message-ID: <520CF5CF.6040205@wwwdotorg.org>
+References: <1376512027-28245-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130815103452.GA13740@ulmo>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1376512027-28245-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/15/2013 04:34 AM, Thierry Reding wrote:
-> On Wed, Aug 14, 2013 at 03:43:40PM -0600, Stephen Warren wrote:
->> On 08/13/2013 05:12 AM, Thierry Reding wrote:
->>> Implement the platform driver's .remove() callback to free all
->>> resources allocated during driver setup and call
->>> pci_common_exit() to cleanup ARM specific datastructures. Unmap
->>> the fixed PCI I/O mapping by calling the new pci_iounmap_io()
->>> function in the new .teardown() callback.
->>> 
->>> Finally, no longer set the .suppress_bind_attrs field to true
->>> to allow the driver to unbind from a device.
->> 
->>> +static int tegra_pcie_remove(struct platform_device *pdev) +{ 
->>> +	struct tegra_pcie *pcie = platform_get_drvdata(pdev); +
->>> struct tegra_pcie_bus *bus, *tmp; +	int err; + +
->>> pci_common_exit(&pcie->sys); + +	list_for_each_entry_safe(bus,
->>> tmp, &pcie->busses, list) { +		vunmap(bus->area->addr); +
->>> kfree(bus); +	} + +	if (IS_ENABLED(CONFIG_PCI_MSI)) { +		err =
->>> tegra_pcie_disable_msi(pcie); +		if (err < 0) +			return err; +
->>> }
->> 
->> Wouldn't it make sense to do that as early as possible in the
->> function, to make sure that no MSI accidentally fires after some
->> of the cleanup has already happened?
+On 08/14/2013 02:27 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> I don't think that's strictly necessary in this case. After the
-> call to pci_common_exit() there are no PCI devices left, there's
-> not even a bus left. All MSI users should have cleaned up after
-> themselves.
-> 
-> Given that I thought it more useful to mirror the setup done in
-> .probe() to make it clearer what's being undone (and potentially
-> what's missing).
+> This enables the microphone input jack, and hence allows audio to be
+> captured as well as played back.
 
-That makes sense SW-wise, but what about mis-behaving HW that triggers
-an MSI even when it's been told not to? I assume that
-tegra_pcie_disable_msi() unrequests the IRQ, hence solves that
-problem, if done early enough.
+I've applied this series to Tegra's for-3.12/dt branch, with patch 2/2's
+subject line fixed to s/Cardhu/Dalmore/.
