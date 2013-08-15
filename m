@@ -1,98 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: dts: USB for Tegra114 Dalmore
-Date: Thu, 15 Aug 2013 12:54:05 +0200
-Message-ID: <20130815105404.GA14301@ulmo>
-References: <1375292543-7896-1-git-send-email-ttynkkynen@nvidia.com>
- <1375292543-7896-3-git-send-email-ttynkkynen@nvidia.com>
- <51F9550F.3080503@cogentembedded.com>
- <51F9660C.6090604@iki.fi>
- <51F96B48.10209@cogentembedded.com>
- <51F98A78.9060309@wwwdotorg.org>
- <51F98D92.3010607@cogentembedded.com>
- <51F99DE4.7010503@wwwdotorg.org>
+Subject: Re: [PATCH 4/4] ARM: tegra: correct Colibri T20 regulator settings
+Date: Thu, 15 Aug 2013 13:05:53 +0200
+Message-ID: <20130815110553.GB14301@ulmo>
+References: <1374442132-24040-1-git-send-email-dev@lynxeye.de>
+ <1374442132-24040-5-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <51F99DE4.7010503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1374442132-24040-5-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2013 at 05:29:40PM -0600, Stephen Warren wrote:
-> On 07/31/2013 04:20 PM, Sergei Shtylyov wrote:
-> > On 08/01/2013 02:06 AM, Stephen Warren wrote:
-> ...
-> >>>     That's really horrible design.
-> >>
-> >> Yup. Both USB PHY and EHCI controller registers really are interleaved
-> >> in one range.
-> >=20
-> >    But the standard EHCI register space has no holes IIRC, so they can't
-> > be really that much interleaved as you're describing (unless you have
-> > some non-standard registers of course)...
+On Sun, Jul 21, 2013 at 11:28:52PM +0200, Lucas Stach wrote:
+> Core and CPU voltage settings were a bit on the safe side. The actually
+> used chips on the Colibri allow for lower voltages and work just fine
+> this way.
 >=20
-> Yes, there are certainly non-standard registers.
+> SM2 is not a the parent of LDO regs, but actually the DDR regulator. The
+> Colibri uses a different version of the TPS with other voltage mapping
+> tables for SM2, currently we cheat by setting a fake 3,2V which results
+> in 1,8V physical.
 >=20
-> ...
-> >>>     Don't they cause numerous resource conflicts while device nodes
-> >>> being
-> >>> instantiated as the platform devices?
-> >=20
-> >> No; the driver knows that the HW is screwy and there's lots of
-> >> register-range sharing going on, so it simply maps the registers, rath=
-er
-> >> than reserving the physical address range and mapping it.
-> >=20
-> >    Yes, it's clear that the driver should take special measures, I was
-> > asking about the platform device creation phase. What do you see in
-> > /proc/iomem?
->=20
-> The drivers don't request the memory region since doing so would cause
-> conflicts. Hence, the regions don't show up in /proc/iomem.
->=20
-> This actually isn't that uncommon for DT-based drivers anyway; many use
-> e.g. of_iomap() which IIRC just looks up the resource and maps it
-> without registering the usage.
+> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+> ---
+> The issue with the used version of the PMIC having a different voltage
+> mapping for SM2 should be resolved properly. As this needs some bigger
+> adjustments at the regulator driver this quick fix is just aimed at
+> stopping slight overvolting of the ram with 3.11 kernels. A proper fix
+> should land in time for 3.12.
 
-Not being uncommon isn't a good argument. The problem with doing this is
-that it sets a bad example and makes it easier for others to do the same
-thing. I can see that for some drivers providing a proper abstraction or
-encapsulation might be more complicated than necessary. But I've also
-seen this kind of shortcut taken quite often lately and especially often
-in DT-based drivers.
+This wouldn't happen to be the TPS658640? I remember a similar problem
+with a special version of Tamonten that had this version of the PMU
+which supposedly is pin and register-compatible. Well, it is register
+compatible alright, and the pins are the same as well, but the voltage
+tables are slightly different.
 
-Am I the only one concerned about this development?
+I did attempt to work the changes into the tps6586x driver at some point
+but there were a few things that made it much more difficult than I had
+imagined.
 
 Thierry
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSDLNMAAoJEN0jrNd/PrOhhwAQAK9AjWRaNcZLykAhkqcaoG/f
-v3zxgb4k04AIhaYBtzFd6Hbtke+gDZpgCIsRBeitAGPTNxMpu5FcJgyH7iaWr7hw
-+E0yV7LvEgoGCt4sTnTA9N0TPGrURV4Zt/9+7nrBphBtadA7QBxq8bmIDEDJ/kak
-FlyWDSJIqXQyxzT9vUx6OR4PXjvVqeqykxEhCJi/i09P9WuyFtEEi/KVVIO473mh
-FL2gxoU3BWCHcvSY/lt2rnPGAQuzqHWYX2HuPiBbiMeDz6fbHl2NlGybIPnHUcjw
-e7SSJ22fV9JaSPOh0O0rGZrmukkJ8B6wNXZhDsmW3rOtT01339WNeJtl0iit2dVz
-OqJbGBlJvV+elLa/1ih1g3NLF2J4RT5P421+feCn3QmAMHVA/WZXrhNCR9gQUUOP
-3Fnnt6qECL3VmOa/nBFtMj71XJIwsyhFTEceyjp5rxLXKWRtpblIGzrwqYVYYLNF
-lRsbhlruWDwRQPtiOaDD+7y4xl/tRJ0giDPLsmFIy290O75kB5Jb8R6ZtQqK0Vkj
-FaF9j5Ok61vxkD7T4LjpMseQflAVwPHUhgEeSbx2ol3NWzerheMUwTejsXe67reN
-Xbqj9BCLyMu/j4T5WNSVmb1j+QvYmvwwwe/hmmJ645+3Fb4ZACDJOYpp3Q/nGvQe
-ypSSJzepvIXh6p9WrBB5
-=E9Ke
+iQIcBAEBAgAGBQJSDLYRAAoJEN0jrNd/PrOh0tAQAMASdwiPLtjXZox0B1w+eAFr
+LbDS8IXT9HdXQ1hL3/8X5Y7h2ZkvELyKIETJFvUkKJSWR9NmrcJEjEeu5CR6dkjg
+dg7jQwSxzn1E99mhx1NSA3oYX+d4SnRoBXQL8U5gjrvHMz3XTYWekC4ptYMxMxTZ
+lvetlkUasFhIgIsdtmDdLfmU/QHZn0x3EV4ss9qEAQJVhOmkrnZ/luCeoOeZVt9i
+YeuHhqJ5fXIWPXi6+WZQcEA66e4PGPlzHlzpmFhi5OjtD0LMDwneOPNZH063fjWR
+Pkhx3dX8LKYoNLNvNk77L5w3H+WMwuBaSQkAdVYs7W6AqXQHyJ1YQpxD7dNU3qCu
+wm7+4xO6UD7/VRk6rdp1udE4H45vhqoNVU7pL4zF00V0Gy4cIpZQ5MQjcEMlzk3M
+1rO9z1neY1Lm5yqFYWQ+UDWZ+5X8+BhokLM6SZyJ2boRqVFy+I0fLA3JKSs90fTk
+i27eb7ftwTBhehKPZNnY0+Xl3urpvpAtAgDCtHKKsux+wTmQJOSkJHanWtrukSBr
++aummhJQBTF6yCZDJN9VqQLhdi3stMTFtHdHZCNjSsqN4aoMUl0qdm2Ir18eRBIw
+I0G76/sYOnCyTlB7I+N+D5bec98JjDXg42LmtQe9FPYpuKOktHm6LXgJBjtu78BE
+q4nVE2Bzqyle6bEvh3+/
+=wQDp
 -----END PGP SIGNATURE-----
 
---SUOF0GtieIMvvwua--
+--nVMJ2NtxeReIH9PS--
