@@ -1,26 +1,21 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [GIT PULL 1/4] ARM: tegra: cleanups for 3.12
-Date: Fri, 16 Aug 2013 11:20:25 -0600
-Message-ID: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: arm@kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [GIT PULL 4/4] ARM: tegra: defconfig update for 3.12
+Date: Fri, 16 Aug 2013 11:20:28 -0600
+Message-ID: <1376673628-5867-4-git-send-email-swarren@wwwdotorg.org>
+References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1376673628-5867-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch includes a single cleanup patch which removes redundant
-error-handling for platform_get_resource().
+This defconfig change enables:
+* SYSVIPC (needed for some apps, e.g. fakeroot).
+* Elantech touchpad (touchpad on AC100).
+* SCSI_MULTI_LUN (needed for some USB SD card readers).
+* PCI, MSI, and Tegra's PCIe driver.
+* USB XHCI; useful for testing PCIe.
 
 ----------------------------------------------------------------
 
@@ -30,18 +25,16 @@ The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.12-cleanup
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.12-defconfig
 
-for you to fetch changes up to 946a88df76a2c5a9f4087fb41efd9d2763872302:
+for you to fetch changes up to 25819408cdd8c019277d9b4906ac7345fc1817bd:
 
-  tegra: simplify use of devm_ioremap_resource
+  ARM: tegra: defconfig updates
 
 ----------------------------------------------------------------
 
-Julia Lawall (1):
-      tegra: simplify use of devm_ioremap_resource
+Stephen Warren (1):
+      ARM: tegra: defconfig updates
 
- drivers/iommu/tegra-smmu.c  | 2 --
- drivers/memory/tegra20-mc.c | 2 --
- drivers/memory/tegra30-mc.c | 2 --
- 3 files changed, 6 deletions(-)
+ arch/arm/configs/tegra_defconfig | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
