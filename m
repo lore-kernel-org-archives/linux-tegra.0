@@ -1,22 +1,112 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 6/29] tegra: simplify use of devm_ioremap_resource
-Date: Thu, 15 Aug 2013 16:07:49 -0600
-Message-ID: <520D5135.7020503@wwwdotorg.org>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr> <1376471493-22215-7-git-send-email-Julia.Lawall@lip6.fr>
+From: Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
+Date: Fri, 16 Aug 2013 14:23:26 +0100
+Message-ID: <20130816132326.GC2909@localhost.localdomain>
+References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
+ <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
+ <20130815115227.GC2562@localhost.localdomain>
+ <520D500C.5070901@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376471493-22215-7-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <520D500C.5070901@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: gnurou@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/14/2013 03:11 AM, Julia Lawall wrote:
-> From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+On Thu, Aug 15, 2013 at 04:02:52PM -0600, Stephen Warren wrote:
+> On 08/15/2013 05:52 AM, Dave Martin wrote:
+> > On Tue, Aug 13, 2013 at 11:29:48AM +0900, Alexandre Courbot wrote:
+> >> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> >> can be invoked  using a consistent smc-based API on all supported
+> >> platforms. This patch adds initial basic support for Trusted
+> >> Foundations using the ARM firmware API. Current features are limited
+> >> to the ability to boot secondary processors.
 > 
-> Remove unneeded error handling on the result of a call to
-> platform_get_resource when the value is passed to devm_ioremap_resource.
+> >> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+> 
+> >> +Required properties:
+> >> +- compatible : "tl,trusted-foundations"
+> >> +- version : Must contain the version number string of the Trusted Foundation
+> >> +	firmware.
+> > 
+> > Are you sure there is no low-level way to probe vendor and version info?
+> > If there is, then the DT should describe nothing except the fact that
+> > the probe interface exists.
+> > 
+> > I also worry that two integrations on different SoCs might have the
+> > same version number, yet still be different due to vendor-specific
+> > features and options.
+> 
+> I would expect HW-specific compatible values also to be present in a DT.
+> For example, perhaps:
+> 
+> compatible = "tl,trusted-foundations-nvidia-shield",
+> "tl,trusted-foundations";
+> 
+> (nvidia vendor, shield board/implementation)
+> 
+> This would allow matching on the specific value
+> "tl,trusted-foundations-nvidia-shield" in the future if some quirking
+> was needed, but if this wasn't needed, drivers could just bind to the
+> generic "tl,trusted-foundations".
 
-I have applied this to Tegra's for-3.12/cleanup branch.
+That seems reasonable *unless* there is a reliable way to obtain
+a vendor ID from the SMC ABI directly, in which case we should just
+use that.
+
+One could debate whether the extra compatible string should have
+"nvidia," or "tl," but the fact that "nvidia" is in the name at all
+pretty much narrows it down.
+
+> 
+> >> +- version : Must contain the version number string of the Trusted Foundation
+> >> +	firmware.
+> > 
+> > Are you sure there is no low-level way to probe vendor and version info?
+> > If there is, then the DT should describe nothing except the fact that
+> > the probe interface exists.
+> > 
+> > I also worry that two integrations on different SoCs might have the
+> > same version number, yet still be different due to vendor-specific
+> > features and options.
+> 
+> Talking of the version - if we do need to represent this in the DT, how
+> about 2 separate cells for major/minor version rather than encoding it
+> into a string? Then, no parsing would be required.
+
+I think the key thing here is to match whatever TF's native notion of
+version is.
+
+If it's truly a string with specific comparison rules, we should leave it
+a string and write code to examine it.  If it's a simple <major minor>
+pair, then putting it in the DT in this form makes sense.
+
+And, as you previosly suggested, if there's a reliable ABI for getting
+the firmware to tell you its version number, we should just use that and
+not describe the version number in the DT at all.
+
+I'm not in a position to answer that one.
+
+If we really have no idea, we'll have to go with a best guess, and
+change the compatible string later if necessary.  But it would be better
+to get it right if we can.
+
+
+If TF has version/vendor probe interfaces but those might be missing/
+broken/wrong, we could still specify "vendor" and "version" properties
+which allow the probed values to be overridden.
+
+Cheers
+---Dave
