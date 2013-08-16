@@ -1,112 +1,35 @@
-From: Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
-Date: Fri, 16 Aug 2013 14:23:26 +0100
-Message-ID: <20130816132326.GC2909@localhost.localdomain>
-References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
- <1376360992-1508-2-git-send-email-acourbot@nvidia.com>
- <20130815115227.GC2562@localhost.localdomain>
- <520D500C.5070901@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH RESEND] clk: tegra30: Don't wait for PLL_U lock bit
+Date: Fri, 16 Aug 2013 10:38:27 -0600
+Message-ID: <520E5583.2080604@wwwdotorg.org>
+References: <1376510979-21562-1-git-send-email-ttynkkynen@nvidia.com> <1376510979-21562-2-git-send-email-ttynkkynen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <520D500C.5070901@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: gnurou@gmail.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1376510979-21562-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 15, 2013 at 04:02:52PM -0600, Stephen Warren wrote:
-> On 08/15/2013 05:52 AM, Dave Martin wrote:
-> > On Tue, Aug 13, 2013 at 11:29:48AM +0900, Alexandre Courbot wrote:
-> >> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> >> can be invoked  using a consistent smc-based API on all supported
-> >> platforms. This patch adds initial basic support for Trusted
-> >> Foundations using the ARM firmware API. Current features are limited
-> >> to the ability to boot secondary processors.
-> 
-> >> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
-> 
-> >> +Required properties:
-> >> +- compatible : "tl,trusted-foundations"
-> >> +- version : Must contain the version number string of the Trusted Foundation
-> >> +	firmware.
-> > 
-> > Are you sure there is no low-level way to probe vendor and version info?
-> > If there is, then the DT should describe nothing except the fact that
-> > the probe interface exists.
-> > 
-> > I also worry that two integrations on different SoCs might have the
-> > same version number, yet still be different due to vendor-specific
-> > features and options.
-> 
-> I would expect HW-specific compatible values also to be present in a DT.
-> For example, perhaps:
-> 
-> compatible = "tl,trusted-foundations-nvidia-shield",
-> "tl,trusted-foundations";
-> 
-> (nvidia vendor, shield board/implementation)
-> 
-> This would allow matching on the specific value
-> "tl,trusted-foundations-nvidia-shield" in the future if some quirking
-> was needed, but if this wasn't needed, drivers could just bind to the
-> generic "tl,trusted-foundations".
+On 08/14/2013 02:09 PM, Tuomas Tynkkynen wrote:
+> The lock bit on PLL_U does not seem to be working correctly and
+> sometimes never gets set when waiting for the PLL to come up.
+> Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
 
-That seems reasonable *unless* there is a reliable way to obtain
-a vendor ID from the SMC ABI directly, in which case we should just
-use that.
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-One could debate whether the extra compatible string should have
-"nvidia," or "tl," but the fact that "nvidia" is in the name at all
-pretty much narrows it down.
+(Mike I assume you'll take this through the clock tree)
 
-> 
-> >> +- version : Must contain the version number string of the Trusted Foundation
-> >> +	firmware.
-> > 
-> > Are you sure there is no low-level way to probe vendor and version info?
-> > If there is, then the DT should describe nothing except the fact that
-> > the probe interface exists.
-> > 
-> > I also worry that two integrations on different SoCs might have the
-> > same version number, yet still be different due to vendor-specific
-> > features and options.
-> 
-> Talking of the version - if we do need to represent this in the DT, how
-> about 2 separate cells for major/minor version rather than encoding it
-> into a string? Then, no parsing would be required.
-
-I think the key thing here is to match whatever TF's native notion of
-version is.
-
-If it's truly a string with specific comparison rules, we should leave it
-a string and write code to examine it.  If it's a simple <major minor>
-pair, then putting it in the DT in this form makes sense.
-
-And, as you previosly suggested, if there's a reliable ABI for getting
-the firmware to tell you its version number, we should just use that and
-not describe the version number in the DT at all.
-
-I'm not in a position to answer that one.
-
-If we really have no idea, we'll have to go with a best guess, and
-change the compatible string later if necessary.  But it would be better
-to get it right if we can.
-
-
-If TF has version/vendor probe interfaces but those might be missing/
-broken/wrong, we could still specify "vendor" and "version" properties
-which allow the probed values to be overridden.
-
-Cheers
----Dave
+I do suspect there's some underlying issue that needs fixing so that
+PLL_U does report lock as expected. However, this fix does enable USB to
+work correctly on Tegra30 right now (so I assume it is locking, but just
+isn't reporting it), and should have zero negative fallout since nothing
+else uses PLL_U. I'm following up internally to work out why the PLL
+isn't reporting that it's locking as expected.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
