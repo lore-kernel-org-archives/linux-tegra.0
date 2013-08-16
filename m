@@ -1,35 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH RESEND] clk: tegra30: Don't wait for PLL_U lock bit
-Date: Fri, 16 Aug 2013 10:38:27 -0600
-Message-ID: <520E5583.2080604@wwwdotorg.org>
-References: <1376510979-21562-1-git-send-email-ttynkkynen@nvidia.com> <1376510979-21562-2-git-send-email-ttynkkynen@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [GIT PULL 1/4] ARM: tegra: cleanups for 3.12
+Date: Fri, 16 Aug 2013 11:20:25 -0600
+Message-ID: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376510979-21562-2-git-send-email-ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/14/2013 02:09 PM, Tuomas Tynkkynen wrote:
-> The lock bit on PLL_U does not seem to be working correctly and
-> sometimes never gets set when waiting for the PLL to come up.
-> Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
+This branch includes a single cleanup patch which removes redundant
+error-handling for platform_get_resource().
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+----------------------------------------------------------------
 
-(Mike I assume you'll take this through the clock tree)
+The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
 
-I do suspect there's some underlying issue that needs fixing so that
-PLL_U does report lock as expected. However, this fix does enable USB to
-work correctly on Tegra30 right now (so I assume it is locking, but just
-isn't reporting it), and should have zero negative fallout since nothing
-else uses PLL_U. I'm following up internally to work out why the PLL
-isn't reporting that it's locking as expected.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+  Linux 3.11-rc1
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.12-cleanup
+
+for you to fetch changes up to 946a88df76a2c5a9f4087fb41efd9d2763872302:
+
+  tegra: simplify use of devm_ioremap_resource
+
+----------------------------------------------------------------
+
+Julia Lawall (1):
+      tegra: simplify use of devm_ioremap_resource
+
+ drivers/iommu/tegra-smmu.c  | 2 --
+ drivers/memory/tegra20-mc.c | 2 --
+ drivers/memory/tegra30-mc.c | 2 --
+ 3 files changed, 6 deletions(-)
