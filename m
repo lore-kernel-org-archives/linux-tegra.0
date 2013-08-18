@@ -1,59 +1,52 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/5] ARM: tegra: add support for Trusted Foundations
-Date: Sun, 18 Aug 2013 17:37:00 +0900
-Message-ID: <CAAVeFuJY_UkS8rF=xfB0uEpJp4bZpc77i599bP4qmY9Xr91PSQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v3 4/5] ARM: tegra: set CPU reset handler with firmware op
+Date: Sun, 18 Aug 2013 17:37:08 +0900
+Message-ID: <CAAVeFuJMPZpz4jV4y12P=h-fJ2RSSCrzLWW5Uwges0WZH1Zb2w@mail.gmail.com>
 References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
- <1376360992-1508-3-git-send-email-acourbot@nvidia.com> <520BF8BD.7050706@wwwdotorg.org>
+ <1376360992-1508-5-git-send-email-acourbot@nvidia.com> <520BF94F.60907@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <520BF8BD.7050706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <520BF94F.60907@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>, Joseph Lo <josephl@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 15, 2013 at 6:38 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On Thu, Aug 15, 2013 at 6:40 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 > On 08/12/2013 08:29 PM, Alexandre Courbot wrote:
->> Register the firmware operations for Trusted Foundations if the device
->> tree indicates it is active on the device.
+>> Use a firmware operation to set the CPU reset handler and only resort to
+>> doing it ourselves if there is none defined.
+>>
+>> This supports the booting of secondary CPUs on devices using a TrustZone
+>> secure monitor.
 >
->> diff --git a/arch/arm/mach-tegra/firmware.c b/arch/arm/mach-tegra/firmware.c
+>> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
 >
->> +void __init tegra_init_firmware(void)
->> +{
->> +     struct device_node *node;
->> +
->> +     if (!of_have_populated_dt())
->> +             return;
->
-> That's never false on Tegra, at least upstream.
-
-Will remove, thanks.
-
->> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
->> +     if (node) {
->> +             const char *tf_version;
->> +             int err;
->> +
->> +             err = of_property_read_string(node, "version", &tf_version);
->> +             if (err != 0) {
->> +                     pr_crit("Cannot read Trusted Foundation version: %d\n",
->> +                             err);
->> +                     BUG();
->> +             } else {
->> +                     register_trusted_foundations(tf_version);
->> +             }
+>> +     err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
+>> +     switch (err) {
+>> +     case -ENOSYS:
+>> +             tegra_cpu_reset_handler_set(reset_address);
+>> +             /* pass-through */
+>> +     case 0:
+>> +             is_enabled = true;
+>> +             break;
+>> +     default:
+>> +             pr_crit("Cannot set CPU reset handler: %d\n", err);
+>> +             BUG();
 >> +     }
->> +}
 >
-> I think most/all of that function will be common across all SoCs that
-> support the TF monitor. I think you want to move the code into
-> register_trusted_foundations() (or a function that calls that) in patch 1?
+> Instead of trying and failing, does it make sense to register
+> tegra_cpu_reset_handler_set() as the set_cpu_boot_addr firmware op when
+> there is no firmware present? That would simplify all call-sites of any
+> firmware op.
 
-Agreed. If we push the logic a bit further, we should also have some
-platform parameters for non-DT users, along with an
-of_register_trusted_foundations() for those who prefer DT.
+We discussed that point in v2 already IIRC (that is some time ago).
+The reason I did it this way is because I wanted to follow the way
+Tomasz was using his interface with Exynos - it seemed appropriate
+that all users of an interface use it the same way. But if you prefer
+to use a "non-firmware" firmware_ops for Tegra, I have absolutely
+nothing against this.
 
 Thanks,
 Alex.
