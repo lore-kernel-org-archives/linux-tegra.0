@@ -1,105 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/4] ARM: tegra: device tree changes for 3.12
-Date: Fri, 16 Aug 2013 11:20:27 -0600
-Message-ID: <1376673628-5867-3-git-send-email-swarren@wwwdotorg.org>
-References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 2/5] ARM: tegra: add support for Trusted Foundations
+Date: Sun, 18 Aug 2013 17:37:00 +0900
+Message-ID: <CAAVeFuJY_UkS8rF=xfB0uEpJp4bZpc77i599bP4qmY9Xr91PSQ@mail.gmail.com>
+References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
+ <1376360992-1508-3-git-send-email-acourbot@nvidia.com> <520BF8BD.7050706@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1376673628-5867-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <520BF8BD.7050706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch contains all *.dts (device tree) changes for Tegra.
-New features enabled are:
+On Thu, Aug 15, 2013 at 6:38 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 08/12/2013 08:29 PM, Alexandre Courbot wrote:
+>> Register the firmware operations for Trusted Foundations if the device
+>> tree indicates it is active on the device.
+>
+>> diff --git a/arch/arm/mach-tegra/firmware.c b/arch/arm/mach-tegra/firmware.c
+>
+>> +void __init tegra_init_firmware(void)
+>> +{
+>> +     struct device_node *node;
+>> +
+>> +     if (!of_have_populated_dt())
+>> +             return;
+>
+> That's never false on Tegra, at least upstream.
 
-* PMICs on Dalmore
-* CPU power-gating on Dalmore
-* HDMI output on Beaver
-* LP1 system suspend mode on almost all boards
-* PCIe support on numerous Tegra20/30 boards
-* USB support on Tegra30/114 boards
-* Audio capture on Beaver and Dalmore
-* Temperature sensor on Cardhu.
+Will remove, thanks.
 
-... along with a few DT cleanups.
+>> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+>> +     if (node) {
+>> +             const char *tf_version;
+>> +             int err;
+>> +
+>> +             err = of_property_read_string(node, "version", &tf_version);
+>> +             if (err != 0) {
+>> +                     pr_crit("Cannot read Trusted Foundation version: %d\n",
+>> +                             err);
+>> +                     BUG();
+>> +             } else {
+>> +                     register_trusted_foundations(tf_version);
+>> +             }
+>> +     }
+>> +}
+>
+> I think most/all of that function will be common across all SoCs that
+> support the TF monitor. I think you want to move the code into
+> register_trusted_foundations() (or a function that calls that) in patch 1?
 
-----------------------------------------------------------------
+Agreed. If we push the logic a bit further, we should also have some
+platform parameters for non-DT users, along with an
+of_register_trusted_foundations() for those who prefer DT.
 
-The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
-
-  Linux 3.11-rc1
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.12-dt
-
-for you to fetch changes up to 8af3bbec752902c0480c84613d7f10e22f485977:
-
-  ARM: tegra: add Mic Jack to Dalmore device tree
-
-----------------------------------------------------------------
-
-Jay Agarwal (2):
-      ARM: tegra: Enable PCIe controller on Cardhu
-      ARM: dts: tegra: Increase prefetchable PCI memory space
-
-Joseph Lo (3):
-      ARM: tegra: dalmore: add PM configurations for PMC
-      ARM: tegra: dalmore: fix the irq trigger type of Palmas MFD device
-      ARM: tegra: enable LP1 suspend mode
-
-Laxman Dewangan (3):
-      ARM: tegra: enable gpio-keys on Dalmore
-      ARM: tegra: enable palmas device for dalmore
-      ARM: tegra: define valid function names in DT document
-
-Mikko Perttunen (1):
-      ARM: tegra: add USB DT entries for Tegra114, Dalmore
-
-Stephen Warren (6):
-      ARM: tegra: fix DT node ordering in Tegra30 Cardhu
-      ARM: tegra: remove tegra114-pluto.dts
-      ARM: tegra: use TEGRA_GPIO() in a couple more places
-      ARM: tegra: Fix Beaver's PCIe lane configuration
-      ARM: tegra: add Mic Jack to Beaver device tree
-      ARM: tegra: add Mic Jack to Dalmore device tree
-
-Thierry Reding (8):
-      ARM: tegra: beaver: Enable HDMI output
-      ARM: tegra: Add Tegra20 PCIe support to DT
-      ARM: tegra: tamonten: Add PCIe support
-      ARM: tegra: tec: Add PCIe support
-      ARM: tegra: harmony: Initialize PCIe from DT
-      ARM: tegra: trimslice: Initialize PCIe from DT
-      ARM: tegra: Add Tegra30 PCIe support
-      ARM: tegra: Enable PCIe controller on Beaver
-
-Tuomas Tynkkynen (1):
-      ARM: tegra: add USB DT entries for Tegra30
-
-Wei Ni (1):
-      ARM: tegra: add DT entry for nct1008 to Cardhu
-
- .../bindings/pinctrl/nvidia,tegra114-pinmux.txt |  11 +
- .../bindings/pinctrl/nvidia,tegra20-pinmux.txt  |  11 +
- .../bindings/pinctrl/nvidia,tegra30-pinmux.txt  |  12 +
- arch/arm/boot/dts/Makefile                      |   3 +-
- arch/arm/boot/dts/tegra114-dalmore.dts          | 235 ++++++++++++++++++-
- arch/arm/boot/dts/tegra114-pluto.dts            |  33 ---
- arch/arm/boot/dts/tegra114.dtsi                 |  62 +++++
- arch/arm/boot/dts/tegra20-colibri-512.dtsi      |   2 +-
- arch/arm/boot/dts/tegra20-harmony.dts           |  22 +-
- arch/arm/boot/dts/tegra20-paz00.dts             |   2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts          |   4 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi         |  19 +-
- arch/arm/boot/dts/tegra20-tec.dts               |   8 +
- arch/arm/boot/dts/tegra20-trimslice.dts         |  32 ++-
- arch/arm/boot/dts/tegra20-ventana.dts           |   2 +-
- arch/arm/boot/dts/tegra20-whistler.dts          |   2 +-
- arch/arm/boot/dts/tegra20.dtsi                  |  55 +++++
- arch/arm/boot/dts/tegra30-beaver.dts            |  64 ++++-
- arch/arm/boot/dts/tegra30-cardhu.dtsi           |  64 +++--
- arch/arm/boot/dts/tegra30.dtsi                  | 156 ++++++++++++
- 20 files changed, 728 insertions(+), 71 deletions(-)
- delete mode 100644 arch/arm/boot/dts/tegra114-pluto.dts
+Thanks,
+Alex.
