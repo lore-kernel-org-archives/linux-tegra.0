@@ -1,106 +1,84 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
-Date: Mon, 19 Aug 2013 09:56:46 -0600
-Message-ID: <5212403E.9070304@wwwdotorg.org>
-References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com> <1376360992-1508-2-git-send-email-acourbot@nvidia.com> <520BF835.5080309@wwwdotorg.org> <CAAVeFuJ9tgXRf+QZRK5K8O2X=mKxUZtFgTsB06r4huQrDwZx2A@mail.gmail.com>
+From: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 08/14] gpu: host1x: Port the HDMI vendor infoframe code the common helpers
+Date: Mon, 19 Aug 2013 16:58:59 +0100
+Message-ID: <1376927945-26635-9-git-send-email-damien.lespiau@intel.com>
+References: <1376927945-26635-1-git-send-email-damien.lespiau@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJ9tgXRf+QZRK5K8O2X=mKxUZtFgTsB06r4huQrDwZx2A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1376927945-26635-1-git-send-email-damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/18/2013 02:37 AM, Alexandre Courbot wrote:
-> On Thu, Aug 15, 2013 at 6:35 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 08/12/2013 08:29 PM, Alexandre Courbot wrote:
->>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->>> can be invoked  using a consistent smc-based API on all supported
->>> platforms. This patch adds initial basic support for Trusted
->>> Foundations using the ARM firmware API. Current features are limited
->>> to the ability to boot secondary processors.
->>
->>> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
->>
->>> +Trusted Foundations
->>> +
->>> +Boards that use the Trusted Foundations secure monitor can signal its
->>> +presence by declaring a node compatible with "tl,trusted-foundations"
->>> +(the name and location of the node does not matter).
->>> +
->>> +Required properties:
->>> +- compatible : "tl,trusted-foundations"
->>
->>> +- version : Must contain the version number string of the Trusted Foundation
->>> +     firmware.
->>
->> Can the version be queried at run-time from the firmware itself?
-> 
-> I'm afraid there is not, unfortunately. :/
-> 
->> If not, I wonder if we shouldn't instead encode the version number into
->> the compatible value.
-> 
-> Why? This would make the node harder to find and would also complicate
-> the case where a given firmware handler can support a given range of
-> versions (which is what I expect will happen).
+I just wrote the bits to define and pack HDMI vendor specific infoframe=
+=2E
+Port the host1x driver to use those so I can refactor the infoframe cod=
+e
+a bit more.
 
-I guess that would be painful. There are probably a lot more valid
-version numbers for a SW firmware interface than there are for a HW IP
-block interface, so it makes less sense to encoded the version into the
-compatible value, at least in cases where the interface is "similar
-enough"; we can add some kind of basic version number into the
-compatible values for radically different interfaces if they appear in
-the future.
+This changes the length of the infoframe payload from 6 to 5, which is
+enough for the "frame packing" stereo format.
 
->>> diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
->>
->>> +config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
->>> +     bool
->>
->> Shouldn't that be "config ARCH_SUPPORTS_FIRMWARE", since presumably in
->> the future there will be more entries in the menu, and hence we want the
->> menu to appear if any of those entries are useful?
-> 
-> The things is that because you support one firmware does not mean you
-> will support then all. Only some set of architectures will support
-> firmware X, and another set (maybe not inclusive) will support
-> firmware Y. We do not want to allow selecting firmware Y if the kernel
-> does not support any of the architectures that may make use of it.
-> 
->>> +
->>> +menu "Firmware options"
->>> +     depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
->>
->> Or perhaps that comment is more appropriate for that "depends".
-> 
-> Here the idea is to not show the "Firmware options" menu if the kernel
-> does not include support for any architecture that uses them. As more
-> firmwares get added, the depends line should expand into something
-> like "depends on ARCH_SUPPORTS_FIRMWARE_X || ARCH_SUPPORTS_FIRMWARE_Y
-> || ...
-> 
-> Maybe there's a better way to express this?
+v2: Pimp up the commit message with the note about the length
+    (Ville Syrj=C3=A4l=C3=A4)
 
-Is there a need for a menu at all? I suppose it might group things
-nicely. If so, how about:
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-config ARCH_SUPPORTS_FIRMWARE
-	bool
+Signed-off-by: Damien Lespiau <damien.lespiau-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/host1x/drm/hdmi.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
-	bool
-	select ARCH_SUPPORTS_FIRMWARE
-
-config ARCH_SUPPORTS_SOME_OTHER_FW
-	bool
-	select ARCH_SUPPORTS_FIRMWARE
-
-menu "Firmware options"
-	depends on ARCH_SUPPORTS_FIRMWARE
-
-That's probably slightly easier to read than a huge "depends" statement
-in the menu stanza, and ARCH_SUPPORTS_FIRMWARE might be a useful to
-build in support for any core firmware utility code.
+diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
+i.c
+index 01097da..b548918 100644
+--- a/drivers/gpu/host1x/drm/hdmi.c
++++ b/drivers/gpu/host1x/drm/hdmi.c
+@@ -539,7 +539,7 @@ static void tegra_hdmi_setup_audio_infoframe(struct=
+ tegra_hdmi *hdmi)
+=20
+ static void tegra_hdmi_setup_stereo_infoframe(struct tegra_hdmi *hdmi)
+ {
+-	struct hdmi_vendor_infoframe frame;
++	struct hdmi_hdmi_infoframe frame;
+ 	unsigned long value;
+ 	u8 buffer[10];
+ 	ssize_t err;
+@@ -551,26 +551,10 @@ static void tegra_hdmi_setup_stereo_infoframe(str=
+uct tegra_hdmi *hdmi)
+ 		return;
+ 	}
+=20
+-	memset(&frame, 0, sizeof(frame));
++	hdmi_hdmi_infoframe_init(&frame);
++	frame.s3d_struct =3D HDMI_3D_STRUCTURE_FRAME_PACKING;
+=20
+-	frame.type =3D HDMI_INFOFRAME_TYPE_VENDOR;
+-	frame.version =3D 0x01;
+-	frame.length =3D 6;
+-
+-	frame.data[0] =3D 0x03; /* regid0 */
+-	frame.data[1] =3D 0x0c; /* regid1 */
+-	frame.data[2] =3D 0x00; /* regid2 */
+-	frame.data[3] =3D 0x02 << 5; /* video format */
+-
+-	/* TODO: 74 MHz limit? */
+-	if (1) {
+-		frame.data[4] =3D 0x00 << 4; /* 3D structure */
+-	} else {
+-		frame.data[4] =3D 0x08 << 4; /* 3D structure */
+-		frame.data[5] =3D 0x00 << 4; /* 3D ext. data */
+-	}
+-
+-	err =3D hdmi_vendor_infoframe_pack(&frame, buffer, sizeof(buffer));
++	err =3D hdmi_hdmi_infoframe_pack(&frame, buffer, sizeof(buffer));
+ 	if (err < 0) {
+ 		dev_err(hdmi->dev, "failed to pack vendor infoframe: %zd\n",
+ 			err);
+--=20
+1.8.3.1
