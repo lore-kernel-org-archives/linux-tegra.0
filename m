@@ -1,54 +1,35 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: question on possible i2c slave configuration
-Date: Mon, 19 Aug 2013 12:16:07 +0530
-Message-ID: <5211BF2F.1010309@nvidia.com>
-References: <1674757.GDNdpd4ScH@fb07-iapwap2.physik.uni-giessen.de>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: tegra: configure power off for Dalmore
+Date: Sun, 18 Aug 2013 23:33:48 -0700
+Message-ID: <1376894028-30060-1-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1674757.GDNdpd4ScH-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marc,
-Sorry for late response, I was on vacation.
+Add DT property to tell the regulator to register pm_power_off to make
+"shutdown" work.
 
-On Tuesday 13 August 2013 07:46 PM, Marc Dietrich wrote:
-> Hi Laxman,
->
-> Stephen and me were discussing about the possible configuration of the i2c
-> slave controller. The question here is if the slave and the master controller
-> of the same port (or instance) can act in parallel.
+Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Yes, they can work in parallel. Infact we also tested the loopback 
-(internal) from master to slave for same instance controller.
-
-Bot engine (Master and slave) shared the interrupt number, clock bit and 
-clock source, reset bit, and some controller registers.
-So if we handle the sharing of this stuff then it is fine to use in 
-parallel.
-
-
->
-> This is of particular interest when it comes to device tree representation.
-> The Tegra3 TRM mentions a that the master can address its own slave for
-> testing purposes. Also the i2c block diagram suggests that there are two
-> controllers (for master and slave) connected to the same bus.
-
-Yes, this is very much supported and we have simple testcases for this.
-
-
-> If this is the case, master and slave mode is not exclusive, or in other
-> words, the i2c master and slave need to share their resources.
-
-Yes, it is not exclusive and share some common resources as mentioned above.
-
-> Another question is (because this would add a lot of code complexity) if we
-> want to allow such a configuration at all.
-
-In Tegra context, we did not use the master and slave together as these 
-makes the sw unnecessarily complex. We used in either in master or in 
-slave only.
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 45056a2..6023028 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -845,6 +845,8 @@
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+ 
++			ti,system-power-controller;
++
+ 			palmas_gpio: gpio {
+ 				compatible = "ti,palmas-gpio";
+ 				gpio-controller;
+-- 
+1.7.9.5
