@@ -1,26 +1,55 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Date: Mon, 19 Aug 2013 14:04:24 -0600
-Message-ID: <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH tegra-cbootimage] Add automake option subdir-objects to
+ prevent warnings
+Date: Mon, 19 Aug 2013 13:08:22 -0700
+Message-ID: <20130819200822.GA13707@badger>
+References: <ba99c86b9074ac9053f665350e6b4985@agner.ch>
+ <20130723154918.GB2864@dhcp-172-17-186-34.nvidia.com>
+ <51FAC272.8040105@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130819120249.GA5740@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51FAC272.8040105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
+On Thu, Aug 01, 2013 at 01:17:54PM -0700, Stephen Warren wrote:
+> On 07/23/2013 09:49 AM, Thierry Reding wrote:
+> > On Sun, Jul 21, 2013 at 11:25:28PM +0200, Stefan Agner wrote:
+> >> The SoC specific code is in subdirectories which leads to
+> >> warnings in newer automake versions. The option subdir-objects
+> >> prevents those warnings.
+> >> 
+> >> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org> --- src/Makefile.am
+> >> | 2 ++ 1 file changed, 2 insertions(+)
+> >> 
+> >> diff --git a/src/Makefile.am b/src/Makefile.am index
+> >> 6fcc0d8..6fecfc7 100644 --- a/src/Makefile.am +++
+> >> b/src/Makefile.am @@ -1,3 +1,5 @@ +AUTOMAKE_OPTIONS =
+> >> subdir-objects + AM_CFLAGS = -Wall -std=c99
+> >> 
+> >> bin_PROGRAMS = cbootimage bct_dump
+> > 
+> > Hi Stefan,
+> > 
+> > Thanks for the patch. Generally this looks good to me, though
+> > automake now complains:
+> > 
+> > src/Makefile.am:36: compiling `t114/parse_t114.c' in subdir
+> > requires `AM_PROG_CC_C_O' in `configure.ac'
+> > 
+> > Which can quite easily be solved by adding that line in
+> > configure.ac. Immediately following the AC_PROG_CC looks like a
+> > good place for it.
+> 
+> Stefan, are you planning on revising the patch based on Thierry's
+> suggestion?
 
-> Bjorn, how do you want to handle patches to the Tegra PCIe driver in the
-> future? Do you want me to prepare a branch and pull from that or would
-> you rather just take simple patches?
+Hi, what's the status of this patch?  Is there a version 2 to review?
 
-I'm in the habit of applying patches from email, so that's easy for
-me.  But a branch would be OK, too.
-
-Bjorn
+-Allen
+-- 
+nvpublic
