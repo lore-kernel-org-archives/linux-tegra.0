@@ -1,57 +1,55 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH RESEND] i2c: move of helpers into the core
-Date: Mon, 19 Aug 2013 20:56:33 +0200
-Message-ID: <20130819185633.GA12011@katana>
-References: <1376918361-7014-1-git-send-email-wsa@the-dreams.de>
- <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
- <5212624D.5090708@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
+Date: Mon, 19 Aug 2013 13:21:25 -0600
+Message-ID: <52127035.7000909@wwwdotorg.org>
+References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9jxsPFA5p3P2qPhR"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5212624D.5090708-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+In-Reply-To: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
+Sender: linux-next-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/17/2013 08:56 AM, Linus Walleij wrote:
+> We currently defer probing of the caller if a pinctrl GPIO
+> request or direction setting comes in before the range mapping
+> a certain GPIO to a certain pin controller is available.
+> 
+> This can end up with a circular dependency: the GPIO driver
+> needs the pin controller to be ready and the pin controller
+> need the GPIO driver to be ready. This also happens if
+> pin controllers and GPIO controllers compiled as modules
+> are inserted in a certain order.
+> 
+> To break this circular dependence, queue any GPIO
+> operations coming to the framework until the range is ready,
+> instead of deferring the probe of the caller.
 
---9jxsPFA5p3P2qPhR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I just noticed that next-20130819 is failing on the Tegra114 Dalmore
+board because of this patch. The kernel log is below. Reverting this
+patch solves the problem
 
-
-> However this patch fails to apply onto either v3.11-rc4 or v3.11-rc6:
-
-Argh, did not drop the MPC patch before rebasing :( So either pick the
-patch "i2c: powermac: fix return path on error" before, pull the branch
-[1], or force me to resend ;)
-
-Thanks!
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/core-with-of
-
---9jxsPFA5p3P2qPhR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSEmphAAoJEBQN5MwUoCm2oSMQALA/vPFqMuszNie+wpNeFLTx
-ndq9K7tvwvyV6ix/QtfrneDKM17i0G/OljSqOXMuO3YddSvGKIvs956j6te7Tor0
-INyTIzc59ycgiF10Zt6egrZOa4CTwka0IyozuU9tiue9VIIL2u4SnTkS7aEOH7rI
-rSFgyaDAFjvcMLAVrw/nsTcM5GRLVsFwZJklQ4m5m6ntXOs8cVDsEhkFUbMabLEA
-ITNMspH4KtEQr3v5ij+tl6rhUGJzWu8IARf4C7f8Gxas3y8NuADXlXgFjtd5xccR
-6Qgex4Wuv9yOLK9oCiXHrg3J7iXR46po/VM5BEHxT013Wxde8784u8Hv8FaPxC9r
-r1FkkadCnWaJWe0nIq2eFTU6pECwuSBT3Bu5d4kOrhr4S3a9Z+3s4KpmWZEmaNkz
-nN5hBURGFQIdLY7BzGJWiBRLqa7kq97ATfMr9N9Pg7Rpqa9TezMDF2Sm5DP2p0Ha
-fR764qsVds2fPT8+DIEnNiwfgBFJYcXhV0yv5T5pkncE5C6x6RQoK+RmRXMPO8hx
-l3xL9yV9GHVITzzgah/uaCKHCh7dboPYlKoiEqwHb0GxGbaEq3kMqaJ0D99mIss+
-k9sAe3Nfq02mwMN+2pGEZX7Rzs3d4CD84Yi0NC/csPSzkAHuC0qD1qdEw9nGrw4v
-ptWWV5ABSl7wqbZKZ0Rc
-=96ic
------END PGP SIGNATURE-----
-
---9jxsPFA5p3P2qPhR--
+> [   12.427751] tegra114-pinctrl 70000868.pinmux: pin USB_VBUS_EN0 PN4 already requested by Tegra GPIOs:108; cannot claim for Tegra GPIOs:108
+> [   12.440320] tegra114-pinctrl 70000868.pinmux: pin-108 (Tegra GPIOs:108) status -22
+> [   12.447965] usb1_vbus: Failed to request enable GPIO108: -22
+> [   12.454306] reg-fixed-voltage 3.regulator: Failed to register regulator: -22
+> [   12.461508] reg-fixed-voltage: probe of 3.regulator failed with error -22
+> [   12.469659] tegra114-pinctrl 70000868.pinmux: pin SPDIF_IN PK6 already requested by Tegra GPIOs:86; cannot claim for Tegra GPIOs:86
+> [   12.481606] tegra114-pinctrl 70000868.pinmux: pin-86 (Tegra GPIOs:86) status -22
+> [   12.489052] usb2_vbus: Failed to request enable GPIO86: -22
+> [   12.495226] reg-fixed-voltage 4.regulator: Failed to register regulator: -22
+> [   12.502449] reg-fixed-voltage: probe of 4.regulator failed with error -22
+> [   12.510542] tegra114-pinctrl 70000868.pinmux: pin GMI_CLK PK1 already requested by Tegra GPIOs:81; cannot claim for Tegra GPIOs:81
+> [   12.522403] tegra114-pinctrl 70000868.pinmux: pin-81 (Tegra GPIOs:81) status -22
+> [   12.529896] vdd_hdmi_5v0: Failed to request enable GPIO81: -22
+> [   12.536281] reg-fixed-voltage 5.regulator: Failed to register regulator: -22
+> [   12.543465] reg-fixed-voltage: probe of 5.regulator failed with error -22
+> [   12.552509] vdd_cam_1v8_reg: 1800 mV 
+> [   12.558205] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
+> [   12.566600] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
+> [   12.577475] input: gpio-keys.2 as /devices/soc0/gpio-keys.2/input/input1
+> [   12.588329] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
+> [   12.596967] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
