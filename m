@@ -1,111 +1,54 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
-Date: Sun, 18 Aug 2013 17:38:16 +0900
-Message-ID: <CAAVeFuK612z6sYYBQNrbV=x3_Uy91qqusW4G+=yNVg4tMbV2Kg@mail.gmail.com>
-References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com>
- <1376360992-1508-2-git-send-email-acourbot@nvidia.com> <20130815115227.GC2562@localhost.localdomain>
- <520D500C.5070901@wwwdotorg.org> <20130816132326.GC2909@localhost.localdomain>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: question on possible i2c slave configuration
+Date: Mon, 19 Aug 2013 12:16:07 +0530
+Message-ID: <5211BF2F.1010309@nvidia.com>
+References: <1674757.GDNdpd4ScH@fb07-iapwap2.physik.uni-giessen.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130816132326.GC2909-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+In-Reply-To: <1674757.GDNdpd4ScH-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 16, 2013 at 10:23 PM, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org> wrote:
-> On Thu, Aug 15, 2013 at 04:02:52PM -0600, Stephen Warren wrote:
->> On 08/15/2013 05:52 AM, Dave Martin wrote:
->> > On Tue, Aug 13, 2013 at 11:29:48AM +0900, Alexandre Courbot wrote:
->> >> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->> >> can be invoked  using a consistent smc-based API on all supported
->> >> platforms. This patch adds initial basic support for Trusted
->> >> Foundations using the ARM firmware API. Current features are limited
->> >> to the ability to boot secondary processors.
->>
->> >> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
->>
->> >> +Required properties:
->> >> +- compatible : "tl,trusted-foundations"
->> >> +- version : Must contain the version number string of the Trusted Foundation
->> >> +  firmware.
->> >
->> > Are you sure there is no low-level way to probe vendor and version info?
->> > If there is, then the DT should describe nothing except the fact that
->> > the probe interface exists.
->> >
->> > I also worry that two integrations on different SoCs might have the
->> > same version number, yet still be different due to vendor-specific
->> > features and options.
->>
->> I would expect HW-specific compatible values also to be present in a DT.
->> For example, perhaps:
->>
->> compatible = "tl,trusted-foundations-nvidia-shield",
->> "tl,trusted-foundations";
->>
->> (nvidia vendor, shield board/implementation)
->>
->> This would allow matching on the specific value
->> "tl,trusted-foundations-nvidia-shield" in the future if some quirking
->> was needed, but if this wasn't needed, drivers could just bind to the
->> generic "tl,trusted-foundations".
+Hi Marc,
+Sorry for late response, I was on vacation.
+
+On Tuesday 13 August 2013 07:46 PM, Marc Dietrich wrote:
+> Hi Laxman,
 >
-> That seems reasonable *unless* there is a reliable way to obtain
-> a vendor ID from the SMC ABI directly, in which case we should just
-> use that.
+> Stephen and me were discussing about the possible configuration of the i2c
+> slave controller. The question here is if the slave and the master controller
+> of the same port (or instance) can act in parallel.
+
+Yes, they can work in parallel. Infact we also tested the loopback 
+(internal) from master to slave for same instance controller.
+
+Bot engine (Master and slave) shared the interrupt number, clock bit and 
+clock source, reset bit, and some controller registers.
+So if we handle the sharing of this stuff then it is fine to use in 
+parallel.
+
+
 >
-> One could debate whether the extra compatible string should have
-> "nvidia," or "tl," but the fact that "nvidia" is in the name at all
-> pretty much narrows it down.
->
->>
->> >> +- version : Must contain the version number string of the Trusted Foundation
->> >> +  firmware.
->> >
->> > Are you sure there is no low-level way to probe vendor and version info?
->> > If there is, then the DT should describe nothing except the fact that
->> > the probe interface exists.
->> >
->> > I also worry that two integrations on different SoCs might have the
->> > same version number, yet still be different due to vendor-specific
->> > features and options.
->>
->> Talking of the version - if we do need to represent this in the DT, how
->> about 2 separate cells for major/minor version rather than encoding it
->> into a string? Then, no parsing would be required.
->
-> I think the key thing here is to match whatever TF's native notion of
-> version is.
->
-> If it's truly a string with specific comparison rules, we should leave it
-> a string and write code to examine it.  If it's a simple <major minor>
-> pair, then putting it in the DT in this form makes sense.
+> This is of particular interest when it comes to device tree representation.
+> The Tegra3 TRM mentions a that the master can address its own slave for
+> testing purposes. Also the i2c block diagram suggests that there are two
+> controllers (for master and slave) connected to the same bus.
 
-TF's native version is this major/minor pair, and indeed it should be
-sensible and harmless to turn it into a pair of cells.
+Yes, this is very much supported and we have simple testcases for this.
 
-Then there are other components that can be added to build a more
-precise "version string". You can have a look at this file to see how
-this is done:
 
-http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=blob;f=security/tf_driver/s_version.h;h=d75c5f35d32d597b664c9533b1c5a52696e81b49;hb=rel-roth-ota-1
+> If this is the case, master and slave mode is not exclusive, or in other
+> words, the i2c master and slave need to share their resources.
 
-The version string I used to far is the S_VERSION_MAIN macro, since it
-is the only one that seems to be platform-independant.
-S_VERSION_PLATFORM and S_VERSION_OS can be used to indentify if
-Android is used and which version. Then all these strings (plus a few
-others) are concatenated to build S_VERSION_STRING which is the
-ultimate version, but also considerably more complicated to handle.
+Yes, it is not exclusive and share some common resources as mentioned above.
 
-At the current level of support, I don't think it makes sense to look
-further than S_VERSION_MAIN for the moment. If we switch it to a pair
-of integer cells as Stephen suggested, nothing prevents us to extend
-the bindings with other properties (for instance version-platform and
-version-os) if they become necessary. But at the moment I don't think
-it makes sense to overthink versions beyond the main version number,
-especially if it can be extended safely if needed in the future.
+> Another question is (because this would add a lot of code complexity) if we
+> want to allow such a configuration at all.
 
-Thanks,
-Alex.
+In Tegra context, we did not use the master and slave together as these 
+makes the sw unnecessarily complex. We used in either in master or in 
+slave only.
