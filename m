@@ -1,105 +1,81 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
- devm_ioremap_resource
-Date: Mon, 19 Aug 2013 21:33:40 +0200
-Message-ID: <20130819193339.GB4961@mithrandir>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
- <20130819120249.GA5740@ulmo>
- <alpine.DEB.2.02.1308191405450.2313@hadrien>
- <20130819121238.GB5740@ulmo>
- <alpine.DEB.2.02.1308191414360.2313@hadrien>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH RESEND] i2c: move of helpers into the core
+Date: Mon, 19 Aug 2013 21:46:04 +0200
+Message-ID: <20130819194603.GC4961@mithrandir>
+References: <1376918361-7014-1-git-send-email-wsa@the-dreams.de>
+ <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.02.1308191414360.2313@hadrien>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-media-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---b5gNqxB1S1yM7hjW
+--TYecfFk8j8mZq+dy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2013 at 02:15:39PM +0200, Julia Lawall wrote:
->=20
->=20
-> On Mon, 19 Aug 2013, Thierry Reding wrote:
->=20
-> > On Mon, Aug 19, 2013 at 02:07:54PM +0200, Julia Lawall wrote:
-> > >
-> > >
-> > > On Mon, 19 Aug 2013, Thierry Reding wrote:
-> > >
-> > > > On Mon, Aug 19, 2013 at 01:20:35PM +0200, Julia Lawall wrote:
-> > > > > From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> > > > >
-> > > > > Use devm_ioremap_resource instead of devm_request_and_ioremap.
-> > > > >
-> > > > > This was done using the semantic patch
-> > > > > scripts/coccinelle/api/devm_ioremap_resource.cocci
-> > > > >
-> > > > > Error-handling code was manually removed from the associated call=
-s to
-> > > > > platform_get_resource.
-> > > > >
-> > > > > Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> > > > >
-> > > > > ---
-> > > > > The first block of modified code is followed by a call to
-> > > > > devm_request_mem_region for pcie->cs with no associated ioremap. =
- Should
-> > > > > ioremap be used in this case as well?
-> > > >
-> > > > No. The pcie->cs resource is 256 MiB so it's challenging to map it =
-at
-> > > > once. Furthermore it requires a non-linear mapping so we do it on
-> > > > demand.
-> > >
-> > > OK, thanks for the explanation.  Is the comment, though, a little
-> > > misleading, since the mapping is not done here?
-> > >
-> > > /* request and remap configuration space */
-> >
-> > Yes, that's misleading. Given that it doesn't really add anything useful
-> > information either, perhaps I should just remove it.
->=20
-> OK, or maybe something like
->=20
-> /* request configuration space, but remap later, on demand */
->=20
-> To make it clear that something different is intended than the
-> devm_ioremap_resources that come just before..
+On Mon, Aug 19, 2013 at 07:59:40PM +0200, Wolfram Sang wrote:
+[...]
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+[...]
+> +#if IS_ENABLED(CONFIG_OF)
+> +static void of_i2c_register_devices(struct i2c_adapter *adap)
+> +{
+[...]
+> +}
+[...]
+> +#endif /* CONFIG_OF */
 
-Yes, that works for me too. Can you respin the patch with the comment
-updated and my Acked-by and Tested-by so Bjorn can pick it up?
+Isn't this missing the dummy implementation for !OF.
+
+>  static int i2c_do_add_adapter(struct i2c_driver *driver,
+>  			      struct i2c_adapter *adap)
+>  {
+> @@ -1058,6 +1160,8 @@ static int i2c_register_adapter(struct i2c_adapter =
+*adap)
+> =20
+>  exit_recovery:
+>  	/* create pre-declared device nodes */
+> +	of_i2c_register_devices(adap);
+
+Alternatively you could remove the of_i2c_register_devices() from the
+"#ifdef CONFIG_OF" block so that it will always be compiled. You could
+turn the above into
+
+	if (IS_ENABLED(CONFIG_OF))
+		of_i2c_register_devices(adap);
+
+and let the compiler throw the static function away if it sees that the
+condition is always false.
 
 Thierry
 
---b5gNqxB1S1yM7hjW
+--TYecfFk8j8mZq+dy
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSEnMTAAoJEN0jrNd/PrOhXm0P/Aq1cDNbUVylWq4kk1+i8YD5
-W6NdJOrjZyYk5YH7PI4w0hIrtTbWWmun+SrWjXZvLOZF83DOxhXwrCeksQrINY8A
-C5GSRxzTq/7utJDZNZGDZa8meBVTFPlyP40fvBan5BYLDr1qkIht0IMZDojK1HLR
-bH5iRTAe6d5/Dowqj1kQKCqa7NG4W0Oo9X4uDirHo4f24vQIx1g21ZOb9XTFOdDE
-J3nRNGcCglbqUi4DTiaAikU27QvUSoX4Dx04lZOaBsKHHh4hNBjOMKfi+PPeLJl+
-OS3thlgCyznonXGCMV+6gMCZhdZTyOhecFacENfJLJF08dneqMaKzy/qNsUXgDHQ
-IXCtryAd8mwhcP0HcX78eaBWlVs6NAy6hVMyGK9QXkbw0JQ5+JHAltuKn6IsCytH
-K2XXnrqA4L+1t/yB7IfjJfwHC2ry7q1zCpQNFSP8M0cA4NaCMnL7M77TtTk+1Mm1
-ycAM1DH8lk5PJSFBxT2pXMmBgBLGWHcL8B2ghZwMtVxDv6qyX2HOEcehEJyiKzNy
-kojKCELRy9AeeqGVlygRT6ui1CRCu41JJTikxIPmMF7AuDcuFUjpmWtZEcjY67CU
-I4l0i3C75coEnXKB3qofU6M9pNFyenlr+Yyl+v8IV7Rowy9M75q+BaEklohRvxEN
-SBXOzFok/8xXdwiF/z91
-=Wcy4
+iQIcBAEBAgAGBQJSEnX7AAoJEN0jrNd/PrOhtxEP/2Ulur33dk711CAHb3j6OaCw
+JZ633M09rA84w4ngGfFM/2IfZFUBeqoyQ7wDnrtW7N89A+COpTqCAOpqo1LQ4WdU
+aehQXm1JyGXPiKb9hvgNXfL9Xz5U1VALvivFJs4kroXVIUlceGmoBZ/ywXYp8SH3
+0C9ClEkxCyvzaIBVmuwDVYZrr42pQduXnbTa/AwwIDlYcUfhELm8a3vfxteP3d9d
+pjrqsxmhTgGHoVp2EvGKXacaf2ISiwMe/FUK1dSrbRf69TU9KTVnUh8eIPlBCJ8s
+bjolz/LfRakgSmQpnzru+3apNnpkPOqApQhWd15E2o2ZUM0XRQx1ratt+meZEbbZ
+GWZj4jPeXWSDWkxtQwFgtPlltyMzJ11AvMxpgs93hjNmdDsjH5uPbrC5Cvz2S2MC
+UB5QOBMRb+DcdQhb72cg4GSiSv08loIFwRQb3lPuDQe2CzbcinHvTUANlzQXKmnF
+R8ZZ2UL1akR3zULh7CmzvQzNHplLOuS4T/J1gu9V7EhOJs2I7xWcoHqCVsqhfIk7
+MGSyYf7te7elOJKNomD/v22ojmbcmPapAf1yn1GBr74mk2t8SdH/QszRMem27oh5
+iL1yw/CIktcr6/EhOlQjIePBum4yQNAxnbtfbFc9ZBkLpR9YsDOw/CE7gEDQargW
+H56h2el3+6kiSlao+UmT
+=ukb7
 -----END PGP SIGNATURE-----
 
---b5gNqxB1S1yM7hjW--
+--TYecfFk8j8mZq+dy--
