@@ -1,49 +1,106 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/5] clk: tegra: Add reset only clock node flag and COP
-Date: Mon, 19 Aug 2013 17:53:53 +0300
-Message-ID: <20130819145353.GP18810@tbergstrom-lnx.Nvidia.com>
-References: <1375874709-10438-1-git-send-email-markz@nvidia.com>
- <1375874709-10438-2-git-send-email-markz@nvidia.com>
- <52027C9B.2030009@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 1/5] ARM: add basic Trusted Foundations support
+Date: Mon, 19 Aug 2013 09:56:46 -0600
+Message-ID: <5212403E.9070304@wwwdotorg.org>
+References: <1376360992-1508-1-git-send-email-acourbot@nvidia.com> <1376360992-1508-2-git-send-email-acourbot@nvidia.com> <520BF835.5080309@wwwdotorg.org> <CAAVeFuJ9tgXRf+QZRK5K8O2X=mKxUZtFgTsB06r4huQrDwZx2A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52027C9B.2030009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAAVeFuJ9tgXRf+QZRK5K8O2X=mKxUZtFgTsB06r4huQrDwZx2A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 07, 2013 at 06:58:03PM +0200, Stephen Warren wrote:
-> On 08/07/2013 05:25 AM, Mark Zhang wrote:
-> > From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > COP is a reset only clock. So this patch adds NO_CLK support
-> > then adds the COP clock.
+On 08/18/2013 02:37 AM, Alexandre Courbot wrote:
+> On Thu, Aug 15, 2013 at 6:35 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 08/12/2013 08:29 PM, Alexandre Courbot wrote:
+>>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>>> can be invoked  using a consistent smc-based API on all supported
+>>> platforms. This patch adds initial basic support for Trusted
+>>> Foundations using the ARM firmware API. Current features are limited
+>>> to the ability to boot secondary processors.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+>>
+>>> +Trusted Foundations
+>>> +
+>>> +Boards that use the Trusted Foundations secure monitor can signal its
+>>> +presence by declaring a node compatible with "tl,trusted-foundations"
+>>> +(the name and location of the node does not matter).
+>>> +
+>>> +Required properties:
+>>> +- compatible : "tl,trusted-foundations"
+>>
+>>> +- version : Must contain the version number string of the Trusted Foundation
+>>> +     firmware.
+>>
+>> Can the version be queried at run-time from the firmware itself?
 > 
-> Do we actually need this clock upstream yet?
+> I'm afraid there is not, unfortunately. :/
 > 
-> IIRC, Prashant was working on implementing the common reset API, so I'd
-> prefer not to add any reset-only "clocks" to the clock driver, but
-> rather to simply make sure that the new reset driver exposes them.
+>> If not, I wonder if we shouldn't instead encode the version number into
+>> the compatible value.
 > 
+> Why? This would make the node harder to find and would also complicate
+> the case where a given firmware handler can support a given range of
+> versions (which is what I expect will happen).
 
-It would be better if we can switch to the reset API.
+I guess that would be painful. There are probably a lot more valid
+version numbers for a SW firmware interface than there are for a HW IP
+block interface, so it makes less sense to encoded the version into the
+compatible value, at least in cases where the interface is "similar
+enough"; we can add some kind of basic version number into the
+compatible values for radically different interfaces if they appear in
+the future.
 
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+>>> diff --git a/arch/arm/firmware/Kconfig b/arch/arm/firmware/Kconfig
+>>
+>>> +config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
+>>> +     bool
+>>
+>> Shouldn't that be "config ARCH_SUPPORTS_FIRMWARE", since presumably in
+>> the future there will be more entries in the menu, and hence we want the
+>> menu to appear if any of those entries are useful?
 > 
-> >  enum tegra114_clk {
-> > -	rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
-> > +	cop = 1, rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
+> The things is that because you support one firmware does not mean you
+> will support then all. Only some set of architectures will support
+> firmware X, and another set (maybe not inclusive) will support
+> firmware Y. We do not want to allow selecting firmware Y if the kernel
+> does not support any of the architectures that may make use of it.
 > 
-> To make this change, you would also need to edit
-> include/dt-bindings/clock/tegra114-car.h. BTW, why doesn't the Tegra
-> clock driver include that file rather than defining its own enum?
+>>> +
+>>> +menu "Firmware options"
+>>> +     depends on ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
+>>
+>> Or perhaps that comment is more appropriate for that "depends".
+> 
+> Here the idea is to not show the "Firmware options" menu if the kernel
+> does not include support for any architecture that uses them. As more
+> firmwares get added, the depends line should expand into something
+> like "depends on ARCH_SUPPORTS_FIRMWARE_X || ARCH_SUPPORTS_FIRMWARE_Y
+> || ...
+> 
+> Maybe there's a better way to express this?
 
-History. include/dt-bindings/clock/tegra114-car.h didn't exist when
-clk-tegra114.c was written.
+Is there a need for a menu at all? I suppose it might group things
+nicely. If so, how about:
 
-Cheers,
+config ARCH_SUPPORTS_FIRMWARE
+	bool
 
-Peter.
+config ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
+	bool
+	select ARCH_SUPPORTS_FIRMWARE
+
+config ARCH_SUPPORTS_SOME_OTHER_FW
+	bool
+	select ARCH_SUPPORTS_FIRMWARE
+
+menu "Firmware options"
+	depends on ARCH_SUPPORTS_FIRMWARE
+
+That's probably slightly easier to read than a huge "depends" statement
+in the menu stanza, and ARCH_SUPPORTS_FIRMWARE might be a useful to
+build in support for any core firmware utility code.
