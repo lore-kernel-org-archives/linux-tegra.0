@@ -1,42 +1,73 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Date: Mon, 19 Aug 2013 14:49:07 -0600
-Message-ID: <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo>
- <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com> <20130819201224.GC5191@mithrandir>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC 3/3] PCI: tegra: Support driver unbinding
+Date: Mon, 19 Aug 2013 14:55:44 -0600
+Message-ID: <52128650.7090009@wwwdotorg.org>
+References: <1376392346-14127-1-git-send-email-treding@nvidia.com> <1376392346-14127-4-git-send-email-treding@nvidia.com> <520BFA0C.5070001@wwwdotorg.org> <20130815103452.GA13740@ulmo> <520CF211.6060003@wwwdotorg.org> <20130819201623.GD5191@mithrandir>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130819201224.GC5191@mithrandir>
+In-Reply-To: <20130819201623.GD5191@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 19, 2013 at 2:12 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Aug 19, 2013 at 02:04:24PM -0600, Bjorn Helgaas wrote:
->> On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->> > Bjorn, how do you want to handle patches to the Tegra PCIe driver in the
->> > future? Do you want me to prepare a branch and pull from that or would
->> > you rather just take simple patches?
->>
->> I'm in the habit of applying patches from email, so that's easy for
->> me.  But a branch would be OK, too.
->
-> Patches work for me too. Is this cleanup patch something that you'd be
-> comfortable with applying after 3.12-rc1 or would you rather defer it to
-> 3.13?
+On 08/19/2013 02:16 PM, Thierry Reding wrote:
+> On Thu, Aug 15, 2013 at 09:21:53AM -0600, Stephen Warren wrote:
+>> On 08/15/2013 04:34 AM, Thierry Reding wrote:
+>>> On Wed, Aug 14, 2013 at 03:43:40PM -0600, Stephen Warren
+>>> wrote:
+>>>> On 08/13/2013 05:12 AM, Thierry Reding wrote:
+>>>>> Implement the platform driver's .remove() callback to free
+>>>>> all resources allocated during driver setup and call 
+>>>>> pci_common_exit() to cleanup ARM specific datastructures.
+>>>>> Unmap the fixed PCI I/O mapping by calling the new
+>>>>> pci_iounmap_io() function in the new .teardown() callback.
+>>>>> 
+>>>>> Finally, no longer set the .suppress_bind_attrs field to
+>>>>> true to allow the driver to unbind from a device.
+>>>> 
+>>>>> +static int tegra_pcie_remove(struct platform_device *pdev)
+>>>>> +{ +	struct tegra_pcie *pcie = platform_get_drvdata(pdev);
+>>>>> + struct tegra_pcie_bus *bus, *tmp; +	int err; + + 
+>>>>> pci_common_exit(&pcie->sys); + +
+>>>>> list_for_each_entry_safe(bus, tmp, &pcie->busses, list) { +
+>>>>> vunmap(bus->area->addr); + kfree(bus); +	} + +	if
+>>>>> (IS_ENABLED(CONFIG_PCI_MSI)) { +		err = 
+>>>>> tegra_pcie_disable_msi(pcie); +		if (err < 0) +			return
+>>>>> err; + }
+>>>> 
+>>>> Wouldn't it make sense to do that as early as possible in
+>>>> the function, to make sure that no MSI accidentally fires
+>>>> after some of the cleanup has already happened?
+>>> 
+>>> I don't think that's strictly necessary in this case. After
+>>> the call to pci_common_exit() there are no PCI devices left,
+>>> there's not even a bus left. All MSI users should have cleaned
+>>> up after themselves.
+>>> 
+>>> Given that I thought it more useful to mirror the setup done
+>>> in .probe() to make it clearer what's being undone (and
+>>> potentially what's missing).
+>> 
+>> That makes sense SW-wise, but what about mis-behaving HW that
+>> triggers an MSI even when it's been told not to? I assume that 
+>> tegra_pcie_disable_msi() unrequests the IRQ, hence solves that 
+>> problem, if done early enough.
+> 
+> To be honest, I'm not sure about the side-effects that this will
+> have. tegra_pcie_disable_msi() does quite a bit more than just
+> masking the interrupts. It also completely removes the IRQ domain
+> that provides the MSI interrupts. While I haven't tried it yet I
+> can imagine that it will cause crashes at a later point when
+> drivers want to disable MSI on a device and the IRQ domain having
+> vanished from underneath.
 
-I'm not really sure how we should manage drivers/pci/host/*.  Those
-files are mostly arch code, and I'm not sure it's useful for me to be
-in the middle of managing them.
+Surely by the time the PCIe controller device has been remove()d then
+all devices for PCIe "client" devices have also been removed.
 
-I assume Stephen or somebody has a tree with the pci-tegra.c stuff
-that's in -next right now; it seems like it'd be simplest to just add
-this patch there and merge in during the v3.12 merge window.
-
-Bjorn
+But I guess the problem is if the controller is added back, yet the
+IRQ resources aren't re-parsed under the new IRQ domain? Still, that
+seems like an unrelated issue to exactly where the MSI IRQ domain gets
+cleaned up in the host controller's remove().
