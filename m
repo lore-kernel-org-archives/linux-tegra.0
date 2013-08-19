@@ -1,55 +1,105 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
-Date: Mon, 19 Aug 2013 13:21:25 -0600
-Message-ID: <52127035.7000909@wwwdotorg.org>
-References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
+ devm_ioremap_resource
+Date: Mon, 19 Aug 2013 21:33:40 +0200
+Message-ID: <20130819193339.GB4961@mithrandir>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
+ <20130819120249.GA5740@ulmo>
+ <alpine.DEB.2.02.1308191405450.2313@hadrien>
+ <20130819121238.GB5740@ulmo>
+ <alpine.DEB.2.02.1308191414360.2313@hadrien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1308191414360.2313@hadrien>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/17/2013 08:56 AM, Linus Walleij wrote:
-> We currently defer probing of the caller if a pinctrl GPIO
-> request or direction setting comes in before the range mapping
-> a certain GPIO to a certain pin controller is available.
-> 
-> This can end up with a circular dependency: the GPIO driver
-> needs the pin controller to be ready and the pin controller
-> need the GPIO driver to be ready. This also happens if
-> pin controllers and GPIO controllers compiled as modules
-> are inserted in a certain order.
-> 
-> To break this circular dependence, queue any GPIO
-> operations coming to the framework until the range is ready,
-> instead of deferring the probe of the caller.
 
-I just noticed that next-20130819 is failing on the Tegra114 Dalmore
-board because of this patch. The kernel log is below. Reverting this
-patch solves the problem
+--b5gNqxB1S1yM7hjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> [   12.427751] tegra114-pinctrl 70000868.pinmux: pin USB_VBUS_EN0 PN4 already requested by Tegra GPIOs:108; cannot claim for Tegra GPIOs:108
-> [   12.440320] tegra114-pinctrl 70000868.pinmux: pin-108 (Tegra GPIOs:108) status -22
-> [   12.447965] usb1_vbus: Failed to request enable GPIO108: -22
-> [   12.454306] reg-fixed-voltage 3.regulator: Failed to register regulator: -22
-> [   12.461508] reg-fixed-voltage: probe of 3.regulator failed with error -22
-> [   12.469659] tegra114-pinctrl 70000868.pinmux: pin SPDIF_IN PK6 already requested by Tegra GPIOs:86; cannot claim for Tegra GPIOs:86
-> [   12.481606] tegra114-pinctrl 70000868.pinmux: pin-86 (Tegra GPIOs:86) status -22
-> [   12.489052] usb2_vbus: Failed to request enable GPIO86: -22
-> [   12.495226] reg-fixed-voltage 4.regulator: Failed to register regulator: -22
-> [   12.502449] reg-fixed-voltage: probe of 4.regulator failed with error -22
-> [   12.510542] tegra114-pinctrl 70000868.pinmux: pin GMI_CLK PK1 already requested by Tegra GPIOs:81; cannot claim for Tegra GPIOs:81
-> [   12.522403] tegra114-pinctrl 70000868.pinmux: pin-81 (Tegra GPIOs:81) status -22
-> [   12.529896] vdd_hdmi_5v0: Failed to request enable GPIO81: -22
-> [   12.536281] reg-fixed-voltage 5.regulator: Failed to register regulator: -22
-> [   12.543465] reg-fixed-voltage: probe of 5.regulator failed with error -22
-> [   12.552509] vdd_cam_1v8_reg: 1800 mV 
-> [   12.558205] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
-> [   12.566600] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
-> [   12.577475] input: gpio-keys.2 as /devices/soc0/gpio-keys.2/input/input1
-> [   12.588329] platform 7d008000.usb: Driver tegra-ehci requests probe deferral
-> [   12.596967] platform 7d008000.usb-phy: Driver tegra-phy requests probe deferral
+On Mon, Aug 19, 2013 at 02:15:39PM +0200, Julia Lawall wrote:
+>=20
+>=20
+> On Mon, 19 Aug 2013, Thierry Reding wrote:
+>=20
+> > On Mon, Aug 19, 2013 at 02:07:54PM +0200, Julia Lawall wrote:
+> > >
+> > >
+> > > On Mon, 19 Aug 2013, Thierry Reding wrote:
+> > >
+> > > > On Mon, Aug 19, 2013 at 01:20:35PM +0200, Julia Lawall wrote:
+> > > > > From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+> > > > >
+> > > > > Use devm_ioremap_resource instead of devm_request_and_ioremap.
+> > > > >
+> > > > > This was done using the semantic patch
+> > > > > scripts/coccinelle/api/devm_ioremap_resource.cocci
+> > > > >
+> > > > > Error-handling code was manually removed from the associated call=
+s to
+> > > > > platform_get_resource.
+> > > > >
+> > > > > Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+> > > > >
+> > > > > ---
+> > > > > The first block of modified code is followed by a call to
+> > > > > devm_request_mem_region for pcie->cs with no associated ioremap. =
+ Should
+> > > > > ioremap be used in this case as well?
+> > > >
+> > > > No. The pcie->cs resource is 256 MiB so it's challenging to map it =
+at
+> > > > once. Furthermore it requires a non-linear mapping so we do it on
+> > > > demand.
+> > >
+> > > OK, thanks for the explanation.  Is the comment, though, a little
+> > > misleading, since the mapping is not done here?
+> > >
+> > > /* request and remap configuration space */
+> >
+> > Yes, that's misleading. Given that it doesn't really add anything useful
+> > information either, perhaps I should just remove it.
+>=20
+> OK, or maybe something like
+>=20
+> /* request configuration space, but remap later, on demand */
+>=20
+> To make it clear that something different is intended than the
+> devm_ioremap_resources that come just before..
+
+Yes, that works for me too. Can you respin the patch with the comment
+updated and my Acked-by and Tested-by so Bjorn can pick it up?
+
+Thierry
+
+--b5gNqxB1S1yM7hjW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSEnMTAAoJEN0jrNd/PrOhXm0P/Aq1cDNbUVylWq4kk1+i8YD5
+W6NdJOrjZyYk5YH7PI4w0hIrtTbWWmun+SrWjXZvLOZF83DOxhXwrCeksQrINY8A
+C5GSRxzTq/7utJDZNZGDZa8meBVTFPlyP40fvBan5BYLDr1qkIht0IMZDojK1HLR
+bH5iRTAe6d5/Dowqj1kQKCqa7NG4W0Oo9X4uDirHo4f24vQIx1g21ZOb9XTFOdDE
+J3nRNGcCglbqUi4DTiaAikU27QvUSoX4Dx04lZOaBsKHHh4hNBjOMKfi+PPeLJl+
+OS3thlgCyznonXGCMV+6gMCZhdZTyOhecFacENfJLJF08dneqMaKzy/qNsUXgDHQ
+IXCtryAd8mwhcP0HcX78eaBWlVs6NAy6hVMyGK9QXkbw0JQ5+JHAltuKn6IsCytH
+K2XXnrqA4L+1t/yB7IfjJfwHC2ry7q1zCpQNFSP8M0cA4NaCMnL7M77TtTk+1Mm1
+ycAM1DH8lk5PJSFBxT2pXMmBgBLGWHcL8B2ghZwMtVxDv6qyX2HOEcehEJyiKzNy
+kojKCELRy9AeeqGVlygRT6ui1CRCu41JJTikxIPmMF7AuDcuFUjpmWtZEcjY67CU
+I4l0i3C75coEnXKB3qofU6M9pNFyenlr+Yyl+v8IV7Rowy9M75q+BaEklohRvxEN
+SBXOzFok/8xXdwiF/z91
+=Wcy4
+-----END PGP SIGNATURE-----
+
+--b5gNqxB1S1yM7hjW--
