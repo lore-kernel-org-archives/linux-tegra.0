@@ -1,43 +1,32 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Date: Tue, 20 Aug 2013 12:53:32 -0600
-Message-ID: <5213BB2C.60908@wwwdotorg.org>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo> <alpine.DEB.2.02.1308191405450.2313@hadrien> <20130819121238.GB5740@ulmo> <alpine.DEB.2.02.1308191414360.2313@hadrien> <20130819193339.GB4961@mithrandir> <alpine.DEB.2.02.1308201112400.2269@hadrien> <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: tegra on 3.11
+Date: Tue, 20 Aug 2013 13:18:10 -0600
+Message-ID: <5213C0F2.9060909@wwwdotorg.org>
+References: <20130820150418.GI27560@redacted.bos.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, Thierry Reding <thierry.reding@gmail.com>, kernel-janitors@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130820150418.GI27560-nxOev/eQj6CGu0OVIAPS5KfLeoKvNuZc@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/20/2013 10:26 AM, Bjorn Helgaas wrote:
-> On Tue, Aug 20, 2013 at 3:13 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
->> From: Julia Lawall <Julia.Lawall@lip6.fr>
->>
->> Use devm_ioremap_resource instead of devm_request_and_ioremap.
->>
->> This was done using the semantic patch
->> scripts/coccinelle/api/devm_ioremap_resource.cocci
->>
->> Error-handling code was manually removed from the associated calls to
->> platform_get_resource.
->>
->> Adjust the comment at the third platform_get_resource_byname to make clear
->> why ioremap is not done at this point.
->>
->> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->> Acked-by: Thierry Reding <thierry.reding@gmail.com>
->> Tested-by: Thierry Reding <thierry.reding@gmail.com>
+On 08/20/2013 09:04 AM, Kyle McMartin wrote:
+> Hey guys,
 > 
-> I'm hoping this goes via arm-soc.  Let me know if you need me to do
-> something.  If you need it:
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Just a quick note, I needed to pull in the patch from
+> http://marc.info/?l=linux-tegra&m=137404750420372&w=2 in order to get
+> trimslice booting from its internal SATA when using dtb to boot.
 
-In that case, Thierry, can you please bounce it to arm@kernel.org to be
-applied on top of wherever Tegra's for-3.12/soc branch was merged.
+Oh dear, I can reproduce this. It looks like I didn't notice this since
+I was probably testing linux-next with Mikko's patches applied on top in
+my local branch:-(
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+If that patch gets applied to v3.11, then it'll cause nasty merge
+conflicts with Mikko's other USB-related patches when v3.12 comes
+around. Plus, the patch is rather large for this late stage in the
+v3.11-rc series. I think the best way is to add regulator-always-on,
+regulator-boot-on properties to the relevant VBUS regulators. I'll try
+sending a patch for that...
