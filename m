@@ -1,34 +1,56 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH 4/5] clk: tegra: Set the clock parent of gr2d/gr3d to
- pll_c2
-Date: Tue, 20 Aug 2013 11:47:58 +0300
-Message-ID: <20130820084758.GR18810@tbergstrom-lnx.Nvidia.com>
-References: <1375874709-10438-1-git-send-email-markz@nvidia.com>
- <1375874709-10438-4-git-send-email-markz@nvidia.com>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [patch] crypto: tegra-aes - bitwise vs logical and
+Date: Tue, 20 Aug 2013 11:54:48 +0300
+Message-ID: <20130820085447.GA20170@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1375874709-10438-4-git-send-email-markz@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Zhang <markz@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Andrew Chew <AChew@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, Paul Walmsley <pwalmsley@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "mturquette@linaro.org" <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>
+Cc: "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 07, 2013 at 01:25:08PM +0200, Mark Zhang wrote:
-> pll_m will be the parent of gr2d/gr3d if we don't do this.
-> And because pll_m runs at a high rate so gr2d/gr3d will be
-> unstable. So change the parent of them to pll_c2.
-> 
-> Signed-off-by: Mark Zhang <markz@nvidia.com>
+The bug here is that:
 
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+	while (eng_busy & (!icq_empty) & dma_busy)
+
+is never true because it's using bitwise instead of logical ANDs.  The
+other bitwise AND conditions work as intended but I changed them as well
+for consistency.
+
+Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+---
+Static checker stuff.  I don't have the hardware.
+
+diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
+index 85ea752..2d58da9 100644
+--- a/drivers/crypto/tegra-aes.c
++++ b/drivers/crypto/tegra-aes.c
+@@ -275,7 +275,7 @@ static int aes_start_crypt(struct tegra_aes_dev *dd, u32 in_addr, u32 out_addr,
+ 			value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+ 			eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 			icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+-		} while (eng_busy & (!icq_empty));
++		} while (eng_busy && !icq_empty);
+ 		aes_writel(dd, cmdq[i], TEGRA_AES_ICMDQUE_WR);
+ 	}
+ 
+@@ -365,7 +365,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
+ 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+ 		dma_busy = value & TEGRA_AES_DMA_BUSY_FIELD;
+-	} while (eng_busy & (!icq_empty) & dma_busy);
++	} while (eng_busy && !icq_empty && dma_busy);
+ 
+ 	/* settable command to get key into internal registers */
+ 	value = CMD_SETTABLE << CMDQ_OPCODE_SHIFT |
+@@ -379,7 +379,7 @@ static int aes_set_key(struct tegra_aes_dev *dd)
+ 		value = aes_readl(dd, TEGRA_AES_INTR_STATUS);
+ 		eng_busy = value & TEGRA_AES_ENGINE_BUSY_FIELD;
+ 		icq_empty = value & TEGRA_AES_ICQ_EMPTY_FIELD;
+-	} while (eng_busy & (!icq_empty));
++	} while (eng_busy && !icq_empty);
+ 
+ 	return 0;
+ }
