@@ -1,200 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: split tegra_pmc_init() in two
-Date: Tue, 20 Aug 2013 15:27:45 -0600
-Message-ID: <1377034065-26373-1-git-send-email-swarren@wwwdotorg.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: split tegra_pmc_init() in two
+Date: Tue, 20 Aug 2013 23:44:04 +0200
+Message-ID: <5213E324.2020000@gmail.com>
+References: <1377034065-26373-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377034065-26373-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/20/2013 11:27 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Tegra's board file currently initializes clocks much earlier than those
+> for most other ARM SoCs. The reason is:
+>
+> * The PMC HW block is involved in the path of some interrupts (i.e. it
+> inverts, or not, the IRQ input pin dedicated to the PMIC).
+>
+> * So, that part of the PMC must be initialized early so that the IRQ
+> polarity is correct.
+>
+> * The PMC initialization is currently monolithic, and the PMC has some
+> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
+> and hence clocks must be set up early too.
+>
+> In order to defer clock initialization to the more typical location,
+> split out the portions of tegra_pmc_init() that are truly IRQ-related
+> into a separate tegra_pmc_init_irq(), which can be called from the
+> machine descriptor's .init_irq() function, and defer the rest until
+> the machine descriptor's .init_machine() function. This allows the
+> clock initiliazation to happen from the machine descriptor's
+> .init_time() function, as is typical.
+>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Sebastian, this should help with your of_clock_init() series. Feel free
+> to include this patch in your series unless someone raises objections to
+> it. It's based on next-20130819, but I think it should apply many other
+> places without any issue, and certainly on top of wherever Tegra's
+> for-3.12/soc branch got applies within the arm-soc git repo. If you want
+> me to take it for 3.13, just let me know.
 
-Tegra's board file currently initializes clocks much earlier than those
-for most other ARM SoCs. The reason is:
+Stephen,
 
-* The PMC HW block is involved in the path of some interrupts (i.e. it
-inverts, or not, the IRQ input pin dedicated to the PMIC).
+thanks for looking into it so fast. I prefer to include it and send it
+with the other patches. Besides tegra, also imx, mvebu, and vexpress
+required to move things around a bit, so I wait for the someone to
+comment on their mach changes first.
 
-* So, that part of the PMC must be initialized early so that the IRQ
-polarity is correct.
+For the final patch set, I guess your Signed-off on this is sufficient
+to convince Olof or Russell to take it.
 
-* The PMC initialization is currently monolithic, and the PMC has some
-clock inputs, so the init routine ends up calling of_clk_get_by_name(),
-and hence clocks must be set up early too.
-
-In order to defer clock initialization to the more typical location,
-split out the portions of tegra_pmc_init() that are truly IRQ-related
-into a separate tegra_pmc_init_irq(), which can be called from the
-machine descriptor's .init_irq() function, and defer the rest until
-the machine descriptor's .init_machine() function. This allows the
-clock initiliazation to happen from the machine descriptor's
-.init_time() function, as is typical.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Sebastian, this should help with your of_clock_init() series. Feel free
-to include this patch in your series unless someone raises objections to
-it. It's based on next-20130819, but I think it should apply many other
-places without any issue, and certainly on top of wherever Tegra's
-for-3.12/soc branch got applies within the arm-soc git repo. If you want
-me to take it for 3.13, just let me know.
-
- arch/arm/mach-tegra/common.c |  4 +---
- arch/arm/mach-tegra/pmc.c    | 41 ++++++++++++++++++++++-------------------
- arch/arm/mach-tegra/pmc.h    |  1 +
- arch/arm/mach-tegra/tegra.c  | 12 +++++++++++-
- 4 files changed, 35 insertions(+), 23 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 94a119a..58dc91c5 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -24,7 +24,6 @@
- #include <linux/delay.h>
- #include <linux/reboot.h>
- #include <linux/irqchip.h>
--#include <linux/clk-provider.h>
- 
- #include <asm/hardware/cache-l2x0.h>
- 
-@@ -61,8 +60,7 @@ u32 tegra_uart_config[4] = {
- #ifdef CONFIG_OF
- void __init tegra_dt_init_irq(void)
- {
--	of_clk_init(NULL);
--	tegra_pmc_init();
-+	tegra_pmc_init_irq();
- 	tegra_init_irq();
- 	irqchip_init();
- 	tegra_legacy_irq_syscore_init();
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index 8acb881..7916ff9 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -285,13 +285,10 @@ static const struct of_device_id matches[] __initconst = {
- 	{ }
- };
- 
--static void __init tegra_pmc_parse_dt(void)
-+void __init tegra_pmc_init_irq(void)
- {
- 	struct device_node *np;
--	u32 prop;
--	enum tegra_suspend_mode suspend_mode;
--	u32 core_good_time[2] = {0, 0};
--	u32 lp0_vec[2] = {0, 0};
-+	u32 val;
- 
- 	np = of_find_matching_node(NULL, matches);
- 	BUG_ON(!np);
-@@ -300,6 +297,26 @@ static void __init tegra_pmc_parse_dt(void)
- 
- 	tegra_pmc_invert_interrupt = of_property_read_bool(np,
- 				     "nvidia,invert-interrupt");
-+
-+	val = tegra_pmc_readl(PMC_CTRL);
-+	if (tegra_pmc_invert_interrupt)
-+		val |= PMC_CTRL_INTR_LOW;
-+	else
-+		val &= ~PMC_CTRL_INTR_LOW;
-+	tegra_pmc_writel(val, PMC_CTRL);
-+}
-+
-+void __init tegra_pmc_init(void)
-+{
-+	struct device_node *np;
-+	u32 prop;
-+	enum tegra_suspend_mode suspend_mode;
-+	u32 core_good_time[2] = {0, 0};
-+	u32 lp0_vec[2] = {0, 0};
-+
-+	np = of_find_matching_node(NULL, matches);
-+	BUG_ON(!np);
-+
- 	tegra_pclk = of_clk_get_by_name(np, "pclk");
- 	WARN_ON(IS_ERR(tegra_pclk));
- 
-@@ -365,17 +382,3 @@ static void __init tegra_pmc_parse_dt(void)
- 
- 	pmc_pm_data.suspend_mode = suspend_mode;
- }
--
--void __init tegra_pmc_init(void)
--{
--	u32 val;
--
--	tegra_pmc_parse_dt();
--
--	val = tegra_pmc_readl(PMC_CTRL);
--	if (tegra_pmc_invert_interrupt)
--		val |= PMC_CTRL_INTR_LOW;
--	else
--		val &= ~PMC_CTRL_INTR_LOW;
--	tegra_pmc_writel(val, PMC_CTRL);
--}
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 549f8c7..4d5f8f3 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -39,6 +39,7 @@ bool tegra_pmc_cpu_is_powered(int cpuid);
- int tegra_pmc_cpu_power_on(int cpuid);
- int tegra_pmc_cpu_remove_clamping(int cpuid);
- 
-+void tegra_pmc_init_irq(void);
- void tegra_pmc_init(void);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 5b86055..4da271d 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -33,6 +33,7 @@
- #include <linux/slab.h>
- #include <linux/sys_soc.h>
- #include <linux/usb/tegra_usb_phy.h>
-+#include <linux/clk-provider.h>
- #include <linux/clk/tegra.h>
- 
- #include <asm/mach-types.h>
-@@ -44,6 +45,7 @@
- #include "common.h"
- #include "fuse.h"
- #include "iomap.h"
-+#include "pmc.h"
- 
- static void __init tegra_dt_init(void)
- {
-@@ -51,6 +53,8 @@ static void __init tegra_dt_init(void)
- 	struct soc_device *soc_dev;
- 	struct device *parent = NULL;
- 
-+	tegra_pmc_init();
-+
- 	tegra_clocks_apply_init_table();
- 
- 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-@@ -80,6 +84,12 @@ out:
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
- }
- 
-+static void __init tegra_dt_init_time(void)
-+{
-+	of_clk_init(NULL);
-+	clocksource_of_init();
-+}
-+
- static void __init paz00_init(void)
- {
- 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_2x_SOC))
-@@ -119,7 +129,7 @@ DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
--	.init_time	= clocksource_of_init,
-+	.init_time	= tegra_dt_init_time,
- 	.init_machine	= tegra_dt_init,
- 	.init_late	= tegra_dt_init_late,
- 	.restart	= tegra_assert_system_reset,
--- 
-1.8.1.5
+Sebastian
