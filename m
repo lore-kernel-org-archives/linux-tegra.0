@@ -1,96 +1,51 @@
-From: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
- devm_ioremap_resource
-Date: Tue, 20 Aug 2013 11:13:14 +0200 (CEST)
-Message-ID: <alpine.DEB.2.02.1308201112400.2269@hadrien>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo> <alpine.DEB.2.02.1308191405450.2313@hadrien> <20130819121238.GB5740@ulmo> <alpine.DEB.2.02.1308191414360.2313@hadrien>
- <20130819193339.GB4961@mithrandir>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] drivers/spi/spi-tegra114.c clean use of
+ devm_ioremap_resource()
+Date: Tue, 20 Aug 2013 11:44:27 +0100
+Message-ID: <20130820104427.GJ30073@sirena.org.uk>
+References: <1368526032-31371-1-git-send-email-laurent.navet@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FgWTvDHj0r903stt"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130819193339.GB4961@mithrandir>
+Content-Disposition: inline
+In-Reply-To: <1368526032-31371-1-git-send-email-laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laurent Navet <laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 
-Use devm_ioremap_resource instead of devm_request_and_ioremap.
+--FgWTvDHj0r903stt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This was done using the semantic patch
-scripts/coccinelle/api/devm_ioremap_resource.cocci
+On Tue, May 14, 2013 at 12:07:12PM +0200, Laurent Navet wrote:
+> Check of 'r' and calls to dev_err are already done in devm_ioremap_resource,
+> so no need to do them twice.
 
-Error-handling code was manually removed from the associated calls to
-platform_get_resource.
+Applied, thanks.
 
-Adjust the comment at the third platform_get_resource_byname to make clear
-why ioremap is not done at this point.
+--FgWTvDHj0r903stt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Tested-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
----
-v2: add the change to the comment
+iQIcBAEBAgAGBQJSE0iIAAoJELSic+t+oim90cAP/jgwvpA7n3C92Y1/ULcQHb84
+samV9m0MchaPC7llFvdRhmnN5qdTn7R8y0hz+tjBQzWq1ys5qbV8e49srcUl86Ot
+yYOXZNIWQKle30mfMfQXlOGozxCdawfNzqQvTJE4yikMaR4XMP4ggp6dV2IRuHAy
+0QFUcZuRMVZs4eR7suyQ4x4mFg2Y2kIbzyVvz96QfBz3Ml/8D3NLEsM/fK5ezJwb
+WfzkRHh1nwN+Tjp0tW0KNtzzkOQPibO2lYi+TfgJ02fWNL4XOTbnw7oc85ADlYXA
+j293RZguP4M4wTE/4BWrVShi4udzuXZeQUx2GXLKUVlyFQ40664gQhG9p12nmvgv
+sb1CYB8iBLvhhNRqkjfqt83Dtl33vhrKpLHESGaVHs0AofDmA4RA4ppunnhQuwaN
+nYmxX9Wv+7Zo6R2JJz6GXxTHG1ecPest6naJkVqUihW0dZoSdcgDNRWMvqZ1LsXl
+nyYjBIMjyagmo38nACQulkRD1xRe9exG5EfYCHCB0+ER7QRIrCWF804ADTSWLfVE
+kMt2193YJV+HIGCQY9lUbjGq4BhQu5x+4RhC0r3iRR8QFrAV5Ub5GX0zR6w2/VQ3
+E8ZX67cTHO2xVA9yOfreKS6OfqO5A289zrayoevVkVh47BNHc8RrxVWeaqTllF83
+xbhsEktpvuwJBEz2vaqn
+=OaPF
+-----END PGP SIGNATURE-----
 
- drivers/pci/host/pci-tegra.c |   31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 7356741..2e9888a 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1031,32 +1031,21 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 		return err;
- 	}
-
--	/* request and remap controller registers */
- 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
--	if (!pads) {
--		err = -EADDRNOTAVAIL;
-+	pcie->pads = devm_ioremap_resource(&pdev->dev, pads);
-+	if (IS_ERR(pcie->pads)) {
-+		err = PTR_ERR(pcie->pads);
- 		goto poweroff;
- 	}
-
- 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
--	if (!afi) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->pads = devm_request_and_ioremap(&pdev->dev, pads);
--	if (!pcie->pads) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->afi = devm_request_and_ioremap(&pdev->dev, afi);
--	if (!pcie->afi) {
--		err = -EADDRNOTAVAIL;
-+	pcie->afi = devm_ioremap_resource(&pdev->dev, afi);
-+	if (IS_ERR(pcie->afi)) {
-+		err = PTR_ERR(pcie->afi);
- 		goto poweroff;
- 	}
-
--	/* request and remap configuration space */
-+	/* request configuration space, but remap later, on demand */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cs");
- 	if (!res) {
- 		err = -EADDRNOTAVAIL;
-@@ -1492,9 +1481,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 		rp->lanes = value;
- 		rp->pcie = pcie;
-
--		rp->base = devm_request_and_ioremap(pcie->dev, &rp->regs);
--		if (!rp->base)
--			return -EADDRNOTAVAIL;
-+		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
-+		if (IS_ERR(rp->base))
-+			return PTR_ERR(rp->base);
-
- 		list_add_tail(&rp->list, &pcie->ports);
- 	}
+--FgWTvDHj0r903stt--
