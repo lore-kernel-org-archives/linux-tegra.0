@@ -1,90 +1,119 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
- devm_ioremap_resource
-Date: Tue, 20 Aug 2013 21:31:31 +0200
-Message-ID: <20130820193130.GA14170@mithrandir>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
- <20130819120249.GA5740@ulmo>
- <alpine.DEB.2.02.1308191405450.2313@hadrien>
- <20130819121238.GB5740@ulmo>
- <alpine.DEB.2.02.1308191414360.2313@hadrien>
- <20130819193339.GB4961@mithrandir>
- <alpine.DEB.2.02.1308201112400.2269@hadrien>
- <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
- <5213BB2C.60908@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: always enable USB VBUS regulators
+Date: Tue, 20 Aug 2013 14:00:13 -0600
+Message-ID: <1377028813-32762-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5213BB2C.60908-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This fixes a regression exposed during the merge window by commit
+9f310de "ARM: tegra: fix VBUS regulator GPIO polarity in DT"; namely that
+USB VBUS doesn't get turned on, so USB devices are not detected. This
+affects the internal USB port on TrimSlice (i.e. the USB->SATA bridge, to
+which the SSD is connected) and the external port(s) on Seaboard/
+Springbank and Whistler.
 
-On Tue, Aug 20, 2013 at 12:53:32PM -0600, Stephen Warren wrote:
-> On 08/20/2013 10:26 AM, Bjorn Helgaas wrote:
-> > On Tue, Aug 20, 2013 at 3:13 AM, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org> wr=
-ote:
-> >> From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> >>
-> >> Use devm_ioremap_resource instead of devm_request_and_ioremap.
-> >>
-> >> This was done using the semantic patch
-> >> scripts/coccinelle/api/devm_ioremap_resource.cocci
-> >>
-> >> Error-handling code was manually removed from the associated calls to
-> >> platform_get_resource.
-> >>
-> >> Adjust the comment at the third platform_get_resource_byname to make c=
-lear
-> >> why ioremap is not done at this point.
-> >>
-> >> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> >> Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> Tested-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >=20
-> > I'm hoping this goes via arm-soc.  Let me know if you need me to do
-> > something.  If you need it:
-> >=20
-> > Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
->=20
-> In that case, Thierry, can you please bounce it to arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org to be
-> applied on top of wherever Tegra's for-3.12/soc branch was merged.
->=20
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The Tegra DT as written in v3.11 allows two paths to enable USB VBUS:
 
-Yes, I can do that. Thanks everyone.
+1) Via the legacy DT binding for the USB controller; it can directly
+   acquire a VBUS GPIO and activate it.
 
-Thierry
+2) Via a regulator for VBUS, which is referenced by the new DT binding
+   for the USB controller.
 
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature
+Those two methods both use the same GPIO, and hence whichever of the
+USB controller and regulator gets probed first ends up owning the GPIO.
+In practice, the USB driver only supports path (1) above, since the
+patches to support the new USB binding are not present until v3.12:-(
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+In practice, the regulator ends up being probed first and owning the
+GPIO. Since nothing enables the regulator (the USB driver code is not
+yet present), the regulator ends up being turned off. This originally
+caused no problem, because the polarity in the regulator definition was
+incorrect, so attempting to turn off the regulator actually turned it
+on, and everything worked:-(
 
-iQIcBAEBAgAGBQJSE8QSAAoJEN0jrNd/PrOha7cP/jHHviDSOEEdhLvAlWNYXNIA
-YZeqSc3FoIx0oYpfA0gJqrBI7TUKExYMgRB6pX64UObkql/p14MPI39Fwy0BSmIM
-YThoFDC8sPvbCdaHCc5EDaxxQVysgg39/lrmJcccQRKxJdPTiEvkzPfyQoxex/hY
-uMu1K49oGWZc7uSf/JYvPLo/C4YC1jPnxuvWi3BEtgUJcWfjH9YjDxT6OdUTcGY3
-AA5GQ/1fC81s+QjWtkqz9rQYylTTqW7kCXsdf8UCJoVYNcP6P3hCtD3K6eIVSBoa
-JKC0Rbgp4s6kDH21XcRfrSzODMKMBS903QZ403HltDiZJ7GV/lzvtIduFE0zT2Y+
-4bZuz8z17dkkLVWQ64VnSHv6mkT7hY5nR6fIbBsdaX02za2BqRSshPa/fkki1V82
-Z5kAGFF4wnMRJfylvu6Min5mNx/YA7eUll66h/02ZYG/piKSEJvvL5ERosbxDkNw
-aZoYye2jUcpdFCd7RmfNbfgLEo/KKOMxLlUSYeizYeeIQqFNOJLtWbPRt6zliXVg
-la6RMrEcIBxSQm9Fba067gQJKlsMmmGTxjZvn56PEfzJBpJ89NY4gn3LiVUG8p/w
-ilgualt13rvm7EsgGBtOhHpM+Z9JGiPv1lgn4vTJ50Bl5Rc+v2CxDbnw3CT73nfi
-5ruM8fJ8Db/OHwOY56I2
-=S6/L
------END PGP SIGNATURE-----
+However, when testing the new USB driver code in v3.12, I noticed the
+incorrect polarity and fixed it in commit 9f310de "ARM: tegra: fix VBUS
+regulator GPIO polarity in DT". In the context of v3.11, this patch then
+caused the USB VBUS to actually turn off, which broke USB ports with VBUS
+control. I got this patch included in v3.11-rc1 since it fixed a bug in
+device tree (incorrect polarity specification), and hence was suitable to
+be included early in the rc series. I evidently did not test the patch at
+all, or correctly, in the context of v3.11, and hence did not notice the
+issue that I have explained above:-(
 
---Qxx1br4bt0+wmkIi--
+Fix this by making the USB VBUS regulators always enabled. This way, if
+the regulator owns the GPIO, it will always be turned on, even if there
+is no USB driver code to request the regulator be turned on. Even
+ignoring this bug, this is a reasonable way to configure the HW anyway.
+
+If this patch is applied to v3.11, it will cause a couple pretty trivial
+conflicts in tegra20-{trimslice,seaboard}.dts when creating v3.12, since
+the context right above the added lines changed in patches destined for
+v3.12.
+
+Reported-by: Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This is a patch for v3.11-rc*
+
+ arch/arm/boot/dts/tegra20-seaboard.dts  | 2 ++
+ arch/arm/boot/dts/tegra20-trimslice.dts | 2 ++
+ arch/arm/boot/dts/tegra20-whistler.dts  | 4 ++++
+ 3 files changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 365760b..40e6fb2 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -830,6 +830,8 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			enable-active-high;
+ 			gpio = <&gpio 24 0>; /* PD0 */
++			regulator-always-on;
++			regulator-boot-on;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index ed4b901..37c93d3 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -412,6 +412,8 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			enable-active-high;
+ 			gpio = <&gpio 170 0>; /* PV2 */
++			regulator-always-on;
++			regulator-boot-on;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index ab67c94..a3d0eba 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -588,6 +588,8 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			enable-active-high;
+ 			gpio = <&tca6416 0 0>; /* GPIO_PMU0 */
++			regulator-always-on;
++			regulator-boot-on;
+ 		};
+ 
+ 		vbus3_reg: regulator@3 {
+@@ -598,6 +600,8 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			enable-active-high;
+ 			gpio = <&tca6416 1 0>; /* GPIO_PMU1 */
++			regulator-always-on;
++			regulator-boot-on;
+ 		};
+ 	};
+ 
+-- 
+1.8.1.5
