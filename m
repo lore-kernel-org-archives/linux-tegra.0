@@ -1,44 +1,27 @@
-From: Soeren Grunewald <soeren.grunewald-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: Re: [PATCH] Add the =?UTF-8?B?VGFtb250ZW7ihKIgTkcgRXZhbHVhdGlvbiA=?=
- =?UTF-8?B?Q2FycmllciBib2FyZA==?=
-Date: Tue, 20 Aug 2013 09:32:09 +0200
-Message-ID: <52131B79.8090209@avionic-design.de>
-References: <1376906757-28185-1-git-send-email-soeren.grunewald@avionic-design.de> <1376906757-28185-2-git-send-email-soeren.grunewald@avionic-design.de> <52126131.8000104@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/5] clk: tegra: Fix vde/2d/3d clock src offset
+Date: Tue, 20 Aug 2013 11:47:29 +0300
+Message-ID: <20130820084729.GQ18810@tbergstrom-lnx.Nvidia.com>
+References: <1375874709-10438-1-git-send-email-markz@nvidia.com>
+ <1375874709-10438-3-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52126131.8000104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1375874709-10438-3-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <AChew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/19/2013 08:17 PM, Stephen Warren wrote:
-> On 08/19/2013 04:05 AM, Soeren Grunewald wrote:
->> From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
->>
->> Add the build script to create bootable image for the Tamonten=E2=84=
-=A2 NG
->> Evaluation Carrier board using the Tamonten=E2=84=A2 NG COM module.
->
-> I have applied this, and push it out the the git server. It's great t=
-o
-> see Avionic contributing towards upstream.
+On Wed, Aug 07, 2013 at 01:25:07PM +0200, Mark Zhang wrote:
+> In Tegra114, vde/gr_2d/gr_3d have 3 bits for clock source selection.
+> So change the clock init macro for these clocks from
+> "TEGRA_INIT_DATA_INT" to "TEGRA_INIT_DATA_INT8".
+> 
+> Besides, no one uses "TEGRA_INIT_DATA_INT" after this change, so
+> remove this macro.
+> 
+> Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks for applying the patch. We continue to upstream as much as possi=
-ble.
-
->
->> Change-Id: I0a72de713fd322f679439ea1b9205d238f9265ef
->
-> For upstream patches, can you please remove that line. Thanks. I remo=
-ved
-> it manually when applying this patch.
->
-
-No more change-id's in the future, understood.
---
-Kind Regards,
-Soeren
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
