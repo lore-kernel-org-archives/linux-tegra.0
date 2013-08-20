@@ -1,59 +1,94 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: split tegra_pmc_init() in two
-Date: Tue, 20 Aug 2013 23:44:04 +0200
-Message-ID: <5213E324.2020000@gmail.com>
-References: <1377034065-26373-1-git-send-email-swarren@wwwdotorg.org>
+From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL 2/4] ARM: tegra: core SoC enhancements for 3.12
+Date: Tue, 20 Aug 2013 16:24:47 -0700
+Message-ID: <87mwocj680.fsf@kernel.org>
+References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
+	<1376673628-5867-2-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377034065-26373-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1376673628-5867-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen
+	Warren's message of "Fri, 16 Aug 2013 11:20:26 -0600")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Turquette, Mike" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/20/2013 11:27 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Tegra's board file currently initializes clocks much earlier than those
-> for most other ARM SoCs. The reason is:
->
-> * The PMC HW block is involved in the path of some interrupts (i.e. it
-> inverts, or not, the IRQ input pin dedicated to the PMIC).
->
-> * So, that part of the PMC must be initialized early so that the IRQ
-> polarity is correct.
->
-> * The PMC initialization is currently monolithic, and the PMC has some
-> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
-> and hence clocks must be set up early too.
->
-> In order to defer clock initialization to the more typical location,
-> split out the portions of tegra_pmc_init() that are truly IRQ-related
-> into a separate tegra_pmc_init_irq(), which can be called from the
-> machine descriptor's .init_irq() function, and defer the rest until
-> the machine descriptor's .init_machine() function. This allows the
-> clock initiliazation to happen from the machine descriptor's
-> .init_time() function, as is typical.
->
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Sebastian, this should help with your of_clock_init() series. Feel free
-> to include this patch in your series unless someone raises objections to
-> it. It's based on next-20130819, but I think it should apply many other
-> places without any issue, and certainly on top of wherever Tegra's
-> for-3.12/soc branch got applies within the arm-soc git repo. If you want
-> me to take it for 3.13, just let me know.
++ Mike Turquette
 
-Stephen,
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
 
-thanks for looking into it so fast. I prefer to include it and send it
-with the other patches. Besides tegra, also imx, mvebu, and vexpress
-required to move things around a bit, so I wait for the someone to
-comment on their mach changes first.
+> This branch includes a number of enhancements to core SoC support for
+> Tegra devices. The major new features are:
+>
+> * Adds a new CPU-power-gated cpuidle state for Tegra114.
+> * Adds initial system suspend support for Tegra114, initially supporting
+>   just CPU-power-gating during suspend.
+> * Adds "LP1" suspend mode support for all of Tegra20/30/114. This mode
+>   both gates CPU power, and places the DRAM into self-refresh mode.
+> * A new DT-driven PCIe driver to Tegra20/30. The driver is also moved
+>   from arch/arm/mach-tegra/ to drivers/pci/host/.
+>
+> The PCIe driver work depends on the following tag from Thomas Petazzoni:
+> git://git.infradead.org/linux-mvebu.git mis-3.12.2
+> ... which is merged into the middle of this pull request.
+>
+> ----------------------------------------------------------------
+>
+> (If the location of the merge into this branch is problematic, just let
+> me know and I'll rebase everything on top of the merge)
 
-For the final patch set, I guess your Signed-off on this is sufficient
-to convince Olof or Russell to take it.
+The merge looks fine, but...
 
-Sebastian
+> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+>
+>   Linux 3.11-rc1
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.12-soc
+>
+> for you to fetch changes up to b4f173752a56187bd55752b0474429202f2ab1d3:
+>
+>   ARM: tegra: disable LP2 cpuidle state if PCIe is enabled
+>
+> ----------------------------------------------------------------
+>
+> Jay Agarwal (1):
+>       PCI: tegra: Add Tegra 30 PCIe support
+>
+> Joseph Lo (21):
+>       ARM: tegra: enable Cortex-A15 erratum 798181
+>       Revert "ARM: tegra: add cpu_disable for hotplug"
+>       ARM: tegra114: Reprogram GIC CPU interface to bypass IRQ on CPU PM entry
+>       ARM: tegra114: add low level support for CPU idle powered-down mode
+>       ARM: tegra114: cpuidle: add powered-down state
+>       ARM: tegra: do v7_invalidate_l1 only when CPU is Cortex-A9
+>       ARM: tegra: add a flag for tegra_disable_clean_inv_dcache to do LoUIS or ALL
+>       ARM: tegra: set up the correct L2 data RAM latency for Cortex-A15
+>       ARM: tegra: add low level code for Tegra114 cluster power down
+>       ARM: tegra: shut off the CPU rail when the last CPU in suspend
+>       ARM: tegra: hook tegra_tear_down_cpu function
+>       ARM: tegra: flowctrl: add support for cpu_suspend_enter/exit
+>       clk: tegra: add suspend/resume function for tegra_cpu_car_ops
+
+This one...
+
+>       ARM: tegra: remove the limitation that Tegra114 can't support suspend
+>       ARM: tegra: add common resume handling code for LP1 resuming
+>       ARM: tegra: config the polarity of the request of sys clock
+>       clk: tegra114: add LP1 suspend/resume support
+
+...and this one are drivers/clk and I don't see an ack from the
+clock framework maintainer (Mike Turquette) on either.
+
+If Mike is OK for them to go via arm-soc, that should be specified in
+the description above (and he should ack them), otherwise they should be
+split out and sent via Mike.
+
+A quick glance suggests there are no direct dependencies, so it's
+probably best if those changes go through Mike.
+
+Thanks,
+
+Kevin
