@@ -1,51 +1,44 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: utils : add support to pass config type
- in generic util APIs
-Date: Tue, 20 Aug 2013 14:25:09 -0600
-Message-ID: <5213D0A5.7000504@wwwdotorg.org>
-References: <1377000758-3795-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: use pinctrl-utils APIs for mapping
+Date: Tue, 20 Aug 2013 14:28:28 -0600
+Message-ID: <5213D16C.40304@wwwdotorg.org>
+References: <1377000758-3795-1-git-send-email-ldewangan@nvidia.com> <1377000758-3795-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377000758-3795-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1377000758-3795-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/20/2013 06:12 AM, Laxman Dewangan wrote:
-> Add support to pass the config type like GROUP or PIN when using
-> the utils or generic pin configuration APIs. This will make the
-> APIs more generic.
+> Pin control utility functions provides the function for creating
+> map lists.
+> 
+> In place of implementing APIs locally in Tegra pin control driver
+> for creating map lists, use the utility functions. This reduces
+> the code size and avoid duplication.
 
-I think passing in the type parameter to the *_to_map APIs makes sense,
-but I don't think you need to have separate free functions; the way to
-free any kind of map entry is always known, so you don't have to limit
-the code to only freeing one type.
+This patch looks fine, so assuming the issue in patch 1/2 is fixed, this
+patch,
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
+One thought though:
 
-> -void pinctrl_utils_dt_free_map(struct pinctrl_dev *pctldev,
-> -	      struct pinctrl_map *map, unsigned num_maps)
-> +void pinctrl_utils_dt_free_map_config(struct pinctrl_dev *pctldev,
-> +		struct pinctrl_map *map, unsigned num_maps,
-> +		enum pinctrl_map_type type)
->  {
->  	int i;
->  
->  	for (i = 0; i < num_maps; i++)
-> -		if (map[i].type == PIN_MAP_TYPE_CONFIGS_GROUP)
-> +		if (map[i].type == type)
->  			kfree(map[i].data.configs.configs);
+> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
 
-In other words, replace that if with:
+>  static const struct cfg_param {
+>  	const char *property;
+>  	enum tegra_pinconf_param param;
+> @@ -212,12 +112,13 @@ static const struct cfg_param {
+>  	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
+>  };
 
-switch (maps[i].type) {
-case PIN_MAP_TYPE_CONFIGS_PIN:
-case PIN_MAP_TYPE_CONFIGS_GROUP:
-	kfree(map[i].data.configs.configs);
-	break;
-default:
-	break;
-}
+If you add a new field to that struct that's a function pointer, which
+parses the content of the property and gives back an unsigned log or
+struct pinctrl_map, you could probably make most of
+tegra_pinctrl_dt_subnode_to_map() be generic too...
+
+But, that's certainly something for a separate patch if you want.
