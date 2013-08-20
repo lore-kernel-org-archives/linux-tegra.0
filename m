@@ -1,35 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [patch] crypto: tegra-aes - bitwise vs logical and
-Date: Tue, 20 Aug 2013 10:31:41 -0600
-Message-ID: <521399ED.9030701@wwwdotorg.org>
-References: <20130820085447.GA20170@elgon.mountain>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Date: Tue, 20 Aug 2013 12:53:32 -0600
+Message-ID: <5213BB2C.60908@wwwdotorg.org>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo> <alpine.DEB.2.02.1308191405450.2313@hadrien> <20130819121238.GB5740@ulmo> <alpine.DEB.2.02.1308191414360.2313@hadrien> <20130819193339.GB4961@mithrandir> <alpine.DEB.2.02.1308201112400.2269@hadrien> <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130820085447.GA20170-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Herbert Xu <herbert-F6s6mLieUQo7FNHlEwC/lvQIK84fMopw@public.gmane.org>, "David S. Miller" <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo4WLt7zbyfkKfvMbXMQGmp0MAS=7AFiomUjtUCfdprDUA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, Thierry Reding <thierry.reding@gmail.com>, kernel-janitors@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/20/2013 02:54 AM, Dan Carpenter wrote:
-> The bug here is that:
+On 08/20/2013 10:26 AM, Bjorn Helgaas wrote:
+> On Tue, Aug 20, 2013 at 3:13 AM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>> From: Julia Lawall <Julia.Lawall@lip6.fr>
+>>
+>> Use devm_ioremap_resource instead of devm_request_and_ioremap.
+>>
+>> This was done using the semantic patch
+>> scripts/coccinelle/api/devm_ioremap_resource.cocci
+>>
+>> Error-handling code was manually removed from the associated calls to
+>> platform_get_resource.
+>>
+>> Adjust the comment at the third platform_get_resource_byname to make clear
+>> why ioremap is not done at this point.
+>>
+>> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+>> Tested-by: Thierry Reding <thierry.reding@gmail.com>
 > 
-> 	while (eng_busy & (!icq_empty) & dma_busy)
+> I'm hoping this goes via arm-soc.  Let me know if you need me to do
+> something.  If you need it:
 > 
-> is never true because it's using bitwise instead of logical ANDs.  The
-> other bitwise AND conditions work as intended but I changed them as well
-> for consistency.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> ---
-> Static checker stuff.  I don't have the hardware.
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Varun, can you please test the driver with this change applied and make
-sure it works correctly.
+In that case, Thierry, can you please bounce it to arm@kernel.org to be
+applied on top of wherever Tegra's for-3.12/soc branch was merged.
 
-If you could also update our internal testing wiki with the steps you
-use for this testing, that'd be great too.
-
-Thanks.
+Acked-by: Stephen Warren <swarren@nvidia.com>
