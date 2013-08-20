@@ -1,51 +1,195 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] drivers/spi/spi-tegra114.c clean use of
- devm_ioremap_resource()
-Date: Tue, 20 Aug 2013 11:44:27 +0100
-Message-ID: <20130820104427.GJ30073@sirena.org.uk>
-References: <1368526032-31371-1-git-send-email-laurent.navet@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] pinctrl: utils : add support to pass config type in generic util APIs
+Date: Tue, 20 Aug 2013 17:42:37 +0530
+Message-ID: <1377000758-3795-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FgWTvDHj0r903stt"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1368526032-31371-1-git-send-email-laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Navet <laurent.navet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Add support to pass the config type like GROUP or PIN when using
+the utils or generic pin configuration APIs. This will make the
+APIs more generic.
 
---FgWTvDHj0r903stt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Added additional inline APIs such that it can be use directly as
+callback for the pinctrl_ops.
 
-On Tue, May 14, 2013 at 12:07:12PM +0200, Laurent Navet wrote:
-> Check of 'r' and calls to dev_err are already done in devm_ioremap_resource,
-> so no need to do them twice.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinconf-generic.c       |   12 +++++++-----
+ drivers/pinctrl/pinctrl-palmas.c        |    4 ++--
+ drivers/pinctrl/pinctrl-utils.c         |    9 +++++----
+ drivers/pinctrl/pinctrl-utils.h         |   23 +++++++++++++++++++++--
+ include/linux/pinctrl/pinconf-generic.h |   22 ++++++++++++++++++++--
+ 5 files changed, 55 insertions(+), 15 deletions(-)
 
-Applied, thanks.
-
---FgWTvDHj0r903stt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSE0iIAAoJELSic+t+oim90cAP/jgwvpA7n3C92Y1/ULcQHb84
-samV9m0MchaPC7llFvdRhmnN5qdTn7R8y0hz+tjBQzWq1ys5qbV8e49srcUl86Ot
-yYOXZNIWQKle30mfMfQXlOGozxCdawfNzqQvTJE4yikMaR4XMP4ggp6dV2IRuHAy
-0QFUcZuRMVZs4eR7suyQ4x4mFg2Y2kIbzyVvz96QfBz3Ml/8D3NLEsM/fK5ezJwb
-WfzkRHh1nwN+Tjp0tW0KNtzzkOQPibO2lYi+TfgJ02fWNL4XOTbnw7oc85ADlYXA
-j293RZguP4M4wTE/4BWrVShi4udzuXZeQUx2GXLKUVlyFQ40664gQhG9p12nmvgv
-sb1CYB8iBLvhhNRqkjfqt83Dtl33vhrKpLHESGaVHs0AofDmA4RA4ppunnhQuwaN
-nYmxX9Wv+7Zo6R2JJz6GXxTHG1ecPest6naJkVqUihW0dZoSdcgDNRWMvqZ1LsXl
-nyYjBIMjyagmo38nACQulkRD1xRe9exG5EfYCHCB0+ER7QRIrCWF804ADTSWLfVE
-kMt2193YJV+HIGCQY9lUbjGq4BhQu5x+4RhC0r3iRR8QFrAV5Ub5GX0zR6w2/VQ3
-E8ZX67cTHO2xVA9yOfreKS6OfqO5A289zrayoevVkVh47BNHc8RrxVWeaqTllF83
-xbhsEktpvuwJBEz2vaqn
-=OaPF
------END PGP SIGNATURE-----
-
---FgWTvDHj0r903stt--
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index d9536ca..a278c32 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -240,7 +240,8 @@ out:
+ 
+ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		struct device_node *np, struct pinctrl_map **map,
+-		unsigned *reserved_maps, unsigned *num_maps)
++		unsigned *reserved_maps, unsigned *num_maps,
++		enum pinctrl_map_type type)
+ {
+ 	int ret;
+ 	const char *function;
+@@ -295,7 +296,7 @@ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		if (num_configs) {
+ 			ret = pinctrl_utils_add_map_configs(pctldev, map,
+ 					reserved_maps, num_maps, group, configs,
+-					num_configs, PIN_MAP_TYPE_CONFIGS_PIN);
++					num_configs, type);
+ 			if (ret < 0)
+ 				goto exit;
+ 		}
+@@ -310,7 +311,7 @@ EXPORT_SYMBOL_GPL(pinconf_generic_dt_subnode_to_map);
+ 
+ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		struct device_node *np_config, struct pinctrl_map **map,
+-		unsigned *num_maps)
++		unsigned *num_maps, enum pinctrl_map_type type)
+ {
+ 	unsigned reserved_maps;
+ 	struct device_node *np;
+@@ -322,9 +323,10 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 
+ 	for_each_child_of_node(np_config, np) {
+ 		ret = pinconf_generic_dt_subnode_to_map(pctldev, np, map,
+-						&reserved_maps, num_maps);
++					&reserved_maps, num_maps, type);
+ 		if (ret < 0) {
+-			pinctrl_utils_dt_free_map(pctldev, *map, *num_maps);
++			pinctrl_utils_dt_free_map_config(pctldev, *map,
++				*num_maps, type);
+ 			return ret;
+ 		}
+ 	}
+diff --git a/drivers/pinctrl/pinctrl-palmas.c b/drivers/pinctrl/pinctrl-palmas.c
+index 2697c2e..599c0c7 100644
+--- a/drivers/pinctrl/pinctrl-palmas.c
++++ b/drivers/pinctrl/pinctrl-palmas.c
+@@ -655,8 +655,8 @@ static const struct pinctrl_ops palmas_pinctrl_ops = {
+ 	.get_groups_count = palmas_pinctrl_get_groups_count,
+ 	.get_group_name = palmas_pinctrl_get_group_name,
+ 	.get_group_pins = palmas_pinctrl_get_group_pins,
+-	.dt_node_to_map = pinconf_generic_dt_node_to_map,
+-	.dt_free_map = pinctrl_utils_dt_free_map,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinctrl_utils_dt_free_map_configs_pin,
+ };
+ 
+ static int palmas_pinctrl_get_funcs_count(struct pinctrl_dev *pctldev)
+diff --git a/drivers/pinctrl/pinctrl-utils.c b/drivers/pinctrl/pinctrl-utils.c
+index b7ac646..102e2d5 100644
+--- a/drivers/pinctrl/pinctrl-utils.c
++++ b/drivers/pinctrl/pinctrl-utils.c
+@@ -121,15 +121,16 @@ int pinctrl_utils_add_config(struct pinctrl_dev *pctldev,
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_utils_add_config);
+ 
+-void pinctrl_utils_dt_free_map(struct pinctrl_dev *pctldev,
+-	      struct pinctrl_map *map, unsigned num_maps)
++void pinctrl_utils_dt_free_map_config(struct pinctrl_dev *pctldev,
++		struct pinctrl_map *map, unsigned num_maps,
++		enum pinctrl_map_type type)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < num_maps; i++)
+-		if (map[i].type == PIN_MAP_TYPE_CONFIGS_GROUP)
++		if (map[i].type == type)
+ 			kfree(map[i].data.configs.configs);
+ 
+ 	kfree(map);
+ }
+-EXPORT_SYMBOL_GPL(pinctrl_utils_dt_free_map);
++EXPORT_SYMBOL_GPL(pinctrl_utils_dt_free_map_config);
+diff --git a/drivers/pinctrl/pinctrl-utils.h b/drivers/pinctrl/pinctrl-utils.h
+index d0ffe1c..6ca6ea1 100644
+--- a/drivers/pinctrl/pinctrl-utils.h
++++ b/drivers/pinctrl/pinctrl-utils.h
+@@ -22,6 +22,8 @@
+ #ifndef __PINCTRL_UTILS_H__
+ #define __PINCTRL_UTILS_H__
+ 
++#include <linux/pinctrl/machine.h>
++
+ int pinctrl_utils_reserve_map(struct pinctrl_dev *pctldev,
+ 		struct pinctrl_map **map, unsigned *reserved_maps,
+ 		unsigned *num_maps, unsigned reserve);
+@@ -37,7 +39,24 @@ int pinctrl_utils_add_map_configs(struct pinctrl_dev *pctldev,
+ int pinctrl_utils_add_config(struct pinctrl_dev *pctldev,
+ 		unsigned long **configs, unsigned *num_configs,
+ 		unsigned long config);
+-void pinctrl_utils_dt_free_map(struct pinctrl_dev *pctldev,
+-		struct pinctrl_map *map, unsigned num_maps);
++void pinctrl_utils_dt_free_map_config(struct pinctrl_dev *pctldev,
++		struct pinctrl_map *map, unsigned num_maps,
++		enum pinctrl_map_type type);
++
++static inline void pinctrl_utils_dt_free_map_configs_group(
++	struct pinctrl_dev *pctldev,
++	struct pinctrl_map *map, unsigned num_maps)
++{
++	pinctrl_utils_dt_free_map_config(pctldev, map, num_maps,
++		PIN_MAP_TYPE_CONFIGS_GROUP);
++}
++
++static inline void pinctrl_utils_dt_free_map_configs_pin(
++	struct pinctrl_dev *pctldev,
++	struct pinctrl_map *map, unsigned num_maps)
++{
++	pinctrl_utils_dt_free_map_config(pctldev, map, num_maps,
++		PIN_MAP_TYPE_CONFIGS_PIN);
++}
+ 
+ #endif /* __PINCTRL_UTILS_H__ */
+diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinctrl/pinconf-generic.h
+index 83f5179..fb90ef5 100644
+--- a/include/linux/pinctrl/pinconf-generic.h
++++ b/include/linux/pinctrl/pinconf-generic.h
+@@ -140,15 +140,33 @@ static inline unsigned long pinconf_to_config_packed(enum pin_config_param param
+ #ifdef CONFIG_OF
+ 
+ #include <linux/device.h>
++#include <linux/pinctrl/machine.h>
+ struct pinctrl_dev;
+ struct pinctrl_map;
+ 
+ int pinconf_generic_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		struct device_node *np, struct pinctrl_map **map,
+-		unsigned *reserved_maps, unsigned *num_maps);
++		unsigned *reserved_maps, unsigned *num_maps,
++		enum pinctrl_map_type type);
+ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		struct device_node *np_config, struct pinctrl_map **map,
+-		unsigned *num_maps);
++		unsigned *num_maps, enum pinctrl_map_type type);
++
++static inline int pinconf_generic_dt_node_to_map_group(
++		struct pinctrl_dev *pctldev, struct device_node *np_config,
++		struct pinctrl_map **map, unsigned *num_maps)
++{
++	return pinconf_generic_dt_node_to_map(pctldev, np_config, map, num_maps,
++			PIN_MAP_TYPE_CONFIGS_GROUP);
++}
++
++static inline int pinconf_generic_dt_node_to_map_pin(
++		struct pinctrl_dev *pctldev, struct device_node *np_config,
++		struct pinctrl_map **map, unsigned *num_maps)
++{
++	return pinconf_generic_dt_node_to_map(pctldev, np_config, map, num_maps,
++			PIN_MAP_TYPE_CONFIGS_PIN);
++}
+ 
+ #endif
+ 
+-- 
+1.7.1.1
