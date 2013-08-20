@@ -1,44 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: use pinctrl-utils APIs for mapping
-Date: Tue, 20 Aug 2013 14:28:28 -0600
-Message-ID: <5213D16C.40304@wwwdotorg.org>
-References: <1377000758-3795-1-git-send-email-ldewangan@nvidia.com> <1377000758-3795-2-git-send-email-ldewangan@nvidia.com>
+From: Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: tegra on 3.11
+Date: Tue, 20 Aug 2013 16:50:08 -0400
+Message-ID: <20130820205007.GL27560@redacted.bos.redhat.com>
+References: <20130820150418.GI27560@redacted.bos.redhat.com>
+ <5213C0F2.9060909@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377000758-3795-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5213C0F2.9060909-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/20/2013 06:12 AM, Laxman Dewangan wrote:
-> Pin control utility functions provides the function for creating
-> map lists.
+On Tue, Aug 20, 2013 at 01:18:10PM -0600, Stephen Warren wrote:
+> On 08/20/2013 09:04 AM, Kyle McMartin wrote:
+> > Hey guys,
+> > 
+> > Just a quick note, I needed to pull in the patch from
+> > http://marc.info/?l=linux-tegra&m=137404750420372&w=2 in order to get
+> > trimslice booting from its internal SATA when using dtb to boot.
 > 
-> In place of implementing APIs locally in Tegra pin control driver
-> for creating map lists, use the utility functions. This reduces
-> the code size and avoid duplication.
+> Oh dear, I can reproduce this. It looks like I didn't notice this since
+> I was probably testing linux-next with Mikko's patches applied on top in
+> my local branch:-(
+> 
+> If that patch gets applied to v3.11, then it'll cause nasty merge
+> conflicts with Mikko's other USB-related patches when v3.12 comes
+> around. Plus, the patch is rather large for this late stage in the
+> v3.11-rc series. I think the best way is to add regulator-always-on,
+> regulator-boot-on properties to the relevant VBUS regulators. I'll try
+> sending a patch for that...
 
-This patch looks fine, so assuming the issue in patch 1/2 is fixed, this
-patch,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Thanks, we've hit another issue in Fedora where that may or may not be
+the kernel (life on the bleeding edge, sigh.) but I'll re-build a known
+working kernel with your patch instead of the backport and let you know
+if it works for us.
 
-One thought though:
-
-> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
-
->  static const struct cfg_param {
->  	const char *property;
->  	enum tegra_pinconf_param param;
-> @@ -212,12 +112,13 @@ static const struct cfg_param {
->  	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
->  };
-
-If you add a new field to that struct that's a function pointer, which
-parses the content of the property and gives back an unsigned log or
-struct pinctrl_map, you could probably make most of
-tegra_pinctrl_dt_subnode_to_map() be generic too...
-
-But, that's certainly something for a separate patch if you want.
+regards, Kyle
