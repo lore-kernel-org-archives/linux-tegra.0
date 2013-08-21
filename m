@@ -1,31 +1,50 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [patch] crypto: tegra-aes - bitwise vs logical and
-Date: Wed, 21 Aug 2013 21:51:18 +1000
-Message-ID: <20130821115118.GG23287@gondor.apana.org.au>
-References: <20130820085447.GA20170@elgon.mountain>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 2/2] ARM: tegra: add Palmas pincontrol to Dalmore device tree
+Date: Wed, 21 Aug 2013 18:04:21 +0530
+Message-ID: <1377088461-9499-2-git-send-email-ldewangan@nvidia.com>
+References: <1377088461-9499-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130820085447.GA20170@elgon.mountain>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1377088461-9499-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 20, 2013 at 11:54:48AM +0300, Dan Carpenter wrote:
-> The bug here is that:
-> 
-> 	while (eng_busy & (!icq_empty) & dma_busy)
-> 
-> is never true because it's using bitwise instead of logical ANDs.  The
-> other bitwise AND conditions work as intended but I changed them as well
-> for consistency.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Add Palmas pincontrol to Dalmore device tree and make following
+configuration as default:
+- Disable DVFS1 and DVFS2.
+- Set GPIO6 to gpio mode.
 
-Also applied.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts |   13 +++++++++++++
+ 1 files changed, 13 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 45056a2..44413dd 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1009,6 +1009,19 @@
+ 				interrupt-parent = <&palmas>;
+ 				interrupts = <8 0>;
+ 			};
++
++			palmas_pinctrl {
++				compatible = "ti,tps65913-pinctrl";
++				pinctrl-names = "default";
++				pinctrl-0 = <&palmas_default>;
++
++				palmas_default: palams_pinctrl {
++					pin_gpio6 {
++						pins = "gpio6";
++						function = "gpio";
++					};
++				};
++			};
+ 		};
+ 	};
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.1.1
