@@ -1,147 +1,48 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V2] i2c: move of helpers into the core
-Date: Wed, 21 Aug 2013 16:46:48 +0200
-Message-ID: <5214D2D8.7010106@samsung.com>
-References: <1377092832-3417-1-git-send-email-wsa@the-dreams.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [GIT PULL 3/4] ARM: tegra: device tree changes for 3.12
+Date: Wed, 21 Aug 2013 09:57:03 -0600
+Message-ID: <5214E34F.2030606@wwwdotorg.org>
+References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org> <1376673628-5867-3-git-send-email-swarren@wwwdotorg.org> <8738q4j59d.fsf@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1377092832-3417-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+In-Reply-To: <8738q4j59d.fsf-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/21/2013 03:47 PM, Wolfram Sang wrote:
-> I2C of helpers used to live in of_i2c.c but experience (from SPI) shows
-> that it is much cleaner to have this in the core. This also removes a
-> circular dependency between the helpers and the core, and so we can
-> finally register child nodes in the core instead of doing this manually
-> in each driver. So, fix the drivers and documentation, too.
+On 08/20/2013 05:45 PM, Kevin Hilman wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
 > 
-> Acked-by: Sylwester Nawrocki <s.nawrocki-UaMK/Mspgf7QT0dZR+AlfA@public.gmane.org>
-> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-
-With this patch there are still couple of of_i2c.h header file
-inclusions:
-
-$ git grep of_i2c.h
-arch/powerpc/platforms/44x/warp.c:#include <linux/of_i2c.h>
-drivers/gpu/drm/tilcdc/tilcdc_slave.c:#include <linux/of_i2c.h>
-drivers/gpu/drm/tilcdc/tilcdc_tfp410.c:#include <linux/of_i2c.h>
-drivers/gpu/host1x/drm/output.c:#include <linux/of_i2c.h>
-drivers/media/platform/exynos4-is/fimc-is.c:#include <linux/of_i2c.h>
-drivers/media/platform/exynos4-is/media-dev.c:#include <linux/of_i2c.h>
-drivers/staging/imx-drm/imx-tve.c:#include <linux/of_i2c.h>
-sound/soc/fsl/imx-sgtl5000.c:#include <linux/of_i2c.h>
-sound/soc/fsl/imx-wm8962.c:#include <linux/of_i2c.h>
-
-
-Please include also this chunk, without it I'm getting build errors.
-
---------------8<---------------------
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-index ca07b48..e38e9dc 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-@@ -11,6 +11,7 @@
-  */
-
- #include <linux/clk.h>
-+#include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c
-b/drivers/media/platform/exynos4-is/fimc-is.c
-index 6743ae3..63e4f1d 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -21,7 +21,6 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/of_i2c.h>
- #include <linux/of_irq.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c
-b/drivers/media/platform/exynos4-is/media-dev.c
-index c10dee2..00e5f91 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -22,7 +22,6 @@
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/of_device.h>
--#include <linux/of_i2c.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/types.h>
---------------8<---------------------
-
-> ---
+>> This branch contains all *.dts (device tree) changes for Tegra.
+>> New features enabled are:
+>>
+>> * PMICs on Dalmore
+>> * CPU power-gating on Dalmore
+>> * HDMI output on Beaver
+>> * LP1 system suspend mode on almost all boards
+>> * PCIe support on numerous Tegra20/30 boards
+>> * USB support on Tegra30/114 boards
+>> * Audio capture on Beaver and Dalmore
+>> * Temperature sensor on Cardhu.
+>>
+>> ... along with a few DT cleanups.
 > 
-> V1 -> V2: * Add #else branch to #if CONFIG_OF
-> 	  * EXPORT_SYMBOLs got attached to wrong functions
-> 	  * cosmetic change (of -> OF)
-> 	  * properly based on 3.11-rc4
-> 
->  Documentation/acpi/enumeration.txt              |    1 -
->  drivers/i2c/busses/i2c-at91.c                   |    3 -
->  drivers/i2c/busses/i2c-cpm.c                    |    6 --
->  drivers/i2c/busses/i2c-davinci.c                |    2 -
->  drivers/i2c/busses/i2c-designware-platdrv.c     |    2 -
->  drivers/i2c/busses/i2c-gpio.c                   |    3 -
->  drivers/i2c/busses/i2c-i801.c                   |    2 -
->  drivers/i2c/busses/i2c-ibm_iic.c                |    4 -
->  drivers/i2c/busses/i2c-imx.c                    |    3 -
->  drivers/i2c/busses/i2c-mpc.c                    |    2 -
->  drivers/i2c/busses/i2c-mv64xxx.c                |    3 -
->  drivers/i2c/busses/i2c-mxs.c                    |    3 -
->  drivers/i2c/busses/i2c-nomadik.c                |    3 -
->  drivers/i2c/busses/i2c-ocores.c                 |    3 -
->  drivers/i2c/busses/i2c-octeon.c                 |    3 -
->  drivers/i2c/busses/i2c-omap.c                   |    3 -
->  drivers/i2c/busses/i2c-pnx.c                    |    3 -
->  drivers/i2c/busses/i2c-powermac.c               |    9 +-
->  drivers/i2c/busses/i2c-pxa.c                    |    2 -
->  drivers/i2c/busses/i2c-s3c2410.c                |    2 -
->  drivers/i2c/busses/i2c-sh_mobile.c              |    2 -
->  drivers/i2c/busses/i2c-sirf.c                   |    3 -
->  drivers/i2c/busses/i2c-stu300.c                 |    2 -
->  drivers/i2c/busses/i2c-tegra.c                  |    3 -
->  drivers/i2c/busses/i2c-versatile.c              |    2 -
->  drivers/i2c/busses/i2c-wmt.c                    |    3 -
->  drivers/i2c/busses/i2c-xiic.c                   |    3 -
->  drivers/i2c/i2c-core.c                          |  109 +++++++++++++++++++++-
->  drivers/i2c/i2c-mux.c                           |    3 -
->  drivers/i2c/muxes/i2c-arb-gpio-challenge.c      |    1 -
->  drivers/i2c/muxes/i2c-mux-gpio.c                |    1 -
->  drivers/i2c/muxes/i2c-mux-pinctrl.c             |    1 -
->  drivers/media/platform/exynos4-is/fimc-is-i2c.c |    3 -
->  drivers/of/Kconfig                              |    6 --
->  drivers/of/Makefile                             |    1 -
->  drivers/of/of_i2c.c                             |  114 -----------------------
->  include/linux/i2c.h                             |   20 ++++
->  include/linux/of_i2c.h                          |   46 ---------
->  38 files changed, 132 insertions(+), 253 deletions(-)
->  delete mode 100644 drivers/of/of_i2c.c
->  delete mode 100644 include/linux/of_i2c.h
+> Hmm, shouldn't I have a DT maintainer signoff on this stuff... oh,
+> wait... ;)
 
-I've tested this patch on Exynos4412 SoC based board, so this covers
-i2c-s3c2410 and fimc-is-i2c. Compiled with CONFIG_OF enabled.
+One thought here on my DT binding maintainer role (hence CCing the other
+DT maintainers):
 
-I guess after removing all remaining occurrences of
-#include <linux/of_i2c.h> you could add:
+I assume that the DT maintainers are reviewing the DT bindings, and not
+the *.dts files. There's certainly so much email defining/modifying
+bindings that I can't even keep up with that. So, I deliberately don't
+even attempt to look at anything other than the binding changes. Is this
+not what the role entails? If the role is supposed to include reviewing
+*.dts changes, then perhaps I should wait until someone else has
+reviewed such patches before applying them to the Tegra tree?
 
-Tested-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
---
-Thanks,
-Sylwester
+Of course, as Tegra maintainer I do actively look at the specific *.dts
+changes that go through my own tree.
