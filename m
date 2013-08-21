@@ -1,35 +1,35 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] pinctrl: utils : add support to pass config type
- in generic util APIs
-Date: Thu, 22 Aug 2013 00:28:46 +0200
-Message-ID: <CACRpkdZjrd5xCcKTOMoYqnGVyfjKtN7NOpAw_Vp7XoJsqi_4oQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 2/2] pinctrl: tegra: use pinctrl-utils APIs for mapping
+Date: Thu, 22 Aug 2013 00:30:05 +0200
+Message-ID: <CACRpkdagqL2zUtsC4P0je094CnpA9iDNT-xWMbzHwAGfO-BA4w@mail.gmail.com>
 References: <1377084218-13858-1-git-send-email-ldewangan@nvidia.com>
+	<1377084218-13858-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377084218-13858-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1377084218-13858-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 1:23 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Wed, Aug 21, 2013 at 1:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> Add support to pass the config type like GROUP or PIN when using
-> the utils or generic pin configuration APIs. This will make the
-> APIs more generic.
+> Pin control utility functions provides the function for creating
+> map lists.
 >
-> Added additional inline APIs such that it can be use directly as
-> callback for the pinctrl_ops.
+> In place of implementing APIs locally in Tegra pin control driver
+> for creating map lists, use the utility functions. This reduces
+> the code size and avoid duplication.
 >
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 > ---
 > Changes from V1:
-> - Remove separate implementation for pins and group for
->   pinctrl_utils_dt_free_map and improve this function
->   to support both i.e. PINS and GROUPs.
+> - Rebased change on top of V1.
+> - Use pinctrl_utils_dt_free_map
 
-Patch applied with Stephen's tags.
+Patch applied.
 
 Yours,
 Linus Walleij
