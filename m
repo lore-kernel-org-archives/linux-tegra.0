@@ -1,63 +1,68 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL 3/4] ARM: tegra: device tree changes for 3.12
-Date: Wed, 21 Aug 2013 11:47:35 -0700
-Message-ID: <87bo4qq3so.fsf@linaro.org>
-References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
-	<1376673628-5867-3-git-send-email-swarren@wwwdotorg.org>
-	<8738q4j59d.fsf@kernel.org> <5214E34F.2030606@wwwdotorg.org>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: question on possible i2c slave configuration
+Date: Wed, 21 Aug 2013 23:34:32 +0200
+Message-ID: <1394885.ONCPakntio@fb07-iapwap2.physik.uni-giessen.de>
+References: <1674757.GDNdpd4ScH@fb07-iapwap2.physik.uni-giessen.de> <5211BF2F.1010309@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5214E34F.2030606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen Warren's message of
-	"Wed, 21 Aug 2013 09:57:03 -0600")
+In-Reply-To: <5211BF2F.1010309-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
+Hi Laxman,
 
-> On 08/20/2013 05:45 PM, Kevin Hilman wrote:
->> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
->> 
->>> This branch contains all *.dts (device tree) changes for Tegra.
->>> New features enabled are:
->>>
->>> * PMICs on Dalmore
->>> * CPU power-gating on Dalmore
->>> * HDMI output on Beaver
->>> * LP1 system suspend mode on almost all boards
->>> * PCIe support on numerous Tegra20/30 boards
->>> * USB support on Tegra30/114 boards
->>> * Audio capture on Beaver and Dalmore
->>> * Temperature sensor on Cardhu.
->>>
->>> ... along with a few DT cleanups.
->> 
->> Hmm, shouldn't I have a DT maintainer signoff on this stuff... oh,
->> wait... ;)
->
-> One thought here on my DT binding maintainer role (hence CCing the other
-> DT maintainers):
->
-> I assume that the DT maintainers are reviewing the DT bindings, and not
-> the *.dts files. There's certainly so much email defining/modifying
-> bindings that I can't even keep up with that. So, I deliberately don't
-> even attempt to look at anything other than the binding changes. Is this
-> not what the role entails? If the role is supposed to include reviewing
-> *.dts changes, then perhaps I should wait until someone else has
-> reviewed such patches before applying them to the Tegra tree?
+Am Montag, 19. August 2013, 12:16:07 schrieb Laxman Dewangan:
+> Hi Marc,
+> Sorry for late response, I was on vacation.
 
-I was assuming that the DT maintainers would primarily focus on
-bindings.  The platform maintainers should be primarily responsible for
-the .dts files.
+As chance would have it, I'm now ;-)
 
-That being said, there will be no harm done if the DT reviewers have
-some bandwidth to look at .dts files too. :)
+> On Tuesday 13 August 2013 07:46 PM, Marc Dietrich wrote:
+> > Hi Laxman,
+> > 
+> > Stephen and me were discussing about the possible configuration of the i2c
+> > slave controller. The question here is if the slave and the master
+> > controller of the same port (or instance) can act in parallel.
+> 
+> Yes, they can work in parallel. Infact we also tested the loopback
+> (internal) from master to slave for same instance controller.
+> 
+> Bot engine (Master and slave) shared the interrupt number, clock bit and
+> clock source, reset bit, and some controller registers.
+> So if we handle the sharing of this stuff then it is fine to use in
+> parallel.
 
-> Of course, as Tegra maintainer I do actively look at the specific *.dts
-> changes that go through my own tree.
+Thanks for confirmation. I don't have much time now to think about how to 
+repesent this in DT. One idea which jumped into my mind is to always 
+instantiate the master (the bus is not clocked) and instatiate the slave as 
+his i2c client. This should make loopback mode work. The downside is, that if 
+someone else is the bus master, the DT bus structure would be broken somehow. 
+NVEC could talk to the slave via some node handler in this case. 
 
-Phew.
+Will think more about it when I'm "recovered".
 
-Kevin
+Marc
+
+> > This is of particular interest when it comes to device tree
+> > representation.
+> > The Tegra3 TRM mentions a that the master can address its own slave for
+> > testing purposes. Also the i2c block diagram suggests that there are two
+> > controllers (for master and slave) connected to the same bus.
+> 
+> Yes, this is very much supported and we have simple testcases for this.
+> 
+> > If this is the case, master and slave mode is not exclusive, or in other
+> > words, the i2c master and slave need to share their resources.
+> 
+> Yes, it is not exclusive and share some common resources as mentioned above.
+> > Another question is (because this would add a lot of code complexity) if
+> > we
+> > want to allow such a configuration at all.
+> 
+> In Tegra context, we did not use the master and slave together as these
+> makes the sw unnecessarily complex. We used in either in master or in
+> slave only.
