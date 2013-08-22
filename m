@@ -1,47 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] pinctrl: queue GPIO operations instead of defering
-Date: Thu, 22 Aug 2013 01:04:23 +0200
-Message-ID: <CACRpkdbNh6ooBh-dhT=KKHQMZ=uK_AQMsreTg56kVXE5cE1ohQ@mail.gmail.com>
-References: <1376751410-14560-1-git-send-email-linus.walleij@linaro.org>
-	<52127035.7000909@wwwdotorg.org>
-	<5214FCB6.4040200@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [GIT PULL 2/4] ARM: tegra: core SoC enhancements for 3.12
+Date: Thu, 22 Aug 2013 11:10:02 +0800
+Message-ID: <1377141002.23521.9.camel@jlo-ubuntu-64.nvidia.com>
+References: <1376673628-5867-1-git-send-email-swarren@wwwdotorg.org>
+	 <1376673628-5867-2-git-send-email-swarren@wwwdotorg.org>
+	 <87mwocj680.fsf@kernel.org> <5213FB99.5030903@wwwdotorg.org>
+	 <20130821012822.4443.83479@quantum>  <5214E59E.2070908@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <5214FCB6.4040200@wwwdotorg.org>
-Sender: linux-next-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Lars Poeschel <poeschel@lemonage.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5214E59E.2070908-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 7:45 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/19/2013 01:21 PM, Stephen Warren wrote:
->> On 08/17/2013 08:56 AM, Linus Walleij wrote:
->>> We currently defer probing of the caller if a pinctrl GPIO
->>> request or direction setting comes in before the range mapping
->>> a certain GPIO to a certain pin controller is available.
->>>
->>> This can end up with a circular dependency: the GPIO driver
->>> needs the pin controller to be ready and the pin controller
->>> need the GPIO driver to be ready. This also happens if
->>> pin controllers and GPIO controllers compiled as modules
->>> are inserted in a certain order.
->>>
->>> To break this circular dependence, queue any GPIO
->>> operations coming to the framework until the range is ready,
->>> instead of deferring the probe of the caller.
->>
->> I just noticed that next-20130819 is failing on the Tegra114 Dalmore
->> board because of this patch. The kernel log is below. Reverting this
->> patch solves the problem
->
-> Linus, any thoughts here?
+On Thu, 2013-08-22 at 00:06 +0800, Stephen Warren wrote:
+> On 08/20/2013 07:28 PM, Mike Turquette wrote:
+> > Quoting Stephen Warren (2013-08-20 16:28:25)
+> >> On 08/20/2013 05:24 PM, Kevin Hilman wrote:
+> >>> + Mike Turquette
+> >>>
+> >>> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
+> >>>
+> >>>> This branch includes a number of enhancements to core SoC support for
+> >>>> Tegra devices. The major new features are:
+[...]
+> >>>> ----------------------------------------------------------------
+> >>>>
+> >>>> Jay Agarwal (1):
+> >>>>       PCI: tegra: Add Tegra 30 PCIe support
+> >>>>
+> >>>> Joseph Lo (21):
+> >>>>       ARM: tegra: enable Cortex-A15 erratum 798181
+> >>>>       Revert "ARM: tegra: add cpu_disable for hotplug"
+> >>>>       ARM: tegra114: Reprogram GIC CPU interface to bypass IRQ on CPU PM entry
+> >>>>       ARM: tegra114: add low level support for CPU idle powered-down mode
+> >>>>       ARM: tegra114: cpuidle: add powered-down state
+> >>>>       ARM: tegra: do v7_invalidate_l1 only when CPU is Cortex-A9
+> >>>>       ARM: tegra: add a flag for tegra_disable_clean_inv_dcache to do LoUIS or ALL
+> >>>>       ARM: tegra: set up the correct L2 data RAM latency for Cortex-A15
+> >>>>       ARM: tegra: add low level code for Tegra114 cluster power down
+> >>>>       ARM: tegra: shut off the CPU rail when the last CPU in suspend
+> >>>>       ARM: tegra: hook tegra_tear_down_cpu function
+> >>>>       ARM: tegra: flowctrl: add support for cpu_suspend_enter/exit
+> >>>>       clk: tegra: add suspend/resume function for tegra_cpu_car_ops
+> >>>
+> >>> This one...
+> >>>
+> >>>>       ARM: tegra: remove the limitation that Tegra114 can't support suspend
+> >>>>       ARM: tegra: add common resume handling code for LP1 resuming
+> >>>>       ARM: tegra: config the polarity of the request of sys clock
+> >>>>       clk: tegra114: add LP1 suspend/resume support
+> >>>
+> >>> ...and this one are drivers/clk and I don't see an ack from the
+> >>> clock framework maintainer (Mike Turquette) on either.
+> >>>
+> >>> If Mike is OK for them to go via arm-soc, that should be specified in
+> >>> the description above (and he should ack them), otherwise they should be
+> >>> split out and sent via Mike.
+> >>>
+> >>> A quick glance suggests there are no direct dependencies, so it's
+> >>> probably best if those changes go through Mike.
+> >>
+> >> There are at least run-time dependencies here, although it's possible
+> >> they're limited to "suspend won't work on Tegra114 unless all those
+> >> patches are present" rather than "if all these patches aren't present,
+> >> something other than a new feature will regress due to this series".
+> >>
+> >> Mike's certainly been CC'd on the patches many times as quite a few
+> >> versions of each were posted, and I asked for acks, but got no response.
+> >> In the past, that's meant he's fine with the patches...
+> > 
+> > Hi Stephen,
+> > 
+> > Let's not set the precedent of silence conferring an Ack. For the patch
+> > "clk: tegra: add suspend/resume function for tegra_cpu_car_ops" I gave
+> > the V1 patch a "looks good to me" response but I seemed to have missed
+> > the V2 patch:
+> > http://article.gmane.org/gmane.linux.ports.tegra/12213
+> 
+> Yes, it looks like Joseph simply didn't add the ack to the commit. I'll
+> follow up internally to make sure people get the process right.
+> 
 
-None whatsoever, but logically it should be that your pinctrl+GPIO
-driver pair depends on the GPIO driver coming first and having it's probing
-deferred.
-
-I'll rip out that patch for the time being...
-
-Yours,
-Linus Walleij
+This was because the ack was coming after the patch had been merged. :-(
