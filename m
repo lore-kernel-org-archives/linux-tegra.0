@@ -1,46 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [cbootimage PATCH 2/2] crypto: produce consistent hash for zero-length data
-Date: Fri, 23 Aug 2013 12:56:02 -0600
-Message-ID: <1377284162-7700-2-git-send-email-swarren@wwwdotorg.org>
-References: <1377284162-7700-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [cbootimage PATCH 1/1] Add Tegra124 support
+Date: Fri, 23 Aug 2013 13:05:11 -0600
+Message-ID: <5217B267.3030205@wwwdotorg.org>
+References: <1377229591-21235-1-git-send-email-pchiu@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377284162-7700-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1377229591-21235-1-git-send-email-pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/22/2013 09:46 PM, Penny Chiu wrote:
+> Add the Tegra124 chip support to cbootimage. User can use "-t124" as
+> option to parse .cfg and generate BCT/image for Tegra124.
 
-In real-world use-cases, hashing zero-length data likely never happens.
-However, it is relevant when testing cbootimage with a dummy zero-length
-bootloader binary, e.g.:
+This looks fine to me at a quick glance. Just one small comment below:
 
-touch u-boot.bin
-cbootimage -t30 ../tamonten-ng/tegra30.img.cfg tegra30-tec-ng.img
+> diff --git a/src/cbootimage.c b/src/cbootimage.c
 
-In this scenario, it's useful to create a consistent hash, so that one
-can compare the resultant images before and after applying patches, to
-check for regressions.
+>  	printf("Usage: cbootimage [options] configfile imagename\n");
+>  	printf("    options:\n");
+> -	printf("    -h, --help, -?        Display this message.\n");
+> -	printf("    -d, --debug           Output debugging information.\n");
+> -	printf("    -gbct                 Generate the new bct file.\n");
+> -	printf("    -o<ODM_DATA>          Specify the odm_data(in hex).\n");
+> -	printf("    [-t20|-t30|-t114]     Select one of the possible target devices,\n");
+> -	printf("                          -t20 if unspecified.\n");
+> -	printf("    configfile            File with configuration information\n");
+> -	printf("    imagename             Output image name\n");
+> +	printf("    -h, --help, -?              Display this message.\n");
+> +	printf("    -d, --debug                 Output debugging information.\n");
+> +	printf("    -gbct                       Generate the new bct file.\n");
+> +	printf("    -o<ODM_DATA>                Specify the odm_data(in hex).\n");
+> +	printf("    [-t20|-t30|-t114|-t124]     Select one of the possible target devices,\n");
+> +	printf("                                -t20 if unspecified.\n");
+> +	printf("    configfile                  File with configuration information\n");
+> +	printf("    imagename                   Output image name\n");
+>  }
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- src/crypto.c | 3 +++
- 1 file changed, 3 insertions(+)
+To avoid continually re-formatting that text when adding new SoCs, why
+not start the description of the -tNN options on a separate line, and
+leave the indentation as-is for all the unmodified lines. i.e.:
 
-diff --git a/src/crypto.c b/src/crypto.c
-index 88de357..9741785 100644
---- a/src/crypto.c
-+++ b/src/crypto.c
-@@ -183,6 +183,9 @@ sign_objext(
- 	if (enable_debug_crypto)
- 		print_vector("K1", KEY_LENGTH, k1);
- 
-+	if (!num_aes_blocks)
-+		memset(dst, 0, 4 * NVAES_STATECOLS);
-+
- 	/* compute the AES-CMAC value */
- 	for (i = 0; i < num_aes_blocks; i++) {
- 		/* Apply the chain data */
--- 
-1.8.1.5
+>> +	printf("    [-t20|-t30|-t114|-t124]\n");
+>> +	printf("                          Select one of the possible target devices,\n");
+>> +	printf("                          -t20 if unspecified.\n");
+
+I tested this patch, and it has zero effect on any of the generated
+images in the cbootimage-configs project, as expected, so I think it's
+safe to accept.
