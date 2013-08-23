@@ -1,33 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [patch 2/2] gpu: host1x: returning success instead of -ENOMEM
-Date: Fri, 23 Aug 2013 13:16:30 -0600
-Message-ID: <5217B50E.5020101@wwwdotorg.org>
-References: <20130823101911.GA1824@elgon.mountain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130823101911.GA1824-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Terje_Ber?= =?ISO-8859-1?Q?gstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Colin Cross <ccross@android.com>
+Subject: [PATCH 1/3] cpuidle: coupled: disable interrupts after entering safe state
+Date: Fri, 23 Aug 2013 12:45:10 -0700
+Message-ID: <1377287112-12018-1-git-send-email-ccross@android.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Neil Zhang <zhangwm@marvell.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Colin Cross <ccross@android.com>, stable@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/23/2013 04:19 AM, Dan Carpenter wrote:
-> There is a mistake here so it returns PTR_ERR(NULL) which is success
-> instead of -ENOMEM.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> ---
-> I can't compile this.
+Calling cpuidle_enter_state is expected to return with interrupts
+enabled, but interrupts must be disabled before starting the
+ready loop synchronization stage.  Call local_irq_disable after
+each call to cpuidle_enter_state for the safe state.
 
-For the record, just do:
+CC: stable@vger.kernel.org
+Signed-off-by: Colin Cross <ccross@android.com>
+---
+ drivers/cpuidle/coupled.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-export CROSS_COMPILE=xxx
-make ARCH=arm tegra_defconfig
-make ARCH=arm zImage
-
-The only slightly difficult part is getting a CROSS_COMPILE value. Many
-distros ship at least some ARM cross-compiler in their standard
-package-set these days, and if not, you can download the Linaro
-compilers or go to ftp://ftp.kernel.org/pub/tools/crosstool/index.html.
+diff --git a/drivers/cpuidle/coupled.c b/drivers/cpuidle/coupled.c
+index 2a297f8..db92bcb 100644
+--- a/drivers/cpuidle/coupled.c
++++ b/drivers/cpuidle/coupled.c
+@@ -460,6 +460,7 @@ int cpuidle_enter_state_coupled(struct cpuidle_device *dev,
+ 		}
+ 		entered_state = cpuidle_enter_state(dev, drv,
+ 			dev->safe_state_index);
++		local_irq_disable();
+ 	}
+ 
+ 	/* Read barrier ensures online_count is read after prevent is cleared */
+@@ -485,6 +486,7 @@ retry:
+ 
+ 		entered_state = cpuidle_enter_state(dev, drv,
+ 			dev->safe_state_index);
++		local_irq_disable();
+ 	}
+ 
+ 	if (cpuidle_coupled_clear_pokes(dev->cpu)) {
+-- 
+1.8.3
