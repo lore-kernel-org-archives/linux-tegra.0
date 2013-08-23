@@ -1,60 +1,52 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V3] i2c: move of helpers into the core
-Date: Fri, 23 Aug 2013 10:52:03 +0200
-Message-ID: <20130823085203.GC3035@katana>
-References: <1377187217-31820-1-git-send-email-wsa@the-dreams.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch 1/2] gpu: host1x: fix an integer overflow check
+Date: Fri, 23 Aug 2013 13:18:25 +0300
+Message-ID: <20130823101825.GA1765@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
-Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-janitors-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1377187217-31820-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, devel@driverdev.osuosl.org, alsa-devel@alsa-project.org
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
+"total" will never be higher than UINT_MAX because of integer overflows.
+We need cast to u64 first before doing the math.
 
---bAmEntskrkuBymla
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also the addition earlier:
 
-On Thu, Aug 22, 2013 at 06:00:14PM +0200, Wolfram Sang wrote:
-> I2C of helpers used to live in of_i2c.c but experience (from SPI) shows
-> that it is much cleaner to have this in the core. This also removes a
-> circular dependency between the helpers and the core, and so we can
-> finally register child nodes in the core instead of doing this manually
-> in each driver. So, fix the drivers and documentation, too.
->=20
-> Acked-by: Rob Herring <rob.herring@calxeda.com>
-> Reviewed-by: Felipe Balbi <balbi@ti.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+        unsigned int num_unpins = num_cmdbufs + num_relocs;
 
-Applied to for-next!
+That can overflow as well, but I think it's still safe because we check
+both "num_cmdbufs" and "num_relocs" again in this test.
 
---bAmEntskrkuBymla
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+This is something I spotted in code review.  I can't actually compile
+this code.  I assume this overflow test has security implications.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSFyKzAAoJEBQN5MwUoCm2bI0QAK5awQ507hl+3+q76tlv3bM/
-+m1YNlqdEye7K3+XmB48MpCUi65bGtoITuOg+DaWYxw3+A7RhoJgwkFyMZ0gpesj
-aHkFe51yVYiU4Zx1MVSpIDo5ufAmp+8FRM3TF++IgAq62/7fLtwhTJlU2qgzShzs
-rw8UbmXg9+VjWFRfw1tAl+Vz3sWb9+vH2fmNiwXyPMglOdpClKe28rXrABJ78Gqc
-cxqgatPqfBCxyob57z/hGShtPUZkRWdpMU/hjbfemsPrysbLQzmqVyVS2idFP1ad
-T3mJ3xbKXcyJNO4NjGWazxPnpZ74RfNIJQ5nerZfqralO2gdVW8EFwCYaEy9k8YF
-/EpBpMQkHz3Pb3eb4tZJa50cVCygjuikpPoxq9Mtao6T8VG0aVNj8NuE9ros2WS8
-YWkRaVRDN8fjW98vuw7HmNuHCfFZV7QQ8uCcDtrl9k7X+fLQIvxPAVgrDs7Qmugm
-9nzR9AchLDuHuBNRM42bz/t+cILX2ExwIMC5k1YouF0Inuvfrh3LSrEyaJSD8IEF
-VeRGJPNSEP+Ww2+bGexV56ziz8JeMNLaj5rghDw9h9Jz5D4nMRjqhsRAbSfjrlMb
-YfyMTzS/tmJgt2NPj2bc2DvK4JLfrS/SR5YsdWSgR6VQ0WUvPSLJL/rY8Gn/UJ2j
-gfliuM4Sj6/OhS+bbMX3
-=pGc6
------END PGP SIGNATURE-----
-
---bAmEntskrkuBymla--
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index cc80766..18a47f9 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -42,12 +42,12 @@ struct host1x_job *host1x_job_alloc(struct host1x_channel *ch,
+ 
+ 	/* Check that we're not going to overflow */
+ 	total = sizeof(struct host1x_job) +
+-		num_relocs * sizeof(struct host1x_reloc) +
+-		num_unpins * sizeof(struct host1x_job_unpin_data) +
+-		num_waitchks * sizeof(struct host1x_waitchk) +
+-		num_cmdbufs * sizeof(struct host1x_job_gather) +
+-		num_unpins * sizeof(dma_addr_t) +
+-		num_unpins * sizeof(u32 *);
++		(u64)num_relocs * sizeof(struct host1x_reloc) +
++		(u64)num_unpins * sizeof(struct host1x_job_unpin_data) +
++		(u64)num_waitchks * sizeof(struct host1x_waitchk) +
++		(u64)num_cmdbufs * sizeof(struct host1x_job_gather) +
++		(u64)num_unpins * sizeof(dma_addr_t) +
++		(u64)num_unpins * sizeof(u32 *);
+ 	if (total > ULONG_MAX)
+ 		return NULL;
+ 
