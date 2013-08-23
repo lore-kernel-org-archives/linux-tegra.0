@@ -1,21 +1,22 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] cpufreq: tegra: fix the wrong clock name
-Date: Fri, 23 Aug 2013 10:24:39 -0600
-Message-ID: <52178CC7.2070003@wwwdotorg.org>
-References: <1377222238-9439-1-git-send-email-josephl@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 tegra-cbootimage] Add automake option subdir-objects
+ to prevent warnings
+Date: Fri, 23 Aug 2013 10:50:57 -0600
+Message-ID: <521792F1.5040502@wwwdotorg.org>
+References: <c0f44202ad8a959b1bd4c93f43c1dc42@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1377222238-9439-1-git-send-email-josephl@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c0f44202ad8a959b1bd4c93f43c1dc42-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/22/2013 07:43 PM, Joseph Lo wrote:
-> The "cpu" and "pclk_p_cclk" was a virtual clock name that was used in
-> the legacy Tegra clock framework. It was not used after converting to
-> CCF. Fix it as the correct clock name that we are using.
+On 08/19/2013 02:10 PM, Stefan Agner wrote:
+> The SoC specific code is in subdirectories which leads to warnings in
+> newer
+> automake versions. The option subdir-objects prevents those warnings.
 
-Tested-by: Stephen Warren <swarren@nvidia.com>
+I've applied this.
