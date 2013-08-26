@@ -1,60 +1,53 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: Tegra PCIe system hangs
-Date: Mon, 26 Aug 2013 01:50:34 +0200
-Message-ID: <1377474634.1622.17.camel@tellur>
-References: <1377450840.1622.15.camel@tellur>
+From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra: Convert to devm_ioremap_resource
+Date: Mon, 26 Aug 2013 10:17:28 +0800
+Message-ID: <1377483448.15374.1.camel@phoenix>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377450840.1622.15.camel@tellur>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jay Agarwal <jagarwal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ok, turn out this seems to be an issue with legacy PCI interrupts.
-Nouveau wasn't really using MSI interrupts, switching them on seems to
-fix the stability issue.
+Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-Still I would be interested in the root cause and would like to see this
-documented somewhere.
-
-Thanks,
-Lucas
-
-Am Sonntag, den 25.08.2013, 19:14 +0200 schrieb Lucas Stach:
-> Hi all,
-> 
-> I've been experimenting with the Nouveau driver on Tegra for a few days
-> now and made some promising progress. The one thing that keeps throwing
-> me back is that I get seemingly random system lockups, which are not
-> recoverable.
-> 
-> I think this could be the same issue that was reported by Jay Agarwal
-> earlier. (Message-id:
-> <C79B248886DD134989C8FF6B096A91AB91B603D82B-kdsAE/FnitNDw2glCA4ptUEOCMrvLtNR@public.gmane.org>)
-> I also found a WAR for a system hang issue in the NVidia downstream
-> kernel [1], but when tried on upstream it had no effect on the issue.
-> 
-> I'm reasonably sure that this is not driver software related, as I've
-> already hunted down most of the caching issues and acceleration seems to
-> work at this point. So either this is a random HW hang, or there is some
-> software condition I'm not aware of.
-> 
-> I'm running a NV92 connected to the NVidia Beaver board. Kernel is
-> next-20130809 with the PCIe series + the LP2 workaround applied.
-> 
-> Could you please investigate if there are any other known errata for the
-> Tegra PCIe controller, which could hang the entire system?
-> 
-> Thanks,
-> Lucas
-> 
-> [1]
-> http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=blobdiff;f=arch/arm/mach-tegra/pcie.c;h=9fab5de016cfd3cd2ebd8176da5bdbedfac73cd8;hp=44749685e2bf822665c9345aec45151b8d2447c4;hb=c5d1bcfb7249b291453a80122148155a00e5456a;hpb=704125ef90e12bc41de057001cc96d81d7cc0376
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 637bcd3..be7e900 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -643,25 +643,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res) {
+-			dev_err(&pdev->dev, "Missing MEM resource\n");
+-			return -ENODEV;
+-		}
+-
+-		if (!devm_request_mem_region(&pdev->dev, res->start,
+-					    resource_size(res),
+-					    dev_name(&pdev->dev))) {
+-			dev_err(&pdev->dev,
+-				"Couldn't request MEM resource %d\n", i);
+-			return -ENODEV;
+-		}
+-
+-		pmx->regs[i] = devm_ioremap(&pdev->dev, res->start,
+-					    resource_size(res));
+-		if (!pmx->regs[i]) {
+-			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n", i);
+-			return -ENODEV;
+-		}
++		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(pmx->regs[i]))
++			return PTR_ERR(pmx->regs[i]);
+ 	}
+ 
+ 	pmx->pctl = pinctrl_register(&tegra_pinctrl_desc, &pdev->dev, pmx);
+-- 
+1.8.1.2
