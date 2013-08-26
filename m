@@ -1,44 +1,36 @@
-From: Kyle McMartin <kyle-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] tegra-cpuidle: provide stub when !CONFIG_CPU_IDLE
-Date: Mon, 26 Aug 2013 11:30:51 -0400
-Message-ID: <20130826153050.GC8764@redacted.bos.redhat.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/3] cpuidle: coupled: disable interrupts after entering
+ safe state
+Date: Mon, 26 Aug 2013 09:55:11 -0600
+Message-ID: <521B7A5F.7030101@wwwdotorg.org>
+References: <1377287112-12018-1-git-send-email-ccross@android.com> <5217EB9A.5050206@wwwdotorg.org> <CAMbhsRQzmyftujGhD+b7WwdXWP9b+=R0D7SavgKSjWKuFNLejQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMbhsRQzmyftujGhD+b7WwdXWP9b+=R0D7SavgKSjWKuFNLejQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Neil Zhang <zhangwm@marvell.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, stable@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-While poking at something using the for-3.12/* trees, I hit the
-following compile error:
-drivers/built-in.o: In function `tegra_pcie_map_irq':
-/builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.armv7hl/drivers/pci/host/pci-tegra.c:640:
-undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-drivers/built-in.o: In function `tegra_msi_map':
-/builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.armv7hl/drivers/pci/host/pci-tegra.c:1227:
-undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-make: *** [vmlinux] Error 1
+On 08/23/2013 06:22 PM, Colin Cross wrote:
+> On Fri, Aug 23, 2013 at 4:09 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 08/23/2013 01:45 PM, Colin Cross wrote:
+>>> Calling cpuidle_enter_state is expected to return with interrupts
+>>> enabled, but interrupts must be disabled before starting the
+>>> ready loop synchronization stage.  Call local_irq_disable after
+>>> each call to cpuidle_enter_state for the safe state.
+>>
+>> Tested-by: Stephen Warren <swarren@nvidia.com>
+>>
+>> Note: I tested the current Tegra cpuidle code that's in next-20130819.
+>> IIRC, Joseph reported the issue when trying to enable some additional
+>> feature in Tegra30 cpuidle. I didn't actually try to enable whatever
+>> that was; I just briefly tested for regressions in the existing code
+>> configuration.
+> 
+> Is that for the series or just this patch?
 
-Since our .config had CONFIG_CPU_IDLE off. We should probably provide
-an empty function to handle this to avoid cluttering up pci-tegra.c
-with conditionals.
+The series.
 
-Signed-off-by: Kyle McMartin <kyle-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-
---- a/include/linux/tegra-cpuidle.h
-+++ b/include/linux/tegra-cpuidle.h
-@@ -14,6 +14,13 @@
- #ifndef __LINUX_TEGRA_CPUIDLE_H__
- #define __LINUX_TEGRA_CPUIDLE_H__
- 
-+#ifdef CONFIG_CPU_IDLE
- void tegra_cpuidle_pcie_irqs_in_use(void);
-+#else
-+static inline void tegra_cpuidle_pcie_irqs_in_use(void)
-+{
-+	return;
-+}
-+#endif
- 
- #endif
