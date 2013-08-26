@@ -1,109 +1,102 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: Tegra PCIe system hangs
-Date: Mon, 26 Aug 2013 10:11:06 +0200
-Message-ID: <20130826081105.GD31726@ulmo>
-References: <1377450840.1622.15.camel@tellur>
- <1377474634.1622.17.camel@tellur>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1377474634.1622.17.camel@tellur>
-Sender: linux-pci-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>
-Cc: Jay Agarwal <jagarwal@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Date: Mon, 26 Aug 2013 11:11:09 +0200
+Message-ID: <1377508269-9664-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
 
---T7mxYSe680VjQnyC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use devm_ioremap_resource instead of devm_request_and_ioremap.
 
-On Mon, Aug 26, 2013 at 01:50:34AM +0200, Lucas Stach wrote:
-> Ok, turn out this seems to be an issue with legacy PCI interrupts.
-> Nouveau wasn't really using MSI interrupts, switching them on seems to
-> fix the stability issue.
->=20
-> Still I would be interested in the root cause and would like to see this
-> documented somewhere.
+This was done using the semantic patch
+scripts/coccinelle/api/devm_ioremap_resource.cocci
 
-Hi Lucas,
+Error-handling code was manually removed from the associated calls to
+platform_get_resource.
 
-Thanks for reporting. It's quite possible that there is a general issue
-with legacy interrupts since I haven't tested that much. I'll see if I
-can reproduce the lockups when using legacy interrupts on any of my
-setups.
+Adjust the comment at the third platform_get_resource_byname to make clear
+why ioremap is not done at this point.
+
+Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi,
+
+This is a small cleanup patch on top of the recently merged Tegra PCIe
+driver. Can someone please apply this to the same branch that Tegra's
+tegra-for-3.12-soc branch was merged? I think Kevin Hilman pulled it
+into next/soc.
 
 Thanks,
 Thierry
 
->=20
-> Thanks,
-> Lucas
->=20
-> Am Sonntag, den 25.08.2013, 19:14 +0200 schrieb Lucas Stach:
-> > Hi all,
-> >=20
-> > I've been experimenting with the Nouveau driver on Tegra for a few days
-> > now and made some promising progress. The one thing that keeps throwing
-> > me back is that I get seemingly random system lockups, which are not
-> > recoverable.
-> >=20
-> > I think this could be the same issue that was reported by Jay Agarwal
-> > earlier. (Message-id:
-> > <C79B248886DD134989C8FF6B096A91AB91B603D82B@BGMAIL01.nvidia.com>)
-> > I also found a WAR for a system hang issue in the NVidia downstream
-> > kernel [1], but when tried on upstream it had no effect on the issue.
-> >=20
-> > I'm reasonably sure that this is not driver software related, as I've
-> > already hunted down most of the caching issues and acceleration seems to
-> > work at this point. So either this is a random HW hang, or there is some
-> > software condition I'm not aware of.
-> >=20
-> > I'm running a NV92 connected to the NVidia Beaver board. Kernel is
-> > next-20130809 with the PCIe series + the LP2 workaround applied.
-> >=20
-> > Could you please investigate if there are any other known errata for the
-> > Tegra PCIe controller, which could hang the entire system?
-> >=20
-> > Thanks,
-> > Lucas
-> >=20
-> > [1]
-> > http://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-2.6.git;a=3Dblobdiff;f=3Da=
-rch/arm/mach-tegra/pcie.c;h=3D9fab5de016cfd3cd2ebd8176da5bdbedfac73cd8;hp=
-=3D44749685e2bf822665c9345aec45151b8d2447c4;hb=3Dc5d1bcfb7249b291453a801221=
-48155a00e5456a;hpb=3D704125ef90e12bc41de057001cc96d81d7cc0376
-> >=20
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
-in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
+ drivers/pci/host/pci-tegra.c | 31 ++++++++++---------------------
+ 1 file changed, 10 insertions(+), 21 deletions(-)
 
---T7mxYSe680VjQnyC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSGw2ZAAoJEN0jrNd/PrOhrGsP/R04SWYx+tfpM5Khzi2/Bi4s
-KBaKHPPghskcjkDVMtB74hloPU554/3vQ2qXSQ7Nk9wy2pmJ61p5fW71n7PpjNyc
-GQNKC7zDt09rMFtqziLxg/aWjy4k89EBWC195sxKODPM2bInZqnFX0moOPwCwRty
-AU/2p+sGA/g4wE7Y+nJ2EIlWDYuBStWFnnABoZPC9A75JFqHQsZgPd6XM9DntNrR
-YN6fTdf+Lsmvh4/etpSKriGVkv25zbbaeBazAsM1JaW7mIHLH7Df9XSw7OWn4OiO
-wa+rcpNnZtRUrAMH2DoZQV8ecDxVJJkVbTLYc8Km/QxbFjhTeDRzFo3YDCAIV2Zq
-SYpxqR86eoMndJyy1msz+se8hgwwJB6UUVhDLYNPMPdaMFoHe1XssKlw9hfw4hD6
-tdsPiE7HyDONg++sabFZt+TwxJITDdTs01dfmBJ7ADHZLGQw8FFCuukIOz67UV7o
-/PNO3P7p/GDLnrOgJtdtM5rP+pnbFXJpRy7MIwv6hMAPEVKMLtwwH6p+gJhwg7zC
-D9MGdcZP83f1DpT/y/ZQQvQr5bg4FRyz76VRbdnyAXvkxwb991g65/swSH7S2W1r
-pL3wTupZBfY3BFdHcHONd4zF0TBqMz62lKu48aSdtUm7o6dm5ghVt7MlRHE+qENK
-DQyP1I+mzC+CPtDdfGcC
-=wE0H
------END PGP SIGNATURE-----
-
---T7mxYSe680VjQnyC--
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 7356741..2e9888a 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -1031,32 +1031,21 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
+-	/* request and remap controller registers */
+ 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
+-	if (!pads) {
+-		err = -EADDRNOTAVAIL;
++	pcie->pads = devm_ioremap_resource(&pdev->dev, pads);
++	if (IS_ERR(pcie->pads)) {
++		err = PTR_ERR(pcie->pads);
+ 		goto poweroff;
+ 	}
+ 
+ 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
+-	if (!afi) {
+-		err = -EADDRNOTAVAIL;
+-		goto poweroff;
+-	}
+-
+-	pcie->pads = devm_request_and_ioremap(&pdev->dev, pads);
+-	if (!pcie->pads) {
+-		err = -EADDRNOTAVAIL;
+-		goto poweroff;
+-	}
+-
+-	pcie->afi = devm_request_and_ioremap(&pdev->dev, afi);
+-	if (!pcie->afi) {
+-		err = -EADDRNOTAVAIL;
++	pcie->afi = devm_ioremap_resource(&pdev->dev, afi);
++	if (IS_ERR(pcie->afi)) {
++		err = PTR_ERR(pcie->afi);
+ 		goto poweroff;
+ 	}
+ 
+-	/* request and remap configuration space */
++	/* request configuration space, but remap later, on demand */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cs");
+ 	if (!res) {
+ 		err = -EADDRNOTAVAIL;
+@@ -1492,9 +1481,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		rp->lanes = value;
+ 		rp->pcie = pcie;
+ 
+-		rp->base = devm_request_and_ioremap(pcie->dev, &rp->regs);
+-		if (!rp->base)
+-			return -EADDRNOTAVAIL;
++		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
++		if (IS_ERR(rp->base))
++			return PTR_ERR(rp->base);
+ 
+ 		list_add_tail(&rp->list, &pcie->ports);
+ 	}
+-- 
+1.8.4
