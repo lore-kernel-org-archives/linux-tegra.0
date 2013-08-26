@@ -1,46 +1,63 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v3.11-rc7
-Date: Mon, 26 Aug 2013 13:58:46 -0700
-Message-ID: <521BC186.2070803@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [cbootimage PATCH V2] crypto: produce consistent hash for zero-length data
+Date: Mon, 26 Aug 2013 16:12:50 -0600
+Message-ID: <1377555170-6841-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v3.11-rc7.
-Logs and other details at:
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.11-rc7/20130825180108/
+In real-world use-cases, hashing zero-length data likely never happens.
+However, it is relevant when testing cbootimage with a dummy zero-length
+bootloader binary, e.g.:
 
+touch u-boot.bin
+cbootimage -t30 ../tamonten-ng/tegra30.img.cfg tegra30-tec-ng.img
 
-Test summary
-------------
+In this scenario, it's useful to create a consistent hash, so that one
+can compare the resultant images before and after applying patches, to
+check for regressions.
 
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Hence, zero out the hash data so it has consistent content if it isn't
+written to.
 
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: clear region using calloc at allocation time, rather than memset
+    at hash-calculation time.
+---
+ src/crypto.c      | 2 +-
+ src/data_layout.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Boot to userspace: tegra_defconfig:
-     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v3.11-rc6 (b36f4be3de1b123d8601de062e7dbfc904f305fb)):
-    text     data      bss    total  kernel
-    +816       -8        0     +808  multi_v7_defconfig
-    +576       -8        0     +568  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v3.11-rc6 (b36f4be3de1b123d8601de062e7dbfc904f305fb))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+diff --git a/src/crypto.c b/src/crypto.c
+index 88de357..99e9f08 100644
+--- a/src/crypto.c
++++ b/src/crypto.c
+@@ -280,7 +280,7 @@ sign_bct(build_image_context *context,
+ 					bct) != 0)
+ 		return -ENODATA;
+ 
+-	hash_buffer = malloc(hash_size);
++	hash_buffer = calloc(1, hash_size);
+ 	if (hash_buffer == NULL)
+ 		return -ENOMEM;
+ 	e = sign_data_block(bct + Offset, length, hash_buffer);
+diff --git a/src/data_layout.c b/src/data_layout.c
+index ae62126..cae4c37 100644
+--- a/src/data_layout.c
++++ b/src/data_layout.c
+@@ -391,7 +391,7 @@ write_bootloaders(build_image_context *context)
+ 	g_soc_config->get_value(token_bootloaders_max,
+ 			&bootloaders_max, context->bct);
+ 
+-	hash_buffer = malloc(hash_size);
++	hash_buffer = calloc(1, hash_size);
+ 	if (hash_buffer == NULL)
+ 		return -ENOMEM;
+ 
+-- 
+1.8.1.5
