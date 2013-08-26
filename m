@@ -1,29 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH 1/2] autogen.sh: allow spaced in configure
- arguments
-Date: Mon, 26 Aug 2013 14:20:58 -0600
-Message-ID: <521BB8AA.2090201@wwwdotorg.org>
-References: <1377284162-7700-1-git-send-email-swarren@wwwdotorg.org> <20130826075206.GB31726@ulmo>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.11-rc7
+Date: Mon, 26 Aug 2013 13:58:46 -0700
+Message-ID: <521BC186.2070803@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130826075206.GB31726@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/26/2013 01:52 AM, Thierry Reding wrote:
-> On Fri, Aug 23, 2013 at 12:56:01PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> s/spaced/spaces/ in the patch subject?
+Here are some basic Tegra test results for Linux v3.11-rc7.
+Logs and other details at:
 
-Sigh. Guess I need to pay more attention too:-)
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.11-rc7/20130825180108/
 
-> Otherwise:
-> 
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks. I've pushed this one patch out with the subject fixed.
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.11-rc6 (b36f4be3de1b123d8601de062e7dbfc904f305fb)):
+    text     data      bss    total  kernel
+    +816       -8        0     +808  multi_v7_defconfig
+    +576       -8        0     +568  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.11-rc6 (b36f4be3de1b123d8601de062e7dbfc904f305fb))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
