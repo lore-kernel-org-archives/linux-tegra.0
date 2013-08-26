@@ -1,102 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Date: Mon, 26 Aug 2013 11:11:09 +0200
-Message-ID: <1377508269-9664-1-git-send-email-treding@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] cpuidle: coupled: abort idle if pokes are pending
+Date: Mon, 26 Aug 2013 17:10:21 +0800
+Message-ID: <1377508221.16229.34.camel@jlo-ubuntu-64.nvidia.com>
+References: <1377287112-12018-1-git-send-email-ccross@android.com>
+	 <1377287112-12018-2-git-send-email-ccross@android.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377287112-12018-2-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Neil Zhang <zhangwm-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+On Sat, 2013-08-24 at 03:45 +0800, Colin Cross wrote:
+> Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> reported a lockup on Tegra3 caused
+> by a race condition in coupled cpuidle.  When two or more cpus
+Actually this issue can be reproduced on both Tegra20/30 platforms. And
+I suggest using Tegra20 to replace Tegra3 here, we only apply coupled
+CPU idle function on Tegra20 in the mainline right now.
+> enter idle at the same time, the first cpus to arrive may go to the
+> ready loop without processing pending pokes from the last cpu to
+> arrive.
+> 
+> This patch adds a check for pending pokes once all cpus have been
+> synchronized in the ready loop and resets the coupled state and
+> retries if any cpus failed to handle their pending poke.
+> 
+> Retrying on all cpus may trigger the same issue again, so this patch
+> also adds a check to ensure that each cpu has received at least one
+> poke between when it enters the waiting loop and when it moves on to
+> the ready loop.
+> 
+> Reported-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/cpuidle/coupled.c | 107 +++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 82 insertions(+), 25 deletions(-)
+> 
+[snip]
+> +/*
+> + * The cpuidle_coupled_poke_pending mask is used to ensure that each cpu has
+s/cpuidle_coupled_poke_pending/cpuidle_coupled_poked/? :)
+> + * been poked once to minimize entering the ready loop with a poke pending,
+> + * which would require aborting and retrying.
+> + */
+> +static cpumask_t cpuidle_coupled_poked;
+> 
+I fixed this issue by checking if there is a pending SGI, then abort the
+coupled state on Tegra20. It still can be reproduced easily if I remove
+the checking code. So I tested the case with this patch, the result is
+good. This patch can fix the issue indeed.
 
-Use devm_ioremap_resource instead of devm_request_and_ioremap.
+I also tested with the other two patches. It didn't cause any
+regression.
 
-This was done using the semantic patch
-scripts/coccinelle/api/devm_ioremap_resource.cocci
-
-Error-handling code was manually removed from the associated calls to
-platform_get_resource.
-
-Adjust the comment at the third platform_get_resource_byname to make clear
-why ioremap is not done at this point.
-
-Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Hi,
-
-This is a small cleanup patch on top of the recently merged Tegra PCIe
-driver. Can someone please apply this to the same branch that Tegra's
-tegra-for-3.12-soc branch was merged? I think Kevin Hilman pulled it
-into next/soc.
-
-Thanks,
-Thierry
-
- drivers/pci/host/pci-tegra.c | 31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 7356741..2e9888a 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -1031,32 +1031,21 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 		return err;
- 	}
- 
--	/* request and remap controller registers */
- 	pads = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pads");
--	if (!pads) {
--		err = -EADDRNOTAVAIL;
-+	pcie->pads = devm_ioremap_resource(&pdev->dev, pads);
-+	if (IS_ERR(pcie->pads)) {
-+		err = PTR_ERR(pcie->pads);
- 		goto poweroff;
- 	}
- 
- 	afi = platform_get_resource_byname(pdev, IORESOURCE_MEM, "afi");
--	if (!afi) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->pads = devm_request_and_ioremap(&pdev->dev, pads);
--	if (!pcie->pads) {
--		err = -EADDRNOTAVAIL;
--		goto poweroff;
--	}
--
--	pcie->afi = devm_request_and_ioremap(&pdev->dev, afi);
--	if (!pcie->afi) {
--		err = -EADDRNOTAVAIL;
-+	pcie->afi = devm_ioremap_resource(&pdev->dev, afi);
-+	if (IS_ERR(pcie->afi)) {
-+		err = PTR_ERR(pcie->afi);
- 		goto poweroff;
- 	}
- 
--	/* request and remap configuration space */
-+	/* request configuration space, but remap later, on demand */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cs");
- 	if (!res) {
- 		err = -EADDRNOTAVAIL;
-@@ -1492,9 +1481,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 		rp->lanes = value;
- 		rp->pcie = pcie;
- 
--		rp->base = devm_request_and_ioremap(pcie->dev, &rp->regs);
--		if (!rp->base)
--			return -EADDRNOTAVAIL;
-+		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
-+		if (IS_ERR(rp->base))
-+			return PTR_ERR(rp->base);
- 
- 		list_add_tail(&rp->list, &pcie->ports);
- 	}
--- 
-1.8.4
+So this series:
+Tested-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
