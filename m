@@ -1,88 +1,109 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [cbootimage PATCH 2/2] crypto: produce consistent hash for
- zero-length data
-Date: Mon, 26 Aug 2013 10:01:17 +0200
-Message-ID: <20130826080111.GC31726@ulmo>
-References: <1377284162-7700-1-git-send-email-swarren@wwwdotorg.org>
- <1377284162-7700-2-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: Tegra PCIe system hangs
+Date: Mon, 26 Aug 2013 10:11:06 +0200
+Message-ID: <20130826081105.GD31726@ulmo>
+References: <1377450840.1622.15.camel@tellur>
+ <1377474634.1622.17.camel@tellur>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z4+8/lEcDcG5Ke9S"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1377284162-7700-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1377474634.1622.17.camel@tellur>
+Sender: linux-pci-owner@vger.kernel.org
+To: Lucas Stach <dev@lynxeye.de>
+Cc: Jay Agarwal <jagarwal@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---z4+8/lEcDcG5Ke9S
+--T7mxYSe680VjQnyC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 23, 2013 at 12:56:02PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Aug 26, 2013 at 01:50:34AM +0200, Lucas Stach wrote:
+> Ok, turn out this seems to be an issue with legacy PCI interrupts.
+> Nouveau wasn't really using MSI interrupts, switching them on seems to
+> fix the stability issue.
 >=20
-> In real-world use-cases, hashing zero-length data likely never happens.
-> However, it is relevant when testing cbootimage with a dummy zero-length
-> bootloader binary, e.g.:
->=20
-> touch u-boot.bin
-> cbootimage -t30 ../tamonten-ng/tegra30.img.cfg tegra30-tec-ng.img
->=20
-> In this scenario, it's useful to create a consistent hash, so that one
-> can compare the resultant images before and after applying patches, to
-> check for regressions.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  src/crypto.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/src/crypto.c b/src/crypto.c
-> index 88de357..9741785 100644
-> --- a/src/crypto.c
-> +++ b/src/crypto.c
-> @@ -183,6 +183,9 @@ sign_objext(
->  	if (enable_debug_crypto)
->  		print_vector("K1", KEY_LENGTH, k1);
-> =20
-> +	if (!num_aes_blocks)
-> +		memset(dst, 0, 4 * NVAES_STATECOLS);
-> +
+> Still I would be interested in the root cause and would like to see this
+> documented somewhere.
 
-Perhaps it would be better to zero out the memory after allocating it in
-sign_bct()? Or alternatively use:
+Hi Lucas,
 
-	hash_buffer =3D calloc(1, hash_size);
+Thanks for reporting. It's quite possible that there is a general issue
+with legacy interrupts since I haven't tested that much. I'll see if I
+can reproduce the lockups when using legacy interrupts on any of my
+setups.
 
-That way you're sure to get the size right and don't have to hardcode
-it. The above patch will only work as long as the hash size across SoCs
-remains the same.
-
+Thanks,
 Thierry
 
---z4+8/lEcDcG5Ke9S
+>=20
+> Thanks,
+> Lucas
+>=20
+> Am Sonntag, den 25.08.2013, 19:14 +0200 schrieb Lucas Stach:
+> > Hi all,
+> >=20
+> > I've been experimenting with the Nouveau driver on Tegra for a few days
+> > now and made some promising progress. The one thing that keeps throwing
+> > me back is that I get seemingly random system lockups, which are not
+> > recoverable.
+> >=20
+> > I think this could be the same issue that was reported by Jay Agarwal
+> > earlier. (Message-id:
+> > <C79B248886DD134989C8FF6B096A91AB91B603D82B@BGMAIL01.nvidia.com>)
+> > I also found a WAR for a system hang issue in the NVidia downstream
+> > kernel [1], but when tried on upstream it had no effect on the issue.
+> >=20
+> > I'm reasonably sure that this is not driver software related, as I've
+> > already hunted down most of the caching issues and acceleration seems to
+> > work at this point. So either this is a random HW hang, or there is some
+> > software condition I'm not aware of.
+> >=20
+> > I'm running a NV92 connected to the NVidia Beaver board. Kernel is
+> > next-20130809 with the PCIe series + the LP2 workaround applied.
+> >=20
+> > Could you please investigate if there are any other known errata for the
+> > Tegra PCIe controller, which could hang the entire system?
+> >=20
+> > Thanks,
+> > Lucas
+> >=20
+> > [1]
+> > http://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-2.6.git;a=3Dblobdiff;f=3Da=
+rch/arm/mach-tegra/pcie.c;h=3D9fab5de016cfd3cd2ebd8176da5bdbedfac73cd8;hp=
+=3D44749685e2bf822665c9345aec45151b8d2447c4;hb=3Dc5d1bcfb7249b291453a801221=
+48155a00e5456a;hpb=3D704125ef90e12bc41de057001cc96d81d7cc0376
+> >=20
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-tegra" =
+in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
+
+--T7mxYSe680VjQnyC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSGwtHAAoJEN0jrNd/PrOhkUgP/0KtSoat1AyKJ1KouuesTTA+
-/mhJnKIICDy2Yf+BiLWlUI2UjGJE9yPHaUE5AjmjBWmZt4KdG6RusEduAbyNEqSp
-jlodEyfFH/RBq3Ss9krwJIYDW3XFQjtsPdPwlARnxWbS9pEIifdgtkNbHOkOxYIp
-ZwRj8D7pfFpcg15+B+t4bEPk9RZFWtuy5FyUobgKU9BsbGYeaZ8ZePVYk0bYkPdW
-0CxZOf2mqLdagp+Fc+DgRqf6c9Z3J7H70NJWg4LRmGqzuG+KV4nsCjjjEm/90y+g
-bx1KUKqGwxDwil7PZc61nU702ZcOCAvYFxvi4d1/JZWUynbR54NQCEErEzD+P27b
-XMBzXbvf8j8kpi7x1V9LgfH0DhD1mkACybyK+jQ38pLpALK4lveGcpEzU38tRXAP
-5bH9HPoU8ACzbLJ61eCIzy0536Of/3QNyvO03XAxtgn8qnt/PGI9I/22TYVaqDyR
-KGvJSkribA14VaR+OHfa+mUwzF2cj8467hPdx9GSho+zAIgenhlraKPmVVV35GgW
-pnvRhOWnCRJvsOQNjHZYXUSh+ZoVJ2ncWUv2OEPtugboLtc4Y07azMz7Fnt0+abH
-mlhsXlaV1BMgQt1/tsT6tbYZuXEtMroc8LPnBmL9b2e3D4U3zz3sFLkE8rjxrrz1
-7+Ph4ejNFCBx5QhF+BzL
-=0LaI
+iQIcBAEBAgAGBQJSGw2ZAAoJEN0jrNd/PrOhrGsP/R04SWYx+tfpM5Khzi2/Bi4s
+KBaKHPPghskcjkDVMtB74hloPU554/3vQ2qXSQ7Nk9wy2pmJ61p5fW71n7PpjNyc
+GQNKC7zDt09rMFtqziLxg/aWjy4k89EBWC195sxKODPM2bInZqnFX0moOPwCwRty
+AU/2p+sGA/g4wE7Y+nJ2EIlWDYuBStWFnnABoZPC9A75JFqHQsZgPd6XM9DntNrR
+YN6fTdf+Lsmvh4/etpSKriGVkv25zbbaeBazAsM1JaW7mIHLH7Df9XSw7OWn4OiO
+wa+rcpNnZtRUrAMH2DoZQV8ecDxVJJkVbTLYc8Km/QxbFjhTeDRzFo3YDCAIV2Zq
+SYpxqR86eoMndJyy1msz+se8hgwwJB6UUVhDLYNPMPdaMFoHe1XssKlw9hfw4hD6
+tdsPiE7HyDONg++sabFZt+TwxJITDdTs01dfmBJ7ADHZLGQw8FFCuukIOz67UV7o
+/PNO3P7p/GDLnrOgJtdtM5rP+pnbFXJpRy7MIwv6hMAPEVKMLtwwH6p+gJhwg7zC
+D9MGdcZP83f1DpT/y/ZQQvQr5bg4FRyz76VRbdnyAXvkxwb991g65/swSH7S2W1r
+pL3wTupZBfY3BFdHcHONd4zF0TBqMz62lKu48aSdtUm7o6dm5ghVt7MlRHE+qENK
+DQyP1I+mzC+CPtDdfGcC
+=wE0H
 -----END PGP SIGNATURE-----
 
---z4+8/lEcDcG5Ke9S--
+--T7mxYSe680VjQnyC--
