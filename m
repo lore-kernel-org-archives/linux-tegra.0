@@ -1,72 +1,99 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
-Date: Tue, 27 Aug 2013 15:19:46 -0700
-Message-ID: <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
- <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
+Date: Wed, 28 Aug 2013 00:58:39 +0200
+Message-ID: <521D2F1F.1070103@gmail.com>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com> <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann@xilinx.com>
 Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrote:
-> Most DT ARM machs require common clock providers initialized before t=
-imers.
-> Currently, arch/arm machs use .init_time to call clk_of_init right be=
-fore
-> clocksource_of_init. This prevents to remove that hook and use the de=
-fault
-> hook instead. clk_of_init is safe to call for non-DT platforms, so ad=
-d
-> the call to ARM arch time_init by default. While at it, also reorder =
-includes
-> alphabetically.
->=20
-> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com=
+On 08/28/13 00:19, S=C3=B6ren Brinkmann wrote:
+> On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrote=
+:
+>> Most DT ARM machs require common clock providers initialized before =
+timers.
+>> Currently, arch/arm machs use .init_time to call clk_of_init right b=
+efore
+>> clocksource_of_init. This prevents to remove that hook and use the d=
+efault
+>> hook instead. clk_of_init is safe to call for non-DT platforms, so a=
+dd
+>> the call to ARM arch time_init by default. While at it, also reorder=
+ includes
+>> alphabetically.
+>>
+>> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.co=
+m>
+>> ---
+>> Changelog:
+>> v1->v2:
+>> - reorder includes alphabetically
+>>
+>> Cc: Russell King <linux@arm.linux.org.uk>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: linux-tegra@vger.kernel.org
+>> Cc: kernel@stlinux.com
+>> Cc: linux-samsung-soc@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   arch/arm/kernel/time.c |   24 ++++++++++++++----------
+>>   1 files changed, 14 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+>> index 98aee32..dd1028e 100644
+>> --- a/arch/arm/kernel/time.c
+>> +++ b/arch/arm/kernel/time.c
+>> @@ -11,25 +11,26 @@
+> [ ... ]
+>>   void __init time_init(void)
+>>   {
+>> +	/* initalize common clocks before timers */
+>> +	of_clk_init(NULL);
+>> +
+>>   	if (machine_desc->init_time)
+>>   		machine_desc->init_time();
+>>   	else
 >
-> ---
-> Changelog:
-> v1->v2:
-> - reorder includes alphabetically
->=20
-> Cc: Russell King <linux@arm.linux.org.uk>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-tegra@vger.kernel.org
-> Cc: kernel@stlinux.com
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/arm/kernel/time.c |   24 ++++++++++++++----------
->  1 files changed, 14 insertions(+), 10 deletions(-)
->=20
-> diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
-> index 98aee32..dd1028e 100644
-> --- a/arch/arm/kernel/time.c
-> +++ b/arch/arm/kernel/time.c
-> @@ -11,25 +11,26 @@
-[ ... ]
->  void __init time_init(void)
->  {
-> +	/* initalize common clocks before timers */
-> +	of_clk_init(NULL);
-> +
->  	if (machine_desc->init_time)
->  		machine_desc->init_time();
->  	else
+> This forces zynq to move some initialization our clock code relies on=
+ to
+> init_irq(). Also, the current code already takes an approach of
+> doing either common init or machine specific init.
 
-This forces zynq to move some initialization our clock code relies on t=
+Soeren,
+
+you know that patch 16/16 takes care of zynq's clock init?
+
+It's your own patch you provided from the last RFC. Looking at it, it
+moves  zynq_sclr_init() to .init_irq and removes the call to
+of_clk_init() from zynq_clock_init() which is called by
+zynq_sclr_init().
+
+Isn't that solving the above issues for mach-zynq?
+
+> I think it might be better to move the call to of_clk_init() down int=
 o
-init_irq(). Also, the current code already takes an approach of
-doing either common init or machine specific init.
-I think it might be better to move the call to of_clk_init() down into
-the else branch of the if-else.
-Though, this probably contradicts the purpose of the whole series.
+> the else branch of the if-else.
 
-	S=C3=B6ren
+Possibly, yes. But we could also unconditionally call of_clk_init() at
+the beginning of time_init() and call clocksource_of_init() at the end.
+That will make .init_time() to some fixup hook between initialization o=
+f=20
+clocks and timers.
+
+> Though, this probably contradicts the purpose of the whole series.
+
+Hmm, the purpose was to allow most platforms to remove a custom
+=2Einit_time hook only calling of_clk_init() and clocksource_of_init().
+
+If we move of_clk_init() above also in the else-branch the purpose
+is still met.
+
+Sebastian
