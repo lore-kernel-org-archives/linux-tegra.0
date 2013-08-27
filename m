@@ -1,193 +1,106 @@
 From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH RFC v2 13/16] ARM: tegra: split tegra_pmc_init() in two
-Date: Tue, 27 Aug 2013 23:28:07 +0200
-Message-ID: <1377638890-371-14-git-send-email-sebastian.hesselbarth@gmail.com>
+Subject: [PATCH RFC v2 00/16] ARM: provide common arch init for DT clocks
+Date: Tue, 27 Aug 2013 23:27:54 +0200
+Message-ID: <1377638890-371-1-git-send-email-sebastian.hesselbarth@gmail.com>
 References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+This RFC converts arch/arm to provide a common arch init for DT clock
+providers. Currently, the call to of_clk_init(NULL) to initialize DT
+clock providers is spread among several mach-dirs. Since most machs
+require DT clocks initialized before timers, no initcall can be used.
 
-Tegra's board file currently initializes clocks much earlier than those
-for most other ARM SoCs. The reason is:
+By adding of_clk_init(NULL) to ARM time_init(), we can remove all
+mach-specific .init_time hooks that basically called of_clk_init before
+starting timers.
 
-* The PMC HW block is involved in the path of some interrupts (i.e. it
-inverts, or not, the IRQ input pin dedicated to the PMIC).
+Based on the previous version, this one now includes patches provided by
+Stephen Warren for mach-tegra and Soren Brinkmann for mach-zynq.
 
-* So, that part of the PMC must be initialized early so that the IRQ
-polarity is correct.
+With mach-tegra now requiring clocks as late as the other machs, the
+patch to protect of_clk_init() from being called twice, has been dropped.
 
-* The PMC initialization is currently monolithic, and the PMC has some
-clock inputs, so the init routine ends up calling of_clk_get_by_name(),
-and hence clocks must be set up early too.
+The RFCv2 is based on next-20130827 and has been compile tested for
+multi_v7_defconfig and mach-dove. All single patches have also been sent
+to the respective maintainers and corresponding mailing lists.
 
-In order to defer clock initialization to the more typical location,
-split out the portions of tegra_pmc_init() that are truly IRQ-related
-into a separate tegra_pmc_init_irq(), which can be called from the
-machine descriptor's .init_irq() function, and defer the rest until
-the machine descriptor's .init_machine() function. With arch/arm calling
-of_clk_init(NULL) from time_init() this also allows the removal of
-.init_time() hook.
+Before going for a real patch set after v3.11 drops, I prefer to have
+Tested-by or Acked-by for at least mach-imx, mach-mxs, mach-sti, and
+mach-vexpress. Others are trivial, prepared by maintainers (mach-tegra
+and mach-zynq), or have already been Acked-by (mach-highbank).
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Also, I'd like to know if the patches should be grouped by mach- or
+rather been split into mach- preparation and .init_time removal.
+
+Sebastian Hesselbarth (14):
+  ARM: call clk_of_init from time_init
+  ARM: dove: remove custom .init_time hook
+  ARM: exynos: remove custom .init_time hook
+  ARM: highbank: remove custom .init_time hook
+  ARM: imx: remove custom .init_time hook
+  ARM: kirkwood: remove custom .init_time hook
+  ARM: mvebu: remove custom .init_time hook
+  ARM: mxs: remove custom .init_time hook
+  ARM: nspire: remove custom .init_time hook
+  ARM: rockchip: remove custom .init_time hook
+  ARM: socfpga: remove call to of_clk_init
+  ARM: sti: remove custom .init_time hook
+  ARM: vexpress: remove custom .init_time hook
+  clk: vt8500: remove call to of_clk_init
+
+Soren Brinkmann (1):
+  ARM: zynq: Don't call of_clk_init()
+
+Stephen Warren (1):
+  ARM: tegra: split tegra_pmc_init() in two
+
+ arch/arm/kernel/time.c                 |   24 +++++++++++-------
+ arch/arm/mach-dove/board-dt.c          |   17 +------------
+ arch/arm/mach-exynos/common.c          |    7 -----
+ arch/arm/mach-exynos/common.h          |    1 -
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    1 -
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    1 -
+ arch/arm/mach-highbank/highbank.c      |   23 +++++------------
+ arch/arm/mach-imx/clk-imx51-imx53.c    |   29 +++++++--------------
+ arch/arm/mach-imx/common.h             |    4 ---
+ arch/arm/mach-imx/imx51-dt.c           |    6 ----
+ arch/arm/mach-imx/mach-imx53.c         |    6 ----
+ arch/arm/mach-imx/mach-imx6q.c         |   14 ++--------
+ arch/arm/mach-imx/mach-imx6sl.c        |    7 -----
+ arch/arm/mach-imx/mach-vf610.c         |    9 -------
+ arch/arm/mach-kirkwood/board-dt.c      |    8 ------
+ arch/arm/mach-mvebu/armada-370-xp.c    |    2 -
+ arch/arm/mach-mxs/mach-mxs.c           |   13 ----------
+ arch/arm/mach-nspire/nspire.c          |    9 -------
+ arch/arm/mach-rockchip/rockchip.c      |    9 -------
+ arch/arm/mach-socfpga/socfpga.c        |    2 -
+ arch/arm/mach-sti/board-dt.c           |   10 +++----
+ arch/arm/mach-tegra/common.c           |    4 +--
+ arch/arm/mach-tegra/pmc.c              |   41 +++++++++++++++++--------------
+ arch/arm/mach-tegra/pmc.h              |    1 +
+ arch/arm/mach-tegra/tegra.c            |    5 ++-
+ arch/arm/mach-vexpress/v2m.c           |   14 +----------
+ arch/arm/mach-zynq/common.c            |    9 +++----
+ drivers/clk/clk-highbank.c             |   10 +++++--
+ drivers/clk/clk-vt8500.c               |    2 -
+ drivers/clk/mxs/clk-imx23.c            |   16 +++++-------
+ drivers/clk/mxs/clk-imx28.c            |   16 +++++-------
+ drivers/clk/zynq/clkc.c                |    4 ++-
+ include/linux/clk/mxs.h                |    2 -
+ 33 files changed, 95 insertions(+), 231 deletions(-)
+
 ---
-Changelog:
-v1->v2:
-- took Stephen Warren's patch provided to separate Tegra's pmc_init
-- sqashed in .init_time removal and reworded patch text
-
-Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mike Turquette <mturquette@linaro.org>
 Cc: Russell King <linux@arm.linux.org.uk>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: linux-tegra@vger.kernel.org
+Cc: kernel@stlinux.com
+Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org
----
- arch/arm/mach-tegra/common.c |    4 +---
- arch/arm/mach-tegra/pmc.c    |   41 ++++++++++++++++++++++-------------------
- arch/arm/mach-tegra/pmc.h    |    1 +
- arch/arm/mach-tegra/tegra.c  |    5 +++--
- 4 files changed, 27 insertions(+), 24 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
-index 94a119a..58dc91c5 100644
---- a/arch/arm/mach-tegra/common.c
-+++ b/arch/arm/mach-tegra/common.c
-@@ -24,7 +24,6 @@
- #include <linux/delay.h>
- #include <linux/reboot.h>
- #include <linux/irqchip.h>
--#include <linux/clk-provider.h>
- 
- #include <asm/hardware/cache-l2x0.h>
- 
-@@ -61,8 +60,7 @@ u32 tegra_uart_config[4] = {
- #ifdef CONFIG_OF
- void __init tegra_dt_init_irq(void)
- {
--	of_clk_init(NULL);
--	tegra_pmc_init();
-+	tegra_pmc_init_irq();
- 	tegra_init_irq();
- 	irqchip_init();
- 	tegra_legacy_irq_syscore_init();
-diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
-index 8acb881..7916ff9 100644
---- a/arch/arm/mach-tegra/pmc.c
-+++ b/arch/arm/mach-tegra/pmc.c
-@@ -285,13 +285,10 @@ static const struct of_device_id matches[] __initconst = {
- 	{ }
- };
- 
--static void __init tegra_pmc_parse_dt(void)
-+void __init tegra_pmc_init_irq(void)
- {
- 	struct device_node *np;
--	u32 prop;
--	enum tegra_suspend_mode suspend_mode;
--	u32 core_good_time[2] = {0, 0};
--	u32 lp0_vec[2] = {0, 0};
-+	u32 val;
- 
- 	np = of_find_matching_node(NULL, matches);
- 	BUG_ON(!np);
-@@ -300,6 +297,26 @@ static void __init tegra_pmc_parse_dt(void)
- 
- 	tegra_pmc_invert_interrupt = of_property_read_bool(np,
- 				     "nvidia,invert-interrupt");
-+
-+	val = tegra_pmc_readl(PMC_CTRL);
-+	if (tegra_pmc_invert_interrupt)
-+		val |= PMC_CTRL_INTR_LOW;
-+	else
-+		val &= ~PMC_CTRL_INTR_LOW;
-+	tegra_pmc_writel(val, PMC_CTRL);
-+}
-+
-+void __init tegra_pmc_init(void)
-+{
-+	struct device_node *np;
-+	u32 prop;
-+	enum tegra_suspend_mode suspend_mode;
-+	u32 core_good_time[2] = {0, 0};
-+	u32 lp0_vec[2] = {0, 0};
-+
-+	np = of_find_matching_node(NULL, matches);
-+	BUG_ON(!np);
-+
- 	tegra_pclk = of_clk_get_by_name(np, "pclk");
- 	WARN_ON(IS_ERR(tegra_pclk));
- 
-@@ -365,17 +382,3 @@ static void __init tegra_pmc_parse_dt(void)
- 
- 	pmc_pm_data.suspend_mode = suspend_mode;
- }
--
--void __init tegra_pmc_init(void)
--{
--	u32 val;
--
--	tegra_pmc_parse_dt();
--
--	val = tegra_pmc_readl(PMC_CTRL);
--	if (tegra_pmc_invert_interrupt)
--		val |= PMC_CTRL_INTR_LOW;
--	else
--		val &= ~PMC_CTRL_INTR_LOW;
--	tegra_pmc_writel(val, PMC_CTRL);
--}
-diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
-index 549f8c7..4d5f8f3 100644
---- a/arch/arm/mach-tegra/pmc.h
-+++ b/arch/arm/mach-tegra/pmc.h
-@@ -39,6 +39,7 @@ bool tegra_pmc_cpu_is_powered(int cpuid);
- int tegra_pmc_cpu_power_on(int cpuid);
- int tegra_pmc_cpu_remove_clamping(int cpuid);
- 
-+void tegra_pmc_init_irq(void);
- void tegra_pmc_init(void);
- 
- #endif
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 5b86055..2e21928 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -16,7 +16,6 @@
-  *
-  */
- 
--#include <linux/clocksource.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-@@ -44,6 +43,7 @@
- #include "common.h"
- #include "fuse.h"
- #include "iomap.h"
-+#include "pmc.h"
- 
- static void __init tegra_dt_init(void)
- {
-@@ -51,6 +51,8 @@ static void __init tegra_dt_init(void)
- 	struct soc_device *soc_dev;
- 	struct device *parent = NULL;
- 
-+	tegra_pmc_init();
-+
- 	tegra_clocks_apply_init_table();
- 
- 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-@@ -119,7 +121,6 @@ DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
- 	.smp		= smp_ops(tegra_smp_ops),
- 	.init_early	= tegra_init_early,
- 	.init_irq	= tegra_dt_init_irq,
--	.init_time	= clocksource_of_init,
- 	.init_machine	= tegra_dt_init,
- 	.init_late	= tegra_dt_init_late,
- 	.restart	= tegra_assert_system_reset,
 -- 
 1.7.2.5
