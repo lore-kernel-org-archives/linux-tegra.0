@@ -1,63 +1,60 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/1] ARM: tegra: Add basic support for carma devkit
-Date: Tue, 27 Aug 2013 09:56:55 +0200
-Message-ID: <20130827075654.GG8686@ulmo>
-References: <1371994685-4997-1-git-send-email-chris.desjardins@amscins.com>
+Subject: Re: [PATCH] host1x: hdmi: Make sure clock is enabled before dumping
+ registers
+Date: Tue, 27 Aug 2013 10:04:48 +0200
+Message-ID: <20130827080447.GH8686@ulmo>
+References: <1375173303-4275-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
+	protocol="application/pgp-signature"; boundary="CNfT9TXqV7nd4cfk"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1371994685-4997-1-git-send-email-chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1375173303-4275-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---gvF4niNJ+uBMJnEh
+--CNfT9TXqV7nd4cfk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2013 at 03:38:05PM +0200, Chris Desjardins wrote:
+On Tue, Jul 30, 2013 at 11:35:03AM +0300, Mikko Perttunen wrote:
+> The debugfs register dumping function did not enable the HDMI clock.
+> This led to a possible system hang when reading the debugfs entry
+> while no HDMI cable was connected to the system. This patch makes
+> sure that the clock is enabled during the read.
 >=20
-> Signed-off-by: Chris Desjardins <chris.desjardins-8HJrC8Or5ylBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra30-carma.dts |  461 +++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 461 insertions(+)
->  create mode 100644 arch/arm/boot/dts/tegra30-carma.dts
+>  drivers/gpu/host1x/drm/hdmi.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-Hi Chris,
-
-The new PCIe driver is going to be merged in 3.12, so it would be nice
-to see this patch merged as well as given that it is one of the few
-users of PCIe.
-
-Have you had a chance to look at the comments you received?
+Applied, thanks.
 
 Thierry
 
---gvF4niNJ+uBMJnEh
+--CNfT9TXqV7nd4cfk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHFvGAAoJEN0jrNd/PrOhQEEQAI0YTUTrjKXma7qzmzO5NPRH
-m4ub+5usUcdVY2lByGIoxEo3+gCArS2iObfbo8JLZdalt5n3AtsCNHW42DvNJlA8
-QYeRJ+59Wbn0fFjh89X2pBjDRCTlPACpG56TtlIEMcoJK20WSYK24mQIKT4w7iUB
-ou9xfa1rUSG51LRIwB3CxXeEH9e5Ssgi+VIbqE4Z7M58WljGUFb9MvN78Xm1TB2m
-mcgdPNknXsdYUnnKVeS1SvU1RYw0nAPill6f1/yyLGfLvxqbxg3Kwggn8etf3nm2
-W1iH/W5gclP9Ef8Anliken5l3bbMEA2u1v9Ec00Kbe6Rpx1joYJtNIooCqqoivFL
-nZJhme70NBw8PYdExbvjpjB+nuWxAQaFznNd0fTT7C9DRp7ng9vs9M1eh54Nv/WO
-OI123VXwZ7YV10UFa5YkDMyk1nLsQ+b/AaYLlL3ZKjDMCW/71qNlvaBv5fGIm+lj
-LKJOdkeTRAXdijdYlnoaLStPosAe3ADttarXTdr+tz6KtObZGAXpFFb8zpeiyiJa
-rie6wwkY7lw8Djv2VKwMMF2DXnqXBdpkYc7zbrFvoefNp17LnGxcZvD5ly0pqKfP
-Xrmzm4J92v8toYfAOh5bI1NFGml6qLQeIGyjb5k2YGxBDXJDRy5yIY4E4hu0wha7
-6nSW0QZRSonxK1DtiIFi
-=iu1/
+iQIcBAEBAgAGBQJSHF2fAAoJEN0jrNd/PrOhjD0P/25n4NrF/zsYVKXY7oDEeM0k
+D24bAqBHLySDysys0DEqhA6XQZV3JoBkGK++QjEAoRAE/A6a5dzTbwQbELhlO8+z
+iuLuYx7aBuJh7lT1ghvoctgP2p8lJvD1FhrVS/ucTYJyNhnNebp2gXW45PqUOG61
+YleJ1kfYBKI6lEZgZ6JP5AWdVxD8ETrqs9zoSjY+1KK93Q70y87JSzMqR0/ounJO
+JXYdXepWa8yIC7ywwaTykcFvpgXPEjocn06i7BJr4MS5axYhJvcfKIWxRVBXwYA5
+Z14RmGOuVlmvlkUsc3F+9udjgKzzm6XG38QtXY1QsIcwYWQQqfT7uPpcP1P4mu81
+8xtrw58ZPDzJhbk3v8310MYg81q2f7HtZ9jnZPQIn7eTa7646xmhHtdC9ZD+IUjx
+QYAY+X9X4FtGDqMRZnonK3FcI+ao0xI9rdwnMbUNDpWf2trOxiDAeDYaLa1EkJ+1
+5J/B61FRVi4N3fB/IEntLcMVBSAPiIrXQUDpTANgOLDm1KYr5FDTLM711wmUeHMd
+2toNbMdvEuisNkHoDfXyAm5Tsq7Yg9dahPHTluUQAvZqDS44fef/lPn7zFJtqAuG
+ikcn8l6OrFwpv/Qm5ptmVNs5ZCpqrn08VYj/J2mlzcIm7PTd1zakJpPcJmOvn9s7
+0QvKcvOxlbphSUCGUev2
+=8APv
 -----END PGP SIGNATURE-----
 
---gvF4niNJ+uBMJnEh--
+--CNfT9TXqV7nd4cfk--
