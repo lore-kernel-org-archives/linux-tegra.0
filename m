@@ -1,62 +1,72 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH RFC v2 13/16] ARM: tegra: split tegra_pmc_init() in two
-Date: Wed, 28 Aug 2013 00:09:24 +0200
-Message-ID: <521D2394.7030005@gmail.com>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <1377638890-371-14-git-send-email-sebastian.hesselbarth@gmail.com> <521D214C.80809@wwwdotorg.org>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
+Date: Tue, 27 Aug 2013 15:19:46 -0700
+Message-ID: <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
+ <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <521D214C.80809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/27/13 23:59, Stephen Warren wrote:
-> On 08/27/2013 03:28 PM, Sebastian Hesselbarth wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Tegra's board file currently initializes clocks much earlier than those
->> for most other ARM SoCs. The reason is:
->>
->> * The PMC HW block is involved in the path of some interrupts (i.e. it
->> inverts, or not, the IRQ input pin dedicated to the PMIC).
->>
->> * So, that part of the PMC must be initialized early so that the IRQ
->> polarity is correct.
->>
->> * The PMC initialization is currently monolithic, and the PMC has some
->> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
->> and hence clocks must be set up early too.
->>
->> In order to defer clock initialization to the more typical location,
->> split out the portions of tegra_pmc_init() that are truly IRQ-related
->> into a separate tegra_pmc_init_irq(), which can be called from the
->> machine descriptor's .init_irq() function, and defer the rest until
->> the machine descriptor's .init_machine() function. With arch/arm calling
->> of_clk_init(NULL) from time_init() this also allows the removal of
->> .init_time() hook.
->>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Changelog:
->> v1->v2:
->> - took Stephen Warren's patch provided to separate Tegra's pmc_init
->> - sqashed in .init_time removal and reworded patch text
+On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrote:
+> Most DT ARM machs require common clock providers initialized before t=
+imers.
+> Currently, arch/arm machs use .init_time to call clk_of_init right be=
+fore
+> clocksource_of_init. This prevents to remove that hook and use the de=
+fault
+> hook instead. clk_of_init is safe to call for non-DT platforms, so ad=
+d
+> the call to ARM arch time_init by default. While at it, also reorder =
+includes
+> alphabetically.
+>=20
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com=
 >
-> I think it'd be better to keep the 2 patches separate so the two logical
-> changes are in different patches. I suppose it isn't a huge deal though.
->
-> Either way, on this patch, your S-o-b line is missing above.
+> ---
+> Changelog:
+> v1->v2:
+> - reorder includes alphabetically
+>=20
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-tegra@vger.kernel.org
+> Cc: kernel@stlinux.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm/kernel/time.c |   24 ++++++++++++++----------
+>  1 files changed, 14 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+> index 98aee32..dd1028e 100644
+> --- a/arch/arm/kernel/time.c
+> +++ b/arch/arm/kernel/time.c
+> @@ -11,25 +11,26 @@
+[ ... ]
+>  void __init time_init(void)
+>  {
+> +	/* initalize common clocks before timers */
+> +	of_clk_init(NULL);
+> +
+>  	if (machine_desc->init_time)
+>  		machine_desc->init_time();
+>  	else
 
-Stephen,
+This forces zynq to move some initialization our clock code relies on t=
+o
+init_irq(). Also, the current code already takes an approach of
+doing either common init or machine specific init.
+I think it might be better to move the call to of_clk_init() down into
+the else branch of the if-else.
+Though, this probably contradicts the purpose of the whole series.
 
-I was already wondering here, if I should separate the patches into 
-preparation and actual removal. I put that question into the cover
-letter and removed it from this patch text ;)
-
-As you suggest to use preparation/removal, I will take that approach
-for the final patch set. Will take you original unmodified patch then.
-
-Sebastian
+	S=C3=B6ren
