@@ -1,86 +1,66 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
- devm_ioremap_resource
-Date: Tue, 27 Aug 2013 10:14:46 +0200
-Message-ID: <20130827081443.GI8686@ulmo>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
- <20130819120249.GA5740@ulmo>
- <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
- <20130819201224.GC5191@mithrandir>
- <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+Subject: Re: [patch 1/2] gpu: host1x: fix an integer overflow check
+Date: Tue, 27 Aug 2013 10:30:24 +0200
+Message-ID: <20130827083023.GJ8686@ulmo>
+References: <20130823101825.GA1765@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MFZs98Tklfu0WsCO"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
+Return-path: <kernel-janitors-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20130823101825.GA1765@elgon.mountain>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---MFZs98Tklfu0WsCO
+--HcccYpVZDxQ8hzPO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 19, 2013 at 02:49:07PM -0600, Bjorn Helgaas wrote:
-> On Mon, Aug 19, 2013 at 2:12 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Mon, Aug 19, 2013 at 02:04:24PM -0600, Bjorn Helgaas wrote:
-> >> On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding
-> >> <thierry.reding@gmail.com> wrote:
-> >>
-> >> > Bjorn, how do you want to handle patches to the Tegra PCIe driver in=
- the
-> >> > future? Do you want me to prepare a branch and pull from that or wou=
-ld
-> >> > you rather just take simple patches?
-> >>
-> >> I'm in the habit of applying patches from email, so that's easy for
-> >> me.  But a branch would be OK, too.
-> >
-> > Patches work for me too. Is this cleanup patch something that you'd be
-> > comfortable with applying after 3.12-rc1 or would you rather defer it to
-> > 3.13?
+On Fri, Aug 23, 2013 at 01:18:25PM +0300, Dan Carpenter wrote:
+> Tegra is a 32 bit arch.  On 32 bit systems then size_t is 32 bits so
+> "total" will never be higher than UINT_MAX because of integer overflows.
+> We need cast to u64 first before doing the math.
 >=20
-> I'm not really sure how we should manage drivers/pci/host/*.  Those
-> files are mostly arch code, and I'm not sure it's useful for me to be
-> in the middle of managing them.
+> Also the addition earlier:
 >=20
-> I assume Stephen or somebody has a tree with the pci-tegra.c stuff
-> that's in -next right now; it seems like it'd be simplest to just add
-> this patch there and merge in during the v3.12 merge window.
+>         unsigned int num_unpins =3D num_cmdbufs + num_relocs;
+>=20
+> That can overflow as well, but I think it's still safe because we check
+> both "num_cmdbufs" and "num_relocs" again in this test.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> This is something I spotted in code review.  I can't actually compile
+> this code.  I assume this overflow test has security implications.
 
-If Stephen's fine with it I suppose we could take pci-tegra.c driver
-changes through the Tegra tree. But I think it'd be good if we could
-still Cc you on patches so you're aware of what we're doing (that is
-the same for all drivers drivers/pci/host/*). And we're going to need
-your Acked-by on the patches as well.
+It did compile and looks good to me, so I've applied it.
 
+Thanks,
 Thierry
 
---MFZs98Tklfu0WsCO
+--HcccYpVZDxQ8hzPO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHF/zAAoJEN0jrNd/PrOh4LcQAJvIRnYZFA6phiVFvyQON8YI
-EinzYiHmV02pb5MDFKUivA2yDKSiy86MJRcVxNpRW/JxvXwFTdbpiN8B/7qtrCsC
-2uwrtFlKo0WGktGYJsIVM57aarPEBl66GMcAliAmDTBD1x6z00QCOjwdbociDmWO
-aZRUjn2IK+ZFvKAijiM8OZWForsiCriWNUUILGUZXggR8FNK8Tu3BtO0/1BNBJgA
-LGbcqzSLd8KHJlXXSkXKvzESpvx9q4nhe1Q+D/r92CW3jlJDgu9FQ4IjVC0Z2dav
-e+52ueTWOexlIT8lyf//hSn7W9EWvsuBxiWihwHg/nMUcHII8aUl3k9DzJz43yc0
-m+it531Sbtcu+/PsMOti3+GWBwwqt6pb5JYlSyNLhUAtKVUw35bp/uR6mr072c3d
-D2s4exsHRwHipB+GYNAEOMWVS76wE4ngNmCRViKNcIrHkNH7fDuJ1gJFyjNrCxtD
-erx2i6GHs9cQahd69EBMoZhTxGhQJ5xT8VQyJ6VxuSwJFtVVZuTShN/n+b9jQJll
-uDoCn2w6CYY2OSDvKLe9vBFBCtqIVjQePcKoJSoEiKzCtuOkeujMI44/kRY0qAUL
-63vaPUu7RAnDscd61Ay5uS2aRyjy62Dre6Atohkzb4BtNxtrZW3v2XG27keaKe40
-jcM6e+Iuq23A2UnHzW0O
-=g8NQ
+iQIcBAEBAgAGBQJSHGOfAAoJEN0jrNd/PrOhj+oP/jAFWTE3EgWri6RAM/vFiFrY
+7lOg8hlDZ0cv5v/nJkDhtZ3VOel2hWcEMt0Xx5yGjt/ls4FJ1CehyJwW9HtZEGsl
+DVO/1xjwWjpIgGo6OScp192+3/OOMe40drxsw3KYYK96b1Y9RN8IyWC36fBjMhAM
+a/jLhpr8PR8Avght5AaCd58+WjZk/9B4YhZtbCh9zBay1iCeiHbS/GnzIoKe6x07
+Pl2GybMLXtCPQYahrl1aRhGPgLFnggLoN1LSrS8SCt3GDe0OAkW4fHDUDAbYMk89
+2BRNZ2ebjY5PRQmGsNTnFSEjdSsFR6rH6jmCuqpnNe60GJcvIyei9zaIKcNbzU/G
+LipkOxlz/Yf49HN2dEQhtdoSY/6X2heAsfpeW7flpLuon+Og7hXRq/jjS491t4gb
+STnTCXm3saQ9vomOSbMrSaCscC1WmHuEtBZO8UXTMLsPNshndjoGo4hk9CyGIvmK
++5gIXa1Xezb8ILVj/+fTlZCEwyCwa6q94IofqhPtovAYOWz75MNT+dRm2kDKS7Du
+/zfLstgT3mxc226RcviFPo342DV2zl+R5rWFTWLAvlv562Lj4KuXX+Jn2IehMj32
+OKCeVpIRgk6jpZB2pJ8g0JRHBk1jGbRhmE+eTWcULQVVJnFDuEmavu9A8Q1LV2DS
+9Fm0o4PnlEOQBPgU6PR3
+=oKqR
 -----END PGP SIGNATURE-----
 
---MFZs98Tklfu0WsCO--
+--HcccYpVZDxQ8hzPO--
