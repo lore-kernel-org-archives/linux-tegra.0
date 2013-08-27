@@ -1,167 +1,131 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4] pinctrl: Pass all configs to driver on pin_config_set()
-Date: Wed, 28 Aug 2013 01:14:11 +0200
-Message-ID: <12648377.rRBG7cWhRe@avalon>
-References: <1377134300-25480-1-git-send-email-syin@broadcom.com> <1377628332-12303-1-git-send-email-syin@broadcom.com>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
+Date: Tue, 27 Aug 2013 16:20:02 -0700
+Message-ID: <2caa20c0-cfa8-497d-8aef-fb99f2a0d821@DB9EHSMHS015.ehs.local>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
+ <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
+ <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
+ <521D2F1F.1070103@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1377628332-12303-1-git-send-email-syin@broadcom.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sherman Yin <syin@broadcom.com>, Simon Horman <horms+renesas@verge.net.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Paul Mundt <lethal@linux-sh.org>, Tony Prisk <linux@prisktech.co.nz>, Axel Lin <axel.lin@ingics.com>, Matt Porter <matt.porter@linaro.org>, linux-rpi-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.in
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <521D2F1F.1070103@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 27 August 2013 11:32:12 Sherman Yin wrote:
-> When setting pin configuration in the pinctrl framework, pin_config_set() or
-> pin_config_group_set() is called in a loop to set one configuration at a
-> time for the specified pin or group.
-> 
-> This patch 1) removes the loop and 2) changes the API to pass the whole pin
-> config array to the driver.  It is now up to the driver to loop through the
-> configs.  This allows the driver to potentially combine configs and reduce
-> the number of writes to pin config registers.
-> 
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o is successfully generated.
-> 
-> Signed-off-by: Sherman Yin <syin@broadcom.com>
-> Reviewed-by: Christian Daudt <csd@broadcom.com>
-> Reviewed-by: Matt Porter <matt.porter@linaro.org>
-> 
->   drivers/pinctrl/pinconf.c             |   42 ++++----
->   drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->   include/linux/pinctrl/pinconf.h       |    6 +-
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> 
->   On Tegra (Tegra114 Dalmore board, on top of next-20130816),
-> Tested-by: Stephen Warren <swarren@nvidia.com>
+On Wed, Aug 28, 2013 at 12:58:39AM +0200, Sebastian Hesselbarth wrote:
+> On 08/28/13 00:19, S=C3=B6ren Brinkmann wrote:
+> >On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrot=
+e:
+> >>Most DT ARM machs require common clock providers initialized before=
+ timers.
+> >>Currently, arch/arm machs use .init_time to call clk_of_init right =
+before
+> >>clocksource_of_init. This prevents to remove that hook and use the =
+default
+> >>hook instead. clk_of_init is safe to call for non-DT platforms, so =
+add
+> >>the call to ARM arch time_init by default. While at it, also reorde=
+r includes
+> >>alphabetically.
+> >>
+> >>Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.c=
+om>
+> >>---
+> >>Changelog:
+> >>v1->v2:
+> >>- reorder includes alphabetically
+> >>
+> >>Cc: Russell King <linux@arm.linux.org.uk>
+> >>Cc: Arnd Bergmann <arnd@arndb.de>
+> >>Cc: linux-tegra@vger.kernel.org
+> >>Cc: kernel@stlinux.com
+> >>Cc: linux-samsung-soc@vger.kernel.org
+> >>Cc: linux-arm-kernel@lists.infradead.org
+> >>Cc: linux-kernel@vger.kernel.org
+> >>---
+> >>  arch/arm/kernel/time.c |   24 ++++++++++++++----------
+> >>  1 files changed, 14 insertions(+), 10 deletions(-)
+> >>
+> >>diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+> >>index 98aee32..dd1028e 100644
+> >>--- a/arch/arm/kernel/time.c
+> >>+++ b/arch/arm/kernel/time.c
+> >>@@ -11,25 +11,26 @@
+> >[ ... ]
+> >>  void __init time_init(void)
+> >>  {
+> >>+	/* initalize common clocks before timers */
+> >>+	of_clk_init(NULL);
+> >>+
+> >>  	if (machine_desc->init_time)
+> >>  		machine_desc->init_time();
+> >>  	else
+> >
+> >This forces zynq to move some initialization our clock code relies o=
+n to
+> >init_irq(). Also, the current code already takes an approach of
+> >doing either common init or machine specific init.
+>=20
+> Soeren,
+>=20
+> you know that patch 16/16 takes care of zynq's clock init?
+>=20
+> It's your own patch you provided from the last RFC. Looking at it, it
+> moves  zynq_sclr_init() to .init_irq and removes the call to
+> of_clk_init() from zynq_clock_init() which is called by
+> zynq_sclr_init().
+>=20
+> Isn't that solving the above issues for mach-zynq?
 
-For drivers/pinctrl/sh-pfc/pinctrl.c,
+Yes, I know. This alternative approach came to me after I sent my patch
+and took a closer look at init_irq(). As you said, we move our problem
+just to an earlier boot stage. Which wouldn't be true if a strict
+if-else would allow us to explicitly call everything in the right order
+- which init_irq by the way does.
+I mentioned it in an email in the original thread yesterday. But since
+there is a v2 now, I just thought to bring it up here now.
 
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>=20
+> >I think it might be better to move the call to of_clk_init() down in=
+to
+> >the else branch of the if-else.
+>=20
+> Possibly, yes. But we could also unconditionally call of_clk_init() a=
+t
+> the beginning of time_init() and call clocksource_of_init() at the en=
+d.
+> That will make .init_time() to some fixup hook between
+> initialization of clocks and timers.
 
-> ---
-> Please refer to the discussion with Linus W. "[PATCH] ARM: Adds pin config
-> API to set all configs in one function" here:
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-May/166567.html
-> 
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o are successfully generated.
-> 
-> [v2]	rebased on LinusW's linux-pinctrl.git "devel" branch.  Fixed and
-> build-tested pinctrl-sunxi.c
-> [v3]	rebased on linux-pinctrl.git:devel as of 2013.08.25. Applied API
-> change to new driver pinctrl-palmas.c. Re build-tested all files.
-> [v4]	Changed int to unsigned int in sh-pfc/pinctrl.c
-> ---
->  drivers/pinctrl/mvebu/pinctrl-mvebu.c |   26 +++--
->  drivers/pinctrl/pinconf.c             |   42 ++++----
->  drivers/pinctrl/pinctrl-abx500.c      |  187 ++++++++++++++++--------------
->  drivers/pinctrl/pinctrl-at91.c        |   48 +++++----
->  drivers/pinctrl/pinctrl-bcm2835.c     |   43 ++++----
->  drivers/pinctrl/pinctrl-exynos5440.c  |  113 +++++++++++---------
->  drivers/pinctrl/pinctrl-falcon.c      |   63 ++++++-----
->  drivers/pinctrl/pinctrl-imx.c         |   28 ++---
->  drivers/pinctrl/pinctrl-mxs.c         |   91 ++++++++--------
->  drivers/pinctrl/pinctrl-nomadik.c     |  125 ++++++++++++----------
->  drivers/pinctrl/pinctrl-palmas.c      |  134 ++++++++++++-----------
->  drivers/pinctrl/pinctrl-rockchip.c    |   57 ++++++----
->  drivers/pinctrl/pinctrl-samsung.c     |   17 ++-
->  drivers/pinctrl/pinctrl-single.c      |   33 ++++--
->  drivers/pinctrl/pinctrl-st.c          |   11 +-
->  drivers/pinctrl/pinctrl-sunxi.c       |   77 +++++++-------
->  drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->  drivers/pinctrl/pinctrl-tz1090-pdc.c  |  135 ++++++++++++++----------
->  drivers/pinctrl/pinctrl-tz1090.c      |  140 +++++++++++++-----------
->  drivers/pinctrl/pinctrl-u300.c        |   18 ++--
->  drivers/pinctrl/pinctrl-xway.c        |  119 +++++++++++++--------
->  drivers/pinctrl/sh-pfc/pinctrl.c      |   42 ++++----
->  drivers/pinctrl/vt8500/pinctrl-wmt.c  |   54 +++++-----
->  include/linux/pinctrl/pinconf.h       |    6 +-
->  24 files changed, 952 insertions(+), 726 deletions(-)
+Right, the question is what is the common case? What do SOCs use the
+custom init_time() hook for?
 
-[snip]
+If SOCs use it for things additionally to clock init where=20
+execution order doesn't matter, your patch works perfectly well and is
+the preferred solution.
 
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
-> b/drivers/pinctrl/sh-pfc/pinctrl.c index 8649ec3..e758af9 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -529,38 +529,44 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
-> *pctldev, unsigned _pin, }
-> 
->  static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
-> -			      unsigned long config)
-> +			      unsigned long *configs, unsigned num_configs)
->  {
->  	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
->  	struct sh_pfc *pfc = pmx->pfc;
-> -	enum pin_config_param param = pinconf_to_config_param(config);
-> +	enum pin_config_param param;
->  	unsigned long flags;
-> +	unsigned int i;
-> 
-> -	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
-> -		return -ENOTSUPP;
-> +	for (i = 0; i < num_configs; i++) {
-> +		param = pinconf_to_config_param(configs[i]);
-> 
-> -	switch (param) {
-> -	case PIN_CONFIG_BIAS_PULL_UP:
-> -	case PIN_CONFIG_BIAS_PULL_DOWN:
-> -	case PIN_CONFIG_BIAS_DISABLE:
-> -		if (!pfc->info->ops || !pfc->info->ops->set_bias)
-> +		if (!sh_pfc_pinconf_validate(pfc, _pin, param))
->  			return -ENOTSUPP;
-> 
-> -		spin_lock_irqsave(&pfc->lock, flags);
-> -		pfc->info->ops->set_bias(pfc, _pin, param);
-> -		spin_unlock_irqrestore(&pfc->lock, flags);
-> +		switch (param) {
-> +		case PIN_CONFIG_BIAS_PULL_UP:
-> +		case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		case PIN_CONFIG_BIAS_DISABLE:
-> +			if (!pfc->info->ops || !pfc->info->ops->set_bias)
-> +				return -ENOTSUPP;
-> 
-> -		break;
-> +			spin_lock_irqsave(&pfc->lock, flags);
-> +			pfc->info->ops->set_bias(pfc, _pin, param);
-> +			spin_unlock_irqrestore(&pfc->lock, flags);
-> 
-> -	default:
-> -		return -ENOTSUPP;
-> -	}
-> +			break;
-> +
-> +		default:
-> +			return -ENOTSUPP;
-> +		}
-> +	} /* for each config */
-> 
->  	return 0;
->  }
-> 
->  static int sh_pfc_pinconf_group_set(struct pinctrl_dev *pctldev, unsigned
-> group, -				    unsigned long config)
-> +				    unsigned long *configs,
-> +				    unsigned num_configs)
->  {
->  	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
->  	const unsigned int *pins;
-> @@ -571,7 +577,7 @@ static int sh_pfc_pinconf_group_set(struct pinctrl_dev
-> *pctldev, unsigned group, num_pins = pmx->pfc->info->groups[group].nr_pins;
-> 
->  	for (i = 0; i < num_pins; ++i)
-> -		sh_pfc_pinconf_set(pctldev, pins[i], config);
-> +		sh_pfc_pinconf_set(pctldev, pins[i], configs, num_configs);
-> 
->  	return 0;
->  }
+If they use it just to call of_clk_init() and of_clocksource_init(),
+those hooks can go away and it would work in the else branch or outside=
+,
+equally well.
 
--- 
-Regards,
+If they use it like Zynq, to do some required SOC specific init which m=
+ust
+be done before clock init, it would make more sense to have it in the
+else branch. That way the SOC intentionally replaces init_time()
+with its own implementation and has to take care of calling everything =
+in the
+right order.
 
-Laurent Pinchart
+Another approach might be to move the custom init_time() hook before th=
+e
+call to of_clk_init().
+
+As I said, it depends on how this hook is used.
+
+	S=C3=B6ren
