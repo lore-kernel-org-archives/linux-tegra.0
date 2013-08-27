@@ -1,36 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] tegra-cpuidle: provide stub when !CONFIG_CPU_IDLE
-Date: Mon, 26 Aug 2013 16:19:59 -0600
-Message-ID: <521BD48F.1060202@wwwdotorg.org>
-References: <20130826153050.GC8764@redacted.bos.redhat.com>
+From: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] pinctrl: tegra: Convert to devm_ioremap_resource
+Date: Tue, 27 Aug 2013 09:07:23 +0800
+Message-ID: <1377565643.17552.0.camel@phoenix>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130826153050.GC8764-nxOev/eQj6CGu0OVIAPS5KfLeoKvNuZc@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kyle McMartin <kyle-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/26/2013 09:30 AM, Kyle McMartin wrote:
-> While poking at something using the for-3.12/* trees, I hit the
-> following compile error:
-> drivers/built-in.o: In function `tegra_pcie_map_irq':
-> /builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.armv7hl/drivers/pci/host/pci-tegra.c:640:
-> undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> drivers/built-in.o: In function `tegra_msi_map':
-> /builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.armv7hl/drivers/pci/host/pci-tegra.c:1227:
-> undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> make: *** [vmlinux] Error 1
-> 
-> Since our .config had CONFIG_CPU_IDLE off. We should probably provide
-> an empty function to handle this to avoid cluttering up pci-tegra.c
-> with conditionals.
+Using the new devm_ioremap_resource() we can greatly simplify resource handling.
 
-Another approach would be to use if (IS_ENABLED(CPU_IDLE)) at the call
-site. I guess the approach in this patch is better than that though,
-since it doesn't pollute the callers with knowledge of when this
-function is available.
+Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+---
+v2: add commit log.
 
-Thierry, if you're OK with this, I can forward it on to arm-soc.
+ drivers/pinctrl/pinctrl-tegra.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 637bcd3..be7e900 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -643,25 +643,9 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+ 
+ 	for (i = 0; i < pmx->nbanks; i++) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res) {
+-			dev_err(&pdev->dev, "Missing MEM resource\n");
+-			return -ENODEV;
+-		}
+-
+-		if (!devm_request_mem_region(&pdev->dev, res->start,
+-					    resource_size(res),
+-					    dev_name(&pdev->dev))) {
+-			dev_err(&pdev->dev,
+-				"Couldn't request MEM resource %d\n", i);
+-			return -ENODEV;
+-		}
+-
+-		pmx->regs[i] = devm_ioremap(&pdev->dev, res->start,
+-					    resource_size(res));
+-		if (!pmx->regs[i]) {
+-			dev_err(&pdev->dev, "Couldn't ioremap regs %d\n", i);
+-			return -ENODEV;
+-		}
++		pmx->regs[i] = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(pmx->regs[i]))
++			return PTR_ERR(pmx->regs[i]);
+ 	}
+ 
+ 	pmx->pctl = pinctrl_register(&tegra_pinctrl_desc, &pdev->dev, pmx);
+-- 
+1.8.1.2
