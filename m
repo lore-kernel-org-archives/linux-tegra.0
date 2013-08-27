@@ -1,39 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH V2] crypto: produce consistent hash for zero-length
- data
-Date: Tue, 27 Aug 2013 10:05:28 -0600
-Message-ID: <521CCE48.5060701@wwwdotorg.org>
-References: <1377555170-6841-1-git-send-email-swarren@wwwdotorg.org> <20130827074835.GF8686@ulmo>
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Date: Tue, 27 Aug 2013 10:11:07 -0600
+Message-ID: <521CCF9B.9000004@wwwdotorg.org>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr> <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo> <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com> <20130819201224.GC5191@mithrandir> <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com> <20130827081443.GI8686@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130827074835.GF8686@ulmo>
+In-Reply-To: <20130827081443.GI8686@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/27/2013 01:48 AM, Thierry Reding wrote:
-> On Mon, Aug 26, 2013 at 04:12:50PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/27/2013 02:14 AM, Thierry Reding wrote:
+> On Mon, Aug 19, 2013 at 02:49:07PM -0600, Bjorn Helgaas wrote:
+>> On Mon, Aug 19, 2013 at 2:12 PM, Thierry Reding 
+>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> On Mon, Aug 19, 2013 at 02:04:24PM -0600, Bjorn Helgaas wrote:
+>>>> On Mon, Aug 19, 2013 at 6:02 AM, Thierry Reding 
+>>>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>> 
+>>>>> Bjorn, how do you want to handle patches to the Tegra PCIe
+>>>>> driver in the future? Do you want me to prepare a branch
+>>>>> and pull from that or would you rather just take simple
+>>>>> patches?
+>>>> 
+>>>> I'm in the habit of applying patches from email, so that's
+>>>> easy for me.  But a branch would be OK, too.
+>>> 
+>>> Patches work for me too. Is this cleanup patch something that
+>>> you'd be comfortable with applying after 3.12-rc1 or would you
+>>> rather defer it to 3.13?
 >> 
->> In real-world use-cases, hashing zero-length data likely never
->> happens. However, it is relevant when testing cbootimage with a
->> dummy zero-length bootloader binary, e.g.:
+>> I'm not really sure how we should manage drivers/pci/host/*.
+>> Those files are mostly arch code, and I'm not sure it's useful
+>> for me to be in the middle of managing them.
 >> 
->> touch u-boot.bin cbootimage -t30 ../tamonten-ng/tegra30.img.cfg
->> tegra30-tec-ng.img
->> 
->> In this scenario, it's useful to create a consistent hash, so
->> that one can compare the resultant images before and after
->> applying patches, to check for regressions.
->> 
->> Hence, zero out the hash data so it has consistent content if it
->> isn't written to.
-...
-> Looks good:
+>> I assume Stephen or somebody has a tree with the pci-tegra.c
+>> stuff that's in -next right now; it seems like it'd be simplest
+>> to just add this patch there and merge in during the v3.12 merge
+>> window.
 > 
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> If Stephen's fine with it I suppose we could take pci-tegra.c
+> driver changes through the Tegra tree. But I think it'd be good if
+> we could still Cc you on patches so you're aware of what we're
+> doing (that is the same for all drivers drivers/pci/host/*). And
+> we're going to need your Acked-by on the patches as well.
 
-Thanks. I've pushed this out.
+I can push Tegra PCIe patches through the arm-soc tree before
+3.12-rc1, but after that point, I think it's best if they go through
+the PCIe tree, unless there's some cross-subsystem dependency for a
+specific patch, and with the new PCIe driver, that's less likely.
