@@ -1,153 +1,85 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3] pinctrl: Pass all configs to driver on pin_config_set()
-Date: Tue, 27 Aug 2013 10:56:31 +0200
-Message-ID: <6659378.X3XNCLDVvV@avalon>
-References: <1377134300-25480-1-git-send-email-syin@broadcom.com> <1377484899-4918-1-git-send-email-syin@broadcom.com>
+From: Neil Zhang <zhangwm-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH 3/3] cpuidle: coupled: fix race condition between pokes
+ and safe state
+Date: Tue, 27 Aug 2013 01:57:43 -0700
+Message-ID: <175CCF5F49938B4D99B2E3EF7F558EBE3DBD2B9E21@SC-VEXCH4.marvell.com>
+References: <1377287112-12018-1-git-send-email-ccross@android.com>
+ <1377287112-12018-3-git-send-email-ccross@android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1377484899-4918-1-git-send-email-syin@broadcom.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sherman Yin <syin@broadcom.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-rpi-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-tegra@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Paul Mundt <lethal@linux-sh.org>, Tony Prisk <linux@prisktec>
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377287112-12018-3-git-send-email-ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Sherman,
-
-Thank you for the patch.
-
-On Sunday 25 August 2013 19:41:39 Sherman Yin wrote:
-> When setting pin configuration in the pinctrl framework, pin_config_set() or
-> pin_config_group_set() is called in a loop to set one configuration at a
-> time for the specified pin or group.
-> 
-> This patch 1) removes the loop and 2) changes the API to pass the whole pin
-> config array to the driver.  It is now up to the driver to loop through the
-> configs.  This allows the driver to potentially combine configs and reduce
-> the number of writes to pin config registers.
-> 
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o is successfully generated.
-> 
-> Signed-off-by: Sherman Yin <syin@broadcom.com>
-> Reviewed-by: Christian Daudt <csd@broadcom.com>
-> Reviewed-by: Matt Porter <matt.porter@linaro.org>
-> 
->   drivers/pinctrl/pinconf.c             |   42 ++++----
->   drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->   include/linux/pinctrl/pinconf.h       |    6 +-
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> 
->   On Tegra (Tegra114 Dalmore board, on top of next-20130816),
-> Tested-by: Stephen Warren <swarren@nvidia.com>
-> 
-> ---
-> Please refer to the discussion with Linus W. "[PATCH] ARM: Adds pin config
-> API to set all configs in one function" here:
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-May/166567.html
-> 
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o are successfully generated.
-> 
-> [v2]	rebased on LinusW's linux-pinctrl.git "devel" branch.  Fixed and
-> build-tested pinctrl-sunxi.c
-> [v3]	rebased on linux-pinctrl.git:devel as of 2013.08.25. Applied API
-> change to new driver pinctrl-palmas.c. Re build-tested all files.
-> ---
->  drivers/pinctrl/mvebu/pinctrl-mvebu.c |   26 +++--
->  drivers/pinctrl/pinconf.c             |   42 ++++----
->  drivers/pinctrl/pinctrl-abx500.c      |  187 ++++++++++++++++--------------
->  drivers/pinctrl/pinctrl-at91.c        |   48 +++++----
->  drivers/pinctrl/pinctrl-bcm2835.c     |   43 ++++----
->  drivers/pinctrl/pinctrl-exynos5440.c  |  113 +++++++++++---------
->  drivers/pinctrl/pinctrl-falcon.c      |   63 ++++++-----
->  drivers/pinctrl/pinctrl-imx.c         |   28 ++---
->  drivers/pinctrl/pinctrl-mxs.c         |   91 ++++++++--------
->  drivers/pinctrl/pinctrl-nomadik.c     |  125 ++++++++++++----------
->  drivers/pinctrl/pinctrl-palmas.c      |  134 ++++++++++++-----------
->  drivers/pinctrl/pinctrl-rockchip.c    |   57 ++++++----
->  drivers/pinctrl/pinctrl-samsung.c     |   17 ++-
->  drivers/pinctrl/pinctrl-single.c      |   33 ++++--
->  drivers/pinctrl/pinctrl-st.c          |   11 +-
->  drivers/pinctrl/pinctrl-sunxi.c       |   77 +++++++-------
->  drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->  drivers/pinctrl/pinctrl-tz1090-pdc.c  |  135 ++++++++++++++----------
->  drivers/pinctrl/pinctrl-tz1090.c      |  140 +++++++++++++-----------
->  drivers/pinctrl/pinctrl-u300.c        |   18 ++--
->  drivers/pinctrl/pinctrl-xway.c        |  119 +++++++++++++--------
->  drivers/pinctrl/sh-pfc/pinctrl.c      |   42 ++++----
->  drivers/pinctrl/vt8500/pinctrl-wmt.c  |   54 +++++-----
->  include/linux/pinctrl/pinconf.h       |    6 +-
->  24 files changed, 952 insertions(+), 726 deletions(-)
-
-[snip]
-
-> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
-> b/drivers/pinctrl/sh-pfc/pinctrl.c index 8649ec3..ced199e 100644
-> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
-> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
-> @@ -529,38 +529,44 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
-> *pctldev, unsigned _pin, }
-> 
->  static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
-> -			      unsigned long config)
-> +			      unsigned long *configs, unsigned num_configs)
->  {
->  	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
->  	struct sh_pfc *pfc = pmx->pfc;
-> -	enum pin_config_param param = pinconf_to_config_param(config);
-> +	enum pin_config_param param;
->  	unsigned long flags;
-> +	int i;
-
-Could you please make this an unsigned int ?
-
-Other than that the sh-pfc part looks good to me.
-
-> -	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
-> -		return -ENOTSUPP;
-> +	for (i = 0; i < num_configs; i++) {
-> +		param = pinconf_to_config_param(configs[i]);
-> 
-> -	switch (param) {
-> -	case PIN_CONFIG_BIAS_PULL_UP:
-> -	case PIN_CONFIG_BIAS_PULL_DOWN:
-> -	case PIN_CONFIG_BIAS_DISABLE:
-> -		if (!pfc->info->ops || !pfc->info->ops->set_bias)
-> +		if (!sh_pfc_pinconf_validate(pfc, _pin, param))
->  			return -ENOTSUPP;
-> 
-> -		spin_lock_irqsave(&pfc->lock, flags);
-> -		pfc->info->ops->set_bias(pfc, _pin, param);
-> -		spin_unlock_irqrestore(&pfc->lock, flags);
-> +		switch (param) {
-> +		case PIN_CONFIG_BIAS_PULL_UP:
-> +		case PIN_CONFIG_BIAS_PULL_DOWN:
-> +		case PIN_CONFIG_BIAS_DISABLE:
-> +			if (!pfc->info->ops || !pfc->info->ops->set_bias)
-> +				return -ENOTSUPP;
-> 
-> -		break;
-> +			spin_lock_irqsave(&pfc->lock, flags);
-> +			pfc->info->ops->set_bias(pfc, _pin, param);
-> +			spin_unlock_irqrestore(&pfc->lock, flags);
-> 
-> -	default:
-> -		return -ENOTSUPP;
-> -	}
-> +			break;
-> +
-> +		default:
-> +			return -ENOTSUPP;
-> +		}
-> +	} /* for each config */
-> 
->  	return 0;
->  }
-
--- 
-Regards,
-
-Laurent Pinchart
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBDcm9zcyBbbWFpbHRv
+OmNjcm9zc0BhbmRyb2lkLmNvbV0NCj4gU2VudDogMjAxM8TqONTCMjTI1SAzOjQ1DQo+IFRvOiBs
+aW51eC1wbUB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7IE5laWwgWmhhbmc7IEpvc2VwaCBMbzsNCj4gbGludXgtdGVncmFAdmdlci5rZXJuZWwub3Jn
+OyBDb2xpbiBDcm9zczsgc3RhYmxlQHZnZXIua2VybmVsLm9yZzsgUmFmYWVsIEouDQo+IFd5c29j
+a2k7IERhbmllbCBMZXpjYW5vDQo+IFN1YmplY3Q6IFtQQVRDSCAzLzNdIGNwdWlkbGU6IGNvdXBs
+ZWQ6IGZpeCByYWNlIGNvbmRpdGlvbiBiZXR3ZWVuIHBva2VzIGFuZCBzYWZlDQo+IHN0YXRlDQo+
+IA0KPiBUaGUgY291cGxlZCBjcHVpZGxlIHdhaXRpbmcgbG9vcCBjbGVhcnMgcGVuZGluZyBwb2tl
+cyBiZWZvcmUgZW50ZXJpbmcgdGhlIHNhZmUNCj4gc3RhdGUuICBJZiBhIHBva2UgYXJyaXZlcyBq
+dXN0IGJlZm9yZSB0aGUgcG9rZXMgYXJlIGNsZWFyZWQsIGJ1dCBhZnRlciB0aGUgd2hpbGUNCj4g
+bG9vcCBjb25kaXRpb24gY2hlY2tzLCB0aGUgcG9rZSB3aWxsIGJlIGxvc3QgYW5kIHRoZSBjcHUg
+d2lsbCBzdGF5IGluIHRoZSBzYWZlIHN0YXRlDQo+IHVudGlsIGFub3RoZXIgaW50ZXJydXB0IGFy
+cml2ZXMuICBUaGlzIG1heSBjYXVzZSB0aGUgY3B1IHRoYXQgc2VudCB0aGUgcG9rZSB0bw0KPiBz
+cGluIGluIHRoZSByZWFkeSBsb29wIHdpdGggaW50ZXJydXB0cyBvZmYgdW50aWwgYW5vdGhlciBj
+cHUgcmVjZWl2ZXMgYW4gaW50ZXJydXB0LA0KPiBhbmQgaWYgbm8gb3RoZXIgY3B1cyBoYXZlIGlu
+dGVycnVwdHMgcm91dGVkIHRvIHRoZW0gaXQgY2FuIHNwaW4gZm9yZXZlci4NCj4gDQo+IENoYW5n
+ZSB0aGUgcmV0dXJuIHZhbHVlIG9mIGNwdWlkbGVfY291cGxlZF9jbGVhcl9wb2tlcyB0byByZXR1
+cm4gaWYgYSBwb2tlIHdhcw0KPiBjbGVhcmVkLCBhbmQgbW92ZSB0aGUgbmVlZF9yZXNjaGVkKCkg
+Y2hlY2tzIGludG8gdGhlIGNhbGxlcnMuICBJbiB0aGUgd2FpdGluZw0KPiBsb29wLCBpZiBhIHBv
+a2Ugd2FzIGNsZWFyZWQgcmVzdGFydCB0aGUgbG9vcCB0byByZXBlYXQgdGhlIHdoaWxlIGNvbmRp
+dGlvbiBjaGVja3MuDQo+IA0KPiBSZXBvcnRlZC1ieTogTmVpbCBaaGFuZyA8emhhbmd3bUBtYXJ2
+ZWxsLmNvbT4NCj4gQ0M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU2lnbmVkLW9mZi1ieTog
+Q29saW4gQ3Jvc3MgPGNjcm9zc0BhbmRyb2lkLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL2NwdWlk
+bGUvY291cGxlZC5jIHwgMjAgKysrKysrKysrKysrKystLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvY3B1aWRsZS9jb3VwbGVkLmMgYi9kcml2ZXJzL2NwdWlkbGUvY291cGxlZC5jIGluZGV4
+DQo+IGJiYzRiYTUuLmM5MTIzMGIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY3B1aWRsZS9jb3Vw
+bGVkLmMNCj4gKysrIGIvZHJpdmVycy9jcHVpZGxlL2NvdXBsZWQuYw0KPiBAQCAtNDA4LDE5ICs0
+MDgsMjIgQEAgc3RhdGljIHZvaWQgY3B1aWRsZV9jb3VwbGVkX3NldF9kb25lKGludCBjcHUsIHN0
+cnVjdA0KPiBjcHVpZGxlX2NvdXBsZWQgKmNvdXBsZWQpDQo+ICAgKiBiZWVuIHByb2Nlc3NlZCBh
+bmQgdGhlIHBva2UgYml0IGhhcyBiZWVuIGNsZWFyZWQuDQo+ICAgKg0KPiAgICogT3RoZXIgaW50
+ZXJydXB0cyBtYXkgYWxzbyBiZSBwcm9jZXNzZWQgd2hpbGUgaW50ZXJydXB0cyBhcmUgZW5hYmxl
+ZCwgc28NCj4gLSAqIG5lZWRfcmVzY2hlZCgpIG11c3QgYmUgdGVzdGVkIGFmdGVyIHR1cm5pbmcg
+aW50ZXJydXB0cyBvZmYgYWdhaW4gdG8gbWFrZSBzdXJlDQo+ICsgKiBuZWVkX3Jlc2NoZWQoKSBt
+dXN0IGJlIHRlc3RlZCBhZnRlciB0aGlzIGZ1bmN0aW9uIHJldHVybnMgdG8gbWFrZQ0KPiArIHN1
+cmUNCj4gICAqIHRoZSBpbnRlcnJ1cHQgZGlkbid0IHNjaGVkdWxlIHdvcmsgdGhhdCBzaG91bGQg
+dGFrZSB0aGUgY3B1IG91dCBvZiBpZGxlLg0KPiAgICoNCj4gLSAqIFJldHVybnMgMCBpZiBuZWVk
+X3Jlc2NoZWQgd2FzIGZhbHNlLCAtRUlOVFIgaWYgbmVlZF9yZXNjaGVkIHdhcyB0cnVlLg0KPiAr
+ICogUmV0dXJucyAwIGlmIG5vIHBva2Ugd2FzIHBlbmRpbmcsIDEgaWYgYSBwb2tlIHdhcyBjbGVh
+cmVkLg0KPiAgICovDQo+ICBzdGF0aWMgaW50IGNwdWlkbGVfY291cGxlZF9jbGVhcl9wb2tlcyhp
+bnQgY3B1KSAgew0KPiArCWlmICghY3B1bWFza190ZXN0X2NwdShjcHUsICZjcHVpZGxlX2NvdXBs
+ZWRfcG9rZV9wZW5kaW5nKSkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gIAlsb2NhbF9pcnFfZW5h
+YmxlKCk7DQo+ICAJd2hpbGUgKGNwdW1hc2tfdGVzdF9jcHUoY3B1LCAmY3B1aWRsZV9jb3VwbGVk
+X3Bva2VfcGVuZGluZykpDQo+ICAJCWNwdV9yZWxheCgpOw0KPiAgCWxvY2FsX2lycV9kaXNhYmxl
+KCk7DQo+IA0KPiAtCXJldHVybiBuZWVkX3Jlc2NoZWQoKSA/IC1FSU5UUiA6IDA7DQo+ICsJcmV0
+dXJuIDE7DQo+ICB9DQo+IA0KPiAgc3RhdGljIGJvb2wgY3B1aWRsZV9jb3VwbGVkX2FueV9wb2tl
+c19wZW5kaW5nKHN0cnVjdCBjcHVpZGxlX2NvdXBsZWQNCj4gKmNvdXBsZWQpIEBAIC00NjQsNyAr
+NDY3LDggQEAgaW50IGNwdWlkbGVfZW50ZXJfc3RhdGVfY291cGxlZChzdHJ1Y3QNCj4gY3B1aWRs
+ZV9kZXZpY2UgKmRldiwNCj4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+IA0KPiAgCXdoaWxlIChjb3Vw
+bGVkLT5wcmV2ZW50KSB7DQo+IC0JCWlmIChjcHVpZGxlX2NvdXBsZWRfY2xlYXJfcG9rZXMoZGV2
+LT5jcHUpKSB7DQo+ICsJCWNwdWlkbGVfY291cGxlZF9jbGVhcl9wb2tlcyhkZXYtPmNwdSk7DQo+
+ICsJCWlmIChuZWVkX3Jlc2NoZWQoKSkgew0KPiAgCQkJbG9jYWxfaXJxX2VuYWJsZSgpOw0KPiAg
+CQkJcmV0dXJuIGVudGVyZWRfc3RhdGU7DQo+ICAJCX0NCj4gQEAgLTUwMyw3ICs1MDcsMTAgQEAg
+cmV0cnk6DQo+ICAJICovDQo+ICAJd2hpbGUgKCFjcHVpZGxlX2NvdXBsZWRfY3B1c193YWl0aW5n
+KGNvdXBsZWQpIHx8DQo+ICAJCQkhY3B1bWFza190ZXN0X2NwdShkZXYtPmNwdSwgJmNwdWlkbGVf
+Y291cGxlZF9wb2tlZCkpIHsNCj4gLQkJaWYgKGNwdWlkbGVfY291cGxlZF9jbGVhcl9wb2tlcyhk
+ZXYtPmNwdSkpIHsNCj4gKwkJaWYgKGNwdWlkbGVfY291cGxlZF9jbGVhcl9wb2tlcyhkZXYtPmNw
+dSkpDQo+ICsJCQljb250aW51ZTsNCj4gKw0KPiArCQlpZiAobmVlZF9yZXNjaGVkKCkpIHsNCj4g
+IAkJCWNwdWlkbGVfY291cGxlZF9zZXRfbm90X3dhaXRpbmcoZGV2LT5jcHUsIGNvdXBsZWQpOw0K
+PiAgCQkJZ290byBvdXQ7DQo+ICAJCX0NCj4gQEAgLTUxOCw3ICs1MjUsOCBAQCByZXRyeToNCj4g
+IAkJbG9jYWxfaXJxX2Rpc2FibGUoKTsNCj4gIAl9DQo+IA0KPiAtCWlmIChjcHVpZGxlX2NvdXBs
+ZWRfY2xlYXJfcG9rZXMoZGV2LT5jcHUpKSB7DQo+ICsJY3B1aWRsZV9jb3VwbGVkX2NsZWFyX3Bv
+a2VzKGRldi0+Y3B1KTsNCj4gKwlpZiAobmVlZF9yZXNjaGVkKCkpIHsNCj4gIAkJY3B1aWRsZV9j
+b3VwbGVkX3NldF9ub3Rfd2FpdGluZyhkZXYtPmNwdSwgY291cGxlZCk7DQo+ICAJCWdvdG8gb3V0
+Ow0KPiAgCX0NCj4gLS0NCj4gMS44LjMNCg0KSSB0aGluayB0aGlzIHBhdGNoIHNob3VsZCBhbHNv
+IGJlIHdvcmthYmxlLg0KVGhhbmtzLg0KDQpSZXZpZXdlZC1ieTogTmVpbCBaaGFuZyA8emhhbmd3
+bUBtYXJ2ZWxsLmNvbT4NCg0KQmVzdCBSZWdhcmRzLA0KTmVpbCBaaGFuZw0K
