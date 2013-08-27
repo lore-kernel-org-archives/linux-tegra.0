@@ -1,106 +1,50 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH RFC v2 00/16] ARM: provide common arch init for DT clocks
-Date: Tue, 27 Aug 2013 23:27:54 +0200
-Message-ID: <1377638890-371-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH RFC v2 13/16] ARM: tegra: split tegra_pmc_init() in two
+Date: Tue, 27 Aug 2013 15:59:40 -0600
+Message-ID: <521D214C.80809@wwwdotorg.org>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <1377638890-371-14-git-send-email-sebastian.hesselbarth@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377638890-371-14-git-send-email-sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This RFC converts arch/arm to provide a common arch init for DT clock
-providers. Currently, the call to of_clk_init(NULL) to initialize DT
-clock providers is spread among several mach-dirs. Since most machs
-require DT clocks initialized before timers, no initcall can be used.
+On 08/27/2013 03:28 PM, Sebastian Hesselbarth wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra's board file currently initializes clocks much earlier than those
+> for most other ARM SoCs. The reason is:
+> 
+> * The PMC HW block is involved in the path of some interrupts (i.e. it
+> inverts, or not, the IRQ input pin dedicated to the PMIC).
+> 
+> * So, that part of the PMC must be initialized early so that the IRQ
+> polarity is correct.
+> 
+> * The PMC initialization is currently monolithic, and the PMC has some
+> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
+> and hence clocks must be set up early too.
+> 
+> In order to defer clock initialization to the more typical location,
+> split out the portions of tegra_pmc_init() that are truly IRQ-related
+> into a separate tegra_pmc_init_irq(), which can be called from the
+> machine descriptor's .init_irq() function, and defer the rest until
+> the machine descriptor's .init_machine() function. With arch/arm calling
+> of_clk_init(NULL) from time_init() this also allows the removal of
+> .init_time() hook.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changelog:
+> v1->v2:
+> - took Stephen Warren's patch provided to separate Tegra's pmc_init
+> - sqashed in .init_time removal and reworded patch text
 
-By adding of_clk_init(NULL) to ARM time_init(), we can remove all
-mach-specific .init_time hooks that basically called of_clk_init before
-starting timers.
+I think it'd be better to keep the 2 patches separate so the two logical
+changes are in different patches. I suppose it isn't a huge deal though.
 
-Based on the previous version, this one now includes patches provided by
-Stephen Warren for mach-tegra and Soren Brinkmann for mach-zynq.
-
-With mach-tegra now requiring clocks as late as the other machs, the
-patch to protect of_clk_init() from being called twice, has been dropped.
-
-The RFCv2 is based on next-20130827 and has been compile tested for
-multi_v7_defconfig and mach-dove. All single patches have also been sent
-to the respective maintainers and corresponding mailing lists.
-
-Before going for a real patch set after v3.11 drops, I prefer to have
-Tested-by or Acked-by for at least mach-imx, mach-mxs, mach-sti, and
-mach-vexpress. Others are trivial, prepared by maintainers (mach-tegra
-and mach-zynq), or have already been Acked-by (mach-highbank).
-
-Also, I'd like to know if the patches should be grouped by mach- or
-rather been split into mach- preparation and .init_time removal.
-
-Sebastian Hesselbarth (14):
-  ARM: call clk_of_init from time_init
-  ARM: dove: remove custom .init_time hook
-  ARM: exynos: remove custom .init_time hook
-  ARM: highbank: remove custom .init_time hook
-  ARM: imx: remove custom .init_time hook
-  ARM: kirkwood: remove custom .init_time hook
-  ARM: mvebu: remove custom .init_time hook
-  ARM: mxs: remove custom .init_time hook
-  ARM: nspire: remove custom .init_time hook
-  ARM: rockchip: remove custom .init_time hook
-  ARM: socfpga: remove call to of_clk_init
-  ARM: sti: remove custom .init_time hook
-  ARM: vexpress: remove custom .init_time hook
-  clk: vt8500: remove call to of_clk_init
-
-Soren Brinkmann (1):
-  ARM: zynq: Don't call of_clk_init()
-
-Stephen Warren (1):
-  ARM: tegra: split tegra_pmc_init() in two
-
- arch/arm/kernel/time.c                 |   24 +++++++++++-------
- arch/arm/mach-dove/board-dt.c          |   17 +------------
- arch/arm/mach-exynos/common.c          |    7 -----
- arch/arm/mach-exynos/common.h          |    1 -
- arch/arm/mach-exynos/mach-exynos4-dt.c |    1 -
- arch/arm/mach-exynos/mach-exynos5-dt.c |    1 -
- arch/arm/mach-highbank/highbank.c      |   23 +++++------------
- arch/arm/mach-imx/clk-imx51-imx53.c    |   29 +++++++--------------
- arch/arm/mach-imx/common.h             |    4 ---
- arch/arm/mach-imx/imx51-dt.c           |    6 ----
- arch/arm/mach-imx/mach-imx53.c         |    6 ----
- arch/arm/mach-imx/mach-imx6q.c         |   14 ++--------
- arch/arm/mach-imx/mach-imx6sl.c        |    7 -----
- arch/arm/mach-imx/mach-vf610.c         |    9 -------
- arch/arm/mach-kirkwood/board-dt.c      |    8 ------
- arch/arm/mach-mvebu/armada-370-xp.c    |    2 -
- arch/arm/mach-mxs/mach-mxs.c           |   13 ----------
- arch/arm/mach-nspire/nspire.c          |    9 -------
- arch/arm/mach-rockchip/rockchip.c      |    9 -------
- arch/arm/mach-socfpga/socfpga.c        |    2 -
- arch/arm/mach-sti/board-dt.c           |   10 +++----
- arch/arm/mach-tegra/common.c           |    4 +--
- arch/arm/mach-tegra/pmc.c              |   41 +++++++++++++++++--------------
- arch/arm/mach-tegra/pmc.h              |    1 +
- arch/arm/mach-tegra/tegra.c            |    5 ++-
- arch/arm/mach-vexpress/v2m.c           |   14 +----------
- arch/arm/mach-zynq/common.c            |    9 +++----
- drivers/clk/clk-highbank.c             |   10 +++++--
- drivers/clk/clk-vt8500.c               |    2 -
- drivers/clk/mxs/clk-imx23.c            |   16 +++++-------
- drivers/clk/mxs/clk-imx28.c            |   16 +++++-------
- drivers/clk/zynq/clkc.c                |    4 ++-
- include/linux/clk/mxs.h                |    2 -
- 33 files changed, 95 insertions(+), 231 deletions(-)
-
----
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-tegra@vger.kernel.org
-Cc: kernel@stlinux.com
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
--- 
-1.7.2.5
+Either way, on this patch, your S-o-b line is missing above.
