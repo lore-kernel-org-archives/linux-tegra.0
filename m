@@ -1,76 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] tegra-cpuidle: provide stub when !CONFIG_CPU_IDLE
-Date: Tue, 27 Aug 2013 09:46:10 +0200
-Message-ID: <20130827074609.GE8686@ulmo>
-References: <20130826153050.GC8764@redacted.bos.redhat.com>
- <521BD48F.1060202@wwwdotorg.org>
+Subject: Re: [cbootimage PATCH V2] crypto: produce consistent hash for
+ zero-length data
+Date: Tue, 27 Aug 2013 09:48:36 +0200
+Message-ID: <20130827074835.GF8686@ulmo>
+References: <1377555170-6841-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cPi+lWm09sJ+d57q"
+	protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <521BD48F.1060202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1377555170-6841-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Kyle McMartin <kyle-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---cPi+lWm09sJ+d57q
+--AH+kv8CCoFf6qPuz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2013 at 04:19:59PM -0600, Stephen Warren wrote:
-> On 08/26/2013 09:30 AM, Kyle McMartin wrote:
-> > While poking at something using the for-3.12/* trees, I hit the
-> > following compile error:
-> > drivers/built-in.o: In function `tegra_pcie_map_irq':
-> > /builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.a=
-rmv7hl/drivers/pci/host/pci-tegra.c:640:
-> > undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> > drivers/built-in.o: In function `tegra_msi_map':
-> > /builddir/build/BUILD/kernel-3.10.fc20/linux-3.11.0-0.rc6.git4.1.fc20.a=
-rmv7hl/drivers/pci/host/pci-tegra.c:1227:
-> > undefined reference to `tegra_cpuidle_pcie_irqs_in_use'
-> > make: *** [vmlinux] Error 1
-> >=20
-> > Since our .config had CONFIG_CPU_IDLE off. We should probably provide
-> > an empty function to handle this to avoid cluttering up pci-tegra.c
-> > with conditionals.
+On Mon, Aug 26, 2013 at 04:12:50PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Another approach would be to use if (IS_ENABLED(CPU_IDLE)) at the call
-> site. I guess the approach in this patch is better than that though,
-> since it doesn't pollute the callers with knowledge of when this
-> function is available.
+> In real-world use-cases, hashing zero-length data likely never happens.
+> However, it is relevant when testing cbootimage with a dummy zero-length
+> bootloader binary, e.g.:
 >=20
-> Thierry, if you're OK with this, I can forward it on to arm-soc.
+> touch u-boot.bin
+> cbootimage -t30 ../tamonten-ng/tegra30.img.cfg tegra30-tec-ng.img
+>=20
+> In this scenario, it's useful to create a consistent hash, so that one
+> can compare the resultant images before and after applying patches, to
+> check for regressions.
+>=20
+> Hence, zero out the hash data so it has consistent content if it isn't
+> written to.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2: clear region using calloc at allocation time, rather than memset
+>     at hash-calculation time.
+> ---
+>  src/crypto.c      | 2 +-
+>  src/data_layout.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-I agree. The dummy seems like the better option. Feel free to add my
-Reviewed-by (in my reply to the original patch) when you forward.
+Looks good:
 
-Thanks,
-Thierry
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---cPi+lWm09sJ+d57q
+--AH+kv8CCoFf6qPuz
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHFlBAAoJEN0jrNd/PrOhzHgQALqpjFJhFVpCcvL2xsQF37bZ
-a0CQS/AWA40FJ6dzEOP3j1ZF6hRrsIiHSxLf5b/Fwhlo5ejuF4ccj1NG1+6mKh2i
-hvNSRwUjrCWO3o/b5SqJAnHqIEWa7JwDUDJBiX6S7lF8V7sqYC8gm7ikUdowBxFf
-klbIkye79BWIzERKz7gi4a38yCTNh6W/wpEi7OcgFHLDC7uLVrsIEEa5SbfdxI1b
-IjER3iwEovoUL46fbMsMLuyTn9zDH2+McKpnMg+pC2OcNzpAnpZahw2B2GHmciAZ
-f1KcjhKhoIeJGIBvF7CI7dBrHTY0j1GZkFLQIBwC062OgkbQhRmVU7zVwbNqZlvs
-CQXBM+ErC4m8MznzvoYrHQaLVWNPqQmBUnQNdBBlM+zFupGK5C1jjLgYZk09T9tY
-RwwW1IrDhm7Zuw+Ma57evDC9mLKoe/1DRAm8lOZ5ybTRJZHYLBOYKJOoJO0hJNoI
-cIQHQcLCiCVFl6JevUuLazjL/LmC/KATABYATHcE5YFWEgVuT73WDFxEaihzRs5N
-7hUAUMW3+aifrPv0hFJry756hcnLgEi2HS0zmlsJvrB6bLslTR5mO6pSYi04PrGe
-01moaWQEtIAINwVPi05gDOv0K2JpDhgqUzWwrw8ZDSkVT/UYcaoGFo353V6TrVtf
-C2DVAPalm61lyKPDKrOd
-=Lm2o
+iQIcBAEBAgAGBQJSHFnTAAoJEN0jrNd/PrOhSekQAIhf5SmngjzatzLaoES62tve
+8GiSj0eU+jpSEWm4CMdG99rWlc6AfZt8vmGMoRvIEZOsfCzoEnqg2ULjEJPetjrF
+kHFruXdP1xI0Psf7s8H3IIWfEIEaMGYV9vLqck6daYzvx7nTAErSv5557uCyjha0
+aWKe3xQUO4PJy3JShyI5H4wcJhKq12XbYfrMgKo3Cp+tRLrw+rLFLuMtHrkW73xq
+0YmtcRUgiA9Jc2KigkLRp7k1MpGphGJEP2WyrmvRXrn77aff8wX3M1YqOktjXP7g
+5DsMO9y/roljeY2aJbbM0zQPW514fBoxY1tZyCDjot8xbxqgUnN9u2GW2BQ/YAkf
+dnRgqy6nDpDj+uywtaNRpDTlHkEIhVB00+y6s10N0Zdpq+hHUGjIWm0PLwDnZt+S
+PHnQJYzSpBlalHFP6e/367cQYuqcsSO1gjUGTBjqcWpgrtzgJgmOXwVI42EnSRE3
+N7bVvtsRrWrZpHYLeHRbWaKqrkSTgY9evtIZTvh91EWA38qqeHlDBiqoVdyFFp8a
+0mDVhli/BWdDasEfK2XWU5qiQ93hQ8Ozetr3qte8yWOjxho4KBc4aCu2JjxrzlLr
+rrttR5s5FsT3+b8jzgokj831jaFs4mJBjb4aJqb4hWof7mXRKbgen7LR0vqel9B2
+vuO8wO5JXopNeo+agztG
+=bX0P
 -----END PGP SIGNATURE-----
 
---cPi+lWm09sJ+d57q--
+--AH+kv8CCoFf6qPuz--
