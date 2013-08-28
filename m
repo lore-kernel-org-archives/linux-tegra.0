@@ -1,77 +1,60 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 3/6] host1x: hdmi: Enable Vdd earlier for hotplug/DDC
-Date: Wed, 28 Aug 2013 18:48:39 +0300
-Message-ID: <1377704922-2824-4-git-send-email-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 6/6] ARM: tegra: Add HDMI to Tegra114 Dalmore device tree
+Date: Wed, 28 Aug 2013 18:48:42 +0300
+Message-ID: <1377704922-2824-7-git-send-email-mperttunen@nvidia.com>
 References: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com
-Cc: tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377704922-2824-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Vdd regulator used to be enabled only at tegra_output_hdmi_enable,
-which is called after a sink is detected. However, the HDMI hotplug pin
-works by returning the voltage supplied by the Vdd pin, so this meant
-that the hotplug pin was never asserted and the sink was not detected
-unless the Vdd regulator was set to be always on.
+Add HDMI node to Dalmore device tree to supply Dalmore-specific
+data: VDD and PLL regulators for HDMI port, DDC bus and HDMI
+cable hotplug GPIO.
 
-This patch moves the enable to the tegra_hdmi_drm_init function to make
-sure the regulator will get enabled.
-
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/drm/hdmi.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
-index 140339b..96a6ae1 100644
---- a/drivers/gpu/host1x/drm/hdmi.c
-+++ b/drivers/gpu/host1x/drm/hdmi.c
-@@ -716,12 +716,6 @@ static int tegra_output_hdmi_enable(struct tegra_output *output)
- 	h_back_porch = mode->htotal - mode->hsync_end;
- 	h_front_porch = mode->hsync_start - mode->hdisplay;
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 6023028..f979e74 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -713,6 +713,19 @@
+ 		};
+ 	};
  
--	err = regulator_enable(hdmi->vdd);
--	if (err < 0) {
--		dev_err(hdmi->dev, "failed to enable VDD regulator: %d\n", err);
--		return err;
--	}
--
- 	err = regulator_enable(hdmi->pll);
- 	if (err < 0) {
- 		dev_err(hdmi->dev, "failed to enable PLL regulator: %d\n", err);
-@@ -943,7 +937,6 @@ static int tegra_output_hdmi_disable(struct tegra_output *output)
- 	tegra_periph_reset_assert(hdmi->clk);
- 	clk_disable(hdmi->clk);
- 	regulator_disable(hdmi->pll);
--	regulator_disable(hdmi->vdd);
- 
- 	return 0;
- }
-@@ -1240,6 +1233,12 @@ static int tegra_hdmi_drm_init(struct host1x_client *client,
- 	struct tegra_hdmi *hdmi = host1x_client_to_hdmi(client);
- 	int err;
- 
-+	err = regulator_enable(hdmi->vdd);
-+	if (err < 0) {
-+		dev_err(client->dev, "vdd regulator enable failed: %d\n", err);
-+		return err;
-+	}
++	host1x {
++		hdmi {
++			status = "okay";
 +
- 	hdmi->output.type = TEGRA_OUTPUT_HDMI;
- 	hdmi->output.dev = client->dev;
- 	hdmi->output.ops = &hdmi_ops;
-@@ -1283,6 +1282,8 @@ static int tegra_hdmi_drm_exit(struct host1x_client *client)
- 		return err;
- 	}
- 
-+	regulator_disable(hdmi->vdd);
++			vdd-supply = <&vdd_hdmi_reg>;
++			pll-supply = <&palmas_smps3_reg>;
 +
- 	return 0;
- }
++			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
++			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
++					   GPIO_ACTIVE_HIGH>;
++		};
++	};
++
+ 	serial@70006300 {
+ 		status = "okay";
+ 	};
+@@ -740,6 +753,10 @@
+ 		};
+ 	};
  
++	hdmi_ddc: i2c@7000c700 {
++		status = "okay";
++	};
++
+ 	i2c@7000d000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
 -- 
 1.8.1.5
