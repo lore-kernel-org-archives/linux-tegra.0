@@ -1,36 +1,128 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
-Date: Wed, 28 Aug 2013 07:02:16 -0600
-Message-ID: <CAErSpo5LOig3KPGfyWJ1BWA61Ox3cyrguSo_XdVqw6SqxttXeA@mail.gmail.com>
-References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
- <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo>
- <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
- <20130819201224.GC5191@mithrandir> <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
- <20130827081443.GI8686@ulmo> <521CCF9B.9000004@wwwdotorg.org> <CAErSpo461H=3qD5Xb7rKkMcQ1_ipyAQ5Tv2VhZD4j578A+Bd9w@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/5] host1x: hdmi: Detect whether display is connected
+ with HDMI or DVI
+Date: Wed, 28 Aug 2013 15:16:09 +0200
+Message-ID: <20130828131608.GA604@ulmo>
+References: <1377686459-16634-1-git-send-email-mperttunen@nvidia.com>
+ <1377686459-16634-3-git-send-email-mperttunen@nvidia.com>
+ <20130828120727.GA32254@ulmo>
+ <521DEE6D.4050503@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAErSpo461H=3qD5Xb7rKkMcQ1_ipyAQ5Tv2VhZD4j578A+Bd9w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <521DEE6D.4050503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 12:03 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
->> On 08/27/2013 02:14 AM, Thierry Reding wrote:
 
->>> If Stephen's fine with it I suppose we could take pci-tegra.c
->>> driver changes through the Tegra tree. But I think it'd be good if
->>> we could still Cc you on patches so you're aware of what we're
->>> doing (that is the same for all drivers drivers/pci/host/*). And
->>> we're going to need your Acked-by on the patches as well.
->
-> I think you have my Acked-by for this case already (from Aug 20).  And
-> feel free to copy me on anything you like; my delete key works well :)
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I didn't mean for this to sound like "I'll just delete any email you
-send me"; I intended more like "feel free to copy me and if it's
-something I'm interested or knowledgeable about, I'll try to help and
-if not, it's easy for me to ignore it."
+On Wed, Aug 28, 2013 at 03:34:53PM +0300, Mikko Perttunen wrote:
+> On 08/28/2013 03:07 PM, Thierry Reding wrote:
+> >* PGP Signed by an unknown key
+> >
+> >On Wed, Aug 28, 2013 at 01:40:56PM +0300, Mikko Perttunen wrote:
+> >>Use EDID data to determine whether the display supports HDMI or just DV=
+I.
+> >>This used to be hardcoded to be HDMI, which broke support for DVI displ=
+ays
+> >>that couldn't understand the interspersed audio/other data.
+> >>
+> >>If the EDID data isn't available, default to DVI, which should be a saf=
+er
+> >>choice.
+> >>
+> >>Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>---
+> >>  drivers/gpu/host1x/drm/hdmi.c | 8 ++++++++
+> >>  1 file changed, 8 insertions(+)
+> >>
+> >>diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
+i.c
+> >>index d81fac8..140339b 100644
+> >>--- a/drivers/gpu/host1x/drm/hdmi.c
+> >>+++ b/drivers/gpu/host1x/drm/hdmi.c
+> >>@@ -702,6 +702,14 @@ static int tegra_output_hdmi_enable(struct tegra_o=
+utput *output)
+> >>  	unsigned long value;
+> >>  	int retries =3D 1000;
+> >>  	int err;
+> >>+	struct drm_property_blob *edid_blob =3D output->connector.edid_blob_p=
+tr;
+> >>+
+> >>+	if (edid_blob && edid_blob->data &&
+> >>+		drm_detect_hdmi_monitor((struct edid *)edid_blob->data)) {
+> >>+		hdmi->dvi =3D false;
+> >>+	} else {
+> >>+		hdmi->dvi =3D true;
+> >>+	}
+> >>
+> >>  	pclk =3D mode->clock * 1000;
+> >>  	h_sync_width =3D mode->hsync_end - mode->hsync_start;
+> >
+> >Odd, now that I see that code I remember that there was a similar patch
+> >a few months back, but it was never applied for some reason:
+> >
+> >	http://lists.freedesktop.org/archives/dri-devel/2013-January/033509.html
+> >
+> >That was already reviewed by me and Jon Mayo, so I'll go ahead and apply
+> >that one instead.
+> >
+> >Thierry
+> >
+> >* Unknown Key
+> >* 0x7F3EB3A1
+> >
+>=20
+> That patch seems to cause a warning for me:
+> drivers/gpu/host1x/drm/hdmi.c: In function =E2=80=98tegra_output_hdmi_ena=
+ble=E2=80=99:
+> drivers/gpu/host1x/drm/hdmi.c:706:2: warning: passing argument 1 of
+> =E2=80=98drm_detect_hdmi_monitor=E2=80=99 discards =E2=80=98const=E2=80=
+=99 qualifier from pointer
+> target type [enabled by default]
+> include/drm/drm_crtc.h:1037:13: note: expected =E2=80=98struct edid *=E2=
+=80=99 but
+> argument is of type =E2=80=98const struct edid *=E2=80=99
 
-Bjorn
+Given the discussion about this back in January, I think the best way,
+at least for now, is to keep a copy of the EDID data so that it can
+actually be modified.
+
+But looking at the problem more closely, I don't think the patch from
+January is quite correct. The problem is that it uses the EDID stored
+within the struct tegra_output. That's problematic because that field
+is not updated when EDID is probed via DDC. That would make the patch
+that you proposed more correct.
+
+Thierry
+
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHfgYAAoJEN0jrNd/PrOhLoAP/ROg98PTWP/OoDyWRRLelWVx
+LZfc3BYBQwLLn4Y7/bwbWUBacGdJ28pwMOuF7rc7Se3SkfcqiZCXBcbhoxv0oZ4y
+seT9NxQynIh5CzrEL9SyqqlaP5ZeidbHVfHOoJQfXKTQN1cSQTmf957RaO7ueMwH
+Osl3O11LAt9HUhQRYn5pClxLrhO3Jhbr6LpEc3hp19IImrV5h4YnDr4OpCclMwGz
+ple9/MtL/Uyco4YEyriv8ABzZqHdtUheVyxNhuBZO74/LZ5GWHSfIrfFjxxeaIXg
+/RBxwj88izUREY1GCxyK+VCzX7WSZZGeMNrERqIiMk/x314Tfre2rvjOZ7788S3y
+93R7ePghv4Pw2GU1TbHjlwmwpBIaySUSbUen1v2EioD4J18fPatiaAXVz6YlWHdj
+fWhG2IC+dDatg0wje6XaiA5vRc6RNpgAC/fqGbBfiXLNs4LmXT9n/jCfjfuI+3PJ
+9yAkrnNFIUBs8tIFVE34UmhRkpMcLLOlDz5TZ+uVMVx+TRMW5vDx6/7ixFQ58k8X
+Pv69D/lxPq6yVSIbT7+RI+AjFpyAo5QyCK/V1CQCp5xSnVHpTBSW/GUOTybcuk5c
+KXAUy08lGn3hexL3V603HTFZrbei5MvgIfShP4IlYKCfvcD/jE05dnP5OTH1R+0p
+EXVafjW78C0n/G0eVSCg
+=4f73
+-----END PGP SIGNATURE-----
+
+--k+w/mQv8wyuph6w0--
