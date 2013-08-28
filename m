@@ -1,72 +1,36 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 5/5] ARM: tegra: Add hdmi to Tegra114 Dalmore device tree
-Date: Wed, 28 Aug 2013 15:49:45 +0300
-Message-ID: <521DF1E9.7050504@nvidia.com>
-References: <1377686459-16634-1-git-send-email-mperttunen@nvidia.com> <1377686459-16634-6-git-send-email-mperttunen@nvidia.com> <20130828123008.GC32254@ulmo>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by devm_ioremap_resource
+Date: Wed, 28 Aug 2013 07:02:16 -0600
+Message-ID: <CAErSpo5LOig3KPGfyWJ1BWA61Ox3cyrguSo_XdVqw6SqxttXeA@mail.gmail.com>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr> <20130819120249.GA5740@ulmo>
+ <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
+ <20130819201224.GC5191@mithrandir> <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+ <20130827081443.GI8686@ulmo> <521CCF9B.9000004@wwwdotorg.org> <CAErSpo461H=3qD5Xb7rKkMcQ1_ipyAQ5Tv2VhZD4j578A+Bd9w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130828123008.GC32254@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAErSpo461H=3qD5Xb7rKkMcQ1_ipyAQ5Tv2VhZD4j578A+Bd9w@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, kernel-janitors@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/28/2013 03:30 PM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->
-> On Wed, Aug 28, 2013 at 01:40:59PM +0300, Mikko Perttunen wrote:
->> Add hdmi node to Dalmore device tree to supply Dalmore-specific
->
-> s/hdmi/HDMI/
+On Tue, Aug 27, 2013 at 12:03 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+>> On 08/27/2013 02:14 AM, Thierry Reding wrote:
 
-Will fix.
+>>> If Stephen's fine with it I suppose we could take pci-tegra.c
+>>> driver changes through the Tegra tree. But I think it'd be good if
+>>> we could still Cc you on patches so you're aware of what we're
+>>> doing (that is the same for all drivers drivers/pci/host/*). And
+>>> we're going to need your Acked-by on the patches as well.
+>
+> I think you have my Acked-by for this case already (from Aug 20).  And
+> feel free to copy me on anything you like; my delete key works well :)
 
->
->> diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-> [...]
->> +	host1x {
->> +		hdmi {
->> +			status = "okay";
->> +
->> +			vdd-supply = <&vdd_hdmi_reg>;
->> +			pll-supply = <&palmas_smps3_reg>;
->> +			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
->
-> I prefer to use a blank line to separate "standard" from
-> "vendor-specific" properties.
+I didn't mean for this to sound like "I'll just delete any email you
+send me"; I intended more like "feel free to copy me and if it's
+something I'm interested or knowledgeable about, I'll try to help and
+if not, it's easy for me to ignore it."
 
-Will fix.
-
->
->> +			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
->
-> Other .dts files split this so it doesn't exceed 80 characters. I'm not
-> sure how useful that is as a general rule for DT source files, though.
-
-Will fix. I guess check_patch.pl doesn't check for line length in *.dts.
-
->
->>   	i2c@7000d000 {
->>   		status = "okay";
->>   		clock-frequency = <400000>;
->> @@ -1169,6 +1184,8 @@
->>   			regulator-min-microvolt = <5000000>;
->>   			regulator-max-microvolt = <5000000>;
->>   			enable-active-high;
->> +			regulator-always-on;
->> +			regulator-boot-on;
->
-> This warrants at least a mention in the commit message.
-
-Hmm, yeah. Looks like the HDMI driver only enables the Vdd in 
-tegra_output_hdmi_enable, which is too late at least for DDC. I guess a 
-better patch would be to enable it earlier. In _probe?
-
->
-> Thierry
->
-> * Unknown Key
-> * 0x7F3EB3A1
->
+Bjorn
