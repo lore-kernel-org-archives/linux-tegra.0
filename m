@@ -1,41 +1,34 @@
-From: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Subject: [PATCH 2nd RESEND] clk: tegra30: Don't wait for PLL_U lock bit
-Date: Wed, 28 Aug 2013 18:18:47 +0300
-Message-ID: <1377703127-7020-2-git-send-email-ttynkkynen@nvidia.com>
-References: <1377703127-7020-1-git-send-email-ttynkkynen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/6] HDMI support for Tegra114 Dalmore
+Date: Wed, 28 Aug 2013 18:48:36 +0300
+Message-ID: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1377703127-7020-1-git-send-email-ttynkkynen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mturquette@linaro.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, linux-usb@vger.kernel.org, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The lock bit on PLL_U does not seem to be working correctly and
-sometimes never gets set when waiting for the PLL to come up.
-Remove the TEGRA_PLL_USE_LOCK flag to use a constant delay.
+This patchset adds HDMI support for the Tegra114 Dalmore board.
+Tested with 1080p DVI and HDMI monitors.
 
-Signed-off-by: Tuomas Tynkkynen <ttynkkynen@nvidia.com>
-Tested-by: Stephen Warren <swarren@nvidia.com>
-Acked-by: Stephen Warren <swarren@nvidia.com>
+Mikko Perttunen (6):
+  host1x: hdmi: Add Tegra114 support
+  host1x: hdmi: Detect whether display is connected with HDMI or DVI
+  host1x: hdmi: Enable Vdd earlier for hotplug/DDC
+  clk: tegra114: Initialize clocks needed for HDMI
+  ARM: tegra: Add host1x, DC and HDMI to Tegra114 device tree
+  ARM: tegra: Add HDMI to Tegra114 Dalmore device tree
 
----
- drivers/clk/tegra/clk-tegra30.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts |  17 ++++
+ arch/arm/boot/dts/tegra114.dtsi        |  42 +++++++++
+ drivers/clk/tegra/clk-tegra114.c       |   3 +
+ drivers/gpu/host1x/dev.c               |   1 +
+ drivers/gpu/host1x/drm/drm.c           |   1 +
+ drivers/gpu/host1x/drm/hdmi.c          | 125 ++++++++++++++++++++++++---
+ drivers/gpu/host1x/drm/hdmi.h          | 152 +++++++++++++++++++++++++++++++++
+ 7 files changed, 331 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index e2c6ca0..9103fc8 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -971,7 +971,7 @@ static void __init tegra30_pll_init(void)
- 	/* PLLU */
- 	clk = tegra_clk_register_pll("pll_u", "pll_ref", clk_base, pmc_base, 0,
- 			    0, &pll_u_params, TEGRA_PLLU | TEGRA_PLL_HAS_CPCON |
--			    TEGRA_PLL_SET_LFCON | TEGRA_PLL_USE_LOCK,
-+			    TEGRA_PLL_SET_LFCON,
- 			    pll_u_freq_table,
- 			    NULL);
- 	clk_register_clkdev(clk, "pll_u", NULL);
 -- 
 1.8.1.5
