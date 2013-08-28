@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 5/6] ARM: tegra: Add host1x, DC and HDMI to Tegra114 device tree
-Date: Wed, 28 Aug 2013 18:48:41 +0300
-Message-ID: <1377704922-2824-6-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH v2 2/6] host1x: hdmi: Detect whether display is connected with HDMI or DVI
+Date: Wed, 28 Aug 2013 18:48:38 +0300
+Message-ID: <1377704922-2824-3-git-send-email-mperttunen@nvidia.com>
 References: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,66 +12,36 @@ To: thierry.reding@gmail.com
 Cc: tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add host1x, DC (display controller) and HDMI devices to Tegra114
-device tree.
+Use EDID data to determine whether the display supports HDMI or just DVI.
+This used to be hardcoded to be HDMI, which broke support for DVI displays
+that couldn't understand the interspersed audio/other data.
+
+If the EDID data isn't available, default to DVI, which should be a safer
+choice.
 
 Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 42 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/gpu/host1x/drm/hdmi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 2905145..088b594 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -27,6 +27,48 @@
- 			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 	};
+diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
+index d81fac8..140339b 100644
+--- a/drivers/gpu/host1x/drm/hdmi.c
++++ b/drivers/gpu/host1x/drm/hdmi.c
+@@ -702,6 +702,14 @@ static int tegra_output_hdmi_enable(struct tegra_output *output)
+ 	unsigned long value;
+ 	int retries = 1000;
+ 	int err;
++	struct drm_property_blob *edid_blob = output->connector.edid_blob_ptr;
++
++	if (edid_blob && edid_blob->data &&
++		drm_detect_hdmi_monitor((struct edid *)edid_blob->data)) {
++		hdmi->dvi = false;
++	} else {
++		hdmi->dvi = true;
++	}
  
-+	host1x {
-+		compatible = "nvidia,tegra114-host1x", "simple-bus";
-+		reg = <0x50000000 0x00028000>;
-+		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH
-+			      GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_HOST1X>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		ranges = <0x54000000 0x54000000 0x04000000>;
-+
-+		dc@54200000 {
-+			compatible = "nvidia,tegra114-dc", "nvidia,tegra30-dc";
-+			reg = <0x54200000 0x00040000>;
-+			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_DISP1>,
-+				    <&tegra_car TEGRA114_CLK_PLL_P>;
-+			clock-names = "disp1", "parent";
-+		};
-+
-+		dc@54240000 {
-+			compatible = "nvidia,tegra114-dc", "nvidia,tegra30-dc";
-+			reg = <0x54240000 0x00040000>;
-+			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_DISP2>,
-+				    <&tegra_car TEGRA114_CLK_PLL_P>;
-+			clock-names = "disp2", "parent";
-+		};
-+
-+		hdmi {
-+			compatible = "nvidia,tegra114-hdmi";
-+			reg = <0x54280000 0x00040000>;
-+			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_HDMI>,
-+				    <&tegra_car TEGRA114_CLK_PLL_D2_OUT0>;
-+			clock-names = "hdmi", "parent";
-+
-+			status = "disabled";
-+		};
-+	};
-+
- 	timer@60005000 {
- 		compatible = "nvidia,tegra114-timer", "nvidia,tegra20-timer";
- 		reg = <0x60005000 0x400>;
+ 	pclk = mode->clock * 1000;
+ 	h_sync_width = mode->hsync_end - mode->hsync_start;
 -- 
 1.8.1.5
