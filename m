@@ -1,71 +1,77 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/5] ARM: tegra: Add hdmi to Tegra114 Dalmore device tree
-Date: Wed, 28 Aug 2013 15:25:53 +0200
-Message-ID: <20130828132552.GC604@ulmo>
-References: <1377686459-16634-1-git-send-email-mperttunen@nvidia.com>
- <1377686459-16634-6-git-send-email-mperttunen@nvidia.com>
- <20130828123008.GC32254@ulmo>
- <521DF1E9.7050504@nvidia.com>
+Subject: Re: [PATCH 1/7] PCI: tegra: replace devm_request_and_ioremap by
+ devm_ioremap_resource
+Date: Wed, 28 Aug 2013 15:27:32 +0200
+Message-ID: <20130828132731.GD604@ulmo>
+References: <1376911241-27720-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1376911241-27720-2-git-send-email-Julia.Lawall@lip6.fr>
+ <20130819120249.GA5740@ulmo>
+ <CAErSpo5oOnfhi+aRi-Z3kCwS1VpYSO6FX5O_MOZmWNLcfhhA9w@mail.gmail.com>
+ <20130819201224.GC5191@mithrandir>
+ <CAErSpo6U9i16gdaYGpWqgLaFteXpy1erCUw55SqkHLcbypP=vA@mail.gmail.com>
+ <20130827081443.GI8686@ulmo>
+ <521CCF9B.9000004@wwwdotorg.org>
+ <CAErSpo461H=3qD5Xb7rKkMcQ1_ipyAQ5Tv2VhZD4j578A+Bd9w@mail.gmail.com>
+ <CAErSpo5LOig3KPGfyWJ1BWA61Ox3cyrguSo_XdVqw6SqxttXeA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xesSdrSSBC0PokLI"
+	protocol="application/pgp-signature"; boundary="RhUH2Ysw6aD5utA4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <521DF1E9.7050504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAErSpo5LOig3KPGfyWJ1BWA61Ox3cyrguSo_XdVqw6SqxttXeA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---xesSdrSSBC0PokLI
+--RhUH2Ysw6aD5utA4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2013 at 03:49:45PM +0300, Mikko Perttunen wrote:
-> On 08/28/2013 03:30 PM, Thierry Reding wrote:
-> >On Wed, Aug 28, 2013 at 01:40:59PM +0300, Mikko Perttunen wrote:
-[...]
-> >>  			regulator-min-microvolt =3D <5000000>;
-> >>  			regulator-max-microvolt =3D <5000000>;
-> >>  			enable-active-high;
-> >>+			regulator-always-on;
-> >>+			regulator-boot-on;
-> >
-> >This warrants at least a mention in the commit message.
+On Wed, Aug 28, 2013 at 07:02:16AM -0600, Bjorn Helgaas wrote:
+> On Tue, Aug 27, 2013 at 12:03 PM, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> >> On 08/27/2013 02:14 AM, Thierry Reding wrote:
 >=20
-> Hmm, yeah. Looks like the HDMI driver only enables the Vdd in
-> tegra_output_hdmi_enable, which is too late at least for DDC. I
-> guess a better patch would be to enable it earlier. In _probe?
+> >>> If Stephen's fine with it I suppose we could take pci-tegra.c
+> >>> driver changes through the Tegra tree. But I think it'd be good if
+> >>> we could still Cc you on patches so you're aware of what we're
+> >>> doing (that is the same for all drivers drivers/pci/host/*). And
+> >>> we're going to need your Acked-by on the patches as well.
+> >
+> > I think you have my Acked-by for this case already (from Aug 20).  And
+> > feel free to copy me on anything you like; my delete key works well :)
+>=20
+> I didn't mean for this to sound like "I'll just delete any email you
+> send me"; I intended more like "feel free to copy me and if it's
+> something I'm interested or knowledgeable about, I'll try to help and
+> if not, it's easy for me to ignore it."
 
-I don't think that would be much better. That way the supply will still
-always be on, independent of whether we're actually using HDMI or not.
-I'm thinking that perhaps we need to allow HDMI to override get_modes()
-by something custom. That should also help with the EDID problem in the
-earlier patch.
+That's exactly the way I understood it. =3D)
 
 Thierry
 
---xesSdrSSBC0PokLI
+--RhUH2Ysw6aD5utA4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHfpgAAoJEN0jrNd/PrOhD+8P/0AL5x/hr33/Tng2tV3i9iyO
-o4cuIpRbbi8GurRtvsCgg0GJQgfSSN4owwdZtKDdogBVvLkt6bNEGPG6YWVDUyQr
-KGd8iNtBmpJ2f/ZXfclHqxLUXPJarjYNwj1Z2TW0jossRysxXso2yIGPYdR5769+
-iUiyix5wAYCylEYGApepdH/jk7hyxWO6lMb+3vBC/Bf4fIJXTymQVZNIuWBRstX8
-NLY0YvA0jiD0ldQXshUcPVrvjRa+6H5VNBc4JkP2ALyf2N2+oppVZ7+o+yDp4G26
-b6TDEdFj5Gvf6FaCHy1X5KIxQvQ22c7qn2JXR0EcAR7ALfksEUBkS+5/YzI1pS7k
-FoV5FrAtvWxG0K3pvNcTQOyGQ1u+PUsNceFZxYJJLyeN539dBy/Q+TCwuww5kxkR
-p/viwukxWVFjaYui86ruADJBSEMbEOSpkMjUq00geUu4nwHJCDep7i6iq6aPomTy
-Xpx7NuDXBbKiBh4lRFsTOi4JwVDy0A4ZUW/JutXyqQB31l3te774MdZLKdaz+CE5
-x4133zP9JH39bQnqQZMAmHru5T75fjKLDWDAj5flrlBd/u5p5NfPwttpJWVj6um7
-A5Fy0Iwyy9709VZOvp5g4IL3rdmLhlu6l3keEh6Q07nrp0jpjkMw3DvLTHyE7KlX
-1aT5i0jLhRPjjA4HaOpQ
-=n80n
+iQIcBAEBAgAGBQJSHfrDAAoJEN0jrNd/PrOh9LoP/jzTsBN750UFOQAVpcrNvC09
+At58ZhEP8KBnnJtuO4oQIt07HiK32D4myerdIX70Avvjw8fgtCm+mlwdOsrpvTOw
+vzF91V1bCufiok8B9T/MPj6loD0e+XcRhqKYRkpYu0YLkPP2VNll4JOZJ0oAjydf
+6mcbApw1dkX7loYpmsuE6ZF8pEp6mWia36YGwWZ81YMSaHGMK6ZgMa75hPpuN+3D
+Y1b5A0sjIkQakV/JXUWLudoqqeb3gmQ+KnfifJAsV+tgtgqOON8vV2XA7pwLGvAG
+HswrETQz4rIpVRYyxR39gsGm6kVTcin2rdS70MRKa0u6WaMZNMFDRx2KG69FHZ2s
+jC0Ti8L79CtNFo5S9Y8lcvcdBvL4gq0UpMpEbkQeOQQCJbEbn73TEvyCgGMJwuVB
+kG++aAYNJZdrolJa+YY0aGqK6/IBxECY0VpeH5XO/oux4tZkhwGHlBHYpXhyEYJu
+oIP34C8n2qiTD8EN+tLjOq5Mjl2I1z869b8pP/t/KER0yQLakQ2z4emvE6uP+bZX
+QDcrvOTr/jI/TOdFjzswcFsffn8JA1GHfxY8qAbM5X8QDoeYt/ILCSGWAsoRybml
+D+CEQr3tp6UGL6CzkluEqkKCBHXoq3pd0pV6nr1gOl0ypcUpwcIPYdQbz9XMQwiM
+hnMV3SP4Bg+sS9TVoCVX
+=DkuK
 -----END PGP SIGNATURE-----
 
---xesSdrSSBC0PokLI--
+--RhUH2Ysw6aD5utA4--
