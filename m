@@ -1,128 +1,106 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/5] host1x: hdmi: Detect whether display is connected
- with HDMI or DVI
-Date: Wed, 28 Aug 2013 15:16:09 +0200
-Message-ID: <20130828131608.GA604@ulmo>
+Subject: Re: [PATCH 4/5] ARM: tegra: Add host1x, dc and hdmi to Tegra114
+ device tree
+Date: Wed, 28 Aug 2013 15:18:15 +0200
+Message-ID: <20130828131815.GB604@ulmo>
 References: <1377686459-16634-1-git-send-email-mperttunen@nvidia.com>
- <1377686459-16634-3-git-send-email-mperttunen@nvidia.com>
- <20130828120727.GA32254@ulmo>
- <521DEE6D.4050503@nvidia.com>
+ <1377686459-16634-5-git-send-email-mperttunen@nvidia.com>
+ <20130828122529.GB32254@ulmo>
+ <521DEFFF.90507@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <521DEE6D.4050503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <521DEFFF.90507-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=utf-8
+--5/uDoXvLw7AC5HRs
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 28, 2013 at 03:34:53PM +0300, Mikko Perttunen wrote:
-> On 08/28/2013 03:07 PM, Thierry Reding wrote:
-> >* PGP Signed by an unknown key
-> >
-> >On Wed, Aug 28, 2013 at 01:40:56PM +0300, Mikko Perttunen wrote:
-> >>Use EDID data to determine whether the display supports HDMI or just DV=
-I.
-> >>This used to be hardcoded to be HDMI, which broke support for DVI displ=
-ays
-> >>that couldn't understand the interspersed audio/other data.
-> >>
-> >>If the EDID data isn't available, default to DVI, which should be a saf=
-er
-> >>choice.
-> >>
+On Wed, Aug 28, 2013 at 03:41:35PM +0300, Mikko Perttunen wrote:
+> On 08/28/2013 03:25 PM, Thierry Reding wrote:
+[...]
 > >>Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >>---
-> >>  drivers/gpu/host1x/drm/hdmi.c | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
+> >>  arch/arm/boot/dts/tegra114.dtsi | 43 ++++++++++++++++++++++++++++++++=
++++++++++
+> >>  1 file changed, 43 insertions(+)
 > >>
-> >>diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
-i.c
-> >>index d81fac8..140339b 100644
-> >>--- a/drivers/gpu/host1x/drm/hdmi.c
-> >>+++ b/drivers/gpu/host1x/drm/hdmi.c
-> >>@@ -702,6 +702,14 @@ static int tegra_output_hdmi_enable(struct tegra_o=
-utput *output)
-> >>  	unsigned long value;
-> >>  	int retries =3D 1000;
-> >>  	int err;
-> >>+	struct drm_property_blob *edid_blob =3D output->connector.edid_blob_p=
-tr;
-> >>+
-> >>+	if (edid_blob && edid_blob->data &&
-> >>+		drm_detect_hdmi_monitor((struct edid *)edid_blob->data)) {
-> >>+		hdmi->dvi =3D false;
-> >>+	} else {
-> >>+		hdmi->dvi =3D true;
-> >>+	}
+> >>diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra1=
+14.dtsi
+> >>index 2905145..ce5a95c 100644
+> >>--- a/arch/arm/boot/dts/tegra114.dtsi
+> >>+++ b/arch/arm/boot/dts/tegra114.dtsi
+> >>@@ -27,6 +27,49 @@
+> >>  			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+> >>  	};
 > >>
-> >>  	pclk =3D mode->clock * 1000;
-> >>  	h_sync_width =3D mode->hsync_end - mode->hsync_start;
+> >>+	host1x {
+> >>+		compatible =3D "nvidia,tegra114-host1x", "nvidia,tegra30-host1x",
 > >
-> >Odd, now that I see that code I remember that there was a similar patch
-> >a few months back, but it was never applied for some reason:
+> >I don't think that's correct. The Tegra114 host1x is not backwards
+> >compatible with the Tegra30 host1x.
 > >
-> >	http://lists.freedesktop.org/archives/dri-devel/2013-January/033509.html
-> >
-> >That was already reviewed by me and Jon Mayo, so I'll go ahead and apply
-> >that one instead.
-> >
-> >Thierry
-> >
-> >* Unknown Key
-> >* 0x7F3EB3A1
-> >
+> >That said, I have a local patch that is a bit more complete in that it
+> >adds other host1x devices as listed in the TRM as well. But I'll leave
+> >it up to Stephen how he prefers to handle that. It should be fine to
+> >defer adding nodes for additional hardware blocks when the supporting
+> >drivers are merged. We've done it for other devices as well.
 >=20
-> That patch seems to cause a warning for me:
-> drivers/gpu/host1x/drm/hdmi.c: In function =E2=80=98tegra_output_hdmi_ena=
-ble=E2=80=99:
-> drivers/gpu/host1x/drm/hdmi.c:706:2: warning: passing argument 1 of
-> =E2=80=98drm_detect_hdmi_monitor=E2=80=99 discards =E2=80=98const=E2=80=
-=99 qualifier from pointer
-> target type [enabled by default]
-> include/drm/drm_crtc.h:1037:13: note: expected =E2=80=98struct edid *=E2=
-=80=99 but
-> argument is of type =E2=80=98const struct edid *=E2=80=99
+> Ok. Will need to add tegra114-host1x to the host1x driver compat
+> strings, then, but I guess that's better than having it wrong in the
+> DT.
 
-Given the discussion about this back in January, I think the best way,
-at least for now, is to keep a copy of the EDID data so that it can
-actually be modified.
+I think that's not all. I have local patches that also introduce a v2 of
+host1x, because the number of syncpoints is different. There may also be
+other differences, but Terje might be more qualified to answer that.
 
-But looking at the problem more closely, I don't think the patch from
-January is quite correct. The problem is that it uses the EDID stored
-within the struct tegra_output. That's problematic because that field
-is not updated when EDID is probed via DDC. That would make the patch
-that you proposed more correct.
+> >>+		hdmi {
+> >>+			compatible =3D "nvidia,tegra114-hdmi";
+> >>+			reg =3D <0x54280000 0x00040000>;
+> >>+			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
+> >>+			clocks =3D <&tegra_car TEGRA114_CLK_HDMI>,
+> >>+				    <&tegra_car TEGRA114_CLK_PLL_D_OUT0>;
+> >
+> >Any reason why we can't use pll_d2_out0 here, like we do on Tegra30?
+>=20
+> I have this set to PLL_D because I don't have panel support so disp1
+> will be the HDMI DC. However, it doesn't seem to matter which one is
+> specified here. I have also tested HDMI with disp2 and that works
+> too.
+
+Well eventually we'll add panel support and I think it'd be good to stay
+consistent as to what clocks are used for the internal and external
+displays.
 
 Thierry
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSHfgYAAoJEN0jrNd/PrOhLoAP/ROg98PTWP/OoDyWRRLelWVx
-LZfc3BYBQwLLn4Y7/bwbWUBacGdJ28pwMOuF7rc7Se3SkfcqiZCXBcbhoxv0oZ4y
-seT9NxQynIh5CzrEL9SyqqlaP5ZeidbHVfHOoJQfXKTQN1cSQTmf957RaO7ueMwH
-Osl3O11LAt9HUhQRYn5pClxLrhO3Jhbr6LpEc3hp19IImrV5h4YnDr4OpCclMwGz
-ple9/MtL/Uyco4YEyriv8ABzZqHdtUheVyxNhuBZO74/LZ5GWHSfIrfFjxxeaIXg
-/RBxwj88izUREY1GCxyK+VCzX7WSZZGeMNrERqIiMk/x314Tfre2rvjOZ7788S3y
-93R7ePghv4Pw2GU1TbHjlwmwpBIaySUSbUen1v2EioD4J18fPatiaAXVz6YlWHdj
-fWhG2IC+dDatg0wje6XaiA5vRc6RNpgAC/fqGbBfiXLNs4LmXT9n/jCfjfuI+3PJ
-9yAkrnNFIUBs8tIFVE34UmhRkpMcLLOlDz5TZ+uVMVx+TRMW5vDx6/7ixFQ58k8X
-Pv69D/lxPq6yVSIbT7+RI+AjFpyAo5QyCK/V1CQCp5xSnVHpTBSW/GUOTybcuk5c
-KXAUy08lGn3hexL3V603HTFZrbei5MvgIfShP4IlYKCfvcD/jE05dnP5OTH1R+0p
-EXVafjW78C0n/G0eVSCg
-=4f73
+iQIbBAEBAgAGBQJSHfiXAAoJEN0jrNd/PrOha6cP+NwKrhZkiwZ7d1bLkd6YS/JU
+xBsWP+7RZJ7peQYmJxlDVDjV3wo4Yw4jDGGySATYs/1jvW2xAKmMRRoxUwKUPfKQ
+jrl/e4hxUajcHMJoRDkekqLh1ga4ehqtCJmAJir0xxYeb4BVAL/f+f6gRfLaQ9g/
+iGyayJLLOhxNgbGAC4xpG1cOiTzPbusxDiNxgxAPxqV7eVivn0KGRQM6Zs/GNrA/
+2bomrCNas8rP4urHRmlgfOtP1DEBWhOMLVqKc5qGmUB5jv8uE+x2muavcz0dTg7s
+5THTOo7IBGmpBIO9Sj7uuZSk6alvbOqBJZQ7rqgNt3xkS4okvdadC4ubokVRQ9XZ
+mLuf+RnoyzK/AOUJtN/DJBNrZyVRIux1b7uq9JT4Z1g3I4IeGb+nItBW+RUZ+Zo9
+ONho8V8rqECqIeXbJQf/QyKXKG5RgW1ZOdgn35CihVtVhMLKIFBNwfNHxOEHCQYx
+f90+PU73Xl+BNd9m+2xWlypnqhPWKa3IWSUtk0Mhy8E4sv1wvFjcvj0HnI/Oq7rz
+lrTuBSkRxajsefiAZtZBmvS+/EaZ+0HscYhrKfNTlymO62kH4CvJHx2fUVP60iv5
++mt8hBZ4anIwI80sHewOJ2zo9ARQkp/iV5WQ7WejbuSVhUFR8pAzADbfBECYPjfd
+QILDRo16YCXSbH+0U5g=
+=PCCV
 -----END PGP SIGNATURE-----
 
---k+w/mQv8wyuph6w0--
+--5/uDoXvLw7AC5HRs--
