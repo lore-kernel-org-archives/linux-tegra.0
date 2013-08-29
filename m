@@ -1,61 +1,65 @@
-From: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 1/3] cpuidle: coupled: disable interrupts after entering
- safe state
-Date: Thu, 29 Aug 2013 00:12:17 -0700
-Message-ID: <CAMbhsRSTv9ivMY1=-4YPxPV0tCTcJnHwWOEvr_F5exg9A2Z1Mw@mail.gmail.com>
-References: <1377287112-12018-1-git-send-email-ccross@android.com>
-	<521EEF26.80803@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v4 0/5] ARM: tegra: support for Trusted Foundations
+Date: Thu, 29 Aug 2013 18:57:43 +0900
+Message-ID: <1377770268-14014-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <521EEF26.80803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Neil Zhang <zhangwm-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: gnurou@gmail.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 28, 2013 at 11:50 PM, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Saturday 24 August 2013 01:15 AM, Colin Cross wrote:
->>
->> Calling cpuidle_enter_state is expected to return with interrupts
->> enabled, but interrupts must be disabled before starting the
->> ready loop synchronization stage.  Call local_irq_disable after
->> each call to cpuidle_enter_state for the safe state.
->>
->> CC: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Signed-off-by: Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   drivers/cpuidle/coupled.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/cpuidle/coupled.c b/drivers/cpuidle/coupled.c
->> index 2a297f8..db92bcb 100644
->> --- a/drivers/cpuidle/coupled.c
->> +++ b/drivers/cpuidle/coupled.c
->> @@ -460,6 +460,7 @@ int cpuidle_enter_state_coupled(struct cpuidle_device
->> *dev,
->>                 }
->>                 entered_state = cpuidle_enter_state(dev, drv,
->>                         dev->safe_state_index);
->> +               local_irq_disable();
->
->
-> Colin,
->
-> There is still some window where irq remains enabled after exiting safe
-> state. It may introduce some corner case.
-> Instead of this can we pass a parameter to cpuidle_enter_state indicating
-> that irq has to be enabled or not after exit from idle state, which would be
-> false when entering safe state from coupled idle.
+New version revised according to comments received for v3. Hopefully
+it will be good enough to be merged.
 
-It's fine for irqs to be enabled when exiting the safe state, in fact
-on further inspection this patch isn't strictly necessary at all - we
-always enable interrupts inside cpuidle_coupled_clear_pokes soon after
-cpuidle_enter_state returns, and then disable them again.  It's
-probably better to disable interrupts right after cpuidle_enter_state,
-it makes sure interrupts are consistently disabled when calling
-cpuidle_coupled_set_waiting, cpuidle_coupled_cpus_waiting and
-cpuidle_coupled_clear_pokes, although that doesn't matter in the
-current implementation.
+Changes since v3:
+- Added of_register_trusted_foundations() function to avoid duplicate
+  device tree parsing code in arch files
+- Added ability to initialize Trusted Foundations through platform data
+- Changed TF version number to integers
+- Refactored Kconfig menu for more clarity
 
-Rafael, feel free to drop the stable annotation from this patch.
+A few requests could not reasonably be implemented:
+
+TF version probing at runtime (requested by Dave) seems impossible
+unfortunately. TF just does not provide an interface that allows such
+queries. In the downstream Tegra kernel the TF version is
+even hardcoded into the kernel.
+
+Use of a firmware_op instance for non-firmware behavior (requested by
+Stephen) would make it necessary to have a dedicated non-firmware
+registration function that takes implementations from various different
+files and would require these implementations to be exported. Checking
+the return code of call_firmware_op() at call sites seems to be easier
+to handle and is how current users of firmware_ops do.
+
+Alexandre Courbot (5):
+  ARM: add basic Trusted Foundations support
+  ARM: tegra: add support for Trusted Foundations
+  ARM: tegra: split setting of CPU reset handler
+  ARM: tegra: set CPU reset handler with firmware op
+  ARM: tegra: support Trusted Foundations by default
+
+ .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
+ Documentation/devicetree/bindings/arm/tegra.txt    |  5 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+ arch/arm/Kconfig                                   |  2 +
+ arch/arm/Makefile                                  |  1 +
+ arch/arm/configs/tegra_defconfig                   |  1 +
+ arch/arm/firmware/Kconfig                          | 26 +++++++
+ arch/arm/firmware/Makefile                         |  1 +
+ arch/arm/firmware/trusted_foundations.c            | 83 ++++++++++++++++++++++
+ arch/arm/include/asm/trusted_foundations.h         | 48 +++++++++++++
+ arch/arm/mach-tegra/Kconfig                        |  1 +
+ arch/arm/mach-tegra/common.c                       |  2 +
+ arch/arm/mach-tegra/reset.c                        | 40 ++++++++---
+ 13 files changed, 217 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+ create mode 100644 arch/arm/firmware/Kconfig
+ create mode 100644 arch/arm/firmware/Makefile
+ create mode 100644 arch/arm/firmware/trusted_foundations.c
+ create mode 100644 arch/arm/include/asm/trusted_foundations.h
+
+-- 
+1.8.4
