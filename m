@@ -1,57 +1,30 @@
-From: Prashant Gaikwad <pgaikwad@nvidia.com>
-Subject: Re: [PATCH 1/3] cpuidle: coupled: disable interrupts after entering
- safe state
-Date: Thu, 29 Aug 2013 12:20:14 +0530
-Message-ID: <521EEF26.80803@nvidia.com>
-References: <1377287112-12018-1-git-send-email-ccross@android.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/5] ARM: tegra: Add host1x, dc and hdmi to Tegra114 device
+ tree
+Date: Thu, 29 Aug 2013 09:52:00 +0300
+Message-ID: <521EEF90.8070907@nvidia.com>
+References: <1377686459-16634-1-git-send-email-mperttunen@nvidia.com> <1377686459-16634-5-git-send-email-mperttunen@nvidia.com> <20130828122529.GB32254@ulmo> <521DEFFF.90507@nvidia.com> <20130828131815.GB604@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <1377287112-12018-1-git-send-email-ccross@android.com>
-Sender: stable-owner@vger.kernel.org
-To: Colin Cross <ccross@android.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Neil Zhang <zhangwm@marvell.com>, Joseph Lo <josephl@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130828131815.GB604@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Saturday 24 August 2013 01:15 AM, Colin Cross wrote:
-> Calling cpuidle_enter_state is expected to return with interrupts
-> enabled, but interrupts must be disabled before starting the
-> ready loop synchronization stage.  Call local_irq_disable after
-> each call to cpuidle_enter_state for the safe state.
->
-> CC: stable@vger.kernel.org
-> Signed-off-by: Colin Cross <ccross@android.com>
-> ---
->   drivers/cpuidle/coupled.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/cpuidle/coupled.c b/drivers/cpuidle/coupled.c
-> index 2a297f8..db92bcb 100644
-> --- a/drivers/cpuidle/coupled.c
-> +++ b/drivers/cpuidle/coupled.c
-> @@ -460,6 +460,7 @@ int cpuidle_enter_state_coupled(struct cpuidle_device *dev,
->   		}
->   		entered_state = cpuidle_enter_state(dev, drv,
->   			dev->safe_state_index);
-> +		local_irq_disable();
+On 28.08.2013 16:18, Thierry Reding wrote:
+> I think that's not all. I have local patches that also introduce a v2 of
+> host1x, because the number of syncpoints is different. There may also be
+> other differences, but Terje might be more qualified to answer that.
 
-Colin,
+Tegra4 host1x has an extra channel(totals 9), which caused bitfields in
+a couple of registers to shift. The registers are mainly used in the
+debug code to dump the channel FIFO. Same number of sync points as
+Tegra3, but 12 wait bases.
 
-There is still some window where irq remains enabled after exiting safe 
-state. It may introduce some corner case.
-Instead of this can we pass a parameter to cpuidle_enter_state 
-indicating that irq has to be enabled or not after exit from idle state, 
-which would be false when entering safe state from coupled idle.
+Other changes are minor and driver already deals with them, for example
+32-bit versus 16-bit sync point value comparison.
 
->   	}
->   
->   	/* Read barrier ensures online_count is read after prevent is cleared */
-> @@ -485,6 +486,7 @@ retry:
->   
->   		entered_state = cpuidle_enter_state(dev, drv,
->   			dev->safe_state_index);
-> +		local_irq_disable();
->   	}
->   
->   	if (cpuidle_coupled_clear_pokes(dev->cpu)) {
+Terje
