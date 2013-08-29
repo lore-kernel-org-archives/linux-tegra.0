@@ -1,58 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: 32337ea "ASoC: warn if we will overwrite the DAI stream widgets"
-Date: Wed, 28 Aug 2013 17:28:24 -0600
-Message-ID: <521E8798.10206@wwwdotorg.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: 32337ea "ASoC: warn if we will overwrite the DAI
+	stream	widgets"
+Date: Thu, 29 Aug 2013 01:01:26 +0100
+Message-ID: <20130829000126.GQ6617@n2100.arm.linux.org.uk>
+References: <521E8798.10206@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lrg-l0cyMroinI0@public.gmane.org>
-Cc: "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Steev Klimaszewski <steev-4jv++OSWV9OTkO8mciVlQg@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <521E8798.10206@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Steev Klimaszewski <steev@pwnieexpress.com>, Liam Girdwood <lrg@ti.com>, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Russell, if the warning in commit 32337ea "ASoC: warn if we will
-overwrite the DAI stream widgets" fires, what do I need to do to the
-ASoC driver to fix it? (I'm deliberately ignoring any other issues with
-this patch, and looking only to discover what is apparently wrong with
-my driver that's triggering this...).
+On Wed, Aug 28, 2013 at 05:28:24PM -0600, Stephen Warren wrote:
+> Russell, if the warning in commit 32337ea "ASoC: warn if we will
+> overwrite the DAI stream widgets" fires, what do I need to do to the
+> ASoC driver to fix it? (I'm deliberately ignoring any other issues with
+> this patch, and looking only to discover what is apparently wrong with
+> my driver that's triggering this...).
+> 
+> Steev Klimaszewski reported this warning to me, and I've repro'd it
+> running next-20130827 on a couple of Tegra systems (TrimSlice and
+> Seaboard at least), using sound/soc/tegra/tegra_{trimslice,wm8903}.c,
+> and associated ASoC components.
 
-Steev Klimaszewski reported this warning to me, and I've repro'd it
-running next-20130827 on a couple of Tegra systems (TrimSlice and
-Seaboard at least), using sound/soc/tegra/tegra_{trimslice,wm8903}.c,
-and associated ASoC components.
+I chucked this into linux-next in order to prove that the issue I had
+been reporting was not specific to my systems here (because I was making
+absolutely no useful progress with Mark.)  Mark finally admitted for the
+first time that there's a bug here yesterday, so I've now dropped the
+patch out of linux-next (either that's coincidental or cause and effect).
+In any case, it's served its purpose.
 
-For the record, the commit description is:
->     ASoC: warn if we will overwrite the DAI stream widgets
->     
->     The DAI stream widgets can end up being created multiple times if the
->     CPU DAI and DMA/platform components share the same struct device.  This
->     bug has been reported in various forms to the ASoC maintainer(s) several
->     times, yet they refuse to acknowledge this:
->     
->     > Essentially all the dmaengine based platforms in mainline use a shared
->     > device for DMA and DAI; I'm fairly sure someone would have mentioned if
->     > there were problems.
->     >
->     > As you have been repeatedly told the Kirkwood drivers are the first
->     > drivers submitted to mainline which use DPCM and therefore it is not
->     > surprising that there are a few issues which need to be worked through,
->     > there were a few revisions to the framework which went in as a result of
->     > review during the mainline merge.  The problem you are seeing here is
->     > due to this being the first platform with a *shared* device to use DPCM.
->     
->     This is inspite of stating multiple times that this has nothing to do
->     with DPCM what so ever.  So, having tried to convince them over the
->     last month that this is the case, and them being obstructive and/or
->     obtuse, this is the only way left open to convince them that there is
->     a problem here.
->     
->     It is only through complete frustration over their inability to recognise
->     that there could be a problem that I am putting this into linux-next;
->     this is not something I want to do, but they leave me no other choice.
->     
->     If they are correct, then this patch will have no effect what so ever.
->     If I am correct, there will be warnings produced where a CPU DAI and
->     DMA/platform component shares the same struct device.
->     
->     Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+As for how to solve the underlying problem, I have no idea - I've been
+asking the same question of Mark for the last three weeks and just been
+getting a load of drivel about "it's because you're using DPCM" and
+other *totally useless* suggestions about the code I'm trying to get
+working.
+
+Liam says he's working on "a patch" last week, so I assume that this
+issue will eventually be resolved.
