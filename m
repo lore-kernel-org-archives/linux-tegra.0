@@ -1,52 +1,41 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: 32337ea "ASoC: warn if we will overwrite the DAI
-	stream	widgets"
-Date: Thu, 29 Aug 2013 01:01:26 +0100
-Message-ID: <20130829000126.GQ6617@n2100.arm.linux.org.uk>
-References: <521E8798.10206@wwwdotorg.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/3] cpuidle: coupled: disable interrupts after entering safe state
+Date: Thu, 29 Aug 2013 02:50:52 +0200
+Message-ID: <4613645.5k2flX1qQg@vostro.rjw.lan>
+References: <1377287112-12018-1-git-send-email-ccross@android.com> <16805669.URyPi50bbV@vostro.rjw.lan> <CAMbhsRQ4DtMUs7HJz_t4reWaehjqEN=Xg2EaFKBgdPUO_ZtNCA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <521E8798.10206@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Steev Klimaszewski <steev@pwnieexpress.com>, Liam Girdwood <lrg@ti.com>, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMbhsRQ4DtMUs7HJz_t4reWaehjqEN=Xg2EaFKBgdPUO_ZtNCA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Colin Cross <ccross@android.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Neil Zhang <zhangwm@marvell.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, stable@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 28, 2013 at 05:28:24PM -0600, Stephen Warren wrote:
-> Russell, if the warning in commit 32337ea "ASoC: warn if we will
-> overwrite the DAI stream widgets" fires, what do I need to do to the
-> ASoC driver to fix it? (I'm deliberately ignoring any other issues with
-> this patch, and looking only to discover what is apparently wrong with
-> my driver that's triggering this...).
+On Wednesday, August 28, 2013 03:00:58 PM Colin Cross wrote:
+> On Wed, Aug 28, 2013 at 2:28 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> > On Friday, August 23, 2013 12:45:10 PM Colin Cross wrote:
+> >> Calling cpuidle_enter_state is expected to return with interrupts
+> >> enabled, but interrupts must be disabled before starting the
+> >> ready loop synchronization stage.  Call local_irq_disable after
+> >> each call to cpuidle_enter_state for the safe state.
+> >>
+> >> CC: stable@vger.kernel.org
+> >> Signed-off-by: Colin Cross <ccross@android.com>
+> >
+> > I've queued up all thress for 3.12, but I wonder what stable versions they
+> > should be included into?  All of them or just a subset?
 > 
-> Steev Klimaszewski reported this warning to me, and I've repro'd it
-> running next-20130827 on a couple of Tegra systems (TrimSlice and
-> Seaboard at least), using sound/soc/tegra/tegra_{trimslice,wm8903}.c,
-> and associated ASoC components.
+> The patches apply cleanly back to v3.6.
+> 
+> Joseph Lo had 2 minor comments on patch 2 (changing Tegra3 to Tegra20
+> in the commit message, replacing cpuidle_coupled_poke_pending with
+> cpuidle_coupled_poked in the comment above cpuidle_coupled_poked), do
+> you want to fix those up locally or should I resend the series?
 
-I chucked this into linux-next in order to prove that the issue I had
-been reporting was not specific to my systems here (because I was making
-absolutely no useful progress with Mark.)  Mark finally admitted for the
-first time that there's a bug here yesterday, so I've now dropped the
-patch out of linux-next (either that's coincidental or cause and effect).
-In any case, it's served its purpose.
+I'd prefer it to be resent, then, but just the patch(es) that changed.
 
-As for how to solve the underlying problem, I have no idea - I've been
-asking the same question of Mark for the last three weeks and just been
-getting a load of drivel about "it's because you're using DPCM" and
-other *totally useless* suggestions about the code I'm trying to get
-working.
+Thanks,
+Rafael
 
-Liam says he's working on "a patch" last week, so I assume that this
-issue will eventually be resolved.
