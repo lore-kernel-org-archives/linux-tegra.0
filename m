@@ -1,65 +1,69 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v4 0/5] ARM: tegra: support for Trusted Foundations
-Date: Thu, 29 Aug 2013 18:57:43 +0900
-Message-ID: <1377770268-14014-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v4 4/5] ARM: tegra: set CPU reset handler with firmware op
+Date: Thu, 29 Aug 2013 18:57:47 +0900
+Message-ID: <1377770268-14014-5-git-send-email-acourbot@nvidia.com>
+References: <1377770268-14014-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1377770268-14014-1-git-send-email-acourbot@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>
 Cc: gnurou@gmail.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-New version revised according to comments received for v3. Hopefully
-it will be good enough to be merged.
+Use a firmware operation to set the CPU reset handler and only resort to
+doing it ourselves if there is none defined.
 
-Changes since v3:
-- Added of_register_trusted_foundations() function to avoid duplicate
-  device tree parsing code in arch files
-- Added ability to initialize Trusted Foundations through platform data
-- Changed TF version number to integers
-- Refactored Kconfig menu for more clarity
+This supports the booting of secondary CPUs on devices using a TrustZone
+secure monitor.
 
-A few requests could not reasonably be implemented:
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ arch/arm/mach-tegra/reset.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-TF version probing at runtime (requested by Dave) seems impossible
-unfortunately. TF just does not provide an interface that allows such
-queries. In the downstream Tegra kernel the TF version is
-even hardcoded into the kernel.
-
-Use of a firmware_op instance for non-firmware behavior (requested by
-Stephen) would make it necessary to have a dedicated non-firmware
-registration function that takes implementations from various different
-files and would require these implementations to be exported. Checking
-the return code of call_firmware_op() at call sites seems to be easier
-to handle and is how current users of firmware_ops do.
-
-Alexandre Courbot (5):
-  ARM: add basic Trusted Foundations support
-  ARM: tegra: add support for Trusted Foundations
-  ARM: tegra: split setting of CPU reset handler
-  ARM: tegra: set CPU reset handler with firmware op
-  ARM: tegra: support Trusted Foundations by default
-
- .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
- Documentation/devicetree/bindings/arm/tegra.txt    |  5 ++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- arch/arm/Kconfig                                   |  2 +
- arch/arm/Makefile                                  |  1 +
- arch/arm/configs/tegra_defconfig                   |  1 +
- arch/arm/firmware/Kconfig                          | 26 +++++++
- arch/arm/firmware/Makefile                         |  1 +
- arch/arm/firmware/trusted_foundations.c            | 83 ++++++++++++++++++++++
- arch/arm/include/asm/trusted_foundations.h         | 48 +++++++++++++
- arch/arm/mach-tegra/Kconfig                        |  1 +
- arch/arm/mach-tegra/common.c                       |  2 +
- arch/arm/mach-tegra/reset.c                        | 40 ++++++++---
- 13 files changed, 217 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
- create mode 100644 arch/arm/firmware/Kconfig
- create mode 100644 arch/arm/firmware/Makefile
- create mode 100644 arch/arm/firmware/trusted_foundations.c
- create mode 100644 arch/arm/include/asm/trusted_foundations.h
-
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index 6964117..fc9cf03 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -21,6 +21,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/firmware.h>
+ 
+ #include "iomap.h"
+ #include "irammap.h"
+@@ -65,6 +66,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+ 	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
+ 						tegra_cpu_reset_handler_offset;
++	int err;
+ 
+ 	BUG_ON(is_enabled);
+ 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+@@ -72,9 +74,18 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+ 			tegra_cpu_reset_handler_size);
+ 
+-	tegra_cpu_reset_handler_set(reset_address);
+-
+-	is_enabled = true;
++	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
++	switch (err) {
++	case -ENOSYS:
++		tegra_cpu_reset_handler_set(reset_address);
++		/* pass-through */
++	case 0:
++		is_enabled = true;
++		break;
++	default:
++		pr_crit("Cannot set CPU reset handler: %d\n", err);
++		BUG();
++	}
+ }
+ 
+ void __init tegra_cpu_reset_handler_init(void)
 -- 
 1.8.4
