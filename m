@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [RFC 3/3] drm/tegra: Implement panel support
-Date: Fri, 30 Aug 2013 17:25:21 +0200
-Message-ID: <1377876321-26835-4-git-send-email-treding@nvidia.com>
+Subject: [RFC 2/3] drm/panel: Add simple panel support
+Date: Fri, 30 Aug 2013 17:25:20 +0200
+Message-ID: <1377876321-26835-3-git-send-email-treding@nvidia.com>
 References: <1377876321-26835-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1377876321-26835-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,126 +10,436 @@ To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use the DRM panel framework to attach a panel to an output.
+Add a driver for simple panels. Such panels can have a regulator that
+provides the supply voltage and a separate GPIO to enable the panel.
+Optionally the panels can have a backlight associated with them so it
+can be enabled or disabled according to the panel's power management
+mode.
+
+Support is added for three panels: An AU Optronics 10.1" WSVGA, a
+Chunghwa Picture Tubes 10.1" WXGA and a Panasonic 10.1 WUXGA TFT LCD
+panel.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/drm/Kconfig  |  1 +
- drivers/gpu/host1x/drm/drm.h    |  1 +
- drivers/gpu/host1x/drm/output.c | 28 ++++++++++++++++++++++++++--
- 3 files changed, 28 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/panel/panel-simple.txt     |  25 ++
+ drivers/gpu/drm/Makefile                           |   1 +
+ drivers/gpu/drm/panel/Kconfig                      |  13 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-simple.c               | 335 +++++++++++++++++++++
+ 5 files changed, 375 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/panel-simple.txt
+ create mode 100644 drivers/gpu/drm/panel/Makefile
+ create mode 100644 drivers/gpu/drm/panel/panel-simple.c
 
-diff --git a/drivers/gpu/host1x/drm/Kconfig b/drivers/gpu/host1x/drm/Kconfig
-index 69853a4..01b036d 100644
---- a/drivers/gpu/host1x/drm/Kconfig
-+++ b/drivers/gpu/host1x/drm/Kconfig
-@@ -2,6 +2,7 @@ config DRM_TEGRA
- 	bool "NVIDIA Tegra DRM"
- 	depends on DRM
- 	select DRM_KMS_HELPER
-+	select DRM_PANEL
- 	select FB_SYS_FILLRECT
- 	select FB_SYS_COPYAREA
- 	select FB_SYS_IMAGEBLIT
-diff --git a/drivers/gpu/host1x/drm/drm.h b/drivers/gpu/host1x/drm/drm.h
-index 02ce020..a30276c 100644
---- a/drivers/gpu/host1x/drm/drm.h
-+++ b/drivers/gpu/host1x/drm/drm.h
-@@ -195,6 +195,7 @@ struct tegra_output {
- 	const struct tegra_output_ops *ops;
- 	enum tegra_output_type type;
- 
-+	struct drm_panel *panel;
- 	struct i2c_adapter *ddc;
- 	const struct edid *edid;
- 	unsigned int hpd_irq;
-diff --git a/drivers/gpu/host1x/drm/output.c b/drivers/gpu/host1x/drm/output.c
-index 137ae81..2ce03c1 100644
---- a/drivers/gpu/host1x/drm/output.c
-+++ b/drivers/gpu/host1x/drm/output.c
-@@ -11,6 +11,7 @@
- #include <linux/of_gpio.h>
- #include <linux/i2c.h>
- 
+diff --git a/Documentation/devicetree/bindings/panel/panel-simple.txt b/Documentation/devicetree/bindings/panel/panel-simple.txt
+new file mode 100644
+index 0000000..dfd4b76
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/panel-simple.txt
+@@ -0,0 +1,25 @@
++Simple display panel
++
++Required properties:
++- compatible: should be one of:
++  - "auo,b101aw03": AU Optronics Corporation 10.1" WSVGA TFT LCD panel
++  - "cptt,claa101wb03": Chunghwa Picture Tubes Ltd. 10.1" WXGA TFT LCD panel
++  - "pc,vvx10f004b00": Panasonic Corporation 10.1" WUXGA TFT LCD panel
++
++Optional properties:
++- ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
++- power-supply: regulator to provide the supply voltage
++- enable-gpios: GPIO pin to enable or disable the panel
++- backlight: phandle of the backlight device attached to the panel
++
++Example:
++
++	panel: panel {
++		compatible = "cptt,claa101wb01";
++		ddc-i2c-bus = <&panelddc>;
++
++		power-supply = <&vdd_pnl_reg>;
++		enable-gpios = <&gpio 90 0>;
++
++		backlight = <&backlight>;
++	};
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 9b009c7..764a5ec 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -57,3 +57,4 @@ obj-$(CONFIG_DRM_TILCDC)	+= tilcdc/
+ obj-$(CONFIG_DRM_QXL) += qxl/
+ obj-$(CONFIG_DRM_MSM) += msm/
+ obj-y			+= i2c/
++obj-y			+= panel/
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 2ddd5bd..843087b 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -2,3 +2,16 @@ menuconfig DRM_PANEL
+ 	bool "DRM panel support"
+ 	help
+ 	  Panel registration and lookup framework.
++
++if DRM_PANEL
++
++config DRM_PANEL_SIMPLE
++	bool "support for simple panels"
++	depends on OF
++	help
++	  DRM panel driver for dumb panels that need at most a regulator and
++	  a GPIO to be powered up. Optionally a backlight can be attached so
++	  that it can be automatically turned off when the panel goes into a
++	  low power state.
++
++endif
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+new file mode 100644
+index 0000000..af9dfa2
+--- /dev/null
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+new file mode 100644
+index 0000000..e38cd6f
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -0,0 +1,335 @@
++/*
++ * Copyright (C) 2013, NVIDIA Corporation.  All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sub license,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the
++ * next paragraph) shall be included in all copies or substantial portions
++ * of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++#include <linux/backlight.h>
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++
++#include <drm/drm_crtc.h>
 +#include <drm/drm_panel.h>
- #include "drm.h"
- 
- static int tegra_connector_get_modes(struct drm_connector *connector)
-@@ -19,6 +20,9 @@ static int tegra_connector_get_modes(struct drm_connector *connector)
- 	struct edid *edid = NULL;
- 	int err = 0;
- 
-+	if (output->panel)
-+		return output->panel->funcs->get_modes(output->panel);
 +
- 	if (output->edid)
- 		edid = kmemdup(output->edid, sizeof(*edid), GFP_KERNEL);
- 	else if (output->ddc)
-@@ -74,6 +78,9 @@ tegra_connector_detect(struct drm_connector *connector, bool force)
- 		else
- 			status = connector_status_connected;
- 	} else {
-+		if (output->panel)
-+			status = connector_status_connected;
++struct panel_desc {
++	const struct drm_display_mode *modes;
++	unsigned int num_modes;
 +
- 		if (connector->connector_type == DRM_MODE_CONNECTOR_LVDS)
- 			status = connector_status_connected;
- 	}
-@@ -105,6 +112,11 @@ static const struct drm_encoder_funcs encoder_funcs = {
- 
- static void tegra_encoder_dpms(struct drm_encoder *encoder, int mode)
- {
-+	struct tegra_output *output = encoder_to_output(encoder);
-+	struct drm_panel *panel = output->panel;
++	struct {
++		unsigned int width;
++		unsigned int height;
++	} size;
++};
 +
-+	if (panel && panel->funcs && panel->funcs->dpms)
-+		panel->funcs->dpms(panel, mode);
- }
- 
- static bool tegra_encoder_mode_fixup(struct drm_encoder *encoder,
-@@ -153,14 +165,23 @@ static irqreturn_t hpd_irq(int irq, void *data)
- 
- int tegra_output_parse_dt(struct tegra_output *output)
- {
-+	struct device_node *ddc, *panel;
- 	enum of_gpio_flags flags;
--	struct device_node *ddc;
- 	size_t size;
- 	int err;
- 
- 	if (!output->of_node)
- 		output->of_node = output->dev->of_node;
- 
-+	panel = of_parse_phandle(output->of_node, "nvidia,panel", 0);
-+	if (panel) {
-+		output->panel = of_drm_find_panel(panel);
-+		if (!output->panel)
-+			return -EPROBE_DEFER;
++struct panel_simple {
++	struct drm_panel base;
 +
-+		of_node_put(panel);
++	const struct panel_desc *desc;
++
++	struct backlight_device *backlight;
++	struct regulator *supply;
++
++	unsigned long enable_gpio_flags;
++	int enable_gpio;
++};
++
++static inline struct panel_simple *to_panel_simple(struct drm_panel *panel)
++{
++	return container_of(panel, struct panel_simple, base);
++}
++
++static void panel_simple_dpms(struct drm_panel *panel, int mode)
++{
++	struct panel_simple *p = to_panel_simple(panel);
++	int err;
++
++	if (mode == DRM_MODE_DPMS_ON) {
++		if (p->supply) {
++			err = regulator_enable(p->supply);
++			if (err < 0)
++				dev_err(panel->dev,
++					"failed to enable supply: %d\n",
++					err);
++		}
++
++		if (gpio_is_valid(p->enable_gpio)) {
++			if (p->enable_gpio_flags & GPIO_ACTIVE_LOW)
++				gpio_set_value(p->enable_gpio, 0);
++			else
++				gpio_set_value(p->enable_gpio, 1);
++		}
 +	}
 +
- 	output->edid = of_get_property(output->of_node, "nvidia,edid", &size);
- 
- 	ddc = of_parse_phandle(output->of_node, "nvidia,ddc-i2c-bus", 0);
-@@ -175,7 +196,7 @@ int tegra_output_parse_dt(struct tegra_output *output)
- 		of_node_put(ddc);
- 	}
- 
--	if (!output->edid && !output->ddc)
-+	if (!output->panel && !output->edid && !output->ddc)
- 		return -ENODEV;
- 
- 	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
-@@ -242,6 +263,9 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
- 			   connector);
- 	drm_connector_helper_add(&output->connector, &connector_helper_funcs);
- 
-+	if (output->panel)
-+		drm_panel_attach(output->panel, &output->connector);
++	if (p->backlight) {
++		if (mode != DRM_MODE_DPMS_ON)
++			p->backlight->props.power = FB_BLANK_POWERDOWN;
++		else
++			p->backlight->props.power = FB_BLANK_UNBLANK;
 +
- 	drm_encoder_init(drm, &output->encoder, &encoder_funcs, encoder);
- 	drm_encoder_helper_add(&output->encoder, &encoder_helper_funcs);
- 
++		backlight_update_status(p->backlight);
++	}
++
++	if (mode == DRM_MODE_DPMS_OFF) {
++		if (gpio_is_valid(p->enable_gpio)) {
++			if (p->enable_gpio_flags & GPIO_ACTIVE_LOW)
++				gpio_set_value(p->enable_gpio, 1);
++			else
++				gpio_set_value(p->enable_gpio, 0);
++		}
++
++		if (p->supply)
++			regulator_disable(p->supply);
++	}
++}
++
++static int panel_simple_get_modes(struct drm_panel *panel)
++{
++	struct panel_simple *p = to_panel_simple(panel);
++	struct drm_display_mode *mode;
++	unsigned int i;
++
++	for (i = 0; i < p->desc->num_modes; i++) {
++		mode = drm_mode_duplicate(panel->drm, &p->desc->modes[i]);
++		if (!mode)
++			return -ENOMEM;
++
++		drm_mode_set_name(mode);
++
++		drm_mode_probed_add(panel->connector, mode);
++	}
++
++	return p->desc->num_modes;
++}
++
++static const struct drm_panel_funcs panel_simple_funcs = {
++	.dpms = panel_simple_dpms,
++	.get_modes = panel_simple_get_modes,
++};
++
++static const struct drm_display_mode auo_b101aw03_mode = {
++	.clock = 51450,
++	.hdisplay = 1024,
++	.hsync_start = 1024 + 156,
++	.hsync_end = 1024 + 156 + 8,
++	.htotal = 1024 + 156 + 8 + 156,
++	.vdisplay = 600,
++	.vsync_start = 600 + 16,
++	.vsync_end = 600 + 16 + 6,
++	.vtotal = 600 + 16 + 6 + 16,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc auo_b101aw03 = {
++	.modes = &auo_b101aw03_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 223,
++		.height = 125,
++	},
++};
++
++static const struct drm_display_mode chunghwa_claa101wb01_mode = {
++	.clock = 69300,
++	.hdisplay = 1366,
++	.hsync_start = 1366 + 48,
++	.hsync_end = 1366 + 48 + 32,
++	.htotal = 1366 + 48 + 32 + 20,
++	.vdisplay = 768,
++	.vsync_start = 768 + 16,
++	.vsync_end = 768 + 16 + 8,
++	.vtotal = 768 + 16 + 8 + 16,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc chunghwa_claa101wb01 = {
++	.modes = &chunghwa_claa101wb01_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 223,
++		.height = 125,
++	},
++};
++
++static const struct drm_display_mode panasonic_vvx10f004b00_mode = {
++	.clock = 154700,
++	.hdisplay = 1920,
++	.hsync_start = 1920 + 154,
++	.hsync_end = 1920 + 154 + 16,
++	.htotal = 1920 + 154 + 16 + 32,
++	.vdisplay = 1200,
++	.vsync_start = 1200 + 17,
++	.vsync_end = 1200 + 17 + 2,
++	.vtotal = 1200 + 17 + 2 + 16,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc panasonic_vvx10f004b00 = {
++	.modes = &panasonic_vvx10f004b00_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 217,
++		.height = 136,
++	},
++};
++
++static const struct of_device_id panel_simple_of_match[] = {
++	{
++		.compatible = "auo,b101aw03",
++		.data = &auo_b101aw03,
++	}, {
++		.compatible = "cptt,claa101wb01",
++		.data = &chunghwa_claa101wb01
++	}, {
++		.compatible = "pc,vvx10f004b00",
++		.data = &panasonic_vvx10f004b00
++	}, {
++		/* sentinel */
++	}
++};
++MODULE_DEVICE_TABLE(of, panel_simple_of_match);
++
++static int panel_simple_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *id;
++	struct device_node *backlight;
++	struct panel_simple *panel;
++	enum of_gpio_flags flags;
++	int err;
++
++	panel = devm_kzalloc(&pdev->dev, sizeof(*panel), GFP_KERNEL);
++	if (!panel)
++		return -ENOMEM;
++
++	id = of_match_node(panel_simple_of_match, pdev->dev.of_node);
++	if (!id)
++		return -ENODEV;
++
++	panel->desc = id->data;
++
++	panel->supply = devm_regulator_get_optional(&pdev->dev, "power");
++	if (IS_ERR(panel->supply)) {
++		if (PTR_ERR(panel->supply) != -ENODEV) {
++			dev_err(&pdev->dev, "failed to get regulator: %ld\n",
++				PTR_ERR(panel->supply));
++			return PTR_ERR(panel->supply);
++		}
++
++		panel->supply = NULL;
++	}
++
++	panel->enable_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
++						     "enable-gpios", 0,
++						     &flags);
++	if (gpio_is_valid(panel->enable_gpio)) {
++		unsigned int value;
++
++		if (flags & OF_GPIO_ACTIVE_LOW)
++			panel->enable_gpio_flags |= GPIO_ACTIVE_LOW;
++
++		err = gpio_request(panel->enable_gpio, "enable");
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to request GPIO#%u: %d\n",
++				panel->enable_gpio, err);
++			return err;
++		}
++
++		value = (panel->enable_gpio_flags & GPIO_ACTIVE_LOW) != 0;
++
++		err = gpio_direction_output(panel->enable_gpio, value);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to setup GPIO%u: %d\n",
++				panel->enable_gpio, err);
++			goto free_gpio;
++		}
++	}
++
++	backlight = of_parse_phandle(pdev->dev.of_node, "backlight", 0);
++	if (backlight) {
++		panel->backlight = of_find_backlight_by_node(backlight);
++		if (!panel->backlight) {
++			err = -EPROBE_DEFER;
++			goto free_gpio;
++		}
++
++		of_node_put(backlight);
++	}
++
++	drm_panel_init(&panel->base);
++	panel->base.dev = &pdev->dev;
++	panel->base.funcs = &panel_simple_funcs;
++
++	err = drm_panel_add(&panel->base);
++	if (err < 0)
++		goto free_gpio;
++
++	platform_set_drvdata(pdev, panel);
++
++	return 0;
++
++free_gpio:
++	if (gpio_is_valid(panel->enable_gpio))
++		gpio_free(panel->enable_gpio);
++
++	return err;
++}
++
++static int panel_simple_remove(struct platform_device *pdev)
++{
++	struct panel_simple *panel = platform_get_drvdata(pdev);
++
++	if (gpio_is_valid(panel->enable_gpio)) {
++		if (panel->enable_gpio_flags & GPIO_ACTIVE_LOW)
++			gpio_set_value(panel->enable_gpio, 1);
++		else
++			gpio_set_value(panel->enable_gpio, 0);
++
++		gpio_free(panel->enable_gpio);
++	}
++
++	if (panel->supply)
++		regulator_disable(panel->supply);
++
++	if (panel->backlight)
++		put_device(&panel->backlight->dev);
++
++	drm_panel_detach(&panel->base);
++	drm_panel_remove(&panel->base);
++
++	return 0;
++}
++
++static struct platform_driver panel_simple_driver = {
++	.driver = {
++		.name = "panel-simple",
++		.owner = THIS_MODULE,
++		.of_match_table = panel_simple_of_match,
++	},
++	.probe = panel_simple_probe,
++	.remove = panel_simple_remove,
++};
++module_platform_driver(panel_simple_driver);
++
++MODULE_DESCRIPTION("DRM Driver for Simple Panels");
++MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_LICENSE("GPL v2");
 -- 
 1.8.4
