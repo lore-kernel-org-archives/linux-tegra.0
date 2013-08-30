@@ -1,40 +1,48 @@
-From: Colin Cross <ccross@android.com>
-Subject: Re: [PATCH v2] cpuidle: coupled: abort idle if pokes are pending
-Date: Thu, 29 Aug 2013 14:23:10 -0700
-Message-ID: <CAMbhsRTnMKMVXBav+FwJxw3+Ochk-wfs8WU3oWAExzYMfm4RRw@mail.gmail.com>
-References: <1377740508-22134-1-git-send-email-ccross@android.com>
-	<7272744.lhUaaLc3cm@vostro.rjw.lan>
+From: Libo Chen <clbchenlibo.chen-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH RESEND 3/4] usb: phy-tegra-usb: use platform_{get,set}_drvdata()
+Date: Fri, 30 Aug 2013 11:23:32 +0800
+Message-ID: <52201034.7010609@huawei.com>
+References: <521C5EF3.2090907@huawei.com> <20130828043616.GB21756@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7272744.lhUaaLc3cm@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Neil Zhang <zhangwm@marvell.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra <linux-tegra@vger.kernel.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Jon Medhurst <tixy@linaro.org>, Sivaram Nair <sivaramn@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130828043616.GB21756-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, USB <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Li Zefan <lizefan-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Aug 29, 2013 at 1:28 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Wednesday, August 28, 2013 06:41:47 PM Colin Cross wrote:
->> Joseph Lo <josephl@nvidia.com> reported a lockup on Tegra20 caused
->> by a race condition in coupled cpuidle.  When two or more cpus
->> enter idle at the same time, the first cpus to arrive may go to the
->> ready loop without processing pending pokes from the last cpu to
->> arrive.
->>
->> This patch adds a check for pending pokes once all cpus have been
->> synchronized in the ready loop and resets the coupled state and
->> retries if any cpus failed to handle their pending poke.
->>
->> Retrying on all cpus may trigger the same issue again, so this patch
->> also adds a check to ensure that each cpu has received at least one
->> poke between when it enters the waiting loop and when it moves on to
->> the ready loop.
->>
->> Reported-by: Joseph Lo <josephl@nvidia.com>
->> Tested-by: Stephen Warren <swarren@nvidia.com>
->> Tested-by: Joseph Lo <josephl@nvidia.com>
->> Signed-off-by: Colin Cross <ccross@android.com>
->
-> Still stable material I suppose?
 
-Yes please
+Use the wrapper functions for getting and setting the driver data using
+platform_device instead of using dev_{get,set}_drvdata() with &of->dev,
+so we can directly pass a struct platform_device.
+
+Signed-off-by: Libo Chen <libo.chen-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/phy/phy-tegra-usb.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+rebase on usb-next tree
+
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 3bfb3d1..e9cb1cb 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1064,7 +1064,7 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	tegra_phy->u_phy.shutdown = tegra_usb_phy_close;
+ 	tegra_phy->u_phy.set_suspend = tegra_usb_phy_suspend;
+
+-	dev_set_drvdata(&pdev->dev, tegra_phy);
++	platform_set_drvdata(pdev, tegra_phy);
+
+ 	err = usb_add_phy_dev(&tegra_phy->u_phy);
+ 	if (err < 0) {
+-- 
+1.7.1
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
