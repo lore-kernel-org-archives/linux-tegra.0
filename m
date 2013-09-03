@@ -1,77 +1,275 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3] pinctrl: Pass all configs to driver on pin_config_set()
-Date: Wed, 28 Aug 2013 13:44:59 +0200
-Message-ID: <CACRpkdYVzXDRWFEa84LwN7fh9x1mK+7YOLeps51zcRHZCCowsQ@mail.gmail.com>
-References: <1377134300-25480-1-git-send-email-syin@broadcom.com>
- <1377484899-4918-1-git-send-email-syin@broadcom.com>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 1/3] drm: Add panel support
+Date: Tue, 3 Sep 2013 11:20:33 +0900
+Message-ID: <52254771.4050103@nvidia.com>
+References: <1377876321-26835-1-git-send-email-treding@nvidia.com> <1377876321-26835-2-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1377484899-4918-1-git-send-email-syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
-List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: Srinidhi Kasagar <srinidhi.kasagar-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Markus Mayer <mmayer-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>"linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <li>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1377876321-26835-2-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 26, 2013 at 4:41 AM, Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+Hi Thierry,
 
-> When setting pin configuration in the pinctrl framework, pin_config_set() or
-> pin_config_group_set() is called in a loop to set one configuration at a time
-> for the specified pin or group.
+On 08/31/2013 12:25 AM, Thierry Reding wrote:
+> Add a very simple framework to register and lookup panels. Panel drivers
+> can initialize a DRM panel and register it with the framework, allowing
+> them to be retrieved and used by display drivers. Currently only support
+> for DPMS and obtaining panel modes is provided. However it should be
+> sufficient to enable a large number of panels. The framework should also
+> be easily extensible to support more sophisticated kinds of panels such
+> as DSI.
 >
-> This patch 1) removes the loop and 2) changes the API to pass the whole pin
-> config array to the driver.  It is now up to the driver to loop through the
-> configs.  This allows the driver to potentially combine configs and reduce the
-> number of writes to pin config registers.
+> The framework hasn't been tied into the DRM core, even though it should
+> be easily possible to do so if that's what we want. In the current
+> implementation, display drivers can simple make use of it to retrieve a
+> panel, obtain its modes and control its DPMS mode.
 >
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o is successfully generated.
->
-> Signed-off-by: Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-> Reviewed-by: Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-> Reviewed-by: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
->   drivers/pinctrl/pinconf.c             |   42 ++++----
->   drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->   include/linux/pinctrl/pinconf.h       |    6 +-
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
->   On Tegra (Tegra114 Dalmore board, on top of next-20130816),
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
+> Note that this is currently only tested on systems that boot from a
+> device tree. No glue code has been written yet for systems that use
+> platform data, but it should be easy to add.
+
+Really like this. It's simple and to the point, and much needed since I 
+guess many vendors have come with their own custom solution to handle 
+panels. Do you know if it would be possible to convert these 
+implementations to use your framework instead and consolidate the code 
+around it?
+
+Eventually this might be superseeded by the CDF, but if this happens it 
+should not be too hard to convert the code, and we need something to use 
+panels conveniently in the meantime.
+
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Please refer to the discussion with Linus W. "[PATCH] ARM: Adds pin config API
-> to set all configs in one function" here:
+>   drivers/gpu/drm/Kconfig       |  2 +
+>   drivers/gpu/drm/Makefile      |  1 +
+>   drivers/gpu/drm/drm_panel.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
+>   drivers/gpu/drm/panel/Kconfig |  4 ++
+>   include/drm/drm_panel.h       | 65 +++++++++++++++++++++++++++++
+>   5 files changed, 168 insertions(+)
+>   create mode 100644 drivers/gpu/drm/drm_panel.c
+>   create mode 100644 drivers/gpu/drm/panel/Kconfig
+>   create mode 100644 include/drm/drm_panel.h
 >
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-May/166567.html
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index 955555d..b4d8402 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -236,3 +236,5 @@ source "drivers/gpu/drm/tilcdc/Kconfig"
+>   source "drivers/gpu/drm/qxl/Kconfig"
 >
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o are successfully generated.
+>   source "drivers/gpu/drm/msm/Kconfig"
+> +
+> +source "drivers/gpu/drm/panel/Kconfig"
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index f089adf..9b009c7 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -18,6 +18,7 @@ drm-y       :=        drm_auth.o drm_buffer.o drm_bufs.o drm_cache.o \
+>   drm-$(CONFIG_COMPAT) += drm_ioc32.o
+>   drm-$(CONFIG_DRM_GEM_CMA_HELPER) += drm_gem_cma_helper.o
+>   drm-$(CONFIG_PCI) += ati_pcigart.o
+> +drm-$(CONFIG_DRM_PANEL) += drm_panel.o
 >
-> [v2]    rebased on LinusW's linux-pinctrl.git "devel" branch.  Fixed and build-
->         tested pinctrl-sunxi.c
-> [v3]    rebased on linux-pinctrl.git:devel as of 2013.08.25. Applied API change
->         to new driver pinctrl-palmas.c. Re build-tested all files.
+>   drm-usb-y   := drm_usb.o
+>
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> new file mode 100644
+> index 0000000..ff6e459
+> --- /dev/null
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -0,0 +1,96 @@
+> +/*
+> + * Copyright (C) 2013, NVIDIA Corporation.  All rights reserved.
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sub license,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice (including the
+> + * next paragraph) shall be included in all copies or substantial portions
+> + * of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+> + * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> + * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+> + * DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/export.h>
+> +
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_panel.h>
+> +
+> +static DEFINE_MUTEX(panel_lock);
+> +static LIST_HEAD(panel_list);
+> +
+> +void drm_panel_init(struct drm_panel *panel)
+> +{
+> +       INIT_LIST_HEAD(&panel->list);
+> +}
+> +EXPORT_SYMBOL(drm_panel_init);
+> +
+> +int drm_panel_add(struct drm_panel *panel)
+> +{
+> +       mutex_lock(&panel_lock);
+> +       list_add_tail(&panel->list, &panel_list);
+> +       mutex_unlock(&panel_lock);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(drm_panel_add);
+> +
+> +void drm_panel_remove(struct drm_panel *panel)
+> +{
+> +       mutex_lock(&panel_lock);
+> +       list_del_init(&panel->list);
+> +       mutex_unlock(&panel_lock);
+> +}
+> +EXPORT_SYMBOL(drm_panel_remove);
+> +
+> +int drm_panel_attach(struct drm_panel *panel, struct drm_connector *connector)
+> +{
+> +       if (panel->connector)
+> +               return -EBUSY;
+> +
+> +       panel->connector = connector;
+> +       panel->drm = connector->dev;
 
+Since connector and drm both seem to only be set here, and drm can 
+easily be derived from connector (connector->dev), do you need the drm 
+member at all?
 
-OK it appears to work flawlessly on ux500 as well, and with
-Stephen's Tested-by and Laurent's ACK, there is really no
-reason for me not to apply this right off. And no reason to
-prolong this much needed change.
-
-So patch applied for v3.12.
-
-Let's see if something nasty happens in linux-next or this
-is a go.
-
-Yours,
-Linus Walleij
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(drm_panel_attach);
+> +
+> +int drm_panel_detach(struct drm_panel *panel)
+> +{
+> +       panel->connector = NULL;
+> +       panel->drm = NULL;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(drm_panel_detach);
+> +
+> +#ifdef CONFIG_OF
+> +struct drm_panel *of_drm_find_panel(struct device_node *np)
+> +{
+> +       struct drm_panel *panel;
+> +
+> +       mutex_lock(&panel_lock);
+> +
+> +       list_for_each_entry(panel, &panel_list, list) {
+> +               if (panel->dev->of_node == np) {
+> +                       mutex_unlock(&panel_lock);
+> +                       return panel;
+> +               }
+> +       }
+> +
+> +       mutex_unlock(&panel_lock);
+> +       return NULL;
+> +}
+> +EXPORT_SYMBOL(of_drm_find_panel);
+> +#endif
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> new file mode 100644
+> index 0000000..2ddd5bd
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -0,0 +1,4 @@
+> +menuconfig DRM_PANEL
+> +       bool "DRM panel support"
+> +       help
+> +         Panel registration and lookup framework.
+> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+> new file mode 100644
+> index 0000000..f02b615
+> --- /dev/null
+> +++ b/include/drm/drm_panel.h
+> @@ -0,0 +1,65 @@
+> +/*
+> + * Copyright (C) 2013, NVIDIA Corporation.  All rights reserved.
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a
+> + * copy of this software and associated documentation files (the "Software"),
+> + * to deal in the Software without restriction, including without limitation
+> + * the rights to use, copy, modify, merge, publish, distribute, sub license,
+> + * and/or sell copies of the Software, and to permit persons to whom the
+> + * Software is furnished to do so, subject to the following conditions:
+> + *
+> + * The above copyright notice and this permission notice (including the
+> + * next paragraph) shall be included in all copies or substantial portions
+> + * of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
+> + * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> + * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+> + * DEALINGS IN THE SOFTWARE.
+> + */
+> +
+> +#ifndef __DRM_PANEL_H__
+> +#define __DRM_PANEL_H__
+> +
+> +#include <linux/list.h>
+> +
+> +struct drm_connector;
+> +struct drm_device;
+> +struct drm_panel;
+> +
+> +struct drm_panel_funcs {
+> +       void (*dpms)(struct drm_panel *panel, int mode);
+> +       int (*get_modes)(struct drm_panel *panel);
+> +};
+> +
+> +struct drm_panel {
+> +       struct drm_device *drm;
+> +       struct drm_connector *connector;
+> +       struct device *dev;
+> +
+> +       const struct drm_panel_funcs *funcs;
+> +
+> +       struct list_head list;
+> +};
+> +
+> +void drm_panel_init(struct drm_panel *panel);
+> +
+> +int drm_panel_add(struct drm_panel *panel);
+> +void drm_panel_remove(struct drm_panel *panel);
+> +
+> +int drm_panel_attach(struct drm_panel *panel, struct drm_connector *connector);
+> +int drm_panel_detach(struct drm_panel *panel);
+> +
+> +#ifdef CONFIG_OF
+> +struct drm_panel *of_drm_find_panel(struct device_node *np);
+> +#else
+> +static inline struct drm_panel *of_drm_find_panel(struct device_node *np)
+> +{
+> +       return NULL;
+> +}
+> +#endif
+> +
+> +#endif
+> --
+> 1.8.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
