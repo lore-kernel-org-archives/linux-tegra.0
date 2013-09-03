@@ -1,33 +1,54 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/4] Introduce table driven initializations
-Date: Tue, 03 Sep 2013 12:13:32 -0600
-Message-ID: <522626CC.70804@wwwdotorg.org>
-References: <1378215105-12145-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH v4 1/5] ARM: add basic Trusted Foundations support
+Date: Tue, 03 Sep 2013 12:36:06 -0600
+Message-ID: <52262C16.3020406@wwwdotorg.org>
+References: <1377770268-14014-1-git-send-email-acourbot@nvidia.com> <1377770268-14014-2-git-send-email-acourbot@nvidia.com> <2081838.eZHRxlDf7s@flatron> <CAAVeFuJ=z-29gp9=caQaxRGCiOQSnPLfafia3eCgWAUuny3GBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1378215105-12145-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAAVeFuJ=z-29gp9=caQaxRGCiOQSnPLfafia3eCgWAUuny3GBg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/03/2013 07:31 AM, Peter De Schrijver wrote:
-> This patchset introduces a table driven initialization method for the
-> audio, PMC and gate clocks. It's similar to the table we already have for
-> the periph clocks.
+On 09/02/2013 01:28 AM, Alexandre Courbot wrote:
+> Hi Tomasz!
+> 
+> On Fri, Aug 30, 2013 at 5:20 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> +Required properties:
+>>> +- compatible : "tl,trusted-foundations"
+>>> +- version-major : major version number of Trusted Foundations firmware
+>>> +- version-minor: minor version number of Trusted Foundations firmware
+>>
+>> Hmm, maybe you could simply define a single version property that could
+>> have multiple cells? Like:
+>>
+>>         firmware {
+>>                 compatible = "tl,trusted-foundations";
+>>                 version = <2 8>;
+>>         };
+> 
+> I'm fine this way too, but do we have other bindings that use the same
+> scheme? What is the general convention for version number bindings?
 
-I assume these patches will all go through Mike's clock tree for 3.13.
+I don't know if there are enough cases of this for there to be a
+convention. A 2-cell property seems fine to me.
 
-Aside from the one issue I mentioned, the series,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> +       This option allows the kernel to invoke the secure monitor whenever
+>>> +       required on devices using Trusted Foundations.
+>>> +
+>>> +       Devices using Trusted Foundations should pass a device tree
+>>> containing +    a node compatible with "tl,trusted-foundations" to
+>>> signal the presence +   of the secure monitor.
+>>
+>> What about pointing to the documentation file instead?
+> 
+> Yes, that would make more sense.
 
-I assume this will be followed by changes to convert the Tegra20/30
-clock drivers to be table-based too?
-
->  2 files changed, 455 insertions(+), 550 deletions(-)
-
-That didn't work out as much of a line-count-reduction as I had naively
-hoped. Are there any more large blocks of repetitive code left to be
-converted?
+Possibly. What about when the binding document is no longer part of the
+kernel though? Perhaps we could reference the documentation in some way
+other than by the pathname within the kernel source tree though, e.g.
+'see the device tree binding documentation for
+compatible="tl,trusted-foundations"'?
