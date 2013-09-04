@@ -1,21 +1,23 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 4/4] clk: tegra114: table driven PMC clock init
-Date: Wed, 4 Sep 2013 17:20:11 +0300
-Message-ID: <1378304438-7780-5-git-send-email-pdeschrijver@nvidia.com>
-References: <1378304438-7780-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v2 4/4 Resend] clk: tegra114: table driven PMC clock init
+Date: Wed, 4 Sep 2013 17:23:56 +0300
+Message-ID: <1378304641-7992-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378304438-7780-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch converts the Tegra114 audio clock registration to be table driven
+This patch converts the Tegra114 PMC clock registration to be table driven
 like the periph clocks.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+
+Fix comment :)
+
 ---
  drivers/clk/tegra/clk-tegra114.c |   58 +++++++++++++++-----------------------
  1 files changed, 23 insertions(+), 35 deletions(-)
