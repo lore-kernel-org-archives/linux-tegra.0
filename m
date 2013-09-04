@@ -1,99 +1,93 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 4/4 Resend] clk: tegra114: table driven PMC clock init
-Date: Wed, 4 Sep 2013 17:23:56 +0300
-Message-ID: <1378304641-7992-1-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 2/3] drm/panel: Add simple panel support
+Date: Wed, 4 Sep 2013 16:38:30 +0200
+Message-ID: <20130904143829.GA11833@ulmo>
+References: <1377876321-26835-1-git-send-email-treding@nvidia.com>
+ <1377876321-26835-3-git-send-email-treding@nvidia.com>
+ <52262FF4.6050605@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52262FF4.6050605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch converts the Tegra114 PMC clock registration to be table driven
-like the periph clocks.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix comment :)
+On Tue, Sep 03, 2013 at 12:52:36PM -0600, Stephen Warren wrote:
+> On 08/30/2013 09:25 AM, Thierry Reding wrote:
+> > Add a driver for simple panels. Such panels can have a regulator that
+> > provides the supply voltage and a separate GPIO to enable the panel.
+> > Optionally the panels can have a backlight associated with them so it
+> > can be enabled or disabled according to the panel's power management
+> > mode.
+>=20
+> > diff --git a/Documentation/devicetree/bindings/panel/panel-simple.txt b=
+/Documentation/devicetree/bindings/panel/panel-simple.txt
+>=20
+> > +Simple display panel
+> > +
+> > +Required properties:
+> > +- compatible: should be one of:
+> > +  - "auo,b101aw03": AU Optronics Corporation 10.1" WSVGA TFT LCD panel
+> > +  - "cptt,claa101wb03": Chunghwa Picture Tubes Ltd. 10.1" WXGA TFT LCD=
+ panel
+> > +  - "pc,vvx10f004b00": Panasonic Corporation 10.1" WUXGA TFT LCD panel
+> > +
+> > +Optional properties:
+> > +- ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
+> > +- power-supply: regulator to provide the supply voltage
+> > +- enable-gpios: GPIO pin to enable or disable the panel
+> > +- backlight: phandle of the backlight device attached to the panel
+>=20
+> Do we need to represent the timing requirements e.g. between panel
+> enable and backlight enable, or do you expect the driver to hard-code
+> this based on the compatible value?
 
----
- drivers/clk/tegra/clk-tegra114.c |   58 +++++++++++++++-----------------------
- 1 files changed, 23 insertions(+), 35 deletions(-)
+Yes, I'd expect the driver to hard-code that, similar to how the video
+mode is hardcoded. ddc-i2c-bus support hasn't even been implemented yet.
+I was planning to do that because one of the panels (the Chunghwa I
+think) actually is connected via DDC. What I was going to do was prefer
+a hardcoded mode over EDID to allow a driver to override a faulty EDID.
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 0379a19..44ba713 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1583,45 +1583,33 @@ static void __init tegra114_audio_clk_init(void __iomem *clk_base)
- 	}
- }
- 
-+static struct pmc_clk_init_data tegra_pmc_clk_init_data[] = {
-+	TEGRA_INIT_PMC_CLK("clk_out_1", "extern1", clk_out1_parents, 6, 2, TEGRA114_CLK_CLK_OUT_1),
-+	TEGRA_INIT_PMC_CLK("clk_out_2", "extern2", clk_out2_parents, 14, 10, TEGRA114_CLK_CLK_OUT_2),
-+	TEGRA_INIT_PMC_CLK("clk_out_3", "extern3", clk_out3_parents, 22, 18, TEGRA114_CLK_CLK_OUT_3),
-+};
-+
- static void __init tegra114_pmc_clk_init(void __iomem *pmc_base)
- {
- 	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(tegra_pmc_clk_init_data); i++) {
-+		struct pmc_clk_init_data *data;
- 
--	/* clk_out_1 */
--	clk = clk_register_mux(NULL, "clk_out_1_mux", clk_out1_parents,
--			       ARRAY_SIZE(clk_out1_parents), 0,
--			       pmc_base + PMC_CLK_OUT_CNTRL, 6, 3, 0,
--			       &clk_out_lock);
--	clks[TEGRA114_CLK_CLK_OUT_1_MUX] = clk;
--	clk = clk_register_gate(NULL, "clk_out_1", "clk_out_1_mux", 0,
--				pmc_base + PMC_CLK_OUT_CNTRL, 2, 0,
--				&clk_out_lock);
--	clk_register_clkdev(clk, "extern1", "clk_out_1");
--	clks[TEGRA114_CLK_CLK_OUT_1] = clk;
--
--	/* clk_out_2 */
--	clk = clk_register_mux(NULL, "clk_out_2_mux", clk_out2_parents,
--			       ARRAY_SIZE(clk_out2_parents), 0,
--			       pmc_base + PMC_CLK_OUT_CNTRL, 14, 3, 0,
--			       &clk_out_lock);
--	clks[TEGRA114_CLK_CLK_OUT_2_MUX] = clk;
--	clk = clk_register_gate(NULL, "clk_out_2", "clk_out_2_mux", 0,
--				pmc_base + PMC_CLK_OUT_CNTRL, 10, 0,
--				&clk_out_lock);
--	clk_register_clkdev(clk, "extern2", "clk_out_2");
--	clks[TEGRA114_CLK_CLK_OUT_2] = clk;
--
--	/* clk_out_3 */
--	clk = clk_register_mux(NULL, "clk_out_3_mux", clk_out3_parents,
--			       ARRAY_SIZE(clk_out3_parents), 0,
--			       pmc_base + PMC_CLK_OUT_CNTRL, 22, 3, 0,
--			       &clk_out_lock);
--	clks[TEGRA114_CLK_CLK_OUT_3_MUX] = clk;
--	clk = clk_register_gate(NULL, "clk_out_3", "clk_out_3_mux", 0,
--				pmc_base + PMC_CLK_OUT_CNTRL, 18, 0,
--				&clk_out_lock);
--	clk_register_clkdev(clk, "extern3", "clk_out_3");
--	clks[TEGRA114_CLK_CLK_OUT_3] = clk;
-+		data = &tegra_pmc_clk_init_data[i];
-+
-+		clk = clk_register_mux(NULL, data->mux_name, data->parents,
-+				data->num_parents, 0,
-+				pmc_base + PMC_CLK_OUT_CNTRL, data->mux_shift,
-+				3, 0, &clk_out_lock);
-+		clks[data->mux_id] = clk;
-+		clk = clk_register_gate(NULL, data->gate_name, data->mux_name,
-+					0, pmc_base + PMC_CLK_OUT_CNTRL,
-+					data->gate_shift, 0, &clk_out_lock);
-+		clks[data->gate_id] = clk;
-+		clk_register_clkdev(clk, data->dev_name, data->gate_name);
-+	}
- 
- 	/* blink */
- 	/* clear the blink timer register to directly output clk_32k */
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+> Looking at the driver code, it seems that it has direct knowledge of the
+> video mode that each panel supports, so DDC is actually optional unlike
+> what I asserted/assumed in my previous response. As such, I guess we
+> should have a separate DT binding document for each of the three panels
+> (compatible values) listed above that pretty much just says "go look at
+> simple-panel.txt".
+
+Okay, I suppose that makes sense.
+
+Thierry
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSJ0XlAAoJEN0jrNd/PrOh7iMP/AxEnK6mo55lUYijqFYMyiau
+frO1LmkHTqmEC11dECmjVWto8D0BPnHr0yZ+Cy8bygDpE06aqforAm2GXDW2o6bb
+/YbC5FTDf/SvwEZT7oGwI2H5NlR1BKscTTJM4t0uCgvjdNHOnHuhRdN873fwJkAU
+Y0yjJVrD+qpFP+cCUm/ZRv/0EO5SLxQJPLEJnFBcHzOnYF8pFcApc5RO8FNB2Fto
+a3UEyUJ7HP81JAAfcMVsWA8OcCQ/DpKbCwXjWu12wMvWRClBjTOwVG+Llx/lL+4F
+qn1uO5ADlJ/3WQSAv2Sz5fEgz6R6+9coKnI+innUDoP8yO16VQLvZMVOnIH3cpYN
+M3dpav4jNvLjEqUB5pPaSdHTJ95yp9TGr0ncPdpUbNaLbOLhLcDvJyqX6Exy2D7g
+lQ4/YPPqcJy5yk4TZgXOiDUAGrmcKlitCa3SPzNvslwVsOiLrrCBTb61wF16uJw7
+Pk+2pWRljPN8COCyOQ//kwUI7tIEcUEIMk1ocWfiNHAAh7cyJ7ItWnuZKO3+SJ+S
+QdKokTfuXafhKqkjc22rQ3JAb/vHrXHc7k5nQ2lr9ZXrxjSgnjG8rsJuf4gedK3B
+IRqakWF4BiXTx/RuWHRdh2koIlrU7Hb11y9460w9/YXRVtkdI1akpxSy37iG1Ksd
+rJ52tTWH2Y1g0lkFEVKJ
+=nC/j
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
