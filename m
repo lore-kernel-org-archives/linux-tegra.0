@@ -1,26 +1,34 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 0/5] ARM: tegra: support for Trusted Foundations
-Date: Wed, 4 Sep 2013 11:31:46 +0900
-Message-ID: <52269B92.3070304@nvidia.com>
-References: <1377770268-14014-1-git-send-email-acourbot@nvidia.com> <52262D8F.9060706@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/4] Introduce table driven initializations
+Date: Wed, 4 Sep 2013 17:20:07 +0300
+Message-ID: <1378304438-7780-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52262D8F.9060706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/04/2013 03:42 AM, Stephen Warren wrote:
-> On 08/29/2013 03:57 AM, Alexandre Courbot wrote:
->> New version revised according to comments received for v3. Hopefully
->> it will be good enough to be merged.
->
-> Aside from the small issue in patch 1/5, the series,
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This patchset introduces a table driven initialization method for the
+audio, PMC and gate clocks. It's similar to the table we already have for                                                                                      
+the periph clocks.                                                                                                                                             
 
-Thanks! I have adressed the issues you mentioned and will submit v5 
-soon. Despite the fact this adds some non-Tegra stuff, will you be able 
-to take it into your tree, or should I ask someone else?
+Changes since v1:
+
+* Use parent names directly in TEGRA_INIT_DATA_GATE()
+
+Peter De Schrijver (4):
+  clk: tegra: simplify periph clock data
+  clk: tegra: convert Tegra114 gate clocks to table
+  clk: tegra114: table driven audio clock init
+  clk: tegra114: table driven PMC clock init
+
+ drivers/clk/tegra/clk-tegra114.c |  892 +++++++++++++++-----------------------
+ drivers/clk/tegra/clk-tegra20.c  |    4 +-
+ drivers/clk/tegra/clk-tegra30.c  |    4 +-
+ drivers/clk/tegra/clk.h          |   93 ++++-
+ 4 files changed, 436 insertions(+), 557 deletions(-)
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
