@@ -1,33 +1,89 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2 0/4] Introduce table driven initializations
-Date: Wed, 04 Sep 2013 14:11:19 -0600
-Message-ID: <522793E7.3020000@wwwdotorg.org>
-References: <1378304438-7780-1-git-send-email-pdeschrijver@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 1/6] host1x: hdmi: Add Tegra114 support
+Date: Wed, 4 Sep 2013 23:55:09 +0200
+Message-ID: <20130904215508.GA4661@mithrandir>
+References: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
+ <1377704922-2824-2-git-send-email-mperttunen@nvidia.com>
+ <52277E7F.5050609@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378304438-7780-1-git-send-email-pdeschrijver@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <52277E7F.5050609@wwwdotorg.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/04/2013 08:20 AM, Peter De Schrijver wrote:
-> This patchset introduces a table driven initialization method for the
-> audio, PMC and gate clocks. It's similar to the table we already have for                                                                                      
-> the periph clocks.                                                                                                                                             
-> 
-> Changes since v1:
-> 
-> * Use parent names directly in TEGRA_INIT_DATA_GATE()
 
-For the record, I said the following in response to V1 which still applies:
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I assume these patches will all go through Mike's clock tree for 3.13.
+On Wed, Sep 04, 2013 at 12:39:59PM -0600, Stephen Warren wrote:
+> On 08/28/2013 09:48 AM, Mikko Perttunen wrote:
+> > Add Tegra114 TMDS configuration, add new peak_current field and
+> > use new place for drive current override bit on Tegra114 platform.
+>=20
+> > diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+>=20
+> >  static struct of_device_id host1x_of_match[] =3D {
+> > +	{ .compatible =3D "nvidia,tegra114-host1x", .data =3D &host1x01_info,=
+ },
+>=20
+> We should add that value to the host1x DT binding documentation.
 
-Aside from the one issue I mentioned, the series,
-Acked-by: Stephen Warren <swarren@nvidia.com>
+That should be superseeded by a patch from my Tegra114 DSI series. Note
+that Tegra114 also uses a slightly updated version of host1x.
 
-I assume this will be followed by changes to convert the Tegra20/30
-clock drivers to be table-based too?
+> > diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
+i.c
+>=20
+> >  static const struct tegra_hdmi_audio_config *
+> >  tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pclk)
+> >  {
+> > @@ -593,8 +673,20 @@ static void tegra_hdmi_setup_tmds(struct tegra_hdm=
+i *hdmi,
+> >  	tegra_hdmi_writel(hdmi, tmds->pll1, HDMI_NV_PDISP_SOR_PLL1);
+> >  	tegra_hdmi_writel(hdmi, tmds->pe_current, HDMI_NV_PDISP_PE_CURRENT);
+> > =20
+> > -	value =3D tmds->drive_current | DRIVE_CURRENT_FUSE_OVERRIDE;
+> > -	tegra_hdmi_writel(hdmi, value, HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT);
+> > +	if (of_device_is_compatible(hdmi->dev->of_node,
+> > +		"nvidia,tegra114-hdmi")) {
+>=20
+> We shouldn't do this at run-time. Rather, set tegra_hdmi_of_match[]'s
+> .data field to a structure that represents the various features of the
+> HW, and then make this code conditional upon a feature flag in that
+> structure.
+
+I'll take a look at how this could be done. There are a few other places
+where we do this check at runtime, so that should be converted at the
+same time.
+
+Thierry
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSJ6w8AAoJEN0jrNd/PrOhlyEQALqP3RdPIv0zd9oKoZNyQQlB
+cb2otx/kQOuveeMzw3OP5OOvXlS7UDlUlgp7MZST7Ou4BElu+TYS5BG86g3Nxy+z
+Wm6vEMbryrp8X79lp+JwXLe5n1NLz8prmQsQPszZCe1rJDt6JOW7JvC5PPsyxg8m
+FdnsOzmIPevJLynsr7OS8xevNc8gNDaCxKn9OF8soqxSNThxR5UaZ7PXdYsHDMX7
+ADQ1/kMiuozX8LgK9163PVomTCwfnnWLfDBZOgQ7KRSJfDr8G+5FC1WsbxGOJXk5
+z2NZQ3dhaXW74ZfBE/s1Xtn/iq5+IsJQAkZQSlEK4RjSvUUhhVqADcC9ObwGKEv4
+qEHuqYNTmmvilFJMMEN44BX3BzWB1wZChODaGSYLQQKvxbbwyrC0RTZBglPLY0DW
+YYxSG/FP+d/2B8ed+JQYhbyoBLiSEbP8y9B1QhowbTO4K8PFR5pQl4WvpWw7qQdV
+1CXHtbZPbd/UMlyLqMMGLMZtCman/Yojlm1x+nQWdjD4xFursob5MLSQ6BLeQP/Y
+jHogaSREN+fmxTOvd/kEnAlZ93s04Eycox9Q+qVRvXtIaeMIzll+o3TGlcit4tBu
+xQ5DhUGupO979um4WZ+uByrG2K4m+JQFFixMc3TTOJa1bBmI0R8EVgZbm+heu8ke
+PAs9EElVOvIbpDzVsA/n
+=nr1Q
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
