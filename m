@@ -1,35 +1,36 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 0/5] ARM: tegra: support for Trusted Foundations
-Date: Wed, 04 Sep 2013 12:25:06 -0600
-Message-ID: <52277B02.9010707@wwwdotorg.org>
-References: <1377770268-14014-1-git-send-email-acourbot@nvidia.com> <52262D8F.9060706@wwwdotorg.org> <52269B92.3070304@nvidia.com>
+From: Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: tegra on 3.11
+Date: Wed, 4 Sep 2013 14:38:15 -0400
+Message-ID: <20130904183815.GC16338@redacted.bos.redhat.com>
+References: <20130820150418.GI27560@redacted.bos.redhat.com>
+ <5213C0F2.9060909@wwwdotorg.org>
+ <20130827213445.GI8764@redacted.bos.redhat.com>
+ <521D1D7F.7060006@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52269B92.3070304@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alex Courbot <acourbot@nvidia.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Dave Martin <Dave.Martin@arm.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <521D1D7F.7060006-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/03/2013 08:31 PM, Alex Courbot wrote:
-> On 09/04/2013 03:42 AM, Stephen Warren wrote:
->> On 08/29/2013 03:57 AM, Alexandre Courbot wrote:
->>> New version revised according to comments received for v3. Hopefully
->>> it will be good enough to be merged.
->>
->> Aside from the small issue in patch 1/5, the series,
->> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> > [   29.198018] PCI: enabling device 0000:01:00.0 (0140 -> 0143)
+> > [   29.198180] Unhandled fault: imprecise external abort (0x406) at
+> > 0xb6f49000
+> > [   29.205136] Internal error: : 406 [#1] SMP ARM
+> > 
+> > looks to be the first time we touch the HW in rtl_init_one.
+> > 
+> > Seen anything similar, or should I start debugging further?
 > 
-> Thanks! I have adressed the issues you mentioned and will submit v5
-> soon. Despite the fact this adds some non-Tegra stuff, will you be able
-> to take it into your tree, or should I ask someone else?
+> PCIe isn't expected to work usefully until 3.12, unless you've manually
+> merged in Thierry's Tegra PCIe driver rewrite. It's probably worth
+> disabling it in your .config file.
 
-I would like to see an ack from the core ARM maintainer (Russell) on
-patch 1/5 (also CC'ing arm-soc maintainers for their opinion).
+fwiw, the problem was CONFIG_PCIEPORTBUS in our config, I've not had
+a chance to track down what the issue actually is, but that driver
+busted things in 3.11.
 
-If I get that, I think it makes sense to take the series through the
-Tegra tree. I can always create a stable branch for patch 1/5 if needed
-to resolve conflicts elsewhere (e.g. Russell's trees or arm-soc) and/or
-allow other people to build on top of that patch.
+regards, Kyle
