@@ -1,89 +1,67 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 1/6] host1x: hdmi: Add Tegra114 support
-Date: Wed, 4 Sep 2013 23:55:09 +0200
-Message-ID: <20130904215508.GA4661@mithrandir>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/6] host1x: hdmi: Detect whether display is connected
+ with HDMI or DVI
+Date: Wed, 4 Sep 2013 23:59:03 +0200
+Message-ID: <20130904215902.GB4661@mithrandir>
 References: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com>
- <1377704922-2824-2-git-send-email-mperttunen@nvidia.com>
- <52277E7F.5050609@wwwdotorg.org>
+ <1377704922-2824-3-git-send-email-mperttunen@nvidia.com>
+ <52277EBA.6030105@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <52277E7F.5050609@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <52277EBA.6030105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---7AUc2qLy4jB3hD7Z
+--xgyAXRrhYN0wYx8y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2013 at 12:39:59PM -0600, Stephen Warren wrote:
+On Wed, Sep 04, 2013 at 12:40:58PM -0600, Stephen Warren wrote:
 > On 08/28/2013 09:48 AM, Mikko Perttunen wrote:
-> > Add Tegra114 TMDS configuration, add new peak_current field and
-> > use new place for drive current override bit on Tegra114 platform.
+> > Use EDID data to determine whether the display supports HDMI or just DV=
+I.
+> > This used to be hardcoded to be HDMI, which broke support for DVI displ=
+ays
+> > that couldn't understand the interspersed audio/other data.
+> >=20
+> > If the EDID data isn't available, default to DVI, which should be a saf=
+er
+> > choice.
 >=20
-> > diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
->=20
-> >  static struct of_device_id host1x_of_match[] =3D {
-> > +	{ .compatible =3D "nvidia,tegra114-host1x", .data =3D &host1x01_info,=
- },
->=20
-> We should add that value to the host1x DT binding documentation.
+> This seems like a bug-fix that might even be worth CC: stable?
 
-That should be superseeded by a patch from my Tegra114 DSI series. Note
-that Tegra114 also uses a slightly updated version of host1x.
-
-> > diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdm=
-i.c
->=20
-> >  static const struct tegra_hdmi_audio_config *
-> >  tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pclk)
-> >  {
-> > @@ -593,8 +673,20 @@ static void tegra_hdmi_setup_tmds(struct tegra_hdm=
-i *hdmi,
-> >  	tegra_hdmi_writel(hdmi, tmds->pll1, HDMI_NV_PDISP_SOR_PLL1);
-> >  	tegra_hdmi_writel(hdmi, tmds->pe_current, HDMI_NV_PDISP_PE_CURRENT);
-> > =20
-> > -	value =3D tmds->drive_current | DRIVE_CURRENT_FUSE_OVERRIDE;
-> > -	tegra_hdmi_writel(hdmi, value, HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT);
-> > +	if (of_device_is_compatible(hdmi->dev->of_node,
-> > +		"nvidia,tegra114-hdmi")) {
->=20
-> We shouldn't do this at run-time. Rather, set tegra_hdmi_of_match[]'s
-> .data field to a structure that represents the various features of the
-> HW, and then make this code conditional upon a feature flag in that
-> structure.
-
-I'll take a look at how this could be done. There are a few other places
-where we do this check at runtime, so that should be converted at the
-same time.
+Possibly. The patch reaches deeply into some DRM structures, which I'd
+like to avoid. I'll have another look to see if it can be done in a
+slightly different way.
 
 Thierry
 
---7AUc2qLy4jB3hD7Z
+--xgyAXRrhYN0wYx8y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSJ6w8AAoJEN0jrNd/PrOhlyEQALqP3RdPIv0zd9oKoZNyQQlB
-cb2otx/kQOuveeMzw3OP5OOvXlS7UDlUlgp7MZST7Ou4BElu+TYS5BG86g3Nxy+z
-Wm6vEMbryrp8X79lp+JwXLe5n1NLz8prmQsQPszZCe1rJDt6JOW7JvC5PPsyxg8m
-FdnsOzmIPevJLynsr7OS8xevNc8gNDaCxKn9OF8soqxSNThxR5UaZ7PXdYsHDMX7
-ADQ1/kMiuozX8LgK9163PVomTCwfnnWLfDBZOgQ7KRSJfDr8G+5FC1WsbxGOJXk5
-z2NZQ3dhaXW74ZfBE/s1Xtn/iq5+IsJQAkZQSlEK4RjSvUUhhVqADcC9ObwGKEv4
-qEHuqYNTmmvilFJMMEN44BX3BzWB1wZChODaGSYLQQKvxbbwyrC0RTZBglPLY0DW
-YYxSG/FP+d/2B8ed+JQYhbyoBLiSEbP8y9B1QhowbTO4K8PFR5pQl4WvpWw7qQdV
-1CXHtbZPbd/UMlyLqMMGLMZtCman/Yojlm1x+nQWdjD4xFursob5MLSQ6BLeQP/Y
-jHogaSREN+fmxTOvd/kEnAlZ93s04Eycox9Q+qVRvXtIaeMIzll+o3TGlcit4tBu
-xQ5DhUGupO979um4WZ+uByrG2K4m+JQFFixMc3TTOJa1bBmI0R8EVgZbm+heu8ke
-PAs9EElVOvIbpDzVsA/n
-=nr1Q
+iQIcBAEBAgAGBQJSJ60mAAoJEN0jrNd/PrOhXCIP/RsOAR8/E432K+lCgHx8CHXN
+/QD/Hqw+4s3yxKIQruJRPOZHn9Aq9B5lI0Et5GT+WhC/4WdnBGB2QcNeF0hhJl8I
+LvDWPGTWbExVlt+HUQUeHvFf7Vv/J6eoXzn2HkKUuejLiQVTn0pB8z5lddRL/3LA
+JMg3Cbduin+ITngUwimhNK6x3qRp4/dN3/2ugm7QYl83GQO9KVX+qCllDFDhvgne
+uTPt515qtphsEQfZFpprdzpZasTWrIGyK3Wj/6jazF7bZqpnJQZsbg7phV2uPxlY
+YheN8ONZ4Xac+TSoTLWSfAjkmw20G2eDiQeWW6hRcHuFz5GPg5HIiSaamn9H6yMn
+/QX3yaZ3oM1FdpUnvbbIxZhtfigi/r0F+hvsCPcIS7nTr96B3mj2QkAUlEqcVAFJ
+bQtrCPiX6U7Q1RNpjIu8ifFVQSvTS0EjuqZvvdP6AYsM5diwnHxFErGlH0c4K/rX
+Lt0cf6/CbRIl+hPFRMg30CqzjvcgkkPl6406JSsrFWE5etwse2gYmPPLJ1q9+d0Y
+2LoWEIbGXZvOAJlaIUjzoQZopY4gPjBXMXGuCyU8+YmbOgVpuoIOxJRkzZqgjnvt
+4cO0y/nam5FDdoM0zbuqmRPMOgIyu5LUp//QGW4jLd5JCSa+gDCTNd6GN7iRW1EE
+H8m7loUCHaNqH9tnv4W5
+=OUEj
 -----END PGP SIGNATURE-----
 
---7AUc2qLy4jB3hD7Z--
+--xgyAXRrhYN0wYx8y--
