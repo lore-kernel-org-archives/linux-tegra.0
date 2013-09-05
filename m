@@ -1,85 +1,75 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v5 3/5] ARM: tegra: split setting of CPU reset handler
-Date: Thu, 5 Sep 2013 12:27:58 +0900
-Message-ID: <1378351680-14696-4-git-send-email-acourbot@nvidia.com>
-References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>
-Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] ARM: tegra: throw the unique chip ID into the entropy pool
+Date: Thu,  5 Sep 2013 17:28:58 +0200
+Message-ID: <1378394938-1551-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Not all Tegra devices can set the CPU reset handler in the same way.
-In particular, devices using a TrustZone secure monitor cannot set the
-reset handler directly and need to do it through a firmware operation.
+This adds a hook at common late init to extract the 64 bits of
+chip-unique data and throw it into the entropy pool to make it
+more device-unique.
 
-This patch separates the act of setting the reset handler from its
-preparation, so the former can be implemented in a different way.
-
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/mach-tegra/reset.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+Stephen: since I don't have the Tegra reference manual I don't
+know what "UID" means, but if it means "unique ID" then this
+patch should be relevant for initializing the entropy pool.
+---
+ arch/arm/mach-tegra/common.c | 1 +
+ arch/arm/mach-tegra/fuse.c   | 9 +++++++++
+ arch/arm/mach-tegra/fuse.h   | 1 +
+ 3 files changed, 11 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index 1ac434e..6964117 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -33,26 +33,18 @@
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+index 94a119a..c1ab5f5 100644
+--- a/arch/arm/mach-tegra/common.c
++++ b/arch/arm/mach-tegra/common.c
+@@ -109,6 +109,7 @@ void __init tegra_init_early(void)
  
- static bool is_enabled;
- 
--static void __init tegra_cpu_reset_handler_enable(void)
-+static void __init tegra_cpu_reset_handler_set(const u32 reset_address)
+ void __init tegra_init_late(void)
  {
--	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
- 	void __iomem *evp_cpu_reset =
- 		IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE + 0x100);
- 	void __iomem *sb_ctrl = IO_ADDRESS(TEGRA_SB_BASE);
- 	u32 reg;
++	tegra_random_init();
+ 	tegra_init_suspend();
+ 	tegra_cpuidle_init();
+ 	tegra_powergate_debugfs_init();
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index e035cd2..16673de 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -22,6 +22,7 @@
+ #include <linux/io.h>
+ #include <linux/export.h>
+ #include <linux/tegra-soc.h>
++#include <linux/random.h>
  
--	BUG_ON(is_enabled);
--	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
--
--	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
--			tegra_cpu_reset_handler_size);
--
- 	/*
- 	 * NOTE: This must be the one and only write to the EVP CPU reset
- 	 *       vector in the entire system.
- 	 */
--	writel(TEGRA_IRAM_RESET_BASE + tegra_cpu_reset_handler_offset,
--			evp_cpu_reset);
-+	writel(reset_address, evp_cpu_reset);
- 	wmb();
- 	reg = readl(evp_cpu_reset);
- 
-@@ -66,6 +58,21 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 		writel(reg, sb_ctrl);
- 		wmb();
- 	}
-+}
-+
-+static void __init tegra_cpu_reset_handler_enable(void)
-+{
-+	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
-+	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
-+						tegra_cpu_reset_handler_offset;
-+
-+	BUG_ON(is_enabled);
-+	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
-+
-+	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
-+			tegra_cpu_reset_handler_size);
-+
-+	tegra_cpu_reset_handler_set(reset_address);
- 
- 	is_enabled = true;
+ #include "fuse.h"
+ #include "iomap.h"
+@@ -165,3 +166,11 @@ unsigned long long tegra_chip_uid(void)
+ 	return (hi << 32ull) | lo;
  }
+ EXPORT_SYMBOL(tegra_chip_uid);
++
++void __init tegra_random_init(void)
++{
++	unsigned long long uid;
++
++	uid = tegra_chip_uid();
++	add_device_randomness(&uid, sizeof(uid));
++}
+diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
+index def7968..559d101 100644
+--- a/arch/arm/mach-tegra/fuse.h
++++ b/arch/arm/mach-tegra/fuse.h
+@@ -55,6 +55,7 @@ unsigned long long tegra_chip_uid(void);
+ void tegra_init_fuse(void);
+ bool tegra_spare_fuse(int bit);
+ u32 tegra_fuse_readl(unsigned long offset);
++void tegra_random_init(void);
+ 
+ #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+ void tegra20_init_speedo_data(void);
 -- 
-1.8.4
+1.8.3.1
