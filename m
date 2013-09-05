@@ -1,47 +1,57 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 3/6] host1x: hdmi: Enable Vdd earlier for hotplug/DDC
-Date: Wed, 04 Sep 2013 16:24:26 -0600
-Message-ID: <5227B31A.3070404@wwwdotorg.org>
-References: <1377704922-2824-1-git-send-email-mperttunen@nvidia.com> <1377704922-2824-4-git-send-email-mperttunen@nvidia.com> <52277F90.40109@wwwdotorg.org> <5227AE4F.8050603@kapsi.fi>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v5 0/5] ARM: support for Trusted Foundations secure monitor
+Date: Thu, 5 Sep 2013 12:27:55 +0900
+Message-ID: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5227AE4F.8050603-/1wQRMveznE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>
+Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/04/2013 04:03 PM, Mikko Perttunen wrote:
-> On 09/04/2013 09:44 PM, Stephen Warren wrote:
->> On 08/28/2013 09:48 AM, Mikko Perttunen wrote:
->>> The Vdd regulator used to be enabled only at tegra_output_hdmi_enable,
->>> which is called after a sink is detected. However, the HDMI hotplug pin
->>> works by returning the voltage supplied by the Vdd pin, so this meant
->>> that the hotplug pin was never asserted and the sink was not detected
->>> unless the Vdd regulator was set to be always on.
->>>
->>> This patch moves the enable to the tegra_hdmi_drm_init function to make
->>> sure the regulator will get enabled.
->>
->> The DT binding document isn't very clear on this topic (and should be
->> fixed): What is this regulator intended to control? If this regulator
->> solely controls the supply to the hotplug detection circuit, this change
->> makes sense. If the regulator mainly supplies something else (e.g. part
->> of the HDMI core on the Tegra chip), then perhaps this change isn't
->> correct. The correct approach might be to introduce another (optional)
->> regulator specifically for the hotplug circuit. Presumably both DT
->> properties vdd-supply and hotplug-supply could point at the same
->> regulator if that's the way the HW was wired up.
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> AFAICT, it controls the Vdd pin on the HDMI port, so it just affects the
-> hotplug pin and the DDC I2C bus power.
+After several rounds of reviews, this patchset should be close to maturity. This
+fifth version gathers the Reviewed-by tags, addresses the (hopefully) last
+issues, and seeks the Acked-bys of ARM maintainers to be merged, probably
+through the Tegra tree.
 
-Ah OK, then this code change makes sense. It'd be useful to put what you
-just wrote into the binding doc.
+Changes since v4:
+- Added ifdefs to isolate open firmware-dependant code
+- Changed BUGS() into more appropriate calls to panic()
+- Fix hard-fail when TF support is not compiled in
+- Make Tegra documentation reference the TF binding
+- Tested extensively
+
+As there is no consensus on the matter, I have left the TF version in device
+tree as two separate nodes. Comments for or against this and references to prior
+practices regarding version handling in the device tree are welcome.
+
+Alexandre Courbot (5):
+  ARM: add basic Trusted Foundations support
+  ARM: tegra: add support for Trusted Foundations
+  ARM: tegra: split setting of CPU reset handler
+  ARM: tegra: set CPU reset handler with firmware op
+  ARM: tegra: support Trusted Foundations by default
+
+ .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
+ Documentation/devicetree/bindings/arm/tegra.txt    |  5 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+ arch/arm/Kconfig                                   |  2 +
+ arch/arm/Makefile                                  |  1 +
+ arch/arm/configs/tegra_defconfig                   |  1 +
+ arch/arm/firmware/Kconfig                          | 25 +++++++
+ arch/arm/firmware/Makefile                         |  1 +
+ arch/arm/firmware/trusted_foundations.c            | 82 ++++++++++++++++++++++
+ arch/arm/include/asm/trusted_foundations.h         | 53 ++++++++++++++
+ arch/arm/mach-tegra/Kconfig                        |  1 +
+ arch/arm/mach-tegra/common.c                       |  2 +
+ arch/arm/mach-tegra/reset.c                        | 40 ++++++++---
+ 13 files changed, 220 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+ create mode 100644 arch/arm/firmware/Kconfig
+ create mode 100644 arch/arm/firmware/Makefile
+ create mode 100644 arch/arm/firmware/trusted_foundations.c
+ create mode 100644 arch/arm/include/asm/trusted_foundations.h
+
+-- 
+1.8.4
