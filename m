@@ -1,38 +1,50 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: throw the unique chip ID into the entropy
- pool
-Date: Fri, 06 Sep 2013 13:09:22 -0600
-Message-ID: <522A2862.9060607@wwwdotorg.org>
-References: <1378394938-1551-1-git-send-email-linus.walleij@linaro.org> <5228DECA.4090601@wwwdotorg.org> <CACRpkdYVUC+MM2SC446k=HC=FwsJMtD6YQa9Hcu8C9eMKMdYng@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
+Date: Fri, 06 Sep 2013 13:29:31 -0600
+Message-ID: <522A2D1B.3010508@wwwdotorg.org>
+References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com> <1378351680-14696-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYVUC+MM2SC446k=HC=FwsJMtD6YQa9Hcu8C9eMKMdYng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1378351680-14696-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/06/2013 02:53 AM, Linus Walleij wrote:
-> On Thu, Sep 5, 2013 at 9:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On 09/04/2013 09:27 PM, Alexandre Courbot wrote:
+> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> can be invoked  using a consistent SMC-based API on all supported
+> platforms. This patch adds initial basic support for Trusted
+> Foundations using the ARM firmware API. Current features are limited
+> to the ability to boot secondary processors.
+
+> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
 ...
->> Note that the UID value appears to be incorrect on anything other than
->> Tegra20; I'll file an internal bug to track that down.
-> 
-> Hm, that will not affect the kernel entropy pool so much, but
-> the crypto driver is in trouble since that seems to be the only
-> entropy it's using :-(
+> +void of_register_trusted_foundations(void)
+> +{
+> +	struct device_node *node;
+> +	struct trusted_foundations_platform_data pdata;
+> +	int err;
+> +
+> +	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+> +
+> +	if (!node)
+> +		return;
 
-Well, it calls getnstimeofday() too, so there's presumably a small
-amount of entropy there, unless tegra_aes_rng_reset() gets called at
-predictable times, which is probably true.
+If you're going to revise this patch for the comment below, then I would
+suggest removing the blank line before that if statement.
 
-> If it will return something like a constant, that is actually a quite
-> valid case for initializing tmp[1] from the kernel entropy pool
-> with get_random_bytes() instead of using UID.
-> 
-> I don't know if the Tegra AES needs that specific initializer
-> though (it seems not). Shall I propose a patch?
+> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
 
-That sounds reasonable. Perhaps Varun can comment?
+Do we need to add the following here:
+
+#if !IS_ENABLED(CONFIG_OF)
+static inline void register_trusted_foundations(...) {}
+#endif
+
+So that there is a dummy no-op function for the non-DT-support case? I
+guess Tegra always has CONFIG_OF enabled so that call from
+mach-tegra/common.c in patch 2 will never be an issue, but perhaps it
+might if anyone else uses this?
