@@ -1,38 +1,26 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: permission to move definition of struct rpmsg_channel_info
-Date: Sun, 8 Sep 2013 14:27:11 +0200
-Message-ID: <CAK=WgbZ2JgtAonvdyeDZazYBGdKpPAieJtjzi7MM6nwqhVfs7g@mail.gmail.com>
-References: <5220F099.1020002@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/1] dma: tegra20-apb-dma: Staticize tegra_dma_prep_dma_cyclic
+Date: Fri, 6 Sep 2013 17:56:17 +0530
+Message-ID: <5229C9E9.6020001@nvidia.com>
+References: <1378467982-30327-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5220F099.1020002@nvidia.com>
+In-Reply-To: <1378467982-30327-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arjun Gopalan <agopalan@nvidia.com>
-Cc: Brian Swetland <swetland@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Paul Walmsley <pwalmsley@nvidia.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "vinod.koul@intel.com" <vinod.koul@intel.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arjun,
-
-On Fri, Aug 30, 2013 at 9:20 PM, Arjun Gopalan <agopalan@nvidia.com> wrote:
+On Friday 06 September 2013 05:16 PM, Sachin Kamat wrote:
+> tegra_dma_prep_dma_cyclic is referenced only in this file.
+> Make it static.
 >
-> Hi Ohad/Brian,
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> ---
 >
-> I have been working on rpmsg and I need to be able to create static rpmsg channels. Channel information needs to be specified by other drivers and for this, the drivers need access to struct rpmsg_channel_info.
+Agree, looks good.
 
-I'm not convinced how useful it is for other Linux drivers to create
-static rpmsg channels?
-
-Usually these channels reflect the existence of services running on
-the remote processor, and their creation (or lack thereof) should be
-specified in the remote image. This way an rpmsg channel is published
-iff there is a matching remote service.
-
-The way we were planning to add static channels functionality (I
-should still have preliminary patches doing this somewhere but the
-entire work was put on hold since TI changed its focus) is by
-statically publishing them in the resource table, which is coupled
-with a specific remote image.
-
-Best,
-Ohad.
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
