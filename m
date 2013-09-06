@@ -1,51 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
-Date: Fri, 6 Sep 2013 18:48:15 +0200
-Message-ID: <CACRpkdaphSqM1oOphC-t1UPmkxaEemC3R3aDfEXb79GWNNyNMA@mail.gmail.com>
-References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
-	<1378351680-14696-2-git-send-email-acourbot@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: throw the unique chip ID into the entropy
+ pool
+Date: Fri, 06 Sep 2013 13:09:22 -0600
+Message-ID: <522A2862.9060607@wwwdotorg.org>
+References: <1378394938-1551-1-git-send-email-linus.walleij@linaro.org> <5228DECA.4090601@wwwdotorg.org> <CACRpkdYVUC+MM2SC446k=HC=FwsJMtD6YQa9Hcu8C9eMKMdYng@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378351680-14696-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYVUC+MM2SC446k=HC=FwsJMtD6YQa9Hcu8C9eMKMdYng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 5, 2013 at 5:27 AM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+On 09/06/2013 02:53 AM, Linus Walleij wrote:
+> On Thu, Sep 5, 2013 at 9:43 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+...
+>> Note that the UID value appears to be incorrect on anything other than
+>> Tegra20; I'll file an internal bug to track that down.
+> 
+> Hm, that will not affect the kernel entropy pool so much, but
+> the crypto driver is in trouble since that seems to be the only
+> entropy it's using :-(
 
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked  using a consistent SMC-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+Well, it calls getnstimeofday() too, so there's presumably a small
+amount of entropy there, unless tegra_aes_rng_reset() gets called at
+predictable times, which is probably true.
 
-I take it that this means that it is a set of standard routines
-living in the secure world that can be called by way of this
-API, correct? The commit message is written a bit like
-everybody knows what this is about but I don't :-)
+> If it will return something like a constant, that is actually a quite
+> valid case for initializing tmp[1] from the kernel entropy pool
+> with get_random_bytes() instead of using UID.
+> 
+> I don't know if the Tegra AES needs that specific initializer
+> though (it seems not). Shall I propose a patch?
 
-Some more background here would be nice, like where did this
-thing come from, and are there other platforms in existance that
-use trusted foundations or is it a Tegra-only thing? Does a
-specification of this thing listing available services exist for
-example?
-
-How does it relate to the (arch-neutral) trusted execution
-environment and such things that other vendors are pushing for?
-Can the trusted foundations be used "underneath" such
-frameworks for trusted applications, or is it a parallell thing
-altogether?
-
-Simple things like that...
-
-I tried googling it, is this a relevant URL?
-http://www.arm.com/community/partners/display_product/rw/ProductId/5393/
-
-Thanks,
-Linus Walleij
+That sounds reasonable. Perhaps Varun can comment?
