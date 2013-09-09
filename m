@@ -1,56 +1,30 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
-Date: Mon, 09 Sep 2013 09:59:20 -0600
-Message-ID: <522DF058.8020509@wwwdotorg.org>
-References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com> <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <522A2D1B.3010508@wwwdotorg.org> <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g@mail.gmail.com>
+Subject: Re: [PATCH] crypto: tegra: use kernel entropy instead of ad-hoc
+Date: Mon, 09 Sep 2013 10:02:04 -0600
+Message-ID: <522DF0FC.5080200@wwwdotorg.org>
+References: <1378712154-30602-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1378712154-30602-1-git-send-email-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/09/2013 12:38 AM, Alexandre Courbot wrote:
-> On Sat, Sep 7, 2013 at 4:29 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 09/04/2013 09:27 PM, Alexandre Courbot wrote:
->>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->>> can be invoked  using a consistent SMC-based API on all supported
->>> platforms. This patch adds initial basic support for Trusted
->>> Foundations using the ARM firmware API. Current features are limited
->>> to the ability to boot secondary processors.
-
->>> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
->>
->> Do we need to add the following here:
->>
->> #if !IS_ENABLED(CONFIG_OF)
->> static inline void register_trusted_foundations(...) {}
->> #endif
-
-Uggh. I meant to write **of_**register_trusted_foundations() there.
-
->> So that there is a dummy no-op function for the non-DT-support case? I
->> guess Tegra always has CONFIG_OF enabled so that call from
->> mach-tegra/common.c in patch 2 will never be an issue, but perhaps it
->> might if anyone else uses this?
+On 09/09/2013 01:35 AM, Linus Walleij wrote:
+> The way I read the Tegra AES RNG is that it has a homebrew
+> algorithm for initializing the 128bit RNG using timespec and
+> the unique chip ID. This looks like reinventing the (square)
+> wheel, instead just grab 128bits from the kernel entropy pool
+> where the time and (after another patch) chip unique ID is
+> already mixed in.
 > 
-> My expectation is that register_trusted_foundations() is called by the
-> platform code once it has established (through whatever mean it likes)
-> that Trusted Foundations is required. For platforms supporting DT,
-> of_register_trusted_foundations() takes care of that. Platforms that
-> don't support DT need another way to decide whether they *need* TF or
-> not. Once a platform decided that it needs TF, its absence is not an
-> option, and therefore I'd think that register_trusted_foundations()
-> should hard-fail if support is not compiled in. Or maybe I missed your
-> point?
+> Incidentally this also gets rid of a rather ugly
+> cross-dependence on the machine using an extern declaration.
 
-So yes, you missed my point, but it was my fault:-)
+This sounds reasonable to me, although I know little about the driver.
+Varun, can you please comment?
 
-Most of_* can be called irrespective of CONFIG_OF, and since
-of_register_trusted_foundations() is meant to handle internally the "do
-I need to do anything" case, I think it makes sense to be allowed to
-call it unconditionally without determining anything about either
-CONFIG_OF or TF DT node presence?
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
