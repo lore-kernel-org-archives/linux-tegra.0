@@ -1,67 +1,56 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Mon, 9 Sep 2013 08:50:43 -0700
-Message-ID: <20130909155043.GA18975@roeck-us.net>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com>
- <1378722552-10357-2-git-send-email-wni@nvidia.com>
- <20130909111242.GW29403@sirena.org.uk>
- <522DB253.6000707@roeck-us.net>
- <20130909135022.GZ29403@sirena.org.uk>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
+Date: Mon, 09 Sep 2013 09:59:20 -0600
+Message-ID: <522DF058.8020509@wwwdotorg.org>
+References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com> <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <522A2D1B.3010508@wwwdotorg.org> <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130909135022.GZ29403@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Wei Ni <wni@nvidia.com>, khali@linux-fr.org, swarren@wwwdotorg.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 09, 2013 at 02:50:22PM +0100, Mark Brown wrote:
-> On Mon, Sep 09, 2013 at 04:34:43AM -0700, Guenter Roeck wrote:
-> > On 09/09/2013 04:12 AM, Mark Brown wrote:
-> > >On Mon, Sep 09, 2013 at 06:29:11PM +0800, Wei Ni wrote:
-> 
-> > >This doesn't look good, it is going to ignore actual errors - I *really*
-> > >doubt that vcc is optional, it looks like it's the main power supply for
-> > >the device.  You should use normal regulator_get(), _optional() is for
-> > >supplies which could physically not be provided in a system (eg, if the
-> > >device can generate them internally if required).
-> 
-> > Then he'll have to make sure that all devicetree files in the system
-> > contain references to this regulator.
-> 
-> Or get the patches applied on top of the code that'll be going in this
-> cycle implementing get_optional() properly - when that's done the
-> default will be to provide a dummy supply for regulator_get().  If you
-> ack the patch I'd be happy to carry it.
-> 
-Jean will have to ack it.
+On 09/09/2013 12:38 AM, Alexandre Courbot wrote:
+> On Sat, Sep 7, 2013 at 4:29 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 09/04/2013 09:27 PM, Alexandre Courbot wrote:
+>>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>>> can be invoked  using a consistent SMC-based API on all supported
+>>> platforms. This patch adds initial basic support for Trusted
+>>> Foundations using the ARM firmware API. Current features are limited
+>>> to the ability to boot secondary processors.
 
-> > >Also do you really need 25ms after power on?
+>>> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+>>
+>> Do we need to add the following here:
+>>
+>> #if !IS_ENABLED(CONFIG_OF)
+>> static inline void register_trusted_foundations(...) {}
+>> #endif
+
+Uggh. I meant to write **of_**register_trusted_foundations() there.
+
+>> So that there is a dummy no-op function for the non-DT-support case? I
+>> guess Tegra always has CONFIG_OF enabled so that call from
+>> mach-tegra/common.c in patch 2 will never be an issue, but perhaps it
+>> might if anyone else uses this?
 > 
-> > I had not noticed, but I recommend to reject the patch because of it.
-> > If we add 25ms delay to each driver, booting the system will take as
-> > long as booting windows. If enabling the regulator needs time, the
-> > regulator subsystem should do it.
-> 
-> And indeed it does this (well, it does whatever the driver says in terms
-> of delay).  However it is possible that the lm90 needs this time for
-> itself - if it's doing some sort of initialisation or callibration
-> sequence then that'll happen after the supplies come up.  25ms did seem
-> rather long, especially for such simple devices, but it's not beyond the
-> bounds of possibility.
+> My expectation is that register_trusted_foundations() is called by the
+> platform code once it has established (through whatever mean it likes)
+> that Trusted Foundations is required. For platforms supporting DT,
+> of_register_trusted_foundations() takes care of that. Platforms that
+> don't support DT need another way to decide whether they *need* TF or
+> not. Once a platform decided that it needs TF, its absence is not an
+> option, and therefore I'd think that register_trusted_foundations()
+> should hard-fail if support is not compiled in. Or maybe I missed your
+> point?
 
-Even then it would be unreasonable to enforce such a delay for every instance
-of this driver, even if the regulator is a dummy one and/or has been enabled
-already. Many if not almost all users of the driver work just fine as-is,
-without additional enforced delay (and, for that matter, without regulator ;).
+So yes, you missed my point, but it was my fault:-)
 
-If there is a delay, it would have to be optional: Only wait if the regulator
-was really turned on by the call and not already active. I don't know if the
-regulator subsystem has this capability; if not, maybe it should.
-
-On a higher level, I wonder if such functionality should be added in the i2c
-subsystem and not in i2c client drivers. Has anyone thought about this ?
-
-Guenter
+Most of_* can be called irrespective of CONFIG_OF, and since
+of_register_trusted_foundations() is meant to handle internally the "do
+I need to do anything" case, I think it makes sense to be allowed to
+call it unconditionally without determining anything about either
+CONFIG_OF or TF DT node presence?
