@@ -1,66 +1,74 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
-Date: Mon, 9 Sep 2013 15:38:28 +0900
-Message-ID: <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g@mail.gmail.com>
-References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
- <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <522A2D1B.3010508@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <522A2D1B.3010508@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] crypto: tegra: use kernel entropy instead of ad-hoc
+Date: Mon,  9 Sep 2013 09:35:54 +0200
+Message-ID: <1378712154-30602-1-git-send-email-linus.walleij@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Sep 7, 2013 at 4:29 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 09/04/2013 09:27 PM, Alexandre Courbot wrote:
->> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->> can be invoked  using a consistent SMC-based API on all supported
->> platforms. This patch adds initial basic support for Trusted
->> Foundations using the ARM firmware API. Current features are limited
->> to the ability to boot secondary processors.
->
->> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
-> ...
->> +void of_register_trusted_foundations(void)
->> +{
->> +     struct device_node *node;
->> +     struct trusted_foundations_platform_data pdata;
->> +     int err;
->> +
->> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
->> +
->> +     if (!node)
->> +             return;
->
-> If you're going to revise this patch for the comment below, then I would
-> suggest removing the blank line before that if statement.
+The way I read the Tegra AES RNG is that it has a homebrew
+algorithm for initializing the 128bit RNG using timespec and
+the unique chip ID. This looks like reinventing the (square)
+wheel, instead just grab 128bits from the kernel entropy pool
+where the time and (after another patch) chip unique ID is
+already mixed in.
 
-Sure.
+Incidentally this also gets rid of a rather ugly
+cross-dependence on the machine using an extern declaration.
 
->
->> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
->
-> Do we need to add the following here:
->
-> #if !IS_ENABLED(CONFIG_OF)
-> static inline void register_trusted_foundations(...) {}
-> #endif
->
-> So that there is a dummy no-op function for the non-DT-support case? I
-> guess Tegra always has CONFIG_OF enabled so that call from
-> mach-tegra/common.c in patch 2 will never be an issue, but perhaps it
-> might if anyone else uses this?
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+Only compile-tested as I don't have this platform.
+---
+ drivers/crypto/tegra-aes.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-My expectation is that register_trusted_foundations() is called by the
-platform code once it has established (through whatever mean it likes)
-that Trusted Foundations is required. For platforms supporting DT,
-of_register_trusted_foundations() takes care of that. Platforms that
-don't support DT need another way to decide whether they *need* TF or
-not. Once a platform decided that it needs TF, its absence is not an
-option, and therefore I'd think that register_trusted_foundations()
-should hard-fail if support is not compiled in. Or maybe I missed your
-point?
-
-Alex.
+diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
+index 2d58da9..7f42bfe 100644
+--- a/drivers/crypto/tegra-aes.c
++++ b/drivers/crypto/tegra-aes.c
+@@ -199,8 +199,6 @@ static void aes_workqueue_handler(struct work_struct *work);
+ static DECLARE_WORK(aes_work, aes_workqueue_handler);
+ static struct workqueue_struct *aes_wq;
+ 
+-extern unsigned long long tegra_chip_uid(void);
+-
+ static inline u32 aes_readl(struct tegra_aes_dev *dd, u32 offset)
+ {
+ 	return readl(dd->io_base + offset);
+@@ -713,9 +711,8 @@ static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
+ 	struct tegra_aes_dev *dd = aes_dev;
+ 	struct tegra_aes_ctx *ctx = &rng_ctx;
+ 	struct tegra_aes_slot *key_slot;
+-	struct timespec ts;
+ 	int ret = 0;
+-	u64 nsec, tmp[2];
++	u8 tmp[16]; /* 16 bytes = 128 bits of entropy */
+ 	u8 *dt;
+ 
+ 	if (!ctx || !dd) {
+@@ -778,14 +775,8 @@ static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
+ 	if (dd->ivlen >= (2 * DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128)) {
+ 		dt = dd->iv + DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128;
+ 	} else {
+-		getnstimeofday(&ts);
+-		nsec = timespec_to_ns(&ts);
+-		do_div(nsec, 1000);
+-		nsec ^= dd->ctr << 56;
+-		dd->ctr++;
+-		tmp[0] = nsec;
+-		tmp[1] = tegra_chip_uid();
+-		dt = (u8 *)tmp;
++		get_random_bytes(tmp, sizeof(tmp));
++		dt = tmp;
+ 	}
+ 	memcpy(dd->dt, dt, DEFAULT_RNG_BLK_SZ);
+ 
+-- 
+1.8.3.1
