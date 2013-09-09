@@ -1,69 +1,43 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 0/3] Lm90 Enhancements
-Date: Mon, 9 Sep 2013 09:42:45 +0200
-Message-ID: <20130909094245.4661d9cb@endymion.delvare>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
-	<522D67B2.4030406@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/2] Add power control for lm90
+Date: Mon, 9 Sep 2013 18:29:10 +0800
+Message-ID: <1378722552-10357-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <522D67B2.4030406-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
+The device lm90 can be controlled by the vcc rail.
+Add function to power on/off the vcc.
 
-I am sorry, I see there have been many discussions about the lm90
-driver while I was on vacation and these are threads I did not have the
-time to catch up with yet. I'll read it all as soon as possible by my
-current schedule is tight so please be patient!
+This series is v3, previous version patches are:
+[v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
+[v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
 
-Jean
+Changes from v2:
+1. use devm_regulator_get_optional(), as suggested by Mark.
+2. remove the lm90_power_control(), enable the regulator in the probe()
+directly, so the codes are more clear, as suggested by Alexander and Guenter.
+3. change the binding documentation, as per Stephen suggestion.
+4. couple of changes, as per previous review.
 
-On Mon, 9 Sep 2013 14:16:18 +0800, Wei Ni wrote:
-> Hi, Jean
-> Do you have any more suggestions on this series?
-> 
-> Thanks.
-> Wei.
-> 
-> On 08/07/2013 02:18 PM, Wei Ni wrote:
-> > This patch set enhance the lm90 driver,
-> > it make the driver more readable and easier to use thermal framework.
-> > 
-> > This series is v4, previous version patches:
-> > [RFC]: http://thread.gmane.org/gmane.linux.power-management.general/31056
-> > [v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11710/
-> > [v2]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg465555.html
-> > [v3]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg466772.html
-> > 
-> > Changes from v3:
-> > 1. remove the patch "hwmon: (lm90) split set&show temp as common codes",
-> > and sent it as a separated one.
-> > 2. fix the bug of second read on STATUS register.
-> > 3. fix some code style issue according to Jean's comments.
-> > 
-> > Changes from v2:
-> > 1. update the defines for status bit, and go into a separate patch.
-> > 2. introduce the new lm90_is_tripped() for lm90_irq_thread and lm90_alert.
-> > 
-> > Changes from v1:
-> > 1. change the string "irq" to "IRQ"
-> > 2. add macro defines for the alarm status
-> > 3. consider the shared IRQ.
-> > 
-> > Changes from RFC:
-> > 1. change _show_temp() to read_temp(), _set_temp() to write_temp().
-> > 2. simply return value for the read_temp(), not use pointer.
-> > 3. use devm_request_threaded_irq() to request irq and set flag IRQF_ONESHOT.
-> > 
-> > Wei Ni (3):
-> >   hwmon: (lm90) Define status bits
-> >   hwmon: (lm90) add support to handle IRQ
-> >   hwmon: (lm90) use enums for the indexes of temp8 and temp11
-> > 
-> >  drivers/hwmon/lm90.c |  252 ++++++++++++++++++++++++++++++++------------------
-> >  1 file changed, 163 insertions(+), 89 deletions(-)
+Changes from v1:
+1. if get regulator failed, we should continue to run probe function,
+not return fail.
+2. call regulator_put() in error handler and remove function.
+3. add LM90 DT binding document.
+
+Wei Ni (2):
+  hwmon: (lm90) Add power control
+  Documentation: dt: hwmon: add OF document for LM90
+
+ Documentation/devicetree/bindings/hwmon/lm90.txt |   44 ++++++++++++++++++++++
+ drivers/hwmon/lm90.c                             |   25 ++++++++++++
+ 2 files changed, 69 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
+
+-- 
+1.7.9.5
