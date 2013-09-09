@@ -1,74 +1,66 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Alexandre Courbot <gnurou@gmail.com>
 Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
-Date: Mon, 9 Sep 2013 15:32:08 +0900
-Message-ID: <CAAVeFuKq=DVeG6BZ0jg_88+X_XroioY15C43wQA1mnvHVcjsLQ@mail.gmail.com>
+Date: Mon, 9 Sep 2013 15:38:28 +0900
+Message-ID: <CAAVeFuJF-cu9aPCruGPQk9WHV7VAGhGpU0bU6LToxP38YBnS_g@mail.gmail.com>
 References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
- <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <CACRpkdaphSqM1oOphC-t1UPmkxaEemC3R3aDfEXb79GWNNyNMA@mail.gmail.com>
+ <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <522A2D1B.3010508@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdaphSqM1oOphC-t1UPmkxaEemC3R3aDfEXb79GWNNyNMA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <522A2D1B.3010508@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, devicetree@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Sep 7, 2013 at 1:48 AM, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Thu, Sep 5, 2013 at 5:27 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
+On Sat, Sep 7, 2013 at 4:29 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/04/2013 09:27 PM, Alexandre Courbot wrote:
 >> Trusted Foundations is a TrustZone-based secure monitor for ARM that
 >> can be invoked  using a consistent SMC-based API on all supported
 >> platforms. This patch adds initial basic support for Trusted
 >> Foundations using the ARM firmware API. Current features are limited
 >> to the ability to boot secondary processors.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> I take it that this means that it is a set of standard routines
-> living in the secure world that can be called by way of this
-> API, correct? The commit message is written a bit like
-> everybody knows what this is about but I don't :-)
+>> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+> ...
+>> +void of_register_trusted_foundations(void)
+>> +{
+>> +     struct device_node *node;
+>> +     struct trusted_foundations_platform_data pdata;
+>> +     int err;
+>> +
+>> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+>> +
+>> +     if (!node)
+>> +             return;
+>
+> If you're going to revise this patch for the comment below, then I would
+> suggest removing the blank line before that if statement.
 
-It's actually written a bit like I don't really know what this is
-about, thanks for exposing my ignorance. :P
+Sure.
 
-> Some more background here would be nice, like where did this
-> thing come from, and are there other platforms in existance that
-> use trusted foundations or is it a Tegra-only thing? Does a
-> specification of this thing listing available services exist for
-> example?
+>
+>> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+>
+> Do we need to add the following here:
+>
+> #if !IS_ENABLED(CONFIG_OF)
+> static inline void register_trusted_foundations(...) {}
+> #endif
+>
+> So that there is a dummy no-op function for the non-DT-support case? I
+> guess Tegra always has CONFIG_OF enabled so that call from
+> mach-tegra/common.c in patch 2 will never be an issue, but perhaps it
+> might if anyone else uses this?
 
-There is unfortunately no public specification of this AFAIK. Client
-(kernel) side sources are available as Tegra downstream kernel
-releases, but that's about it.
-
-> How does it relate to the (arch-neutral) trusted execution
-> environment and such things that other vendors are pushing for?
-> Can the trusted foundations be used "underneath" such
-> frameworks for trusted applications, or is it a parallell thing
-> altogether?
-
-My understanding is that TF serves the same purpose for ARM only AFAICT.
-
-> I tried googling it, is this a relevant URL?
-> http://www.arm.com/community/partners/display_product/rw/ProductId/5393/
-
-Yes. TF is an essential feature to support in order to boot the kernel
-on some Tegra-based consumer devices (e.g. SHIELD). Basic things such
-as secondary CPU control must be performed through SMCs. It has many
-more features but for the moment I don't see a need to go beyond the
-very basic.
-
-The issue is that as you pointed out, public information is scarce and
-future direction uncertain. That's why this patchset limits itself to
-what is needed to get secondary CPUs running - the procedure is very
-simple and unlikely to change in the future. DT binding is also as
-concise as possible to allow malleability since we cannot predict how
-it will evolve in the future.
-
-I will try to explain better what TF is in the commit log - at least
-as far as I understand it myself.
+My expectation is that register_trusted_foundations() is called by the
+platform code once it has established (through whatever mean it likes)
+that Trusted Foundations is required. For platforms supporting DT,
+of_register_trusted_foundations() takes care of that. Platforms that
+don't support DT need another way to decide whether they *need* TF or
+not. Once a platform decided that it needs TF, its absence is not an
+option, and therefore I'd think that register_trusted_foundations()
+should hard-fail if support is not compiled in. Or maybe I missed your
+point?
 
 Alex.
