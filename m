@@ -1,70 +1,50 @@
-From: Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>
-Subject: Re: permission to move definition of struct rpmsg_channel_info
-Date: Mon, 9 Sep 2013 22:06:24 +0200
-Message-ID: <CAK=Wgbbxp5pfQm1mvCZ2phigXe_e2_J_Zkrof9tx2jggi8EMjQ@mail.gmail.com>
-References: <5220F099.1020002@nvidia.com> <CAK=WgbZ2JgtAonvdyeDZazYBGdKpPAieJtjzi7MM6nwqhVfs7g@mail.gmail.com>
- <20130909125745.GD22197@ulmo>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 00/11] tegrarcm: T124 and new command support
+Date: Mon, 9 Sep 2013 13:15:50 -0700
+Message-ID: <1378757761-20939-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130909125745.GD22197@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arjun Gopalan <agopalan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Brian Swetland <swetland-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 9, 2013 at 2:57 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> If I understand correctly, the way that the services should be announced
-> is via RSC_VDEV entries in the resource table?
+This patch series adds T124 support to tegrarcm, tested on laguna.  It
+also adds support for new commands for ripping a BCT from a live
+system, for passing in the miniloader from a file, and for passing in
+the odmdata on the command line.  Also fixed up some of the error
+handling so now USB commands will time out instead of hanging, and
+attempt to bring up nv3p even if RCM is unresponsive.
 
-Yes.
+Allen Martin (11):
+  tegrarcm: Change NVIDIA license to apply to all miniloader files
+  tegrarcm: Add support for RCM protocol version 40
+  tegrarcm: Add Tegra124 miniloader
+  tegrarcm: Add Tegra124 support
+  tegrarcm: Add timeout to USB xfers
+  tegrarcm: Assume nv3p server is running if RCM doesn't respond
+  tegrarcm: Clean up usage info
+  tegrarcm: Add rip support
+  tegrarcm: Add support for odmdata command
+  tegrarcm: Add command to pass miniloader in from file
+  tegrarcm: Bump version to 1.5
 
-> Looking at the remoteproc core and ELF loader, it seems like the way to
-> pass in the resource table is either via an extra ELF section or driver
-> specific. TI drivers seem to use ELF, but the STE modem driver seems to
-> employ some custom format.
->
-> From what I understand this resource table can also be processed by the
-> host to provide some of the resources such as carveout memory. So that
-> the normal way for this to work would be something like:
->
->         - load firmware image
->           - obtain pointer to resource table
->         - process resource table
->           - allocate resources
->           - update table
->         - upload firmware to remote processor
->
-> Upon which the remote processor probably needs to parse the resource
-> table to set itself up. Does that sound about right?
+ LICENSE                              |    4 +-
+ README                               |    2 +
+ configure.ac                         |    2 +-
+ src/Makefile.am                      |    1 +
+ src/main.c                           |  398 +-
+ src/miniloader/tegra124-miniloader.h | 8570 ++++++++++++++++++++++++++++++++++
+ src/nv3p.c                           |   26 +-
+ src/nv3p.h                           |   27 +
+ src/rcm.c                            |   74 +
+ src/rcm.h                            |   58 +-
+ src/tegrarcm.1.in                    |   21 +-
+ src/usb.c                            |   10 +-
+ src/usb.h                            |    1 +
+ 13 files changed, 9066 insertions(+), 128 deletions(-)
+ create mode 100644 src/miniloader/tegra124-miniloader.h
 
-Yeah, it generally does.
-
-> > The way we were planning to add static channels functionality (I
-> > should still have preliminary patches doing this somewhere but the
-> > entire work was put on hold since TI changed its focus) is by
-> > statically publishing them in the resource table, which is coupled
-> > with a specific remote image.
->
-> While I see that the format of all this is pretty well documented, are
-> there any standard tools that can be used to embed the resource table
-> into an ELF binary?
-
-I'm not aware of any.
-
-> I have a pretty good idea on how it could be done,
-> but I wonder if it might make sense to provide some kind of a standard
-> set of headers to make things easier so that not everyone has to
-> reinvent the wheel.
->
-> Looking at the remoteproc core, it seems that there's no direct way to
-> change the firmware running on a remoteproc at runtime.
-
-One way is to unload and load the driver, but you can also use the
-bind/unbind sysfs files of your driver (echo -n device-name >
-/sys/..../{un}bind).
-
-Does that help?
-
-Best,
-Ohad.
+-- 
+1.8.1.5
