@@ -1,108 +1,36 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Mon, 9 Sep 2013 21:39:10 +0100
-Message-ID: <20130909203910.GV29403@sirena.org.uk>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com>
- <1378722552-10357-2-git-send-email-wni@nvidia.com>
- <20130909111242.GW29403@sirena.org.uk>
- <522DB253.6000707@roeck-us.net>
- <20130909135022.GZ29403@sirena.org.uk>
- <20130909155043.GA18975@roeck-us.net>
- <20130909160237.GR29403@sirena.org.uk>
- <20130909161735.GC18975@roeck-us.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 04/11] tegrarcm: Add Tegra124 support
+Date: Mon, 09 Sep 2013 15:38:47 -0600
+Message-ID: <522E3FE7.8020503@wwwdotorg.org>
+References: <1378757761-20939-1-git-send-email-amartin@nvidia.com> <1378757761-20939-5-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MXE3caftPhBF8dmD"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20130909161735.GC18975-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+In-Reply-To: <1378757761-20939-5-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/09/2013 02:15 PM, Allen Martin wrote:
+> Add Tegra124 USB device id, miniloader, and chip SKU information.
 
---MXE3caftPhBF8dmD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> @@ -481,6 +491,11 @@ static void dump_platform_info(nv3p_platform_info_t *info)
+>  		case TEGRA114_CHIP_SKU_T114: chip_name = "t114"; break;
+>  		default: chip_name = "unknown"; break;
+>  		}
+> +	} else if (info->chip_id.id == 0x40) {
+> +		switch (info->sku) {
+> +		case TEGRA124_CHIP_SKU_T124: chip_name = "t124"; break;
+> +		default: chip_name = "unknown"; break;
+> +		}
+>  	} else {
+>  		chip_name = "unknown";
+>  	}
 
-On Mon, Sep 09, 2013 at 09:17:35AM -0700, Guenter Roeck wrote:
-> On Mon, Sep 09, 2013 at 05:02:37PM +0100, Mark Brown wrote:
-
-> > It does, though it gets complicated trying to use it for a case like
-> > this since you can't really tell if the regulator was powered on
-> > immediately before the device got probed by another device on the bus.
-
-> Why not ? Just keep a timestamp.
-
-The support is a callback on state changes; we could keep a timestamp
-but there's still going to be race conditions around bootloaders.  It's
-doable though.
-
-> > > On a higher level, I wonder if such functionality should be added in the i2c
-> > > subsystem and not in i2c client drivers. Has anyone thought about this ?
-
-> > I'm not sure what the subsystem would do for such delays?  It's fairly
-> > common for things that need this to also want to do things like
-> > manipulate GPIOs as part of the power on sequence so the applicability
-> > is relatively limited, plus it's not even I2C specific, the same applies
-> > to other buses so it ought to be a driver core thing.
-
-> Possibly. I just thought about i2c since it also takes care of basic
-> devicetree bindings. Something along the line of
-> 	if devicetree bindings for this device declare one or more
-> 	regulators, enable those regulators before calling the driver
-> 	probe function.
-
-That's definitely a driver core thing, not I2C - there's nothing
-specific to I2C in there at all, needing power is pretty generic.  I
-have considered this before, something along the lines of what we have
-for pinctrl, but unfortunately the generic case isn't quite generic
-enough to make it easy.  It'd need to be an explicit list of regulators
-(partly just to make it opt in and avoid breaking things) and you'd want
-to have a way of handling the different suspend/resume behaviour that
-devices want.  There's a few patterns there.
-
-It's definitely something I think about from time to time and it would
-be useful to factor things out, the issue is getting a good enough model
-of what's going on.
-
-> > There was some work on a generic helper for power on sequences but it
-> > stalled since it wasn't accepted for the original purpose (LCD panel
-> > power ons IIRC).
-
-> Too bad. I think it could be kept quite simple, though, by handling it
-> through the regulator subsystem as suggested above. A generic binding
-> for a per-regulator and per-device poweron delay should solve that
-> and possibly even make it transparent to the actual driver code.
-
-Lots of things have a GPIO for reset too, and some want clocks too.  For
-maximum usefulness this should be cross subsystem.  I suspect the reset
-controller API may be able to handle some of it.
-
-The regulator power on delays are already handled transparently, by the
-time regulator_enable() returns the ramp should be finished.
-
---MXE3caftPhBF8dmD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSLjHrAAoJELSic+t+oim9k/MP/jTamsn6zl52va+mJqjasS6c
-mREzOt84i+2eFFjJQGWM9LjKdcziRq/CuEAHLGwrWbFFbEhGim7NbpDVLkzJy+aS
-oh0Iof/L4j8rB04GXnMUo42KGVQEDP8zqBpX6HBoX3uib95hA0eA8PgFVVM65z2i
-KjBfRPp1TCisXQyJVuNgbZCECPFbuko7457cDYP93xlVQio5XnNcYdPKBPF5S1ms
-JwSeTrjISBiTMBovb7KphwVXbt9T7hYJKr3NGLiRjR+Ypsxjj6ZaoCKbd6XF6bco
-Bvbsm0LDoVG5foYTxOxQSprF4jMQsM1Ury5CDYrZh1Gn061Jgz/dlsS9jOfvHaJg
-KSN+fYm0k8rrg8E+nS9TV22qxladk96QjWGbHB3D7H45EuUqWWGVv4EohHT7e+U5
-hm6BJLNDNI7EV9eJJ4WS83OdYtd5PU3pGHc8hphA6nGt62WI38mzMEUicIiN0Pn0
-RQACww8/ALgRUFm+TJFZy49YfL6COtwxMrjFWl7qiuESWDeGDNE9rP1njzHkzHyJ
-yK5fpymSC3Ge61PxOKOKJIw2Li925uaR21uitduwulOPrOmt1Xg0eub5lZ5UA3g2
-1Ba8RbEWBMGSVF7lG/ukUYG5ZMWAMJumjH9DxZuX2HXu4E7TpxiBRQan4hnOgCIK
-rUE9ltokxIy2OnvJPPC0
-=C1Zh
------END PGP SIGNATURE-----
-
---MXE3caftPhBF8dmD--
+Do we really need to care about the SKU here? For chips other than
+Tegra20, can't we just switch on the chip ID and be done with it? The
+reason I ask is that in U-Boot, there are some SKU IDs that haven't been
+ported into tegrarcm, and I assume we should be keeping the two SKU ID
+lists in sync. It'd be simpler if we just made tegrarcm not care about SKU.
