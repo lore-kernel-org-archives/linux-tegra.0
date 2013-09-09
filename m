@@ -1,59 +1,78 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 0/3] Lm90 Enhancements
-Date: Mon, 9 Sep 2013 14:16:18 +0800
-Message-ID: <522D67B2.4030406@nvidia.com>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
+Date: Mon, 9 Sep 2013 15:15:31 +0900
+Message-ID: <CAAVeFu+MGGBfmm1jwtKGP_d3EjkLdf5B_E_5RT___PVh1e=8jw@mail.gmail.com>
+References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
+ <1378351680-14696-2-git-send-email-acourbot@nvidia.com> <5228CEDB.1090306@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375856306-14415-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5228CEDB.1090306-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Jean
-Do you have any more suggestions on this series?
+On Fri, Sep 6, 2013 at 3:35 AM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 09/04/2013 10:27 PM, Alexandre Courbot wrote:
+>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>> can be invoked  using a consistent SMC-based API on all supported
+>> platforms. This patch adds initial basic support for Trusted
+>> Foundations using the ARM firmware API. Current features are limited
+>> to the ability to boot secondary processors.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
+>>  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+>>  arch/arm/Kconfig                                   |  2 +
+>>  arch/arm/Makefile                                  |  1 +
+>>  arch/arm/firmware/Kconfig                          | 25 +++++++
+>>  arch/arm/firmware/Makefile                         |  1 +
+>>  arch/arm/firmware/trusted_foundations.c            | 82 ++++++++++++++++++++++
+>>  arch/arm/include/asm/trusted_foundations.h         | 53 ++++++++++++++
+>>  8 files changed, 182 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+>>  create mode 100644 arch/arm/firmware/Kconfig
+>>  create mode 100644 arch/arm/firmware/Makefile
+>>  create mode 100644 arch/arm/firmware/trusted_foundations.c
+>>  create mode 100644 arch/arm/include/asm/trusted_foundations.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+>> new file mode 100644
+>> index 0000000..3954bbd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+>> @@ -0,0 +1,17 @@
+>> +Trusted Foundations
+>> +
+>> +Boards that use the Trusted Foundations secure monitor can signal its
+>> +presence by declaring a node compatible with "tl,trusted-foundations"
+>> +under the root node.
+>> +
+>> +Required properties:
+>> +- compatible : "tl,trusted-foundations"
+>> +- version-major : major version number of Trusted Foundations firmware
+>> +- version-minor: minor version number of Trusted Foundations firmware
+>> +
+>> +Example:
+>> +     firmware {
+>> +             compatible = "tl,trusted-foundations";
+>> +             version-major = <2>;
+>> +             version-minor = <8>;
+>> +     };
+>
+> I'm wondering how we fit this in with PSCI bindings? Both are pieces of
+> firmware functionality and may co-exist. There's nothing incompatible
+> here, but there should be some commonality. Will future versions of
+> Trusted Foundations follow the SMC calling conventions doc? What about
+> armv8 support.
 
-Thanks.
-Wei.
+I don't have any information about the future of TF unfortunately,
+excepted that it should remain backward-compatible. What is this SMC
+calling convention doc your are talking about btw? Is there a standard
+calling convention defined by ARM?
 
-On 08/07/2013 02:18 PM, Wei Ni wrote:
-> This patch set enhance the lm90 driver,
-> it make the driver more readable and easier to use thermal framework.
-> 
-> This series is v4, previous version patches:
-> [RFC]: http://thread.gmane.org/gmane.linux.power-management.general/31056
-> [v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11710/
-> [v2]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg465555.html
-> [v3]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg466772.html
-> 
-> Changes from v3:
-> 1. remove the patch "hwmon: (lm90) split set&show temp as common codes",
-> and sent it as a separated one.
-> 2. fix the bug of second read on STATUS register.
-> 3. fix some code style issue according to Jean's comments.
-> 
-> Changes from v2:
-> 1. update the defines for status bit, and go into a separate patch.
-> 2. introduce the new lm90_is_tripped() for lm90_irq_thread and lm90_alert.
-> 
-> Changes from v1:
-> 1. change the string "irq" to "IRQ"
-> 2. add macro defines for the alarm status
-> 3. consider the shared IRQ.
-> 
-> Changes from RFC:
-> 1. change _show_temp() to read_temp(), _set_temp() to write_temp().
-> 2. simply return value for the read_temp(), not use pointer.
-> 3. use devm_request_threaded_irq() to request irq and set flag IRQF_ONESHOT.
-> 
-> Wei Ni (3):
->   hwmon: (lm90) Define status bits
->   hwmon: (lm90) add support to handle IRQ
->   hwmon: (lm90) use enums for the indexes of temp8 and temp11
-> 
->  drivers/hwmon/lm90.c |  252 ++++++++++++++++++++++++++++++++------------------
->  1 file changed, 163 insertions(+), 89 deletions(-)
-> 
+Alex.
