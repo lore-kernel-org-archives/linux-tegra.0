@@ -1,74 +1,69 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] crypto: tegra: use kernel entropy instead of ad-hoc
-Date: Mon,  9 Sep 2013 09:35:54 +0200
-Message-ID: <1378712154-30602-1-git-send-email-linus.walleij@linaro.org>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v4 0/3] Lm90 Enhancements
+Date: Mon, 9 Sep 2013 09:42:45 +0200
+Message-ID: <20130909094245.4661d9cb@endymion.delvare>
+References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
+	<522D67B2.4030406@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <522D67B2.4030406-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The way I read the Tegra AES RNG is that it has a homebrew
-algorithm for initializing the 128bit RNG using timespec and
-the unique chip ID. This looks like reinventing the (square)
-wheel, instead just grab 128bits from the kernel entropy pool
-where the time and (after another patch) chip unique ID is
-already mixed in.
+Hi Wei,
 
-Incidentally this also gets rid of a rather ugly
-cross-dependence on the machine using an extern declaration.
+I am sorry, I see there have been many discussions about the lm90
+driver while I was on vacation and these are threads I did not have the
+time to catch up with yet. I'll read it all as soon as possible by my
+current schedule is tight so please be patient!
 
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
-Only compile-tested as I don't have this platform.
----
- drivers/crypto/tegra-aes.c | 15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+Jean
 
-diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
-index 2d58da9..7f42bfe 100644
---- a/drivers/crypto/tegra-aes.c
-+++ b/drivers/crypto/tegra-aes.c
-@@ -199,8 +199,6 @@ static void aes_workqueue_handler(struct work_struct *work);
- static DECLARE_WORK(aes_work, aes_workqueue_handler);
- static struct workqueue_struct *aes_wq;
- 
--extern unsigned long long tegra_chip_uid(void);
--
- static inline u32 aes_readl(struct tegra_aes_dev *dd, u32 offset)
- {
- 	return readl(dd->io_base + offset);
-@@ -713,9 +711,8 @@ static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
- 	struct tegra_aes_dev *dd = aes_dev;
- 	struct tegra_aes_ctx *ctx = &rng_ctx;
- 	struct tegra_aes_slot *key_slot;
--	struct timespec ts;
- 	int ret = 0;
--	u64 nsec, tmp[2];
-+	u8 tmp[16]; /* 16 bytes = 128 bits of entropy */
- 	u8 *dt;
- 
- 	if (!ctx || !dd) {
-@@ -778,14 +775,8 @@ static int tegra_aes_rng_reset(struct crypto_rng *tfm, u8 *seed,
- 	if (dd->ivlen >= (2 * DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128)) {
- 		dt = dd->iv + DEFAULT_RNG_BLK_SZ + AES_KEYSIZE_128;
- 	} else {
--		getnstimeofday(&ts);
--		nsec = timespec_to_ns(&ts);
--		do_div(nsec, 1000);
--		nsec ^= dd->ctr << 56;
--		dd->ctr++;
--		tmp[0] = nsec;
--		tmp[1] = tegra_chip_uid();
--		dt = (u8 *)tmp;
-+		get_random_bytes(tmp, sizeof(tmp));
-+		dt = tmp;
- 	}
- 	memcpy(dd->dt, dt, DEFAULT_RNG_BLK_SZ);
- 
--- 
-1.8.3.1
+On Mon, 9 Sep 2013 14:16:18 +0800, Wei Ni wrote:
+> Hi, Jean
+> Do you have any more suggestions on this series?
+> 
+> Thanks.
+> Wei.
+> 
+> On 08/07/2013 02:18 PM, Wei Ni wrote:
+> > This patch set enhance the lm90 driver,
+> > it make the driver more readable and easier to use thermal framework.
+> > 
+> > This series is v4, previous version patches:
+> > [RFC]: http://thread.gmane.org/gmane.linux.power-management.general/31056
+> > [v1]: http://thread.gmane.org/gmane.linux.ports.tegra/11710/
+> > [v2]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg465555.html
+> > [v3]: http://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg466772.html
+> > 
+> > Changes from v3:
+> > 1. remove the patch "hwmon: (lm90) split set&show temp as common codes",
+> > and sent it as a separated one.
+> > 2. fix the bug of second read on STATUS register.
+> > 3. fix some code style issue according to Jean's comments.
+> > 
+> > Changes from v2:
+> > 1. update the defines for status bit, and go into a separate patch.
+> > 2. introduce the new lm90_is_tripped() for lm90_irq_thread and lm90_alert.
+> > 
+> > Changes from v1:
+> > 1. change the string "irq" to "IRQ"
+> > 2. add macro defines for the alarm status
+> > 3. consider the shared IRQ.
+> > 
+> > Changes from RFC:
+> > 1. change _show_temp() to read_temp(), _set_temp() to write_temp().
+> > 2. simply return value for the read_temp(), not use pointer.
+> > 3. use devm_request_threaded_irq() to request irq and set flag IRQF_ONESHOT.
+> > 
+> > Wei Ni (3):
+> >   hwmon: (lm90) Define status bits
+> >   hwmon: (lm90) add support to handle IRQ
+> >   hwmon: (lm90) use enums for the indexes of temp8 and temp11
+> > 
+> >  drivers/hwmon/lm90.c |  252 ++++++++++++++++++++++++++++++++------------------
+> >  1 file changed, 163 insertions(+), 89 deletions(-)
