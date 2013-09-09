@@ -1,30 +1,85 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] crypto: tegra: use kernel entropy instead of ad-hoc
-Date: Mon, 09 Sep 2013 10:02:04 -0600
-Message-ID: <522DF0FC.5080200@wwwdotorg.org>
-References: <1378712154-30602-1-git-send-email-linus.walleij@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
+Date: Mon, 9 Sep 2013 17:02:37 +0100
+Message-ID: <20130909160237.GR29403@sirena.org.uk>
+References: <1378722552-10357-1-git-send-email-wni@nvidia.com>
+ <1378722552-10357-2-git-send-email-wni@nvidia.com>
+ <20130909111242.GW29403@sirena.org.uk>
+ <522DB253.6000707@roeck-us.net>
+ <20130909135022.GZ29403@sirena.org.uk>
+ <20130909155043.GA18975@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1378712154-30602-1-git-send-email-linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Varun Wadekar <vwadekar-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Neil Horman <nhorman-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tvVWxv2WwUczo9bQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130909155043.GA18975@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wei Ni <wni@nvidia.com>, khali@linux-fr.org, swarren@wwwdotorg.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/09/2013 01:35 AM, Linus Walleij wrote:
-> The way I read the Tegra AES RNG is that it has a homebrew
-> algorithm for initializing the 128bit RNG using timespec and
-> the unique chip ID. This looks like reinventing the (square)
-> wheel, instead just grab 128bits from the kernel entropy pool
-> where the time and (after another patch) chip unique ID is
-> already mixed in.
-> 
-> Incidentally this also gets rid of a rather ugly
-> cross-dependence on the machine using an extern declaration.
 
-This sounds reasonable to me, although I know little about the driver.
-Varun, can you please comment?
+--tvVWxv2WwUczo9bQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Sep 09, 2013 at 08:50:43AM -0700, Guenter Roeck wrote:
+> On Mon, Sep 09, 2013 at 02:50:22PM +0100, Mark Brown wrote:
+
+> > And indeed it does this (well, it does whatever the driver says in terms
+> > of delay).  However it is possible that the lm90 needs this time for
+> > itself - if it's doing some sort of initialisation or callibration
+> > sequence then that'll happen after the supplies come up.  25ms did seem
+> > rather long, especially for such simple devices, but it's not beyond the
+> > bounds of possibility.
+
+> Even then it would be unreasonable to enforce such a delay for every instance
+> of this driver, even if the regulator is a dummy one and/or has been enabled
+> already. Many if not almost all users of the driver work just fine as-is,
+> without additional enforced delay (and, for that matter, without regulator ;).
+
+> If there is a delay, it would have to be optional: Only wait if the regulator
+> was really turned on by the call and not already active. I don't know if the
+> regulator subsystem has this capability; if not, maybe it should.
+
+It does, though it gets complicated trying to use it for a case like
+this since you can't really tell if the regulator was powered on
+immediately before the device got probed by another device on the bus.
+
+> On a higher level, I wonder if such functionality should be added in the i2c
+> subsystem and not in i2c client drivers. Has anyone thought about this ?
+
+I'm not sure what the subsystem would do for such delays?  It's fairly
+common for things that need this to also want to do things like
+manipulate GPIOs as part of the power on sequence so the applicability
+is relatively limited, plus it's not even I2C specific, the same applies
+to other buses so it ought to be a driver core thing.
+
+There was some work on a generic helper for power on sequences but it
+stalled since it wasn't accepted for the original purpose (LCD panel
+power ons IIRC).
+
+--tvVWxv2WwUczo9bQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSLfEZAAoJELSic+t+oim9YzcP/2Xsw4IXiihoOInzmZU56HSW
+E1bc1Yn4Ix00V1PEJBXxNJ9WtGOBoUFjQS58vIYe3wXNuW4eGQV9ltCA7YffnSLL
+YpW4S2OQlKNTrRl+XKixHA7x4FJPRgVBeokR0R7eIzfzPXuaUiyzPsbiQll956oa
+NPKlo3P1iadahpzXhlxDfu7CNX3p6Jfkxe84XRQtafb2XT4EnSUyKWHDmgTLHHEg
+BV/0f5EIHHlLo5QI1bwy3EJeX5soJmb5SU2Xq2Ocrf+ea+McOMCPE8xp/HThILTx
+ZgBQC0i+vZLg029/Z6PayxZGdTpRnFqteyOQSnDD75NMKNGt8qEkg9dQMPKlG0OW
+ZIXLzzIYiVzbHClyKm+RlnnAnIC3FbWVqmhf4XNd6xo1+4wSNeEOb2D5y12dEV0d
+SSmtbnOWxEyHFW3jmSu1daRhr+eDscDKS48bgYFTOWQmxfs95dM5cGAGxq+pB0d5
+Za4BMsVxf7rH4oMWqhK90bie+ae9mApTMaAatToQLZx4EyXPRXnd5bXQftVi4eiR
+JMUsSDShk3LnKZHi1KfWj5eeqe2iKVElJnwX5lcoX2PIuf8ZLvzb+k1am0wj73Iw
+6aLgz73fSYvtu0PxgCYdSXmwTB/IEedA4xVktrVVx4wtr8l927mhWmEvlT0mY8fR
+rjArakslzbEmL6a4Qz/w
+=H60y
+-----END PGP SIGNATURE-----
+
+--tvVWxv2WwUczo9bQ--
