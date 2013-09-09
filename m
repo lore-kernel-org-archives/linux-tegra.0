@@ -1,79 +1,70 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Mon, 9 Sep 2013 09:17:35 -0700
-Message-ID: <20130909161735.GC18975@roeck-us.net>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com>
- <1378722552-10357-2-git-send-email-wni@nvidia.com>
- <20130909111242.GW29403@sirena.org.uk>
- <522DB253.6000707@roeck-us.net>
- <20130909135022.GZ29403@sirena.org.uk>
- <20130909155043.GA18975@roeck-us.net>
- <20130909160237.GR29403@sirena.org.uk>
+From: Ohad Ben-Cohen <ohad-Ix1uc/W3ht7QT0dZR+AlfA@public.gmane.org>
+Subject: Re: permission to move definition of struct rpmsg_channel_info
+Date: Mon, 9 Sep 2013 22:06:24 +0200
+Message-ID: <CAK=Wgbbxp5pfQm1mvCZ2phigXe_e2_J_Zkrof9tx2jggi8EMjQ@mail.gmail.com>
+References: <5220F099.1020002@nvidia.com> <CAK=WgbZ2JgtAonvdyeDZazYBGdKpPAieJtjzi7MM6nwqhVfs7g@mail.gmail.com>
+ <20130909125745.GD22197@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130909160237.GR29403@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Wei Ni <wni@nvidia.com>, khali@linux-fr.org, swarren@wwwdotorg.org, lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130909125745.GD22197@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Arjun Gopalan <agopalan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Brian Swetland <swetland-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 09, 2013 at 05:02:37PM +0100, Mark Brown wrote:
-> On Mon, Sep 09, 2013 at 08:50:43AM -0700, Guenter Roeck wrote:
-> > On Mon, Sep 09, 2013 at 02:50:22PM +0100, Mark Brown wrote:
-> 
-> > > And indeed it does this (well, it does whatever the driver says in terms
-> > > of delay).  However it is possible that the lm90 needs this time for
-> > > itself - if it's doing some sort of initialisation or callibration
-> > > sequence then that'll happen after the supplies come up.  25ms did seem
-> > > rather long, especially for such simple devices, but it's not beyond the
-> > > bounds of possibility.
-> 
-> > Even then it would be unreasonable to enforce such a delay for every instance
-> > of this driver, even if the regulator is a dummy one and/or has been enabled
-> > already. Many if not almost all users of the driver work just fine as-is,
-> > without additional enforced delay (and, for that matter, without regulator ;).
-> 
-> > If there is a delay, it would have to be optional: Only wait if the regulator
-> > was really turned on by the call and not already active. I don't know if the
-> > regulator subsystem has this capability; if not, maybe it should.
-> 
-> It does, though it gets complicated trying to use it for a case like
-> this since you can't really tell if the regulator was powered on
-> immediately before the device got probed by another device on the bus.
-> 
-Why not ? Just keep a timestamp.
+On Mon, Sep 9, 2013 at 2:57 PM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> If I understand correctly, the way that the services should be announced
+> is via RSC_VDEV entries in the resource table?
 
-> > On a higher level, I wonder if such functionality should be added in the i2c
-> > subsystem and not in i2c client drivers. Has anyone thought about this ?
-> 
-> I'm not sure what the subsystem would do for such delays?  It's fairly
-> common for things that need this to also want to do things like
-> manipulate GPIOs as part of the power on sequence so the applicability
-> is relatively limited, plus it's not even I2C specific, the same applies
-> to other buses so it ought to be a driver core thing.
-> 
-Possibly. I just thought about i2c since it also takes care of basic
-devicetree bindings. Something along the line of
-	if devicetree bindings for this device declare one or more
-	regulators, enable those regulators before calling the driver
-	probe function.
+Yes.
 
-That was not intended to solve the delay problem, though. The delay problem
-seems to be more of a generic regulator problem and, as I suggested, should
-be solved in the regulator subsystem.
-	if the regulator is enabled and the device specifies a poweron delay,
-	wait for the specified amount of time after (and only after) enabling
-	the regulator.
+> Looking at the remoteproc core and ELF loader, it seems like the way to
+> pass in the resource table is either via an extra ELF section or driver
+> specific. TI drivers seem to use ELF, but the STE modem driver seems to
+> employ some custom format.
+>
+> From what I understand this resource table can also be processed by the
+> host to provide some of the resources such as carveout memory. So that
+> the normal way for this to work would be something like:
+>
+>         - load firmware image
+>           - obtain pointer to resource table
+>         - process resource table
+>           - allocate resources
+>           - update table
+>         - upload firmware to remote processor
+>
+> Upon which the remote processor probably needs to parse the resource
+> table to set itself up. Does that sound about right?
 
-> There was some work on a generic helper for power on sequences but it
-> stalled since it wasn't accepted for the original purpose (LCD panel
-> power ons IIRC).
+Yeah, it generally does.
 
-Too bad. I think it could be kept quite simple, though, by handling it
-through the regulator subsystem as suggested above. A generic binding
-for a per-regulator and per-device poweron delay should solve that
-and possibly even make it transparent to the actual driver code.
+> > The way we were planning to add static channels functionality (I
+> > should still have preliminary patches doing this somewhere but the
+> > entire work was put on hold since TI changed its focus) is by
+> > statically publishing them in the resource table, which is coupled
+> > with a specific remote image.
+>
+> While I see that the format of all this is pretty well documented, are
+> there any standard tools that can be used to embed the resource table
+> into an ELF binary?
 
-Guenter
+I'm not aware of any.
+
+> I have a pretty good idea on how it could be done,
+> but I wonder if it might make sense to provide some kind of a standard
+> set of headers to make things easier so that not everyone has to
+> reinvent the wheel.
+>
+> Looking at the remoteproc core, it seems that there's no direct way to
+> change the firmware running on a remoteproc at runtime.
+
+One way is to unload and load the driver, but you can also use the
+bind/unbind sysfs files of your driver (echo -n device-name >
+/sys/..../{un}bind).
+
+Does that help?
+
+Best,
+Ohad.
