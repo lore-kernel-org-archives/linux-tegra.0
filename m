@@ -1,53 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Tue, 10 Sep 2013 09:07:43 -0600
-Message-ID: <522F35BF.6070909@wwwdotorg.org>
-References: <1378722552-10357-2-git-send-email-wni@nvidia.com> <20130909111242.GW29403@sirena.org.uk> <522DB253.6000707@roeck-us.net> <20130909135022.GZ29403@sirena.org.uk> <20130909155043.GA18975@roeck-us.net> <522E9059.3070305@nvidia.com> <522E93D6.2010304@roeck-us.net> <522E94AE.7000804@wwwdotorg.org> <522E97CE.4070300@roeck-us.net> <522E9C84.9070405@wwwdotorg.org> <20130910100939.GW29403@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] pinctrl: tegra114: Remove MODULE_ALIAS
+Date: Tue, 10 Sep 2013 18:30:59 +0200
+Message-ID: <1378830659-22072-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130910100939.GW29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/10/2013 04:09 AM, Mark Brown wrote:
-> On Mon, Sep 09, 2013 at 10:13:56PM -0600, Stephen Warren wrote:
->> On 09/09/2013 09:53 PM, Guenter Roeck wrote:
-> 
->>> Earlier comments suggest that this is not the intended use case
->>> for regulator_get_optional().
-> 
-> That's right.
-> 
->> Isn't the issue only whether the optional aspect of the regulator
->> is implemented by:
-> 
->> a) regulator_get_optional() returning failure, then the driver
->> having to check for that and either using or not-using the
->> regulator.
-> 
->> b) regulator_get_optional() returning a dummy regulator
->> automatically when none is specified in DT or the regulator
->> lookup table, and hence the driver can always call
->> regulator_enable/disable on the returned value.
-> 
-> No.  There are a couple of issues here.  One is that we don't want
-> to litter all drivers with conditional code to check if they
-> actually got the regulator and so on, that's just pointless make
-> work on the part of consumers.
+The driver cannot be built as a module, so having a MODULE_ALIAS() isn't
+useful.
 
-So that's exactly the difference between (a) and (b) above.
+While at it, fix a small typo in the file header comment and make the
+module description string consistent with those for earlier Tegra SoCs.
 
-> The other is that just ignoring errors is generally terrible 
-> practice which we don't want to encourage - ignoring the specific
-> case where nothing is provided and the system has control of that
-> is one thing but just ignoring any error is another.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra114.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Yes, obviously the code somewhere needs to distinguish between
-missing-so-use-a-dummy, and specified-but-in-a-broken-way. Doesn't
-regulator_get_optional() already distinguish those two cases? Perhaps
-that's the enhancement to regulator_get_optional() that you were
-requesting.
+diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
+index 622c485..93c9e38 100644
+--- a/drivers/pinctrl/pinctrl-tegra114.c
++++ b/drivers/pinctrl/pinctrl-tegra114.c
+@@ -3,7 +3,7 @@
+  *
+  * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
+  *
+- * Arthur:  Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ * Author:  Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+  *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+@@ -2763,7 +2763,6 @@ static struct platform_driver tegra114_pinctrl_driver = {
+ };
+ module_platform_driver(tegra114_pinctrl_driver);
+ 
+-MODULE_ALIAS("platform:tegra114-pinctrl");
+ MODULE_AUTHOR("Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
+-MODULE_DESCRIPTION("NVIDIA Tegra114 pincontrol driver");
++MODULE_DESCRIPTION("NVIDIA Tegra114 pinctrl driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+1.8.4
