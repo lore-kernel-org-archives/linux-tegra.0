@@ -1,78 +1,47 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] Documentation: dt: hwmon: add OF document for
- LM90
-Date: Tue, 10 Sep 2013 12:36:31 +0800
-Message-ID: <522EA1CF.4070605@nvidia.com>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com> <1378722552-10357-3-git-send-email-wni@nvidia.com> <CALkWK0nqgF6yn4QRe2tTD-Qd+5GLtH-ifCesayk-+uxkWMx-5w@mail.gmail.com> <522EA177.6050608@nvidia.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
+Date: Mon, 09 Sep 2013 21:44:24 -0700
+Message-ID: <522EA3A8.7040508@roeck-us.net>
+References: <1378722552-10357-1-git-send-email-wni@nvidia.com> <1378722552-10357-2-git-send-email-wni@nvidia.com> <20130909111242.GW29403@sirena.org.uk> <522DB253.6000707@roeck-us.net> <20130909135022.GZ29403@sirena.org.uk> <20130909155043.GA18975@roeck-us.net> <522E9059.3070305@nvidia.com> <522E93D6.2010304@roeck-us.net> <522E94AE.7000804@wwwdotorg.org> <522E97CE.4070300@roeck-us.net> <522E9C84.9070405@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <522EA177.6050608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <522E9C84.9070405-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ramkumar Ramachandra <artagnon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/10/2013 12:35 PM, Wei Ni wrote:
-> On 09/09/2013 06:57 PM, Ramkumar Ramachandra wrote:
->> Wei Ni wrote:
->>> diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt b/Documentation/devicetree/bindings/hwmon/lm90.txt
->>> new file mode 100644
->>> index 0000000..5570875
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/hwmon/lm90.txt
+On 09/09/2013 09:13 PM, Stephen Warren wrote:
+> On 09/09/2013 09:53 PM, Guenter Roeck wrote:
+>> On 09/09/2013 08:40 PM, Stephen Warren wrote:
+>>> On 09/09/2013 09:36 PM, Guenter Roeck wrote:
+> ...
+>>>> My understanding is that by adding regulator support you essentially
+>>>> committed to adding regulators (if necessary dummy ones) for this driver
+>>>> to all those platforms. This is quite similar to other drivers in the
+>>>> same situation. Once you start along that route, you'll have to go it
+>>>> all the way.
+>>>
+>>> By using regulator_get_optional(), the regulator should be optional,
+>>> hence you only have to add it to platforms that need it.
+>>>
 >>
->> While at it, please update and rename ads1015.txt.
-> 
-> This series is for lm90 compatible devices, it seems ads1015 is not
-> register-compatible with lm90.
-> 
->>
->>> @@ -0,0 +1,44 @@
->>> +* LM90 series thermometer.
->>> +
->>> +Required node properties:
->>> +- compatible: manufacture and chip name, one of
->>> +               "<manufacture>,adm1032"
->>> +               "<manufacture>,adt7461"
->>> +               "<manufacture>,adt7461a"
->>> +               "<manufacture>,g781"
->>> +               "<manufacture>,lm90"
->>> +               "<manufacture>,lm86"
->>> +               "<manufacture>,lm89"
->>> +               "<manufacture>,lm99"
->>
->> More versions of this of different ages are required.
-> 
-> In here, the chip names, such as "lm99", come from lm90.c id_table, the
-> i2c subsystem want to use it to load driver, so we can add any other names.
+>> Earlier comments suggest that this is not the intended use case for
+>> regulator_get_optional().
+>
+> Isn't the issue only whether the optional aspect of the regulator is
+> implemented by:
+>
+> a) regulator_get_optional() returning failure, then the driver having to
+> check for that and either using or not-using the regulator.
+>
+> b) regulator_get_optional() returning a dummy regulator automatically
+> when none is specified in DT or the regulator lookup table, and hence
+> the driver can always call regulator_enable/disable on the returned value.
+>
 
-Sorry, it's typo, it should be "can't add any other names".
+I don't know. The regulator folks would have to answer that.
 
-> 
->>
->>> +               "<manufacture>,max6646"
->>> +               "<manufacture>,max6647"
->>> +               "<manufacture>,max6649"
->>> +               "<manufacture>,max6657"
->>> +               "<manufacture>,max6658"
->>> +               "<manufacture>,max6659"
->>> +               "<manufacture>,max6680"
->>> +               "<manufacture>,max6681"
->>> +               "<manufacture>,max6695"
->>> +               "<manufacture>,max6696"
->>
->> SSDNow devices are required.
-> What's the SSDNow device? It seems the lm90.c doesn't support it.
-> 
-> Thanks.
-> Wei.
-> 
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Guenter
