@@ -1,65 +1,61 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Tue, 10 Sep 2013 13:11:57 +0100
-Message-ID: <20130910121157.GJ29403@sirena.org.uk>
-References: <20130909135022.GZ29403@sirena.org.uk>
- <20130909155043.GA18975@roeck-us.net>
- <20130909160237.GR29403@sirena.org.uk>
- <20130909161735.GC18975@roeck-us.net>
- <20130909203910.GV29403@sirena.org.uk>
- <522E9A85.9050803@nvidia.com>
- <522EA51C.90706@roeck-us.net>
- <522EB0AF.9030708@nvidia.com>
- <20130910101359.GX29403@sirena.org.uk>
- <522F02A4.7060702@nvidia.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
+Date: Tue, 10 Sep 2013 14:04:31 +0100
+Message-ID: <20130910130431.GE27966@mudshark.cambridge.arm.com>
+References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
+ <1378351680-14696-2-git-send-email-acourbot@nvidia.com>
+ <5228CEDB.1090306@gmail.com>
+ <CAAVeFu+MGGBfmm1jwtKGP_d3EjkLdf5B_E_5RT___PVh1e=8jw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wvmAFhn+Ugdou746"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <522F02A4.7060702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAAVeFu+MGGBfmm1jwtKGP_d3EjkLdf5B_E_5RT___PVh1e=8jw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi guys,
 
---wvmAFhn+Ugdou746
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Sep 09, 2013 at 07:15:31AM +0100, Alexandre Courbot wrote:
+> On Fri, Sep 6, 2013 at 3:35 AM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > On 09/04/2013 10:27 PM, Alexandre Courbot wrote:
+> >> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> >> can be invoked  using a consistent SMC-based API on all supported
+> >> platforms. This patch adds initial basic support for Trusted
+> >> Foundations using the ARM firmware API. Current features are limited
+> >> to the ability to boot secondary processors.
 
-On Tue, Sep 10, 2013 at 07:29:40PM +0800, Wei Ni wrote:
+[...]
 
-> On my platform, it use palmas-regulator.c, ldo6 for this lm90 power
-> rail. I checked this driver, it will handle ramp_delay except LDOx.
-> Since I'm not familiar with this palmas device and driver, so do you
-> mean I can set regulator-ramp-delay property in the DT for ldo6, but I
-> really don't know what value should I set :(
+> >> +Example:
+> >> +     firmware {
+> >> +             compatible = "tl,trusted-foundations";
+> >> +             version-major = <2>;
+> >> +             version-minor = <8>;
+> >> +     };
+> >
+> > I'm wondering how we fit this in with PSCI bindings? Both are pieces of
+> > firmware functionality and may co-exist. There's nothing incompatible
+> > here, but there should be some commonality. Will future versions of
+> > Trusted Foundations follow the SMC calling conventions doc? What about
+> > armv8 support.
+> 
+> I don't have any information about the future of TF unfortunately,
+> excepted that it should remain backward-compatible. What is this SMC
+> calling convention doc your are talking about btw? Is there a standard
+> calling convention defined by ARM?
 
-Laxman just submitted a patch adding the ramp delay information which I
-applied.  It seems like this is just a hack for your board and can
-therefore be removed?
+SMC calling convention:
 
---wvmAFhn+Ugdou746
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+https://silver.arm.com/download/download.tm?pv=1435186
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+PSCI:
 
-iQIcBAEBAgAGBQJSLwyKAAoJELSic+t+oim9EJ0QAJABKUsNKO5ZsmnJsLVUSgQA
-gwqfjeFiV2Zt/1GQmIpqmYeEBnkHVdXzDkSrP26dlvKymzDEmxs3Fak2qZ1UeI3/
-WpHpK/1kOgnVPlyL514Tx5PJAmM9mmHh3/Ry1HEeMsq6fVpydTj0UrS5z3xnVe1A
-kPryp2w7zNaPnVIanyQleWhDZ99Dzqo4E9ZbF0tsogIXVGRbsQXR8P7WgXITCCh1
-yW5fvFFypiXXMFoV/Ur9jORR7cawnvubiQDjgpSCE/PVEK9hEAUFN4/n+FJD4ej7
-yiDrBWvb8XNtSeAyTHYhBRXMgISeNcWyrViNkpli2NjDz0c1TOvXEK1LmWhX3c9M
-P6NgYaqv3TqoWwNQfBouuAMeXVSjlhgSA6rPLsFGWr9Dz29t1jdD0cm5FIJrXl7k
-SeK1TCL19U1HnAzbuO8eegKDjdQWxYecFULX10G46rqa5lVRwq9V6TkYaPdytHsI
-IxkuuE60ILJD95GlPTHGdh8rhv2LrKefcSCapVfpyNIpVU7uI87yTHSS50xT4Lc6
-w6HHA9HOZEIWsit6pUeh0cB9ydY5SZG7Y2AGP0GaloKOqdAuulsyO6KByEglz9m2
-MkHjxOBPHJ9tlaWFMC/heLBGAaNfyBoNwm4ct1kLACTq1EXIa0Kd0lNG9msxYyia
-+wEJ6nOxHvPPcAaso47k
-=RC+n
------END PGP SIGNATURE-----
+https://silver.arm.com/download/download.tm?pv=1421585
 
---wvmAFhn+Ugdou746--
+Although access to these documents requires you to go through a
+click-through license.
+
+Will
