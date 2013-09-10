@@ -1,63 +1,73 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Tue, 10 Sep 2013 19:52:35 +0100
-Message-ID: <20130910185235.GF29403@sirena.org.uk>
-References: <522E93D6.2010304@roeck-us.net>
- <522E94AE.7000804@wwwdotorg.org>
- <522E97CE.4070300@roeck-us.net>
- <522E9C84.9070405@wwwdotorg.org>
- <20130910100939.GW29403@sirena.org.uk>
- <522F35BF.6070909@wwwdotorg.org>
- <20130910170438.GS29403@sirena.org.uk>
- <522F5A65.8040907@wwwdotorg.org>
- <20130910181837.GD29403@sirena.org.uk>
- <522F66FB.2000608@wwwdotorg.org>
+From: Arjun Gopalan <agopalan@nvidia.com>
+Subject: Re: permission to move definition of struct rpmsg_channel_info
+Date: Tue, 10 Sep 2013 12:18:37 -0700
+Message-ID: <522F708D.3060903@nvidia.com>
+References: <5220F099.1020002@nvidia.com> <CAK=WgbZ2JgtAonvdyeDZazYBGdKpPAieJtjzi7MM6nwqhVfs7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hJ64AiXiG3hy1bNf"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <522F66FB.2000608@wwwdotorg.org>
+In-Reply-To: <CAK=WgbZ2JgtAonvdyeDZazYBGdKpPAieJtjzi7MM6nwqhVfs7g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Wei Ni <wni@nvidia.com>, "khali@linux-fr.org" <khali@linux-fr.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Brian Swetland <swetland@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Paul Walmsley <pwalmsley@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/08/2013 05:27 AM, Ohad Ben-Cohen wrote:
+> Hi Arjun,
+>
+> On Fri, Aug 30, 2013 at 9:20 PM, Arjun Gopalan <agopalan@nvidia.com> wrote:
+>> Hi Ohad/Brian,
+>>
+>> I have been working on rpmsg and I need to be able to create static rpmsg channels. Channel information needs to be specified by other drivers and for this, the drivers need access to struct rpmsg_channel_info.
+> I'm not convinced how useful it is for other Linux drivers to create
+> static rpmsg channels?
+>
+> Usually these channels reflect the existence of services running on
+> the remote processor, and their creation (or lack thereof) should be
+> specified in the remote image. This way an rpmsg channel is published
+> iff there is a matching remote service.
+>
+> The way we were planning to add static channels functionality (I
+> should still have preliminary patches doing this somewhere but the
+> entire work was put on hold since TI changed its focus) is by
+> statically publishing them in the resource table, which is coupled
+> with a specific remote image.
+>
+> Best,
+> Ohad.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+Hi Ohad,
 
---hJ64AiXiG3hy1bNf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for your response. Implementing a name service facility in the 
+remote processor may be an option for us too. But, it would be nice to 
+be able to create static rpmsg channels.
 
-On Tue, Sep 10, 2013 at 12:37:47PM -0600, Stephen Warren wrote:
+You mentioned that your patches publish rpmsg channels in the resource 
+table which is coupled to the firmware image. In our case, we may not 
+have a dynamic firmware that is loaded. In other words, we may not be 
+using the Linux firmware loading mechanism at all. In that case, how do 
+you think your patches have to be modified ?
 
-> OK, so for the DT binding we should make vcc-supply a required
-> property, yet the driver will still work OK if that property just
-> happens to be missing (or e.g. when instantiated from a board file,
-> and there's no regulator).
+Would we probably need static resource tables ?
 
-Yup.  That way we've got both the binding and code trying to make things
-work, hopefully that'll maximise robustness.
+On similar lines, the remoteproc core also mandates a valid firmware for 
+every remote processor, which again won't work for our case. I have a 
+patch to enable firmware-less remote processors but it is not in perfect 
+shape yet because I haven't integrated virtio and remoteproc as is done 
+in drivers/remoteproc/remoteproc_virtio. This would again possibly 
+require something like static resource tables.
 
---hJ64AiXiG3hy1bNf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Instead, currently, I have a separate driver that overlaps with some of 
+the functionalities offered by drivers/remoteproc/remoteproc_virtio.c.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Please let me know what your thoughts are on this.
+Thanks.
 
-iQIcBAEBAgAGBQJSL2pwAAoJELSic+t+oim9q5kP/RXrSlKvyL4QavWVPwUgeaOq
-oMGisH4i71kRMbqpKFHAiy/4N3B/qFxx+o/EDyYQqc41EUxsaN9eI9VIfZwHFjou
-XlLiY9nEDJ+NkpIVSZbWu+yhnV+LPxbC4xGsZNYgxsgeqoB56f3M5DsfPlnHnl1j
-LSdVDQZtdruv+/ysZP9oJizpfJcG1Y7zBemRgyo0x0RL6UMK798KoJ3H/bBc8Qba
-bUXMe97taby31o8UbY/P+6MJ4MPTXdAUVF8UpTKlf2eFxLfI/tCtXStTHqBgKOr2
-3ndMzWMk6RbXA4MYT2AOxsXWkv6eJ5sPy2Gfjs09rizkTaAYMOX2aVVhGhV3FBgN
-5iToKP1gKCl8/ME5ReHvf7mEeGS9B7DYzXQcswqmtyeMmlvoXRw7ISkR962lkySb
-EaldbQAqtc6DzBbDcWDL2UKwOUEi28IGNSsxsITisp/CQp7duC1MwWVnGyqHR/C8
-TzreyE6BFgEoPbKyvBGnB+mmh5ujRe9fTiq8RVoiLbssBlXEqJgcJpyqnKP0TLVL
-YHMKxEEdlB7LMFg5KCSSyejqFRrwOEBZvyFAGiifYGAJO44h5dbu9NggS1kSG0Ar
-Rl0koYRf2ngxun9YpGYr8ee8BDfWrSb8+VwTOsEpPSfxcqWnxmnHrkTt88DghWZC
-xbQ1VHWz5qwOLT+t7CEb
-=2McI
------END PGP SIGNATURE-----
 
---hJ64AiXiG3hy1bNf--
+Regards,
+Arjun
