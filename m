@@ -1,35 +1,47 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] Documentation: dt: hwmon: add OF document for LM90
-Date: Mon, 9 Sep 2013 15:23:30 -0700
-Message-ID: <20130909222330.GA31708@roeck-us.net>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com>
- <1378722552-10357-3-git-send-email-wni@nvidia.com>
- <522E489D.6080903@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
+Date: Tue, 10 Sep 2013 11:22:01 +0800
+Message-ID: <522E9059.3070305@nvidia.com>
+References: <1378722552-10357-1-git-send-email-wni@nvidia.com> <1378722552-10357-2-git-send-email-wni@nvidia.com> <20130909111242.GW29403@sirena.org.uk> <522DB253.6000707@roeck-us.net> <20130909135022.GZ29403@sirena.org.uk> <20130909155043.GA18975@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <522E489D.6080903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20130909155043.GA18975-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 09, 2013 at 04:15:57PM -0600, Stephen Warren wrote:
-> On 09/09/2013 04:29 AM, Wei Ni wrote:
-> > Add OF document for LM90 in Documentation/devicetree/.
+On 09/09/2013 11:50 PM, Guenter Roeck wrote:
+> On Mon, Sep 09, 2013 at 02:50:22PM +0100, Mark Brown wrote:
+>> On Mon, Sep 09, 2013 at 04:34:43AM -0700, Guenter Roeck wrote:
+>>> On 09/09/2013 04:12 AM, Mark Brown wrote:
+>>>> On Mon, Sep 09, 2013 at 06:29:11PM +0800, Wei Ni wrote:
+>>
+>>>> This doesn't look good, it is going to ignore actual errors - I *really*
+>>>> doubt that vcc is optional, it looks like it's the main power supply for
+>>>> the device.  You should use normal regulator_get(), _optional() is for
+>>>> supplies which could physically not be provided in a system (eg, if the
+>>>> device can generate them internally if required).
+>>
+>>> Then he'll have to make sure that all devicetree files in the system
+>>> contain references to this regulator.
+>>
+>> Or get the patches applied on top of the code that'll be going in this
+>> cycle implementing get_optional() properly - when that's done the
+>> default will be to provide a dummy supply for regulator_get().  If you
+>> ack the patch I'd be happy to carry it.
+>>
+> Jean will have to ack it.
 > 
-> > diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt
-> > b/Documentation/devicetree/bindings/hwmon/lm90.txt
-> 
-> > +Optional properties:
-> 
-> > +- interrupts: Contains a single interrupt specifier which
-> > describes the +              LM90 pin6 output.
-> 
-> Does the pin also have a standard name you could include here, rather
-> than (or in addition to) just the pin number?
-> 
-This is the "ALERT" pin (or maybe "-ALERT" to reflect that it is low-active).
+I think it's better to use get_optional(), and ignore the errors except
+-EPROBE_DEFER. Because many platform may always power on this device,
+and will not provide regulator for it, so if we get errors from
+regulator subsystem and return it directly, then the probe() can't be
+implemented, this driver can't work properly, even though it can work
+without regulator support.
+Mark, do you mean you have patches for regulator_get_optional() and
+regulator_get()?
 
-Guenter
+Wei.
