@@ -1,41 +1,55 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Mon, 09 Sep 2013 22:13:56 -0600
-Message-ID: <522E9C84.9070405@wwwdotorg.org>
-References: <1378722552-10357-1-git-send-email-wni@nvidia.com> <1378722552-10357-2-git-send-email-wni@nvidia.com> <20130909111242.GW29403@sirena.org.uk> <522DB253.6000707@roeck-us.net> <20130909135022.GZ29403@sirena.org.uk> <20130909155043.GA18975@roeck-us.net> <522E9059.3070305@nvidia.com> <522E93D6.2010304@roeck-us.net> <522E94AE.7000804@wwwdotorg.org> <522E97CE.4070300@roeck-us.net>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] Documentation: dt: hwmon: add OF document for
+ LM90
+Date: Tue, 10 Sep 2013 12:25:23 +0800
+Message-ID: <522E9F33.3010004@nvidia.com>
+References: <1378722552-10357-1-git-send-email-wni@nvidia.com> <1378722552-10357-3-git-send-email-wni@nvidia.com> <522DA86B.6000603@roeck-us.net> <522E4854.1050800@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <522E97CE.4070300-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+In-Reply-To: <522E4854.1050800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/09/2013 09:53 PM, Guenter Roeck wrote:
-> On 09/09/2013 08:40 PM, Stephen Warren wrote:
->> On 09/09/2013 09:36 PM, Guenter Roeck wrote:
-...
->>> My understanding is that by adding regulator support you essentially
->>> committed to adding regulators (if necessary dummy ones) for this driver
->>> to all those platforms. This is quite similar to other drivers in the
->>> same situation. Once you start along that route, you'll have to go it
->>> all the way.
->>
->> By using regulator_get_optional(), the regulator should be optional,
->> hence you only have to add it to platforms that need it.
->>
+On 09/10/2013 06:14 AM, Stephen Warren wrote:
+> On 09/09/2013 04:52 AM, Guenter Roeck wrote:
+>> On 09/09/2013 03:29 AM, Wei Ni wrote:
+>>> Add OF document for LM90 in Documentation/devicetree/.
 > 
-> Earlier comments suggest that this is not the intended use case for
-> regulator_get_optional().
+>>> diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt
+> 
+>>> +* LM90 series thermometer.
+>>> +
+>>> +Required node properties:
+>>> +- compatible: manufacture and chip name, one of
+>>
+>> manufacturer
+>>
+>>> +        "<manufacture>,adm1032"
+> ...
+>>> +        "<manufacture>,sa56004"
+>>
+>> Shouldn't the manufacturers be listed explicitly ?
+> 
+> Yes, and they must all be present in
+> Documentation/devicetree/bindings/vendor-prefixes.txt.
 
-Isn't the issue only whether the optional aspect of the regulator is
-implemented by:
+Oh, got it, I will update it, thanks.
 
-a) regulator_get_optional() returning failure, then the driver having to
-check for that and either using or not-using the regulator.
-
-b) regulator_get_optional() returning a dummy regulator automatically
-when none is specified in DT or the regulator lookup table, and hence
-the driver can always call regulator_enable/disable on the returned value.
+> 
+>>> +Example LM90 node:
+>>> +
+>>> +temp-sensor {
+>>> +    compatible = "onnn,nct1008";
+>>> +    reg = <0x4c>;
+>>> +    vcc-supply = <&palmas_ldo6_reg>;
+>>> +    interrupt-parent = <&gpio>;
+>>
+>> List above as optional property.
+> 
+> I believe it's common not to document this, since it's implicitly
+> supported as part of any node that is an interrupt source.
+> 
