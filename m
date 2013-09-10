@@ -1,45 +1,22 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] pinctrl: tegra114: Remove MODULE_ALIAS
-Date: Tue, 10 Sep 2013 18:30:59 +0200
-Message-ID: <1378830659-22072-1-git-send-email-treding@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/4] serial: tegra: fix tty-kref leak
+Date: Tue, 10 Sep 2013 10:42:49 -0600
+Message-ID: <522F4C09.2060406@wwwdotorg.org>
+References: <1378810251-28499-1-git-send-email-jhovold@gmail.com> <1378810251-28499-2-git-send-email-jhovold@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1378810251-28499-2-git-send-email-jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Johan Hovold <jhovold-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The driver cannot be built as a module, so having a MODULE_ALIAS() isn't
-useful.
+On 09/10/2013 04:50 AM, Johan Hovold wrote:
+> Fix potential tty-kref leak in stop_rx path.
 
-While at it, fix a small typo in the file header comment and make the
-module description string consistent with those for earlier Tegra SoCs.
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pinctrl/pinctrl-tegra114.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
-index 622c485..93c9e38 100644
---- a/drivers/pinctrl/pinctrl-tegra114.c
-+++ b/drivers/pinctrl/pinctrl-tegra114.c
-@@ -3,7 +3,7 @@
-  *
-  * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-- * Arthur:  Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ * Author:  Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -2763,7 +2763,6 @@ static struct platform_driver tegra114_pinctrl_driver = {
- };
- module_platform_driver(tegra114_pinctrl_driver);
- 
--MODULE_ALIAS("platform:tegra114-pinctrl");
- MODULE_AUTHOR("Pritesh Raithatha <praithatha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
--MODULE_DESCRIPTION("NVIDIA Tegra114 pincontrol driver");
-+MODULE_DESCRIPTION("NVIDIA Tegra114 pinctrl driver");
- MODULE_LICENSE("GPL v2");
--- 
-1.8.4
+(For the record, I tested Bluetooth on our Cardhu board, which uses this
+driver to connect out to the BCM4330 card)
