@@ -1,46 +1,30 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Wed, 11 Sep 2013 19:35:35 +0800
-Message-ID: <52305587.6020207@nvidia.com>
-References: <522E93D6.2010304@roeck-us.net> <522E94AE.7000804@wwwdotorg.org> <522E97CE.4070300@roeck-us.net> <522E9C84.9070405@wwwdotorg.org> <20130910100939.GW29403@sirena.org.uk> <522F35BF.6070909@wwwdotorg.org> <20130910170438.GS29403@sirena.org.uk> <522F5A65.8040907@wwwdotorg.org> <20130910181837.GD29403@sirena.org.uk> <522F66FB.2000608@wwwdotorg.org> <20130910185235.GF29403@sirena.org.uk>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] cpufreq: tegra: Remove not used header and clean
+ up codes
+Date: Wed, 11 Sep 2013 13:19:28 -0600
+Message-ID: <5230C240.8050602@wwwdotorg.org>
+References: <1378898355-31290-1-git-send-email-bilhuang@nvidia.com> <1378898355-31290-2-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130910185235.GF29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <1378898355-31290-2-git-send-email-bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rjw-KKrjLPT3xs0@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/2013 02:52 AM, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Sep 10, 2013 at 12:37:47PM -0600, Stephen Warren wrote:
-> 
->> OK, so for the DT binding we should make vcc-supply a required
->> property, yet the driver will still work OK if that property just
->> happens to be missing (or e.g. when instantiated from a board file,
->> and there's no regulator).
-> 
-> Yup.  That way we've got both the binding and code trying to make things
-> work, hopefully that'll maximise robustness.
+On 09/11/2013 05:19 AM, Bill Huang wrote:
+> Remove inclustion of the not needed header files and remove the logic
+> to check the CPU ID to not exceeding the maximum supported CPUs.
 
-Ok, it looks like regulator_get will handle all things, looking forward
-to your patches :)
-Then I think my changes will be simple, just something like:
-+	reg = devm_regulator_get(dev, "vcc");
-+	if (!IS_ERR(reg)) {
-+		err = regulator_enable(reg);
-+		if (err < 0)
-+			return err;
-+	} else {
-+		return PTR_ERR(reg);
-+	}
+> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
 
-Wei.
+> - * Copyright (C) 2010 Google, Inc.
+> + * Copyright (c) 2013, NVIDIA Corporation.
+> + * Copyright (C) 2010-2013 Google, Inc.
 
-> 
-> * Unknown Key
-> * 0x7EA229BD
-> 
+This is such a trivial patch, I don't think it's appropriate to add an
+NVIDIA (c) notice. It may well be appropriate in patch 2/2.
+
+I assume that Google didn't write this patch, so why adjust that (c) notice?
