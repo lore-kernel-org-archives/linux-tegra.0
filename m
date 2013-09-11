@@ -1,71 +1,46 @@
-From: Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH 1/2] cpufreq: tegra: Remove not used header and clean up codes
-Date: Wed, 11 Sep 2013 04:19:13 -0700
-Message-ID: <1378898355-31290-2-git-send-email-bilhuang@nvidia.com>
-References: <1378898355-31290-1-git-send-email-bilhuang@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
+Date: Wed, 11 Sep 2013 19:35:35 +0800
+Message-ID: <52305587.6020207@nvidia.com>
+References: <522E93D6.2010304@roeck-us.net> <522E94AE.7000804@wwwdotorg.org> <522E97CE.4070300@roeck-us.net> <522E9C84.9070405@wwwdotorg.org> <20130910100939.GW29403@sirena.org.uk> <522F35BF.6070909@wwwdotorg.org> <20130910170438.GS29403@sirena.org.uk> <522F5A65.8040907@wwwdotorg.org> <20130910181837.GD29403@sirena.org.uk> <522F66FB.2000608@wwwdotorg.org> <20130910185235.GF29403@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1378898355-31290-1-git-send-email-bilhuang@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@sisk.pl, viresh.kumar@linaro.org, swarren@wwwdotorg.org
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130910185235.GF29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove inclustion of the not needed header files and remove the logic
-to check the CPU ID to not exceeding the maximum supported CPUs.
+On 09/11/2013 02:52 AM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Sep 10, 2013 at 12:37:47PM -0600, Stephen Warren wrote:
+> 
+>> OK, so for the DT binding we should make vcc-supply a required
+>> property, yet the driver will still work OK if that property just
+>> happens to be missing (or e.g. when instantiated from a board file,
+>> and there's no regulator).
+> 
+> Yup.  That way we've got both the binding and code trying to make things
+> work, hopefully that'll maximise robustness.
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
- drivers/cpufreq/tegra-cpufreq.c |   14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+Ok, it looks like regulator_get will handle all things, looking forward
+to your patches :)
+Then I think my changes will be simple, just something like:
++	reg = devm_regulator_get(dev, "vcc");
++	if (!IS_ERR(reg)) {
++		err = regulator_enable(reg);
++		if (err < 0)
++			return err;
++	} else {
++		return PTR_ERR(reg);
++	}
 
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
-index a7b876f..6eb3dd8 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra-cpufreq.c
-@@ -1,5 +1,6 @@
- /*
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA Corporation.
-+ * Copyright (C) 2010-2013 Google, Inc.
-  *
-  * Author:
-  *	Colin Cross <ccross@google.com>
-@@ -18,14 +19,9 @@
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/types.h>
--#include <linux/sched.h>
- #include <linux/cpufreq.h>
--#include <linux/delay.h>
--#include <linux/init.h>
- #include <linux/err.h>
- #include <linux/clk.h>
--#include <linux/io.h>
- #include <linux/suspend.h>
- 
- static struct cpufreq_frequency_table freq_table[] = {
-@@ -60,9 +56,6 @@ static unsigned int tegra_getspeed(unsigned int cpu)
- {
- 	unsigned long rate;
- 
--	if (cpu >= NUM_CPUS)
--		return 0;
--
- 	rate = clk_get_rate(cpu_clk) / 1000;
- 	return rate;
- }
-@@ -209,9 +202,6 @@ static struct notifier_block tegra_cpu_pm_notifier = {
- 
- static int tegra_cpu_init(struct cpufreq_policy *policy)
- {
--	if (policy->cpu >= NUM_CPUS)
--		return -EINVAL;
--
- 	clk_prepare_enable(emc_clk);
- 	clk_prepare_enable(cpu_clk);
- 
--- 
-1.7.9.5
+Wei.
+
+> 
+> * Unknown Key
+> * 0x7EA229BD
+> 
