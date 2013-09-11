@@ -1,40 +1,34 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] hwmon: (lm90) Add power control
-Date: Wed, 11 Sep 2013 17:40:24 +0800
-Message-ID: <52303A88.5050306@nvidia.com>
-References: <20130909135022.GZ29403@sirena.org.uk> <20130909155043.GA18975@roeck-us.net> <20130909160237.GR29403@sirena.org.uk> <20130909161735.GC18975@roeck-us.net> <20130909203910.GV29403@sirena.org.uk> <522E9A85.9050803@nvidia.com> <522EA51C.90706@roeck-us.net> <522EB0AF.9030708@nvidia.com> <20130910101359.GX29403@sirena.org.uk> <522F02A4.7060702@nvidia.com> <20130910121157.GJ29403@sirena.org.uk>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/2] Remodel Tegra cpufreq driver to support Tegra series SoCs
+Date: Wed, 11 Sep 2013 04:19:12 -0700
+Message-ID: <1378898355-31290-1-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130910121157.GJ29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: rjw-KKrjLPT3xs0@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/10/2013 08:11 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Sep 10, 2013 at 07:29:40PM +0800, Wei Ni wrote:
-> 
->> On my platform, it use palmas-regulator.c, ldo6 for this lm90 power
->> rail. I checked this driver, it will handle ramp_delay except LDOx.
->> Since I'm not familiar with this palmas device and driver, so do you
->> mean I can set regulator-ramp-delay property in the DT for ldo6, but I
->> really don't know what value should I set :(
-> 
-> Laxman just submitted a patch adding the ramp delay information which I
-> applied.  It seems like this is just a hack for your board and can
-> therefore be removed?
+This patch series remodel Tegra cpufreq driver to make it more easy to
+add new SoC support, in addition to that, adding probe function in the
+driver to let probe defer can be used to control init sequence when we
+going to support DVFS.
 
-Oh, yes, it seems the patches is Laxman's [PATCH 1/2] regulator: palmas:
-configure enable time for LDOs.
-Thanks, I will check it, and remove the delay in my next patch.
+Bill Huang (2):
+  cpufreq: tegra: Remove not used header and clean up codes
+  cpufreq: tegra: Re-model Tegra cpufreq driver
 
-Wei.
+ arch/arm/mach-tegra/common.c      |    2 +
+ drivers/cpufreq/Kconfig.arm       |   16 +++-
+ drivers/cpufreq/Makefile          |    1 +
+ drivers/cpufreq/tegra-cpufreq.c   |  192 +++++++++++++++++--------------------
+ drivers/cpufreq/tegra-cpufreq.h   |   37 +++++++
+ drivers/cpufreq/tegra20-cpufreq.c |  133 +++++++++++++++++++++++++
+ include/linux/tegra-soc.h         |   11 ++-
+ 7 files changed, 283 insertions(+), 109 deletions(-)
+ create mode 100644 drivers/cpufreq/tegra-cpufreq.h
+ create mode 100644 drivers/cpufreq/tegra20-cpufreq.c
 
-> 
-> * Unknown Key
-> * 0x7EA229BD
-> 
+-- 
+1.7.9.5
