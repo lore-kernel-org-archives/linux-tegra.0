@@ -1,60 +1,102 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH RFC v2 13/16] ARM: tegra: split tegra_pmc_init() in two
-Date: Thu, 12 Sep 2013 08:21:56 +0200
-Message-ID: <52315D84.10703@gmail.com>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <1377638890-371-14-git-send-email-sebastian.hesselbarth@gmail.com> <5230CAF7.6010103@wwwdotorg.org>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5230CAF7.6010103-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 1/5] ARM: add basic Trusted Foundations support
+Date: Thu, 12 Sep 2013 11:18:09 +0200
+Message-ID: <CACRpkdYLbG3uMfces=jv=G+ysqejW5kdLjKwLvNvghPns5RmWA@mail.gmail.com>
+References: <1378351680-14696-1-git-send-email-acourbot@nvidia.com>
+	<1378351680-14696-2-git-send-email-acourbot@nvidia.com>
+	<5228CEDB.1090306@gmail.com>
+	<CAAVeFu+MGGBfmm1jwtKGP_d3EjkLdf5B_E_5RT___PVh1e=8jw@mail.gmail.com>
+	<20130910130431.GE27966@mudshark.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130910130431.GE27966@mudshark.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/11/2013 09:56 PM, Stephen Warren wrote:
-> On 08/27/2013 03:28 PM, Sebastian Hesselbarth wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Tegra's board file currently initializes clocks much earlier than those
->> for most other ARM SoCs. The reason is:
->>
->> * The PMC HW block is involved in the path of some interrupts (i.e. it
->> inverts, or not, the IRQ input pin dedicated to the PMIC).
->>
->> * So, that part of the PMC must be initialized early so that the IRQ
->> polarity is correct.
->>
->> * The PMC initialization is currently monolithic, and the PMC has some
->> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
->> and hence clocks must be set up early too.
->>
->> In order to defer clock initialization to the more typical location,
->> split out the portions of tegra_pmc_init() that are truly IRQ-related
->> into a separate tegra_pmc_init_irq(), which can be called from the
->> machine descriptor's .init_irq() function, and defer the rest until
->> the machine descriptor's .init_machine() function. With arch/arm calling
->> of_clk_init(NULL) from time_init() this also allows the removal of
->> .init_time() hook.
+On Tue, Sep 10, 2013 at 3:04 PM, Will Deacon <will.deacon@arm.com> wrote:
+> On Mon, Sep 09, 2013 at 07:15:31AM +0100, Alexandre Courbot wrote:
+
+>> I don't have any information about the future of TF unfortunately,
+>> excepted that it should remain backward-compatible. What is this SMC
+>> calling convention doc your are talking about btw? Is there a standard
+>> calling convention defined by ARM?
 >
-> Sebastian, I assume you're targeting v3.13 or later for this patch
-> series? If so, it might be a good idea if I apply this patch myself to
-> the Tegra tree so that I can base any future Tegra patches on top of it
-> to avoid any possible conflicts. I can put this patch first in the
-> cleanup branch so you can merge it into whatever tree you use for the
-> rest of this series. Does that work for you? If so, let me know. Thanks.
+> SMC calling convention:
+> https://silver.arm.com/download/download.tm?pv=1435186
 
-Yes, I was waiting for v3.12-rc1 to drop to have something stable with
-the new machs inside. I haven't made up my mind who will finally take
-the patches but I guess it's either arm-soc or each individual
-maintainer.
+According to the SMC calling convention r0 should be
+the SMC function identifier.
 
-Currently, the patch set includes your original patch and another one to
-remove .init_time when the arch-wide default callback is available. If
-you want to take it now, I can add the corresponding dependency to the
-cover letter and drop the patch from my set.
++static void __naked tf_generic_smc(u32 type, u32 subtype, u32 arg)
++{
++       asm volatile(
++               ".arch_extension        sec\n\t"
++               "stmfd  sp!, {r4 - r11, lr}\n\t"
++               __asmeq("%0", "r0")
++               __asmeq("%1", "r1")
++               __asmeq("%2", "r2")
++               "mov    r3, #0\n\t"
++               "mov    r4, #0\n\t"
++               "smc    #0\n\t"
++               "ldmfd  sp!, {r4 - r11, pc}"
++               :
++               : "r" (type), "r" (subtype), "r" (arg)
++               : "memory");
++}
 
-If Arnd, Olof, and Mike say that current mainline head is stable with
-respect to arm-soc and clk, I can also send it today or tomorrow.
+So type == function identifier? Or are these two totally
+different things, such that trusted foundations are already
+a different beast that what the SMC calling convention
+specifies?
 
-Sebastian
+Anyway:
+r0,r1,r2 = type/subtype/arg.
+
++#define TF_SET_CPU_BOOT_ADDR_SMC 0xfffff200
+(...)
++static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
++{
++       tf_generic_smc(TF_SET_CPU_BOOT_ADDR_SMC, boot_addr, 0);
++
++       return 0;
++}
+
+What kind of a "subtype" is the boot address? I could have
+accepted it if the *last* thing, the argument contained the boot
+address. With the type/subtype/arg convention it would be
+more natural if the "subtype" was something like 0.
+
+Should the SMC function rather have this signature:
+
+tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+
+?
+
+Then *sometimes* arg1 is a subtype, if the "type" is
+such that it takes a subtype?
+
+(That's a rough guess.)
+
+So to begin with the arguments to tf_generic_smc() are either
+confusingly named or tf_set_cpu_boot_addr() begins the
+journey with violating the function signature.
+
+I also wonder what kind if "type" starts its enumerator on
+0xfffff200? Wouldn't it be more natural if it was e.g. 1?
+It looks like the TF_SET_CPU_BOOT_ADDR_SMC
+reflects some bit-wise encoding scheme, so some details
+here wouldn't hurt?
+
+The main thing is that the patch has to say that this
+is an API toward trusted foundations, that it has nothing
+to do with the SMC calling conventions, and only pertain
+to devices that use trusted foundations, so as to avoid
+any confusion.
+
+Then I'm game :-)
+
+Yours,
+Linus Walleij
