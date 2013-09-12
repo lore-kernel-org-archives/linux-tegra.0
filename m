@@ -1,53 +1,53 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 0/4] Remodel Tegra cpufreq driver to support Tegra
- series SoCs
-Date: Thu, 12 Sep 2013 16:57:28 +0530
-Message-ID: <CAKohpom-8abJCL_VrdvowmKUkfyEw0svne-RpXFhhO1AH6NPew@mail.gmail.com>
-References: <1378985091-9447-1-git-send-email-bilhuang@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Add power control
+Date: Thu, 12 Sep 2013 12:51:06 +0100
+Message-ID: <20130912115106.GM29403@sirena.org.uk>
+References: <1378985061-28547-1-git-send-email-wni@nvidia.com>
+ <1378985061-28547-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LAThOmUcSmfEsnm5"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1378985091-9447-1-git-send-email-bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1378985061-28547-2-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12 September 2013 16:54, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> This patch series remodel Tegra cpufreq driver to make it more easy to
-> add new SoC support, in addition to that, adding probe function in the
-> driver to let probe defer can be used to control init sequence when we
-> going to support DVFS.
->
-> Changes since v1:
->
-> - Split up patches.
-> - Split configuration-time data out of structure "tegra_cpufreq_data".
-> - Bug fixes.
->
-> Bill Huang (4):
->   cpufreq: tegra: Call tegra_cpufreq_init() specifically in machine
->     code
->   cpufreq: tegra: Remove not used header files and clean up codes
->   cpufreq: tegra: Re-model Tegra cpufreq driver
->   ARM: tegra: defconfig updates
->
->  arch/arm/configs/tegra_defconfig  |    1 +
->  arch/arm/mach-tegra/common.c      |    2 +
->  drivers/cpufreq/Kconfig.arm       |    8 +-
->  drivers/cpufreq/Makefile          |    1 +
->  drivers/cpufreq/tegra-cpufreq.c   |  194 +++++++++++++++++--------------------
->  drivers/cpufreq/tegra-cpufreq.h   |   42 ++++++++
->  drivers/cpufreq/tegra20-cpufreq.c |  138 ++++++++++++++++++++++++++
->  include/linux/tegra-soc.h         |   11 ++-
->  8 files changed, 290 insertions(+), 107 deletions(-)
->  create mode 100644 drivers/cpufreq/tegra-cpufreq.h
->  create mode 100644 drivers/cpufreq/tegra20-cpufreq.c
 
-I haven't gone deeper into these yet, but there are some cleaup
-patches that I have prepared/posted earlier, which will be queued
-by Rafael soon.. And after that you would be required to rebase
-your stuff on top of it..  As there would be many conflicts..
+--LAThOmUcSmfEsnm5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---
-viresh
+On Thu, Sep 12, 2013 at 07:24:19PM +0800, Wei Ni wrote:
+
+> +#include <linux/delay.h>
+
+You don't need this any more, otherwise
+
+Reviewed-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+--LAThOmUcSmfEsnm5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSMaqnAAoJELSic+t+oim9nmoQAIfb7z1IwpTynk3KqYsa52vo
+M1uKfF6uSoyVR4xc/9zRnr1ZtqXMGv/JElBDbSjTP2qmCq6cTh8yh/mIhcRjv9PB
+h8k0ZVVAxfZKGnzps+1FY/DdJn6uKVeb7IN1fk9EdfzkZXjj4V5ATMoDhZKyLREb
+is6fO6vs7hkei4sUwzYZuXuTkTEujnvFSVx/cxBYiHyuiRYtAezsCOpy2xvqmkey
+MC60Tx4cugHZt5ok3vcaW5n7Y4MAiPJ+yaS/jE9v7b9owABfERNK/+Uz2yItsOF7
+Z+rcbbpUXi5iN6rxxGcoV0HYnSiuqXpCheS4mY8xLJooHBf72XYyb/CMYgj2/0Pt
+kc+k1B/x5MWWJlOz2FfhzksoBlpbouF1Romri6YPJTsOyOIaNWMTf6t86oVXuD0o
+85CB+ZHiDt6A/Ob9pCkr3QSRQFT1powQ8bl3/E+kaNM3I9WmgvurT4Y8/noFN0Jm
+KcwJM5kwvwdm8EMy1z36mt99X6B8eIC4KY6875zPcr2YRjMvzMeF6pdKfYckWhp8
+NN/g5Wnan09bm8h+AigGIQOeFMcEe2emA/Ncy+WNiDmfjv51UF5fxeofhklCbi86
+4akVdzn954GMuIldhHpJ75RgI57RiWXdkcRjAazTrjYNfS8QRkgrhuKevYJUtvhI
+rDnodfnlnVX28n46Bpqr
+=lJNd
+-----END PGP SIGNATURE-----
+
+--LAThOmUcSmfEsnm5--
