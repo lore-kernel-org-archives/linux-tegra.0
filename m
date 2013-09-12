@@ -1,54 +1,60 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] gpu: host1x: use %pa to print dma_addr_t
-Date: Wed, 11 Sep 2013 21:41:49 -0700
-Message-ID: <1378960909-15773-1-git-send-email-olof@lixom.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC v2 13/16] ARM: tegra: split tegra_pmc_init() in two
+Date: Thu, 12 Sep 2013 08:21:56 +0200
+Message-ID: <52315D84.10703@gmail.com>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <1377638890-371-14-git-send-email-sebastian.hesselbarth@gmail.com> <5230CAF7.6010103@wwwdotorg.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5230CAF7.6010103-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This removes two warnings where dma_addr_t variables were printed using
-%x when built with CONFIG_ARM_LPAE=y, thus having 64-bit dma_addr_t:
+On 09/11/2013 09:56 PM, Stephen Warren wrote:
+> On 08/27/2013 03:28 PM, Sebastian Hesselbarth wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Tegra's board file currently initializes clocks much earlier than those
+>> for most other ARM SoCs. The reason is:
+>>
+>> * The PMC HW block is involved in the path of some interrupts (i.e. it
+>> inverts, or not, the IRQ input pin dedicated to the PMIC).
+>>
+>> * So, that part of the PMC must be initialized early so that the IRQ
+>> polarity is correct.
+>>
+>> * The PMC initialization is currently monolithic, and the PMC has some
+>> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
+>> and hence clocks must be set up early too.
+>>
+>> In order to defer clock initialization to the more typical location,
+>> split out the portions of tegra_pmc_init() that are truly IRQ-related
+>> into a separate tegra_pmc_init_irq(), which can be called from the
+>> machine descriptor's .init_irq() function, and defer the rest until
+>> the machine descriptor's .init_machine() function. With arch/arm calling
+>> of_clk_init(NULL) from time_init() this also allows the removal of
+>> .init_time() hook.
+>
+> Sebastian, I assume you're targeting v3.13 or later for this patch
+> series? If so, it might be a good idea if I apply this patch myself to
+> the Tegra tree so that I can base any future Tegra patches on top of it
+> to avoid any possible conflicts. I can put this patch first in the
+> cleanup branch so you can merge it into whatever tree you use for the
+> rest of this series. Does that work for you? If so, let me know. Thanks.
 
-  drivers/gpu/host1x/hw/cdma_hw.c:57:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t'
-  drivers/gpu/host1x/hw/debug_hw.c:175:10: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'dma_addr_t'
+Yes, I was waiting for v3.12-rc1 to drop to have something stable with
+the new machs inside. I haven't made up my mind who will finally take
+the patches but I guess it's either arm-soc or each individual
+maintainer.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- drivers/gpu/host1x/hw/cdma_hw.c  |    4 ++--
- drivers/gpu/host1x/hw/debug_hw.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Currently, the patch set includes your original patch and another one to
+remove .init_time when the arch-wide default callback is available. If
+you want to take it now, I can add the corresponding dependency to the
+cover letter and drop the patch from my set.
 
-diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
-index 2ee4ad5..3db3011 100644
---- a/drivers/gpu/host1x/hw/cdma_hw.c
-+++ b/drivers/gpu/host1x/hw/cdma_hw.c
-@@ -54,8 +54,8 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
- 		u32 *p = (u32 *)((u32)pb->mapped + getptr);
- 		*(p++) = HOST1X_OPCODE_NOP;
- 		*(p++) = HOST1X_OPCODE_NOP;
--		dev_dbg(host1x->dev, "%s: NOP at 0x%x\n", __func__,
--			pb->phys + getptr);
-+		dev_dbg(host1x->dev, "%s: NOP at %pa+0x%x\n", __func__,
-+			&pb->phys, getptr);
- 		getptr = (getptr + 8) & (pb->size_bytes - 1);
- 	}
- 	wmb();
-diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
-index 334c038..346a54b 100644
---- a/drivers/gpu/host1x/hw/debug_hw.c
-+++ b/drivers/gpu/host1x/hw/debug_hw.c
-@@ -171,8 +171,8 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
- 				continue;
- 			}
- 
--			host1x_debug_output(o, "    GATHER at %08x+%04x, %d words\n",
--					    g->base, g->offset, g->words);
-+			host1x_debug_output(o, "    GATHER at %pa+%04x, %d words\n",
-+					    &g->base, g->offset, g->words);
- 
- 			show_gather(o, g->base + g->offset, g->words, cdma,
- 				    g->base, mapped);
--- 
-1.7.10.4
+If Arnd, Olof, and Mike say that current mainline head is stable with
+respect to arm-soc and clk, I can also send it today or tomorrow.
+
+Sebastian
