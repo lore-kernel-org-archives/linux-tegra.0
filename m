@@ -1,38 +1,54 @@
-From: Bill Huang <bilhuang@nvidia.com>
-Subject: Re: [PATCH 2/2] cpufreq: tegra: Re-model Tegra cpufreq driver
-Date: Wed, 11 Sep 2013 19:03:22 -0700
-Message-ID: <1378951402.2475.2.camel@bilhuang-vm1>
-References: <1378898355-31290-1-git-send-email-bilhuang@nvidia.com>
-	 <1378898355-31290-3-git-send-email-bilhuang@nvidia.com>
-	 <5230C596.7010000@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-9"
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <5230C596.7010000@wwwdotorg.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: "rjw@sisk.pl" <rjw@sisk.pl>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: [PATCH] gpu: host1x: use %pa to print dma_addr_t
+Date: Wed, 11 Sep 2013 21:41:49 -0700
+Message-ID: <1378960909-15773-1-git-send-email-olof@lixom.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2013-09-12 at 03:33 +0800, Stephen Warren wrote:
-> On 09/11/2013 05:19 AM, Bill Huang wrote:
-> > diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> 
-> > +static struct cpufreq_frequency_table freq_table[] = {
-> > +	{ .frequency = 216000 },
-> > +	{ .frequency = 312000 },
-> > +	{ .frequency = 456000 },
-> > +	{ .frequency = 608000 },
-> > +	{ .frequency = 760000 },
-> > +	{ .frequency = 816000 },
-> > +	{ .frequency = 912000 },
-> > +	{ .frequency = 1000000 },
-> > +	{ .frequency = CPUFREQ_TABLE_END },
-> > +};
-> 
-> Should/can we query that list from the clock driver?
-> 
-It's not easy to query that list from clock driver so I'll leave it as
-it was. I'll take all the other comments, thanks.
+This removes two warnings where dma_addr_t variables were printed using
+%x when built with CONFIG_ARM_LPAE=y, thus having 64-bit dma_addr_t:
 
+  drivers/gpu/host1x/hw/cdma_hw.c:57:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t'
+  drivers/gpu/host1x/hw/debug_hw.c:175:10: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'dma_addr_t'
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+ drivers/gpu/host1x/hw/cdma_hw.c  |    4 ++--
+ drivers/gpu/host1x/hw/debug_hw.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 2ee4ad5..3db3011 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -54,8 +54,8 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
+ 		u32 *p = (u32 *)((u32)pb->mapped + getptr);
+ 		*(p++) = HOST1X_OPCODE_NOP;
+ 		*(p++) = HOST1X_OPCODE_NOP;
+-		dev_dbg(host1x->dev, "%s: NOP at 0x%x\n", __func__,
+-			pb->phys + getptr);
++		dev_dbg(host1x->dev, "%s: NOP at %pa+0x%x\n", __func__,
++			&pb->phys, getptr);
+ 		getptr = (getptr + 8) & (pb->size_bytes - 1);
+ 	}
+ 	wmb();
+diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
+index 334c038..346a54b 100644
+--- a/drivers/gpu/host1x/hw/debug_hw.c
++++ b/drivers/gpu/host1x/hw/debug_hw.c
+@@ -171,8 +171,8 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
+ 				continue;
+ 			}
+ 
+-			host1x_debug_output(o, "    GATHER at %08x+%04x, %d words\n",
+-					    g->base, g->offset, g->words);
++			host1x_debug_output(o, "    GATHER at %pa+%04x, %d words\n",
++					    &g->base, g->offset, g->words);
+ 
+ 			show_gather(o, g->base + g->offset, g->words, cdma,
+ 				    g->base, mapped);
+-- 
+1.7.10.4
