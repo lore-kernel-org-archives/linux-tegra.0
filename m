@@ -1,55 +1,93 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4 0/3] Add power control for lm90
-Date: Thu, 12 Sep 2013 19:24:18 +0800
-Message-ID: <1378985061-28547-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v4 1/3] hwmon: (lm90) Add power control
+Date: Thu, 12 Sep 2013 19:24:19 +0800
+Message-ID: <1378985061-28547-2-git-send-email-wni@nvidia.com>
+References: <1378985061-28547-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1378985061-28547-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org, linux@roeck-us.net, broonie@kernel.org, swarren@wwwdotorg.org
+Cc: lm-sensors@lm-sensors.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 The device lm90 can be controlled by the vcc rail.
-Add function to power on/off the vcc.
+Adding the regulator support to power on/off the vcc rail.
+Enable the "vcc" regulator before accessing the device.
 
-This series must base on Mark's new dummy regulator support.
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ drivers/hwmon/lm90.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-This series is v4, previous version patches are:
-[v3]: http://www.spinics.net/lists/lm-sensors/msg39503.html
-[v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
-[v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
-
-Changes from v3:
-1. change to use devm_regulator_get, as per discussion in previous patches.
-2. just return errors when get error from regulator_get(), Mark's new dummy
-regulator can cope with errors.
-3. add vendor prefix for GMT
-3. list manufacturer in the binding doc.
-
-Changes from v2:
-1. use devm_regulator_get_optional(), as suggested by Mark.
-2. remove the lm90_power_control(), enable the regulator in the probe()
-directly, so the codes are more clear, as suggested by Alexander and Guenter.
-3. change the binding documentation, as per Stephen suggestion.
-4. couple of changes, as per previous review.
-
-Changes from v1:
-1. if get regulator failed, we should continue to run probe function,
-not return fail.
-2. call regulator_put() in error handler and remove function.
-3. add LM90 DT binding document.
-
-Wei Ni (3):
-  hwmon: (lm90) Add power control
-  of: add vendor prefix for GMT
-  Documentation: dt: hwmon: add OF document for LM90
-
- Documentation/devicetree/bindings/hwmon/lm90.txt   |   44 ++++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- drivers/hwmon/lm90.c                               |   20 +++++++++
- 3 files changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
-
+diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+index cdff742..f3f66d5 100644
+--- a/drivers/hwmon/lm90.c
++++ b/drivers/hwmon/lm90.c
+@@ -89,6 +89,8 @@
+ #include <linux/err.h>
+ #include <linux/mutex.h>
+ #include <linux/sysfs.h>
++#include <linux/regulator/consumer.h>
++#include <linux/delay.h>
+ 
+ /*
+  * Addresses to scan
+@@ -302,6 +304,7 @@ static const struct lm90_params lm90_params[] = {
+ struct lm90_data {
+ 	struct device *hwmon_dev;
+ 	struct mutex update_lock;
++	struct regulator *lm90_reg;
+ 	char valid; /* zero until following fields are valid */
+ 	unsigned long last_updated; /* in jiffies */
+ 	int kind;
+@@ -1397,8 +1400,20 @@ static int lm90_probe(struct i2c_client *client,
+ 	struct device *dev = &client->dev;
+ 	struct i2c_adapter *adapter = to_i2c_adapter(dev->parent);
+ 	struct lm90_data *data;
++	struct regulator *reg;
+ 	int err;
+ 
++	reg = devm_regulator_get(dev, "vcc");
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
++
++	err = regulator_enable(reg);
++	if (err < 0) {
++		dev_err(&client->dev,
++			"Failed to enable regulator: %d\n", err);
++		return err;
++	}
++
+ 	data = devm_kzalloc(&client->dev, sizeof(struct lm90_data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+@@ -1406,6 +1421,8 @@ static int lm90_probe(struct i2c_client *client,
+ 	i2c_set_clientdata(client, data);
+ 	mutex_init(&data->update_lock);
+ 
++	data->lm90_reg = reg;
++
+ 	/* Set the device type */
+ 	data->kind = id->driver_data;
+ 	if (data->kind == adm1032) {
+@@ -1473,6 +1490,8 @@ exit_remove_files:
+ 	lm90_remove_files(client, data);
+ exit_restore:
+ 	lm90_restore_conf(client, data);
++	regulator_disable(data->lm90_reg);
++
+ 	return err;
+ }
+ 
+@@ -1483,6 +1502,7 @@ static int lm90_remove(struct i2c_client *client)
+ 	hwmon_device_unregister(data->hwmon_dev);
+ 	lm90_remove_files(client, data);
+ 	lm90_restore_conf(client, data);
++	regulator_disable(data->lm90_reg);
+ 
+ 	return 0;
+ }
 -- 
 1.7.9.5
