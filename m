@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 5/7] ARM: tegra: remove much of iomap.h
-Date: Fri, 13 Sep 2013 12:25:09 -0600
-Message-ID: <1379096711-26875-6-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 1/7] ARM: tegra: remove common.c
+Date: Fri, 13 Sep 2013 12:25:05 -0600
+Message-ID: <1379096711-26875-2-git-send-email-swarren@wwwdotorg.org>
 References: <1379096711-26875-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1379096711-26875-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -12,223 +12,314 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-iomap.h defines the base address of Tegra peripherals. Most of this
-information comes from device tree now, and hence can be deleted.
-Entries are kept for various system peripherals that low-level code
-(such as initial boot, system suspend/resume, debug) still requires.
-
-Removing the values removes the temptation for someone to use them.
+common.c was create to contain code shared across the various Tegra board
+files. There is now only one board file, tegra.c. So, move the code there.
+One exception is the PMC reboot routine, which moves to pmc.c, and now
+takes advantage of the 'standard' tegra_pmc_readl/writel functions.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/iomap.h | 150 --------------------------------------------
- 1 file changed, 150 deletions(-)
+ arch/arm/mach-tegra/Makefile |   1 -
+ arch/arm/mach-tegra/board.h  |   6 ---
+ arch/arm/mach-tegra/common.c | 113 -------------------------------------------
+ arch/arm/mach-tegra/pmc.c    |   9 ++++
+ arch/arm/mach-tegra/pmc.h    |   4 ++
+ arch/arm/mach-tegra/tegra.c  |  67 ++++++++++++++++++++++++-
+ 6 files changed, 78 insertions(+), 122 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/common.c
 
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index 7e0c180..cbee57f 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -24,42 +24,12 @@
- #define TEGRA_IRAM_BASE			0x40000000
- #define TEGRA_IRAM_SIZE			SZ_256K
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index e7e5f45..97eb48e 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -1,6 +1,5 @@
+ asflags-y				+= -march=armv7-a
  
--#define TEGRA_HOST1X_BASE		0x50000000
--#define TEGRA_HOST1X_SIZE		0x24000
--
- #define TEGRA_ARM_PERIF_BASE		0x50040000
- #define TEGRA_ARM_PERIF_SIZE		SZ_8K
+-obj-y                                   += common.o
+ obj-y                                   += io.o
+ obj-y                                   += irq.o
+ obj-y					+= fuse.o
+diff --git a/arch/arm/mach-tegra/board.h b/arch/arm/mach-tegra/board.h
+index db6810d..7b9a5bd 100644
+--- a/arch/arm/mach-tegra/board.h
++++ b/arch/arm/mach-tegra/board.h
+@@ -25,14 +25,8 @@
+ #include <linux/types.h>
+ #include <linux/reboot.h>
  
--#define TEGRA_ARM_PL310_BASE		0x50043000
--#define TEGRA_ARM_PL310_SIZE		SZ_4K
+-void tegra_assert_system_reset(enum reboot_mode mode, const char *cmd);
 -
- #define TEGRA_ARM_INT_DIST_BASE		0x50041000
- #define TEGRA_ARM_INT_DIST_SIZE		SZ_4K
+-void __init tegra_init_early(void);
+ void __init tegra_map_common_io(void);
+ void __init tegra_init_irq(void);
+-void __init tegra_dt_init_irq(void);
+-
+-void tegra_init_late(void);
  
--#define TEGRA_MPE_BASE			0x54040000
--#define TEGRA_MPE_SIZE			SZ_256K
+ #ifdef CONFIG_DEBUG_FS
+ int tegra_clk_debugfs_init(void);
+diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
+deleted file mode 100644
+index 58dc91c5..0000000
+--- a/arch/arm/mach-tegra/common.c
++++ /dev/null
+@@ -1,113 +0,0 @@
+-/*
+- * arch/arm/mach-tegra/common.c
+- *
+- * Copyright (c) 2013 NVIDIA Corporation. All rights reserved.
+- * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
 -
--#define TEGRA_VI_BASE			0x54080000
--#define TEGRA_VI_SIZE			SZ_256K
+-#include <linux/init.h>
+-#include <linux/io.h>
+-#include <linux/clk.h>
+-#include <linux/delay.h>
+-#include <linux/reboot.h>
+-#include <linux/irqchip.h>
 -
--#define TEGRA_ISP_BASE			0x54100000
--#define TEGRA_ISP_SIZE			SZ_256K
+-#include <asm/hardware/cache-l2x0.h>
 -
--#define TEGRA_DISPLAY_BASE		0x54200000
--#define TEGRA_DISPLAY_SIZE		SZ_256K
+-#include "board.h"
+-#include "common.h"
+-#include "cpuidle.h"
+-#include "fuse.h"
+-#include "iomap.h"
+-#include "irq.h"
+-#include "pmc.h"
+-#include "apbio.h"
+-#include "sleep.h"
+-#include "pm.h"
+-#include "reset.h"
 -
--#define TEGRA_DISPLAY2_BASE		0x54240000
--#define TEGRA_DISPLAY2_SIZE		SZ_256K
+-/*
+- * Storage for debug-macro.S's state.
+- *
+- * This must be in .data not .bss so that it gets initialized each time the
+- * kernel is loaded. The data is declared here rather than debug-macro.S so
+- * that multiple inclusions of debug-macro.S point at the same data.
+- */
+-u32 tegra_uart_config[4] = {
+-	/* Debug UART initialization required */
+-	1,
+-	/* Debug UART physical address */
+-	0,
+-	/* Debug UART virtual address */
+-	0,
+-	/* Scratch space for debug macro */
+-	0,
+-};
 -
--#define TEGRA_HDMI_BASE			0x54280000
--#define TEGRA_HDMI_SIZE			SZ_256K
+-#ifdef CONFIG_OF
+-void __init tegra_dt_init_irq(void)
+-{
+-	tegra_pmc_init_irq();
+-	tegra_init_irq();
+-	irqchip_init();
+-	tegra_legacy_irq_syscore_init();
+-}
+-#endif
 -
--#define TEGRA_GART_BASE			0x58000000
--#define TEGRA_GART_SIZE			SZ_32M
+-void tegra_assert_system_reset(enum reboot_mode mode, const char *cmd)
+-{
+-	void __iomem *reset = IO_ADDRESS(TEGRA_PMC_BASE + 0);
+-	u32 reg;
 -
--#define TEGRA_RES_SEMA_BASE		0x60001000
--#define TEGRA_RES_SEMA_SIZE		SZ_4K
+-	reg = readl_relaxed(reset);
+-	reg |= 0x10;
+-	writel_relaxed(reg, reset);
+-}
 -
- #define TEGRA_PRIMARY_ICTLR_BASE	0x60004000
- #define TEGRA_PRIMARY_ICTLR_SIZE	SZ_64
+-static void __init tegra_init_cache(void)
+-{
+-#ifdef CONFIG_CACHE_L2X0
+-	int ret;
+-	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
+-	u32 aux_ctrl, cache_type;
+-
+-	cache_type = readl(p + L2X0_CACHE_TYPE);
+-	aux_ctrl = (cache_type & 0x700) << (17-8);
+-	aux_ctrl |= 0x7C400001;
+-
+-	ret = l2x0_of_init(aux_ctrl, 0x8200c3fe);
+-	if (!ret)
+-		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
+-#endif
+-
+-}
+-
+-void __init tegra_init_early(void)
+-{
+-	tegra_cpu_reset_handler_init();
+-	tegra_apb_io_init();
+-	tegra_init_fuse();
+-	tegra_init_cache();
+-	tegra_powergate_init();
+-	tegra_hotplug_init();
+-}
+-
+-void __init tegra_init_late(void)
+-{
+-	tegra_init_suspend();
+-	tegra_cpuidle_init();
+-	tegra_powergate_debugfs_init();
+-}
+diff --git a/arch/arm/mach-tegra/pmc.c b/arch/arm/mach-tegra/pmc.c
+index 7916ff9..93a4dbc 100644
+--- a/arch/arm/mach-tegra/pmc.c
++++ b/arch/arm/mach-tegra/pmc.c
+@@ -166,6 +166,15 @@ int tegra_pmc_cpu_remove_clamping(int cpuid)
+ 	return tegra_pmc_powergate_remove_clamping(id);
+ }
  
-@@ -96,51 +66,15 @@
- #define TEGRA_FLOW_CTRL_BASE		0x60007000
- #define TEGRA_FLOW_CTRL_SIZE		20
++void tegra_pmc_restart(enum reboot_mode mode, const char *cmd)
++{
++	u32 val;
++
++	val = tegra_pmc_readl(0);
++	val |= 0x10;
++	tegra_pmc_writel(val, 0);
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static void set_power_timers(u32 us_on, u32 us_off, unsigned long rate)
+ {
+diff --git a/arch/arm/mach-tegra/pmc.h b/arch/arm/mach-tegra/pmc.h
+index 4d5f8f3..59e19c34 100644
+--- a/arch/arm/mach-tegra/pmc.h
++++ b/arch/arm/mach-tegra/pmc.h
+@@ -18,6 +18,8 @@
+ #ifndef __MACH_TEGRA_PMC_H
+ #define __MACH_TEGRA_PMC_H
  
--#define TEGRA_AHB_DMA_BASE		0x60008000
--#define TEGRA_AHB_DMA_SIZE		SZ_4K
--
--#define TEGRA_AHB_DMA_CH0_BASE		0x60009000
--#define TEGRA_AHB_DMA_CH0_SIZE		32
--
--#define TEGRA_APB_DMA_BASE		0x6000A000
--#define TEGRA_APB_DMA_SIZE		SZ_4K
--
--#define TEGRA_APB_DMA_CH0_BASE		0x6000B000
--#define TEGRA_APB_DMA_CH0_SIZE		32
--
--#define TEGRA_AHB_GIZMO_BASE		0x6000C004
--#define TEGRA_AHB_GIZMO_SIZE		0x10C
--
- #define TEGRA_SB_BASE			0x6000C200
- #define TEGRA_SB_SIZE			256
++#include <linux/reboot.h>
++
+ enum tegra_suspend_mode {
+ 	TEGRA_SUSPEND_NONE = 0,
+ 	TEGRA_SUSPEND_LP2,	/* CPU voltage off */
+@@ -39,6 +41,8 @@ bool tegra_pmc_cpu_is_powered(int cpuid);
+ int tegra_pmc_cpu_power_on(int cpuid);
+ int tegra_pmc_cpu_remove_clamping(int cpuid);
  
--#define TEGRA_STATMON_BASE		0x6000C400
--#define TEGRA_STATMON_SIZE		SZ_1K
--
--#define TEGRA_GPIO_BASE			0x6000D000
--#define TEGRA_GPIO_SIZE			SZ_4K
--
- #define TEGRA_EXCEPTION_VECTORS_BASE    0x6000F000
- #define TEGRA_EXCEPTION_VECTORS_SIZE    SZ_4K
++void tegra_pmc_restart(enum reboot_mode mode, const char *cmd);
++
+ void tegra_pmc_init_irq(void);
+ void tegra_pmc_init(void);
  
- #define TEGRA_APB_MISC_BASE		0x70000000
- #define TEGRA_APB_MISC_SIZE		SZ_4K
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 4da271d..40b031c 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -35,17 +35,78 @@
+ #include <linux/usb/tegra_usb_phy.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clk/tegra.h>
++#include <linux/irqchip.h>
  
--#define TEGRA_APB_MISC_DAS_BASE		0x70000c00
--#define TEGRA_APB_MISC_DAS_SIZE		SZ_128
--
--#define TEGRA_AC97_BASE			0x70002000
--#define TEGRA_AC97_SIZE			SZ_512
--
--#define TEGRA_SPDIF_BASE		0x70002400
--#define TEGRA_SPDIF_SIZE		SZ_512
--
--#define TEGRA_I2S1_BASE			0x70002800
--#define TEGRA_I2S1_SIZE			SZ_256
--
--#define TEGRA_I2S2_BASE			0x70002A00
--#define TEGRA_I2S2_SIZE			SZ_256
--
- #define TEGRA_UARTA_BASE		0x70006000
- #define TEGRA_UARTA_SIZE		SZ_64
++#include <asm/hardware/cache-l2x0.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+ #include <asm/setup.h>
  
-@@ -156,87 +90,15 @@
- #define TEGRA_UARTE_BASE		0x70006400
- #define TEGRA_UARTE_SIZE		SZ_256
++#include "apbio.h"
+ #include "board.h"
+ #include "common.h"
++#include "cpuidle.h"
+ #include "fuse.h"
+ #include "iomap.h"
++#include "irq.h"
+ #include "pmc.h"
++#include "pm.h"
++#include "reset.h"
++#include "sleep.h"
++
++/*
++ * Storage for debug-macro.S's state.
++ *
++ * This must be in .data not .bss so that it gets initialized each time the
++ * kernel is loaded. The data is declared here rather than debug-macro.S so
++ * that multiple inclusions of debug-macro.S point at the same data.
++ */
++u32 tegra_uart_config[4] = {
++	/* Debug UART initialization required */
++	1,
++	/* Debug UART physical address */
++	0,
++	/* Debug UART virtual address */
++	0,
++	/* Scratch space for debug macro */
++	0,
++};
++
++static void __init tegra_init_cache(void)
++{
++#ifdef CONFIG_CACHE_L2X0
++	int ret;
++	void __iomem *p = IO_ADDRESS(TEGRA_ARM_PERIF_BASE) + 0x3000;
++	u32 aux_ctrl, cache_type;
++
++	cache_type = readl(p + L2X0_CACHE_TYPE);
++	aux_ctrl = (cache_type & 0x700) << (17-8);
++	aux_ctrl |= 0x7C400001;
++
++	ret = l2x0_of_init(aux_ctrl, 0x8200c3fe);
++	if (!ret)
++		l2x0_saved_regs_addr = virt_to_phys(&l2x0_saved_regs);
++#endif
++}
++
++static void __init tegra_init_early(void)
++{
++	tegra_cpu_reset_handler_init();
++	tegra_apb_io_init();
++	tegra_init_fuse();
++	tegra_init_cache();
++	tegra_powergate_init();
++	tegra_hotplug_init();
++}
++
++static void __init tegra_dt_init_irq(void)
++{
++	tegra_pmc_init_irq();
++	tegra_init_irq();
++	irqchip_init();
++	tegra_legacy_irq_syscore_init();
++}
  
--#define TEGRA_NAND_BASE			0x70008000
--#define TEGRA_NAND_SIZE			SZ_256
--
--#define TEGRA_HSMMC_BASE		0x70008500
--#define TEGRA_HSMMC_SIZE		SZ_256
--
--#define TEGRA_SNOR_BASE			0x70009000
--#define TEGRA_SNOR_SIZE			SZ_4K
--
--#define TEGRA_PWFM_BASE			0x7000A000
--#define TEGRA_PWFM_SIZE			SZ_256
--
--#define TEGRA_PWFM0_BASE		0x7000A000
--#define TEGRA_PWFM0_SIZE		4
--
--#define TEGRA_PWFM1_BASE		0x7000A010
--#define TEGRA_PWFM1_SIZE		4
--
--#define TEGRA_PWFM2_BASE		0x7000A020
--#define TEGRA_PWFM2_SIZE		4
--
--#define TEGRA_PWFM3_BASE		0x7000A030
--#define TEGRA_PWFM3_SIZE		4
--
--#define TEGRA_MIPI_BASE			0x7000B000
--#define TEGRA_MIPI_SIZE			SZ_256
--
--#define TEGRA_I2C_BASE			0x7000C000
--#define TEGRA_I2C_SIZE			SZ_256
--
--#define TEGRA_TWC_BASE			0x7000C100
--#define TEGRA_TWC_SIZE			SZ_256
--
--#define TEGRA_SPI_BASE			0x7000C380
--#define TEGRA_SPI_SIZE			48
--
--#define TEGRA_I2C2_BASE			0x7000C400
--#define TEGRA_I2C2_SIZE			SZ_256
--
--#define TEGRA_I2C3_BASE			0x7000C500
--#define TEGRA_I2C3_SIZE			SZ_256
--
--#define TEGRA_OWR_BASE			0x7000C600
--#define TEGRA_OWR_SIZE			80
--
--#define TEGRA_DVC_BASE			0x7000D000
--#define TEGRA_DVC_SIZE			SZ_512
--
--#define TEGRA_SPI1_BASE			0x7000D400
--#define TEGRA_SPI1_SIZE			SZ_512
--
--#define TEGRA_SPI2_BASE			0x7000D600
--#define TEGRA_SPI2_SIZE			SZ_512
--
--#define TEGRA_SPI3_BASE			0x7000D800
--#define TEGRA_SPI3_SIZE			SZ_512
--
--#define TEGRA_SPI4_BASE			0x7000DA00
--#define TEGRA_SPI4_SIZE			SZ_512
--
--#define TEGRA_RTC_BASE			0x7000E000
--#define TEGRA_RTC_SIZE			SZ_256
--
--#define TEGRA_KBC_BASE			0x7000E200
--#define TEGRA_KBC_SIZE			SZ_256
--
- #define TEGRA_PMC_BASE			0x7000E400
- #define TEGRA_PMC_SIZE			SZ_256
+ static void __init tegra_dt_init(void)
+ {
+@@ -107,7 +168,9 @@ static void __init tegra_dt_init_late(void)
+ {
+ 	int i;
  
--#define TEGRA_MC_BASE			0x7000F000
--#define TEGRA_MC_SIZE			SZ_1K
--
- #define TEGRA_EMC_BASE			0x7000F400
- #define TEGRA_EMC_SIZE			SZ_1K
+-	tegra_init_late();
++	tegra_init_suspend();
++	tegra_cpuidle_init();
++	tegra_powergate_debugfs_init();
  
- #define TEGRA_FUSE_BASE			0x7000F800
- #define TEGRA_FUSE_SIZE			SZ_1K
- 
--#define TEGRA_KFUSE_BASE		0x7000FC00
--#define TEGRA_KFUSE_SIZE		SZ_1K
--
- #define TEGRA_EMC0_BASE			0x7001A000
- #define TEGRA_EMC0_SIZE			SZ_2K
- 
-@@ -246,18 +108,6 @@
- #define TEGRA_CSITE_BASE		0x70040000
- #define TEGRA_CSITE_SIZE		SZ_256K
- 
--#define TEGRA_SDMMC1_BASE		0xC8000000
--#define TEGRA_SDMMC1_SIZE		SZ_512
--
--#define TEGRA_SDMMC2_BASE		0xC8000200
--#define TEGRA_SDMMC2_SIZE		SZ_512
--
--#define TEGRA_SDMMC3_BASE		0xC8000400
--#define TEGRA_SDMMC3_SIZE		SZ_512
--
--#define TEGRA_SDMMC4_BASE		0xC8000600
--#define TEGRA_SDMMC4_SIZE		SZ_512
--
- /* On TEGRA, many peripherals are very closely packed in
-  * two 256MB io windows (that actually only use about 64KB
-  * at the start of each).
+ 	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
+ 		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
+@@ -132,6 +195,6 @@ DT_MACHINE_START(TEGRA_DT, "NVIDIA Tegra SoC (Flattened Device Tree)")
+ 	.init_time	= tegra_dt_init_time,
+ 	.init_machine	= tegra_dt_init,
+ 	.init_late	= tegra_dt_init_late,
+-	.restart	= tegra_assert_system_reset,
++	.restart	= tegra_pmc_restart,
+ 	.dt_compat	= tegra_dt_board_compat,
+ MACHINE_END
 -- 
 1.8.1.5
