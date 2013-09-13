@@ -1,69 +1,52 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher PATCH 2/2] Add config files for Venice2 board
-Date: Fri, 13 Sep 2013 15:09:51 -0600
-Message-ID: <52337F1F.9070608@wwwdotorg.org>
-References: <1378943336-9263-1-git-send-email-swarren@wwwdotorg.org> <1378943336-9263-2-git-send-email-swarren@wwwdotorg.org> <523101EA.7020704@wwwdotorg.org> <20130913132252.GN30013@tbergstrom-lnx.Nvidia.com> <52333AF6.9060208@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2 3/4] cpufreq: tegra: Re-model Tegra cpufreq driver
+Date: Fri, 13 Sep 2013 16:26:14 -0600
+Message-ID: <52339106.4020601@wwwdotorg.org>
+References: <1378985091-9447-1-git-send-email-bilhuang@nvidia.com> <1378985091-9447-4-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52333AF6.9060208-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1378985091-9447-4-git-send-email-bilhuang@nvidia.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Bill Huang <bilhuang@nvidia.com>
+Cc: rjw@sisk.pl, viresh.kumar@linaro.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/13/2013 10:19 AM, Stephen Warren wrote:
-> On 09/13/2013 07:22 AM, Peter De Schrijver wrote:
->> On Thu, Sep 12, 2013 at 01:51:06AM +0200, Stephen Warren wrote:
->>> On 09/11/2013 05:48 PM, Stephen Warren wrote:
->>>> This board is currently disabled by default due to lack of U-Boot support
->>>> in the mainline repository. If you wish to test this, do as follows:
->>>>
->>>> cd u-boot
->>>> git checkout some-branch-with-venice2-support
->>>> cd ../scripts
->>>> ./build --boards venice2 build
->>>
->>> Peter, do you have a Venice2 yet? If so, could I trouble you to apply
->>> the tegrarcm Tegra124 support patches from Allen, the cbootimage-configs
->>> and tegra-uboot-flasher-scripts patches from me, grab a downstream
->>> Venice2 U-Boot branch, and validate that it all works?
->>>
->>
->> It builds all fine, but flashing as such fails with:
->>
->> U-Boot SPL 2013.04-g4e07053 (Sep 13 2013 - 16:11:40)
-...
->> SF: Unsupported manufacturer fc
->> Failed to initialize SPI flash at 0:0
->> No SPI flash selected. Please run `sf probe'
->> No SPI flash selected. Please run `sf probe'
+On 09/12/2013 05:24 AM, Bill Huang wrote:
+> Re-model Tegra cpufreq driver to support all Tegra series of SoCs.
+> 
+> * Make tegra-cpufreq.c a generic Tegra cpufreq driver.
+> * Move Tegra20 specific codes into tegra20-cpufreq.c.
+> * Bind Tegra cpufreq dirver with a fake device so defer probe would work
+>   when we're going to get regulator in the driver to support voltage
+>   scaling (DVFS).
 
-Does the following solve that?
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
 
-diff --git a/configs/venice2.config b/configs/venice2.config
-index 15d0b67..4316a1a 100644
---- a/configs/venice2.config
-+++ b/configs/venice2.config
-@@ -5,4 +5,5 @@ config = {
-     'flash-erase-size': 1048576,
-     'flash-image': 'venice2-spi.img',
-     'flash-type': 'spi',
-+    'flash-id-uboot', '1:0',
- }
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index f1abe54..41879c3 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -64,7 +64,8 @@ def gen_flashcmd_nand(flash_image_addr, flash_img_size):
-     return flashcmd
+> @@ -232,6 +232,12 @@ config ARM_TEGRA_CPUFREQ
+>  	bool "TEGRA CPUFreq support"
+>  	depends on ARCH_TEGRA
+>  	select CPU_FREQ_TABLE
+> +
+> +config ARM_TEGRA20_CPUFREQ
+> +	bool "NVIDIA TEGRA20"
+> +	depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
+>  	default y
+>  	help
+> -	  This adds the CPUFreq driver support for TEGRA SOCs.
+> +	  This adds the CPUFreq driver for NVIDIA TEGRA20 SoC.
+> +
+> +	  If in doubt, say N.
 
- def gen_flashcmd_spi(flash_image_addr, flash_img_size):
--    flashcmd = 'sf probe 0 ; '
-+    flash_id = config.get('flash-id-uboot', '0')
-+    flashcmd = 'sf probe %s ; ' % flash_id
-     flashcmd += 'sf erase 0 0x%08x ; ' % config['flash-erase-size']
-     flashcmd += 'sf write 0x%08x 0 0x%08x ; ' % (flash_image_addr,
-flash_img_size)
-     return flashcmd
+This patch removes the following from "config ARM_TEGRA_CPUFREQ":
+
+	default y
+	help
+	  This adds the CPUFreq driver support for TEGRA SOCs.
+
+I think that option should be left unchanged, such that this patch
+*just* adds the new option without changing the existing one. If you do
+that, then you can completely drop patch 4/4.
+
+Other than that, this series looks fine.
