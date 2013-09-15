@@ -1,51 +1,74 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: throw the unique chip ID into the entropy pool
-Date: Sun, 15 Sep 2013 11:24:33 +0200
-Message-ID: <CACRpkdYTD4i74U-pAY1eq6FXiBwh-sw9U4N5PobBmpSKiTEVwA@mail.gmail.com>
-References: <1378394938-1551-1-git-send-email-linus.walleij@linaro.org>
-	<52333E56.8060204@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52333E56.8060204-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 4/5] ARM: tegra: set CPU reset handler with firmware op
+Date: Sun, 15 Sep 2013 18:40:27 +0900
+Message-ID: <1379238028-7960-5-git-send-email-acourbot@nvidia.com>
+References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379238028-7960-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 13, 2013 at 6:33 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 09/05/2013 09:28 AM, Linus Walleij wrote:
->> This adds a hook at common late init to extract the 64 bits of
->> chip-unique data and throw it into the entropy pool to make it
->> more device-unique.
->
->> diff --git a/arch/arm/mach-tegra/common.c b/arch/arm/mach-tegra/common.c
->
->>  void __init tegra_init_late(void)
->>  {
->> +     tegra_random_init();
->
-> Looking at this further, there's already a tegra_init_fuse() call made
-> from tegra_init_early(), so rather than adding a second init function
-> into the fuse code, I'd rather just augment that function, unless
-> there's some reason add_device_randomness() won't work at that time?
+Use a firmware operation to set the CPU reset handler and only resort to
+doing it ourselves if there is none defined.
 
-This seems to be possible, due to the comment above
-rand_initialize():
+This supports the booting of secondary CPUs on devices using a TrustZone
+secure monitor.
 
-/*
- * Note that setup_arch() may call add_device_randomness()
- * long before we get here. This allows seeding of the pools
- * with some platform dependent data very early in the boot
- * process.
-(...)
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/reset.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-> If that will work, I'll supply an alternate patch that replaces this,
-> since I also want to remove the tegra_chip_uid() function, and need to
-> make the add_device_randomness() call not use tegra_chip_uid() on
-> Tegra30 or later, since the set of fuses for the chip ID changed radically.
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index 6964117..fc9cf03 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -21,6 +21,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/firmware.h>
+ 
+ #include "iomap.h"
+ #include "irammap.h"
+@@ -65,6 +66,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+ 	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
+ 						tegra_cpu_reset_handler_offset;
++	int err;
+ 
+ 	BUG_ON(is_enabled);
+ 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+@@ -72,9 +74,18 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+ 			tegra_cpu_reset_handler_size);
+ 
+-	tegra_cpu_reset_handler_set(reset_address);
+-
+-	is_enabled = true;
++	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
++	switch (err) {
++	case -ENOSYS:
++		tegra_cpu_reset_handler_set(reset_address);
++		/* pass-through */
++	case 0:
++		is_enabled = true;
++		break;
++	default:
++		pr_crit("Cannot set CPU reset handler: %d\n", err);
++		BUG();
++	}
+ }
+ 
+ void __init tegra_cpu_reset_handler_init(void)
+-- 
+1.8.4
 
-Sure, go ahead.
-
-Yours,
-Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
