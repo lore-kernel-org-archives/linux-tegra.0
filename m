@@ -1,32 +1,37 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Add power control
-Date: Mon, 16 Sep 2013 12:21:54 +0800
-Message-ID: <52368762.7000701@nvidia.com>
-References: <1378985061-28547-1-git-send-email-wni@nvidia.com> <1378985061-28547-2-git-send-email-wni@nvidia.com> <20130912115106.GM29403@sirena.org.uk>
+Subject: Re: [PATCH v4 3/3] Documentation: dt: hwmon: add OF document for
+ LM90
+Date: Mon, 16 Sep 2013 12:28:43 +0800
+Message-ID: <523688FB.2010701@nvidia.com>
+References: <1378985061-28547-1-git-send-email-wni@nvidia.com> <1378985061-28547-4-git-send-email-wni@nvidia.com> <5231D709.5080308@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130912115106.GM29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <5231D709.5080308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/12/2013 07:51 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On 09/12/2013 11:00 PM, Stephen Warren wrote:
+> On 09/12/2013 05:24 AM, Wei Ni wrote:
+>> Add OF document for LM90 in Documentation/devicetree/.
 > 
-> On Thu, Sep 12, 2013 at 07:24:19PM +0800, Wei Ni wrote:
+>> diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt b/Documentation/devicetree/bindings/hwmon/lm90.txt
 > 
->> +#include <linux/delay.h>
+>> +Optional properties:
+>> +- vcc-supply: vcc regulator for the supply voltage.
+>> +              If this is not set, assuming vcc is always powered.
 > 
-> You don't need this any more, otherwise
+> I thought that was going to be a "Required Property".
 
-Oh, yes, I will remove it.
+There may have many platforms without regulator, they always power on
+this device, so how can they set this "vcc-supply "property if we set it
+as "Required Property".
+Set to dummy-regulator? but it seems the regulator framework can't
+handle it yet.
 
-> 
-> Reviewed-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> * Unknown Key
-> * 0x7EA229BD
+Wei.
+
 > 
