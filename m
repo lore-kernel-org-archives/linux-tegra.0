@@ -1,104 +1,314 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v6 1/5] ARM: add basic support for Trusted Foundations
-Date: Mon, 16 Sep 2013 10:50:38 -0600
-Message-ID: <523736DE.1050201@wwwdotorg.org>
-References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com> <1379238028-7960-2-git-send-email-acourbot@nvidia.com>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH RESEND v4] hwmon: (lm90) split set&show temp as common
+ codes
+Date: Mon, 16 Sep 2013 21:29:08 +0200
+Message-ID: <20130916212908.25248fae@endymion.delvare>
+References: <1375785417-13650-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379238028-7960-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375785417-13650-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/15/2013 03:40 AM, Alexandre Courbot wrote:
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked using the same SMC-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
+Hi Wei,
+
+On Tue, 6 Aug 2013 18:36:57 +0800, Wei Ni wrote:
+> Split set&show temp codes as common functions, so we can use it
+> directly when implement linux thermal framework.
+> And handle error return value for the lm90_select_remote_channel
+> and write_tempx, then set_temp8 and set_temp11 could return it
+> to user-space.
 > 
-> Note: The API followed by Trusted Foundations does *not* follow the SMC
-> calling conventions. It has nothing to do with PSCI neither and is only
-> relevant to devices that use Trusted Foundations (like most Tegra-based
-> retail devices).
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/hwmon/lm90.c |  150 +++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 99 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+> index cdff742..6de8e01 100644
+> --- a/drivers/hwmon/lm90.c
+> +++ b/drivers/hwmon/lm90.c
+> @@ -422,20 +422,29 @@ static int lm90_read16(struct i2c_client *client, u8 regh, u8 regl, u16 *value)
+>   * various registers have different meanings as a result of selecting a
+>   * non-default remote channel.
+>   */
+> -static inline void lm90_select_remote_channel(struct i2c_client *client,
+> +static inline int lm90_select_remote_channel(struct i2c_client *client,
+>  					      struct lm90_data *data,
+>  					      int channel)
+>  {
+>  	u8 config;
+> +	int err = 0;
 
-> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+You don't have to initialize err, as you return immediately when an
+error happens. You can just...
 
-> +#if IS_ENABLED(CONFIG_OF)
-> +void of_register_trusted_foundations(void)
+>  
+>  	if (data->kind == max6696) {
+>  		lm90_read_reg(client, LM90_REG_R_CONFIG1, &config);
+>  		config &= ~0x08;
+>  		if (channel)
+>  			config |= 0x08;
+> -		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
+> -					  config);
+> +		err = i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
+> +						config);
+> +		if (err < 0) {
+> +			dev_err(&client->dev,
+> +				"Failed to select remote channel %d, err %d\n",
+> +				channel, err);
+> +			return err;
+> +		}
+>  	}
+> +
+> +	return err;
+
+... return 0 here.
+
+>  }
+>  
+>  /*
+> @@ -702,29 +711,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
+>   * Sysfs stuff
+>   */
+>  
+> -static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
+> -			  char *buf)
+> +static int read_temp8(struct device *dev, int index)
+>  {
+> -	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+>  	if (data->kind == adt7461)
+> -		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
+> +		temp = temp_from_u8_adt7461(data, data->temp8[index]);
+>  	else if (data->kind == max6646)
+> -		temp = temp_from_u8(data->temp8[attr->index]);
+> +		temp = temp_from_u8(data->temp8[index]);
+>  	else
+> -		temp = temp_from_s8(data->temp8[attr->index]);
+> +		temp = temp_from_s8(data->temp8[index]);
+>  
+>  	/* +16 degrees offset for temp2 for the LM99 */
+> -	if (data->kind == lm99 && attr->index == 3)
+> +	if (data->kind == lm99 && index == 3)
+>  		temp += 16000;
+>  
+> -	return sprintf(buf, "%d\n", temp);
+> +	return temp;
+>  }
+>  
+> -static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
+> -			 const char *buf, size_t count)
+> +static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
+> +			  char *buf)
 > +{
-> +	struct device_node *node;
-> +	struct trusted_foundations_platform_data pdata;
+> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> +
+> +	return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
+> +}
+> +
+> +static int write_temp8(struct device *dev, int index, long val)
+>  {
+>  	static const u8 reg[8] = {
+>  		LM90_REG_W_LOCAL_LOW,
+> @@ -737,60 +751,79 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
+>  		MAX6659_REG_W_REMOTE_EMERG,
+>  	};
+>  
+> -	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+>  	struct i2c_client *client = to_i2c_client(dev);
+>  	struct lm90_data *data = i2c_get_clientdata(client);
+> -	int nr = attr->index;
+> -	long val;
+>  	int err;
+>  
+> -	err = kstrtol(buf, 10, &val);
+> -	if (err < 0)
+> -		return err;
+> -
+>  	/* +16 degrees offset for temp2 for the LM99 */
+> -	if (data->kind == lm99 && attr->index == 3)
+> +	if (data->kind == lm99 && index == 3)
+>  		val -= 16000;
+>  
+>  	mutex_lock(&data->update_lock);
+>  	if (data->kind == adt7461)
+> -		data->temp8[nr] = temp_to_u8_adt7461(data, val);
+> +		data->temp8[index] = temp_to_u8_adt7461(data, val);
+>  	else if (data->kind == max6646)
+> -		data->temp8[nr] = temp_to_u8(val);
+> +		data->temp8[index] = temp_to_u8(val);
+>  	else
+> -		data->temp8[nr] = temp_to_s8(val);
+> -
+> -	lm90_select_remote_channel(client, data, nr >= 6);
+> -	i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
+> -	lm90_select_remote_channel(client, data, 0);
+> +		data->temp8[index] = temp_to_s8(val);
+>  
+> +	err = lm90_select_remote_channel(client, data, index >= 6);
+> +	err |= i2c_smbus_write_byte_data(client, reg[index], data->temp8[index]);
+> +	err |= lm90_select_remote_channel(client, data, 0);
+
+You can't use |= for error codes. Imagine that
+lm90_select_remote_channel() returns -EIO (-5) and
+i2c_smbus_write_byte_data() returns -EAGAIN (-11), err will have value
+-EPERM (-1) which makes no sense. You have to report errors as soon as
+they happen so that the error code isn't lost.
+
+What you can do is:
+
+	if ((err = f1(...)) ||
+	    (err = f2(...)) ||
+	    (err = f3(...))) {
+		dev_err(...);
+		return err;
+	}
+
+I think checkpatch will complain about that construct but me, I'm fine
+with it.
+
+> +	if (err)
+> +		dev_err(dev, "write_temp8 failed!\n");
+>  	mutex_unlock(&data->update_lock);
+> +
+> +	return err;
+> +}
+> +
+> +static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
+> +			 const char *buf, size_t count)
+> +{
+> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
+> +	int index = attr->index;
+> +	long val;
 > +	int err;
 > +
-> +	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
-> +	if (!node)
-> +		return;
-...
-
-> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
-
-> +#if IS_ENABLED(CONFIG_TRUSTED_FOUNDATIONS)
-> +void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
-> +#if IS_ENABLED(CONFIG_OF)
-> +void of_register_trusted_foundations(void);
-> +#endif
-
-I still don't think that's correct.
-
-If TF support is enabled, yet DT support is not enabled, then there is
-no prototype, implementation, or dummy implementation for
-of_register_trusted_foundations(). I think there should be a dummy
-implementation in this case, shouldn't there?
-
+> +	err = kstrtol(buf, 10, &val);
+> +	if (err < 0)
+> +		return err;
 > +
-> +#else /* CONFIG_TRUSTED_FOUNDATIONS */
+> +	err = write_temp8(dev, index, val);
+> +	if (err < 0)
+> +		return err;
 > +
-> +#include <linux/printk.h>
-> +#include <linux/of.h>
-> +#include <asm/bug.h>
-> +
-> +static inline void register_trusted_foundations(
-> +				   struct trusted_foundations_platform_data *pd)
+>  	return count;
+>  }
+>  
+> -static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
+> -			   char *buf)
+> +static int read_temp11(struct device *dev, int index)
+>  {
+> -	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+>  	if (data->kind == adt7461)
+> -		temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
+> +		temp = temp_from_u16_adt7461(data, data->temp11[index]);
+>  	else if (data->kind == max6646)
+> -		temp = temp_from_u16(data->temp11[attr->index]);
+> +		temp = temp_from_u16(data->temp11[index]);
+>  	else
+> -		temp = temp_from_s16(data->temp11[attr->index]);
+> +		temp = temp_from_s16(data->temp11[index]);
+>  
+>  	/* +16 degrees offset for temp2 for the LM99 */
+> -	if (data->kind == lm99 &&  attr->index <= 2)
+> +	if (data->kind == lm99 && index <= 2)
+>  		temp += 16000;
+>  
+> -	return sprintf(buf, "%d\n", temp);
+> +	return temp;
+>  }
+>  
+> -static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+> -			  const char *buf, size_t count)
+> +static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
+> +			   char *buf)
 > +{
-> +	panic("No support for Trusted Foundations, stopping...\n");
+> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+> +
+> +	return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
 > +}
 > +
-> +#if IS_ENABLED(CONFIG_OF)
-> +static inline void of_register_trusted_foundations(void)
-> +{
-> +	/* If we find the target should enable TF but does not support it,
-> +	 * fail as the system won't be able to do much anyway */
-> +	if (of_find_compatible_node(NULL, NULL, "tl,trusted-foundations"))
-> +		register_trusted_foundations(NULL);
+> +static int write_temp11(struct device *dev, int nr, int index, long val)
+>  {
+>  	struct {
+>  		u8 high;
+> @@ -804,18 +837,10 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+>  		{ LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
+>  	};
+>  
+> -	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+>  	struct i2c_client *client = to_i2c_client(dev);
+>  	struct lm90_data *data = i2c_get_clientdata(client);
+> -	int nr = attr->nr;
+> -	int index = attr->index;
+> -	long val;
+>  	int err;
+>  
+> -	err = kstrtol(buf, 10, &val);
+> -	if (err < 0)
+> -		return err;
+> -
+>  	/* +16 degrees offset for temp2 for the LM99 */
+>  	if (data->kind == lm99 && index <= 2)
+>  		val -= 16000;
+> @@ -830,15 +855,38 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+>  	else
+>  		data->temp11[index] = temp_to_s8(val) << 8;
+>  
+> -	lm90_select_remote_channel(client, data, reg[nr].channel);
+> -	i2c_smbus_write_byte_data(client, reg[nr].high,
+> +	err = lm90_select_remote_channel(client, data, reg[nr].channel);
+> +	err |= i2c_smbus_write_byte_data(client, reg[nr].high,
+>  				  data->temp11[index] >> 8);
+>  	if (data->flags & LM90_HAVE_REM_LIMIT_EXT)
+> -		i2c_smbus_write_byte_data(client, reg[nr].low,
+> -					  data->temp11[index] & 0xff);
+> -	lm90_select_remote_channel(client, data, 0);
+> +		err |= i2c_smbus_write_byte_data(client, reg[nr].low,
+> +						data->temp11[index] & 0xff);
+> +	err |= lm90_select_remote_channel(client, data, 0);
+> +	if (err)
+> +		dev_err(dev, "write_temp11 failed !\n");
+
+Same here, you can't use |=.
+
+Also, no space needed before exclamation marks in English.
+
+>  
+>  	mutex_unlock(&data->update_lock);
+> +
+> +	return err;
 > +}
-> +#else
-> +static inline void of_register_trusted_foundations(void)
+> +
+> +static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
+> +			  const char *buf, size_t count)
 > +{
-> +}
-> +#endif /* CONFIG_OF */
+> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
+> +	int nr = attr->nr;
+> +	int index = attr->index;
+> +	long val;
+> +	int err;
+> +
+> +	err = kstrtol(buf, 10, &val);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err = write_temp11(dev, nr, index, val);
+> +	if (err < 0)
+> +		return err;
+> +
+>  	return count;
+>  }
+>  
 
-That's more complex than it needs to be; there is a dummy
-of_find_compatible_node() in the !OF case, so you don't need to ifdef
-the implementation of of_register_trusted_foundations(); you just need
-the first implementation here.
-
-> +#endif /* CONFIG_TRUSTED_FOUNDATIONS */
-
-In summary, I think you need:
-
-If TF is enabled, always implement of_register_trusted_foundations() in
-the C file, and rely on of_find_compatible_node() to return NULL if
-!CONFIG_OF.
-
-If TF is not enabled, implement the inline version in the header file,
-and again rely on of_find_compatible_node() to return NULL if !CONFIG_OF.
-
-Unless I'm missing something!
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Jean Delvare
