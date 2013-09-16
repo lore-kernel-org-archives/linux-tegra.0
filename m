@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 5/9] of/irq: Introduce __of_irq_to_resource()
-Date: Mon, 16 Sep 2013 10:32:02 +0200
-Message-ID: <1379320326-13241-6-git-send-email-treding@nvidia.com>
+Subject: [PATCH 3/9] irqdomain: Introduce __irq_create_of_mapping()
+Date: Mon, 16 Sep 2013 10:32:00 +0200
+Message-ID: <1379320326-13241-4-git-send-email-treding@nvidia.com>
 References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
@@ -10,69 +10,105 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.wallei
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is a version of of_irq_to_resource() that propagates the precise
+This is a version of irq_create_of_mapping() that propagates the precise
 error code instead of returning 0 for all errors. It will be used in
 subsequent patches to allow further propagation of error codes.
 
-To avoid code duplication, implement of_irq_to_resource() as a wrapper
-around the new __of_irq_to_resource().
+To avoid code duplication, implement irq_create_of_mapping() as a
+wrapper around the new __irq_create_of_mapping().
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/of/irq.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
+ include/linux/of_irq.h |  3 +++
+ kernel/irq/irqdomain.c | 39 +++++++++++++++++++++++++++++----------
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 8225289..57396fd 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -343,15 +343,15 @@ int of_irq_map_one(struct device_node *device, int index, struct of_irq *out_irq
+diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+index 535cecf..c383dd1 100644
+--- a/include/linux/of_irq.h
++++ b/include/linux/of_irq.h
+@@ -63,6 +63,9 @@ extern int of_irq_map_raw(struct device_node *parent, const __be32 *intspec,
+ 			  struct of_irq *out_irq);
+ extern int of_irq_map_one(struct device_node *device, int index,
+ 			  struct of_irq *out_irq);
++extern int __irq_create_of_mapping(struct device_node *controller,
++				   const u32 *intspec, unsigned int intsize,
++				   unsigned int *virqp);
+ extern unsigned int irq_create_of_mapping(struct device_node *controller,
+ 					  const u32 *intspec,
+ 					  unsigned int intsize);
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index d2a3b01..9867616 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -484,39 +484,58 @@ int irq_create_strict_mappings(struct irq_domain *domain, unsigned int irq_base,
  }
- EXPORT_SYMBOL_GPL(of_irq_map_one);
+ EXPORT_SYMBOL_GPL(irq_create_strict_mappings);
  
--/**
-- * of_irq_to_resource - Decode a node's IRQ and return it as a resource
-- * @dev: pointer to device tree node
-- * @index: zero-based index of the irq
-- * @r: pointer to resource structure to return result into.
-- */
--int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
-+static int __of_irq_to_resource(struct device_node *dev, unsigned int index,
-+				struct resource *r)
+-unsigned int irq_create_of_mapping(struct device_node *controller,
+-				   const u32 *intspec, unsigned int intsize)
++int __irq_create_of_mapping(struct device_node *controller, const u32 *intspec,
++			    unsigned int intsize, unsigned int *virqp)
  {
--	int irq = irq_of_parse_and_map(dev, index);
-+	unsigned int irq;
++	unsigned int type = IRQ_TYPE_NONE;
+ 	struct irq_domain *domain;
+ 	irq_hw_number_t hwirq;
+-	unsigned int type = IRQ_TYPE_NONE;
+ 	unsigned int virq;
 +	int ret;
-+
-+	ret = of_irq_get(dev, index, &irq);
+ 
+ 	domain = controller ? irq_find_host(controller) : irq_default_domain;
+ 	if (!domain) {
+ 		pr_warn("no irq domain found for %s !\n",
+ 			of_node_full_name(controller));
+-		return 0;
++		return -EPROBE_DEFER;
+ 	}
+ 
+ 	/* If domain has no translation, then we assume interrupt line */
+ 	if (domain->ops->xlate == NULL)
+ 		hwirq = intspec[0];
+ 	else {
+-		if (domain->ops->xlate(domain, controller, intspec, intsize,
+-				     &hwirq, &type))
+-			return 0;
++		ret = domain->ops->xlate(domain, controller, intspec, intsize,
++					 &hwirq, &type);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/* Create mapping */
+-	virq = irq_create_mapping(domain, hwirq);
+-	if (!virq)
+-		return virq;
++	ret = __irq_create_mapping(domain, hwirq, &virq);
 +	if (ret)
 +		return ret;
  
- 	/* Only dereference the resource if both the
- 	 * resource and the irq are valid. */
-@@ -373,6 +373,23 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
- 
- 	return irq;
- }
+ 	/* Set type if specified and different than the current one */
+ 	if (type != IRQ_TYPE_NONE &&
+ 	    type != irq_get_trigger_type(virq))
+ 		irq_set_irq_type(virq, type);
 +
-+/**
-+ * of_irq_to_resource - Decode a node's IRQ and return it as a resource
-+ * @dev: pointer to device tree node
-+ * @index: zero-based index of the irq
-+ * @r: pointer to resource structure to return result into.
-+ */
-+int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
++	if (virqp)
++		*virqp = virq;
++
++	return 0;
++}
++
++unsigned int irq_create_of_mapping(struct device_node *controller,
++				   const u32 *intspec, unsigned int intsize)
 +{
++	unsigned int virq;
 +	int ret;
 +
-+	ret = __of_irq_to_resource(dev, index, r);
-+	if (ret < 0)
++	ret = __irq_create_of_mapping(controller, intspec, intsize, &virq);
++	if (ret)
 +		return 0;
 +
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(of_irq_to_resource);
- 
- /**
+ 	return virq;
+ }
+ EXPORT_SYMBOL_GPL(irq_create_of_mapping);
 -- 
 1.8.4
