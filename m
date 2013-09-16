@@ -1,58 +1,56 @@
 From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv2 06/11] tegrarcm: Add timeout to USB xfers
-Date: Mon, 16 Sep 2013 15:24:53 -0700
-Message-ID: <1379370298-20404-7-git-send-email-amartin@nvidia.com>
-References: <1379370298-20404-1-git-send-email-amartin@nvidia.com>
+Subject: [PATCHv2 00/11] tegrarcm: T124 and new command support
+Date: Mon, 16 Sep 2013 15:24:47 -0700
+Message-ID: <1379370298-20404-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379370298-20404-1-git-send-email-amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This prevents tegrarcm from just hanging in the event that the target
-gets in some bad state and stops responding to USB (like downloading a
-bad BCT).  Set default timeout to 1s which should be plenty long
-enough for the max xfer size of 4096 bytes.
+This patch series adds T124 support to tegrarcm, tested on laguna.  It
+also adds support for new commands for ripping a BCT from a live
+system, and for passing in the miniloader from a file.  Also fixed up
+some of the error handling so now USB commands will time out instead
+of hanging, and attempt to bring up nv3p even if RCM is unresponsive.
 
-Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- src/usb.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Changes:
+v2:
+ - Removed odmdata option
+ - Renamed ripbct to readbct and made it a command not an option
+ - Added missing SKUs, made default SKU be the chip family name
+ - Removed some left over debug prints, whitespace errors
 
-diff --git a/src/usb.c b/src/usb.c
-index 16f3d90..450bc80 100644
---- a/src/usb.c
-+++ b/src/usb.c
-@@ -34,6 +34,9 @@
- #include "usb.h"
- #include "debug.h"
- 
-+// USB xfer timeout in ms
-+#define USB_TIMEOUT 1000
-+
- #define USB_XFER_MAX 4096
- 
- //
-@@ -225,7 +228,7 @@ int usb_write(usb_device_t *usb, uint8_t *buf, int len)
- 	while (len) {
- 		chunk_size = MIN(len, USB_XFER_MAX);
- 		ret = libusb_bulk_transfer(usb->handle, usb->endpt_out, buf,
--					   chunk_size, &actual_chunk, 0);
-+					   chunk_size, &actual_chunk, USB_TIMEOUT);
- 		if (ret != LIBUSB_SUCCESS) {
- 			dprintf("write failure: %d\n", ret);
- 			return EIO;
-@@ -252,7 +255,7 @@ int usb_read(usb_device_t *usb, uint8_t *buf, int len, int *actual_len)
- 	while (len) {
- 		chunk_size = MIN(len, USB_XFER_MAX);
- 		ret = libusb_bulk_transfer(usb->handle, usb->endpt_in, buf,
--					   chunk_size, &actual_chunk, 0);
-+					   chunk_size, &actual_chunk, USB_TIMEOUT);
- 		if (ret != LIBUSB_SUCCESS) {
- 			dprintf("read failure: %d\n", ret);
- 			return EIO;
+Allen Martin (11):
+  tegrarcm: Change NVIDIA license to apply to all miniloader files
+  tegrarcm: Add missing SKU information
+  tegrarcm: Add support for RCM protocol version 40
+  tegrarcm: Add Tegra124 miniloader
+  tegrarcm: Add Tegra124 support
+  tegrarcm: Add timeout to USB xfers
+  tegrarcm: Assume nv3p server is running if RCM doesn't respond
+  tegrarcm: Clean up usage info
+  tegrarcm: Add readbct support
+  tegrarcm: Add command to pass miniloader in from file
+  tegrarcm: Bump version to 1.5
+
+ LICENSE                              |    4 +-
+ README                               |    4 +
+ configure.ac                         |    2 +-
+ src/Makefile.am                      |    1 +
+ src/main.c                           |  416 +-
+ src/miniloader/tegra124-miniloader.h | 8570 ++++++++++++++++++++++++++++++++++
+ src/nv3p.c                           |   10 +-
+ src/nv3p.h                           |   22 +
+ src/rcm.c                            |   74 +
+ src/rcm.h                            |   58 +-
+ src/tegrarcm.1.in                    |   27 +-
+ src/usb.c                            |   10 +-
+ src/usb.h                            |    1 +
+ 13 files changed, 9058 insertions(+), 141 deletions(-)
+ create mode 100644 src/miniloader/tegra124-miniloader.h
+
 -- 
 1.8.1.5
