@@ -1,53 +1,128 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 09/11] tegrarcm: Add support for odmdata command
-Date: Mon, 16 Sep 2013 13:28:51 -0700
-Message-ID: <20130916202851.GA1663@badger>
-References: <1378757761-20939-1-git-send-email-amartin@nvidia.com>
- <1378757761-20939-10-git-send-email-amartin@nvidia.com>
- <522E436F.90402@wwwdotorg.org>
- <20130911211228.GC29868@badger>
- <5230DD8F.4030703@wwwdotorg.org>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/9] irqdomain: Introduce __irq_create_of_mapping()
+Date: Mon, 16 Sep 2013 16:17:28 -0500
+Message-ID: <52377568.6010204@gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-4-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5230DD8F.4030703-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379320326-13241-4-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 11, 2013 at 02:15:59PM -0700, Stephen Warren wrote:
-> On 09/11/2013 03:12 PM, Allen Martin wrote:
-> > On Mon, Sep 09, 2013 at 02:53:51PM -0700, Stephen Warren wrote:
-> >> On 09/09/2013 02:15 PM, Allen Martin wrote:
-> >>> Add command "--odmdata" to pass odmdata down to the miniloader.  This
-> >>> is used by the miniloader for things such as UART init and RAM sizing.
-> >>> It is normally not needed and is really only useful for miniloader
-> >>> debugging.
-> >>
-> >> Does the miniloader put it into the BCT in IRAM so that the bootloader
-> >> can also read it? If suppose we expect the correct ODMDATA to be already
-> >> included in the BCT that tegrarcm sends though, so the bootloader
-> >> already sees the correct value.
-> > 
-> > Yes, miniloader will update the BCT with the new value if you send
-> > this command after downloading a BCT.  Really the only thing I'm using
-> > this for is the side effect inside miniloader that causes it to
-> > reinitialize the UART with the new odmdata value.  For some reason
-> > when you donwload the BCT, miniloader does not do that, and when you
-> > boot in recovery mode there's no initial BCT so UART never gets
-> > initialized in miniloader and you get no debug prints.
+On 09/16/2013 03:32 AM, Thierry Reding wrote:
+> This is a version of irq_create_of_mapping() that propagates the precise
+> error code instead of returning 0 for all errors. It will be used in
+> subsequent patches to allow further propagation of error codes.
 > 
-> Oh, I wasn't aware that the miniloader ever initialized the UART. Debug
-> prints from what? The miniloader itself, or what it loads (which I think
-> should be initializing the UART from scratch anyway, since I assume the
-> boot ROM doesn't do it for the regular boot path either).
+> To avoid code duplication, implement irq_create_of_mapping() as a
+> wrapper around the new __irq_create_of_mapping().
 
-Yes, debugging the miniloader.  I loaded a debug version of the
-miniloader during venice2 bringup to determine why it was failing and
-added this command so I could see the error messages from it.  It may
-only be useful to me, so I can yank it from the series if you don't
-think it's useful for inclusion in the upstream repository.
+This function is a manageable number of callers that the callers should
+just be updated and avoid the wrapper.
 
--Allen
+Rob
+
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/linux/of_irq.h |  3 +++
+>  kernel/irq/irqdomain.c | 39 +++++++++++++++++++++++++++++----------
+>  2 files changed, 32 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+> index 535cecf..c383dd1 100644
+> --- a/include/linux/of_irq.h
+> +++ b/include/linux/of_irq.h
+> @@ -63,6 +63,9 @@ extern int of_irq_map_raw(struct device_node *parent, const __be32 *intspec,
+>  			  struct of_irq *out_irq);
+>  extern int of_irq_map_one(struct device_node *device, int index,
+>  			  struct of_irq *out_irq);
+> +extern int __irq_create_of_mapping(struct device_node *controller,
+> +				   const u32 *intspec, unsigned int intsize,
+> +				   unsigned int *virqp);
+>  extern unsigned int irq_create_of_mapping(struct device_node *controller,
+>  					  const u32 *intspec,
+>  					  unsigned int intsize);
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index d2a3b01..9867616 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -484,39 +484,58 @@ int irq_create_strict_mappings(struct irq_domain *domain, unsigned int irq_base,
+>  }
+>  EXPORT_SYMBOL_GPL(irq_create_strict_mappings);
+>  
+> -unsigned int irq_create_of_mapping(struct device_node *controller,
+> -				   const u32 *intspec, unsigned int intsize)
+> +int __irq_create_of_mapping(struct device_node *controller, const u32 *intspec,
+> +			    unsigned int intsize, unsigned int *virqp)
+>  {
+> +	unsigned int type = IRQ_TYPE_NONE;
+>  	struct irq_domain *domain;
+>  	irq_hw_number_t hwirq;
+> -	unsigned int type = IRQ_TYPE_NONE;
+>  	unsigned int virq;
+> +	int ret;
+>  
+>  	domain = controller ? irq_find_host(controller) : irq_default_domain;
+>  	if (!domain) {
+>  		pr_warn("no irq domain found for %s !\n",
+>  			of_node_full_name(controller));
+> -		return 0;
+> +		return -EPROBE_DEFER;
+>  	}
+>  
+>  	/* If domain has no translation, then we assume interrupt line */
+>  	if (domain->ops->xlate == NULL)
+>  		hwirq = intspec[0];
+>  	else {
+> -		if (domain->ops->xlate(domain, controller, intspec, intsize,
+> -				     &hwirq, &type))
+> -			return 0;
+> +		ret = domain->ops->xlate(domain, controller, intspec, intsize,
+> +					 &hwirq, &type);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	/* Create mapping */
+> -	virq = irq_create_mapping(domain, hwirq);
+> -	if (!virq)
+> -		return virq;
+> +	ret = __irq_create_mapping(domain, hwirq, &virq);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Set type if specified and different than the current one */
+>  	if (type != IRQ_TYPE_NONE &&
+>  	    type != irq_get_trigger_type(virq))
+>  		irq_set_irq_type(virq, type);
+> +
+> +	if (virqp)
+> +		*virqp = virq;
+> +
+> +	return 0;
+> +}
+> +
+> +unsigned int irq_create_of_mapping(struct device_node *controller,
+> +				   const u32 *intspec, unsigned int intsize)
+> +{
+> +	unsigned int virq;
+> +	int ret;
+> +
+> +	ret = __irq_create_of_mapping(controller, intspec, intsize, &virq);
+> +	if (ret)
+> +		return 0;
+> +
+>  	return virq;
+>  }
+>  EXPORT_SYMBOL_GPL(irq_create_of_mapping);
+> 
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
