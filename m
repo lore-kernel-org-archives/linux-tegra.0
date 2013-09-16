@@ -1,128 +1,83 @@
 From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/9] irqdomain: Introduce __irq_create_of_mapping()
-Date: Mon, 16 Sep 2013 16:17:28 -0500
-Message-ID: <52377568.6010204@gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-4-git-send-email-treding@nvidia.com>
+Subject: Re: [PATCH 4/9] of/irq: Introduce of_irq_get()
+Date: Mon, 16 Sep 2013 16:24:47 -0500
+Message-ID: <5237771F.1060908@gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-5-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379320326-13241-4-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379320326-13241-5-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> This is a version of irq_create_of_mapping() that propagates the precise
+> This is a version of irq_of_parse_and_map() that propagates the precise
 > error code instead of returning 0 for all errors. It will be used in
 > subsequent patches to allow further propagation of error codes.
 > 
-> To avoid code duplication, implement irq_create_of_mapping() as a
-> wrapper around the new __irq_create_of_mapping().
+> To avoid code duplication, implement irq_of_parse_and_map() as a wrapper
+> around the new of_irq_get().
 
-This function is a manageable number of callers that the callers should
-just be updated and avoid the wrapper.
+*_get typically also implies some reference counting which I don't
+believe this does. I don't think having 2 functions with completely
+different names doing the same thing with only a different calling
+convention is good either. So I would keep the old name and the names
+aligned.
 
-Rob
-
-> 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
+>  drivers/of/irq.c       | 21 +++++++++++++++++----
 >  include/linux/of_irq.h |  3 +++
->  kernel/irq/irqdomain.c | 39 +++++++++++++++++++++++++++++----------
->  2 files changed, 32 insertions(+), 10 deletions(-)
+>  2 files changed, 20 insertions(+), 4 deletions(-)
 > 
-> diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
-> index 535cecf..c383dd1 100644
-> --- a/include/linux/of_irq.h
-> +++ b/include/linux/of_irq.h
-> @@ -63,6 +63,9 @@ extern int of_irq_map_raw(struct device_node *parent, const __be32 *intspec,
->  			  struct of_irq *out_irq);
->  extern int of_irq_map_one(struct device_node *device, int index,
->  			  struct of_irq *out_irq);
-> +extern int __irq_create_of_mapping(struct device_node *controller,
-> +				   const u32 *intspec, unsigned int intsize,
-> +				   unsigned int *virqp);
->  extern unsigned int irq_create_of_mapping(struct device_node *controller,
->  					  const u32 *intspec,
->  					  unsigned int intsize);
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index d2a3b01..9867616 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -484,39 +484,58 @@ int irq_create_strict_mappings(struct irq_domain *domain, unsigned int irq_base,
->  }
->  EXPORT_SYMBOL_GPL(irq_create_strict_mappings);
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index 5f44388..8225289 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -26,6 +26,20 @@
+>  #include <linux/string.h>
+>  #include <linux/slab.h>
 >  
-> -unsigned int irq_create_of_mapping(struct device_node *controller,
-> -				   const u32 *intspec, unsigned int intsize)
-> +int __irq_create_of_mapping(struct device_node *controller, const u32 *intspec,
-> +			    unsigned int intsize, unsigned int *virqp)
->  {
-> +	unsigned int type = IRQ_TYPE_NONE;
->  	struct irq_domain *domain;
->  	irq_hw_number_t hwirq;
-> -	unsigned int type = IRQ_TYPE_NONE;
->  	unsigned int virq;
+> +int of_irq_get(struct device_node *dev, unsigned int index, unsigned int *virqp)
+> +{
+> +	struct of_irq oirq;
 > +	int ret;
->  
->  	domain = controller ? irq_find_host(controller) : irq_default_domain;
->  	if (!domain) {
->  		pr_warn("no irq domain found for %s !\n",
->  			of_node_full_name(controller));
-> -		return 0;
-> +		return -EPROBE_DEFER;
->  	}
->  
->  	/* If domain has no translation, then we assume interrupt line */
->  	if (domain->ops->xlate == NULL)
->  		hwirq = intspec[0];
->  	else {
-> -		if (domain->ops->xlate(domain, controller, intspec, intsize,
-> -				     &hwirq, &type))
-> -			return 0;
-> +		ret = domain->ops->xlate(domain, controller, intspec, intsize,
-> +					 &hwirq, &type);
-> +		if (ret)
-> +			return ret;
->  	}
->  
->  	/* Create mapping */
-> -	virq = irq_create_mapping(domain, hwirq);
-> -	if (!virq)
-> -		return virq;
-> +	ret = __irq_create_mapping(domain, hwirq, &virq);
+> +
+> +	ret = of_irq_map_one(dev, index, &oirq);
 > +	if (ret)
 > +		return ret;
->  
->  	/* Set type if specified and different than the current one */
->  	if (type != IRQ_TYPE_NONE &&
->  	    type != irq_get_trigger_type(virq))
->  		irq_set_irq_type(virq, type);
 > +
-> +	if (virqp)
-> +		*virqp = virq;
-> +
-> +	return 0;
+> +	return __irq_create_of_mapping(oirq.controller, oirq.specifier,
+> +				       oirq.size, virqp);
 > +}
+> +EXPORT_SYMBOL_GPL(of_irq_get);
 > +
-> +unsigned int irq_create_of_mapping(struct device_node *controller,
-> +				   const u32 *intspec, unsigned int intsize)
-> +{
+>  /**
+>   * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
+>   * @dev: Device node of the device whose interrupt is to be mapped
+> @@ -36,13 +50,12 @@
+>   */
+>  unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+>  {
+> -	struct of_irq oirq;
 > +	unsigned int virq;
-> +	int ret;
-> +
-> +	ret = __irq_create_of_mapping(controller, intspec, intsize, &virq);
-> +	if (ret)
-> +		return 0;
-> +
->  	return virq;
->  }
->  EXPORT_SYMBOL_GPL(irq_create_of_mapping);
-> 
+>  
+> -	if (of_irq_map_one(dev, index, &oirq))
+> +	if (of_irq_get(dev, index, &virq))
+>  		return 0;
+>  
+> -	return irq_create_of_mapping(oirq.controller, oirq.specifier,
+> -				     oirq.size);
+> +	return virq;
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This can be an inline and written more concisely:
+
+{
+	unsigned int virq;
+	return (of_irq_get(dev, index, &virq) < 0) ? 0 : virq;
+}
+
+Rob
