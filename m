@@ -1,51 +1,32 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2] crypto: tegra-aes: Use devm_clk_get
-Date: Mon, 16 Sep 2013 09:01:11 +0530
-Message-ID: <1379302271-22438-2-git-send-email-sachin.kamat@linaro.org>
-References: <1379302271-22438-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <1379302271-22438-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-crypto-owner@vger.kernel.org
-To: linux-crypto@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, herbert@gondor.apana.org.au, swarren@wwwdotorg.org, sachin.kamat@linaro.org
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Add power control
+Date: Mon, 16 Sep 2013 12:21:54 +0800
+Message-ID: <52368762.7000701@nvidia.com>
+References: <1378985061-28547-1-git-send-email-wni@nvidia.com> <1378985061-28547-2-git-send-email-wni@nvidia.com> <20130912115106.GM29403@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130912115106.GM29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-devm_clk_get is device managed and makes code simpler.
+On 09/12/2013 07:51 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Sep 12, 2013 at 07:24:19PM +0800, Wei Ni wrote:
+> 
+>> +#include <linux/delay.h>
+> 
+> You don't need this any more, otherwise
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/crypto/tegra-aes.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Oh, yes, I will remove it.
 
-diff --git a/drivers/crypto/tegra-aes.c b/drivers/crypto/tegra-aes.c
-index 33f9530..d8c7a13 100644
---- a/drivers/crypto/tegra-aes.c
-+++ b/drivers/crypto/tegra-aes.c
-@@ -917,7 +917,7 @@ static int tegra_aes_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Initialize the vde clock */
--	dd->aes_clk = clk_get(dev, "vde");
-+	dd->aes_clk = devm_clk_get(dev, "vde");
- 	if (IS_ERR(dd->aes_clk)) {
- 		dev_err(dev, "iclock intialization failed.\n");
- 		err = -ENODEV;
-@@ -1026,8 +1026,6 @@ out:
- 	if (dd->buf_out)
- 		dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
- 			dd->buf_out, dd->dma_buf_out);
--	if (!IS_ERR(dd->aes_clk))
--		clk_put(dd->aes_clk);
- 	if (aes_wq)
- 		destroy_workqueue(aes_wq);
- 	spin_lock(&list_lock);
-@@ -1061,7 +1059,6 @@ static int tegra_aes_remove(struct platform_device *pdev)
- 			  dd->buf_in, dd->dma_buf_in);
- 	dma_free_coherent(dev, AES_HW_DMA_BUFFER_SIZE_BYTES,
- 			  dd->buf_out, dd->dma_buf_out);
--	clk_put(dd->aes_clk);
- 	aes_dev = NULL;
- 
- 	return 0;
--- 
-1.7.9.5
+> 
+> Reviewed-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
+> * Unknown Key
+> * 0x7EA229BD
+> 
