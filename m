@@ -1,55 +1,88 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 09/11] tegrarcm: Add support for odmdata command
-Date: Mon, 16 Sep 2013 15:26:48 -0600
-Message-ID: <52377798.5000209@wwwdotorg.org>
-References: <1378757761-20939-1-git-send-email-amartin@nvidia.com> <1378757761-20939-10-git-send-email-amartin@nvidia.com> <522E436F.90402@wwwdotorg.org> <20130911211228.GC29868@badger> <5230DD8F.4030703@wwwdotorg.org> <20130916202851.GA1663@badger>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 5/9] of/irq: Introduce __of_irq_to_resource()
+Date: Mon, 16 Sep 2013 16:29:15 -0500
+Message-ID: <5237782B.3030804@gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-6-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130916202851.GA1663@badger>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379320326-13241-6-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/16/2013 02:28 PM, Allen Martin wrote:
-> On Wed, Sep 11, 2013 at 02:15:59PM -0700, Stephen Warren wrote:
->> On 09/11/2013 03:12 PM, Allen Martin wrote:
->>> On Mon, Sep 09, 2013 at 02:53:51PM -0700, Stephen Warren wrote:
->>>> On 09/09/2013 02:15 PM, Allen Martin wrote:
->>>>> Add command "--odmdata" to pass odmdata down to the miniloader.  This
->>>>> is used by the miniloader for things such as UART init and RAM sizing.
->>>>> It is normally not needed and is really only useful for miniloader
->>>>> debugging.
->>>>
->>>> Does the miniloader put it into the BCT in IRAM so that the bootloader
->>>> can also read it? If suppose we expect the correct ODMDATA to be already
->>>> included in the BCT that tegrarcm sends though, so the bootloader
->>>> already sees the correct value.
->>>
->>> Yes, miniloader will update the BCT with the new value if you send
->>> this command after downloading a BCT.  Really the only thing I'm using
->>> this for is the side effect inside miniloader that causes it to
->>> reinitialize the UART with the new odmdata value.  For some reason
->>> when you donwload the BCT, miniloader does not do that, and when you
->>> boot in recovery mode there's no initial BCT so UART never gets
->>> initialized in miniloader and you get no debug prints.
->>
->> Oh, I wasn't aware that the miniloader ever initialized the UART. Debug
->> prints from what? The miniloader itself, or what it loads (which I think
->> should be initializing the UART from scratch anyway, since I assume the
->> boot ROM doesn't do it for the regular boot path either).
+On 09/16/2013 03:32 AM, Thierry Reding wrote:
+> This is a version of of_irq_to_resource() that propagates the precise
+> error code instead of returning 0 for all errors. It will be used in
+> subsequent patches to allow further propagation of error codes.
 > 
-> Yes, debugging the miniloader.  I loaded a debug version of the
-> miniloader during venice2 bringup to determine why it was failing and
-> added this command so I could see the error messages from it.  It may
-> only be useful to me, so I can yank it from the series if you don't
-> think it's useful for inclusion in the upstream repository.
+> To avoid code duplication, implement of_irq_to_resource() as a wrapper
+> around the new __of_irq_to_resource().
 
-It might not be a bad idea to remove it then; having it around will just
-encourage people to use it rather than setting the ODMDATA correctly in
-the BCT. If/when we get an OSS miniloader replacement, we can always
-think about adding it back, although then I'd argue that the UART should
-be initialized as a side-effect of downloading/activating the BCT
-anyway, so you still wouldn't need the command.
+I think the callers in this case are manageable to update as well.
+Several cases could simply use irq_of_parse_and_map instead as they just
+pass in a NULL resource.
+
+Rob
+
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/of/irq.c | 33 +++++++++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> index 8225289..57396fd 100644
+> --- a/drivers/of/irq.c
+> +++ b/drivers/of/irq.c
+> @@ -343,15 +343,15 @@ int of_irq_map_one(struct device_node *device, int index, struct of_irq *out_irq
+>  }
+>  EXPORT_SYMBOL_GPL(of_irq_map_one);
+>  
+> -/**
+> - * of_irq_to_resource - Decode a node's IRQ and return it as a resource
+> - * @dev: pointer to device tree node
+> - * @index: zero-based index of the irq
+> - * @r: pointer to resource structure to return result into.
+> - */
+> -int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+> +static int __of_irq_to_resource(struct device_node *dev, unsigned int index,
+> +				struct resource *r)
+>  {
+> -	int irq = irq_of_parse_and_map(dev, index);
+> +	unsigned int irq;
+> +	int ret;
+> +
+> +	ret = of_irq_get(dev, index, &irq);
+> +	if (ret)
+> +		return ret;
+>  
+>  	/* Only dereference the resource if both the
+>  	 * resource and the irq are valid. */
+> @@ -373,6 +373,23 @@ int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+>  
+>  	return irq;
+>  }
+> +
+> +/**
+> + * of_irq_to_resource - Decode a node's IRQ and return it as a resource
+> + * @dev: pointer to device tree node
+> + * @index: zero-based index of the irq
+> + * @r: pointer to resource structure to return result into.
+> + */
+> +int of_irq_to_resource(struct device_node *dev, int index, struct resource *r)
+> +{
+> +	int ret;
+> +
+> +	ret = __of_irq_to_resource(dev, index, r);
+> +	if (ret < 0)
+> +		return 0;
+> +
+> +	return ret;
+> +}
+>  EXPORT_SYMBOL_GPL(of_irq_to_resource);
+>  
+>  /**
+> 
