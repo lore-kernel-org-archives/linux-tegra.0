@@ -1,83 +1,55 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/9] of/irq: Introduce of_irq_get()
-Date: Mon, 16 Sep 2013 16:24:47 -0500
-Message-ID: <5237771F.1060908@gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com> <1379320326-13241-5-git-send-email-treding@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 09/11] tegrarcm: Add support for odmdata command
+Date: Mon, 16 Sep 2013 15:26:48 -0600
+Message-ID: <52377798.5000209@wwwdotorg.org>
+References: <1378757761-20939-1-git-send-email-amartin@nvidia.com> <1378757761-20939-10-git-send-email-amartin@nvidia.com> <522E436F.90402@wwwdotorg.org> <20130911211228.GC29868@badger> <5230DD8F.4030703@wwwdotorg.org> <20130916202851.GA1663@badger>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379320326-13241-5-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20130916202851.GA1663@badger>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> This is a version of irq_of_parse_and_map() that propagates the precise
-> error code instead of returning 0 for all errors. It will be used in
-> subsequent patches to allow further propagation of error codes.
+On 09/16/2013 02:28 PM, Allen Martin wrote:
+> On Wed, Sep 11, 2013 at 02:15:59PM -0700, Stephen Warren wrote:
+>> On 09/11/2013 03:12 PM, Allen Martin wrote:
+>>> On Mon, Sep 09, 2013 at 02:53:51PM -0700, Stephen Warren wrote:
+>>>> On 09/09/2013 02:15 PM, Allen Martin wrote:
+>>>>> Add command "--odmdata" to pass odmdata down to the miniloader.  This
+>>>>> is used by the miniloader for things such as UART init and RAM sizing.
+>>>>> It is normally not needed and is really only useful for miniloader
+>>>>> debugging.
+>>>>
+>>>> Does the miniloader put it into the BCT in IRAM so that the bootloader
+>>>> can also read it? If suppose we expect the correct ODMDATA to be already
+>>>> included in the BCT that tegrarcm sends though, so the bootloader
+>>>> already sees the correct value.
+>>>
+>>> Yes, miniloader will update the BCT with the new value if you send
+>>> this command after downloading a BCT.  Really the only thing I'm using
+>>> this for is the side effect inside miniloader that causes it to
+>>> reinitialize the UART with the new odmdata value.  For some reason
+>>> when you donwload the BCT, miniloader does not do that, and when you
+>>> boot in recovery mode there's no initial BCT so UART never gets
+>>> initialized in miniloader and you get no debug prints.
+>>
+>> Oh, I wasn't aware that the miniloader ever initialized the UART. Debug
+>> prints from what? The miniloader itself, or what it loads (which I think
+>> should be initializing the UART from scratch anyway, since I assume the
+>> boot ROM doesn't do it for the regular boot path either).
 > 
-> To avoid code duplication, implement irq_of_parse_and_map() as a wrapper
-> around the new of_irq_get().
+> Yes, debugging the miniloader.  I loaded a debug version of the
+> miniloader during venice2 bringup to determine why it was failing and
+> added this command so I could see the error messages from it.  It may
+> only be useful to me, so I can yank it from the series if you don't
+> think it's useful for inclusion in the upstream repository.
 
-*_get typically also implies some reference counting which I don't
-believe this does. I don't think having 2 functions with completely
-different names doing the same thing with only a different calling
-convention is good either. So I would keep the old name and the names
-aligned.
-
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/of/irq.c       | 21 +++++++++++++++++----
->  include/linux/of_irq.h |  3 +++
->  2 files changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index 5f44388..8225289 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -26,6 +26,20 @@
->  #include <linux/string.h>
->  #include <linux/slab.h>
->  
-> +int of_irq_get(struct device_node *dev, unsigned int index, unsigned int *virqp)
-> +{
-> +	struct of_irq oirq;
-> +	int ret;
-> +
-> +	ret = of_irq_map_one(dev, index, &oirq);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return __irq_create_of_mapping(oirq.controller, oirq.specifier,
-> +				       oirq.size, virqp);
-> +}
-> +EXPORT_SYMBOL_GPL(of_irq_get);
-> +
->  /**
->   * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
->   * @dev: Device node of the device whose interrupt is to be mapped
-> @@ -36,13 +50,12 @@
->   */
->  unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
->  {
-> -	struct of_irq oirq;
-> +	unsigned int virq;
->  
-> -	if (of_irq_map_one(dev, index, &oirq))
-> +	if (of_irq_get(dev, index, &virq))
->  		return 0;
->  
-> -	return irq_create_of_mapping(oirq.controller, oirq.specifier,
-> -				     oirq.size);
-> +	return virq;
-
-This can be an inline and written more concisely:
-
-{
-	unsigned int virq;
-	return (of_irq_get(dev, index, &virq) < 0) ? 0 : virq;
-}
-
-Rob
+It might not be a bad idea to remove it then; having it around will just
+encourage people to use it rather than setting the ODMDATA correctly in
+the BCT. If/when we get an OSS miniloader replacement, we can always
+think about adding it back, although then I'd argue that the UART should
+be initialized as a side-effect of downloading/activating the BCT
+anyway, so you still wouldn't need the command.
