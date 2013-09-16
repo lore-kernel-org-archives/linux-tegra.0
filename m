@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 4/9] of/irq: Introduce of_irq_get()
-Date: Mon, 16 Sep 2013 10:32:01 +0200
-Message-ID: <1379320326-13241-5-git-send-email-treding@nvidia.com>
+Subject: [PATCH 8/9] of/i2c: Resolve interrupt references at probe time
+Date: Mon, 16 Sep 2013 10:32:05 +0200
+Message-ID: <1379320326-13241-9-git-send-email-treding@nvidia.com>
 References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
@@ -10,74 +10,78 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.wallei
 Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is a version of irq_of_parse_and_map() that propagates the precise
-error code instead of returning 0 for all errors. It will be used in
-subsequent patches to allow further propagation of error codes.
+Instead of resolving interrupt references at device creation time, delay
+resolution until probe time. At device creation time, there is nothing
+that can be done if an interrupt parent isn't ready yet, and the device
+will end up with an invalid interrupt number (0).
 
-To avoid code duplication, implement irq_of_parse_and_map() as a wrapper
-around the new of_irq_get().
+If the interrupt reference is resolved at probe time, the device's probe
+can be deferred, so that it's interrupt resolution can be retried after
+more devices (possibly including its interrupt parent) have been probed.
+
+However, individual drivers shouldn't be required to do that themselves,
+over and over again, so this commit implements this functionality within
+the I2C core.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/of/irq.c       | 21 +++++++++++++++++----
- include/linux/of_irq.h |  3 +++
- 2 files changed, 20 insertions(+), 4 deletions(-)
+ drivers/i2c/i2c-core.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 5f44388..8225289 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -26,6 +26,20 @@
- #include <linux/string.h>
- #include <linux/slab.h>
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index 29d3f04..163a1e8 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -236,6 +236,21 @@ int i2c_recover_bus(struct i2c_adapter *adap)
+ 	return adap->bus_recovery_info->recover_bus(adap);
+ }
  
-+int of_irq_get(struct device_node *dev, unsigned int index, unsigned int *virqp)
++static int of_i2c_probe(struct i2c_client *client)
 +{
-+	struct of_irq oirq;
++	struct device_node *np = client->dev.of_node;
 +	int ret;
 +
-+	ret = of_irq_map_one(dev, index, &oirq);
-+	if (ret)
-+		return ret;
++	/* skip if the device node specifies no interrupts */
++	if (of_get_property(np, "interrupts", NULL)) {
++		ret = of_irq_get(client->dev.of_node, 0, &client->irq);
++		if (ret)
++			return ret;
++	}
 +
-+	return __irq_create_of_mapping(oirq.controller, oirq.specifier,
-+				       oirq.size, virqp);
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(of_irq_get);
 +
- /**
-  * irq_of_parse_and_map - Parse and map an interrupt into linux virq space
-  * @dev: Device node of the device whose interrupt is to be mapped
-@@ -36,13 +50,12 @@
-  */
- unsigned int irq_of_parse_and_map(struct device_node *dev, int index)
+ static int i2c_device_probe(struct device *dev)
  {
--	struct of_irq oirq;
-+	unsigned int virq;
+ 	struct i2c_client	*client = i2c_verify_client(dev);
+@@ -254,6 +269,12 @@ static int i2c_device_probe(struct device *dev)
+ 					client->flags & I2C_CLIENT_WAKE);
+ 	dev_dbg(dev, "probe\n");
  
--	if (of_irq_map_one(dev, index, &oirq))
-+	if (of_irq_get(dev, index, &virq))
- 		return 0;
- 
--	return irq_create_of_mapping(oirq.controller, oirq.specifier,
--				     oirq.size);
-+	return virq;
- }
- EXPORT_SYMBOL_GPL(irq_of_parse_and_map);
- 
-diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
-index c383dd1..cac15d7 100644
---- a/include/linux/of_irq.h
-+++ b/include/linux/of_irq.h
-@@ -17,6 +17,9 @@ struct of_irq;
-  */
- extern unsigned int irq_of_parse_and_map(struct device_node *node, int index);
- 
-+extern int of_irq_get(struct device_node *node, unsigned int index,
-+		      unsigned int *virqp);
++	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
++		status = of_i2c_probe(client);
++		if (status)
++			return status;
++	}
 +
- #if defined(CONFIG_OF_IRQ)
- /**
-  * of_irq - container for device_node/irq_specifier pair for an irq controller
+ 	status = driver->probe(client, i2c_match_id(driver->id_table, client));
+ 	if (status) {
+ 		client->driver = NULL;
+@@ -1002,7 +1023,6 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
+ 			continue;
+ 		}
+ 
+-		info.irq = irq_of_parse_and_map(node, 0);
+ 		info.of_node = of_node_get(node);
+ 		info.archdata = &dev_ad;
+ 
+@@ -1016,7 +1036,6 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
+ 			dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
+ 				node->full_name);
+ 			of_node_put(node);
+-			irq_dispose_mapping(info.irq);
+ 			continue;
+ 		}
+ 	}
 -- 
 1.8.4
