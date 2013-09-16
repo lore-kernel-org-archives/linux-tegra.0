@@ -1,126 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Mon, 16 Sep 2013 10:31:59 +0200
-Message-ID: <1379320326-13241-3-git-send-email-treding@nvidia.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 3/3] Documentation: dt: hwmon: add OF document for LM90
+Date: Mon, 16 Sep 2013 11:23:37 +0100
+Message-ID: <20130916102337.GZ29403@sirena.org.uk>
+References: <1378985061-28547-1-git-send-email-wni@nvidia.com>
+ <1378985061-28547-4-git-send-email-wni@nvidia.com>
+ <5231D709.5080308@wwwdotorg.org>
+ <523688FB.2010701@nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+EtoZOcuEljFWerI"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <523688FB.2010701-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is a version of irq_create_mapping() that propagates the precise
-error code instead of returning 0 for all errors. It will be used in
-subsequent patches to allow further propagation of error codes.
 
-To avoid code duplication, implement irq_create_mapping() as a wrapper
-around the new __irq_create_mapping().
+--+EtoZOcuEljFWerI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- kernel/irq/irqdomain.c | 59 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+On Mon, Sep 16, 2013 at 12:28:43PM +0800, Wei Ni wrote:
+> On 09/12/2013 11:00 PM, Stephen Warren wrote:
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 706724e..d2a3b01 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -374,30 +374,21 @@ unsigned int irq_create_direct_mapping(struct irq_domain *domain)
- }
- EXPORT_SYMBOL_GPL(irq_create_direct_mapping);
- 
--/**
-- * irq_create_mapping() - Map a hardware interrupt into linux irq space
-- * @domain: domain owning this hardware interrupt or NULL for default domain
-- * @hwirq: hardware irq number in that domain space
-- *
-- * Only one mapping per hardware interrupt is permitted. Returns a linux
-- * irq number.
-- * If the sense/trigger is to be specified, set_irq_type() should be called
-- * on the number returned from that call.
-- */
--unsigned int irq_create_mapping(struct irq_domain *domain,
--				irq_hw_number_t hwirq)
-+static int __irq_create_mapping(struct irq_domain *domain,
-+				irq_hw_number_t hwirq, unsigned int *virqp)
- {
--	unsigned int hint;
--	int virq;
-+	unsigned int hint, virq;
-+	int ret;
- 
--	pr_debug("irq_create_mapping(0x%p, 0x%lx)\n", domain, hwirq);
-+	pr_debug("__irq_create_mapping(0x%p, 0x%lx, %p)\n", domain, hwirq,
-+		 virqp);
- 
- 	/* Look for default domain if nececssary */
- 	if (domain == NULL)
- 		domain = irq_default_domain;
- 	if (domain == NULL) {
- 		WARN(1, "%s(, %lx) called with NULL domain\n", __func__, hwirq);
--		return 0;
-+		return -ENODEV;
- 	}
- 	pr_debug("-> using domain @%p\n", domain);
- 
-@@ -405,7 +396,11 @@ unsigned int irq_create_mapping(struct irq_domain *domain,
- 	virq = irq_find_mapping(domain, hwirq);
- 	if (virq) {
- 		pr_debug("-> existing mapping on virq %d\n", virq);
--		return virq;
-+
-+		if (virqp)
-+			*virqp = virq;
-+
-+		return 0;
- 	}
- 
- 	/* Allocate a virtual interrupt number */
-@@ -417,17 +412,41 @@ unsigned int irq_create_mapping(struct irq_domain *domain,
- 		virq = irq_alloc_desc_from(1, of_node_to_nid(domain->of_node));
- 	if (virq <= 0) {
- 		pr_debug("-> virq allocation failed\n");
--		return 0;
-+		return virq ? : -ENOSPC;
- 	}
- 
--	if (irq_domain_associate(domain, virq, hwirq)) {
-+	ret = irq_domain_associate(domain, virq, hwirq);
-+	if (ret) {
- 		irq_free_desc(virq);
--		return 0;
-+		return ret;
- 	}
- 
- 	pr_debug("irq %lu on domain %s mapped to virtual irq %u\n",
- 		hwirq, of_node_full_name(domain->of_node), virq);
- 
-+	if (virqp)
-+		*virqp = virq;
-+
-+	return 0;
-+}
-+/**
-+ * irq_create_mapping() - Map a hardware interrupt into linux irq space
-+ * @domain: domain owning this hardware interrupt or NULL for default domain
-+ * @hwirq: hardware irq number in that domain space
-+ *
-+ * Only one mapping per hardware interrupt is permitted. Returns a linux
-+ * irq number.
-+ * If the sense/trigger is to be specified, set_irq_type() should be called
-+ * on the number returned from that call.
-+ */
-+unsigned int irq_create_mapping(struct irq_domain *domain,
-+				irq_hw_number_t hwirq)
-+{
-+	unsigned int virq;
-+
-+	if (__irq_create_mapping(domain, hwirq, &virq))
-+		return 0;
-+
- 	return virq;
- }
- EXPORT_SYMBOL_GPL(irq_create_mapping);
--- 
-1.8.4
+> >> +- vcc-supply: vcc regulator for the supply voltage.
+> >> +              If this is not set, assuming vcc is always powered.
+
+> > I thought that was going to be a "Required Property".
+
+> There may have many platforms without regulator, they always power on
+> this device, so how can they set this "vcc-supply "property if we set it
+> as "Required Property".
+> Set to dummy-regulator? but it seems the regulator framework can't
+> handle it yet.
+
+To repeat once more: these platforms will physically have a regulator,
+the device won't function without power and unfortunately the device
+tree bindings only have optional and required properties.
+
+--+EtoZOcuEljFWerI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSNtwmAAoJELSic+t+oim9XukQAInDuT/CuiodQAxLwPHctc1o
+1PDVDOD2tw2Y5raXf2BoiiFfIvOuQPjq85S2+rib0cO6CAGr9kNOn5TgYw+R3Cwx
++0wRkzs50kUjDrQGS1iMeFH3uRCiFRfajmyMaftUIQ8SPR5pmZHGnPc9CF0n19G0
+C6QwNP/FpWbxRNaqTtiaFAPeSPYQjblCEknicV/R0o2kZoSqv6pWPBDqjfgX4t58
+QPwAXd1yCscAnHXThz8OgUCxHCY+qeXtlU5WnqNp0TTCNsi1WOXXVn5bafJsDKPl
+pwKxDFfvNDFZZnMGa2pOZANzWlJ4lsYP/74ghk52pTI86zjSpEBW5WUZ4yyoTdNR
+/jN+i08Ml6gR4lqdFUimvX/UjEjoU6ndbkZ6pCXps9S/qfLCbU3k2o3BpwjeZ9D/
+a93vVhPxDXIdnAHJNkgSlBJAr4HZ6fGH0l7Azzh5to6CCLmTSDsbulXXYOkEY8MM
+EDqMg8osQXHCOcE1hVt73rXGp3FDWRJ5oBbY8sHomIw7TGJe0bBbXRtKlWJrOO6d
+Q6SUCXJuxcOSr23EBKJy0i6SkzSvzWFd0n2tYzhDnOrtgoezY6JwjAgodYfPKaZ3
++m62n01rsy8u4M9WrcDHyE4KDgGXd75AvUx3AexY8sctunSfjAsl7uxdK0WgbtNh
+t+LVAd8OQdxQ4HTgZqTl
+=aUd3
+-----END PGP SIGNATURE-----
+
+--+EtoZOcuEljFWerI--
