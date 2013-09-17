@@ -1,115 +1,78 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH 0/9] of/irq: Defer interrupt reference resolution
-Date: Tue, 17 Sep 2013 13:20:39 +0200
-Message-ID: <52383B07.5030806@free-electrons.com>
+Date: Tue, 17 Sep 2013 14:43:01 +0200
+Message-ID: <20130917124300.GB6757@ulmo>
 References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <52383B07.5030806@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52383B07.5030806-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
 
-On 16/09/2013 10:31, Thierry Reding wrote:
-> Hi,
->
-> This small series allows interrupt references from the device tree to be
-> resolved at driver probe time, rather than at device creation time. The
-> current implementation resolves such references while devices are added
-> during the call to of_platform_populate(), which happens very early in
-> the boot process. This causes probe ordering issues, because all devices
-> that are an interrupt parent for other devices need to have been probed
-> by that time. This is worked around for primary interrupt controllers by
-> initializing them using a device tree specific way (of_irq_init()), but
-> it doesn't work for something like a GPIO controller that is itself a
-> platform device and an interrupt parent for other devices at the same
-> time.
->
-> Currently such drivers use explicit initcall ordering to force these
-> chips to be probed earlier than other devices, but that only fixes a
-> subset of the problematic cases. It doesn't work if the interrupt user
-> is itself a platform device on the same bus. There are possibly other
-> cases where it doesn't work either.
->
-> This patch series attempts to fix this by not resolving the interrupt
-> references at device creation time. Instead, some functionality is added
-> to the driver core to resolve them for each device immediately before it
-> is probed. Often this is a lot later than the point at which the device
-> was created, which gives interrupt parents more time and therefore a
-> better chance of being probed. More importantly, however, it allows the
-> driver core to detect when an interrupt parent isn't there yet and cause
-> the device to be queued for deferred probing. After all, resolving probe
-> ordering issues is one of the primary reason for the introduction of
-> deferred probing.
->
-> Unfortunately the interrupt core code isn't prepared to handle this very
-> well, so some preparatory work is required.
->
-> Patch 1 is a bit of a cleanup. It modifies of_irq_count() to not use the
-> heavyweight of_irq_to_resource(), which will actually try to create a
-> mapping. While not usually harmful, it causes a warning during boot if
-> the interrupt parent hasn't registered an IRQ domain yet. Furthermore it
-> is much more than the stated intention of the function, which is to
-> return the number of interrupts that a device node uses.
->
-> Patches 2 and 3 introduce two new functions: __irq_create_mapping() and
-> __irq_create_of_mapping(), which are both equivalent to the non-__ parts
-> except that they return a negative error code on failure and therefore
-> allow propagation of a precise error code instead of 0 for all errors.
-> This is an important prerequisite for subsequent patches. I think that
-> it would've been nice to not introduced underscore-prefixed variants but
-> but there are about 130 callers and updating them all would've been
-> rather messy.
->
-> Patch 4 adds an of_irq_get() function, which is irq_of_parse_and_map()
-> but returns a negative error code on failure instead of 0.
->
-> Similarly, __of_irq_to_resource() as introduced in patch 5 is equivalent
-> to of_irq_to_resource() but returns a negative error code on failure
-> instead of 0.
->
-> Patch 6 uses __of_irq_to_resource() to propagate error code to callers
-> of the of_irq_to_resource_table() function.
->
-> Patch 7 adds functionality to the platform driver code to resolve
-> interrupt references at probe time. It uses the negative error code of
-> the of_irq_to_resource_table() function to trigger deferred probing.
->
-> Patch 8 implements similar functionality for I2C devices.
->
-> Patch 9 serves as an example of the kind of cleanup that can be done
-> after this series. Obviously this will require quite a bit of retesting
-> of working setups, but I think that in the long run we're better off
-> without the kind of explicit probe ordering employed by the gpio-tegra
-> driver and many others.
->
-> Note that I've only implemented this for platform and I2C devices, but
-> the same can be done for SPI and possibly other subsystems as well.
->
-> There is another use-case that I'm aware of for which a similar solution
-> could be implemented. IOMMUs on SoCs generally need to hook themselves
-> up to new platform devices. This causes a similar issues as interrupt
-> resolution and should be fixable by extending the of_platform_probe()
-> function introduced in patch 7 of this series.
+--1LKvkjL3sHcu1TtY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I believe this will solve the issue I was hitting back in June where
-of_i2c_register_devices() failed to get the IRQ while doing it at probe
-time was working fine:
+On Tue, Sep 17, 2013 at 01:20:39PM +0200, Alexandre Belloni wrote:
+> Hi Thierry,
+>=20
+> On 16/09/2013 10:31, Thierry Reding wrote:
+> > Hi,
+> >
+> > This small series allows interrupt references from the device tree to be
+> > resolved at driver probe time, rather than at device creation time. The
+> > current implementation resolves such references while devices are added
+> > during the call to of_platform_populate(), which happens very early in
+> > the boot process. This causes probe ordering issues, because all devices
+> > that are an interrupt parent for other devices need to have been probed
+> > by that time. This is worked around for primary interrupt controllers by
+> > initializing them using a device tree specific way (of_irq_init()), but
+> > it doesn't work for something like a GPIO controller that is itself a
+> > platform device and an interrupt parent for other devices at the same
+> > time.
+[...]
+> I believe this will solve the issue I was hitting back in June where
+> of_i2c_register_devices() failed to get the IRQ while doing it at probe
+> time was working fine:
+>=20
+> http://www.spinics.net/lists/linux-i2c/msg12523.html
+>=20
+> I couldn't test your patches yet though. I'll try to test as soon as I
+> get some free time.
 
-http://www.spinics.net/lists/linux-i2c/msg12523.html
+Yes, this series precisely aims at fixing situations as those. It'd be
+great if you could give the series a spin to verify that it really works
+for your case.
 
-I couldn't test your patches yet though. I'll try to test as soon as I
-get some free time.
+Thierry
 
+--1LKvkjL3sHcu1TtY
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+iQIcBAEBAgAGBQJSOE5UAAoJEN0jrNd/PrOh3voP/1hw9WEb6DSu58FjkPwBUHq9
+hTmxcJnZu17WBZenis03iBhLbriJkARhFifMNEGsVtPF2lw7hIq56r1edgzX5iC+
+ktSmzJoR2D51SDdwxYPTtJRtJKX6DF6TC1s6rGBVZsuwK+R2aIBwmHB6lDaQQcOG
+a8phB8yCknKBAGE7RJ4rIzesltd3z7SjMuhha7x10pYCMxjhgGnQ4AqG2SXdcMwZ
+bGak47drOWWvVrjQvZ+fjmy309rK79SoWfpvRPTL06erWHsrSLQRyGBew+uZQmt0
+G6iIHcxr9MUeO2WtQeLkb2E3nIPzBNaADT/M1Ow+VNhSIILW6rSBVIlD+EstROp6
+hXvrohTJp5i4NJjAD/Y/71lPLpUH8S0+DGh8xv/cK1HbE56XImPqraVn9vuY+8UA
+BRC5jsiqswVvdjGJrYtM30oNkxJJH1tPHwAhxN1XtWtX1X6wJlf+dPFlhIwsy1L4
+5uLLvTFTrXvZVV0FMTAheVyeoNOYZf3iXF1IkBdAbVhHCFaGd3J7eNq7pm98nJo1
+Y/M9DNefMa7BagU54ZuJO97oF+sY30EjEspeCjiFnMPOcSPPj0gml+rr/Gj8/am8
+7F9RA+31coPCsel/EY+vRDUT/aHQIP4uWrfeAolL1uo9dzamaGRUZMoHIJsIid/s
+Px/lRrlyE326OtkqeyUH
+=PMhD
+-----END PGP SIGNATURE-----
 
+--1LKvkjL3sHcu1TtY--
