@@ -1,68 +1,107 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] gpu: host1x: use %pa to print dma_addr_t
-Date: Mon, 16 Sep 2013 17:18:54 -0700
-Message-ID: <52379FEE.2080004@infradead.org>
-References: <1378960909-15773-1-git-send-email-olof@lixom.net> <20130916151716.GA5613@ulmo> <CAOesGMjUeyKDtNU+zVpPYWyQX8ESoUhqaHXLuW5jJ=u2ggEb5A@mail.gmail.com> <1379346848.1934.13.camel@joe-AO722> <CAOesGMjK47GfxQ6-xxZ36aU7k6i3s5uecNpVFsdEbfULnLxWOQ@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 1/5] ARM: add basic support for Trusted Foundations
+Date: Tue, 17 Sep 2013 12:28:53 +0900
+Message-ID: <CAAVeFuJgtF1xWHfF4gN+WbOBpL93pFdX7AR1ccu1imvoi9XZXg@mail.gmail.com>
+References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com>
+ <1379238028-7960-2-git-send-email-acourbot@nvidia.com> <523736DE.1050201@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMjK47GfxQ6-xxZ36aU7k6i3s5uecNpVFsdEbfULnLxWOQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Joe Perches <joe@perches.com>, Thierry Reding <thierry.reding@gmail.com>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <523736DE.1050201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/16/13 17:06, Olof Johansson wrote:
-> On Mon, Sep 16, 2013 at 8:54 AM, Joe Perches <joe@perches.com> wrote:
->> On Mon, 2013-09-16 at 08:46 -0700, Olof Johansson wrote:
->>> On Mon, Sep 16, 2013 at 8:17 AM, Thierry Reding
->>> <thierry.reding@gmail.com> wrote:
->>>> On Wed, Sep 11, 2013 at 09:41:49PM -0700, Olof Johansson wrote:
->>>>> This removes two warnings where dma_addr_t variables were printed using
->>>>> %x when built with CONFIG_ARM_LPAE=y, thus having 64-bit dma_addr_t:
->>>>>
->>>>>   drivers/gpu/host1x/hw/cdma_hw.c:57:3: warning: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'dma_addr_t'
->>>>>   drivers/gpu/host1x/hw/debug_hw.c:175:10: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'dma_addr_t'
->>>>
->>>> Hi Olof,
->>>>
->>>> I can't reproduce this. Does this perhaps depend on some other patch?
->>>> When I enable LPAE I do see similar warnings in drivers/iommu/tegra-*.c
->>>> and those can indeed be fixed using an equivalent patch.
->>>
->>> You need to enable LPAE on a platform that also selects
->>> ARCH_DMA_ADDR_T_64BIT, I don't think tegra does. If you do it with
->>> multi_v7_defconfig you'll see them.
->>>
->>> However, see discussion on another of the emails in the series; I'll
->>> have to introduce a new format specifier instead.
+On Tue, Sep 17, 2013 at 1:50 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/15/2013 03:40 AM, Alexandre Courbot wrote:
+>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>> can be invoked using the same SMC-based API on all supported
+>> platforms. This patch adds initial basic support for Trusted
+>> Foundations using the ARM firmware API. Current features are limited
+>> to the ability to boot secondary processors.
 >>
->> Or not.
->>
->> I don't know whether or not the dma_addr_t really needs a
->> fixed 18 byte output length for 64 bit uses.
->>
->> I think always using a cast for dma_addr_t addresses like:
->>
->>         printk("dma_addr_t: %#llx\n", (u64)addr);
->>
->> would probably work just fine.
-> 
-> Sigh. Any color would do. I just want to get rid of the mostly-bogus
-> warnings that makes it harder to spot real problems, I really don't
-> care how they're resolved.
-> 
-> None of the affected platforms today use 64-bit DMA anyway, so casting
-> down to u32 is equally acceptable. I'll repost with that instead.
+>> Note: The API followed by Trusted Foundations does *not* follow the SMC
+>> calling conventions. It has nothing to do with PSCI neither and is only
+>> relevant to devices that use Trusted Foundations (like most Tegra-based
+>> retail devices).
+>
+>> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+>
+>> +#if IS_ENABLED(CONFIG_OF)
+>> +void of_register_trusted_foundations(void)
+>> +{
+>> +     struct device_node *node;
+>> +     struct trusted_foundations_platform_data pdata;
+>> +     int err;
+>> +
+>> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+>> +     if (!node)
+>> +             return;
+> ...
+>
+>> diff --git a/arch/arm/include/asm/trusted_foundations.h b/arch/arm/include/asm/trusted_foundations.h
+>
+>> +#if IS_ENABLED(CONFIG_TRUSTED_FOUNDATIONS)
+>> +void register_trusted_foundations(struct trusted_foundations_platform_data *pd);
+>> +#if IS_ENABLED(CONFIG_OF)
+>> +void of_register_trusted_foundations(void);
+>> +#endif
+>
+> I still don't think that's correct.
+>
+> If TF support is enabled, yet DT support is not enabled, then there is
+> no prototype, implementation, or dummy implementation for
+> of_register_trusted_foundations(). I think there should be a dummy
+> implementation in this case, shouldn't there?
+>
+>> +
+>> +#else /* CONFIG_TRUSTED_FOUNDATIONS */
+>> +
+>> +#include <linux/printk.h>
+>> +#include <linux/of.h>
+>> +#include <asm/bug.h>
+>> +
+>> +static inline void register_trusted_foundations(
+>> +                                struct trusted_foundations_platform_data *pd)
+>> +{
+>> +     panic("No support for Trusted Foundations, stopping...\n");
+>> +}
+>> +
+>> +#if IS_ENABLED(CONFIG_OF)
+>> +static inline void of_register_trusted_foundations(void)
+>> +{
+>> +     /* If we find the target should enable TF but does not support it,
+>> +      * fail as the system won't be able to do much anyway */
+>> +     if (of_find_compatible_node(NULL, NULL, "tl,trusted-foundations"))
+>> +             register_trusted_foundations(NULL);
+>> +}
+>> +#else
+>> +static inline void of_register_trusted_foundations(void)
+>> +{
+>> +}
+>> +#endif /* CONFIG_OF */
+>
+> That's more complex than it needs to be; there is a dummy
+> of_find_compatible_node() in the !OF case, so you don't need to ifdef
+> the implementation of of_register_trusted_foundations(); you just need
+> the first implementation here.
+>
+>> +#endif /* CONFIG_TRUSTED_FOUNDATIONS */
+>
+> In summary, I think you need:
+>
+> If TF is enabled, always implement of_register_trusted_foundations() in
+> the C file, and rely on of_find_compatible_node() to return NULL if
+> !CONFIG_OF.
+>
+> If TF is not enabled, implement the inline version in the header file,
+> and again rely on of_find_compatible_node() to return NULL if !CONFIG_OF.
 
-Casting to u64 and using %llx is preferred for this throughout the kernel,
-not u32.
+Indeed, all your points are correct, and I've clearly been negligent
+here. Sorry about that.
 
-That way you would never have to 'fix' those when those platforms use
-64-bit DMA (this is where you say that they never will :).
+Will have to submit a v7, but hopefully we can get the acks that we
+need (Russel?) on this version.
 
-
-
--- 
-~Randy
+Alex.
