@@ -1,329 +1,69 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH RESEND v4] hwmon: (lm90) split set&show temp as common
- codes
-Date: Tue, 17 Sep 2013 15:04:15 +0800
-Message-ID: <5237FEEF.9050308@nvidia.com>
-References: <1375785417-13650-1-git-send-email-wni@nvidia.com> <20130916212908.25248fae@endymion.delvare>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [RFC] binding for nvec mfd device
+Date: Tue, 17 Sep 2013 09:53:02 +0200
+Message-ID: <17687182.lGWlO75r41@fb07-iapwap2.physik.uni-giessen.de>
+References: <1416005.VvfEeGuSWa@ax5200p> <2910047.nJ4yDntMXS@ax5200p> <51F97B92.1040707@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130916212908.25248fae-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51F97B92.1040707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/17/2013 03:29 AM, Jean Delvare wrote:
-> Hi Wei,
-> 
-> On Tue, 6 Aug 2013 18:36:57 +0800, Wei Ni wrote:
->> Split set&show temp codes as common functions, so we can use it
->> directly when implement linux thermal framework.
->> And handle error return value for the lm90_select_remote_channel
->> and write_tempx, then set_temp8 and set_temp11 could return it
->> to user-space.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/hwmon/lm90.c |  150 +++++++++++++++++++++++++++++++++-----------------
->>  1 file changed, 99 insertions(+), 51 deletions(-)
->>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index cdff742..6de8e01 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -422,20 +422,29 @@ static int lm90_read16(struct i2c_client *client, u8 regh, u8 regl, u16 *value)
->>   * various registers have different meanings as a result of selecting a
->>   * non-default remote channel.
->>   */
->> -static inline void lm90_select_remote_channel(struct i2c_client *client,
->> +static inline int lm90_select_remote_channel(struct i2c_client *client,
->>                                             struct lm90_data *data,
->>                                             int channel)
->>  {
->>       u8 config;
->> +     int err = 0;
-> 
-> You don't have to initialize err, as you return immediately when an
-> error happens. You can just...
+Hi Stephen,
 
-Got it, I will change it.
+Am Mittwoch, 31. Juli 2013, 15:03:14 schrieb Stephen Warren:
+> The generic I2C bindings already define that the other chips on the I2C
+> bus appear directly underneath the I2C controller's DT node. Perhaps it
+> isn't a big issue to change that, since each I2C controller can define
+> the layout of its own node?
+> 
+> Anyway, we can probably get away without introducing multiple levels by
+> adding some more bits or cells into the reg address for I2C child nodes:
+> 
+> i2c@xxxxxxxx {
+> 	compatible = "nvidia,tegra20-i2c";
+> 	... resources
+> 	#address-cells = <2>;
+> 
+> 	codec {
+> 		// 0 means external slave, 0x1c is slave's address
+> 		reg = <0 0x1c>;
+> 		...
+> 	};
+> 
+> 	tegraslave {
+> 		// 0 means internal slave, 0x80 is controller's address
+> 		reg = <1 0x80>;
+> 		...
+> 	};
+> };
+> 
+> ... where each of those child nodes could be repeated N times. We could
+> also or in 0x80000000 to the reg values in the child nodes rather than
+> using a separate cell if we wanted.
 
-> 
->>
->>       if (data->kind == max6696) {
->>               lm90_read_reg(client, LM90_REG_R_CONFIG1, &config);
->>               config &= ~0x08;
->>               if (channel)
->>                       config |= 0x08;
->> -             i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
->> -                                       config);
->> +             err = i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
->> +                                             config);
->> +             if (err < 0) {
->> +                     dev_err(&client->dev,
->> +                             "Failed to select remote channel %d, err %d\n",
->> +                             channel, err);
->> +                     return err;
->> +             }
->>       }
->> +
->> +     return err;
-> 
-> ... return 0 here.
-> 
->>  }
->>
->>  /*
->> @@ -702,29 +711,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
->>   * Sysfs stuff
->>   */
->>
->> -static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
->> -                       char *buf)
->> +static int read_temp8(struct device *dev, int index)
->>  {
->> -     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->>       struct lm90_data *data = lm90_update_device(dev);
->>       int temp;
->>
->>       if (data->kind == adt7461)
->> -             temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
->> +             temp = temp_from_u8_adt7461(data, data->temp8[index]);
->>       else if (data->kind == max6646)
->> -             temp = temp_from_u8(data->temp8[attr->index]);
->> +             temp = temp_from_u8(data->temp8[index]);
->>       else
->> -             temp = temp_from_s8(data->temp8[attr->index]);
->> +             temp = temp_from_s8(data->temp8[index]);
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 && attr->index == 3)
->> +     if (data->kind == lm99 && index == 3)
->>               temp += 16000;
->>
->> -     return sprintf(buf, "%d\n", temp);
->> +     return temp;
->>  }
->>
->> -static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->> -                      const char *buf, size_t count)
->> +static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
->> +                       char *buf)
->> +{
->> +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->> +
->> +     return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
->> +}
->> +
->> +static int write_temp8(struct device *dev, int index, long val)
->>  {
->>       static const u8 reg[8] = {
->>               LM90_REG_W_LOCAL_LOW,
->> @@ -737,60 +751,79 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->>               MAX6659_REG_W_REMOTE_EMERG,
->>       };
->>
->> -     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->>       struct i2c_client *client = to_i2c_client(dev);
->>       struct lm90_data *data = i2c_get_clientdata(client);
->> -     int nr = attr->index;
->> -     long val;
->>       int err;
->>
->> -     err = kstrtol(buf, 10, &val);
->> -     if (err < 0)
->> -             return err;
->> -
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 && attr->index == 3)
->> +     if (data->kind == lm99 && index == 3)
->>               val -= 16000;
->>
->>       mutex_lock(&data->update_lock);
->>       if (data->kind == adt7461)
->> -             data->temp8[nr] = temp_to_u8_adt7461(data, val);
->> +             data->temp8[index] = temp_to_u8_adt7461(data, val);
->>       else if (data->kind == max6646)
->> -             data->temp8[nr] = temp_to_u8(val);
->> +             data->temp8[index] = temp_to_u8(val);
->>       else
->> -             data->temp8[nr] = temp_to_s8(val);
->> -
->> -     lm90_select_remote_channel(client, data, nr >= 6);
->> -     i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
->> -     lm90_select_remote_channel(client, data, 0);
->> +             data->temp8[index] = temp_to_s8(val);
->>
->> +     err = lm90_select_remote_channel(client, data, index >= 6);
->> +     err |= i2c_smbus_write_byte_data(client, reg[index], data->temp8[index]);
->> +     err |= lm90_select_remote_channel(client, data, 0);
-> 
-> You can't use |= for error codes. Imagine that
-> lm90_select_remote_channel() returns -EIO (-5) and
-> i2c_smbus_write_byte_data() returns -EAGAIN (-11), err will have value
-> -EPERM (-1) which makes no sense. You have to report errors as soon as
-> they happen so that the error code isn't lost.
-> 
-> What you can do is:
-> 
->         if ((err = f1(...)) ||
->             (err = f2(...)) ||
->             (err = f3(...))) {
->                 dev_err(...);
->                 return err;
->         }
-> 
-> I think checkpatch will complain about that construct but me, I'm fine
-> with it.
+thinking a little more about this, this is way to complicated. "Master" and 
+"Slave" functions are properties of the same i2c controller. Therefore, just 
+adding a small property to the i2c controller node saying "enable slave 
+support" is sufficient, as all the resources are shared (which is another good 
+argument that it is the same device, hence same node). I would just add the 
+slave i2c address, which is all the slave driver needs, e.g.
+"slave-address = <8c>;" to enable slave mode operation. Both modes can be 
+enabled at the same time (for loopback comm). AFAIK, if only the slave part is 
+used, the master part shouldn't hurt if programmed (same as other way around).
 
-Ok, I will do it.
+The difficult part is how to specify the master if only the slave is used. As 
+the master is naturally on the same bus as the slave, it should be a child 
+node of the controller. Therefore it needs a special i2c address, maybe 
+0x80000000 as you mentioned above, but this will be rejected by the i2c core. 
+Instantiating the nvec as an i2c client could be another problem.
 
-> 
->> +     if (err)
->> +             dev_err(dev, "write_temp8 failed!\n");
->>       mutex_unlock(&data->update_lock);
->> +
->> +     return err;
->> +}
->> +
->> +static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->> +                      const char *buf, size_t count)
->> +{
->> +     struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->> +     int index = attr->index;
->> +     long val;
->> +     int err;
->> +
->> +     err = kstrtol(buf, 10, &val);
->> +     if (err < 0)
->> +             return err;
->> +
->> +     err = write_temp8(dev, index, val);
->> +     if (err < 0)
->> +             return err;
->> +
->>       return count;
->>  }
->>
->> -static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
->> -                        char *buf)
->> +static int read_temp11(struct device *dev, int index)
->>  {
->> -     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->>       struct lm90_data *data = lm90_update_device(dev);
->>       int temp;
->>
->>       if (data->kind == adt7461)
->> -             temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
->> +             temp = temp_from_u16_adt7461(data, data->temp11[index]);
->>       else if (data->kind == max6646)
->> -             temp = temp_from_u16(data->temp11[attr->index]);
->> +             temp = temp_from_u16(data->temp11[index]);
->>       else
->> -             temp = temp_from_s16(data->temp11[attr->index]);
->> +             temp = temp_from_s16(data->temp11[index]);
->>
->>       /* +16 degrees offset for temp2 for the LM99 */
->> -     if (data->kind == lm99 &&  attr->index <= 2)
->> +     if (data->kind == lm99 && index <= 2)
->>               temp += 16000;
->>
->> -     return sprintf(buf, "%d\n", temp);
->> +     return temp;
->>  }
->>
->> -static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->> -                       const char *buf, size_t count)
->> +static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
->> +                        char *buf)
->> +{
->> +     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->> +
->> +     return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
->> +}
->> +
->> +static int write_temp11(struct device *dev, int nr, int index, long val)
->>  {
->>       struct {
->>               u8 high;
->> @@ -804,18 +837,10 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->>               { LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
->>       };
->>
->> -     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->>       struct i2c_client *client = to_i2c_client(dev);
->>       struct lm90_data *data = i2c_get_clientdata(client);
->> -     int nr = attr->nr;
->> -     int index = attr->index;
->> -     long val;
->>       int err;
->>
->> -     err = kstrtol(buf, 10, &val);
->> -     if (err < 0)
->> -             return err;
->> -
->>       /* +16 degrees offset for temp2 for the LM99 */
->>       if (data->kind == lm99 && index <= 2)
->>               val -= 16000;
->> @@ -830,15 +855,38 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->>       else
->>               data->temp11[index] = temp_to_s8(val) << 8;
->>
->> -     lm90_select_remote_channel(client, data, reg[nr].channel);
->> -     i2c_smbus_write_byte_data(client, reg[nr].high,
->> +     err = lm90_select_remote_channel(client, data, reg[nr].channel);
->> +     err |= i2c_smbus_write_byte_data(client, reg[nr].high,
->>                                 data->temp11[index] >> 8);
->>       if (data->flags & LM90_HAVE_REM_LIMIT_EXT)
->> -             i2c_smbus_write_byte_data(client, reg[nr].low,
->> -                                       data->temp11[index] & 0xff);
->> -     lm90_select_remote_channel(client, data, 0);
->> +             err |= i2c_smbus_write_byte_data(client, reg[nr].low,
->> +                                             data->temp11[index] & 0xff);
->> +     err |= lm90_select_remote_channel(client, data, 0);
->> +     if (err)
->> +             dev_err(dev, "write_temp11 failed !\n");
-> 
-> Same here, you can't use |=.
-> 
-> Also, no space needed before exclamation marks in English.
+It looks like that the i2c subsystem needs some modifications to allow to 
+specify a master device which is attached to a slave controller. Maybe someone 
+from the i2c folks (cc'ed) can comment on this?
 
-Oh, you reviewed so carefully, thanks.
-
-> 
->>
->>       mutex_unlock(&data->update_lock);
->> +
->> +     return err;
->> +}
->> +
->> +static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->> +                       const char *buf, size_t count)
->> +{
->> +     struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->> +     int nr = attr->nr;
->> +     int index = attr->index;
->> +     long val;
->> +     int err;
->> +
->> +     err = kstrtol(buf, 10, &val);
->> +     if (err < 0)
->> +             return err;
->> +
->> +     err = write_temp11(dev, nr, index, val);
->> +     if (err < 0)
->> +             return err;
->> +
->>       return count;
->>  }
->>
-> 
-> --
-> Jean Delvare
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Marc
