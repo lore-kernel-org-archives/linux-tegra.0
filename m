@@ -1,69 +1,75 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [RFC] binding for nvec mfd device
-Date: Tue, 17 Sep 2013 09:53:02 +0200
-Message-ID: <17687182.lGWlO75r41@fb07-iapwap2.physik.uni-giessen.de>
-References: <1416005.VvfEeGuSWa@ax5200p> <2910047.nJ4yDntMXS@ax5200p> <51F97B92.1040707@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] iommu/tegra: Print phys_addr_t using %pa
+Date: Tue, 17 Sep 2013 10:19:31 +0200
+Message-ID: <1379405971-2693-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <51F97B92.1040707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+When enabling LPAE on ARM, phys_addr_t becomes 64 bits wide and printing
+a variable of that type using a simple %x format specifier causes the
+compiler to complain. Change the format specifier to %pa, which is used
+specifically for variables of type phys_addr_t.
 
-Am Mittwoch, 31. Juli 2013, 15:03:14 schrieb Stephen Warren:
-> The generic I2C bindings already define that the other chips on the I2C
-> bus appear directly underneath the I2C controller's DT node. Perhaps it
-> isn't a big issue to change that, since each I2C controller can define
-> the layout of its own node?
-> 
-> Anyway, we can probably get away without introducing multiple levels by
-> adding some more bits or cells into the reg address for I2C child nodes:
-> 
-> i2c@xxxxxxxx {
-> 	compatible = "nvidia,tegra20-i2c";
-> 	... resources
-> 	#address-cells = <2>;
-> 
-> 	codec {
-> 		// 0 means external slave, 0x1c is slave's address
-> 		reg = <0 0x1c>;
-> 		...
-> 	};
-> 
-> 	tegraslave {
-> 		// 0 means internal slave, 0x80 is controller's address
-> 		reg = <1 0x80>;
-> 		...
-> 	};
-> };
-> 
-> ... where each of those child nodes could be repeated N times. We could
-> also or in 0x80000000 to the reg values in the child nodes rather than
-> using a separate cell if we wanted.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Olof has been sending patches to fix up similar issues, but I couldn't
+find one that fixes these warnings. If Olof sent a patch for this and I
+missed it, please ignore.
 
-thinking a little more about this, this is way to complicated. "Master" and 
-"Slave" functions are properties of the same i2c controller. Therefore, just 
-adding a small property to the i2c controller node saying "enable slave 
-support" is sufficient, as all the resources are shared (which is another good 
-argument that it is the same device, hence same node). I would just add the 
-slave i2c address, which is all the slave driver needs, e.g.
-"slave-address = <8c>;" to enable slave mode operation. Both modes can be 
-enabled at the same time (for loopback comm). AFAIK, if only the slave part is 
-used, the master part shouldn't hurt if programmed (same as other way around).
+ drivers/iommu/tegra-gart.c | 6 +++---
+ drivers/iommu/tegra-smmu.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-The difficult part is how to specify the master if only the slave is used. As 
-the master is naturally on the same bus as the slave, it should be a child 
-node of the controller. Therefore it needs a special i2c address, maybe 
-0x80000000 as you mentioned above, but this will be rejected by the i2c core. 
-Instantiating the nvec as an i2c client could be another problem.
-
-It looks like that the i2c subsystem needs some modifications to allow to 
-specify a master device which is attached to a slave controller. Maybe someone 
-from the i2c folks (cc'ed) can comment on this?
-
-Marc
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index 108c0e9..8993999 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -252,7 +252,7 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	spin_lock_irqsave(&gart->pte_lock, flags);
+ 	pfn = __phys_to_pfn(pa);
+ 	if (!pfn_valid(pfn)) {
+-		dev_err(gart->dev, "Invalid page: %08x\n", pa);
++		dev_err(gart->dev, "Invalid page: %pa\n", &pa);
+ 		spin_unlock_irqrestore(&gart->pte_lock, flags);
+ 		return -EINVAL;
+ 	}
+@@ -295,8 +295,8 @@ static phys_addr_t gart_iommu_iova_to_phys(struct iommu_domain *domain,
+ 
+ 	pa = (pte & GART_PAGE_MASK);
+ 	if (!pfn_valid(__phys_to_pfn(pa))) {
+-		dev_err(gart->dev, "No entry for %08llx:%08x\n",
+-			 (unsigned long long)iova, pa);
++		dev_err(gart->dev, "No entry for %08llx:%pa\n",
++			 (unsigned long long)iova, &pa);
+ 		gart_dump_table(gart);
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index e066560..34374b3 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -731,7 +731,7 @@ static int smmu_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	unsigned long pfn = __phys_to_pfn(pa);
+ 	unsigned long flags;
+ 
+-	dev_dbg(as->smmu->dev, "[%d] %08lx:%08x\n", as->asid, iova, pa);
++	dev_dbg(as->smmu->dev, "[%d] %08lx:%pa\n", as->asid, iova, &pa);
+ 
+ 	if (!pfn_valid(pfn))
+ 		return -ENOMEM;
+-- 
+1.8.4
