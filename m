@@ -1,21 +1,40 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Enable clock debugfs support
-Date: Tue, 17 Sep 2013 14:06:26 -0600
-Message-ID: <5238B642.8090505@wwwdotorg.org>
-References: <1378195515-28807-1-git-send-email-treding@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL] ARM: tegra: dependencies for ARM .init_time cleanup
+Date: Tue, 17 Sep 2013 14:17:37 -0600
+Message-ID: <1379449057-5097-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1378195515-28807-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/03/2013 02:05 AM, Thierry Reding wrote:
-> It's sometimes useful to look at the clock tree to verify that clocks
-> for the various devices have been properly setup. The clock subsystem's
-> debugfs support provides a neat set of files for that purpose.
+This patch is a dependency for Sebastian Hesselbarth's series that
+cleans up the ARM machine descriptor's .init_time hook. It may also end
+up being a dependency for cleanup/development in the Tegra tree, and
+hence is contained in its own topic branch, to allow conflicts to be
+easily resolved.
 
-I have squashed this patch into Tegra's for-3.13/defconfig branch.
+----------------------------------------------------------------
+
+The following changes since commit 272b98c6455f00884f0350f775c5342358ebb73f:
+
+  Linux 3.12-rc1
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.13-deps-for-arm-init-time-cleanup
+
+for you to fetch changes up to d2207071b3c74b144a860cbe6a46496a44963972:
+
+  ARM: tegra: split tegra_pmc_init() in two
+
+----------------------------------------------------------------
+
+Stephen Warren (1):
+      ARM: tegra: split tegra_pmc_init() in two
+
+ arch/arm/mach-tegra/common.c |  4 +---
+ arch/arm/mach-tegra/pmc.c    | 41 +++++++++++++++++++++------------------
+ arch/arm/mach-tegra/pmc.h    |  1 +
+ arch/arm/mach-tegra/tegra.c  | 12 +++++++++++-
+ 4 files changed, 35 insertions(+), 23 deletions(-)
