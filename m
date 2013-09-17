@@ -1,42 +1,43 @@
-From: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] Input: gpio-keys - update to devm_* API
-Date: Wed, 18 Sep 2013 00:41:11 +0530
-Message-ID: <CAKDJKT5fvf=cCqU0ULs0o6NO10aDM73ewx=-sVG9Rzm-cKkECg@mail.gmail.com>
-References: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
-	<20130917185259.GA6894@core.coreip.homeip.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: split tegra_pmc_init() in two
+Date: Tue, 17 Sep 2013 14:04:06 -0600
+Message-ID: <5238B5B6.9040405@wwwdotorg.org>
+References: <1377034065-26373-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130917185259.GA6894-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
+In-Reply-To: <1377034065-26373-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+On 08/20/2013 03:27 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra's board file currently initializes clocks much earlier than those
+> for most other ARM SoCs. The reason is:
+> 
+> * The PMC HW block is involved in the path of some interrupts (i.e. it
+> inverts, or not, the IRQ input pin dedicated to the PMIC).
+> 
+> * So, that part of the PMC must be initialized early so that the IRQ
+> polarity is correct.
+> 
+> * The PMC initialization is currently monolithic, and the PMC has some
+> clock inputs, so the init routine ends up calling of_clk_get_by_name(),
+> and hence clocks must be set up early too.
+> 
+> In order to defer clock initialization to the more typical location,
+> split out the portions of tegra_pmc_init() that are truly IRQ-related
+> into a separate tegra_pmc_init_irq(), which can be called from the
+> machine descriptor's .init_irq() function, and defer the rest until
+> the machine descriptor's .init_machine() function. This allows the
+> clock initiliazation to happen from the machine descriptor's
+> .init_time() function, as is typical.
 
-On Wed, Sep 18, 2013 at 12:22 AM, Dmitry Torokhov
-<dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Manish,
->
-> On Sun, Sep 15, 2013 at 01:22:23AM +0530, Manish Badarkhe wrote:
->> Update the code to use devm_* API so that driver core will manage
->> resources.
->>
->
-> And the benefit of this would be...?
->
-> There are still resources that are managed in traditional way and I
-> really dislike mixing the 2 styles. I can see applying patch that
-> converts the driver to use devm_ for all its resources and gets rid of
-> the remove() method altogether, but I am not sure how beneficial this
-> kind of changes are for existing drivers.
+I have applied this to Tegra's for-3.13/deps-for-clk-init-hook branch.
 
-IMO devm_ makes us to manage resources properly without much care about freeing
-it ( as devm_handles freeing automatically). But, stiil  there are use
-cases which makes
-us to mix this devm_  with traditionally managed resources.
-Not much sure about any other benefits.
-
-Regards
-Manish Badarkhe
+Sebastian, I'll send out a pull request to you containing this patch for
+inclusion in your time hook series shortly.
