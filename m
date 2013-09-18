@@ -1,55 +1,135 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher manifests PATCH] Move dtc from jdl.com to kernel.org
-Date: Wed, 18 Sep 2013 15:00:44 -0600
-Message-ID: <1379538044-8149-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Wed, 18 Sep 2013 23:04:03 +0200
+Message-ID: <523A1543.8040201@gmail.com>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com> <20130918194711.GR19937@titan.lakedaemon.net> <523A046E.6040804@gmail.com> <CAOesGMguF33+-mXScLmUy1Kr9JkL36Ah1_ShW_ZuGy4Q0gJefg@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOesGMguF33+-mXScLmUy1Kr9JkL36Ah1_ShW_ZuGy4Q0gJefg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Jason Cooper <jason@lakedaemon.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, kernel@stlinux.com, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-rpi-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 09/18/2013 10:48 PM, Olof Johansson wrote:
+> On Wed, Sep 18, 2013 at 12:52 PM, Sebastian Hesselbarth
+> <sebastian.hesselbarth@gmail.com> wrote:
+>> On 09/18/2013 09:47 PM, Jason Cooper wrote:
+>>>
+>>> On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+>>> ...
+>>>>
+>>>> Sebastian Hesselbarth (26):
+>>>>     ARM: nomadik: move mtu setup to clocksource init
+>>>>     clk: nomadik: move src init out of nomadik_clk_init
+>>>>     clk: nomadik: declare OF clock provider
+>>>>     clk: prima2: declare OF clock provider
+>>>>     ARM: socfgpa: prepare for arch-wide .init_time callback
+>>>>     clk: sunxi: declare OF clock provider
+>>>>     clk: vt8500: parse pmc_base from clock driver
+>>>>     ARM: vt8500: prepare for arch-wide .init_time callback
+>>>>     ARM: call of_clk_init from default time_init handler
+>>>>     ARM: bcm2835: remove custom .init_time hook
+>>>>     ARM: dove: remove custom .init_time hook
+>>>>     ARM: exynos: remove custom .init_time hook
+>>>>     ARM: highbank: remove custom .init_time hook
+>>>>     ARM: imx: remove custom .init_time hook
+>>>>     ARM: kirkwood: remove custom .init_time hook
+>>>>     ARM: mxs: remove custom .init_time hook
+>>>>     ARM: nomadik: remove custom .init_time hook
+>>>>     ARM: nspire: remove custom .init_time hook
+>>>>     ARM: prima2: remove custom .init_time hook
+>>>>     ARM: rockchip: remove custom .init_time hook
+>>>>     ARM: socfpga: remove custom .init_time hook
+>>>>     ARM: sti: remove custom .init_time hook
+>>>>     ARM: sunxi: remove custom .init_time hook
+>>>>     ARM: tegra: remove custom .init_time hook
+>>>>     ARM: vexpress: remove custom .init_time hook
+>>>>     ARM: vt8500: remove custom .init_time hook
+>>>>
+>>>>    arch/arm/kernel/time.c                    |   27 ++---
+>>>>    arch/arm/mach-bcm2835/bcm2835.c           |    2 -
+>>>>    arch/arm/mach-dove/board-dt.c             |   11 --
+>>>>    arch/arm/mach-exynos/common.c             |    8 --
+>>>>    arch/arm/mach-exynos/common.h             |    1 -
+>>>>    arch/arm/mach-exynos/mach-exynos4-dt.c    |    2 -
+>>>>    arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 -
+>>>>    arch/arm/mach-highbank/highbank.c         |   23 ++---
+>>>>    arch/arm/mach-imx/clk-imx51-imx53.c       |   29 ++----
+>>>>    arch/arm/mach-imx/common.h                |    4 -
+>>>>    arch/arm/mach-imx/imx51-dt.c              |    6 --
+>>>>    arch/arm/mach-imx/mach-imx53.c            |    6 --
+>>>>    arch/arm/mach-imx/mach-imx6q.c            |   14 +--
+>>>>    arch/arm/mach-imx/mach-imx6sl.c           |    7 --
+>>>>    arch/arm/mach-imx/mach-vf610.c            |    9 --
+>>>>    arch/arm/mach-kirkwood/board-dt.c         |    8 --
+>>>>    arch/arm/mach-mxs/mach-mxs.c              |   13 ---
+>>>>    arch/arm/mach-nomadik/cpu-8815.c          |   36 -------
+>>>>    arch/arm/mach-nspire/nspire.c             |    9 --
+>>>>    arch/arm/mach-prima2/common.c             |   11 --
+>>>>    arch/arm/mach-prima2/common.h             |    1 -
+>>>>    arch/arm/mach-rockchip/rockchip.c         |    9 --
+>>>>    arch/arm/mach-socfpga/socfpga.c           |    2 -
+>>>>    arch/arm/mach-sti/board-dt.c              |   10 +-
+>>>>    arch/arm/mach-sunxi/sunxi.c               |   10 --
+>>>>    arch/arm/mach-tegra/tegra.c               |    9 --
+>>>>    arch/arm/mach-vexpress/v2m.c              |   14 +--
+>>>>    arch/arm/mach-vt8500/common.h             |   24 -----
+>>>>    arch/arm/mach-vt8500/vt8500.c             |    6 --
+>>>>    drivers/clk/clk-bcm2835.c                 |    8 --
+>>>>    drivers/clk/clk-highbank.c                |   10 +-
+>>>>    drivers/clk/clk-nomadik.c                 |  161
+>>>> ++++++++++++++---------------
+>>>>    drivers/clk/clk-prima2.c                  |   29 ++----
+>>>>    drivers/clk/clk-vt8500.c                  |   31 ++++--
+>>>>    drivers/clk/mxs/clk-imx23.c               |   15 +--
+>>>>    drivers/clk/mxs/clk-imx28.c               |   16 +--
+>>>>    drivers/clk/sunxi/clk-sunxi.c             |   11 +-
+>>>>    drivers/clocksource/nomadik-mtu.c         |   11 ++
+>>>>    include/linux/clk/mxs.h                   |    2 -
+>>>>    include/linux/clk/sunxi.h                 |   22 ----
+>>>>    include/linux/platform_data/clk-nomadik.h |    2 -
+>>>>    41 files changed, 182 insertions(+), 449 deletions(-)
+>>>>    delete mode 100644 arch/arm/mach-vt8500/common.h
+>>>>    delete mode 100644 include/linux/clk/sunxi.h
+>>>>    delete mode 100644 include/linux/platform_data/clk-nomadik.h
+>>>
+>>>
+>>> How would you like to handle this series?
+>>
+>>
+>> Jason,
+>>
+>> honestly I don't really know, yet. I was hoping for Arnd and Olof
+>> decide on that. Maybe they also create a topic branch up to where
+>> arch-wide of_clk_init is introduced. Then each removal patch can
+>> go through the independent sub-trees. There may be more machs
+>> introduced before, that can then also depend on the common branch.
+>
+> I'd like to see this merged early into arm-soc and have it as a base
+> branch for other platform branches if there will be much conflicts
+> (for trivial or small conflicts we can resolve, of course). So please
+> collect acks and prepare a branch for me to merge, Sebastian. Or if
+> it's easier I can just apply the patches directly -- just let me know.
+> But given the tegra dependency it's probably easier to take a branch.
 
-The primary dtc repository recently moved from jdl.com to kernel.org.
-Update tegra-uboot-flasher manifests to reflect the move.
+Actually, I'd be happy if you make a decision. It would be my first
+pull request and maybe it should go guided by more experienced devs
+from now on. Although I am willing to learn.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- default-notools.xml | 1 -
- default.xml         | 4 ++--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+> The long tail might be the cases where you rewrote some of the init
+> code, since that'll need to be tested on those platforms. I wonder if
+> we can pick up most of the other pieces if that ends up taking a
+> while.
 
-diff --git a/default-notools.xml b/default-notools.xml
-index dce72e4..62b296e 100644
---- a/default-notools.xml
-+++ b/default-notools.xml
-@@ -1,6 +1,5 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <manifest>
--  <remote name="dtc" fetch="git://git.jdl.com/"/>
-   <remote name="denx" fetch="git://git.denx.de/"/>
-   <remote name="github" fetch="git://github.com/NVIDIA/"/>
- 
-diff --git a/default.xml b/default.xml
-index d6da4dd..c409bfd 100644
---- a/default.xml
-+++ b/default.xml
-@@ -1,14 +1,14 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <manifest>
--  <remote name="dtc" fetch="git://git.jdl.com/"/>
-   <remote name="denx" fetch="git://git.denx.de/"/>
-   <remote name="github" fetch="git://github.com/NVIDIA/"/>
-+  <remote name="korg" fetch="git://git.kernel.org/pub/scm/"/>
- 
-   <default revision="master"/>
- 
-   <project path="cbootimage" name="cbootimage.git" remote="github"/>
-   <project path="cbootimage-configs" name="cbootimage-configs.git" remote="github"/>
--  <project path="dtc" name="software/dtc.git" remote="dtc"/>
-+  <project path="dtc" name="linux/kernel/git/jdl/dtc.git" remote="korg"/>
-   <project path="scripts" name="tegra-uboot-flasher-scripts.git" remote="github"/>
-   <project path="tegrarcm" name="tegrarcm.git" remote="github"/>
-   <project path="u-boot" name="u-boot.git" remote="denx"/>
--- 
-1.8.1.5
+True, for an early merge that was a bad decision. I looked again into
+patches 1-8 and if there are concerns:
+- nomadik can be dropped as it still has custom .init_time.
+- prima2 and sunxi are quite straight forward but also have custom
+   .init_time that protect them from the arch-wide call.
+- socfpga needs some new custom .init_time then.
+- vt8500 is a little bit more changes but has .init_time call to
+   clocksource_of_init alone.
+
+Sebastian
