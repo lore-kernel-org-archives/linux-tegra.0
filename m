@@ -1,140 +1,164 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH 00/26] ARM: provide common arch init for DT clocks
-Date: Wed, 18 Sep 2013 19:53:33 +0200
-Message-ID: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [IP REVIEW] spi/tegra114: Correct support for cs_change
+Date: Wed, 18 Sep 2013 14:13:39 -0400
+Message-ID: <1379528019-6042-1-git-send-email-rklein@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is a patch set based on an RFC [1][2] sent earlier to provide a common
-arch/arm init for DT clock providers. Currently, the call to of_clk_init(NULL)
-to initialize DT clock providers is spread among several mach-dirs. Since most
-machs require DT clocks initialized before timers, no initcall can be used.
+The tegra114 driver wasn't currently handling the cs_change functionality.
+It is meant to invert normal behavior, and we were only using it to possibly
+delay at the end of a transfer.
 
-By adding of_clk_init(NULL) to arch/arm time_init(), we can remove all
-mach-specific .init_time hooks that basically called of_clk_init and
-clocksource_of_init.
+This patch modifies the logic so that the cs state will be toggled after
+every individual transfer or NOT toggled at the end of the last transfer
+if cs_change is set in that transfer struct.
 
-In contrast to the RFC version, of_clk_init(NULL) is now only called if no
-custom .init_time callback is set. This allows some machs to still call clock
-init themselves, as not all can be converted now. Therefore, this patch sets
-drops conversion of mach-mvebu and mach-zynq. New machs that were introduced
-with v3.12-rc1 are also converted, except mach-u300 that requires clocks
-before irqs.
+Also, this builds in logic so that if a different device tries to start
+a transfer while CS is active from a different device, it will abort the
+previous transfer and start a new one for the new device.
 
-The patch set is based on v3.12-rc1 and further depends on a topic branch
-created by Stephen Warren for mach-tegra [3]. It is now split into preparation
-and removal patches to not break bisectability. I added all Acked-by/Tested-by's
-where applicable or dropped them, if the patch was separated into two.
-It has been compile tested for all machs involved with the following defconfigs
-(multi_v7, bcm2835, dove, exynos, kirkwood, mxs, nhk8815) and nspire selected
-on multi_v4_v5.
+This work was based on the spi-atmel driver.
 
-Patches 1-8 comprise preparation patches that convert machs nomadik, prima2,
-socfpga, sunxi, tegra, and vt8500 to usual .init_time callbacks calling only
-of_clk_init and clocksource_of_init.
-
-Patch 9 then introduces of_clk_init(NULL) to the arch-wide default .init_time
-callback.
-
-Patches 10-26 finally remove custom .init_time callbacks from the machs involved.
-
-The patches have been pushed to a topic branch based on v3.12-rc1 with tegra's
-tegra-for-3.13-deps-for-arm-init-time-cleanup branch merged in to
-
-https://github.com/shesselba/linux-dove.git clk-of-init-v1_for-3.13
-
-[1] http://www.spinics.net/lists/arm-kernel/msg268260.html
-[2] http://www.spinics.net/lists/arm-kernel/msg270173.html
-[3] http://www.spinics.net/lists/arm-kernel/msg273957.html
-    git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.13-deps-for-arm-init-time-cleanup
-
-Sebastian Hesselbarth (26):
-  ARM: nomadik: move mtu setup to clocksource init
-  clk: nomadik: move src init out of nomadik_clk_init
-  clk: nomadik: declare OF clock provider
-  clk: prima2: declare OF clock provider
-  ARM: socfgpa: prepare for arch-wide .init_time callback
-  clk: sunxi: declare OF clock provider
-  clk: vt8500: parse pmc_base from clock driver
-  ARM: vt8500: prepare for arch-wide .init_time callback
-  ARM: call of_clk_init from default time_init handler
-  ARM: bcm2835: remove custom .init_time hook
-  ARM: dove: remove custom .init_time hook
-  ARM: exynos: remove custom .init_time hook
-  ARM: highbank: remove custom .init_time hook
-  ARM: imx: remove custom .init_time hook
-  ARM: kirkwood: remove custom .init_time hook
-  ARM: mxs: remove custom .init_time hook
-  ARM: nomadik: remove custom .init_time hook
-  ARM: nspire: remove custom .init_time hook
-  ARM: prima2: remove custom .init_time hook
-  ARM: rockchip: remove custom .init_time hook
-  ARM: socfpga: remove custom .init_time hook
-  ARM: sti: remove custom .init_time hook
-  ARM: sunxi: remove custom .init_time hook
-  ARM: tegra: remove custom .init_time hook
-  ARM: vexpress: remove custom .init_time hook
-  ARM: vt8500: remove custom .init_time hook
-
- arch/arm/kernel/time.c                    |   27 ++---
- arch/arm/mach-bcm2835/bcm2835.c           |    2 -
- arch/arm/mach-dove/board-dt.c             |   11 --
- arch/arm/mach-exynos/common.c             |    8 --
- arch/arm/mach-exynos/common.h             |    1 -
- arch/arm/mach-exynos/mach-exynos4-dt.c    |    2 -
- arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 -
- arch/arm/mach-highbank/highbank.c         |   23 ++---
- arch/arm/mach-imx/clk-imx51-imx53.c       |   29 ++----
- arch/arm/mach-imx/common.h                |    4 -
- arch/arm/mach-imx/imx51-dt.c              |    6 --
- arch/arm/mach-imx/mach-imx53.c            |    6 --
- arch/arm/mach-imx/mach-imx6q.c            |   14 +--
- arch/arm/mach-imx/mach-imx6sl.c           |    7 --
- arch/arm/mach-imx/mach-vf610.c            |    9 --
- arch/arm/mach-kirkwood/board-dt.c         |    8 --
- arch/arm/mach-mxs/mach-mxs.c              |   13 ---
- arch/arm/mach-nomadik/cpu-8815.c          |   36 -------
- arch/arm/mach-nspire/nspire.c             |    9 --
- arch/arm/mach-prima2/common.c             |   11 --
- arch/arm/mach-prima2/common.h             |    1 -
- arch/arm/mach-rockchip/rockchip.c         |    9 --
- arch/arm/mach-socfpga/socfpga.c           |    2 -
- arch/arm/mach-sti/board-dt.c              |   10 +-
- arch/arm/mach-sunxi/sunxi.c               |   10 --
- arch/arm/mach-tegra/tegra.c               |    9 --
- arch/arm/mach-vexpress/v2m.c              |   14 +--
- arch/arm/mach-vt8500/common.h             |   24 -----
- arch/arm/mach-vt8500/vt8500.c             |    6 --
- drivers/clk/clk-bcm2835.c                 |    8 --
- drivers/clk/clk-highbank.c                |   10 +-
- drivers/clk/clk-nomadik.c                 |  161 ++++++++++++++---------------
- drivers/clk/clk-prima2.c                  |   29 ++----
- drivers/clk/clk-vt8500.c                  |   31 ++++--
- drivers/clk/mxs/clk-imx23.c               |   15 +--
- drivers/clk/mxs/clk-imx28.c               |   16 +--
- drivers/clk/sunxi/clk-sunxi.c             |   11 +-
- drivers/clocksource/nomadik-mtu.c         |   11 ++
- include/linux/clk/mxs.h                   |    2 -
- include/linux/clk/sunxi.h                 |   22 ----
- include/linux/platform_data/clk-nomadik.h |    2 -
- 41 files changed, 182 insertions(+), 449 deletions(-)
- delete mode 100644 arch/arm/mach-vt8500/common.h
- delete mode 100644 include/linux/clk/sunxi.h
- delete mode 100644 include/linux/platform_data/clk-nomadik.h
-
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: STEricsson <STEricsson_nomadik_linux@list.st.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: kernel@stlinux.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+ drivers/spi/spi-tegra114.c |   59 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 52 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index 145dd43..a9973de 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -182,6 +182,7 @@ struct tegra_spi_data {
+ 	u32					cur_speed;
+ 
+ 	struct spi_device			*cur_spi;
++	struct spi_device			*cs_control;
+ 	unsigned				cur_pos;
+ 	unsigned				cur_len;
+ 	unsigned				words_per_32bit;
+@@ -717,7 +718,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+ 		else if (req_mode == SPI_MODE_3)
+ 			command1 |= SPI_CONTROL_MODE_3;
+ 
+-		tegra_spi_writel(tspi, command1, SPI_COMMAND1);
++		if (tspi->cs_control) {
++			if (tspi->cs_control != spi)
++				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
++			tspi->cs_control = NULL;
++		} else
++			tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+ 
+ 		command1 |= SPI_CS_SW_HW;
+ 		if (spi->mode & SPI_CS_HIGH)
+@@ -732,6 +738,9 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+ 		command1 |= SPI_BIT_LENGTH(bits_per_word - 1);
+ 	}
+ 
++	if (t->len == 0 && !t->tx_buf && !t->rx_buf)
++		return 0;
++
+ 	if (tspi->is_packed)
+ 		command1 |= SPI_PACKED;
+ 
+@@ -803,6 +812,17 @@ static int tegra_spi_setup(struct spi_device *spi)
+ 	return 0;
+ }
+ 
++static void tegra_spi_transfer_delay(int delay)
++{
++	if (!delay)
++		return;
++
++	if (delay >= 1000)
++		mdelay(delay / 1000);
++
++	udelay(delay % 1000);
++}
++
+ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 			struct spi_message *msg)
+ {
+@@ -812,6 +832,7 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 	struct spi_transfer *xfer;
+ 	struct spi_device *spi = msg->spi;
+ 	int ret;
++	bool skip = false;
+ 
+ 	msg->status = 0;
+ 	msg->actual_length = 0;
+@@ -819,13 +840,20 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 	single_xfer = list_is_singular(&msg->transfers);
+ 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+ 		INIT_COMPLETION(tspi->xfer_completion);
++
+ 		ret = tegra_spi_start_transfer_one(spi, xfer,
+ 					is_first_msg, single_xfer);
+ 		if (ret < 0) {
+ 			dev_err(tspi->dev,
+ 				"spi can not start transfer, err %d\n", ret);
+-			goto exit;
++			goto complete_xfer;
++		}
++
++		if (xfer->len == 0 && !xfer->tx_buf && !xfer->rx_buf) {
++			skip = true;
++			goto complete_xfer;
+ 		}
++
+ 		is_first_msg = false;
+ 		ret = wait_for_completion_timeout(&tspi->xfer_completion,
+ 						SPI_DMA_TIMEOUT);
+@@ -833,24 +861,41 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
+ 			dev_err(tspi->dev,
+ 				"spi trasfer timeout, err %d\n", ret);
+ 			ret = -EIO;
+-			goto exit;
++			goto complete_xfer;
+ 		}
+ 
+ 		if (tspi->tx_status ||  tspi->rx_status) {
+ 			dev_err(tspi->dev, "Error in Transfer\n");
+ 			ret = -EIO;
+-			goto exit;
++			goto complete_xfer;
+ 		}
+ 		msg->actual_length += xfer->len;
+-		if (xfer->cs_change && xfer->delay_usecs) {
++
++complete_xfer:
++		if (ret < 0 || skip) {
+ 			tegra_spi_writel(tspi, tspi->def_command1_reg,
+ 					SPI_COMMAND1);
+-			udelay(xfer->delay_usecs);
++			tegra_spi_transfer_delay(xfer->delay_usecs);
++			goto exit;
++		} else if (msg->transfers.prev == &xfer->transfer_list) {
++			/* This is the last transfer in message */
++			if (xfer->cs_change)
++				tspi->cs_control = spi;
++			else {
++				tegra_spi_writel(tspi, tspi->def_command1_reg,
++						SPI_COMMAND1);
++				tegra_spi_transfer_delay(xfer->delay_usecs);
++			}
++		} else if (xfer->cs_change) {
++			tegra_spi_writel(tspi, tspi->def_command1_reg,
++					SPI_COMMAND1);
++			tegra_spi_transfer_delay(xfer->delay_usecs);
+ 		}
++
+ 	}
+ 	ret = 0;
+ exit:
+-	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
++
+ 	msg->status = ret;
+ 	spi_finalize_current_message(master);
+ 	return ret;
 -- 
-1.7.10.4
+1.7.9.5
