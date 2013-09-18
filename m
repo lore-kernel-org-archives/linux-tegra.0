@@ -1,93 +1,138 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC] binding for nvec mfd device
-Date: Tue, 17 Sep 2013 15:48:12 -0600
-Message-ID: <5238CE1C.3050107@wwwdotorg.org>
-References: <1416005.VvfEeGuSWa@ax5200p> <2910047.nJ4yDntMXS@ax5200p> <51F97B92.1040707@wwwdotorg.org> <17687182.lGWlO75r41@fb07-iapwap2.physik.uni-giessen.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 7/9] of/platform: Resolve interrupt references at probe
+ time
+Date: Wed, 18 Sep 2013 12:43:36 +0200
+Message-ID: <20130918104335.GA8256@ulmo>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-8-git-send-email-treding@nvidia.com>
+ <902E09E6452B0E43903E4F2D568737AB363BD3@DNCE04.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <17687182.lGWlO75r41-D3pzGp0ZKuDWZbiwp4sFPyrtisivX6KghOMvlBiLbJSELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <902E09E6452B0E43903E4F2D568737AB363BD3@DNCE04.ent.ti.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: "Strashko, Grygorii" <grygorii.strashko@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/17/2013 01:53 AM, Marc Dietrich wrote:
-> Hi Stephen,
-> 
-> Am Mittwoch, 31. Juli 2013, 15:03:14 schrieb Stephen Warren:
->> The generic I2C bindings already define that the other chips on the I2C
->> bus appear directly underneath the I2C controller's DT node. Perhaps it
->> isn't a big issue to change that, since each I2C controller can define
->> the layout of its own node?
->>
->> Anyway, we can probably get away without introducing multiple levels by
->> adding some more bits or cells into the reg address for I2C child nodes:
->>
->> i2c@xxxxxxxx {
->> 	compatible = "nvidia,tegra20-i2c";
->> 	... resources
->> 	#address-cells = <2>;
->>
->> 	codec {
->> 		// 0 means external slave, 0x1c is slave's address
->> 		reg = <0 0x1c>;
->> 		...
->> 	};
->>
->> 	tegraslave {
->> 		// 0 means internal slave, 0x80 is controller's address
->> 		reg = <1 0x80>;
->> 		...
->> 	};
->> };
->>
->> ... where each of those child nodes could be repeated N times. We could
->> also or in 0x80000000 to the reg values in the child nodes rather than
->> using a separate cell if we wanted.
-> 
-> thinking a little more about this, this is way to complicated.
 
-Really, this seems extremely simple to me.
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> "Master" and 
-> "Slave" functions are properties of the same i2c controller. Therefore, just 
-> adding a small property to the i2c controller node saying "enable slave 
-> support" is sufficient, as all the resources are shared (which is another good 
-> argument that it is the same device, hence same node). I would just add the 
-> slave i2c address, which is all the slave driver needs, e.g.
+On Tue, Sep 17, 2013 at 01:04:06PM +0000, Strashko, Grygorii wrote:
+> Hi Thierry,
+>=20
+> On 09/16/2013 11:32 AM, Thierry Reding wrote:> Interrupt references are c=
+urrently resolved very early (when a device is
+> > created). This has the disadvantage that it will fail in cases where the
+> > interrupt parent hasn't been probed and no IRQ domain for it has been
+> > registered yet. To work around that various drivers use explicit
+> > initcall ordering to force interrupt parents to be probed before devices
+> > that need them are created. That's error prone and doesn't always work.
+> > If a platform device uses an interrupt line connected to a different
+> > platform device (such as a GPIO controller), both will be created in the
+> > same batch, and the GPIO controller won't have been probed by its driver
+> > when the depending platform device is created. Interrupt resolution will
+> > fail in that case.
+> >=20
+> > Another common workaround is for drivers to explicitly resolve interrupt
+> > references at probe time. This is suboptimal, however, because it will
+> > require every driver to duplicate the code.
+> >=20
+> > This patch adds support for late interrupt resolution to the platform
+> > driver core, by resolving the references right before a device driver's
+> > .probe() function will be called. This not only delays the resolution
+> > until a much later time (giving interrupt parents a better chance of
+> > being probed in the meantime), but it also allows the platform driver
+> > core to queue the device for deferred probing if the interrupt parent
+> > hasn't registered its IRQ domain yet.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >   drivers/base/platform.c     |  4 ++++
+> >   drivers/of/platform.c       | 43 ++++++++++++++++++++++++++++++++++++=
++------
+> >   include/linux/of_platform.h |  7 +++++++
+> >   3 files changed, 48 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> > index 4f8bef3..8dcf835 100644
+> > --- a/drivers/base/platform.c
+> > +++ b/drivers/base/platform.c
+> > @@ -481,6 +481,10 @@ static int platform_drv_probe(struct device *_dev)
+>=20
+> Should it be the part of really_probe()? Isn't it?
 
-Perhaps so for this one controller, but we should strive to create a
-binding style that can work with any I2C controller that can be master
-or slave. For a general binding, I think we need to support multiple
-slave addresses. The style above seems to support that with little
-complexity.
+really_probe() takes a struct device and is in fact called by all types
+of devices. This code, however, is highly platform_device specific, so I
+don't think we can do it in really_probe().
 
-> "slave-address = <8c>;" to enable slave mode operation. Both modes can be 
-> enabled at the same time (for loopback comm). AFAIK, if only the slave part is 
-> used, the master part shouldn't hurt if programmed (same as other way around).
-> 
-> The difficult part is how to specify the master if only the slave is used. As 
-> the master is naturally on the same bus as the slave, it should be a child 
-> node of the controller. Therefore it needs a special i2c address, maybe 
+Unfortunately every device type has its own way of storing interrupts.
+Platform devices store them as resources, I2C clients store them as a
+separate field in struct i2c_client, etc.
 
-Why would the external I2C master be represented in the DT bindings at
-all? It's not really a SW-accessible entity; its presence is only
-observable not something you can initiate interaction with.
+> > +int of_platform_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device_node *np =3D pdev->dev.of_node;
+> > +	int num_irq, ret =3D 0;
+> > +
+> > +	if (!pdev->dev.of_node)
+> > +		return 0;
+> > +
+> > +	num_irq =3D of_irq_count(pdev->dev.of_node);
+> > +	if (num_irq > 0) {
+> > +		struct resource *res =3D pdev->resource;
+> > +		int num_reg =3D pdev->num_resources;
+> > +		int num =3D num_reg + num_irq;
+> > +
+> > +		res =3D krealloc(res, num * sizeof(*res), GFP_KERNEL);
+> > +		if (!res)
+> > +			return -ENOMEM;
+> > +
+> > +		pdev->num_resources =3D num;
+> > +		pdev->resource =3D res;
+> > +		res +=3D num_reg;
+>=20
+> What will happen if Driver probe is failed or deferred?
+> Seems resource table size will grow each time the Driver probe is
+> deferred or failed.
 
-I assume you're not talking about the Tegra I2C controller when you say
-"master" above; that is already represented in the DT as the top-level
-I2C node.
+That's a very good point. I think what we can do is check whether the
+total number of resources that the device has (pdev->num_resources)
+corresponds to num_reg + num_irq and skip in that case. That and...
 
-> 0x80000000 as you mentioned above, but this will be rejected by the i2c core. 
-> Instantiating the nvec as an i2c client could be another problem.
-...
-> It looks like that the i2c subsystem needs some modifications to allow to 
-> specify a master device which is attached to a slave controller. Maybe someone 
-> from the i2c folks (cc'ed) can comment on this?
+> > +		ret =3D of_irq_to_resource_table(np, res, num_irq);
+> > +		if (ret < 0)
+> > +			return ret;
 
-Yes, you certainly will need some enhancements to the I2C core to
-support slave mode. I suggest that I2C drivers gain an .of_xlate
-callback which translates child node DT reg values (addresses) into the
-(master-vs-slave, I2C address) pair.
+=2E.. updating pdev->num_resources after this point should cover all
+cases. Do you see any other potential problems?
+
+Thierry
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSOYPXAAoJEN0jrNd/PrOhm8sP/1+E0NleY5/Ys4U7+yA5qzXg
+DO7FbP9HEW6PXSif+yezB1lVV/aQ+ot9Ftqy470yi05pe/Spg/7ZKMnWGPAQoNWO
+/P7KkE//ckcPaGKr+DWNa4k8MN4BrmLP2enbLZI5XV5Xjz8CBIFe1q5e0Uz6wwGu
+tEgU0pNZnpcX5yTYwa8a/Pk7MkoeDH8xn6wjUzUgQW41x0Nz3+u4NKncewT4ykBO
+N8etJ98CnzsPv9bS6CZUvq4JTvvKGn7sXnWPc+EfZvWCBuQRjZJEHILAMWBDeLia
+e1vv6oBUz6himHcWFMI5xh9BtshB6240wTPDQgIkcTDNnbQz3b//VYUaT/M0ArBm
+8FX9UadaY/b8altwFq/JcfkM+YSDEcKXSwdeNs1oEVVUo7UeCjFBRPf8mqc42vx7
+Eaqt+gNfvGjPCNuXAT24rNkcz4++YX9Wn4ZqKRM5kdE/Y9Kc3uspHrn3FkVJtecg
+qGePbOpWndysAwXlzMVYHvdqFoLD9Slpwk9T/5ZlWK1knTMjU0T4HknJdXelAp60
+3JUeL73iS5JvCLUklXo9iiBSe1qEdnNit+6JjvY1BX8XLaXMrloMjRDRhb8fK+cb
+bNYKCYojY4UeAEjCFiTT2oDTtLoP28tgJodK01v0gzXR/MQ4hKGiasV9kTOM7cuI
+YoypuRCIojTA8q8ZNJQW
+=Plej
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
