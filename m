@@ -1,25 +1,48 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH REPOST] ARM: tegra: use dt-binding header for key code
-Date: Wed, 18 Sep 2013 22:08:54 +0530
-Message-ID: <5239D71E.3040005@nvidia.com>
-References: <1379510552-23401-1-git-send-email-ldewangan@nvidia.com> <5239C6AC.10403@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.12-rc1
+Date: Wed, 18 Sep 2013 09:23:19 -0700
+Message-ID: <A4DCC42E2B5835498682FCB0A8F9F873378C267FFD@HQMAIL04.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5239C6AC.10403@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 18 September 2013 08:58 PM, Stephen Warren wrote:
-> On 09/18/2013 07:22 AM, Laxman Dewangan wrote:
->> In place of hardcoding the key code in DTS file and comment the
->> key code as side notes, use the key code macro defines in the
->> dt-bindings/input/input.h directly.
-> I can apply this, but aren't there many other Tegra DT files that need
-> conversion too?
-Yes, I am planning to this in next few days. I will post different 
-patches for different boards.
-If it is fine to you, it can be applied this patch.
+
+Here are some basic Tegra test results for Linux v3.12-rc1.
+Logs and other details at:
+
+    http://nvt.pwsan.com/pub/linux/testlogs/test_v3.12-rc1/20130916143118/
+
+
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267)):
+   text     data      bss    total  kernel
+ -89208   +10000     -416   -79624  multi_v7_defconfig
++299303    +7244    +1484  +308031  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+    -324k     324k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+    -324k     324k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+    -592k     592k        .       8k       tegra30-beaver      tegra_defconfig       tegra30-beaver
