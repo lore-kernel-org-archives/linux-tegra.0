@@ -1,53 +1,65 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V2 2/2] ARM: tegra: add palmas pincontrol to Dalmore device tree
-Date: Wed, 18 Sep 2013 18:37:22 +0530
-Message-ID: <1379509642-19227-2-git-send-email-ldewangan@nvidia.com>
-References: <1379509642-19227-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH REPOST] ARM: tegra: use dt-binding header for key code
+Date: Wed, 18 Sep 2013 18:52:32 +0530
+Message-ID: <1379510552-23401-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1379509642-19227-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: rob.herring@calxeda.com, mark.rutland@arm.com, pawel.moll@arm.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: swarren@nvidia.com
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Palmas pincontrol to Dalmore device tree and make following
-configuration as default:
-- Disable DVFS1 and DVFS2.
-- Set GPIO6 to gpio mode.
+In place of hardcoding the key code in DTS file and comment the
+key code as side notes, use the key code macro defines in the
+dt-bindings/input/input.h directly.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
-changes from V1:
-- Renames the node name to pinmux as suggested on patch V1.
-- Not sure that this will create the issue with other node having same
-  name as pinmux in top of the dts file.
+Reposting this patch as it was sent earlier when merge window was closed.
 
- arch/arm/boot/dts/tegra114-dalmore.dts |   13 +++++++++++++
- 1 files changed, 13 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/tegra114-dalmore.dts |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
-index 6023028..dc5cdd7 100644
+index 6023028..05a3aae 100644
 --- a/arch/arm/boot/dts/tegra114-dalmore.dts
 +++ b/arch/arm/boot/dts/tegra114-dalmore.dts
-@@ -1011,6 +1011,19 @@
- 				interrupt-parent = <&palmas>;
- 				interrupts = <8 0>;
- 			};
-+
-+			pinmux {
-+				compatible = "ti,tps65913-pinctrl";
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&palmas_default>;
-+
-+				palmas_default: pinmux {
-+					pin_gpio6 {
-+						pins = "gpio6";
-+						function = "gpio";
-+					};
-+				};
-+			};
+@@ -1,5 +1,6 @@
+ /dts-v1/;
+ 
++#include <dt-bindings/input/input.h>
+ #include "tegra114.dtsi"
+ 
+ / {
+@@ -1081,26 +1082,26 @@
+ 		home {
+ 			label = "Home";
+ 			gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
+-			linux,code = <102>; /* KEY_HOME */
++			linux,code = <KEY_HOME>;
+ 		};
+ 
+ 		power {
+ 			label = "Power";
+ 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
+-			linux,code = <116>; /* KEY_POWER */
++			linux,code = <KEY_POWER>;
+ 			gpio-key,wakeup;
+ 		};
+ 
+ 		volume_down {
+ 			label = "Volume Down";
+ 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
+-			linux,code = <114>; /* KEY_VOLUMEDOWN */
++			linux,code = <KEY_VOLUMEDOWN>;
+ 		};
+ 
+ 		volume_up {
+ 			label = "Volume Up";
+ 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
+-			linux,code = <115>; /* KEY_VOLUMEUP */
++			linux,code = <KEY_VOLUMEUP>;
  		};
  	};
  
