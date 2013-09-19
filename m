@@ -1,151 +1,95 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
-Date: Fri, 20 Sep 2013 09:53:03 +0200
-Message-ID: <20130920075302.GB8575@ulmo>
-References: <1379607514-11200-1-git-send-email-rklein@nvidia.com>
- <20130919202706.GB4470@ulmo>
- <523B6257.4040302@nvidia.com>
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: [PATCH 39/51] DMA-API: others: use dma_set_coherent_mask()
+Date: Fri, 20 Sep 2013 00:11:38 +0100
+Message-ID: <E1VMnNq-0007s4-HN@rmk-PC.arm.linux.org.uk>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <523B6257.4040302-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tejun Heo <tj@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The correct way for a driver to specify the coherent DMA mask is
+not to directly access the field in the struct device, but to use
+dma_set_coherent_mask().  Only arch and bus code should access this
+member directly.
 
---0eh6TmSyL6TZE2Uz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Convert all direct write accesses to using the correct API.
 
-On Thu, Sep 19, 2013 at 04:45:11PM -0400, Rhyland Klein wrote:
-> On 9/19/2013 4:27 PM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Thu, Sep 19, 2013 at 12:18:33PM -0400, Rhyland Klein wrote:
-> >> From: Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> Adding driver support for bq24735 charger chipset.
-> ...snip
-> >=20
-> >> +             return -ENOMEM;
-> >> +     }
-> >> +
-> >> +     charger_device->pdata =3D client->dev.platform_data;
-> >> +
-> >> +     if (!charger_device->pdata && client->dev.of_node)
-> >=20
-> > If you use IS_ENABLED(CONFIG_OF) here, the compiler will see that it
-> > evaluates to 0 if OF is not selected, in which case it will be clever
-> > enough to see that bq24735_parse_dt_data() is not used and just discard
-> > it (because it is static). Then the #ifdefery above is not needed and
-> > you will get compile coverage whether or not OF has been selected. Which
-> > is a good thing.
-> >=20
-> > That said, I've mentioned before that you may want to not support the
-> > non-DT at all since there's no immediate need, so this may not even be
-> > an issue.
->=20
-> The main reason I don't want to break non-DT support (or just not
-> implement it) is that this driver is going to be used in our downstream
-> kernels, and I prefer to minimize the patches they will have on top of
-> it so we don't diverge.
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ drivers/ata/pata_ixp4xx_cf.c             |    5 ++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  |    6 +++++-
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    5 +++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
-I was under the impression that our downstream kernels used DT for a lot
-of devices already. This doesn't look like a very special binding, and I
-don't see a reason why we'd have to use platform data in our downstream
-kernels.
-
-> >> +     name =3D charger_device->pdata->name;
-> >> +     if (!name) {
-> >> +             name =3D kasprintf(GFP_KERNEL, "bq24735-%s",
-> >> +                              dev_name(&client->dev));
-> >=20
-> > Won't the device name already include bq24735 because of the driver
-> > name?
->=20
-> In my experience this comes up with a name like "bq24735-5-0009". Thats
-> why I added the bq24735 in the beginning, so the name is more descriptive.
-
-Yes, you're right. Perhaps in that case it's even easier to just stick
-with a static string such as "bq24735" or "bq24735-charger". It's likely
-to be the only device of that type in a machine. If you want to include
-the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
-clearer that 5-0009 is actually the bus-specific name.
-
-> > Also I don't see where charging is disabled. Or enabled when AC power is
-> > plugged after the device has been probed. How does that work?
->=20
-> I believe charging is auto-disabled when the adapter is unplugged, but I
-> will verify and if that doesn't seem to be the case. This is something
-> that should likely be added to the ISR (enable/disable).
-
-I can very well imagine that it's auto-disabled when the power supply is
-unplugged, but probably more importantly charging should be reenabled
-when the supply is plugged again.
-
-> >> +#define BQ24735_CHG_OPT_REG          0x12
-> >> +#define BQ24735_CHG_OPT_CHARGE_ENABLE        (1 << 0)
-> >> +#define BQ24735_ENABLE_CHARGING              0
-> >> +#define BQ24735_DISABLE_CHARGING     1
-> >=20
-> > I don't think these are really useful. The field is already named
-> > CHARGE_ENABLE, so it should be pretty clear what you're supposed to put
-> > in here. For that matter, I'm not a huge fan of the whole "update bits"
-> > API because it encourages these things and they are just confusing.
->=20
-> The only thing about the enable bit is that isn't kind of inverted what
-> what you might expect. 1 is disabling. Thats why I think the bit
-> definitions for enable/disable make sense. What would you suggest to
-> replace the "update bits" API?
-
-Well, especially for single bits I find it much more intuitive to do
-something like this:
-
-	value =3D read();
-	value |=3D ENABLE;
-	write(value);
-
-or
-
-	value =3D read();
-	value &=3D ~ENABLE;
-	write(value);
-
-And if the meaning of the bit is inverted, then you can just rename
-ENABLE to DISABLE. "update bits" might be fine for fields wider than a
-single bit, but even in those cases, I find something like the above
-much easier to read. But perhaps that's just personal preference.
-
-Thierry
-
---0eh6TmSyL6TZE2Uz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSO/7eAAoJEN0jrNd/PrOhmnsP/08lv4ERwi0uF/kd4URz6XZ4
-EVt3+tm/uaKgWZXRCEiZGDvZlCY/6pnXpQ1dPZPqozuOny+f0N1Mcw+BoF7Id436
-fBsObcdWq8YrcUX13BN8QWPd5NxV6M2pm+SOfmes9H92EOJ/4xhhjPuELt8EpStK
-ugvyw6pxYVW/lPNd+s22Bv419mbU7oOYO3FVo3ew5+Bn0qpbNYnriyLMFgH4T1rF
-dFWnpHdEBZrqPiHqR56RsPRuOl+WeRcZBji2gStWigkHM2DFlJj5yo5d695D3Irg
-pA6R8Mn71s1TXNVDAvCmBhiJY57/+gSFQJFVUTaXj8K+4FZ4n3cWNAjs76Ss4bNU
-D+SUejHBiitFfBqFqhK+7MDhHRuLxJBUgb7Q654xauUnJXwN334UEVSUCe8l6BzY
-MmNuCOkqNVTYBD0wrdiRAjrwXLF/I/vPPdTmnXG1blk5bdy+01P5gcKtaSYTugXT
-NCJTVXoDDSYAdS7tyf6HOdzg5jXpyyI2G6pP2ZRwlWZZiGBJ7d/oImx3o1hERQ1D
-PsNH2Al1+oQLMRe+WCixLemBc+tQVeqFGTF2D/8vhpWpUFNXFapc9DO37zDoTGkk
-UPkwCgmhV+nr3w01MOELZgwDkd/BoRGV5O00wmSaTn/s6Yt78mmHBo7nxBeTGhnd
-EovnbdJ8mFq5RsZ80M9g
-=Om+c
------END PGP SIGNATURE-----
-
---0eh6TmSyL6TZE2Uz--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/ata/pata_ixp4xx_cf.c b/drivers/ata/pata_ixp4xx_cf.c
+index 1ec53f8..ddf470c 100644
+--- a/drivers/ata/pata_ixp4xx_cf.c
++++ b/drivers/ata/pata_ixp4xx_cf.c
+@@ -144,6 +144,7 @@ static int ixp4xx_pata_probe(struct platform_device *pdev)
+ 	struct ata_host *host;
+ 	struct ata_port *ap;
+ 	struct ixp4xx_pata_data *data = dev_get_platdata(&pdev->dev);
++	int ret;
+ 
+ 	cs0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	cs1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+@@ -157,7 +158,9 @@ static int ixp4xx_pata_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	/* acquire resources and fill host */
+-	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
++	if (ret)
++		return ret;
+ 
+ 	data->cs0 = devm_ioremap(&pdev->dev, cs0->start, 0x1000);
+ 	data->cs1 = devm_ioremap(&pdev->dev, cs1->start, 0x1000);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index bb82ef7..81192d0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -286,7 +286,11 @@ static struct drm_driver exynos_drm_driver = {
+ 
+ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ {
+-	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++	int ret;
++
++	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
++	if (ret)
++		return ret;
+ 
+ 	return drm_platform_init(&exynos_drm_driver, pdev);
+ }
+diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+index acf6678..701c4c1 100644
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -664,8 +664,9 @@ static int omap_dmm_probe(struct platform_device *dev)
+ 	}
+ 
+ 	/* set dma mask for device */
+-	/* NOTE: this is a workaround for the hwmod not initializing properly */
+-	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++	ret = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
++	if (ret)
++		goto fail;
+ 
+ 	omap_dmm->dummy_pa = page_to_phys(omap_dmm->dummy_page);
+ 
+-- 
+1.7.4.4
