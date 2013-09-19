@@ -1,22 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher manifests PATCH] Move dtc from jdl.com to kernel.org
-Date: Wed, 18 Sep 2013 17:29:48 -0600
-Message-ID: <523A376C.90802@wwwdotorg.org>
-References: <1379538044-8149-1-git-send-email-swarren@wwwdotorg.org>
+From: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] drivers: power: Add support for bq24735 charger
+Date: Thu, 19 Sep 2013 19:26:41 +0530
+Message-ID: <CAKDJKT4D7VV1pxC1Bme5wptEW=2uyWBccVCv06tTwgrW20diVA@mail.gmail.com>
+References: <1379452259-3499-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379538044-8149-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379452259-3499-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/18/2013 03:00 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The primary dtc repository recently moved from jdl.com to kernel.org.
-> Update tegra-uboot-flasher manifests to reflect the move.
+Hi
 
-I have applied this.
+> +               ret = gpio_request(charger_device->pdata->status_gpio, name);
+> +               if (ret) {
+> +                       dev_err(&client->dev, "Failed gpio request: %d\n", ret);
+> +                       goto err_free_name;
+> +               }
+> +       }
+
+snip ...
+
+> +err_free_name:
+> +       if (name && name != charger_device->pdata->name)
+> +               kfree(name);
+> +
+> +       return ret;
+> +}
+
+Like to know, Is there a need to free gpio which has been requested previously?
+Alternatively, this can be get requested using "devm_" function so
+that it will get
+freed automatically during removal.
+
+> +static int bq24735_charger_remove(struct i2c_client *client)
+> +{
+> +       struct bq24735_charger *charger_device = i2c_get_clientdata(client);
+> +
+> +       if (charger_device->irq)
+> +               devm_free_irq(charger_device->dev, charger_device->irq,
+> +                               &charger_device->charger);
+> +
+> +       power_supply_unregister(&charger_device->charger);
+> +
+> +       if (charger_device->charger.name != charger_device->pdata->name)
+> +               kfree(charger_device->charger.name);
+> +
+> +       return 0;
+
+Ditto, If go with free_gpio.
+
+
+Regards
+Manish Badarkhe
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
