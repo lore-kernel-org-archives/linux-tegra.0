@@ -1,47 +1,48 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 1/5] ARM: add basic support for Trusted Foundations
-Date: Thu, 19 Sep 2013 13:49:31 -0700
-Message-ID: <87d2o4edus.fsf@linaro.org>
-References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com>
-	<1379238028-7960-2-git-send-email-acourbot@nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] Input: gpio-keys - update to devm_* API
+Date: Thu, 19 Sep 2013 14:22:53 -0700
+Message-ID: <20130919212253.GA16015@core.coreip.homeip.net>
+References: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
+ <20130917185259.GA6894@core.coreip.homeip.net>
+ <CAKDJKT5fvf=cCqU0ULs0o6NO10aDM73ewx=-sVG9Rzm-cKkECg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379238028-7960-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Alexandre
-	Courbot's message of "Sun, 15 Sep 2013 18:40:24 +0900")
+Content-Disposition: inline
+In-Reply-To: <CAKDJKT5fvf=cCqU0ULs0o6NO10aDM73ewx=-sVG9Rzm-cKkECg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+On Wed, Sep 18, 2013 at 12:41:11AM +0530, Manish Badarkhe wrote:
+> Hi Dmitry,
+> 
+> On Wed, Sep 18, 2013 at 12:22 AM, Dmitry Torokhov
+> <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > Hi Manish,
+> >
+> > On Sun, Sep 15, 2013 at 01:22:23AM +0530, Manish Badarkhe wrote:
+> >> Update the code to use devm_* API so that driver core will manage
+> >> resources.
+> >>
+> >
+> > And the benefit of this would be...?
+> >
+> > There are still resources that are managed in traditional way and I
+> > really dislike mixing the 2 styles. I can see applying patch that
+> > converts the driver to use devm_ for all its resources and gets rid of
+> > the remove() method altogether, but I am not sure how beneficial this
+> > kind of changes are for existing drivers.
+> 
+> IMO devm_ makes us to manage resources properly without much care about freeing
+> it ( as devm_handles freeing automatically).
 
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked using the same SMC-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
+Are the resources released improperly in the current version of the
+driver? IOW I do not see the point in applying this patch as it does not
+make the driver materially better.
 
-[...]
+Thanks.
 
-> +#if IS_ENABLED(CONFIG_OF)
-> +void of_register_trusted_foundations(void)
-> +{
-> +	struct device_node *node;
-> +	struct trusted_foundations_platform_data pdata;
-> +	int err;
-> +
-> +	node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
-> +	if (!node)
-> +		return;
-> +
-> +	err = of_property_read_u32(node, "version-major", &pdata.version_major);
-> +	if (err != 0)
-> +		panic("Trusted Foundation: missing version-major property\n");
-
-Do really need to panic() the whole kernel for a missing property?
-Surely this can more gracefully recover, or assume some defaults?  
-
-Same comment for the other uses of panic() in this patch.
-
-Kevin
+-- 
+Dmitry
