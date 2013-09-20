@@ -1,87 +1,87 @@
-From: Matt Porter <matt.porter@linaro.org>
-Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
-Date: Fri, 20 Sep 2013 15:16:14 -0400
-Message-ID: <20130920191613.GA25191@ohporter.com>
-References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: [PATCH 12/51] DMA-API: net: intel/e1000: replace
+ dma_set_mask()+dma_set_coherent_mask() with new helper
+Date: Fri, 20 Sep 2013 12:45:55 -0700
+Message-ID: <1379706355.1972.8.camel@jtkirshe-mobl>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+ <E1VMluG-0007gV-6y@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Christian Daudt <csd@broadcom.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, linux-arm-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============7923185765950412603=="
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <E1VMluG-0007gV-6y@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, Peter P Waskiewicz Jr <peter.p.waskiewicz.jr@intel.com>, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, Carolyn Wyborny <carolyn.wyborny@intel.com>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, Don Skidmore <donald.c.skidmore@intel.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, Alex Duyck <alexander.h.duyck@intel.com>, devicetree@vger.kernel.org, Greg Rose <gregory.v.rose@intel.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
-> This is a patch set based on an RFC [1][2] sent earlier to provide a common
-> arch/arm init for DT clock providers. Currently, the call to of_clk_init(NULL)
-> to initialize DT clock providers is spread among several mach-dirs. Since most
-> machs require DT clocks initialized before timers, no initcall can be used.
-> 
-> By adding of_clk_init(NULL) to arch/arm time_init(), we can remove all
-> mach-specific .init_time hooks that basically called of_clk_init and
-> clocksource_of_init.
-> 
-> In contrast to the RFC version, of_clk_init(NULL) is now only called if no
-> custom .init_time callback is set. This allows some machs to still call clock
-> init themselves, as not all can be converted now. Therefore, this patch sets
-> drops conversion of mach-mvebu and mach-zynq. New machs that were introduced
-> with v3.12-rc1 are also converted, except mach-u300 that requires clocks
-> before irqs.
-> 
-> The patch set is based on v3.12-rc1 and further depends on a topic branch
-> created by Stephen Warren for mach-tegra [3]. It is now split into preparation
-> and removal patches to not break bisectability. I added all Acked-by/Tested-by's
-> where applicable or dropped them, if the patch was separated into two.
-> It has been compile tested for all machs involved with the following defconfigs
-> (multi_v7, bcm2835, dove, exynos, kirkwood, mxs, nhk8815) and nspire selected
-> on multi_v4_v5.
-> 
-> Patches 1-8 comprise preparation patches that convert machs nomadik, prima2,
-> socfpga, sunxi, tegra, and vt8500 to usual .init_time callbacks calling only
-> of_clk_init and clocksource_of_init.
-> 
-> Patch 9 then introduces of_clk_init(NULL) to the arch-wide default .init_time
-> callback.
-> 
-> Patches 10-26 finally remove custom .init_time callbacks from the machs involved.
 
-Hi Sebastian,
+--===============7923185765950412603==
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-IwGSEViKnlGxN4Ur4LPe"
 
-Could you pick up the following patch for mach-bcm/ into this series?
 
-Thanks,
-Matt
+--=-IwGSEViKnlGxN4Ur4LPe
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From f65d048b3453447bb3e693cb21701c4d0c6375ed Mon Sep 17 00:00:00 2001
-From: Matt Porter <matt.porter@linaro.org>
-Date: Fri, 20 Sep 2013 13:41:06 -0400
-Subject: [PATCH] ARM: bcm: Remove custom .time_init hook
+On Thu, 2013-09-19 at 22:37 +0100, Russell King wrote:
+> Replace the following sequence:
+>=20
+>         dma_set_mask(dev, mask);
+>         dma_set_coherent_mask(dev, mask);
+>=20
+> with a call to the new helper dma_set_mask_and_coherent().
+>=20
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  drivers/net/ethernet/intel/e1000/e1000_main.c |    9 ++-------
+>  1 files changed, 2 insertions(+), 7 deletions(-)
 
-With arch/arm calling of_clk_init(NULL) and clocksource_of_init()
-this is no longer needed. The former is useful because we can make
-use of dummy fixed clocks for drivers until the bcm281xx common
-clock driver is ready.
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
-Signed-off-by: Matt Porter <matt.porter@linaro.org>
-Reviewed-by: Markus Mayer <markus.mayer@linaro.org>
-Reviewed-by: Christian Daudt <csd@broadcom.com>
----
- arch/arm/mach-bcm/board_bcm281xx.c | 1 -
- 1 file changed, 1 deletion(-)
+--=-IwGSEViKnlGxN4Ur4LPe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
-index 8d9f931..26b2390 100644
---- a/arch/arm/mach-bcm/board_bcm281xx.c
-+++ b/arch/arm/mach-bcm/board_bcm281xx.c
-@@ -68,7 +68,6 @@ static void __init board_init(void)
- static const char * const bcm11351_dt_compat[] = { "brcm,bcm11351", NULL, };
- 
- DT_MACHINE_START(BCM11351_DT, "Broadcom Application Processor")
--	.init_time = clocksource_of_init,
- 	.init_machine = board_init,
- 	.restart = bcm_kona_restart,
- 	.dt_compat = bcm11351_dt_compat,
--- 
-1.8.4
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.14 (GNU/Linux)
+
+iQIcBAABCgAGBQJSPKXzAAoJEOVv75VaS+3OXRMP/0inX8RE/LpymWBicNP8WD6j
+xJGDMRHzZ+Frac/Q0qSWiCNSvfBn/WZ9glR0uxnIz51/TjfFzITWZBzcsgeVJlAv
+BAQt/pIzXrw1Qwwcnm3ZGBJ6XhGFQ8rI+6Fv/1nQ7peb1PoVjpM+pkGszhgOD7AZ
+KU0EqTKIIGnRKxdVZwraXXEIrrwCwEnEJnHylot3scVYOEww+8UkQzp1ItDHeXuD
+FQurkbrCawaVB7bctDl45kmo66I+Pn6SLo22LFDI7m8Q92KePKR0pNHv4dLuRrh2
+5j6S2j1jeZca3DT0dFzyV1jgBjOzWmHfA38yHpk0FesH+3DAlTgkTxLc2PpARAww
+cKqu5d/i1rk0INt61H6tp3qYWH7HQ563PW9aIxX82PsRdXtedvTUjtxAZ/kIWAUQ
+uFX5Q0Y0u9XlfC8spRAcUvi9AxKATY/mDXcd1oBFO2yLYWcfo/2R4THAqz/yjhea
+KQQVh9gE2Uc06/fWbh2W+uGdluMNJJSEKTbkNxea2w9+MEGLV9+Cjdfb9x/w4oMf
+vT5rD9lIZh1k9xZGjB++HrOd6Gy6l9j+wYQqIiC0Ut9P5gOjrd2gyhg3xzvz894/
+eYO6FFFLJeQijLVHEU5nUVg+0IQQQaUc0Cq6WGr/USpjapQUq0xuQLLRCaph1uPM
+crlJOl4YrRaaUMl8RxDR
+=UEsD
+-----END PGP SIGNATURE-----
+
+--=-IwGSEViKnlGxN4Ur4LPe--
+
+
+--===============7923185765950412603==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--===============7923185765950412603==--
