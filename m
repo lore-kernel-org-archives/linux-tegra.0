@@ -1,148 +1,83 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
-Date: Fri, 20 Sep 2013 12:21:30 -0400
-Message-ID: <523C760A.8060402@nvidia.com>
-References: <1379607514-11200-1-git-send-email-rklein@nvidia.com> <20130919202706.GB4470@ulmo> <523B6257.4040302@nvidia.com> <20130920075302.GB8575@ulmo>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 28/51] DMA-API: sound: fix dma mask handling in a lot of
+ drivers
+Date: Fri, 20 Sep 2013 17:36:54 +0100
+Message-ID: <20130920163654.GN21013@sirena.org.uk>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+ <E1VMm9m-0007ij-ER@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130920075302.GB8575@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============4406136581201344290=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1VMm9m-0007ij-ER@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Timur Tabi <timur@tabi.org>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Eric Miao <eric.y.miao@gmail.com>, Sangbeom Kim <sbkim73@samsu>
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/20/2013 3:53 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Sep 19, 2013 at 04:45:11PM -0400, Rhyland Klein wrote:
->> On 9/19/2013 4:27 PM, Thierry Reding wrote:
->>>> Old Signed by an unknown key
->>>
->>> On Thu, Sep 19, 2013 at 12:18:33PM -0400, Rhyland Klein wrote:
->>>> From: Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>
->>>> Adding driver support for bq24735 charger chipset.
->> ...snip
->>>
->>>> +             return -ENOMEM;
->>>> +     }
->>>> +
->>>> +     charger_device->pdata = client->dev.platform_data;
->>>> +
->>>> +     if (!charger_device->pdata && client->dev.of_node)
->>>
->>> If you use IS_ENABLED(CONFIG_OF) here, the compiler will see that it
->>> evaluates to 0 if OF is not selected, in which case it will be clever
->>> enough to see that bq24735_parse_dt_data() is not used and just discard
->>> it (because it is static). Then the #ifdefery above is not needed and
->>> you will get compile coverage whether or not OF has been selected. Which
->>> is a good thing.
->>>
->>> That said, I've mentioned before that you may want to not support the
->>> non-DT at all since there's no immediate need, so this may not even be
->>> an issue.
->>
->> The main reason I don't want to break non-DT support (or just not
->> implement it) is that this driver is going to be used in our downstream
->> kernels, and I prefer to minimize the patches they will have on top of
->> it so we don't diverge.
-> 
-> I was under the impression that our downstream kernels used DT for a lot
-> of devices already. This doesn't look like a very special binding, and I
-> don't see a reason why we'd have to use platform data in our downstream
-> kernels.
 
-Specifically, there is a platform that uses this part where the chip
-itself isn't connected to an i2c bus (From what I understand). In that
-case, they actually add callbacks into the platform data and then use
-them to configure the charger.
-
-> 
->>>> +     name = charger_device->pdata->name;
->>>> +     if (!name) {
->>>> +             name = kasprintf(GFP_KERNEL, "bq24735-%s",
->>>> +                              dev_name(&client->dev));
->>>
->>> Won't the device name already include bq24735 because of the driver
->>> name?
->>
->> In my experience this comes up with a name like "bq24735-5-0009". Thats
->> why I added the bq24735 in the beginning, so the name is more descriptive.
-> 
-> Yes, you're right. Perhaps in that case it's even easier to just stick
-> with a static string such as "bq24735" or "bq24735-charger". It's likely
-> to be the only device of that type in a machine. If you want to include
-> the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
-> clearer that 5-0009 is actually the bus-specific name.
-
-I prefer to have the bus identifier included in some way just because in
-theory there could be multiple chargers and this will make their names
-unique in sysfs. I am fine with either way, I simply followed the model
-I saw in other drivers (like the sbs-battery driver). In fact, many
-driver seem to just use the dev_name(), but I think either way is fine.
-Maybe Anton or David have a preference.
-
-> 
->>> Also I don't see where charging is disabled. Or enabled when AC power is
->>> plugged after the device has been probed. How does that work?
->>
->> I believe charging is auto-disabled when the adapter is unplugged, but I
->> will verify and if that doesn't seem to be the case. This is something
->> that should likely be added to the ISR (enable/disable).
-> 
-> I can very well imagine that it's auto-disabled when the power supply is
-> unplugged, but probably more importantly charging should be reenabled
-> when the supply is plugged again.
-> 
->>>> +#define BQ24735_CHG_OPT_REG          0x12
->>>> +#define BQ24735_CHG_OPT_CHARGE_ENABLE        (1 << 0)
->>>> +#define BQ24735_ENABLE_CHARGING              0
->>>> +#define BQ24735_DISABLE_CHARGING     1
->>>
->>> I don't think these are really useful. The field is already named
->>> CHARGE_ENABLE, so it should be pretty clear what you're supposed to put
->>> in here. For that matter, I'm not a huge fan of the whole "update bits"
->>> API because it encourages these things and they are just confusing.
->>
->> The only thing about the enable bit is that isn't kind of inverted what
->> what you might expect. 1 is disabling. Thats why I think the bit
->> definitions for enable/disable make sense. What would you suggest to
->> replace the "update bits" API?
-> 
-> Well, especially for single bits I find it much more intuitive to do
-> something like this:
-> 
-> 	value = read();
-> 	value |= ENABLE;
-> 	write(value);
-> 
-> or
-> 
-> 	value = read();
-> 	value &= ~ENABLE;
-> 	write(value);
-> 
-> And if the meaning of the bit is inverted, then you can just rename
-> ENABLE to DISABLE. "update bits" might be fine for fields wider than a
-> single bit, but even in those cases, I find something like the above
-> much easier to read. But perhaps that's just personal preference.
-
-I see your point I think your examples work fine for me. And since we
-don't use any of the larger bit fields currently, we don't have to worry
-about those cases right now.
-
-> 
-> Thierry
-> 
-> * Unknown Key
-> * 0x7F3EB3A1
-> 
-
-thanks again,
-Rhyland
+--===============4406136581201344290==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NbUNL4d9A9kY58qh"
+Content-Disposition: inline
 
 
--- 
-nvpublic
+--NbUNL4d9A9kY58qh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 19, 2013 at 10:53:02PM +0100, Russell King wrote:
+> This code sequence is unsafe in modules:
+>=20
+> static u64 mask =3D DMA_BIT_MASK(something);
+> ...
+> 	if (!dev->dma_mask)
+> 		dev->dma_mask =3D &mask;
+
+Acked-by: Mark Brown <broonie@linaro.org>
+
+--NbUNL4d9A9kY58qh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSPHmjAAoJELSic+t+oim9WB4QAINsf282vDwWmQYHGXTeorHo
+q0pJ/9bTwBrSE0KzOK9H6UvL7oxCgzMPOT8RiSjWcdEXX/FavpH1TCf+ETkaYyEA
+NaPvO/uUV/99qWhM/PJQvtv4yxhIR7ENiZKywUuFnWQuc44yGUWBLK8ooA4xXtme
+WMcWyy7SMMcP/+9eBd9aNe1FPYFirsqSrrCpWSR/fD+TWFKMB6HG+OZGNYRFMrRm
+Xet5sWMGwzBiL453M0ujAEHKd/g4VOkweCydEq+2Rt2am6ph+SrMuoQvCDZ1bvbh
+71nyYA+j2xNy8jb7AA9PukWoeXyAI0xRY8zh939Uvdxf4SPUIVgw9wJE5rMRGoT5
+k4We/z2A4m1DGCtg1JQN86HAe7jv3YlGLoPOhsrOnOEV55VnXIz0Lm9x3HjTNfvG
+LcJXBGeHmU3Jvj3JEpA57YDbOhpwx0klK7RS5v6BjIJrJUSwjATqt1WQVr528HDp
+rXQpUqxUL3KObdlA5TYweR2I0KxWe47rw612XGqhRiI+equSdTDP770QsO1nXlsA
+qCfn3Gh7t+hyB3yFZUquWEXwKVv0YMh3Ds/bR2RtZluSl3SzM9n/Dp45w6SMu1LN
+oSpxUS7KNzTPXQp0kns7dDFnJJWXid7mUScjK4rc5pSyBF4NSEqJsmqHm0whd/qL
+uR8J7AFq8DkXx3g+/4gf
+=H53r
+-----END PGP SIGNATURE-----
+
+--NbUNL4d9A9kY58qh--
+
+
+--===============4406136581201344290==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============4406136581201344290==--
