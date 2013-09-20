@@ -1,53 +1,87 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH 24/51] DMA-API: dma: pl330: add
- dma_set_mask_and_coherent() call
-Date: Fri, 20 Sep 2013 19:26:27 +0200
-Message-ID: <201309201926.29084.heiko@sntech.de>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMm5t-0007i5-V7@rmk-PC.arm.linux.org.uk>
+From: Matt Porter <matt.porter@linaro.org>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Fri, 20 Sep 2013 15:16:14 -0400
+Message-ID: <20130920191613.GA25191@ohporter.com>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <b43-dev-bounces+gldbd-bcm43xx-dev=gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <E1VMm5t-0007i5-V7-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/b43-dev>,
- <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/b43-dev/>
-List-Post: <mailto:b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/b43-dev>,
- <mailto:b43-dev-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "b43-dev" <b43-dev-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: b43-dev-bounces+gldbd-bcm43xx-dev=gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Christian Daudt <csd@broadcom.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, linux-arm-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Donnerstag, 19. September 2013, 23:49:01 schrieb Russell King:
-> The DMA API requires drivers to call the appropriate dma_set_mask()
-> functions before doing any DMA mapping.  Add this required call to
-> the AMBA PL08x driver.
-			^--- copy and paste error - should of course be PL330
+On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+> This is a patch set based on an RFC [1][2] sent earlier to provide a common
+> arch/arm init for DT clock providers. Currently, the call to of_clk_init(NULL)
+> to initialize DT clock providers is spread among several mach-dirs. Since most
+> machs require DT clocks initialized before timers, no initcall can be used.
+> 
+> By adding of_clk_init(NULL) to arch/arm time_init(), we can remove all
+> mach-specific .init_time hooks that basically called of_clk_init and
+> clocksource_of_init.
+> 
+> In contrast to the RFC version, of_clk_init(NULL) is now only called if no
+> custom .init_time callback is set. This allows some machs to still call clock
+> init themselves, as not all can be converted now. Therefore, this patch sets
+> drops conversion of mach-mvebu and mach-zynq. New machs that were introduced
+> with v3.12-rc1 are also converted, except mach-u300 that requires clocks
+> before irqs.
+> 
+> The patch set is based on v3.12-rc1 and further depends on a topic branch
+> created by Stephen Warren for mach-tegra [3]. It is now split into preparation
+> and removal patches to not break bisectability. I added all Acked-by/Tested-by's
+> where applicable or dropped them, if the patch was separated into two.
+> It has been compile tested for all machs involved with the following defconfigs
+> (multi_v7, bcm2835, dove, exynos, kirkwood, mxs, nhk8815) and nspire selected
+> on multi_v4_v5.
+> 
+> Patches 1-8 comprise preparation patches that convert machs nomadik, prima2,
+> socfpga, sunxi, tegra, and vt8500 to usual .init_time callbacks calling only
+> of_clk_init and clocksource_of_init.
+> 
+> Patch 9 then introduces of_clk_init(NULL) to the arch-wide default .init_time
+> callback.
+> 
+> Patches 10-26 finally remove custom .init_time callbacks from the machs involved.
 
+Hi Sebastian,
 
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
->  drivers/dma/pl330.c |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index a562d24..df8b10f 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2903,6 +2903,10 @@ pl330_probe(struct amba_device *adev, const struct
-> amba_id *id)
-> 
->  	pdat = dev_get_platdata(&adev->dev);
-> 
-> +	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Allocate a new DMAC and its Channels */
->  	pdmac = devm_kzalloc(&adev->dev, sizeof(*pdmac), GFP_KERNEL);
->  	if (!pdmac) {
+Could you pick up the following patch for mach-bcm/ into this series?
+
+Thanks,
+Matt
+
+From f65d048b3453447bb3e693cb21701c4d0c6375ed Mon Sep 17 00:00:00 2001
+From: Matt Porter <matt.porter@linaro.org>
+Date: Fri, 20 Sep 2013 13:41:06 -0400
+Subject: [PATCH] ARM: bcm: Remove custom .time_init hook
+
+With arch/arm calling of_clk_init(NULL) and clocksource_of_init()
+this is no longer needed. The former is useful because we can make
+use of dummy fixed clocks for drivers until the bcm281xx common
+clock driver is ready.
+
+Signed-off-by: Matt Porter <matt.porter@linaro.org>
+Reviewed-by: Markus Mayer <markus.mayer@linaro.org>
+Reviewed-by: Christian Daudt <csd@broadcom.com>
+---
+ arch/arm/mach-bcm/board_bcm281xx.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
+index 8d9f931..26b2390 100644
+--- a/arch/arm/mach-bcm/board_bcm281xx.c
++++ b/arch/arm/mach-bcm/board_bcm281xx.c
+@@ -68,7 +68,6 @@ static void __init board_init(void)
+ static const char * const bcm11351_dt_compat[] = { "brcm,bcm11351", NULL, };
+ 
+ DT_MACHINE_START(BCM11351_DT, "Broadcom Application Processor")
+-	.init_time = clocksource_of_init,
+ 	.init_machine = board_init,
+ 	.restart = bcm_kona_restart,
+ 	.dt_compat = bcm11351_dt_compat,
+-- 
+1.8.4
