@@ -1,36 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra_defconfig: enable CONFIG_ARM_APPENDED_DTB
-Date: Thu, 19 Sep 2013 19:58:10 -0600
-Message-ID: <523BABB2.4090200@wwwdotorg.org>
-References: <1379638594-28888-1-git-send-email-olof@lixom.net> <CAKCjkJbavWtWBxvKqpesmJfcKTUCpbsM_xL0JfS49vOpkZ8AUw@mail.gmail.com> <CAOesGMjP+QMyuLCykg0nW4yWwmnNtoyzf7nK2dPAWuqcpfp5OA@mail.gmail.com> <523BA64F.1050607@wwwdotorg.org> <CAOesGMh8NE7h=BH2sPrG4eE3Vbv0Q5+hCj52gi0072phtjcghw@mail.gmail.com>
+From: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] Input: gpio-keys - update to devm_* API
+Date: Fri, 20 Sep 2013 07:54:09 +0530
+Message-ID: <CAKDJKT5jbL7_WG1etAhpkhjfSYa10SPcn_aA70n2wGavHX8Kvw@mail.gmail.com>
+References: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
+	<20130917185259.GA6894@core.coreip.homeip.net>
+	<CAKDJKT5fvf=cCqU0ULs0o6NO10aDM73ewx=-sVG9Rzm-cKkECg@mail.gmail.com>
+	<20130919212253.GA16015@core.coreip.homeip.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMh8NE7h=BH2sPrG4eE3Vbv0Q5+hCj52gi0072phtjcghw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20130919212253.GA16015-WlK9ik9hQGAhIp7JRqBPierSzoNAToWh@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Steev Klimaszewski <steev-4jv++OSWV9OTkO8mciVlQg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/19/2013 07:39 PM, Olof Johansson wrote:
-> On Thu, Sep 19, 2013 at 6:35 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 09/19/2013 07:09 PM, Olof Johansson wrote:
->>> They do? The hardware I have came with a very old u-boot. Got a link
->>> to the newer one?
->>
->> Mainline U-Boot runs nicely on the TrimSlice. Missing functionality
->> includes PCIe Ethernet and HDMI, but everything else works fine IIRC.
->> You can flash it using:
->>
->> https://github.com/NVIDIA/tegra-uboot-flasher-scripts
->>
->> (read README-developer.txt first, then README-user.txt)
-> 
-> Oh great. Unfortunately lack of PCI-e makes it hard to network boot
-> (unless I add a redundant usb-ethernet adapter on it). Hmm.
+Hi Dmitry,
 
-I think Thierry was looking into PCIe, although I don't think it's
-working yet. I always just use USB even on TrimSlice since it's easier
-to move the USB connector than the network connector when switching
-machines:-) PCIe works in Linux now though, as of v3.12-rc1.
+On Fri, Sep 20, 2013 at 2:52 AM, Dmitry Torokhov
+<dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Wed, Sep 18, 2013 at 12:41:11AM +0530, Manish Badarkhe wrote:
+>> Hi Dmitry,
+>>
+>> On Wed, Sep 18, 2013 at 12:22 AM, Dmitry Torokhov
+>> <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> > Hi Manish,
+>> >
+>> > On Sun, Sep 15, 2013 at 01:22:23AM +0530, Manish Badarkhe wrote:
+>> >> Update the code to use devm_* API so that driver core will manage
+>> >> resources.
+>> >>
+>> >
+>> > And the benefit of this would be...?
+>> >
+>> > There are still resources that are managed in traditional way and I
+>> > really dislike mixing the 2 styles. I can see applying patch that
+>> > converts the driver to use devm_ for all its resources and gets rid of
+>> > the remove() method altogether, but I am not sure how beneficial this
+>> > kind of changes are for existing drivers.
+>>
+>> IMO devm_ makes us to manage resources properly without much care about freeing
+>> it ( as devm_handles freeing automatically).
+>
+> Are the resources released improperly in the current version of the
+> driver? IOW I do not see the point in applying this patch as it does not
+> make the driver materially better.
+
+Resources are released properly in current version of driver but using
+a traditional
+way. This patch is just a clean up and  to use new devm_ variant. Yes,
+This patch does
+not make a driver materially better but make use of "devm_" variant as
+like any other
+drivers.
+
+Thanks
+Manish Badarkhe
