@@ -1,102 +1,148 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 42/51] DMA-API: usb: musb: use
- platform_device_register_full() to avoid directly messing with dma masks
-Date: Fri, 20 Sep 2013 10:15:52 -0500
-Message-ID: <20130920151552.GQ26101@radagast>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMnQk-0007sX-Ty@rmk-PC.arm.linux.org.uk>
- <20130920131125.GO26101@radagast>
- <20130920134938.GO25647@n2100.arm.linux.org.uk>
-Reply-To: balbi@ti.com
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
+Date: Fri, 20 Sep 2013 12:21:30 -0400
+Message-ID: <523C760A.8060402@nvidia.com>
+References: <1379607514-11200-1-git-send-email-rklein@nvidia.com> <20130919202706.GB4470@ulmo> <523B6257.4040302@nvidia.com> <20130920075302.GB8575@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8713123321030954905=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20130920134938.GO25647@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-crypto@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130920075302.GB8575@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============8713123321030954905==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rKoHqF+aPLVth8b2"
-Content-Disposition: inline
+On 9/20/2013 3:53 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Sep 19, 2013 at 04:45:11PM -0400, Rhyland Klein wrote:
+>> On 9/19/2013 4:27 PM, Thierry Reding wrote:
+>>>> Old Signed by an unknown key
+>>>
+>>> On Thu, Sep 19, 2013 at 12:18:33PM -0400, Rhyland Klein wrote:
+>>>> From: Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> Adding driver support for bq24735 charger chipset.
+>> ...snip
+>>>
+>>>> +             return -ENOMEM;
+>>>> +     }
+>>>> +
+>>>> +     charger_device->pdata = client->dev.platform_data;
+>>>> +
+>>>> +     if (!charger_device->pdata && client->dev.of_node)
+>>>
+>>> If you use IS_ENABLED(CONFIG_OF) here, the compiler will see that it
+>>> evaluates to 0 if OF is not selected, in which case it will be clever
+>>> enough to see that bq24735_parse_dt_data() is not used and just discard
+>>> it (because it is static). Then the #ifdefery above is not needed and
+>>> you will get compile coverage whether or not OF has been selected. Which
+>>> is a good thing.
+>>>
+>>> That said, I've mentioned before that you may want to not support the
+>>> non-DT at all since there's no immediate need, so this may not even be
+>>> an issue.
+>>
+>> The main reason I don't want to break non-DT support (or just not
+>> implement it) is that this driver is going to be used in our downstream
+>> kernels, and I prefer to minimize the patches they will have on top of
+>> it so we don't diverge.
+> 
+> I was under the impression that our downstream kernels used DT for a lot
+> of devices already. This doesn't look like a very special binding, and I
+> don't see a reason why we'd have to use platform data in our downstream
+> kernels.
 
---rKoHqF+aPLVth8b2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Specifically, there is a platform that uses this part where the chip
+itself isn't connected to an i2c bus (From what I understand). In that
+case, they actually add callbacks into the platform data and then use
+them to configure the charger.
 
-Hi,
+> 
+>>>> +     name = charger_device->pdata->name;
+>>>> +     if (!name) {
+>>>> +             name = kasprintf(GFP_KERNEL, "bq24735-%s",
+>>>> +                              dev_name(&client->dev));
+>>>
+>>> Won't the device name already include bq24735 because of the driver
+>>> name?
+>>
+>> In my experience this comes up with a name like "bq24735-5-0009". Thats
+>> why I added the bq24735 in the beginning, so the name is more descriptive.
+> 
+> Yes, you're right. Perhaps in that case it's even easier to just stick
+> with a static string such as "bq24735" or "bq24735-charger". It's likely
+> to be the only device of that type in a machine. If you want to include
+> the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
+> clearer that 5-0009 is actually the bus-specific name.
 
-On Fri, Sep 20, 2013 at 02:49:38PM +0100, Russell King - ARM Linux wrote:
-> On Fri, Sep 20, 2013 at 08:11:25AM -0500, Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Fri, Sep 20, 2013 at 12:14:38AM +0100, Russell King wrote:
-> > > Use platform_device_register_full() for those drivers which can, to
-> > > avoid messing directly with DMA masks.  This can only be done when
-> > > the driver does not need to access the allocated musb platform device
-> > > from within its callbacks, which may be called during the musb
-> > > device probing.
-> > >=20
-> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> >=20
-> > you want me to carry this one through my tree or you prefer getting my
-> > Acked-by ? Either way works for me:
-> >=20
-> > Acked-by: Felipe Balbi <balbi@ti.com>
-> >=20
-> > there's also the third option of me setting up a branch with only this
-> > patch and we both merge it, that'd also work.
->=20
-> I think this patch is sufficiently stand-alone that it should be fine
-> if you want to take it through your tree.  That may be better in the
-> long run to avoid conflicts with this patch and any future work in
-> this area during this cycle.
+I prefer to have the bus identifier included in some way just because in
+theory there could be multiple chargers and this will make their names
+unique in sysfs. I am fine with either way, I simply followed the model
+I saw in other drivers (like the sbs-battery driver). In fact, many
+driver seem to just use the dev_name(), but I think either way is fine.
+Maybe Anton or David have a preference.
 
-awesome, i'll take this one early next week.
+> 
+>>> Also I don't see where charging is disabled. Or enabled when AC power is
+>>> plugged after the device has been probed. How does that work?
+>>
+>> I believe charging is auto-disabled when the adapter is unplugged, but I
+>> will verify and if that doesn't seem to be the case. This is something
+>> that should likely be added to the ISR (enable/disable).
+> 
+> I can very well imagine that it's auto-disabled when the power supply is
+> unplugged, but probably more importantly charging should be reenabled
+> when the supply is plugged again.
+> 
+>>>> +#define BQ24735_CHG_OPT_REG          0x12
+>>>> +#define BQ24735_CHG_OPT_CHARGE_ENABLE        (1 << 0)
+>>>> +#define BQ24735_ENABLE_CHARGING              0
+>>>> +#define BQ24735_DISABLE_CHARGING     1
+>>>
+>>> I don't think these are really useful. The field is already named
+>>> CHARGE_ENABLE, so it should be pretty clear what you're supposed to put
+>>> in here. For that matter, I'm not a huge fan of the whole "update bits"
+>>> API because it encourages these things and they are just confusing.
+>>
+>> The only thing about the enable bit is that isn't kind of inverted what
+>> what you might expect. 1 is disabling. Thats why I think the bit
+>> definitions for enable/disable make sense. What would you suggest to
+>> replace the "update bits" API?
+> 
+> Well, especially for single bits I find it much more intuitive to do
+> something like this:
+> 
+> 	value = read();
+> 	value |= ENABLE;
+> 	write(value);
+> 
+> or
+> 
+> 	value = read();
+> 	value &= ~ENABLE;
+> 	write(value);
+> 
+> And if the meaning of the bit is inverted, then you can just rename
+> ENABLE to DISABLE. "update bits" might be fine for fields wider than a
+> single bit, but even in those cases, I find something like the above
+> much easier to read. But perhaps that's just personal preference.
 
---=20
-balbi
+I see your point I think your examples work fine for me. And since we
+don't use any of the larger bit fields currently, we don't have to worry
+about those cases right now.
 
---rKoHqF+aPLVth8b2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> 
+> Thierry
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSPGaoAAoJEIaOsuA1yqREE+MP/2yK4ec5lzVPs6fLeF9dUQHh
-yWwfvqZLfu9D9lFIzGOOgfPm03or8ubh7i/ryfKBHxyKiGysUyo2yen3AwOwFgq1
-2VbJzj55Zz5fejj7T9YE2hJPXU3ofUTdkNSJkbOGqnROvzNcCBYorIgcsAceohqP
-biXh7G8wuxJmJqe967o/LVi9M4GL9ny+GqXdqT7TzuPeFzIwnlDpRL2+vgQDD3Y8
-maW6NOBkrF8W7g2qM5qG4oT/LPNyIEAFpJqOYSQ14EgDp0VxviUl4kMDSqihMOM7
-iPMQJPMhNKRx8vSUilrRxGCY636T0bSXZd1x6L+AIQ0XsTzEtFT73v929byiFNso
-bzQpIOgJjrDgUfBi4MnOemhm98+/UhamcqoXq7v6FQ2FyhEMeIgArAIwwr3VxOf1
-E7iiKaT7jVMRMcNZ+7UJsb+09vie5hGleu4M7YBayoxDEEtlWI8t0aOcngW8oVO4
-DHD3uff/mpbTt9UYf7009WRToHXQwLMhbAimBcXbtya9Nxa79LNxT6aWEzfB2uVS
-Ju5j7FEQZUsAMHQdJIUu+kpcEjrc5IKWWsedQul4piraIFh2Jb+8ODrGLEQvMq9e
-8Jxl6hajoiw6zWfr+HMSqJa3MkDtaZ9GEOyvZqlnrBnpNS4dI3jZKDfresiz1fkq
-o5bj9gHe6QmYbP9tPOOz
-=V876
------END PGP SIGNATURE-----
-
---rKoHqF+aPLVth8b2--
-
---===============8713123321030954905==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+thanks again,
+Rhyland
 
 
---===============8713123321030954905==--
+-- 
+nvpublic
