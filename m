@@ -1,35 +1,62 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 24/51] DMA-API: dma: pl330:
-	add	dma_set_mask_and_coherent() call
-Date: Sat, 21 Sep 2013 21:00:00 +0100
-Message-ID: <20130921200000.GS25647@n2100.arm.linux.org.uk>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMm5t-0007i5-V7@rmk-PC.arm.linux.org.uk>
- <201309201926.29084.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <201309201926.29084.heiko@sntech.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, linux-crypto@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Sun, 22 Sep 2013 14:14:14 +0200
+Message-ID: <523EDF16.10102@gmail.com>
+References: <20130920191613.GA25191@ohporter.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130920191613.GA25191@ohporter.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matt Porter <matt.porter@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Christian Daudt <csd@broadcom.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, linux-arm-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 20, 2013 at 07:26:27PM +0200, Heiko St=FCbner wrote:
-> Am Donnerstag, 19. September 2013, 23:49:01 schrieb Russell King:
-> > The DMA API requires drivers to call the appropriate dma_set_mask()
-> > functions before doing any DMA mapping.  Add this required call to
-> > the AMBA PL08x driver.
-> 			^--- copy and paste error - should of course be PL330
+On 09/20/2013 09:16 PM, Matt Porter wrote:
+> On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+>> This is a patch set based on an RFC [1][2] sent earlier to provide a common
+>> arch/arm init for DT clock providers. Currently, the call to of_clk_init(NULL)
+>> to initialize DT clock providers is spread among several mach-dirs. Since most
+>> machs require DT clocks initialized before timers, no initcall can be used.
+[...]
+> Could you pick up the following patch for mach-bcm/ into this series?
+>
+> Thanks,
+> Matt
+>
+>  From f65d048b3453447bb3e693cb21701c4d0c6375ed Mon Sep 17 00:00:00 2001
+> From: Matt Porter <matt.porter@linaro.org>
+> Date: Fri, 20 Sep 2013 13:41:06 -0400
+> Subject: [PATCH] ARM: bcm: Remove custom .time_init hook
+>
+> With arch/arm calling of_clk_init(NULL) and clocksource_of_init()
+> this is no longer needed. The former is useful because we can make
+> use of dummy fixed clocks for drivers until the bcm281xx common
+> clock driver is ready.
+>
+> Signed-off-by: Matt Porter <matt.porter@linaro.org>
+> Reviewed-by: Markus Mayer <markus.mayer@linaro.org>
+> Reviewed-by: Christian Daudt <csd@broadcom.com>
 
-Fixed, thanks.
+As a v2 is required due to calling of_clk_init() breaks non-DT builds,
+I will include this _if_ Christian actually gives his Acked-By.
+
+Sebastian
+
+> ---
+>   arch/arm/mach-bcm/board_bcm281xx.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
+> index 8d9f931..26b2390 100644
+> --- a/arch/arm/mach-bcm/board_bcm281xx.c
+> +++ b/arch/arm/mach-bcm/board_bcm281xx.c
+> @@ -68,7 +68,6 @@ static void __init board_init(void)
+>   static const char * const bcm11351_dt_compat[] = { "brcm,bcm11351", NULL, };
+>
+>   DT_MACHINE_START(BCM11351_DT, "Broadcom Application Processor")
+> -	.init_time = clocksource_of_init,
+>   	.init_machine = board_init,
+>   	.restart = bcm_kona_restart,
+>   	.dt_compat = bcm11351_dt_compat,
+>
