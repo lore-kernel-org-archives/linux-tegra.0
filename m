@@ -1,72 +1,86 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/9] of/irq: Introduce __of_irq_to_resource()
-Date: Mon, 23 Sep 2013 22:50:39 +0200
-Message-ID: <20130923205038.GD5216@ulmo>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-6-git-send-email-treding@nvidia.com>
- <5237782B.3030804@gmail.com>
- <CACRpkdadFct8iXSaRRQ3a2YQryfMjJwVaq+8wgWXS1Ymj3M_WA@mail.gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
+Date: Mon, 23 Sep 2013 17:01:46 -0400
+Message-ID: <5240AC3A.9060206@nvidia.com>
+References: <1379528245-6283-1-git-send-email-rklein@nvidia.com> <52408DC8.3020407@wwwdotorg.org> <52409B1E.3030405@nvidia.com> <52409D63.3020909@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u65IjBhB3TIa72Vp"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdadFct8iXSaRRQ3a2YQryfMjJwVaq+8wgWXS1Ymj3M_WA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52409D63.3020909-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 9/23/2013 3:58 PM, Stephen Warren wrote:
+> On 09/23/2013 01:48 PM, Rhyland Klein wrote:
+>> On 9/23/2013 2:51 PM, Stephen Warren wrote:
+>>> On 09/18/2013 12:17 PM, Rhyland Klein wrote:
+>>>> The tegra114 driver wasn't currently handling the cs_change functionality.
+>>>> It is meant to invert normal behavior, and we were only using it to possibly
+>>>> delay at the end of a transfer.
+> ...
+>>>> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+> ...
+>>>> @@ -717,7 +718,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>>>>  		else if (req_mode == SPI_MODE_3)
+>>>>  			command1 |= SPI_CONTROL_MODE_3;
+>>>>  
+>>>> -		tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>>>> +		if (tspi->cs_control) {
+>>>> +			if (tspi->cs_control != spi)
+>>>> +				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>>>
+>>> Do you really need a separate write call there? The value of command1
+>>> isn't fully set up there (the CS bits are all set up immediately after),
+>>> so won't that glitch the CS lines in some cases?
+>>
+>> On our hardware (as far as I've seen), the CS line is normally low. We
+> 
+> I assume you meant "normally *active* low", not "normally low"?
 
---u65IjBhB3TIa72Vp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I mean that when I look at CS, before a transaction starts, the line is
+low. Then we do a write like this (default SPI_COMMAND1) you see CS rise
+and fall very soon after. This is purely how we generate the edge
+triggers (as far as I can tell on all Tegra hw, though Laxman can
+correct me if I am wrong).
 
-On Mon, Sep 23, 2013 at 09:20:37PM +0200, Linus Walleij wrote:
-> On Mon, Sep 16, 2013 at 11:29 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wro=
-te:
-> > On 09/16/2013 03:32 AM, Thierry Reding wrote:
-> >> This is a version of of_irq_to_resource() that propagates the precise
-> >> error code instead of returning 0 for all errors. It will be used in
-> >> subsequent patches to allow further propagation of error codes.
-> >>
-> >> To avoid code duplication, implement of_irq_to_resource() as a wrapper
-> >> around the new __of_irq_to_resource().
-> >
-> > I think the callers in this case are manageable to update as well.
-> > Several cases could simply use irq_of_parse_and_map instead as they just
-> > pass in a NULL resource.
->=20
-> I second this comment.
+> 
+>> need to generate a falling-edge to trigger the beginning of a SPI
+>> transaction. Doing this write with the default value of SPI_COMMAND1
+>> causes a brief rise and fall of CS, giving us our falling-edge.
+> 
+> That sounds like exactly the glitch I was talking about.
+> 
+> Assuming CS isn't held constantly asserted (low), isn't CS de-asserted
+> (rises) at the end of transaction n-1, and re-asserted (falls) at the
+> start of transaction n? If so, I'm not sure why the setup for
+> transaction n needs to both de-assert and then re-assert it? It seems
+> like cs_control should be handled at the end of a transaction, not at
+> the start of the next one.
 
-That should be fixed in v2 of the series that I posted a few days ago.
+cs_change has to maintain state over spi_message boundries, not just
+between spi_transfers within a spi_message.
 
-Thierry
+In this specific case, this is a safe guard.
 
---u65IjBhB3TIa72Vp
-Content-Type: application/pgp-signature
+>>>> +		if (tspi->cs_control) {
+This sees that the previous transfer stored its spi_device pointer,
+meaning it had cs_change set on the last part of the last spi_message
+(I.E. CS hasn't been deasserted, so the SPI transaction is still on-going).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+>>>> +			if (tspi->cs_control != spi)
+This however finds that the device trying to send a SPI message isn't
+the same one that was in the middle of its transaction. This is a
+collision between 2 clients on 1 bus. This simply ends the previous
+transaction (the ongoing one) in favor of starting a new transaction.
 
-iQIcBAEBAgAGBQJSQKmeAAoJEN0jrNd/PrOhpsYP/2xzs3k69Qi+gWUntP1If6vS
-9gqRbcx8LT4ESsT94HHYieEF/P821YGLviE3Hi3LRSCZwR8mEYmFXHdf24Y4Z6wC
-zexH3VxggvAe6RtDx5I8+0vyia4UV8N5Hx3xBqPkBRsQYIdMkEf5mCjqfs71RntT
-kQu4jCeaznIiMMn18YkqwpJqHuCeHn3u6HmuKn1xSEbxcf8etXEE5bANehkdPyNO
-7E7NTSDrmCnXhwJRlALlAee1TmEaV8TmF7mYtVM3QmjP+PX7hkSk6rbJ08XuWUCS
-DCOiOMTuGlyRkRVJZJiWQO/ajmZT5bWXMUoOzYuV5RzDsUzbQjw9oFEbzs6ww5zi
-7CtHnlNS3r98BDMb+jk9+CJ55xm0+BIyhuq540Dmn8nGuV50LniQF0ViHTBc9JBQ
-vQA+I5PtruaiJbDokA8KVn+Q7VbPStSMgvrUuPOQudVJICfUvsc3df81BVAgD4zW
-kZzBOVtb+PZwNFyYC5u8Dnx9yJqjQebkOccYYKESI1RzJW9YSPtMGe/XXZmqNsVG
-pHI196XlHrih3fbPKD6J1unERKfmDcXswYtcU2NJNMeMCjlBDq+PJZLsbc2mwL/l
-aGhf2Wx13qqHid+cBo7P75/frWEQU/wpUKugLCGs7UeFYKk/D3Ofr4BeRDYMAr0K
-Geb6Q+K8bx8LJGDUpDKG
-=gApM
------END PGP SIGNATURE-----
+Otherwise, this logic allows us to skip the spi of COMMAND1 which would
+normally be used to create the falling edge to start a new transaction,
+leaving the previous one open for more transfers.
 
---u65IjBhB3TIa72Vp--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-rhyland
+
+-- 
+nvpublic
