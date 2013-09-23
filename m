@@ -1,32 +1,60 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 06/12] clk: tegra: add common infra for DT clocks
-Date: Mon, 23 Sep 2013 12:16:18 -0600
-Message-ID: <52408572.2030907@wwwdotorg.org>
-References: <1379515331-19427-1-git-send-email-pdeschrijver@nvidia.com> <1379515331-19427-7-git-send-email-pdeschrijver@nvidia.com>
+Subject: Re: [PATCH 07/12] clk: tegra: move audio clk to common file
+Date: Mon, 23 Sep 2013 12:22:31 -0600
+Message-ID: <524086E7.3020903@wwwdotorg.org>
+References: <1379515331-19427-1-git-send-email-pdeschrijver@nvidia.com> <1379515331-19427-8-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1379515331-19427-7-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1379515331-19427-8-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc: Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/18/2013 08:40 AM, Peter De Schrijver wrote:
-> Introduce a common infrastructure for registering DT IDs for tegra clocks and
-> sharing clock initialization between SoCs. Move Tegra114 to this new
-> infrastructure.
+> Move audio clocks and PLLA initialization to a common file so it can be used by
+> multiple Tegra SoCs.
 
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> diff --git a/drivers/clk/tegra/clk-tegra-audio.c b/drivers/clk/tegra/clk-tegra-audio.c
 
-> +static struct tegra_clk __initdata tegra114_clks[tegra_clk_max] = {
-> +	[tegra_clk_rtc] = { .dt_id = TEGRA114_CLK_RTC, .present = true },
-> +	[tegra_clk_timer] = { .dt_id = TEGRA114_CLK_TIMER, .present = true },
+> +static struct div_nmp pllp_nmp = {
+> +	.divm_shift = 0,
+> +	.divm_width = 5,
+> +	.divn_shift = 8,
+> +	.divn_width = 10,
+> +	.divp_shift = 20,
+> +	.divp_width = 3,
+> +};
+> +
+> +static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
+> +	{9600000, 282240000, 147, 5, 0, 4},
+> +	{9600000, 368640000, 192, 5, 0, 4},
+> +	{9600000, 240000000, 200, 8, 0, 8},
+> +
+> +	{28800000, 282240000, 245, 25, 0, 8},
+> +	{28800000, 368640000, 320, 25, 0, 8},
+> +	{28800000, 240000000, 200, 24, 0, 8},
+> +	{0, 0, 0, 0, 0, 0},
+> +};
+> +
+> +static struct tegra_clk_pll_params pll_a_params = {
+> +	.input_min = 2000000,
+> +	.input_max = 31000000,
+> +	.cf_min = 1000000,
+> +	.cf_max = 6000000,
+> +	.vco_min = 200000000,
+> +	.vco_max = 700000000,
+> +	.base_reg = PLLA_BASE,
+> +	.misc_reg = PLLA_MISC,
+> +	.lock_mask = PLL_BASE_LOCK,
+> +	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
+> +	.lock_delay = 300,
+> +	.div_nmp = &pllp_nmp,
+> +};
 
-It seems rather odd for a patch that adds "common infrastructure" to be
-adding a Tegra114-specific table of clock IDs, especially since this new
-table isn't actually used at all. I think I would expect a separate
-patch for the common infra-structure and the Tegra114-specific table.
-Hopefully there will be Tegra20-/30-specific tables added too in that
-second patch?
+I'm not convinced any of those tables are common across SoCs. In fact, I
+can see definite differences in those tables between the 3 SoCs we
+already have upstream... How will this be handled once you've enhanced
+this series to handle all supported SoCs?
