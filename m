@@ -1,57 +1,112 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
-Date: Mon, 23 Sep 2013 16:05:30 -0600
-Message-ID: <5240BB2A.8060705@wwwdotorg.org>
-References: <1379607514-11200-1-git-send-email-rklein@nvidia.com> <5240B85D.3050803@wwwdotorg.org> <5240BA4A.4010007@nvidia.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
+Date: Mon, 23 Sep 2013 16:24:14 -0600
+Message-ID: <CAPnjgZ3GB8q=CMREX6YF_TR-FD6kRTZwWpJTuNQRA2JNmGWRMQ@mail.gmail.com>
+References: <1379528245-6283-1-git-send-email-rklein@nvidia.com>
+	<52408DC8.3020407@wwwdotorg.org>
+	<52409B1E.3030405@nvidia.com>
+	<52409D63.3020909@wwwdotorg.org>
+	<5240AC3A.9060206@nvidia.com>
+	<5240AF20.8030301@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5240BA4A.4010007-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5240AF20.8030301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/23/2013 04:01 PM, Rhyland Klein wrote:
-> On 9/23/2013 5:53 PM, Stephen Warren wrote:
->> On 09/19/2013 10:18 AM, Rhyland Klein wrote:
->>> Adding driver support for bq24735 charger chipset.
+[trying again]
+
+Hi,
+
+On Mon, Sep 23, 2013 at 3:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/23/2013 03:01 PM, Rhyland Klein wrote:
+>> On 9/23/2013 3:58 PM, Stephen Warren wrote:
+>>> On 09/23/2013 01:48 PM, Rhyland Klein wrote:
+>>>> On 9/23/2013 2:51 PM, Stephen Warren wrote:
+>>>>> On 09/18/2013 12:17 PM, Rhyland Klein wrote:
+>>>>>> The tegra114 driver wasn't currently handling the cs_change functionality.
+>>>>>> It is meant to invert normal behavior, and we were only using it to possibly
+>>>>>> delay at the end of a transfer.
+>>> ...
+>>>>>> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+>>> ...
+>>>>>> @@ -717,7 +718,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>>>>>>           else if (req_mode == SPI_MODE_3)
+>>>>>>                   command1 |= SPI_CONTROL_MODE_3;
+>>>>>>
+>>>>>> -         tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>>>>>> +         if (tspi->cs_control) {
+>>>>>> +                 if (tspi->cs_control != spi)
+>>>>>> +                         tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>>>>>
+>>>>> Do you really need a separate write call there? The value of command1
+>>>>> isn't fully set up there (the CS bits are all set up immediately after),
+>>>>> so won't that glitch the CS lines in some cases?
+>>>>
+>>>> On our hardware (as far as I've seen), the CS line is normally low. We
+>>>
+>>> I assume you meant "normally *active* low", not "normally low"?
 >>
->>> diff --git a/Documentation/devicetree/bindings/power_supply/ti,bq24735.txt b/Documentation/devicetree/bindings/power_supply/ti,bq24735.txt
-
->>> + - ti,charge-current : Used to control and set the charging current. This value
->>> +   must follow the below guidelines:
->>> +	bit 0 - 5:	Not used
->>> +	bit 6:		1 = Adds 64mA of charger current
->>> +	bit 7:		1 = Adds 128mA of charger current
->>> +	bit 8:		1 = Adds 256mA of charger current
->>> +	bit 9:		1 = Adds 512mA of charger current
->>> +	bit 10:		1 = Adds 1024mA of charger current
->>> +	bit 11:		1 = Adds 2048mA of charger current
->>> +	bit 12:		1 = Adds 4096mA of charger current
->>> +	bit 13 - 15:	Not used
+>> I mean that when I look at CS, before a transaction starts, the line is
+>> low. Then we do a write like this (default SPI_COMMAND1) you see CS rise
+>> and fall very soon after. This is purely how we generate the edge
+>> triggers (as far as I can tell on all Tegra hw, though Laxman can
+>> correct me if I am wrong).
+>
+> That sounds broken. Normally, shouldn't CS assert before a transaction,
+> stay asserted during a transaction, then deassert after the transaction?
+> It shouldn't rise and fall very quickly in between parts of the transaction.
+>
+>>>> need to generate a falling-edge to trigger the beginning of a SPI
+>>>> transaction. Doing this write with the default value of SPI_COMMAND1
+>>>> causes a brief rise and fall of CS, giving us our falling-edge.
+>>>
+>>> That sounds like exactly the glitch I was talking about.
+>>>
+>>> Assuming CS isn't held constantly asserted (low), isn't CS de-asserted
+>>> (rises) at the end of transaction n-1, and re-asserted (falls) at the
+>>> start of transaction n? If so, I'm not sure why the setup for
+>>> transaction n needs to both de-assert and then re-assert it? It seems
+>>> like cs_control should be handled at the end of a transaction, not at
+>>> the start of the next one.
 >>
->> That's a little odd. Why not just put the number of mA directly into the
->> property unshifted?
-> 
-> This is how the hw register is defined, its the literal number of mA.
-> This is cleaned up in the upcoming revision.
-
-OK. If you still want to use the raw register encoding, which seems
-reasonable, why not just say:
-
-ti,charge-current: Value for charge current register as described in the
-HW documentation.
-
->>> +   Setting the value to < 128mA or > 8.128A terminates charging.
+>> cs_change has to maintain state over spi_message boundries, not just
+>> between spi_transfers within a spi_message.
 >>
->> "terminates charging" is a driver action, not a description of HW. It's
->> fine to say that what min/max value should be specified in the property
->> for it to be valid, but not what action SW should take in response to that.
-> 
-> This isn't sw. This is defined in the HW documentation as to what
-> happens if an invalid value is used.
+>> In this specific case, this is a safe guard.
+>>
+>>>>>> +         if (tspi->cs_control) {
+>> This sees that the previous transfer stored its spi_device pointer,
+>> meaning it had cs_change set on the last part of the last spi_message
+>> (I.E. CS hasn't been deasserted, so the SPI transaction is still on-going).
+>>
+>>>>>> +                 if (tspi->cs_control != spi)
+>> This however finds that the device trying to send a SPI message isn't
+>> the same one that was in the middle of its transaction. This is a
+>> collision between 2 clients on 1 bus. This simply ends the previous
+>> transaction (the ongoing one) in favor of starting a new transaction.
+>>
+>> Otherwise, this logic allows us to skip the spi of COMMAND1 which would
+>> normally be used to create the falling edge to start a new transaction,
+>> leaving the previous one open for more transfers.
+>
+> This sounds like something the SPI core should be managing. If a driver
+> is using the SPI bus to communicate with a device in a way that needs CS
+> left active while outside a transaction, it shouldn't be possible for
+> another driver to come along and communicate with another device before
+> the first transaction is all complete. The bus should be locked.
+> Allowing anything else could corrupt the protocol that required specific
+> CS states outside the transaction.
 
-OK, if the HW documentation already says that, I don't see the need for
-the DT binding to also say it; I would suggest just removing that text.
+Perhaps the client driver should use spi_sync_locked() instead if it
+wants to avoid this problem? To me this driver code seems reasonable
+in the circumstances.
+
+Note: at present the Chrome OS EC driver does not support sharing a
+SPI bus with anything else, and neither does the EC.
+
+Regards,
+Simon
