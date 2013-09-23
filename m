@@ -1,35 +1,64 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH 22/51] DMA-API: amba: get rid of separate dma_mask
-Date: Sun, 22 Sep 2013 07:18:28 -0500
-Message-ID: <20130922121828.58F02C42373@trevor.secretlab.ca>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMm3x-0007hp-Lv@rmk-PC.arm.linux.org.uk>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Tegra baseline test results for v3.12-rc1
+Date: Mon, 23 Sep 2013 07:26:32 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1309230703090.18475@utopia.booyaka.com>
+References: <A4DCC42E2B5835498682FCB0A8F9F873378C267FFD@HQMAIL04.nvidia.com> <CAOesGMjAQZMUdC9ZoGhX=zEA3HCky1zwE0-B6fNAJubqO9bVzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <E1VMm3x-0007hp-Lv@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Russell King <rmk+kernel@arm.linux.org.uk>, alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
-Cc: Rob Herring <rob.herring@calxeda.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMjAQZMUdC9ZoGhX=zEA3HCky1zwE0-B6fNAJubqO9bVzw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 19 Sep 2013 22:47:01 +0100, Russell King <rmk+kernel@arm.linux.org.uk> wrote:
-> AMBA Primecell devices always treat streaming and coherent DMA exactly
-> the same, so there's no point in having the masks separated.
+Hi
+
+On Wed, 18 Sep 2013, Olof Johansson wrote:
+
+> On Wed, Sep 18, 2013 at 9:23 AM, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > vmlinux object size
+> > (delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267)):
+> >    text     data      bss    total  kernel
+> >  -89208   +10000     -416   -79624  multi_v7_defconfig
+> > +299303    +7244    +1484  +308031  tegra_defconfig
+> >
+> >
+> > Boot-time memory difference
+> > (delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267))
+> >     avail    rsrvd     high    freed                board              kconfig                  dtb
+> >         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+> >     -324k     324k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+> >     -324k     324k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+> >     -592k     592k        .       8k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+> 
+> Hm. These deltas are huge. :(  It would be interesting to know where
+> they come from.
 
-for the drivers/of/platform.c portion:
-Acked-by: Grant Likely <grant.likely@linaro.org>
+In terms of the vmlinux object size deltas, if one compares with OMAP 
+v3.11 -> v3.12-rc1:
 
-g.
+  http://marc.info/?l=linux-omap&m=137990533109727&w=2
+
+it appears that the 308KB tegra_defconfig delta is pretty close. 
+
+As a historical observation, the past several -rc1s have seen considerable 
+vmlinux size increases.  The Tegra data here doesn't go back very far yet, 
+but here's the OMAP data:
+
++158KB: http://www.pwsan.com/omap/testlogs/test_v3.11-rc1/20130721020309/build/size.txt
++105KB: http://www.pwsan.com/omap/testlogs/test_v3.10-rc1/20130518212204/build/size.txt
++235KB: http://www.pwsan.com/omap/testlogs/test_v3.9-rc1/20130312100243/build/size.txt
++195KB: http://www.pwsan.com/omap/testlogs/test_v3.8-rc1/20121228031713/build/size.txt
+ +63KB: http://www.pwsan.com/omap/testlogs/test_v3.7-rc1/20121017205513/build/size.txt
+
+...
+
+Regarding the boot-time memory differences, the ~300KB deltas look about 
+right, but the 0KB and the ~600KB deltas seem incorrect.  Something is 
+probably wrong with some of the scripts here.  Will follow up on that 
+this week.
+
+
+- Paul
