@@ -1,64 +1,96 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v3.12-rc1
-Date: Mon, 23 Sep 2013 07:26:32 +0000 (UTC)
-Message-ID: <alpine.DEB.2.02.1309230703090.18475@utopia.booyaka.com>
-References: <A4DCC42E2B5835498682FCB0A8F9F873378C267FFD@HQMAIL04.nvidia.com> <CAOesGMjAQZMUdC9ZoGhX=zEA3HCky1zwE0-B6fNAJubqO9bVzw@mail.gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 8/9] of/i2c: Resolve interrupt references at probe time
+Date: Mon, 23 Sep 2013 09:34:51 +0200
+Message-ID: <20130923073451.GE3051@katana>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-9-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAOesGMjAQZMUdC9ZoGhX=zEA3HCky1zwE0-B6fNAJubqO9bVzw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lkTb+7nhmha7W+c3"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1379320326-13241-9-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi
 
-On Wed, 18 Sep 2013, Olof Johansson wrote:
+--lkTb+7nhmha7W+c3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Sep 18, 2013 at 9:23 AM, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
-> > vmlinux object size
-> > (delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267)):
-> >    text     data      bss    total  kernel
-> >  -89208   +10000     -416   -79624  multi_v7_defconfig
-> > +299303    +7244    +1484  +308031  tegra_defconfig
-> >
-> >
-> > Boot-time memory difference
-> > (delta in bytes from test_v3.11-rc7 (d8dfad3876e4386666b759da3c833d62fb8b2267))
-> >     avail    rsrvd     high    freed                board              kconfig                  dtb
-> >         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
-> >     -324k     324k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
-> >     -324k     324k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-> >     -592k     592k        .       8k       tegra30-beaver      tegra_defconfig       tegra30-beaver
-> 
-> Hm. These deltas are huge. :(  It would be interesting to know where
-> they come from.
+On Mon, Sep 16, 2013 at 10:32:05AM +0200, Thierry Reding wrote:
+> Instead of resolving interrupt references at device creation time, delay
+> resolution until probe time. At device creation time, there is nothing
+> that can be done if an interrupt parent isn't ready yet, and the device
+> will end up with an invalid interrupt number (0).
+>=20
+> If the interrupt reference is resolved at probe time, the device's probe
+> can be deferred, so that it's interrupt resolution can be retried after
+> more devices (possibly including its interrupt parent) have been probed.
+>=20
+> However, individual drivers shouldn't be required to do that themselves,
+> over and over again, so this commit implements this functionality within
+> the I2C core.
+>=20
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/i2c/i2c-core.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index 29d3f04..163a1e8 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -236,6 +236,21 @@ int i2c_recover_bus(struct i2c_adapter *adap)
+>  	return adap->bus_recovery_info->recover_bus(adap);
+>  }
+> =20
+> +static int of_i2c_probe(struct i2c_client *client)
 
-In terms of the vmlinux object size deltas, if one compares with OMAP 
-v3.11 -> v3.12-rc1:
+This function should be in the CONFIG_OF block.
 
-  http://marc.info/?l=linux-omap&m=137990533109727&w=2
+> +{
+> +	struct device_node *np =3D client->dev.of_node;
+> +	int ret;
+> +
+> +	/* skip if the device node specifies no interrupts */
+> +	if (of_get_property(np, "interrupts", NULL)) {
+> +		ret =3D of_irq_get(client->dev.of_node, 0, &client->irq);
 
-it appears that the 308KB tegra_defconfig delta is pretty close. 
+of_irq_get really sounds as it does refcounting. +1 to change the name.
 
-As a historical observation, the past several -rc1s have seen considerable 
-vmlinux size increases.  The Tegra data here doesn't go back very far yet, 
-but here's the OMAP data:
+Thanks,
 
-+158KB: http://www.pwsan.com/omap/testlogs/test_v3.11-rc1/20130721020309/build/size.txt
-+105KB: http://www.pwsan.com/omap/testlogs/test_v3.10-rc1/20130518212204/build/size.txt
-+235KB: http://www.pwsan.com/omap/testlogs/test_v3.9-rc1/20130312100243/build/size.txt
-+195KB: http://www.pwsan.com/omap/testlogs/test_v3.8-rc1/20121228031713/build/size.txt
- +63KB: http://www.pwsan.com/omap/testlogs/test_v3.7-rc1/20121017205513/build/size.txt
-
-...
-
-Regarding the boot-time memory differences, the ~300KB deltas look about 
-right, but the 0KB and the ~600KB deltas seem incorrect.  Something is 
-probably wrong with some of the scripts here.  Will follow up on that 
-this week.
+   Wolfram
 
 
-- Paul
+--lkTb+7nhmha7W+c3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSP+8bAAoJEBQN5MwUoCm2G9AP/Ay3YBsjFpAv5Ki2PC2bMrlS
+7TV4G1bzGYDvSvDJHT/azoOF+5HofCL9iXtbuqX6CB352AphfHh4XIP+qKc9K4cN
+e8K04mQpXhkrlOmC9HUB2z2QtLRCKBiaahKeH9OHTK9FtvqtIx2Xcn81WNQj742k
+1Vn2EYVdF2YmfLQruAksT+9GxZNuy5Mk675HHK4nTquXPHlbhZMP8t8LpsBX/f7p
+mgdPvcy6GREO6Yn8RJkxpdc3tyBo5IHuHwDyG1UGEDeVpMTlkYnrRszB0TzCwMEr
+LOIQCbb9ZOPaU7ZEqZvz/cXB62jYPk0B9xMmhEjkiOgylzWmU0jxeVAkh7KO9ofu
+hUZ3NNqLKaH1WChUvqGFbvwEWAbF5YisWquV4KSX8GlVaxoAco65WgjH6Oyy8xyJ
+Hr1ZjtFY/w4DFLsS3v/K71ghFik/A/BZq73BPgw5LKM57NjSiQQJiVJpWODt2Gxe
+tC/82zok4aGgeMbXrWt9MQ1pa3pG2gcl06hTjBRNcWU/8aX9Yspt3SNzkYHKQlYB
+Hu27YJ4HyOn4hbB+QkmcyIFnsFSxPdnBW/6qPgAuo1VJ12erParTbXiupe5yejCi
+Q79D0EzOaOtaD2mQ1JPx3m307kW6SqEuMdZVSfa7sX7Wk/BJe0emCWGZFmMehvfT
+Ku3RPeKJrrkh4KVUMG84
+=/7nF
+-----END PGP SIGNATURE-----
+
+--lkTb+7nhmha7W+c3--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
