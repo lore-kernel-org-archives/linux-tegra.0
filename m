@@ -1,53 +1,62 @@
-From: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 37/51] DMA-API: usb: use new dma_coerce_mask_and_coherent()
-Date: Mon, 23 Sep 2013 14:34:34 +0200
-Message-ID: <5240355A.9010609@atmel.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk> <E1VMmIV-0007jw-Gq@rmk-PC.arm.linux.org.uk>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 00/12] Introduce common infra for tegra clocks
+Date: Mon, 23 Sep 2013 17:24:52 +0300
+Message-ID: <1379946381-20125-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1VMmIV-0007jw-Gq-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org
-Cc: Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/09/2013 00:02, Russell King :
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
->   drivers/usb/chipidea/ci_hdrc_imx.c |    4 +---
->   drivers/usb/dwc3/dwc3-exynos.c     |    4 +---
->   drivers/usb/host/ehci-atmel.c      |    4 +---
+This patchset introduces common infrastructure for clocks which exist in
+several Tegra SoCs. We also move Tegra114 to this new infrastructure.
+Tegra20 and Tegra30 will be moved later in separate patchsets.
 
-For Atmel driver:
+Changes since v1:
++ move common clks allocation to patch 2
++ adapt also Tegra20 and Tegra30 to the changes in patch 2
 
-Acked-by: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Boottested on dalmore, beaverboard and seaboard.
 
-[..]
+Peter De Schrijver (12):
+  clk: tegra: simplify periph clock data
+  clk: tegra: common periph_clk_enb_refcnt and clks
+  clk: tegra: Add TEGRA_PERIPH_NO_DIV flag
+  clk: tegra: move some PLLC and PLLXC init to clk-pll.c
+  clk: tegra: add header for common tegra clock IDs
+  clk: tegra: add common infra for DT clocks
+  clk: tegra: move audio clk to common file
+  clk: tegra: move periph clocks to common file
+  clk: tegra: move PMC clocks to common file
+  clk: tegra: move fixed clocks to common file
+  clk: tegra: introduce common tegra_osc_clk_init
+  clk: tegra: introduce common gen4 super clock
 
-> diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
-> index 5831a88..8e7323e 100644
-> --- a/drivers/usb/host/ehci-atmel.c
-> +++ b/drivers/usb/host/ehci-atmel.c
-> @@ -90,9 +90,7 @@ static int ehci_atmel_drv_probe(struct platform_device *pdev)
->   	 * Since shared usb code relies on it, set it here for now.
->   	 * Once we have dma capability bindings this can go away.
->   	 */
-> -	if (!pdev->dev.dma_mask)
-> -		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-> -	retval = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +	retval = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->   	if (retval)
->   		goto fail_create_hcd;
->
+ drivers/clk/tegra/Makefile               |    7 +-
+ drivers/clk/tegra/clk-id.h               |  197 ++++
+ drivers/clk/tegra/clk-periph.c           |    9 +-
+ drivers/clk/tegra/clk-pll.c              |   95 ++-
+ drivers/clk/tegra/clk-tegra-audio.c      |  260 +++++
+ drivers/clk/tegra/clk-tegra-fixed.c      |   62 ++
+ drivers/clk/tegra/clk-tegra-osc.c        |   81 ++
+ drivers/clk/tegra/clk-tegra-periph.c     |  596 ++++++++++++
+ drivers/clk/tegra/clk-tegra-pmc.c        |  131 +++
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  220 +++++
+ drivers/clk/tegra/clk-tegra114.c         | 1547 +++++-------------------------
+ drivers/clk/tegra/clk-tegra20.c          |   43 +-
+ drivers/clk/tegra/clk-tegra30.c          |   47 +-
+ drivers/clk/tegra/clk.c                  |  149 +++
+ drivers/clk/tegra/clk.h                  |   48 +-
+ 15 files changed, 2095 insertions(+), 1397 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-id.h
+ create mode 100644 drivers/clk/tegra/clk-tegra-audio.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-fixed.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-osc.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-periph.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen4.c
 
-[..]
-
-Thanks Russell,
 -- 
-Nicolas Ferre
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.7.rc0.72.g4b5ea.dirty
