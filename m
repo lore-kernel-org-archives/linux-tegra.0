@@ -1,105 +1,88 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH 36/51] DMA-API: usb: use dma_set_coherent_mask()
-Date: Mon, 23 Sep 2013 19:42:26 +0100
-Message-ID: <20130923184226.GU25647@n2100.arm.linux.org.uk>
-References: <E1VMmHX-0007jq-Cj@rmk-PC.arm.linux.org.uk> <Pine.LNX.4.44L0.1309231418030.1348-100000@iolanthe.rowland.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
+Date: Mon, 23 Sep 2013 12:51:52 -0600
+Message-ID: <52408DC8.3020407@wwwdotorg.org>
+References: <1379528245-6283-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1309231418030.1348-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+In-Reply-To: <1379528245-6283-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexander Shishkin <alexander.shishkin-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Greg Kroah-Hartman <gregkh@lin>
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 23, 2013 at 02:27:39PM -0400, Alan Stern wrote:
-> On Thu, 19 Sep 2013, Russell King wrote:
+On 09/18/2013 12:17 PM, Rhyland Klein wrote:
+> The tegra114 driver wasn't currently handling the cs_change functionality.
+> It is meant to invert normal behavior, and we were only using it to possibly
+> delay at the end of a transfer.
+
+I don't really follow this patch description well. It may help if you
+fully spelled out the definition of normal behaviour, what the driver
+was doing, and what it should be doing (which is presumable what it does
+do after this patch).
+
+> This patch modifies the logic so that the cs state will be toggled after
+> every individual transfer or NOT toggled at the end of the last transfer
+> if cs_change is set in that transfer struct.
 > 
-> > The correct way for a driver to specify the coherent DMA mask is
-> > not to directly access the field in the struct device, but to use
-> > dma_set_coherent_mask().  Only arch and bus code should access this
-> > member directly.
-> > 
-> > Convert all direct write accesses to using the correct API.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> 
-> > diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-> > index f6b790c..5b0cd2d 100644
-> > --- a/drivers/usb/host/ehci-platform.c
-> > +++ b/drivers/usb/host/ehci-platform.c
-> 
-> > @@ -91,8 +91,9 @@ static int ehci_platform_probe(struct platform_device *dev)
-> >  		dev->dev.platform_data = &ehci_platform_defaults;
-> >  	if (!dev->dev.dma_mask)
-> >  		dev->dev.dma_mask = &dev->dev.coherent_dma_mask;
-> > -	if (!dev->dev.coherent_dma_mask)
-> > -		dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> > +	err = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
-> > +	if (err)
-> > +		return err;
-> >  
-> >  	pdata = dev_get_platdata(&dev->dev);
-> 
-> ehci-platform.c is a generic file, intended for use by multiple
-> platforms.  Is it not possible that on some platforms, the arch or bus
-> code may already have initialized the DMA masks?  Isn't something like 
-> this (i.e., DMA bindings) planned for Device Tree?
-> 
-> By eliminating the tests above and calling dma_set_coherent_mask or
-> dma_coerce_mask_and_coherent unconditionally, this patch (and the next)
-> would overwrite those initial settings.
-> 
-> I don't know to what extent the same may be true for the other,
-> platform-specific, drivers changed by this patch.  But it's something 
-> to be aware of.
+> Also, this builds in logic so that if a different device tries to start
+> a transfer while CS is active from a different device, it will abort the
+> previous transfer and start a new one for the new device.
 
-Please check the DMA API documentation:
+What user-visible impact does this patch have. Does it solve a bug, or
+improve performance, or ...? In other words, how would I test this
+patch, other that testing for regressions in SPI functionality that I
+know already works.
 
-=====
-For correct operation, you must interrogate the kernel in your device
-probe routine to see if the DMA controller on the machine can properly
-support the DMA addressing limitation your device has.  It is good
-style to do this even if your device holds the default setting,
-because this shows that you did think about these issues wrt. your
-device.
+BTW, I don't think you're using get_maintainer.pl, since Mark Brown is
+the SPI maintainer now, not Grant Likely.
 
-The query is performed via a call to dma_set_mask():
+> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+> index 145dd43..a9973de 100644
+> --- a/drivers/spi/spi-tegra114.c
+> +++ b/drivers/spi/spi-tegra114.c
+> @@ -182,6 +182,7 @@ struct tegra_spi_data {
+>  	u32					cur_speed;
+>  
+>  	struct spi_device			*cur_spi;
+> +	struct spi_device			*cs_control;
+>  	unsigned				cur_pos;
+>  	unsigned				cur_len;
+>  	unsigned				words_per_32bit;
+> @@ -717,7 +718,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>  		else if (req_mode == SPI_MODE_3)
+>  			command1 |= SPI_CONTROL_MODE_3;
+>  
+> -		tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+> +		if (tspi->cs_control) {
+> +			if (tspi->cs_control != spi)
+> +				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
 
-        int dma_set_mask(struct device *dev, u64 mask);
+Do you really need a separate write call there? The value of command1
+isn't fully set up there (the CS bits are all set up immediately after),
+so won't that glitch the CS lines in some cases?
 
-The query for consistent allocations is performed via a call to
-dma_set_coherent_mask():
+> +			tspi->cs_control = NULL;
+> +		} else
+> +			tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>  
+>  		command1 |= SPI_CS_SW_HW;
+>  		if (spi->mode & SPI_CS_HIGH)
+> @@ -732,6 +738,9 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>  		command1 |= SPI_BIT_LENGTH(bits_per_word - 1);
+>  	}
+>  
+> +	if (t->len == 0 && !t->tx_buf && !t->rx_buf)
+> +		return 0;
 
-        int dma_set_coherent_mask(struct device *dev, u64 mask);
-=====
+What if !t->len, but t->tx_buf || t->rx_buf ?
 
-So, All drivers which use DMA are supposed to issue the appropriate
-calls to check the DMA masks before they perform DMA, even if the
-"default" is correct.
-
-And yes, this is all part of sorting out the DT mess - we should
-start not from the current mess (which is really totally haphazard)
-but from the well established position of how the DMA API _should_
-be used.  What that means is that all drivers should be issuing
-these calls as appropriate today.
-
-The default mask setup when the device is created is just that -
-it's a default mask, and it should not be used to decide anything
-about the device.  That's something which the driver should compute
-on its own accord and then inform the various other layers via the
-appropriate call.
-
-Remember, on PCI, even when we have 64-bit, we do not declare PCI
-devices with a 64-bit DMA mask: that's up to PCI device drivers to
-_try_ to set a 64-bit DMA mask, which when successful _allows_ them
-to use 64-bit DMA.  If it fails, they have to only use 32-bit.  If
-they want a smaller mask, the _driver_ has to set the smaller mask,
-not the device creating code.
-
-The reason we're into this (particularly on ARM) is that we got lazy
-because we could get by with declaring a DMA mask at device creation
-time, since all devices were statically declared.  Now it's time to
-get rid of those old lazy ways and start doing things correctly and
-to the requirements of the APIs.
+This code is also duplicated in tegra_spi_transfer_one_message() after
+this patch. Instead, perhaps the first N lines of
+tegra_spi_start_transfer_one() should be split out into e.g.
+tegra_spi_setup_transfer_one(), such that
+tegra_spi_transfer_one_message() can always call it, plus have
+tegra_spi_transfer_one_message() only call
+tegra_spi_start_transfer_one() if (t->len != 0).
