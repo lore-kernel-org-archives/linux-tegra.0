@@ -1,89 +1,61 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Mon, 23 Sep 2013 22:29:36 +0200
-Message-ID: <20130923202935.GA5216@ulmo>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-3-git-send-email-treding@nvidia.com>
- <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v6 1/5] ARM: add basic support for Trusted Foundations
+Date: Tue, 24 Sep 2013 05:37:17 +0900
+Message-ID: <CAAVeFuLs5SPic-khRG87TxuAVcC3nJeAhjSHyESKRQXvfMzQ5w@mail.gmail.com>
+References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com>
+ <1379238028-7960-2-git-send-email-acourbot@nvidia.com> <87d2o4edus.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87d2o4edus.fsf-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Sep 20, 2013 at 5:49 AM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+>
+>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>> can be invoked using the same SMC-based API on all supported
+>> platforms. This patch adds initial basic support for Trusted
+>> Foundations using the ARM firmware API. Current features are limited
+>> to the ability to boot secondary processors.
+>
+> [...]
+>
+>> +#if IS_ENABLED(CONFIG_OF)
+>> +void of_register_trusted_foundations(void)
+>> +{
+>> +     struct device_node *node;
+>> +     struct trusted_foundations_platform_data pdata;
+>> +     int err;
+>> +
+>> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
+>> +     if (!node)
+>> +             return;
+>> +
+>> +     err = of_property_read_u32(node, "version-major", &pdata.version_major);
+>> +     if (err != 0)
+>> +             panic("Trusted Foundation: missing version-major property\n");
+>
+> Do really need to panic() the whole kernel for a missing property?
+> Surely this can more gracefully recover, or assume some defaults?
+>
+> Same comment for the other uses of panic() in this patch.
 
---BXVAT5kNtrzKuDFl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For something as essential as the secure monitor (for which there
+cannot be "safe" defaults) it makes sense to have the version
+explicitly mentioned. Version is a mandatory property in the bindings,
+its implementors just need to follow it.
 
-On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
-> On Mon, Sep 16, 2013 at 10:31 AM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
->=20
-> > This is a version of irq_create_mapping() that propagates the precise
-> > error code instead of returning 0 for all errors. It will be used in
-> > subsequent patches to allow further propagation of error codes.
-> >
-> > To avoid code duplication, implement irq_create_mapping() as a wrapper
-> > around the new __irq_create_mapping().
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Surprise! I don't like this.
->=20
-> I think it is better to first go over the call sites and make them
-> all handle negative return numbers rather than pushing the
-> obscure __interface.
->=20
-> I know from patch 0 that you think it's too much to change these
-> 127 call sites but I don't think so, and I'm happy to merge one
-> big patch changing all the 20 users in drivers/gpio.
->=20
-> Likewise with the 11 consumers in drivers/pinctrl.
->=20
-> It's just a a few archs+subsystems and it's just plain work.
+As for the other uses of panic(), that's because you just cannot
+reasonably continue booting the system if trusted foundations is
+required but not support for it is built into the kernel. Once again,
+I don't feel this is out of place.
 
-Well, the problem is that the current patch changes the signature of the
-function as well, therefore the call sites will have to be updated all
-at once in a single patch to avoid build breakage. And that's excluding
-any potential fallout from new callsites added between the creation of
-the patch and its application.
-
-Another alternative could be to change the signature in a way that does
-not break compatibility. For instance I think it could work out if we
-change this function to return int instead of unsigned int but keep the
-same semantics to begin with (return 0 on failure). Then update all call
-sites to handle potential negative errors and after that return negative
-error codes. That still wouldn't catch any callers introduced between
-the patch creation and application.
-
-Thierry
-
---BXVAT5kNtrzKuDFl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSQKSvAAoJEN0jrNd/PrOh0LsP/iAbSX1dVXCmb8C92d91DSva
-PLyYP5BNn5qIrulewqzl5XMEA9zQVg5NjYJZgqzf5n54EVGe/4s24CqCTEeNKohl
-9oE2dc70UHupJmP8Uo94dMi28U94bzDyyGSxmaVoHtiLo1Z7N1djjZyOc3BiGso3
-VVCALPfAWhiZ14w2EXVKKxh2gCP7cqSJzgMkNo+wsZ/nV0Hbx6RWt3JvSMHhVVvZ
-INVR6dbdnHrLHNRpiFXLUQR1G8xOIku/Os0EhyaRmgY/4fDQpmijpL2VtzLP2GF/
-G3zUflzzV7JgFnXRyoWkEIgPd9uxFaxG6F5xf7U9MMUV8zzDZFT+1ZmPhsSl+l30
-yrm6fUFC0QBvVfn/vEZgUllo3pAFoPdXCGV8yB8xwAtb5UIkhwkxYsf+zt/1P2al
-oyKXCVJ3+9Io6rLOYGDHmsI4+R71ztQtWtz2jbC5+dn4nU5he5Xtw1k2bE6+gSHl
-Qu0MjNRgMZxyJJ5uZFNI2ZlTeqlt5gs3CpdjgUlZd1ntgT8BzpX6wWBiCUMhMwZn
-AEX9rUSLcpIPhHLUDc9+P3d60KTL+cwETf7u5IEQPcHrmie+Wm/Hssmtzl3cK1Oo
-I8ut+HoKFqTPzhrdiSbB+zaxVyedim1lX/1fjrxzOrLKWmDmdNfpuITwr9A88qsH
-V5s8sAiD8V8+CQKHpjig
-=89Ks
------END PGP SIGNATURE-----
-
---BXVAT5kNtrzKuDFl--
+Alex.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
