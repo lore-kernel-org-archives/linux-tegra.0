@@ -1,48 +1,108 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 00/22] Unified SMMU driver among Tegra SoCs
-Date: Mon, 23 Sep 2013 19:07:57 +0200
-Message-ID: <20130923.200757.1877217415494983605.hdoyu@nvidia.com>
-References: <1373021097-32420-1-git-send-email-hdoyu@nvidia.com><20130708.114736.1280783845180530098.hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 01/12] clk: tegra: simplify periph clock data
+Date: Mon, 23 Sep 2013 11:29:33 -0600
+Message-ID: <52407A7D.6080002@wwwdotorg.org>
+References: <1379515331-19427-1-git-send-email-pdeschrijver@nvidia.com> <1379515331-19427-2-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130708.114736.1280783845180530098.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1379515331-19427-2-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Mon, 08 Jul 2013 11:47:36 +0300 (EEST):
+On 09/18/2013 08:40 AM, Peter De Schrijver wrote:
+> This patch determines the register bank for clock enable/disable and reset
+> based on the clock ID instead of hardcoding it in the tables describing the
+> clocks. This results in less data to be maintained in the tables, making the
+> code easier to understand. The full benefit of the change will be realized once
+> also other clocktypes will be table based.
 
-> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 5 Jul 2013 12:44:35 +0200:
->
-> > Hi,
-> >
-> > This series provides:
-> >
-> > (1) Unified SMMU driver among Tegra SoCs
-> > (2) Multiple Address Space support(MASID) in IOMMU(SMMMU)
-> > (3) Tegra IOMMU'able devices, most of platform devices are IOMMU'able.
-> >
-> > There's some discussion[1] about device population order, which can
-> > solve the following patches.
-> >
-> >   [HACK] of: dev_node has struct device pointer
-> >   ARM: tegra: Populate AHB/IOMMU earlier than others
-> >
-> > Also "ARM: dma-mapping: Drop GFP_COMP for DMA memory allocations" may
-> > not be necessary by [2]
-> >
-> > Tested IOMMU functionality with T30 SD/MMC. Any further testing with
-> > T114 and/or other devices would be really appreciated.
->
-> For tegra device driver maintainers, please try this series to make
-> your device work with IOMMU enabled. I guess that some of drivers may
-> need to set its swgroup ID correctly in DT, and also you may need to
-> check the usage of DMA mapping API correctly. For your convenience,
-> you can get this series by git fetch:
->
-> git://nv-tegra.nvidia.com/user/hdoyu/linux.git smmu-upstreaming@20130705
+>  drivers/clk/tegra/clk-tegra114.c |  483 ++++++++++++++++----------------------
+>  drivers/clk/tegra/clk.c          |  105 ++++++++
+>  drivers/clk/tegra/clk.h          |    3 +
 
-Sorry for the delay of v3, I'm preparing v3. I will send them out early Oct.
+Can't this change be applied to the Tegra20/30 diffstat too, for even
+more negative diffstat? Similar comments probably apply for other
+patches in the series.
+
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+
+>  #define TEGRA_INIT_DATA_MUX(_name, _con_id, _dev_id, _parents, _offset,	\
+> -			    _clk_num, _regs, _gate_flags, _clk_id)	\
+> +			    _clk_num, _gate_flags, _clk_id)	\
+>  	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
+> -			30, MASK(2), 0, 0, 8, 1, 0, _regs, _clk_num,	\
+> -			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
+> -			_parents##_idx, 0)
+> +			30, MASK(2), 0, 0, 8, 1, 0, 0,\
+> +			_clk_num, periph_clk_enb_refcnt, _gate_flags,\
+> +			 _clk_id, _parents##_idx, 0)
+
+Nit: A simple s/_regs/0/ without re-flowing the parameters would have
+made that diff smaller, and more similar to all the others...
+
+> @@ -1606,9 +1538,9 @@ static void __init tegra114_audio_clk_init(void __iomem *clk_base)
+>  	clk = tegra_clk_register_divider("audio0_div", "audio0_doubler",
+>  				clk_base + AUDIO_SYNC_DOUBLER, 0, 0, 24, 1,
+>  				0, &clk_doubler_lock);
+> -	clk = tegra_clk_register_periph_gate("audio0_2x", "audio0_div",
+> +	clk = tegra114_periph_gate_helper("audio0_2x", "audio0_div",
+>  				  TEGRA_PERIPH_NO_RESET, clk_base,
+> -				  CLK_SET_RATE_PARENT, 113, &periph_v_regs,
+> +				  CLK_SET_RATE_PARENT, 113,
+>  				  periph_clk_enb_refcnt);
+>  	clk_register_clkdev(clk, "audio0_2x", NULL);
+>  	clks[TEGRA114_CLK_AUDIO0_2X] = clk;
+
+It sure seems like much of this repetitive code could be driven from a
+data table rather than cut/paste code. Perhaps a later patch in this
+series cleans this up?
+
+> @@ -2030,21 +1949,10 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base)
+...
+> -	/* dsib */
+> -	clk = clk_register_mux(NULL, "dsib_mux", mux_plld_out0_plld2_out0,
+> -			       ARRAY_SIZE(mux_plld_out0_plld2_out0), 0,
+> -			       clk_base + PLLD2_BASE, 25, 1, 0, &pll_d2_lock);
+> -	clks[TEGRA114_CLK_DSIB_MUX] = clk;
+> -	clk = tegra_clk_register_periph_gate("dsib", "dsib_mux", 0, clk_base,
+> -				    0, 82, &periph_u_regs,
+> -				    periph_clk_enb_refcnt);
+> -	clks[TEGRA114_CLK_DSIB] = clk;
+> -
+
+Why delete dsib? I don't think it got added elsewhere in this patch.
+
+> @@ -2077,21 +1982,36 @@ static __init void tegra114_periph_clk_init(void __iomem *clk_base)
+
+>  	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
+> +		struct tegra_clk_periph_regs *bank;
+> +
+>  		data = &tegra_periph_clk_list[i];
+> -		clk = tegra_clk_register_periph(data->name, data->parent_names,
+> -				data->num_parents, &data->periph,
+> -				clk_base, data->offset, data->flags);
+> +		bank = get_reg_bank(data->periph.gate.clk_num);
+> +
+> +		if (!bank)
+> +			continue;
+
+Nit: I dislike blank lines between the code that retrieves a value, and
+the immediately following error-check of the value. This applies to the
+second change to this function too.
+
+> @@ -2337,6 +2257,9 @@ static void __init tegra114_clock_init(struct device_node *np)
+>  	if (tegra114_osc_clk_init(clk_base) < 0)
+>  		return;
+>  
+> +	if (tegra_clk_periph_banks(5) < 0)
+> +		return;
+
+Is that just debugging code? If you intend to keep this as a permanent
+run-time check, wouldn't it be better to validate the result of
+get_reg_bank(max_tegra114_periph_clock_id)? But, I'm not sure the check
+is necessary at all, since the result of get_reg_bank() is checked when
+registering each individual clock, so there's already plenty of coverage.
