@@ -1,61 +1,85 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v6 1/5] ARM: add basic support for Trusted Foundations
-Date: Tue, 24 Sep 2013 05:37:17 +0900
-Message-ID: <CAAVeFuLs5SPic-khRG87TxuAVcC3nJeAhjSHyESKRQXvfMzQ5w@mail.gmail.com>
-References: <1379238028-7960-1-git-send-email-acourbot@nvidia.com>
- <1379238028-7960-2-git-send-email-acourbot@nvidia.com> <87d2o4edus.fsf@linaro.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 9/9] gpio: tegra: Use module_platform_driver()
+Date: Mon, 23 Sep 2013 22:38:29 +0200
+Message-ID: <20130923203829.GB5216@ulmo>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+ <1379320326-13241-10-git-send-email-treding@nvidia.com>
+ <CACRpkdbLGThUTteqmEcfda7Tvc08ZFWwe=WpKMyxALQe=LZLVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87d2o4edus.fsf-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WYTEVAkct0FjGQmd"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbLGThUTteqmEcfda7Tvc08ZFWwe=WpKMyxALQe=LZLVA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Sep 20, 2013 at 5:49 AM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
->
->> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->> can be invoked using the same SMC-based API on all supported
->> platforms. This patch adds initial basic support for Trusted
->> Foundations using the ARM firmware API. Current features are limited
->> to the ability to boot secondary processors.
->
-> [...]
->
->> +#if IS_ENABLED(CONFIG_OF)
->> +void of_register_trusted_foundations(void)
->> +{
->> +     struct device_node *node;
->> +     struct trusted_foundations_platform_data pdata;
->> +     int err;
->> +
->> +     node = of_find_compatible_node(NULL, NULL, "tl,trusted-foundations");
->> +     if (!node)
->> +             return;
->> +
->> +     err = of_property_read_u32(node, "version-major", &pdata.version_major);
->> +     if (err != 0)
->> +             panic("Trusted Foundation: missing version-major property\n");
->
-> Do really need to panic() the whole kernel for a missing property?
-> Surely this can more gracefully recover, or assume some defaults?
->
-> Same comment for the other uses of panic() in this patch.
 
-For something as essential as the secure monitor (for which there
-cannot be "safe" defaults) it makes sense to have the version
-explicitly mentioned. Version is a mandatory property in the bindings,
-its implementors just need to follow it.
+--WYTEVAkct0FjGQmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As for the other uses of panic(), that's because you just cannot
-reasonably continue booting the system if trusted foundations is
-required but not support for it is built into the kernel. Once again,
-I don't feel this is out of place.
+On Mon, Sep 23, 2013 at 09:25:53PM +0200, Linus Walleij wrote:
+> On Mon, Sep 16, 2013 at 10:32 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > With the driver core now resolving interrupt references at probe time,
+> > it is no longer necessary to force explicit probe ordering using
+> > initcalls.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> > Note that there are potentially many more drivers that can be switched
+> > to the generic module_*_driver() interfaces now that interrupts can be
+> > resolved later and deferred probe should be able to handle all the
+> > ordering issues.
+>=20
+> Let me see if I get this right: so this would be all GPIO/pinctrl
+> drivers which are probed exclusively from the device tree
+> so anything that depends explicitly on CONFIG_OF would
+> be a candidate?
 
-Alex.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It includes all interrupt providers that are probed from the device
+tree. I'm not sure exactly what the situation is regarding DT vs non-DT,
+but if my memory serves me well, with non-DT setups interrupts need to
+be hard-coded in the board support code. Therefore I don't think the
+usefulness is limited to drivers that are exclusively probed from device
+tree, but rather any interrupt providing driver that can be probed from
+device tree.
+
+> I think we have a bit of a problem that some drivers depend
+> only on a certain arch or compiles directly for a certain arch
+> without any specific Kconfig option so that this may be a
+> bit hard to spot, so we should keep an eye out for this
+> once this probing scheme is in place.
+
+Yes, it certainly needs to be decided on a case by case basis. There
+might be other factors that prevent a driver from being a proper module
+driver.
+
+Thierry
+
+--WYTEVAkct0FjGQmd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSQKbFAAoJEN0jrNd/PrOh/ioQAK8raKpecttc0qM+PcG6fkPu
+PfpsoiXLPjWW9kOLtpqJtCy79bTDvVWgg1wnzIDH3BO3ROLu200341jR8abQviRR
+6JpsvjJL8eQjzB15wdokfPhnADCc+SA60J+0+JqkGpQs81ABjoKTQNonKzXbDDPi
+rt9U6wpdi2t5OaeJNPmM0CzDhz2w64fKhNEcejX55cj2+gUeIUOuaj7s6XoBd8Mz
+jJRcw0YsrbQPrsrfu360Mc1lXxwOmhrLJA3zW46asX3YLIbPY/gjY8R1ck1Ny5uF
+0Fz99kq7xLIR15RZnaCfEM6Flyg5gYAxvvPbIwt2qgPdoBaKNGeia20G4GlIvhmN
+FSOskDIC+oyGIU/RW7kl8wIJKYFsh5v7KM80pTuL3+bGryQiiHtc5MD5HVvBf66r
+oE+6Vpl/XzsI9cRPiT3kFuSSHduRHdkx3mhtYl9Zw97D3C0AfP94PvEr+4gf/yDO
+vbo/ddSiaFN/TEo5xd7jHYUS//2KRQOea9xdbbJKdrcZy/il45/hKoA3dGuCLPen
+s3HGCmLeuLRKa3k5nse0w6gbpfHf+8JBhAsQq8/C7GTaSM77cxeGD90QKEfefNXu
++OpMYzhwqdXzv0594WctxpP+NCfrl22R4S6jyou5HB6P2mmKF+50YYOEhSZUVN/R
+vW6WJUku915Uri6nQp/s
+=R3jY
+-----END PGP SIGNATURE-----
+
+--WYTEVAkct0FjGQmd--
