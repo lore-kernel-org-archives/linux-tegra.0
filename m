@@ -1,20 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 03/12] clk: tegra: Add TEGRA_PERIPH_NO_DIV flag
-Date: Mon, 23 Sep 2013 11:52:24 -0600
-Message-ID: <52407FD8.3020509@wwwdotorg.org>
-References: <1379515331-19427-1-git-send-email-pdeschrijver@nvidia.com> <1379515331-19427-4-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 05/12] clk: tegra: add header for common tegra clock IDs
+Date: Mon, 23 Sep 2013 12:05:23 -0600
+Message-ID: <524082E3.8070801@wwwdotorg.org>
+References: <1379515331-19427-1-git-send-email-pdeschrijver@nvidia.com> <1379515331-19427-6-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379515331-19427-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1379515331-19427-6-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Joseph Lo <josephl@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/18/2013 08:40 AM, Peter De Schrijver wrote:
-> This flag indicates the peripheral clock does not have a divider. It will
-> simply the initialization tables and avoids some very similar code.
+> Many clocks are common between several Tegra SoCs. Define an enum to list
+> them so we can move them to separate files which can be shared between
+> SoCs. Each SoC specific file will provide an array with the common clocks
+> which are present on the SoC and their DT binding ID.
 
-s/simply/simplify/
+So, this enum is purely something internal to the driver, and is in no
+way related to the DT binding clock IDs, nor the HW peripheral clock
+register bits, and finally is a union of all extant clocks across all chips?
+
+If so, I suppose it's OK to make an enum for this. If not, the same
+comments I had re: trying to unify the DT binding clock IDs would apply
+here; if there's no architectural guarantee that the clock IDs will be
+kept the same across all future chips, assuming they are the same seems
+dangerous...
