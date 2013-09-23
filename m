@@ -1,73 +1,59 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 8/9] of/i2c: Resolve interrupt references at probe time
-Date: Mon, 23 Sep 2013 10:35:09 +0200
-Message-ID: <20130923083509.GF3051@katana>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-9-git-send-email-treding@nvidia.com>
- <20130923073451.GE3051@katana>
- <20130923080230.GA11881@ulmo>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH 23/51] DMA-API: dma: pl08x: add
+ dma_set_mask_and_coherent() call
+Date: Mon, 23 Sep 2013 15:42:22 +0530
+Message-ID: <20130923101222.GH17188@intel.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+ <E1VMm4v-0007hz-RC@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JcvBIhDvR6w3jUPA"
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20130923080230.GA11881@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <E1VMm4v-0007hz-RC-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Sep 19, 2013 at 10:48:01PM +0100, Russell King wrote:
+> The DMA API requires drivers to call the appropriate dma_set_mask()
+> functions before doing any DMA mapping.  Add this required call to
+> the AMBA PL08x driver.
+> 
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Acked-by: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
---JcvBIhDvR6w3jUPA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+~Vinod
+> ---
+>  drivers/dma/amba-pl08x.c |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+> index fce46c5..e51a983 100644
+> --- a/drivers/dma/amba-pl08x.c
+> +++ b/drivers/dma/amba-pl08x.c
+> @@ -2055,6 +2055,11 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Ensure that we can do DMA */
+> +	ret = dma_set_mask_and_coherent(&adev->dev, DMA_BIT_MASK(32));
+> +	if (ret)
+> +		goto out_no_pl08x;
+> +
+>  	/* Create the driver state holder */
+>  	pl08x = kzalloc(sizeof(*pl08x), GFP_KERNEL);
+>  	if (!pl08x) {
+> -- 
+> 1.7.4.4
+> 
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
 
-
-> > This function should be in the CONFIG_OF block.
->=20
-> I'll argue the other way. I think that the whole CONFIG_OF block should
-> be remove, or at least be confined to public functions. The reason that
-> I've chosen to do it this way is that the i2c_device_probe() uses an
-> IS_ENABLED(CONFIG_OF), which will evaluate to 0 if OF isn't selected
-> which in turn will cause the compiler to throw away of_i2c_probe()
-> because it is static and never used.
->=20
-> The big advantage of this is that we get compile coverage for these
-> functions independent of what configuration is built. The same could
-> probably be done for the whole CONFIG_ACPI block. In fact I volunteer to
-> provide that patch if I've convinced you that this is actually better
-> than sprinking the code with the #ifdef blocks that make it harder than
-> necessary to verify that the code builds in all configurations.
-
-Yes, you (easily) did :) Still, I'd like the of_i2c_probe function
-near the other of_* functions.
-
-Thanks,
-
-   Wolfram
-
-
---JcvBIhDvR6w3jUPA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSP/09AAoJEBQN5MwUoCm2GHIP/Rhq+fgMMs0+9m7uXuoeEaO9
-GCTFoirPnLRiofGgNSrMjCIxiGJ7zFNaRMdieA//chsY1342PuSLfuu0PQRB7V2s
-XWjj/XiJSMvPT1JNv+b2GTxq5QQOcRDe72ucCFR2Qziq4qp2lAs5Rn54W84sB7tV
-/DHa7vjfqf87HebvQDbilHWH60rn5Jyxf0uCY/hUKjd0kwYPAff4OlaaCsrT91Zx
-7ydlgVflCzouIoRMWr2uYFQy/jXeptw5YogFnMghc/f0UN1kbaN6bxUVfUxb2Apj
-QW+6TllRVOl+bug8Veuj16nYPrVN2AHEYo/l0HWxBWWxsGS0oPN7qaBXim+UZy65
-5kdy1G50J+bWIpKOuicL96/lWyGR9CqpB1UDbT+X1Nbt3ahRJtUTk67vqBHc0aDF
-MIdjbGdOqvXVOJwwJ4axYTK/sEIimMC9hyXEokRDTrmqmsXztKCtwbjhqmNnd4Rq
-pahY0/vwIrCdZLhPjCEA1Q2J0vosBfMCo+c/Q3F85r7huKTU1Cz8ntJs60LU6jqX
-2yS36m3vv0amhpBbubds7KI+3n+sZ15S+gP+PxMDf3F9e+ucNFHDb+HaTbcrG3jR
-zI1vtkMW+DCgIMy1Gwd2UnVNuHvSHNjsy3VhVwBf79hb0WT3uog4LNz4BBUhLozt
-U52AUCw08/dP31WArXz3
-=PD8g
------END PGP SIGNATURE-----
-
---JcvBIhDvR6w3jUPA--
+-- 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
