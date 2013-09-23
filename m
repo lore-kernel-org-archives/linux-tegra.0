@@ -1,466 +1,137 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 12/12] clk: tegra: introduce common gen4 super clock
-Date: Mon, 23 Sep 2013 17:25:04 +0300
-Message-ID: <1379946381-20125-13-git-send-email-pdeschrijver@nvidia.com>
-References: <1379946381-20125-1-git-send-email-pdeschrijver@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [RFC] binding for nvec mfd device
+Date: Mon, 23 Sep 2013 16:52:46 +0200
+Message-ID: <2112732.zfJtNyCk0i@fb07-iapwap2.physik.uni-giessen.de>
+References: <1416005.VvfEeGuSWa@ax5200p> <17687182.lGWlO75r41@fb07-iapwap2.physik.uni-giessen.de> <5238CE1C.3050107@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379946381-20125-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5238CE1C.3050107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgAndrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Introduce a common function which super clock initialization for Tegra114
-and beyond.
+Am Dienstag, 17. September 2013, 15:48:12 schrieb Stephen Warren:
+> On 09/17/2013 01:53 AM, Marc Dietrich wrote:
+> > Hi Stephen,
+> > 
+> > Am Mittwoch, 31. Juli 2013, 15:03:14 schrieb Stephen Warren:
+> >> The generic I2C bindings already define that the other chips on the I2C
+> >> bus appear directly underneath the I2C controller's DT node. Perhaps it
+> >> isn't a big issue to change that, since each I2C controller can define
+> >> the layout of its own node?
+> >> 
+> >> Anyway, we can probably get away without introducing multiple levels by
+> >> adding some more bits or cells into the reg address for I2C child nodes:
+> >> 
+> >> i2c@xxxxxxxx {
+> >> 
+> >> 	compatible = "nvidia,tegra20-i2c";
+> >> 	... resources
+> >> 	#address-cells = <2>;
+> >> 	
+> >> 	codec {
+> >> 	
+> >> 		// 0 means external slave, 0x1c is slave's address
+> >> 		reg = <0 0x1c>;
+> >> 		...
+> >> 	
+> >> 	};
+> >> 	
+> >> 	tegraslave {
+> >> 	
+> >> 		// 0 means internal slave, 0x80 is controller's address
+> >> 		reg = <1 0x80>;
+> >> 		...
+> >> 	
+> >> 	};
+> >> 
+> >> };
+> >> 
+> >> ... where each of those child nodes could be repeated N times. We could
+> >> also or in 0x80000000 to the reg values in the child nodes rather than
+> >> using a separate cell if we wanted.
+> > 
+> > thinking a little more about this, this is way to complicated.
+> 
+> Really, this seems extremely simple to me.
+> 
+> > "Master" and
+> > "Slave" functions are properties of the same i2c controller. Therefore,
+> > just adding a small property to the i2c controller node saying "enable
+> > slave support" is sufficient, as all the resources are shared (which is
+> > another good argument that it is the same device, hence same node). I
+> > would just add the slave i2c address, which is all the slave driver
+> > needs, e.g.
+> 
+> Perhaps so for this one controller, but we should strive to create a
+> binding style that can work with any I2C controller that can be master
+> or slave. For a general binding, I think we need to support multiple
+> slave addresses. The style above seems to support that with little
+> complexity.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/Makefile               |    1 +
- drivers/clk/tegra/clk-tegra-super-gen4.c |  220 ++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra114.c         |  126 +-----------------
- drivers/clk/tegra/clk.h                  |    2 +
- 4 files changed, 226 insertions(+), 123 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-gen4.c
+I have no idea how other implementations may look like. The downstream kernel 
+seems to program the slave address in a secondary step after the controller is 
+initialized [1]. So every "client" which binds to the slave driver can use its 
+own address, but only one client at the same time is allowed. As said before, 
+the may also exist devices (!tegra) with multiple slave addresses at the same 
+time.
 
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index 5b78841..a4e5b5a 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -11,6 +11,7 @@ obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
- obj-y					+= clk-tegra-osc.o
-+obj-y					+= clk-tegra-super-gen4.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
- obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
- obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-new file mode 100644
-index 0000000..9130025
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -0,0 +1,220 @@
-+/*
-+ * Copyright (c) 2012, 2013, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/delay.h>
-+#include <linux/export.h>
-+#include <linux/clk/tegra.h>
-+
-+#include "clk.h"
-+#include "clk-id.h"
-+
-+#define PLLX_BASE 0xe0
-+#define PLLX_MISC 0xe4
-+#define PLLX_MISC2 0x514
-+#define PLLX_MISC3 0x518
-+
-+#define PLL_BASE_LOCK BIT(27)
-+#define PLL_MISC_LOCK_ENABLE 18
-+
-+#define CCLKG_BURST_POLICY 0x368
-+#define CCLKLP_BURST_POLICY 0x370
-+#define SCLK_BURST_POLICY 0x028
-+#define SYSTEM_CLK_RATE 0x030
-+
-+static DEFINE_SPINLOCK(sysrate_lock);
-+
-+static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_p_out4",
-+			       "pll_p", "pll_p_out2", "unused",
-+			       "clk_32k", "pll_m_out1" };
-+
-+static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x" };
-+
-+static const char *cclk_lp_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
-+					 "pll_p", "pll_p_out4", "unused",
-+					 "unused", "pll_x", "pll_x_out0" };
-+
-+static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
-+	/* 1 GHz */
-+	{12000000, 1000000000, 83, 0, 1},	/* actual: 996.0 MHz */
-+	{13000000, 1000000000, 76, 0, 1},	/* actual: 988.0 MHz */
-+	{16800000, 1000000000, 59, 0, 1},	/* actual: 991.2 MHz */
-+	{19200000, 1000000000, 52, 0, 1},	/* actual: 998.4 MHz */
-+	{26000000, 1000000000, 76, 1, 1},	/* actual: 988.0 MHz */
-+	{0, 0, 0, 0, 0, 0},
-+};
-+
-+static struct div_nmp pllxc_nmp = {
-+	.divm_shift = 0,
-+	.divm_width = 8,
-+	.divn_shift = 8,
-+	.divn_width = 8,
-+	.divp_shift = 20,
-+	.divp_width = 4,
-+};
-+
-+static struct pdiv_map pllxc_p[] = {
-+	{ .pdiv = 1, .hw_val = 0 },
-+	{ .pdiv = 2, .hw_val = 1 },
-+	{ .pdiv = 3, .hw_val = 2 },
-+	{ .pdiv = 4, .hw_val = 3 },
-+	{ .pdiv = 5, .hw_val = 4 },
-+	{ .pdiv = 6, .hw_val = 5 },
-+	{ .pdiv = 8, .hw_val = 6 },
-+	{ .pdiv = 10, .hw_val = 7 },
-+	{ .pdiv = 12, .hw_val = 8 },
-+	{ .pdiv = 16, .hw_val = 9 },
-+	{ .pdiv = 12, .hw_val = 10 },
-+	{ .pdiv = 16, .hw_val = 11 },
-+	{ .pdiv = 20, .hw_val = 12 },
-+	{ .pdiv = 24, .hw_val = 13 },
-+	{ .pdiv = 32, .hw_val = 14 },
-+	{ .pdiv = 0, .hw_val = 0 },
-+};
-+
-+static struct tegra_clk_pll_params pll_x_params = {
-+	.input_min = 12000000,
-+	.input_max = 800000000,
-+	.cf_min = 12000000,
-+	.cf_max = 19200000,	/* s/w policy, h/w capability 50 MHz */
-+	.vco_min = 700000000,
-+	.vco_max = 2400000000U,
-+	.base_reg = PLLX_BASE,
-+	.misc_reg = PLLX_MISC,
-+	.lock_mask = PLL_BASE_LOCK,
-+	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
-+	.lock_delay = 300,
-+	.iddq_reg = PLLX_MISC3,
-+	.iddq_bit_idx = 3,
-+	.max_p = 6,
-+	.dyn_ramp_reg = PLLX_MISC2,
-+	.stepa_shift = 16,
-+	.stepb_shift = 24,
-+	.pdiv_tohw = pllxc_p,
-+	.div_nmp = &pllxc_nmp,
-+};
-+
-+static void __init tegra_sclk_init(void __iomem *clk_base,
-+				struct tegra_clk *tegra_clks)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* SCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
-+					ARRAY_SIZE(sclk_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + SCLK_BURST_POLICY,
-+					0, 4, 0, 0, NULL);
-+	clk_register_clkdev(clk, "sclk", NULL);
-+	*dt_clk = clk;
-+
-+	/* HCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_hclk, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
-+				   &sysrate_lock);
-+	clk = clk_register_gate(NULL, "hclk", "hclk_div", CLK_SET_RATE_PARENT |
-+				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-+				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+	clk_register_clkdev(clk, "hclk", NULL);
-+	*dt_clk = clk;
-+
-+	/* PCLK */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
-+				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
-+				   &sysrate_lock);
-+	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
-+				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
-+				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
-+	clk_register_clkdev(clk, "pclk", NULL);
-+	*dt_clk = clk;
-+}
-+
-+void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
-+				void __iomem *pmc_base,
-+				struct tegra_clk *tegra_clks)
-+{
-+	struct clk *clk;
-+	struct clk **dt_clk;
-+
-+	/* CCLKG */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
-+					ARRAY_SIZE(cclk_g_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKG_BURST_POLICY,
-+					0, 4, 0, 0, NULL);
-+		clk_register_clkdev(clk, "cclk_g", NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	/* CCLKLP */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
-+	if (dt_clk) {
-+		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
-+					ARRAY_SIZE(cclk_lp_parents),
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKLP_BURST_POLICY,
-+					0, 4, 8, 9, NULL);
-+		clk_register_clkdev(clk, "cclk_lp", NULL);
-+		*dt_clk = clk;
-+	}
-+
-+	tegra_sclk_init(clk_base, tegra_clks);
-+
-+	/* PLLX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+
-+	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
-+			pmc_base, CLK_IGNORE_UNUSED, 0, &pll_x_params,
-+			TEGRA_PLL_USE_LOCK, pll_x_freq_table, NULL);
-+	clk_register_clkdev(clk, "pll_x", NULL);
-+	*dt_clk = clk;
-+
-+	/* PLLX_OUT0 */
-+
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x_out0, tegra_clks);
-+	if (!dt_clk)
-+		return;
-+	clk = clk_register_fixed_factor(NULL, "pll_x_out0", "pll_x",
-+					CLK_SET_RATE_PARENT, 1, 2);
-+	clk_register_clkdev(clk, "pll_x_out0", NULL);
-+	*dt_clk = clk;
-+
-+}
-+
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index b2ddfbf..ab11d00 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -69,10 +69,6 @@
- #define PLLM_MISC 0x9c
- #define PLLP_BASE 0xa0
- #define PLLP_MISC 0xac
--#define PLLX_BASE 0xe0
--#define PLLX_MISC 0xe4
--#define PLLX_MISC2 0x514
--#define PLLX_MISC3 0x518
- #define PLLD_BASE 0xd0
- #define PLLD_MISC 0xdc
- #define PLLD2_BASE 0x4b8
-@@ -91,7 +87,6 @@
- #define PLLRE_MISC_LOCK_ENABLE 30
- 
- #define PLLC_IDDQ_BIT 26
--#define PLLX_IDDQ_BIT 3
- #define PLLRE_IDDQ_BIT 16
- 
- #define PLL_BASE_LOCK BIT(27)
-@@ -110,12 +105,9 @@
- #define PMC_CTRL_BLINK_ENB 7
- #define PMC_BLINK_TIMER 0x40
- 
--#define PLLXC_SW_MAX_P			6
--
- #define CCLKG_BURST_POLICY 0x368
--#define CCLKLP_BURST_POLICY 0x370
--#define SCLK_BURST_POLICY 0x028
--#define SYSTEM_CLK_RATE 0x030
-+
-+#define PLLXC_SW_MAX_P			6
- 
- #define UTMIP_PLL_CFG2 0x488
- #define UTMIP_PLL_CFG2_STABLE_COUNT(x) (((x) & 0xffff) << 6)
-@@ -169,7 +161,6 @@ static DEFINE_SPINLOCK(pll_d_lock);
- static DEFINE_SPINLOCK(pll_d2_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
--static DEFINE_SPINLOCK(sysrate_lock);
- 
- static struct div_nmp pllxc_nmp = {
- 	.divm_shift = 0,
-@@ -444,39 +435,6 @@ static struct tegra_clk_pll_params pll_u_params = {
- 	.div_nmp = &pllu_nmp,
- };
- 
--static struct tegra_clk_pll_freq_table pll_x_freq_table[] = {
--	/* 1 GHz */
--	{12000000, 1000000000, 83, 0, 1},	/* actual: 996.0 MHz */
--	{13000000, 1000000000, 76, 0, 1},	/* actual: 988.0 MHz */
--	{16800000, 1000000000, 59, 0, 1},	/* actual: 991.2 MHz */
--	{19200000, 1000000000, 52, 0, 1},	/* actual: 998.4 MHz */
--	{26000000, 1000000000, 76, 1, 1},	/* actual: 988.0 MHz */
--
--	{0, 0, 0, 0, 0, 0},
--};
--
--static struct tegra_clk_pll_params pll_x_params = {
--	.input_min = 12000000,
--	.input_max = 800000000,
--	.cf_min = 12000000,
--	.cf_max = 19200000,	/* s/w policy, h/w capability 50 MHz */
--	.vco_min = 700000000,
--	.vco_max = 2400000000U,
--	.base_reg = PLLX_BASE,
--	.misc_reg = PLLX_MISC,
--	.lock_mask = PLL_BASE_LOCK,
--	.lock_enable_bit_idx = PLL_MISC_LOCK_ENABLE,
--	.lock_delay = 300,
--	.iddq_reg = PLLX_MISC3,
--	.iddq_bit_idx = PLLX_IDDQ_BIT,
--	.max_p = PLLXC_SW_MAX_P,
--	.dyn_ramp_reg = PLLX_MISC2,
--	.stepa_shift = 16,
--	.stepb_shift = 24,
--	.pdiv_tohw = pllxc_p,
--	.div_nmp = &pllxc_nmp,
--};
--
- static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
- 	/* PLLE special case: use cpcon field to store cml divider value */
- 	{336000000, 100000000, 100, 21, 16, 11},
-@@ -932,19 +890,6 @@ static void __init tegra114_pll_init(void __iomem *clk_base,
- 	clk = clk_register_fixed_factor(NULL, "pll_m_ud", "pll_m",
- 					CLK_SET_RATE_PARENT, 1, 1);
- 
--	/* PLLX */
--	clk = tegra_clk_register_pllxc("pll_x", "pll_ref", clk_base,
--			pmc, CLK_IGNORE_UNUSED, 0, &pll_x_params,
--			TEGRA_PLL_USE_LOCK, pll_x_freq_table, NULL);
--	clk_register_clkdev(clk, "pll_x", NULL);
--	clks[TEGRA114_CLK_PLL_X] = clk;
--
--	/* PLLX_OUT0 */
--	clk = clk_register_fixed_factor(NULL, "pll_x_out0", "pll_x",
--					CLK_SET_RATE_PARENT, 1, 2);
--	clk_register_clkdev(clk, "pll_x_out0", NULL);
--	clks[TEGRA114_CLK_PLL_X_OUT0] = clk;
--
- 	/* PLLU */
- 	val = readl(clk_base + pll_u_params.base_reg);
- 	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
-@@ -1033,70 +978,6 @@ static void __init tegra114_pll_init(void __iomem *clk_base,
- 	clks[TEGRA114_CLK_PLL_E_OUT0] = clk;
- }
- 
--static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_p_out4",
--			       "pll_p", "pll_p_out2", "unused",
--			       "clk_32k", "pll_m_out1" };
--
--static const char *cclk_g_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
--					"pll_p", "pll_p_out4", "unused",
--					"unused", "pll_x" };
--
--static const char *cclk_lp_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
--					 "pll_p", "pll_p_out4", "unused",
--					 "unused", "pll_x", "pll_x_out0" };
--
--static void __init tegra114_super_clk_init(void __iomem *clk_base)
--{
--	struct clk *clk;
--
--	/* CCLKG */
--	clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
--					ARRAY_SIZE(cclk_g_parents),
--					CLK_SET_RATE_PARENT,
--					clk_base + CCLKG_BURST_POLICY,
--					0, 4, 0, 0, NULL);
--	clk_register_clkdev(clk, "cclk_g", NULL);
--	clks[TEGRA114_CLK_CCLK_G] = clk;
--
--	/* CCLKLP */
--	clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
--					ARRAY_SIZE(cclk_lp_parents),
--					CLK_SET_RATE_PARENT,
--					clk_base + CCLKLP_BURST_POLICY,
--					0, 4, 8, 9, NULL);
--	clk_register_clkdev(clk, "cclk_lp", NULL);
--	clks[TEGRA114_CLK_CCLK_LP] = clk;
--
--	/* SCLK */
--	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
--					ARRAY_SIZE(sclk_parents),
--					CLK_SET_RATE_PARENT,
--					clk_base + SCLK_BURST_POLICY,
--					0, 4, 0, 0, NULL);
--	clk_register_clkdev(clk, "sclk", NULL);
--	clks[TEGRA114_CLK_SCLK] = clk;
--
--	/* HCLK */
--	clk = clk_register_divider(NULL, "hclk_div", "sclk", 0,
--				   clk_base + SYSTEM_CLK_RATE, 4, 2, 0,
--				   &sysrate_lock);
--	clk = clk_register_gate(NULL, "hclk", "hclk_div", CLK_SET_RATE_PARENT |
--				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
--				7, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
--	clk_register_clkdev(clk, "hclk", NULL);
--	clks[TEGRA114_CLK_HCLK] = clk;
--
--	/* PCLK */
--	clk = clk_register_divider(NULL, "pclk_div", "hclk", 0,
--				   clk_base + SYSTEM_CLK_RATE, 0, 2, 0,
--				   &sysrate_lock);
--	clk = clk_register_gate(NULL, "pclk", "pclk_div", CLK_SET_RATE_PARENT |
--				CLK_IGNORE_UNUSED, clk_base + SYSTEM_CLK_RATE,
--				3, CLK_GATE_SET_TO_DISABLE, &sysrate_lock);
--	clk_register_clkdev(clk, "pclk", NULL);
--	clks[TEGRA114_CLK_PCLK] = clk;
--}
--
- static __init void tegra114_periph_clk_init(void __iomem *clk_base,
- 					    void __iomem *pmc_base)
- {
-@@ -1381,8 +1262,7 @@ static void __init tegra114_clock_init(struct device_node *np)
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, NULL);
- 	tegra_pmc_clk_init(pmc_base, tegra114_clks);
- 
--	tegra114_super_clk_init(clk_base);
--
-+	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks);
- 	tegra_add_of_provider(np);
- 
- 	tegra_clk_apply_init_table = tegra114_clock_apply_init_table;
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 3b28178..153d857 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -614,6 +614,8 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *tegra_clks,
- 				unsigned long *input_freqs, int num,
- 				unsigned long *osc_freq,
- 				unsigned long *pll_ref_freq);
-+void tegra_super_clk_gen4_init(void __iomem *clk_base,
-+			void __iomem *pmc_base, struct tegra_clk *tegra_clks);
- 
- void tegra114_clock_tune_cpu_trimmers_high(void);
- void tegra114_clock_tune_cpu_trimmers_low(void);
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+Your approach above seems fulfill these properties (what about a single slave 
+controller without a master?), but it will be tricky for the slave to find the 
+controller resources it needs. I'm thinking of an insane (but valid) 
+configuration where all i2c ports of the SoC are connected together and one 
+port plays the master and all others are slaves. In this case we need to add a 
+property to the slave node which points to his controller instance.
+
+> > "slave-address = <8c>;" to enable slave mode operation. Both modes can be
+> > enabled at the same time (for loopback comm). AFAIK, if only the slave
+> > part is used, the master part shouldn't hurt if programmed (same as other
+> > way around).
+> > 
+> > The difficult part is how to specify the master if only the slave is used.
+> > As the master is naturally on the same bus as the slave, it should be a
+> > child node of the controller. Therefore it needs a special i2c address,
+> > maybe
+> Why would the external I2C master be represented in the DT bindings at
+> all? It's not really a SW-accessible entity; its presence is only
+> observable not something you can initiate interaction with.
+
+No, we can and nvec does it regulary using a "side"-channel (a tegra gpio 
+connected to a master irq input). This side-channel is non standard and each 
+vendor may do it differently. But you are right, we don't need an entry for 
+the master, but an entry for the driver (the other side of the communication) 
+which binds to the slave controller.
+
+> I assume you're not talking about the Tegra I2C controller when you say
+> "master" above; that is already represented in the DT as the top-level
+> I2C node.
+> 
+> > 0x80000000 as you mentioned above, but this will be rejected by the i2c
+> > core. Instantiating the nvec as an i2c client could be another problem.
+> 
+> ...
+> 
+> > It looks like that the i2c subsystem needs some modifications to allow to
+> > specify a master device which is attached to a slave controller. Maybe
+> > someone from the i2c folks (cc'ed) can comment on this?
+> 
+> Yes, you certainly will need some enhancements to the I2C core to
+> support slave mode. I suggest that I2C drivers gain an .of_xlate
+> callback which translates child node DT reg values (addresses) into the
+> (master-vs-slave, I2C address) pair.
+
+I somehow feared that :-( Now my free time became rather limited recently and 
+I don't feel that I'm the best person to solve these problem(s). Andrey said 
+that he may be interested finishing at least a proper device tree 
+representation (especially to get his great nvec uboot support upstreamed). 
+Kernel support is a different beast and I really hope that the code which 
+lives in staging area currently is not doomed because integration with the i2c 
+subsystem is too complex.
+
+Marc
+
+
+[1] http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=blob;f=drivers/i2c/i2c-slave.c;h=280a860cd2e84e15b2c1aef0e938d750f56863dd;hb=rel-roth-ota-1#l120
