@@ -1,41 +1,141 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 9/9] gpio: tegra: Use module_platform_driver()
-Date: Mon, 23 Sep 2013 21:25:53 +0200
-Message-ID: <CACRpkdbLGThUTteqmEcfda7Tvc08ZFWwe=WpKMyxALQe=LZLVA@mail.gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-	<1379320326-13241-10-git-send-email-treding@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
+Date: Mon, 23 Sep 2013 15:48:46 -0400
+Message-ID: <52409B1E.3030405@nvidia.com>
+References: <1379528245-6283-1-git-send-email-rklein@nvidia.com> <52408DC8.3020407@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379320326-13241-10-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52408DC8.3020407-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 16, 2013 at 10:32 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> With the driver core now resolving interrupt references at probe time,
-> it is no longer necessary to force explicit probe ordering using
-> initcalls.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Note that there are potentially many more drivers that can be switched
-> to the generic module_*_driver() interfaces now that interrupts can be
-> resolved later and deferred probe should be able to handle all the
-> ordering issues.
+On 9/23/2013 2:51 PM, Stephen Warren wrote:
+> On 09/18/2013 12:17 PM, Rhyland Klein wrote:
+>> The tegra114 driver wasn't currently handling the cs_change functionality.
+>> It is meant to invert normal behavior, and we were only using it to possibly
+>> delay at the end of a transfer.
+> 
+> I don't really follow this patch description well. It may help if you
+> fully spelled out the definition of normal behaviour, what the driver
+> was doing, and what it should be doing (which is presumable what it does
+> do after this patch).
 
-Let me see if I get this right: so this would be all GPIO/pinctrl
-drivers which are probed exclusively from the device tree
-so anything that depends explicitly on CONFIG_OF would
-be a candidate?
+Yah, I'll explain the cs_change logic a little clearer in the next
+version, but for now:
 
-I think we have a bit of a problem that some drivers depend
-only on a certain arch or compiles directly for a certain arch
-without any specific Kconfig option so that this may be a
-bit hard to spot, so we should keep an eye out for this
-once this probing scheme is in place.
+cs_change is meant to invert the normal behavior of the CS line during a
+SPI transfer. Normally, the CS line stays asserted from the beginning of
+the first transfer until the last is completed within the same
+spi_message, and then it is deasserted. There can be any number of
+spi_transfers within a spi_message. When cs_change is asserted for a
+spi_transfer that is not the last one in the message, this means that
+after that transfer is completed, the CS line should be deasserted
+(where normally it would stay asserted). Then when the next transfer
+starts, it will assert CS again. If the last spi_transfer in a
+spi_message has cs_change set, then it means that instead of deasserted
+CS at the end of the transaction (spi_message) then it leaves CS asserted.
 
-Yours,
-Linus Walleij
+> 
+>> This patch modifies the logic so that the cs state will be toggled after
+>> every individual transfer or NOT toggled at the end of the last transfer
+>> if cs_change is set in that transfer struct.
+>>
+>> Also, this builds in logic so that if a different device tries to start
+>> a transfer while CS is active from a different device, it will abort the
+>> previous transfer and start a new one for the new device.
+> 
+> What user-visible impact does this patch have. Does it solve a bug, or
+> improve performance, or ...? In other words, how would I test this
+> patch, other that testing for regressions in SPI functionality that I
+> know already works.
+
+This allows a spi client to send a write, and then any number of reads
+as a single spi transaction, but separated into separate spi_messages. I
+tested this for ChromeOS where our platform has an embedded controller
+which communicates over SPI. It has some quirks, namely when we read
+back data, we maybe need to do multiple reads before we start getting
+valid data. This means we need to be able to control when the CS line is
+deasserted which would be after we know we finally received all the data
+we were expecting.
+
+I don't know of any other hardware currently that is good for exercising
+this logic on our reference boards.
+
+> 
+> BTW, I don't think you're using get_maintainer.pl, since Mark Brown is
+> the SPI maintainer now, not Grant Likely.
+
+I could have sworn I ran it, but I didn't see Mark come up, I'll
+definitely add him for the next revision.
+
+> 
+>> diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+>> index 145dd43..a9973de 100644
+>> --- a/drivers/spi/spi-tegra114.c
+>> +++ b/drivers/spi/spi-tegra114.c
+>> @@ -182,6 +182,7 @@ struct tegra_spi_data {
+>>  	u32					cur_speed;
+>>  
+>>  	struct spi_device			*cur_spi;
+>> +	struct spi_device			*cs_control;
+>>  	unsigned				cur_pos;
+>>  	unsigned				cur_len;
+>>  	unsigned				words_per_32bit;
+>> @@ -717,7 +718,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>>  		else if (req_mode == SPI_MODE_3)
+>>  			command1 |= SPI_CONTROL_MODE_3;
+>>  
+>> -		tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>> +		if (tspi->cs_control) {
+>> +			if (tspi->cs_control != spi)
+>> +				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+> 
+> Do you really need a separate write call there? The value of command1
+> isn't fully set up there (the CS bits are all set up immediately after),
+> so won't that glitch the CS lines in some cases?
+
+On our hardware (as far as I've seen), the CS line is normally low. We
+need to generate a falling-edge to trigger the beginning of a SPI
+transaction. Doing this write with the default value of SPI_COMMAND1
+causes a brief rise and fall of CS, giving us our falling-edge.
+
+> 
+>> +			tspi->cs_control = NULL;
+>> +		} else
+>> +			tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+>>  
+>>  		command1 |= SPI_CS_SW_HW;
+>>  		if (spi->mode & SPI_CS_HIGH)
+>> @@ -732,6 +738,9 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
+>>  		command1 |= SPI_BIT_LENGTH(bits_per_word - 1);
+>>  	}
+>>  
+>> +	if (t->len == 0 && !t->tx_buf && !t->rx_buf)
+>> +		return 0;
+> 
+> What if !t->len, but t->tx_buf || t->rx_buf ?
+> 
+> This code is also duplicated in tegra_spi_transfer_one_message() after
+> this patch. Instead, perhaps the first N lines of
+> tegra_spi_start_transfer_one() should be split out into e.g.
+> tegra_spi_setup_transfer_one(), such that
+> tegra_spi_transfer_one_message() can always call it, plus have
+> tegra_spi_transfer_one_message() only call
+> tegra_spi_start_transfer_one() if (t->len != 0).
+
+I'll look into this some more. The main reason I have this here is
+because tegra_spi_start_transfer_one() contains the logic for starting a
+transaction (which when this type of spi_transfer is set, can be used
+just to toggle CS and end a previous transaction that had cs_change
+set). Breaking apart tegra_spi_start_transfer_one() might very well be
+much nicer. I'll see how it looks.
+
+Thanks,
+-rhyland
+
+-- 
+nvpublic
