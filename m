@@ -1,118 +1,78 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Tue, 24 Sep 2013 20:28:21 +0200
-Message-ID: <20130924182820.GA9911@mithrandir>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
- <1379320326-13241-3-git-send-email-treding@nvidia.com>
- <CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
- <20130923202935.GA5216@ulmo>
- <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
+Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
+Date: Tue, 24 Sep 2013 20:31:00 +0200
+Message-ID: <20130924183100.GB9911@mithrandir>
+References: <1379607514-11200-1-git-send-email-rklein@nvidia.com>
+ <20130919202706.GB4470@ulmo>
+ <523B6257.4040302@nvidia.com>
+ <20130920075302.GB8575@ulmo>
+ <5241D62E.1060705@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5241D62E.1060705-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---x+6KMIRAuhnl3hBn
+--neYutvxvOLaeuPCA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2013 at 02:20:44PM +0200, Linus Walleij wrote:
-> On Mon, Sep 23, 2013 at 10:29 PM, Thierry Reding
-> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
+On Tue, Sep 24, 2013 at 02:13:02PM -0400, Rhyland Klein wrote:
+> On 9/20/2013 3:53 AM, Thierry Reding wrote:
+> >>>> +     name =3D charger_device->pdata->name;
+> >>>> +     if (!name) {
+> >>>> +             name =3D kasprintf(GFP_KERNEL, "bq24735-%s",
+> >>>> +                              dev_name(&client->dev));
+> >>>
+> >>> Won't the device name already include bq24735 because of the driver
+> >>> name?
+> >>
+> >> In my experience this comes up with a name like "bq24735-5-0009". Thats
+> >> why I added the bq24735 in the beginning, so the name is more descript=
+ive.
+> >=20
+> > Yes, you're right. Perhaps in that case it's even easier to just stick
+> > with a static string such as "bq24735" or "bq24735-charger". It's likely
+> > to be the only device of that type in a machine. If you want to include
+> > the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
+> > clearer that 5-0009 is actually the bus-specific name.
+> >=20
 >=20
-> >> I think it is better to first go over the call sites and make them
-> >> all handle negative return numbers rather than pushing the
-> >> obscure __interface.
-> (...)
-> >
-> > Well, the problem is that the current patch changes the signature of the
-> > function as well, therefore the call sites will have to be updated all
-> > at once in a single patch to avoid build breakage.
->=20
-> Hm yeah OK I see the problem, but can we atleast avoid the
-> __thing? Like calling the new function irq_create_mapping_strict()
-> or whatever.
+> So it turns out if I try to put in a '/' or '\' they are translated to
+> '!' in sysfs, so the name comes out to be '5-0009!bq24735'. Perhaps
+> 'bq24735@5-0009' to still signify that the 5-009 is more of an address
+> than chip name? What do you think Thierry?
 
-_strict sort of implies that it does something more than the non-strict
-irq_create_mapping() while it really doesn't. Perhaps the alternative
-proposed below would indeed be a better solution.
-
-> > Another alternative could be to change the signature in a way that does
-> > not break compatibility. For instance I think it could work out if we
-> > change this function to return int instead of unsigned int but keep the
-> > same semantics to begin with (return 0 on failure). Then update all call
-> > sites to handle potential negative errors and after that return negative
-> > error codes.
->=20
-> Hm that sounds like an attractive solution to me actually.
-
-The only thing we'd loose is the additional bit, but given that most (if
-not all) platforms that use DT are 32-bit (do we actually support any
-platforms that don't have 32-bit integers?) that should not matter at
-all. We're not very likely to get anywhere near that number of
-interrupts in the system.
-
-> > That still wouldn't catch any callers introduced between
-> > the patch creation and application.
->=20
-> Such things happen all the time, just have to be attentive in
-> what goes into linux-next...
-
-Given that linux-next might not be with us for much longer before the
-3.12 release, I'm thinking of deferring the series until then. Or at
-least trying to get it merged. Otherwise we'll probably have to deal
-with a lot of fall out during the merge window.
-
-In any case, it'd be nice to get some feedback on the general idea of
-the patch series from other people involved. I'd hate to do all the
-conversions just to have it NAKed at the last minute.
-
-> Another minor thing:
->=20
-> +static int __irq_create_mapping(struct irq_domain *domain,
-> +                               irq_hw_number_t hwirq, unsigned int *virq=
-p)
->=20
-> Unless you can make a very good case for why there should
-> be a "v" in the beginning of virqp, then remove it and call it
-> "irqp" simply.
->=20
-> All Linux IRQs are virtual and we're already clearly separating
-> out those that are not by calling them "hwirq".
-
-Yeah, I was just trying to adapt to what was already there. But with the
-alternative proposal that'll go away anyway.
+I hadn't thought about that. @ looks like a better separator indeed.
 
 Thierry
 
---x+6KMIRAuhnl3hBn
+--neYutvxvOLaeuPCA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSQdnEAAoJEN0jrNd/PrOhJn8P/3TBPXWjbLi5m7KaRXlga4UE
-K3Ny6iA37CXlF+yLzqlpZz6UvKJvvTqXwv0Vt/nwMHvZ+/hnyWefdxDeAnGioz9Q
-Xv35ArYyVpnXDLidl34Cer+KodQyfq9bNfBynn69ioEzSu3pa1iCzMsufoc7qYv2
-iQoOFbSFHDIO7kWiX8IWnrObr7HWg6+64Za4tPQm+9tH2wHs3p5rG5QzY/qPtBUX
-UqqE9WiC6olA8ANasEpO/LeP3+73vFF57q45dI2tTrrPYej5Ea/n87CIPGY4mj4P
-MsqS1XwBXZR8hHP+kL6DruxTC3lXW5xs3xVW7Qp5ErazD7I5DAz7V35FqR70rlE6
-LaCxaiwjGL3dMVVbH/3rExquKzLcp5Qb+9pguqz4hnZ2rDPEswLEZwJxRfhxN4hj
-0l7NFVN2AfSD7RHdujXo5cqv6N/PHq/IbBX/ZGMqfj63E8oyong/d+Ejf34SWjID
-qJmWcaPvxOq6/Wn5RYiPAf1ukqDQXQJPfOeMYhfMZCq5dwufxeI6kqHaUn5ngQ95
-3Mad+lpjP2zvWsDCyevKJvZT6xOmiKDH8hoi9mk0t3YmLtQsPGU0M2wKpKhaxEkE
-5RDuwDO2NnwIohRiNhBV5etxQ8DX+6AfOd6scZ0hJymX0sjgeTla5EWCXXaMKinZ
-2h9exIOdxzKJAO1B8A+O
-=0ZXR
+iQIcBAEBAgAGBQJSQdpkAAoJEN0jrNd/PrOhdi8P/2exuCTEB2qONKPn0Ba077aP
+LpSefJRWAAKzNzBtLp64nU7aGjlTU7emD+GHD5j/Z6+XAVSO+5cMQarx5z0wzaxD
+pBWkIzlHcIXhryiiHAatkFutfVKLwIe34XLZa7E3OUDF98DPL8iPckXkqVlAL5bm
+i0ejGws3dDESpwZIV2i3JCMgK8NRHEfMu9KkOShtqGMCSM3CfRinm1daGNYvN2BQ
+Z6TBi06bAOl8AvgvjGM4Y3+uOMGl/18bBV9UQqzk19sAF4F4PhbugSUleMq85x7l
++zHNvvnqKMxql46sDP8XfuJcBCqHBhKPQGU+wV3MC76cooLZFxRYhV2rFW/XVM+P
+FofVggNG/tyZlTMdKbuwWoCjUY2U378O1ayuwXjyd+WDOff75kBdUA7UFcXG5smj
+ybFTduNurDMM22LDRvAxRIeHV3sX0lo/i5A6kG2/XFhKqq6ho7XmMGyHmAK6vlfd
+PJ7MideVDdvoEmx8Dr+ctc1RLaQ3ZtFK1PksnxTLmPNxHFbf02PV7L3lrLnxspXa
+v+kEm5WlryziNtbub7o3LvBO+9E1xOmLrgEXRtIA+BlcomMIiUl6MVioKlPak0LL
+LOpMUvwsqrbilcB86yExcveZXZ0CKKPrEejgwge1pEN8DstMGgIftAewFrYLcP/M
+OTlWKjcT+SHj+ZGoEIa3
+=pnC3
 -----END PGP SIGNATURE-----
 
---x+6KMIRAuhnl3hBn--
+--neYutvxvOLaeuPCA--
