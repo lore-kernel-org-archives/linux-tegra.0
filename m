@@ -1,39 +1,115 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] clk: tegra114: Initialize host1x and related clocks
-Date: Tue, 24 Sep 2013 11:40:04 +0200
-Message-ID: <1380015604-21956-1-git-send-email-treding@nvidia.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv3 1/4] gpu: host1x: shuffle job APIs
+Date: Tue, 24 Sep 2013 15:05:22 +0300
+Message-ID: <1380024325-18280-2-git-send-email-amerilainen@nvidia.com>
+References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380024325-18280-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The host1x clock should be a child of PLLC and runs too fast by default,
-so throttle it while at it. The disp1 and disp2 clocks should use PLLP
-by default. They will usually be reparented to either pll_d_out0 or
-pll_d2_out0 as part of the display driver setup.
+This patch moves function host1x_job_submit() to job.c file where
+all other host1x_job_* functions are placed. This patch also
+introduces function host1x_job_complete().
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-tegra114.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/host1x/cdma.c    |  2 ++
+ drivers/gpu/host1x/channel.c |  8 --------
+ drivers/gpu/host1x/channel.h |  1 -
+ drivers/gpu/host1x/job.c     | 12 ++++++++++++
+ drivers/gpu/host1x/job.h     |  3 +++
+ 5 files changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 9467da7..1c8701d 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -2223,6 +2223,9 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{i2s4, pll_a_out0, 11289600, 0},
- 	{dfll_soc, pll_p, 51000000, 1},
- 	{dfll_ref, pll_p, 51000000, 1},
-+	{host1x, pll_c, 150000000, 0},
-+	{disp1, pll_p, 600000000, 0},
-+	{disp2, pll_p, 600000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
- };
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index de72172..910087b 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -252,6 +252,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
+ 				signal = true;
+ 		}
  
++		host1x_job_complete(job);
++
+ 		list_del(&job->list);
+ 		host1x_job_put(job);
+ 	}
+diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
+index 83ea51b..c381441 100644
+--- a/drivers/gpu/host1x/channel.c
++++ b/drivers/gpu/host1x/channel.c
+@@ -21,7 +21,6 @@
+ 
+ #include "channel.h"
+ #include "dev.h"
+-#include "job.h"
+ 
+ /* Constructor for the host1x device list */
+ int host1x_channel_list_init(struct host1x *host)
+@@ -37,13 +36,6 @@ int host1x_channel_list_init(struct host1x *host)
+ 	return 0;
+ }
+ 
+-int host1x_job_submit(struct host1x_job *job)
+-{
+-	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
+-
+-	return host1x_hw_channel_submit(host, job);
+-}
+-
+ struct host1x_channel *host1x_channel_get(struct host1x_channel *channel)
+ {
+ 	int err = 0;
+diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
+index 48723b8..8401f25 100644
+--- a/drivers/gpu/host1x/channel.h
++++ b/drivers/gpu/host1x/channel.h
+@@ -44,7 +44,6 @@ struct host1x_channel *host1x_channel_request(struct device *dev);
+ void host1x_channel_free(struct host1x_channel *channel);
+ struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
+ void host1x_channel_put(struct host1x_channel *channel);
+-int host1x_job_submit(struct host1x_job *job);
+ 
+ #define host1x_for_each_channel(host, channel)				\
+ 	list_for_each_entry(channel, &host->chlist.list, list)
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index c4e1050..3928b4e 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -585,3 +585,15 @@ void host1x_job_dump(struct device *dev, struct host1x_job *job)
+ 	dev_dbg(dev, "    NUM_SLOTS   %d\n", job->num_slots);
+ 	dev_dbg(dev, "    NUM_HANDLES %d\n", job->num_unpins);
+ }
++
++int host1x_job_submit(struct host1x_job *job)
++{
++	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
++
++	return host1x_hw_channel_submit(host, job);
++}
++
++int host1x_job_complete(struct host1x_job *job)
++{
++	return 0;
++}
+diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
+index fba45f2..e0249c3 100644
+--- a/drivers/gpu/host1x/job.h
++++ b/drivers/gpu/host1x/job.h
+@@ -159,4 +159,7 @@ void host1x_job_unpin(struct host1x_job *job);
+  */
+ void host1x_job_dump(struct device *dev, struct host1x_job *job);
+ 
++int host1x_job_submit(struct host1x_job *job);
++int host1x_job_complete(struct host1x_job *job);
++
+ #endif
 -- 
-1.8.4
+1.8.1.5
