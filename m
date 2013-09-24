@@ -1,33 +1,43 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: drop explicit selection of HAVE_CLK and
- CLKDEV_LOOKUP
-Date: Tue, 24 Sep 2013 11:08:15 -0700
-Message-ID: <20130924180815.GA8949@atomide.com>
-References: <1380044515-3173-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
+Date: Tue, 24 Sep 2013 14:13:02 -0400
+Message-ID: <5241D62E.1060705@nvidia.com>
+References: <1379607514-11200-1-git-send-email-rklein@nvidia.com> <20130919202706.GB4470@ulmo> <523B6257.4040302@nvidia.com> <20130920075302.GB8575@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1380044515-3173-1-git-send-email-u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <20130920075302.GB8575@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Nicolas Pitre <nico-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org> [130924 10:50]=
-:
-> CLKDEV_LOOKUP selects HAVE_CLK and COMMON_CLK selects CLKDEV_LOOKUP. =
-So
-> all symbols that select at least two of these symbols can be simplifi=
-ed.
->=20
-> For imx, omap2 and ux500 some rearrangements were necessary before th=
-e
-> simplification.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+On 9/20/2013 3:53 AM, Thierry Reding wrote:
+>>>> +     name = charger_device->pdata->name;
+>>>> +     if (!name) {
+>>>> +             name = kasprintf(GFP_KERNEL, "bq24735-%s",
+>>>> +                              dev_name(&client->dev));
+>>>
+>>> Won't the device name already include bq24735 because of the driver
+>>> name?
+>>
+>> In my experience this comes up with a name like "bq24735-5-0009". Thats
+>> why I added the bq24735 in the beginning, so the name is more descriptive.
+> 
+> Yes, you're right. Perhaps in that case it's even easier to just stick
+> with a static string such as "bq24735" or "bq24735-charger". It's likely
+> to be the only device of that type in a machine. If you want to include
+> the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
+> clearer that 5-0009 is actually the bus-specific name.
+> 
 
-=46or the omap changes:
+So it turns out if I try to put in a '/' or '\' they are translated to
+'!' in sysfs, so the name comes out to be '5-0009!bq24735'. Perhaps
+'bq24735@5-0009' to still signify that the 5-009 is more of an address
+than chip name? What do you think Thierry?
 
-Acked-by: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+-rhyland
+
+-- 
+nvpublic
