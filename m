@@ -1,63 +1,85 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Tue, 24 Sep 2013 14:20:44 +0200
-Message-ID: <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-	<1379320326-13241-3-git-send-email-treding@nvidia.com>
-	<CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
-	<20130923202935.GA5216@ulmo>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
+Date: Tue, 24 Sep 2013 12:33:48 -0400
+Message-ID: <5241BEEC.9000508@nvidia.com>
+References: <1379528245-6283-1-git-send-email-rklein@nvidia.com> <52408DC8.3020407@wwwdotorg.org>	<52409B1E.3030405@nvidia.com> <52409D63.3020909@wwwdotorg.org>	<5240AC3A.9060206@nvidia.com> <5240AF20.8030301@wwwdotorg.org> <CA+7tXiiNMwyQh9sCsW4Qkid9Tn8RTcQ-uUmNse+kK-PZro1pyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20130923202935.GA5216@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+7tXiiNMwyQh9sCsW4Qkid9Tn8RTcQ-uUmNse+kK-PZro1pyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Trent Piepho <tpiepho-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Sep 23, 2013 at 10:29 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
+On 9/23/2013 7:08 PM, Trent Piepho wrote:
+> On Mon, Sep 23, 2013 at 2:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>
+>> That sounds broken. Normally, shouldn't CS assert before a transaction,
+>> stay asserted during a transaction, then deassert after the transaction?
+>> It shouldn't rise and fall very quickly in between parts of the transaction.
+> 
+> That is normal, where a transaction is a spi_message made up of
+> multiple spi_transfers.  The cs_change bit for a transfer will insert
+> a de-asserted pulse after a transfer or leave CS de-asserted after the
+> last transfer.
+> 
+>>>>> need to generate a falling-edge to trigger the beginning of a SPI
+>>>>> transaction. Doing this write with the default value of SPI_COMMAND1
+>>>>> causes a brief rise and fall of CS, giving us our falling-edge.
+> 
+> I wonder, is the real problem that the spi layer allows CS to possibly
+> remain asserted between transactions to the same device?  Normally you
+> would expect it to be de-asserted at the end of a spi_message, but I
+> believe the Linux spi semantics are that it may or may not actually be
+> de-asserted at that time.  It only guarantees that is will be
+> de-asserted before a message to a different device starts.
+> 
+> I guess this is supposed to be an optimization.  Some drivers, like
+> gpio bit-banging, probably have a cost associated with any CS change.
+> Usually many messages in a row are to the same device.  Most devices
+> don't care if CS pulses between messages.  Thus not pulsing CS between
+> each message is faster.
+> 
+>>>
+>>> Otherwise, this logic allows us to skip the spi of COMMAND1 which would
+>>> normally be used to create the falling edge to start a new transaction,
+>>> leaving the previous one open for more transfers.
+>>
+>> This sounds like something the SPI core should be managing. If a driver
+>> is using the SPI bus to communicate with a device in a way that needs CS
+>> left active while outside a transaction, it shouldn't be possible for
+>> another driver to come along and communicate with another device before
+>> the first transaction is all complete. The bus should be locked.
+>> Allowing anything else could corrupt the protocol that required specific
+>> CS states outside the transaction.
+> 
+> If the transaction is one message, which can be multiple transfers and
+> multiple CS pulses, then the spi core always does it atomically.  The
+> limitation is the driver can't get the result of the transaction until
+> the entire transaction is finished.
+> 
+> If a driver needs to get part of a transaction to complete the rest,
+> e.g. read a 16-bit length from the device and then read that many
+> bytes, it can still be done.  It doesn't seem to be documented in
+> spi-summary, but the way to do this is with spi_bus_(un)lock() and
+> spi_(a)sync_locked() calls.  The driver must lock the bus, used the
+> _locked versions to issue spi_messages, then unlock when done.  This
+> should prevent another device on the bus from getting a messages, and
+> thus CS pulses, in the middle of the transaction.
 
->> I think it is better to first go over the call sites and make them
->> all handle negative return numbers rather than pushing the
->> obscure __interface.
-(...)
->
-> Well, the problem is that the current patch changes the signature of the
-> function as well, therefore the call sites will have to be updated all
-> at once in a single patch to avoid build breakage.
+I suppose I can should reword my comment then on the code which checked:
 
-Hm yeah OK I see the problem, but can we atleast avoid the
-__thing? Like calling the new function irq_create_mapping_strict()
-or whatever.
++		if (tspi->cs_control) {
++			if (tspi->cs_control != spi)
++				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
 
-> Another alternative could be to change the signature in a way that does
-> not break compatibility. For instance I think it could work out if we
-> change this function to return int instead of unsigned int but keep the
-> same semantics to begin with (return 0 on failure). Then update all call
-> sites to handle potential negative errors and after that return negative
-> error codes.
+While this does do exactly what I said, ending a previous "on-going"
+transaction in favor of a new one, this shouldn't be expected to be the
+way for clients to guarantee that they have locked a bus. This is more
+of a way internally to the Tegra SPI driver to clear its state.
 
-Hm that sounds like an attractive solution to me actually.
-
-> That still wouldn't catch any callers introduced between
-> the patch creation and application.
-
-Such things happen all the time, just have to be attentive in
-what goes into linux-next...
-
-Another minor thing:
-
-+static int __irq_create_mapping(struct irq_domain *domain,
-+                               irq_hw_number_t hwirq, unsigned int *virqp)
-
-Unless you can make a very good case for why there should
-be a "v" in the beginning of virqp, then remove it and call it
-"irqp" simply.
-
-All Linux IRQs are virtual and we're already clearly separating
-out those that are not by calling them "hwirq".
-
-Yours,
-Linus Walleij
+-rhyland
+-- 
+nvpublic
