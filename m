@@ -1,85 +1,76 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RESEND] spi/tegra114: Correct support for cs_change
-Date: Tue, 24 Sep 2013 12:33:48 -0400
-Message-ID: <5241BEEC.9000508@nvidia.com>
-References: <1379528245-6283-1-git-send-email-rklein@nvidia.com> <52408DC8.3020407@wwwdotorg.org>	<52409B1E.3030405@nvidia.com> <52409D63.3020909@wwwdotorg.org>	<5240AC3A.9060206@nvidia.com> <5240AF20.8030301@wwwdotorg.org> <CA+7tXiiNMwyQh9sCsW4Qkid9Tn8RTcQ-uUmNse+kK-PZro1pyQ@mail.gmail.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
+Date: Tue, 24 Sep 2013 12:39:29 -0400
+Message-ID: <5241C041.7020208@nvidia.com>
+References: <1379607514-11200-1-git-send-email-rklein@nvidia.com> <5240B85D.3050803@wwwdotorg.org> <5240BA4A.4010007@nvidia.com> <5240BB2A.8060705@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+7tXiiNMwyQh9sCsW4Qkid9Tn8RTcQ-uUmNse+kK-PZro1pyQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trent Piepho <tpiepho-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org" <spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5240BB2A.8060705@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Anton Vorontsov <anton@enomsg.org>, David Woodhouse <dwmw2@infradead.org>, Manish Badarkhe <badarkhe.manish@gmail.com>, Darbha Sriharsha <dsriharsha@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 9/23/2013 7:08 PM, Trent Piepho wrote:
-> On Mon, Sep 23, 2013 at 2:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>
->> That sounds broken. Normally, shouldn't CS assert before a transaction,
->> stay asserted during a transaction, then deassert after the transaction?
->> It shouldn't rise and fall very quickly in between parts of the transaction.
-> 
-> That is normal, where a transaction is a spi_message made up of
-> multiple spi_transfers.  The cs_change bit for a transfer will insert
-> a de-asserted pulse after a transfer or leave CS de-asserted after the
-> last transfer.
-> 
->>>>> need to generate a falling-edge to trigger the beginning of a SPI
->>>>> transaction. Doing this write with the default value of SPI_COMMAND1
->>>>> causes a brief rise and fall of CS, giving us our falling-edge.
-> 
-> I wonder, is the real problem that the spi layer allows CS to possibly
-> remain asserted between transactions to the same device?  Normally you
-> would expect it to be de-asserted at the end of a spi_message, but I
-> believe the Linux spi semantics are that it may or may not actually be
-> de-asserted at that time.  It only guarantees that is will be
-> de-asserted before a message to a different device starts.
-> 
-> I guess this is supposed to be an optimization.  Some drivers, like
-> gpio bit-banging, probably have a cost associated with any CS change.
-> Usually many messages in a row are to the same device.  Most devices
-> don't care if CS pulses between messages.  Thus not pulsing CS between
-> each message is faster.
-> 
+On 9/23/2013 6:05 PM, Stephen Warren wrote:
+> On 09/23/2013 04:01 PM, Rhyland Klein wrote:
+>> On 9/23/2013 5:53 PM, Stephen Warren wrote:
+>>> On 09/19/2013 10:18 AM, Rhyland Klein wrote:
+>>>> Adding driver support for bq24735 charger chipset.
 >>>
->>> Otherwise, this logic allows us to skip the spi of COMMAND1 which would
->>> normally be used to create the falling edge to start a new transaction,
->>> leaving the previous one open for more transfers.
+>>>> diff --git a/Documentation/devicetree/bindings/power_supply/ti,bq24735.txt b/Documentation/devicetree/bindings/power_supply/ti,bq24735.txt
+> 
+>>>> + - ti,charge-current : Used to control and set the charging current. This value
+>>>> +   must follow the below guidelines:
+>>>> +	bit 0 - 5:	Not used
+>>>> +	bit 6:		1 = Adds 64mA of charger current
+>>>> +	bit 7:		1 = Adds 128mA of charger current
+>>>> +	bit 8:		1 = Adds 256mA of charger current
+>>>> +	bit 9:		1 = Adds 512mA of charger current
+>>>> +	bit 10:		1 = Adds 1024mA of charger current
+>>>> +	bit 11:		1 = Adds 2048mA of charger current
+>>>> +	bit 12:		1 = Adds 4096mA of charger current
+>>>> +	bit 13 - 15:	Not used
+>>>
+>>> That's a little odd. Why not just put the number of mA directly into the
+>>> property unshifted?
 >>
->> This sounds like something the SPI core should be managing. If a driver
->> is using the SPI bus to communicate with a device in a way that needs CS
->> left active while outside a transaction, it shouldn't be possible for
->> another driver to come along and communicate with another device before
->> the first transaction is all complete. The bus should be locked.
->> Allowing anything else could corrupt the protocol that required specific
->> CS states outside the transaction.
+>> This is how the hw register is defined, its the literal number of mA.
+>> This is cleaned up in the upcoming revision.
 > 
-> If the transaction is one message, which can be multiple transfers and
-> multiple CS pulses, then the spi core always does it atomically.  The
-> limitation is the driver can't get the result of the transaction until
-> the entire transaction is finished.
+> OK. If you still want to use the raw register encoding, which seems
+> reasonable, why not just say:
 > 
-> If a driver needs to get part of a transaction to complete the rest,
-> e.g. read a 16-bit length from the device and then read that many
-> bytes, it can still be done.  It doesn't seem to be documented in
-> spi-summary, but the way to do this is with spi_bus_(un)lock() and
-> spi_(a)sync_locked() calls.  The driver must lock the bus, used the
-> _locked versions to issue spi_messages, then unlock when done.  This
-> should prevent another device on the bus from getting a messages, and
-> thus CS pulses, in the middle of the transaction.
+> ti,charge-current: Value for charge current register as described in the
+> HW documentation.
 
-I suppose I can should reword my comment then on the code which checked:
+I had written this for v3:
 
-+		if (tspi->cs_control) {
-+			if (tspi->cs_control != spi)
-+				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
+- ti,charge-current : Used to control and set the charging current. This
+value must be between 128mA and 8.128A with a 64mA step resolution. The
+POR value is 0x0000h. See spec for more details.
 
-While this does do exactly what I said, ending a previous "on-going"
-transaction in favor of a new one, this shouldn't be expected to be the
-way for clients to guarantee that they have locked a bus. This is more
-of a way internally to the Tegra SPI driver to clear its state.
+Do you think the range is unnecessary or is it fine?
+
+> 
+>>>> +   Setting the value to < 128mA or > 8.128A terminates charging.
+>>>
+>>> "terminates charging" is a driver action, not a description of HW. It's
+>>> fine to say that what min/max value should be specified in the property
+>>> for it to be valid, but not what action SW should take in response to that.
+>>
+>> This isn't sw. This is defined in the HW documentation as to what
+>> happens if an invalid value is used.
+> 
+> OK, if the HW documentation already says that, I don't see the need for
+> the DT binding to also say it; I would suggest just removing that text.
+> 
+
+Will remove in v3.
 
 -rhyland
+
+
 -- 
 nvpublic
