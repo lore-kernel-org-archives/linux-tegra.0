@@ -1,59 +1,146 @@
 From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv3 0/4] gpu: host1x: Add runtime pm support
-Date: Tue, 24 Sep 2013 15:05:21 +0300
-Message-ID: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
+Subject: [PATCHv3 3/4] drm/tegra: Add runtime pm support for dc
+Date: Tue, 24 Sep 2013 15:05:24 +0300
+Message-ID: <1380024325-18280-4-git-send-email-amerilainen@nvidia.com>
+References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: tbergstrom@nvidia.com, treding@nvidia.com
-Cc: linux-tegra@vger.kernel.org, mkulkarni@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com, mkulkarni@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds runtime pm support for host1x, gr2d and dc. It retains the
-current behaviour if CONFIG_PM_RUNTIME is not enabled.
+From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
 
-The gr2d clock is enabled when a new job is submitted and disabled when
-the work is done. Due to parent->child relations between host1x->gr2d, this
-scheme enables and disables host1x clock.
+This patch adds initial runtime pm support for Tegra display
+controller. As of now, the dc clock is enabled in device probe via
+runtime pm and disabled in device remove. In case pm runtime is not
+configured, we simply enable the clock in device probe (..and disable
+it in remove).
 
-For dc, the clocks are enabled in .probe and disabled in .remove via runtime
-pm instead of direct clock APIs.
+Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
+Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+---
+ drivers/gpu/host1x/drm/dc.c | 58 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 5 deletions(-)
 
-Mayuresh is unfortunately not available to continue with the series and hence
-I will continue working on the patches.
-
-Changes in v3:
-- Rebased patches on top of 3.12-rc2
-- Removed unnecessary #ifdefs
-- Added descriptions to commit messages
-- If runtime pm is disabled, the code calls suspend/resume functions
-for enabling/disabling the clocks instead of repeating the functions
-
-Mayuresh Kulkarni (4):
-  gpu: host1x: shuffle job APIs
-  drm/tegra: Add runtime pm support for gr2d
-  drm/tegra: Add runtime pm support for dc
-  gpu: host1x: Add runtime pm support for host1x
-
- drivers/gpu/host1x/cdma.c     |  2 ++
- drivers/gpu/host1x/channel.c  |  8 ------
- drivers/gpu/host1x/channel.h  |  1 -
- drivers/gpu/host1x/dev.c      | 57 +++++++++++++++++++++++++++++++++++++++---
- drivers/gpu/host1x/drm/dc.c   | 58 +++++++++++++++++++++++++++++++++++++++----
- drivers/gpu/host1x/drm/gr2d.c | 57 ++++++++++++++++++++++++++++++++++++++----
- drivers/gpu/host1x/job.c      | 13 ++++++++++
- drivers/gpu/host1x/job.h      |  3 +++
- 8 files changed, 176 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
+index b1a05ad..6d1d5fc 100644
+--- a/drivers/gpu/host1x/drm/dc.c
++++ b/drivers/gpu/host1x/drm/dc.c
+@@ -13,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk/tegra.h>
++#include <linux/pm_runtime.h>
+ 
+ #include "host1x_client.h"
+ #include "dc.h"
+@@ -24,6 +25,9 @@ struct tegra_plane {
+ 	unsigned int index;
+ };
+ 
++static int tegra_dc_runtime_suspend(struct device *dev);
++static int tegra_dc_runtime_resume(struct device *dev);
++
+ static inline struct tegra_plane *to_tegra_plane(struct drm_plane *plane)
+ {
+ 	return container_of(plane, struct tegra_plane, base);
+@@ -1128,9 +1132,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dc->clk);
+ 	}
+ 
+-	err = clk_prepare_enable(dc->clk);
+-	if (err < 0)
+-		return err;
++	platform_set_drvdata(pdev, dc);
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	dc->regs = devm_ioremap_resource(&pdev->dev, regs);
+@@ -1147,6 +1149,15 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 	dc->client.ops = &dc_client_ops;
+ 	dc->client.dev = &pdev->dev;
+ 
++	pm_runtime_enable(&pdev->dev);
++	if (!pm_runtime_enabled(&pdev->dev)) {
++		err = tegra_dc_runtime_resume(&pdev->dev);
++		if (err < 0)
++			return err;
++	}
++
++	pm_runtime_get_sync(&pdev->dev);
++
+ 	err = tegra_dc_rgb_probe(dc);
+ 	if (err < 0 && err != -ENODEV) {
+ 		dev_err(&pdev->dev, "failed to probe RGB output: %d\n", err);
+@@ -1160,8 +1171,6 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	platform_set_drvdata(pdev, dc);
+-
+ 	return 0;
+ }
+ 
+@@ -1178,11 +1187,49 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	pm_runtime_put(&pdev->dev);
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_disable(&pdev->dev);
++	else
++		tegra_dc_runtime_suspend(&pdev->dev);
++
++	return 0;
++}
++
++static int tegra_dc_runtime_suspend(struct device *dev)
++{
++	struct tegra_dc *dc;
++
++	dc = dev_get_drvdata(dev);
++	if (!dc)
++		return -EINVAL;
++
+ 	clk_disable_unprepare(dc->clk);
+ 
+ 	return 0;
+ }
+ 
++static int tegra_dc_runtime_resume(struct device *dev)
++{
++	int err = 0;
++	struct tegra_dc *dc;
++
++	dc = dev_get_drvdata(dev);
++	if (!dc)
++		return -EINVAL;
++
++	err = clk_prepare_enable(dc->clk);
++	if (err < 0)
++		dev_err(dev, "failed to enable clock\n");
++
++	return err;
++}
++
++static const struct dev_pm_ops tegra_dc_pm_ops = {
++	SET_RUNTIME_PM_OPS(tegra_dc_runtime_suspend,
++			   tegra_dc_runtime_resume, NULL)
++};
++
+ static struct of_device_id tegra_dc_of_match[] = {
+ 	{ .compatible = "nvidia,tegra30-dc", },
+ 	{ .compatible = "nvidia,tegra20-dc", },
+@@ -1194,6 +1241,7 @@ struct platform_driver tegra_dc_driver = {
+ 		.name = "tegra-dc",
+ 		.owner = THIS_MODULE,
+ 		.of_match_table = tegra_dc_of_match,
++		.pm = &tegra_dc_pm_ops,
+ 	},
+ 	.probe = tegra_dc_probe,
+ 	.remove = tegra_dc_remove,
 -- 
 1.8.1.5
