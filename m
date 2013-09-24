@@ -1,175 +1,63 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv3 2/4] drm/tegra: Add runtime pm support for gr2d
-Date: Tue, 24 Sep 2013 15:05:23 +0300
-Message-ID: <1380024325-18280-3-git-send-email-amerilainen@nvidia.com>
-References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
+Date: Tue, 24 Sep 2013 14:20:44 +0200
+Message-ID: <CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
+References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
+	<1379320326-13241-3-git-send-email-treding@nvidia.com>
+	<CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
+	<20130923202935.GA5216@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: tbergstrom@nvidia.com, treding@nvidia.com
-Cc: linux-tegra@vger.kernel.org, mkulkarni@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20130923202935.GA5216@ulmo>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
+On Mon, Sep 23, 2013 at 10:29 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, Sep 23, 2013 at 09:14:30PM +0200, Linus Walleij wrote:
 
-This far we have enabled gr2d clock on device probe and disabled
-it on device deinitialisation. This patch adds runtime pm support
-for the hardware unit allowing dynamic power management. If pm
-runtime is not enabled, gr2d clock is enabled in device probe and
-disabled in remove.
+>> I think it is better to first go over the call sites and make them
+>> all handle negative return numbers rather than pushing the
+>> obscure __interface.
+(...)
+>
+> Well, the problem is that the current patch changes the signature of the
+> function as well, therefore the call sites will have to be updated all
+> at once in a single patch to avoid build breakage.
 
-Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
----
- drivers/gpu/host1x/drm/gr2d.c | 57 +++++++++++++++++++++++++++++++++++++++----
- drivers/gpu/host1x/job.c      |  5 ++--
- 2 files changed, 55 insertions(+), 7 deletions(-)
+Hm yeah OK I see the problem, but can we atleast avoid the
+__thing? Like calling the new function irq_create_mapping_strict()
+or whatever.
 
-diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-index 27ffcf1..8d92925 100644
---- a/drivers/gpu/host1x/drm/gr2d.c
-+++ b/drivers/gpu/host1x/drm/gr2d.c
-@@ -22,6 +22,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/clk.h>
-+#include <linux/pm_runtime.h>
- 
- #include "channel.h"
- #include "drm.h"
-@@ -45,6 +46,8 @@ static inline struct gr2d *to_gr2d(struct host1x_client *client)
- }
- 
- static int gr2d_is_addr_reg(struct device *dev, u32 class, u32 reg);
-+static int gr2d_runtime_suspend(struct device *dev);
-+static int gr2d_runtime_resume(struct device *dev);
- 
- static int gr2d_client_init(struct host1x_client *client,
- 			    struct drm_device *drm)
-@@ -275,12 +278,18 @@ static int gr2d_probe(struct platform_device *pdev)
- 		return PTR_ERR(gr2d->clk);
- 	}
- 
--	err = clk_prepare_enable(gr2d->clk);
--	if (err) {
--		dev_err(dev, "cannot turn on clock\n");
--		return err;
-+	/* pm runtime accesses the clock through driver data */
-+	platform_set_drvdata(pdev, gr2d);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	if (!pm_runtime_enabled(&pdev->dev)) {
-+		err = gr2d_runtime_resume(&pdev->dev);
-+		if (err < 0)
-+			return err;
- 	}
- 
-+	pm_runtime_get_sync(&pdev->dev);
-+
- 	gr2d->channel = host1x_channel_request(dev);
- 	if (!gr2d->channel)
- 		return -ENOMEM;
-@@ -305,7 +314,7 @@ static int gr2d_probe(struct platform_device *pdev)
- 
- 	gr2d_init_addr_reg_map(dev, gr2d);
- 
--	platform_set_drvdata(pdev, gr2d);
-+	pm_runtime_put(&pdev->dev);
- 
- 	return 0;
- }
-@@ -327,11 +336,48 @@ static int __exit gr2d_remove(struct platform_device *pdev)
- 		host1x_syncpt_free(gr2d->client.syncpts[i]);
- 
- 	host1x_channel_free(gr2d->channel);
-+
-+	if (pm_runtime_enabled(&pdev->dev))
-+		pm_runtime_disable(&pdev->dev);
-+	else
-+		gr2d_runtime_suspend(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int gr2d_runtime_suspend(struct device *dev)
-+{
-+	struct gr2d *gr2d;
-+
-+	gr2d = dev_get_drvdata(dev);
-+	if (!gr2d)
-+		return -EINVAL;
-+
- 	clk_disable_unprepare(gr2d->clk);
- 
- 	return 0;
- }
- 
-+static int gr2d_runtime_resume(struct device *dev)
-+{
-+	int err = 0;
-+	struct gr2d *gr2d;
-+
-+	gr2d = dev_get_drvdata(dev);
-+	if (!gr2d)
-+		return -EINVAL;
-+
-+	err = clk_prepare_enable(gr2d->clk);
-+	if (err < 0)
-+		dev_err(dev, "failed to enable clock\n");
-+
-+	return err;
-+}
-+
-+static const struct dev_pm_ops gr2d_pm_ops = {
-+	SET_RUNTIME_PM_OPS(gr2d_runtime_suspend, gr2d_runtime_resume, NULL)
-+};
-+
- struct platform_driver tegra_gr2d_driver = {
- 	.probe = gr2d_probe,
- 	.remove = __exit_p(gr2d_remove),
-@@ -339,5 +385,6 @@ struct platform_driver tegra_gr2d_driver = {
- 		.owner = THIS_MODULE,
- 		.name = "gr2d",
- 		.of_match_table = gr2d_match,
-+		.pm = &gr2d_pm_ops,
- 	}
- };
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index 3928b4e..e4148e0 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -23,6 +23,7 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-+#include <linux/pm_runtime.h>
- #include <trace/events/host1x.h>
- 
- #include "channel.h"
-@@ -589,11 +590,11 @@ void host1x_job_dump(struct device *dev, struct host1x_job *job)
- int host1x_job_submit(struct host1x_job *job)
- {
- 	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
--
-+	pm_runtime_get_sync(job->channel->dev);
- 	return host1x_hw_channel_submit(host, job);
- }
- 
- int host1x_job_complete(struct host1x_job *job)
- {
--	return 0;
-+	return pm_runtime_put(job->channel->dev);
- }
--- 
-1.8.1.5
+> Another alternative could be to change the signature in a way that does
+> not break compatibility. For instance I think it could work out if we
+> change this function to return int instead of unsigned int but keep the
+> same semantics to begin with (return 0 on failure). Then update all call
+> sites to handle potential negative errors and after that return negative
+> error codes.
+
+Hm that sounds like an attractive solution to me actually.
+
+> That still wouldn't catch any callers introduced between
+> the patch creation and application.
+
+Such things happen all the time, just have to be attentive in
+what goes into linux-next...
+
+Another minor thing:
+
++static int __irq_create_mapping(struct irq_domain *domain,
++                               irq_hw_number_t hwirq, unsigned int *virqp)
+
+Unless you can make a very good case for why there should
+be a "v" in the beginning of virqp, then remove it and call it
+"irqp" simply.
+
+All Linux IRQs are virtual and we're already clearly separating
+out those that are not by calling them "hwirq".
+
+Yours,
+Linus Walleij
