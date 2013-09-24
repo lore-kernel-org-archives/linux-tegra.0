@@ -1,78 +1,32 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch V2] drivers: power: Add support for bq24735 charger
-Date: Tue, 24 Sep 2013 20:31:00 +0200
-Message-ID: <20130924183100.GB9911@mithrandir>
-References: <1379607514-11200-1-git-send-email-rklein@nvidia.com>
- <20130919202706.GB4470@ulmo>
- <523B6257.4040302@nvidia.com>
- <20130920075302.GB8575@ulmo>
- <5241D62E.1060705@nvidia.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: drop explicit selection of HAVE_CLK and
+ CLKDEV_LOOKUP
+Date: Tue, 24 Sep 2013 12:10:17 -0700
+Message-ID: <20130924191017.GH19754@codeaurora.org>
+References: <1380044515-3173-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="neYutvxvOLaeuPCA"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5241D62E.1060705-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1380044515-3173-1-git-send-email-u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Anton Vorontsov <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Darbha Sriharsha <dsriharsha-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Uwe Kleine-K??nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Viresh Kumar <viresh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shiraz Hashim <shiraz.hashim-qxv4g6HH51o@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Santosh Shilimkar <santosh.shilimkar-l0cyMroinI0@public.gmane.org>, Nicolas Pitre <nico-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/24, Uwe Kleine-K??nig wrote:
+> CLKDEV_LOOKUP selects HAVE_CLK and COMMON_CLK selects CLKDEV_LOOKUP. So
+> all symbols that select at least two of these symbols can be simplified.
+> 
+> For imx, omap2 and ux500 some rearrangements were necessary before the
+> simplification.
+> 
+> Signed-off-by: Uwe Kleine-K??nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 
---neYutvxvOLaeuPCA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For MSM:
 
-On Tue, Sep 24, 2013 at 02:13:02PM -0400, Rhyland Klein wrote:
-> On 9/20/2013 3:53 AM, Thierry Reding wrote:
-> >>>> +     name =3D charger_device->pdata->name;
-> >>>> +     if (!name) {
-> >>>> +             name =3D kasprintf(GFP_KERNEL, "bq24735-%s",
-> >>>> +                              dev_name(&client->dev));
-> >>>
-> >>> Won't the device name already include bq24735 because of the driver
-> >>> name?
-> >>
-> >> In my experience this comes up with a name like "bq24735-5-0009". Thats
-> >> why I added the bq24735 in the beginning, so the name is more descript=
-ive.
-> >=20
-> > Yes, you're right. Perhaps in that case it's even easier to just stick
-> > with a static string such as "bq24735" or "bq24735-charger". It's likely
-> > to be the only device of that type in a machine. If you want to include
-> > the device name, perhaps something like "%s/bq24735" (5-0009/bq24735) is
-> > clearer that 5-0009 is actually the bus-specific name.
-> >=20
->=20
-> So it turns out if I try to put in a '/' or '\' they are translated to
-> '!' in sysfs, so the name comes out to be '5-0009!bq24735'. Perhaps
-> 'bq24735@5-0009' to still signify that the 5-009 is more of an address
-> than chip name? What do you think Thierry?
+Acked-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
-I hadn't thought about that. @ looks like a better separator indeed.
-
-Thierry
-
---neYutvxvOLaeuPCA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSQdpkAAoJEN0jrNd/PrOhdi8P/2exuCTEB2qONKPn0Ba077aP
-LpSefJRWAAKzNzBtLp64nU7aGjlTU7emD+GHD5j/Z6+XAVSO+5cMQarx5z0wzaxD
-pBWkIzlHcIXhryiiHAatkFutfVKLwIe34XLZa7E3OUDF98DPL8iPckXkqVlAL5bm
-i0ejGws3dDESpwZIV2i3JCMgK8NRHEfMu9KkOShtqGMCSM3CfRinm1daGNYvN2BQ
-Z6TBi06bAOl8AvgvjGM4Y3+uOMGl/18bBV9UQqzk19sAF4F4PhbugSUleMq85x7l
-+zHNvvnqKMxql46sDP8XfuJcBCqHBhKPQGU+wV3MC76cooLZFxRYhV2rFW/XVM+P
-FofVggNG/tyZlTMdKbuwWoCjUY2U378O1ayuwXjyd+WDOff75kBdUA7UFcXG5smj
-ybFTduNurDMM22LDRvAxRIeHV3sX0lo/i5A6kG2/XFhKqq6ho7XmMGyHmAK6vlfd
-PJ7MideVDdvoEmx8Dr+ctc1RLaQ3ZtFK1PksnxTLmPNxHFbf02PV7L3lrLnxspXa
-v+kEm5WlryziNtbub7o3LvBO+9E1xOmLrgEXRtIA+BlcomMIiUl6MVioKlPak0LL
-LOpMUvwsqrbilcB86yExcveZXZ0CKKPrEejgwge1pEN8DstMGgIftAewFrYLcP/M
-OTlWKjcT+SHj+ZGoEIa3
-=pnC3
------END PGP SIGNATURE-----
-
---neYutvxvOLaeuPCA--
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
