@@ -1,115 +1,59 @@
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv3 1/4] gpu: host1x: shuffle job APIs
-Date: Tue, 24 Sep 2013 15:05:22 +0300
-Message-ID: <1380024325-18280-2-git-send-email-amerilainen@nvidia.com>
-References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
+From: Arto Merilainen <amerilainen@nvidia.com>
+Subject: [PATCHv3 0/4] gpu: host1x: Add runtime pm support
+Date: Tue, 24 Sep 2013 15:05:21 +0300
+Message-ID: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380024325-18280-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: tbergstrom@nvidia.com, treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, mkulkarni@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, amerilainen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This series adds runtime pm support for host1x, gr2d and dc. It retains the
+current behaviour if CONFIG_PM_RUNTIME is not enabled.
 
-This patch moves function host1x_job_submit() to job.c file where
-all other host1x_job_* functions are placed. This patch also
-introduces function host1x_job_complete().
+The gr2d clock is enabled when a new job is submitted and disabled when
+the work is done. Due to parent->child relations between host1x->gr2d, this
+scheme enables and disables host1x clock.
 
-Signed-off-by: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/host1x/cdma.c    |  2 ++
- drivers/gpu/host1x/channel.c |  8 --------
- drivers/gpu/host1x/channel.h |  1 -
- drivers/gpu/host1x/job.c     | 12 ++++++++++++
- drivers/gpu/host1x/job.h     |  3 +++
- 5 files changed, 17 insertions(+), 9 deletions(-)
+For dc, the clocks are enabled in .probe and disabled in .remove via runtime
+pm instead of direct clock APIs.
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index de72172..910087b 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -252,6 +252,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 				signal = true;
- 		}
- 
-+		host1x_job_complete(job);
-+
- 		list_del(&job->list);
- 		host1x_job_put(job);
- 	}
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index 83ea51b..c381441 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -21,7 +21,6 @@
- 
- #include "channel.h"
- #include "dev.h"
--#include "job.h"
- 
- /* Constructor for the host1x device list */
- int host1x_channel_list_init(struct host1x *host)
-@@ -37,13 +36,6 @@ int host1x_channel_list_init(struct host1x *host)
- 	return 0;
- }
- 
--int host1x_job_submit(struct host1x_job *job)
--{
--	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
--
--	return host1x_hw_channel_submit(host, job);
--}
--
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel)
- {
- 	int err = 0;
-diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
-index 48723b8..8401f25 100644
---- a/drivers/gpu/host1x/channel.h
-+++ b/drivers/gpu/host1x/channel.h
-@@ -44,7 +44,6 @@ struct host1x_channel *host1x_channel_request(struct device *dev);
- void host1x_channel_free(struct host1x_channel *channel);
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
- void host1x_channel_put(struct host1x_channel *channel);
--int host1x_job_submit(struct host1x_job *job);
- 
- #define host1x_for_each_channel(host, channel)				\
- 	list_for_each_entry(channel, &host->chlist.list, list)
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index c4e1050..3928b4e 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -585,3 +585,15 @@ void host1x_job_dump(struct device *dev, struct host1x_job *job)
- 	dev_dbg(dev, "    NUM_SLOTS   %d\n", job->num_slots);
- 	dev_dbg(dev, "    NUM_HANDLES %d\n", job->num_unpins);
- }
-+
-+int host1x_job_submit(struct host1x_job *job)
-+{
-+	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
-+
-+	return host1x_hw_channel_submit(host, job);
-+}
-+
-+int host1x_job_complete(struct host1x_job *job)
-+{
-+	return 0;
-+}
-diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
-index fba45f2..e0249c3 100644
---- a/drivers/gpu/host1x/job.h
-+++ b/drivers/gpu/host1x/job.h
-@@ -159,4 +159,7 @@ void host1x_job_unpin(struct host1x_job *job);
-  */
- void host1x_job_dump(struct device *dev, struct host1x_job *job);
- 
-+int host1x_job_submit(struct host1x_job *job);
-+int host1x_job_complete(struct host1x_job *job);
-+
- #endif
+Mayuresh is unfortunately not available to continue with the series and hence
+I will continue working on the patches.
+
+Changes in v3:
+- Rebased patches on top of 3.12-rc2
+- Removed unnecessary #ifdefs
+- Added descriptions to commit messages
+- If runtime pm is disabled, the code calls suspend/resume functions
+for enabling/disabling the clocks instead of repeating the functions
+
+Mayuresh Kulkarni (4):
+  gpu: host1x: shuffle job APIs
+  drm/tegra: Add runtime pm support for gr2d
+  drm/tegra: Add runtime pm support for dc
+  gpu: host1x: Add runtime pm support for host1x
+
+ drivers/gpu/host1x/cdma.c     |  2 ++
+ drivers/gpu/host1x/channel.c  |  8 ------
+ drivers/gpu/host1x/channel.h  |  1 -
+ drivers/gpu/host1x/dev.c      | 57 +++++++++++++++++++++++++++++++++++++++---
+ drivers/gpu/host1x/drm/dc.c   | 58 +++++++++++++++++++++++++++++++++++++++----
+ drivers/gpu/host1x/drm/gr2d.c | 57 ++++++++++++++++++++++++++++++++++++++----
+ drivers/gpu/host1x/job.c      | 13 ++++++++++
+ drivers/gpu/host1x/job.h      |  3 +++
+ 8 files changed, 176 insertions(+), 23 deletions(-)
+
 -- 
 1.8.1.5
