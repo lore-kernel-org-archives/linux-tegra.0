@@ -1,224 +1,42 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [Patch V2] spi/tegra114: Correct support for cs_change
-Date: Thu, 26 Sep 2013 13:01:43 -0400
-Message-ID: <1380214904-12899-1-git-send-email-rklein@nvidia.com>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Re: [PATCH 00/51] DMA mask changes
+Date: Thu, 26 Sep 2013 22:23:08 +0200
+Message-ID: <CACna6rxkpYzdD8_Jfi22vA2suUa3k-JM65_gCySQpp4crVCoPg@mail.gmail.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, b43-dev <b43-dev@lists.infradead.org>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, devicetree@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, e1000-devel@lists.sourceforge.net, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linux ppc dev <linuxppc-dev@lists.ozlabs.org>, linux-samsung-soc@vger.kernel.org, Linux SCSI List <linux-scsi@vger.kernel.org>, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, Solarflare linux maintainers <linux-ne>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra114 driver wasn't currently handling the cs_change
-functionality. cs_change is meant to invert the decisions of whether
-or not to deactivate CS after each transfer. Without cs_change, after
-every transfer (other than the last in the message) the normal behavior
-is to leave CS active. For the last transfer, normally CS is
-deactivated when the transfer is complete.
+2013/9/19 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> This email is only being sent to the mailing lists in question, not t=
+o
+> anyone personally.  The list of individuals is far to great to do tha=
+t.
+> I'm hoping no mailing lists reject the patches based on the number of
+> recipients.
 
-With cs_change set on a transfer (other than last one) CS would be
-deactivated and the next transfer would need to activate it again. If
-cs_change was set on the last tranfer in a message, then CS would be
-left active when the message compeleted.
+Huh, I think it was enough to send only 3 patches to the b43-dev@. Like=
+:
+[PATCH 01/51] DMA-API: provide a helper to set both DMA and coherent DM=
+A masks
+[PATCH 14/51] DMA-API: net: b43: (...)
+[PATCH 15/51] DMA-API: net: b43legacy: (...)
+;)
 
-Also, this builds in logic so that if a different device tries to start
-a transfer while CS is active from a different device, it will abort the
-previous transfer and start a new one for the new device.
+I believe Joe has some nice script for doing it that way. When fixing
+some coding style / formatting, he sends only related patches to the
+given ML.
 
-This splits tegra_spi_start_transfer_one into 2 functions, the new one
-being tegra_spi_setup_transfer_one. The setup function is safe to call
-on all transfers, sets up for the transfer, and handles the special case
-of the first transfer in a message. In this special case, it needs to
-know whether or not it needs to activate CS.
-
-This work was based on the spi-atmel driver.
-
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
- - Split start_transfer_one into setup & start, now setup it always safe
-   to call, and we can simplify the checks for a transfer with no length.
- - removed unnecessary whitespace changes
- - I also cleaned up the parameters to tegra_spi_start_transfer_one,
-   removing is_first_of_msg (moved to setup) and is_single_xfer, since it
-   was not used.
-
- drivers/spi/spi-tegra114.c |   85 +++++++++++++++++++++++++++++++++++---------
- 1 file changed, 68 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index 946ff73..95c7caa 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -182,6 +182,7 @@ struct tegra_spi_data {
- 	u32					cur_speed;
- 
- 	struct spi_device			*cur_spi;
-+	struct spi_device			*cs_control;
- 	unsigned				cur_pos;
- 	unsigned				cur_len;
- 	unsigned				words_per_32bit;
-@@ -676,15 +677,12 @@ static void tegra_spi_deinit_dma_param(struct tegra_spi_data *tspi,
- 	dma_release_channel(dma_chan);
- }
- 
--static int tegra_spi_start_transfer_one(struct spi_device *spi,
--		struct spi_transfer *t, bool is_first_of_msg,
--		bool is_single_xfer)
-+static unsigned long tegra_spi_setup_transfer_one(struct spi_device *spi,
-+		struct spi_transfer *t, bool is_first_of_msg)
- {
- 	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
- 	u32 speed = t->speed_hz;
- 	u8 bits_per_word = t->bits_per_word;
--	unsigned total_fifo_words;
--	int ret;
- 	unsigned long command1;
- 	int req_mode;
- 
-@@ -698,7 +696,6 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
- 	tspi->cur_rx_pos = 0;
- 	tspi->cur_tx_pos = 0;
- 	tspi->curr_xfer = t;
--	total_fifo_words = tegra_spi_calculate_curr_xfer_param(spi, tspi, t);
- 
- 	if (is_first_of_msg) {
- 		tegra_spi_clear_status(tspi);
-@@ -717,7 +714,12 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
- 		else if (req_mode == SPI_MODE_3)
- 			command1 |= SPI_CONTROL_MODE_3;
- 
--		tegra_spi_writel(tspi, command1, SPI_COMMAND1);
-+		if (tspi->cs_control) {
-+			if (tspi->cs_control != spi)
-+				tegra_spi_writel(tspi, command1, SPI_COMMAND1);
-+			tspi->cs_control = NULL;
-+		} else
-+			tegra_spi_writel(tspi, command1, SPI_COMMAND1);
- 
- 		command1 |= SPI_CS_SW_HW;
- 		if (spi->mode & SPI_CS_HIGH)
-@@ -732,6 +734,18 @@ static int tegra_spi_start_transfer_one(struct spi_device *spi,
- 		command1 |= SPI_BIT_LENGTH(bits_per_word - 1);
- 	}
- 
-+	return command1;
-+}
-+
-+static int tegra_spi_start_transfer_one(struct spi_device *spi,
-+		struct spi_transfer *t, unsigned long command1)
-+{
-+	struct tegra_spi_data *tspi = spi_master_get_devdata(spi->master);
-+	unsigned total_fifo_words;
-+	int ret;
-+
-+	total_fifo_words = tegra_spi_calculate_curr_xfer_param(spi, tspi, t);
-+
- 	if (tspi->is_packed)
- 		command1 |= SPI_PACKED;
- 
-@@ -803,29 +817,50 @@ static int tegra_spi_setup(struct spi_device *spi)
- 	return 0;
- }
- 
-+static void tegra_spi_transfer_delay(int delay)
-+{
-+	if (!delay)
-+		return;
-+
-+	if (delay >= 1000)
-+		mdelay(delay / 1000);
-+
-+	udelay(delay % 1000);
-+}
-+
- static int tegra_spi_transfer_one_message(struct spi_master *master,
- 			struct spi_message *msg)
- {
- 	bool is_first_msg = true;
--	int single_xfer;
- 	struct tegra_spi_data *tspi = spi_master_get_devdata(master);
- 	struct spi_transfer *xfer;
- 	struct spi_device *spi = msg->spi;
- 	int ret;
-+	bool skip = false;
- 
- 	msg->status = 0;
- 	msg->actual_length = 0;
- 
--	single_xfer = list_is_singular(&msg->transfers);
- 	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-+		unsigned long cmd1;
-+
- 		INIT_COMPLETION(tspi->xfer_completion);
--		ret = tegra_spi_start_transfer_one(spi, xfer,
--					is_first_msg, single_xfer);
-+
-+		cmd1 = tegra_spi_setup_transfer_one(spi, xfer, is_first_msg);
-+
-+		if (!xfer->len) {
-+			ret = 0;
-+			skip = true;
-+			goto complete_xfer;
-+		}
-+
-+		ret = tegra_spi_start_transfer_one(spi, xfer, cmd1);
- 		if (ret < 0) {
- 			dev_err(tspi->dev,
- 				"spi can not start transfer, err %d\n", ret);
--			goto exit;
-+			goto complete_xfer;
- 		}
-+
- 		is_first_msg = false;
- 		ret = wait_for_completion_timeout(&tspi->xfer_completion,
- 						SPI_DMA_TIMEOUT);
-@@ -833,24 +868,40 @@ static int tegra_spi_transfer_one_message(struct spi_master *master,
- 			dev_err(tspi->dev,
- 				"spi trasfer timeout, err %d\n", ret);
- 			ret = -EIO;
--			goto exit;
-+			goto complete_xfer;
- 		}
- 
- 		if (tspi->tx_status ||  tspi->rx_status) {
- 			dev_err(tspi->dev, "Error in Transfer\n");
- 			ret = -EIO;
--			goto exit;
-+			goto complete_xfer;
- 		}
- 		msg->actual_length += xfer->len;
--		if (xfer->cs_change && xfer->delay_usecs) {
-+
-+complete_xfer:
-+		if (ret < 0 || skip) {
- 			tegra_spi_writel(tspi, tspi->def_command1_reg,
- 					SPI_COMMAND1);
--			udelay(xfer->delay_usecs);
-+			tegra_spi_transfer_delay(xfer->delay_usecs);
-+			goto exit;
-+		} else if (msg->transfers.prev == &xfer->transfer_list) {
-+			/* This is the last transfer in message */
-+			if (xfer->cs_change)
-+				tspi->cs_control = spi;
-+			else {
-+				tegra_spi_writel(tspi, tspi->def_command1_reg,
-+						SPI_COMMAND1);
-+				tegra_spi_transfer_delay(xfer->delay_usecs);
-+			}
-+		} else if (xfer->cs_change) {
-+			tegra_spi_writel(tspi, tspi->def_command1_reg,
-+					SPI_COMMAND1);
-+			tegra_spi_transfer_delay(xfer->delay_usecs);
- 		}
-+
- 	}
- 	ret = 0;
- exit:
--	tegra_spi_writel(tspi, tspi->def_command1_reg, SPI_COMMAND1);
- 	msg->status = ret;
- 	spi_finalize_current_message(master);
- 	return ret;
--- 
-1.7.9.5
+--=20
+Rafa=C5=82
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
