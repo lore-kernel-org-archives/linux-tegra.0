@@ -1,43 +1,69 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/9] irqdomain: Introduce __irq_create_mapping()
-Date: Thu, 26 Sep 2013 12:57:25 +0200
-Message-ID: <CACRpkdYzcb1F1-YK5ivxGpskZyVxN3qfUGn8sqq9RnfOU-EzEQ@mail.gmail.com>
-References: <1379320326-13241-1-git-send-email-treding@nvidia.com>
-	<1379320326-13241-3-git-send-email-treding@nvidia.com>
-	<CACRpkdYo8knzZ+Z-tc7fyEGwX5bt4RvMU3TR3k3UrOj0KRJocw@mail.gmail.com>
-	<20130923202935.GA5216@ulmo>
-	<CACRpkdZMM9RUkRCWG0mYbF9PL-fOdDncpY05xG3F5BF55hn5ug@mail.gmail.com>
-	<20130924182820.GA9911@mithrandir>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH] clk: tegra: PLLE spread spectrum control
+Date: Thu, 26 Sep 2013 18:34:05 +0300
+Message-ID: <1380209654-25458-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130924182820.GA9911@mithrandir>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 24, 2013 at 8:28 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Add spread spectrum control for PLLE in Tegra114.
 
-> Given that linux-next might not be with us for much longer before the
-> 3.12 release, I'm thinking of deferring the series until then. Or at
-> least trying to get it merged. Otherwise we'll probably have to deal
-> with a lot of fall out during the merge window.
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/clk/tegra/clk-pll.c |   30 +++++++++++++++++++++++++++++-
+ 1 files changed, 29 insertions(+), 1 deletions(-)
 
-Hm, how unfortunate. Typically this is the kind of topic branch
-that should go in separately to linux-next.
-
-> In any case, it'd be nice to get some feedback on the general idea of
-> the patch series from other people involved. I'd hate to do all the
-> conversions just to have it NAKed at the last minute.
-
-With the direction we've discussed here atleast I won't be
-doing any NACKing if it's of any help...
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 87f0533..f0577e3 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -77,7 +77,23 @@
+ #define PLLE_MISC_SETUP_VALUE (7 << PLLE_MISC_SETUP_BASE_SHIFT)
+ 
+ #define PLLE_SS_CTRL 0x68
+-#define PLLE_SS_DISABLE (7 << 10)
++#define PLLE_SS_CNTL_BYPASS_SS BIT(10)
++#define PLLE_SS_CNTL_INTERP_RESET BIT(11)
++#define PLLE_SS_CNTL_SSC_BYP BIT(12)
++#define PLLE_SS_CNTL_CENTER BIT(14)
++#define PLLE_SS_CNTL_INVERT BIT(15)
++#define PLLE_SS_DISABLE (PLLE_SS_CNTL_BYPASS_SS | PLLE_SS_CNTL_INTERP_RESET |\
++				PLLE_SS_CNTL_SSC_BYP)
++#define PLLE_SS_MAX_MASK 0x1ff
++#define PLLE_SS_MAX_VAL 0x25
++#define PLLE_SS_INC_MASK (0xff << 16)
++#define PLLE_SS_INC_VAL (0x1 << 16)
++#define PLLE_SS_INCINTRV_MASK (0x3f << 24)
++#define PLLE_SS_INCINTRV_VAL (0x20 << 24)
++#define PLLE_SS_COEFFICIENTS_MASK \
++	(PLLE_SS_MAX_MASK | PLLE_SS_INC_MASK | PLLE_SS_INCINTRV_MASK)
++#define PLLE_SS_COEFFICIENTS_VAL \
++	(PLLE_SS_MAX_VAL | PLLE_SS_INC_VAL | PLLE_SS_INCINTRV_VAL)
+ 
+ #define PLLE_AUX_PLLP_SEL	BIT(2)
+ #define PLLE_AUX_ENABLE_SWCTL	BIT(4)
+@@ -1286,6 +1302,18 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+ 	if (ret < 0)
+ 		goto out;
+ 
++	val = pll_readl(PLLE_SS_CTRL, pll);
++	val &= ~(PLLE_SS_CNTL_CENTER | PLLE_SS_CNTL_INVERT);
++	val &= ~PLLE_SS_COEFFICIENTS_MASK;
++	val |= PLLE_SS_COEFFICIENTS_VAL;
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	val &= ~(PLLE_SS_CNTL_SSC_BYP | PLLE_SS_CNTL_BYPASS_SS);
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	udelay(1);
++	val &= ~PLLE_SS_CNTL_INTERP_RESET;
++	pll_writel(val, PLLE_SS_CTRL, pll);
++	udelay(1);
++
+ 	/* TODO: enable hw control of xusb brick pll */
+ 
+ out:
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
