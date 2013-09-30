@@ -1,42 +1,53 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 5/5] usb: phy: tegra-usb: Remove redundant of_match_ptr
-Date: Mon, 30 Sep 2013 09:44:47 +0530
-Message-ID: <1380514487-12898-5-git-send-email-sachin.kamat@linaro.org>
-References: <1380514487-12898-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380514487-12898-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH 19/51] DMA-API: media: dt3155v4l: replace dma_set_mask()+dma_set_coherent_mask()
+ with new helper
+Date: Mon, 30 Sep 2013 13:57:47 +0200
+Message-ID: <5249673B.5020705@xs4all.nl>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk> <E1VMm13-0007hO-9l@rmk-PC.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <E1VMm13-0007hO-9l@rmk-PC.arm.linux.org.uk>
+Sender: netdev-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The data structure of_match_ptr() protects is always compiled in.
-Hence of_match_ptr() is not needed.
+On 09/19/2013 11:44 PM, Russell King wrote:
+> Replace the following sequence:
+> 
+> 	dma_set_mask(dev, mask);
+> 	dma_set_coherent_mask(dev, mask);
+> 
+> with a call to the new helper dma_set_mask_and_coherent().
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
- drivers/usb/phy/phy-tegra-usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index e9cb1cb..82232ac 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -1090,7 +1090,7 @@ static struct platform_driver tegra_usb_phy_driver = {
- 	.driver		= {
- 		.name	= "tegra-phy",
- 		.owner	= THIS_MODULE,
--		.of_match_table = of_match_ptr(tegra_usb_phy_id_table),
-+		.of_match_table = tegra_usb_phy_id_table,
- 	},
- };
- module_platform_driver(tegra_usb_phy_driver);
--- 
-1.7.9.5
+Regards,
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Hans
+
+> ---
+>  drivers/staging/media/dt3155v4l/dt3155v4l.c |    5 +----
+>  1 files changed, 1 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> index 90d6ac4..081407b 100644
+> --- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> +++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> @@ -901,10 +901,7 @@ dt3155_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>  	int err;
+>  	struct dt3155_priv *pd;
+>  
+> -	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+> -	if (err)
+> -		return -ENODEV;
+> -	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+>  	if (err)
+>  		return -ENODEV;
+>  	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> 
