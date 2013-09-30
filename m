@@ -1,19 +1,42 @@
-From: "kisu2000x" <ignatova-oiJLCEd1qoakKIMnga5tIw@public.gmane.org>
-Subject: =?koi8-r?B?99kg09XNxcXUxSDOxdfJxMnNzyDEzNEg08/CxdPFxM7J?=
-	=?koi8-r?B?y8Egy8zPzsnU2CDFx88g1yDO1dbOz8UgzsHQ0sHXzMXO?=
-	=?koi8-r?B?ycU=?=
-Date: Mon, 30 Sep 2013 04:01:55 +0200
-Message-ID: <FF59DBD793CB49169BD320271CECB38D@oiuqmt>
-Reply-To: "kisu2000x" <fedorkyzmich-4pRkgeDRav5BDgjK7y7TUQ@public.gmane.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: andreevuv-KQL7Z1PEZR0ox3rIn2DAYQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, semenov-Hk3lrmVzaNfxHp8jWcj4NYdd74u8MsAO@public.gmane.org, tema3602-FwUnz9BCdg8@public.gmane.org, tomyboy342000-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 5/5] usb: phy: tegra-usb: Remove redundant of_match_ptr
+Date: Mon, 30 Sep 2013 09:44:47 +0530
+Message-ID: <1380514487-12898-5-git-send-email-sachin.kamat@linaro.org>
+References: <1380514487-12898-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380514487-12898-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-=EE=C9=CB=D4=CF =CE=C5 =D3=CD=CF=D6=C5=D4 =D0=D2=CF=D4=C9=D7=CF=C4=C5=CA=
-=D3=D4=D7=CF=D7=C1=D4=D8 =D7=CC=C1=D3=D4=C9 =D7=C1=DB=C9=C8 =D3=CB=D2=D9=
-=D4=D9=C8 =D0=D2=C9=CB=C1=DA=CF=D7 http://liveinternet.ru/click?aka.gr/=
-ieqmq
+The data structure of_match_ptr() protects is always compiled in.
+Hence of_match_ptr() is not needed.
+
+Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ drivers/usb/phy/phy-tegra-usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index e9cb1cb..82232ac 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1090,7 +1090,7 @@ static struct platform_driver tegra_usb_phy_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-phy",
+ 		.owner	= THIS_MODULE,
+-		.of_match_table = of_match_ptr(tegra_usb_phy_id_table),
++		.of_match_table = tegra_usb_phy_id_table,
+ 	},
+ };
+ module_platform_driver(tegra_usb_phy_driver);
+-- 
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
