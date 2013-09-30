@@ -1,53 +1,96 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 19/51] DMA-API: media: dt3155v4l: replace dma_set_mask()+dma_set_coherent_mask()
- with new helper
-Date: Mon, 30 Sep 2013 13:57:47 +0200
-Message-ID: <5249673B.5020705@xs4all.nl>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk> <E1VMm13-0007hO-9l@rmk-PC.arm.linux.org.uk>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] tps65090-charger: Use "IS_ENABLED(CONFIG_OF)" for DT
+ code.
+Date: Mon, 30 Sep 2013 12:03:40 -0400
+Message-ID: <5249A0DC.9030206@nvidia.com>
+References: <1380342744-4227-1-git-send-email-badarkhe.manish@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <E1VMm13-0007hO-9l@rmk-PC.arm.linux.org.uk>
-Sender: netdev-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org, Mauro Carvalho Chehab <m.chehab@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380342744-4227-1-git-send-email-badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org" <anton-9xeibp6oKSgdnm+yROfE0A@public.gmane.org>, "dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/19/2013 11:44 PM, Russell King wrote:
-> Replace the following sequence:
+On 9/28/2013 12:32 AM, Manish Badarkhe wrote:
+> Instead of "#if defined(CONFIG_OF)" use "IS_ENABLED(CONFIG_OF)" option
+> for DT code to avoid if-deffery in code.
+> Also, arranged header files in alphabetically.
 > 
-> 	dma_set_mask(dev, mask);
-> 	dma_set_coherent_mask(dev, mask);
-> 
-> with a call to the new helper dma_set_mask_and_coherent().
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-
-Regards,
-
-	Hans
-
+> Signed-off-by: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/staging/media/dt3155v4l/dt3155v4l.c |    5 +----
->  1 files changed, 1 insertions(+), 4 deletions(-)
+> :100644 100644 bdd7b9b... 8b9c406... M	drivers/power/tps65090-charger.c
+>  drivers/power/tps65090-charger.c |   19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
-> index 90d6ac4..081407b 100644
-> --- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
-> +++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
-> @@ -901,10 +901,7 @@ dt3155_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  	int err;
->  	struct dt3155_priv *pd;
+> diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
+> index bdd7b9b..8b9c406 100644
+> --- a/drivers/power/tps65090-charger.c
+> +++ b/drivers/power/tps65090-charger.c
+> @@ -15,15 +15,17 @@
+>   * You should have received a copy of the GNU General Public License
+>   * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/slab.h>
+> -#include <linux/delay.h>
+> +#include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/power_supply.h>
+> +#include <linux/slab.h>
+> +
+>  #include <linux/mfd/tps65090.h>
 >  
-> -	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
-> -	if (err)
-> -		return -ENODEV;
-> -	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
->  	if (err)
->  		return -ENODEV;
->  	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+>  #define TPS65090_REG_INTR_STS	0x00
+> @@ -185,10 +187,6 @@ static irqreturn_t tps65090_charger_isr(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -#if defined(CONFIG_OF)
+> -
+> -#include <linux/of_device.h>
+> -
+>  static struct tps65090_platform_data *
+>  		tps65090_parse_dt_charger_data(struct platform_device *pdev)
+>  {
+> @@ -210,13 +208,6 @@ static struct tps65090_platform_data *
+>  	return pdata;
+>  
+>  }
+> -#else
+> -static struct tps65090_platform_data *
+> -		tps65090_parse_dt_charger_data(struct platform_device *pdev)
+> -{
+> -	return NULL;
+> -}
+> -#endif
+>  
+>  static int tps65090_charger_probe(struct platform_device *pdev)
+>  {
+> @@ -228,7 +219,7 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+>  
+>  	pdata = dev_get_platdata(pdev->dev.parent);
+>  
+> -	if (!pdata && pdev->dev.of_node)
+> +	if (IS_ENABLED(CONFIG_OF) && !pdata && pdev->dev.of_node)
+>  		pdata = tps65090_parse_dt_charger_data(pdev);
+>  
+>  	if (!pdata) {
 > 
+
+LGTM
+Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+-- 
+nvpublic
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
