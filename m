@@ -1,48 +1,43 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH] regulator: tps65090: remove usage of IS_ERR_OR_NULL
-Date: Tue, 1 Oct 2013 22:02:37 +0530
-Message-ID: <CAKDJKT7m0d=GqFF_QTOQitBRac=UZYEaZi5L1xEggM-cp9c85w@mail.gmail.com>
-References: <1380600664-20649-1-git-send-email-badarkhe.manish@gmail.com>
-	<20131001092258.GJ19304@sirena.org.uk>
-	<CAKDJKT6kBi_axtn+qDBkwueRGn_zzOAdSstRF=x1OqX-TrO2XQ@mail.gmail.com>
-	<524AEF0E.6090207@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 00/12] Introduce common infra for tegra clocks
+Date: Tue, 01 Oct 2013 11:39:09 -0600
+Message-ID: <524B08BD.2020902@wwwdotorg.org>
+References: <1379946381-20125-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <524AEF0E.6090207@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Brown <broonie@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, rmk+kernel@arm.linux.org.uk
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379946381-20125-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephan,
+On 09/23/2013 08:24 AM, Peter De Schrijver wrote:
+> This patchset introduces common infrastructure for clocks which exist in
+> several Tegra SoCs. We also move Tegra114 to this new infrastructure.
+> Tegra20 and Tegra30 will be moved later in separate patchsets.
+> 
+> Changes since v1:
+> + move common clks allocation to patch 2
+> + adapt also Tegra20 and Tegra30 to the changes in patch 2
+> 
+> Boottested on dalmore, beaverboard and seaboard.
 
-Thank you for your reply.
+What commit is this series based on? I applied the two pre-requisites:
 
-On Tue, Oct 1, 2013 at 9:19 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 10/01/2013 08:59 AM, Manish Badarkhe wrote:
->> Hi Mark,
->>
->> Thank you for your reply.
->>
->> On Tue, Oct 1, 2013 at 2:52 PM, Mark Brown <broonie@kernel.org> wrote:
->>> On Tue, Oct 01, 2013 at 09:41:04AM +0530, Manish Badarkhe wrote:
->>>> This patch changes the driver to avoid the usage of IS_ERR_OR_NULL()
->>>> macro.
->>>
->>> Why?
->>
->> Code use "IS_ERR_OR_NULL()" properly as per current implementation. But
->> as per patches [1], [2] below, the use of "IS_ERR_OR_NULL()" has been
->> deprecated.
->> Hence done this change.
->
-> The intent was to deprecate to *concept* of checking a return value for
-> both NULL and an error. Simply removing usage of the macro and replacing
-> it with the exact same code that was part of the macro doesn't fulfil
-> the intent at all.
+ARM: tegra114: add missing clocks to binding.eml
+clk: tegra: replace enum tegra114_clk by binding header.eml
 
-Ok, Please drop this patch.
+... but still got a bunch of conflicts when applying this. I guess at
+least commit 819c1de "clk: add CLK_SET_RATE_NO_REPARENT flag" isn't in
+the history of this series. Consequently, I gave up and didn't test this.
 
-Regards
-Manish Badarkhe
+Also, I had given a lot of feedback on v1. Admittedly I should have
+reviewed v2 since it appeared just before I reviewed v1, but I expect
+most of the feedback still applies given the limited list of changes
+listed above. Certainly, this series still removes the "dsib" clock yet
+I expect it shouldn't (patch 1, in the change to
+tegra114_periph_clk_init()), and that's the very first piece of feedback
+I gave on v1, and also causes the first "git am" conflict with
+CLK_SET_RATE_NO_REPARENT.
