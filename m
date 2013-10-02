@@ -1,43 +1,62 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] clocksource: put nodes passed to CLOCKSOURCE_OF_DECLARE
- callbacks centrally
-Date: Wed, 02 Oct 2013 12:21:33 +0200
-Message-ID: <524BF3AD.5000905@linaro.org>
-References: <1380618053-11159-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1380618053-11159-1-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: kernel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Tony Prisk <linux@prisktech.co.nz>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, David Brown <davidb@codeaurora.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
+Date: Wed,  2 Oct 2013 23:12:40 +0200
+Message-ID: <1380748361-32459-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/01/2013 11:00 AM, Uwe Kleine-K=C3=B6nig wrote:
-> Instead of letting each driver call of_node_put do it centrally in th=
-e
-> loop that also calls the CLOCKSOURCE_OF_DECLARE callbacks. This is le=
-ss
-> prone to error and also moves getting and putting the references into=
- the
-> same function.
->
-> Consequently all respective of_node_put calls in drivers are removed.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
+These clocks were named gr2d and gr3d on Tegra20 and Tegra30, so use the
+same names on Tegra114 for consistency.
 
-Applied in my tree for 3.13.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra114.c         | 6 +++---
+ include/dt-bindings/clock/tegra114-car.h | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Thanks
-   -- Daniel
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 1c8701d..ef8e892 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -867,7 +867,7 @@ static unsigned long tegra114_input_freq[] = {
+ enum tegra114_clk {
+ 	rtc = 4, timer = 5, uarta = 6, sdmmc2 = 9, i2s1 = 11, i2c1 = 12,
+ 	ndflash = 13, sdmmc1 = 14, sdmmc4 = 15, pwm = 17, i2s2 = 18, epp = 19,
+-	gr_2d = 21, usbd = 22, isp = 23, gr_3d = 24, disp2 = 26, disp1 = 27,
++	gr2d = 21, usbd = 22, isp = 23, gr3d = 24, disp2 = 26, disp1 = 27,
+ 	host1x = 28, vcp = 29, i2s0 = 30, apbdma = 34, kbc = 36, kfuse = 40,
+ 	sbc1 = 41, nor = 42, sbc2 = 44, sbc3 = 46, i2c5 = 47, dsia = 48,
+ 	mipi = 50, hdmi = 51, csi = 52, i2c2 = 54, uartc = 55, mipi_cal = 56,
+@@ -1884,8 +1884,8 @@ static struct tegra_periph_init_data tegra_periph_clk_list[] = {
+ 	TEGRA_INIT_DATA_UART("uartb", NULL, "tegra_uart.1", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTB, 7, &periph_l_regs, uartb),
+ 	TEGRA_INIT_DATA_UART("uartc", NULL, "tegra_uart.2", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTC, 55, &periph_h_regs, uartc),
+ 	TEGRA_INIT_DATA_UART("uartd", NULL, "tegra_uart.3", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTD, 65, &periph_u_regs, uartd),
+-	TEGRA_INIT_DATA_INT("3d", NULL, "3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, &periph_l_regs, 0, gr_3d),
+-	TEGRA_INIT_DATA_INT("2d", NULL, "2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, &periph_l_regs, 0, gr_2d),
++	TEGRA_INIT_DATA_INT("3d", NULL, "3d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_3D, 24, &periph_l_regs, 0, gr3d),
++	TEGRA_INIT_DATA_INT("2d", NULL, "2d", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_2D, 21, &periph_l_regs, 0, gr2d),
+ 	TEGRA_INIT_DATA_MUX("vi_sensor", "vi_sensor", "tegra_camera", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI_SENSOR, 20, &periph_l_regs, TEGRA_PERIPH_NO_RESET, vi_sensor),
+ 	TEGRA_INIT_DATA_INT8("vi", "vi", "tegra_camera", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI, 20, &periph_l_regs, 0, vi),
+ 	TEGRA_INIT_DATA_INT8("epp", NULL, "epp", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_EPP, 19, &periph_l_regs, 0, epp),
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index 614aec4..62a39aa 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -37,10 +37,10 @@
+ #define TEGRA114_CLK_I2S2 18
+ #define TEGRA114_CLK_EPP 19
+ /* 20 (register bit affects vi and vi_sensor) */
+-#define TEGRA114_CLK_GR_2D 21
++#define TEGRA114_CLK_GR2D 21
+ #define TEGRA114_CLK_USBD 22
+ #define TEGRA114_CLK_ISP 23
+-#define TEGRA114_CLK_GR_3D 24
++#define TEGRA114_CLK_GR3D 24
+ /* 25 */
+ #define TEGRA114_CLK_DISP2 26
+ #define TEGRA114_CLK_DISP1 27
+-- 
+1.8.4
