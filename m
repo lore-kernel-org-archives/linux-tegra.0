@@ -1,40 +1,60 @@
-From: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH] clocksource: put nodes passed to CLOCKSOURCE_OF_DECLARE
- callbacks centrally
-Date: Tue, 1 Oct 2013 13:01:21 -0700
-Message-ID: <20131001200121.GA18640@codeaurora.org>
-References: <1380618053-11159-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv3 2/4] drm/tegra: Add runtime pm support for gr2d
+Date: Wed, 2 Oct 2013 08:40:09 +0300
+Message-ID: <524BB1B9.1040806@nvidia.com>
+References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com> <1380024325-18280-3-git-send-email-amerilainen@nvidia.com> <524B10F0.7000301@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1380618053-11159-1-git-send-email-u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+In-Reply-To: <524B10F0.7000301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tony Prisk <linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bryan Huntsman <bryanh-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Daniel Walker <dwalker-zu3NM2574RrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 01, 2013 at 11:00:53AM +0200, Uwe Kleine-K=F6nig wrote:
->Instead of letting each driver call of_node_put do it centrally in the
->loop that also calls the CLOCKSOURCE_OF_DECLARE callbacks. This is les=
-s
->prone to error and also moves getting and putting the references into =
-the
->same function.
+On 10/01/2013 09:14 PM, Stephen Warren wrote:
+> On 09/24/2013 06:05 AM, Arto Merilainen wrote:
+>> diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
 >
->Consequently all respective of_node_put calls in drivers are removed.
+>> @@ -327,11 +336,48 @@ static int __exit gr2d_remove(struct platform_device *pdev)
+>>   		host1x_syncpt_free(gr2d->client.syncpts[i]);
+>>
+>>   	host1x_channel_free(gr2d->channel);
+>> +
+>> +	if (pm_runtime_enabled(&pdev->dev))
+>> +		pm_runtime_disable(&pdev->dev);
+>> +	else
+>> +		gr2d_runtime_suspend(&pdev->dev);
 >
->Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
->---
-> arch/arm/mach-msm/timer.c             | 1 -
+> This code is slightly different to the code in e.g.
+> sound/soc/tegra/tegra20_i2s.c:remove(), whereas the code in probe() is
+> identical. I'm not sure whether there's some advantage in this version?
+> If so, perhaps the sound drivers should be updated to be consistent. If
+> not, perhaps this driver should do the same thing as the I2S driver, so
+> we keep the drivers consistent, and provide the same "example" code
+> everywhere.
 
-Acked-by: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Hmm. I cannot immediately see any advantage in this version... I will 
+update the patch.
 
+>
+>> +static int gr2d_runtime_suspend(struct device *dev)
+>> +{
+>> +	struct gr2d *gr2d;
+>> +
+>> +	gr2d = dev_get_drvdata(dev);
+>> +	if (!gr2d)
+>> +		return -EINVAL;
+>
+> Presumably, gr2d will never be NULL here, unless there's some chronic
+> bug. Can't we re-write those last 5 lines as simply:
+>
+> 	struct gr2d *grd2 = dev_get_drvdata(dev);
+>
+> If that's not valid, we should probably update the audio drivers (and
+> perhaps others) too.
 
---=20
-sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora For=
-um,
-hosted by The Linux Foundation
+I think you are correct. I cannot see any reason why that check is required.
+
+- Arto
