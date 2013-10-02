@@ -1,37 +1,43 @@
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv3 4/4] gpu: host1x: Add runtime pm support for host1x
-Date: Wed, 2 Oct 2013 08:40:53 +0300
-Message-ID: <524BB1E5.9080601@nvidia.com>
-References: <1380024325-18280-1-git-send-email-amerilainen@nvidia.com> <1380024325-18280-5-git-send-email-amerilainen@nvidia.com> <524B11AA.30400@wwwdotorg.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] clocksource: put nodes passed to CLOCKSOURCE_OF_DECLARE
+ callbacks centrally
+Date: Wed, 02 Oct 2013 12:21:33 +0200
+Message-ID: <524BF3AD.5000905@linaro.org>
+References: <1380618053-11159-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <524B11AA.30400-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <1380618053-11159-1-git-send-email-u.kleine-koenig@pengutronix.de>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
+Cc: kernel@pengutronix.de, Thomas Gleixner <tglx@linutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Tony Prisk <linux@prisktech.co.nz>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, David Brown <davidb@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/01/2013 09:17 PM, Stephen Warren wrote:
-> On 09/24/2013 06:05 AM, Arto Merilainen wrote:
->> From: Mayuresh Kulkarni <mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> This patch adds runtime pm support for host1x hardware unit. This
->> allows host1x clock to be turned off when it is idle. If pm runtime
->> is not configured, we enable host1x clock in device probe and disable
->> it in remove.
+On 10/01/2013 11:00 AM, Uwe Kleine-K=C3=B6nig wrote:
+> Instead of letting each driver call of_node_put do it centrally in th=
+e
+> loop that also calls the CLOCKSOURCE_OF_DECLARE callbacks. This is le=
+ss
+> prone to error and also moves getting and putting the references into=
+ the
+> same function.
 >
->> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+> Consequently all respective of_node_put calls in drivers are removed.
 >
->> +static int host1x_runtime_suspend(struct device *dev);
->> +static int host1x_runtime_resume(struct device *dev);
->
-> You could avoid having these prototypes by simply putting the function
-> bodies earlier on in the file, somewhere before they're used. I don't
-> care much either way, but I've certainly seen some people care about
-> this and ask for them to be moved.
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Will fix.
+Applied in my tree for 3.13.
 
-- Arto
+Thanks
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
