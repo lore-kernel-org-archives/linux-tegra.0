@@ -1,42 +1,40 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: PLLE spread spectrum control
-Date: Thu, 3 Oct 2013 18:35:19 +0300
-Message-ID: <20131003153519.GT3973@tbergstrom-lnx.Nvidia.com>
-References: <1380209654-25458-1-git-send-email-pdeschrijver@nvidia.com>
- <524B28EA.40702@wwwdotorg.org>
- <20131003105228.GK3973@tbergstrom-lnx.Nvidia.com>
- <524D8C0B.90707@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <524D8C0B.90707@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Mike Turquette <mturquette@linaro.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher scripts PATCH] Update URL to obtain the repo tool
+Date: Thu,  3 Oct 2013 11:01:17 -0600
+Message-ID: <1380819677-31166-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 03, 2013 at 05:23:55PM +0200, Stephen Warren wrote:
-> On 10/03/2013 04:52 AM, Peter De Schrijver wrote:
-> > On Tue, Oct 01, 2013 at 09:56:26PM +0200, Stephen Warren wrote:
-> >> On 09/26/2013 09:34 AM, Peter De Schrijver wrote:
-> >>> Add spread spectrum control for PLLE in Tegra114.
-> >>
-> >> It would be useful to have some description of the end-user-visible
-> >> benefit of this change; why is it useful?
-> > 
-> > spread spectrum clocking is a technique to reduce EMI caused by the clock
-> > signal by modulating the frequency with a low frequency signal. This should
-> > reduce interference with eg. Wifi or cellular modems on the same board.
-> 
-> Great. The intent of my request was for that information to be included
-> in the patch description.
-> 
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Mike,
+The repo tool's download location has changed. Update the README
+to contain the new location. For reference, see the equivalent chagne
+to Android and associated discussion:
 
-Do you want a version 2 for this?
+https://android-review.googlesource.com/#/c/66864/
+https://groups.google.com/forum/#!topic/repo-discuss/4EsDRDRK5Lk
 
-Cheers,
+Reported-by: kusma on IRC #tegra
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ README-developer.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Peter.
+diff --git a/README-developer.txt b/README-developer.txt
+index 9feff24..9016d2b 100644
+--- a/README-developer.txt
++++ b/README-developer.txt
+@@ -39,7 +39,7 @@ http://code.google.com/p/git-repo/
+ 
+ To obtain repo, do the following in a directory in your $PATH:
+ 
+-curl https://dl-ssl.google.com/dl/googlesource/git-repo/repo > repo
++curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > repo
+ chmod a+x repo
+ 
+ To obtain the source of the tegra-uboot-flasher project, do:
+-- 
+1.8.1.5
