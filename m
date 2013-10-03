@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH] Document manifest change to use groups
-Date: Thu,  3 Oct 2013 14:50:54 -0600
-Message-ID: <1380833455-32147-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [flasher manifests PATCH] Use groups rather than separate manifests
+Date: Thu,  3 Oct 2013 14:50:55 -0600
+Message-ID: <1380833455-32147-2-git-send-email-swarren@wwwdotorg.org>
+References: <1380833455-32147-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380833455-32147-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,47 +12,58 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Rather than the manifest repo containing separate default.xml and
-default-notools.xml, there is now a single default.xml, and one may use
-repo init's -g option to cut down what gets synced. Update the README
-to document this.
+repo allows projects to be placed into groups. Use this feature, rather
+than separate manually-maintained manifests, to allow syncing the flasher
+source excluding the tools repositories.
+
+Also add a group for the U-Boot repo, since it may be useful to exclude
+that if you're building U-Boot elsewhere, and manually copying its build
+results into the flasher directory. This change would have multiplied
+the number of manifests by two if not implemented using repo's group
+feature.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- README-developer.txt | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ default-notools.xml | 11 -----------
+ default.xml         |  8 ++++----
+ 2 files changed, 4 insertions(+), 15 deletions(-)
+ delete mode 100644 default-notools.xml
 
-diff --git a/README-developer.txt b/README-developer.txt
-index 9016d2b..090f900 100644
---- a/README-developer.txt
-+++ b/README-developer.txt
-@@ -46,14 +46,21 @@ To obtain the source of the tegra-uboot-flasher project, do:
+diff --git a/default-notools.xml b/default-notools.xml
+deleted file mode 100644
+index 62b296e..0000000
+--- a/default-notools.xml
++++ /dev/null
+@@ -1,11 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<manifest>
+-  <remote name="denx" fetch="git://git.denx.de/"/>
+-  <remote name="github" fetch="git://github.com/NVIDIA/"/>
+-
+-  <default revision="master"/>
+-
+-  <project path="cbootimage-configs" name="cbootimage-configs.git" remote="github"/>
+-  <project path="scripts" name="tegra-uboot-flasher-scripts.git" remote="github"/>
+-  <project path="u-boot" name="u-boot.git" remote="denx"/>
+-</manifest>
+diff --git a/default.xml b/default.xml
+index c5a504d..f21690d 100644
+--- a/default.xml
++++ b/default.xml
+@@ -6,10 +6,10 @@
  
- mkdir tegra-uboot-flasher
- cd tegra-uboot-flasher
--repo init -u git://github.com/NVIDIA/tegra-uboot-flasher-manifests.git \
--        -m MANIFEST # see explanation below
-+repo init -u git://github.com/NVIDIA/tegra-uboot-flasher-manifests.git
- repo sync
+   <default revision="master"/>
  
--There are two separate repo manifests for this project. Use repo's -m option
--to specify which you want. Valid values are default.xml (all required
--dependencies) and default-notools.xml (excludes the source to potentially
--distro-packaged utilities cbootimage, tegrarcm, dtc).
-+The manifest includes the source to potentially distro-packaged utilities
-+such as cbootimage and tegrarcm, and U-Boot itself. If you already have the
-+pre-requisite tools installed, you may not want to download their source.
-+Similarly, if you already build U-Boot yourself, you may not want another
-+copy of the U-Boot source tree. You can request that repo not download
-+those source trees using the -g option to repo init. For example:
-+
-+# Exclude just the pre-requisite tools:
-+repo init -u ... -g default,-notools
-+
-+# Only include the bare minimum
-+repo init -u ... -g default,-notools,-bootloader
- 
- Pre-requisites
- ==============
+-  <project path="cbootimage" name="cbootimage.git" remote="github"/>
++  <project path="cbootimage" name="cbootimage.git" remote="github" groups="tools"/>
+   <project path="cbootimage-configs" name="cbootimage-configs.git" remote="github"/>
+-  <project path="dtc" name="utils/dtc/dtc.git" remote="korg"/>
++  <project path="dtc" name="utils/dtc/dtc.git" remote="korg" groups="tools"/>
+   <project path="scripts" name="tegra-uboot-flasher-scripts.git" remote="github"/>
+-  <project path="tegrarcm" name="tegrarcm.git" remote="github"/>
+-  <project path="u-boot" name="u-boot.git" remote="denx"/>
++  <project path="tegrarcm" name="tegrarcm.git" remote="github" groups="tools"/>
++  <project path="u-boot" name="u-boot.git" remote="denx" groups="bootloader"/>
+ </manifest>
 -- 
 1.8.1.5
