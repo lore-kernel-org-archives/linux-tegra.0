@@ -1,34 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] clk: tegra114: Initialize gr2d clock
-Date: Wed,  2 Oct 2013 23:12:41 +0200
-Message-ID: <1380748361-32459-2-git-send-email-treding@nvidia.com>
-References: <1380748361-32459-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380748361-32459-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Bibek Basu <bbasu@nvidia.com>
+Subject: [PATCH] HID: i2c-hid: add platform data for quirks
+Date: Thu, 3 Oct 2013 14:18:41 +0530
+Message-ID: <1380790121-1355-1-git-send-email-bbasu@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: benjamin.tissoires@gmail.com
+Cc: linux-tegra@vger.kernel.org, jkosina@suse.cz, kadduri@nvidia.com, linux-input@vger.kernel.org, Bibek Basu <bbasu@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Set up the gr2d clock as a child of PLLC and let it run at 300 MHz by
-default.
+Some HID device does not responds to INPUT/FEATURE
+report query during initialization. As a result HID driver
+throws error even when its not mandatory according to the
+HID specification. Add platform data to provide
+quirk information to the driver so that init query is not
+done on such devices.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Bibek Basu <bbasu@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra114.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/i2c-hid/i2c-hid.c | 1 +
+ include/linux/i2c/i2c-hid.h   | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index ef8e892..698a92d 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -2226,6 +2226,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{host1x, pll_c, 150000000, 0},
- 	{disp1, pll_p, 600000000, 0},
- 	{disp2, pll_p, 600000000, 0},
-+	{gr2d, pll_c, 300000000, 0},
- 	{clk_max, clk_max, 0, 0}, /* This MUST be the last entry. */
+diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+index fd7ce37..a7aec2c 100644
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -1017,6 +1017,7 @@ static int i2c_hid_probe(struct i2c_client *client,
+ 	hid->version = le16_to_cpu(ihid->hdesc.bcdVersion);
+ 	hid->vendor = le16_to_cpu(ihid->hdesc.wVendorID);
+ 	hid->product = le16_to_cpu(ihid->hdesc.wProductID);
++	hid->quirks = platform_data->quirks;
+ 
+ 	snprintf(hid->name, sizeof(hid->name), "%s %04hX:%04hX",
+ 		 client->name, hid->vendor, hid->product);
+diff --git a/include/linux/i2c/i2c-hid.h b/include/linux/i2c/i2c-hid.h
+index 7aa901d..12e682d 100644
+--- a/include/linux/i2c/i2c-hid.h
++++ b/include/linux/i2c/i2c-hid.h
+@@ -17,7 +17,7 @@
+ /**
+  * struct i2chid_platform_data - used by hid over i2c implementation.
+  * @hid_descriptor_address: i2c register where the HID descriptor is stored.
+- *
++ * @quirks: quirks, if any for i2c-hid devices
+  * Note that it is the responsibility of the platform driver (or the acpi 5.0
+  * driver, or the flattened device tree) to setup the irq related to the gpio in
+  * the struct i2c_board_info.
+@@ -31,6 +31,7 @@
+  */
+ struct i2c_hid_platform_data {
+ 	u16 hid_descriptor_address;
++	u32 quirks;
  };
  
+ #endif /* __LINUX_I2C_HID_H */
 -- 
-1.8.4
+1.8.1.5
+
