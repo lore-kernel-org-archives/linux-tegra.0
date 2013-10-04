@@ -1,68 +1,71 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v7 0/5] ARM: support for Trusted Foundations secure monito
-Date: Fri, 4 Oct 2013 09:37:10 -0700
-Message-ID: <1380904635-18113-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v7 4/5] ARM: tegra: set CPU reset handler with firmware op
+Date: Fri, 4 Oct 2013 09:37:14 -0700
+Message-ID: <1380904635-18113-5-git-send-email-acourbot@nvidia.com>
+References: <1380904635-18113-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1380904635-18113-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>
-Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hopefully final version of this patchset. If I'm not mistaken the last thing
-that prevents Stephen from merging it is Russel's Ack. Russel, could you check
-it?
+Use a firmware operation to set the CPU reset handler and only resort to
+doing it ourselves if there is none defined.
 
-Trusted Foundations is an ARM secure monitor that is used by many Tegra-based
-retail devices (like SHIELD). Adding support to it allows these devices to boot
-on a purely upstream kernel.
+This supports the booting of secondary CPUs on devices using a TrustZone
+secure monitor.
 
-Public documentation about Trusted Foundations is scarce, but over the various
-versions of this patch it has been established that it does not follow the ARM
-SMC convention and also has no connection whatsoever with PSCI. As such, it
-requires an implementation of its own and the firmware interface introduced by
-Tomasz provides an adequate framework for it.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
+---
+ arch/arm/mach-tegra/reset.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-Changes since v6:
-- Improved and simplified header conditionals when TF support is compiled in
-  or not as advised by Stephen.
-
-Alexandre Courbot (5):
-  ARM: add basic support for Trusted Foundations
-  ARM: tegra: add support for Trusted Foundations
-  ARM: tegra: split setting of CPU reset handler
-  ARM: tegra: set CPU reset handler with firmware op
-  ARM: tegra: support Trusted Foundations by default
-
- .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
- Documentation/devicetree/bindings/arm/tegra.txt    |  5 ++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- arch/arm/Kconfig                                   |  2 +
- arch/arm/Makefile                                  |  1 +
- arch/arm/configs/tegra_defconfig                   |  1 +
- arch/arm/firmware/Kconfig                          | 28 ++++++++
- arch/arm/firmware/Makefile                         |  1 +
- arch/arm/firmware/trusted_foundations.c            | 77 ++++++++++++++++++++++
- arch/arm/include/asm/trusted_foundations.h         | 64 ++++++++++++++++++
- arch/arm/mach-tegra/Kconfig                        |  1 +
- arch/arm/mach-tegra/common.c                       |  2 +
- arch/arm/mach-tegra/reset.c                        | 40 +++++++----
- 13 files changed, 229 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
- create mode 100644 arch/arm/firmware/Kconfig
- create mode 100644 arch/arm/firmware/Makefile
- create mode 100644 arch/arm/firmware/trusted_foundations.c
- create mode 100644 arch/arm/include/asm/trusted_foundations.h
-
+diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+index e282395..368af0a 100644
+--- a/arch/arm/mach-tegra/reset.c
++++ b/arch/arm/mach-tegra/reset.c
+@@ -21,6 +21,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/firmware.h>
+ 
+ #include "iomap.h"
+ #include "irammap.h"
+@@ -65,6 +66,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+ 	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
+ 						tegra_cpu_reset_handler_offset;
++	int err;
+ 
+ 	BUG_ON(is_enabled);
+ 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+@@ -72,9 +74,18 @@ static void __init tegra_cpu_reset_handler_enable(void)
+ 	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+ 			tegra_cpu_reset_handler_size);
+ 
+-	tegra_cpu_reset_handler_set(reset_address);
+-
+-	is_enabled = true;
++	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
++	switch (err) {
++	case -ENOSYS:
++		tegra_cpu_reset_handler_set(reset_address);
++		/* pass-through */
++	case 0:
++		is_enabled = true;
++		break;
++	default:
++		pr_crit("Cannot set CPU reset handler: %d\n", err);
++		BUG();
++	}
+ }
+ 
+ void __init tegra_cpu_reset_handler_init(void)
 -- 
 1.8.4
