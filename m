@@ -1,31 +1,46 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: replace enum tegra114_clk by binding header
-Date: Fri, 4 Oct 2013 18:52:36 +0300
-Message-ID: <20131004155236.GX3973@tbergstrom-lnx.Nvidia.com>
-References: <1378213915-10222-1-git-send-email-pdeschrijver@nvidia.com>
- <522622F1.70008@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] USB: host: tegra: CONFIG_USB_EHCI_TEGRA requires ULPI
+ and ULPI viewport support
+Date: Fri, 04 Oct 2013 10:04:05 -0600
+Message-ID: <524EE6F5.9020109@wwwdotorg.org>
+References: <alpine.DEB.2.02.1310032300110.32666@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <522622F1.70008-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1310032300110.32666@tamien>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Sep 03, 2013 at 07:57:05PM +0200, Stephen Warren wrote:
-> On 09/03/2013 07:11 AM, Peter De Schrijver wrote:
-> > As the clock IDs are now specified in a header file, we can use those
-> > definitions instead of maintaining an internal enum.
+On 10/04/2013 12:02 AM, Paul Walmsley wrote:
 > 
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Selecting CONFIG_USB_EHCI_TEGRA requires CONFIG_USB_ULPI_VIEWPORT.
+> Otherwise the build can break with:
 > 
-> I assume this will go through Mike's clock tree for 3.13.
+> drivers/usb/phy/phy-tegra-usb.c: In function 'ulpi_open':
+> drivers/usb/phy/phy-tegra-usb.c:689:31: error:
+> 'ulpi_viewport_access_ops' undeclared (first use in this function)
+> drivers/usb/phy/phy-tegra-usb.c:689:31: note: each undeclared identifier
+> is reported only once for each function it appears in
 > 
+> if CONFIG_USB_ULPI_VIEWPORT is not manually selected.
+> 
+> Fix by forcing CONFIG_USB_ULPI_VIEWPORT to be selected when
+> CONFIG_USB_EHCI_TEGRA is selected.  Then, since CONFIG_USB_ULPI_VIEWPORT
+> requires CONFIG_USB_ULPI to be selected, add that too.
+> 
+> N.B.: ULPI is deprecated on this controller for T114, so it might make
+> sense to split the ULPI support code into a separate file, compiled only
+> if a ULPI PHY is selected.
 
-Mike?
+This was fixed at least in 3.13 (perhaps 3.12 too?) by:
 
-> I assume similar patches will follow for Tegra20/30?
+config ARCH_TEGRA
+...
+        select USB_ARCH_HAS_EHCI if USB_SUPPORT
+        select USB_ULPI if USB_PHY
+        select USB_ULPI_VIEWPORT if USB_PHY
 
-Yes.
+I think it'd be better to back-port that patch to stable, for consistency.
