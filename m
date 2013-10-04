@@ -1,46 +1,27 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] USB: host: tegra: CONFIG_USB_EHCI_TEGRA requires ULPI
- and ULPI viewport support
-Date: Fri, 04 Oct 2013 10:04:05 -0600
-Message-ID: <524EE6F5.9020109@wwwdotorg.org>
-References: <alpine.DEB.2.02.1310032300110.32666@tamien>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] spi/tegra20-slink: Remove unused is_single_xfer check
+Date: Fri, 4 Oct 2013 22:13:54 +0530
+Message-ID: <524EF04A.1040809@nvidia.com>
+References: <1380901375-9901-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1310032300110.32666@tamien>
+In-Reply-To: <1380901375-9901-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/04/2013 12:02 AM, Paul Walmsley wrote:
-> 
-> Selecting CONFIG_USB_EHCI_TEGRA requires CONFIG_USB_ULPI_VIEWPORT.
-> Otherwise the build can break with:
-> 
-> drivers/usb/phy/phy-tegra-usb.c: In function 'ulpi_open':
-> drivers/usb/phy/phy-tegra-usb.c:689:31: error:
-> 'ulpi_viewport_access_ops' undeclared (first use in this function)
-> drivers/usb/phy/phy-tegra-usb.c:689:31: note: each undeclared identifier
-> is reported only once for each function it appears in
-> 
-> if CONFIG_USB_ULPI_VIEWPORT is not manually selected.
-> 
-> Fix by forcing CONFIG_USB_ULPI_VIEWPORT to be selected when
-> CONFIG_USB_EHCI_TEGRA is selected.  Then, since CONFIG_USB_ULPI_VIEWPORT
-> requires CONFIG_USB_ULPI to be selected, add that too.
-> 
-> N.B.: ULPI is deprecated on this controller for T114, so it might make
-> sense to split the ULPI support code into a separate file, compiled only
-> if a ULPI PHY is selected.
+On Friday 04 October 2013 09:12 PM, Mark Brown wrote:
+> From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> Currently transfer_one_message() checks to see if the message consists of
+> a single spi_transfer and tells _start_transfer_one() but it just ignores
+> this. Don't bother.
+>
 
-This was fixed at least in 3.13 (perhaps 3.12 too?) by:
+Yes, we dont need this as it was there to support HW bases CS control 
+which is removed.
 
-config ARCH_TEGRA
-...
-        select USB_ARCH_HAS_EHCI if USB_SUPPORT
-        select USB_ULPI if USB_PHY
-        select USB_ULPI_VIEWPORT if USB_PHY
-
-I think it'd be better to back-port that patch to stable, for consistency.
+Acked-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
