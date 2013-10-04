@@ -1,26 +1,101 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher PATCH 1/2] Fix typo in variable name
-Date: Fri, 04 Oct 2013 13:35:10 -0600
-Message-ID: <524F186E.6020807@wwwdotorg.org>
-References: <1380833470-32189-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
+Date: Fri,  4 Oct 2013 14:10:11 -0600
+Message-ID: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380833470-32189-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/03/2013 02:51 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> For some reason (likely cut/paste), all the ArgParser subparsers were
-> stored in a variable named parser_list_configs. That variable name is at
-> most appropriate for one subcommand, and in fact the subcommand it would
-> be relevant for is not implemented by "build" but rather
-> "tegra-uboot-flasher". Replace this variable name with something more
-> appropriate and generic.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied (the series).
+Move all common select clauses from ARCH_TEGRA_*_SOC to ARCH_TEGRA to
+eliminate duplication. The USB-related selects all should have been
+common too, but were missing from Tegra114 previously. Move these to
+ARCH_TEGRA too. The latter fixes a build break when only Tegra114
+support was enabled, but not Tegra20 or Tegra30 support.
+
+This is 20984c44b5a08620778ea14fa5807489170fd5ca in v3.12-rc1.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reported-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[auto-builders for 3.11.x are failing due to this]
+Cc: stable # v3.11
+---
+ arch/arm/mach-tegra/Kconfig | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index add345e..e963db2 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -2,18 +2,24 @@ config ARCH_TEGRA
+ 	bool "NVIDIA Tegra" if ARCH_MULTI_V7
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_REQUIRE_GPIOLIB
++	select ARM_GIC
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select CLKSRC_OF
+ 	select COMMON_CLK
++	select CPU_V7
+ 	select GENERIC_CLOCKEVENTS
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if LOCAL_TIMERS
+ 	select HAVE_CLK
+ 	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
++	select PINCTRL
+ 	select SOC_BUS
+ 	select SPARSE_IRQ
++	select USB_ARCH_HAS_EHCI if USB_SUPPORT
++	select USB_ULPI if USB_PHY
++	select USB_ULPI_VIEWPORT if USB_PHY
+ 	select USE_OF
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
+@@ -27,15 +33,9 @@ config ARCH_TEGRA_2x_SOC
+ 	select ARM_ERRATA_720789
+ 	select ARM_ERRATA_754327 if SMP
+ 	select ARM_ERRATA_764369 if SMP
+-	select ARM_GIC
+-	select CPU_V7
+-	select PINCTRL
+ 	select PINCTRL_TEGRA20
+ 	select PL310_ERRATA_727915 if CACHE_L2X0
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+-	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Support for NVIDIA Tegra AP20 and T20 processors, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -44,14 +44,8 @@ config ARCH_TEGRA_3x_SOC
+ 	bool "Enable support for Tegra30 family"
+ 	select ARM_ERRATA_754322
+ 	select ARM_ERRATA_764369 if SMP
+-	select ARM_GIC
+-	select CPU_V7
+-	select PINCTRL
+ 	select PINCTRL_TEGRA30
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+-	select USB_ARCH_HAS_EHCI if USB_SUPPORT
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Support for NVIDIA Tegra T30 processor family, based on the
+ 	  ARM CortexA9MP CPU and the ARM PL310 L2 cache controller
+@@ -60,10 +54,7 @@ config ARCH_TEGRA_114_SOC
+ 	bool "Enable support for Tegra114 family"
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select ARM_ERRATA_798181
+-	select ARM_GIC
+ 	select ARM_L1_CACHE_SHIFT_6
+-	select CPU_V7
+-	select PINCTRL
+ 	select PINCTRL_TEGRA114
+ 	help
+ 	  Support for NVIDIA Tegra T114 processor family, based on the
+-- 
+1.8.1.5
