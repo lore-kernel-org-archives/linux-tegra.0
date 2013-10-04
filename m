@@ -1,56 +1,46 @@
 From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] USB: host: tegra: CONFIG_USB_EHCI_TEGRA requires ULPI and
- ULPI viewport support
-Date: Thu, 3 Oct 2013 23:02:54 -0700
-Message-ID: <alpine.DEB.2.02.1310032300110.32666@tamien>
+Subject: Tegra baseline test results for v3.12-rc3
+Date: Thu, 3 Oct 2013 23:27:57 -0700
+Message-ID: <524E5FED.4010009@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="US-ASCII"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v3.12-rc3.
+Logs and other details at:
 
-Selecting CONFIG_USB_EHCI_TEGRA requires CONFIG_USB_ULPI_VIEWPORT.
-Otherwise the build can break with:
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.12-rc3/20130929153116/
 
-drivers/usb/phy/phy-tegra-usb.c: In function 'ulpi_open':
-drivers/usb/phy/phy-tegra-usb.c:689:31: error: 'ulpi_viewport_access_ops' undeclared (first use in this function)
-drivers/usb/phy/phy-tegra-usb.c:689:31: note: each undeclared identifier is reported only once for each function it appears in
 
-if CONFIG_USB_ULPI_VIEWPORT is not manually selected.
+Test summary
+------------
 
-Fix by forcing CONFIG_USB_ULPI_VIEWPORT to be selected when
-CONFIG_USB_EHCI_TEGRA is selected.  Then, since CONFIG_USB_ULPI_VIEWPORT
-requires CONFIG_USB_ULPI to be selected, add that too.
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-N.B.: ULPI is deprecated on this controller for T114, so it might make 
-sense to split the ULPI support code into a separate file, compiled only 
-if a ULPI PHY is selected.
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
 
-Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
----
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
 
-Observed while building the stable kernels v3.11.[123] with a T114-only 
-Kconfig.
 
-  drivers/usb/host/Kconfig | 2 ++
-  1 file changed, 2 insertions(+)
+vmlinux object size
+(delta in bytes from test_v3.12-rc2 (4a10c2ac2f368583138b774ca41fac4207911983)):
+    text     data      bss    total  kernel
+    +788        0        0     +788  multi_v7_defconfig
+    +744       +8        0     +752  tegra_defconfig
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 4263d01..81b9d34 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -202,6 +202,8 @@ config USB_EHCI_TEGRA
-         depends on ARCH_TEGRA
-         select USB_EHCI_ROOT_HUB_TT
-         select USB_PHY
-+       select USB_ULPI
-+       select USB_ULPI_VIEWPORT
-         help
-           This driver enables support for the internal USB Host Controllers
-           found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
--- 
-1.8.1.5
+
+Boot-time memory difference
+(delta in bytes from test_v3.12-rc2 (4a10c2ac2f368583138b774ca41fac4207911983))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
