@@ -1,93 +1,56 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher PATCH 2/2] Add command to import U-Boot binaries from an external location
-Date: Thu,  3 Oct 2013 14:51:10 -0600
-Message-ID: <1380833470-32189-2-git-send-email-swarren@wwwdotorg.org>
-References: <1380833470-32189-1-git-send-email-swarren@wwwdotorg.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] USB: host: tegra: CONFIG_USB_EHCI_TEGRA requires ULPI and
+ ULPI viewport support
+Date: Thu, 3 Oct 2013 23:02:54 -0700
+Message-ID: <alpine.DEB.2.02.1310032300110.32666@tamien>
+Mime-Version: 1.0
+Content-Type: text/plain; format=flowed; charset="US-ASCII"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380833470-32189-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This option is useful if the user already builds U-Boot in a directory
-not managed by the tegra-uboot-flasher manifest. This may happen when
-an active U-Boot developer wishes to use the flasher scripts without
-relocating their U-Boot development, or when performing separate
-automated builds of U-Boot and the flasher, with the flasher build
-picking up the result of an abitrary U-Boot build under the control of
-the automated build system.
+Selecting CONFIG_USB_EHCI_TEGRA requires CONFIG_USB_ULPI_VIEWPORT.
+Otherwise the build can break with:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+drivers/usb/phy/phy-tegra-usb.c: In function 'ulpi_open':
+drivers/usb/phy/phy-tegra-usb.c:689:31: error: 'ulpi_viewport_access_ops' undeclared (first use in this function)
+drivers/usb/phy/phy-tegra-usb.c:689:31: note: each undeclared identifier is reported only once for each function it appears in
+
+if CONFIG_USB_ULPI_VIEWPORT is not manually selected.
+
+Fix by forcing CONFIG_USB_ULPI_VIEWPORT to be selected when
+CONFIG_USB_EHCI_TEGRA is selected.  Then, since CONFIG_USB_ULPI_VIEWPORT
+requires CONFIG_USB_ULPI to be selected, add that too.
+
+N.B.: ULPI is deprecated on this controller for T114, so it might make 
+sense to split the ULPI support code into a separate file, compiled only 
+if a ULPI PHY is selected.
+
+Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 ---
- build | 36 ++++++++++++++++++++++++++++--------
- 1 file changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/build b/build
-index 134d6de..6142f31 100755
---- a/build
-+++ b/build
-@@ -127,17 +127,10 @@ def dtb_filename(config):
-     boardname = configs[config]['board']
-     return boards[boardname]['soc'] + '-' + boardname + extra + '.dtb'
- 
--def build_uboot_one_board(boardname):
--    build_board_dir = gen_build_board_dir(boardname)
--    build_uboot_dir = gen_build_uboot_dir(build_board_dir)
--    mkdir(build_uboot_dir)
--
-+def import_uboot_one_board(boardname, build_uboot_dir):
-     out_board_dir = gen_out_board_dir(boardname)
-     mkdir(out_board_dir)
- 
--    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' ' + boardname + '_config')
--    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' -s ' + makejobs)
--
-     src = os.path.join(build_uboot_dir, 'u-boot-nodtb-tegra.bin')
-     dst = os.path.join(out_board_dir, 'u-boot-nodtb-tegra.bin')
-     cp(src, dst)
-@@ -150,6 +143,27 @@ def build_uboot_one_board(boardname):
-     dst = os.path.join(out_board_dir, 'u-boot-dtb-tegra.bin')
-     cp(src, dst)
- 
-+def cmd_import_uboot():
-+    boardname = None
-+    for i in all_enabled_boardnames():
-+        if boardname:
-+            raise Exception('import-uboot only allows one enabled board')
-+        boardname = i
-+    import_uboot_one_board(boardname, args.builddir)
-+
-+def build_uboot_one_board(boardname):
-+    build_board_dir = gen_build_board_dir(boardname)
-+    build_uboot_dir = gen_build_uboot_dir(build_board_dir)
-+    mkdir(build_uboot_dir)
-+
-+    out_board_dir = gen_out_board_dir(boardname)
-+    mkdir(out_board_dir)
-+
-+    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' ' + boardname + '_config')
-+    run(uboot_dir, 'make BUILD_DIR=' + build_uboot_dir + ' -s ' + makejobs)
-+
-+    import_uboot_one_board(boardname, build_uboot_dir)
-+
- def cmd_build_uboots():
-     for boardname in all_enabled_boardnames():
-         build_uboot_one_board(boardname)
-@@ -222,6 +236,12 @@ parser.add_argument('--boards', type=str,
- 
- subparsers = parser.add_subparsers()
- 
-+subparser = subparsers.add_parser('import-uboot',
-+    help='Import U-Boot binaries from an external build tree')
-+subparser.add_argument('builddir', type=str,
-+    help='The external build directory to import from.')
-+subparser.set_defaults(func = cmd_import_uboot)
-+
- subparser = subparsers.add_parser('build-uboots',
-     help='Build U-Boot binaries')
- subparser.set_defaults(func = cmd_build_uboots)
+Observed while building the stable kernels v3.11.[123] with a T114-only 
+Kconfig.
+
+  drivers/usb/host/Kconfig | 2 ++
+  1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 4263d01..81b9d34 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -202,6 +202,8 @@ config USB_EHCI_TEGRA
+         depends on ARCH_TEGRA
+         select USB_EHCI_ROOT_HUB_TT
+         select USB_PHY
++       select USB_ULPI
++       select USB_ULPI_VIEWPORT
+         help
+           This driver enables support for the internal USB Host Controllers
+           found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
 -- 
 1.8.1.5
