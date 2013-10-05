@@ -1,51 +1,44 @@
-From: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] gpu: host1x: check relocs after all gathers are consumed
-Date: Fri,  4 Oct 2013 20:18:33 +0000
-Message-ID: <1380917913-20482-1-git-send-email-kusmabite@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
+Date: Sat, 5 Oct 2013 16:38:33 -0700
+Message-ID: <20131005233833.GA18223@kroah.com>
+References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org>
+Sender: stable-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: stable@vger.kernel.org, linux-tegra@vger.kernel.org, Paul Walmsley <pwalmsley@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The num_relocs count are passed to the kernel per job, not per gather.
+On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+> 
+> Move all common select clauses from ARCH_TEGRA_*_SOC to ARCH_TEGRA to
+> eliminate duplication. The USB-related selects all should have been
+> common too, but were missing from Tegra114 previously. Move these to
+> ARCH_TEGRA too. The latter fixes a build break when only Tegra114
+> support was enabled, but not Tegra20 or Tegra30 support.
+> 
+> This is 20984c44b5a08620778ea14fa5807489170fd5ca in v3.12-rc1.
+> 
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Reported-by: Paul Walmsley <pwalmsley@nvidia.com>
+> [auto-builders for 3.11.x are failing due to this]
 
-For multi-gather jobs, we would previously fail if there were relocs in
-other gathers aside from the first one.
+What autobuilders?  I haven't heard of this before.
 
-Fix this by simply moving the check until all gathers have been
-consumed.
+> Cc: stable # v3.11
+> ---
+>  arch/arm/mach-tegra/Kconfig | 21 ++++++---------------
+>  1 file changed, 6 insertions(+), 15 deletions(-)
 
-Signed-off-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/host1x/job.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This fails to apply to the 3.11-stable tree, if you want it there, can
+you provide a version that actually does apply, and that you have tested
+to work properly?
 
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index c4e1050..c9ddff8 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -436,10 +436,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
- 		}
- 	}
- 
--	/* No relocs should remain at this point */
--	if (fw->num_relocs)
--		err = -EINVAL;
--
- out:
- 	return err;
- }
-@@ -493,6 +489,10 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
- 		offset += g->words * sizeof(u32);
- 	}
- 
-+	/* No relocs should remain at this point */
-+	if (fw.num_relocs)
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
--- 
-1.7.9.5
+thanks,
+
+greg k-h
