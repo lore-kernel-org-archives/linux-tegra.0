@@ -1,63 +1,35 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
-Date: Sun, 06 Oct 2013 17:14:33 -0700
-Message-ID: <20131007001433.7445.7915@quantum>
-References: <1380748361-32459-1-git-send-email-treding@nvidia.com>
- <524EF436.4000704@wwwdotorg.org>
+From: Paul Walmsley <pwalmsley@nvidia.com>
+Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
+Date: Sun, 6 Oct 2013 23:18:47 -0700
+Message-ID: <52525247.9060609@nvidia.com>
+References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org> <20131005233833.GA18223@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <524EF436.4000704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <20131005233833.GA18223@kroah.com>
+Sender: stable-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-10-04 10:00:38)
-> On 10/02/2013 03:12 PM, Thierry Reding wrote:
-> > These clocks were named gr2d and gr3d on Tegra20 and Tegra30, so use the
-> > same names on Tegra114 for consistency.
-> 
-> The series,
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Although I wonder if there will be merge conflicts with Peter's "clk:
-> tegra: replace enum tegra114_clk by binding header"?
+Hi Greg,
 
-There are merge conflicts in other places too. The latest clk-next
-branch is based on -rc3 with only a few patches (publicly) applied so
-far. As of the time of this writing the top-most commit is
-96a7ed9079a3483c5681b17f4713c37c1cf2b1c9.
+On 10/05/2013 04:38 PM, Greg KH wrote:
+> On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
+>> [auto-builders for 3.11.x are failing due to this]
+> What autobuilders?  I haven't heard of this before.
 
-Can the Tegra folks send me a pull request with the following
-patches applied? (likely in this order):
+There's an experimental system here that automatically builds and 
+test-boots -stable kernels on some Tegra platforms.  The output isn't 
+public yet -- that's planned, but there are still a few bugs left in the 
+test system that would be good to clean up first.
 
-ARM: tegra114: add missing clocks to binding
-clk: tegra: replace enum tegra114_clk by binding header
-[PATCH v2] clk: tegra: Correct sbc mux width & parent
-clk: tegra: Fix vde/2d/3d clock src offset
-clk: tegra: Set the clock parent of gr2d/gr3d to pll_c2
-clk: tegra: Set the clk parent of host1x to pll_p
-clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
-clk: tegra114: Initialize gr2d clock
+The output is similar to this:
 
-The set of patches above (with their functional dependencies) were
-giving me some conflict resolution issues (e.g. large data tables that
-needed to be updated in clk-tegra-114.c) against the latest clk-next.
+http://nvt.pwsan.com/pub/linux/testlogs/
 
-Additionally I've looked at the following patches on the list which can
-be added to the pull request if you want (these patches all look fine
-but I haven't yet Acked each individually):
+Will certainly send you a link when it's ready to go.
 
-clk: tegra30: Don't wait for PLL_U lock bit
-clk: tegra114: Initialize host1x and related clocks
-clk: tegra: PLLE spread spectrum control (with updated changelog)
 
-If there are plans to spin a v3 of "Introduce common infra for tegra
-clocks" then basing it on top of this tegra pull request would be nice.
-
-Let me know if this is a problem for you.
-
-Regards,
-Mike
+- Paul
