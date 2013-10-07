@@ -1,74 +1,51 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v5 3/3] Documentation: dt: hwmon: add OF document for LM90
-Date: Mon, 7 Oct 2013 17:25:40 +0800
-Message-ID: <1381137940-22608-4-git-send-email-wni@nvidia.com>
-References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH 1/2] ARM: tegra: add DT entry for nct1008 to Dalmore
+Date: Mon, 7 Oct 2013 17:28:28 +0800
+Message-ID: <1381138109-22727-2-git-send-email-wni@nvidia.com>
+References: <1381138109-22727-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381137940-22608-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1381138109-22727-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add OF document for LM90 in Documentation/devicetree/.
+Enable thermal sensor nct1008 for Tegra114 dalmore.
 
 Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- Documentation/devicetree/bindings/hwmon/lm90.txt |   44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
+ arch/arm/boot/dts/tegra114-dalmore.dts |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt b/Documentation/devicetree/bindings/hwmon/lm90.txt
-new file mode 100644
-index 0000000..e863248
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/lm90.txt
-@@ -0,0 +1,44 @@
-+* LM90 series thermometer.
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 871aff5..cb5ec23 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -739,6 +739,14 @@
+ 			realtek,ldo1-en-gpios =
+ 				<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
+ 		};
 +
-+Required node properties:
-+- compatible: manufacturer and chip name, one of
-+		"adi,adm1032"
-+		"adi,adt7461"
-+		"adi,adt7461a"
-+		"gmt,g781"
-+		"national,lm90"
-+		"national,lm86"
-+		"national,lm89"
-+		"national,lm99"
-+		"dallas,max6646"
-+		"dallas,max6647"
-+		"dallas,max6649"
-+		"dallas,max6657"
-+		"dallas,max6658"
-+		"dallas,max6659"
-+		"dallas,max6680"
-+		"dallas,max6681"
-+		"dallas,max6695"
-+		"dallas,max6696"
-+		"onnn,nct1008"
-+		"winbond,w83l771"
-+		"nxp,sa56004"
-+
-+- reg: I2C bus address of the device
-+
-+- vcc-supply: vcc regulator for the supply voltage.
-+
-+Optional properties:
-+- interrupts: Contains a single interrupt specifier which describes the
-+              LM90 "-ALERT" pin output.
-+              See interrupt-controller/interrupts.txt for the format.
-+
-+Example LM90 node:
-+
-+temp-sensor {
-+	compatible = "onnn,nct1008";
-+	reg = <0x4c>;
-+	vcc-supply = <&palmas_ldo6_reg>;
-+	interrupt-parent = <&gpio>;
-+	interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
-+}
++		temperature-sensor@4c {
++			compatible = "onnn,nct1008";
++			reg = <0x4c>;
++			vcc-supply = <&palmas_ldo6_reg>;
++			interrupt-parent = <&gpio>;
++			interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
++		};
+ 	};
+ 
+ 	i2c@7000d000 {
+@@ -948,7 +956,7 @@
+ 						regulator-max-microvolt = <1800000>;
+ 					};
+ 
+-					ldo6 {
++					palmas_ldo6_reg: ldo6 {
+ 						regulator-name = "vdd-sensor-2v85";
+ 						regulator-min-microvolt = <2850000>;
+ 						regulator-max-microvolt = <2850000>;
 -- 
 1.7.9.5
