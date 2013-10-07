@@ -1,376 +1,539 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 17/27] drm/tegra: Add Tegra114 HDMI support
-Date: Mon,  7 Oct 2013 10:34:34 +0200
-Message-ID: <1381134884-5816-18-git-send-email-treding@nvidia.com>
+Subject: [PATCH v2 11/27] drm/tegra: Introduce tegra_drm_client structure
+Date: Mon,  7 Oct 2013 10:34:28 +0200
+Message-ID: <1381134884-5816-12-git-send-email-treding@nvidia.com>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1381134884-5816-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This structure derives from host1x_client. DRM-specific fields are moved
+from host1x_client to this structure, so that host1x_client can remain
+agnostic of DRM.
 
-Tegra114 TMDS configuration requires a new peak_current field and the
-driver current override bit has changed position.
-
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/drm.c  |   1 +
- drivers/gpu/drm/tegra/hdmi.c | 103 ++++++++++++++++++++++++++++-
- drivers/gpu/drm/tegra/hdmi.h | 152 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 253 insertions(+), 3 deletions(-)
+ drivers/gpu/host1x/drm/dc.c   | 35 ++++++++++++++++++-----------------
+ drivers/gpu/host1x/drm/drm.c  | 30 +++++++++++++++++++-----------
+ drivers/gpu/host1x/drm/drm.h  | 37 +++++++++++++++++--------------------
+ drivers/gpu/host1x/drm/gr2d.c | 42 +++++++++++++++++++++++-------------------
+ drivers/gpu/host1x/drm/hdmi.c | 33 +++++++++++++++++----------------
+ include/linux/host1x.h        | 20 ++++++++++++++++++++
+ 6 files changed, 114 insertions(+), 83 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index e958960..4afc9e1 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -490,6 +490,7 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra30-hdmi", },
- 	{ .compatible = "nvidia,tegra30-gr2d", },
- 	{ .compatible = "nvidia,tegra114-dc", },
-+	{ .compatible = "nvidia,tegra114-hdmi", },
- 	{ /* sentinel */ }
+diff --git a/drivers/gpu/host1x/drm/dc.c b/drivers/gpu/host1x/drm/dc.c
+index e11aec7..5106df0 100644
+--- a/drivers/gpu/host1x/drm/dc.c
++++ b/drivers/gpu/host1x/drm/dc.c
+@@ -1038,30 +1038,30 @@ static int tegra_dc_debugfs_exit(struct tegra_dc *dc)
+ 	return 0;
+ }
+ 
+-static int tegra_dc_drm_init(struct host1x_client *client,
+-			     struct drm_device *drm)
++static int tegra_dc_init(struct host1x_client *client)
+ {
+-	struct tegra_dc *dc = host1x_client_to_dc(client);
++	struct tegra_drm_client *drm = to_tegra_drm_client(client);
++	struct tegra_dc *dc = tegra_drm_client_to_dc(drm);
+ 	int err;
+ 
+-	dc->pipe = drm->mode_config.num_crtc;
++	dc->pipe = drm->drm->mode_config.num_crtc;
+ 
+-	drm_crtc_init(drm, &dc->base, &tegra_crtc_funcs);
++	drm_crtc_init(drm->drm, &dc->base, &tegra_crtc_funcs);
+ 	drm_mode_crtc_set_gamma_size(&dc->base, 256);
+ 	drm_crtc_helper_add(&dc->base, &tegra_crtc_helper_funcs);
+ 
+-	err = tegra_dc_rgb_init(drm, dc);
++	err = tegra_dc_rgb_init(drm->drm, dc);
+ 	if (err < 0 && err != -ENODEV) {
+ 		dev_err(dc->dev, "failed to initialize RGB output: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	err = tegra_dc_add_planes(drm, dc);
++	err = tegra_dc_add_planes(drm->drm, dc);
+ 	if (err < 0)
+ 		return err;
+ 
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+-		err = tegra_dc_debugfs_init(dc, drm->primary);
++		err = tegra_dc_debugfs_init(dc, drm->drm->primary);
+ 		if (err < 0)
+ 			dev_err(dc->dev, "debugfs setup failed: %d\n", err);
+ 	}
+@@ -1077,9 +1077,10 @@ static int tegra_dc_drm_init(struct host1x_client *client,
+ 	return 0;
+ }
+ 
+-static int tegra_dc_drm_exit(struct host1x_client *client)
++static int tegra_dc_exit(struct host1x_client *client)
+ {
+-	struct tegra_dc *dc = host1x_client_to_dc(client);
++	struct tegra_drm_client *drm = to_tegra_drm_client(client);
++	struct tegra_dc *dc = tegra_drm_client_to_dc(drm);
+ 	int err;
+ 
+ 	devm_free_irq(dc->dev, dc->irq, dc);
+@@ -1100,8 +1101,8 @@ static int tegra_dc_drm_exit(struct host1x_client *client)
+ }
+ 
+ static const struct host1x_client_ops dc_client_ops = {
+-	.drm_init = tegra_dc_drm_init,
+-	.drm_exit = tegra_dc_drm_exit,
++	.init = tegra_dc_init,
++	.exit = tegra_dc_exit,
  };
  
-diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
-index 4489d56..130cb6d 100644
---- a/drivers/gpu/drm/tegra/hdmi.c
-+++ b/drivers/gpu/drm/tegra/hdmi.c
-@@ -142,6 +142,7 @@ struct tmds_config {
- 	u32 pll1;
- 	u32 pe_current;
- 	u32 drive_current;
-+	u32 peak_current;
+ static int tegra_dc_probe(struct platform_device *pdev)
+@@ -1140,9 +1141,9 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return -ENXIO;
+ 	}
+ 
+-	INIT_LIST_HEAD(&dc->client.list);
+-	dc->client.ops = &dc_client_ops;
+-	dc->client.dev = &pdev->dev;
++	INIT_LIST_HEAD(&dc->client.base.list);
++	dc->client.base.ops = &dc_client_ops;
++	dc->client.base.dev = &pdev->dev;
+ 
+ 	err = tegra_dc_rgb_probe(dc);
+ 	if (err < 0 && err != -ENODEV) {
+@@ -1150,7 +1151,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	err = host1x_register_client(tegra, &dc->client);
++	err = host1x_register_client(tegra, &dc->client.base);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
+ 			err);
+@@ -1168,7 +1169,7 @@ static int tegra_dc_remove(struct platform_device *pdev)
+ 	struct tegra_dc *dc = platform_get_drvdata(pdev);
+ 	int err;
+ 
+-	err = host1x_unregister_client(tegra, &dc->client);
++	err = host1x_unregister_client(tegra, &dc->client.base);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
+ 			err);
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+index 90a1f3d..cb6a4e8 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -131,12 +131,18 @@ int tegra_drm_alloc(struct platform_device *pdev)
+ int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm)
+ {
+ 	struct host1x_client *client;
++	int err;
+ 
+ 	mutex_lock(&tegra->clients_lock);
+ 
+ 	list_for_each_entry(client, &tegra->clients, list) {
+-		if (client->ops && client->ops->drm_init) {
+-			int err = client->ops->drm_init(client, drm);
++		struct tegra_drm_client *tdc = to_tegra_drm_client(client);
++
++		/* associate client with DRM device */
++		tdc->drm = drm;
++
++		if (client->ops && client->ops->init) {
++			err = client->ops->init(client);
+ 			if (err < 0) {
+ 				dev_err(tegra->dev,
+ 					"DRM setup failed for %s: %d\n",
+@@ -154,8 +160,9 @@ int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm)
+ 
+ int tegra_drm_exit(struct tegra_drm *tegra)
+ {
+-	struct platform_device *pdev = to_platform_device(tegra->dev);
+ 	struct host1x_client *client;
++	struct platform_device *pdev;
++	int err;
+ 
+ 	if (!tegra->drm)
+ 		return 0;
+@@ -163,8 +170,8 @@ int tegra_drm_exit(struct tegra_drm *tegra)
+ 	mutex_lock(&tegra->clients_lock);
+ 
+ 	list_for_each_entry_reverse(client, &tegra->clients, list) {
+-		if (client->ops && client->ops->drm_exit) {
+-			int err = client->ops->drm_exit(client);
++		if (client->ops && client->ops->exit) {
++			err = client->ops->exit(client);
+ 			if (err < 0) {
+ 				dev_err(tegra->dev,
+ 					"DRM cleanup failed for %s: %d\n",
+@@ -177,6 +184,7 @@ int tegra_drm_exit(struct tegra_drm *tegra)
+ 
+ 	mutex_unlock(&tegra->clients_lock);
+ 
++	pdev = to_platform_device(tegra->dev);
+ 	drm_platform_exit(&tegra_drm_driver, pdev);
+ 	tegra->drm = NULL;
+ 
+@@ -409,22 +417,22 @@ static int tegra_open_channel(struct drm_device *drm, void *data,
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 	struct drm_tegra_open_channel *args = data;
+ 	struct tegra_drm_context *context;
+-	struct host1x_client *client;
++	struct tegra_drm_client *client;
+ 	int err = -ENODEV;
+ 
+ 	context = kzalloc(sizeof(*context), GFP_KERNEL);
+ 	if (!context)
+ 		return -ENOMEM;
+ 
+-	list_for_each_entry(client, &tegra->clients, list)
+-		if (client->class == args->client) {
++	list_for_each_entry(client, &tegra->clients, base.list)
++		if (client->base.class == args->client) {
+ 			err = client->ops->open_channel(client, context);
+ 			if (err)
+ 				break;
+ 
+-			context->client = client;
+ 			list_add(&context->list, &fpriv->contexts);
+ 			args->context = (uintptr_t)context;
++			context->client = client;
+ 			return 0;
+ 		}
+ 
+@@ -463,10 +471,10 @@ static int tegra_get_syncpt(struct drm_device *drm, void *data,
+ 	if (!tegra_drm_file_owns_context(fpriv, context))
+ 		return -ENODEV;
+ 
+-	if (args->index >= context->client->num_syncpts)
++	if (args->index >= context->client->base.num_syncpts)
+ 		return -EINVAL;
+ 
+-	syncpt = context->client->syncpts[args->index];
++	syncpt = context->client->base.syncpts[args->index];
+ 	args->id = host1x_syncpt_id(syncpt);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/host1x/drm/drm.h b/drivers/gpu/host1x/drm/drm.h
+index 78754f6..8c26c6b 100644
+--- a/drivers/gpu/host1x/drm/drm.h
++++ b/drivers/gpu/host1x/drm/drm.h
+@@ -44,18 +44,16 @@ struct tegra_drm {
+ 	struct tegra_fbdev *fbdev;
  };
  
- static const struct tmds_config tegra2_tmds_config[] = {
-@@ -223,6 +224,85 @@ static const struct tmds_config tegra3_tmds_config[] = {
- 	},
+-struct host1x_client;
++struct tegra_drm_client;
+ 
+ struct tegra_drm_context {
+-	struct host1x_client *client;
++	struct tegra_drm_client *client;
+ 	struct host1x_channel *channel;
+ 	struct list_head list;
  };
  
-+const struct tmds_config tegra114_tmds_config[] = {
-+	{ /* 480p/576p / 25.2MHz/27MHz modes */
-+		.pclk = 27000000,
-+		.pll0 = SOR_PLL_ICHPMP(1) | SOR_PLL_BG_V17_S(3) |
-+			SOR_PLL_VCOCAP(0) | SOR_PLL_RESISTORSEL,
-+		.pll1 = SOR_PLL_LOADADJ(3) | SOR_PLL_TMDS_TERMADJ(0),
-+		.pe_current = PE_CURRENT0(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT1(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT2(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT3(PE_CURRENT_0_mA_T114),
-+		.drive_current =
-+			DRIVE_CURRENT_LANE0_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE1_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE2_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE3_T114(DRIVE_CURRENT_10_400_mA_T114),
-+		.peak_current = PEAK_CURRENT_LANE0(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE1(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE2(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE3(PEAK_CURRENT_0_000_mA),
-+	}, { /* 720p / 74.25MHz modes */
-+		.pclk = 74250000,
-+		.pll0 = SOR_PLL_ICHPMP(1) | SOR_PLL_BG_V17_S(3) |
-+			SOR_PLL_VCOCAP(1) | SOR_PLL_RESISTORSEL,
-+		.pll1 = SOR_PLL_PE_EN | SOR_PLL_LOADADJ(3) |
-+			SOR_PLL_TMDS_TERMADJ(0),
-+		.pe_current = PE_CURRENT0(PE_CURRENT_15_mA_T114) |
-+			PE_CURRENT1(PE_CURRENT_15_mA_T114) |
-+			PE_CURRENT2(PE_CURRENT_15_mA_T114) |
-+			PE_CURRENT3(PE_CURRENT_15_mA_T114),
-+		.drive_current =
-+			DRIVE_CURRENT_LANE0_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE1_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE2_T114(DRIVE_CURRENT_10_400_mA_T114) |
-+			DRIVE_CURRENT_LANE3_T114(DRIVE_CURRENT_10_400_mA_T114),
-+		.peak_current = PEAK_CURRENT_LANE0(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE1(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE2(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE3(PEAK_CURRENT_0_000_mA),
-+	}, { /* 1080p / 148.5MHz modes */
-+		.pclk = 148500000,
-+		.pll0 = SOR_PLL_ICHPMP(1) | SOR_PLL_BG_V17_S(3) |
-+			SOR_PLL_VCOCAP(3) | SOR_PLL_RESISTORSEL,
-+		.pll1 = SOR_PLL_PE_EN | SOR_PLL_LOADADJ(3) |
-+			SOR_PLL_TMDS_TERMADJ(0),
-+		.pe_current = PE_CURRENT0(PE_CURRENT_10_mA_T114) |
-+			PE_CURRENT1(PE_CURRENT_10_mA_T114) |
-+			PE_CURRENT2(PE_CURRENT_10_mA_T114) |
-+			PE_CURRENT3(PE_CURRENT_10_mA_T114),
-+		.drive_current =
-+			DRIVE_CURRENT_LANE0_T114(DRIVE_CURRENT_12_400_mA_T114) |
-+			DRIVE_CURRENT_LANE1_T114(DRIVE_CURRENT_12_400_mA_T114) |
-+			DRIVE_CURRENT_LANE2_T114(DRIVE_CURRENT_12_400_mA_T114) |
-+			DRIVE_CURRENT_LANE3_T114(DRIVE_CURRENT_12_400_mA_T114),
-+		.peak_current = PEAK_CURRENT_LANE0(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE1(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE2(PEAK_CURRENT_0_000_mA) |
-+			PEAK_CURRENT_LANE3(PEAK_CURRENT_0_000_mA),
-+	}, { /* 225/297MHz modes */
-+		.pclk = UINT_MAX,
-+		.pll0 = SOR_PLL_ICHPMP(1) | SOR_PLL_BG_V17_S(3) |
-+			SOR_PLL_VCOCAP(0xf) | SOR_PLL_RESISTORSEL,
-+		.pll1 = SOR_PLL_LOADADJ(3) | SOR_PLL_TMDS_TERMADJ(7)
-+			| SOR_PLL_TMDS_TERM_ENABLE,
-+		.pe_current = PE_CURRENT0(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT1(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT2(PE_CURRENT_0_mA_T114) |
-+			PE_CURRENT3(PE_CURRENT_0_mA_T114),
-+		.drive_current =
-+			DRIVE_CURRENT_LANE0_T114(DRIVE_CURRENT_25_200_mA_T114) |
-+			DRIVE_CURRENT_LANE1_T114(DRIVE_CURRENT_25_200_mA_T114) |
-+			DRIVE_CURRENT_LANE2_T114(DRIVE_CURRENT_25_200_mA_T114) |
-+			DRIVE_CURRENT_LANE3_T114(DRIVE_CURRENT_19_200_mA_T114),
-+		.peak_current = PEAK_CURRENT_LANE0(PEAK_CURRENT_3_000_mA) |
-+			PEAK_CURRENT_LANE1(PEAK_CURRENT_3_000_mA) |
-+			PEAK_CURRENT_LANE2(PEAK_CURRENT_3_000_mA) |
-+			PEAK_CURRENT_LANE3(PEAK_CURRENT_0_800_mA),
-+	},
+-struct host1x_client_ops {
+-	int (*drm_init)(struct host1x_client *client, struct drm_device *drm);
+-	int (*drm_exit)(struct host1x_client *client);
+-	int (*open_channel)(struct host1x_client *client,
++struct tegra_drm_client_ops {
++	int (*open_channel)(struct tegra_drm_client *client,
+ 			    struct tegra_drm_context *context);
+ 	void (*close_channel)(struct tegra_drm_context *context);
+ 	int (*submit)(struct tegra_drm_context *context,
+@@ -63,21 +61,19 @@ struct host1x_client_ops {
+ 		      struct drm_file *file);
+ };
+ 
+-struct host1x_client {
+-	struct tegra_drm *tegra;
+-	struct device *dev;
+-
+-	const struct host1x_client_ops *ops;
+-
+-	enum host1x_class class;
+-	struct host1x_channel *channel;
+-
+-	struct host1x_syncpt **syncpts;
+-	unsigned int num_syncpts;
++struct tegra_drm_client {
++	struct host1x_client base;
++	struct drm_device *drm;
+ 
+-	struct list_head list;
++	const struct tegra_drm_client_ops *ops;
+ };
+ 
++static inline struct tegra_drm_client *
++to_tegra_drm_client(struct host1x_client *client)
++{
++	return container_of(client, struct tegra_drm_client, base);
++}
++
+ extern int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
+ extern int tegra_drm_exit(struct tegra_drm *tegra);
+ 
+@@ -89,7 +85,7 @@ extern int host1x_unregister_client(struct tegra_drm *tegra,
+ struct tegra_output;
+ 
+ struct tegra_dc {
+-	struct host1x_client client;
++	struct tegra_drm_client client;
+ 	struct device *dev;
+ 	spinlock_t lock;
+ 
+@@ -112,7 +108,8 @@ struct tegra_dc {
+ 	struct drm_pending_vblank_event *event;
+ };
+ 
+-static inline struct tegra_dc *host1x_client_to_dc(struct host1x_client *client)
++static inline struct tegra_dc *
++tegra_drm_client_to_dc(struct tegra_drm_client *client)
+ {
+ 	return container_of(client, struct tegra_dc, client);
+ }
+diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+index fc4476d..e814918 100644
+--- a/drivers/gpu/host1x/drm/gr2d.c
++++ b/drivers/gpu/host1x/drm/gr2d.c
+@@ -25,18 +25,17 @@
+ #include "syncpt.h"
+ 
+ struct gr2d {
+-	struct host1x_client client;
++	struct tegra_drm_client client;
+ 	struct host1x_channel *channel;
+ 	struct clk *clk;
+ };
+ 
+-static inline struct gr2d *to_gr2d(struct host1x_client *client)
++static inline struct gr2d *to_gr2d(struct tegra_drm_client *client)
+ {
+ 	return container_of(client, struct gr2d, client);
+ }
+ 
+-static int gr2d_client_init(struct host1x_client *client,
+-			    struct drm_device *drm)
++static int gr2d_client_init(struct host1x_client *client)
+ {
+ 	return 0;
+ }
+@@ -46,7 +45,12 @@ static int gr2d_client_exit(struct host1x_client *client)
+ 	return 0;
+ }
+ 
+-static int gr2d_open_channel(struct host1x_client *client,
++static const struct host1x_client_ops gr2d_client_ops = {
++	.init = gr2d_client_init,
++	.exit = gr2d_client_exit,
 +};
 +
- static const struct tegra_hdmi_audio_config *
- tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pclk)
++static int gr2d_open_channel(struct tegra_drm_client *client,
+ 			     struct tegra_drm_context *context)
  {
-@@ -564,14 +644,26 @@ static void tegra_hdmi_setup_stereo_infoframe(struct tegra_hdmi *hdmi)
- static void tegra_hdmi_setup_tmds(struct tegra_hdmi *hdmi,
- 				  const struct tmds_config *tmds)
- {
-+	struct device_node *np = hdmi->dev->of_node;
- 	unsigned long value;
+ 	struct gr2d *gr2d = to_gr2d(client);
+@@ -139,7 +143,7 @@ static int gr2d_submit(struct tegra_drm_context *context,
+ 	job->num_relocs = args->num_relocs;
+ 	job->num_waitchk = args->num_waitchks;
+ 	job->client = (u32)args->context;
+-	job->class = context->client->class;
++	job->class = context->client->base.class;
+ 	job->serialize = true;
  
- 	tegra_hdmi_writel(hdmi, tmds->pll0, HDMI_NV_PDISP_SOR_PLL0);
- 	tegra_hdmi_writel(hdmi, tmds->pll1, HDMI_NV_PDISP_SOR_PLL1);
- 	tegra_hdmi_writel(hdmi, tmds->pe_current, HDMI_NV_PDISP_PE_CURRENT);
+ 	while (num_cmdbufs) {
+@@ -200,7 +204,7 @@ static int gr2d_submit(struct tegra_drm_context *context,
+ 	if (args->timeout && args->timeout < 10000)
+ 		job->timeout = args->timeout;
  
--	value = tmds->drive_current | DRIVE_CURRENT_FUSE_OVERRIDE;
--	tegra_hdmi_writel(hdmi, value, HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT);
-+	if (of_device_is_compatible(np, "nvidia,tegra114-hdmi")) {
-+		tegra_hdmi_writel(hdmi, tmds->drive_current,
-+				  HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT);
-+		value = tegra_hdmi_readl(hdmi, HDMI_NV_PDISP_SOR_PAD_CTLS0);
-+		value |= DRIVE_CURRENT_FUSE_OVERRIDE_T114;
-+		tegra_hdmi_writel(hdmi, value, HDMI_NV_PDISP_SOR_PAD_CTLS0);
-+		tegra_hdmi_writel(hdmi, tmds->peak_current,
-+				  HDMI_NV_PDISP_SOR_IO_PEAK_CURRENT);
-+	} else {
-+		value = tmds->drive_current | DRIVE_CURRENT_FUSE_OVERRIDE;
-+		tegra_hdmi_writel(hdmi, value,
-+				  HDMI_NV_PDISP_SOR_LANE_DRIVE_CURRENT);
-+	}
+-	err = host1x_job_pin(job, context->client->dev);
++	err = host1x_job_pin(job, context->client->base.dev);
+ 	if (err)
+ 		goto fail;
+ 
+@@ -220,9 +224,7 @@ fail:
+ 	return err;
  }
  
- static int tegra_output_hdmi_enable(struct tegra_output *output)
-@@ -703,7 +795,10 @@ static int tegra_output_hdmi_enable(struct tegra_output *output)
- 	tegra_hdmi_setup_stereo_infoframe(hdmi);
+-static struct host1x_client_ops gr2d_client_ops = {
+-	.drm_init = gr2d_client_init,
+-	.drm_exit = gr2d_client_exit,
++static const struct tegra_drm_client_ops gr2d_ops = {
+ 	.open_channel = gr2d_open_channel,
+ 	.close_channel = gr2d_close_channel,
+ 	.submit = gr2d_submit,
+@@ -272,13 +274,15 @@ static int gr2d_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
- 	/* TMDS CONFIG */
--	if (of_device_is_compatible(node, "nvidia,tegra30-hdmi")) {
-+	if (of_device_is_compatible(node, "nvidia,tegra114-hdmi")) {
-+		num_tmds = ARRAY_SIZE(tegra114_tmds_config);
-+		tmds = tegra114_tmds_config;
-+	} else if (of_device_is_compatible(node, "nvidia,tegra30-hdmi")) {
- 		num_tmds = ARRAY_SIZE(tegra3_tmds_config);
- 		tmds = tegra3_tmds_config;
- 	} else {
-@@ -1048,6 +1143,7 @@ static int tegra_hdmi_show_regs(struct seq_file *s, void *data)
- 	DUMP_REG(HDMI_NV_PDISP_SOR_AUDIO_CNTRL0);
- 	DUMP_REG(HDMI_NV_PDISP_SOR_AUDIO_HDA_ELD_BUFWR);
- 	DUMP_REG(HDMI_NV_PDISP_SOR_AUDIO_HDA_PRESENSE);
-+	DUMP_REG(HDMI_NV_PDISP_SOR_IO_PEAK_CURRENT);
+-	gr2d->client.ops = &gr2d_client_ops;
+-	gr2d->client.dev = dev;
+-	gr2d->client.class = HOST1X_CLASS_GR2D;
+-	gr2d->client.syncpts = syncpts;
+-	gr2d->client.num_syncpts = 1;
++	INIT_LIST_HEAD(&gr2d->client.base.list);
++	gr2d->client.base.ops = &gr2d_client_ops;
++	gr2d->client.base.dev = dev;
++	gr2d->client.base.class = HOST1X_CLASS_GR2D;
++	gr2d->client.base.syncpts = syncpts;
++	gr2d->client.base.num_syncpts = 1;
++	gr2d->client.ops = &gr2d_ops;
  
- #undef DUMP_REG
+-	err = host1x_register_client(tegra, &gr2d->client);
++	err = host1x_register_client(tegra, &gr2d->client.base);
+ 	if (err < 0) {
+ 		dev_err(dev, "failed to register host1x client: %d\n", err);
+ 		return err;
+@@ -296,15 +300,15 @@ static int gr2d_remove(struct platform_device *pdev)
+ 	unsigned int i;
+ 	int err;
  
-@@ -1284,6 +1380,7 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
+-	err = host1x_unregister_client(tegra, &gr2d->client);
++	err = host1x_unregister_client(tegra, &gr2d->client.base);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
+ 			err);
+ 		return err;
+ 	}
+ 
+-	for (i = 0; i < gr2d->client.num_syncpts; i++)
+-		host1x_syncpt_free(gr2d->client.syncpts[i]);
++	for (i = 0; i < gr2d->client.base.num_syncpts; i++)
++		host1x_syncpt_free(gr2d->client.base.syncpts[i]);
+ 
+ 	host1x_channel_free(gr2d->channel);
+ 	clk_disable_unprepare(gr2d->clk);
+diff --git a/drivers/gpu/host1x/drm/hdmi.c b/drivers/gpu/host1x/drm/hdmi.c
+index 5d8c41c..30ac9e8 100644
+--- a/drivers/gpu/host1x/drm/hdmi.c
++++ b/drivers/gpu/host1x/drm/hdmi.c
+@@ -19,7 +19,7 @@
+ #include "host1x_client.h"
+ 
+ struct tegra_hdmi {
+-	struct host1x_client client;
++	struct tegra_drm_client client;
+ 	struct tegra_output output;
+ 	struct device *dev;
+ 
+@@ -43,7 +43,7 @@ struct tegra_hdmi {
+ };
+ 
+ static inline struct tegra_hdmi *
+-host1x_client_to_hdmi(struct host1x_client *client)
++tegra_drm_client_to_hdmi(struct tegra_drm_client *client)
+ {
+ 	return container_of(client, struct tegra_hdmi, client);
+ }
+@@ -1116,24 +1116,24 @@ static int tegra_hdmi_debugfs_exit(struct tegra_hdmi *hdmi)
+ 	return 0;
  }
  
- static struct of_device_id tegra_hdmi_of_match[] = {
-+	{ .compatible = "nvidia,tegra114-hdmi", },
- 	{ .compatible = "nvidia,tegra30-hdmi", },
- 	{ .compatible = "nvidia,tegra20-hdmi", },
- 	{ },
-diff --git a/drivers/gpu/drm/tegra/hdmi.h b/drivers/gpu/drm/tegra/hdmi.h
-index 52ac36e..37925c2 100644
---- a/drivers/gpu/drm/tegra/hdmi.h
-+++ b/drivers/gpu/drm/tegra/hdmi.h
-@@ -233,6 +233,10 @@
- #define DRIVE_CURRENT_LANE1(x)      (((x) & 0x3f) <<  8)
- #define DRIVE_CURRENT_LANE2(x)      (((x) & 0x3f) << 16)
- #define DRIVE_CURRENT_LANE3(x)      (((x) & 0x3f) << 24)
-+#define DRIVE_CURRENT_LANE0_T114(x) (((x) & 0x7f) <<  0)
-+#define DRIVE_CURRENT_LANE1_T114(x) (((x) & 0x7f) <<  8)
-+#define DRIVE_CURRENT_LANE2_T114(x) (((x) & 0x7f) << 16)
-+#define DRIVE_CURRENT_LANE3_T114(x) (((x) & 0x7f) << 24)
- #define DRIVE_CURRENT_FUSE_OVERRIDE (1 << 31)
+-static int tegra_hdmi_drm_init(struct host1x_client *client,
+-			       struct drm_device *drm)
++static int tegra_hdmi_init(struct host1x_client *client)
+ {
+-	struct tegra_hdmi *hdmi = host1x_client_to_hdmi(client);
++	struct tegra_drm_client *drm = to_tegra_drm_client(client);
++	struct tegra_hdmi *hdmi = tegra_drm_client_to_hdmi(drm);
+ 	int err;
  
- #define DRIVE_CURRENT_1_500_mA  0x00
-@@ -299,6 +303,79 @@
- #define DRIVE_CURRENT_24_375_mA 0x3d
- #define DRIVE_CURRENT_24_750_mA 0x3e
+ 	hdmi->output.type = TEGRA_OUTPUT_HDMI;
+ 	hdmi->output.dev = client->dev;
+ 	hdmi->output.ops = &hdmi_ops;
  
-+#define DRIVE_CURRENT_0_000_mA_T114 0x00
-+#define DRIVE_CURRENT_0_400_mA_T114 0x01
-+#define DRIVE_CURRENT_0_800_mA_T114 0x02
-+#define DRIVE_CURRENT_1_200_mA_T114 0x03
-+#define DRIVE_CURRENT_1_600_mA_T114 0x04
-+#define DRIVE_CURRENT_2_000_mA_T114 0x05
-+#define DRIVE_CURRENT_2_400_mA_T114 0x06
-+#define DRIVE_CURRENT_2_800_mA_T114 0x07
-+#define DRIVE_CURRENT_3_200_mA_T114 0x08
-+#define DRIVE_CURRENT_3_600_mA_T114 0x09
-+#define DRIVE_CURRENT_4_000_mA_T114 0x0a
-+#define DRIVE_CURRENT_4_400_mA_T114 0x0b
-+#define DRIVE_CURRENT_4_800_mA_T114 0x0c
-+#define DRIVE_CURRENT_5_200_mA_T114 0x0d
-+#define DRIVE_CURRENT_5_600_mA_T114 0x0e
-+#define DRIVE_CURRENT_6_000_mA_T114 0x0f
-+#define DRIVE_CURRENT_6_400_mA_T114 0x10
-+#define DRIVE_CURRENT_6_800_mA_T114 0x11
-+#define DRIVE_CURRENT_7_200_mA_T114 0x12
-+#define DRIVE_CURRENT_7_600_mA_T114 0x13
-+#define DRIVE_CURRENT_8_000_mA_T114 0x14
-+#define DRIVE_CURRENT_8_400_mA_T114 0x15
-+#define DRIVE_CURRENT_8_800_mA_T114 0x16
-+#define DRIVE_CURRENT_9_200_mA_T114 0x17
-+#define DRIVE_CURRENT_9_600_mA_T114 0x18
-+#define DRIVE_CURRENT_10_000_mA_T114 0x19
-+#define DRIVE_CURRENT_10_400_mA_T114 0x1a
-+#define DRIVE_CURRENT_10_800_mA_T114 0x1b
-+#define DRIVE_CURRENT_11_200_mA_T114 0x1c
-+#define DRIVE_CURRENT_11_600_mA_T114 0x1d
-+#define DRIVE_CURRENT_12_000_mA_T114 0x1e
-+#define DRIVE_CURRENT_12_400_mA_T114 0x1f
-+#define DRIVE_CURRENT_12_800_mA_T114 0x20
-+#define DRIVE_CURRENT_13_200_mA_T114 0x21
-+#define DRIVE_CURRENT_13_600_mA_T114 0x22
-+#define DRIVE_CURRENT_14_000_mA_T114 0x23
-+#define DRIVE_CURRENT_14_400_mA_T114 0x24
-+#define DRIVE_CURRENT_14_800_mA_T114 0x25
-+#define DRIVE_CURRENT_15_200_mA_T114 0x26
-+#define DRIVE_CURRENT_15_600_mA_T114 0x27
-+#define DRIVE_CURRENT_16_000_mA_T114 0x28
-+#define DRIVE_CURRENT_16_400_mA_T114 0x29
-+#define DRIVE_CURRENT_16_800_mA_T114 0x2a
-+#define DRIVE_CURRENT_17_200_mA_T114 0x2b
-+#define DRIVE_CURRENT_17_600_mA_T114 0x2c
-+#define DRIVE_CURRENT_18_000_mA_T114 0x2d
-+#define DRIVE_CURRENT_18_400_mA_T114 0x2e
-+#define DRIVE_CURRENT_18_800_mA_T114 0x2f
-+#define DRIVE_CURRENT_19_200_mA_T114 0x30
-+#define DRIVE_CURRENT_19_600_mA_T114 0x31
-+#define DRIVE_CURRENT_20_000_mA_T114 0x32
-+#define DRIVE_CURRENT_20_400_mA_T114 0x33
-+#define DRIVE_CURRENT_20_800_mA_T114 0x34
-+#define DRIVE_CURRENT_21_200_mA_T114 0x35
-+#define DRIVE_CURRENT_21_600_mA_T114 0x36
-+#define DRIVE_CURRENT_22_000_mA_T114 0x37
-+#define DRIVE_CURRENT_22_400_mA_T114 0x38
-+#define DRIVE_CURRENT_22_800_mA_T114 0x39
-+#define DRIVE_CURRENT_23_200_mA_T114 0x3a
-+#define DRIVE_CURRENT_23_600_mA_T114 0x3b
-+#define DRIVE_CURRENT_24_000_mA_T114 0x3c
-+#define DRIVE_CURRENT_24_400_mA_T114 0x3d
-+#define DRIVE_CURRENT_24_800_mA_T114 0x3e
-+#define DRIVE_CURRENT_25_200_mA_T114 0x3f
-+#define DRIVE_CURRENT_25_400_mA_T114 0x40
-+#define DRIVE_CURRENT_25_800_mA_T114 0x41
-+#define DRIVE_CURRENT_26_200_mA_T114 0x42
-+#define DRIVE_CURRENT_26_600_mA_T114 0x43
-+#define DRIVE_CURRENT_27_000_mA_T114 0x44
-+#define DRIVE_CURRENT_27_400_mA_T114 0x45
-+#define DRIVE_CURRENT_27_800_mA_T114 0x46
-+#define DRIVE_CURRENT_28_200_mA_T114 0x47
-+
- #define HDMI_NV_PDISP_AUDIO_DEBUG0				0x7f
- #define HDMI_NV_PDISP_AUDIO_DEBUG1				0x80
- #define HDMI_NV_PDISP_AUDIO_DEBUG2				0x81
-@@ -358,6 +435,23 @@
- #define PE_CURRENT_7_0_mA 0xe
- #define PE_CURRENT_7_5_mA 0xf
+-	err = tegra_output_init(drm, &hdmi->output);
++	err = tegra_output_init(drm->drm, &hdmi->output);
+ 	if (err < 0) {
+ 		dev_err(client->dev, "output setup failed: %d\n", err);
+ 		return err;
+ 	}
  
-+#define PE_CURRENT_0_mA_T114 0x0
-+#define PE_CURRENT_1_mA_T114 0x1
-+#define PE_CURRENT_2_mA_T114 0x2
-+#define PE_CURRENT_3_mA_T114 0x3
-+#define PE_CURRENT_4_mA_T114 0x4
-+#define PE_CURRENT_5_mA_T114 0x5
-+#define PE_CURRENT_6_mA_T114 0x6
-+#define PE_CURRENT_7_mA_T114 0x7
-+#define PE_CURRENT_8_mA_T114 0x8
-+#define PE_CURRENT_9_mA_T114 0x9
-+#define PE_CURRENT_10_mA_T114 0xa
-+#define PE_CURRENT_11_mA_T114 0xb
-+#define PE_CURRENT_12_mA_T114 0xc
-+#define PE_CURRENT_13_mA_T114 0xd
-+#define PE_CURRENT_14_mA_T114 0xe
-+#define PE_CURRENT_15_mA_T114 0xf
-+
- #define HDMI_NV_PDISP_KEY_CTRL					0x9a
- #define HDMI_NV_PDISP_KEY_DEBUG0				0x9b
- #define HDMI_NV_PDISP_KEY_DEBUG1				0x9c
-@@ -383,4 +477,62 @@
- #define HDMI_NV_PDISP_SOR_AUDIO_AVAL_1920    0xc5
- #define HDMI_NV_PDISP_SOR_AUDIO_AVAL_DEFAULT 0xc5
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+-		err = tegra_hdmi_debugfs_init(hdmi, drm->primary);
++		err = tegra_hdmi_debugfs_init(hdmi, drm->drm->primary);
+ 		if (err < 0)
+ 			dev_err(client->dev, "debugfs setup failed: %d\n", err);
+ 	}
+@@ -1141,9 +1141,10 @@ static int tegra_hdmi_drm_init(struct host1x_client *client,
+ 	return 0;
+ }
  
-+#define HDMI_NV_PDISP_SOR_IO_PEAK_CURRENT		0xd1
-+#define PEAK_CURRENT_LANE0(x) (((x) & 0x7f) <<  0)
-+#define PEAK_CURRENT_LANE1(x) (((x) & 0x7f) <<  8)
-+#define PEAK_CURRENT_LANE2(x) (((x) & 0x7f) << 16)
-+#define PEAK_CURRENT_LANE3(x) (((x) & 0x7f) << 24)
+-static int tegra_hdmi_drm_exit(struct host1x_client *client)
++static int tegra_hdmi_exit(struct host1x_client *client)
+ {
+-	struct tegra_hdmi *hdmi = host1x_client_to_hdmi(client);
++	struct tegra_drm_client *drm = to_tegra_drm_client(client);
++	struct tegra_hdmi *hdmi = tegra_drm_client_to_hdmi(drm);
+ 	int err;
+ 
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+@@ -1169,8 +1170,8 @@ static int tegra_hdmi_drm_exit(struct host1x_client *client)
+ }
+ 
+ static const struct host1x_client_ops hdmi_client_ops = {
+-	.drm_init = tegra_hdmi_drm_init,
+-	.drm_exit = tegra_hdmi_drm_exit,
++	.init = tegra_hdmi_init,
++	.exit = tegra_hdmi_exit,
+ };
+ 
+ static int tegra_hdmi_probe(struct platform_device *pdev)
+@@ -1246,11 +1247,11 @@ static int tegra_hdmi_probe(struct platform_device *pdev)
+ 
+ 	hdmi->irq = err;
+ 
+-	hdmi->client.ops = &hdmi_client_ops;
+-	INIT_LIST_HEAD(&hdmi->client.list);
+-	hdmi->client.dev = &pdev->dev;
++	INIT_LIST_HEAD(&hdmi->client.base.list);
++	hdmi->client.base.ops = &hdmi_client_ops;
++	hdmi->client.base.dev = &pdev->dev;
+ 
+-	err = host1x_register_client(tegra, &hdmi->client);
++	err = host1x_register_client(tegra, &hdmi->client.base);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
+ 			err);
+@@ -1268,7 +1269,7 @@ static int tegra_hdmi_remove(struct platform_device *pdev)
+ 	struct tegra_hdmi *hdmi = platform_get_drvdata(pdev);
+ 	int err;
+ 
+-	err = host1x_unregister_client(tegra, &hdmi->client);
++	err = host1x_unregister_client(tegra, &hdmi->client.base);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
+ 			err);
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index fe09939..d429a93 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -25,4 +25,24 @@ enum host1x_class {
+ 	HOST1X_CLASS_GR2D_SB = 0x52,
+ };
+ 
++struct host1x_client;
 +
-+#define PEAK_CURRENT_0_000_mA 0x00
-+#define PEAK_CURRENT_0_200_mA 0x01
-+#define PEAK_CURRENT_0_400_mA 0x02
-+#define PEAK_CURRENT_0_600_mA 0x03
-+#define PEAK_CURRENT_0_800_mA 0x04
-+#define PEAK_CURRENT_1_000_mA 0x05
-+#define PEAK_CURRENT_1_200_mA 0x06
-+#define PEAK_CURRENT_1_400_mA 0x07
-+#define PEAK_CURRENT_1_600_mA 0x08
-+#define PEAK_CURRENT_1_800_mA 0x09
-+#define PEAK_CURRENT_2_000_mA 0x0a
-+#define PEAK_CURRENT_2_200_mA 0x0b
-+#define PEAK_CURRENT_2_400_mA 0x0c
-+#define PEAK_CURRENT_2_600_mA 0x0d
-+#define PEAK_CURRENT_2_800_mA 0x0e
-+#define PEAK_CURRENT_3_000_mA 0x0f
-+#define PEAK_CURRENT_3_200_mA 0x10
-+#define PEAK_CURRENT_3_400_mA 0x11
-+#define PEAK_CURRENT_3_600_mA 0x12
-+#define PEAK_CURRENT_3_800_mA 0x13
-+#define PEAK_CURRENT_4_000_mA 0x14
-+#define PEAK_CURRENT_4_200_mA 0x15
-+#define PEAK_CURRENT_4_400_mA 0x16
-+#define PEAK_CURRENT_4_600_mA 0x17
-+#define PEAK_CURRENT_4_800_mA 0x18
-+#define PEAK_CURRENT_5_000_mA 0x19
-+#define PEAK_CURRENT_5_200_mA 0x1a
-+#define PEAK_CURRENT_5_400_mA 0x1b
-+#define PEAK_CURRENT_5_600_mA 0x1c
-+#define PEAK_CURRENT_5_800_mA 0x1d
-+#define PEAK_CURRENT_6_000_mA 0x1e
-+#define PEAK_CURRENT_6_200_mA 0x1f
-+#define PEAK_CURRENT_6_400_mA 0x20
-+#define PEAK_CURRENT_6_600_mA 0x21
-+#define PEAK_CURRENT_6_800_mA 0x22
-+#define PEAK_CURRENT_7_000_mA 0x23
-+#define PEAK_CURRENT_7_200_mA 0x24
-+#define PEAK_CURRENT_7_400_mA 0x25
-+#define PEAK_CURRENT_7_600_mA 0x26
-+#define PEAK_CURRENT_7_800_mA 0x27
-+#define PEAK_CURRENT_8_000_mA 0x28
-+#define PEAK_CURRENT_8_200_mA 0x29
-+#define PEAK_CURRENT_8_400_mA 0x2a
-+#define PEAK_CURRENT_8_600_mA 0x2b
-+#define PEAK_CURRENT_8_800_mA 0x2c
-+#define PEAK_CURRENT_9_000_mA 0x2d
-+#define PEAK_CURRENT_9_200_mA 0x2e
-+#define PEAK_CURRENT_9_400_mA 0x2f
++struct host1x_client_ops {
++	int (*init)(struct host1x_client *client);
++	int (*exit)(struct host1x_client *client);
++};
 +
-+#define HDMI_NV_PDISP_SOR_PAD_CTLS0		0xd2
-+#define DRIVE_CURRENT_FUSE_OVERRIDE_T114	(1 << 31)
++struct host1x_client {
++	struct list_head list;
++	struct device *dev;
 +
- #endif /* TEGRA_HDMI_H */
++	const struct host1x_client_ops *ops;
++
++	enum host1x_class class;
++	struct host1x_channel *channel;
++
++	struct host1x_syncpt **syncpts;
++	unsigned int num_syncpts;
++};
++
+ #endif
 -- 
 1.8.4
