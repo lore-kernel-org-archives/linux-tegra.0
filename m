@@ -1,35 +1,57 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
-Date: Sun, 6 Oct 2013 23:18:47 -0700
-Message-ID: <52525247.9060609@nvidia.com>
-References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org> <20131005233833.GA18223@kroah.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/7] ARM: tegra: basic support for Tegra124 SoC
+Date: Mon, 7 Oct 2013 15:31:18 +0800
+Message-ID: <1381131085-26116-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20131005233833.GA18223@kroah.com>
-Sender: stable-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Greg,
+Hi,
 
-On 10/05/2013 04:38 PM, Greg KH wrote:
-> On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
->> [auto-builders for 3.11.x are failing due to this]
-> What autobuilders?  I haven't heard of this before.
+This series adds basic support for the new Tegra SoC, Tegra124. To bring
+up the system, it also needs an initrd as rootfs. Because most of the
+peripheral not be enabled yet in this series, it depends on the clock and
+pinctrl driver.
 
-There's an experimental system here that automatically builds and 
-test-boots -stable kernels on some Tegra platforms.  The output isn't 
-public yet -- that's planned, but there are still a few bugs left in the 
-test system that would be good to clean up first.
+Here are the commands for U-Boot that I used for booting system to
+console prompt:
+* preparing kernel & initrd image
+mkimage -A arm -T kernel_noload -C none -a 0 -e 0 -d zImage kernel.img
+mkimage -A arm -C none -T ramdisk -a ${initrd_addr} -d rootfs.img.gz rootfs.img
 
-The output is similar to this:
+* boot cmd for U-Boot
+setenv bootargs console=ttyS0,115200 loglevel=8 init=/bin/sh
+ext2load mmc ${mmc_dev}:${boot_part} ${kernel_addr_r} kernel.img
+ext2load mmc ${mmc_dev}:${boot_part} ${ramdisk_addr_r} rootfs.img
+ext2load mmc ${mmc_dev}:${boot_part} ${fdt_addr_r} tegra124-venice2.dtb
+bootm ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}
 
-http://nvt.pwsan.com/pub/linux/testlogs/
+Verified on Venice2.
 
-Will certainly send you a link when it's ready to go.
+Joseph Lo (7):
+  ARM: tegra: add Tegra124 SoC support
+  ARM: tegra: add chip ID of Tegra124
+  ARM: tegra: add SMP support for Tegra124
+  ARM: tegra: Add initial device tree for Tegra124
+  ARM: tegra: add Venice2 board support
+  HACK: arm: tegra: reuse the Tegra114 clock driver for Tegra124 UART-A
+  ARM: tegra: enable Tegra124 support
 
+ arch/arm/boot/dts/Makefile             |   3 +-
+ arch/arm/boot/dts/tegra124-venice2.dts |  21 +++++
+ arch/arm/boot/dts/tegra124.dtsi        | 140 +++++++++++++++++++++++++++++++++
+ arch/arm/configs/tegra_defconfig       |   1 +
+ arch/arm/mach-tegra/Kconfig            |   8 ++
+ arch/arm/mach-tegra/fuse.h             |   1 +
+ arch/arm/mach-tegra/platsmp.c          |   2 +
+ arch/arm/mach-tegra/tegra.c            |   1 +
+ 8 files changed, 176 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/tegra124-venice2.dts
+ create mode 100644 arch/arm/boot/dts/tegra124.dtsi
 
-- Paul
+-- 
+1.8.4
