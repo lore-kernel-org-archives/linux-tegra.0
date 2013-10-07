@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/7] ARM: tegra: add Tegra124 SoC support
-Date: Mon, 7 Oct 2013 15:31:19 +0800
-Message-ID: <1381131085-26116-2-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 2/7] ARM: tegra: add chip ID of Tegra124
+Date: Mon, 7 Oct 2013 15:31:20 +0800
+Message-ID: <1381131085-26116-3-git-send-email-josephl@nvidia.com>
 References: <1381131085-26116-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,44 +12,24 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add Tegra124 SoC support that base on CortexA15MP Core.
+Add tegra_chip_id 0x40 for Tegra124
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/Kconfig | 8 ++++++++
- arch/arm/mach-tegra/tegra.c | 1 +
- 2 files changed, 9 insertions(+)
+ arch/arm/mach-tegra/fuse.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 67a76f2..92272e0 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -61,6 +61,14 @@ config ARCH_TEGRA_114_SOC
- 	  Support for NVIDIA Tegra T114 processor family, based on the
- 	  ARM CortexA15MP CPU
+diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
+index def7968..c01d047 100644
+--- a/arch/arm/mach-tegra/fuse.h
++++ b/arch/arm/mach-tegra/fuse.h
+@@ -29,6 +29,7 @@
+ #define TEGRA20		0x20
+ #define TEGRA30		0x30
+ #define TEGRA114	0x35
++#define TEGRA124	0x40
  
-+config ARCH_TEGRA_124_SOC
-+	bool "Enable support for Tegra124 family"
-+	select ARM_L1_CACHE_SHIFT_6
-+	select HAVE_ARM_ARCH_TIMER
-+	help
-+	  Support for NVIDIA Tegra T124 processor family, based on the
-+	  ARM CortexA15MP CPU
-+
- config TEGRA_AHB
- 	bool "Enable AHB driver for NVIDIA Tegra SoCs"
- 	default y
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 40b031c..80b801a 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -181,6 +181,7 @@ static void __init tegra_dt_init_late(void)
- }
- 
- static const char * const tegra_dt_board_compat[] = {
-+	"nvidia,tegra124",
- 	"nvidia,tegra114",
- 	"nvidia,tegra30",
- 	"nvidia,tegra20",
+ #ifndef __ASSEMBLY__
+ enum tegra_revision {
 -- 
 1.8.4
