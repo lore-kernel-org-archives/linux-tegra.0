@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/7] ARM: tegra: add chip ID of Tegra124
-Date: Mon, 7 Oct 2013 15:31:20 +0800
-Message-ID: <1381131085-26116-3-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 3/7] ARM: tegra: add SMP support for Tegra124
+Date: Mon, 7 Oct 2013 15:31:21 +0800
+Message-ID: <1381131085-26116-4-git-send-email-josephl@nvidia.com>
 References: <1381131085-26116-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,24 +12,26 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add tegra_chip_id 0x40 for Tegra124
+The power up method is same as Tegra114, so we share the same function
+for it.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/fuse.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-tegra/platsmp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-tegra/fuse.h b/arch/arm/mach-tegra/fuse.h
-index def7968..c01d047 100644
---- a/arch/arm/mach-tegra/fuse.h
-+++ b/arch/arm/mach-tegra/fuse.h
-@@ -29,6 +29,7 @@
- #define TEGRA20		0x20
- #define TEGRA30		0x30
- #define TEGRA114	0x35
-+#define TEGRA124	0x40
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index 2d02036..eb72ae7 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -176,6 +176,8 @@ static int tegra_boot_secondary(unsigned int cpu,
+ 		return tegra30_boot_secondary(cpu, idle);
+ 	if (IS_ENABLED(CONFIG_ARCH_TEGRA_114_SOC) && tegra_chip_id == TEGRA114)
+ 		return tegra114_boot_secondary(cpu, idle);
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_124_SOC) && tegra_chip_id == TEGRA124)
++		return tegra114_boot_secondary(cpu, idle);
  
- #ifndef __ASSEMBLY__
- enum tegra_revision {
+ 	return -EINVAL;
+ }
 -- 
 1.8.4
