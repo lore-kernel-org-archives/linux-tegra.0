@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 22/27] drm/panel: Add simple panel support
-Date: Mon,  7 Oct 2013 10:34:39 +0200
-Message-ID: <1381134884-5816-23-git-send-email-treding@nvidia.com>
+Subject: [PATCH v2 21/27] drm: Add panel support
+Date: Mon,  7 Oct 2013 10:34:38 +0200
+Message-ID: <1381134884-5816-22-git-send-email-treding@nvidia.com>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1381134884-5816-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,149 +10,66 @@ To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a driver for simple panels. Such panels can have a regulator that
-provides the supply voltage and a separate GPIO to enable the panel.
-Optionally the panels can have a backlight associated with them so it
-can be enabled or disabled according to the panel's power management
-mode.
+Add a very simple framework to register and lookup panels. Panel drivers
+can initialize a DRM panel and register it with the framework, allowing
+them to be retrieved and used by display drivers. Currently only support
+for DPMS and obtaining panel modes is provided. However it should be
+sufficient to enable a large number of panels. The framework should also
+be easily extensible to support more sophisticated kinds of panels such
+as DSI.
 
-Support is added for three panels: An AU Optronics 10.1" WSVGA, a
-Chunghwa Picture Tubes 10.1" WXGA and a Panasonic 10.1 WUXGA TFT LCD
-panel.
+The framework hasn't been tied into the DRM core, even though it should
+be easily possible to do so if that's what we want. In the current
+implementation, display drivers can simple make use of it to retrieve a
+panel, obtain its modes and control its DPMS mode.
+
+Note that this is currently only tested on systems that boot from a
+device tree. No glue code has been written yet for systems that use
+platform data, but it should be easy to add.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Changes in v2:
-- update vendor prefixes (cptt -> chunghwa, pc -> panasonic)
-- split up panel binding documents per-panel
-- make regulator mandatory
-- add flag to keep track of enabled status
+- split .dpms() into separate .disable() and .enable()
 
- .../devicetree/bindings/panel/auo,b101aw03.txt     |   7 +
- .../bindings/panel/chunghwa,claa101wb03.txt        |   7 +
- .../bindings/panel/panasonic,vvx10f004b00.txt      |   7 +
- .../devicetree/bindings/panel/simple-panel.txt     |  21 ++
- drivers/gpu/drm/Makefile                           |   1 +
- drivers/gpu/drm/panel/Kconfig                      |  13 +
- drivers/gpu/drm/panel/Makefile                     |   1 +
- drivers/gpu/drm/panel/panel-simple.c               | 339 +++++++++++++++++++++
- 8 files changed, 396 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/auo,b101aw03.txt
- create mode 100644 Documentation/devicetree/bindings/panel/chunghwa,claa101wb03.txt
- create mode 100644 Documentation/devicetree/bindings/panel/panasonic,vvx10f004b00.txt
- create mode 100644 Documentation/devicetree/bindings/panel/simple-panel.txt
- create mode 100644 drivers/gpu/drm/panel/Makefile
- create mode 100644 drivers/gpu/drm/panel/panel-simple.c
+ drivers/gpu/drm/Kconfig       |  2 +
+ drivers/gpu/drm/Makefile      |  1 +
+ drivers/gpu/drm/drm_panel.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/panel/Kconfig |  4 ++
+ include/drm/drm_panel.h       | 78 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 181 insertions(+)
+ create mode 100644 drivers/gpu/drm/drm_panel.c
+ create mode 100644 drivers/gpu/drm/panel/Kconfig
+ create mode 100644 include/drm/drm_panel.h
 
-diff --git a/Documentation/devicetree/bindings/panel/auo,b101aw03.txt b/Documentation/devicetree/bindings/panel/auo,b101aw03.txt
-new file mode 100644
-index 0000000..72e088a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/auo,b101aw03.txt
-@@ -0,0 +1,7 @@
-+AU Optronics Corporation 10.1" WSVGA TFT LCD panel
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index 290e2ac..a1d4f8e 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -238,3 +238,5 @@ source "drivers/gpu/drm/qxl/Kconfig"
+ source "drivers/gpu/drm/msm/Kconfig"
+ 
+ source "drivers/gpu/drm/tegra/Kconfig"
 +
-+Required properties:
-+- compatible: should be "auo,b101aw03"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/panel/chunghwa,claa101wb03.txt b/Documentation/devicetree/bindings/panel/chunghwa,claa101wb03.txt
-new file mode 100644
-index 0000000..0ab2c05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/chunghwa,claa101wb03.txt
-@@ -0,0 +1,7 @@
-+Chunghwa Picture Tubes Ltd. 10.1" WXGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "chunghwa,claa101wb03"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/panel/panasonic,vvx10f004b00.txt b/Documentation/devicetree/bindings/panel/panasonic,vvx10f004b00.txt
-new file mode 100644
-index 0000000..d328b03
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/panasonic,vvx10f004b00.txt
-@@ -0,0 +1,7 @@
-+Panasonic Corporation 10.1" WUXGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "panasonic,vvx10f004b00"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/panel/simple-panel.txt b/Documentation/devicetree/bindings/panel/simple-panel.txt
-new file mode 100644
-index 0000000..1341bbf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/simple-panel.txt
-@@ -0,0 +1,21 @@
-+Simple display panel
-+
-+Required properties:
-+- power-supply: regulator to provide the supply voltage
-+
-+Optional properties:
-+- ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
-+- enable-gpios: GPIO pin to enable or disable the panel
-+- backlight: phandle of the backlight device attached to the panel
-+
-+Example:
-+
-+	panel: panel {
-+		compatible = "cptt,claa101wb01";
-+		ddc-i2c-bus = <&panelddc>;
-+
-+		power-supply = <&vdd_pnl_reg>;
-+		enable-gpios = <&gpio 90 0>;
-+
-+		backlight = <&backlight>;
-+	};
++source "drivers/gpu/drm/panel/Kconfig"
 diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 81363a9..a9859e0 100644
+index e39cd03..81363a9 100644
 --- a/drivers/gpu/drm/Makefile
 +++ b/drivers/gpu/drm/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_DRM_QXL) += qxl/
- obj-$(CONFIG_DRM_MSM) += msm/
- obj-$(CONFIG_DRM_TEGRA) += tegra/
- obj-y			+= i2c/
-+obj-y			+= panel/
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 2ddd5bd..843087b 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -2,3 +2,16 @@ menuconfig DRM_PANEL
- 	bool "DRM panel support"
- 	help
- 	  Panel registration and lookup framework.
-+
-+if DRM_PANEL
-+
-+config DRM_PANEL_SIMPLE
-+	bool "support for simple panels"
-+	depends on OF
-+	help
-+	  DRM panel driver for dumb panels that need at most a regulator and
-+	  a GPIO to be powered up. Optionally a backlight can be attached so
-+	  that it can be automatically turned off when the panel goes into a
-+	  low power state.
-+
-+endif
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+@@ -18,6 +18,7 @@ drm-y       :=	drm_auth.o drm_buffer.o drm_bufs.o drm_cache.o \
+ drm-$(CONFIG_COMPAT) += drm_ioc32.o
+ drm-$(CONFIG_DRM_GEM_CMA_HELPER) += drm_gem_cma_helper.o
+ drm-$(CONFIG_PCI) += ati_pcigart.o
++drm-$(CONFIG_DRM_PANEL) += drm_panel.o
+ 
+ drm-usb-y   := drm_usb.o
+ 
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
 new file mode 100644
-index 0000000..af9dfa2
+index 0000000..ff6e459
 --- /dev/null
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-new file mode 100644
-index 0000000..b0fb103
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -0,0 +1,339 @@
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -0,0 +1,96 @@
 +/*
 + * Copyright (C) 2013, NVIDIA Corporation.  All rights reserved.
 + *
@@ -176,321 +93,172 @@ index 0000000..b0fb103
 + * DEALINGS IN THE SOFTWARE.
 + */
 +
-+#include <linux/backlight.h>
-+#include <linux/gpio.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
++#include <linux/err.h>
++#include <linux/export.h>
 +
 +#include <drm/drm_crtc.h>
 +#include <drm/drm_panel.h>
 +
-+struct panel_desc {
-+	const struct drm_display_mode *modes;
-+	unsigned int num_modes;
++static DEFINE_MUTEX(panel_lock);
++static LIST_HEAD(panel_list);
 +
-+	struct {
-+		unsigned int width;
-+		unsigned int height;
-+	} size;
-+};
-+
-+/* TODO: convert to gpiod_*() API once it's been merged */
-+#define GPIO_ACTIVE_LOW	(1 << 0)
-+
-+struct panel_simple {
-+	struct drm_panel base;
-+	bool enabled;
-+
-+	const struct panel_desc *desc;
-+
-+	struct backlight_device *backlight;
-+	struct regulator *supply;
-+
-+	unsigned long enable_gpio_flags;
-+	int enable_gpio;
-+};
-+
-+static inline struct panel_simple *to_panel_simple(struct drm_panel *panel)
++void drm_panel_init(struct drm_panel *panel)
 +{
-+	return container_of(panel, struct panel_simple, base);
++	INIT_LIST_HEAD(&panel->list);
 +}
++EXPORT_SYMBOL(drm_panel_init);
 +
-+static void panel_simple_disable(struct drm_panel *panel)
++int drm_panel_add(struct drm_panel *panel)
 +{
-+	struct panel_simple *p = to_panel_simple(panel);
-+
-+	if (!p->enabled)
-+		return;
-+
-+	if (p->backlight) {
-+		p->backlight->props.power = FB_BLANK_POWERDOWN;
-+		backlight_update_status(p->backlight);
-+	}
-+
-+	if (gpio_is_valid(p->enable_gpio)) {
-+		if (p->enable_gpio_flags & GPIO_ACTIVE_LOW)
-+			gpio_set_value(p->enable_gpio, 1);
-+		else
-+			gpio_set_value(p->enable_gpio, 0);
-+	}
-+
-+	regulator_disable(p->supply);
-+	p->enabled = false;
-+}
-+
-+static void panel_simple_enable(struct drm_panel *panel)
-+{
-+	struct panel_simple *p = to_panel_simple(panel);
-+	int err;
-+
-+	if (p->enabled)
-+		return;
-+
-+	err = regulator_enable(p->supply);
-+	if (err < 0)
-+		dev_err(panel->dev, "failed to enable supply: %d\n", err);
-+
-+	if (gpio_is_valid(p->enable_gpio)) {
-+		if (p->enable_gpio_flags & GPIO_ACTIVE_LOW)
-+			gpio_set_value(p->enable_gpio, 0);
-+		else
-+			gpio_set_value(p->enable_gpio, 1);
-+	}
-+
-+	if (p->backlight) {
-+		p->backlight->props.power = FB_BLANK_UNBLANK;
-+		backlight_update_status(p->backlight);
-+	}
-+
-+	p->enabled = true;
-+}
-+
-+static int panel_simple_get_modes(struct drm_panel *panel)
-+{
-+	struct panel_simple *p = to_panel_simple(panel);
-+	struct drm_display_mode *mode;
-+	unsigned int i;
-+
-+	for (i = 0; i < p->desc->num_modes; i++) {
-+		mode = drm_mode_duplicate(panel->drm, &p->desc->modes[i]);
-+		if (!mode)
-+			return -ENOMEM;
-+
-+		drm_mode_set_name(mode);
-+
-+		drm_mode_probed_add(panel->connector, mode);
-+	}
-+
-+	return p->desc->num_modes;
-+}
-+
-+static const struct drm_panel_funcs panel_simple_funcs = {
-+	.disable = panel_simple_disable,
-+	.enable = panel_simple_enable,
-+	.get_modes = panel_simple_get_modes,
-+};
-+
-+static const struct drm_display_mode auo_b101aw03_mode = {
-+	.clock = 51450,
-+	.hdisplay = 1024,
-+	.hsync_start = 1024 + 156,
-+	.hsync_end = 1024 + 156 + 8,
-+	.htotal = 1024 + 156 + 8 + 156,
-+	.vdisplay = 600,
-+	.vsync_start = 600 + 16,
-+	.vsync_end = 600 + 16 + 6,
-+	.vtotal = 600 + 16 + 6 + 16,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc auo_b101aw03 = {
-+	.modes = &auo_b101aw03_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 223,
-+		.height = 125,
-+	},
-+};
-+
-+static const struct drm_display_mode chunghwa_claa101wb01_mode = {
-+	.clock = 69300,
-+	.hdisplay = 1366,
-+	.hsync_start = 1366 + 48,
-+	.hsync_end = 1366 + 48 + 32,
-+	.htotal = 1366 + 48 + 32 + 20,
-+	.vdisplay = 768,
-+	.vsync_start = 768 + 16,
-+	.vsync_end = 768 + 16 + 8,
-+	.vtotal = 768 + 16 + 8 + 16,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc chunghwa_claa101wb01 = {
-+	.modes = &chunghwa_claa101wb01_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 223,
-+		.height = 125,
-+	},
-+};
-+
-+static const struct drm_display_mode panasonic_vvx10f004b00_mode = {
-+	.clock = 154700,
-+	.hdisplay = 1920,
-+	.hsync_start = 1920 + 154,
-+	.hsync_end = 1920 + 154 + 16,
-+	.htotal = 1920 + 154 + 16 + 32,
-+	.vdisplay = 1200,
-+	.vsync_start = 1200 + 17,
-+	.vsync_end = 1200 + 17 + 2,
-+	.vtotal = 1200 + 17 + 2 + 16,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc panasonic_vvx10f004b00 = {
-+	.modes = &panasonic_vvx10f004b00_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 217,
-+		.height = 136,
-+	},
-+};
-+
-+static const struct of_device_id panel_simple_of_match[] = {
-+	{
-+		.compatible = "auo,b101aw03",
-+		.data = &auo_b101aw03,
-+	}, {
-+		.compatible = "chunghwa,claa101wb01",
-+		.data = &chunghwa_claa101wb01
-+	}, {
-+		.compatible = "panasonic,vvx10f004b00",
-+		.data = &panasonic_vvx10f004b00
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(of, panel_simple_of_match);
-+
-+static int panel_simple_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *id;
-+	struct device_node *backlight;
-+	struct panel_simple *panel;
-+	enum of_gpio_flags flags;
-+	int err;
-+
-+	panel = devm_kzalloc(&pdev->dev, sizeof(*panel), GFP_KERNEL);
-+	if (!panel)
-+		return -ENOMEM;
-+
-+	id = of_match_node(panel_simple_of_match, pdev->dev.of_node);
-+	if (!id)
-+		return -ENODEV;
-+
-+	panel->desc = id->data;
-+	panel->enabled = false;
-+
-+	panel->supply = devm_regulator_get(&pdev->dev, "power");
-+	if (IS_ERR(panel->supply))
-+		return PTR_ERR(panel->supply);
-+
-+	panel->enable_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
-+						     "enable-gpios", 0,
-+						     &flags);
-+	if (gpio_is_valid(panel->enable_gpio)) {
-+		unsigned int value;
-+
-+		if (flags & OF_GPIO_ACTIVE_LOW)
-+			panel->enable_gpio_flags |= GPIO_ACTIVE_LOW;
-+
-+		err = gpio_request(panel->enable_gpio, "enable");
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to request GPIO#%u: %d\n",
-+				panel->enable_gpio, err);
-+			return err;
-+		}
-+
-+		value = (panel->enable_gpio_flags & GPIO_ACTIVE_LOW) != 0;
-+
-+		err = gpio_direction_output(panel->enable_gpio, value);
-+		if (err < 0) {
-+			dev_err(&pdev->dev, "failed to setup GPIO%u: %d\n",
-+				panel->enable_gpio, err);
-+			goto free_gpio;
-+		}
-+	}
-+
-+	backlight = of_parse_phandle(pdev->dev.of_node, "backlight", 0);
-+	if (backlight) {
-+		panel->backlight = of_find_backlight_by_node(backlight);
-+		if (!panel->backlight) {
-+			err = -EPROBE_DEFER;
-+			goto free_gpio;
-+		}
-+
-+		of_node_put(backlight);
-+	}
-+
-+	drm_panel_init(&panel->base);
-+	panel->base.dev = &pdev->dev;
-+	panel->base.funcs = &panel_simple_funcs;
-+
-+	err = drm_panel_add(&panel->base);
-+	if (err < 0)
-+		goto free_gpio;
-+
-+	platform_set_drvdata(pdev, panel);
-+
-+	return 0;
-+
-+free_gpio:
-+	if (gpio_is_valid(panel->enable_gpio))
-+		gpio_free(panel->enable_gpio);
-+
-+	return err;
-+}
-+
-+static int panel_simple_remove(struct platform_device *pdev)
-+{
-+	struct panel_simple *panel = platform_get_drvdata(pdev);
-+
-+	if (gpio_is_valid(panel->enable_gpio)) {
-+		if (panel->enable_gpio_flags & GPIO_ACTIVE_LOW)
-+			gpio_set_value(panel->enable_gpio, 1);
-+		else
-+			gpio_set_value(panel->enable_gpio, 0);
-+
-+		gpio_free(panel->enable_gpio);
-+	}
-+
-+	regulator_disable(panel->supply);
-+
-+	if (panel->backlight)
-+		put_device(&panel->backlight->dev);
-+
-+	drm_panel_detach(&panel->base);
-+	drm_panel_remove(&panel->base);
++	mutex_lock(&panel_lock);
++	list_add_tail(&panel->list, &panel_list);
++	mutex_unlock(&panel_lock);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL(drm_panel_add);
 +
-+static struct platform_driver panel_simple_driver = {
-+	.driver = {
-+		.name = "panel-simple",
-+		.owner = THIS_MODULE,
-+		.of_match_table = panel_simple_of_match,
-+	},
-+	.probe = panel_simple_probe,
-+	.remove = panel_simple_remove,
++void drm_panel_remove(struct drm_panel *panel)
++{
++	mutex_lock(&panel_lock);
++	list_del_init(&panel->list);
++	mutex_unlock(&panel_lock);
++}
++EXPORT_SYMBOL(drm_panel_remove);
++
++int drm_panel_attach(struct drm_panel *panel, struct drm_connector *connector)
++{
++	if (panel->connector)
++		return -EBUSY;
++
++	panel->connector = connector;
++	panel->drm = connector->dev;
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_panel_attach);
++
++int drm_panel_detach(struct drm_panel *panel)
++{
++	panel->connector = NULL;
++	panel->drm = NULL;
++
++	return 0;
++}
++EXPORT_SYMBOL(drm_panel_detach);
++
++#ifdef CONFIG_OF
++struct drm_panel *of_drm_find_panel(struct device_node *np)
++{
++	struct drm_panel *panel;
++
++	mutex_lock(&panel_lock);
++
++	list_for_each_entry(panel, &panel_list, list) {
++		if (panel->dev->of_node == np) {
++			mutex_unlock(&panel_lock);
++			return panel;
++		}
++	}
++
++	mutex_unlock(&panel_lock);
++	return NULL;
++}
++EXPORT_SYMBOL(of_drm_find_panel);
++#endif
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+new file mode 100644
+index 0000000..2ddd5bd
+--- /dev/null
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -0,0 +1,4 @@
++menuconfig DRM_PANEL
++	bool "DRM panel support"
++	help
++	  Panel registration and lookup framework.
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+new file mode 100644
+index 0000000..4c8760b
+--- /dev/null
++++ b/include/drm/drm_panel.h
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (C) 2013, NVIDIA Corporation.  All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sub license,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the
++ * next paragraph) shall be included in all copies or substantial portions
++ * of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ */
++
++#ifndef __DRM_PANEL_H__
++#define __DRM_PANEL_H__
++
++#include <linux/list.h>
++
++struct drm_connector;
++struct drm_device;
++struct drm_panel;
++
++struct drm_panel_funcs {
++	void (*disable)(struct drm_panel *panel);
++	void (*enable)(struct drm_panel *panel);
++	int (*get_modes)(struct drm_panel *panel);
 +};
-+module_platform_driver(panel_simple_driver);
 +
-+MODULE_DESCRIPTION("DRM Driver for Simple Panels");
-+MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_LICENSE("GPL v2");
++struct drm_panel {
++	struct drm_device *drm;
++	struct drm_connector *connector;
++	struct device *dev;
++
++	const struct drm_panel_funcs *funcs;
++
++	struct list_head list;
++};
++
++static inline void drm_panel_disable(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->disable)
++		panel->funcs->disable(panel);
++}
++
++static inline void drm_panel_enable(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->enable)
++		panel->funcs->enable(panel);
++}
++
++void drm_panel_init(struct drm_panel *panel);
++
++int drm_panel_add(struct drm_panel *panel);
++void drm_panel_remove(struct drm_panel *panel);
++
++int drm_panel_attach(struct drm_panel *panel, struct drm_connector *connector);
++int drm_panel_detach(struct drm_panel *panel);
++
++#ifdef CONFIG_OF
++struct drm_panel *of_drm_find_panel(struct device_node *np);
++#else
++static inline struct drm_panel *of_drm_find_panel(struct device_node *np)
++{
++	return NULL;
++}
++#endif
++
++#endif
 -- 
 1.8.4
