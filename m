@@ -1,45 +1,60 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 2/2] iommu/tegra-smmu: Staticize tegra_smmu_pm_ops
-Date: Tue,  8 Oct 2013 16:21:04 +0530
-Message-ID: <1381229464-28017-2-git-send-email-sachin.kamat@linaro.org>
-References: <1381229464-28017-1-git-send-email-sachin.kamat@linaro.org>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: check relocs after all gathers are consumed
+Date: Tue, 8 Oct 2013 13:57:48 +0300
+Message-ID: <5253E52C.5090805@nvidia.com>
+References: <1380917913-20482-1-git-send-email-kusmabite@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1381229464-28017-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380917913-20482-1-git-send-email-kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-'tegra_smmu_pm_ops' is used only in this file. Make it static.
+On 04.10.2013 23:18, Erik Faye-Lund wrote:
+> The num_relocs count are passed to the kernel per job, not per gather.
+> 
+> For multi-gather jobs, we would previously fail if there were relocs in
+> other gathers aside from the first one.
+> 
+> Fix this by simply moving the check until all gathers have been
+> consumed.
+> 
+> Signed-off-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/job.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+> index c4e1050..c9ddff8 100644
+> --- a/drivers/gpu/host1x/job.c
+> +++ b/drivers/gpu/host1x/job.c
+> @@ -436,10 +436,6 @@ static int validate(struct host1x_firewall *fw, struct host1x_job_gather *g)
+>  		}
+>  	}
+>  
+> -	/* No relocs should remain at this point */
+> -	if (fw->num_relocs)
+> -		err = -EINVAL;
+> -
+>  out:
+>  	return err;
+>  }
+> @@ -493,6 +489,10 @@ static inline int copy_gathers(struct host1x_job *job, struct device *dev)
+>  		offset += g->words * sizeof(u32);
+>  	}
+>  
+> +	/* No relocs should remain at this point */
+> +	if (fw.num_relocs)
+> +		return -EINVAL;
+> +
+>  	return 0;
+>  }
 
-Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good catch.
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 34374b3..605b5b4 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -1254,7 +1254,7 @@ static int tegra_smmu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--const struct dev_pm_ops tegra_smmu_pm_ops = {
-+static const struct dev_pm_ops tegra_smmu_pm_ops = {
- 	.suspend	= tegra_smmu_suspend,
- 	.resume		= tegra_smmu_resume,
- };
--- 
-1.7.9.5
+Acked-By: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Terje
