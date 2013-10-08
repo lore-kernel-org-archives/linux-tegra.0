@@ -1,37 +1,36 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
-Date: Mon, 7 Oct 2013 23:00:56 -0700
-Message-ID: <52539F98.2030307@nvidia.com>
-References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org> <20131005233833.GA18223@kroah.com> <52525247.9060609@nvidia.com>
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 13/27] drm/tegra: Move subdevice infrastructure to
+ host1x
+Date: Tue, 8 Oct 2013 09:25:39 +0300
+Message-ID: <5253A563.1060409@nvidia.com>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-14-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52525247.9060609-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1381134884-5816-14-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 07.10.2013 11:34, Thierry Reding wrote:
+> The Tegra DRM driver currently uses some infrastructure to defer the DRM
+> core initialization until all required devices have registered. The same
+> infrastructure can potentially be used by any other driver that requires
+> more than a single sub-device of the host1x module.
+> 
+> Make the infrastructure more generic and keep only the DRM specific code
+> in the DRM part of the driver. Eventually this will make it easy to move
+> the DRM driver part back to the DRM subsystem.
 
-On 10/06/2013 11:18 PM, Paul Walmsley wrote:
-> Hi Greg,
->
-> On 10/05/2013 04:38 PM, Greg KH wrote:
->> On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
->>> [auto-builders for 3.11.x are failing due to this]
->> What autobuilders?  I haven't heard of this before.
-> There's an experimental system here that automatically builds and
-> test-boots -stable kernels on some Tegra platforms.
+Do we need the host1x_client/tegra_drm_client concept outside DRM? You
+separated the two in an earlier patch, but the whole structure is there
+because of limitation in DRM. Shouldn't we keep management of drm
+clients entirely inside drm?
 
-Well, here's a public link for it:
+Second, do we need an own drm_bus for host1x clients? Does it bring
+something drm_platform doesn't? I couldn't see any immediate difference
+between the two.
 
-http://nvt.pwsan.com/pub/linux-stable/testlogs/
-
-So far it's seeded with v3.11.[34].  It should update automatically as 
-new releases come out.  So far the tests are quite basic (build + boot 
-to minimal userspace).  Please let Stephen and I know if you have any 
-comments or suggestions.
-
-
-- Paul
+Terje
