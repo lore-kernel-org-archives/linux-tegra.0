@@ -1,115 +1,75 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv4 2/5] gpu: host1x: shuffle job APIs
-Date: Tue, 8 Oct 2013 09:27:25 +0300
-Message-ID: <1381213648-5931-3-git-send-email-amerilainen@nvidia.com>
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv4 1/5] drm/tegra: Fix gr2d initialisation clean up
+Date: Tue, 8 Oct 2013 09:27:24 +0300
+Message-ID: <1381213648-5931-2-git-send-email-amerilainen@nvidia.com>
 References: <1381213648-5931-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381213648-5931-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tbergstrom@nvidia.com, treding@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com, mkulkarni@nvidia.com
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381213648-5931-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mkulkarni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mayuresh Kulkarni <mkulkarni@nvidia.com>
+gr2d initialisation clean up had missing steps (i.e. host1x channel
+was not released if we could not register gr2d as a host1x client)
+that could have lead to weird issues. This patch reworks the
+initialisation sequence to do clean up correctly.
 
-This patch moves function host1x_job_submit() to job.c file where
-all other host1x_job_* functions are placed. This patch also
-introduces function host1x_job_complete().
-
-Signed-off-by: Mayuresh Kulkarni <mkulkarni@nvidia.com>
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/host1x/cdma.c    |  2 ++
- drivers/gpu/host1x/channel.c |  8 --------
- drivers/gpu/host1x/channel.h |  1 -
- drivers/gpu/host1x/job.c     | 12 ++++++++++++
- drivers/gpu/host1x/job.h     |  3 +++
- 5 files changed, 17 insertions(+), 9 deletions(-)
+ drivers/gpu/host1x/drm/gr2d.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index de72172..910087b 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -252,6 +252,8 @@ static void update_cdma_locked(struct host1x_cdma *cdma)
- 				signal = true;
- 		}
- 
-+		host1x_job_complete(job);
-+
- 		list_del(&job->list);
- 		host1x_job_put(job);
+diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
+index 27ffcf1..60150ad 100644
+--- a/drivers/gpu/host1x/drm/gr2d.c
++++ b/drivers/gpu/host1x/drm/gr2d.c
+@@ -282,13 +282,15 @@ static int gr2d_probe(struct platform_device *pdev)
  	}
-diff --git a/drivers/gpu/host1x/channel.c b/drivers/gpu/host1x/channel.c
-index 83ea51b..c381441 100644
---- a/drivers/gpu/host1x/channel.c
-+++ b/drivers/gpu/host1x/channel.c
-@@ -21,7 +21,6 @@
  
- #include "channel.h"
- #include "dev.h"
--#include "job.h"
+ 	gr2d->channel = host1x_channel_request(dev);
+-	if (!gr2d->channel)
+-		return -ENOMEM;
++	if (!gr2d->channel) {
++		err = -ENOMEM;
++		goto err_channel_request;
++	}
  
- /* Constructor for the host1x device list */
- int host1x_channel_list_init(struct host1x *host)
-@@ -37,13 +36,6 @@ int host1x_channel_list_init(struct host1x *host)
+ 	*syncpts = host1x_syncpt_request(dev, false);
+ 	if (!(*syncpts)) {
+-		host1x_channel_free(gr2d->channel);
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto err_syncpt_request;
+ 	}
+ 
+ 	gr2d->client.ops = &gr2d_client_ops;
+@@ -300,7 +302,7 @@ static int gr2d_probe(struct platform_device *pdev)
+ 	err = host1x_register_client(host1x, &gr2d->client);
+ 	if (err < 0) {
+ 		dev_err(dev, "failed to register host1x client: %d\n", err);
+-		return err;
++		goto err_register_client;
+ 	}
+ 
+ 	gr2d_init_addr_reg_map(dev, gr2d);
+@@ -308,6 +310,15 @@ static int gr2d_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, gr2d);
+ 
  	return 0;
++
++err_register_client:
++	host1x_syncpt_free(*gr2d->client.syncpts);
++err_syncpt_request:
++	host1x_channel_free(gr2d->channel);
++err_channel_request:
++	clk_disable_unprepare(gr2d->clk);
++
++	return err;
  }
  
--int host1x_job_submit(struct host1x_job *job)
--{
--	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
--
--	return host1x_hw_channel_submit(host, job);
--}
--
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel)
- {
- 	int err = 0;
-diff --git a/drivers/gpu/host1x/channel.h b/drivers/gpu/host1x/channel.h
-index 48723b8..8401f25 100644
---- a/drivers/gpu/host1x/channel.h
-+++ b/drivers/gpu/host1x/channel.h
-@@ -44,7 +44,6 @@ struct host1x_channel *host1x_channel_request(struct device *dev);
- void host1x_channel_free(struct host1x_channel *channel);
- struct host1x_channel *host1x_channel_get(struct host1x_channel *channel);
- void host1x_channel_put(struct host1x_channel *channel);
--int host1x_job_submit(struct host1x_job *job);
- 
- #define host1x_for_each_channel(host, channel)				\
- 	list_for_each_entry(channel, &host->chlist.list, list)
-diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
-index c4e1050..3928b4e 100644
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -585,3 +585,15 @@ void host1x_job_dump(struct device *dev, struct host1x_job *job)
- 	dev_dbg(dev, "    NUM_SLOTS   %d\n", job->num_slots);
- 	dev_dbg(dev, "    NUM_HANDLES %d\n", job->num_unpins);
- }
-+
-+int host1x_job_submit(struct host1x_job *job)
-+{
-+	struct host1x *host = dev_get_drvdata(job->channel->dev->parent);
-+
-+	return host1x_hw_channel_submit(host, job);
-+}
-+
-+int host1x_job_complete(struct host1x_job *job)
-+{
-+	return 0;
-+}
-diff --git a/drivers/gpu/host1x/job.h b/drivers/gpu/host1x/job.h
-index fba45f2..e0249c3 100644
---- a/drivers/gpu/host1x/job.h
-+++ b/drivers/gpu/host1x/job.h
-@@ -159,4 +159,7 @@ void host1x_job_unpin(struct host1x_job *job);
-  */
- void host1x_job_dump(struct device *dev, struct host1x_job *job);
- 
-+int host1x_job_submit(struct host1x_job *job);
-+int host1x_job_complete(struct host1x_job *job);
-+
- #endif
+ static int __exit gr2d_remove(struct platform_device *pdev)
 -- 
 1.8.1.5
