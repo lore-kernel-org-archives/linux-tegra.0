@@ -1,37 +1,80 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] ARM: tegra: add CPU hot-plug and idle support for Tegra124
-Date: Tue, 8 Oct 2013 16:23:03 +0800
-Message-ID: <1381220587-29697-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 1/4] clk: tegra124: add wait_for_reset and disable_clock for tegra_cpu_car_ops
+Date: Tue, 8 Oct 2013 16:23:04 +0800
+Message-ID: <1381220587-29697-2-git-send-email-josephl@nvidia.com>
+References: <1381220587-29697-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381220587-29697-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The CPU hot-plug and idle function for Tegra124 was identical to Tegra114,
-so we share the driver with it.
+Hook the functions for CPU hotplug support. After the CPU is hot
+unplugged, the flow controller will handle to clock gate the CPU clock.
+But still need to implement an empty function to avoid warning message.
 
-Note:
-This patch series depends on the patch series below.
-* [PATCH 0/5] Tegra124 clock support
-* [PATCH V2 0/6] ARM: tegra: basic support for Tegra124 SoC
-* [PATCH] ARM: tegra: add clock properties for devices of Tegra124
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch depends on the patch series "[PATCH 0/5] Tegra124 clock support"
+that sent by Peter on 10/4/2013.
+---
+ drivers/clk/tegra/clk-tegra124.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Joseph Lo (4):
-  clk: tegra124: add wait_for_reset and disable_clock for
-    tegra_cpu_car_ops
-  ARM: tegra: CPU hotplug support for Tegra124
-  ARM: tegra: make tegra_resume can work with current and later chips
-  ARM: tegra: enable CPU idle for Tegra124
-
- arch/arm/mach-tegra/Makefile        |  4 ++++
- arch/arm/mach-tegra/cpuidle.c       |  4 +++-
- arch/arm/mach-tegra/hotplug.c       |  2 ++
- arch/arm/mach-tegra/reset-handler.S |  9 +++------
- drivers/clk/tegra/clk-tegra124.c    | 26 ++++++++++++++++++++++++++
- 5 files changed, 38 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 26ba059..c1c9330 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -106,6 +106,9 @@
+ #define UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE	BIT(1)
+ #define UTMIPLL_HW_PWRDN_CFG0_IDDQ_SWCTL	BIT(0)
+ 
++/* Tegra CPU clock and reset control regs */
++#define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
++
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
+ 
+@@ -1120,6 +1123,27 @@ static void __init tegra124_pll_init(void __iomem *clk_base,
+ 
+ }
+ 
++/* Tegra124 CPU clock and reset control functions */
++static void tegra124_wait_cpu_in_reset(u32 cpu)
++{
++	unsigned int reg;
++
++	do {
++		reg = readl(clk_base + CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
++		cpu_relax();
++	} while (!(reg & (1 << cpu)));  /* check CPU been reset or not */
++}
++
++static void tegra124_disable_cpu_clock(u32 cpu)
++{
++	/* flow controller would take care in the power sequence. */
++}
++
++static struct tegra_cpu_car_ops tegra124_cpu_car_ops = {
++	.wait_for_reset	= tegra124_wait_cpu_in_reset,
++	.disable_clock	= tegra124_disable_cpu_clock,
++};
++
+ static const struct of_device_id pmc_match[] __initconst = {
+ 	{ .compatible = "nvidia,tegra124-pmc" },
+ 	{},
+@@ -1202,5 +1226,7 @@ static void __init tegra124_clock_init(struct device_node *np)
+ 	tegra_add_of_provider(np);
+ 
+ 	tegra_clk_apply_init_table = tegra124_clock_apply_init_table;
++
++	tegra_cpu_car_ops = &tegra124_cpu_car_ops;
+ }
+ CLK_OF_DECLARE(tegra124, "nvidia,tegra124-car", tegra124_clock_init);
 -- 
 1.8.4
