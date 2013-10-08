@@ -1,31 +1,37 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 06/27] gpu: host1x: Cleanup includes
-Date: Tue, 8 Oct 2013 08:59:58 +0300
-Message-ID: <52539F5E.1060005@nvidia.com>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-7-git-send-email-treding@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
+Date: Mon, 7 Oct 2013 23:00:56 -0700
+Message-ID: <52539F98.2030307@nvidia.com>
+References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org> <20131005233833.GA18223@kroah.com> <52525247.9060609@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381134884-5816-7-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <52525247.9060609-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.10.2013 11:34, Thierry Reding wrote:
-> Most of the included files are either not required or already included
-> by some other header file.
 
-What's the general policy? I personally feel that each source file
-should #include all the header files it needs, and should not rely on
-header files #including other header files.
+On 10/06/2013 11:18 PM, Paul Walmsley wrote:
+> Hi Greg,
+>
+> On 10/05/2013 04:38 PM, Greg KH wrote:
+>> On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
+>>> [auto-builders for 3.11.x are failing due to this]
+>> What autobuilders?  I haven't heard of this before.
+> There's an experimental system here that automatically builds and
+> test-boots -stable kernels on some Tegra platforms.
 
-This way if header file A stops needing header file B, we don't need to
-go and fix all users of header file A that assume B is included.
+Well, here's a public link for it:
 
-I've been hit by this multiple times in Linux kernel - sometimes some
-header files just assume another header file is #included and refuses to
-compile it it isn't.
+http://nvt.pwsan.com/pub/linux-stable/testlogs/
 
-Terje
+So far it's seeded with v3.11.[34].  It should update automatically as 
+new releases come out.  So far the tests are quite basic (build + boot 
+to minimal userspace).  Please let Stephen and I know if you have any 
+comments or suggestions.
+
+
+- Paul
