@@ -1,130 +1,36 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: [PATCH v7 1/5] ARM: add basic support for Trusted Foundations
-Date: Tue, 08 Oct 2013 10:17:18 +0200
-Message-ID: <5253BF8E.4050802@monstr.eu>
-References: <1380904635-18113-1-git-send-email-acourbot@nvidia.com> <1380904635-18113-2-git-send-email-acourbot@nvidia.com>
-Reply-To: monstr@monstr.eu
+From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
+Date: Tue, 8 Oct 2013 11:20:07 +0300
+Message-ID: <5253C037.8070105@nvidia.com>
+References: <1380748361-32459-1-git-send-email-treding@nvidia.com> <524EF436.4000704@wwwdotorg.org> <20131007001433.7445.7915@quantum> <20131007142839.GC3973@tbergstrom-lnx.Nvidia.com> <20131007145343.GA19045@ulmo.nvidia.com> <20131008075356.GD3973@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="BDpjDvjmMN2UQURjhm38bdHVcwUhd0upd"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1380904635-18113-2-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, gnurou@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131008075356.GD3973-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---BDpjDvjmMN2UQURjhm38bdHVcwUhd0upd
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On 08.10.2013 10:53, Peter De Schrijver wrote:
+> On Mon, Oct 07, 2013 at 04:53:44PM +0200, Thierry Reding wrote:
+>> What's wrong with pll_c? We've used it for Tegra20 and Tegra30 and I
+>> have at least tested that gr2d works properly with it. It will also
+>> cause both host1x and gr2d to run off the same clock, which I guess may
+>> not matter at all.
+> Using pll_c2 is consistent with our policy in downstream. It allows more
+> freedom in scaling gr2d independently from host1x.
 
-Hi,
+host1x really should be on a clock that is not scaled. This is because
+it has some registers that need to be calibrated to the clock rate. It's
+a pain to recalibrate whenever clock rate is modified. This is why
+host1x is on PLLP downstream.
 
-On 10/04/2013 06:37 PM, Alexandre Courbot wrote:
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked using the same SMC-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
->=20
-> Note: The API followed by Trusted Foundations does *not* follow the SMC=
+2D on the other hand (and all clients) is a prime candidate for clock
+scaling.
 
-> calling conventions. It has nothing to do with PSCI neither and is only=
+This all is of course just hypothetical as long as we don't really scale
+host1x' or its clients' clocks.
 
-> relevant to devices that use Trusted Foundations (like most Tegra-based=
-
-> retail devices).
->=20
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> ---
->  .../arm/firmware/tl,trusted-foundations.txt        | 17 +++++
->  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
->  arch/arm/Kconfig                                   |  2 +
->  arch/arm/Makefile                                  |  1 +
->  arch/arm/firmware/Kconfig                          | 28 ++++++++
->  arch/arm/firmware/Makefile                         |  1 +
->  arch/arm/firmware/trusted_foundations.c            | 77 ++++++++++++++=
-++++++++
->  arch/arm/include/asm/trusted_foundations.h         | 64 ++++++++++++++=
-++++
->  8 files changed, 191 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,t=
-rusted-foundations.txt
->  create mode 100644 arch/arm/firmware/Kconfig
->  create mode 100644 arch/arm/firmware/Makefile
->  create mode 100644 arch/arm/firmware/trusted_foundations.c
->  create mode 100644 arch/arm/include/asm/trusted_foundations.h
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-=
-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trust=
-ed-foundations.txt
-> new file mode 100644
-> index 0000000..3954bbd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat=
-ions.txt
-> @@ -0,0 +1,17 @@
-> +Trusted Foundations
-> +
-> +Boards that use the Trusted Foundations secure monitor can signal its
-> +presence by declaring a node compatible with "tl,trusted-foundations"
-> +under the root node.
-> +
-> +Required properties:
-> +- compatible : "tl,trusted-foundations"
-> +- version-major : major version number of Trusted Foundations firmware=
-
-> +- version-minor: minor version number of Trusted Foundations firmware
-> +
-> +Example:
-> +	firmware {
-> +		compatible =3D "tl,trusted-foundations";
-> +		version-major =3D <2>;
-> +		version-minor =3D <8>;
-> +	};
-
-This is just another example how to add sw description to dts.
-I have briefly looked at tegra20.dtsi and there are IPs like timer, intc,=
- etc
-which are in the DTS without any bus.
-
-Add this firmware node to the root is just +1 case to this mess
-but IMHO will be good to have specific DT part which will be used for
-this sw setting which are coming to DTS all the time.
-
-Grant, Rob: Where is the proper location for these type of description?
-
-Thanks,
-Michal
-
-
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
-Maintainer of Linux kernel - Xilinx Zynq ARM architecture
-Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
-
-
-
---BDpjDvjmMN2UQURjhm38bdHVcwUhd0upd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iEYEARECAAYFAlJTv48ACgkQykllyylKDCEYkwCeLioWKoeGiaYBx648ugD2OS+U
-rcIAn1v7siGeDBSfU5yRm9YORfSs+hSO
-=ZRPE
------END PGP SIGNATURE-----
-
---BDpjDvjmMN2UQURjhm38bdHVcwUhd0upd--
+Terje
