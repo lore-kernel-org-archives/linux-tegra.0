@@ -1,87 +1,196 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: check relocs after all gathers are consumed
-Date: Tue, 8 Oct 2013 13:32:12 +0200
-Message-ID: <20131008113212.GI19633@ulmo.nvidia.com>
-References: <1380917913-20482-1-git-send-email-kusmabite@gmail.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH] hwmon: (lm90) Add support for TI TMP451
+Date: Tue, 8 Oct 2013 08:25:50 -0700
+Message-ID: <20131008152550.GA18402@roeck-us.net>
+References: <1381224457-21858-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1983509946=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1380917913-20482-1-git-send-email-kusmabite@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Erik Faye-Lund <kusmabite@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1381224457-21858-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============1983509946==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="boAH8PqvUi1v1f55"
-Content-Disposition: inline
-
-
---boAH8PqvUi1v1f55
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 04, 2013 at 08:18:33PM +0000, Erik Faye-Lund wrote:
-> The num_relocs count are passed to the kernel per job, not per gather.
->=20
-> For multi-gather jobs, we would previously fail if there were relocs in
-> other gathers aside from the first one.
->=20
-> Fix this by simply moving the check until all gathers have been
-> consumed.
->=20
-> Signed-off-by: Erik Faye-Lund <kusmabite@gmail.com>
+On Tue, Oct 08, 2013 at 05:27:37PM +0800, Wei Ni wrote:
+> TI TMP451 is mostly compatible with ADT7461, except for
+> local temperature low byte and max conversion rate.
+> Add support to the LM90 driver.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/gpu/host1x/job.c |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  Documentation/hwmon/lm90 |    6 ++++++
+>  drivers/hwmon/lm90.c     |   37 +++++++++++++++++++++++++++++--------
+>  2 files changed, 35 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/lm90 b/Documentation/hwmon/lm90
+> index b466974..e40af89 100644
+> --- a/Documentation/hwmon/lm90
+> +++ b/Documentation/hwmon/lm90
+> @@ -122,6 +122,12 @@ Supported chips:
+>      Prefix: 'g781'
+>      Addresses scanned: I2C 0x4c, 0x4d
+>      Datasheet: Not publicly available from GMT
+> +  * Texas Instruments TMP451
+> +    Prefix: 'tmp451'
+> +    Addresses scanned: I2C 0x4c
+> +    Datasheet: Publicly available at NXP website
 
-Applied, thanks.
+s/NXP/TI/
 
-Thierry
+> +               http://www.ti.com/litv/pdf/sbos686
+> +
+>  
+>  Author: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+>  
+> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+> index 82a1ca15..81a7bf6 100644
+> --- a/drivers/hwmon/lm90.c
+> +++ b/drivers/hwmon/lm90.c
+> @@ -60,6 +60,11 @@
+>   * This driver also supports the G781 from GMT. This device is compatible
+>   * with the ADM1032.
+>   *
+> + * This driver also supports TMP451 from Texas Instruments. This device is
+> + * supported in both compatibility and extended mode. it's mostly compatible
 
---boAH8PqvUi1v1f55
-Content-Type: application/pgp-signature
+s/it/It/
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+> + * with ADT7461 except for local temperature low byte register and max
+> + * conversion rate.
+> + *
+>   * Since the LM90 was the first chipset supported by this driver, most
+>   * comments will refer to this chipset, but are actually general and
+>   * concern all supported chipsets, unless mentioned otherwise.
+> @@ -111,7 +116,7 @@ static const unsigned short normal_i2c[] = {
+>  	0x4d, 0x4e, 0x4f, I2C_CLIENT_END };
+>  
+>  enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+> -	max6646, w83l771, max6696, sa56004, g781 };
+> +	max6646, w83l771, max6696, sa56004, g781, tmp451 };
+>  
+>  /*
+>   * The LM90 registers
+> @@ -168,6 +173,9 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+>  #define LM90_DEF_CONVRATE_RVAL	6	/* Def conversion rate register value */
+>  #define LM90_MAX_CONVRATE_MS	16000	/* Maximum conversion rate in ms */
+>  
+> +/* TMP451 registers */
+> +#define TMP451_REG_R_LOCAL_TEMPL	0x15
+> +
+>  /*
+>   * Device flags
+>   */
+> @@ -206,6 +214,7 @@ static const struct i2c_device_id lm90_id[] = {
+>  	{ "nct1008", adt7461 },
+>  	{ "w83l771", w83l771 },
+>  	{ "sa56004", sa56004 },
+> +	{ "tmp451", tmp451},
 
-iQIcBAEBAgAGBQJSU+08AAoJEN0jrNd/PrOhU0gQAJ48g2ZR+7ZFvyZMwz35jHOU
-xYpjk+H5VE9D0CpXpsaQO5OWc9dIgRFgW3vmwFWUCwFTyFQVuFUMO9bSzDDL4hR9
-nYVMv3/Q/J3Z1Bq7dwk7UEMJ80U/Ag+ZO+tCwzdlAJSK9v6a3F36cKEfE6ZBOQpO
-9TfNcrgwb2G2ILlnp2qDlp8Ch/h3434joCBgD7ZnM0Q0XiyxzMGpXHt0fU8foxgi
-vsNiVPwjORFB67wEwelZ1I3w8GjNbDndZw5soBZqfEhq4kThYSQaRrKM7y7pz6Zs
-YWbdqy7w52Bx3dlN5WfJG5m4eefHJDRDeJwR12wM1hLB5tqLqqeLuneb2QwdiYLW
-MtolFjOHVO8rxUd4ZtMAQRvPaPmMTvkrd6tUdoaoHc9asQm2BUSr6CbLNYW5okyR
-jh4oc1eaA1o3LOVTQdtiQgjfqUnxi41x98mWDpy8PrwkNKvNs7fyP2djvAxzp8YB
-JfoUrXJ/PhNf9MgZ98hdHs3uMTiOFJtWDF2xXxddwZ4LWjdMlRc4CQGEMU1msFRz
-yR429R/OgrTsFwLPvuhHSbAy3583klnT/ZDeVHenEuZZXSipQJNSyVl8t4lnOXcC
-3fbuaZVi5TJ51cniN9GN5XQst9kImrHmV06kBUY4PSDgczkE1w04hPL1hGYUTKQN
-F5dChSNN/I+PyDEgvV3Y
-=QrTF
------END PGP SIGNATURE-----
+	Addd space before } for consistency
 
---boAH8PqvUi1v1f55--
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, lm90_id);
+> @@ -294,6 +303,13 @@ static const struct lm90_params lm90_params[] = {
+>  		.max_convrate = 9,
+>  		.reg_local_ext = SA56004_REG_R_LOCAL_TEMPL,
+>  	},
+> +	[tmp451] = {
+> +		.flags = LM90_HAVE_OFFSET | LM90_HAVE_REM_LIMIT_EXT
+> +		  | LM90_HAVE_BROKEN_ALERT,
+> +		.alert_alarms = 0x7c,
+> +		.max_convrate = 9,
+> +		.reg_local_ext = TMP451_REG_R_LOCAL_TEMPL,
+> +	}
+>  };
+>  
+>  /*
+> @@ -718,7 +734,7 @@ static int read_temp8(struct device *dev, int index)
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[index]);
+> @@ -762,7 +778,7 @@ static int write_temp8(struct device *dev, int index, long val)
+>  		val -= 16000;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		data->temp8[index] = temp_to_u8_adt7461(data, val);
+>  	else if (data->kind == max6646)
+>  		data->temp8[index] = temp_to_u8(val);
+> @@ -803,7 +819,7 @@ static int read_temp11(struct device *dev, int index)
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u16_adt7461(data, data->temp11[index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u16(data->temp11[index]);
+> @@ -848,7 +864,7 @@ static int write_temp11(struct device *dev, int nr, int index, long val)
+>  		val -= 16000;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		data->temp11[index] = temp_to_u16_adt7461(data, val);
+>  	else if (data->kind == max6646)
+>  		data->temp11[index] = temp_to_u8(val) << 8;
+> @@ -912,7 +928,7 @@ static ssize_t show_temphyst(struct device *dev,
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[attr->index]);
+> @@ -940,7 +956,7 @@ static ssize_t set_temphyst(struct device *dev, struct device_attribute *dummy,
+>  		return err;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[2]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[2]);
+> @@ -1368,6 +1384,11 @@ static int lm90_detect(struct i2c_client *client,
+>  		 && (config1 & 0x3F) == 0x00
+>  		 && convrate <= 0x08)
+>  			name = "g781";
+> +	} else
+> +	if (address == 0x4C
+> +	 && man_id == 0x55) { /* Texas Instruments */
+> +		if (chip_id == 0x00)
+> +			name = "tmp451";
 
---===============1983509946==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Chip ID register is not defined for TMP451. Even if it is readable, not sure if
+you can rely on it. Guess we have to, as other TI chips _do_ have this register
+and might be mis-detected otherwise. Anyway, I think you should add additional
+checks as with other chips. Conversion rate limits are known, as well as
+forced-zero bits in the configuration register. You could also read register
+0x15 to ensure that it is readable and has the lower 4 bits set to 0.
 
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1983509946==--
+>  	}
+>  
+>  	if (!name) { /* identification failed */
+> @@ -1429,7 +1450,7 @@ static void lm90_init_client(struct i2c_client *client)
+>  	data->config_orig = config;
+>  
+>  	/* Check Temperature Range Select */
+> -	if (data->kind == adt7461) {
+> +	if (data->kind == adt7461 || data->kind == tmp451) {
+>  		if (config & 0x04)
+>  			data->flags |= LM90_FLAG_ADT7461_EXT;
+>  	}
+> -- 
+> 1.7.9.5
+> 
+> 
