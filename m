@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 3/6] ARM: tegra: Add initial device tree for Tegra124
-Date: Tue, 8 Oct 2013 12:50:05 +0800
-Message-ID: <1381207808-14734-4-git-send-email-josephl@nvidia.com>
+Subject: [PATCH V2 4/6] ARM: tegra: add Venice2 board support
+Date: Tue, 8 Oct 2013 12:50:06 +0800
+Message-ID: <1381207808-14734-5-git-send-email-josephl@nvidia.com>
 References: <1381207808-14734-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,155 +12,57 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Initial support for Tegra 124 SoC. This is expected to be included in
-the board DTS files.
+Add support for the Tegra124 based Venice2 reference board.
 
 Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 V2:
-* fix device node name with register address
-* fix PMC compitable value for Tegra124
+* fix the device node name with register address
+* remove an extra blank line
 ---
- arch/arm/boot/dts/tegra124.dtsi | 132 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 arch/arm/boot/dts/tegra124.dtsi
+ arch/arm/boot/dts/Makefile             |  3 ++-
+ arch/arm/boot/dts/tegra124-venice2.dts | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/tegra124-venice2.dts
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index cf75889..1c3b871 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -252,7 +252,8 @@ dtb-$(CONFIG_ARCH_TEGRA) += tegra20-harmony.dtb \
+ 	tegra30-beaver.dtb \
+ 	tegra30-cardhu-a02.dtb \
+ 	tegra30-cardhu-a04.dtb \
+-	tegra114-dalmore.dtb
++	tegra114-dalmore.dtb \
++	tegra124-venice2.dtb
+ dtb-$(CONFIG_ARCH_VERSATILE) += versatile-ab.dtb \
+ 	versatile-pb.dtb
+ dtb-$(CONFIG_ARCH_U300) += ste-u300.dtb
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
 new file mode 100644
-index 0000000..905f148
+index 0000000..2bfc7ab
 --- /dev/null
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -0,0 +1,132 @@
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -0,0 +1,20 @@
++/dts-v1/;
 +
-+#include "skeleton.dtsi"
++#include "tegra124.dtsi"
 +
 +/ {
-+	compatible = "nvidia,tegra124";
-+	interrupt-parent = <&gic>;
++	model = "NVIDIA Tegra124 Venice2";
++	compatible = "nvidia,venice2", "nvidia,tegra124";
 +
-+	gic: interrupt-controller@50041000 {
-+		compatible = "arm,cortex-a15-gic";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x50041000 0x1000>,
-+		      <0x50042000 0x1000>,
-+		      <0x50044000 0x2000>,
-+		      <0x50046000 0x2000>;
-+		interrupts = <GIC_PPI 9
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++	memory {
++		reg = <0x80000000 0x80000000>;
 +	};
 +
-+	timer@60005000 {
-+		compatible = "nvidia,tegra124-timer", "nvidia,tegra20-timer";
-+		reg = <0x60005000 0x400>;
-+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	/*
-+	 * There are two serial driver i.e. 8250 based simple serial
-+	 * driver and APB DMA based serial driver for higher baudrate
-+	 * and performace. To enable the 8250 based driver, the compatible
-+	 * is "nvidia,tegra124-uart", "nvidia,tegra20-uart" and to enable
-+	 * the APB DMA based serial driver, the comptible is
-+	 * "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart".
-+	 */
 +	serial@70006000 {
-+		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006000 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006040 {
-+		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006040 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006200 {
-+		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006200 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006300 {
-+		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006300 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	serial@70006400 {
-+		compatible = "nvidia,tegra124-uart", "nvidia,tegra20-uart";
-+		reg = <0x70006400 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	rtc@7000e000 {
-+		compatible = "nvidia,tegra124-rtc", "nvidia,tegra20-rtc";
-+		reg = <0x7000e000 0x100>;
-+		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
++		status = "okay";
 +	};
 +
 +	pmc@7000e400 {
-+		compatible = "nvidia,tegra124-pmc";
-+		reg = <0x7000e400 0x400>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <2>;
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <3>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
++		nvidia,invert-interrupt;
 +	};
 +};
 -- 
