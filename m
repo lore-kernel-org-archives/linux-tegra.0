@@ -1,297 +1,127 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5] hwmon: (lm90) split set&show temp as common codes
-Date: Tue, 8 Oct 2013 15:10:10 +0800
-Message-ID: <5253AFD2.2010405@nvidia.com>
-References: <1381215866-20608-1-git-send-email-wni@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: add clock properties for devices of Tegra124
+Date: Tue, 8 Oct 2013 15:47:40 +0800
+Message-ID: <1381218460-23123-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381215866-20608-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The previous version is in https://lkml.org/lkml/2013/8/6/170 .
+This patch adds clock properties for devices in the DT for basic support
+of Tegra124 SoC.
 
-Changes from v4:
-Couple of changes to get right error codes, as per Jean's review.
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch was based on the series of Tegra124 clock driver and the basic
+support of Tegra124. It coulud be used to replace the "HACK" patch in the
+basic support of Tegra124 series.
+---
+ arch/arm/boot/dts/tegra124-venice2.dts | 13 +++++++++++++
+ arch/arm/boot/dts/tegra124.dtsi        | 16 ++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-On 10/08/2013 03:04 PM, Wei Ni wrote:
-> Split set&show temp codes as common functions, so we can use it
-> directly when implement linux thermal framework.
-> And handle error return value for the lm90_select_remote_channel
-> and write_tempx, then set_temp8 and set_temp11 could return it
-> to user-space.
-> 
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/hwmon/lm90.c |  166 ++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 113 insertions(+), 53 deletions(-)
-> 
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index 3f51680..82a1ca15 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -424,20 +424,29 @@ static int lm90_read16(struct i2c_client *client, u8 regh, u8 regl, u16 *value)
->   * various registers have different meanings as a result of selecting a
->   * non-default remote channel.
->   */
-> -static inline void lm90_select_remote_channel(struct i2c_client *client,
-> +static inline int lm90_select_remote_channel(struct i2c_client *client,
->  					      struct lm90_data *data,
->  					      int channel)
->  {
->  	u8 config;
-> +	int err;
->  
->  	if (data->kind == max6696) {
->  		lm90_read_reg(client, LM90_REG_R_CONFIG1, &config);
->  		config &= ~0x08;
->  		if (channel)
->  			config |= 0x08;
-> -		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
-> -					  config);
-> +		err = i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
-> +						config);
-> +		if (err < 0) {
-> +			dev_err(&client->dev,
-> +				"Failed to select remote channel %d, err %d\n",
-> +				channel, err);
-> +			return err;
-> +		}
->  	}
-> +
-> +	return 0;
->  }
->  
->  /*
-> @@ -704,29 +713,34 @@ static u16 temp_to_u16_adt7461(struct lm90_data *data, long val)
->   * Sysfs stuff
->   */
->  
-> -static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
-> -			  char *buf)
-> +static int read_temp8(struct device *dev, int index)
->  {
-> -	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->  	struct lm90_data *data = lm90_update_device(dev);
->  	int temp;
->  
->  	if (data->kind == adt7461)
-> -		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
-> +		temp = temp_from_u8_adt7461(data, data->temp8[index]);
->  	else if (data->kind == max6646)
-> -		temp = temp_from_u8(data->temp8[attr->index]);
-> +		temp = temp_from_u8(data->temp8[index]);
->  	else
-> -		temp = temp_from_s8(data->temp8[attr->index]);
-> +		temp = temp_from_s8(data->temp8[index]);
->  
->  	/* +16 degrees offset for temp2 for the LM99 */
-> -	if (data->kind == lm99 && attr->index == 3)
-> +	if (data->kind == lm99 && index == 3)
->  		temp += 16000;
->  
-> -	return sprintf(buf, "%d\n", temp);
-> +	return temp;
->  }
->  
-> -static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
-> -			 const char *buf, size_t count)
-> +static ssize_t show_temp8(struct device *dev, struct device_attribute *devattr,
-> +			  char *buf)
-> +{
-> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> +
-> +	return sprintf(buf, "%d\n", read_temp8(dev, attr->index));
-> +}
-> +
-> +static int write_temp8(struct device *dev, int index, long val)
->  {
->  	static const u8 reg[8] = {
->  		LM90_REG_W_LOCAL_LOW,
-> @@ -739,60 +753,79 @@ static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
->  		MAX6659_REG_W_REMOTE_EMERG,
->  	};
->  
-> -	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->  	struct i2c_client *client = to_i2c_client(dev);
->  	struct lm90_data *data = i2c_get_clientdata(client);
-> -	int nr = attr->index;
-> -	long val;
->  	int err;
->  
-> -	err = kstrtol(buf, 10, &val);
-> -	if (err < 0)
-> -		return err;
-> -
->  	/* +16 degrees offset for temp2 for the LM99 */
-> -	if (data->kind == lm99 && attr->index == 3)
-> +	if (data->kind == lm99 && index == 3)
->  		val -= 16000;
->  
->  	mutex_lock(&data->update_lock);
->  	if (data->kind == adt7461)
-> -		data->temp8[nr] = temp_to_u8_adt7461(data, val);
-> +		data->temp8[index] = temp_to_u8_adt7461(data, val);
->  	else if (data->kind == max6646)
-> -		data->temp8[nr] = temp_to_u8(val);
-> +		data->temp8[index] = temp_to_u8(val);
->  	else
-> -		data->temp8[nr] = temp_to_s8(val);
-> -
-> -	lm90_select_remote_channel(client, data, nr >= 6);
-> -	i2c_smbus_write_byte_data(client, reg[nr], data->temp8[nr]);
-> -	lm90_select_remote_channel(client, data, 0);
-> +		data->temp8[index] = temp_to_s8(val);
->  
-> +	if ((err = lm90_select_remote_channel(client, data, index >= 6)) ||
-> +	    (err = i2c_smbus_write_byte_data(client, reg[index], data->temp8[index])) ||
-> +	    (err = lm90_select_remote_channel(client, data, 0))) {
-> +		dev_err(dev, "write_temp8 failed %d\n", err);
-> +	}
->  	mutex_unlock(&data->update_lock);
-> +
-> +	return err;
-> +}
-> +
-> +static ssize_t set_temp8(struct device *dev, struct device_attribute *devattr,
-> +			 const char *buf, size_t count)
-> +{
-> +	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
-> +	int index = attr->index;
-> +	long val;
-> +	int err;
-> +
-> +	err = kstrtol(buf, 10, &val);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	err = write_temp8(dev, index, val);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return count;
->  }
->  
-> -static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
-> -			   char *buf)
-> +static int read_temp11(struct device *dev, int index)
->  {
-> -	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->  	struct lm90_data *data = lm90_update_device(dev);
->  	int temp;
->  
->  	if (data->kind == adt7461)
-> -		temp = temp_from_u16_adt7461(data, data->temp11[attr->index]);
-> +		temp = temp_from_u16_adt7461(data, data->temp11[index]);
->  	else if (data->kind == max6646)
-> -		temp = temp_from_u16(data->temp11[attr->index]);
-> +		temp = temp_from_u16(data->temp11[index]);
->  	else
-> -		temp = temp_from_s16(data->temp11[attr->index]);
-> +		temp = temp_from_s16(data->temp11[index]);
->  
->  	/* +16 degrees offset for temp2 for the LM99 */
-> -	if (data->kind == lm99 &&  attr->index <= 2)
-> +	if (data->kind == lm99 && index <= 2)
->  		temp += 16000;
->  
-> -	return sprintf(buf, "%d\n", temp);
-> +	return temp;
->  }
->  
-> -static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
-> -			  const char *buf, size_t count)
-> +static ssize_t show_temp11(struct device *dev, struct device_attribute *devattr,
-> +			   char *buf)
-> +{
-> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-> +
-> +	return sprintf(buf, "%d\n", read_temp11(dev, attr->index));
-> +}
-> +
-> +static int write_temp11(struct device *dev, int nr, int index, long val)
->  {
->  	struct {
->  		u8 high;
-> @@ -806,18 +839,10 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->  		{ LM90_REG_W_REMOTE_HIGHH, LM90_REG_W_REMOTE_HIGHL, 1 }
->  	};
->  
-> -	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
->  	struct i2c_client *client = to_i2c_client(dev);
->  	struct lm90_data *data = i2c_get_clientdata(client);
-> -	int nr = attr->nr;
-> -	int index = attr->index;
-> -	long val;
->  	int err;
->  
-> -	err = kstrtol(buf, 10, &val);
-> -	if (err < 0)
-> -		return err;
-> -
->  	/* +16 degrees offset for temp2 for the LM99 */
->  	if (data->kind == lm99 && index <= 2)
->  		val -= 16000;
-> @@ -832,15 +857,50 @@ static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
->  	else
->  		data->temp11[index] = temp_to_s8(val) << 8;
->  
-> -	lm90_select_remote_channel(client, data, reg[nr].channel);
-> -	i2c_smbus_write_byte_data(client, reg[nr].high,
-> -				  data->temp11[index] >> 8);
-> -	if (data->flags & LM90_HAVE_REM_LIMIT_EXT)
-> -		i2c_smbus_write_byte_data(client, reg[nr].low,
-> -					  data->temp11[index] & 0xff);
-> -	lm90_select_remote_channel(client, data, 0);
-> +	err = lm90_select_remote_channel(client, data, reg[nr].channel);
-> +	if (err)
-> +		goto error;
-> +
-> +	err = i2c_smbus_write_byte_data(client, reg[nr].high,
-> +					data->temp11[index] >> 8);
-> +	if (err)
-> +		goto error;
-> +
-> +	if (data->flags & LM90_HAVE_REM_LIMIT_EXT) {
-> +		err = i2c_smbus_write_byte_data(client, reg[nr].low,
-> +						data->temp11[index] & 0xff);
-> +		if (err)
-> +			goto error;
-> +	}
-> +
-> +	err = lm90_select_remote_channel(client, data, 0);
-> +
-> +error:
-> +	if (err)
-> +		dev_err(dev, "write_temp11 failed %d\n", err);
->  
->  	mutex_unlock(&data->update_lock);
-> +
-> +	return err;
-> +}
-> +
-> +static ssize_t set_temp11(struct device *dev, struct device_attribute *devattr,
-> +			  const char *buf, size_t count)
-> +{
-> +	struct sensor_device_attribute_2 *attr = to_sensor_dev_attr_2(devattr);
-> +	int nr = attr->nr;
-> +	int index = attr->index;
-> +	long val;
-> +	int err;
-> +
-> +	err = kstrtol(buf, 10, &val);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	err = write_temp11(dev, nr, index, val);
-> +	if (err < 0)
-> +		return err;
-> +
->  	return count;
->  }
->  
-> 
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 2bfc7ab..5859ec2 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -17,4 +17,17 @@
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+ 	};
++
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		clk32k_in: clock {
++			compatible = "fixed-clock";
++			reg=<0>;
++			#clock-cells = <0>;
++			clock-frequency = <32768>;
++		};
++	};
+ };
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 905f148..7862024 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -1,3 +1,4 @@
++#include <dt-bindings/clock/tegra124-car.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ #include "skeleton.dtsi"
+@@ -27,6 +28,13 @@
+ 			     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_TIMER>;
++	};
++
++	tegra_car: clock@60006000 {
++		compatible = "nvidia,tegra124-car";
++		reg = <0x60006000 0x1000>;
++		#clock-cells = <1>;
+ 	};
+ 
+ 	/*
+@@ -43,6 +51,7 @@
+ 		reg-shift = <2>;
+ 		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_UARTA>;
+ 	};
+ 
+ 	serial@70006040 {
+@@ -51,6 +60,7 @@
+ 		reg-shift = <2>;
+ 		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_UARTB>;
+ 	};
+ 
+ 	serial@70006200 {
+@@ -59,6 +69,7 @@
+ 		reg-shift = <2>;
+ 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_UARTC>;
+ 	};
+ 
+ 	serial@70006300 {
+@@ -67,6 +78,7 @@
+ 		reg-shift = <2>;
+ 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_UARTD>;
+ 	};
+ 
+ 	serial@70006400 {
+@@ -75,6 +87,7 @@
+ 		reg-shift = <2>;
+ 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_UARTE>;
+ 	};
+ 
+ 	rtc@7000e000 {
+@@ -82,11 +95,14 @@
+ 		reg = <0x7000e000 0x100>;
+ 		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ 		status = "disabled";
++		clocks = <&tegra_car TEGRA124_CLK_RTC>;
+ 	};
+ 
+ 	pmc@7000e400 {
+ 		compatible = "nvidia,tegra124-pmc";
+ 		reg = <0x7000e400 0x400>;
++		clocks = <&tegra_car TEGRA124_CLK_PCLK>, <&clk32k_in>;
++		clock-names = "pclk", "clk32k_in";
+ 	};
+ 
+ 	cpus {
+-- 
+1.8.4
