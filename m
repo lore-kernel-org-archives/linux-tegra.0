@@ -1,45 +1,65 @@
 From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCH 0/3] gpu: host1x: Add syncpoint base support
-Date: Wed, 9 Oct 2013 14:54:07 +0300
-Message-ID: <1381319650-9799-1-git-send-email-amerilainen@nvidia.com>
+Subject: [PATCH 2/3] drm/tegra: Deliver syncpoint base to user space
+Date: Wed, 9 Oct 2013 14:54:09 +0300
+Message-ID: <1381319650-9799-3-git-send-email-amerilainen@nvidia.com>
+References: <1381319650-9799-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1381319650-9799-1-git-send-email-amerilainen@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: tbergstrom@nvidia.com, thierry.reding@gmail.com
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-The host1x driver uses currently syncpoints statically from host1x point of
-view. If we do a wait inside a job, it always has a constant value to wait.
-host1x supports also doing relative syncpoint waits with respect to syncpoint
-bases. This allows doing multiple operations inside a single submit and
-waiting an operation to complete before moving to next one.
+This patch makes the necessary additions to deliver syncpoint base
+to the user space.
 
-This set of patches adds support for syncpoint bases to host1x driver and
-enables the support for gr2d client. The series is based on 3.12-rc4.
+This patch splits the index field in the drm_tegra_get_syncpt structure
+into three separate fields (index, support_base, base_id). This allows
+to keep compatibility over kernel versions:
+- The placing of index field stays constant and therefore the interface
+  should stay compatible with earlier userspace versions.
+- The old index field was input-only and it was not supposed to be read
+  afterwards. Delivering data back in the same field should not introduce
+  regressions to any old user space applications.
+- Old kernels left support_base and base_id fields intact (zero) and
+  hence the new user space applications get the correct response from
+  the kernel (=syncpoint does not have a base).
 
-I have tested the series using the host1x test application (available at [0],
-function test_wait_base() in tests/tegra/host1x/tegra_host1x_test.c) on cardhu.
-I would appreciate help in reviewing the series and testing the patches
-on other boards.
+Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
+---
+ drivers/gpu/host1x/drm/drm.c | 2 ++
+ include/uapi/drm/tegra_drm.h | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-[0] https://gitorious.org/linux-host1x/libdrm-host1x
-
-Arto Merilainen (3):
-  gpu: host1x: Add syncpoint base support
-  drm/tegra: Deliver syncpoint base to user space
-  drm/tegra: Reserve base for gr2d
-
- drivers/gpu/host1x/dev.h                   |  2 ++
- drivers/gpu/host1x/drm/drm.c               |  2 ++
- drivers/gpu/host1x/drm/gr2d.c              |  2 +-
- drivers/gpu/host1x/hw/channel_hw.c         | 19 +++++++++++
- drivers/gpu/host1x/hw/hw_host1x01_uclass.h |  6 ++++
- drivers/gpu/host1x/syncpt.c                | 55 +++++++++++++++++++++++++++---
- drivers/gpu/host1x/syncpt.h                | 10 ++++++
- include/uapi/drm/tegra_drm.h               |  4 ++-
- 8 files changed, 93 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/gpu/host1x/drm/drm.c b/drivers/gpu/host1x/drm/drm.c
+index 8c61cee..4251563 100644
+--- a/drivers/gpu/host1x/drm/drm.c
++++ b/drivers/gpu/host1x/drm/drm.c
+@@ -468,6 +468,8 @@ static int tegra_get_syncpt(struct drm_device *drm, void *data,
+ 
+ 	syncpt = context->client->syncpts[args->index];
+ 	args->id = host1x_syncpt_id(syncpt);
++	args->support_base = syncpt->base ? 1 : 0;
++	args->base_id = syncpt->base ? syncpt->base->id : 0;
+ 
+ 	return 0;
+ }
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index 73bde4e..7a79ca5 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -61,7 +61,9 @@ struct drm_tegra_close_channel {
+ 
+ struct drm_tegra_get_syncpt {
+ 	__u64 context;
+-	__u32 index;
++	__u16 index;
++	__u8 support_base;
++	__u8 base_id;
+ 	__u32 id;
+ };
+ 
 -- 
 1.8.1.5
