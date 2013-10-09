@@ -1,34 +1,34 @@
-From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>
-Subject: Re: [PATCHv4 0/5] gpu: host1x: Add runtime pm support
-Date: Wed, 9 Oct 2013 09:42:39 +0300
-Message-ID: <5254FADF.7060709@nvidia.com>
-References: <1381213648-5931-1-git-send-email-amerilainen@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/5] clk: tegra124: Add new peripheral clocks
+Date: Wed, 9 Oct 2013 11:11:23 +0300
+Message-ID: <20131009081123.GB3973@tbergstrom-lnx.Nvidia.com>
+References: <1380878014-22088-1-git-send-email-pdeschrijver@nvidia.com>
+ <1380878014-22088-5-git-send-email-pdeschrijver@nvidia.com>
+ <525487C7.6080103@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381213648-5931-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arto Merilainen <amerilainen@nvidia.com>, Thierry Reding <treding@nvidia.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mayuresh Kulkarni <mkulkarni@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <525487C7.6080103-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08.10.2013 09:27, Arto Merilainen wrote:
-> This series adds runtime pm support for host1x, gr2d and dc. It retains the
-> current behaviour if CONFIG_PM_RUNTIME is not enabled.
+On Wed, Oct 09, 2013 at 12:31:35AM +0200, Stephen Warren wrote:
+> On 10/04/2013 03:12 AM, Peter De Schrijver wrote:
+> > Tegra124 introduces a number of new peripheral clocks. This patch adds those
+> > to the common peripheral clock code.
 > 
-> The gr2d clock is enabled when a new job is submitted and disabled when
-> the work is done. Due to parent->child relations between host1x->gr2d, this
-> scheme enables and disables host1x clock.
-> 
-> For dc, the clocks are enabled in .probe and disabled in .remove via runtime
-> pm instead of direct clock APIs.
-> 
-> Mayuresh is unfortunately not available to continue with the series and hence
-> I will continue working on the patches.
+> Don't you need to add AFC[0..5] in this patch and/or patch 5?
 
-The series,
+AFC[0..5] are reset only nodes afaik. Up to now, we haven't done that.
+The goal is to include them once we move to the reset framework.
 
-Acked-By: Terje Bergstrom <tbergstrom@nvidia.com>
+Cheers,
 
-Terje
+Peter.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
