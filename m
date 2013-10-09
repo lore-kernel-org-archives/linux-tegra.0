@@ -1,64 +1,45 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] hwmon: (lm90) Add support for TI TMP451
-Date: Wed, 9 Oct 2013 16:57:30 +0800
-Message-ID: <52551A7A.6080905@nvidia.com>
-References: <1381297248-13375-1-git-send-email-wni@nvidia.com> <20131009102323.169965ff@endymion.delvare>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/7] ARM: tegra: support LP1 suspend mode for Tegra124
+Date: Wed, 9 Oct 2013 17:20:04 +0800
+Message-ID: <1381310411-11391-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131009102323.169965ff-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/09/2013 04:23 PM, Jean Delvare wrote:
-> Hi Wei,
-> 
-> On Wed, 9 Oct 2013 13:40:48 +0800, Wei Ni wrote:
->> TI TMP451 is mostly compatible with ADT7461, except for
->> local temperature low byte and max conversion rate.
->> Add support to the LM90 driver.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  Documentation/hwmon/lm90 |    6 ++++++
->>  drivers/hwmon/lm90.c     |   45 +++++++++++++++++++++++++++++++++++++--------
->>  2 files changed, 43 insertions(+), 8 deletions(-)
-> 
-> If the lm90 driver supports and detects this chip then sensors-detect
-> should as well. I can do that for you if you provide a register dump of
-> your TMP451 chip (use the i2c-dev driver and i2cdump from the i2c-tools
-> package.)
+This series adds the LP1 support for Tegra124. (suspend to LP2 also
+supported in this series)
 
-localhost device # i2cdump -f 0 0x4c
-No size specified (using byte-data access)
-WARNING! This program can confuse your I2C bus, cause data loss and worse!
-I will probe file /dev/i2c-0, address 0x4c, mode byte
-Continue? [Y/n] y
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f    0123456789abcdef
-00: 5d 69 00 04 08 bf 00 ff 53 00 00 00 00 00 00 00    ]i.???..S.......
-10: a0 00 00 00 00 f0 00 00 00 a9 00 00 00 00 00 00    ?....?...?......
-20: b8 0a 01 00 00 XX 00 00 00 00 0e 00 00 00 00 00    ???..X....?.....
-30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-60: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-70: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-90: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
-f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 55 00    ..............U.
-localhost device #
+Note:
+This patch series depends on the patch series below.
+* [PATCH 0/5] Tegra124 clock support
+* [PATCH V2 0/6] ARM: tegra: basic support for Tegra124 SoC
+* [PATCH] ARM: tegra: add clock properties for devices of Tegra124
+* [PATCH 0/4] ARM: tegra: add CPU hot-plug and idle support for Tegra124
 
-Thanks.
-Wei.
+Verified on Cardhu, Dalmore and Venice2 and with THUMB2_KERNEL as well.
 
-> 
-> Thanks,
-> 
+Joseph Lo (7):
+  clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
+  ARM: tegra: add flow controller to support suspend for Tegra124
+  ARM: tegra: hook tegra_cpu_tear_down for Tegra124
+  ARM: tegra: add LP1 support code for Tegra124
+  ARM: tegra: hook the LP1 iram code area and sleep_core function for
+    Tegra124
+  ARM: tegra: enable Tegra RTC for Venice2
+  ARM: tegra: enable LP1 suspend mode for Venice2
+
+ arch/arm/boot/dts/tegra124-venice2.dts | 11 +++++++++++
+ arch/arm/mach-tegra/Makefile           |  1 +
+ arch/arm/mach-tegra/flowctrl.c         |  2 ++
+ arch/arm/mach-tegra/iomap.h            |  3 +++
+ arch/arm/mach-tegra/pm.c               | 12 +++++++++---
+ arch/arm/mach-tegra/sleep-tegra30.S    | 36 +++++++++++++++++++++++++++-------
+ drivers/clk/tegra/clk-tegra124.c       | 27 +++++++++++++++++++++++++
+ 7 files changed, 82 insertions(+), 10 deletions(-)
+
+-- 
+1.8.4
