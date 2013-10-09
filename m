@@ -1,45 +1,81 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/7] ARM: tegra: support LP1 suspend mode for Tegra124
-Date: Wed, 9 Oct 2013 17:20:04 +0800
-Message-ID: <1381310411-11391-1-git-send-email-josephl@nvidia.com>
+Subject: [PATCH 1/7] clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
+Date: Wed, 9 Oct 2013 17:20:05 +0800
+Message-ID: <1381310411-11391-2-git-send-email-josephl@nvidia.com>
+References: <1381310411-11391-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381310411-11391-1-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This series adds the LP1 support for Tegra124. (suspend to LP2 also
-supported in this series)
+Adding suspend/resume function for tegra_cpu_car_ops. We only save and
+restore the setting of the clock of CoreSight. Other clocks still need
+to be taken care by clock driver.
 
-Note:
-This patch series depends on the patch series below.
-* [PATCH 0/5] Tegra124 clock support
-* [PATCH V2 0/6] ARM: tegra: basic support for Tegra124 SoC
-* [PATCH] ARM: tegra: add clock properties for devices of Tegra124
-* [PATCH 0/4] ARM: tegra: add CPU hot-plug and idle support for Tegra124
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra124.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Verified on Cardhu, Dalmore and Venice2 and with THUMB2_KERNEL as well.
-
-Joseph Lo (7):
-  clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
-  ARM: tegra: add flow controller to support suspend for Tegra124
-  ARM: tegra: hook tegra_cpu_tear_down for Tegra124
-  ARM: tegra: add LP1 support code for Tegra124
-  ARM: tegra: hook the LP1 iram code area and sleep_core function for
-    Tegra124
-  ARM: tegra: enable Tegra RTC for Venice2
-  ARM: tegra: enable LP1 suspend mode for Venice2
-
- arch/arm/boot/dts/tegra124-venice2.dts | 11 +++++++++++
- arch/arm/mach-tegra/Makefile           |  1 +
- arch/arm/mach-tegra/flowctrl.c         |  2 ++
- arch/arm/mach-tegra/iomap.h            |  3 +++
- arch/arm/mach-tegra/pm.c               | 12 +++++++++---
- arch/arm/mach-tegra/sleep-tegra30.S    | 36 +++++++++++++++++++++++++++-------
- drivers/clk/tegra/clk-tegra124.c       | 27 +++++++++++++++++++++++++
- 7 files changed, 82 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index c1c9330..66eb1f8a 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -28,6 +28,7 @@
+ #include "clk.h"
+ #include "clk-id.h"
+ 
++#define CLK_SOURCE_CSITE 0x1d4
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_XUSB_SS_SRC 0x610
+ 
+@@ -109,6 +110,12 @@
+ /* Tegra CPU clock and reset control regs */
+ #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
+ 
++#ifdef CONFIG_PM_SLEEP
++static struct cpu_clk_suspend_context {
++	u32 clk_csite_src;
++} tegra124_cpu_clk_sctx;
++#endif
++
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
+ 
+@@ -1139,9 +1146,29 @@ static void tegra124_disable_cpu_clock(u32 cpu)
+ 	/* flow controller would take care in the power sequence. */
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static void tegra124_cpu_clock_suspend(void)
++{
++	/* switch coresite to clk_m, save off original source */
++	tegra124_cpu_clk_sctx.clk_csite_src =
++				readl(clk_base + CLK_SOURCE_CSITE);
++	writel(3 << 30, clk_base + CLK_SOURCE_CSITE);
++}
++
++static void tegra124_cpu_clock_resume(void)
++{
++	writel(tegra124_cpu_clk_sctx.clk_csite_src,
++				clk_base + CLK_SOURCE_CSITE);
++}
++#endif
++
+ static struct tegra_cpu_car_ops tegra124_cpu_car_ops = {
+ 	.wait_for_reset	= tegra124_wait_cpu_in_reset,
+ 	.disable_clock	= tegra124_disable_cpu_clock,
++#ifdef CONFIG_PM_SLEEP
++	.suspend	= tegra124_cpu_clock_suspend,
++	.resume		= tegra124_cpu_clock_resume,
++#endif
+ };
+ 
+ static const struct of_device_id pmc_match[] __initconst = {
 -- 
 1.8.4
