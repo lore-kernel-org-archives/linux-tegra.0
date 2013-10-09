@@ -1,89 +1,69 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/7] clk: tegra124: add suspend/resume function for
- tegra_cpu_car_ops
-Date: Wed, 9 Oct 2013 17:26:22 +0800
-Message-ID: <1381310782.2200.6.camel@jlo-ubuntu-64.nvidia.com>
-References: <1381310411-11391-1-git-send-email-josephl@nvidia.com>
-	 <1381310411-11391-2-git-send-email-josephl@nvidia.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH] HID: i2c-hid: add platform data for quirks
+Date: Wed, 9 Oct 2013 12:26:48 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1310091225230.13289@pobox.suse.cz>
+References: <1380790121-1355-1-git-send-email-bbasu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381310411-11391-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1380790121-1355-1-git-send-email-bbasu@nvidia.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Bibek Basu <bbasu@nvidia.com>
+Cc: benjamin.tissoires@gmail.com, linux-tegra@vger.kernel.org, kadduri@nvidia.com, linux-input@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-10-09 at 17:20 +0800, Joseph Lo wrote:
-> Adding suspend/resume function for tegra_cpu_car_ops. We only save and
-> restore the setting of the clock of CoreSight. Other clocks still need
-> to be taken care by clock driver.
-> 
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-Sorry.
-I forgot to mention this series depends on the patch series below.
-[PATCH 0/5] Tegra124 clock support
-[PATCH 1/4] clk: tegra124: add wait_for_reset and disable_clock for
-tegra_cpu_car_ops
+On Thu, 3 Oct 2013, Bibek Basu wrote:
 
->  drivers/clk/tegra/clk-tegra124.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+> Some HID device does not responds to INPUT/FEATURE
+> report query during initialization. As a result HID driver
+> throws error even when its not mandatory according to the
+> HID specification. Add platform data to provide
+> quirk information to the driver so that init query is not
+> done on such devices.
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index c1c9330..66eb1f8a 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -28,6 +28,7 @@
->  #include "clk.h"
->  #include "clk-id.h"
+> Signed-off-by: Bibek Basu <bbasu@nvidia.com>
+> ---
+>  drivers/hid/i2c-hid/i2c-hid.c | 1 +
+>  include/linux/i2c/i2c-hid.h   | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+> index fd7ce37..a7aec2c 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid.c
+> @@ -1017,6 +1017,7 @@ static int i2c_hid_probe(struct i2c_client *client,
+>  	hid->version = le16_to_cpu(ihid->hdesc.bcdVersion);
+>  	hid->vendor = le16_to_cpu(ihid->hdesc.wVendorID);
+>  	hid->product = le16_to_cpu(ihid->hdesc.wProductID);
+> +	hid->quirks = platform_data->quirks;
 >  
-> +#define CLK_SOURCE_CSITE 0x1d4
->  #define CLK_SOURCE_EMC 0x19c
->  #define CLK_SOURCE_XUSB_SS_SRC 0x610
->  
-> @@ -109,6 +110,12 @@
->  /* Tegra CPU clock and reset control regs */
->  #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static struct cpu_clk_suspend_context {
-> +	u32 clk_csite_src;
-> +} tegra124_cpu_clk_sctx;
-> +#endif
-> +
->  static void __iomem *clk_base;
->  static void __iomem *pmc_base;
->  
-> @@ -1139,9 +1146,29 @@ static void tegra124_disable_cpu_clock(u32 cpu)
->  	/* flow controller would take care in the power sequence. */
->  }
->  
-> +#ifdef CONFIG_PM_SLEEP
-> +static void tegra124_cpu_clock_suspend(void)
-> +{
-> +	/* switch coresite to clk_m, save off original source */
-> +	tegra124_cpu_clk_sctx.clk_csite_src =
-> +				readl(clk_base + CLK_SOURCE_CSITE);
-> +	writel(3 << 30, clk_base + CLK_SOURCE_CSITE);
-> +}
-> +
-> +static void tegra124_cpu_clock_resume(void)
-> +{
-> +	writel(tegra124_cpu_clk_sctx.clk_csite_src,
-> +				clk_base + CLK_SOURCE_CSITE);
-> +}
-> +#endif
-> +
->  static struct tegra_cpu_car_ops tegra124_cpu_car_ops = {
->  	.wait_for_reset	= tegra124_wait_cpu_in_reset,
->  	.disable_clock	= tegra124_disable_cpu_clock,
-> +#ifdef CONFIG_PM_SLEEP
-> +	.suspend	= tegra124_cpu_clock_suspend,
-> +	.resume		= tegra124_cpu_clock_resume,
-> +#endif
+>  	snprintf(hid->name, sizeof(hid->name), "%s %04hX:%04hX",
+>  		 client->name, hid->vendor, hid->product);
+> diff --git a/include/linux/i2c/i2c-hid.h b/include/linux/i2c/i2c-hid.h
+> index 7aa901d..12e682d 100644
+> --- a/include/linux/i2c/i2c-hid.h
+> +++ b/include/linux/i2c/i2c-hid.h
+> @@ -17,7 +17,7 @@
+>  /**
+>   * struct i2chid_platform_data - used by hid over i2c implementation.
+>   * @hid_descriptor_address: i2c register where the HID descriptor is stored.
+> - *
+> + * @quirks: quirks, if any for i2c-hid devices
+>   * Note that it is the responsibility of the platform driver (or the acpi 5.0
+>   * driver, or the flattened device tree) to setup the irq related to the gpio in
+>   * the struct i2c_board_info.
+> @@ -31,6 +31,7 @@
+>   */
+>  struct i2c_hid_platform_data {
+>  	u16 hid_descriptor_address;
+> +	u32 quirks;
 >  };
->  
->  static const struct of_device_id pmc_match[] __initconst = {
+
+Umm, and where does the quirks field of platform data actually get set? I 
+don't seem to see any followup patchset doing that?
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
