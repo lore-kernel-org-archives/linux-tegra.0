@@ -1,250 +1,195 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCH 1/3] gpu: host1x: Add syncpoint base support
-Date: Wed, 9 Oct 2013 14:54:08 +0300
-Message-ID: <1381319650-9799-2-git-send-email-amerilainen@nvidia.com>
-References: <1381319650-9799-1-git-send-email-amerilainen@nvidia.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH v2] hwmon: (lm90) Add support for TI TMP451
+Date: Wed, 9 Oct 2013 08:17:44 -0700
+Message-ID: <20131009151744.GA7787@roeck-us.net>
+References: <1381297248-13375-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381319650-9799-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tbergstrom@nvidia.com, thierry.reding@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1381297248-13375-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds support for hardware syncpoint bases. This creates
-a simple mechanism for waiting an operation to complete in the middle
-of the command buffer.
+On Wed, Oct 09, 2013 at 01:40:48PM +0800, Wei Ni wrote:
+> TI TMP451 is mostly compatible with ADT7461, except for
+> local temperature low byte and max conversion rate.
+> Add support to the LM90 driver.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
----
- drivers/gpu/host1x/dev.h                   |  2 ++
- drivers/gpu/host1x/hw/channel_hw.c         | 19 +++++++++++
- drivers/gpu/host1x/hw/hw_host1x01_uclass.h |  6 ++++
- drivers/gpu/host1x/syncpt.c                | 55 +++++++++++++++++++++++++++---
- drivers/gpu/host1x/syncpt.h                | 10 ++++++
- 5 files changed, 87 insertions(+), 5 deletions(-)
+Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index bed90a8..89a3c1e 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -26,6 +26,7 @@
- #include "cdma.h"
- #include "job.h"
- 
-+struct host1x_base;
- struct host1x_syncpt;
- struct host1x_channel;
- struct host1x_cdma;
-@@ -102,6 +103,7 @@ struct host1x {
- 
- 	void __iomem *regs;
- 	struct host1x_syncpt *syncpt;
-+	struct host1x_base *bases;
- 	struct device *dev;
- 	struct clk *clk;
- 
-diff --git a/drivers/gpu/host1x/hw/channel_hw.c b/drivers/gpu/host1x/hw/channel_hw.c
-index ee19962..5f9f735 100644
---- a/drivers/gpu/host1x/hw/channel_hw.c
-+++ b/drivers/gpu/host1x/hw/channel_hw.c
-@@ -67,6 +67,21 @@ static void submit_gathers(struct host1x_job *job)
- 	}
- }
- 
-+static inline void synchronize_syncpt_base(struct host1x_job *job)
-+{
-+	struct host1x_channel *ch = job->channel;
-+	struct host1x *host = dev_get_drvdata(ch->dev->parent);
-+	struct host1x_syncpt *sp = host->syncpt + job->syncpt_id;
-+	u32 base_id = sp->base->id;
-+	u32 base_val = host1x_syncpt_read_max(sp);
-+
-+	host1x_cdma_push(&ch->cdma,
-+			 host1x_opcode_setclass(HOST1X_CLASS_HOST1X,
-+				host1x_uclass_load_syncpt_base_r(), 1),
-+			 host1x_uclass_load_syncpt_base_base_indx_f(base_id) |
-+			 host1x_uclass_load_syncpt_base_value_f(base_val));
-+}
-+
- static int channel_submit(struct host1x_job *job)
- {
- 	struct host1x_channel *ch = job->channel;
-@@ -118,6 +133,10 @@ static int channel_submit(struct host1x_job *job)
- 					host1x_syncpt_read_max(sp)));
- 	}
- 
-+	/* Synchronize base register to allow using it for relative waiting */
-+	if (sp->base)
-+		synchronize_syncpt_base(job);
-+
- 	syncval = host1x_syncpt_incr_max(sp, user_syncpt_incrs);
- 
- 	job->syncpt_end = syncval;
-diff --git a/drivers/gpu/host1x/hw/hw_host1x01_uclass.h b/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-index 42f3ce1..f755359 100644
---- a/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-+++ b/drivers/gpu/host1x/hw/hw_host1x01_uclass.h
-@@ -111,6 +111,12 @@ static inline u32 host1x_uclass_wait_syncpt_base_offset_f(u32 v)
- }
- #define HOST1X_UCLASS_WAIT_SYNCPT_BASE_OFFSET_F(v) \
- 	host1x_uclass_wait_syncpt_base_offset_f(v)
-+static inline u32 host1x_uclass_load_syncpt_base_r(void)
-+{
-+	return 0xb;
-+}
-+#define HOST1X_UCLASS_LOAD_SYNCPT_BASE \
-+	host1x_uclass_load_syncpt_base_r()
- static inline u32 host1x_uclass_load_syncpt_base_base_indx_f(u32 v)
- {
- 	return (v & 0xff) << 24;
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 409745b..48927b1 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -30,9 +30,32 @@
- #define SYNCPT_CHECK_PERIOD (2 * HZ)
- #define MAX_STUCK_CHECK_COUNT 15
- 
-+static struct host1x_base *host1x_base_alloc(struct host1x *host)
-+{
-+	struct host1x_base *base = host->bases;
-+	int i;
-+
-+	for (i = 0; i < host->info->nb_bases && base->reserved; i++, base++)
-+		;
-+
-+	if (i >= host->info->nb_bases)
-+		return NULL;
-+
-+	base->reserved = true;
-+	return base;
-+}
-+
-+static void host1x_base_free(struct host1x_base *base)
-+{
-+	if (!base)
-+		return;
-+	base->reserved = false;
-+}
-+
- static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
- 						  struct device *dev,
--						  bool client_managed)
-+						  bool client_managed,
-+						  bool support_base)
- {
- 	int i;
- 	struct host1x_syncpt *sp = host->syncpt;
-@@ -44,6 +67,12 @@ static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
- 	if (i >= host->info->nb_pts)
- 		return NULL;
- 
-+	if (support_base) {
-+		sp->base = host1x_base_alloc(host);
-+		if (!sp->base)
-+			return NULL;
-+	}
-+
- 	name = kasprintf(GFP_KERNEL, "%02d-%s", sp->id,
- 			dev ? dev_name(dev) : NULL);
- 	if (!name)
-@@ -304,24 +333,31 @@ int host1x_syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr)
- int host1x_syncpt_init(struct host1x *host)
- {
- 	struct host1x_syncpt *syncpt;
-+	struct host1x_base *bases;
- 	int i;
- 
-+	bases = devm_kzalloc(host->dev, sizeof(*bases) * host->info->nb_bases,
-+		GFP_KERNEL);
- 	syncpt = devm_kzalloc(host->dev, sizeof(*syncpt) * host->info->nb_pts,
- 		GFP_KERNEL);
--	if (!syncpt)
-+	if (!syncpt || !bases)
- 		return -ENOMEM;
- 
--	for (i = 0; i < host->info->nb_pts; ++i) {
-+	for (i = 0; i < host->info->nb_bases; i++)
-+		bases[i].id = i;
-+
-+	for (i = 0; i < host->info->nb_pts; i++) {
- 		syncpt[i].id = i;
- 		syncpt[i].host = host;
- 	}
- 
- 	host->syncpt = syncpt;
-+	host->bases = bases;
- 
- 	host1x_syncpt_restore(host);
- 
- 	/* Allocate sync point to use for clearing waits for expired fences */
--	host->nop_sp = _host1x_syncpt_alloc(host, NULL, false);
-+	host->nop_sp = _host1x_syncpt_alloc(host, NULL, false, false);
- 	if (!host->nop_sp)
- 		return -ENOMEM;
- 
-@@ -332,7 +368,14 @@ struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
- 					    bool client_managed)
- {
- 	struct host1x *host = dev_get_drvdata(dev->parent);
--	return _host1x_syncpt_alloc(host, dev, client_managed);
-+	return _host1x_syncpt_alloc(host, dev, client_managed, false);
-+}
-+
-+struct host1x_syncpt *host1x_syncpt_request_based(struct device *dev,
-+						  bool client_managed)
-+{
-+	struct host1x *host = dev_get_drvdata(dev->parent);
-+	return _host1x_syncpt_alloc(host, dev, client_managed, true);
- }
- 
- void host1x_syncpt_free(struct host1x_syncpt *sp)
-@@ -340,7 +383,9 @@ void host1x_syncpt_free(struct host1x_syncpt *sp)
- 	if (!sp)
- 		return;
- 
-+	host1x_base_free(sp->base);
- 	kfree(sp->name);
-+	sp->base = NULL;
- 	sp->dev = NULL;
- 	sp->name = NULL;
- 	sp->client_managed = false;
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index 267c0b9..852dc76 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -30,6 +30,11 @@ struct host1x;
- /* Reserved for replacing an expired wait with a NOP */
- #define HOST1X_SYNCPT_RESERVED			0
- 
-+struct host1x_base {
-+	u8 id;
-+	bool reserved;
-+};
-+
- struct host1x_syncpt {
- 	int id;
- 	atomic_t min_val;
-@@ -39,6 +44,7 @@ struct host1x_syncpt {
- 	bool client_managed;
- 	struct host1x *host;
- 	struct device *dev;
-+	struct host1x_base *base;
- 
- 	/* interrupt data */
- 	struct host1x_syncpt_intr intr;
-@@ -156,6 +162,10 @@ u32 host1x_syncpt_id(struct host1x_syncpt *sp);
- struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
- 					    bool client_managed);
- 
-+/* Allocate a sync point and a base for a device */
-+struct host1x_syncpt *host1x_syncpt_request_based(struct device *dev,
-+						  bool client_managed);
-+
- /* Free a sync point. */
- void host1x_syncpt_free(struct host1x_syncpt *sp);
- 
--- 
-1.8.1.5
+Jean, I assume you'll take this one ? Otherwise, please let me know.
+
+Thanks,
+Guenter
+
+> ---
+>  Documentation/hwmon/lm90 |    6 ++++++
+>  drivers/hwmon/lm90.c     |   45 +++++++++++++++++++++++++++++++++++++--------
+>  2 files changed, 43 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/lm90 b/Documentation/hwmon/lm90
+> index b466974..ab81013 100644
+> --- a/Documentation/hwmon/lm90
+> +++ b/Documentation/hwmon/lm90
+> @@ -122,6 +122,12 @@ Supported chips:
+>      Prefix: 'g781'
+>      Addresses scanned: I2C 0x4c, 0x4d
+>      Datasheet: Not publicly available from GMT
+> +  * Texas Instruments TMP451
+> +    Prefix: 'tmp451'
+> +    Addresses scanned: I2C 0x4c
+> +    Datasheet: Publicly available at TI website
+> +               http://www.ti.com/litv/pdf/sbos686
+> +
+>  
+>  Author: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+>  
+> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
+> index 82a1ca15..e9a5e30 100644
+> --- a/drivers/hwmon/lm90.c
+> +++ b/drivers/hwmon/lm90.c
+> @@ -60,6 +60,11 @@
+>   * This driver also supports the G781 from GMT. This device is compatible
+>   * with the ADM1032.
+>   *
+> + * This driver also supports TMP451 from Texas Instruments. This device is
+> + * supported in both compatibility and extended mode. It's mostly compatible
+> + * with ADT7461 except for local temperature low byte register and max
+> + * conversion rate.
+> + *
+>   * Since the LM90 was the first chipset supported by this driver, most
+>   * comments will refer to this chipset, but are actually general and
+>   * concern all supported chipsets, unless mentioned otherwise.
+> @@ -111,7 +116,7 @@ static const unsigned short normal_i2c[] = {
+>  	0x4d, 0x4e, 0x4f, I2C_CLIENT_END };
+>  
+>  enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+> -	max6646, w83l771, max6696, sa56004, g781 };
+> +	max6646, w83l771, max6696, sa56004, g781, tmp451 };
+>  
+>  /*
+>   * The LM90 registers
+> @@ -168,6 +173,9 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
+>  #define LM90_DEF_CONVRATE_RVAL	6	/* Def conversion rate register value */
+>  #define LM90_MAX_CONVRATE_MS	16000	/* Maximum conversion rate in ms */
+>  
+> +/* TMP451 registers */
+> +#define TMP451_REG_R_LOCAL_TEMPL	0x15
+> +
+>  /*
+>   * Device flags
+>   */
+> @@ -206,6 +214,7 @@ static const struct i2c_device_id lm90_id[] = {
+>  	{ "nct1008", adt7461 },
+>  	{ "w83l771", w83l771 },
+>  	{ "sa56004", sa56004 },
+> +	{ "tmp451", tmp451},
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, lm90_id);
+> @@ -294,6 +303,13 @@ static const struct lm90_params lm90_params[] = {
+>  		.max_convrate = 9,
+>  		.reg_local_ext = SA56004_REG_R_LOCAL_TEMPL,
+>  	},
+> +	[tmp451] = {
+> +		.flags = LM90_HAVE_OFFSET | LM90_HAVE_REM_LIMIT_EXT
+> +		  | LM90_HAVE_BROKEN_ALERT,
+> +		.alert_alarms = 0x7c,
+> +		.max_convrate = 9,
+> +		.reg_local_ext = TMP451_REG_R_LOCAL_TEMPL,
+> +	}
+>  };
+>  
+>  /*
+> @@ -718,7 +734,7 @@ static int read_temp8(struct device *dev, int index)
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[index]);
+> @@ -762,7 +778,7 @@ static int write_temp8(struct device *dev, int index, long val)
+>  		val -= 16000;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		data->temp8[index] = temp_to_u8_adt7461(data, val);
+>  	else if (data->kind == max6646)
+>  		data->temp8[index] = temp_to_u8(val);
+> @@ -803,7 +819,7 @@ static int read_temp11(struct device *dev, int index)
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u16_adt7461(data, data->temp11[index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u16(data->temp11[index]);
+> @@ -848,7 +864,7 @@ static int write_temp11(struct device *dev, int nr, int index, long val)
+>  		val -= 16000;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		data->temp11[index] = temp_to_u16_adt7461(data, val);
+>  	else if (data->kind == max6646)
+>  		data->temp11[index] = temp_to_u8(val) << 8;
+> @@ -912,7 +928,7 @@ static ssize_t show_temphyst(struct device *dev,
+>  	struct lm90_data *data = lm90_update_device(dev);
+>  	int temp;
+>  
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[attr->index]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[attr->index]);
+> @@ -940,7 +956,7 @@ static ssize_t set_temphyst(struct device *dev, struct device_attribute *dummy,
+>  		return err;
+>  
+>  	mutex_lock(&data->update_lock);
+> -	if (data->kind == adt7461)
+> +	if (data->kind == adt7461 || data->kind == tmp451)
+>  		temp = temp_from_u8_adt7461(data, data->temp8[2]);
+>  	else if (data->kind == max6646)
+>  		temp = temp_from_u8(data->temp8[2]);
+> @@ -1368,6 +1384,19 @@ static int lm90_detect(struct i2c_client *client,
+>  		 && (config1 & 0x3F) == 0x00
+>  		 && convrate <= 0x08)
+>  			name = "g781";
+> +	} else
+> +	if (address == 0x4C
+> +	 && man_id == 0x55) { /* Texas Instruments */
+> +		int local_ext;
+> +
+> +		local_ext = i2c_smbus_read_byte_data(client,
+> +						     TMP451_REG_R_LOCAL_TEMPL);
+> +
+> +		if (chip_id == 0x00 /* TMP451 */
+> +		 && (config1 & 0x1B) == 0x00
+> +		 && convrate <= 0x09
+> +		 && (local_ext & 0x0F) == 0x00)
+> +			name = "tmp451";
+>  	}
+>  
+>  	if (!name) { /* identification failed */
+> @@ -1429,7 +1458,7 @@ static void lm90_init_client(struct i2c_client *client)
+>  	data->config_orig = config;
+>  
+>  	/* Check Temperature Range Select */
+> -	if (data->kind == adt7461) {
+> +	if (data->kind == adt7461 || data->kind == tmp451) {
+>  		if (config & 0x04)
+>  			data->flags |= LM90_FLAG_ADT7461_EXT;
+>  	}
+> -- 
+> 1.7.9.5
+> 
+> 
