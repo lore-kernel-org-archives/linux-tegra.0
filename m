@@ -1,31 +1,47 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/7] clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
-Date: Wed, 09 Oct 2013 17:12:19 -0600
-Message-ID: <5255E2D3.3040808@wwwdotorg.org>
-References: <1381310411-11391-1-git-send-email-josephl@nvidia.com> <1381310411-11391-2-git-send-email-josephl@nvidia.com>
+Subject: Re: [PATCH 4/7] ARM: tegra: add LP1 support code for Tegra124
+Date: Wed, 09 Oct 2013 17:20:45 -0600
+Message-ID: <5255E4CD.1050509@wwwdotorg.org>
+References: <1381310411-11391-1-git-send-email-josephl@nvidia.com> <1381310411-11391-5-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381310411-11391-2-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1381310411-11391-5-git-send-email-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 10/09/2013 03:20 AM, Joseph Lo wrote:
-> Adding suspend/resume function for tegra_cpu_car_ops. We only save and
-> restore the setting of the clock of CoreSight. Other clocks still need
-> to be taken care by clock driver.
+> The LP1 suspend procedure is the same with Tegra30 and Tegra114. Just
+> need to update the difference of the register address, then we can
+> continue to share the code.
 
-This series also mixes drivers/clk and arch/arm/mach-tegra changes. It
-looks like there's no build-time dependency though, since this just
-implements some extra hooks in tegra_cpu_car_ops, so I assume again this
-clk patch will go through Mike's tree, and the rest of the patches
-through the Tegra tree.
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
 
-In the future, if there aren't any dependencies, it's best just to send
-the two sets of changes separately.
+>  tegra114_sdram_pad_size:
+> -	.word	tegra30_sdram_pad_size - tegra114_sdram_pad_address
+> +	.word	tegra124_sdram_pad_address - tegra114_sdram_pad_address
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-(although it'd be nice to have Peter review it too)
+Why not put label tegra30_sdram_pad_address_end after the Tegra30 table
+and tegra114_sdram_pad_address_end after the Tegra114 table, etc. That
+way, you won't have to modify previous chips when you add a new one.
+
+>  	.type	tegra30_sdram_pad_save, %object
+>  tegra30_sdram_pad_save:
+
+Shouldn't that name be tegra_xxx not tegra30_xxx, since I think the same
+register save area is used for all SoCs?
+
+> -	.rept (tegra30_sdram_pad_size - tegra114_sdram_pad_address) / 4
+> +	.rept (tegra124_sdram_pad_address - tegra114_sdram_pad_address) / 4
+
+I assume this is intended to reserve enough space to store all the saved
+registers for the largest table of tegra30_sdram_pad_address,
+tegra114_sdram_pad_address, tegra124_sdram_pad_address. I count more
+entries in the existing Tegra114 table than the new Tegra124 table, so
+I'm not sure this part of the change is correct.
+
+Is there no way to do a max(tegra30 size, tegra114 size, tegra124 size)
+so you don't have to pick manually which size to reserve here?
