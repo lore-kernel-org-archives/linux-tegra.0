@@ -1,39 +1,36 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: tegra: unify Tegra's Kconfig a bit more
-Date: Thu, 10 Oct 2013 16:11:51 -0700
-Message-ID: <20131010231151.GG4301@kroah.com>
-References: <1381164349-23130-1-git-send-email-swarren@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2] hwmon: (lm90) Add support for TI TMP451
+Date: Fri, 11 Oct 2013 09:57:50 +0800
+Message-ID: <52575B1E.60504@nvidia.com>
+References: <1381297248-13375-1-git-send-email-wni@nvidia.com> <20131009151744.GA7787@roeck-us.net> <20131009173555.74c0d5f5@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1381164349-23130-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20131009173555.74c0d5f5-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 07, 2013 at 10:45:49AM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 10/09/2013 11:35 PM, Jean Delvare wrote:
+> On Wed, 9 Oct 2013 08:17:44 -0700, Guenter Roeck wrote:
+>> On Wed, Oct 09, 2013 at 01:40:48PM +0800, Wei Ni wrote:
+>>> TI TMP451 is mostly compatible with ADT7461, except for
+>>> local temperature low byte and max conversion rate.
+>>> Add support to the LM90 driver.
+>>>
+>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+>>
+>> Jean, I assume you'll take this one ? Otherwise, please let me know.
 > 
-> Move all common select clauses from ARCH_TEGRA_*_SOC to ARCH_TEGRA to
-> eliminate duplication. The USB-related selects all should have been
-> common too, but were missing from Tegra114 previously. Move these to
-> ARCH_TEGRA too. The latter fixes a build break when only Tegra114
-> support was enabled, but not Tegra20 or Tegra30 support.
+> Yes I will, thank for the review.
+
+Hi, Jean, do you have git repository, so that I can clone it to get
+latest changes.
+
+Thanks.
+Wei.
 > 
-> This is 20984c44b5a08620778ea14fa5807489170fd5ca in v3.12-rc1, with
-> a merge conflict resolved.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reported-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [our auto-builders for 3.11.x are failing due to this]
-> ---
-> v2: I actually applied the patch this time, resolving the merge conflict
->     while I was at it. I built and booted the result too.
-
-Thanks for testing it :)
-
-Now queued up.
-
-greg k-h
