@@ -1,74 +1,39 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCH] drm/tegra: Use dma_mapping API in mmap
-Date: Fri, 11 Oct 2013 15:24:37 +0300
-Message-ID: <1381494277-25542-1-git-send-email-amerilainen@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 4/7] ARM: tegra: add LP1 support code for Tegra124
+Date: Fri, 11 Oct 2013 09:40:54 -0600
+Message-ID: <52581C06.5090707@wwwdotorg.org>
+References: <1381310411-11391-1-git-send-email-josephl@nvidia.com>	 <1381310411-11391-5-git-send-email-josephl@nvidia.com>	 <5255E4CD.1050509@wwwdotorg.org> <1381477089.5685.3.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tbergstrom@nvidia.com, thierry.reding@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381477089.5685.3.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This far we have used the remap_pfn_range() function directly to
-map buffers to user space. Calling this function has worked as all
-memory allocations have been contiguous. However, the function must
-support also non-contiguous memory allocations as we later want to
-turn on IOMMU.
+On 10/11/2013 01:38 AM, Joseph Lo wrote:
+> On Thu, 2013-10-10 at 07:20 +0800, Stephen Warren wrote:
+>> On 10/09/2013 03:20 AM, Joseph Lo wrote:
+>>> The LP1 suspend procedure is the same with Tegra30 and Tegra114. Just
+>>> need to update the difference of the register address, then we can
+>>> continue to share the code.
+>>> -	.rept (tegra30_sdram_pad_size - tegra114_sdram_pad_address) / 4
+>>> +	.rept (tegra124_sdram_pad_address - tegra114_sdram_pad_address) / 4
+>>
+>> I assume this is intended to reserve enough space to store all the saved
+>> registers for the largest table of tegra30_sdram_pad_address,
+>> tegra114_sdram_pad_address, tegra124_sdram_pad_address. I count more
+>> entries in the existing Tegra114 table than the new Tegra124 table, so
+>> I'm not sure this part of the change is correct.
+>>
+>> Is there no way to do a max(tegra30 size, tegra114 size, tegra124 size)
+>> so you don't have to pick manually which size to reserve here?
+> 
+> I don't have a good way to achieve this, because we may have another new
+> SoC that may continue re-use these codes. Hence I need to keep
+> maintaining the max() function.
 
-This patch modifies the code to use dma_mapping API for mapping
-buffers to user space.
-
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
----
-
-I tested this patch on cardhu using Hiroshi Doyu's series "Unified SMMU
-driver among Tegra SoCs" and using just pure Linux 3.12rc4. I have not
-tested this on T20 so I would appreaciate help in here (although I do not
-think this should affect the behavior on T20 at all).
-
-I also would like to hear suggestions on better approaches for using
-dma_mmap_writecombine(). If IOMMU is not used, this function call ends up
-calling arm_iommu_mmap() which assumes that vm_pgoff value is valid. I see
-that other drm drivers simply implement fault callbacks and avoid this problem
-completely.
-
- drivers/gpu/host1x/drm/gem.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/host1x/drm/gem.c b/drivers/gpu/host1x/drm/gem.c
-index 59623de..82ae3d5 100644
---- a/drivers/gpu/host1x/drm/gem.c
-+++ b/drivers/gpu/host1x/drm/gem.c
-@@ -240,6 +240,7 @@ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct drm_gem_object *gem;
- 	struct tegra_bo *bo;
-+	unsigned long vm_pgoff;
- 	int ret;
- 
- 	ret = drm_gem_mmap(file, vma);
-@@ -249,8 +250,19 @@ int tegra_drm_mmap(struct file *file, struct vm_area_struct *vma)
- 	gem = vma->vm_private_data;
- 	bo = to_tegra_bo(gem);
- 
--	ret = remap_pfn_range(vma, vma->vm_start, bo->paddr >> PAGE_SHIFT,
--			      vma->vm_end - vma->vm_start, vma->vm_page_prot);
-+	/* the pages are real */
-+	vma->vm_flags &= ~VM_PFNMAP;
-+
-+	/* drm holds a fake offset in vm_pgoff... dma_mapping assumes that
-+	 * vm_pgoff contains data related to the buffer => clear the cookie
-+	 * temporarily. */
-+
-+	vm_pgoff = vma->vm_pgoff;
-+	vma->vm_pgoff = 0;
-+	ret = dma_mmap_writecombine(bo->gem.dev->dev, vma, bo->vaddr,
-+				    bo->paddr, bo->gem.size);
-+	vma->vm_pgoff = vm_pgoff;
-+
- 	if (ret)
- 		drm_gem_vm_close(vma);
- 
--- 
-1.8.1.5
+Sure, but adding one entry to the max function is better than manually
+calculating the size of each array and performing the max yourself.
