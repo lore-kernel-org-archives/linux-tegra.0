@@ -1,79 +1,74 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 15/27] gpu: host1x: Add support for Tegra114
-Date: Sat, 12 Oct 2013 13:24:43 +0200
-Message-ID: <20131012112443.GC22284@mithrandir>
+Subject: Re: [PATCH v2 16/27] drm/tegra: Add Tegra114 display controller
+ support
+Date: Sat, 12 Oct 2013 13:32:32 +0200
+Message-ID: <20131012113231.GD22284@mithrandir>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
- <1381134884-5816-16-git-send-email-treding@nvidia.com>
- <525877F3.9070004@wwwdotorg.org>
+ <1381134884-5816-17-git-send-email-treding@nvidia.com>
+ <52587843.9070806@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4ZLFUWh1odzi/v6L"
+	protocol="application/pgp-signature"; boundary="Ycz6tD7Th1CMF4v7"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <525877F3.9070004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52587843.9070806-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---4ZLFUWh1odzi/v6L
+--Ycz6tD7Th1CMF4v7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2013 at 04:13:07PM -0600, Stephen Warren wrote:
+On Fri, Oct 11, 2013 at 04:14:27PM -0600, Stephen Warren wrote:
 > On 10/07/2013 02:34 AM, Thierry Reding wrote:
-> > Tegra114 uses a slightly updated version of host1x with an additional
-> > syncpoint.
+> > From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > The Tegra114 display controller is backwards-compatible with previous
+> > generations of the Tegra SoC. No code changes are required.
 >=20
-> >  drivers/gpu/host1x/hw/host1x02.c            |  42 +++++
-> >  drivers/gpu/host1x/hw/host1x02.h            |  26 +++
-> >  drivers/gpu/host1x/hw/hw_host1x02_channel.h | 121 ++++++++++++++
-> >  drivers/gpu/host1x/hw/hw_host1x02_sync.h    | 243 ++++++++++++++++++++=
-++++++++
-> >  drivers/gpu/host1x/hw/hw_host1x02_uclass.h  | 175 ++++++++++++++++++++
+> If the HW is backwards-compatible, then there's no need to add extra
+> compatible values to the driver; just write the following in the DT, and
+> it'll just work:
 >=20
-> That seems like an awful lot of extra lines to support just one extra
-> syncpoint. Are there other changes? If not, can the code be
-> shared/parameterized somehow?
+> compatible =3D "nvidia,tegra114-dc", "nvidia,tegra30-dc";
 
-Yeah, I don't like very much how this is currently done. I mean about
-half of this is actually duplicate code because of the static inline
-functions used for register defines. As discussed elsewhere this was
-originally meant to be used for coverage testing, but nobody's done
-anything like that as far as I know. I'm also not convinced that these
-would be very useful in coverage testing, but adding Terje on Cc and
-unless he or anyone else has any (strong) objections I'll go and remove
-the duplicate definitions and while at it see if I can come up with a
-way to share more code/definitions between versions of host1x.
+One reason why I thought it might be useful to still include this, even
+though unnecessary, was to match it to the host1x_drm_subdevs table. We
+can probably remove the entry from there as well, though.
 
-Do you see this as a blocker for 3.13 or can I do the cleanup after
-that? As far as I know Tegra124 has a more heavily modified version of
-host1x so implementing Tegra124 support might be a good opportunity to
-clean this up anyway.
+As far as I can tell, the same holds for Tegra30, which is also
+backwards compatible with Tegra20 but the DTS doesn't contain the
+Tegra20 compatible. So to keep ABI compatibility we'll need to keep the
+nvidia,tegra30-dc in the driver's match tables, but I could still update
+the DTS to include the nvidia,tegra20-dc for correctness.
+
+Does that make sense?
 
 Thierry
 
---4ZLFUWh1odzi/v6L
+--Ycz6tD7Th1CMF4v7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSWTF7AAoJEN0jrNd/PrOhHNEP/3xWDkfE8LczaDGTktIYsSaM
-w6dGmCdf9eC6u/ioWWuQ7nBDfDgDmOfyFqVUSVSyFGDO3aUgN9GOKnaiq0/0WlV6
-UBIhzvQLaXTinqhUhoekVZmM+bBttVDCrkaDn4IPhMuIgW0sionNaHi8JgZMFcNl
-qVG/PRxuFG8AxE1dtMWJmgKx/P27Qmnugkm6Bfvey0YFMHJkGeTMju7cquYxqU7W
-5FjPKMNax+yog+MJEcXz+zwRoKw3dWVRzfQxA0uplUMD2RNOPr97JBtb3i5hjpRk
-IFbSiLAe2X1MYg0veV996ck8UE0isGa++BEfr4qeD9bGI5/dZmKFLf49S8qqIUZs
-M4l6co8dY/THM0JaIDf0YhQ5l30gWb0HlCZ8POF2kCEsBQ/4WfI/QmXbE2sh8x+l
-38ZnSRI+6ePtJGeIxTS3/T3bsDuRQFRvbtgQHvSVWYW9uaTctNWDi1mBiwBAGIqG
-/YyMvkdNVokrgfu2Uy2TAp4pmwm9HluMJ4sX8dSz+J3D4cIz6L5CutEGYSBtOJ5N
-Lb2c1173BdlPgeJ6XatzcLv1POVPg3eBbyD0ejQ1InD5tBmPYqdS4u0Q2O9pUIvD
-Vicga31GLoPQ7RZ42iG59NyU64AhaFBvSVrl/byvIlVsECIDkXmiO8PQtA1Pe9xD
-1xzWlpIWNoTuvRroZ4Jf
-=5LQT
+iQIcBAEBAgAGBQJSWTNPAAoJEN0jrNd/PrOhg+YQAMCX7Sdoehs6HqNy7DVUpPIR
+4Qtn/P2+diQ3sABjFIgtuIwTI0el4rx+izZgn7D4ANTDvGMT8fU+JSZ8QEv3CjAI
+7kZted65e4IE45PUApdPuYiNP5VLnM2cPAvNAjB3UN2JlDTEf5Iv/t1q8fu9n1sH
+5KsfG0GZdJPuvH1+hC4Wps7kR+b+Y8KIk7zVWRPi2aweUnTsfXSKsy75fg0dnUM6
+tREPNTB8J0f9es5o28NsYM6piKWvq74tbA8drwbLGQYPX17AD1R5jL9GjJFAew25
++iyLYKF4LJh0SvL8FTEYMKRD0Z9kVg109wM6sz0rmhiT/GFjw5Y8DG0XU5XwDPWV
+8/odYDIJ/olNRZOY4dh5s9kM68CmTVRnRC8BYrjLP4X5dfoRWlwGx0j6PwPlTOp/
+WRp7U3mJ8ePUd7fE7QaNw7f5bi41ocxuNpeBAp29nb51seJpOJw475JcWOnpLDL/
+Kc241ScsnnUrclGJOrsqezq8vdluy4tSKYga+FiNhAIEEKfQ7ZE+QjPlGYwUU+pe
+9tNIweLaDsmR0cgukDoE8OlEizQlKwTCuHY0pH29iEfyohnQDiet/Ofwkhj4kRJa
+HsAvq1lamUXZG+pWElI7CAfhqkfUe7H2gouenwqh6Wxt/BbFqe3RsJrOhpJD36Xv
+YZrXyKA4Zn18sYtbIc7U
+=XY6A
 -----END PGP SIGNATURE-----
 
---4ZLFUWh1odzi/v6L--
+--Ycz6tD7Th1CMF4v7--
