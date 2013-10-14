@@ -1,53 +1,49 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
-Date: Mon, 14 Oct 2013 12:14:47 -0600
-Message-ID: <525C3497.6010700@wwwdotorg.org>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-28-git-send-email-treding@nvidia.com> <52587F2D.9070007@wwwdotorg.org> <525B880A.7090802@nvidia.com> <20131014140010.GC16302@ulmo.nvidia.com>
+Subject: Re: [PATCH v2 26/27] drm/tegra: Add DSI support
+Date: Mon, 14 Oct 2013 12:16:48 -0600
+Message-ID: <525C3510.60802@wwwdotorg.org>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-27-git-send-email-treding@nvidia.com> <52587F17.7060104@wwwdotorg.org> <20131014135548.GB16302@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131014140010.GC16302-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131014135548.GB16302-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?B?VGVyamUgQmVyZ3N0?= =?UTF-8?B?csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/14/2013 08:00 AM, Thierry Reding wrote:
-> On Mon, Oct 14, 2013 at 08:58:34AM +0300, Terje Bergstr=C3=B6m wrote:
->> On 12.10.2013 01:43, Stephen Warren wrote:
->>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
->>>> The gr2d hardware in Tegra114 is compatible with that of
->>>> Tegra20 and Tegra30. No functionaly changes are required.
->>> Similarly here, if the HW is 100% backwards-compatible, there's
->>> no need to add compatible values to the driver.
->>=20
->> We've used this mechanism for attaching a per-hw-version data
->> structure in match table to accomodate differences in how the
->> hardware is power gated, reset, booted, some per-soc performance
->> related changes etc. It's also used in staging features for new
->> chips, such as disabling power features when they're not
->> working/verified yet.
->>=20
->> Upstream driver is not yet in a state where that is relevant.
->>=20
->> With this, would we still be able to do that with match table? It
->> sounds like we could, because we can still (even with multiple
->> compatible properties) add separate entries in match table and I
->> guess the compatible properties matched in order.
->=20
-> Yes, as long as the device tree files includes the most specific
-> value in the compatible this should still be possible. So we'd have
-> this:
->=20
-> gr2d@54140000 { compatible =3D "nvida,tegra114-gr2d",
-> "nvidia,tegra20-gr2d"; ... };
->=20
-> and the driver will match on "nvidia,tegra20-gr2d" if the more
-> specific "nvidia,tegra114-gr2d" is not there. When the driver is
-> updated to support Tegra114 specific functionality, then a more
-> specific entry can be added to the compatible table to handle it.
+On 10/14/2013 07:55 AM, Thierry Reding wrote:
+> On Fri, Oct 11, 2013 at 04:43:35PM -0600, Stephen Warren wrote:
+>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
+>>> This commit adds support for both DSI outputs found on Tegra. Only very
+>>> minimal functionality is implemented, so advanced features like ganged
+>>> mode won't work.
+>>>
+>>> Due to the lack of other test hardware, some sections of the driver are
+>>> hardcoded to work with Dalmore.
+>>
+>>> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+>>
+>>> +static int tegra_dsi_show_regs(struct seq_file *s, void *data)
+>>> +{
+>>> +	struct drm_info_node *node = s->private;
+>>> +	struct tegra_dsi *dsi = node->info_ent->data;
+>>> +
+>>> +#define DUMP_REG(name)						\
+>>> +	seq_printf(s, "%-32s %#05x %08lx\n", #name, name,	\
+>>> +		   tegra_dsi_readl(dsi, name))
+>>> +
+>>> +	DUMP_REG(DSI_INCR_SYNCPT);
+>>
+>> Does it make sense to use an MMIO regmap instead? That way, you get all
+>> the debugfs files for free...
+> 
+> As far as I know, regmap doesn't give you the symbolic names for the
+> registers. I find that a rather useful feature because it allows to
+> easily compare the registers to the ones in our downstream kernels.
 
-True, but the DT fragment above is also only accurate /if/ a driver
-that only knows about "nvidia,tegra20-gr2d" can operate 100% of the
-features in Tegra20 HW on Tegra114 HW forever.
+True. However, we should really be writing user-space scripts to encode
+that information. Such a script could be useful e.g. if reading the
+information directly from /dev/mem or JTAG too, and bloating the kernel
+with debug strings doesn't seem like a great idea.
