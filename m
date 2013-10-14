@@ -1,107 +1,57 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/5] clk: tegra: Add support for PLLSS
-Date: Mon, 14 Oct 2013 18:03:17 +0300
-Message-ID: <20131014150317.GA19540@tbergstrom-lnx.Nvidia.com>
-References: <1380878014-22088-1-git-send-email-pdeschrijver@nvidia.com>
- <1380878014-22088-2-git-send-email-pdeschrijver@nvidia.com>
- <20131010103915.GA6735@ulmo.nvidia.com>
+From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
+Date: Mon, 14 Oct 2013 11:00:27 -0700
+Message-ID: <87bo2r91hg.fsf@linaro.org>
+References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org>
+	<20131005233833.GA18223@kroah.com> <52525247.9060609@nvidia.com>
+	<52539F98.2030307@nvidia.com> <20131010231135.GF4301@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131010103915.GA6735-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131010231135.GF4301-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org> (Greg KH's message of "Thu, 10
+	Oct 2013 16:11:35 -0700")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "stable@vger.kernel.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 10, 2013 at 12:39:16PM +0200, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Oct 04, 2013 at 12:12:40PM +0300, Peter De Schrijver wrote:
-> > Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This is missing a commit description.
-> 
-> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> [...]
-> > +const struct clk_ops tegra_clk_pllss_ops = {
-> 
-> static?
-> 
-> > +struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
-> > +				void __iomem *clk_base, unsigned long flags,
-> > +				unsigned long fixed_rate,
-> > +				struct tegra_clk_pll_params *pll_params,
-> > +				struct tegra_clk_pll_freq_table *freq_table,
-> > +				spinlock_t *lock)
-> > +{
-> [...]
-> > +	pll = _tegra_init_pll(clk_base, NULL, fixed_rate, pll_params,
-> > +				pll_flags, freq_table, lock);
-> > +
-> > +	if (IS_ERR(pll))
-> 
-> I'd leave out the blank line separating the assignment of pll and the
-> check for validity. Grouping them together like that makes it
-> immediately clear that they belong together.
-> 
-> > +		return ERR_CAST(pll);
-> > +
-> > +	val = pll_readl_base(pll);
-> > +
-> > +	if (val & (3 << 25)) {
-> 
-> Same here. Also 3 << 25 could probably be a symbolic constant, something
-> like PLLSS_REF_SRC_SEL_MASK perhaps?
-> 
-> > +		WARN(1, "Unknown parent selected for %s: %d\n", name,
-> > +			val >> 25);
-> 
-> Similarly, this should be something like:
-> 
-> 		(val & PLLSS_REF_SRC_SEL_MASK) >> PLLSS_REF_SRC_SEL_SHIFT
-> 
-> > +		kfree(pll);
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
-> > +	_get_pll_mnp(pll, &cfg);
-> 
-> Nit: I'd put a blank line before this, to separate the block and the
-> function call. That is:
-> 
-> 	}
-> 
-> 	_get_pll_mnp(...);
-> 
-> > +
-> > +	if (cfg.n > 1) {
-> > +		WARN(1, "%s should not be initialized\n", name);
-> > +		kfree(pll);
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
-> 
-> Is this really fatal? Can't we just configure the PLL from scratch?
-> 
-> > +	parent_rate = __clk_get_rate(parent);
-> > +
-> > +	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
-> > +
-> > +	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
-> > +	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
-> > +
-> > +	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
-> > +		;
-> > +	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
-> 
-> Could use a blank line to separate them. Also what if .pdiv of the first
-> entry is 0? The loop will terminate on the first run and i will be 0, so
-> this would try to access pdiv_tohw[-1]. Can that ever happen?
-> 
+Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> writes:
 
-That would be an error. This PLL type always has a post divider table.
-I will add a check.
+> On Mon, Oct 07, 2013 at 11:00:56PM -0700, Paul Walmsley wrote:
+>> 
+>> On 10/06/2013 11:18 PM, Paul Walmsley wrote:
+>> >Hi Greg,
+>> >
+>> >On 10/05/2013 04:38 PM, Greg KH wrote:
+>> >>On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
+>> >>>[auto-builders for 3.11.x are failing due to this]
+>> >>What autobuilders?  I haven't heard of this before.
+>> >There's an experimental system here that automatically builds and
+>> >test-boots -stable kernels on some Tegra platforms.
+>> 
+>> Well, here's a public link for it:
+>> 
+>> http://nvt.pwsan.com/pub/linux-stable/testlogs/
+>> 
+>> So far it's seeded with v3.11.[34].  It should update automatically
+>> as new releases come out.  So far the tests are quite basic (build +
+>> boot to minimal userspace).  Please let Stephen and I know if you
+>> have any comments or suggestions.
+>
+> That's great to see.  Testing the -rc stable releases would be great, to
+> find if I break anything, as I don't have Tegra hardware to test them
+> out on.
 
-Cheers,
+Greg, FYI... you might be interested in the ARM kernel build/boot
+reports being posted here: 
 
-Peter.
+  http://lists.linaro.org/pipermail/kernel-build-reports/2013-October/thread.html
+
+Along with mainline/next/arm-soc we're building/booting your stable
+queues for v3.10 and v3.11.  See the "queue: build:..." and "queue:
+boot:..." reports.
+
+This builds all the ARM defconfigs, and does minimal boot test on a pile
+of different ARM boards.
+
+Kevin
