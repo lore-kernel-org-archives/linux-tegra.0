@@ -1,54 +1,111 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: support new register layouts in Tegra124
-Date: Mon, 14 Oct 2013 14:56:44 +0100
-Message-ID: <20131014135644.GX2443@sirena.org.uk>
-References: <1381527797-18447-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 26/27] drm/tegra: Add DSI support
+Date: Mon, 14 Oct 2013 15:55:48 +0200
+Message-ID: <20131014135548.GB16302@ulmo.nvidia.com>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
+ <1381134884-5816-27-git-send-email-treding@nvidia.com>
+ <52587F17.7060104@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="krsqJi1PDCheOQxO"
+	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1381527797-18447-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52587F17.7060104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---krsqJi1PDCheOQxO
+--TakKZr9L6Hm6aLOc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2013 at 03:43:17PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Fri, Oct 11, 2013 at 04:43:35PM -0600, Stephen Warren wrote:
+> On 10/07/2013 02:34 AM, Thierry Reding wrote:
+> > This commit adds support for both DSI outputs found on Tegra. Only very
+> > minimal functionality is implemented, so advanced features like ganged
+> > mode won't work.
+> >=20
+> > Due to the lack of other test hardware, some sections of the driver are
+> > hardcoded to work with Dalmore.
 >=20
-> Tegra124 introduces some small changes to the layout of some registers.
-> Modify the affected drivers to program those registers appropriately
-> based on which SoC they're running on.
+> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+>=20
+> > +static int tegra_dsi_show_regs(struct seq_file *s, void *data)
+> > +{
+> > +	struct drm_info_node *node =3D s->private;
+> > +	struct tegra_dsi *dsi =3D node->info_ent->data;
+> > +
+> > +#define DUMP_REG(name)						\
+> > +	seq_printf(s, "%-32s %#05x %08lx\n", #name, name,	\
+> > +		   tegra_dsi_readl(dsi, name))
+> > +
+> > +	DUMP_REG(DSI_INCR_SYNCPT);
+>=20
+> Does it make sense to use an MMIO regmap instead? That way, you get all
+> the debugfs files for free...
 
-Applied, thanks.
+As far as I know, regmap doesn't give you the symbolic names for the
+registers. I find that a rather useful feature because it allows to
+easily compare the registers to the ones in our downstream kernels.
 
---krsqJi1PDCheOQxO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> > +static int tegra_dsi_probe(struct platform_device *pdev)
+>=20
+> > +	dsi->clk_parent =3D devm_clk_get(&pdev->dev, "parent");
+> > +	if (IS_ERR(dsi->clk_parent))
+> > +		return PTR_ERR(dsi->clk_parent);
+> ...
+> > +static const struct of_device_id tegra_dsi_of_match[] =3D {
+> > +	{ .compatible =3D "nvidia,tegra114-dsi", },
+>=20
+> Is this DT binding documented? The clk_get() call above in particular
+> imposes the requirement that DT contain a clock with that name, which
+> should be part of the binding documentation.
+
+I've documented the requirement for both the regular "dsi" as well as
+the "parent" clock in the binding documentation, which I forgot to
+update in the previous series.
+
+Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt is where
+this is documented. The DSI node has a compatible property of
+nvidia,tegra<chip>-dsi, which I think is a common way to write the
+binding at least for Tegra.
+
+> Hopefully the values that this driver hard-codes won't be an issue for
+> the DT binding; we can simply make those values the default if
+> properties are missing. I assume it's likely that such a strategy will
+> work here?
+
+They shouldn't. In fact I think it should be possible to probe them
+either using mechanisms built into DSI, or by querying the attached
+panel (as matched by the corresponding device tree node).
+
+I haven't done the latter yet because I plan to investigate whether
+builtin DSI functionality can be used to probe for the information.
+
+Thierry
+
+--TakKZr9L6Hm6aLOc
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSW/gZAAoJELSic+t+oim9gTIP/1d2iMIXtzD2fVP6rWluy2LS
-WJaMGSXHfgEXHe/WZV8JfFkdPsl2Evc0wYNpxFM0rHX+l+zWuRqsyX6NusaV4x1N
-T6YIp/mplt3Ihd4wGd3HeDcancXqyblrdTEZBAVhjwmVENmyubzdkbH2FqhVeH2i
-3AqsqlB77L+dPrfvvBSwOTkd54an6zy1xle7aSbTJlPFzkVD1pOGy+wb8SP4NtU3
-kiZ7VQD2rp+toJGiJsLJtkeyH25SLB/3wokJF0zUPE4+tUnbp65aTBtuy93ypzoR
-+2IpEybahrV+rxpEEufBuEew4KzOLvFbnIs4j+38NJcpn2QZdF9sw0X2rhiV7F8W
-tle4j4xPjz6M8cqus/UqR1p4rADjJOFxVCj3jcaomu4i6tfgntcV9HwbmGx5Cz4A
-h2+p2w3zr7nI4u+02rKCjIn3BeC/wBMmxs0pVEuucXPFO9SI6eHyqj0PNze9jJ3Q
-P/VTiix45AiJ2n6wfVSBCrFGEC4tS8sC18J5OAWQSKyunLftytjlhTeEuts9Xd6O
-E24XyKzzp5wlCTVFk25tDCPje8XSw5nFBemwqZe18XO8CRa0MrGsrzjE8szECRNE
-MGuSGQ18HYMnOtxhox7m2gOKucVdE4sYfSeEFuAqWfcs22COSeQ4a6HsXOuF7Mwm
-18aetY6fPECLR2tj/+xg
-=DtNp
+iQIcBAEBAgAGBQJSW/fkAAoJEN0jrNd/PrOhYhMQAMGpZhGkBLjP2fe01U0r8Asq
+SKrp9kD9a1XJQaB4bL68m36/tFNAkGRq+uHjkKSh1FQLlTWOxcFqJ7c/LII/IZvZ
+jFj39042ub91JyC5aD88EQoLy3eSagy8TbnoFDJRj6mMTkquR3p8pDdOgmgn7hmq
+eNp+4QYg8upHWm0ySJiK/owjSccDFq9mfGLP8w0N0ZcYm+mvjZc6EXWfc1u84Fqi
+jyZYYr7BrV8fPTPM1QY9HE/YBzw17VTloop5wb13Be6+K842a2oTtcnj02zwEUpq
+nDrIcCTOggdcUAU7CXl0LwaeXcUbU/RuB+0GpGrbP7ztCCBFvM6iL/iEfiyp14JF
+csX04WIWw0Yq5e52Hw57SNw92wC4CkYAKZ2iyDEm5dkWx+eCMl3aAYISOfeRbpli
+IzJTdUVDM/xQzPkQ+wn8ApqkuYU7oiIZ7IrOHPCljsIQt0omGZBvtM//PjkIvH6O
+O0CWzmyHGZzk/xXfkRF8+BVxzVrt+zJv9z4mRzmNwmyGlzG9Y/YHNf05SZgq9EV8
+iE1S2Dn5sKEMAMb9pipS9pTvBceZaATzrtD+zRRMSOyeUv2UAIvwKTOt0hU8zrr8
+qGJkCoNnvevl4X18BU7yOJS9l5TBFW2bmbxec5Gp27s6Mbs40OaOBnoh+x3gKRQP
+5BNV52xFwkg7aKwtDvOj
+=0d81
 -----END PGP SIGNATURE-----
 
---krsqJi1PDCheOQxO--
+--TakKZr9L6Hm6aLOc--
