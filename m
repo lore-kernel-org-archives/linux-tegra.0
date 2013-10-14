@@ -1,111 +1,83 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 26/27] drm/tegra: Add DSI support
-Date: Mon, 14 Oct 2013 15:55:48 +0200
-Message-ID: <20131014135548.GB16302@ulmo.nvidia.com>
+Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
+Date: Mon, 14 Oct 2013 16:00:11 +0200
+Message-ID: <20131014140010.GC16302@ulmo.nvidia.com>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
- <1381134884-5816-27-git-send-email-treding@nvidia.com>
- <52587F17.7060104@wwwdotorg.org>
+ <1381134884-5816-28-git-send-email-treding@nvidia.com>
+ <52587F2D.9070007@wwwdotorg.org>
+ <525B880A.7090802@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TakKZr9L6Hm6aLOc"
+	protocol="application/pgp-signature"; boundary="raC6veAxrt5nqIoY"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <52587F17.7060104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <525B880A.7090802-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---TakKZr9L6Hm6aLOc
-Content-Type: text/plain; charset=us-ascii
+--raC6veAxrt5nqIoY
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2013 at 04:43:35PM -0600, Stephen Warren wrote:
-> On 10/07/2013 02:34 AM, Thierry Reding wrote:
-> > This commit adds support for both DSI outputs found on Tegra. Only very
-> > minimal functionality is implemented, so advanced features like ganged
-> > mode won't work.
-> >=20
-> > Due to the lack of other test hardware, some sections of the driver are
-> > hardcoded to work with Dalmore.
+On Mon, Oct 14, 2013 at 08:58:34AM +0300, Terje Bergstr=C3=B6m wrote:
+> On 12.10.2013 01:43, Stephen Warren wrote:
+> > On 10/07/2013 02:34 AM, Thierry Reding wrote:
+> >> The gr2d hardware in Tegra114 is compatible with that of Tegra20 and
+> >> Tegra30. No functionaly changes are required.
+> > Similarly here, if the HW is 100% backwards-compatible, there's no need
+> > to add compatible values to the driver.
 >=20
-> > diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> We've used this mechanism for attaching a per-hw-version data structure
+> in match table to accomodate differences in how the hardware is power
+> gated, reset, booted, some per-soc performance related changes etc. It's
+> also used in staging features for new chips, such as disabling power
+> features when they're not working/verified yet.
 >=20
-> > +static int tegra_dsi_show_regs(struct seq_file *s, void *data)
-> > +{
-> > +	struct drm_info_node *node =3D s->private;
-> > +	struct tegra_dsi *dsi =3D node->info_ent->data;
-> > +
-> > +#define DUMP_REG(name)						\
-> > +	seq_printf(s, "%-32s %#05x %08lx\n", #name, name,	\
-> > +		   tegra_dsi_readl(dsi, name))
-> > +
-> > +	DUMP_REG(DSI_INCR_SYNCPT);
+> Upstream driver is not yet in a state where that is relevant.
 >=20
-> Does it make sense to use an MMIO regmap instead? That way, you get all
-> the debugfs files for free...
+> With this, would we still be able to do that with match table? It sounds
+> like we could, because we can still (even with multiple compatible
+> properties) add separate entries in match table and I guess the
+> compatible properties matched in order.
 
-As far as I know, regmap doesn't give you the symbolic names for the
-registers. I find that a rather useful feature because it allows to
-easily compare the registers to the ones in our downstream kernels.
+Yes, as long as the device tree files includes the most specific value
+in the compatible this should still be possible. So we'd have this:
 
-> > +static int tegra_dsi_probe(struct platform_device *pdev)
->=20
-> > +	dsi->clk_parent =3D devm_clk_get(&pdev->dev, "parent");
-> > +	if (IS_ERR(dsi->clk_parent))
-> > +		return PTR_ERR(dsi->clk_parent);
-> ...
-> > +static const struct of_device_id tegra_dsi_of_match[] =3D {
-> > +	{ .compatible =3D "nvidia,tegra114-dsi", },
->=20
-> Is this DT binding documented? The clk_get() call above in particular
-> imposes the requirement that DT contain a clock with that name, which
-> should be part of the binding documentation.
+	gr2d@54140000 {
+		compatible =3D "nvida,tegra114-gr2d", "nvidia,tegra20-gr2d";
+		...
+	};
 
-I've documented the requirement for both the regular "dsi" as well as
-the "parent" clock in the binding documentation, which I forgot to
-update in the previous series.
-
-Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt is where
-this is documented. The DSI node has a compatible property of
-nvidia,tegra<chip>-dsi, which I think is a common way to write the
-binding at least for Tegra.
-
-> Hopefully the values that this driver hard-codes won't be an issue for
-> the DT binding; we can simply make those values the default if
-> properties are missing. I assume it's likely that such a strategy will
-> work here?
-
-They shouldn't. In fact I think it should be possible to probe them
-either using mechanisms built into DSI, or by querying the attached
-panel (as matched by the corresponding device tree node).
-
-I haven't done the latter yet because I plan to investigate whether
-builtin DSI functionality can be used to probe for the information.
+and the driver will match on "nvidia,tegra20-gr2d" if the more specific
+"nvidia,tegra114-gr2d" is not there. When the driver is updated to
+support Tegra114 specific functionality, then a more specific entry can
+be added to the compatible table to handle it.
 
 Thierry
 
---TakKZr9L6Hm6aLOc
+--raC6veAxrt5nqIoY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSW/fkAAoJEN0jrNd/PrOhYhMQAMGpZhGkBLjP2fe01U0r8Asq
-SKrp9kD9a1XJQaB4bL68m36/tFNAkGRq+uHjkKSh1FQLlTWOxcFqJ7c/LII/IZvZ
-jFj39042ub91JyC5aD88EQoLy3eSagy8TbnoFDJRj6mMTkquR3p8pDdOgmgn7hmq
-eNp+4QYg8upHWm0ySJiK/owjSccDFq9mfGLP8w0N0ZcYm+mvjZc6EXWfc1u84Fqi
-jyZYYr7BrV8fPTPM1QY9HE/YBzw17VTloop5wb13Be6+K842a2oTtcnj02zwEUpq
-nDrIcCTOggdcUAU7CXl0LwaeXcUbU/RuB+0GpGrbP7ztCCBFvM6iL/iEfiyp14JF
-csX04WIWw0Yq5e52Hw57SNw92wC4CkYAKZ2iyDEm5dkWx+eCMl3aAYISOfeRbpli
-IzJTdUVDM/xQzPkQ+wn8ApqkuYU7oiIZ7IrOHPCljsIQt0omGZBvtM//PjkIvH6O
-O0CWzmyHGZzk/xXfkRF8+BVxzVrt+zJv9z4mRzmNwmyGlzG9Y/YHNf05SZgq9EV8
-iE1S2Dn5sKEMAMb9pipS9pTvBceZaATzrtD+zRRMSOyeUv2UAIvwKTOt0hU8zrr8
-qGJkCoNnvevl4X18BU7yOJS9l5TBFW2bmbxec5Gp27s6Mbs40OaOBnoh+x3gKRQP
-5BNV52xFwkg7aKwtDvOj
-=0d81
+iQIcBAEBAgAGBQJSW/jqAAoJEN0jrNd/PrOhbH4QALU3En3mTdoarh9KS6uc9tXo
++EzQPnugO8f4/5CdYHk8/2Zy/VR0wIROG8HK4kMGn8MYocs5AF09FqeCbNLTvNCK
+KGd//Bp8eTIw7q4OHczdmK1obx939KdQPwMc/Z88kqfGSrk4qeXkU3PTiYjp38MB
+rqLwzaOmo7aPayNjs0C2cbpmqa277mbDvgvYZwI3G5hSR+SVCqdnXRRRlsykImre
+usEtC/wx/7x0cVNaNaKQTl56djIfkb4NXbvxT506kZgLGKwtCFR4q2KryeHX0Jg2
+RMI7fzaXPWKjEAxnf3pIP57accESv00LXeliE4xpT5oThn5uhPwS12AqkJ0ANr8v
+LvtwUkWVKXFUyQpYTuogX+0y68c+SkAP5Jud3DMSF8wrdwDdh6e2PGcMaCoDig1c
+4KNhBe/EaHMjUyVvapP+rm8/NV54SW9ZKsOQZemsB8J9SyOpJC3qj37DemaTeGp3
+Zu+DOYFYWoi1++dO8gjkdjfE9+3k4rG0swJRg2uniasZVWFU5S/rggIjpdIuHQrI
+sjApAQNWENyfcN6Mnn1wHwwX8/4A7XhibqZyeY3IJYVOa+Oas6fEmcyrzYUUzGCS
+bKtfBr+dI4gdPey2RxKeQzKNo/KaGHzxXj++lTecq0q0ZBzUOkpUU+hZjDjDu9Hb
+x28+9JUT/B9CAmatFI7S
+=aj9q
 -----END PGP SIGNATURE-----
 
---TakKZr9L6Hm6aLOc--
+--raC6veAxrt5nqIoY--
