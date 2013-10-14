@@ -1,63 +1,46 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH stable] ARM: tegra: unify Tegra's Kconfig a bit more
-Date: Mon, 14 Oct 2013 11:20:23 -0700
-Message-ID: <20131014182023.GC18058@kroah.com>
-References: <1380917411-25869-1-git-send-email-swarren@wwwdotorg.org>
- <20131005233833.GA18223@kroah.com>
- <52525247.9060609@nvidia.com>
- <52539F98.2030307@nvidia.com>
- <20131010231135.GF4301@kroah.com>
- <87bo2r91hg.fsf@linaro.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.12-rc5
+Date: Mon, 14 Oct 2013 12:38:01 -0700
+Message-ID: <525C4819.9030000@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <87bo2r91hg.fsf-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 14, 2013 at 11:00:27AM -0700, Kevin Hilman wrote:
-> Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org> writes:
-> 
-> > On Mon, Oct 07, 2013 at 11:00:56PM -0700, Paul Walmsley wrote:
-> >> 
-> >> On 10/06/2013 11:18 PM, Paul Walmsley wrote:
-> >> >Hi Greg,
-> >> >
-> >> >On 10/05/2013 04:38 PM, Greg KH wrote:
-> >> >>On Fri, Oct 04, 2013 at 02:10:11PM -0600, Stephen Warren wrote:
-> >> >>>[auto-builders for 3.11.x are failing due to this]
-> >> >>What autobuilders?  I haven't heard of this before.
-> >> >There's an experimental system here that automatically builds and
-> >> >test-boots -stable kernels on some Tegra platforms.
-> >> 
-> >> Well, here's a public link for it:
-> >> 
-> >> http://nvt.pwsan.com/pub/linux-stable/testlogs/
-> >> 
-> >> So far it's seeded with v3.11.[34].  It should update automatically
-> >> as new releases come out.  So far the tests are quite basic (build +
-> >> boot to minimal userspace).  Please let Stephen and I know if you
-> >> have any comments or suggestions.
-> >
-> > That's great to see.  Testing the -rc stable releases would be great, to
-> > find if I break anything, as I don't have Tegra hardware to test them
-> > out on.
-> 
-> Greg, FYI... you might be interested in the ARM kernel build/boot
-> reports being posted here: 
-> 
->   http://lists.linaro.org/pipermail/kernel-build-reports/2013-October/thread.html
-> 
-> Along with mainline/next/arm-soc we're building/booting your stable
-> queues for v3.10 and v3.11.  See the "queue: build:..." and "queue:
-> boot:..." reports.
-> 
-> This builds all the ARM defconfigs, and does minimal boot test on a pile
-> of different ARM boards.
+Here are some basic Tegra test results for Linux v3.12-rc5.
+Logs and other details at:
 
-Thanks, I'll try to watch this, thanks for letting me know about it.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.12-rc5/20131014120118/
 
-greg k-h
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.12-rc4 (d0e639c9e06d44e713170031fe05fb60ebe680af)):
+    text     data      bss    total  kernel
+    +172        0        0     +172  multi_v7_defconfig
+    +548       -8        0     +540  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.12-rc4 (d0e639c9e06d44e713170031fe05fb60ebe680af))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
