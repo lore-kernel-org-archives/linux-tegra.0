@@ -1,34 +1,34 @@
-From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Subject: [PATCH] clocksource: tegra: remove deprecated IRQF_DISABLED
-Date: Sun, 13 Oct 2013 06:42:40 +0200
-Message-ID: <1381639360-6920-1-git-send-email-michael.opdenacker@free-electrons.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
+From: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] rtc: rtc-tps65910: remove unnecessary include
+Date: Mon, 14 Oct 2013 08:11:56 +0530
+Message-ID: <1381718516-3698-1-git-send-email-badarkhe.manish@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch proposes to remove the use of the IRQF_DISABLED flag
+Currently, driver includes 'pm_runtime.h' which is not
+used anywhere in code hence remove this unnecessory
+inclusion.
 
-It's a NOOP since 2.6.35 and it will be removed one day.
-
-Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+Signed-off-by: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/clocksource/tegra20_timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+:100644 100644 a9caf04... 7af0020... M	drivers/rtc/rtc-tps65910.c
+ drivers/rtc/rtc-tps65910.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index 9396170..58e0109 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -149,7 +149,7 @@ static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
+diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
+index a9caf04..7af0020 100644
+--- a/drivers/rtc/rtc-tps65910.c
++++ b/drivers/rtc/rtc-tps65910.c
+@@ -22,7 +22,6 @@
+ #include <linux/rtc.h>
+ #include <linux/bcd.h>
+ #include <linux/platform_device.h>
+-#include <linux/pm_runtime.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/tps65910.h>
  
- static struct irqaction tegra_timer_irq = {
- 	.name		= "timer0",
--	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_TRIGGER_HIGH,
-+	.flags		= IRQF_TIMER | IRQF_TRIGGER_HIGH,
- 	.handler	= tegra_timer_interrupt,
- 	.dev_id		= &tegra_clockevent,
- };
 -- 
-1.8.1.2
+1.7.10.4
