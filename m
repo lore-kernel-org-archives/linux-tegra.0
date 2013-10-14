@@ -1,107 +1,72 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: [PATCHv2 1/4] gpu: host1x: Add 'flags' field to syncpt request
-Date: Mon, 14 Oct 2013 15:21:52 +0300
-Message-ID: <1381753315-21778-2-git-send-email-amerilainen@nvidia.com>
-References: <1381753315-21778-1-git-send-email-amerilainen@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 25/27] gpu: host1x: Add MIPI pad calibration support
+Date: Mon, 14 Oct 2013 15:44:25 +0200
+Message-ID: <20131014134424.GA16302@ulmo.nvidia.com>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
+ <1381134884-5816-26-git-send-email-treding@nvidia.com>
+ <52587DAF.9080003@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1381753315-21778-1-git-send-email-amerilainen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: tbergstrom@nvidia.com, thierry.reding@gmail.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52587DAF.9080003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Functions host1x_syncpt_request() and _host1x_syncpt_alloc() have
-been taking a separate boolean flag ('client_managed') for indicating
-if the syncpoint value should be tracked by the host1x driver.
 
-This patch converts the field into generic 'flags' field so that
-we can easily add more information while requesting a syncpoint.
-Clients are adapted to use the new interface accordingly.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
----
- drivers/gpu/host1x/drm/gr2d.c |  2 +-
- drivers/gpu/host1x/syncpt.c   | 14 +++++++-------
- drivers/gpu/host1x/syncpt.h   |  3 ++-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+On Fri, Oct 11, 2013 at 04:37:35PM -0600, Stephen Warren wrote:
+> On 10/07/2013 02:34 AM, Thierry Reding wrote:
+> > This driver adds support to perform calibration of the MIPI pads for CSI
+> > and DSI.
+>=20
+> > diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+>=20
+> > +int tegra_mipi_calibrate(struct device *device)
+> ...
+> > +	err =3D of_parse_phandle_with_args(device->of_node, "calibrate",
+> > +					 "#calibrate-cells", 0, &args);
+> ...
+> > +static struct of_device_id tegra_mipi_of_match[] =3D {
+> > +	{ .compatible =3D "nvidia,tegra114-mipi", },
+>=20
+> Is the DT binding for that compatible value documented anywhere? I'm not
+> sure what #calibrate-cells means; it doesn't seem to be used...
 
-diff --git a/drivers/gpu/host1x/drm/gr2d.c b/drivers/gpu/host1x/drm/gr2d.c
-index 27ffcf1..7efd97b 100644
---- a/drivers/gpu/host1x/drm/gr2d.c
-+++ b/drivers/gpu/host1x/drm/gr2d.c
-@@ -285,7 +285,7 @@ static int gr2d_probe(struct platform_device *pdev)
- 	if (!gr2d->channel)
- 		return -ENOMEM;
- 
--	*syncpts = host1x_syncpt_request(dev, false);
-+	*syncpts = host1x_syncpt_request(dev, 0);
- 	if (!(*syncpts)) {
- 		host1x_channel_free(gr2d->channel);
- 		return -ENOMEM;
-diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
-index 409745b..d376cd4 100644
---- a/drivers/gpu/host1x/syncpt.c
-+++ b/drivers/gpu/host1x/syncpt.c
-@@ -30,9 +30,9 @@
- #define SYNCPT_CHECK_PERIOD (2 * HZ)
- #define MAX_STUCK_CHECK_COUNT 15
- 
--static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
--						  struct device *dev,
--						  bool client_managed)
-+static struct host1x_syncpt *host1x_syncpt_alloc(struct host1x *host,
-+						 struct device *dev,
-+						 unsigned long flags)
- {
- 	int i;
- 	struct host1x_syncpt *sp = host->syncpt;
-@@ -51,7 +51,7 @@ static struct host1x_syncpt *_host1x_syncpt_alloc(struct host1x *host,
- 
- 	sp->dev = dev;
- 	sp->name = name;
--	sp->client_managed = client_managed;
-+	sp->client_managed = !!(flags & HOST1X_SYNCPT_CLIENT_MANAGED);
- 
- 	return sp;
- }
-@@ -321,7 +321,7 @@ int host1x_syncpt_init(struct host1x *host)
- 	host1x_syncpt_restore(host);
- 
- 	/* Allocate sync point to use for clearing waits for expired fences */
--	host->nop_sp = _host1x_syncpt_alloc(host, NULL, false);
-+	host->nop_sp = host1x_syncpt_alloc(host, NULL, 0);
- 	if (!host->nop_sp)
- 		return -ENOMEM;
- 
-@@ -329,10 +329,10 @@ int host1x_syncpt_init(struct host1x *host)
- }
- 
- struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
--					    bool client_managed)
-+					    unsigned long flags)
- {
- 	struct host1x *host = dev_get_drvdata(dev->parent);
--	return _host1x_syncpt_alloc(host, dev, client_managed);
-+	return host1x_syncpt_alloc(host, dev, flags);
- }
- 
- void host1x_syncpt_free(struct host1x_syncpt *sp)
-diff --git a/drivers/gpu/host1x/syncpt.h b/drivers/gpu/host1x/syncpt.h
-index 267c0b9..1de7b58 100644
---- a/drivers/gpu/host1x/syncpt.h
-+++ b/drivers/gpu/host1x/syncpt.h
-@@ -153,8 +153,9 @@ int host1x_syncpt_patch_wait(struct host1x_syncpt *sp, void *patch_addr);
- u32 host1x_syncpt_id(struct host1x_syncpt *sp);
- 
- /* Allocate a sync point for a device. */
-+#define HOST1X_SYNCPT_CLIENT_MANAGED	(1 << 0)
- struct host1x_syncpt *host1x_syncpt_request(struct device *dev,
--					    bool client_managed);
-+					    unsigned long flags);
- 
- /* Free a sync point. */
- void host1x_syncpt_free(struct host1x_syncpt *sp);
--- 
-1.8.1.5
+I forgot to add a binding document, but I've complemented my local patch
+series with one. The #calibrate-cells defines the number of cells used
+for the specifier and should be 1. I suspect that we'll never get to
+have more than 32 pads that can be calibrated, but perhaps at some point
+data other than a bitmask of the pads will be needed.
+
+Thierry
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSW/U4AAoJEN0jrNd/PrOh9mIP/01TsmyKTXcp94Pfsfh4r9BR
+bX1ZjhuWBls+C46H7HaWt7LyPHUr8ie3WhDrxNq8azjjOhf7t49v2UEtkOpT77WM
+bW2DMiIpGN6d0g1p6RL1ozbo+BUAZvLxvwjIU1M5H8qKb0tP/ORgr8KI52kumf58
+EEecETWf8ELuLCvtkYhi29NgUgwqngG3KDMm+TFoFRrIltOwSG6FXej4y3AXZVlI
+AfcFSJzab18ekDRdsbok/QBna9xyQkX1KxohDZyINgS9LHUgEV2DYFDYbJf21/Y7
++2Hhn+gz8hincXF+drh1yUd15mNdFeWt8jDRtDlSRHQkc/z3PK+DPJLRLQDFLfIM
+wIW98j33O0afYNcDTStpMguVc8KpW8+LbJtLWxYNRpjNR9abTrKZ6EkNJEaPD+4Q
+V5xWQBXtnXi7yLa+Wl7YNGaXMyKD2rp+4x7NKE4nHjhKlU3txJwU0qFzv0+MVGKx
+Y1VdBjs5upibdPGm7cWHDLl22mZAlJ1thQEBjhftGi4pV+UdPgJi/mu1XLgpn5hm
+WsbhwtsKoUq59ZiPkgmCOavRrG0ZvgB6j8gscXSMWMMmUighq5WIkiczc+8qZm9R
+cW1aVrwYTGH0NFGOGQTmw3vVyK0BvGOnxVQU0K8+oppxNAwEHovE3M3QWbL0zTAk
+3yZrbfy05RjWF00k1nL/
+=MTn5
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
