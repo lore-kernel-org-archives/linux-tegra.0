@@ -1,61 +1,114 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 26/27] drm/tegra: Add DSI support
-Date: Tue, 15 Oct 2013 11:21:07 -0600
-Message-ID: <525D7983.6010001@wwwdotorg.org>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-27-git-send-email-treding@nvidia.com> <52587F17.7060104@wwwdotorg.org> <20131014135548.GB16302@ulmo.nvidia.com> <525C3510.60802@wwwdotorg.org> <20131015083342.GH7856@ulmo.nvidia.com>
+Subject: Re: [PATCH v3 00/19] Introduce common infra for tegra clocks
+Date: Tue, 15 Oct 2013 11:48:57 -0600
+Message-ID: <525D8009.5040907@wwwdotorg.org>
+References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131015083342.GH7856-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <1381848794-11761-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/15/2013 02:33 AM, Thierry Reding wrote:
-> On Mon, Oct 14, 2013 at 12:16:48PM -0600, Stephen Warren wrote:
->> On 10/14/2013 07:55 AM, Thierry Reding wrote:
->>> On Fri, Oct 11, 2013 at 04:43:35PM -0600, Stephen Warren
->>> wrote:
->>>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
->>>>> This commit adds support for both DSI outputs found on
->>>>> Tegra. Only very minimal functionality is implemented, so
->>>>> advanced features like ganged mode won't work.
->>>>> 
->>>>> Due to the lack of other test hardware, some sections of
->>>>> the driver are hardcoded to work with Dalmore.
->>>> 
->>>>> diff --git a/drivers/gpu/drm/tegra/dsi.c
->>>>> b/drivers/gpu/drm/tegra/dsi.c
->>>> 
->>>>> +static int tegra_dsi_show_regs(struct seq_file *s, void
->>>>> *data) +{ +	struct drm_info_node *node = s->private; +
->>>>> struct tegra_dsi *dsi = node->info_ent->data; + +#define
->>>>> DUMP_REG(name)						\ +	seq_printf(s, "%-32s %#05x
->>>>> %08lx\n", #name, name,	\ +		   tegra_dsi_readl(dsi, name)) 
->>>>> + +	DUMP_REG(DSI_INCR_SYNCPT);
->>>> 
->>>> Does it make sense to use an MMIO regmap instead? That way,
->>>> you get all the debugfs files for free...
->>> 
->>> As far as I know, regmap doesn't give you the symbolic names
->>> for the registers. I find that a rather useful feature because
->>> it allows to easily compare the registers to the ones in our
->>> downstream kernels.
->> 
->> True. However, we should really be writing user-space scripts to
->> encode that information. Such a script could be useful e.g. if
->> reading the information directly from /dev/mem or JTAG too, and
->> bloating the kernel with debug strings doesn't seem like a great
->> idea.
-> 
-> I don't agree. While I see some value in having such userspace
-> scripts, having the symbolic names in debugfs allows anyone to look
-> at a readable form of the data without having to have access to
-> those scripts. Besides it's called *debug*fs for a purpose, isn't
-> it? There's plenty of edited data that's not just a plain dump of
-> data.
+On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
+> This patchset introduces common infrastructure for clocks which exist in                                                                                       
+> several Tegra SoCs. We also also move Tegra20, Tegra30 and Tegra114 to
+> this new infrastructure.
 
-Perhaps you should work to enhance regmap's debugfs files to support
-optionally naming registers?
+I took my local branch based on next-20131014, and applied the following:
+
+* Joseph's "ARM: tegra: add clock properties for devices of Tegra124".
+
+* The patches from your "pull request for tegra clocks" of today (I just
+cherry-picked the commits rather than merging the pull request).
+
+* Your patch series "Introduce common infra for tegra clocks" of today.
+
+* Your patch series "Tegra124 clock support" of today.
+
+The resultant branch is at:
+git://github.com:swarren/linux-tegra.git linux-next_common
+
+When building, I see a number of section mismatches:
+
+> WARNING: drivers/clk/tegra/built-in.o(.text+0x534): Section mismatch in reference from the function _tegra_clk_register_periph() to the function .init.text:get_reg_bank()
+> The function _tegra_clk_register_periph() references
+> the function __init get_reg_bank().
+> This is often because _tegra_clk_register_periph lacks a __init 
+> annotation or the annotation of get_reg_bank is wrong.
+> 
+> WARNING: drivers/clk/tegra/built-in.o(.text+0x9ec): Section mismatch in reference from the function tegra_clk_register_periph_gate() to the function .init.text:get_reg_bank()
+> The function tegra_clk_register_periph_gate() references
+> the function __init get_reg_bank().
+> This is often because tegra_clk_register_periph_gate lacks a __init 
+> annotation or the annotation of get_reg_bank is wrong.
+
+There are more, but they refer to references from the same two
+functions. You may need to add CONFIG_DEBUG_SECTION_MISMATCH=y to
+.config to see these; I can't remember if that's included in
+tegra_defconfig.
+
+Testing on Venice2 (Tegra124): I see the following WARN during boot,
+which I think is new relative to the internal branch you gave me yesterday:
+
+> [    0.295386] ------------[ cut here ]------------
+> [    0.300450] WARNING: CPU: 0 PID: 1 at drivers/clk/tegra/clk.c:187 tegra_init_from_table+0x78/0x158()
+> [    0.310362] Modules linked in:
+> [    0.313740] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.12.0-rc5-next-20131014-05418-g30b9d55 #48
+> [    0.323397] [<c0016644>] (unwind_backtrace+0x0/0x138) from [<c001225c>] (show_stack+0x10/0x14)
+> [    0.332753] [<c001225c>] (show_stack+0x10/0x14) from [<c0572274>] (dump_stack+0x80/0xc0)
+> [    0.341559] [<c0572274>] (dump_stack+0x80/0xc0) from [<c0025d54>] (warn_slowpath_common+0x64/0x88)
+> [    0.351283] [<c0025d54>] (warn_slowpath_common+0x64/0x88) from [<c0025d94>] (warn_slowpath_null+0x1c/0x24)
+> [    0.361768] [<c0025d94>] (warn_slowpath_null+0x1c/0x24) from [<c07b4c1c>] (tegra_init_from_table+0x78/0x158)
+> [    0.372440] [<c07b4c1c>] (tegra_init_from_table+0x78/0x158) from [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20)
+> [    0.384138] [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20) from [<c079f9cc>] (tegra_dt_init+0xc/0xd8)
+> [    0.394903] [<c079f9cc>] (tegra_dt_init+0xc/0xd8) from [<c079a580>] (customize_machine+0x1c/0x40)
+> [    0.404535] [<c079a580>] (customize_machine+0x1c/0x40) from [<c00089e0>] (do_one_initcall+0xec/0x19c)
+> [    0.414551] [<c00089e0>] (do_one_initcall+0xec/0x19c) from [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8)
+> [    0.424944] [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8) from [<c056d5a8>] (kernel_init+0x8/0xe4)
+> [    0.434764] [<c056d5a8>] (kernel_init+0x8/0xe4) from [<c000f0f8>] (ret_from_fork+0x14/0x3c)
+> [    0.443850] ---[ end trace 98c2207379d4cf99 ]---
+
+Testing on Cardhu (Tegra30): I see the following new WARNs during boot:
+
+> [    0.495006] tegra_init_from_table: Failed to set rate 600000000 of disp1
+> [    0.501960] ------------[ cut here ]------------
+> [    0.506792] WARNING: CPU: 0 PID: 1 at drivers/clk/tegra/clk.c:196 tegra_init_from_table+0xc0/0x158()
+> [    0.516233] Modules linked in:
+> [    0.519446] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.12.0-rc5-next-20131014-05418-g30b9d55 #48
+> [    0.528653] [<c0016644>] (unwind_backtrace+0x0/0x138) from [<c001225c>] (show_stack+0x10/0x14)
+> [    0.537575] [<c001225c>] (show_stack+0x10/0x14) from [<c0572274>] (dump_stack+0x80/0xc0)
+> [    0.545963] [<c0572274>] (dump_stack+0x80/0xc0) from [<c0025d54>] (warn_slowpath_common+0x64/0x88)
+> [    0.555231] [<c0025d54>] (warn_slowpath_common+0x64/0x88) from [<c0025d94>] (warn_slowpath_null+0x1c/0x24)
+> [    0.565213] [<c0025d94>] (warn_slowpath_null+0x1c/0x24) from [<c07b4c64>] (tegra_init_from_table+0xc0/0x158)
+> [    0.575373] [<c07b4c64>] (tegra_init_from_table+0xc0/0x158) from [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20)
+> [    0.586514] [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20) from [<c079f9cc>] (tegra_dt_init+0xc/0xd8)
+> [    0.596770] [<c079f9cc>] (tegra_dt_init+0xc/0xd8) from [<c079a580>] (customize_machine+0x1c/0x40)
+> [    0.605951] [<c079a580>] (customize_machine+0x1c/0x40) from [<c00089e0>] (do_one_initcall+0xec/0x19c)
+> [    0.615486] [<c00089e0>] (do_one_initcall+0xec/0x19c) from [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8)
+> [    0.625389] [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8) from [<c056d5a8>] (kernel_init+0x8/0xe4)
+> [    0.634748] [<c056d5a8>] (kernel_init+0x8/0xe4) from [<c000f0f8>] (ret_from_fork+0x14/0x3c)
+> [    0.643406] ---[ end trace 3b692d0aca5bdcbf ]---
+> [    0.648221] tegra_init_from_table: Failed to set rate 600000000 of disp2
+> [    0.655170] ------------[ cut here ]------------
+> [    0.659985] WARNING: CPU: 0 PID: 1 at drivers/clk/tegra/clk.c:196 tegra_init_from_table+0xc0/0x158()
+> [    0.669424] Modules linked in:
+> [    0.672641] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W    3.12.0-rc5-next-20131014-05418-g30b9d55 #48
+> [    0.682801] [<c0016644>] (unwind_backtrace+0x0/0x138) from [<c001225c>] (show_stack+0x10/0x14)
+> [    0.691716] [<c001225c>] (show_stack+0x10/0x14) from [<c0572274>] (dump_stack+0x80/0xc0)
+> [    0.700089] [<c0572274>] (dump_stack+0x80/0xc0) from [<c0025d54>] (warn_slowpath_common+0x64/0x88)
+> [    0.709356] [<c0025d54>] (warn_slowpath_common+0x64/0x88) from [<c0025d94>] (warn_slowpath_null+0x1c/0x24)
+> [    0.719337] [<c0025d94>] (warn_slowpath_null+0x1c/0x24) from [<c07b4c64>] (tegra_init_from_table+0xc0/0x158)
+> [    0.729496] [<c07b4c64>] (tegra_init_from_table+0xc0/0x158) from [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20)
+> [    0.740633] [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20) from [<c079f9cc>] (tegra_dt_init+0xc/0xd8)
+> [    0.750880] [<c079f9cc>] (tegra_dt_init+0xc/0xd8) from [<c079a580>] (customize_machine+0x1c/0x40)
+> [    0.760058] [<c079a580>] (customize_machine+0x1c/0x40) from [<c00089e0>] (do_one_initcall+0xec/0x19c)
+> [    0.769593] [<c00089e0>] (do_one_initcall+0xec/0x19c) from [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8)
+> [    0.779485] [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8) from [<c056d5a8>] (kernel_init+0x8/0xe4)
+> [    0.788843] [<c056d5a8>] (kernel_init+0x8/0xe4) from [<c000f0f8>] (ret_from_fork+0x14/0x3c)
+> [    0.797483] ---[ end trace 3b692d0aca5bdcc0 ]---
+
+Testing on Dalmore (Tegra114) and Harmony (Tegra20) seemed OK.
