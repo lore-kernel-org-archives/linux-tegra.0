@@ -1,75 +1,80 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] arch_timer: Do not register arch_sys_counter twice
-Date: Tue, 15 Oct 2013 15:23:14 +0100
-Message-ID: <20131015142313.GC850@mudshark.cambridge.arm.com>
-References: <1381843911-31962-1-git-send-email-treding@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 00/19] Introduce common infra for tegra clocks
+Date: Tue, 15 Oct 2013 17:52:45 +0300
+Message-ID: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1381843911-31962-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 15, 2013 at 02:31:51PM +0100, Thierry Reding wrote:
-> Commit 65cd4f6 (arch_timer: Move to generic sched_clock framework) added
-> code to register the arch_sys_counter in arch_timer_register() but it is
-> already registered in arch_counter_register(). This results in the timer
-> being added to the clocksource list twice, therefore causing an infinite
-> loop in the list.
-> 
-> Remove the duplicate registration and register the scheduler clock after
-> the original registration instead.
-> 
-> This fixes a hang during boot on Tegra114 (Cortex-A15).
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> While I've only tested this on Tegra114, I suspect the same hang during
-> boot happens for all processors that use this clock source.
-> 
->  drivers/clocksource/arm_arch_timer.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> index f655036..95fb944 100644
-> --- a/drivers/clocksource/arm_arch_timer.c
-> +++ b/drivers/clocksource/arm_arch_timer.c
-> @@ -436,6 +436,9 @@ static void __init arch_counter_register(unsigned type)
->  	cyclecounter.mult = clocksource_counter.mult;
->  	cyclecounter.shift = clocksource_counter.shift;
->  	timecounter_init(&timecounter, &cyclecounter, start_count);
-> +
-> +	/* 56 bits minimum, so we assume worst case rollover */
-> +	sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
->  }
->  
->  static void arch_timer_stop(struct clock_event_device *clk)
-> @@ -515,15 +518,6 @@ static int __init arch_timer_register(void)
->  		goto out;
->  	}
->  
-> -	clocksource_register_hz(&clocksource_counter, arch_timer_rate);
-> -	cyclecounter.mult = clocksource_counter.mult;
-> -	cyclecounter.shift = clocksource_counter.shift;
-> -	timecounter_init(&timecounter, &cyclecounter,
-> -			 arch_counter_get_cntvct());
-> -
-> -	/* 56 bits minimum, so we assume worst case rollover */
-> -	sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
-> -
->  	if (arch_timer_use_virtual) {
->  		ppi = arch_timer_ppi[VIRT_PPI];
->  		err = request_percpu_irq(ppi, arch_timer_handler_virt,
+This patchset introduces common infrastructure for clocks which exist in                                                                                       
+several Tegra SoCs. We also also move Tegra20, Tegra30 and Tegra114 to
+this new infrastructure.
 
-Excuse my ignorance, but I'm failing to apply either this patch or the one
-that Stephen Boyd proposed:
+Changes since v1:                                                                                                                                              
++ move common clks allocation to patch 2                                                                                                                       
++ adapt also Tegra20 and Tegra30 to the changes in patch 2                                                                                                     
+                                                                                                                                                               
+Changes since v2:
++ move Tegra20 and Tegra30 to the common infrastructure
++ bug fixes and comments
++ merge clk-tegra-osc.c and clk-tegra-fixed.c in 1 file
 
-  http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/204665.html
+Boottested on dalmore, beaverboard and seaboard.                                                                                                               
 
-The second hunk (deletions) doesn't apply at all, and if I just apply the
-first hunk then things won't compile. Which tree is this against?
+--
 
-Will
+based on:
+
+git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-patches-0
+
+Peter De Schrijver (19):
+  ARM: tegra30: add missing CLK IDs
+  clk: tegra: simplify periph clock data
+  clk: tegra: common periph_clk_enb_refcnt and clks
+  clk: tegra: Add TEGRA_PERIPH_NO_DIV flag
+  clk: tegra: move some PLLC and PLLXC init to clk-pll.c
+  clk: tegra: move fields to tegra_clk_pll_params
+  clk: tegra: add header for common tegra clock IDs
+  clk: tegra: add common infra for DT clocks
+  clk: tegra: add clkdev registration infra
+  clk: tegra: move audio clk to common file
+  clk: tegra: move periph clocks to common file
+  clk: tegra: move PMC, fixed clocks to common files
+  clk: tegra: introduce common gen4 super clock
+  clk: tegra30: replace enum by binding header
+  clk: tegra20: replace enum by binding header
+  clk: tegra20: move tegra20 to common clkdev
+  clk: tegra30: move tegra30 to common clkdev
+  clk: tegra20: move to common periph clk
+  clk: tegra30: move to common tegra clk infra
+
+ drivers/clk/tegra/Makefile               |    6 +-
+ drivers/clk/tegra/clk-id.h               |  213 ++++
+ drivers/clk/tegra/clk-periph-gate.c      |    8 +-
+ drivers/clk/tegra/clk-periph.c           |   15 +-
+ drivers/clk/tegra/clk-pll.c              |  233 +++--
+ drivers/clk/tegra/clk-tegra-audio.c      |  213 ++++
+ drivers/clk/tegra/clk-tegra-fixed.c      |  113 +++
+ drivers/clk/tegra/clk-tegra-periph.c     |  590 +++++++++++
+ drivers/clk/tegra/clk-tegra-pmc.c        |  131 +++
+ drivers/clk/tegra/clk-tegra-super-gen4.c |  151 +++
+ drivers/clk/tegra/clk-tegra114.c         | 1601 ++++++------------------------
+ drivers/clk/tegra/clk-tegra20.c          |  809 ++++++----------
+ drivers/clk/tegra/clk-tegra30.c          | 1492 +++++++++-------------------
+ drivers/clk/tegra/clk.c                  |  158 +++
+ drivers/clk/tegra/clk.h                  |  101 ++-
+ include/dt-bindings/clock/tegra30-car.h  |   10 +-
+ 16 files changed, 2902 insertions(+), 2942 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-id.h
+ create mode 100644 drivers/clk/tegra/clk-tegra-audio.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-fixed.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-periph.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-gen4.c
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
