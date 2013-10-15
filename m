@@ -1,32 +1,78 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v8 1/5] ARM: add basic support for Trusted Foundations
-Date: Mon, 14 Oct 2013 16:12:49 -0600
-Message-ID: <525C6C61.5090306@wwwdotorg.org>
-References: <1381527938-22840-1-git-send-email-acourbot@nvidia.com> <1381527938-22840-2-git-send-email-acourbot@nvidia.com>
+From: Bibek Basu <bbasu@nvidia.com>
+Subject: RE: [PATCH] HID: i2c-hid: add platform data for quirks
+Date: Tue, 15 Oct 2013 10:51:11 +0530
+Message-ID: <77F7DB30C698A44DA22FB222C89DE941A68D423812@BGMAIL01.nvidia.com>
+References: <1380790121-1355-1-git-send-email-bbasu@nvidia.com>
+	<alpine.LNX.2.00.1310091225230.13289@pobox.suse.cz>
+ <CAN+gG=Fi2cmJktiUCTT0mBQNnkAFcL8jTctw7EngQh50odQO-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381527938-22840-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <CAN+gG=Fi2cmJktiUCTT0mBQNnkAFcL8jTctw7EngQh50odQO-g@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-input-owner@vger.kernel.org
+To: Benjamin Tissoires <benjamin.tissoires@gmail.com>, Jiri Kosina <jkosina@suse.cz>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Kiran Adduri <kadduri@nvidia.com>, linux-input <linux-input@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/11/2013 03:45 PM, Alexandre Courbot wrote:
-> Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> can be invoked using the same SMC-based API on all supported
-> platforms. This patch adds initial basic support for Trusted
-> Foundations using the ARM firmware API. Current features are limited
-> to the ability to boot secondary processors.
-> 
-> Note: The API followed by Trusted Foundations does *not* follow the SMC
-> calling conventions. It has nothing to do with PSCI neither and is only
-> relevant to devices that use Trusted Foundations (like most Tegra-based
-> retail devices).
-
-Russell, are you OK with this patch? Is it OK if I take it through the
-Tegra tree, or would you like to take it through your tree and give me a
-stable branch I can apply the rest on top of?
-
-Thanks.
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJlbmphbWluIFRpc3NvaXJl
+cyBbbWFpbHRvOmJlbmphbWluLnRpc3NvaXJlc0BnbWFpbC5jb21dDQo+IFNlbnQ6IFdlZG5lc2Rh
+eSwgT2N0b2JlciAwOSwgMjAxMyA0OjMwIFBNDQo+IFRvOiBKaXJpIEtvc2luYQ0KPiBDYzogQmli
+ZWsgQmFzdTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBLaXJhbiBBZGR1cmk7IGxpbnV4
+LWlucHV0DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEhJRDogaTJjLWhpZDogYWRkIHBsYXRmb3Jt
+IGRhdGEgZm9yIHF1aXJrcw0KPiANCj4gT24gV2VkLCBPY3QgOSwgMjAxMyBhdCAxMjoyNiBQTSwg
+SmlyaSBLb3NpbmEgPGprb3NpbmFAc3VzZS5jej4gd3JvdGU6DQo+ID4gT24gVGh1LCAzIE9jdCAy
+MDEzLCBCaWJlayBCYXN1IHdyb3RlOg0KPiA+DQo+ID4+IFNvbWUgSElEIGRldmljZSBkb2VzIG5v
+dCByZXNwb25kcyB0byBJTlBVVC9GRUFUVVJFIHJlcG9ydCBxdWVyeQ0KPiA+PiBkdXJpbmcgaW5p
+dGlhbGl6YXRpb24uIEFzIGEgcmVzdWx0IEhJRCBkcml2ZXIgdGhyb3dzIGVycm9yIGV2ZW4gd2hl
+bg0KPiA+PiBpdHMgbm90IG1hbmRhdG9yeSBhY2NvcmRpbmcgdG8gdGhlIEhJRCBzcGVjaWZpY2F0
+aW9uLiBBZGQgcGxhdGZvcm0NCj4gPj4gZGF0YSB0byBwcm92aWRlIHF1aXJrIGluZm9ybWF0aW9u
+IHRvIHRoZSBkcml2ZXIgc28gdGhhdCBpbml0IHF1ZXJ5IGlzDQo+ID4+IG5vdCBkb25lIG9uIHN1
+Y2ggZGV2aWNlcy4NCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQmliZWsgQmFzdSA8YmJhc3VA
+bnZpZGlhLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL2hpZC9pMmMtaGlkL2kyYy1oaWQu
+YyB8IDEgKw0KPiA+PiAgaW5jbHVkZS9saW51eC9pMmMvaTJjLWhpZC5oICAgfCAzICsrLQ0KPiA+
+PiAgMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPj4N
+Cj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2kyYy1oaWQvaTJjLWhpZC5jDQo+ID4+IGIv
+ZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMgaW5kZXggZmQ3Y2UzNy4uYTdhZWMyYyAxMDA2
+NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMNCj4gPj4gKysrIGIv
+ZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMNCj4gPj4gQEAgLTEwMTcsNiArMTAxNyw3IEBA
+IHN0YXRpYyBpbnQgaTJjX2hpZF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPiA+
+PiAgICAgICBoaWQtPnZlcnNpb24gPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVzYy5iY2RWZXJzaW9u
+KTsNCj4gPj4gICAgICAgaGlkLT52ZW5kb3IgPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVzYy53VmVu
+ZG9ySUQpOw0KPiA+PiAgICAgICBoaWQtPnByb2R1Y3QgPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVz
+Yy53UHJvZHVjdElEKTsNCj4gPj4gKyAgICAgaGlkLT5xdWlya3MgPSBwbGF0Zm9ybV9kYXRhLT5x
+dWlya3M7DQo+ID4+DQo+ID4+ICAgICAgIHNucHJpbnRmKGhpZC0+bmFtZSwgc2l6ZW9mKGhpZC0+
+bmFtZSksICIlcyAlMDRoWDolMDRoWCIsDQo+ID4+ICAgICAgICAgICAgICAgIGNsaWVudC0+bmFt
+ZSwgaGlkLT52ZW5kb3IsIGhpZC0+cHJvZHVjdCk7IGRpZmYgLS1naXQNCj4gPj4gYS9pbmNsdWRl
+L2xpbnV4L2kyYy9pMmMtaGlkLmggYi9pbmNsdWRlL2xpbnV4L2kyYy9pMmMtaGlkLmggaW5kZXgN
+Cj4gPj4gN2FhOTAxZC4uMTJlNjgyZCAxMDA2NDQNCj4gPj4gLS0tIGEvaW5jbHVkZS9saW51eC9p
+MmMvaTJjLWhpZC5oDQo+ID4+ICsrKyBiL2luY2x1ZGUvbGludXgvaTJjL2kyYy1oaWQuaA0KPiA+
+PiBAQCAtMTcsNyArMTcsNyBAQA0KPiA+PiAgLyoqDQo+ID4+ICAgKiBzdHJ1Y3QgaTJjaGlkX3Bs
+YXRmb3JtX2RhdGEgLSB1c2VkIGJ5IGhpZCBvdmVyIGkyYyBpbXBsZW1lbnRhdGlvbi4NCj4gPj4g
+ICAqIEBoaWRfZGVzY3JpcHRvcl9hZGRyZXNzOiBpMmMgcmVnaXN0ZXIgd2hlcmUgdGhlIEhJRCBk
+ZXNjcmlwdG9yIGlzDQo+IHN0b3JlZC4NCj4gPj4gLSAqDQo+ID4+ICsgKiBAcXVpcmtzOiBxdWly
+a3MsIGlmIGFueSBmb3IgaTJjLWhpZCBkZXZpY2VzDQo+ID4+ICAgKiBOb3RlIHRoYXQgaXQgaXMg
+dGhlIHJlc3BvbnNpYmlsaXR5IG9mIHRoZSBwbGF0Zm9ybSBkcml2ZXIgKG9yIHRoZSBhY3BpIDUu
+MA0KPiA+PiAgICogZHJpdmVyLCBvciB0aGUgZmxhdHRlbmVkIGRldmljZSB0cmVlKSB0byBzZXR1
+cCB0aGUgaXJxIHJlbGF0ZWQgdG8gdGhlIGdwaW8NCj4gaW4NCj4gPj4gICAqIHRoZSBzdHJ1Y3Qg
+aTJjX2JvYXJkX2luZm8uDQo+ID4+IEBAIC0zMSw2ICszMSw3IEBADQo+ID4+ICAgKi8NCj4gPj4g
+IHN0cnVjdCBpMmNfaGlkX3BsYXRmb3JtX2RhdGEgew0KPiA+PiAgICAgICB1MTYgaGlkX2Rlc2Ny
+aXB0b3JfYWRkcmVzczsNCj4gPj4gKyAgICAgdTMyIHF1aXJrczsNCj4gPj4gIH07DQo+ID4NCj4g
+DQo+IEhpIEppcmksDQo+IA0KPiA+IFVtbSwgYW5kIHdoZXJlIGRvZXMgdGhlIHF1aXJrcyBmaWVs
+ZCBvZiBwbGF0Zm9ybSBkYXRhIGFjdHVhbGx5IGdldA0KPiA+IHNldD8gSSBkb24ndCBzZWVtIHRv
+IHNlZSBhbnkgZm9sbG93dXAgcGF0Y2hzZXQgZG9pbmcgdGhhdD8NCj4gDQo+IFRoZSBwbGF0Zm9y
+bSBkYXRhIGlzIGZpbGxlZCBieSBzcGVjaWZpYyBtYXJjaC0qIGJvYXJkIGRlZmluaXRpb24gZGF0
+YS4NCj4gSW4gdGhpcyBjYXNlIHNvbWUgSSB3b3VsZCBzYXkgYSB0ZWdyYSBib2FyZC4gU28gaXQn
+cyBmaW5lIG5vdCBoYXZpbmcgYSBwYXRjaHNldA0KPiBzZXR0aW5nIHRoZSBxdWlyayAoYXMgaXQg
+aXMgcGVyIGJvYXJkLCBhbmQgbWF5YmUgcGVyIHZlcnNpb24vbWFudWZhY3R1cmVyKS4NCj4gDQo+
+IE90aGVyIHRoYW4gdGhhdCBJIHdvdWxkIGxvdmUgc2VlaW5nIHRoZSBzYW1lIGZvciB0aGUgZGV2
+aWNlIHRyZWUgYmluZGluZyBpZg0KPiB3ZSBhZGQgdGhpcyB0byB0aGUgc3RydWN0IGkyY19oaWRf
+cGxhdGZvcm1fZGF0YS4NCj4gDQo+IEJUVywgSmlyaSwgdGhlIGFpbSBvZiB0aGUgcGF0Y2ggd2Fz
+IHRvIGJlIGFibGUgdG8gYWRkIHRoZSBxdWlyaw0KPiBISURfUVVJUktfTk9fSU5JVF9JTlBVVF9S
+RVBPUlRTIHRvIHNvbWUgb2YgdGhlIGkyYy1oaWQgZGV2aWNlcy4NCj4gSG93ZXZlciwgdGhlIFdp
+bmRvd3MgZHJpdmVyIHVzZXMgdGhpcyBieSBkZWZhdWx0LCBzbyBJIGFscmVhZHkgdG9sZCB0byBC
+aWJlaw0KPiB0aGF0IHdlIGNvdWxkIGp1c3QgZHJvcCB0aGUgcmVsYXRlZCBjYWxscyBpbiBpMmNf
+aGlkX2luaXRfcmVwb3J0cygpLg0KPiANCkhpLA0KU29ycnksIEkgd2FzIE9PTy4NCk9LLCBJIGFt
+IHJlcHVzaGluZyBhIG5ldyBwYXRjaCB0byBqdXN0IGRyb3AgdGhlIGkyY19oaWRfaW5pdF9yZXBv
+cnRzIGNhbGxzDQoNCnJlZ2FyZHMNCkJpYmVrDQo+IENoZWVycywNCj4gQmVuamFtaW4NCg==
