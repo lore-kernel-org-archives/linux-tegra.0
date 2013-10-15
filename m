@@ -1,89 +1,85 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 15/27] gpu: host1x: Add support for Tegra114
-Date: Tue, 15 Oct 2013 10:05:57 +0200
-Message-ID: <20131015080556.GE7856@ulmo.nvidia.com>
+Subject: Re: [PATCH v2 16/27] drm/tegra: Add Tegra114 display controller
+ support
+Date: Tue, 15 Oct 2013 10:06:34 +0200
+Message-ID: <20131015080633.GF7856@ulmo.nvidia.com>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
- <1381134884-5816-16-git-send-email-treding@nvidia.com>
- <525877F3.9070004@wwwdotorg.org>
- <20131012112443.GC22284@mithrandir>
- <525B8174.4000907@nvidia.com>
+ <1381134884-5816-17-git-send-email-treding@nvidia.com>
+ <52587843.9070806@wwwdotorg.org>
+ <20131012113231.GD22284@mithrandir>
+ <525C325E.2090700@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BQPnanjtCNWHyqYD"
+	protocol="application/pgp-signature"; boundary="lIrNkN/7tmsD/ALM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <525B8174.4000907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <525C325E.2090700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---BQPnanjtCNWHyqYD
-Content-Type: text/plain; charset=utf-8
+--lIrNkN/7tmsD/ALM
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2013 at 08:30:28AM +0300, Terje Bergstr=C3=B6m wrote:
-> On 12.10.2013 14:24, Thierry Reding wrote:
-> > Yeah, I don't like very much how this is currently done. I mean about
-> > half of this is actually duplicate code because of the static inline
-> > functions used for register defines. As discussed elsewhere this was
-> > originally meant to be used for coverage testing, but nobody's done
-> > anything like that as far as I know. I'm also not convinced that these
-> > would be very useful in coverage testing, but adding Terje on Cc and
-> > unless he or anyone else has any (strong) objections I'll go and remove
-> > the duplicate definitions and while at it see if I can come up with a
-> > way to share more code/definitions between versions of host1x.
+On Mon, Oct 14, 2013 at 12:05:18PM -0600, Stephen Warren wrote:
+> On 10/12/2013 05:32 AM, Thierry Reding wrote:
+> > On Fri, Oct 11, 2013 at 04:14:27PM -0600, Stephen Warren wrote:
+> >> On 10/07/2013 02:34 AM, Thierry Reding wrote:
+> >>> From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>=20
+> >>> The Tegra114 display controller is backwards-compatible with
+> >>> previous generations of the Tegra SoC. No code changes are
+> >>> required.
+> >>=20
+> >> If the HW is backwards-compatible, then there's no need to add
+> >> extra compatible values to the driver; just write the following
+> >> in the DT, and it'll just work:
+> >>=20
+> >> compatible =3D "nvidia,tegra114-dc", "nvidia,tegra30-dc";
 > >=20
-> > Do you see this as a blocker for 3.13 or can I do the cleanup after
-> > that? As far as I know Tegra124 has a more heavily modified version of
-> > host1x so implementing Tegra124 support might be a good opportunity to
-> > clean this up anyway.
+> > One reason why I thought it might be useful to still include this,
+> > even though unnecessary, was to match it to the host1x_drm_subdevs
+> > table. We can probably remove the entry from there as well,
+> > though.
+> >=20
+> > As far as I can tell, the same holds for Tegra30, which is also=20
+> > backwards compatible with Tegra20 but the DTS doesn't contain the=20
+> > Tegra20 compatible. So to keep ABI compatibility we'll need to keep
+> > the nvidia,tegra30-dc in the driver's match tables, but I could
+> > still update the DTS to include the nvidia,tegra20-dc for
+> > correctness.
+> >=20
+> > Does that make sense?
 >=20
-> For Tegra114 the register level changes are small (one channel added,
-> wait bases, expanded fifo, etc) but for Tegra124 they're bigger. So
-> let's keep the long term in mind.
+> Yes, fixing the Tegra30 .dtsi file sounds like a good idea.
 
-I agree with Stephen here. We should really be working together with HW
-to prevent as many incompatibilities as we can.
-
-> I'm ok with removing the inlines. Just the energy spent in discussing it
-> over and over again is more than the benefits that a proper compiler
-> gives over the preprocessor (type checking, real syntax checking,
-> coverage, gdb breakpoints, etc). For some reason (which escapes me)
-> preprocessor magic seems to be the norm in Linux kernel.
->=20
-> Parameterized code gets easily really ugly, difficult to debug and
-> difficult to port to new chips. There's much less work and opportunity
-> of mistake in maintaining data in a couple of files than subtle
-> algorithms all over the driver. If we don't have inlines in hw headers,
-> the headers become tiny and any benefits of parameterized code versus
-> per-hw version headers vanish.
-
-I'll keep that in mind when I revisit this.
+Done.
 
 Thierry
 
---BQPnanjtCNWHyqYD
+--lIrNkN/7tmsD/ALM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSXPdkAAoJEN0jrNd/PrOh9vkP/1Mb7MesjxVkX6c2UGcSfRcp
-2JebDlOtJmUUAEEdrQ3pgyP3QoN9C0KhyZA3K83B9TOYlpSnQ98tc7Ypl5X1Ftqb
-Scb67gxWs9bULQcDqRUH4AnbgclLuYuEMT7xPFKieCcD9qoEwCqGwGWq9rwunL8a
-UoIFRoEv2SMWYLgcuYpqvogBiQcryYIB84Ixt91cVqkPR+svfuMIjh05Ri4UKLGh
-GI3HI6PVY1t/1eTcmIyi6yRNcc5hmv7F3zgcvLHgiDArCI0zMmVpL5ZBG8bDq2xF
-L6Y4bxEkwaleIdZIVRwmFqtbA+dFnbSnd348BwfYAlQhbf1aISkv0CpSNEcmCxh0
-lDN3n987YZXz0OLiv1gNjalYqewPfhYs8aSdahbsGZ3ofWDZ30RR0dVplWISRJkG
-V9/sMuc+x6vs42pOh4cYY08jUPn0xt0Tyd8iOTEG2J0X1HnGPf4d0QT5cHsfBQkv
-lvokj6KV7+xZUpohSNGqS+W4Qsgg3xjr5R+q3vdzkdAOMW5kwcGaJYT406DQlxj3
-0YB610VUejpHqPKq63XW8lHqZ+lbShsy9sw/nVUhPT1Bih7lvoPHFCK0MmdzX+le
-rK/r8sQFNsQM4iitSwvjurehz/w6HwFh0VstHusLJWqrhNgxIxV0nTxYCaQAFsKP
-IPb8s/zsjZxiS3W2/dcv
-=LfkI
+iQIcBAEBAgAGBQJSXPeJAAoJEN0jrNd/PrOhuusP+wTH/WaCS4FWgmMzSmbsbLQt
+/X/UCSQwMLGRSTfFxsPIFmVYRLa4UNZD+H37sAupuk0nCVBzYbRfm5fHYes4BA8i
+xC1YIXrz2SnTerR1iSousvFjmE5jBKD2y4zAwBh1HBIGusGeddQWG63tifmvfAcu
+ANyP5Sbel9NBkudJn6tpryOYW9wcJvtyu81+PU9DESA64voJ43FQW28NKeOktCRT
+53Q6hQlfSFtDJtUJoWnxoAVYm0jQMKMysUir/676VIfnAgMYMg28YC2pauvF/OoW
+z2rf9yRU5FD27Ya9gecWrD9zEvwXtds4++KQ4cNlOhO9Ys2OYGIvgDKjBvuwU73K
+AlhGIzVtcdjTK1nl94yoN/Kd0/gN+fLVYZN9X4WdiPfQ7Ci1XzONvVjSUe0jdvAn
+TPDuC13/YMrkng+XCz2NpsLcmANZwvte1ALrcbvyumVY7Ey/0/AYmOfV+X/Syrhn
+ooZcTmX4Jk/g7vlRDLsu4BuWFN715ctOV74KQn2yBOL0wXwbXsIgh5laC9FBuYbu
+WBwvLV6JEKbBmasxGLjZAbTEcaq5JS29XZOC8m7wxS5+8xKv210TokeWNt+a1A67
+oewbXG4pzIZ/oLY4tJFS53RbZoIX+NtT0AdNDritTL1CNJ8A0YXmlHEWcn1ocTI/
+IDIvPXR9qCBrzfLh4BQr
+=vKuW
 -----END PGP SIGNATURE-----
 
---BQPnanjtCNWHyqYD--
+--lIrNkN/7tmsD/ALM--
