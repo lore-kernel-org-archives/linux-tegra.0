@@ -1,49 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
-Date: Tue, 15 Oct 2013 09:12:46 -0600
-Message-ID: <525D5B6E.30301@wwwdotorg.org>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-28-git-send-email-treding@nvidia.com> <52587F2D.9070007@wwwdotorg.org> <525B880A.7090802@nvidia.com> <20131014140010.GC16302@ulmo.nvidia.com> <525C3497.6010700@wwwdotorg.org> <525CD7F3.10907@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 0/7] Tegra124 clock support
+Date: Tue, 15 Oct 2013 18:14:43 +0300
+Message-ID: <1381850098-12357-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <525CD7F3.10907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/14/2013 11:51 PM, Terje Bergstr=C3=B6m wrote:
-> On 14.10.2013 21:14, Stephen Warren wrote:
->> On 10/14/2013 08:00 AM, Thierry Reding wrote:
->>> Yes, as long as the device tree files includes the most specific
->>> value in the compatible this should still be possible. So we'd have
->>> this:
->>>
->>> gr2d@54140000 { compatible =3D "nvida,tegra114-gr2d",
->>> "nvidia,tegra20-gr2d"; ... };
->>>
->>> and the driver will match on "nvidia,tegra20-gr2d" if the more
->>> specific "nvidia,tegra114-gr2d" is not there. When the driver is
->>> updated to support Tegra114 specific functionality, then a more
->>> specific entry can be added to the compatible table to handle it.
->>
->> True, but the DT fragment above is also only accurate /if/ a driver
->> that only knows about "nvidia,tegra20-gr2d" can operate 100% of the
->> features in Tegra20 HW on Tegra114 HW forever.
->=20
-> I don't know of any hardware incompatibility. The only difference is
-> related to something not directly to 2D. We moved host1x away from th=
-e
-> power domain, so in Tegra114 we're able to power gate 2D and EPP. The
-> DVFS tables are also different.
->=20
-> I'd say say adding the compatible property "nvidia,tegra20-gr2d" for
-> Tegra114's 2D is accurate and we're able to use the match table to dr=
-ive
-> any SW policy differences.
+This series introduces support for the Tegra124 CAR clocks.                                                                                                    
+Based on '[PATCH v3 00/12] Introduce common infra for tegra clocks'                                                                                            
 
-The compatible value shouldn't be used for SW policy differences. DT is
-about HW, not SW policy. You have to decide: either the HW is 100%
-backwards-compatible, or it's not. You can't decide that the HW is
-compatible, but then require different compatible values.
+changes since v1:
+
++ suspend/resume for LP1 (Joseph Lo)
++ fixed some comments
++ account for changes to the common infra code
+
+Joseph Lo (2):
+  clk: tegra124: add wait_for_reset and disable_clock for
+    tegra_cpu_car_ops
+  clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
+
+Peter De Schrijver (5):
+  clk: tegra: Add support for PLLSS
+  clk: tegra: Add periph regs bank X
+  clk: tegra124: Add common clk IDs to clk-id.h
+  clk: tegra124: Add new peripheral clocks
+  clk: tegra124: Add support for Tegra124 clocks
+
+ drivers/clk/tegra/Makefile               |    1 +
+ drivers/clk/tegra/clk-id.h               |   20 +
+ drivers/clk/tegra/clk-pll.c              |  172 ++++
+ drivers/clk/tegra/clk-tegra-periph.c     |   55 ++
+ drivers/clk/tegra/clk-tegra124.c         | 1430 ++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.c                  |   10 +
+ drivers/clk/tegra/clk.h                  |    5 +
+ include/dt-bindings/clock/tegra124-car.h |  341 +++++++
+ 8 files changed, 2034 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/clk/tegra/clk-tegra124.c
+ create mode 100644 include/dt-bindings/clock/tegra124-car.h
+
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
