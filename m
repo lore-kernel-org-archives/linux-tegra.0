@@ -1,56 +1,107 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v8 1/5] ARM: add basic support for Trusted Foundations
-Date: Tue, 15 Oct 2013 10:11:59 -0600
-Message-ID: <525D694F.3070803@wwwdotorg.org>
-References: <1381527938-22840-1-git-send-email-acourbot@nvidia.com> <1381527938-22840-2-git-send-email-acourbot@nvidia.com> <20131015110725.GZ25034@n2100.arm.linux.org.uk>
+From: John Stultz <john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arch_timer: Do not register arch_sys_counter twice
+Date: Tue, 15 Oct 2013 09:46:19 -0700
+Message-ID: <525D715B.5090203@linaro.org>
+References: <1381843911-31962-1-git-send-email-treding@nvidia.com> <20131015142313.GC850@mudshark.cambridge.arm.com> <20131015150314.GA10535@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131015110725.GZ25034-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <20131015150314.GA10535-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/15/2013 05:07 AM, Russell King - ARM Linux wrote:
-> On Fri, Oct 11, 2013 at 02:45:34PM -0700, Alexandre Courbot wrote:
->> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->> can be invoked using the same SMC-based API on all supported
->> platforms. This patch adds initial basic support for Trusted
->> Foundations using the ARM firmware API. Current features are limited
->> to the ability to boot secondary processors.
+On 10/15/2013 08:03 AM, Thierry Reding wrote:
+> On Tue, Oct 15, 2013 at 03:23:14PM +0100, Will Deacon wrote:
+>> On Tue, Oct 15, 2013 at 02:31:51PM +0100, Thierry Reding wrote:
+>>> Commit 65cd4f6 (arch_timer: Move to generic sched_clock framework) added
+>>> code to register the arch_sys_counter in arch_timer_register() but it is
+>>> already registered in arch_counter_register(). This results in the timer
+>>> being added to the clocksource list twice, therefore causing an infinite
+>>> loop in the list.
+>>>
+>>> Remove the duplicate registration and register the scheduler clock after
+>>> the original registration instead.
+>>>
+>>> This fixes a hang during boot on Tegra114 (Cortex-A15).
+>>>
+>>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>> While I've only tested this on Tegra114, I suspect the same hang during
+>>> boot happens for all processors that use this clock source.
+>>>
+>>>  drivers/clocksource/arm_arch_timer.c | 12 +++---------
+>>>  1 file changed, 3 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/clocksource/arm_arch_timer.c
+b/drivers/clocksource/arm_arch_timer.c
+>>> index f655036..95fb944 100644
+>>> --- a/drivers/clocksource/arm_arch_timer.c
+>>> +++ b/drivers/clocksource/arm_arch_timer.c
+>>> @@ -436,6 +436,9 @@ static void __init
+arch_counter_register(unsigned type)
+>>>      cyclecounter.mult = clocksource_counter.mult;
+>>>      cyclecounter.shift = clocksource_counter.shift;
+>>>      timecounter_init(&timecounter, &cyclecounter, start_count);
+>>> +
+>>> +    /* 56 bits minimum, so we assume worst case rollover */
+>>> +    sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
+>>>  }
+>>> 
+>>>  static void arch_timer_stop(struct clock_event_device *clk)
+>>> @@ -515,15 +518,6 @@ static int __init arch_timer_register(void)
+>>>          goto out;
+>>>      }
+>>> 
+>>> -    clocksource_register_hz(&clocksource_counter, arch_timer_rate);
+>>> -    cyclecounter.mult = clocksource_counter.mult;
+>>> -    cyclecounter.shift = clocksource_counter.shift;
+>>> -    timecounter_init(&timecounter, &cyclecounter,
+>>> -             arch_counter_get_cntvct());
+>>> -
+>>> -    /* 56 bits minimum, so we assume worst case rollover */
+>>> -    sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
+>>> -
+>>>      if (arch_timer_use_virtual) {
+>>>          ppi = arch_timer_ppi[VIRT_PPI];
+>>>          err = request_percpu_irq(ppi, arch_timer_handler_virt,
 >>
->> Note: The API followed by Trusted Foundations does *not* follow the SMC
->> calling conventions. It has nothing to do with PSCI neither and is only
->> relevant to devices that use Trusted Foundations (like most Tegra-based
->> retail devices).
+>> Excuse my ignorance, but I'm failing to apply either this patch or
+the one
+>> that Stephen Boyd proposed:
 >>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
->>  .../devicetree/bindings/vendor-prefixes.txt        |  1 +
->>  arch/arm/Kconfig                                   |  2 +
->>  arch/arm/Makefile                                  |  1 +
->>  arch/arm/firmware/Kconfig                          | 28 ++++++++
->>  arch/arm/firmware/Makefile                         |  1 +
->>  arch/arm/firmware/trusted_foundations.c            | 79 ++++++++++++++++++++++
->>  arch/arm/include/asm/trusted_foundations.h         | 68 +++++++++++++++++++
->>  8 files changed, 200 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
->>  create mode 100644 arch/arm/firmware/Kconfig
->>  create mode 100644 arch/arm/firmware/Makefile
->>  create mode 100644 arch/arm/firmware/trusted_foundations.c
->>  create mode 100644 arch/arm/include/asm/trusted_foundations.h
-> 
-> Is having this under arch/arm appropriate?  What happens if the API
-> gets re-used on ARM64 for example?  Would drivers/firmware be a better
-> cross-arch location for this?
+>>  
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/204665.html
+>
+> Hehe, that patch is exactly the same as this one. =)
+>
+>> The second hunk (deletions) doesn't apply at all, and if I just apply the
+>> first hunk then things won't compile. Which tree is this against?
 
-That's probably a better location, yes.
+The problem is from my merge to -tip.
 
-BTW, drivers/firmware/ doesn't seem to have an overall maintainer. Who
-should Alex send the patch to, or should I just take this patch throught
-the Tegra tree once the files are moved?
+>
+> This is on top of today's linux-next[0] and will probably apply to
+> yesterday's linux-next too. I think that perhaps the patch or the one
+> that Stephen proposed himself should be squashed with the original
+> because that caused the breakage in the first place. From what I gather
+> from the mailing thread you linked to above it seems like John took an
+> earlier patch from Stephen and rebased it on top of something more
+> recent and that didn't work out as expected.
+
+Yes, again my apologies. When I applied Stephen's original patch to the
+recent tree, I mis-resolved the conflict.
+
+
+> Ingo, any chance you could take this patch and squash it into the patch
+> mentioned above? Applying it as a separate fix will break bisectability
+> inbetween both patches.
+
+I suspect Ingo won't squish down the fix onto the misresolved patch,
+since -tip usually preserves history. But hopefully we can get this
+merged quickly.
+
+Again, sorry for the trouble!
+-john
