@@ -1,78 +1,43 @@
-From: Bibek Basu <bbasu@nvidia.com>
-Subject: RE: [PATCH] HID: i2c-hid: add platform data for quirks
-Date: Tue, 15 Oct 2013 10:51:11 +0530
-Message-ID: <77F7DB30C698A44DA22FB222C89DE941A68D423812@BGMAIL01.nvidia.com>
-References: <1380790121-1355-1-git-send-email-bbasu@nvidia.com>
-	<alpine.LNX.2.00.1310091225230.13289@pobox.suse.cz>
- <CAN+gG=Fi2cmJktiUCTT0mBQNnkAFcL8jTctw7EngQh50odQO-g@mail.gmail.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
+Date: Tue, 15 Oct 2013 08:51:47 +0300
+Message-ID: <525CD7F3.10907@nvidia.com>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-28-git-send-email-treding@nvidia.com> <52587F2D.9070007@wwwdotorg.org> <525B880A.7090802@nvidia.com> <20131014140010.GC16302@ulmo.nvidia.com> <525C3497.6010700@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <CAN+gG=Fi2cmJktiUCTT0mBQNnkAFcL8jTctw7EngQh50odQO-g@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-input-owner@vger.kernel.org
-To: Benjamin Tissoires <benjamin.tissoires@gmail.com>, Jiri Kosina <jkosina@suse.cz>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Kiran Adduri <kadduri@nvidia.com>, linux-input <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <525C3497.6010700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEJlbmphbWluIFRpc3NvaXJl
-cyBbbWFpbHRvOmJlbmphbWluLnRpc3NvaXJlc0BnbWFpbC5jb21dDQo+IFNlbnQ6IFdlZG5lc2Rh
-eSwgT2N0b2JlciAwOSwgMjAxMyA0OjMwIFBNDQo+IFRvOiBKaXJpIEtvc2luYQ0KPiBDYzogQmli
-ZWsgQmFzdTsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBLaXJhbiBBZGR1cmk7IGxpbnV4
-LWlucHV0DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEhJRDogaTJjLWhpZDogYWRkIHBsYXRmb3Jt
-IGRhdGEgZm9yIHF1aXJrcw0KPiANCj4gT24gV2VkLCBPY3QgOSwgMjAxMyBhdCAxMjoyNiBQTSwg
-SmlyaSBLb3NpbmEgPGprb3NpbmFAc3VzZS5jej4gd3JvdGU6DQo+ID4gT24gVGh1LCAzIE9jdCAy
-MDEzLCBCaWJlayBCYXN1IHdyb3RlOg0KPiA+DQo+ID4+IFNvbWUgSElEIGRldmljZSBkb2VzIG5v
-dCByZXNwb25kcyB0byBJTlBVVC9GRUFUVVJFIHJlcG9ydCBxdWVyeQ0KPiA+PiBkdXJpbmcgaW5p
-dGlhbGl6YXRpb24uIEFzIGEgcmVzdWx0IEhJRCBkcml2ZXIgdGhyb3dzIGVycm9yIGV2ZW4gd2hl
-bg0KPiA+PiBpdHMgbm90IG1hbmRhdG9yeSBhY2NvcmRpbmcgdG8gdGhlIEhJRCBzcGVjaWZpY2F0
-aW9uLiBBZGQgcGxhdGZvcm0NCj4gPj4gZGF0YSB0byBwcm92aWRlIHF1aXJrIGluZm9ybWF0aW9u
-IHRvIHRoZSBkcml2ZXIgc28gdGhhdCBpbml0IHF1ZXJ5IGlzDQo+ID4+IG5vdCBkb25lIG9uIHN1
-Y2ggZGV2aWNlcy4NCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQmliZWsgQmFzdSA8YmJhc3VA
-bnZpZGlhLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICBkcml2ZXJzL2hpZC9pMmMtaGlkL2kyYy1oaWQu
-YyB8IDEgKw0KPiA+PiAgaW5jbHVkZS9saW51eC9pMmMvaTJjLWhpZC5oICAgfCAzICsrLQ0KPiA+
-PiAgMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPj4N
-Cj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlkL2kyYy1oaWQvaTJjLWhpZC5jDQo+ID4+IGIv
-ZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMgaW5kZXggZmQ3Y2UzNy4uYTdhZWMyYyAxMDA2
-NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMNCj4gPj4gKysrIGIv
-ZHJpdmVycy9oaWQvaTJjLWhpZC9pMmMtaGlkLmMNCj4gPj4gQEAgLTEwMTcsNiArMTAxNyw3IEBA
-IHN0YXRpYyBpbnQgaTJjX2hpZF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPiA+
-PiAgICAgICBoaWQtPnZlcnNpb24gPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVzYy5iY2RWZXJzaW9u
-KTsNCj4gPj4gICAgICAgaGlkLT52ZW5kb3IgPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVzYy53VmVu
-ZG9ySUQpOw0KPiA+PiAgICAgICBoaWQtPnByb2R1Y3QgPSBsZTE2X3RvX2NwdShpaGlkLT5oZGVz
-Yy53UHJvZHVjdElEKTsNCj4gPj4gKyAgICAgaGlkLT5xdWlya3MgPSBwbGF0Zm9ybV9kYXRhLT5x
-dWlya3M7DQo+ID4+DQo+ID4+ICAgICAgIHNucHJpbnRmKGhpZC0+bmFtZSwgc2l6ZW9mKGhpZC0+
-bmFtZSksICIlcyAlMDRoWDolMDRoWCIsDQo+ID4+ICAgICAgICAgICAgICAgIGNsaWVudC0+bmFt
-ZSwgaGlkLT52ZW5kb3IsIGhpZC0+cHJvZHVjdCk7IGRpZmYgLS1naXQNCj4gPj4gYS9pbmNsdWRl
-L2xpbnV4L2kyYy9pMmMtaGlkLmggYi9pbmNsdWRlL2xpbnV4L2kyYy9pMmMtaGlkLmggaW5kZXgN
-Cj4gPj4gN2FhOTAxZC4uMTJlNjgyZCAxMDA2NDQNCj4gPj4gLS0tIGEvaW5jbHVkZS9saW51eC9p
-MmMvaTJjLWhpZC5oDQo+ID4+ICsrKyBiL2luY2x1ZGUvbGludXgvaTJjL2kyYy1oaWQuaA0KPiA+
-PiBAQCAtMTcsNyArMTcsNyBAQA0KPiA+PiAgLyoqDQo+ID4+ICAgKiBzdHJ1Y3QgaTJjaGlkX3Bs
-YXRmb3JtX2RhdGEgLSB1c2VkIGJ5IGhpZCBvdmVyIGkyYyBpbXBsZW1lbnRhdGlvbi4NCj4gPj4g
-ICAqIEBoaWRfZGVzY3JpcHRvcl9hZGRyZXNzOiBpMmMgcmVnaXN0ZXIgd2hlcmUgdGhlIEhJRCBk
-ZXNjcmlwdG9yIGlzDQo+IHN0b3JlZC4NCj4gPj4gLSAqDQo+ID4+ICsgKiBAcXVpcmtzOiBxdWly
-a3MsIGlmIGFueSBmb3IgaTJjLWhpZCBkZXZpY2VzDQo+ID4+ICAgKiBOb3RlIHRoYXQgaXQgaXMg
-dGhlIHJlc3BvbnNpYmlsaXR5IG9mIHRoZSBwbGF0Zm9ybSBkcml2ZXIgKG9yIHRoZSBhY3BpIDUu
-MA0KPiA+PiAgICogZHJpdmVyLCBvciB0aGUgZmxhdHRlbmVkIGRldmljZSB0cmVlKSB0byBzZXR1
-cCB0aGUgaXJxIHJlbGF0ZWQgdG8gdGhlIGdwaW8NCj4gaW4NCj4gPj4gICAqIHRoZSBzdHJ1Y3Qg
-aTJjX2JvYXJkX2luZm8uDQo+ID4+IEBAIC0zMSw2ICszMSw3IEBADQo+ID4+ICAgKi8NCj4gPj4g
-IHN0cnVjdCBpMmNfaGlkX3BsYXRmb3JtX2RhdGEgew0KPiA+PiAgICAgICB1MTYgaGlkX2Rlc2Ny
-aXB0b3JfYWRkcmVzczsNCj4gPj4gKyAgICAgdTMyIHF1aXJrczsNCj4gPj4gIH07DQo+ID4NCj4g
-DQo+IEhpIEppcmksDQo+IA0KPiA+IFVtbSwgYW5kIHdoZXJlIGRvZXMgdGhlIHF1aXJrcyBmaWVs
-ZCBvZiBwbGF0Zm9ybSBkYXRhIGFjdHVhbGx5IGdldA0KPiA+IHNldD8gSSBkb24ndCBzZWVtIHRv
-IHNlZSBhbnkgZm9sbG93dXAgcGF0Y2hzZXQgZG9pbmcgdGhhdD8NCj4gDQo+IFRoZSBwbGF0Zm9y
-bSBkYXRhIGlzIGZpbGxlZCBieSBzcGVjaWZpYyBtYXJjaC0qIGJvYXJkIGRlZmluaXRpb24gZGF0
-YS4NCj4gSW4gdGhpcyBjYXNlIHNvbWUgSSB3b3VsZCBzYXkgYSB0ZWdyYSBib2FyZC4gU28gaXQn
-cyBmaW5lIG5vdCBoYXZpbmcgYSBwYXRjaHNldA0KPiBzZXR0aW5nIHRoZSBxdWlyayAoYXMgaXQg
-aXMgcGVyIGJvYXJkLCBhbmQgbWF5YmUgcGVyIHZlcnNpb24vbWFudWZhY3R1cmVyKS4NCj4gDQo+
-IE90aGVyIHRoYW4gdGhhdCBJIHdvdWxkIGxvdmUgc2VlaW5nIHRoZSBzYW1lIGZvciB0aGUgZGV2
-aWNlIHRyZWUgYmluZGluZyBpZg0KPiB3ZSBhZGQgdGhpcyB0byB0aGUgc3RydWN0IGkyY19oaWRf
-cGxhdGZvcm1fZGF0YS4NCj4gDQo+IEJUVywgSmlyaSwgdGhlIGFpbSBvZiB0aGUgcGF0Y2ggd2Fz
-IHRvIGJlIGFibGUgdG8gYWRkIHRoZSBxdWlyaw0KPiBISURfUVVJUktfTk9fSU5JVF9JTlBVVF9S
-RVBPUlRTIHRvIHNvbWUgb2YgdGhlIGkyYy1oaWQgZGV2aWNlcy4NCj4gSG93ZXZlciwgdGhlIFdp
-bmRvd3MgZHJpdmVyIHVzZXMgdGhpcyBieSBkZWZhdWx0LCBzbyBJIGFscmVhZHkgdG9sZCB0byBC
-aWJlaw0KPiB0aGF0IHdlIGNvdWxkIGp1c3QgZHJvcCB0aGUgcmVsYXRlZCBjYWxscyBpbiBpMmNf
-aGlkX2luaXRfcmVwb3J0cygpLg0KPiANCkhpLA0KU29ycnksIEkgd2FzIE9PTy4NCk9LLCBJIGFt
-IHJlcHVzaGluZyBhIG5ldyBwYXRjaCB0byBqdXN0IGRyb3AgdGhlIGkyY19oaWRfaW5pdF9yZXBv
-cnRzIGNhbGxzDQoNCnJlZ2FyZHMNCkJpYmVrDQo+IENoZWVycywNCj4gQmVuamFtaW4NCg==
+On 14.10.2013 21:14, Stephen Warren wrote:
+> On 10/14/2013 08:00 AM, Thierry Reding wrote:
+>> Yes, as long as the device tree files includes the most specific
+>> value in the compatible this should still be possible. So we'd have
+>> this:
+>>
+>> gr2d@54140000 { compatible = "nvida,tegra114-gr2d",
+>> "nvidia,tegra20-gr2d"; ... };
+>>
+>> and the driver will match on "nvidia,tegra20-gr2d" if the more
+>> specific "nvidia,tegra114-gr2d" is not there. When the driver is
+>> updated to support Tegra114 specific functionality, then a more
+>> specific entry can be added to the compatible table to handle it.
+> 
+> True, but the DT fragment above is also only accurate /if/ a driver
+> that only knows about "nvidia,tegra20-gr2d" can operate 100% of the
+> features in Tegra20 HW on Tegra114 HW forever.
+
+I don't know of any hardware incompatibility. The only difference is
+related to something not directly to 2D. We moved host1x away from the
+power domain, so in Tegra114 we're able to power gate 2D and EPP. The
+DVFS tables are also different.
+
+I'd say say adding the compatible property "nvidia,tegra20-gr2d" for
+Tegra114's 2D is accurate and we're able to use the match table to drive
+any SW policy differences.
+
+Terje
