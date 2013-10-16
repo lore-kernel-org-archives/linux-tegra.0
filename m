@@ -1,122 +1,82 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
-Date: Wed, 16 Oct 2013 10:48:04 +0200
-Message-ID: <20131016084804.GC21963@ulmo.nvidia.com>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
- <1381134884-5816-28-git-send-email-treding@nvidia.com>
- <52587F2D.9070007@wwwdotorg.org>
- <525B880A.7090802@nvidia.com>
- <20131014140010.GC16302@ulmo.nvidia.com>
- <525C3497.6010700@wwwdotorg.org>
- <20131015083731.GI7856@ulmo.nvidia.com>
- <525D5CF6.3020600@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 00/19] Introduce common infra for tegra clocks
+Date: Wed, 16 Oct 2013 12:06:43 +0300
+Message-ID: <20131016090643.GI5643@tbergstrom-lnx.Nvidia.com>
+References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
+ <525D8009.5040907@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WfZ7S8PLGjBY9Voh"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <525D5CF6.3020600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <525D8009.5040907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 15, 2013 at 07:48:57PM +0200, Stephen Warren wrote:
+> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
+> > This patchset introduces common infrastructure for clocks which exist in                                                                                       
+> > several Tegra SoCs. We also also move Tegra20, Tegra30 and Tegra114 to
+> > this new infrastructure.
+> 
+> I took my local branch based on next-20131014, and applied the following:
+> 
+> * Joseph's "ARM: tegra: add clock properties for devices of Tegra124".
+> 
+> * The patches from your "pull request for tegra clocks" of today (I just
+> cherry-picked the commits rather than merging the pull request).
+> 
+> * Your patch series "Introduce common infra for tegra clocks" of today.
+> 
+> * Your patch series "Tegra124 clock support" of today.
+> 
+> The resultant branch is at:
+> git://github.com:swarren/linux-tegra.git linux-next_common
+> 
+> When building, I see a number of section mismatches:
+> 
+> > WARNING: drivers/clk/tegra/built-in.o(.text+0x534): Section mismatch in reference from the function _tegra_clk_register_periph() to the function .init.text:get_reg_bank()
+> > The function _tegra_clk_register_periph() references
+> > the function __init get_reg_bank().
+> > This is often because _tegra_clk_register_periph lacks a __init 
+> > annotation or the annotation of get_reg_bank is wrong.
+> > 
+> > WARNING: drivers/clk/tegra/built-in.o(.text+0x9ec): Section mismatch in reference from the function tegra_clk_register_periph_gate() to the function .init.text:get_reg_bank()
+> > The function tegra_clk_register_periph_gate() references
+> > the function __init get_reg_bank().
+> > This is often because tegra_clk_register_periph_gate lacks a __init 
+> > annotation or the annotation of get_reg_bank is wrong.
+> 
+> There are more, but they refer to references from the same two
+> functions. You may need to add CONFIG_DEBUG_SECTION_MISMATCH=y to
+> .config to see these; I can't remember if that's included in
+> tegra_defconfig.
+> 
+> Testing on Venice2 (Tegra124): I see the following WARN during boot,
+> which I think is new relative to the internal branch you gave me yesterday:
+> 
+> > [    0.295386] ------------[ cut here ]------------
+> > [    0.300450] WARNING: CPU: 0 PID: 1 at drivers/clk/tegra/clk.c:187 tegra_init_from_table+0x78/0x158()
+> > [    0.310362] Modules linked in:
+> > [    0.313740] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.12.0-rc5-next-20131014-05418-g30b9d55 #48
+> > [    0.323397] [<c0016644>] (unwind_backtrace+0x0/0x138) from [<c001225c>] (show_stack+0x10/0x14)
+> > [    0.332753] [<c001225c>] (show_stack+0x10/0x14) from [<c0572274>] (dump_stack+0x80/0xc0)
+> > [    0.341559] [<c0572274>] (dump_stack+0x80/0xc0) from [<c0025d54>] (warn_slowpath_common+0x64/0x88)
+> > [    0.351283] [<c0025d54>] (warn_slowpath_common+0x64/0x88) from [<c0025d94>] (warn_slowpath_null+0x1c/0x24)
+> > [    0.361768] [<c0025d94>] (warn_slowpath_null+0x1c/0x24) from [<c07b4c1c>] (tegra_init_from_table+0x78/0x158)
+> > [    0.372440] [<c07b4c1c>] (tegra_init_from_table+0x78/0x158) from [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20)
+> > [    0.384138] [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20) from [<c079f9cc>] (tegra_dt_init+0xc/0xd8)
+> > [    0.394903] [<c079f9cc>] (tegra_dt_init+0xc/0xd8) from [<c079a580>] (customize_machine+0x1c/0x40)
+> > [    0.404535] [<c079a580>] (customize_machine+0x1c/0x40) from [<c00089e0>] (do_one_initcall+0xec/0x19c)
+> > [    0.414551] [<c00089e0>] (do_one_initcall+0xec/0x19c) from [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8)
+> > [    0.424944] [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8) from [<c056d5a8>] (kernel_init+0x8/0xe4)
+> > [    0.434764] [<c056d5a8>] (kernel_init+0x8/0xe4) from [<c000f0f8>] (ret_from_fork+0x14/0x3c)
+> > [    0.443850] ---[ end trace 98c2207379d4cf99 ]---
+> 
 
---WfZ7S8PLGjBY9Voh
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Did you see  'tegra_init_from_table: Failed to set parent pll_c2 of epp ' before? Tegra124 doesn't have EPP...
 
-On Tue, Oct 15, 2013 at 09:19:18AM -0600, Stephen Warren wrote:
-> On 10/15/2013 02:37 AM, Thierry Reding wrote:
-> > On Mon, Oct 14, 2013 at 12:14:47PM -0600, Stephen Warren wrote:
-> >> On 10/14/2013 08:00 AM, Thierry Reding wrote:
-> >>> On Mon, Oct 14, 2013 at 08:58:34AM +0300, Terje Bergstr=C3=B6m
-> >>> wrote:
-> >>>> On 12.10.2013 01:43, Stephen Warren wrote:
-> >>>>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
-> >>>>>> The gr2d hardware in Tegra114 is compatible with that of=20
-> >>>>>> Tegra20 and Tegra30. No functionaly changes are
-> >>>>>> required.
-> >>>>> Similarly here, if the HW is 100% backwards-compatible,
-> >>>>> there's no need to add compatible values to the driver.
-> >>>>=20
-> >>>> We've used this mechanism for attaching a per-hw-version
-> >>>> data structure in match table to accomodate differences in
-> >>>> how the hardware is power gated, reset, booted, some per-soc
-> >>>> performance related changes etc. It's also used in staging
-> >>>> features for new chips, such as disabling power features when
-> >>>> they're not working/verified yet.
-> >>>>=20
-> >>>> Upstream driver is not yet in a state where that is
-> >>>> relevant.
-> >>>>=20
-> >>>> With this, would we still be able to do that with match
-> >>>> table? It sounds like we could, because we can still (even
-> >>>> with multiple compatible properties) add separate entries in
-> >>>> match table and I guess the compatible properties matched in
-> >>>> order.
-> >>>=20
-> >>> Yes, as long as the device tree files includes the most
-> >>> specific value in the compatible this should still be possible.
-> >>> So we'd have this:
-> >>>=20
-> >>> gr2d@54140000 { compatible =3D "nvida,tegra114-gr2d",=20
-> >>> "nvidia,tegra20-gr2d"; ... };
-> >>>=20
-> >>> and the driver will match on "nvidia,tegra20-gr2d" if the more=20
-> >>> specific "nvidia,tegra114-gr2d" is not there. When the driver
-> >>> is updated to support Tegra114 specific functionality, then a
-> >>> more specific entry can be added to the compatible table to
-> >>> handle it.
-> >>=20
-> >> True, but the DT fragment above is also only accurate /if/ a
-> >> driver that only knows about "nvidia,tegra20-gr2d" can operate
-> >> 100% of the features in Tegra20 HW on Tegra114 HW forever.
-> >=20
-> > Yes, but given that we also list "nvidia,tegra114-gr2d" in the
-> > property it will be possible to add that to the driver when new
-> > functionality is implemented and immediately take advantage of it
-> > on Tegra114 hardware with an old device tree file which has both
-> > compatible values.
->=20
-> Taking advantage of new functionality isn't the issue. The issue is
-> whether a driver that was written purely to the spec of Tegra20 can
-> successfully operate on the HW. If it can't, then the HW is not
-> compatible with Tegra20. Terje's previous comments sounded like the HW
-> is not backwards-compatible, although his more recent comments make it
-> sound like only SW policy differences, which shouldn't be part of DT
-> anyway.
+Cheers,
 
-Well, as good as I can tell it is backwards-compatible. I've been
-testing the code included in this series with the same simple test
-program that clears a rectangle on Tegra20, Tegra30 and Tegra114.
-
-Furthermore our internal register specification files are identical,
-with the exception of some whitespace changes for all three generations.
-I think that qualifies as backwards-compatible?
-
-Thierry
-
---WfZ7S8PLGjBY9Voh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSXlLEAAoJEN0jrNd/PrOhRisQAJdSibqFhEhJAS2a92jWYGmF
-WC2nwoJL20ly5ldJndVi+ioy47QAJAedXCgrmXuxaOOwzQ2iZi5ip/O0dIAet/np
-Tdl0lBLueGYY+46RYfqiItHsOTV3edacMb7yXhl9d7TwpD66kL80o6cn7/T43efD
-rcA/MiTl9nz2Tw9hh4y7UDYSd7znmgEaP30ig09RH6CqKBJ9wnXKCtMA9c9QShbB
-1pkx3fF6/aUPkx/VBcGI9QYlox7CWs1ktB6d9p1EHiymLlybjHYnwuM3RFISTlI6
-NdW/AH/VBHUoMGrczGJr6UjwGKdupg5wZX0vc3C/dujZB2K3lWxtQm5rjV1AX6Iy
-sORN2C/ZJMQHwuvkalvXaZ671zZ3H73Uk0wDALFkwmrOoNpTLY/iOHjX7T/fiAgO
-66T8aq9787CMJ9iKrn0NkW7qGULGXmZZ3IYOOYDyO50+lxDWJcpyGnrjrwDZeczl
-JnaC4pnqh36FmIYF937TCuNiueyINkZVUt6vcG3/GeUnQPnMqMWnNIYZ2v/Pq9UF
-Yd74NoZJGjzHN9OWkKjFWXA7t/u8a85rv8AhMVVFow1r3OdM66wEJKF+yvqnNrM4
-PzdEDRBZpuaaokr/UFbcCKURUPb9ieW2xn1BwDB3D1UlSU2ZSFP+ckW2HzSBjZR+
-XaZKAWKUOct5WWreHTda
-=xJww
------END PGP SIGNATURE-----
-
---WfZ7S8PLGjBY9Voh--
+Peter.
