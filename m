@@ -1,109 +1,122 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 26/27] drm/tegra: Add DSI support
-Date: Wed, 16 Oct 2013 10:40:31 +0200
-Message-ID: <20131016084031.GB21963@ulmo.nvidia.com>
+Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
+Date: Wed, 16 Oct 2013 10:48:04 +0200
+Message-ID: <20131016084804.GC21963@ulmo.nvidia.com>
 References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
- <1381134884-5816-27-git-send-email-treding@nvidia.com>
- <52587F17.7060104@wwwdotorg.org>
- <20131014135548.GB16302@ulmo.nvidia.com>
- <525C3510.60802@wwwdotorg.org>
- <20131015083342.GH7856@ulmo.nvidia.com>
- <525D7983.6010001@wwwdotorg.org>
+ <1381134884-5816-28-git-send-email-treding@nvidia.com>
+ <52587F2D.9070007@wwwdotorg.org>
+ <525B880A.7090802@nvidia.com>
+ <20131014140010.GC16302@ulmo.nvidia.com>
+ <525C3497.6010700@wwwdotorg.org>
+ <20131015083731.GI7856@ulmo.nvidia.com>
+ <525D5CF6.3020600@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+	protocol="application/pgp-signature"; boundary="WfZ7S8PLGjBY9Voh"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <525D7983.6010001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <525D5CF6.3020600-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
+--WfZ7S8PLGjBY9Voh
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2013 at 11:21:07AM -0600, Stephen Warren wrote:
-> On 10/15/2013 02:33 AM, Thierry Reding wrote:
-> > On Mon, Oct 14, 2013 at 12:16:48PM -0600, Stephen Warren wrote:
-> >> On 10/14/2013 07:55 AM, Thierry Reding wrote:
-> >>> On Fri, Oct 11, 2013 at 04:43:35PM -0600, Stephen Warren
+On Tue, Oct 15, 2013 at 09:19:18AM -0600, Stephen Warren wrote:
+> On 10/15/2013 02:37 AM, Thierry Reding wrote:
+> > On Mon, Oct 14, 2013 at 12:14:47PM -0600, Stephen Warren wrote:
+> >> On 10/14/2013 08:00 AM, Thierry Reding wrote:
+> >>> On Mon, Oct 14, 2013 at 08:58:34AM +0300, Terje Bergstr=C3=B6m
 > >>> wrote:
-> >>>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
-> >>>>> This commit adds support for both DSI outputs found on
-> >>>>> Tegra. Only very minimal functionality is implemented, so
-> >>>>> advanced features like ganged mode won't work.
-> >>>>>=20
-> >>>>> Due to the lack of other test hardware, some sections of
-> >>>>> the driver are hardcoded to work with Dalmore.
+> >>>> On 12.10.2013 01:43, Stephen Warren wrote:
+> >>>>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
+> >>>>>> The gr2d hardware in Tegra114 is compatible with that of=20
+> >>>>>> Tegra20 and Tegra30. No functionaly changes are
+> >>>>>> required.
+> >>>>> Similarly here, if the HW is 100% backwards-compatible,
+> >>>>> there's no need to add compatible values to the driver.
 > >>>>=20
-> >>>>> diff --git a/drivers/gpu/drm/tegra/dsi.c
-> >>>>> b/drivers/gpu/drm/tegra/dsi.c
+> >>>> We've used this mechanism for attaching a per-hw-version
+> >>>> data structure in match table to accomodate differences in
+> >>>> how the hardware is power gated, reset, booted, some per-soc
+> >>>> performance related changes etc. It's also used in staging
+> >>>> features for new chips, such as disabling power features when
+> >>>> they're not working/verified yet.
 > >>>>=20
-> >>>>> +static int tegra_dsi_show_regs(struct seq_file *s, void
-> >>>>> *data) +{ +	struct drm_info_node *node =3D s->private; +
-> >>>>> struct tegra_dsi *dsi =3D node->info_ent->data; + +#define
-> >>>>> DUMP_REG(name)						\ +	seq_printf(s, "%-32s %#05x
-> >>>>> %08lx\n", #name, name,	\ +		   tegra_dsi_readl(dsi, name))=20
-> >>>>> + +	DUMP_REG(DSI_INCR_SYNCPT);
+> >>>> Upstream driver is not yet in a state where that is
+> >>>> relevant.
 > >>>>=20
-> >>>> Does it make sense to use an MMIO regmap instead? That way,
-> >>>> you get all the debugfs files for free...
+> >>>> With this, would we still be able to do that with match
+> >>>> table? It sounds like we could, because we can still (even
+> >>>> with multiple compatible properties) add separate entries in
+> >>>> match table and I guess the compatible properties matched in
+> >>>> order.
 > >>>=20
-> >>> As far as I know, regmap doesn't give you the symbolic names
-> >>> for the registers. I find that a rather useful feature because
-> >>> it allows to easily compare the registers to the ones in our
-> >>> downstream kernels.
+> >>> Yes, as long as the device tree files includes the most
+> >>> specific value in the compatible this should still be possible.
+> >>> So we'd have this:
+> >>>=20
+> >>> gr2d@54140000 { compatible =3D "nvida,tegra114-gr2d",=20
+> >>> "nvidia,tegra20-gr2d"; ... };
+> >>>=20
+> >>> and the driver will match on "nvidia,tegra20-gr2d" if the more=20
+> >>> specific "nvidia,tegra114-gr2d" is not there. When the driver
+> >>> is updated to support Tegra114 specific functionality, then a
+> >>> more specific entry can be added to the compatible table to
+> >>> handle it.
 > >>=20
-> >> True. However, we should really be writing user-space scripts to
-> >> encode that information. Such a script could be useful e.g. if
-> >> reading the information directly from /dev/mem or JTAG too, and
-> >> bloating the kernel with debug strings doesn't seem like a great
-> >> idea.
+> >> True, but the DT fragment above is also only accurate /if/ a
+> >> driver that only knows about "nvidia,tegra20-gr2d" can operate
+> >> 100% of the features in Tegra20 HW on Tegra114 HW forever.
 > >=20
-> > I don't agree. While I see some value in having such userspace
-> > scripts, having the symbolic names in debugfs allows anyone to look
-> > at a readable form of the data without having to have access to
-> > those scripts. Besides it's called *debug*fs for a purpose, isn't
-> > it? There's plenty of edited data that's not just a plain dump of
-> > data.
+> > Yes, but given that we also list "nvidia,tegra114-gr2d" in the
+> > property it will be possible to add that to the driver when new
+> > functionality is implemented and immediately take advantage of it
+> > on Tegra114 hardware with an old device tree file which has both
+> > compatible values.
 >=20
-> Perhaps you should work to enhance regmap's debugfs files to support
-> optionally naming registers?
+> Taking advantage of new functionality isn't the issue. The issue is
+> whether a driver that was written purely to the spec of Tegra20 can
+> successfully operate on the HW. If it can't, then the HW is not
+> compatible with Tegra20. Terje's previous comments sounded like the HW
+> is not backwards-compatible, although his more recent comments make it
+> sound like only SW policy differences, which shouldn't be part of DT
+> anyway.
 
-Just to follow up with what we've discussed on IRC: I'll take a stab at
-refactoring the debugfs file output into something more generic that can
-possibly be leveraged by regmap as well. That should provide a somewhat
-more lightweight alternative to regmap for implementations that don't
-need regmap for anything else while at the same time providing something
-so not every driver has to come up with something custom.
+Well, as good as I can tell it is backwards-compatible. I've been
+testing the code included in this series with the same simple test
+program that clears a rectangle on Tegra20, Tegra30 and Tegra114.
 
-Does that sum it up correctly?
+Furthermore our internal register specification files are identical,
+with the exception of some whitespace changes for all three generations.
+I think that qualifies as backwards-compatible?
 
 Thierry
 
---eAbsdosE1cNLO4uF
+--WfZ7S8PLGjBY9Voh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSXlD/AAoJEN0jrNd/PrOhbfsP/Rz3g1zYMaR7wUk7SnxVXIYL
-69QvhW0YOqV01sqRqBjYko1cBidQWaP2ISSlaxEF/njCVr+ILrZqnED9KB3DwcAh
-KKJtkFGCkU+B2HNlKx/GIAjmpZn4aI3PlGAYrTil/GOe5C3iJIsPsRBqQY5yHa6k
-X8fbGyNCD4r6ce4Fesa43eroq8Kk9rHupqsnju0egl8UewQ7Dg6wJv5QVFYkUsma
-Kxc+quOPwwDCh7xaeo4OvD2HguJ+oiOWDYLwCPeB29npTkQud+gTWlB0B1rtAgLk
-NdP7voD8yR94pyAGpHHiJvcej8zcvaxNc8xqLqbGPoLigoMpflOQ/UIw0fGbx/E+
-vFtUgIN4MLvhZC0YKiZLJBKdlLMBSYCoh4hUaQrnoXurs6UCzEbY5ym2PqiiyAGB
-T6Q9z4lR/SmzpbqlHby/OC0IA+STNE1JACE2u1OZdqBoq9/M89SQWTzzydO2sgXN
-OogQqIGHjCgeI48BvzL33tNVRKY9OIL94gg3TuJT06F8SX0aLZG4Btaz22Tg3Tct
-auUWiQW2GakRb/WaTE9jiFEJqpTkXO2u5MjXBkUV0yKK/Z8KGTNfI/xUSALlCOnq
-GPvlIBP1XF8KP6IhvHd6RG6i0hCwekwNuaVS6kRItZLpBQkcbpFMfd6Eb6h7HFzu
-OvWgfd0R/2o8GHkGMtsI
-=XyNC
+iQIcBAEBAgAGBQJSXlLEAAoJEN0jrNd/PrOhRisQAJdSibqFhEhJAS2a92jWYGmF
+WC2nwoJL20ly5ldJndVi+ioy47QAJAedXCgrmXuxaOOwzQ2iZi5ip/O0dIAet/np
+Tdl0lBLueGYY+46RYfqiItHsOTV3edacMb7yXhl9d7TwpD66kL80o6cn7/T43efD
+rcA/MiTl9nz2Tw9hh4y7UDYSd7znmgEaP30ig09RH6CqKBJ9wnXKCtMA9c9QShbB
+1pkx3fF6/aUPkx/VBcGI9QYlox7CWs1ktB6d9p1EHiymLlybjHYnwuM3RFISTlI6
+NdW/AH/VBHUoMGrczGJr6UjwGKdupg5wZX0vc3C/dujZB2K3lWxtQm5rjV1AX6Iy
+sORN2C/ZJMQHwuvkalvXaZ671zZ3H73Uk0wDALFkwmrOoNpTLY/iOHjX7T/fiAgO
+66T8aq9787CMJ9iKrn0NkW7qGULGXmZZ3IYOOYDyO50+lxDWJcpyGnrjrwDZeczl
+JnaC4pnqh36FmIYF937TCuNiueyINkZVUt6vcG3/GeUnQPnMqMWnNIYZ2v/Pq9UF
+Yd74NoZJGjzHN9OWkKjFWXA7t/u8a85rv8AhMVVFow1r3OdM66wEJKF+yvqnNrM4
+PzdEDRBZpuaaokr/UFbcCKURUPb9ieW2xn1BwDB3D1UlSU2ZSFP+ckW2HzSBjZR+
+XaZKAWKUOct5WWreHTda
+=xJww
 -----END PGP SIGNATURE-----
 
---eAbsdosE1cNLO4uF--
+--WfZ7S8PLGjBY9Voh--
