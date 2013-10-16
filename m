@@ -1,94 +1,39 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
-Date: Wed, 16 Oct 2013 11:00:07 -0600
-Message-ID: <525EC617.9000506@wwwdotorg.org>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-28-git-send-email-treding@nvidia.com> <52587F2D.9070007@wwwdotorg.org> <525B880A.7090802@nvidia.com> <20131014140010.GC16302@ulmo.nvidia.com> <525C3497.6010700@wwwdotorg.org> <20131015083731.GI7856@ulmo.nvidia.com> <525D5CF6.3020600@wwwdotorg.org> <20131016084804.GC21963@ulmo.nvidia.com>
+Subject: Re: [PATCH v3 08/19] clk: tegra: add common infra for DT clocks
+Date: Wed, 16 Oct 2013 11:02:20 -0600
+Message-ID: <525EC69C.5040004@wwwdotorg.org>
+References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com> <1381848794-11761-9-git-send-email-pdeschrijver@nvidia.com> <525D9117.9050009@wwwdotorg.org> <20131016143448.GK5643@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131016084804.GC21963-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131016143448.GK5643-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/16/2013 02:48 AM, Thierry Reding wrote:
-> On Tue, Oct 15, 2013 at 09:19:18AM -0600, Stephen Warren wrote:
->> On 10/15/2013 02:37 AM, Thierry Reding wrote:
->>> On Mon, Oct 14, 2013 at 12:14:47PM -0600, Stephen Warren
->>> wrote:
->>>> On 10/14/2013 08:00 AM, Thierry Reding wrote:
->>>>> On Mon, Oct 14, 2013 at 08:58:34AM +0300, Terje Bergstr=C3=B6m=20
->>>>> wrote:
->>>>>> On 12.10.2013 01:43, Stephen Warren wrote:
->>>>>>> On 10/07/2013 02:34 AM, Thierry Reding wrote:
->>>>>>>> The gr2d hardware in Tegra114 is compatible with that
->>>>>>>> of Tegra20 and Tegra30. No functionaly changes are=20
->>>>>>>> required.
->>>>>>> Similarly here, if the HW is 100%
->>>>>>> backwards-compatible, there's no need to add compatible
->>>>>>> values to the driver.
->>>>>>=20
->>>>>> We've used this mechanism for attaching a per-hw-version=20
->>>>>> data structure in match table to accomodate differences
->>>>>> in how the hardware is power gated, reset, booted, some
->>>>>> per-soc performance related changes etc. It's also used
->>>>>> in staging features for new chips, such as disabling
->>>>>> power features when they're not working/verified yet.
->>>>>>=20
->>>>>> Upstream driver is not yet in a state where that is=20
->>>>>> relevant.
->>>>>>=20
->>>>>> With this, would we still be able to do that with match=20
->>>>>> table? It sounds like we could, because we can still
->>>>>> (even with multiple compatible properties) add separate
->>>>>> entries in match table and I guess the compatible
->>>>>> properties matched in order.
->>>>>=20
->>>>> Yes, as long as the device tree files includes the most=20
->>>>> specific value in the compatible this should still be
->>>>> possible. So we'd have this:
->>>>>=20
->>>>> gr2d@54140000 { compatible =3D "nvida,tegra114-gr2d",=20
->>>>> "nvidia,tegra20-gr2d"; ... };
->>>>>=20
->>>>> and the driver will match on "nvidia,tegra20-gr2d" if the
->>>>> more specific "nvidia,tegra114-gr2d" is not there. When the
->>>>> driver is updated to support Tegra114 specific
->>>>> functionality, then a more specific entry can be added to
->>>>> the compatible table to handle it.
->>>>=20
->>>> True, but the DT fragment above is also only accurate /if/ a=20
->>>> driver that only knows about "nvidia,tegra20-gr2d" can
->>>> operate 100% of the features in Tegra20 HW on Tegra114 HW
->>>> forever.
->>>=20
->>> Yes, but given that we also list "nvidia,tegra114-gr2d" in the=20
->>> property it will be possible to add that to the driver when
->>> new functionality is implemented and immediately take advantage
->>> of it on Tegra114 hardware with an old device tree file which
->>> has both compatible values.
->>=20
->> Taking advantage of new functionality isn't the issue. The issue
->> is whether a driver that was written purely to the spec of
->> Tegra20 can successfully operate on the HW. If it can't, then the
->> HW is not compatible with Tegra20. Terje's previous comments
->> sounded like the HW is not backwards-compatible, although his
->> more recent comments make it sound like only SW policy
->> differences, which shouldn't be part of DT anyway.
->=20
-> Well, as good as I can tell it is backwards-compatible. I've been=20
-> testing the code included in this series with the same simple test=20
-> program that clears a rectangle on Tegra20, Tegra30 and Tegra114.
+On 10/16/2013 08:34 AM, Peter De Schrijver wrote:
+> On Tue, Oct 15, 2013 at 09:01:43PM +0200, Stephen Warren wrote:
+>> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
+>>> Introduce a common infrastructure for sharing clock initialization between
+>>> SoCs.
+>>
+>>> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+>>
+>>> +struct clk ** __init tegra_lookup_dt_id(int clk_id,
+>>> +					struct tegra_clk *tegra_clk)
+>>> +{
+>>> +	if (tegra_clk[clk_id].present)
+>>> +		return &clks[tegra_clk[clk_id].dt_id];
+>>> +	else
+>>> +		return NULL;
+>>
+>> Does this need range-checking? Or do we assume that since this is an
+>> internal function, "clk_id" will never be out-of-range?
+> 
+> That was my assumption indeed. I could add a range check if you think that's
+> useful.
 
-All that means is that the subset of features we use so far is compatib=
-le.
-
-> Furthermore our internal register specification files are
-> identical, with the exception of some whitespace changes for all
-> three generations. I think that qualifies as backwards-compatible?
-
-On the other hand, that sounds like an almost perfect definition of
-backwards-compatible. Can you also validate that any module
-clock/power/reset inputs are identical? If so, the case is closed:-)
+It's probably OK if it's a purely internal function; I just wanted to
+double-check.
