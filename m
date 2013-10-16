@@ -1,94 +1,88 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 13/13] WIP: ARM: tegra: Add Tegra114 powergate support
-Date: Wed, 16 Oct 2013 12:51:13 +0200
-Message-ID: <20131016105112.GF21963@ulmo.nvidia.com>
+Subject: Re: [PATCH v2 04/13] ARM: tegra: Add MIPI calibration DT entries for
+ Tegra114
+Date: Wed, 16 Oct 2013 12:57:44 +0200
+Message-ID: <20131016105743.GG21963@ulmo.nvidia.com>
 References: <1381850883-12722-1-git-send-email-treding@nvidia.com>
- <1381850883-12722-14-git-send-email-treding@nvidia.com>
- <525DB8B2.2050203@wwwdotorg.org>
- <1381890671.11523.15.camel@jlo-ubuntu-64.nvidia.com>
+ <1381850883-12722-5-git-send-email-treding@nvidia.com>
+ <525DA888.2060800@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oFbHfjnMgUMsrGjO"
+	protocol="application/pgp-signature"; boundary="oOB74oR0WcNeq9Zb"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1381890671.11523.15.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <525DA888.2060800-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---oFbHfjnMgUMsrGjO
+--oOB74oR0WcNeq9Zb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2013 at 10:31:11AM +0800, Joseph Lo wrote:
-> On Wed, 2013-10-16 at 05:50 +0800, Stephen Warren wrote:
-> > On 10/15/2013 09:28 AM, Thierry Reding wrote:
-> > > Extend the list of power gates found on Tegra114. Note that there are
-> > > now holes in the list, so perhaps a simple array is no longer the best
-> > > data structure to represent it. But perhaps this is good enough for n=
-ow
-> > > and can be cleaned up in a follow up patch?
-> >=20
-> > Peter should probably comment on this, since I think he's touched the
-> > powergate driver the most recently.
-> >=20
-> > One idea might be to have the powergate IDs be "virtual", with a
-> > virtual->HW ID mapping table per SoC. The virtual IDs need not have any
-> > gaps. I'm not sure that having gaps is really much of a problem though,
-> > except for the debugfs code in powergate.c...
-> >=20
-> > > diff --git a/include/linux/tegra-powergate.h b/include/linux/tegra-po=
-wergate.h
-> >=20
-> > > +#define TEGRA_POWERGATE_DISA	18
-> > > +#define TEGRA_POWERGATE_DISB	19
-> >=20
-> > s/DIS/DSI/ perhaps?
-> >=20
-> > > -#define TEGRA_POWERGATE_CPU0	TEGRA_POWERGATE_CPU
-> >=20
-> > I expect that was added deliberately. Perhaps Peter or Joseph can
-> > comment? Admittedly, it's not used right now.
-> >=20
-> > BTW, while you're fiddling with powergate.c, I note that
-> > mach-tegra/pmc.c #defines some TEGRA_POWERGATE_xxx rather than including
-> > tegra-powergate.h. Can you fix that?
+On Tue, Oct 15, 2013 at 02:41:44PM -0600, Stephen Warren wrote:
+> On 10/15/2013 09:27 AM, Thierry Reding wrote:
+> > Add a device node for the MIPI calibration block on Tegra114. There is
+> > no need to disable it by default because it only enables the clock while
+> > performing calibration and therefore shouldn't be consuming any power
+> > when unused.
 >=20
-> The reason why we didn't keep updated this code and use this driver is
-> because we want it to convert to use generic power domain
-> infrastructure[1]. Not sure this makes sense to you. (Only PCIe uses
-> this powergate driver until now.)
+> > diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra1=
+14.dtsi
+>=20
+> > +	mipi: mipi {
+> > +		compatible =3D "nvidia,tegra114-mipi";
+> > +		reg =3D <0x700e3000 0x100>;
+> > +		clocks =3D <&tegra_car TEGRA114_CLK_MIPI_CAL>;
+> > +		#calibrate-cells =3D <1>;
+> > +	};
+>=20
+> Do you have a link to the binding documentation for this? I'm still in
+> the dark re: why there's a need for #calibrate-cells at all. It seems
+> like this should be some internal implementation detail of the Tegra
+> DC/..., or implicit based on the compatible value (if cell count
+> changes, just rev the compatible value; it's not like this is a generic
+> service for loosely coupled drivers).
 
-We need it for gr3d as well and so far nobody's worked on the conversion
-to the power domain infrastructure as far as I know. So in the meantime
-we should still extend this driver to cover whatever functionality we
-need. Hopefully any effort we invest now can be reused when moving to
-the PM domain framework.
+Here's the commit that adds the device tree binding:
+
+	https://gitorious.org/thierryreding/linux/commit/43b798a54063156692e0fde2a=
+9022c0ae44b862e
+
+I was under the impression that we needed the #*-cells properties so
+that the device tree code could verify that the content is actually
+correct and so that it knows how to parse the specifier. I mean why
+else do we have the #gpio-cells property for GPIO controller nodes?
+
+Also note that this driver isn't for something internal to the DRM
+driver. It can (and will) also be used by the V4L2 camera driver that
+Bryan is working on, because the CSI pads need to be calibrated in the
+same way.
 
 Thierry
 
---oFbHfjnMgUMsrGjO
+--oOB74oR0WcNeq9Zb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSXm+gAAoJEN0jrNd/PrOhJgoQAKHTm8jLQk4K+J3hdwn6Axyk
-iNEEPwwYqNbFNAPXxofbBzLDm9vTuuWNrGNogSIAqcPnh1NKfWemizG0U14BsaUm
-VCF6pl+yGR+Z4ZZRSFidqZKeJOVDlVIhpfQRzG0J5itqcgob5QhGlDJTdVuewJYp
-P9ug62gsv4FbsV30ZdNsBDYfURhHjljC/fzheFWO2YasoTv64Bs2YKjM+LPBHxJL
-ssjXBLUSWbbZlneeRmMcxBJRyinjdfFvoBFXLKr9CvmGAa+iIFWl1AWdoAEAINNe
-ikyXbI5x/J8nspJPqptMPhcogw/Oy9CjNBtB1KKWJI8uHYnLSzwtPlKYPKfRa/CN
-OFpM4gyeRZj+/1P8l7QBKS6oNFyKc+9JHCvhgsgkbtfarI4Lk9qeNbiT1c+9HPBB
-Xzh3U3urqF0RTKgG8QO3kJ6pQK76+MuC4kfKNNwrdWY5wknpXE3VP7IHY4kFWkC7
-SU8Vb54ne6Jaim9r5TJ/T5R84ZOOUSQ/m0nAsrdxR54irUFhNQySrP6gp3UDNSXR
-Mf5OmWis7gqC6RjN3qn81y3+GvfS4o8/YAFNKdaJqIzu5bIakVLcNsD+W0+gQN4Q
-pq7/ndOz/HR8DGUxVv6vrucnnllyxqzy+UTjAeqHauevTagKPuwqdsicoMUfwzBW
-vHFIUWg/CrqWPMjqbuCO
-=0NkF
+iQIcBAEBAgAGBQJSXnEnAAoJEN0jrNd/PrOh0UUP/iiK+FcoSKDShGwendhb6gUZ
+IZnMjA/E8jg5H0q/Ab5wVZbCZW+jB979G2b6XyRKOn6rWQRvIGjJwcMZwPBs2K8m
+JczUsWic0uAfxXZHa0BaJZxeSg/RpvttsMX94CoPoYc4rHZVNlNPwC6cgtw5fmgW
+HtSZjH3rp+hIP9qWs5N7UEVtPvY5oKOMgEdEc6kM2SJiQsLt7EKBmuw/BlrpwusD
+XyzzNIsi8om4+6rpnHRAypKU0QTpcrLa88buoKK6qNIWqay0zOhmKi/XZ0/0vFhF
+MjTzEpx1ITUKgVdW+RWrTKCJOC+WqRY+BF0db2PbhlvOTsCqMw+1/GwzUlZKGR4C
+Vdua+WVFoW1HF/U9U54drJSvjxmw+aTlqswVELSQX94QWCcPRN0Xliz8Q6RCWHYP
+tyi6X1ka7Lg6kRo6FO8bAUclHQ3a5XrRUBhyBK20CrkGOmd1YgZuoLAS7Do0D5NM
+wSJvL3okPcHu60iyH0dtHd+6rvy8hQ6dQSF2uMsNnE1PBMly0pneEPuA+pclQB4f
+tajQzHD6bMHw408//3rIV80AOkk3vLqjJitw+/7dAGLqbgZkSZ9cZsb9DbK9GrJa
++yI+hl2rEbADu8aTgKEwAsXAljkLY76gQCrYIRIysJnHB8nXOW7v9rP1nGOvMnLU
+UFQBie++dJD/qCNaCXyo
+=XQYk
 -----END PGP SIGNATURE-----
 
---oFbHfjnMgUMsrGjO--
+--oOB74oR0WcNeq9Zb--
