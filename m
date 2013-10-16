@@ -1,82 +1,49 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 00/19] Introduce common infra for tegra clocks
-Date: Wed, 16 Oct 2013 12:06:43 +0300
-Message-ID: <20131016090643.GI5643@tbergstrom-lnx.Nvidia.com>
-References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
- <525D8009.5040907@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/1] ARM: dma-mapping: Drop GFP_COMP for DMA memory allocations
+Date: Wed, 16 Oct 2013 13:19:13 +0300
+Message-ID: <1381918756-10389-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <525D8009.5040907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 15, 2013 at 07:48:57PM +0200, Stephen Warren wrote:
-> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
-> > This patchset introduces common infrastructure for clocks which exist in                                                                                       
-> > several Tegra SoCs. We also also move Tegra20, Tegra30 and Tegra114 to
-> > this new infrastructure.
-> 
-> I took my local branch based on next-20131014, and applied the following:
-> 
-> * Joseph's "ARM: tegra: add clock properties for devices of Tegra124".
-> 
-> * The patches from your "pull request for tegra clocks" of today (I just
-> cherry-picked the commits rather than merging the pull request).
-> 
-> * Your patch series "Introduce common infra for tegra clocks" of today.
-> 
-> * Your patch series "Tegra124 clock support" of today.
-> 
-> The resultant branch is at:
-> git://github.com:swarren/linux-tegra.git linux-next_common
-> 
-> When building, I see a number of section mismatches:
-> 
-> > WARNING: drivers/clk/tegra/built-in.o(.text+0x534): Section mismatch in reference from the function _tegra_clk_register_periph() to the function .init.text:get_reg_bank()
-> > The function _tegra_clk_register_periph() references
-> > the function __init get_reg_bank().
-> > This is often because _tegra_clk_register_periph lacks a __init 
-> > annotation or the annotation of get_reg_bank is wrong.
-> > 
-> > WARNING: drivers/clk/tegra/built-in.o(.text+0x9ec): Section mismatch in reference from the function tegra_clk_register_periph_gate() to the function .init.text:get_reg_bank()
-> > The function tegra_clk_register_periph_gate() references
-> > the function __init get_reg_bank().
-> > This is often because tegra_clk_register_periph_gate lacks a __init 
-> > annotation or the annotation of get_reg_bank is wrong.
-> 
-> There are more, but they refer to references from the same two
-> functions. You may need to add CONFIG_DEBUG_SECTION_MISMATCH=y to
-> .config to see these; I can't remember if that's included in
-> tegra_defconfig.
-> 
-> Testing on Venice2 (Tegra124): I see the following WARN during boot,
-> which I think is new relative to the internal branch you gave me yesterday:
-> 
-> > [    0.295386] ------------[ cut here ]------------
-> > [    0.300450] WARNING: CPU: 0 PID: 1 at drivers/clk/tegra/clk.c:187 tegra_init_from_table+0x78/0x158()
-> > [    0.310362] Modules linked in:
-> > [    0.313740] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.12.0-rc5-next-20131014-05418-g30b9d55 #48
-> > [    0.323397] [<c0016644>] (unwind_backtrace+0x0/0x138) from [<c001225c>] (show_stack+0x10/0x14)
-> > [    0.332753] [<c001225c>] (show_stack+0x10/0x14) from [<c0572274>] (dump_stack+0x80/0xc0)
-> > [    0.341559] [<c0572274>] (dump_stack+0x80/0xc0) from [<c0025d54>] (warn_slowpath_common+0x64/0x88)
-> > [    0.351283] [<c0025d54>] (warn_slowpath_common+0x64/0x88) from [<c0025d94>] (warn_slowpath_null+0x1c/0x24)
-> > [    0.361768] [<c0025d94>] (warn_slowpath_null+0x1c/0x24) from [<c07b4c1c>] (tegra_init_from_table+0x78/0x158)
-> > [    0.372440] [<c07b4c1c>] (tegra_init_from_table+0x78/0x158) from [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20)
-> > [    0.384138] [<c07b4e10>] (tegra_clocks_apply_init_table+0x18/0x20) from [<c079f9cc>] (tegra_dt_init+0xc/0xd8)
-> > [    0.394903] [<c079f9cc>] (tegra_dt_init+0xc/0xd8) from [<c079a580>] (customize_machine+0x1c/0x40)
-> > [    0.404535] [<c079a580>] (customize_machine+0x1c/0x40) from [<c00089e0>] (do_one_initcall+0xec/0x19c)
-> > [    0.414551] [<c00089e0>] (do_one_initcall+0xec/0x19c) from [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8)
-> > [    0.424944] [<c0798ba8>] (kernel_init_freeable+0xfc/0x1c8) from [<c056d5a8>] (kernel_init+0x8/0xe4)
-> > [    0.434764] [<c056d5a8>] (kernel_init+0x8/0xe4) from [<c000f0f8>] (ret_from_fork+0x14/0x3c)
-> > [    0.443850] ---[ end trace 98c2207379d4cf99 ]---
-> 
+arm_iommu_alloc_attrs wants to split pages after allocation in order
+to reduce the memory footprint. This does not work well with GFP_COMP
+pages, so drop this flag before allocation.
 
-Did you see  'tegra_init_from_table: Failed to set parent pll_c2 of epp ' before? Tegra124 doesn't have EPP...
+ref: ea2e7057c0234cfb8b09467d8f137760d371fc72:
 
-Cheers,
+    ARM: 7172/1: dma: Drop GFP_COMP for DMA memory allocations
 
-Peter.
+    dma_alloc_coherent wants to split pages after allocation in order to
+    reduce the memory footprint. This does not work well with GFP_COMP
+    pages, so drop this flag before allocation.
+
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mm/dma-mapping.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index f5e1a84..955dd3e 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1321,6 +1321,13 @@ static void *arm_iommu_alloc_attrs(struct device *dev, size_t size,
+ 	struct page **pages;
+ 	void *addr = NULL;
+ 
++	/* Following is a work-around (a.k.a. hack) to prevent pages
++	 * with __GFP_COMP being passed to split_page() which cannot
++	 * handle them.  The real problem is that this flag probably
++	 * should be 0 on ARM as it is not supported on this
++	 * platform--see CONFIG_HUGETLB_PAGE. */
++	gfp &= ~(__GFP_COMP);
++
+ 	*handle = DMA_ERROR_CODE;
+ 	size = PAGE_ALIGN(size);
+ 
+-- 
+1.8.1.5
