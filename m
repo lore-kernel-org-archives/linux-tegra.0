@@ -1,88 +1,126 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] gpio: tegra: use new gpio_lock_as_irq() API
-Date: Wed, 16 Oct 2013 13:25:33 -0600
-Message-ID: <1381951533-18179-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 2/2] spi/tegra20-slink: Move first transfer preparation to prepare_message
+Date: Wed, 16 Oct 2013 22:00:55 +0100
+Message-ID: <1381957255-24344-2-git-send-email-broonie@kernel.org>
+References: <1381957255-24344-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381957255-24344-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Whenever an IRQ is claimed or freed, call gpio_lock_as_irq() or
-gpio_unlock_as_irq() on the associated GPIO, to prevent that GPIO from
-being configured in a manner incompatible with an interrupt.
+This is more idiomatic for the factored out message processing and gives a
+small simplification of the code since we always set the per-transfer
+parameters in the same fashion.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- drivers/gpio/gpio-tegra.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/spi/spi-tegra20-slink.c | 55 +++++++++++++++++++----------------------
+ 1 file changed, 25 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 9a62672..cfd3b90 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -75,6 +75,7 @@ struct tegra_gpio_bank {
- #endif
- };
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index bb28033..175a2ff 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -196,7 +196,6 @@ struct tegra_slink_data {
+ 	u32					rx_status;
+ 	u32					status_reg;
+ 	bool					is_packed;
+-	bool                                    is_first_msg;
+ 	unsigned long				packed_size;
  
-+static struct device *dev;
- static struct irq_domain *irq_domain;
- static void __iomem *regs;
- static u32 tegra_gpio_bank_count;
-@@ -205,6 +206,7 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	int lvl_type;
- 	int val;
- 	unsigned long flags;
-+	int ret;
- 
- 	switch (type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -231,6 +233,12 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
-+	ret = gpio_lock_as_irq(&tegra_gpio_chip, gpio);
-+	if (ret) {
-+		dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
-+		return ret;
-+	}
-+
- 	spin_lock_irqsave(&bank->lvl_lock[port], flags);
- 
- 	val = tegra_gpio_readl(GPIO_INT_LVL(gpio));
-@@ -251,6 +259,13 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	return 0;
+ 	u32					command_reg;
+@@ -708,7 +707,7 @@ static void tegra_slink_deinit_dma_param(struct tegra_slink_data *tspi,
  }
  
-+static void tegra_gpio_irq_shutdown(struct irq_data *d)
-+{
-+	int gpio = d->hwirq;
-+
-+	gpio_unlock_as_irq(&tegra_gpio_chip, gpio);
-+}
-+
- static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ static int tegra_slink_start_transfer_one(struct spi_device *spi,
+-		struct spi_transfer *t, bool is_first_of_msg)
++		struct spi_transfer *t)
  {
- 	struct tegra_gpio_bank *bank;
-@@ -368,6 +383,7 @@ static struct irq_chip tegra_gpio_irq_chip = {
- 	.irq_mask	= tegra_gpio_irq_mask,
- 	.irq_unmask	= tegra_gpio_irq_unmask,
- 	.irq_set_type	= tegra_gpio_irq_set_type,
-+	.irq_shutdown	= tegra_gpio_irq_shutdown,
- #ifdef CONFIG_PM_SLEEP
- 	.irq_set_wake	= tegra_gpio_irq_set_wake,
- #endif
-@@ -413,6 +429,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	int i;
- 	int j;
+ 	struct tegra_slink_data *tspi = spi_master_get_devdata(spi->master);
+ 	u32 speed;
+@@ -732,32 +731,12 @@ static int tegra_slink_start_transfer_one(struct spi_device *spi,
+ 	tspi->curr_xfer = t;
+ 	total_fifo_words = tegra_slink_calculate_curr_xfer_param(spi, tspi, t);
  
-+	dev = &pdev->dev;
+-	if (is_first_of_msg) {
+-		tegra_slink_clear_status(tspi);
++	command = tspi->command_reg;
++	command &= ~SLINK_BIT_LENGTH(~0);
++	command |= SLINK_BIT_LENGTH(bits_per_word - 1);
+ 
+-		command = tspi->def_command_reg;
+-		command |= SLINK_BIT_LENGTH(bits_per_word - 1);
+-		command |= SLINK_CS_SW | SLINK_CS_VALUE;
+-
+-		command2 = tspi->def_command2_reg;
+-		command2 |= SLINK_SS_EN_CS(spi->chip_select);
+-
+-		command &= ~SLINK_MODES;
+-		if (spi->mode & SPI_CPHA)
+-			command |= SLINK_CK_SDA;
+-
+-		if (spi->mode & SPI_CPOL)
+-			command |= SLINK_IDLE_SCLK_DRIVE_HIGH;
+-		else
+-			command |= SLINK_IDLE_SCLK_DRIVE_LOW;
+-	} else {
+-		command = tspi->command_reg;
+-		command &= ~SLINK_BIT_LENGTH(~0);
+-		command |= SLINK_BIT_LENGTH(bits_per_word - 1);
+-
+-		command2 = tspi->command2_reg;
+-		command2 &= ~(SLINK_RXEN | SLINK_TXEN);
+-	}
++	command2 = tspi->command2_reg;
++	command2 &= ~(SLINK_RXEN | SLINK_TXEN);
+ 
+ 	tegra_slink_writel(tspi, command, SLINK_COMMAND);
+ 	tspi->command_reg = command;
+@@ -828,8 +807,24 @@ static int tegra_slink_prepare_message(struct spi_master *master,
+ 				       struct spi_message *msg)
+ {
+ 	struct tegra_slink_data *tspi = spi_master_get_devdata(master);
++	struct spi_device *spi = msg->spi;
+ 
+-	tspi->is_first_msg = true;
++	tegra_slink_clear_status(tspi);
 +
- 	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
- 	if (!match) {
- 		dev_err(&pdev->dev, "Error: No device match found\n");
++	tspi->command_reg = tspi->def_command_reg;
++	tspi->command_reg |= SLINK_CS_SW | SLINK_CS_VALUE;
++
++	tspi->command2_reg = tspi->def_command2_reg;
++	tspi->command2_reg |= SLINK_SS_EN_CS(spi->chip_select);
++
++	tspi->command_reg &= ~SLINK_MODES;
++	if (spi->mode & SPI_CPHA)
++		tspi->command_reg |= SLINK_CK_SDA;
++
++	if (spi->mode & SPI_CPOL)
++		tspi->command_reg |= SLINK_IDLE_SCLK_DRIVE_HIGH;
++	else
++		tspi->command_reg |= SLINK_IDLE_SCLK_DRIVE_LOW;
+ 
+ 	return 0;
+ }
+@@ -842,13 +837,13 @@ static int tegra_slink_transfer_one(struct spi_master *master,
+ 	int ret;
+ 
+ 	INIT_COMPLETION(tspi->xfer_completion);
+-	ret = tegra_slink_start_transfer_one(spi, xfer, tspi->is_first_msg);
++	ret = tegra_slink_start_transfer_one(spi, xfer);
+ 	if (ret < 0) {
+ 		dev_err(tspi->dev,
+ 			"spi can not start transfer, err %d\n", ret);
+ 		return ret;
+ 	}
+-	tspi->is_first_msg = false;
++
+ 	ret = wait_for_completion_timeout(&tspi->xfer_completion,
+ 					  SLINK_DMA_TIMEOUT);
+ 	if (WARN_ON(ret == 0)) {
 -- 
-1.8.1.5
-
+1.8.4.rc3
