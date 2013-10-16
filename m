@@ -1,68 +1,44 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 0/3] Add power control for lm90
-Date: Wed, 16 Oct 2013 11:20:03 +0800
-Message-ID: <525E05E3.4040708@nvidia.com>
-References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 10/19] clk: tegra: move audio clk to common file
+Date: Wed, 16 Oct 2013 10:35:14 +0300
+Message-ID: <20131016073514.GB5643@tbergstrom-lnx.Nvidia.com>
+References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
+ <1381848794-11761-11-git-send-email-pdeschrijver@nvidia.com>
+ <525D93E8.1010903@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381137940-22608-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <525D93E8.1010903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Jean
+On Tue, Oct 15, 2013 at 09:13:44PM +0200, Stephen Warren wrote:
+> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
+> > Move audio clocks and PLLA initialization to a common file so it can be used by
+> > multiple Tegra SoCs.
+> 
+> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> 
+> > +static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+> > +	[tegra_clk_rtc] = { .dt_id = TEGRA114_CLK_RTC, .present = true },
+> > +	[tegra_clk_timer] = { .dt_id = TEGRA114_CLK_TIMER, .present = true },
+> > +	[tegra_clk_uarta] = { .dt_id = TEGRA114_CLK_UARTA, .present = true },
+> ...
+> > @@ -2194,7 +2167,7 @@ static void __init tegra114_clock_init(struct device_node *np)
+> ...
+> > +	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks, &pll_a_params);
+> 
+> I think it's worth explaining in the commit description why an array of
+> not-remotely-audio-related clocks is being passed into an
+> audio-clock-initialization function.
+> 
 
-Do you have any comments on this series, or will you take them ?
+This is mostly to avoid a build warning. I could put this in a separate file,
+but then, there won't be any user before this is merged.
 
-Thanks.
-Wei.
+Cheers,
 
-On 10/07/2013 05:25 PM, Wei Ni wrote:
-> The device lm90 can be controlled by the vcc rail.
-> Add function to power on/off the vcc.
-> I will update all .dts files referencing this driver to
-> match the new requirement in my next series.
-> 
-> This series is v5, previous version patches are:
-> [v4]: http://www.spinics.net/lists/lm-sensors/msg39583.html
-> [v3]: http://www.spinics.net/lists/lm-sensors/msg39503.html
-> [v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
-> [v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
-> 
-> Changes from v4:
-> 1. set vcc-supply as required property.
-> 
-> Changes from v3:
-> 1. change to use devm_regulator_get, as per discussion in previous patches.
-> 2. just return errors when get error from regulator_get(), Mark's new dummy
-> regulator can cope with errors.
-> 3. add vendor prefix for GMT
-> 3. list manufacturer in the binding doc.
-> 
-> Changes from v2:
-> 1. use devm_regulator_get_optional(), as suggested by Mark.
-> 2. remove the lm90_power_control(), enable the regulator in the probe()
-> directly, so the codes are more clear, as suggested by Alexander and Guenter.
-> 3. change the binding documentation, as per Stephen suggestion.
-> 4. couple of changes, as per previous review.
-> 
-> Changes from v1:
-> 1. if get regulator failed, we should continue to run probe function,
-> not return fail.
-> 2. call regulator_put() in error handler and remove function.
-> 3. add LM90 DT binding document.
-> 
-> Wei Ni (3):
->   hwmon: (lm90) Add power control
->   of: add vendor prefix for GMT
->   Documentation: dt: hwmon: add OF document for LM90
-> 
->  Documentation/devicetree/bindings/hwmon/lm90.txt   |   44 ++++++++++++++++++++
->  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
->  drivers/hwmon/lm90.c                               |   19 +++++++++
->  3 files changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
-> 
+Peter.
