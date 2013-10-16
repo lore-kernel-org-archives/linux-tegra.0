@@ -1,70 +1,65 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 5/7] clk: tegra124: Add support for Tegra124 clocks
-Date: Wed, 16 Oct 2013 19:13:13 +0300
-Message-ID: <20131016161313.GO5643@tbergstrom-lnx.Nvidia.com>
-References: <1381850098-12357-1-git-send-email-pdeschrijver@nvidia.com>
- <1381850098-12357-6-git-send-email-pdeschrijver@nvidia.com>
- <525DA5C3.5070903@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 13/13] WIP: ARM: tegra: Add Tegra114 powergate support
+Date: Wed, 16 Oct 2013 10:47:46 -0600
+Message-ID: <525EC332.1010205@wwwdotorg.org>
+References: <1381850883-12722-1-git-send-email-treding@nvidia.com> <1381850883-12722-14-git-send-email-treding@nvidia.com> <525DB8B2.2050203@wwwdotorg.org> <20131016104848.GE21963@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <525DA5C3.5070903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20131016104848.GE21963-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 15, 2013 at 10:29:55PM +0200, Stephen Warren wrote:
-> On 10/15/2013 09:14 AM, Peter De Schrijver wrote:
-> > Implement clock support for Tegra124.
+On 10/16/2013 04:48 AM, Thierry Reding wrote:
+> On Tue, Oct 15, 2013 at 03:50:42PM -0600, Stephen Warren wrote:
+>> On 10/15/2013 09:28 AM, Thierry Reding wrote:
+>>> Extend the list of power gates found on Tegra114. Note that
+>>> there are now holes in the list, so perhaps a simple array is
+>>> no longer the best data structure to represent it. But perhaps
+>>> this is good enough for now and can be cleaned up in a follow
+>>> up patch?
+>> 
+>> Peter should probably comment on this, since I think he's touched
+>> the powergate driver the most recently.
+>> 
+>> One idea might be to have the powergate IDs be "virtual", with a 
+>> virtual->HW ID mapping table per SoC. The virtual IDs need not
+>> have any gaps. I'm not sure that having gaps is really much of a
+>> problem though, except for the debugfs code in powergate.c...
 > 
-> > diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> That sounds like a good idea. I'll see what I can come up with.
 > 
-> > +static struct pdiv_map pll12g_ssd_esd_p[] = {
-> > +	{ .pdiv = 1, .hw_val = 0 },
-> > +	{ .pdiv = 2, .hw_val = 1 },
-> ...
-> > +	{ .pdiv = 24, .hw_val = 13 },
-> > +	{ .pdiv = 32, .hw_val = 14 },
-> > +	{ .pdiv = 0, .hw_val = 15 },
-> > +};
+>>> diff --git a/include/linux/tegra-powergate.h
+>>> b/include/linux/tegra-powergate.h
+>> 
+>>> +#define TEGRA_POWERGATE_DISA	18 +#define TEGRA_POWERGATE_DISB
+>>> 19
+>> 
+>> s/DIS/DSI/ perhaps?
 > 
-> I'm curious why that last entry doesn't have .hw_val = 0, since I think
-> it's a sentinel value. For example, the last entry in pllxc_p[] does
-> have .hw_val = 0.
-> 
-> > diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
-> 
-> I think you also need to create
-> Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt in this
-> patch. All the other SoCs have their own binding file. That said, given
-> all the clock IDs have moved into <dt-bindings/clock/tegraNNN-car.h>,
-> perhaps we should just have a separate patch that removes the separate
-> bindings for Tegra30 and Tegra114, and simply add their compatible
-> values into the existing nvidia,tegra20-car.txt (and also make the
-> header file reference in that file more generic so it applies to any
-> Tegra SoC)?
+> No, these are actually powergates for display A and display B.
 
-Maybe yes...
+Ah, OK. Those entries aren't called DCA, DCB then, DC==Display Controller?
+
+>>> -#define TEGRA_POWERGATE_CPU0	TEGRA_POWERGATE_CPU
+>> 
+>> I expect that was added deliberately. Perhaps Peter or Joseph
+>> can comment? Admittedly, it's not used right now.
+>> 
+>> BTW, while you're fiddling with powergate.c, I note that 
+>> mach-tegra/pmc.c #defines some TEGRA_POWERGATE_xxx rather than
+>> including tegra-powergate.h. Can you fix that?
 > 
-> > @@ -0,0 +1,341 @@
-> > +/*
-> > + * This header provides constants for binding nvidia,tegra124-car.
-> > + *
-> > + * The first 185 clocks are numbered to match the bits in the CAR's CLK_OUT_ENB
-> > + * registers.
-> 
-> Shouldn't that be 192 (== 185 * 32)? Perhaps some bits aren't allocated,
+> There's more: quite a bit of the powergate functionality seems to
+> be implemented in both powergate.c and pmc.c. I should probably
+> unify both while at it. Not sure if I can make it before the
+> deadline on Thursday though, so I'll focus on the refactoring of
+> the power domain stuff first because that's actually needed for
+> Tegra114 support.
 
-I guess you mean 6 * 32?
-
-> but in previous SoCs, I rounded the ID space for peripheral clocks up to
-> whole registers. I see that as far as the clock IDs, this is already
-> fine; it's just this description that says 185 not 192.
-
-Ok.
-
-Cheers,
-
-Peter.
+I think it'd be better to just drop the gr3d support, which is all
+that requires the powergate rework, so we can plan this out a little
+better.
