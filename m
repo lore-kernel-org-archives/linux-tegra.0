@@ -1,41 +1,41 @@
-From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 27/27] drm/tegra: Add Tegra114 gr2d support
-Date: Wed, 16 Oct 2013 15:05:41 +0300
-Message-ID: <525E8115.7080903@nvidia.com>
-References: <1381134884-5816-1-git-send-email-treding@nvidia.com> <1381134884-5816-28-git-send-email-treding@nvidia.com> <52587F2D.9070007@wwwdotorg.org> <525B880A.7090802@nvidia.com> <20131014140010.GC16302@ulmo.nvidia.com> <525C3497.6010700@wwwdotorg.org> <20131015083731.GI7856@ulmo.nvidia.com> <525D5CF6.3020600@wwwdotorg.org> <20131016084804.GC21963@ulmo.nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 08/19] clk: tegra: add common infra for DT clocks
+Date: Wed, 16 Oct 2013 17:34:48 +0300
+Message-ID: <20131016143448.GK5643@tbergstrom-lnx.Nvidia.com>
+References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
+ <1381848794-11761-9-git-send-email-pdeschrijver@nvidia.com>
+ <525D9117.9050009@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131016084804.GC21963-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <525D9117.9050009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 16.10.2013 11:48, Thierry Reding wrote:
-> On Tue, Oct 15, 2013 at 09:19:18AM -0600, Stephen Warren wrote:
->> Taking advantage of new functionality isn't the issue. The issue is
->> whether a driver that was written purely to the spec of Tegra20 can
->> successfully operate on the HW. If it can't, then the HW is not
->> compatible with Tegra20. Terje's previous comments sounded like the HW
->> is not backwards-compatible, although his more recent comments make it
->> sound like only SW policy differences, which shouldn't be part of DT
->> anyway.
+On Tue, Oct 15, 2013 at 09:01:43PM +0200, Stephen Warren wrote:
+> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
+> > Introduce a common infrastructure for sharing clock initialization between
+> > SoCs.
 > 
-> Well, as good as I can tell it is backwards-compatible. I've been
-> testing the code included in this series with the same simple test
-> program that clears a rectangle on Tegra20, Tegra30 and Tegra114.
+> > diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
 > 
-> Furthermore our internal register specification files are identical,
-> with the exception of some whitespace changes for all three generations.
-> I think that qualifies as backwards-compatible?
+> > +struct clk ** __init tegra_lookup_dt_id(int clk_id,
+> > +					struct tegra_clk *tegra_clk)
+> > +{
+> > +	if (tegra_clk[clk_id].present)
+> > +		return &clks[tegra_clk[clk_id].dt_id];
+> > +	else
+> > +		return NULL;
+> 
+> Does this need range-checking? Or do we assume that since this is an
+> internal function, "clk_id" will never be out-of-range?
 
-A driver written for Tegra20 2D works with Tegra114 2D. Not necessarily
-vice versa, because Tegra114's driver can ask for higher clocks, or it
-might want to power gate 2D.
+That was my assumption indeed. I could add a range check if you think that's
+useful.
 
-I mentioned earlier bringup activities. Perhaps Stephen took that in a
-way I didn't intend.
+Cheers,
 
-Terje
+Peter.
