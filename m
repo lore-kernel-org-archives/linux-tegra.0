@@ -1,109 +1,77 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 02/19] clk: tegra: simplify periph clock data
-Date: Wed, 16 Oct 2013 18:06:19 +0300
-Message-ID: <20131016150619.GM5643@tbergstrom-lnx.Nvidia.com>
-References: <1381848794-11761-1-git-send-email-pdeschrijver@nvidia.com>
- <1381848794-11761-3-git-send-email-pdeschrijver@nvidia.com>
- <525D8D7D.10301@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: pull request for tegra clocks (resend with some CCs added this
+ time)
+Date: Wed, 16 Oct 2013 17:35:51 +0200
+Message-ID: <20131016153550.GA22451@ulmo.nvidia.com>
+References: <20131015153620.GA12721@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <525D8D7D.10301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20131015153620.GA12721-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 15, 2013 at 08:46:21PM +0200, Stephen Warren wrote:
-> On 10/15/2013 08:52 AM, Peter De Schrijver wrote:
-> > This patch determines the register bank for clock enable/disable and reset
-> > based on the clock ID instead of hardcoding it in the tables describing the
-> > clocks. This results in less data to be maintained in the tables, making the
-> > code easier to understand. The full benefit of the change will be realized once
-> > also other clocktypes will be table based.
-> 
-> > diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-> 
-> >  #define TEGRA_INIT_DATA_MUX(_name, _con_id, _dev_id, _parents, _offset,	\
-> > -			    _clk_num, _regs, _gate_flags, _clk_id)	\
-> > +			    _clk_num, _gate_flags, _clk_id)	\
-> >  	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
-> > -			30, MASK(2), 0, 0, 8, 1, 0, _regs, _clk_num,	\
-> > -			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
-> > -			_parents##_idx, 0)
-> > +			30, MASK(2), 0, 0, 8, 1, 0, \
-> > +			_clk_num, periph_clk_enb_refcnt, _gate_flags,\
-> > +			 _clk_id, _parents##_idx, 0)
-> 
-> Nit (since there are bugs since I know V4 is needed): If you kept
-> _clk_num on the same line in that macro, the diff would be much more
-> obvious. I think I said this last time.
-> 
-> >  	for (i = 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
-> >  		data = &tegra_periph_clk_list[i];
-> > -		clk = tegra_clk_register_periph(data->name, data->parent_names,
-> > -				data->num_parents, &data->periph,
-> > -				clk_base, data->offset, data->flags);
-> > +
-> > +		clk = tegra_clk_register_periph(data->name,
-> > +			data->parent_names, data->num_parents, &data->periph,
-> > +			clk_base, data->offset, data->flags);
-> >  		clks[data->clk_id] = clk;
-> >  	}
-> >  
-> >  	for (i = 0; i < ARRAY_SIZE(tegra_periph_nodiv_clk_list); i++) {
-> >  		data = &tegra_periph_nodiv_clk_list[i];
-> > +
-> >  		clk = tegra_clk_register_periph_nodiv(data->name,
-> 
-> Nit: Seems like an unrelated change, and inconsistent with the other
-> loop above.
-> 
 
-Actually it makes it consistent. The previous loop added an empty line
-between data = ... and tegra_clk_register_periph()
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> 
-> > +struct tegra_clk_periph_regs * __init get_reg_bank(int clkid)
-> > +{
-> > +	int reg_bank = clkid / 32;
-> > +
-> > +	if (reg_bank < periph_banks)
-> > +		return &periph_regs[reg_bank];
-> > +	else {
-> > +		WARN_ON(1);
-> > +		return NULL;
-> > +	}
-> > +}
-> > +
-> > +int __init tegra_clk_periph_banks(int num)
-> > +{
-> > +	if (num > ARRAY_SIZE(periph_regs))
-> > +		return -EINVAL;
-> > +
-> > +	periph_banks = num;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Shouldn't the condition in tegra_clk_periph_banks() check against
-> periph_banks rather than ARRAY_SIZE(periph_regs)? I assume the calls to
+On Tue, Oct 15, 2013 at 06:36:20PM +0300, Peter De Schrijver wrote:
+> The following changes since commit a0cf1abc25ac197dd97b857c0f6341066a8cb1=
+cf:
+>=20
+>   Add linux-next specific files for 20130927 (2013-09-27 18:48:50 +1000)
+>=20
+> are available in the git repository at:
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-patches=
+-0
+>=20
+> Andrew Chew (1):
+>       clk: tegra: Set the clk parent of host1x to pll_p
+>=20
+> Mark Zhang (3):
+>       clk: tegra: Correct sbc mux width & parent
+>       clk: tegra: Fix vde/2d/3d clock src offset
+>       clk: tegra: Set the clock parent of gr2d/gr3d to pll_c2
+>=20
+> Peter De Schrijver (3):
+>       ARM: tegra114: add missing clocks to binding
+>       clk: tegra: replace enum tegra114_clk by binding header
+>       clk: tegra: PLLE spread spectrum control
+>=20
+> Thierry Reding (1):
+>       clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
 
-periph_banks is initialized in tegra_clk_periph_banks(), so I don't see how
-that would work?
+I think this pull request is missing the initialization of the display
+controller clocks (TEGRA114_CLK_DISP1 and TEGRA114_CLK_DISP2) from
+Mikko's Dalmore HDMI series.
 
-> tegra_clk_periph_banks() from tegra*_clock_init() are intended to ensure
-> that periph_regs is set up correctly in this file? I wonder if
-> s/tegra_clk_periph_banks/tegra_clk_validate_periph_bank_count/ isn't
-> called for?
+Thierry
 
-Yes. The calls are intended to ensure that the clk-tegra* files, don't
-refer to register banks which don't have addresses specified. This could happen
-if a wrong periph clk ID would be specified for example. In later patches
-we will also allocate memory based on the number of register banks.
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature
 
-Cheers,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Peter.
+iQIcBAEBAgAGBQJSXrJWAAoJEN0jrNd/PrOhtqgQAKSzixdiJv7Ex4ifObEg7vAE
+yd5wAhjdCPhr/VA1CgydmMwR5sHojLzB9yiOhAgeHoBnTyxg/dw+NnfiYfJ0XxpF
+2pY4LTzEqRP0pgWBulML1uc2UcskVCBsIAUE+/vEfNBhf2dtEIyyOjqTxdCpgufy
+GK77qSa3sHHwIntkwuIq54mZpI4p5vC2h/qCHoODvBeODHH3rk+hkm1SwE2V7vO5
+6eZr6DXzzCVnjznXr4L7Y6K0+9HxSX9QzFoOYHR89n72qW7ChMvGOZgEawEWLwok
+ELEYNI2So/oynDV1C8ZCd91PMZaRtCClMIZ0k3Twd01DNA9aLMmK3uXQsLZ7Vdvo
+mhbN1+eynn68lKc6jSfwxloalpeZLBYWZ4Wh7uhXQdZY3RS6mU9mmGmR2ibiB1le
+qyHhZJvVHZNE9HYvGxfCSLdulsRSTdUSCUNxhYtaYzKDS5TvtNE85+tSA5Gj2Xnv
+cfwEp6hSt8vD70DCF+7eoNtVXVcJKH5R29MEq2E7qOHHidxQaQ78uK3wFRVOMT/C
+xFg/ZR16ukeeVwsyv/ayLqv88kHv9ayIg3wzlPf9pKMU+AQlgTJZtcMTh5KQNU88
+hD+cQ7QSB04fm42lumCWAYhDPjLA7YwkQPm4ZMGHFwCBUmQMnuq6JSm2zdtOfaUu
+LV2FuhsG1UJ+Rv/m9bhM
+=Vjv1
+-----END PGP SIGNATURE-----
+
+--NzB8fVQJ5HfG6fxh--
