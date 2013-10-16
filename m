@@ -1,58 +1,68 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 13/13] WIP: ARM: tegra: Add Tegra114 powergate support
-Date: Wed, 16 Oct 2013 10:31:11 +0800
-Message-ID: <1381890671.11523.15.camel@jlo-ubuntu-64.nvidia.com>
-References: <1381850883-12722-1-git-send-email-treding@nvidia.com>
-	 <1381850883-12722-14-git-send-email-treding@nvidia.com>
-	 <525DB8B2.2050203@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 0/3] Add power control for lm90
+Date: Wed, 16 Oct 2013 11:20:03 +0800
+Message-ID: <525E05E3.4040708@nvidia.com>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <525DB8B2.2050203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1381137940-22608-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-10-16 at 05:50 +0800, Stephen Warren wrote:
-> On 10/15/2013 09:28 AM, Thierry Reding wrote:
-> > Extend the list of power gates found on Tegra114. Note that there are
-> > now holes in the list, so perhaps a simple array is no longer the best
-> > data structure to represent it. But perhaps this is good enough for now
-> > and can be cleaned up in a follow up patch?
-> 
-> Peter should probably comment on this, since I think he's touched the
-> powergate driver the most recently.
-> 
-> One idea might be to have the powergate IDs be "virtual", with a
-> virtual->HW ID mapping table per SoC. The virtual IDs need not have any
-> gaps. I'm not sure that having gaps is really much of a problem though,
-> except for the debugfs code in powergate.c...
-> 
-> > diff --git a/include/linux/tegra-powergate.h b/include/linux/tegra-powergate.h
-> 
-> > +#define TEGRA_POWERGATE_DISA	18
-> > +#define TEGRA_POWERGATE_DISB	19
-> 
-> s/DIS/DSI/ perhaps?
-> 
-> > -#define TEGRA_POWERGATE_CPU0	TEGRA_POWERGATE_CPU
-> 
-> I expect that was added deliberately. Perhaps Peter or Joseph can
-> comment? Admittedly, it's not used right now.
-> 
-> BTW, while you're fiddling with powergate.c, I note that
-> mach-tegra/pmc.c #defines some TEGRA_POWERGATE_xxx rather than including
-> tegra-powergate.h. Can you fix that?
+Hi, Jean
 
-The reason why we didn't keep updated this code and use this driver is
-because we want it to convert to use generic power domain
-infrastructure[1]. Not sure this makes sense to you. (Only PCIe uses
-this powergate driver until now.)
+Do you have any comments on this series, or will you take them ?
 
-[1]:
-include/linux/pm_domain.h
-drivers/base/power/domain.c
-Documentation/power/devices.txt
-Documentation/power/runtime_pm.txt
+Thanks.
+Wei.
+
+On 10/07/2013 05:25 PM, Wei Ni wrote:
+> The device lm90 can be controlled by the vcc rail.
+> Add function to power on/off the vcc.
+> I will update all .dts files referencing this driver to
+> match the new requirement in my next series.
+> 
+> This series is v5, previous version patches are:
+> [v4]: http://www.spinics.net/lists/lm-sensors/msg39583.html
+> [v3]: http://www.spinics.net/lists/lm-sensors/msg39503.html
+> [v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
+> [v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
+> 
+> Changes from v4:
+> 1. set vcc-supply as required property.
+> 
+> Changes from v3:
+> 1. change to use devm_regulator_get, as per discussion in previous patches.
+> 2. just return errors when get error from regulator_get(), Mark's new dummy
+> regulator can cope with errors.
+> 3. add vendor prefix for GMT
+> 3. list manufacturer in the binding doc.
+> 
+> Changes from v2:
+> 1. use devm_regulator_get_optional(), as suggested by Mark.
+> 2. remove the lm90_power_control(), enable the regulator in the probe()
+> directly, so the codes are more clear, as suggested by Alexander and Guenter.
+> 3. change the binding documentation, as per Stephen suggestion.
+> 4. couple of changes, as per previous review.
+> 
+> Changes from v1:
+> 1. if get regulator failed, we should continue to run probe function,
+> not return fail.
+> 2. call regulator_put() in error handler and remove function.
+> 3. add LM90 DT binding document.
+> 
+> Wei Ni (3):
+>   hwmon: (lm90) Add power control
+>   of: add vendor prefix for GMT
+>   Documentation: dt: hwmon: add OF document for LM90
+> 
+>  Documentation/devicetree/bindings/hwmon/lm90.txt   |   44 ++++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>  drivers/hwmon/lm90.c                               |   19 +++++++++
+>  3 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
+> 
