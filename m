@@ -1,38 +1,32 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 03/15] clk: tegra: common periph_clk_enb_refcnt and clks
-Date: Thu, 17 Oct 2013 15:26:20 -0700
-Message-ID: <CAL1qeaFrm50m0a3csY=04MNQENM_DY5fgBrq5bdsm8dHnLj1gA@mail.gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v4 05/15] clk: tegra: move some PLLC and PLLXC init to clk-pll.c
+Date: Thu, 17 Oct 2013 15:33:13 -0700
+Message-ID: <CAL1qeaHsun=6NP4fk4tLCDr5XkLn71-y273Qz5hcfMagek3ZPQ@mail.gmail.com>
 References: <1382013526-12800-1-git-send-email-pdeschrijver@nvidia.com>
-	<1382013526-12800-4-git-send-email-pdeschrijver@nvidia.com>
+	<1382013526-12800-6-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382013526-12800-4-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1382013526-12800-6-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi Peter,
 
->  static void __init tegra30_clock_init(struct device_node *np)
->  {
->         struct device_node *node;
-> -       int i;
->
->         clk_base = of_iomap(np, 0);
->         if (!clk_base) {
-> @@ -1916,8 +1910,11 @@ static void __init tegra30_clock_init(struct device_node *np)
->                 BUG();
->         }
->
-> -       if (tegra_clk_set_periph_banks(5) < 0)
-> +       clks = tegra_clk_init(clk_max, 5);
-> +       if (!clks) {
-> +               WARN_ON(1);
+> +       val = readl_relaxed(clk_base + pll_params->base_reg);
+> +       val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+> +
+> +       if (val & BIT(30))
 
-Really minor nit: it seems strange that we WARN here for t30, but not
-for t114 or t20.
+BIT(30) -> PLL_BASE_ENABLE?
+
+> +               WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
+> +       else {
+> +               val_iddq |= BIT(pll_params->iddq_bit_idx);
+> +               writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
+> +       }
 
 Thanks,
 Andrew
