@@ -1,7 +1,7 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 3/6] ARM: tegra: core SoC support changes for 3.13
-Date: Thu, 17 Oct 2013 13:07:58 -0600
-Message-ID: <1382036881-23339-3-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 5/6] ARM: tegra: defconfig updates for 3.13
+Date: Thu, 17 Oct 2013 13:08:00 -0600
+Message-ID: <1382036881-23339-5-git-send-email-swarren@wwwdotorg.org>
 References: <1382036881-23339-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1382036881-23339-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -10,62 +10,36 @@ To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch includes:
-* SoC fuse values are used as device randomness at boot.
-* Initial support for the Tegra124 SoC is added. When coupled with an
-  appropriate clock driver, which should also be merged for 3.13, we are
-  able to boot to user-space using an initrd.
-* The powergate code gains support for Tegra114.
+Various config options are enabled:
 
-This branch is based on previous pull request tegra-for-3.13-cleanup.
+ARCH_TEGRA_124_SOC: Tegra124 SoC support.
+CPU_FREQ_STAT_DETAILS: Enables various sysfs files that are useful when
+    testing cpufreq.
+CONFIG_COMMON_CLK_DEBUG: Useful to look at the clock tree to verify that
+    clocks for the various devices have been properly set up.
+PINCTRL_PALMAS: Used on Dalmore board.
+NEON: Enables SIMD instruction support for Tegra30 and later SoCs.
+
+This branch is based on v3.12-rc1.
 
 ----------------------------------------------------------------
 
-The following changes since commit b6bda4e0d23815cb711c16085e03cb23c6d49f21:
+The following changes since commit 272b98c6455f00884f0350f775c5342358ebb73f:
 
-  ARM: tegra: fix ARCH_TEGRA_114_SOC select sort order
+  Linux 3.12-rc1
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.13-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.13-defconfig
 
-for you to fetch changes up to 8d25979dcd10479ebfb9ce01b3c824f4c7659f73:
+for you to fetch changes up to 83c6ca532152806122b8b074a9128299a5cf57c9:
 
-  ARM: tegra: Add Tegra114 powergate support
+  ARM: tegra: defconfig updates
 
 ----------------------------------------------------------------
 
-Joseph Lo (7):
-      ARM: tegra: add Tegra124 SoC support
-      ARM: tegra: add PMC compatible value for Tegra124
-      ARM: tegra: CPU hotplug support for Tegra124
-      ARM: tegra: make tegra_resume can work with current and later chips
-      ARM: tegra: enable CPU idle for Tegra124
-      ARM: tegra: re-calculate the LP1 data for Tegra30/114
-      ARM: tegra: add LP1 support code for Tegra124
-
 Stephen Warren (1):
-      ARM: tegra: add fuses as device randomness
+      ARM: tegra: defconfig updates
 
-Thierry Reding (3):
-      ARM: tegra: Remove duplicate powergate defines
-      ARM: tegra: Constify list of CPU domains
-      ARM: tegra: Add Tegra114 powergate support
-
- arch/arm/mach-tegra/Kconfig         | 10 +++++-
- arch/arm/mach-tegra/Makefile        |  5 +++
- arch/arm/mach-tegra/cpuidle.c       |  4 ++-
- arch/arm/mach-tegra/flowctrl.c      |  2 ++
- arch/arm/mach-tegra/fuse.c          | 54 ++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/fuse.h          |  1 +
- arch/arm/mach-tegra/hotplug.c       |  2 ++
- arch/arm/mach-tegra/iomap.h         |  3 ++
- arch/arm/mach-tegra/platsmp.c       |  2 ++
- arch/arm/mach-tegra/pm.c            | 12 +++++--
- arch/arm/mach-tegra/pmc.c           |  8 ++---
- arch/arm/mach-tegra/powergate.c     | 48 ++++++++++++++++++++++++++--
- arch/arm/mach-tegra/reset-handler.S | 13 +++-----
- arch/arm/mach-tegra/sleep-tegra30.S | 49 ++++++++++++++++++++++-------
- arch/arm/mach-tegra/tegra.c         |  1 +
- include/linux/tegra-powergate.h     |  9 +++++-
- 16 files changed, 188 insertions(+), 35 deletions(-)
+ arch/arm/configs/tegra_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
