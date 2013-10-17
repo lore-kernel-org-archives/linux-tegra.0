@@ -1,61 +1,47 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: About [PATCH 1/2] regulator: core: Provide a dummy regulator
- with full constraints
-Date: Thu, 17 Oct 2013 10:37:01 +0100
-Message-ID: <20131017093701.GH2443@sirena.org.uk>
-References: <5253A17E.10503@nvidia.com>
- <20131008090910.GW21581@sirena.org.uk>
- <5253D489.7010900@nvidia.com>
- <20131012121412.GJ2443@sirena.org.uk>
- <525E17DE.6080301@nvidia.com>
- <20131016103942.GG2443@sirena.org.uk>
- <525F6A1B.70505@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: change_page_attr() implementation for ARM?
+Date: Thu, 17 Oct 2013 12:28:46 +0200
+Message-ID: <20131017.132846.130167893941132236.hdoyu@nvidia.com>
+References: <20131017.080523.1821831578701162178.hdoyu@nvidia.com><20131017101325.GD23462@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JnfXrmBFCAcKdhDT"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <525F6A1B.70505-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131017101325.GD23462-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Cc: "Will.Deacon-5wv7dgnIgG8@public.gmane.org" <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org> wrote @ Thu, 17 Oct 2013 12:13:26 +0200:
 
---JnfXrmBFCAcKdhDT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Thu, Oct 17, 2013 at 06:05:23AM +0100, Hiroshi Doyu wrote:
+> > I found a bit old discussion[1] about CPA support on ARM32(Cortex-A9).
+> > 
+> > It seesm that CPA API on ARM wasn't possible because maintaining
+> > multiple pagetables under SMP is difficult. Instead currently we are
+> > using precallocated memory via DMA API.
+> > 
+> > Is this situation still same for Cortex-A15 and ARM64? If the
+> > mismatched aliasing problem doesn't happen, is CPA API feasible?
+> 
+> On ARMv7+LPAE and AArch64 we use separate TTBR1 for the kernel (linear)
+> mapping so in theory you could implement change_page_attr(). The
+> mismatched aliases restriction still exists but it is clarified on what
+> is and isn't allowed (so you can have Normal non-cacheable and Normal
+> cacheable aliases, as long as you take care of removing any dirty cache
+> lines that could potentially corrupt your data). The DMA API already
+> takes care of this.
 
-On Thu, Oct 17, 2013 at 12:39:55PM +0800, Wei Ni wrote:
+Ok
 
-> So do you mean it should call the regulator_has_full_constraints() in
-> the .init_machine for all machines? If so, this will affect all boards,
-> for example, in arch/arm/mach-tegra, if we set full constraints in the
-> shared board file tegra.c, all tegra boards will be set, is it right?
+> My (other) problem with change_page_attr() is that its not a standard
+> in-kernel API. Powerpc and s390 implement change_page_attr() but with
+> different arguments while x86 has change_page_attr_(set|clear).
+> 
+> So, is the DMA API not enough for what you need?
 
-Yes, but this is currently the case anyway for every system using DT -
-all we'd be doing is moving this call earlier in init.
-
---JnfXrmBFCAcKdhDT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSX6+6AAoJELSic+t+oim9Gw4P/iN90WW0Wn+/x5h8ETqum0/r
-m5yCm8vN7EYh2WUmrEUIjl3d3JXuNRqpZplzf6sTLwXd94d8yekDR9Kldc2uat3Q
-CUAtYKOqMGjf36YD1pFQ4Gc4dAjJuyd+2Br0j17yL9xprtPM+EEt70i0rrF4VdTe
-NqVoIaj1YFIzCO27HiKF9oSrtHsxET5JtMpAqnZmIeOdfCkjsAVSSwB5lD2AnHmE
-S5EftI6+pg4vdEKG/U3QbS+I27F8N33QBwGXYDmomVZMCb0sV1BS/mKuUyEeVXnT
-94DIZiEcnzIHf/mSSVuzaeLmdmZyEws4iZkG1Y8CZDfsTHqwL9SdAW0dH8A/HWCs
-kvsxqCCNY9BxvLRUuOE2jsR6Ahmt42L8BNjIDzV7M93buVj5pmoEe4S56JIdlPnk
-fuj7AQi4plQOqDpxN3S0mLwAytLSD1UnoMGfP8JGWkTetGuXTqY0alpBhBlmT4Xo
-AOvJHf/oGkmTvna892oVwhv7YEMbFhnUrqtzvq/9ffEjISITZFb4xJGCaNLAXOEb
-zzrLyxK15CcHO5sVxj/0gp9kGFd0CosiM6yLUAhPDi46uMfNI3QhcNRAo78RNV/6
-qCVYrsTud7Ul/r1PKMcwEjHoNwm1H0Se5Q/rGIy5D6+lU0eCOmIEtI3kF7maT9jT
-YWTfeqWJVb55giCZsCEe
-=+rKC
------END PGP SIGNATURE-----
-
---JnfXrmBFCAcKdhDT--
+One of the possible usages may be to have buffers with some specific
+page attributes, which could save some of cache maintenances, mainly
+for better performance. For example, manipulating pagetables and some
+special buffers shared by GPU.
