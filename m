@@ -1,47 +1,35 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: change_page_attr() implementation for ARM?
-Date: Thu, 17 Oct 2013 12:28:46 +0200
-Message-ID: <20131017.132846.130167893941132236.hdoyu@nvidia.com>
-References: <20131017.080523.1821831578701162178.hdoyu@nvidia.com><20131017101325.GD23462@arm.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: About [PATCH 1/2] regulator: core: Provide a dummy regulator
+ with full constraints
+Date: Thu, 17 Oct 2013 18:39:56 +0800
+Message-ID: <525FBE7C.9080402@nvidia.com>
+References: <5253A17E.10503@nvidia.com> <20131008090910.GW21581@sirena.org.uk> <5253D489.7010900@nvidia.com> <20131012121412.GJ2443@sirena.org.uk> <525E17DE.6080301@nvidia.com> <20131016103942.GG2443@sirena.org.uk> <525F6A1B.70505@nvidia.com> <20131017093701.GH2443@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131017101325.GD23462-5wv7dgnIgG8@public.gmane.org>
+In-Reply-To: <20131017093701.GH2443-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Cc: "Will.Deacon-5wv7dgnIgG8@public.gmane.org" <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org> wrote @ Thu, 17 Oct 2013 12:13:26 +0200:
-
-> On Thu, Oct 17, 2013 at 06:05:23AM +0100, Hiroshi Doyu wrote:
-> > I found a bit old discussion[1] about CPA support on ARM32(Cortex-A9).
-> > 
-> > It seesm that CPA API on ARM wasn't possible because maintaining
-> > multiple pagetables under SMP is difficult. Instead currently we are
-> > using precallocated memory via DMA API.
-> > 
-> > Is this situation still same for Cortex-A15 and ARM64? If the
-> > mismatched aliasing problem doesn't happen, is CPA API feasible?
+On 10/17/2013 05:37 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
 > 
-> On ARMv7+LPAE and AArch64 we use separate TTBR1 for the kernel (linear)
-> mapping so in theory you could implement change_page_attr(). The
-> mismatched aliases restriction still exists but it is clarified on what
-> is and isn't allowed (so you can have Normal non-cacheable and Normal
-> cacheable aliases, as long as you take care of removing any dirty cache
-> lines that could potentially corrupt your data). The DMA API already
-> takes care of this.
-
-Ok
-
-> My (other) problem with change_page_attr() is that its not a standard
-> in-kernel API. Powerpc and s390 implement change_page_attr() but with
-> different arguments while x86 has change_page_attr_(set|clear).
+> On Thu, Oct 17, 2013 at 12:39:55PM +0800, Wei Ni wrote:
 > 
-> So, is the DMA API not enough for what you need?
+>> So do you mean it should call the regulator_has_full_constraints() in
+>> the .init_machine for all machines? If so, this will affect all boards,
+>> for example, in arch/arm/mach-tegra, if we set full constraints in the
+>> shared board file tegra.c, all tegra boards will be set, is it right?
+> 
+> Yes, but this is currently the case anyway for every system using DT -
+> all we'd be doing is moving this call earlier in init.
 
-One of the possible usages may be to have buffers with some specific
-page attributes, which could save some of cache maintenances, mainly
-for better performance. For example, manipulating pagetables and some
-special buffers shared by GPU.
+Ok, I will send out patches for Tegra series.
+
+> 
+> * Unknown Key
+> * 0x7EA229BD
+> 
