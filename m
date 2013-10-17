@@ -1,55 +1,179 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 0/7] Tegra124 clock support
-Date: Thu, 17 Oct 2013 16:12:44 +0300
-Message-ID: <1382015565-20139-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v3 1/7] clk: tegra: Add support for PLLSS
+Date: Thu, 17 Oct 2013 16:13:14 +0300
+Message-ID: <1382015600-20178-2-git-send-email-pdeschrijver@nvidia.com>
+References: <1382015600-20178-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1382015600-20178-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series introduces support for the Tegra124 CAR clocks.
-Based on '[PATCH v4 00/15] Introduce common infra for tegra clocks'
+Tegra124 introduces a new PLL type, PLLSS. Add support for it.
 
-changes since v1:
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-pll.c |  124 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h     |    5 ++
+ 2 files changed, 129 insertions(+), 0 deletions(-)
 
-+ suspend/resume for LP1 (Joseph Lo)
-+ fixed some comments
-+ account for changes to the common infra code
-
-changes since v2:
-
-+ simplified PLLSS support
-+ added binding document
-+ minor fixes
-
-Joseph Lo (2):
-  clk: tegra124: add wait_for_reset and disable_clock for
-    tegra_cpu_car_ops
-  clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
-
-Peter De Schrijver (5):
-  clk: tegra: Add support for PLLSS
-  clk: tegra: Add periph regs bank X
-  clk: tegra124: Add common clk IDs to clk-id.h
-  clk: tegra124: Add new peripheral clocks
-  clk: tegra124: Add support for Tegra124 clocks
-
- .../bindings/clock/nvidia,tegra124-car.txt         |   59 +
- drivers/clk/tegra/Makefile                         |    1 +
- drivers/clk/tegra/clk-id.h                         |   20 +
- drivers/clk/tegra/clk-pll.c                        |  124 ++
- drivers/clk/tegra/clk-tegra-periph.c               |   54 +
- drivers/clk/tegra/clk-tegra124.c                   | 1428 ++++++++++++++++++++
- drivers/clk/tegra/clk.c                            |   10 +
- drivers/clk/tegra/clk.h                            |    5 +
- include/dt-bindings/clock/tegra124-car.h           |  340 +++++
- 9 files changed, 2041 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
- create mode 100644 drivers/clk/tegra/clk-tegra124.c
- create mode 100644 include/dt-bindings/clock/tegra124-car.h
-
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index c38c0df..2147e2e 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -137,6 +137,36 @@
+ #define PMC_SATA_PWRGT_PLLE_IDDQ_VALUE BIT(5)
+ #define PMC_SATA_PWRGT_PLLE_IDDQ_SWCTL BIT(4)
+ 
++#define PLLSS_MISC_KCP		0
++#define PLLSS_MISC_KVCO		0
++#define PLLSS_MISC_SETUP	0
++#define PLLSS_EN_SDM		0
++#define PLLSS_EN_SSC		0
++#define PLLSS_EN_DITHER2	0
++#define PLLSS_EN_DITHER		1
++#define PLLSS_SDM_RESET		0
++#define PLLSS_CLAMP		0
++#define PLLSS_SDM_SSC_MAX	0
++#define PLLSS_SDM_SSC_MIN	0
++#define PLLSS_SDM_SSC_STEP	0
++#define PLLSS_SDM_DIN		0
++#define PLLSS_MISC_DEFAULT ((PLLSS_MISC_KCP << 25) | \
++			    (PLLSS_MISC_KVCO << 24) | \
++			    PLLSS_MISC_SETUP)
++#define PLLSS_CFG_DEFAULT ((PLLSS_EN_SDM << 31) | \
++			   (PLLSS_EN_SSC << 30) | \
++			   (PLLSS_EN_DITHER2 << 29) | \
++			   (PLLSS_EN_DITHER << 28) | \
++			   (PLLSS_SDM_RESET) << 27 | \
++			   (PLLSS_CLAMP << 22))
++#define PLLSS_CTRL1_DEFAULT \
++			((PLLSS_SDM_SSC_MAX << 16) | PLLSS_SDM_SSC_MIN)
++#define PLLSS_CTRL2_DEFAULT \
++			((PLLSS_SDM_SSC_STEP << 16) | PLLSS_SDM_DIN)
++#define PLLSS_LOCK_OVERRIDE	BIT(24)
++#define PLLSS_REF_SRC_SEL_SHIFT	25
++#define PLLSS_REF_SRC_SEL_MASK	(3 << PLLSS_REF_SRC_SEL_SHIFT)
++
+ #define pll_readl(offset, p) readl_relaxed(p->clk_base + offset)
+ #define pll_readl_base(p) pll_readl(p->params->base_reg, p)
+ #define pll_readl_misc(p) pll_readl(p->params->misc_reg, p)
+@@ -1698,3 +1728,97 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ 	return clk;
+ }
+ #endif
++
++const struct clk_ops tegra_clk_pllss_ops = {
++	.is_enabled = clk_pll_is_enabled,
++	.enable = clk_pll_iddq_enable,
++	.disable = clk_pll_iddq_disable,
++	.recalc_rate = clk_pll_recalc_rate,
++	.round_rate = clk_pll_ramp_round_rate,
++	.set_rate = clk_pllxc_set_rate,
++};
++
++struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
++				void __iomem *clk_base, unsigned long flags,
++				struct tegra_clk_pll_params *pll_params,
++				spinlock_t *lock)
++{
++	struct tegra_clk_pll *pll;
++	struct clk *clk, *parent;
++	struct tegra_clk_pll_freq_table cfg;
++	unsigned long parent_rate;
++	u32 val;
++	int i;
++
++	if (!pll_params->div_nmp)
++		return ERR_PTR(-EINVAL);
++
++	parent = __clk_lookup(parent_name);
++	if (IS_ERR(parent)) {
++		WARN(1, "parent clk %s of %s must be registered first\n",
++			name, parent_name);
++		return ERR_PTR(-EINVAL);
++	}
++
++	pll_params->flags = TEGRA_PLL_HAS_LOCK_ENABLE | TEGRA_PLL_USE_LOCK;
++	pll = _tegra_init_pll(clk_base, NULL, pll_params, lock);
++	if (IS_ERR(pll))
++		return ERR_CAST(pll);
++
++	_get_pll_mnp(pll, &cfg);
++	if (cfg.n > 1) {
++		WARN(1, "%s should not be initialized\n", name);
++		kfree(pll);
++		return ERR_PTR(-EINVAL);
++	}
++
++	val = pll_readl_base(pll);
++	val &= ~PLLSS_REF_SRC_SEL_MASK;
++	pll_writel_base(val, pll);
++
++	parent_rate = __clk_get_rate(parent);
++
++	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
++
++	/* initialize PLL to minimum rate */
++
++	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
++	cfg.n = cfg.m * pll_params->vco_min / parent_rate;
++
++	for (i = 0; pll_params->pdiv_tohw[i].pdiv; i++)
++		;
++	if (!i) {
++		kfree(pll);
++		return ERR_PTR(-EINVAL);
++	}
++
++	cfg.p = pll_params->pdiv_tohw[i-1].hw_val;
++
++	_update_pll_mnp(pll, &cfg);
++
++	pll_writel_misc(PLLSS_MISC_DEFAULT, pll);
++	pll_writel(PLLSS_CFG_DEFAULT, pll_params->ext_misc_reg[0], pll);
++	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[1], pll);
++	pll_writel(PLLSS_CTRL1_DEFAULT, pll_params->ext_misc_reg[2], pll);
++
++	val = pll_readl_base(pll);
++	if (val & PLL_BASE_ENABLE) {
++		if (val & BIT(pll_params->iddq_bit_idx)) {
++			WARN(1, "%s is on but IDDQ set\n", name);
++			kfree(pll);
++			return ERR_PTR(-EINVAL);
++		}
++	} else
++		val |= BIT(pll_params->iddq_bit_idx);
++
++	val &= ~PLLSS_LOCK_OVERRIDE;
++	pll_writel_base(val, pll);
++
++	clk = _tegra_clk_register_pll(pll, name, parent_name, flags,
++					&tegra_clk_pllss_ops);
++
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 05abfc5..7f110ac 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -298,6 +298,11 @@ struct clk *tegra_clk_register_plle_tegra114(const char *name,
+ 				struct tegra_clk_pll_params *pll_params,
+ 				spinlock_t *lock);
+ 
++struct clk *tegra_clk_register_pllss(const char *name, const char *parent_name,
++			   void __iomem *clk_base, unsigned long flags,
++			   struct tegra_clk_pll_params *pll_params,
++			   spinlock_t *lock);
++
+ /**
+  * struct tegra_clk_pll_out - PLL divider down clock
+  *
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
