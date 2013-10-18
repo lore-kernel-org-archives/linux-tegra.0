@@ -1,7 +1,7 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v4 3/7] clk: tegra124: Add common clk IDs to clk-id.h
-Date: Fri, 18 Oct 2013 16:45:00 +0300
-Message-ID: <1382103904-6398-4-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v4 7/7] clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
+Date: Fri, 18 Oct 2013 16:45:04 +0300
+Message-ID: <1382103904-6398-8-git-send-email-pdeschrijver@nvidia.com>
 References: <1382103904-6398-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,146 +9,76 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1382103904-6398-1-git-send-email-pdeschrijver@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Joseph Lo <josephl@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra124 introduces a number of a new clocks. Introduce the corresponding
-the IDs for them.
+From: Joseph Lo <josephl@nvidia.com>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Adding suspend/resume function for tegra_cpu_car_ops. We only save and
+restore the setting of the clock of CoreSight. Other clocks still need
+to be taken care by clock driver.
+
+Cc: Mike Turquette <mturquette@linaro.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
 ---
- drivers/clk/tegra/clk-id.h |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+ drivers/clk/tegra/clk-tegra124.c |   27 +++++++++++++++++++++++++++
+ 1 files changed, 27 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 22e2e8e..836b054 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -7,8 +7,10 @@
- enum clk_id {
- 	tegra_clk_actmon,
- 	tegra_clk_adx,
-+	tegra_clk_adx1,
- 	tegra_clk_afi,
- 	tegra_clk_amx,
-+	tegra_clk_amx1,
- 	tegra_clk_apbdma,
- 	tegra_clk_apbif,
- 	tegra_clk_audio0,
-@@ -35,6 +37,7 @@ enum clk_id {
- 	tegra_clk_cilcd,
- 	tegra_clk_cile,
- 	tegra_clk_clk_32k,
-+	tegra_clk_clk72Mhz,
- 	tegra_clk_clk_m,
- 	tegra_clk_clk_m_div2,
- 	tegra_clk_clk_m_div4,
-@@ -44,6 +47,8 @@ enum clk_id {
- 	tegra_clk_clk_out_2_mux,
- 	tegra_clk_clk_out_3,
- 	tegra_clk_clk_out_3_mux,
-+	tegra_clk_cml0,
-+	tegra_clk_cml1,
- 	tegra_clk_csi,
- 	tegra_clk_csite,
- 	tegra_clk_csus,
-@@ -58,6 +63,7 @@ enum clk_id {
- 	tegra_clk_disp1,
- 	tegra_clk_disp2,
- 	tegra_clk_dp2,
-+	tegra_clk_dpaux,
- 	tegra_clk_dsia,
- 	tegra_clk_dsialp,
- 	tegra_clk_dsia_mux,
-@@ -66,6 +72,7 @@ enum clk_id {
- 	tegra_clk_dsib_mux,
- 	tegra_clk_dtv,
- 	tegra_clk_emc,
-+	tegra_clk_entropy,
- 	tegra_clk_epp,
- 	tegra_clk_epp_8,
- 	tegra_clk_extern1,
-@@ -73,6 +80,7 @@ enum clk_id {
- 	tegra_clk_extern3,
- 	tegra_clk_fuse,
- 	tegra_clk_fuse_burn,
-+	tegra_clk_gpu,
- 	tegra_clk_gr2d,
- 	tegra_clk_gr2d_8,
- 	tegra_clk_gr3d,
-@@ -82,6 +90,7 @@ enum clk_id {
- 	tegra_clk_hda2codec_2x,
- 	tegra_clk_hda2hdmi,
- 	tegra_clk_hdmi,
-+	tegra_clk_hdmi_audio,
- 	tegra_clk_host1x,
- 	tegra_clk_host1x_8,
- 	tegra_clk_i2c1,
-@@ -89,6 +98,7 @@ enum clk_id {
- 	tegra_clk_i2c3,
- 	tegra_clk_i2c4,
- 	tegra_clk_i2c5,
-+	tegra_clk_i2c6,
- 	tegra_clk_i2cslow,
- 	tegra_clk_i2s0,
- 	tegra_clk_i2s0_sync,
-@@ -101,6 +111,8 @@ enum clk_id {
- 	tegra_clk_i2s4,
- 	tegra_clk_i2s4_sync,
- 	tegra_clk_isp,
-+	tegra_clk_isp_8,
-+	tegra_clk_ispb,
- 	tegra_clk_kbc,
- 	tegra_clk_kfuse,
- 	tegra_clk_la,
-@@ -115,17 +127,20 @@ enum clk_id {
- 	tegra_clk_ndspeed_8,
- 	tegra_clk_nor,
- 	tegra_clk_owr,
-+	tegra_clk_pcie,
- 	tegra_clk_pclk,
- 	tegra_clk_pll_a,
- 	tegra_clk_pll_a_out0,
- 	tegra_clk_pll_c,
- 	tegra_clk_pll_c2,
- 	tegra_clk_pll_c3,
-+	tegra_clk_pll_c4,
- 	tegra_clk_pll_c_out1,
- 	tegra_clk_pll_d,
- 	tegra_clk_pll_d2,
- 	tegra_clk_pll_d2_out0,
- 	tegra_clk_pll_d_out0,
-+	tegra_clk_pll_dp,
- 	tegra_clk_pll_e_out0,
- 	tegra_clk_pll_m,
- 	tegra_clk_pll_m_out1,
-@@ -135,6 +150,7 @@ enum clk_id {
- 	tegra_clk_pll_p_out2_int,
- 	tegra_clk_pll_p_out3,
- 	tegra_clk_pll_p_out4,
-+	tegra_clk_pll_p_out5,
- 	tegra_clk_pll_ref,
- 	tegra_clk_pll_re_out,
- 	tegra_clk_pll_re_vco,
-@@ -169,6 +185,7 @@ enum clk_id {
- 	tegra_clk_sdmmc4,
- 	tegra_clk_se,
- 	tegra_clk_soc_therm,
-+	tegra_clk_sor0,
- 	tegra_clk_spdif,
- 	tegra_clk_spdif_2x,
- 	tegra_clk_spdif_in,
-@@ -195,8 +212,11 @@ enum clk_id {
- 	tegra_clk_vfir,
- 	tegra_clk_vi,
- 	tegra_clk_vi_8,
-+	tegra_clk_vic03,
-+	tegra_clk_vim2_clk,
- 	tegra_clk_vimclk_sync,
- 	tegra_clk_vi_sensor,
-+	tegra_clk_vi_sensor2,
- 	tegra_clk_vi_sensor_8,
- 	tegra_clk_xusb_dev,
- 	tegra_clk_xusb_dev_src,
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 700755e..266e80b 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -28,6 +28,7 @@
+ #include "clk.h"
+ #include "clk-id.h"
+ 
++#define CLK_SOURCE_CSITE 0x1d4
+ #define CLK_SOURCE_EMC 0x19c
+ #define CLK_SOURCE_XUSB_SS_SRC 0x610
+ 
+@@ -117,6 +118,12 @@
+ /* Tegra CPU clock and reset control regs */
+ #define CLK_RST_CONTROLLER_CPU_CMPLX_STATUS	0x470
+ 
++#ifdef CONFIG_PM_SLEEP
++static struct cpu_clk_suspend_context {
++	u32 clk_csite_src;
++} tegra124_cpu_clk_sctx;
++#endif
++
+ static void __iomem *clk_base;
+ static void __iomem *pmc_base;
+ 
+@@ -1309,9 +1316,29 @@ static void tegra124_disable_cpu_clock(u32 cpu)
+ 	/* flow controller would take care in the power sequence. */
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static void tegra124_cpu_clock_suspend(void)
++{
++	/* switch coresite to clk_m, save off original source */
++	tegra124_cpu_clk_sctx.clk_csite_src =
++				readl(clk_base + CLK_SOURCE_CSITE);
++	writel(3 << 30, clk_base + CLK_SOURCE_CSITE);
++}
++
++static void tegra124_cpu_clock_resume(void)
++{
++	writel(tegra124_cpu_clk_sctx.clk_csite_src,
++				clk_base + CLK_SOURCE_CSITE);
++}
++#endif
++
+ static struct tegra_cpu_car_ops tegra124_cpu_car_ops = {
+ 	.wait_for_reset	= tegra124_wait_cpu_in_reset,
+ 	.disable_clock	= tegra124_disable_cpu_clock,
++#ifdef CONFIG_PM_SLEEP
++	.suspend	= tegra124_cpu_clock_suspend,
++	.resume		= tegra124_cpu_clock_resume,
++#endif
+ };
+ 
+ static const struct of_device_id pmc_match[] __initconst = {
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
