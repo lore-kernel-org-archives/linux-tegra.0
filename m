@@ -1,25 +1,80 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v4 10/15] clk: tegra: move audio clk to common file
-Date: Thu, 17 Oct 2013 16:44:41 -0700
-Message-ID: <CAL1qeaFeUevACE_ETqV7Ytzi2mk5bPANzfEAQ0uLWmw=iGELTA@mail.gmail.com>
-References: <1382013526-12800-1-git-send-email-pdeschrijver@nvidia.com>
-	<1382013526-12800-11-git-send-email-pdeschrijver@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 0/3] Add power control for lm90
+Date: Fri, 18 Oct 2013 09:45:10 +0800
+Message-ID: <526092A6.4050205@nvidia.com>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com> <525E05E3.4040708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382013526-12800-11-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <525E05E3.4040708-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+On 10/16/2013 11:20 AM, Wei Ni wrote:
+> Hi, Jean
+> 
+> Do you have any comments on this series, or will you take them ?
 
-> +static struct tegra_clk tegra114_clks[tegra_clk_max] __initdata = {
+Hi, Jean, will you apply this series befor the 3.13 merge window?
 
-Not really a big deal, but a lot of these clocks are not audio
-related.  Maybe they should be added when the common infrastructure to
-deal with them is added?
+Since I forgot to tell Stephen not to apply the "[PATCH 0/2] Update dts
+file to support lm90 well" untile this series are accept, so if without
+this change, the lm90 may be broken on the Dalmore board.
 
-Thanks,
-Andrew
+Thanks.
+Wei.
+
+> 
+> Thanks.
+> Wei.
+> 
+> On 10/07/2013 05:25 PM, Wei Ni wrote:
+>> The device lm90 can be controlled by the vcc rail.
+>> Add function to power on/off the vcc.
+>> I will update all .dts files referencing this driver to
+>> match the new requirement in my next series.
+>>
+>> This series is v5, previous version patches are:
+>> [v4]: http://www.spinics.net/lists/lm-sensors/msg39583.html
+>> [v3]: http://www.spinics.net/lists/lm-sensors/msg39503.html
+>> [v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
+>> [v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
+>>
+>> Changes from v4:
+>> 1. set vcc-supply as required property.
+>>
+>> Changes from v3:
+>> 1. change to use devm_regulator_get, as per discussion in previous patches.
+>> 2. just return errors when get error from regulator_get(), Mark's new dummy
+>> regulator can cope with errors.
+>> 3. add vendor prefix for GMT
+>> 3. list manufacturer in the binding doc.
+>>
+>> Changes from v2:
+>> 1. use devm_regulator_get_optional(), as suggested by Mark.
+>> 2. remove the lm90_power_control(), enable the regulator in the probe()
+>> directly, so the codes are more clear, as suggested by Alexander and Guenter.
+>> 3. change the binding documentation, as per Stephen suggestion.
+>> 4. couple of changes, as per previous review.
+>>
+>> Changes from v1:
+>> 1. if get regulator failed, we should continue to run probe function,
+>> not return fail.
+>> 2. call regulator_put() in error handler and remove function.
+>> 3. add LM90 DT binding document.
+>>
+>> Wei Ni (3):
+>>   hwmon: (lm90) Add power control
+>>   of: add vendor prefix for GMT
+>>   Documentation: dt: hwmon: add OF document for LM90
+>>
+>>  Documentation/devicetree/bindings/hwmon/lm90.txt   |   44 ++++++++++++++++++++
+>>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>>  drivers/hwmon/lm90.c                               |   19 +++++++++
+>>  3 files changed, 64 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
+>>
+> 
