@@ -1,45 +1,55 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 03/15] clk: tegra: common periph_clk_enb_refcnt and
- clks
-Date: Fri, 18 Oct 2013 15:18:29 +0300
-Message-ID: <20131018121829.GA25591@tbergstrom-lnx.Nvidia.com>
+Subject: Re: [PATCH v4 06/15] clk: tegra: move fields to
+ tegra_clk_pll_params
+Date: Fri, 18 Oct 2013 15:27:46 +0300
+Message-ID: <20131018122746.GB25591@tbergstrom-lnx.Nvidia.com>
 References: <1382013526-12800-1-git-send-email-pdeschrijver@nvidia.com>
- <1382013526-12800-4-git-send-email-pdeschrijver@nvidia.com>
- <CAL1qeaFrm50m0a3csY=04MNQENM_DY5fgBrq5bdsm8dHnLj1gA@mail.gmail.com>
+ <1382013526-12800-7-git-send-email-pdeschrijver@nvidia.com>
+ <CAL1qeaH+DVdjB-jJMhqKWbFG7TtTAgOuSk3esRh_HPT4YfwPdA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAL1qeaFrm50m0a3csY=04MNQENM_DY5fgBrq5bdsm8dHnLj1gA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <CAL1qeaH+DVdjB-jJMhqKWbFG7TtTAgOuSk3esRh_HPT4YfwPdA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 18, 2013 at 12:26:20AM +0200, Andrew Bresticker wrote:
+On Fri, Oct 18, 2013 at 12:59:30AM +0200, Andrew Bresticker wrote:
 > Hi Peter,
 > 
-> >  static void __init tegra30_clock_init(struct device_node *np)
+> > @@ -1682,17 +1664,15 @@ struct clk *tegra_clk_register_pllc(const char *name, const char *parent_name,
+> >  struct clk *tegra_clk_register_plle_tegra114(const char *name,
+> >                                 const char *parent_name,
+> >                                 void __iomem *clk_base, unsigned long flags,
+> > -                               unsigned long fixed_rate,
+> >                                 struct tegra_clk_pll_params *pll_params,
+> > -                               struct tegra_clk_pll_freq_table *freq_table,
+> >                                 spinlock_t *lock)
 > >  {
-> >         struct device_node *node;
-> > -       int i;
+> >         struct tegra_clk_pll *pll;
+> >         struct clk *clk;
+> >         u32 val, val_aux;
 > >
-> >         clk_base = of_iomap(np, 0);
-> >         if (!clk_base) {
-> > @@ -1916,8 +1910,11 @@ static void __init tegra30_clock_init(struct device_node *np)
-> >                 BUG();
-> >         }
-> >
-> > -       if (tegra_clk_set_periph_banks(5) < 0)
-> > +       clks = tegra_clk_init(clk_max, 5);
-> > +       if (!clks) {
-> > +               WARN_ON(1);
+> > -       pll = _tegra_init_pll(clk_base, NULL, fixed_rate, pll_params,
+> > -                             TEGRA_PLL_HAS_LOCK_ENABLE, freq_table, lock);
+> > +       pll_params->flags = TEGRA_PLL_HAS_LOCK_ENABLE;
 > 
-> Really minor nit: it seems strange that we WARN here for t30, but not
-> for t114 or t20.
+> Why are we just overwriting the flags?  We pass in flags here:
+> 
+> > @@ -661,6 +685,9 @@ static struct tegra_clk_pll_params pll_e_params = {
+> >         .lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
+> >         .lock_delay = 300,
+> >         .div_nmp = &plle_nmp,
+> > +       .freq_table = pll_e_freq_table,
+> > +       .flags = TEGRA_PLL_FIXED,
+> 
+> TEGRA_PLL_FIXED doesn't actually make a difference in the
+> plle_tegra114 case, but it would be nice to be correct about setting
+> it.
 
-There used to be a warning for all 3, but I removed it and apparently forgot
-t30.
+Yeah indeed.
 
 Cheers,
 
