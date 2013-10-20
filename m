@@ -1,34 +1,47 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] ASoC: tegra: Remove redundant
- initialisation of compat_filter_fn
-Date: Sat, 19 Oct 2013 19:26:58 +0200
-Message-ID: <5262C0E2.6010809@metafoo.de>
-References: <1382188623-19494-1-git-send-email-broonie@kernel.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.12-rc6
+Date: Sat, 19 Oct 2013 23:41:52 -0700
+Message-ID: <52637B30.7000203@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1382188623-19494-1-git-send-email-broonie@kernel.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra >> \"linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org\"" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/19/2013 03:17 PM, Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Setting a field in a static struct to NULL has no effect so don't bother
-> (and don't generate false positives for grep).
 
-The idea was to make it explicit that tegra uses the compat path, but with
-the filter function set to NULL.
+Here are some basic Tegra test results for Linux v3.12-rc6.
+Logs and other details at:
 
-- Lars
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.12-rc6/20131019232523/
+
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.12-rc5 (61e6cfa80de5760bbe406f4e815b7739205754d2)):
+    text     data      bss    total  kernel
+    -168      +64     -768     -872  multi_v7_defconfig
+   -1781       -8     -704    -2493  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.12-rc5 (61e6cfa80de5760bbe406f4e815b7739205754d2))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+        8k      -8k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        8k      -8k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
