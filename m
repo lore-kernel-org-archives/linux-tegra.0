@@ -1,38 +1,72 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: tegra: Remove redundant initialisation
- of compat_filter_fn
-Date: Tue, 22 Oct 2013 13:40:18 +0200
-Message-ID: <52666422.9010505@metafoo.de>
-References: <1382188623-19494-1-git-send-email-broonie@kernel.org> <52644D3C.9020709@wwwdotorg.org>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: pull request for tegra clocks (resend with some CCs added this time)
+Date: Tue, 22 Oct 2013 08:00:49 -0700
+Message-ID: <20131022150049.11662.14841@quantum>
+References: <20131015153620.GA12721@tbergstrom-lnx.Nvidia.com>
+ <20131016153550.GA22451@ulmo.nvidia.com>
+ <20131016155336.GN5643@tbergstrom-lnx.Nvidia.com>
+ <20131016155621.GC20211@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52644D3C.9020709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20131016155621.GC20211-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/20/2013 11:38 PM, Stephen Warren wrote:
-> On 10/19/2013 02:17 PM, Mark Brown wrote:
->> From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>
->> Setting a field in a static struct to NULL has no effect so don't bother
->> (and don't generate false positives for grep).
+Quoting Thierry Reding (2013-10-16 08:56:21)
+> On Wed, Oct 16, 2013 at 06:53:36PM +0300, Peter De Schrijver wrote:
+> > On Wed, Oct 16, 2013 at 05:35:51PM +0200, Thierry Reding wrote:
+> > > * PGP Signed by an unknown key
+> > > 
+> > > On Tue, Oct 15, 2013 at 06:36:20PM +0300, Peter De Schrijver wrote:
+> > > > The following changes since commit a0cf1abc25ac197dd97b857c0f6341066a8cb1cf:
+> > > > 
+> > > >   Add linux-next specific files for 20130927 (2013-09-27 18:48:50 +1000)
+> > > > 
+> > > > are available in the git repository at:
+> > > >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-patches-0
+> > > > 
+> > > > Andrew Chew (1):
+> > > >       clk: tegra: Set the clk parent of host1x to pll_p
+> > > > 
+> > > > Mark Zhang (3):
+> > > >       clk: tegra: Correct sbc mux width & parent
+> > > >       clk: tegra: Fix vde/2d/3d clock src offset
+> > > >       clk: tegra: Set the clock parent of gr2d/gr3d to pll_c2
+> > > > 
+> > > > Peter De Schrijver (3):
+> > > >       ARM: tegra114: add missing clocks to binding
+> > > >       clk: tegra: replace enum tegra114_clk by binding header
+> > > >       clk: tegra: PLLE spread spectrum control
+> > > > 
+> > > > Thierry Reding (1):
+> > > >       clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d
+> > > 
+> > > I think this pull request is missing the initialization of the display
+> > > controller clocks (TEGRA114_CLK_DISP1 and TEGRA114_CLK_DISP2) from
+> > > Mikko's Dalmore HDMI series.
+> > 
+> > I don't think they were part of the original request to be included?
 > 
-> I'm fine with this either way, so feel free to take my ack whichever way
-> you work this out with Lars-Peter.
+> Not sure, I certainly sent it to Mike for inclusion at some point. I
+> guess I can respin it on top of this pull request. There is another
+> small patch required for gr3d on Tegra30 which I can rebase on top of
+> this as well.
+> 
+> Mike, do you want me to hold these back until you've merged Peter's
+> Tegra series or would you rather take them all in one go? Until when
+> will you be taking patches for 3.13?
 
-I don't care that much either, just wanted to give an explanation why things
-are the way they are. Mark, if you want to merge this patch you can add:
-Acked-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Can you send another pull request with these patches that is based on
+top of Peter's pull request? I've already pulled Peter's request in but
+have not published it to clk-next yet, so the best way to avoid merge
+issues is to just rebase those changes on top of his latest pull
+request.
 
-Btw. wasn't there a plan to move tegra to the generic dma bindings? If not I
-think it might be a good idea to add the possibility to let the DMA  driver
-overwrite the DT attribute parsing done by of_dma_match_channel(). This
-would spare drivers from having to do the parsing manually and it would
-allow the tegra pcm driver to just follow the normal OF path in the
-generic-dmaengine-pcm driver and didn't had to rely on the compat path.
+Mike
 
-- Lars
+> 
+> Thierry
