@@ -1,101 +1,38 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for Tegra clock rework and Tegra124 clock support
-Date: Tue, 22 Oct 2013 03:19:04 -0700
-Message-ID: <20131022101904.7554.73999@quantum>
-References: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: tegra: Remove redundant initialisation
+ of compat_filter_fn
+Date: Tue, 22 Oct 2013 13:40:18 +0200
+Message-ID: <52666422.9010505@metafoo.de>
+References: <1382188623-19494-1-git-send-email-broonie@kernel.org> <52644D3C.9020709@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52644D3C.9020709-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Peter De Schrijver (2013-10-21 06:56:38)
-> Hi Mike,
+On 10/20/2013 11:38 PM, Stephen Warren wrote:
+> On 10/19/2013 02:17 PM, Mark Brown wrote:
+>> From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>>
+>> Setting a field in a static struct to NULL has no effect so don't bother
+>> (and don't generate false positives for grep).
 > 
-> This pull request contains both the tegra clock rework patches
-> ([PATCH v6 00/15] Introduce common infra for tegra clocks)
-> and the patches to support Tegra124 ([PATCH v4 0/7] Tegra124 clock support)
-> 
-> The following changes since commit d031acfc0b8376209e5b429513766e7028e40e1d:
-> 
->   clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d (2013-10-16 19:49:25 +0300)
-> 
-> are available in the git repository at:
->   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-tegra124-0
+> I'm fine with this either way, so feel free to take my ack whichever way
+> you work this out with Lars-Peter.
 
-Thanks for the pull request Peter. I've taken into clk-next. Next time
-can you generate a signed tag? Due to the increased volume of ccf
-patches I'm happy to start taking pull requests more regularly (after
-requisite review on the list).
+I don't care that much either, just wanted to give an explanation why things
+are the way they are. Mark, if you want to merge this patch you can add:
+Acked-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 
-Regards,
-Mike
+Btw. wasn't there a plan to move tegra to the generic dma bindings? If not I
+think it might be a good idea to add the possibility to let the DMA  driver
+overwrite the DT attribute parsing done by of_dma_match_channel(). This
+would spare drivers from having to do the parsing manually and it would
+allow the tegra pcm driver to just follow the normal OF path in the
+generic-dmaengine-pcm driver and didn't had to rely on the compat path.
 
-> 
-> Joseph Lo (2):
->       clk: tegra124: add wait_for_reset and disable_clock for tegra_cpu_car_ops
->       clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
-> 
-> Peter De Schrijver (20):
->       ARM: tegra30: add missing CLK IDs
->       clk: tegra: simplify periph clock data
->       clk: tegra: common periph_clk_enb_refcnt and clks
->       clk: tegra: Add TEGRA_PERIPH_NO_DIV flag
->       clk: tegra: move some PLLC and PLLXC init to clk-pll.c
->       clk: tegra: move fields to tegra_clk_pll_params
->       clk: tegra: add header for common tegra clock IDs
->       clk: tegra: add common infra for DT clocks
->       clk: tegra: add clkdev registration infra
->       clk: tegra: move audio clk to common file
->       clk: tegra: move periph clocks to common file
->       clk: tegra: move PMC, fixed clocks to common files
->       clk: tegra: introduce common gen4 super clock
->       clk: tegra: move tegra30 to common infra
->       clk: tegra: move tegra20 to common infra
->       clk: tegra: Add support for PLLSS
->       clk: tegra: Add periph regs bank X
->       clk: tegra124: Add common clk IDs to clk-id.h
->       clk: tegra124: Add new peripheral clocks
->       clk: tegra124: Add support for Tegra124 clocks
-> 
->  .../bindings/clock/nvidia,tegra124-car.txt         |   59 +
->  drivers/clk/tegra/Makefile                         |    7 +-
->  drivers/clk/tegra/clk-id.h                         |  233 +++
->  drivers/clk/tegra/clk-periph-gate.c                |    8 +-
->  drivers/clk/tegra/clk-periph.c                     |   18 +-
->  drivers/clk/tegra/clk-pll.c                        |  356 ++++--
->  drivers/clk/tegra/clk-tegra-audio.c                |  215 +++
->  drivers/clk/tegra/clk-tegra-fixed.c                |  111 ++
->  drivers/clk/tegra/clk-tegra-periph.c               |  644 ++++++++
->  drivers/clk/tegra/clk-tegra-pmc.c                  |  131 ++
->  drivers/clk/tegra/clk-tegra-super-gen4.c           |  149 ++
->  drivers/clk/tegra/clk-tegra114.c                   | 1540 +++++---------------
->  drivers/clk/tegra/clk-tegra124.c                   | 1430 ++++++++++++++++++
->  drivers/clk/tegra/clk-tegra20.c                    |  811 ++++-------
->  drivers/clk/tegra/clk-tegra30.c                    | 1492 ++++++-------------
->  drivers/clk/tegra/clk.c                            |  166 +++
->  drivers/clk/tegra/clk.h                            |  104 +-
->  include/dt-bindings/clock/tegra124-car.h           |  340 +++++
->  include/dt-bindings/clock/tegra30-car.h            |   10 +-
->  19 files changed, 4940 insertions(+), 2884 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
->  create mode 100644 drivers/clk/tegra/clk-id.h
->  create mode 100644 drivers/clk/tegra/clk-tegra-audio.c
->  create mode 100644 drivers/clk/tegra/clk-tegra-fixed.c
->  create mode 100644 drivers/clk/tegra/clk-tegra-periph.c
->  create mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
->  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen4.c
->  create mode 100644 drivers/clk/tegra/clk-tegra124.c
->  create mode 100644 include/dt-bindings/clock/tegra124-car.h
+- Lars
