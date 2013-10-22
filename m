@@ -1,24 +1,101 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v6 01/15] ARM: tegra30: add missing CLK IDs
-Date: Mon, 21 Oct 2013 13:23:43 -0700
-Message-ID: <CAL1qeaG9RDMWdN0vxq4Q3NgNbci1xZXCXcPT1L8G7F_U25C17A@mail.gmail.com>
-References: <1382363634-10870-1-git-send-email-pdeschrijver@nvidia.com>
-	<1382363634-10870-2-git-send-email-pdeschrijver@nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for Tegra clock rework and Tegra124 clock support
+Date: Tue, 22 Oct 2013 03:19:04 -0700
+Message-ID: <20131022101904.7554.73999@quantum>
+References: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382363634-10870-2-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+Quoting Peter De Schrijver (2013-10-21 06:56:38)
+> Hi Mike,
+> 
+> This pull request contains both the tegra clock rework patches
+> ([PATCH v6 00/15] Introduce common infra for tegra clocks)
+> and the patches to support Tegra124 ([PATCH v4 0/7] Tegra124 clock support)
+> 
+> The following changes since commit d031acfc0b8376209e5b429513766e7028e40e1d:
+> 
+>   clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d (2013-10-16 19:49:25 +0300)
+> 
+> are available in the git repository at:
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-tegra124-0
 
-> The Tegra30 clock bindings lack few IDs for audio and clk_out muxes.
->
-> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Thanks for the pull request Peter. I've taken into clk-next. Next time
+can you generate a signed tag? Due to the increased volume of ccf
+patches I'm happy to start taking pull requests more regularly (after
+requisite review on the list).
 
-For the entire series,
+Regards,
+Mike
 
-Reviewed-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> 
+> Joseph Lo (2):
+>       clk: tegra124: add wait_for_reset and disable_clock for tegra_cpu_car_ops
+>       clk: tegra124: add suspend/resume function for tegra_cpu_car_ops
+> 
+> Peter De Schrijver (20):
+>       ARM: tegra30: add missing CLK IDs
+>       clk: tegra: simplify periph clock data
+>       clk: tegra: common periph_clk_enb_refcnt and clks
+>       clk: tegra: Add TEGRA_PERIPH_NO_DIV flag
+>       clk: tegra: move some PLLC and PLLXC init to clk-pll.c
+>       clk: tegra: move fields to tegra_clk_pll_params
+>       clk: tegra: add header for common tegra clock IDs
+>       clk: tegra: add common infra for DT clocks
+>       clk: tegra: add clkdev registration infra
+>       clk: tegra: move audio clk to common file
+>       clk: tegra: move periph clocks to common file
+>       clk: tegra: move PMC, fixed clocks to common files
+>       clk: tegra: introduce common gen4 super clock
+>       clk: tegra: move tegra30 to common infra
+>       clk: tegra: move tegra20 to common infra
+>       clk: tegra: Add support for PLLSS
+>       clk: tegra: Add periph regs bank X
+>       clk: tegra124: Add common clk IDs to clk-id.h
+>       clk: tegra124: Add new peripheral clocks
+>       clk: tegra124: Add support for Tegra124 clocks
+> 
+>  .../bindings/clock/nvidia,tegra124-car.txt         |   59 +
+>  drivers/clk/tegra/Makefile                         |    7 +-
+>  drivers/clk/tegra/clk-id.h                         |  233 +++
+>  drivers/clk/tegra/clk-periph-gate.c                |    8 +-
+>  drivers/clk/tegra/clk-periph.c                     |   18 +-
+>  drivers/clk/tegra/clk-pll.c                        |  356 ++++--
+>  drivers/clk/tegra/clk-tegra-audio.c                |  215 +++
+>  drivers/clk/tegra/clk-tegra-fixed.c                |  111 ++
+>  drivers/clk/tegra/clk-tegra-periph.c               |  644 ++++++++
+>  drivers/clk/tegra/clk-tegra-pmc.c                  |  131 ++
+>  drivers/clk/tegra/clk-tegra-super-gen4.c           |  149 ++
+>  drivers/clk/tegra/clk-tegra114.c                   | 1540 +++++---------------
+>  drivers/clk/tegra/clk-tegra124.c                   | 1430 ++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra20.c                    |  811 ++++-------
+>  drivers/clk/tegra/clk-tegra30.c                    | 1492 ++++++-------------
+>  drivers/clk/tegra/clk.c                            |  166 +++
+>  drivers/clk/tegra/clk.h                            |  104 +-
+>  include/dt-bindings/clock/tegra124-car.h           |  340 +++++
+>  include/dt-bindings/clock/tegra30-car.h            |   10 +-
+>  19 files changed, 4940 insertions(+), 2884 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-car.txt
+>  create mode 100644 drivers/clk/tegra/clk-id.h
+>  create mode 100644 drivers/clk/tegra/clk-tegra-audio.c
+>  create mode 100644 drivers/clk/tegra/clk-tegra-fixed.c
+>  create mode 100644 drivers/clk/tegra/clk-tegra-periph.c
+>  create mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+>  create mode 100644 drivers/clk/tegra/clk-tegra-super-gen4.c
+>  create mode 100644 drivers/clk/tegra/clk-tegra124.c
+>  create mode 100644 include/dt-bindings/clock/tegra124-car.h
