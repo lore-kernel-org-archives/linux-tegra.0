@@ -1,34 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: tegra: Remove redundant initialisation
- of compat_filter_fn
-Date: Tue, 22 Oct 2013 22:07:05 +0100
-Message-ID: <5266E8F9.70307@wwwdotorg.org>
-References: <1382188623-19494-1-git-send-email-broonie@kernel.org> <52644D3C.9020709@wwwdotorg.org> <52666422.9010505@metafoo.de>
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: Re: pull request for Tegra clock rework and Tegra124 clock support
+Date: Wed, 23 Oct 2013 11:46:31 +0300
+Message-ID: <20131023084631.GG22111@tbergstrom-lnx.Nvidia.com>
+References: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
+ <20131022101904.7554.73999@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52666422.9010505-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20131022101904.7554.73999@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/22/2013 12:40 PM, Lars-Peter Clausen wrote:
-> On 10/20/2013 11:38 PM, Stephen Warren wrote:
->> On 10/19/2013 02:17 PM, Mark Brown wrote:
->>> From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>>
->>> Setting a field in a static struct to NULL has no effect so don't bother
->>> (and don't generate false positives for grep).
->>
->> I'm fine with this either way, so feel free to take my ack whichever way
->> you work this out with Lars-Peter.
+On Tue, Oct 22, 2013 at 12:19:04PM +0200, Mike Turquette wrote:
+> Quoting Peter De Schrijver (2013-10-21 06:56:38)
+> > Hi Mike,
+> > 
+> > This pull request contains both the tegra clock rework patches
+> > ([PATCH v6 00/15] Introduce common infra for tegra clocks)
+> > and the patches to support Tegra124 ([PATCH v4 0/7] Tegra124 clock support)
+> > 
+> > The following changes since commit d031acfc0b8376209e5b429513766e7028e40e1d:
+> > 
+> >   clk: tegra114: Rename gr_2d/gr_3d to gr2d/gr3d (2013-10-16 19:49:25 +0300)
+> > 
+> > are available in the git repository at:
+> >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-tegra124-0
 > 
-> I don't care that much either, just wanted to give an explanation why things
-> are the way they are. Mark, if you want to merge this patch you can add:
-> Acked-by: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-> 
-> Btw. wasn't there a plan to move tegra to the generic dma bindings?
+> Thanks for the pull request Peter. I've taken into clk-next. Next time
+> can you generate a signed tag? Due to the increased volume of ccf
 
-IIRC, it's been using them for a release or two.
+Ok :) let's sign some keys next week then :)
+
+Cheers,
+
+Peter.
