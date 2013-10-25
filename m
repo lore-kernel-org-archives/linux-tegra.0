@@ -1,45 +1,48 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL V2] ARM: tegra: core SoC support changes for 3.13
-Date: Fri, 25 Oct 2013 03:51:52 -0700
-Message-ID: <87sivppqrb.fsf@linaro.org>
-References: <1382136027-4937-1-git-send-email-swarren@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
+Date: Fri, 25 Oct 2013 13:08:34 +0200
+Message-ID: <20131025.140834.1484720286118607126.hdoyu@nvidia.com>
+References: <20131025091104.GG19622@ulmo.nvidia.com><20131025.124905.1154427805530939055.hdoyu@nvidia.com><20131025104937.GA25080@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382136027-4937-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen
-	Warren's message of "Fri, 18 Oct 2013 16:40:27 -0600")
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20131025104937.GA25080-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> writes:
+Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Fri, 25 Oct 2013 12:49:38 +0200:
 
-> This branch includes:
-> * SoC fuse values are used as device randomness at boot.
-> * Initial support for the Tegra124 SoC is added. When coupled with an
->   appropriate clock driver, which should also be merged for 3.13, we are
->   able to boot to user-space using an initrd.
-> * The powergate code gains support for Tegra114.
->
-> This branch is based on previous pull request tegra-for-3.13-cleanup.
->
-> ----------------------------------------------------------------
->
-> The following changes since commit b6bda4e0d23815cb711c16085e03cb23c6d49f21:
->
->   ARM: tegra: fix ARCH_TEGRA_114_SOC select sort order
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/swarren/linux-tegra.git tegra-for-3.13-soc-v2
->
-> for you to fetch changes up to bd6a9ddcb9f2cb19dae0509341a4cbaf40dc66f0:
->
->   ARM: tegra: Add Tegra114 powergate support
->
-> ----------------------------------------------------------------
+> The way notifiers work is that they run completely hidden from whatever
+> triggers them. For instance you register the IOMMU bus notifier from the
+> IOMMU driver (by calling bus_set_iommu()). That registers a function to
+> be called when some event happens on that bus. When a device's driver is
+> probed successfully, the driver core will notify the bus, which causes
+> the IOMMU callback to be run.
+> 
+> Some of this code runs before the driver has successfully been probed,
+> so I imagine it would be possible to use it to abort probing. But that's
+> not possible at least with the current code.
 
-Thanks for the respin, pulled into next/soc.
+At least I'll experiment this way to see if it's acceptable or not.
 
-Kevin 
+> > This looks somewhat similar to the above iommu_bus notifier.
+> > 
+> > Is there any way to implement the same mechanism rather than using
+> > bus?
+> 
+> Yes, I think it should be possible to get this to work without using the
+> bus notifier at all. I can try to code something up but wanted to wait
+> for feedback from Grant first.
+
+That's interesting too.
