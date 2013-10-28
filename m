@@ -1,53 +1,91 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH -next] drm/tegra: fix return value check
-Date: Mon, 28 Oct 2013 15:51:32 -0600
-Message-ID: <526EDC64.5050202@wwwdotorg.org>
-References: <CAPgLHd_JqYS5DC4tmzgGVEYmJpeM96FAEDvmM3cUUep+1jj7mA@mail.gmail.com> <20131028085358.GC10718@ulmo.nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v8 1/5] ARM: add basic support for Trusted Foundations
+Date: Mon, 28 Oct 2013 14:55:16 -0700
+Message-ID: <20131028215516.GA10833@quad.lixom.net>
+References: <1381527938-22840-1-git-send-email-acourbot@nvidia.com>
+ <1381527938-22840-2-git-send-email-acourbot@nvidia.com>
+ <20131015110725.GZ25034@n2100.arm.linux.org.uk>
+ <525D7969.5060908@nvidia.com>
+ <CA+Ln22FdkcxOfq-yxVVQ7vTLWC3TYRBbAOZ=e3WmpSKkgk_DRg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131028085358.GC10718-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CA+Ln22FdkcxOfq-yxVVQ7vTLWC3TYRBbAOZ=e3WmpSKkgk_DRg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/28/2013 02:53 AM, Thierry Reding wrote:
-> On Mon, Oct 21, 2013 at 11:34:07AM +0800, Wei Yongjun wrote:
->> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
->> 
->> In case of error, the function clk_get_parent() and
->> devm_ioremap_resource() returns ERR_PTR() and never returns NULL.
->> The NULL test in the return value check should be replaced with
->> IS_ERR().
->> 
->> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org> --- 
->> drivers/gpu/drm/tegra/dsi.c | 6 +++--- 1 file changed, 3
->> insertions(+), 3 deletions(-)
+On Mon, Oct 28, 2013 at 12:04:43PM +0100, Tomasz Figa wrote:
+> Hi,
 > 
-> I've applied this, but with the first hunk removed, since looking
-> at the implementation of clk_get_parent() it can actually return
-> NULL. In fact it seems like it will never return ERR_PTR().
+> 2013/10/15 Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+> > On 10/15/2013 04:07 AM, Russell King - ARM Linux wrote:
+> >>
+> >> On Fri, Oct 11, 2013 at 02:45:34PM -0700, Alexandre Courbot wrote:
+> >>>
+> >>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> >>> can be invoked using the same SMC-based API on all supported
+> >>> platforms. This patch adds initial basic support for Trusted
+> >>> Foundations using the ARM firmware API. Current features are limited
+> >>> to the ability to boot secondary processors.
+> >>>
+> >>> Note: The API followed by Trusted Foundations does *not* follow the SMC
+> >>> calling conventions. It has nothing to do with PSCI neither and is only
+> >>> relevant to devices that use Trusted Foundations (like most Tegra-based
+> >>> retail devices).
+> >>>
+> >>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>> ---
+> >>>   .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
+> >>>   .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+> >>>   arch/arm/Kconfig                                   |  2 +
+> >>>   arch/arm/Makefile                                  |  1 +
+> >>>   arch/arm/firmware/Kconfig                          | 28 ++++++++
+> >>>   arch/arm/firmware/Makefile                         |  1 +
+> >>>   arch/arm/firmware/trusted_foundations.c            | 79
+> >>> ++++++++++++++++++++++
+> >>>   arch/arm/include/asm/trusted_foundations.h         | 68
+> >>> +++++++++++++++++++
+> >>>   8 files changed, 200 insertions(+)
+> >>>   create mode 100644
+> >>> Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+> >>>   create mode 100644 arch/arm/firmware/Kconfig
+> >>>   create mode 100644 arch/arm/firmware/Makefile
+> >>>   create mode 100644 arch/arm/firmware/trusted_foundations.c
+> >>>   create mode 100644 arch/arm/include/asm/trusted_foundations.h
+> >>
+> >>
+> >> Is having this under arch/arm appropriate?  What happens if the API
+> >> gets re-used on ARM64 for example?  Would drivers/firmware be a better
+> >> cross-arch location for this?
+> >
+> >
+> > The reason why this has been put into arch/arm is that the firmware_ops
+> > feature this patch depends also resides there
+> > (arch/arm/include/asm/firmware.h).
+> >
+> > On the other hand it might also make sense to move firmware_ops out of ARM
+> > since I don't see anything ARM-specific with it. Tomasz, could we have your
+> > thoughts on this?
 > 
-> I've also updated the commit message to reflect that.
+> I don't see anything wrong in moving this out of arch/arm, feel free
+> to do so.
+> 
+> However I guess that some (or all) of the names will have to
+> be put into a more separate namespace, as the term "firmware" is a bit
+> too generic IMHO. Possibly something like platform_firmware could be
+> better.
+> 
+> What do you think?
 
-Hmm. The documentation for clk_get() says:
+I think we can probably merge this under arch/arm now, and when we figure out
+what needs to be common with ARM64 we can move it out to a good location. It
+might be that mostly just a header file with ABI conventions needs to be
+shared, not actual implementation, for example.
 
-/**
- * clk_get - lookup and obtain a reference to a clock producer.
- * @dev: device for clock "consumer"
- * @id: clock consumer ID
- *
- * Returns a struct clk corresponding to the clock producer, or
- * valid IS_ERR() condition containing errno.  The implementation
- * uses @dev and @id to determine the clock consumer, and thereby
- * the clock producer.  (IOW, @id may be identical strings, but
- * clk_get may return different clock producers depending on @dev.)
 
-If the implementation doesn't match that, then it's a bug, and a whole
-slew of drivers will need changing... On the surface, it looks like
-the hunk you dropped was correct.
-
-NULL may be a perfectly legal return value from a function that
-returns either valid data or an IS_ERR() value.
+-Olof
