@@ -1,45 +1,60 @@
 From: =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] drm/tegra: add missing clk_disable_unprepare()
- on error in gr2d_probe()
-Date: Mon, 28 Oct 2013 10:33:38 +0200
-Message-ID: <526E2162.5030106@nvidia.com>
-References: <CAPgLHd_iff-PXrhOrVKi_qsqsBU7Yx0MByJDr_3_2fpJ8QwETQ@mail.gmail.com>
+Subject: Re: [PATCHv2 0/4] gpu: host1x: Add syncpoint base support
+Date: Mon, 28 Oct 2013 10:37:07 +0200
+Message-ID: <526E2233.3020304@nvidia.com>
+References: <1381753315-21778-1-git-send-email-amerilainen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPgLHd_iff-PXrhOrVKi_qsqsBU7Yx0MByJDr_3_2fpJ8QwETQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1381753315-21778-1-git-send-email-amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "airlied-cv59FeDIM0c@public.gmane.org" <airlied-cv59FeDIM0c@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: "yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org" <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 21.10.2013 08:38, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+On 14.10.2013 15:21, Arto Merilainen wrote:
+> The host1x driver uses currently syncpoints statically from host1x point of
+> view. If we do a wait inside a job, it always has a constant value to wait.
+> host1x supports also doing relative syncpoint waits with respect to syncpoint
+> bases. This allows doing multiple operations inside a single submit and
+> waiting an operation to complete before moving to next one.
 > 
-> Add the missing clk_disable_unprepare() before return
-> from gr2d_probe() in the error handling case.
+> This set of patches adds support for syncpoint bases to host1x driver and
+> enables the support for gr2d client.
 > 
-> Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
-> ---
->  drivers/gpu/drm/tegra/gr2d.c | 1 +
->  1 file changed, 1 insertion(+)
+> I have tested the series using the host1x test application (available at [0],
+> function test_wait_base() in tests/tegra/host1x/tegra_host1x_test.c) on cardhu.
+> I would appreciate help in reviewing the series and testing the patches
+> on other boards.
 > 
-> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
-> index 73b79ba..7f4eb11 100644
-> --- a/drivers/gpu/drm/tegra/gr2d.c
-> +++ b/drivers/gpu/drm/tegra/gr2d.c
-> @@ -186,6 +186,7 @@ static int gr2d_probe(struct platform_device *pdev)
->  	err = host1x_client_register(&gr2d->client.base);
->  	if (err < 0) {
->  		dev_err(dev, "failed to register host1x client: %d\n", err);
-> +		clk_disable_unprepare(gr2d->clk);
->  		return err;
->  	}
->  
+> Changes in v2:
+> - Reordered various code blocks to improve code consistency
+> - Functions host1x_syncpt_alloc() and host1x_syncpt_request() take now a single
+> bitfield argument instead of separate boolean arguments
+> - Added a separate ioctl call for querying the base associated with some
+> syncpoint
+> 
+> [0] https://gitorious.org/linux-host1x/libdrm-host1x
+> 
+> Arto Merilainen (4):
+>   gpu: host1x: Add 'flags' field to syncpt request
+>   gpu: host1x: Add syncpoint base support
+>   drm/tegra: Deliver syncpoint base to user space
+>   drm/tegra: Reserve base for gr2d
+> 
+>  drivers/gpu/host1x/dev.h                   |  2 ++
+>  drivers/gpu/host1x/drm/drm.c               | 25 +++++++++++++
+>  drivers/gpu/host1x/drm/gr2d.c              |  2 +-
+>  drivers/gpu/host1x/hw/channel_hw.c         | 19 ++++++++++
+>  drivers/gpu/host1x/hw/hw_host1x01_uclass.h |  6 ++++
+>  drivers/gpu/host1x/syncpt.c                | 58 +++++++++++++++++++++++++-----
+>  drivers/gpu/host1x/syncpt.h                | 10 +++++-
+>  include/uapi/drm/tegra_drm.h               | 26 +++++++++-----
+>  8 files changed, 128 insertions(+), 20 deletions(-)
 > 
 
-Looks good.
+The series,
 
 Reviewed-by: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
