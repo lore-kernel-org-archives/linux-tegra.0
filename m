@@ -1,71 +1,99 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v9 4/5] ARM: tegra: set CPU reset handler with firmware op
-Date: Mon, 28 Oct 2013 19:28:37 +0900
-Message-ID: <1382956118-12495-5-git-send-email-acourbot@nvidia.com>
-References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Kumar Gala <galak@codeaurora.org>
+Subject: Re: [PATCH v9 1/5] ARM: add basic support for Trusted Foundations
+Date: Mon, 28 Oct 2013 05:57:04 -0500
+Message-ID: <D49A3E92-54FD-4275-82F5-DBB476086B03@codeaurora.org>
+References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com> <1382956118-12495-2-git-send-email-acourbot@nvidia.com>
+Mime-Version: 1.0 (Apple Message framework v1283)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382956118-12495-1-git-send-email-acourbot@nvidia.com>
+In-Reply-To: <1382956118-12495-2-git-send-email-acourbot@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Dave Martin <Dave.Martin@arm.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>, Dave Martin <Dave.Martin@arm.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use a firmware operation to set the CPU reset handler and only resort to
-doing it ourselves if there is none defined.
 
-This supports the booting of secondary CPUs on devices using a TrustZone
-secure monitor.
+On Oct 28, 2013, at 5:28 AM, Alexandre Courbot wrote:
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
----
- arch/arm/mach-tegra/reset.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> can be invoked using the same SMC-based API on all supported
+> platforms. This patch adds initial basic support for Trusted
+> Foundations using the ARM firmware API. Current features are limited
+> to the ability to boot secondary processors.
+> 
+> Note: The API followed by Trusted Foundations does *not* follow the SMC
+> calling conventions. It has nothing to do with PSCI neither and is only
+> relevant to devices that use Trusted Foundations (like most Tegra-based
+> retail devices).
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
+> .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+> arch/arm/Kconfig                                   |  2 +
+> arch/arm/Makefile                                  |  1 +
+> arch/arm/firmware/Kconfig                          | 28 ++++++++
+> arch/arm/firmware/Makefile                         |  1 +
+> arch/arm/firmware/trusted_foundations.c            | 79 ++++++++++++++++++++++
+> arch/arm/include/asm/trusted_foundations.h         | 67 ++++++++++++++++++
+> 8 files changed, 199 insertions(+)
+> create mode 100644 Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+> create mode 100644 arch/arm/firmware/Kconfig
+> create mode 100644 arch/arm/firmware/Makefile
+> create mode 100644 arch/arm/firmware/trusted_foundations.c
+> create mode 100644 arch/arm/include/asm/trusted_foundations.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+> new file mode 100644
+> index 0000000..2ec75c9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundations.txt
+> @@ -0,0 +1,20 @@
+> +Trusted Foundations
+> +-------------------
+> +
+> +Boards that use the Trusted Foundations secure monitor can signal its
+> +presence by declaring a node compatible with "tl,trusted-foundations"
+> +under the /firmware/ node
+> +
+> +Required properties:
+> +- compatible : "tl,trusted-foundations"
+> +- version-major : major version number of Trusted Foundations firmware
+> +- version-minor: minor version number of Trusted Foundations firmware
 
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index e282395..368af0a 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -21,6 +21,7 @@
- 
- #include <asm/cacheflush.h>
- #include <asm/hardware/cache-l2x0.h>
-+#include <asm/firmware.h>
- 
- #include "iomap.h"
- #include "irammap.h"
-@@ -65,6 +66,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
- 	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
- 						tegra_cpu_reset_handler_offset;
-+	int err;
- 
- 	BUG_ON(is_enabled);
- 	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
-@@ -72,9 +74,18 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
- 			tegra_cpu_reset_handler_size);
- 
--	tegra_cpu_reset_handler_set(reset_address);
--
--	is_enabled = true;
-+	err = call_firmware_op(set_cpu_boot_addr, 0, reset_address);
-+	switch (err) {
-+	case -ENOSYS:
-+		tegra_cpu_reset_handler_set(reset_address);
-+		/* pass-through */
-+	case 0:
-+		is_enabled = true;
-+		break;
-+	default:
-+		pr_crit("Cannot set CPU reset handler: %d\n", err);
-+		BUG();
-+	}
- }
- 
- void __init tegra_cpu_reset_handler_init(void)
+vendor prefix version.
+
+> +
+> +Example:
+> +	firmware {
+> +		trusted-foundations {
+> +			compatible = "tl,trusted-foundations";
+> +			version-major = <2>;
+> +			version-minor = <8>;
+> +		};
+> +	};
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 2956800..a374eaa 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -66,6 +66,7 @@ ste	ST-Ericsson
+> stericsson	ST-Ericsson
+> toumaz	Toumaz
+> ti	Texas Instruments
+> +tl	Trusted Logic
+
+Should this be Trusted Logic Mobility (tlm)?
+
+
+> toshiba	Toshiba Corporation
+> v3	V3 Semiconductor
+> via	VIA Technologies, Inc.
+
+- k
+
 -- 
-1.8.4.1
+Employee of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
