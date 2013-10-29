@@ -1,59 +1,124 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/3] clk: tegra: Properly setup PWM clock on Tegra30
-Date: Tue, 29 Oct 2013 16:51:12 +0100
-Message-ID: <1383061872-27899-3-git-send-email-treding@nvidia.com>
-References: <1383061872-27899-1-git-send-email-treding@nvidia.com>
+From: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v9 1/5] ARM: add basic support for Trusted Foundations
+Date: Tue, 29 Oct 2013 14:39:37 -0400
+Message-ID: <20131029183937.GC17573@beef>
+References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com>
+ <D49A3E92-54FD-4275-82F5-DBB476086B03@codeaurora.org>
+ <20131028215649.GB10833@quad.lixom.net>
+ <2702565.PHk13m6fVo@flatron>
+ <20131029002543.GF4763@kartoffel>
+ <0232E02C-5F41-4EC6-9011-86D67005433D@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1383061872-27899-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <0232E02C-5F41-4EC6-9011-86D67005433D-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The clock for the PWM controller is slightly different from other
-peripheral clocks on Tegra30. The clock source mux field start at
-bit position 28 rather than 30.
+On Tue, Oct 29, 2013 at 03:12:05AM -0500, Kumar Gala wrote:
+> 
+> On Oct 28, 2013, at 7:25 PM, Mark Rutland wrote:
+> 
+> > On Mon, Oct 28, 2013 at 11:31:36PM +0000, Tomasz Figa wrote:
+> >> On Monday 28 of October 2013 14:56:49 Olof Johansson wrote:
+> >>> On Mon, Oct 28, 2013 at 05:57:04AM -0500, Kumar Gala wrote:
+> >>>> On Oct 28, 2013, at 5:28 AM, Alexandre Courbot wrote:
+> >>>>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+> >>>>> can be invoked using the same SMC-based API on all supported
+> >>>>> platforms. This patch adds initial basic support for Trusted
+> >>>>> Foundations using the ARM firmware API. Current features are limited
+> >>>>> to the ability to boot secondary processors.
+> >>>>> 
+> >>>>> Note: The API followed by Trusted Foundations does *not* follow the
+> >>>>> SMC
+> >>>>> calling conventions. It has nothing to do with PSCI neither and is
+> >>>>> only
+> >>>>> relevant to devices that use Trusted Foundations (like most
+> >>>>> Tegra-based
+> >>>>> retail devices).
+> >>>>> 
+> >>>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>>>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>> ---
+> >>>>> .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
+> >>>>> .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+> >>>>> arch/arm/Kconfig                                   |  2 +
+> >>>>> arch/arm/Makefile                                  |  1 +
+> >>>>> arch/arm/firmware/Kconfig                          | 28 ++++++++
+> >>>>> arch/arm/firmware/Makefile                         |  1 +
+> >>>>> arch/arm/firmware/trusted_foundations.c            | 79
+> >>>>> ++++++++++++++++++++++ arch/arm/include/asm/trusted_foundations.h  
+> >>>>>      | 67 ++++++++++++++++++ 8 files changed, 199 insertions(+)
+> >>>>> create mode 100644
+> >>>>> Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundatio
+> >>>>> ns.txt create mode 100644 arch/arm/firmware/Kconfig
+> >>>>> create mode 100644 arch/arm/firmware/Makefile
+> >>>>> create mode 100644 arch/arm/firmware/trusted_foundations.c
+> >>>>> create mode 100644 arch/arm/include/asm/trusted_foundations.h
+> >>>>> 
+> >>>>> diff --git
+> >>>>> a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+> >>>>> ions.txt
+> >>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+> >>>>> ions.txt new file mode 100644
+> >>>>> index 0000000..2ec75c9
+> >>>>> --- /dev/null
+> >>>>> +++
+> >>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+> >>>>> ions.txt @@ -0,0 +1,20 @@
+> >>>>> +Trusted Foundations
+> >>>>> +-------------------
+> >>>>> +
+> >>>>> +Boards that use the Trusted Foundations secure monitor can signal
+> >>>>> its
+> >>>>> +presence by declaring a node compatible with
+> >>>>> "tl,trusted-foundations"
+> >>>>> +under the /firmware/ node
+> >>>>> +
+> >>>>> +Required properties:
+> >>>>> +- compatible : "tl,trusted-foundations"
+> >>>>> +- version-major : major version number of Trusted Foundations
+> >>>>> firmware
+> >>>>> +- version-minor: minor version number of Trusted Foundations
+> >>>>> firmware
+> >>>> 
+> >>>> vendor prefix version.
+> >>> 
+> >>> Are you saying he should use tl,version-major tl,version-minor? For
+> >>> bindings that are already vendor-specific we haven't (on ARM) asked for
+> >>> vendor prefix on properties. It doesn't mean that we should keep going
+> >>> down that route though, so I'm just asking for clarification for my own
+> >>> edification. :)
+> >> 
+> >> This is a good question. We should decide what the right thing (TM) is and 
+> >> write it down. I, on the contrary, was convinced that it's the way Kumar 
+> >> says.
+> > 
+> > The impression I got was that properties should be prefixed when they're
+> > extremely vendor-specific and could clash with a more generic property. I'm not
+> > sure that firmware will ever have a generic binding given the variation even in
+> > the set of implemented functionality.
+> > 
+> > I would imagine that there are many ways different firmwares might be
+> > versioned, and I can't see version-major or version-minor clashing with a
+> > generic property we might add later. However prefixing would not be harmful, so
+> > I'm not opposed to it if others want that.
+> > 
+> > Another option would be to support a fallback compatible list (e.g.
+> > "tl,trusted-foundations-${MAJOR}-${MINOR}", "tl,trusted-foundations"), and get
+> > versioning information from there. Given that could be painful to handle I
+> > don't want to force it if not required.
+> > 
+> > Thanks,
+> > Mark.
+> 
+> I'm of the opinion that making all vendor specific properties vendor prefixed is the easiest rule of thumb and leaves no gray area to have to argue about.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra30.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+That would really help all of us to self-police our submissions and
+reduce the burden on the DT maintainer team.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 24ce357..51c093c 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -104,6 +104,7 @@
- #define PMC_CLK_OUT_CNTRL 0x1a8
- 
- #define CLK_SOURCE_SPDIF_OUT 0x108
-+#define CLK_SOURCE_PWM 0x110
- #define CLK_SOURCE_D_AUDIO 0x3d0
- #define CLK_SOURCE_DAM0 0x3d8
- #define CLK_SOURCE_DAM1 0x3dc
-@@ -836,7 +837,6 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_extern1] = { .dt_id = TEGRA30_CLK_EXTERN1, .present = true },
- 	[tegra_clk_extern2] = { .dt_id = TEGRA30_CLK_EXTERN2, .present = true },
- 	[tegra_clk_extern3] = { .dt_id = TEGRA30_CLK_EXTERN3, .present = true },
--	[tegra_clk_pwm] = { .dt_id = TEGRA30_CLK_PWM, .present = true },
- 	[tegra_clk_disp1] = { .dt_id = TEGRA30_CLK_DISP1, .present = true },
- 	[tegra_clk_disp2] = { .dt_id = TEGRA30_CLK_DISP2, .present = true },
- 	[tegra_clk_apbdma] = { .dt_id = TEGRA30_CLK_APBDMA, .present = true },
-@@ -1120,6 +1120,7 @@ static const char *mux_pllpmdacd2_clkm[] = { "pll_p", "pll_m", "pll_d_out0",
- 					     "pll_d2_out0", "clk_m" };
- static const char *mux_plld_out0_plld2_out0[] = { "pll_d_out0",
- 						  "pll_d2_out0" };
-+static const char *pwm_parents[] = { "pll_p", "pll_c", "clk_32k", "clk_m" };
- 
- static struct tegra_periph_init_data tegra_periph_clk_list[] = {
- 	TEGRA_INIT_DATA_MUX("spdif_out", spdif_out_parents, CLK_SOURCE_SPDIF_OUT, 10, TEGRA_PERIPH_ON_APB, TEGRA30_CLK_SPDIF_OUT),
-@@ -1130,6 +1131,7 @@ static struct tegra_periph_init_data tegra_periph_clk_list[] = {
- 	TEGRA_INIT_DATA_INT("3d2", mux_pllmcpa, CLK_SOURCE_3D2, 98, TEGRA_PERIPH_MANUAL_RESET, TEGRA30_CLK_GR3D2),
- 	TEGRA_INIT_DATA_INT("se", mux_pllpcm_clkm, CLK_SOURCE_SE, 127, 0, TEGRA30_CLK_SE),
- 	TEGRA_INIT_DATA_MUX8("hdmi", mux_pllpmdacd2_clkm, CLK_SOURCE_HDMI, 51, 0, TEGRA30_CLK_HDMI),
-+	TEGRA_INIT_DATA("pwm", NULL, NULL, pwm_parents, CLK_SOURCE_PWM, 28, 2, 0, 0, 8, 1, 0, 17, TEGRA_PERIPH_ON_APB, TEGRA30_CLK_PWM),
- };
- 
- static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
--- 
-1.8.4
+-Matt
