@@ -1,119 +1,73 @@
-From: Kumar Gala <galak@codeaurora.org>
-Subject: Re: [PATCH v9 1/5] ARM: add basic support for Trusted Foundations
-Date: Tue, 29 Oct 2013 03:12:05 -0500
-Message-ID: <0232E02C-5F41-4EC6-9011-86D67005433D@codeaurora.org>
-References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com> <D49A3E92-54FD-4275-82F5-DBB476086B03@codeaurora.org> <20131028215649.GB10833@quad.lixom.net> <2702565.PHk13m6fVo@flatron> <20131029002543.GF4763@kartoffel>
-Mime-Version: 1.0 (Apple Message framework v1283)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131029002543.GF4763@kartoffel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dave P Martin <Dave.Martin@arm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] HACK: clk: tegra: Do not mark PLLE as fixed
+Date: Tue, 29 Oct 2013 15:40:31 +0100
+Message-ID: <1383057631-32668-1-git-send-email-treding@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra114.c | 2 --
+ drivers/clk/tegra/clk-tegra124.c | 2 --
+ drivers/clk/tegra/clk-tegra20.c  | 2 --
+ drivers/clk/tegra/clk-tegra30.c  | 3 +--
+ 4 files changed, 1 insertion(+), 8 deletions(-)
 
-On Oct 28, 2013, at 7:25 PM, Mark Rutland wrote:
-
-> On Mon, Oct 28, 2013 at 11:31:36PM +0000, Tomasz Figa wrote:
->> On Monday 28 of October 2013 14:56:49 Olof Johansson wrote:
->>> On Mon, Oct 28, 2013 at 05:57:04AM -0500, Kumar Gala wrote:
->>>> On Oct 28, 2013, at 5:28 AM, Alexandre Courbot wrote:
->>>>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
->>>>> can be invoked using the same SMC-based API on all supported
->>>>> platforms. This patch adds initial basic support for Trusted
->>>>> Foundations using the ARM firmware API. Current features are limited
->>>>> to the ability to boot secondary processors.
->>>>> 
->>>>> Note: The API followed by Trusted Foundations does *not* follow the
->>>>> SMC
->>>>> calling conventions. It has nothing to do with PSCI neither and is
->>>>> only
->>>>> relevant to devices that use Trusted Foundations (like most
->>>>> Tegra-based
->>>>> retail devices).
->>>>> 
->>>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->>>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>>>> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->>>>> ---
->>>>> .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
->>>>> .../devicetree/bindings/vendor-prefixes.txt        |  1 +
->>>>> arch/arm/Kconfig                                   |  2 +
->>>>> arch/arm/Makefile                                  |  1 +
->>>>> arch/arm/firmware/Kconfig                          | 28 ++++++++
->>>>> arch/arm/firmware/Makefile                         |  1 +
->>>>> arch/arm/firmware/trusted_foundations.c            | 79
->>>>> ++++++++++++++++++++++ arch/arm/include/asm/trusted_foundations.h  
->>>>>      | 67 ++++++++++++++++++ 8 files changed, 199 insertions(+)
->>>>> create mode 100644
->>>>> Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundatio
->>>>> ns.txt create mode 100644 arch/arm/firmware/Kconfig
->>>>> create mode 100644 arch/arm/firmware/Makefile
->>>>> create mode 100644 arch/arm/firmware/trusted_foundations.c
->>>>> create mode 100644 arch/arm/include/asm/trusted_foundations.h
->>>>> 
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
->>>>> ions.txt
->>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
->>>>> ions.txt new file mode 100644
->>>>> index 0000000..2ec75c9
->>>>> --- /dev/null
->>>>> +++
->>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
->>>>> ions.txt @@ -0,0 +1,20 @@
->>>>> +Trusted Foundations
->>>>> +-------------------
->>>>> +
->>>>> +Boards that use the Trusted Foundations secure monitor can signal
->>>>> its
->>>>> +presence by declaring a node compatible with
->>>>> "tl,trusted-foundations"
->>>>> +under the /firmware/ node
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible : "tl,trusted-foundations"
->>>>> +- version-major : major version number of Trusted Foundations
->>>>> firmware
->>>>> +- version-minor: minor version number of Trusted Foundations
->>>>> firmware
->>>> 
->>>> vendor prefix version.
->>> 
->>> Are you saying he should use tl,version-major tl,version-minor? For
->>> bindings that are already vendor-specific we haven't (on ARM) asked for
->>> vendor prefix on properties. It doesn't mean that we should keep going
->>> down that route though, so I'm just asking for clarification for my own
->>> edification. :)
->> 
->> This is a good question. We should decide what the right thing (TM) is and 
->> write it down. I, on the contrary, was convinced that it's the way Kumar 
->> says.
-> 
-> The impression I got was that properties should be prefixed when they're
-> extremely vendor-specific and could clash with a more generic property. I'm not
-> sure that firmware will ever have a generic binding given the variation even in
-> the set of implemented functionality.
-> 
-> I would imagine that there are many ways different firmwares might be
-> versioned, and I can't see version-major or version-minor clashing with a
-> generic property we might add later. However prefixing would not be harmful, so
-> I'm not opposed to it if others want that.
-> 
-> Another option would be to support a fallback compatible list (e.g.
-> "tl,trusted-foundations-${MAJOR}-${MINOR}", "tl,trusted-foundations"), and get
-> versioning information from there. Given that could be painful to handle I
-> don't want to force it if not required.
-> 
-> Thanks,
-> Mark.
-
-I'm of the opinion that making all vendor specific properties vendor prefixed is the easiest rule of thumb and leaves no gray area to have to argue about.
-
-- k
-
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 624077d..8f583dc 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -587,8 +587,6 @@ static struct tegra_clk_pll_params pll_e_params = {
+ 	.lock_delay = 300,
+ 	.div_nmp = &plle_nmp,
+ 	.freq_table = pll_e_freq_table,
+-	.flags = TEGRA_PLL_FIXED,
+-	.fixed_rate = 100000000,
+ };
+ 
+ static struct div_nmp pllre_nmp = {
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 266e80b..2f7361f 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -464,8 +464,6 @@ static struct tegra_clk_pll_params pll_e_params = {
+ 	.lock_delay = 300,
+ 	.div_nmp = &plle_nmp,
+ 	.freq_table = pll_e_freq_table,
+-	.flags = TEGRA_PLL_FIXED,
+-	.fixed_rate = 100000000,
+ };
+ 
+ static const struct clk_div_table pll_re_div_table[] = {
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 58faac5..e4d2071 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -427,8 +427,6 @@ static struct tegra_clk_pll_params pll_e_params = {
+ 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
+ 	.lock_delay = 0,
+ 	.freq_table = pll_e_freq_table,
+-	.flags = TEGRA_PLL_FIXED,
+-	.fixed_rate = 100000000,
+ };
+ 
+ static struct tegra_devclk devclks[] __initdata = {
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 24ce357..69bf84d 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -577,8 +577,7 @@ static struct tegra_clk_pll_params pll_e_params = {
+ 	.lock_enable_bit_idx = PLLE_MISC_LOCK_ENABLE,
+ 	.lock_delay = 300,
+ 	.freq_table = pll_e_freq_table,
+-	.flags = TEGRA_PLLE_CONFIGURE | TEGRA_PLL_FIXED,
+-	.fixed_rate = 100000000,
++	.flags = TEGRA_PLLE_CONFIGURE,
+ };
+ 
+ static unsigned long tegra30_input_freq[] = {
 -- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+1.8.4
