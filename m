@@ -1,92 +1,91 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v9 1/5] ARM: add basic support for Trusted Foundations
-Date: Tue, 29 Oct 2013 00:31:36 +0100
-Message-ID: <2702565.PHk13m6fVo@flatron>
-References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com> <D49A3E92-54FD-4275-82F5-DBB476086B03@codeaurora.org> <20131028215649.GB10833@quad.lixom.net>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v9 3/5] ARM: tegra: split setting of CPU reset handler
+Date: Tue, 29 Oct 2013 00:18:59 +0000
+Message-ID: <20131029001858.GE4763@kartoffel>
+References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com>
+ <1382956118-12495-4-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131028215649.GB10833-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1382956118-12495-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 28 of October 2013 14:56:49 Olof Johansson wrote:
-> On Mon, Oct 28, 2013 at 05:57:04AM -0500, Kumar Gala wrote:
-> > On Oct 28, 2013, at 5:28 AM, Alexandre Courbot wrote:
-> > > Trusted Foundations is a TrustZone-based secure monitor for ARM that
-> > > can be invoked using the same SMC-based API on all supported
-> > > platforms. This patch adds initial basic support for Trusted
-> > > Foundations using the ARM firmware API. Current features are limited
-> > > to the ability to boot secondary processors.
-> > > 
-> > > Note: The API followed by Trusted Foundations does *not* follow the
-> > > SMC
-> > > calling conventions. It has nothing to do with PSCI neither and is
-> > > only
-> > > relevant to devices that use Trusted Foundations (like most
-> > > Tegra-based
-> > > retail devices).
-> > > 
-> > > Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > > Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > > .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
-> > > .../devicetree/bindings/vendor-prefixes.txt        |  1 +
-> > > arch/arm/Kconfig                                   |  2 +
-> > > arch/arm/Makefile                                  |  1 +
-> > > arch/arm/firmware/Kconfig                          | 28 ++++++++
-> > > arch/arm/firmware/Makefile                         |  1 +
-> > > arch/arm/firmware/trusted_foundations.c            | 79
-> > > ++++++++++++++++++++++ arch/arm/include/asm/trusted_foundations.h  
-> > >       | 67 ++++++++++++++++++ 8 files changed, 199 insertions(+)
-> > > create mode 100644
-> > > Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundatio
-> > > ns.txt create mode 100644 arch/arm/firmware/Kconfig
-> > > create mode 100644 arch/arm/firmware/Makefile
-> > > create mode 100644 arch/arm/firmware/trusted_foundations.c
-> > > create mode 100644 arch/arm/include/asm/trusted_foundations.h
-> > > 
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
-> > > ions.txt
-> > > b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
-> > > ions.txt new file mode 100644
-> > > index 0000000..2ec75c9
-> > > --- /dev/null
-> > > +++
-> > > b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
-> > > ions.txt @@ -0,0 +1,20 @@
-> > > +Trusted Foundations
-> > > +-------------------
-> > > +
-> > > +Boards that use the Trusted Foundations secure monitor can signal
-> > > its
-> > > +presence by declaring a node compatible with
-> > > "tl,trusted-foundations"
-> > > +under the /firmware/ node
-> > > +
-> > > +Required properties:
-> > > +- compatible : "tl,trusted-foundations"
-> > > +- version-major : major version number of Trusted Foundations
-> > > firmware
-> > > +- version-minor: minor version number of Trusted Foundations
-> > > firmware
-> > 
-> > vendor prefix version.
+On Mon, Oct 28, 2013 at 10:28:36AM +0000, Alexandre Courbot wrote:
+> Not all Tegra devices can set the CPU reset handler in the same way.
+> In particular, devices using a TrustZone secure monitor cannot set the
+> reset handler directly and need to do it through a firmware operation.
 > 
-> Are you saying he should use tl,version-major tl,version-minor? For
-> bindings that are already vendor-specific we haven't (on ARM) asked for
-> vendor prefix on properties. It doesn't mean that we should keep going
-> down that route though, so I'm just asking for clarification for my own
-> edification. :)
+> This patch separates the act of setting the reset handler from its
+> preparation, so the former can be implemented in a different way.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/reset.c | 27 +++++++++++++++++----------
+>  1 file changed, 17 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
+> index fd0bbf8..e282395 100644
+> --- a/arch/arm/mach-tegra/reset.c
+> +++ b/arch/arm/mach-tegra/reset.c
+> @@ -33,26 +33,18 @@
+>  
+>  static bool is_enabled;
+>  
+> -static void __init tegra_cpu_reset_handler_enable(void)
+> +static void __init tegra_cpu_reset_handler_set(const u32 reset_address)
+>  {
+> -	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+>  	void __iomem *evp_cpu_reset =
+>  		IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE + 0x100);
+>  	void __iomem *sb_ctrl = IO_ADDRESS(TEGRA_SB_BASE);
+>  	u32 reg;
+>  
+> -	BUG_ON(is_enabled);
+> -	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+> -
+> -	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+> -			tegra_cpu_reset_handler_size);
+> -
+>  	/*
+>  	 * NOTE: This must be the one and only write to the EVP CPU reset
+>  	 *       vector in the entire system.
+>  	 */
+> -	writel(TEGRA_IRAM_RESET_BASE + tegra_cpu_reset_handler_offset,
+> -			evp_cpu_reset);
+> +	writel(reset_address, evp_cpu_reset);
+>  	wmb();
+>  	reg = readl(evp_cpu_reset);
+>  
+> @@ -66,6 +58,21 @@ static void __init tegra_cpu_reset_handler_enable(void)
+>  		writel(reg, sb_ctrl);
+>  		wmb();
+>  	}
+> +}
+> +
+> +static void __init tegra_cpu_reset_handler_enable(void)
+> +{
+> +	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
+> +	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
+> +						tegra_cpu_reset_handler_offset;
+> +
+> +	BUG_ON(is_enabled);
+> +	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
+> +
+> +	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
+> +			tegra_cpu_reset_handler_size);
 
-This is a good question. We should decide what the right thing (TM) is and 
-write it down. I, on the contrary, was convinced that it's the way Kumar 
-says.
+A memcpy to iomem seems suspect. Should this be memcpy_toio, or is the __iomem
+annotation misleading?
 
-Best regards,
-Tomasz
+Thanks,
+Mark.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
