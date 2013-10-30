@@ -1,93 +1,119 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 0/3] Add power control for lm90
-Date: Wed, 30 Oct 2013 10:38:48 +0800
-Message-ID: <52707138.10903@nvidia.com>
-References: <1381137940-22608-1-git-send-email-wni@nvidia.com> <525E05E3.4040708@nvidia.com> <526092A6.4050205@nvidia.com>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v9 1/5] ARM: add basic support for Trusted Foundations
+Date: Wed, 30 Oct 2013 12:07:52 +0900
+Message-ID: <52707808.8020503@nvidia.com>
+References: <1382956118-12495-1-git-send-email-acourbot@nvidia.com> <D49A3E92-54FD-4275-82F5-DBB476086B03@codeaurora.org> <20131028215649.GB10833@quad.lixom.net> <2702565.PHk13m6fVo@flatron> <20131029002543.GF4763@kartoffel> <0232E02C-5F41-4EC6-9011-86D67005433D@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <526092A6.4050205-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <0232E02C-5F41-4EC6-9011-86D67005433D-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org" <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Jean
-Since no more comments on this series, could you take this series before
-the 3.13 merge window ?
-Because if without this series, the lm90 will be broken on the Tegra
-Dalmore board, and this problem will be get into the v3.13 release.
+On 10/29/2013 05:12 PM, Kumar Gala wrote:
+>
+> On Oct 28, 2013, at 7:25 PM, Mark Rutland wrote:
+>
+>> On Mon, Oct 28, 2013 at 11:31:36PM +0000, Tomasz Figa wrote:
+>>> On Monday 28 of October 2013 14:56:49 Olof Johansson wrote:
+>>>> On Mon, Oct 28, 2013 at 05:57:04AM -0500, Kumar Gala wrote:
+>>>>> On Oct 28, 2013, at 5:28 AM, Alexandre Courbot wrote:
+>>>>>> Trusted Foundations is a TrustZone-based secure monitor for ARM that
+>>>>>> can be invoked using the same SMC-based API on all supported
+>>>>>> platforms. This patch adds initial basic support for Trusted
+>>>>>> Foundations using the ARM firmware API. Current features are limited
+>>>>>> to the ability to boot secondary processors.
+>>>>>>
+>>>>>> Note: The API followed by Trusted Foundations does *not* follow the
+>>>>>> SMC
+>>>>>> calling conventions. It has nothing to do with PSCI neither and is
+>>>>>> only
+>>>>>> relevant to devices that use Trusted Foundations (like most
+>>>>>> Tegra-based
+>>>>>> retail devices).
+>>>>>>
+>>>>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>> ---
+>>>>>> .../arm/firmware/tl,trusted-foundations.txt        | 20 ++++++
+>>>>>> .../devicetree/bindings/vendor-prefixes.txt        |  1 +
+>>>>>> arch/arm/Kconfig                                   |  2 +
+>>>>>> arch/arm/Makefile                                  |  1 +
+>>>>>> arch/arm/firmware/Kconfig                          | 28 ++++++++
+>>>>>> arch/arm/firmware/Makefile                         |  1 +
+>>>>>> arch/arm/firmware/trusted_foundations.c            | 79
+>>>>>> ++++++++++++++++++++++ arch/arm/include/asm/trusted_foundations.h
+>>>>>>       | 67 ++++++++++++++++++ 8 files changed, 199 insertions(+)
+>>>>>> create mode 100644
+>>>>>> Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundatio
+>>>>>> ns.txt create mode 100644 arch/arm/firmware/Kconfig
+>>>>>> create mode 100644 arch/arm/firmware/Makefile
+>>>>>> create mode 100644 arch/arm/firmware/trusted_foundations.c
+>>>>>> create mode 100644 arch/arm/include/asm/trusted_foundations.h
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+>>>>>> ions.txt
+>>>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+>>>>>> ions.txt new file mode 100644
+>>>>>> index 0000000..2ec75c9
+>>>>>> --- /dev/null
+>>>>>> +++
+>>>>>> b/Documentation/devicetree/bindings/arm/firmware/tl,trusted-foundat
+>>>>>> ions.txt @@ -0,0 +1,20 @@
+>>>>>> +Trusted Foundations
+>>>>>> +-------------------
+>>>>>> +
+>>>>>> +Boards that use the Trusted Foundations secure monitor can signal
+>>>>>> its
+>>>>>> +presence by declaring a node compatible with
+>>>>>> "tl,trusted-foundations"
+>>>>>> +under the /firmware/ node
+>>>>>> +
+>>>>>> +Required properties:
+>>>>>> +- compatible : "tl,trusted-foundations"
+>>>>>> +- version-major : major version number of Trusted Foundations
+>>>>>> firmware
+>>>>>> +- version-minor: minor version number of Trusted Foundations
+>>>>>> firmware
+>>>>>
+>>>>> vendor prefix version.
+>>>>
+>>>> Are you saying he should use tl,version-major tl,version-minor? For
+>>>> bindings that are already vendor-specific we haven't (on ARM) asked for
+>>>> vendor prefix on properties. It doesn't mean that we should keep going
+>>>> down that route though, so I'm just asking for clarification for my own
+>>>> edification. :)
+>>>
+>>> This is a good question. We should decide what the right thing (TM) is and
+>>> write it down. I, on the contrary, was convinced that it's the way Kumar
+>>> says.
+>>
+>> The impression I got was that properties should be prefixed when they're
+>> extremely vendor-specific and could clash with a more generic property. I'm not
+>> sure that firmware will ever have a generic binding given the variation even in
+>> the set of implemented functionality.
+>>
+>> I would imagine that there are many ways different firmwares might be
+>> versioned, and I can't see version-major or version-minor clashing with a
+>> generic property we might add later. However prefixing would not be harmful, so
+>> I'm not opposed to it if others want that.
+>>
+>> Another option would be to support a fallback compatible list (e.g.
+>> "tl,trusted-foundations-${MAJOR}-${MINOR}", "tl,trusted-foundations"), and get
+>> versioning information from there. Given that could be painful to handle I
+>> don't want to force it if not required.
+>>
+>> Thanks,
+>> Mark.
+>
+> I'm of the opinion that making all vendor specific properties vendor prefixed is the easiest rule of thumb and leaves no gray area to have to argue about.
 
-Looking forward to your reply :)
+All good points, I will vendor-prefix these properties.
 
-Thanks.
-Wei.
-
-On 10/18/2013 09:45 AM, Wei Ni wrote:
-> On 10/16/2013 11:20 AM, Wei Ni wrote:
->> Hi, Jean
->>
->> Do you have any comments on this series, or will you take them ?
-> 
-> Hi, Jean, will you apply this series befor the 3.13 merge window?
-> 
-> Since I forgot to tell Stephen not to apply the "[PATCH 0/2] Update dts
-> file to support lm90 well" untile this series are accept, so if without
-> this change, the lm90 may be broken on the Dalmore board.
-> 
-> Thanks.
-> Wei.
-> 
->>
->> Thanks.
->> Wei.
->>
->> On 10/07/2013 05:25 PM, Wei Ni wrote:
->>> The device lm90 can be controlled by the vcc rail.
->>> Add function to power on/off the vcc.
->>> I will update all .dts files referencing this driver to
->>> match the new requirement in my next series.
->>>
->>> This series is v5, previous version patches are:
->>> [v4]: http://www.spinics.net/lists/lm-sensors/msg39583.html
->>> [v3]: http://www.spinics.net/lists/lm-sensors/msg39503.html
->>> [v2]: http://www.spinics.net/lists/arm-kernel/msg265373.html
->>> [v1]: http://www.mail-archive.com/linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg12034.html
->>>
->>> Changes from v4:
->>> 1. set vcc-supply as required property.
->>>
->>> Changes from v3:
->>> 1. change to use devm_regulator_get, as per discussion in previous patches.
->>> 2. just return errors when get error from regulator_get(), Mark's new dummy
->>> regulator can cope with errors.
->>> 3. add vendor prefix for GMT
->>> 3. list manufacturer in the binding doc.
->>>
->>> Changes from v2:
->>> 1. use devm_regulator_get_optional(), as suggested by Mark.
->>> 2. remove the lm90_power_control(), enable the regulator in the probe()
->>> directly, so the codes are more clear, as suggested by Alexander and Guenter.
->>> 3. change the binding documentation, as per Stephen suggestion.
->>> 4. couple of changes, as per previous review.
->>>
->>> Changes from v1:
->>> 1. if get regulator failed, we should continue to run probe function,
->>> not return fail.
->>> 2. call regulator_put() in error handler and remove function.
->>> 3. add LM90 DT binding document.
->>>
->>> Wei Ni (3):
->>>   hwmon: (lm90) Add power control
->>>   of: add vendor prefix for GMT
->>>   Documentation: dt: hwmon: add OF document for LM90
->>>
->>>  Documentation/devicetree/bindings/hwmon/lm90.txt   |   44 ++++++++++++++++++++
->>>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
->>>  drivers/hwmon/lm90.c                               |   19 +++++++++
->>>  3 files changed, 64 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
->>>
->>
-> 
+Thanks,
+Alex.
