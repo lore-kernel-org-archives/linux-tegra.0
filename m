@@ -1,53 +1,62 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 00/19] Unifying SMMU driver among Tegra SoCs
-Date: Wed, 30 Oct 2013 10:44:57 -0600
-Message-ID: <52713789.70308@wwwdotorg.org>
-References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
-	<20131030.183454.2089418674186724494.hdoyu@nvidia.com>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH v3 2/4] hwmon: (lm90) use macro defines for the status bit
+Date: Wed, 30 Oct 2013 09:56:44 -0700
+Message-ID: <20131030165644.GC4526@roeck-us.net>
+References: <1373615287-18502-1-git-send-email-wni@nvidia.com>
+ <1373615287-18502-3-git-send-email-wni@nvidia.com>
+ <20130715185727.4ebde8c4@endymion.delvare>
+ <20130715173322.GA20484@roeck-us.net>
+ <20131030163326.4e7e0cfc@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131030.183454.2089418674186724494.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20131030163326.4e7e0cfc-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/30/2013 10:34 AM, Hiroshi Doyu wrote:
-> Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 18 Oct 2013 12:26:41 +0200:
+On Wed, Oct 30, 2013 at 04:33:26PM +0100, Jean Delvare wrote:
+> Hi Guenter,
 > 
->> Hi,
->>
->> This series provides:
->>
->> (1) Unified SMMU driver among Tegra SoCs
->> (2) Multiple Address Space support(MASID) in IOMMU(SMMMU)
->> (3) Tegra IOMMU'able devices, most of platform devices are IOMMU'able.
->>
->> There's some discussion[1] about device population order, which could
->> solve the following patches.
->>
->>   patch 1: [HACK] of: dev_node has struct device pointer
->>   patch 2: [HACK] ARM: tegra: Populate AHB/IOMMU earlier than others
->>   patch 3: [HACK] amba: Move AHB to core_initcall
->>   patch 4: [HACK] iommu/tegra: smmu: Move IOMMU to core_initcall
-> 
-> Joerg, Stephen,
-> 
-> Would it be possible to merge this series without the above ordering patches?
+> On Mon, 15 Jul 2013 10:33:22 -0700, Guenter Roeck wrote:
+> > On Mon, Jul 15, 2013 at 06:57:27PM +0200, Jean Delvare wrote:
+> > > Unrelated to this patch, but Guenter, I am worried about the MAX6696
+> > > handling here. I realize that I am the one who accepted your code, but
+> > > now it looks wrong. Specifically:
+> > > * We check for (status2 & 0xfe) i.e. 7 alarm bits, but the code below
+> > >   only reports 2 alarms bits. So if any of the 5 other alarm bits in
+> > >   STATUS2 are, we may return true (chip is tripped) but not print the
+> > >   cause.
 
-What are the dependencies between the patches? Surely if those patches
-were at the start of the series, the rest relies on them. Otherwise, why
-was this all once series?
+Agreed, that doesn't make much sense, especially since we already check
+for R1OT1 and display a message if it is set. I'll add checks for the other
+bits.
 
-Anyway, I haven't had a chance to look at this yet, and it was sent too
-late for 3.13. Hopefully we can work this out and apply it early for 3.14.
+> > > * At least bits 1 and 2 of STATUS 2 fit totally fine in the driver as
+> > >   it currently exists, so I can't think of any reason for not handling
+> > >   them. Why are we not? Ideally we should print a message for every
+> > >   alarm bit so that we never return "true" without printing a message.
+> > >   Even though OT2 limits aren't handled by the driver...
+
+They actually are, through MAX6659_REG_R_REMOTE_EMERG and LM90_HAVE_EMERGENCY.
+
+> > > * If you think this piece of code shouldn't deal with OT/THERM limits
+> > >   because they do not trigger an SMBus alarm, this can be discussed,
+
+Yes, that was the logic. Presumably OT1 and OT2 are separate interrupts
+(if connected to interrupt pins) and would have to be handled separately.
+
+> > >   but all chips should be handled the same in this respect then.
+
+Agreed.
+
+> > > * Why in the first place is max6696's data->alert_alarms set to 0x187c
+> > >   and not 0x1c7c? Including 1OPEN but not 2OPEN makes no sense.
+
+Oversight. 2OPEN does trigger ALERT, so the bit should be set.
+
+I'll send a patch in a minute.
+
+Guenter
