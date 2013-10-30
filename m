@@ -1,26 +1,119 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: use pll_ref as the pll_e parent
-Date: Wed, 30 Oct 2013 16:50:03 -0600
-Message-ID: <52718D1B.6030106@wwwdotorg.org>
-References: <1383093707-10312-1-git-send-email-pdeschrijver@nvidia.com> <527128B5.2020101@wwwdotorg.org> <20131030221833.GQ22111@tbergstrom-lnx.Nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/3] clk: tegra: Properly setup PWM clock on Tegra30
+Date: Wed, 30 Oct 2013 23:54:44 +0100
+Message-ID: <20131030225443.GB6939@mithrandir>
+References: <1383061872-27899-1-git-send-email-treding@nvidia.com>
+ <1383061872-27899-3-git-send-email-treding@nvidia.com>
+ <52701062.30405@wwwdotorg.org>
+ <20131030210023.GB7686@mithrandir>
+ <52717C4F.6000202@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131030221833.GQ22111-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52717C4F.6000202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/30/2013 04:18 PM, Peter De Schrijver wrote:
-> On Wed, Oct 30, 2013 at 04:41:41PM +0100, Stephen Warren wrote:
->> On 10/29/2013 06:41 PM, Peter De Schrijver wrote:
->>> Use pll_ref instead of pll_re_vco as the pll_e parent on Tegra114 and
->>> Tegra124. Also add a pll_ref table entry for pll_e for Tegra114.
->>
->> Why? What benefit does this give, or what bug does this fix?
-> 
-> Otherrwise Tegra114 will crash on boot.
 
-Sigh. For what reason?
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 30, 2013 at 03:38:23PM -0600, Stephen Warren wrote:
+> On 10/30/2013 03:00 PM, Thierry Reding wrote:
+> > On Tue, Oct 29, 2013 at 01:45:38PM -0600, Stephen Warren wrote:
+> >> On 10/29/2013 09:51 AM, Thierry Reding wrote:
+> >>> The clock for the PWM controller is slightly different from
+> >>> other peripheral clocks on Tegra30. The clock source mux field
+> >>> start at bit position 28 rather than 30.
+>=20
+> >>> diff --git a/drivers/clk/tegra/clk-tegra30.c
+> >>> b/drivers/clk/tegra/clk-tegra30.c
+> >>=20
+> >>> @@ -836,7 +837,6 @@ static struct tegra_clk
+> >>> tegra30_clks[tegra_clk_max] __initdata =3D { [tegra_clk_extern1]
+> >>> =3D { .dt_id =3D TEGRA30_CLK_EXTERN1, .present =3D true },=20
+> >>> [tegra_clk_extern2] =3D { .dt_id =3D TEGRA30_CLK_EXTERN2, .present
+> >>> =3D true }, [tegra_clk_extern3] =3D { .dt_id =3D TEGRA30_CLK_EXTERN3,
+> >>> .present =3D true }, -	[tegra_clk_pwm] =3D { .dt_id =3D
+> >>> TEGRA30_CLK_PWM, .present =3D true },
+> >>=20
+> >> I think you still need an entry in this table; isn't it used by
+> >> the DT->internal clock ID translation function?
+> >=20
+> > As far as I can tell, this is used by the generic code to
+> > determine which of the generic clocks to register. If
+> > TEGRA30_CLK_PWM is kept within this list, tegra_periph_clk_init()
+> > will register the clock a second time.
+> >=20
+> >> Either way, it seems like this patch might want to add a=20
+> >> tegra_clk_pwm_tegra30 so that the common C files can still
+> >> implement this clock, just with different parameters?
+> >=20
+> > That's pretty much what this patch does, isn't it? It adds a
+> > custom entry for the PWM clock to the Tegra30-specific
+> > tegra_periph_clk_list and keeps the common one from being
+> > registered by dropping the entry from tegra30_clks.
+>=20
+> I was hoping for the new clock that gets added to be added to the
+> common file that defines the common clocks rather than to be added to
+> the Tegra30-specific files. However, I suppose if it really is a
+> Tegra30-specific clock, then keeping it isolated to the
+> Tegra30-specific file might make sense.
+>=20
+> That said, I wonder if we can't keep the PWM clock definition in the
+> common file, and just make it a bit parameterized? Perhaps that
+> defeats the purpose of a common definition though.
+>=20
+> > The same is already done on Tegra20, where the PWM clock is
+> > similarly weird.
+>=20
+> OK, perhaps that's reasonable precedent for this then.
+>=20
+> > On Tegra114 and Tegra124 the clock is still weird, but it can be=20
+> > tweaked into behaving more commonly by lying about the actual
+> > position and size of the mux field.
+>=20
+> That doesn't sound good... What if someone actually wants to use the
+> correct position/size (e.g. use mux options that presumably can't be
+> selected now we've lied)? We really shouldn't lie about things.
+
+Perhaps I've misinterpreted the code. At least comparing to the register
+definitions the field should still be 3 bits wide, but the code clamps
+it to the upper 2, which makes it compatible with the regular peripheral
+clocks. The mux options that are left out are apparently very uncommonly
+used (PLLC2 and PLLC3).
+
+I suppose it's always possible that the register definition is wrong or
+there was perhaps another good reason to do it this way? Maybe Peter
+knows.
+
+Thierry
+
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJScY4zAAoJEN0jrNd/PrOhHxkP/05lx50alXo+axCT7Lhi+x67
+8UUxrG7xj1RpaUmB23X88VM43oLr6rzS+A6Isf6HGj2kwf7nFb2J+JLV9DALlplQ
+mdkNq7MDmeanTJeSKt8cEWHxzS6iDSxbhQq+sghFZWWAdhUZ1pvWQh8J+V0j9aPh
+1nET0jzmUYPxMKLdHk9b/nFB1amtRNafngKjoarSaKjqdM32aEMAawY1fn+SaUgG
+kroGtYivNmk1l+phLnLu9R3KvXx7O0ueFovm+R8dOaJeUbyCRRJ4mo6HeHJ+y8wg
+ItC6Hc/b9o7rHVlPIcKcueEC5jqzfDwS1U+AzHnIR6K4UkSHw6RDGhVsB7FrU1Wo
+ZnZ2nD9wnBx67UvqoqbCCdHGkjQb5VModtQ4UWYtyj/9PCHISA0PaH6Jhy569LRu
+Rje7R030nV9qkiYzIFuQxRyVhzP8W0QIPBZCeSITbwcMXAm8HhZPSVb/dOhr86ZR
++OhghVg+kE7OfdsGxmxKDfIG39vb2SaMnLgvU8/p5zGvwXz8oKJBcxPhYMP3csq0
+/hQB1r3qo+mq3mfEK0FFcgfdcuJbeTFCFzzG1PIT9/h56/PV1qzt2ykpTnikCD0j
+yJdl7KDSLCzW+/89V+KF5Y8Xgl4hnpnCbf7+qqnEgIutFxRXjZt5hmMxwF6/T6gv
+iaRA1IC3WZ17+KQj2BbQ
+=qpTj
+-----END PGP SIGNATURE-----
+
+--pvezYHf7grwyp3Bc--
