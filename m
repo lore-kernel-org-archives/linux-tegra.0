@@ -1,34 +1,26 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 15/19] ARM: tegra: Create a DT header defining SWGROUP
- ID
-Date: Wed, 30 Oct 2013 16:48:38 -0600
-Message-ID: <52718CC6.5@wwwdotorg.org>
-References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com> <1382092020-13170-16-git-send-email-hdoyu@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: use pll_ref as the pll_e parent
+Date: Wed, 30 Oct 2013 16:50:03 -0600
+Message-ID: <52718D1B.6030106@wwwdotorg.org>
+References: <1383093707-10312-1-git-send-email-pdeschrijver@nvidia.com> <527128B5.2020101@wwwdotorg.org> <20131030221833.GQ22111@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382092020-13170-16-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131030221833.GQ22111-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/18/2013 04:26 AM, Hiroshi Doyu wrote:
-> Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
-> binding. "swgroups" is a group of H/W clients which Tegra SoCs
-> support. This unique ID can be used to calculate MC_SMMU_<swgroup
-> name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
-> register bit. This will allow the same header to be used by both
-> device tree files, and drivers implementing this binding, which
-> guarantees that the two stay in sync. This also makes device trees
-> more readable by using names instead of magic numbers.
+On 10/30/2013 04:18 PM, Peter De Schrijver wrote:
+> On Wed, Oct 30, 2013 at 04:41:41PM +0100, Stephen Warren wrote:
+>> On 10/29/2013 06:41 PM, Peter De Schrijver wrote:
+>>> Use pll_ref instead of pll_re_vco as the pll_e parent on Tegra114 and
+>>> Tegra124. Also add a pll_ref table entry for pll_e for Tegra114.
+>>
+>> Why? What benefit does this give, or what bug does this fix?
+> 
+> Otherrwise Tegra114 will crash on boot.
 
-> diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
-
-> +#define TEGRA_SWGROUP_PPCS2	32	/* 0xab0 */
-> +
-> +#define TEGRA_SWGROUP_BIT(x)	(1ULL << TEGRA_SWGROUP_##x)
-
-Isn't the DT match all 32-bit, such that the ULL suffix does nothing,
-and TEGRA_SWGROUP_BIT(PPCS2) == 1<<32 == fail?
+Sigh. For what reason?
