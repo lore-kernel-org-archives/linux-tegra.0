@@ -1,153 +1,54 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Define status bits
-Date: Wed, 30 Oct 2013 16:41:13 +0100
-Message-ID: <20131030164113.1396964e@endymion.delvare>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
-	<1375856306-14415-2-git-send-email-wni@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] clk: tegra: use pll_ref as the pll_e parent
+Date: Wed, 30 Oct 2013 09:41:41 -0600
+Message-ID: <527128B5.2020101@wwwdotorg.org>
+References: <1383093707-10312-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375856306-14415-2-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1383093707-10312-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mark Zhang <markz@nvidia.com>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
+On 10/29/2013 06:41 PM, Peter De Schrijver wrote:
+> Use pll_ref instead of pll_re_vco as the pll_e parent on Tegra114 and
+> Tegra124. Also add a pll_ref table entry for pll_e for Tegra114.
 
-On Wed, 7 Aug 2013 14:18:24 +0800, Wei Ni wrote:
-> Add bit defines for the status register. And add a function
-> lm90_is_tripped() which will read status register and return
-> tripped or not, then lm90_alert can call it directly, and in the
-> future the IRQ thread also can use it.
-> 
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/hwmon/lm90.c |   75 +++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 50 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> index cdff742..1da2eff 100644
-> --- a/drivers/hwmon/lm90.c
-> +++ b/drivers/hwmon/lm90.c
-> @@ -179,6 +179,18 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
->  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
->  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
+Why? What benefit does this give, or what bug does this fix?
+
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+
+>  	val_aux = pll_readl(pll_params->aux_reg, pll);
 >  
-> +/* LM90 status */
-> +#define LM90_STATUS_LTHRM	(1 << 0) /* local THERM limit tripped */
-> +#define LM90_STATUS_RTHRM	(1 << 1) /* remote THERM limit tripped */
-> +#define LM90_STATUS_OPEN	(1 << 2) /* remote is an open circuit */
-> +#define LM90_STATUS_RLOW	(1 << 3) /* remote low temp limit tripped */
-> +#define LM90_STATUS_RHIGH	(1 << 4) /* remote high temp limit tripped */
-> +#define LM90_STATUS_LLOW	(1 << 5) /* local low temp limit tripped */
-> +#define LM90_STATUS_LHIGH	(1 << 6) /* local high temp limit tripped */
-> +
-> +#define MAX6696_STATUS2_RLOW	(1 << 3) /* remote2 low temp limit tripped */
-> +#define MAX6696_STATUS2_RHIGH	(1 << 4) /* remote2 high temp limit tripped */
-> +
->  /*
->   * Driver data (common to all clients)
->   */
-> @@ -1391,6 +1403,36 @@ static void lm90_init_client(struct i2c_client *client)
->  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
->  }
->  
-> +static bool lm90_is_tripped(struct i2c_client *client)
-> +{
-> +	struct lm90_data *data = i2c_get_clientdata(client);
-> +	u8 status, status2 = 0;
-> +
-> +	lm90_read_reg(client, LM90_REG_R_STATUS, &status);
-> +
-> +	if (data->kind == max6696)
-> +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &status2);
-> +
-> +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
-> +		return false;
-> +
-> +	if (status & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 1);
-> +	if (status & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 2);
-> +	if (status & LM90_STATUS_OPEN)
-> +		dev_warn(&client->dev,
-> +			 "temp%d diode open, please check!\n", 2);
-> +
-> +	if (status2 & (MAX6696_STATUS2_RLOW | MAX6696_STATUS2_RHIGH))
-> +		dev_warn(&client->dev,
-> +			 "temp%d out of range, please check!\n", 3);
-> +
-> +	return true;
-> +}
-> +
->  static int lm90_probe(struct i2c_client *client,
->  		      const struct i2c_device_id *id)
->  {
-> @@ -1489,36 +1531,17 @@ static int lm90_remove(struct i2c_client *client)
->  
->  static void lm90_alert(struct i2c_client *client, unsigned int flag)
->  {
-> -	struct lm90_data *data = i2c_get_clientdata(client);
-> -	u8 config, alarms, alarms2 = 0;
-> -
-> -	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-> -
-> -	if (data->kind == max6696)
-> -		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms2);
-> -
-> -	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
-> -		dev_info(&client->dev, "Everything OK\n");
-> -	} else {
-> -		if (alarms & 0x61)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 1);
-> -		if (alarms & 0x1a)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 2);
-> -		if (alarms & 0x04)
-> -			dev_warn(&client->dev,
-> -				 "temp%d diode open, please check!\n", 2);
-> -
-> -		if (alarms2 & 0x18)
-> -			dev_warn(&client->dev,
-> -				 "temp%d out of range, please check!\n", 3);
-> -
-> +	if (lm90_is_tripped(client)) {
+>  	if (val & PLL_BASE_ENABLE) {
+> -		if (!(val_aux & PLLE_AUX_PLLRE_SEL))
+> +		if ((val_aux & PLLE_AUX_PLLRE_SEL) || (val_aux & val_aux))
 
-You are reading LM90_REG_R_STATUS here...
+Isn't "|| (val_aux & val_aux)" always true, at least if the value is
+non-zero? Either this should be simply "|| val_aux", or one of those two
+"val_aux" is the wrong thing.
 
->  		/*
->  		 * Disable ALERT# output, because these chips don't implement
->  		 * SMBus alert correctly; they should only hold the alert line
->  		 * low briefly.
->  		 */
-> +		struct lm90_data *data = i2c_get_clientdata(client);
-> +		u8 config, alarms;
-> +
-> +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-
-... and here again. I already complained about this in my previous
-review of this patch, and you were supposed to address it, but you did
-not. As a result I am still not happy with this patch and I can't apply
-it, sorry.
-
-> +
->  		if ((data->flags & LM90_HAVE_BROKEN_ALERT)
->  		 && (alarms & data->alert_alarms)) {
->  			dev_dbg(&client->dev, "Disabling ALERT#\n");
-> @@ -1526,6 +1549,8 @@ static void lm90_alert(struct i2c_client *client, unsigned int flag)
->  			i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
->  						  config | 0x80);
->  		}
-> +	} else {
-> +		dev_info(&client->dev, "Everything OK\n");
+>  			WARN(1, "pll_e enabled with unsupported parent %s\n",
+> -			  (val & PLLE_AUX_PLLP_SEL) ? "pllp_out0" : "pll_ref");
+> +			  (val_aux & PLLE_AUX_PLLP_SEL) ? "pllp_out0" :
+> +					"pll_re_vco");
+>  	} else {
+> -		val_aux |= PLLE_AUX_PLLRE_SEL;
+> +		val_aux &= ~(PLLE_AUX_PLLRE_SEL | PLLE_AUX_PLLP_SEL);
+>  		pll_writel(val, pll_params->aux_reg, pll);
 >  	}
->  }
->  
 
--- 
-Jean Delvare
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+
+> @@ -560,6 +560,7 @@ static struct tegra_clk_pll_freq_table pll_e_freq_table[] = {
+>  	/* PLLE special case: use cpcon field to store cml divider value */
+>  	{336000000, 100000000, 100, 21, 16, 11},
+>  	{312000000, 100000000, 200, 26, 24, 13},
+> +	{12000000, 100000000, 200,  1,  24, 13},
+
+Presumably this is because pll_ref is the crystal, which runs at 12MHz.
+What if it doesn't; Tegra supports a bunch of other crystal rates. Don't
+we need entries for all the other potential crystal rates too?
