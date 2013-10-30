@@ -1,163 +1,55 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Define status bits
-Date: Wed, 30 Oct 2013 10:03:08 -0700
-Message-ID: <20131030170308.GD4526@roeck-us.net>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
- <1375856306-14415-2-git-send-email-wni@nvidia.com>
- <20131030164113.1396964e@endymion.delvare>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 29/51] DMA-API: ata: pata_octeon_cf: convert to use
+	dma_coerce_mask_and_coherent()
+Date: Wed, 30 Oct 2013 20:08:54 +0100
+Message-ID: <CAMuHMdWqAL6MN5VJrpAPC1fq3QtRWZ3UUMG3+6W5vEKSEm5N9g@mail.gmail.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+	<E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131030164113.1396964e@endymion.delvare>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Wei Ni <wni@nvidia.com>, lm-sensors@lm-sensors.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Linux MMC List <linux-mmc@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux-nvme@lists.infradead.org, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, scsi <linux-scsi@vger.kernel.org>, e1000-devel@lists.sourceforge.net, Linux-Next <linux-next@vger.kernel.org>, b43-dev@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>, devicetree@vger.kernel.org, DRI Development <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.o>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 30, 2013 at 04:41:13PM +0100, Jean Delvare wrote:
-> Hi Wei,
-> 
-> On Wed, 7 Aug 2013 14:18:24 +0800, Wei Ni wrote:
-> > Add bit defines for the status register. And add a function
-> > lm90_is_tripped() which will read status register and return
-> > tripped or not, then lm90_alert can call it directly, and in the
-> > future the IRQ thread also can use it.
-> > 
-> > Signed-off-by: Wei Ni <wni@nvidia.com>
-> > ---
-> >  drivers/hwmon/lm90.c |   75 +++++++++++++++++++++++++++++++++-----------------
-> >  1 file changed, 50 insertions(+), 25 deletions(-)
-> > 
-> > diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
-> > index cdff742..1da2eff 100644
-> > --- a/drivers/hwmon/lm90.c
-> > +++ b/drivers/hwmon/lm90.c
-> > @@ -179,6 +179,18 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
-> >  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
-> >  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
-> >  
-> > +/* LM90 status */
-> > +#define LM90_STATUS_LTHRM	(1 << 0) /* local THERM limit tripped */
-> > +#define LM90_STATUS_RTHRM	(1 << 1) /* remote THERM limit tripped */
-> > +#define LM90_STATUS_OPEN	(1 << 2) /* remote is an open circuit */
-> > +#define LM90_STATUS_RLOW	(1 << 3) /* remote low temp limit tripped */
-> > +#define LM90_STATUS_RHIGH	(1 << 4) /* remote high temp limit tripped */
-> > +#define LM90_STATUS_LLOW	(1 << 5) /* local low temp limit tripped */
-> > +#define LM90_STATUS_LHIGH	(1 << 6) /* local high temp limit tripped */
-> > +
-> > +#define MAX6696_STATUS2_RLOW	(1 << 3) /* remote2 low temp limit tripped */
-> > +#define MAX6696_STATUS2_RHIGH	(1 << 4) /* remote2 high temp limit tripped */
-> > +
-> >  /*
-> >   * Driver data (common to all clients)
-> >   */
-> > @@ -1391,6 +1403,36 @@ static void lm90_init_client(struct i2c_client *client)
-> >  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
-> >  }
-> >  
-> > +static bool lm90_is_tripped(struct i2c_client *client)
-> > +{
-> > +	struct lm90_data *data = i2c_get_clientdata(client);
-> > +	u8 status, status2 = 0;
-> > +
-> > +	lm90_read_reg(client, LM90_REG_R_STATUS, &status);
-> > +
-> > +	if (data->kind == max6696)
-> > +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &status2);
-> > +
-> > +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
-> > +		return false;
-> > +
-> > +	if (status & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM))
-> > +		dev_warn(&client->dev,
-> > +			 "temp%d out of range, please check!\n", 1);
-> > +	if (status & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM))
-> > +		dev_warn(&client->dev,
-> > +			 "temp%d out of range, please check!\n", 2);
-> > +	if (status & LM90_STATUS_OPEN)
-> > +		dev_warn(&client->dev,
-> > +			 "temp%d diode open, please check!\n", 2);
-> > +
-> > +	if (status2 & (MAX6696_STATUS2_RLOW | MAX6696_STATUS2_RHIGH))
-> > +		dev_warn(&client->dev,
-> > +			 "temp%d out of range, please check!\n", 3);
-> > +
+On Thu, Sep 19, 2013 at 11:54 PM, Russell King
+<rmk+kernel@arm.linux.org.uk> wrote:
+> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
+> index c51bbb9..6231d43 100644
+> --- a/drivers/ata/pata_octeon_cf.c
+> +++ b/drivers/ata/pata_octeon_cf.c
+> @@ -1014,8 +1014,9 @@ static int octeon_cf_probe(struct platform_device *pdev)
+>         }
+>         cf_port->c0 = ap->ioaddr.ctl_addr;
+>
+> -       pdev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
+> -       pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+> +       rv = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> +       if (rv)
+> +               return ret;
 
-I am also a bit concerned about the misleading function name. 
-I would expect something like "is_tripped" to return true or false,
-not to dump log messages to the console.
+return rv;
 
-Guenter
+http://kisskb.ellerman.id.au/kisskb/buildresult/9959184/
 
-> > +	return true;
-> > +}
-> > +
-> >  static int lm90_probe(struct i2c_client *client,
-> >  		      const struct i2c_device_id *id)
-> >  {
-> > @@ -1489,36 +1531,17 @@ static int lm90_remove(struct i2c_client *client)
-> >  
-> >  static void lm90_alert(struct i2c_client *client, unsigned int flag)
-> >  {
-> > -	struct lm90_data *data = i2c_get_clientdata(client);
-> > -	u8 config, alarms, alarms2 = 0;
-> > -
-> > -	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-> > -
-> > -	if (data->kind == max6696)
-> > -		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms2);
-> > -
-> > -	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
-> > -		dev_info(&client->dev, "Everything OK\n");
-> > -	} else {
-> > -		if (alarms & 0x61)
-> > -			dev_warn(&client->dev,
-> > -				 "temp%d out of range, please check!\n", 1);
-> > -		if (alarms & 0x1a)
-> > -			dev_warn(&client->dev,
-> > -				 "temp%d out of range, please check!\n", 2);
-> > -		if (alarms & 0x04)
-> > -			dev_warn(&client->dev,
-> > -				 "temp%d diode open, please check!\n", 2);
-> > -
-> > -		if (alarms2 & 0x18)
-> > -			dev_warn(&client->dev,
-> > -				 "temp%d out of range, please check!\n", 3);
-> > -
-> > +	if (lm90_is_tripped(client)) {
-> 
-> You are reading LM90_REG_R_STATUS here...
-> 
-> >  		/*
-> >  		 * Disable ALERT# output, because these chips don't implement
-> >  		 * SMBus alert correctly; they should only hold the alert line
-> >  		 * low briefly.
-> >  		 */
-> > +		struct lm90_data *data = i2c_get_clientdata(client);
-> > +		u8 config, alarms;
-> > +
-> > +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
-> 
-> ... and here again. I already complained about this in my previous
-> review of this patch, and you were supposed to address it, but you did
-> not. As a result I am still not happy with this patch and I can't apply
-> it, sorry.
-> 
-> > +
-> >  		if ((data->flags & LM90_HAVE_BROKEN_ALERT)
-> >  		 && (alarms & data->alert_alarms)) {
-> >  			dev_dbg(&client->dev, "Disabling ALERT#\n");
-> > @@ -1526,6 +1549,8 @@ static void lm90_alert(struct i2c_client *client, unsigned int flag)
-> >  			i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
-> >  						  config | 0x80);
-> >  		}
-> > +	} else {
-> > +		dev_info(&client->dev, "Everything OK\n");
-> >  	}
-> >  }
-> >  
-> 
-> -- 
-> Jean Delvare
-> 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
