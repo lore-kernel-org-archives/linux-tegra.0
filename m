@@ -1,55 +1,36 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v4 3/3] hwmon: (lm90) use enums for the indexes of temp8
- and temp11
-Date: Wed, 30 Oct 2013 17:21:42 +0100
-Message-ID: <20131030172142.49234b28@endymion.delvare>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
-	<1375856306-14415-4-git-send-email-wni@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv3 00/19] Unifying SMMU driver among Tegra SoCs
+Date: Wed, 30 Oct 2013 17:34:54 +0100
+Message-ID: <20131030.183454.2089418674186724494.hdoyu@nvidia.com>
+References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1375856306-14415-4-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1382092020-13170-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Wei,
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Fri, 18 Oct 2013 12:26:41 +0200:
 
-On Wed, 7 Aug 2013 14:18:26 +0800, Wei Ni wrote:
-> Using enums for the indexes and nrs of temp8 and temp11.
-> This make the code much more readable.
+> Hi,
 > 
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/hwmon/lm90.c |  154 +++++++++++++++++++++++++++++---------------------
->  1 file changed, 90 insertions(+), 64 deletions(-)
-> (...)
+> This series provides:
+> 
+> (1) Unified SMMU driver among Tegra SoCs
+> (2) Multiple Address Space support(MASID) in IOMMU(SMMMU)
+> (3) Tegra IOMMU'able devices, most of platform devices are IOMMU'able.
+> 
+> There's some discussion[1] about device population order, which could
+> solve the following patches.
+> 
+>   patch 1: [HACK] of: dev_node has struct device pointer
+>   patch 2: [HACK] ARM: tegra: Populate AHB/IOMMU earlier than others
+>   patch 3: [HACK] amba: Move AHB to core_initcall
+>   patch 4: [HACK] iommu/tegra: smmu: Move IOMMU to core_initcall
 
-Looks much better except for one minor detail:
+Joerg, Stephen,
 
-> +/*
-> + * TEMP11 register index
-> + */
-> +enum lm90_temp11_reg_index {
-> +	REMOTE_TEMP = 0,
-> +	REMOTE_LOW,
-> +	REMOTE_HIGH,
-> +	REMOTE_OFFSET,	/* except max6646, max6657/58/59,
-> +			 *  and max6695/96
-> +			 */
-
-This comment fits on a single line now.
-
-> +	LOCAL_TEMP,
-> +	REMOTE2_TEMP,	/* max6695/96 only */
-> +	REMOTE2_LOW,	/* max6695/96 only */
-> +	REMOTE2_HIGH,	/* max6695/96 only */
-> +	TEMP11_REG_NUM
-> +};
-
-Other than that, it's OK, and I think I'll apply it after all.
-
--- 
-Jean Delvare
+Would it be possible to merge this series without the above ordering patches?
