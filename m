@@ -1,17 +1,14 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCHv3 15/19] ARM: tegra: Create a DT header defining SWGROUP ID
-Date: Thu, 31 Oct 2013 10:46:06 -0700
-Message-ID: <20131031174606.GG3037@kartoffel>
-References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
-	<1382092020-13170-16-git-send-email-hdoyu@nvidia.com>
-	<52718CC6.5@wwwdotorg.org>
-	<20131031.101942.530833331841957251.hdoyu@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
+Date: Thu, 31 Oct 2013 11:53:22 -0600
+Message-ID: <52729912.9050800@wwwdotorg.org>
+References: <52718122.9000206@wwwdotorg.org><20131031.101232.80781047726461143.hdoyu@nvidia.com><527286CC.9080404@wwwdotorg.org>
+	<20131031.184603.979300613649357798.hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131031.101942.530833331841957251.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131031.184603.979300613649357798.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -22,36 +19,59 @@ List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
 Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 31, 2013 at 08:19:42AM +0000, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 30 Oct 2013 23:48:38 +0100:
+On 10/31/2013 10:46 AM, Hiroshi Doyu wrote:
+> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 31 Oct 2013 17:35:24 +0100:
 > 
-> > On 10/18/2013 04:26 AM, Hiroshi Doyu wrote:
-> > > Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
-> > > binding. "swgroups" is a group of H/W clients which Tegra SoCs
-> > > support. This unique ID can be used to calculate MC_SMMU_<swgroup
-> > > name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
-> > > register bit. This will allow the same header to be used by both
-> > > device tree files, and drivers implementing this binding, which
-> > > guarantees that the two stay in sync. This also makes device trees
-> > > more readable by using names instead of magic numbers.
-> > 
-> > > diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
-> > 
-> > > +#define TEGRA_SWGROUP_PPCS2	32	/* 0xab0 */
-> > > +
-> > > +#define TEGRA_SWGROUP_BIT(x)	(1ULL << TEGRA_SWGROUP_##x)
-> > 
-> > Isn't the DT match all 32-bit, such that the ULL suffix does nothing,
+> ...
+>>>> ... and for the driver to explicitly parse that property, and wait
+>>>> until the driver for iommu_phandle is ready. Exactly the same as any
+>>>> other resource/service dependency.
+>>>>
+>>>> That will solve all the problems.
+>>>>
+>>>> The only downside is that every driver needs to contain code to parse
+>>>> that property. However, I think that's just one function call; the
+>>>> actual implementation of that function can be unified somewhere inside
+>>>> core code in drivers/iommu/.
+>>>
+>>> Yes, but only missing part now is that, we could do this with
+>>> "bus_notifier", but the current bus_notifier doesn't have the feature
+>>> to return error(-EPROBE_DEFER). This could be modified so that
+>>> bus_notifier could return (-EPROBE_DEFER) to postpone
+>>> probing. Alternatively this could be done in some core probe code as
+>>> well as Thierry pointed out.
+>>>
+>>> [1] In the reply of "[PATCHv3 14/19] iommu/tegra: smmu: Get "nvidia,memory-clients" from DT"
+>>
+>> I think this should be done explicitly in drivers. It's much
+>> simpler,
 > 
-> For the future Tegra SoC, the number of HWA grows a bit more, and it's
-> supposed that "64" would be enough.
+> Yes, we need to insert some IOMMU specific code in driver?
+> 
+>> and doesn't encode any knowledge of driver-specific bindings into some
+>> common bus notifier code.
+> 
+> I think that we cannot do that in drivers. We want to use drivers as
+> they are without any modifications indicating its dependency on
+> IOMMU because most of drivers are existing ones which nvidia doesn't
+> implement. We want to set up any IOMMU related thingy implicitly,
+> hided from driver. That's why we need to do this in bus_notifier or
+> driver core code.
 
-Does DTC accept 64-bit values as-is? I recall DTC shouting at me in the past,
-and having to split values across two u32 cells (i.e. <0xffffffff 0xffffffff>
-rather than <0xffffffffffffffff>).
+We're talking about memory-mapped on-SoC devices here, that generally
+only exist inside Tegra SoCs.
 
-Thanks,
-Mark.
+Even ignoring that (i.e. expanding the argument to arbitrary modules),
+having drivers that perform bus-master transactions call a function
+of_iommu_attach() or similar, which does nothing if the device isn't
+behind an IOMMU but otherwise does whatever is required, seems like it
+isn't much of an imposition.
+
+If this turns out to be something that lots of devices benefit from, we
+could do the same thing that pinctrl does for "hogs", and make the
+function call in the driver core. But note that's still part of the
+probing flow (just implemented in the driver core) rather than bus
+notifier based, hence keeps the same simplicity.
