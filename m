@@ -1,175 +1,66 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 1/3] hwmon: (lm90) Define status bits
-Date: Thu, 31 Oct 2013 11:09:01 +0800
-Message-ID: <5271C9CD.3020202@nvidia.com>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>	<1375856306-14415-2-git-send-email-wni@nvidia.com> <20131030164113.1396964e@endymion.delvare> <5271C4C4.2040308@nvidia.com>
+Subject: Re: [PATCH v5 0/3] Add power control for lm90
+Date: Thu, 31 Oct 2013 11:30:42 +0800
+Message-ID: <5271CEE2.4000202@nvidia.com>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+	<525E05E3.4040708@nvidia.com>	<526092A6.4050205@nvidia.com>
+	<52707138.10903@nvidia.com> <20131030155542.7a09b861@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5271C4C4.2040308-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131030155542.7a09b861-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/31/2013 10:47 AM, Wei Ni wrote:
-> On 10/30/2013 11:41 PM, Jean Delvare wrote:
->> Hi Wei,
->>
->> On Wed, 7 Aug 2013 14:18:24 +0800, Wei Ni wrote:
->>> Add bit defines for the status register. And add a function
->>> lm90_is_tripped() which will read status register and return
->>> tripped or not, then lm90_alert can call it directly, and in the
->>> future the IRQ thread also can use it.
->>>
->>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/hwmon/lm90.c |   75 +++++++++++++++++++++++++++++++++-----------------
->>>  1 file changed, 50 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->>> index cdff742..1da2eff 100644
->>> --- a/drivers/hwmon/lm90.c
->>> +++ b/drivers/hwmon/lm90.c
->>> @@ -179,6 +179,18 @@ enum chips { lm90, adm1032, lm99, lm86, max6657, max6659, adt7461, max6680,
->>>  #define LM90_HAVE_TEMP3		(1 << 6) /* 3rd temperature sensor	*/
->>>  #define LM90_HAVE_BROKEN_ALERT	(1 << 7) /* Broken alert		*/
->>>  
->>> +/* LM90 status */
->>> +#define LM90_STATUS_LTHRM	(1 << 0) /* local THERM limit tripped */
->>> +#define LM90_STATUS_RTHRM	(1 << 1) /* remote THERM limit tripped */
->>> +#define LM90_STATUS_OPEN	(1 << 2) /* remote is an open circuit */
->>> +#define LM90_STATUS_RLOW	(1 << 3) /* remote low temp limit tripped */
->>> +#define LM90_STATUS_RHIGH	(1 << 4) /* remote high temp limit tripped */
->>> +#define LM90_STATUS_LLOW	(1 << 5) /* local low temp limit tripped */
->>> +#define LM90_STATUS_LHIGH	(1 << 6) /* local high temp limit tripped */
->>> +
->>> +#define MAX6696_STATUS2_RLOW	(1 << 3) /* remote2 low temp limit tripped */
->>> +#define MAX6696_STATUS2_RHIGH	(1 << 4) /* remote2 high temp limit tripped */
->>> +
->>>  /*
->>>   * Driver data (common to all clients)
->>>   */
->>> @@ -1391,6 +1403,36 @@ static void lm90_init_client(struct i2c_client *client)
->>>  		i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1, config);
->>>  }
->>>  
->>> +static bool lm90_is_tripped(struct i2c_client *client)
->>> +{
->>> +	struct lm90_data *data = i2c_get_clientdata(client);
->>> +	u8 status, status2 = 0;
->>> +
->>> +	lm90_read_reg(client, LM90_REG_R_STATUS, &status);
->>> +
->>> +	if (data->kind == max6696)
->>> +		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &status2);
->>> +
->>> +	if ((status & 0x7f) == 0 && (status2 & 0xfe) == 0)
->>> +		return false;
->>> +
->>> +	if (status & (LM90_STATUS_LLOW | LM90_STATUS_LHIGH | LM90_STATUS_LTHRM))
->>> +		dev_warn(&client->dev,
->>> +			 "temp%d out of range, please check!\n", 1);
->>> +	if (status & (LM90_STATUS_RLOW | LM90_STATUS_RHIGH | LM90_STATUS_RTHRM))
->>> +		dev_warn(&client->dev,
->>> +			 "temp%d out of range, please check!\n", 2);
->>> +	if (status & LM90_STATUS_OPEN)
->>> +		dev_warn(&client->dev,
->>> +			 "temp%d diode open, please check!\n", 2);
->>> +
->>> +	if (status2 & (MAX6696_STATUS2_RLOW | MAX6696_STATUS2_RHIGH))
->>> +		dev_warn(&client->dev,
->>> +			 "temp%d out of range, please check!\n", 3);
->>> +
->>> +	return true;
->>> +}
->>> +
->>>  static int lm90_probe(struct i2c_client *client,
->>>  		      const struct i2c_device_id *id)
->>>  {
->>> @@ -1489,36 +1531,17 @@ static int lm90_remove(struct i2c_client *client)
->>>  
->>>  static void lm90_alert(struct i2c_client *client, unsigned int flag)
->>>  {
->>> -	struct lm90_data *data = i2c_get_clientdata(client);
->>> -	u8 config, alarms, alarms2 = 0;
->>> -
->>> -	lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
->>> -
->>> -	if (data->kind == max6696)
->>> -		lm90_read_reg(client, MAX6696_REG_R_STATUS2, &alarms2);
->>> -
->>> -	if ((alarms & 0x7f) == 0 && (alarms2 & 0xfe) == 0) {
->>> -		dev_info(&client->dev, "Everything OK\n");
->>> -	} else {
->>> -		if (alarms & 0x61)
->>> -			dev_warn(&client->dev,
->>> -				 "temp%d out of range, please check!\n", 1);
->>> -		if (alarms & 0x1a)
->>> -			dev_warn(&client->dev,
->>> -				 "temp%d out of range, please check!\n", 2);
->>> -		if (alarms & 0x04)
->>> -			dev_warn(&client->dev,
->>> -				 "temp%d diode open, please check!\n", 2);
->>> -
->>> -		if (alarms2 & 0x18)
->>> -			dev_warn(&client->dev,
->>> -				 "temp%d out of range, please check!\n", 3);
->>> -
->>> +	if (lm90_is_tripped(client)) {
->>
->> You are reading LM90_REG_R_STATUS here...
->>
->>>  		/*
->>>  		 * Disable ALERT# output, because these chips don't implement
->>>  		 * SMBus alert correctly; they should only hold the alert line
->>>  		 * low briefly.
->>>  		 */
->>> +		struct lm90_data *data = i2c_get_clientdata(client);
->>> +		u8 config, alarms;
->>> +
->>> +		lm90_read_reg(client, LM90_REG_R_STATUS, &alarms);
->>
->> ... and here again. I already complained about this in my previous
->> review of this patch, and you were supposed to address it, but you did
->> not. As a result I am still not happy with this patch and I can't apply
->> it, sorry.
+On 10/30/2013 10:55 PM, Jean Delvare wrote:
+> Hi Wei,
 > 
-> It's so sorry, I made a mistake, I sent a old patch for this. I will
-> sent the right one right now.
-> Sorry again.
+> I'm sorry again that I always take so much time reviewing your patches.
+> I always have higher priority tasks at work and at the end of the day
+> reviewing the lm90 patches never makes it to the top of my to-do
+> list :( I'll try to review a few lm90 patches today...
 
-Hi, Jean
-
-I resend this patch:
-[PATCH RESEND v4 1/3] hwmon: (lm90) Define status bits
-Please review it.
+I really appreciated you reviewed my patch so carefully.
+Since this series will block the lm90 on tegra board, so we wish to add
+this before v3.13 merge window.
+Looking forward your comments on this series :)
 
 Thanks.
 Wei.
 
 > 
-> Wei.
+> Jean
 > 
+> On Wed, 30 Oct 2013 10:38:48 +0800, Wei Ni wrote:
+>> Hi, Jean
+>> Since no more comments on this series, could you take this series before
+>> the 3.13 merge window ?
+>> Because if without this series, the lm90 will be broken on the Tegra
+>> Dalmore board, and this problem will be get into the v3.13 release.
 >>
->>> +
->>>  		if ((data->flags & LM90_HAVE_BROKEN_ALERT)
->>>  		 && (alarms & data->alert_alarms)) {
->>>  			dev_dbg(&client->dev, "Disabling ALERT#\n");
->>> @@ -1526,6 +1549,8 @@ static void lm90_alert(struct i2c_client *client, unsigned int flag)
->>>  			i2c_smbus_write_byte_data(client, LM90_REG_W_CONFIG1,
->>>  						  config | 0x80);
->>>  		}
->>> +	} else {
->>> +		dev_info(&client->dev, "Everything OK\n");
->>>  	}
->>>  }
->>>  
+>> Looking forward to your reply :)
 >>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>> Thanks.
+>> Wei.
+>>
+>> On 10/18/2013 09:45 AM, Wei Ni wrote:
+>>> On 10/16/2013 11:20 AM, Wei Ni wrote:
+>>>> Hi, Jean
+>>>>
+>>>> Do you have any comments on this series, or will you take them ?
+>>>
+>>> Hi, Jean, will you apply this series befor the 3.13 merge window?
+>>>
+>>> Since I forgot to tell Stephen not to apply the "[PATCH 0/2] Update dts
+>>> file to support lm90 well" untile this series are accept, so if without
+>>> this change, the lm90 may be broken on the Dalmore board.
+>>>
+>>> Thanks.
+>>> Wei.
+>>>
+>>>>
+>>>> Thanks.
+>>>> Wei.
