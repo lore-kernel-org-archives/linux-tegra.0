@@ -1,14 +1,16 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
-Date: Thu, 31 Oct 2013 11:53:22 -0600
-Message-ID: <52729912.9050800@wwwdotorg.org>
-References: <52718122.9000206@wwwdotorg.org><20131031.101232.80781047726461143.hdoyu@nvidia.com><527286CC.9080404@wwwdotorg.org>
-	<20131031.184603.979300613649357798.hdoyu@nvidia.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCHv3 10/19] iommu/tegra: smmu: Get "nvidia,swgroups" from DT
+Date: Thu, 31 Oct 2013 18:00:29 +0000
+Message-ID: <20131031180029.GB31082@mudshark.cambridge.arm.com>
+References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
+	<1382092020-13170-11-git-send-email-hdoyu@nvidia.com>
+	<5271893C.6000507@wwwdotorg.org> <20131031173132.GD3037@kartoffel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131031.184603.979300613649357798.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20131031173132.GD3037@kartoffel>
 List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
@@ -18,60 +20,57 @@ List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
 	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
 Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/31/2013 10:46 AM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 31 Oct 2013 17:35:24 +0100:
+On Thu, Oct 31, 2013 at 05:31:33PM +0000, Mark Rutland wrote:
+> On Wed, Oct 30, 2013 at 10:33:32PM +0000, Stephen Warren wrote:
+> > I'm afraid I still don't quite understand what a swgroup is.
+> > 
+> > IIUC, the HW works like this based on comments in a previous patch:
+> > 
+> > Each bus-master attached to the MMU passes a "memory client ID" along
+> > with the transaction. Some devices can generate transactions with
+> > different "memory client IDs". There is a mapping inside the SMMU from
+> > "memory client ID" to "address space ID". (I don't know what form that
+> > mapping takes; can you point out where it's set up?). Each "address
+> > space ID" has its own set of page tables. Is "swgroup" simply another
+> > name for "memory client ID"? If so, it'd be good to use just one term
+> > consistently.
 > 
-> ...
->>>> ... and for the driver to explicitly parse that property, and wait
->>>> until the driver for iommu_phandle is ready. Exactly the same as any
->>>> other resource/service dependency.
->>>>
->>>> That will solve all the problems.
->>>>
->>>> The only downside is that every driver needs to contain code to parse
->>>> that property. However, I think that's just one function call; the
->>>> actual implementation of that function can be unified somewhere inside
->>>> core code in drivers/iommu/.
->>>
->>> Yes, but only missing part now is that, we could do this with
->>> "bus_notifier", but the current bus_notifier doesn't have the feature
->>> to return error(-EPROBE_DEFER). This could be modified so that
->>> bus_notifier could return (-EPROBE_DEFER) to postpone
->>> probing. Alternatively this could be done in some core probe code as
->>> well as Thierry pointed out.
->>>
->>> [1] In the reply of "[PATCHv3 14/19] iommu/tegra: smmu: Get "nvidia,memory-clients" from DT"
->>
->> I think this should be done explicitly in drivers. It's much
->> simpler,
-> 
-> Yes, we need to insert some IOMMU specific code in driver?
-> 
->> and doesn't encode any knowledge of driver-specific bindings into some
->> common bus notifier code.
-> 
-> I think that we cannot do that in drivers. We want to use drivers as
-> they are without any modifications indicating its dependency on
-> IOMMU because most of drivers are existing ones which nvidia doesn't
-> implement. We want to set up any IOMMU related thingy implicitly,
-> hided from driver. That's why we need to do this in bus_notifier or
-> driver core code.
+> The ARM SMMU refers to these as "stream IDs", as that's the architected name
+> that appears in all the hardware documentation. If "swgroup" is the term used
+> in the hardware documentation I think it makes sense to stick with it, as long
+> as there's a description in the binding document that points out what an
+> "swgroup" is. If there's a common term that both binding documents could refer
+> to to define what stream-id/swgroup are, that would be nice.
 
-We're talking about memory-mapped on-SoC devices here, that generally
-only exist inside Tegra SoCs.
+Sounds like:
 
-Even ignoring that (i.e. expanding the argument to arbitrary modules),
-having drivers that perform bus-master transactions call a function
-of_iommu_attach() or similar, which does nothing if the device isn't
-behind an IOMMU but otherwise does whatever is required, seems like it
-isn't much of an imposition.
+  stream id == memory client id   (part of the binding)
+  context id == address space id  (internal to the driver)
 
-If this turns out to be something that lots of devices benefit from, we
-could do the same thing that pinctrl does for "hogs", and make the
-function call in the driver core. But note that's still part of the
-probing flow (just implemented in the driver core) rather than bus
-notifier based, hence keeps the same simplicity.
+> There are a few other differences in approach with the current ARM SMMU binding:
+> Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> 
+> We should probably begin to look for commonality such that the next iommu
+> device that gets a binding is closer to a generic iommu class binding.
+> 
+> > 
+> > Assuming "swgroup" is "memory client ID", why can't the driver just
+> > create a list/... of known swgroups at runtime, based on the swgroup
+> > values that each device uses, which would presumably be either
+> > hard-coded in the client device's driver, or represented in the DT smmu
+> > property's "iommu specifier" value.
+> 
+> Assuming that the swgroup values of IP block instances are static, that sounds
+> like the ARM SMMU binding approach. Are the IDs static, or can they be assigned
+> at runtime?
+
+The only valid case I can think of for dynamic IDs is for hotpluggable
+devices sitting being a form of host controller (e.g. PCIe). In that case,
+the host controller should handle the ID assignment, which must remain
+static for the lifetime of a device.
+
+Will
