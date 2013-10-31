@@ -1,41 +1,62 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCHv3 14/19] iommu/tegra: smmu: Get "nvidia,memory-clients"
-	from DT
-Date: Thu, 31 Oct 2013 18:02:12 +0000
-Message-ID: <20131031180212.GC31082@mudshark.cambridge.arm.com>
-References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
-	<1382092020-13170-15-git-send-email-hdoyu@nvidia.com>
-	<52718BB4.4090007@wwwdotorg.org>
-	<20131031.101808.1830527808656695540.hdoyu@nvidia.com>
-	<20131031174028.GF3037@kartoffel>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for Tegra clock rework and Tegra124 clock support
+Date: Thu, 31 Oct 2013 11:52:02 -0700
+Message-ID: <20131031185202.11662.1489@quantum>
+References: <20131021135638.GA10943@tbergstrom-lnx.Nvidia.com>
+ <20131022101904.7554.73999@quantum>
+ <20131023084631.GG22111@tbergstrom-lnx.Nvidia.com>
+ <20131030004752.GH22111@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131031174028.GF3037@kartoffel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131030004752.GH22111@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 31, 2013 at 05:40:29PM +0000, Mark Rutland wrote:
-> For the ARM SMMU binding, each device has a #stream-id-cells property
-> describing how many IDs it has, and then the SMMU node has a phandle+args
-> linkage to each of the devices attached to it, describing their stream IDs.
-> While this does have some limitations (a device can't be plugged into multiple
-> SMMUs with a different number of IDs), it seems generally sane.
+Quoting Peter De Schrijver (2013-10-29 17:47:52)
+> Mike,
+> 
+> This is an update to the previous pull request which fixes some late bugs.
+> 
+> Thanks,
+> 
+> Peter.
+> 
+> The following changes since commit 6c984fc8c6314596c302bbecf79dc59d9f98f348:
+> 
+>   clk: tegra124: add suspend/resume function for tegra_cpu_car_ops (2013-10-21 16:39:24 +0300)
+> 
+> are available in the git repository at:
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git tegra-clk-tegra124-0
 
-If a device masters through two separate SMMUs, I think you need to describe
-it as two devices. Even if you could describe the thing in DT, the Linux
-driver/iommu model will quickly fall over.
+Pulled.
 
-Will
+Thanks,
+Mike
+
+> 
+> Mikko Perttunen (1):
+>       clk: tegra114: Initialize clocks needed for HDMI
+> 
+> Peter De Schrijver (1):
+>       clk: tegra: use pll_ref as the pll_e parent
+> 
+> Thierry Reding (2):
+>       clk: tegra: Initialize secondary gr3d clock on Tegra30
+>       clk: tegra: Properly setup PWM clock on Tegra30
+> 
+>  drivers/clk/tegra/clk-pll.c      |    7 ++++---
+>  drivers/clk/tegra/clk-tegra114.c |    5 ++++-
+>  drivers/clk/tegra/clk-tegra30.c  |    5 ++++-
+>  3 files changed, 12 insertions(+), 5 deletions(-)
