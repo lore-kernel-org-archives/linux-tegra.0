@@ -1,36 +1,60 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] clk: tegra: use pll_ref as the pll_e parent
-Date: Thu, 31 Oct 2013 10:41:23 -0600
-Message-ID: <52728833.2030709@wwwdotorg.org>
-References: <1383093707-10312-1-git-send-email-pdeschrijver@nvidia.com> <527128B5.2020101@wwwdotorg.org> <20131030221833.GQ22111@tbergstrom-lnx.Nvidia.com> <52718D1B.6030106@wwwdotorg.org> <20131031154142.GX22111@tbergstrom-lnx.Nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
+Date: Thu, 31 Oct 2013 17:46:03 +0100
+Message-ID: <20131031.184603.979300613649357798.hdoyu@nvidia.com>
+References: <52718122.9000206@wwwdotorg.org><20131031.101232.80781047726461143.hdoyu@nvidia.com><527286CC.9080404@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131031154142.GX22111@tbergstrom-lnx.Nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Mark Zhang <markz@nvidia.com>, Thierry Reding <treding@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <527286CC.9080404-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/31/2013 09:41 AM, Peter De Schrijver wrote:
-> On Wed, Oct 30, 2013 at 11:50:03PM +0100, Stephen Warren wrote:
->> On 10/30/2013 04:18 PM, Peter De Schrijver wrote:
->>> On Wed, Oct 30, 2013 at 04:41:41PM +0100, Stephen Warren wrote:
->>>> On 10/29/2013 06:41 PM, Peter De Schrijver wrote:
->>>>> Use pll_ref instead of pll_re_vco as the pll_e parent on Tegra114 and
->>>>> Tegra124. Also add a pll_ref table entry for pll_e for Tegra114.
->>>>
->>>> Why? What benefit does this give, or what bug does this fix?
->>>
->>> Otherrwise Tegra114 will crash on boot.
->>
->> Sigh. For what reason?
-> 
-> pll_re_vco having an unsupported rate of 300Mhz. My guess is that it depends
-> on the bootloader if you will see this. I'm fairly sure I verified this on
-> my dalmore in helsinki and it worked, but it failed on Paul's test setup.
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Thu, 31 Oct 2013 17:35:24 +0100:
 
-OK, so this is primarily a SW issue, because pll_e's freq_table simply
-doesn't have an entry for input frequency 300MHz. Can you make sure the
-commit description explains that?
+...
+> >> ... and for the driver to explicitly parse that property, and wait
+> >> until the driver for iommu_phandle is ready. Exactly the same as any
+> >> other resource/service dependency.
+> >>
+> >> That will solve all the problems.
+> >>
+> >> The only downside is that every driver needs to contain code to parse
+> >> that property. However, I think that's just one function call; the
+> >> actual implementation of that function can be unified somewhere inside
+> >> core code in drivers/iommu/.
+> > 
+> > Yes, but only missing part now is that, we could do this with
+> > "bus_notifier", but the current bus_notifier doesn't have the feature
+> > to return error(-EPROBE_DEFER). This could be modified so that
+> > bus_notifier could return (-EPROBE_DEFER) to postpone
+> > probing. Alternatively this could be done in some core probe code as
+> > well as Thierry pointed out.
+> > 
+> > [1] In the reply of "[PATCHv3 14/19] iommu/tegra: smmu: Get "nvidia,memory-clients" from DT"
+> 
+> I think this should be done explicitly in drivers. It's much
+> simpler,
+
+Yes, we need to insert some IOMMU specific code in driver?
+
+> and doesn't encode any knowledge of driver-specific bindings into some
+> common bus notifier code.
+
+I think that we cannot do that in drivers. We want to use drivers as
+they are without any modifications indicating its dependency on
+IOMMU because most of drivers are existing ones which nvidia doesn't
+implement. We want to set up any IOMMU related thingy implicitly,
+hided from driver. That's why we need to do this in bus_notifier or
+driver core code.
