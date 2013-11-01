@@ -1,84 +1,34 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCHv3 14/19] iommu/tegra: smmu: Get "nvidia,memory-clients"
-	from DT
-Date: Fri, 1 Nov 2013 16:34:04 +0000
-Message-ID: <20131101163404.GC2442@mudshark.cambridge.arm.com>
-References: <1382092020-13170-1-git-send-email-hdoyu@nvidia.com>
-	<1382092020-13170-15-git-send-email-hdoyu@nvidia.com>
-	<52718BB4.4090007@wwwdotorg.org>
-	<20131031.101808.1830527808656695540.hdoyu@nvidia.com>
-	<20131031174028.GF3037@kartoffel> <5272AC82.6080205@wwwdotorg.org>
-	<5272AEA5.7020200@wwwdotorg.org>
-	<20131031193941.GB31516@mudshark.cambridge.arm.com>
-	<5273D214.90106@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] clk: tegra: Properly setup PWM clock on Tegra30
+Date: Fri, 1 Nov 2013 18:47:09 +0200
+Message-ID: <20131101164709.GA22111@tbergstrom-lnx.Nvidia.com>
+References: <1383061872-27899-1-git-send-email-treding@nvidia.com>
+ <1383061872-27899-3-git-send-email-treding@nvidia.com>
+ <52701062.30405@wwwdotorg.org> <20131030210023.GB7686@mithrandir>
+ <52717C4F.6000202@wwwdotorg.org> <20131030225443.GB6939@mithrandir>
+ <20131031153923.GW22111@tbergstrom-lnx.Nvidia.com>
+ <20131101093840.GF27864@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5273D214.90106-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20131101093840.GF27864-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 01, 2013 at 04:08:52PM +0000, Stephen Warren wrote:
-> On 10/31/2013 01:39 PM, Will Deacon wrote:
-> > On Thu, Oct 31, 2013 at 07:25:25PM +0000, Stephen Warren wrote:
-> >> On 10/31/2013 01:16 PM, Stephen Warren wrote:
-> >>> Hmm. That's interesting. I see that the ARM SMMU has a list of the
-> >>> clients it affects, whereas this Tegra series puts information into each
-> >>> client device about the SMMU(s) that affect it. Is it better to flip the
-> >>> Tegra binding around to match the style of the ARM SMMU?
-> >>
-> >> One question here: How do you ensure that the SMMU driver probe()s
-> >> before probe() runs for devices affected by the SMMU?
 > > 
-> > I think we get away with this by virtue of nobody actually creating IOMMU
-> > mappings from within drivers,
+> > And also not validated. Also by policy PLLC2 and PLLC3 are used for scaling
+> > IP blocks. So I don't think it makes sense to use them for PWM?
 > 
-> Where are the mapping set up? What prevents that action from happening
-> before the IOMMU is set up and the various devices have their DMA ops
-> hooked through the IOMMU? It's fairly clear how deferred probe of client
-> devices could achieve that, but I'm quite unsure how some what other
-> mechanism would ensure that.
-
-This is the part where I start to struggle. If you look at a mainline
-kernel, arm_iommu_create_mapping isn't really used, so it's difficult to
-know at which point the IOMMU needs to be initialised across different ARM
-SoCs.
-
-For other architectures, it looks like the IOMMU initialisation hangs
-directly off arch code (which in turn are driven from initcalls), but that's
-generally possible because either the IOMMU is architected, or it's strongly
-tied to PCI initialisation.
-
-What are the requirements for Tegra? If the IOMMU isn't initialised, does it
-act as a passthrough?
-
-> > so the ordering is already handled. However, I
-> > also have a patch queued to move the SMMU initialisation to a
-> > subsys_initcall. I'm not particularly fond of that, but it seems to be the
-> > done thing (even for other architectures).
+> But the policy is already defined in the clock initialization tables, so
+> we could still setup the clock to exhibit all the possible HW choices
+> and simply not use those excluded "by policy".
 > 
-> We've been trying very hard not to rely on initcall ordering to solve
-> issues like this, simply it doesn't scale to complex use-cases, and
-> different HW/drivers/... might have conflicting requirements that aren't
-> possible to solve by tweaking initcall levels. It seems much more
-> preferable to use something that's guaranteed to work and adapt to any
-> situation, such as deferred probe.
 
-Indeed. As I said, I'm not a huge fan of initcalls either, but that's the
-way things are at the moment. If deferred probe can be used to make that
-less fragile, then that sounds like a good thing to do, perhaps across other
-architectures too.
+That's only the 'default'. Nothing prevents a driver from doing a clk_set_parent().
 
-Will
+Cheers,
+
+Peter.
