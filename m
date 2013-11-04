@@ -1,36 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
-Date: Fri, 01 Nov 2013 15:45:19 -0600
-Message-ID: <527420EF.1070102@wwwdotorg.org>
-References: <20131031.184603.979300613649357798.hdoyu@nvidia.com><52729912.9050800@wwwdotorg.org><20131101094644.GG27864@ulmo.nvidia.com>
-	<20131101.115919.351108054879013006.hdoyu@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
+Date: Mon, 4 Nov 2013 13:59:33 +0800
+Message-ID: <527737C5.5080901@nvidia.com>
+References: <1383203126-3243-1-git-send-email-wni@nvidia.com>
+ <20131031162029.GF2493@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131101.115919.351108054879013006.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131031162029.GF2493-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/01/2013 03:59 AM, Hiroshi Doyu wrote:
-...
-> One idea is that, rather than inserting a hook(function) per
-> subsystems in driver core, if we invent a new /special section/ which
-> collects all hooks in sequence like initcalls, the subsystem just
-> would declare a hook function for that special section. All hooks in
-> that section can be called from driver core iterately. Then we
-> wouldn't touch driver core code at all, once we insert a func to call
-> hooks repeatedly. Looks simpler than tweaking bus notifier.
+On 11/01/2013 12:20 AM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Thu, Oct 31, 2013 at 03:05:26PM +0800, Wei Ni wrote:
+>> Set full constraints during machine initialisation, so that the
+>> regulator_get() can get the dummy regulator if the regulator is
+>> physically present and enabled.
+>> Discussed this in the link:
+>> https://lkml.org/lkml/2013/10/8/40
+> 
+> This should be done for all DT systems - I'd expect this to be done in
+> generic DT init code rather than for a specific board.
 
-That sounds like a lot of effort to avoid adding a simple function call
-to the core's probe path.
+Hi, Mark
+I didn't find the generic DT init code, do you mean to add it in the
+customize_machine() in arch/arm/kernel/setup.c ? But it isn't only for
+DT systems.
+How about to add it in the regulator subsystem? I mean we can add
+following codes in the regulator_init() routine in driver/regulator/core.c:
++#ifdef CONFIG_OF
++regulator_has_full_constraints();
++#endif
+
+Thanks.
+Wei.
+
+> 
+> * Unknown Key
+> * 0x7EA229BD
+> 
