@@ -1,62 +1,80 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
-Date: Mon, 4 Nov 2013 08:18:28 -0800
-Message-ID: <20131104161828.GK2493@sirena.org.uk>
-References: <1383203126-3243-1-git-send-email-wni@nvidia.com>
- <20131031162029.GF2493@sirena.org.uk>
- <527737C5.5080901@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PULL] drm/tegra: Changes for v3.13-rc1
+Date: Mon, 4 Nov 2013 17:21:21 +0100
+Message-ID: <20131104162121.GJ4167@phenom.ffwll.local>
+References: <20131031091727.GA16198@ulmo.nvidia.com>
+ <20131104102253.GE4167@phenom.ffwll.local>
+ <20131104121145.GB18722@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JUntuW47Nl+13QpX"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <527737C5.5080901-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131104121145.GB18722-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Nov 04, 2013 at 01:11:46PM +0100, Thierry Reding wrote:
+> On Mon, Nov 04, 2013 at 11:22:53AM +0100, Daniel Vetter wrote:
+> > On Thu, Oct 31, 2013 at 10:17:28AM +0100, Thierry Reding wrote:
+> [...]
+> > >       drm/tegra: Move subdevice infrastructure to host1x
+> > 
+> > I've just shot at this patch on the m-l, but I'd be rather unhappy if the
+> > new drm_bus madness this add gets into drm-next. Would be a definite step
+> > backwards imo for the drm core. Also more work for me to fix it all up ...
+> 
+> In all fairness, the patches were posted for review a while back (4
+> weeks ago) and I had no idea any such rework was in place, much less
+> that anybody else considered drm_bus to be a bad idea.
+> 
+> Perhaps we could maintain a list of TODO items somewhere with notes as
+> to what's currently being worked on. Maybe such a list already exists
+> and I'm just not aware of it?
 
---JUntuW47Nl+13QpX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+drm_bus goes back to the shadow attach horror stories of legacy drm
+drivers with ums. It was done for platform drivers due to some out-of-tree
+ARM drivers that luckily have never been merged. It's just part of the
+lore ;-)
 
-On Mon, Nov 04, 2013 at 01:59:33PM +0800, Wei Ni wrote:
+> It'd be unfortunate if this series can't be merged for 3.13. The patch
+> you object to is early in the list and everything after it depends on
+> it, so if that doesn't make it in, then none of the rest will make it
+> either.
+> 
+> I've also explained elsewhere that the only thing drm_bus related that
+> this adds is a new define for DRIVER_BUS_HOST1X and an implementation of
+> .set_busid. The former should be trivial to remove, while the latter is
+> the only one that you've kept in the cleanup tree you've posted.
 
-> I didn't find the generic DT init code, do you mean to add it in the
-> customize_machine() in arch/arm/kernel/setup.c ? But it isn't only for
-> DT systems.
+It'll die soon, together with drm_bus. I've just grown a bit frustrated
+thinking that I'm too late at preventing old cruft from spreading ;-)
 
-We can do it as part of parsing the DT or deciding to parse the DT.
+> Also I'd like to reassert my offer to help. While working on this I've
+> actually came across various oddities myself, like how the bus type was
+> completely unused, and had added them to my TODO list of things to look
+> into later.
 
-> How about to add it in the regulator subsystem? I mean we can add
-> following codes in the regulator_init() routine in driver/regulator/core.c:
-> +#ifdef CONFIG_OF
-> +regulator_has_full_constraints();
-> +#endif
+After a bit of cooling of I've looked at the situation. See my reply to
+the patch itself, it should be easily fixed by just throwing a pretty tiny
+fixup patch on top. Then the host1x drm_bus is just a copy of the drm_bus,
+and so really easy to deal with.
 
-No, that's not good - we can have DT enabled but boot on a non-DT board.
+> I really appreciate the work you do, but I think we could use some more
+> coordination to avoid conflicts such as these and perhaps share the load
+> of cleanup work. Is there anything in particular that I could do to help
+> improve the situation?
 
---JUntuW47Nl+13QpX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+For better coordination I wonder whether we should have a drm-integration
+tree with all the driver wip stuff (lesser requirements than linux-next,
+so not just stuff ready for the next merge window) plus big cleanup
+branches like this and big features like the atomic modeset stuff rob is
+working on. But atm I'm still rather reluctant to try it out for fear of
+getting stuck with it ;-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSd8jRAAoJELSic+t+oim9MK0P/2gdtHKMEL8INXlqGcQs8TOM
-dvXCKYeXxVdtw+kjEMBmMr5FbbvaRVlLHGYWW7Gimb2URxkZncnmMmDwGLBYVlNS
-31Z8njUOYY/SSLVfied01R5joRwLSpHzzL4Ng2k+b3gMUAYPeyQyoXKjaI0d4pJH
-zIbnR4a1sHTbaGlszl+4VWNAEjSUDleCjUdpcnG/5jAcFPSXM0kxdYndO7/UOdXN
-NmppNXx5anc78gvZSRLAzxzaFMQPsbBpIkASmYZivhnj1OhwqJ0MTSWMRX3Jph6+
-WfBcVwH4BO8JuOgN/V+3BeAKhIiMUbEQZMi3zXYt54MgNFy74aaczapVLJO8bABp
-YxsEhiyabkH/J/1bxaWFQhdTzBTxAGehCzcLV4Dd0D/TDooy7KZ0Q/B2hDDc9ozG
-EMFUf0OxcuM05w+fnc+5/qej6NROkweGpPnFD7zQnNkI7qg7cYeApLFwwpeBM38O
-dUlJduwAHWfWwGv4IzLGhVeVmrjvBY2ZnCWkL5HNo2EQoS9285o/EajQDR8zmISm
-oKTJFeqU4b0hcshLaEVwNBb+l6To4UX2R5vn0d+/ZpkJjfBOaQiHp6MaYMngPs35
-8DdVjFCsM0o1cX22wp/AZ7Zgi3UodTCzStWV/maevRD2hubAycvOfaopAd60eKdw
-bm0DGgsXtCtDVh/wfjb7
-=K4HX
------END PGP SIGNATURE-----
-
---JUntuW47Nl+13QpX--
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
