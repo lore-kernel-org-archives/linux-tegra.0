@@ -1,97 +1,40 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 2/3] hwmon: (lm90) add support to handle IRQ
-Date: Mon, 4 Nov 2013 18:05:59 +0800
-Message-ID: <52777187.5010202@nvidia.com>
-References: <1375856306-14415-1-git-send-email-wni@nvidia.com>
-	<1375856306-14415-3-git-send-email-wni@nvidia.com>
- <20131104103434.5a085e27@endymion.delvare>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 13/27] drm/tegra: Move subdevice infrastructure to
+ host1x
+Date: Mon, 4 Nov 2013 11:20:55 +0100
+Message-ID: <20131104102054.GD4167@phenom.ffwll.local>
+References: <1381134884-5816-1-git-send-email-treding@nvidia.com>
+ <1381134884-5816-14-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131104103434.5a085e27-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1381134884-5816-14-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/04/2013 05:34 PM, Jean Delvare wrote:
-> Hi Wei,
-> 
-> I'm hitting a problem with that patch now...
-> 
-> On Wed, 7 Aug 2013 14:18:25 +0800, Wei Ni wrote:
->> When the temperature exceed the limit range value,
->> the driver can handle the interrupt.
->>
->> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/hwmon/lm90.c |   23 +++++++++++++++++++++++
->>  1 file changed, 23 insertions(+)
->>
->> diff --git a/drivers/hwmon/lm90.c b/drivers/hwmon/lm90.c
->> index 1da2eff..2e68773 100644
->> --- a/drivers/hwmon/lm90.c
->> +++ b/drivers/hwmon/lm90.c
->> @@ -89,6 +89,7 @@
->>  #include <linux/err.h>
->>  #include <linux/mutex.h>
->>  #include <linux/sysfs.h>
->> +#include <linux/interrupt.h>
->>  
->>  /*
->>   * Addresses to scan
->> @@ -1433,6 +1434,16 @@ static bool lm90_is_tripped(struct i2c_client *client)
->>  	return true;
->>  }
->>  
->> +static irqreturn_t lm90_irq_thread(int irq, void *dev_id)
->> +{
->> +	struct i2c_client *client = dev_id;
->> +
->> +	if (lm90_is_tripped(client))
-> 
-> Did you really send the latest version of the patch? lm90_is_tripped()
-> takes two arguments now, but here you only pass one.
-> 
-> If you have a more up-to-date version of this patch, please send it
-> over quickly.
+On Mon, Oct 07, 2013 at 10:34:30AM +0200, Thierry Reding wrote:
+> +static struct drm_bus drm_host1x_bus = {
+> +	.bus_type = DRIVER_BUS_HOST1X,
+> +	.set_busid = drm_host1x_set_busid,
+> +};
 
-Hi, Jean
-It's so sorry. As you know I resend the "[PATCH RESEND v4 1/3] hwmon:
-(lm90) Define status bits" last week, but didn't rebase this patch. I
-will rebase it and send it right now.
+Imo this needs to die asap, i.e. before it lands in drm-next. I've just
+spent a bit of time trying to rid ourselves of this midlayer
+brain-damange, and now new stuff crops up. See
 
-Wei.
-Thanks.
+http://cgit.freedesktop.org/~danvet/drm/log/?h=drm-init-cleanup
 
-> 
->> +		return IRQ_HANDLED;
->> +	else
->> +		return IRQ_NONE;
->> +}
->> +
->>  static int lm90_probe(struct i2c_client *client,
->>  		      const struct i2c_device_id *id)
->>  {
->> @@ -1509,6 +1520,18 @@ static int lm90_probe(struct i2c_client *client,
->>  		goto exit_remove_files;
->>  	}
->>  
->> +	if (client->irq) {
->> +		dev_dbg(dev, "IRQ: %d\n", client->irq);
->> +		err = devm_request_threaded_irq(dev, client->irq,
->> +						NULL, lm90_irq_thread,
->> +						IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> +						"lm90", client);
->> +		if (err < 0) {
->> +			dev_err(dev, "cannot request IRQ: %d\n", client->irq);
->> +			goto exit_remove_files;
->> +		}
->> +	}
->> +
->>  	return 0;
->>  
->>  exit_remove_files:
-> 
-> 
+drm_bus is a terribly midlayer madness disaster and needs to just burn
+down. So what exactly is the reason here to not go with the drm_platform.c
+stuff until I've gotten around to completely rip it all out?
+
+Adding Dave.
+
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
