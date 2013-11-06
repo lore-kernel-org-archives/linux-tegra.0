@@ -1,9 +1,9 @@
 From: Duan Jiong <duanj.fnst@cn.fujitsu.com>
 Subject: [PATCH] block: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
-Date: Wed, 6 Nov 2013 15:56:39 +0800
-Message-ID: <1383724599-15754-1-git-send-email-duanj.fnst@cn.fujitsu.com>
-Return-path: <linux-input-owner@vger.kernel.org>
-Sender: linux-input-owner@vger.kernel.org
+Date: Wed, 6 Nov 2013 15:57:03 +0800
+Message-ID: <1383724623-15801-1-git-send-email-duanj.fnst@cn.fujitsu.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: kernel@pengutronix.de, linux@arm.linux.org.uk, a.zummo@towertech.it, airlied@linux.ie, dmitry.torokhov@gmail.com, axboe@kernel.dk
 Cc: linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-input@vger.kernel.org, devel@driverdev.osuosl.org, Duan Jiong <duanj.fnst@cn.fujitsu.com>
 List-Id: linux-tegra@vger.kernel.org
@@ -31,4 +31,3 @@ index a31d91d..7d5c3b2 100644
  			if (!part)
 -- 
 1.8.3.1
-
