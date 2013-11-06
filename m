@@ -1,7 +1,7 @@
 From: Duan Jiong <duanj.fnst@cn.fujitsu.com>
-Subject: [PATCH] drm/tegra: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
-Date: Wed, 6 Nov 2013 15:53:55 +0800
-Message-ID: <1383724435-15380-1-git-send-email-duanj.fnst@cn.fujitsu.com>
+Subject: [PATCH] ethernet: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
+Date: Wed, 6 Nov 2013 15:54:12 +0800
+Message-ID: <1383724452-15428-1-git-send-email-duanj.fnst@cn.fujitsu.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: kernel@pengutronix.de, linux@arm.linux.org.uk, a.zummo@towertech.it, airlied@linux.ie
@@ -13,24 +13,23 @@ PTR_ERR instead of PTR_ERR_OR_ZERO.
 
 Signed-off-by: Duan Jiong <duanj.fnst@cn.fujitsu.com>
 ---
- drivers/gpu/drm/tegra/gem.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/ethernet/8390/apne.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-index 28a9cbc..ba6a7ac 100644
---- a/drivers/gpu/drm/tegra/gem.c
-+++ b/drivers/gpu/drm/tegra/gem.c
-@@ -199,10 +199,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
- 
- 	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
- 					 &args->handle);
--	if (IS_ERR(bo))
--		return PTR_ERR(bo);
--
+diff --git a/drivers/net/ethernet/8390/apne.c b/drivers/net/ethernet/8390/apne.c
+index 912ed7a..e41e3af 100644
+--- a/drivers/net/ethernet/8390/apne.c
++++ b/drivers/net/ethernet/8390/apne.c
+@@ -551,9 +551,7 @@ static struct net_device *apne_dev;
+ static int __init apne_module_init(void)
+ {
+ 	apne_dev = apne_probe(-1);
+-	if (IS_ERR(apne_dev))
+-		return PTR_ERR(apne_dev);
 -	return 0;
-+	return PTR_ERR_OR_ZERO(bo);
++	return PTR_ERR_OR_ZERO(apne_dev);
  }
  
- int tegra_bo_dumb_map_offset(struct drm_file *file, struct drm_device *drm,
+ static void __exit apne_module_exit(void)
 -- 
 1.8.3.1
