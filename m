@@ -1,70 +1,36 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] regulator: core: set full constraints in regulator_init
-Date: Wed, 6 Nov 2013 15:23:05 +0800
-Message-ID: <5279EE59.5040800@nvidia.com>
-References: <1383722380-5845-1-git-send-email-wni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1383722380-5845-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Duan Jiong <duanj.fnst@cn.fujitsu.com>
+Subject: [PATCH] drm/tegra: replace IS_ERR and PTR_ERR with PTR_ERR_OR_ZERO
+Date: Wed, 6 Nov 2013 15:53:55 +0800
+Message-ID: <1383724435-15380-1-git-send-email-duanj.fnst@cn.fujitsu.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kernel@pengutronix.de, linux@arm.linux.org.uk, a.zummo@towertech.it, airlied@linux.ie
+Cc: linux-kernel@vger.kernel.org, rtc-linux@googlegroups.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Duan Jiong <duanj.fnst@cn.fujitsu.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This is v2, previous version is:
-[v1]: http://www.spinics.net/lists/linux-tegra/msg14562.html
+This patch fixes coccinelle error regarding usage of IS_ERR and
+PTR_ERR instead of PTR_ERR_OR_ZERO.
 
-On 11/06/2013 03:19 PM, Wei Ni wrote:
-> When use DT to probe device, the probe routine may be erailier than
-> regulator_init_complete(), so at that time the full_constraints isn't
-> set yet, then the regulator_get() can't get the dummy regulator if the
-> regulator is physically present and enabled.
-> Set the full constraints in regulator_init() can fix this problem.
-> 
-> Discussed this in the link:
-> https://lkml.org/lkml/2013/10/8/40
-> 
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/regulator/core.c |   18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index 6382f0a..e80dd88 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -3773,6 +3773,15 @@ static int __init regulator_init(void)
->  
->  	regulator_dummy_init();
->  
-> +	/*
-> +	 * Since DT doesn't provide an idiomatic mechanism for
-> +	 * enabling full constraints and since it's much more natural
-> +	 * with DT to provide them just assume that a DT enabled
-> +	 * system has full constraints.
-> +	 */
-> +	if (of_have_populated_dt())
-> +		has_full_constraints = true;
-> +
->  	return ret;
->  }
->  
-> @@ -3786,15 +3795,6 @@ static int __init regulator_init_complete(void)
->  	struct regulation_constraints *c;
->  	int enabled, ret;
->  
-> -	/*
-> -	 * Since DT doesn't provide an idiomatic mechanism for
-> -	 * enabling full constraints and since it's much more natural
-> -	 * with DT to provide them just assume that a DT enabled
-> -	 * system has full constraints.
-> -	 */
-> -	if (of_have_populated_dt())
-> -		has_full_constraints = true;
-> -
->  	mutex_lock(&regulator_list_mutex);
->  
->  	/* If we have a full configuration then disable any regulators
-> 
+Signed-off-by: Duan Jiong <duanj.fnst@cn.fujitsu.com>
+---
+ drivers/gpu/drm/tegra/gem.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index 28a9cbc..ba6a7ac 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -199,10 +199,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
+ 
+ 	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
+ 					 &args->handle);
+-	if (IS_ERR(bo))
+-		return PTR_ERR(bo);
+-
+-	return 0;
++	return PTR_ERR_OR_ZERO(bo);
+ }
+ 
+ int tegra_bo_dumb_map_offset(struct drm_file *file, struct drm_device *drm,
+-- 
+1.8.3.1
