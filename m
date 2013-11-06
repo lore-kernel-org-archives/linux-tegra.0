@@ -1,63 +1,64 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH trivial] include: uapi: standard all files' macro prefix
-	and suffix, excluding "linux/" sub-directory
-Date: Tue, 05 Nov 2013 20:05:12 +0800
-Message-ID: <5278DEF8.2030101@asianux.com>
-References: <52786742.1080509@asianux.com> <51FB6216.6010008@asianux.com>
-	<11907.1383602624@warthog.procyon.org.uk>
-	<13981.1383649896@warthog.procyon.org.uk>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH] thermal: Fix binding problem when there is thermal zone
+ params
+Date: Wed, 06 Nov 2013 13:29:12 +0800
+Message-ID: <1383715752.2073.11.camel@rzhang1-mobl4>
+References: <1382090587-9602-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-In-Reply-To: <13981.1383649896@warthog.procyon.org.uk>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: David Howells <dhowells@redhat.com>
-Cc: xen-devel@lists.xensource.com, jeremy@goop.org, airlied@linux.ie, daniel.vetter@ffwll.ch, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, perex@perex.cz, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, sean.hefty@intel.com, virtualization@lists.linux-foundation.org, Linux-Arch <linux-arch@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, tbergstrom@nvidia.com, jy0922.shim@samsung.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, roland@purestorage.com, Takashi Iwai <tiwai@suse.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, mtk.manpages@gmail.com, fcoe-devel@open-fcoe.org, Paul McKenney <paulmck@linux.vnet.ibm.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, Arnd Bergmann <arnd@arndb.de>, swarren@wwwdotorg.org, intel-gfx@lists.freedesktop.org, inki.dae@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1382090587-9602-1-git-send-email-wni@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: durgadoss.r@intel.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jinyoung Park <jinyoungp@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/05/2013 07:11 PM, David Howells wrote:
-> Chen Gang <gang.chen@asianux.com> wrote:
+On Fri, 2013-10-18 at 18:03 +0800, Wei Ni wrote:
+> The thermal zone params can be used to set governor
+> to specific thermal governor for thermal zone device.
+> But if the thermal zone params has only governor name
+> without thermal bind params, then the thermal zone device
+> will not be binding to cooling device. Because tz->ops->bind
+> operator is not invoked in bind_tz() and bind_cdev() when
+> there is thermal zone params.
 > 
->>> Userspace sometimes depends on the name in the guard macro:-/
->>
->> "the guard macro" is only for prevent itself from being included by
->> multiple times (an id used by itself -- like a handle), it is not an id
->> to let other files know about it (it is not a normal using way).
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
+> ---
+>  drivers/thermal/thermal_core.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Whilst that *should* be true, it isn't actually true.  See:
-> 
-> 	grep -r _LINUX_.*_H /usr/include/ | grep -v ^/usr/include/linux/
-> 
-> for example.  Also who knows what all those autoconf scripts out there look
-> for?
-> 
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index 4962a6a..2ea41d3 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -247,7 +247,7 @@ static void bind_cdev(struct thermal_cooling_device *cdev)
+>  		if (!pos->tzp && !pos->ops->bind)
+>  			continue;
+>  
+> -		if (!pos->tzp && pos->ops->bind) {
+> +		if (pos->ops->bind) {
+>  			ret = pos->ops->bind(pos, cdev);
+>  			if (ret)
+>  				print_bind_err_msg(pos, cdev, ret);
+IMO, we should also add
++		continue;
+after binding with pos->ops->bind(), to void binding via pos->tzp->tbp
+again, no?
 
-Oh... the real world is really not quite perfect. :-/
+thanks,
+rui
+> @@ -282,8 +282,8 @@ static void bind_tz(struct thermal_zone_device *tz)
+>  
+>  	mutex_lock(&thermal_list_lock);
+>  
+> -	/* If there is no platform data, try to use ops->bind */
+> -	if (!tzp && tz->ops->bind) {
+> +	/* If there is ops->bind, try to use ops->bind */
+> +	if (tz->ops->bind) {
+>  		list_for_each_entry(pos, &thermal_cdev_list, node) {
+>  			ret = tz->ops->bind(tz, pos);
+>  			if (ret)
 
 
-> However, thinking about it some more, you're probably safe with respect to
-> userspace as scripts/headers_install.h strips off the _UAPI prefix on the
-> guard macros - just as long as you don't change the rest of the macro name.
-> 
-
-In honest, I really did not think more about it.
-
-Only adding _UAPI (not touch others) can completely fix one style issue:
-separate "uapi/*" from other sub-directories in "include/*"
-
-So for me, we can continue improve this patch: add "_UAPI" for all guard
-macro under "include/uapi/*" (also include "include/uapi/linux").
-
-
-Thanks.
--- 
-Chen Gang
