@@ -1,57 +1,64 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v2] thermal: Fix binding problem when there is thermal zone params
-Date: Wed, 6 Nov 2013 14:30:13 +0800
-Message-ID: <1383719413-4142-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] regulator: core: set full constraints in regulator_init
+Date: Wed, 6 Nov 2013 15:19:40 +0800
+Message-ID: <1383722380-5845-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: rui.zhang@intel.com
-Cc: durgadoss.r@intel.com, eduardo.valentin@ti.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, Wei Ni <wni@nvidia.com>, Jinyoung Park <jinyoungp@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The thermal zone params can be used to set governor
-to specific thermal governor for thermal zone device.
-But if the thermal zone params has only governor name
-without thermal bind params, then the thermal zone device
-will not be binding to cooling device. Because tz->ops->bind
-operator is not invoked in bind_tz() and bind_cdev() when
-there is thermal zone params.
+When use DT to probe device, the probe routine may be erailier than
+regulator_init_complete(), so at that time the full_constraints isn't
+set yet, then the regulator_get() can't get the dummy regulator if the
+regulator is physically present and enabled.
+Set the full constraints in regulator_init() can fix this problem.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
-Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
+Discussed this in the link:
+https://lkml.org/lkml/2013/10/8/40
+
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/thermal/thermal_core.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/regulator/core.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 4962a6a..aa59567 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -247,10 +247,11 @@ static void bind_cdev(struct thermal_cooling_device *cdev)
- 		if (!pos->tzp && !pos->ops->bind)
- 			continue;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 6382f0a..e80dd88 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3773,6 +3773,15 @@ static int __init regulator_init(void)
  
--		if (!pos->tzp && pos->ops->bind) {
-+		if (pos->ops->bind) {
- 			ret = pos->ops->bind(pos, cdev);
- 			if (ret)
- 				print_bind_err_msg(pos, cdev, ret);
-+			continue;
- 		}
+ 	regulator_dummy_init();
  
- 		tzp = pos->tzp;
-@@ -282,8 +283,8 @@ static void bind_tz(struct thermal_zone_device *tz)
++	/*
++	 * Since DT doesn't provide an idiomatic mechanism for
++	 * enabling full constraints and since it's much more natural
++	 * with DT to provide them just assume that a DT enabled
++	 * system has full constraints.
++	 */
++	if (of_have_populated_dt())
++		has_full_constraints = true;
++
+ 	return ret;
+ }
  
- 	mutex_lock(&thermal_list_lock);
+@@ -3786,15 +3795,6 @@ static int __init regulator_init_complete(void)
+ 	struct regulation_constraints *c;
+ 	int enabled, ret;
  
--	/* If there is no platform data, try to use ops->bind */
--	if (!tzp && tz->ops->bind) {
-+	/* If there is ops->bind, try to use ops->bind */
-+	if (tz->ops->bind) {
- 		list_for_each_entry(pos, &thermal_cdev_list, node) {
- 			ret = tz->ops->bind(tz, pos);
- 			if (ret)
+-	/*
+-	 * Since DT doesn't provide an idiomatic mechanism for
+-	 * enabling full constraints and since it's much more natural
+-	 * with DT to provide them just assume that a DT enabled
+-	 * system has full constraints.
+-	 */
+-	if (of_have_populated_dt())
+-		has_full_constraints = true;
+-
+ 	mutex_lock(&regulator_list_mutex);
+ 
+ 	/* If we have a full configuration then disable any regulators
 -- 
 1.7.9.5
-
