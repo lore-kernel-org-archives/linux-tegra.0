@@ -1,34 +1,33 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Correct the length of AHB register space
-Date: Thu, 7 Nov 2013 13:32:07 +0800
-Message-ID: <1383802327-11908-1-git-send-email-markz@nvidia.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 0/2] Correct SMMU register map
+Date: Thu, 7 Nov 2013 07:38:56 +0100
+Message-ID: <20131107.083856.2279900025541125722.hdoyu@nvidia.com>
+References: <1383796706-10729-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1383796706-10729-1-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra114 it should be 0x12c.
+Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Thu, 7 Nov 2013 04:58:24 +0100:
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra114.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Current SMMU register map for Tegra30 and Tegra114 doesn't
+> match the TRM. So set to the correct values.
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index c79b1813c559..63ae6b3a64eb 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -85,7 +85,7 @@
- 
- 	ahb: ahb {
- 		compatible = "nvidia,tegra114-ahb", "nvidia,tegra30-ahb";
--		reg = <0x6000c004 0x14c>;
-+		reg = <0x6000c004 0x12c>;
- 	};
- 
- 	gpio: gpio {
--- 
-1.8.1.5
+We may need to update TRM itself. I'll check this internally.
+
+> Mark Zhang (2):
+>   ARM: tegra: Correct Tegra30 SMMU register map
+>   ARM: tegra: Correct Tegra114 SMMU register map
+> 
+>  arch/arm/boot/dts/tegra114.dtsi | 9 ++++++---
+>  arch/arm/boot/dts/tegra30.dtsi  | 9 ++++++---
+>  2 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 1.8.1.5
+> 
