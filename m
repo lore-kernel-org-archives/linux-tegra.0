@@ -1,50 +1,53 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v10 3/7] of: add Trusted Foundations bindings
-Date: Thu, 7 Nov 2013 19:11:42 +0900
-Message-ID: <1383819106-1400-4-git-send-email-acourbot@nvidia.com>
-References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com>
+From: Julian Andres Klode <jak@jak-linux.org>
+Subject: Re: [patch] staging: nvec: potential NULL dereference on error path
+Date: Thu, 7 Nov 2013 12:10:14 +0100
+Message-ID: <CAEA6rAzT2eZ-VGUP8gSjNbooKCdkxnixO-nEFA_hPcrUjWR4UQ@mail.gmail.com>
+References: <20131107075418.GL21844@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1383819106-1400-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Dave Martin <Dave.Martin@arm.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20131107075418.GL21844@elgon.mountain>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-Add the Device Tree bindings for the Trusted Foundation secure monitor.
+(Replying to all now)
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- .../arm/firmware/tlm,trusted-foundations.txt         | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
+On Thu, Nov 7, 2013 at 8:54 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> We assume nvec->rx can be NULL earlier so I have added a check here as
+> well.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 3066ee2..c64e069 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -681,7 +681,8 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>                         dev_err(nvec->dev,
+>                                 "RX buffer overflow on %p: "
+>                                 "Trying to write byte %u of %u\n",
+> -                               nvec->rx, nvec->rx->pos, NVEC_MSG_SIZE);
+> +                               nvec->rx, nvec->rx ? nvec->rx->pos : -1,
+> +                               NVEC_MSG_SIZE);
+>                 break;
+>         default:
+>                 nvec->state = 0;
 
-diff --git a/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
-new file mode 100644
-index 000000000000..adb471c3d2dc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
-@@ -0,0 +1,20 @@
-+Trusted Foundations
-+-------------------
-+
-+Boards that use the Trusted Foundations secure monitor can signal its
-+presence by declaring a node compatible with "tlm,trusted-foundations"
-+under the /firmware/ node
-+
-+Required properties:
-+- compatible : "tlm,trusted-foundations"
-+- tlm,version-major : major version number of Trusted Foundations firmware
-+- tlm,version-minor: minor version number of Trusted Foundations firmware
-+
-+Example:
-+	firmware {
-+		trusted-foundations {
-+			compatible = "tlm,trusted-foundations";
-+			tlm,version-major = <2>;
-+			tlm,version-minor = <8>;
-+		};
-+	};
+In the TX case, we print 0 if nvec->tx is NULL, so using -1 if
+nvec->rx is NULL would be inconsistent.
+
 -- 
-1.8.4.2
+Julian Andres Klode  - Debian Developer, Ubuntu Member
+
+See http://wiki.debian.org/JulianAndresKlode and http://jak-linux.org/.
