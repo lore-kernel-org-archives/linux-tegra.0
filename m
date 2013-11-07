@@ -1,77 +1,25 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH trivial] include: uapi: standard all files'
- macro prefix and suffix, excluding "linux/" sub-directory
-Date: Thu, 07 Nov 2013 10:53:16 +0800
-Message-ID: <527B009C.4060905@asianux.com>
-References: <52786742.1080509@asianux.com> <51FB6216.6010008@asianux.com>
-	<11907.1383602624@warthog.procyon.org.uk>
-	<13981.1383649896@warthog.procyon.org.uk>
-	<5278DEF8.2030101@asianux.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/2] Correct SMMU register map
+Date: Thu, 7 Nov 2013 11:58:24 +0800
+Message-ID: <1383796706-10729-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <5278DEF8.2030101@asianux.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Sender: intel-gfx-bounces@lists.freedesktop.org
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-To: David Howells <dhowells@redhat.com>
-Cc: xen-devel@lists.xensource.com, jeremy@goop.org, airlied@linux.ie, daniel.vetter@ffwll.ch, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, perex@perex.cz, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, sean.hefty@intel.com, virtualization@lists.linux-foundation.org, Linux-Arch <linux-arch@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, tbergstrom@nvidia.com, jy0922.shim@samsung.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, roland@purestorage.com, Takashi Iwai <tiwai@suse.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, mtk.manpages@gmail.com, fcoe-devel@open-fcoe.org, Paul McKenney <paulmck@linux.vnet.ibm.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, Arnd Bergmann <arnd@arndb.de>, swarren@wwwdotorg.org, intel-gfx@lists.freedesktop.org, inki.dae@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/05/2013 08:05 PM, Chen Gang wrote:
-> On 11/05/2013 07:11 PM, David Howells wrote:
->> Chen Gang <gang.chen@asianux.com> wrote:
->>
->>>> Userspace sometimes depends on the name in the guard macro:-/
->>>
->>> "the guard macro" is only for prevent itself from being included by
->>> multiple times (an id used by itself -- like a handle), it is not an id
->>> to let other files know about it (it is not a normal using way).
->>
->> Whilst that *should* be true, it isn't actually true.  See:
->>
->> 	grep -r _LINUX_.*_H /usr/include/ | grep -v ^/usr/include/linux/
->>
->> for example.  Also who knows what all those autoconf scripts out there look
->> for?
->>
-> 
-> Oh... the real world is really not quite perfect. :-/
-> 
-> 
->> However, thinking about it some more, you're probably safe with respect to
->> userspace as scripts/headers_install.h strips off the _UAPI prefix on the
->> guard macros - just as long as you don't change the rest of the macro name.
->>
-> 
+Current SMMU register map for Tegra30 and Tegra114 doesn't
+match the TRM. So set to the correct values.
 
-I will preparing the patch for it, it will cover "include/uapi/*" and
-"arch/*/include/uapi/*", the patch will only add "_UAPI" for the guard
-macros which miss it.
+Mark Zhang (2):
+  ARM: tegra: Correct Tegra30 SMMU register map
+  ARM: tegra: Correct Tegra114 SMMU register map
 
-Welcome any additional suggestions and completions.
-
-Thanks.
-
-> In honest, I really did not think more about it.
-> 
-> Only adding _UAPI (not touch others) can completely fix one style issue:
-> separate "uapi/*" from other sub-directories in "include/*"
-> 
-> So for me, we can continue improve this patch: add "_UAPI" for all guard
-> macro under "include/uapi/*" (also include "include/uapi/linux").
-> 
-> 
-> Thanks.
-> 
-
+ arch/arm/boot/dts/tegra114.dtsi | 9 ++++++---
+ arch/arm/boot/dts/tegra30.dtsi  | 9 ++++++---
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
 -- 
-Chen Gang
+1.8.1.5
