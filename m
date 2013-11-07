@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v10 5/7] ARM: tegra: split setting of CPU reset handler
-Date: Thu, 7 Nov 2013 19:11:44 +0900
-Message-ID: <1383819106-1400-6-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v10 3/7] of: add Trusted Foundations bindings
+Date: Thu, 7 Nov 2013 19:11:42 +0900
+Message-ID: <1383819106-1400-4-git-send-email-acourbot@nvidia.com>
 References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,74 +12,39 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Russell King <linux@arm.linux.org.uk
 Cc: Olof Johansson <olof@lixom.net>, Dave Martin <Dave.Martin@arm.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Not all Tegra devices can set the CPU reset handler in the same way.
-In particular, devices using a TrustZone secure monitor cannot set the
-reset handler directly and need to do it through a firmware operation.
-
-This patch separates the act of setting the reset handler from its
-preparation, so the former can be implemented in a different way.
+Add the Device Tree bindings for the Trusted Foundation secure monitor.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
 ---
- arch/arm/mach-tegra/reset.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ .../arm/firmware/tlm,trusted-foundations.txt         | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
 
-diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-index fd0bbf8a6c94..e282395b071c 100644
---- a/arch/arm/mach-tegra/reset.c
-+++ b/arch/arm/mach-tegra/reset.c
-@@ -33,26 +33,18 @@
- 
- static bool is_enabled;
- 
--static void __init tegra_cpu_reset_handler_enable(void)
-+static void __init tegra_cpu_reset_handler_set(const u32 reset_address)
- {
--	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
- 	void __iomem *evp_cpu_reset =
- 		IO_ADDRESS(TEGRA_EXCEPTION_VECTORS_BASE + 0x100);
- 	void __iomem *sb_ctrl = IO_ADDRESS(TEGRA_SB_BASE);
- 	u32 reg;
- 
--	BUG_ON(is_enabled);
--	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
--
--	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
--			tegra_cpu_reset_handler_size);
--
- 	/*
- 	 * NOTE: This must be the one and only write to the EVP CPU reset
- 	 *       vector in the entire system.
- 	 */
--	writel(TEGRA_IRAM_RESET_BASE + tegra_cpu_reset_handler_offset,
--			evp_cpu_reset);
-+	writel(reset_address, evp_cpu_reset);
- 	wmb();
- 	reg = readl(evp_cpu_reset);
- 
-@@ -66,6 +58,21 @@ static void __init tegra_cpu_reset_handler_enable(void)
- 		writel(reg, sb_ctrl);
- 		wmb();
- 	}
-+}
+diff --git a/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt b/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
+new file mode 100644
+index 000000000000..adb471c3d2dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/firmware/tlm,trusted-foundations.txt
+@@ -0,0 +1,20 @@
++Trusted Foundations
++-------------------
 +
-+static void __init tegra_cpu_reset_handler_enable(void)
-+{
-+	void __iomem *iram_base = IO_ADDRESS(TEGRA_IRAM_RESET_BASE);
-+	const u32 reset_address = TEGRA_IRAM_RESET_BASE +
-+						tegra_cpu_reset_handler_offset;
++Boards that use the Trusted Foundations secure monitor can signal its
++presence by declaring a node compatible with "tlm,trusted-foundations"
++under the /firmware/ node
 +
-+	BUG_ON(is_enabled);
-+	BUG_ON(tegra_cpu_reset_handler_size > TEGRA_IRAM_RESET_HANDLER_SIZE);
++Required properties:
++- compatible : "tlm,trusted-foundations"
++- tlm,version-major : major version number of Trusted Foundations firmware
++- tlm,version-minor: minor version number of Trusted Foundations firmware
 +
-+	memcpy(iram_base, (void *)__tegra_cpu_reset_handler_start,
-+			tegra_cpu_reset_handler_size);
-+
-+	tegra_cpu_reset_handler_set(reset_address);
- 
- 	is_enabled = true;
- }
++Example:
++	firmware {
++		trusted-foundations {
++			compatible = "tlm,trusted-foundations";
++			tlm,version-major = <2>;
++			tlm,version-minor = <8>;
++		};
++	};
 -- 
 1.8.4.2
