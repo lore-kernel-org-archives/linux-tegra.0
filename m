@@ -1,56 +1,65 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [patch 1/2] drm/tegra: return -EFAULT if copy_from_user() fails
-Date: Fri, 8 Nov 2013 13:35:37 +0100
-Message-ID: <20131108123536.GB31551@ulmo.nvidia.com>
-References: <20131108100737.GX27977@elgon.mountain>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC][PATCHv3+ 1/2] driver/core: Add of_iommu_attach()
+Date: Fri, 8 Nov 2013 14:14:49 +0100
+Message-ID: <20131108.151449.1092512147495774962.hdoyu@nvidia.com>
+References: <52729912.9050800@wwwdotorg.org><20131101084909.5ed79987aa3aeb13b14e3f08@nvidia.com><20131106160623.2cb72f91cd071e555d0d4b9a@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131108100737.GX27977-mgFCXtclrQlZLf2FXnZxJA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20131106160623.2cb72f91cd071e555d0d4b9a-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Stephen,
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote @ Wed, 6 Nov 2013 15:06:23 +0100:
 
-On Fri, Nov 08, 2013 at 01:07:37PM +0300, Dan Carpenter wrote:
-> copy_from_user() returns the number of bytes remaining if it fails, but
-> we want to return -EFAULT here.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> Experimentally I have implemented "of_iommu_attach()" called from
+> drvier/core to control the order of device instanciation.
+> 
+> In the Tegra SMMU PATCHv3, we've discussed how to control the order of
+> device instanciation. Thierry/Stephen proposed to insert a hook in
+> driver/core to control this order, depending on whether an iommu
+> device is ready or not."of_iommu_attach()" is implement for that
+> purpose now. Along with this patch, I attached DT part of modication
+> to this mail. I used the same iommu bindings which arm,smmu uses.
+> 
+> [RFC][PATCHv3+ 2/2] ARM: DT: tegra30: iommu: Add "stream-id-cells"/"mmu-masters"
+> 
+> "#stream-id-cells" is used to identify whether a device is IOMMU'able
+> or not. If a device is IOMMU'able, we'll defer to instanciate that
+> device till an iommu device is instanciated/ready. Once an iommu device
+> is instanciated, "dev->bus->iommu_ops" is set in the bus. After an
+> iommu device is instanciated, those defered devices are instanciated
+> as IOMMU'able with help of the iommu driver via iommu_ops->add_device().
+> 
+> We don't call bus_set_iommu() until an iommu device is instanciated
+> because we need to support 2 kind of IOMMU drivers, SMMU and GART so
+> that this bus_set_iommu() needs to be defered till an iommu device is
+> instanciated. So the single image can support 2 iommu drivers at once.
+> 
+> With this patch, the following HACK patches in v3[1] are not needed
+> anymore.
+> 
+>   patch 1: [HACK] of: dev_node has struct device pointer
+>   patch 2: [HACK] ARM: tegra: Populate AHB/IOMMU earlier than others
+>   patch 3: [HACK] amba: Move AHB to core_initcall
+>   patch 4: [HACK] iommu/tegra: smmu: Move IOMMU to core_initcall
+> 
+> Any comment would be really appreciated.
 
-Applied (manually because there was a conflict with the __user
-annotation fix that I did earlier).
+Have you had any chance to take a look at this one?
 
-Thanks,
-Thierry
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSfNqYAAoJEN0jrNd/PrOhiE8P/jvqYROBktA+4jbdrkSHmOmH
-f7vpkr6LPNEWmd75PbBNSr7MkZZYE9UiW47V4F95LUtZiZ2xGv0AgVaSRJq98W+b
-Y9nmI8MtnWEX+ReS4QOzE/fzQYk13lDEG0jlBu3JYjKNVaSwlvOSDklbcjWvY2cM
-C0Exsx/re3GBRbNsxXoNpU4ptPIZRPNV3ka6nlY8FCF8pCSfreQewoIOoT0uOTp+
-ZGQTArvczYwstsg/u4mI36ODPbcsR5dX5Y87wEdqJJ+jE31F1u/jkG25KYDlMAqf
-+AQDtmVR9ZXEeLsEmU+vI5tGxMF7xGHNadfSTgEgZF5fXZT9xZWha4EKpiwEndGd
-3sVkAPUdYXlleWu6mfst33wYSGGVGhiWlXiGKjqTkRsqn+rwppVNAlQGZ9/HvtVB
-vAfXKPbZVLpWoCfAdzQIX9bB+5H8p75o++DayEEyX02T7ugQI3LatKhrkXUP6BA7
-ueqqPA/MDWZxcAV3IEh7sHGpPKSLHKu8c+IRISAaKXl6otWJAaG10Eqtb25cmiza
-1Z3f39zNKl3Sfg7FgvsUu0AfXl3F6sq2cykUS1Y5HJY/Tmw+kzPrgzVb2YpOCVQn
-eiClcsyoowjF2g7TXUpC0InR6xMszOIOQYyrRcum/W8VmZOFG9f6Ti7zDp7OaSVt
-UwOBhiifew/fBwA9PEhG
-=YesS
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
+I plan to send version 4 of this series with the above design next
+week. In v4, I use "mmu-masters" binding stolen from "arm,smmu" DT.
