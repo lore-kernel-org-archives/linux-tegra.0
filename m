@@ -1,43 +1,46 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch v2] drm/tegra: fix small leak on error in tegra_fb_alloc()
-Date: Tue, 12 Nov 2013 13:25:26 +0300
-Message-ID: <20131112102526.GA10651@elgon.mountain>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 2/3] of: add vendor prefix for GMT
+Date: Tue, 12 Nov 2013 15:39:34 +0100
+Message-ID: <20131112153934.30543f8d@endymion.delvare>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+	<1381137940-22608-3-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381137940-22608-3-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-If we don't have enough memory for ->planes then we leak "fb".
+Hi Wei,
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2: tiny style changes
+On Mon, 7 Oct 2013 17:25:39 +0800, Wei Ni wrote:
+> Adding Global Mixed-mode Technology Inc. to the list
+> of devicetree vendor prefixes.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 2956800..634c35f 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -28,6 +28,7 @@ est	ESTeem Wireless Modems
+>  fsl	Freescale Semiconductor
+>  GEFanuc	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+>  gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+> +gmt	Global Mixed-mode Technology Inc.
+>  hisilicon	Hisilicon Limited.
+>  hp	Hewlett Packard
+>  ibm	International Business Machines (IBM)
 
-diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-index 490f771..f9d2de6 100644
---- a/drivers/gpu/drm/tegra/fb.c
-+++ b/drivers/gpu/drm/tegra/fb.c
-@@ -98,8 +98,10 @@ static struct tegra_fb *tegra_fb_alloc(struct drm_device *drm,
- 		return ERR_PTR(-ENOMEM);
- 
- 	fb->planes = kzalloc(num_planes * sizeof(*planes), GFP_KERNEL);
--	if (!fb->planes)
-+	if (!fb->planes) {
-+		kfree(fb);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	fb->num_planes = num_planes;
+This patch looks good (except maybe for the missing comma before
+"Inc.") but I'm not the one who can apply it. If should be sent to the
+OF/DT maintainers as listed by ./scripts/get_maintainer.pl.
+
+-- 
+Jean Delvare
