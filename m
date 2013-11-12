@@ -1,34 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: Correct Tegra30 SMMU register map
-Date: Tue, 12 Nov 2013 12:19:04 -0700
-Message-ID: <52827F28.7020305@wwwdotorg.org>
-References: <1383796706-10729-1-git-send-email-markz@nvidia.com> <1383796706-10729-2-git-send-email-markz@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: init fuse before setting reset handler
+Date: Tue, 12 Nov 2013 13:03:16 -0700
+Message-ID: <1384286596-13761-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1383796706-10729-2-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/06/2013 08:58 PM, Mark Zhang wrote:
-> Correct Tegra30 SMMU register map.
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Some more explanation is required here re: why this layout is more
-correct than what's there.
+CPU reset handler was set before fuse is initialized, but
+tegra_cpu_reset_handler_enable() uses tegra_chip_id, which is set by
+tegra_init_fuse(). This patch reorders the calls so the CPU reset
+handler code does not read an uninitialized variable.
 
-Do you need to edit the reg property in Tegra30's memory-controller node
-too; that's what all these reg ranges are interleaved with, so
-presumably if there was a mistake in the SMMU ranges, there's the
-equivalent inverse mistake in the MC's ranges?
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+arm-soc, if you could apply this as a fix for 3.13, that'd be great.
+Thanks.
 
-The DT binding for nvidia,tegra30-smmu states that reg should include
-precisely 3 entries. This patch no longer conforms to that. The binding
-needs to be re-written to explain the interleaving issue, and say that
-an arbitrary number of ranges may be provided. The same issue exists in
-the nvidia,tegra30-mc DT binding.
+ arch/arm/mach-tegra/tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think I'm beginning to regret separating out the MC and SMMU into
-separate DT nodes:-(
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index ce553d557c31..73368176c6e8 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -90,9 +90,9 @@ static void __init tegra_init_cache(void)
+ 
+ static void __init tegra_init_early(void)
+ {
+-	tegra_cpu_reset_handler_init();
+ 	tegra_apb_io_init();
+ 	tegra_init_fuse();
++	tegra_cpu_reset_handler_init();
+ 	tegra_init_cache();
+ 	tegra_powergate_init();
+ 	tegra_hotplug_init();
+-- 
+1.8.1.5
