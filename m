@@ -1,37 +1,34 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Correct the length of AHB register space
-Date: Tue, 12 Nov 2013 12:05:20 -0700
-Message-ID: <52827BF0.5070706@wwwdotorg.org>
-References: <1383802327-11908-1-git-send-email-markz@nvidia.com>
+Subject: Re: [PATCH 1/2] ARM: tegra: Correct Tegra30 SMMU register map
+Date: Tue, 12 Nov 2013 12:19:04 -0700
+Message-ID: <52827F28.7020305@wwwdotorg.org>
+References: <1383796706-10729-1-git-send-email-markz@nvidia.com> <1383796706-10729-2-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1383802327-11908-1-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1383796706-10729-2-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/06/2013 10:32 PM, Mark Zhang wrote:
-> On Tegra114 it should be 0x12c.
+On 11/06/2013 08:58 PM, Mark Zhang wrote:
+> Correct Tegra30 SMMU register map.
 
-> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+Some more explanation is required here re: why this layout is more
+correct than what's there.
 
->  	ahb: ahb {
->  		compatible = "nvidia,tegra114-ahb", "nvidia,tegra30-ahb";
-> -		reg = <0x6000c004 0x14c>;
-> +		reg = <0x6000c004 0x12c>;
->  	};
+Do you need to edit the reg property in Tegra30's memory-controller node
+too; that's what all these reg ranges are interleaved with, so
+presumably if there was a mistake in the SMMU ranges, there's the
+equivalent inverse mistake in the MC's ranges?
 
-I don't think this is correct.
+The DT binding for nvidia,tegra30-smmu states that reg should include
+precisely 3 entries. This patch no longer conforms to that. The binding
+needs to be re-written to explain the interleaving issue, and say that
+an arbitrary number of ranges may be provided. The same issue exists in
+the nvidia,tegra30-mc DT binding.
 
-0x12c /is/ the address of the last defined register that exists.
-However, the system memory map table in the TRM indicates that 336 bytes
-of address space are allocated for this module, so the value should be
-0x150 (minus 4 due to the base address offset of 4, so 0x14c) for all of
-Tegra30/114/124. That matches what's already in DT.
-
-For Tegra20, the TRM says that 268 bytes of address space are allocated
-(which already takes account of the 4-byte base address offset) yielding
-a size of 0x10c, which matches what's already in the DT.
+I think I'm beginning to regret separating out the MC and SMMU into
+separate DT nodes:-(
