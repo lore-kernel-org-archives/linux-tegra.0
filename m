@@ -1,42 +1,58 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv4 0/7] Unifying SMMU driver among Tegra SoCs
-Date: Wed, 13 Nov 2013 08:04:19 +0200
-Message-ID: <20131113080419.23aa9406a443523670e46dea@nvidia.com>
-References: <1384158718-4756-1-git-send-email-hdoyu@nvidia.com>
-	<5282AE55.1040701@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: [PATCH] gpu: host1x: Silence a few warnings with LPAE=y
+Date: Tue, 12 Nov 2013 23:16:50 -0800
+Message-ID: <1384327010-8870-1-git-send-email-olof@lixom.net>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5282AE55.1040701-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 12 Nov 2013 23:40:21 +0100
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+When building with LPAE=y (64-bit dma_addr_t), the following warnings are seen:
 
-> On 11/11/2013 01:31 AM, Hiroshi Doyu wrote:
-> > Hi,
-> > 
-> > This series provides:
-> > 
-> > (1) Unified SMMU driver among Tegra SoCs
-> > (2) Multiple Address Space support(MASID) in IOMMU(SMMMU)
-> > (3) Tegra IOMMU'able devices, most of platform devices are IOMMU'able.
-> > 
-> > There's been some discussion[1] about device population order, and I
-> > added a IOMMU hook in driver core:
-> > 
-> >   [PATCHv4 2/7] driver/core: Populate IOMMU'able devices in order
-> > 
-> > which is based on the following RFC patch:
-> > 
-> >   [RFC][PATCHv3+ 1/2] driver/core: Add of_iommu_attach()
-> >   http://lists.linuxfoundation.org/pipermail/iommu/2013-November/006914.html
-> 
-> I assume that "based on" means "is a new version of", so I don't need to
-> look at the "PATCHv3+" patch, since this series replaces it?
+drivers/gpu/host1x/hw/cdma_hw.c:57:3: warning: format '%x' expects
+  argument of type 'unsigned int', but argument 5 has type 'dma_addr_t'
 
-Right.
+drivers/gpu/host1x/hw/debug_hw.c:167:10: warning: format '%x' expects
+  argument of type 'unsigned int', but argument 3 has type 'dma_addr_t'
+
+The agreed-to solution for this is upcast to u64 and using %llx.
+
+Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+---
+ drivers/gpu/host1x/hw/cdma_hw.c  |    4 ++--
+ drivers/gpu/host1x/hw/debug_hw.c |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/host1x/hw/cdma_hw.c b/drivers/gpu/host1x/hw/cdma_hw.c
+index 37e2a63..6b09b71 100644
+--- a/drivers/gpu/host1x/hw/cdma_hw.c
++++ b/drivers/gpu/host1x/hw/cdma_hw.c
+@@ -54,8 +54,8 @@ static void cdma_timeout_cpu_incr(struct host1x_cdma *cdma, u32 getptr,
+ 		u32 *p = (u32 *)((u32)pb->mapped + getptr);
+ 		*(p++) = HOST1X_OPCODE_NOP;
+ 		*(p++) = HOST1X_OPCODE_NOP;
+-		dev_dbg(host1x->dev, "%s: NOP at 0x%x\n", __func__,
+-			pb->phys + getptr);
++		dev_dbg(host1x->dev, "%s: NOP at %#llx\n", __func__,
++			(u64)pb->phys + getptr);
+ 		getptr = (getptr + 8) & (pb->size_bytes - 1);
+ 	}
+ 	wmb();
+diff --git a/drivers/gpu/host1x/hw/debug_hw.c b/drivers/gpu/host1x/hw/debug_hw.c
+index 640c75c..f72c873 100644
+--- a/drivers/gpu/host1x/hw/debug_hw.c
++++ b/drivers/gpu/host1x/hw/debug_hw.c
+@@ -163,8 +163,8 @@ static void show_channel_gathers(struct output *o, struct host1x_cdma *cdma)
+ 				continue;
+ 			}
+ 
+-			host1x_debug_output(o, "    GATHER at %08x+%04x, %d words\n",
+-					    g->base, g->offset, g->words);
++			host1x_debug_output(o, "    GATHER at %#llx+%04x, %d words\n",
++					    (u64)g->base, g->offset, g->words);
+ 
+ 			show_gather(o, g->base + g->offset, g->words, cdma,
+ 				    g->base, mapped);
+-- 
+1.7.10.4
