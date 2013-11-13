@@ -1,36 +1,81 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
-Date: Wed, 13 Nov 2013 10:29:07 -0700
-Message-ID: <5283B6E3.9070206@wwwdotorg.org>
-References: <1383203126-3243-1-git-send-email-wni@nvidia.com> <20131031162029.GF2493@sirena.org.uk> <527737C5.5080901@nvidia.com> <20131104161828.GK2493@sirena.org.uk> <5278B4CB.9050305@nvidia.com> <20131106085100.GB11602@sirena.org.uk> <527A1C47.6050405@nvidia.com> <20131106110154.GG11602@sirena.org.uk> <5281C228.3000404@nvidia.com> <5282717C.3050502@wwwdotorg.org> <20131113122329.GC878@sirena.org.uk>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCHv4 2/7] driver/core: Populate IOMMU'able devices in order
+Date: Wed, 13 Nov 2013 17:31:42 +0000
+Message-ID: <20131113173142.GF11928@mudshark.cambridge.arm.com>
+References: <1384158718-4756-3-git-send-email-hdoyu@nvidia.com>
+	<5282BAFC.8070405@wwwdotorg.org>
+	<20131113143804.GA11928@mudshark.cambridge.arm.com>
+	<20131113.180610.823304139654159769.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131113122329.GC878-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20131113.180610.823304139654159769.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2013 05:23 AM, Mark Brown wrote:
-> On Tue, Nov 12, 2013 at 11:20:44AM -0700, Stephen Warren wrote:
+On Wed, Nov 13, 2013 at 04:06:10PM +0000, Hiroshi Doyu wrote:
+> Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 13 Nov 2013 15:38:04 +0100:
 > 
->> The only issue you may have to watch out for is: When is 
->> regulator_init() called (i.e. when does core_initcall happen)
->> relative to when driver probe()s can be called? If it's earlier,
->> then core_initcall is early enough I suspect.
+> > On Tue, Nov 12, 2013 at 11:34:20PM +0000, Stephen Warren wrote:
+> > > SMMU:
+> > >     smmu: smmu@xxxxxx {
+> > >         #smmu-cells = <1>;
+> > >     }
+> > > 
+> > > Affected device:
+> > >     smmus = <&smmu 1>;
+> > >     (perhaps with smmu-names too)
+> > > 
+> > > That would allow the DT to represent basically arbitrary HW configurations.
+> > > 
+> > > The implementation of this patch would then be almost as trivial; you'd
+> > > just need to walk the smmus property to find each phandle in turn, just
+> > > like any other phandle+specifier property, and validate that the SMMU
+> > > driver was already probe()d for each.
+> > 
+> > There are a few problems with that:
+> > 
+> >   1.) It assumes all devices sharing an SMMU have the same number of
+> >       "smmu cells"
 > 
-> What I said was to set this up when we hand the DT over to the DT
-> code to be parsed so that we don't need to worry about any gaps
-> like that, it seems like a more direct solution than worrying about
-> initcall ordering.
+> This can be solved with introducing the fixed size of bitmap. The size
+> of bitmap can be fixed even per SoC. In tegra we used 64(2 cells)
+> which I expect at most.
 
-I guess this means putting the call to
-regulator_has_full_constraints() somewhere inside
-early_init_dt_scan(), unflatten_device_tree(), or just perhaps inside
-of_platform_populate() (all in drivers/of/*.c).
+That really doesn't sound like a good idea where you have bridges (like a
+PCIe host controller) which could have a significant chunk of StreamID
+space. You'd also need to pad everything out with some dummy IDs for parsing
+purposes. Yuck!
 
-It seems slightly odd to tightly link the drivers/of and
-drivers/regulator code like that, but I guess with the appropriate
-ifdefs it'll work out OK.
+> >   2.) It moves SMMU-specific data out to the device, which makes it
+> >       impossible to describe more complicated topologies where IDs can be
+> >       remapped/remastered, potentially by multiple SMMUs and/or bus bridges.
+> > 
+> > When writing the binding for the ARM SMMU driver, I originally started with
+> > something similar to what you're suggesting, but was later forced down a
+> > different route when I realised what sort of systems were being built.
+> > 
+> > We will have similar problems for PCIe RIDs and GIC DIDs (I spoke about this
+> > at the ARM mini-summit). They are not fixed across the system: they
+> > originate from a device, but can change as they traverse the system
+> > topology.
+> 
+> Is there any chance to overwrite SMMU driver specific params during
+> setting up topologies?
+
+Not sure I understand what you're getting at here. Could you elaborate
+please?
+
+Will
