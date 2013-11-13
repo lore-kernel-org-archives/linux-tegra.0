@@ -1,93 +1,65 @@
-From: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCHv4 5/7] iommu/tegra: smmu: Support "mmu-masters" binding
-Date: Wed, 13 Nov 2013 05:15:04 -0600
-Message-ID: <A52C6E6B-9776-4408-83C5-066551D76896@codeaurora.org>
-References: <1384158718-4756-1-git-send-email-hdoyu@nvidia.com>
-	<1384158718-4756-6-git-send-email-hdoyu@nvidia.com>
-Mime-Version: 1.0 (Mac OS X Mail 7.0 \(1822\))
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1384158718-4756-6-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, will.deacon-5wv7dgnIgG8@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
+Date: Wed, 13 Nov 2013 12:23:29 +0000
+Message-ID: <20131113122329.GC878@sirena.org.uk>
+References: <1383203126-3243-1-git-send-email-wni@nvidia.com>
+ <20131031162029.GF2493@sirena.org.uk>
+ <527737C5.5080901@nvidia.com>
+ <20131104161828.GK2493@sirena.org.uk>
+ <5278B4CB.9050305@nvidia.com>
+ <20131106085100.GB11602@sirena.org.uk>
+ <527A1C47.6050405@nvidia.com>
+ <20131106110154.GG11602@sirena.org.uk>
+ <5281C228.3000404@nvidia.com>
+ <5282717C.3050502@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FsscpQKzF/jJk6ya"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5282717C.3050502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Nov 11, 2013, at 2:31 AM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+--FsscpQKzF/jJk6ya
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Follow arm,smmu's "mmu-masters" binding.
-> 
-> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Update:
-> Newly added for v4. In v3, I used "nvidia,swgroups" and
-> "nvidia,memory-clients" bindings.
-> ---
-> .../bindings/iommu/nvidia,tegra30-smmu.txt         |  28 ++++-
-> drivers/iommu/tegra-smmu.c                         | 138 +++++++++++++++++----
-> 2 files changed, 141 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-> index 89fb543..51884e9 100644
-> --- a/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/nvidia,tegra30-smmu.txt
-> @@ -8,9 +8,16 @@ Required properties:
-> - nvidia,#asids : # of ASIDs
-> - dma-window : IOVA start address and length.
-> - nvidia,ahb : phandle to the ahb bus connected to SMMU.
-> +- mmu-masters   : A list of phandles to device nodes representing bus
-> +                  masters for which the SMMU can provide a translation
-> +                  and their corresponding StreamIDs (see example below).
-> +                  Each device node linked from this list must have a
-> +                  "#stream-id-cells" property, indicating the number of
-> +                  StreamIDs(swgroup ID) associated with it, which is defined
-> +		  in "include/dt-bindings/memory/tegra-swgroup.h".
-> 
-> Example:
-> -	smmu {
-> +	iommu {
-> 		compatible = "nvidia,tegra30-smmu";
-> 		reg = <0x7000f010 0x02c
-> 		       0x7000f1f0 0x010
-> @@ -18,4 +25,23 @@ Example:
-> 		nvidia,#asids = <4>;		/* # of ASIDs */
-> 		dma-window = <0 0x40000000>;	/* IOVA start & length */
-> 		nvidia,ahb = <&ahb>;
-> +
-> +		mmu-masters = <&host1x TEGRA_SWGROUP_HC>,
-> +			      <&mpe TEGRA_SWGROUP_MPE>,
-> +			      <&vi TEGRA_SWGROUP_VI>,
-> +			      <&epp TEGRA_SWGROUP_EPP>,
-> +			      <&isp TEGRA_SWGROUP_ISP>,
-> +			      <&gr2d TEGRA_SWGROUP_G2>,
-> +			      <&gr3d TEGRA_SWGROUP_NV TEGRA_SWGROUP_NV2>,
-> +			      <&dc TEGRA_SWGROUP_DC>,
-> +			      <&dcb TEGRA_SWGROUP_DCB>,
-> +			      <&uarta TEGRA_SWGROUP_PPCS>,
-> +			      <&uartb TEGRA_SWGROUP_PPCS>,
-> +			      <&uartc TEGRA_SWGROUP_PPCS>,
-> +			      <&uartd TEGRA_SWGROUP_PPCS>,
-> +			      <&uarte TEGRA_SWGROUP_PPCS>,
-> +			      <&sdhci0 TEGRA_SWGROUP_PPCS>,
-> +			      <&sdhci1 TEGRA_SWGROUP_PPCS>,
-> +			      <&sdhci2 TEGRA_SWGROUP_PPCS>,
-> +			      <&sdhci3 TEGRA_SWGROUP_PPCS>;
-> 	};
+On Tue, Nov 12, 2013 at 11:20:44AM -0700, Stephen Warren wrote:
 
-At first glance this seems backward from all other cases we have in which we usually have the device have a property that points back, like interrupt-parent.
+> The only issue you may have to watch out for is: When is
+> regulator_init() called (i.e. when does core_initcall happen) relative
+> to when driver probe()s can be called? If it's earlier, then
+> core_initcall is early enough I suspect.
 
-- k
+What I said was to set this up when we hand the DT over to the DT code
+to be parsed so that we don't need to worry about any gaps like that,
+it seems like a more direct solution than worrying about initcall
+ordering.
 
--- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+--FsscpQKzF/jJk6ya
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSg285AAoJELSic+t+oim9oCYP/iF5TEs9BBI4JdKSWFccG1Wf
+OZBzqLD0phzaLYmCzuETh7NTXBL/SAQs4UoTp8zYOaB11sfdlaff+WwbM21vh9gv
+HHu/nZpokbLXIIYt5djefj973cqzLtKVZlMev6TK4m4s27Bzao5kToaueuVH8mJF
+KepYfMgTTx9zLujsc6GcD9xPz/TiJvspJjT+nKiCnc3ESLIZ6LMuXXjDs4Ryz5TD
+6OfeiwD+kzCSIsX3rKKdUXe7R6rq4iqFHJTbHZ+LGaaFfjqfwRXqKio3XLcFmtfB
+0RqUB3QXiYs7aTljBOhXL3dOy3NO0yF4aYeBDxr3s0AUFfaUsEzfzUy+LgcUhseH
+wkuqGgOdKRnOpuML/EJX6WUw3vAo8ZzahSi/Vwxl4SpAbDvsDGvuiL4l4FKR7TAU
+IYBq5z3OgnwwP581g+Zqxq2sXHYqRRtaNPkjZyqhqFwkW797mfie568cRA6desFO
+UDibdmplzGVbS/PqzkUZilQL8OJhpl/XisSGBlHT0jHAAn7rUZcy6DY/9FxBaf7T
+RSt4Gsg5Zi0ilT5jfiCczJ424JQ8EmI5uwxUAqXxKUVcC5wd6WpNcdmMGf4+Vly4
++t29LSC4iQIks+u/UmLDQwHap6wfd8yU/noJZKU/AIkUNHJpm07yNnWKJuUYuV+Z
+FGybMqYpGiEJMJb+ecNG
+=li8B
+-----END PGP SIGNATURE-----
+
+--FsscpQKzF/jJk6ya--
