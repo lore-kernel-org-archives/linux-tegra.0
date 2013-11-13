@@ -1,67 +1,76 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv4 2/7] driver/core: Populate IOMMU'able devices in order
-Date: Wed, 13 Nov 2013 10:53:36 -0700
-Message-ID: <5283BCA0.40300@wwwdotorg.org>
-References: <1384158718-4756-3-git-send-email-hdoyu@nvidia.com>
-	<5282BAFC.8070405@wwwdotorg.org>
-	<20131113143804.GA11928@mudshark.cambridge.arm.com>
-	<20131113.180610.823304139654159769.hdoyu@nvidia.com>
-	<20131113173142.GF11928@mudshark.cambridge.arm.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [PATCH v10 0/7] ARM: support for Trusted Foundations secure monitor
+Date: Wed, 13 Nov 2013 09:57:57 -0800
+Message-ID: <CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw@mail.gmail.com>
+References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com>
+	<52828EF5.6090909@wwwdotorg.org>
+	<CAOesGMhatp9ZQr=eTCtQ_9a_E9LXKdTCzJd+P7Sy9Ut9wtvnsA@mail.gmail.com>
+	<5282E068.1070608@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131113173142.GF11928-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5282E068.1070608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2013 10:31 AM, Will Deacon wrote:
-> On Wed, Nov 13, 2013 at 04:06:10PM +0000, Hiroshi Doyu wrote:
->> Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org> wrote @ Wed, 13 Nov 2013 15:38:04 +0100:
+On Tue, Nov 12, 2013 at 6:14 PM, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 11/13/2013 05:38 AM, Olof Johansson wrote:
 >>
->>> On Tue, Nov 12, 2013 at 11:34:20PM +0000, Stephen Warren wrote:
->>>> SMMU:
->>>>     smmu: smmu@xxxxxx {
->>>>         #smmu-cells = <1>;
->>>>     }
->>>>
->>>> Affected device:
->>>>     smmus = <&smmu 1>;
->>>>     (perhaps with smmu-names too)
->>>>
->>>> That would allow the DT to represent basically arbitrary HW configurations.
->>>>
->>>> The implementation of this patch would then be almost as trivial; you'd
->>>> just need to walk the smmus property to find each phandle in turn, just
->>>> like any other phandle+specifier property, and validate that the SMMU
->>>> driver was already probe()d for each.
+>> On Tue, Nov 12, 2013 at 12:26 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>> wrote:
 >>>
->>> There are a few problems with that:
+>>> On 11/07/2013 03:11 AM, Alexandre Courbot wrote:
+>>>>
+>>>> Just a set of small fixes to address the concerns expressed on v9 with
+>>>> the
+>>>> non-prefixed version DT properties. I hope there won't be a need for an
+>>>> eleventh (!) version. :P
 >>>
->>>   1.) It assumes all devices sharing an SMMU have the same number of
->>>       "smmu cells"
+>>>
+>>> BTW, this version looks fine to me. On IRC, Olof said it looked OK to
+>>> him. I'm just waiting to hear back from Olof/Russell whether I should
+>>> merge this through the Tegra tree, or whether the first 1-3 patches
+>>> should go through Russell's tree.
 >>
->> This can be solved with introducing the fixed size of bitmap. The size
->> of bitmap can be fixed even per SoC. In tegra we used 64(2 cells)
->> which I expect at most.
-> 
-> That really doesn't sound like a good idea where you have bridges (like a
-> PCIe host controller) which could have a significant chunk of StreamID
-> space. You'd also need to pad everything out with some dummy IDs for parsing
-> purposes. Yuck!
+>>
+>> I pinged Russell, and he brought up the fact that there were earlier
+>> requests to move it to drivers/firmware. It would make sense to try to
+>> get that done before merging, especially if you anticipate someone
+>> using TF on 64-bit platforms.
+>
+>
+> IIRC when we discussed this point your last comment was as follows:
 
-Can't you solve this by having the SMMU include a stream ID mapping
-table. In the case of stream IDs having a large "address" space, then
-just define the mapping table syntax to allow easy specification of
-ranges using start/length, start/end, or value/mask pairs. Similar to
-ranges or PCI's interrupt-map{,-mask}.
+Touche. :) Thanks for the reminder.
+
+> On Tue, Oct 29, 2013 at 6:55 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>> I think we can probably merge this under arch/arm now, and when we
+>> figure out what needs to be common with ARM64 we can move it out to a
+>> good location. It might be that mostly just a header file with ABI
+>> conventions needs to be shared, not actual implementation, for
+>> example.
+>
+> So I thought we agreed on that. If in the end we prefer to move the ARM
+> firmware interface into drivers/firmware, I'm fine with that too (Tomasz
+> also confirmed he would be ok with it) but I wonder if that would not be
+> somehow premature.
+>
+> Another worry of mine is that this might delay this patchset some more.
+> Support for TF is one of the last remaining step towards making NVIDIA
+> branded Tegra retail devices (SHIELD and TegraNote at the moment) run
+> upstream directly. I missed 3.13, I'd like to make sure I won't miss 3.14.
+> Would it be acceptable if we move the ARM firmware interface to a common
+> place after this patchset is merged?
+
+Well, as I already said I'm ok with things going into arch/arm to
+start with, as long as Russell is. Once we see 64-bit needs for the
+same we'll move it out -- it's not like it's a whole lot of code to
+start with. But Russell has veto on the topic. :-)
+
+Russell still has his pull requests outstanding so I'm not sure where
+things are at, but I don't think this will miss 3.14 at this rate.
+
+
+-Olof
