@@ -1,64 +1,78 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
-Date: Wed, 13 Nov 2013 16:41:23 -0700
-Message-ID: <52840E23.5080105@wwwdotorg.org>
-References: <527A1C47.6050405@nvidia.com> <20131106110154.GG11602@sirena.org.uk> <5281C228.3000404@nvidia.com> <5282717C.3050502@wwwdotorg.org> <20131113122329.GC878@sirena.org.uk> <5283B6E3.9070206@wwwdotorg.org> <20131113190745.GD878@sirena.org.uk> <5283DD52.5050903@wwwdotorg.org> <20131113204923.GG878@sirena.org.uk> <5283F625.403@wwwdotorg.org> <20131113222953.GA26614@sirena.org.uk>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v10 0/7] ARM: support for Trusted Foundations secure monitor
+Date: Thu, 14 Nov 2013 10:20:19 +0900
+Message-ID: <52842553.2080807@nvidia.com>
+References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com> <52828EF5.6090909@wwwdotorg.org> <CAOesGMhatp9ZQr=eTCtQ_9a_E9LXKdTCzJd+P7Sy9Ut9wtvnsA@mail.gmail.com> <5282E068.1070608@nvidia.com> <CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131113222953.GA26614-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+In-Reply-To: <CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2013 03:29 PM, Mark Brown wrote:
-> On Wed, Nov 13, 2013 at 02:59:01PM -0700, Stephen Warren wrote:
->> On 11/13/2013 01:49 PM, Mark Brown wrote:
-> 
->>> No, with DT you can say that if there is no DT binding configuring
->>> a given thing (clock, regulator, GPIO or whatever) then no amount
->>> of module loading will ever cause it to appear - this is what the
->>> flag in question controls.
-> 
->> But we do have a binding for regulators, so wouldn't that flag always
->> be true?
-> 
-> In theory.  In practice people often add bindings for devices without
-> including the regulators and then someone comes along and adds the
-> regulators later, perhaps not even using a system with DT, and renders
-> all existing DTs buggy.  This is generally miserable for everyone so
-> it's better if we're liberal in what we accept.
+On 11/14/2013 02:57 AM, Olof Johansson wrote:
+> On Tue, Nov 12, 2013 at 6:14 PM, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 11/13/2013 05:38 AM, Olof Johansson wrote:
+>>>
+>>> On Tue, Nov 12, 2013 at 12:26 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+>>> wrote:
+>>>>
+>>>> On 11/07/2013 03:11 AM, Alexandre Courbot wrote:
+>>>>>
+>>>>> Just a set of small fixes to address the concerns expressed on v9 with
+>>>>> the
+>>>>> non-prefixed version DT properties. I hope there won't be a need for an
+>>>>> eleventh (!) version. :P
+>>>>
+>>>>
+>>>> BTW, this version looks fine to me. On IRC, Olof said it looked OK to
+>>>> him. I'm just waiting to hear back from Olof/Russell whether I should
+>>>> merge this through the Tegra tree, or whether the first 1-3 patches
+>>>> should go through Russell's tree.
+>>>
+>>>
+>>> I pinged Russell, and he brought up the fact that there were earlier
+>>> requests to move it to drivers/firmware. It would make sense to try to
+>>> get that done before merging, especially if you anticipate someone
+>>> using TF on 64-bit platforms.
+>>
+>>
+>> IIRC when we discussed this point your last comment was as follows:
+>
+> Touche. :) Thanks for the reminder.
+>
+>> On Tue, Oct 29, 2013 at 6:55 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>>> I think we can probably merge this under arch/arm now, and when we
+>>> figure out what needs to be common with ARM64 we can move it out to a
+>>> good location. It might be that mostly just a header file with ABI
+>>> conventions needs to be shared, not actual implementation, for
+>>> example.
+>>
+>> So I thought we agreed on that. If in the end we prefer to move the ARM
+>> firmware interface into drivers/firmware, I'm fine with that too (Tomasz
+>> also confirmed he would be ok with it) but I wonder if that would not be
+>> somehow premature.
+>>
+>> Another worry of mine is that this might delay this patchset some more.
+>> Support for TF is one of the last remaining step towards making NVIDIA
+>> branded Tegra retail devices (SHIELD and TegraNote at the moment) run
+>> upstream directly. I missed 3.13, I'd like to make sure I won't miss 3.14.
+>> Would it be acceptable if we move the ARM firmware interface to a common
+>> place after this patchset is merged?
+>
+> Well, as I already said I'm ok with things going into arch/arm to
+> start with, as long as Russell is. Once we see 64-bit needs for the
+> same we'll move it out -- it's not like it's a whole lot of code to
+> start with. But Russell has veto on the topic. :-)
 
-But that's a per-binding issue. Earlier, you wrote:
+Thanks Olof. Russell, are you ok with the patchset in its current form? 
+I can start moving the firmware interface out of arch/arm if that's what 
+you want (there is no user outside of ARM at the moment, but as Olof 
+pointed out that's not too much code) but I'd really like to see this 
+series secured for 3.14.
 
->> The only issue you may have to watch out for is: When is
->> regulator_init() called (i.e. when does core_initcall happen) relative
->> to when driver probe()s can be called? If it's earlier, then
->> core_initcall is early enough I suspect.
-> 
-> What I said was to set this up when we hand the DT over to the DT code
-> to be parsed so that we don't need to worry about any gaps like that,
-> it seems like a more direct solution than worrying about initcall
-> ordering.
-
-That sounds like a system-global flag, not a per-device/binding flag.
-Has the conversation shifted topics? And indeed, I've been talking about
-the system-global has_full_constraints flag all along here.
-
->> Perhaps you can suggest a name for the flag, and a specific set of
->> conditions when it will have specific values. That might help me
->> understand what you mean.
-> 
-> Well, of_have_populated_dt() is essentially doing the same thing
-> (probably, I don't know if it's set at quite the right time) - it's
-> saying we have a DT.  We could even change the users to check that as
-> well if it's doing the right thing.
-
-But the regulator code already calls of_have_populated_dt() in order to
-determine whether to set has_full_constraints = true; The only issue is
-that it does it too late. If of_have_populated_dt() is the flag that the
-code should key off, what's wrong with the suggestion I made yesterday
-to simply move the existing code (that uses of_have_populated_dt()) to
-an earlier location?
+Thanks,
+Alex.
