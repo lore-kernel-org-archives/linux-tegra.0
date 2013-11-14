@@ -1,92 +1,86 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv4 5/7] iommu/tegra: smmu: Support "mmu-masters" binding
-Date: Thu, 14 Nov 2013 07:41:45 +0100
-Message-ID: <20131114.084145.998129499909471378.hdoyu@nvidia.com>
-References: <5282C512.5090900@wwwdotorg.org><20131113094517.4608edf4302b61e3c4402a25@nvidia.com><5283BDBF.9020509@wwwdotorg.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
+Date: Thu, 14 Nov 2013 11:36:46 +0000
+Message-ID: <20131114113646.GG26614@sirena.org.uk>
+References: <5281C228.3000404@nvidia.com>
+ <5282717C.3050502@wwwdotorg.org>
+ <20131113122329.GC878@sirena.org.uk>
+ <5283B6E3.9070206@wwwdotorg.org>
+ <20131113190745.GD878@sirena.org.uk>
+ <5283DD52.5050903@wwwdotorg.org>
+ <20131113204923.GG878@sirena.org.uk>
+ <5283F625.403@wwwdotorg.org>
+ <20131113222953.GA26614@sirena.org.uk>
+ <52840E23.5080105@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <5283BDBF.9020509-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HB4mHL4PVvkpZAgW"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52840E23.5080105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 13 Nov 2013 18:58:23 +0100:
 
-> >  smmu: iommu@xxxxxx {
-> >        #iommu-cells = <3>;
-> >        ^^^^^^^^^^^^^^^^^^
-> >    };
-> > 
-> >    host1x {
-> >            compatible = "nvidia,tegra30-host1x", "simple-bus";
-> >            iommu = <&smmu 0x??????? 0x??????? "asid">;
-> > 	   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#######
-> >            gr3d {
-> >                    compatible = "nvidia,tegra30-gr3d";
-> >                    iommu = <&smmu 0x??????? 0x???????>;
-> >            }
-> > 
-> > I think that this "asid" part can be set 0 in tegra??.dtsi and the
-> > actual value can be overwritten in tegra??-<boardname>.dts file.
-> 
-> The one issue here is that we can only override entire properties, so
-> it's not possible for a board file to *just* replace the ASID, it'd have
-> to duplicate the entire property, just to change the one value.
-> 
-> Is the ASID mapping really likely to be board-specific though? To my
-> naive thinking, it seems that the chip design (e.g. number of
-> peripherals, number of available ASIDs) would tend to imply the
-> device->ASID mapping, since it would have been considered as part of
-> chip design. Hence, wouldn't soc.dtsi typically specify the expected
-> ASID mapping, and boards rarely if ever override it?
-> 
-> If the ASID mapping really is likely to vary per board, perhaps it makes
-> sense to put it into a separate property somehow so it's easier to override?
+--HB4mHL4PVvkpZAgW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  Older Tegra like T30: swgroups > asid(==4)
-  Newer Tegra         : swgroups < asid
+On Wed, Nov 13, 2013 at 04:41:23PM -0700, Stephen Warren wrote:
+> On 11/13/2013 03:29 PM, Mark Brown wrote:
 
-At newer Tegra, each swgroup should have one asid. In older Tegra,
-there aren't many options how to assign ASID since # of AS is 4, and
-we know which one should be isolated/protected first. Even we can fix
-this assignment for a SoC, not for a board.
+> > In theory.  In practice people often add bindings for devices without
+> > including the regulators and then someone comes along and adds the
+> > regulators later, perhaps not even using a system with DT, and renders
+> > all existing DTs buggy.  This is generally miserable for everyone so
+> > it's better if we're liberal in what we accept.
 
-Also I think that a newer tegra won't care this mapping since all will
-have an own AS. So maybe the binding between "swgroup" and "asid"
-should be another one, since this info is only needed for the older
-Tegra. For example:
+> But that's a per-binding issue. Earlier, you wrote:
 
-  smmu: iommu@xxxxxx {
-        #iommu-cells = <2>;
+No, it's an issue that affects running systems every time a binding gets
+updated.  The binding doesn't care.
 
-	/*
-	 * This as <-> swgroups mapping is only needed for older tegra.
-	 */
-	as-swgroups = <0x??????? 0x???????,  /* AS[0]: assigned swgroups bits */
-		       0x??????? 0x???????,  /* AS[1]: assigned swgroups bits */
-		       0x??????? 0x???????,  /* AS[2]: assigned swgroups bits */
-		       0x??????? 0x???????>; /* AS[3]: assigned swgroups bits */
-    };
- 
-    host1x {
-            compatible = "nvidia,tegra30-host1x", "simple-bus";
-            iommus = <&smmu 0x??????? 0x???????>;
-            gr3d {
-                    compatible = "nvidia,tegra30-gr3d";
-                    iommus = <&smmu 0x??????? 0x???????>;
-            }
-   };
+> That sounds like a system-global flag, not a per-device/binding flag.
+> Has the conversation shifted topics? And indeed, I've been talking about
+> the system-global has_full_constraints flag all along here.
 
-Then we would push this mapping info into DT only for older
-Tegra. Newer Tegra won't care where each swgroup will get its own.
+Yes, this is a behaviour which is implemented by the system in order to
+help keep device trees valid.
+
+> But the regulator code already calls of_have_populated_dt() in order to
+> determine whether to set has_full_constraints = true; The only issue is
+> that it does it too late. If of_have_populated_dt() is the flag that the
+> code should key off, what's wrong with the suggestion I made yesterday
+> to simply move the existing code (that uses of_have_populated_dt()) to
+> an earlier location?
+
+This is a third suggestion which is to check have_populated_dt() at use
+time not at some random point during initialisation which may or may not
+be the right one.  And someone needs to check that this is actually the
+check we want to use earlier on.
+
+--HB4mHL4PVvkpZAgW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJShLXLAAoJELSic+t+oim9o50P/2dxwOwRPiE0D7HFrjTconB5
+EJrnNGt163fNqJM525MLhnjyKZOlRb4Jv+Y41qWmmwvrzeV4INJDlZLgwcdY48vG
+AU52siulY6g28WAAxPEYuMNXhnVXSvMm+LwkBBefSNrRg2hzt4ZQFyHAiHkF2GBZ
+qpY4TVRy68ZCU6USSDLfRBFOxwmgmKMbQlBuS1d9A9WfCNST6i/Z0Et5wTuIYHVj
+8vYl9rsmatTTgk4YAWWdcN7tnxBiIJmgzLu/TmISB2az5GWURQNbGCNCSmYSqLy0
+5lBtwYhXmnhXxlIKkObQzx5w5KyD5Ybm7FbP5eTxmBzKCJtheiMhGWHm6Cd6Fbp1
+7Wld0WTdD+rNU8Tr1e8U99TNcFTxxeaLQsk+U0MpQgokNnDtBwMn7qMSvVqtoDYu
+xgEOeKuCDtidHzcVZYqoa72pbGIP7U3i6/e49+hAcrBI0ExifAJUqkkNAD6nnWWR
+/UpwiyRlJVpNkfql3mElkSsNoAapXYzcuh5yES9r1tkQQ8MzXf1n/C/UU3kBgd1D
+WbYIWOhtc3Q1HaqAO/fzuH9EYmTMhWqqeeke8IXNB0NF31xWXBMy/EgdGL3pVBwF
+NhHa3tFi5PCK7WHrkH30TufXh3XNjm9HD/2YXnIzxFBIbRFZIPGBvqHKb8NBjvVM
+f0NmdIco7QXJZxWDxX+B
+=c3VS
+-----END PGP SIGNATURE-----
+
+--HB4mHL4PVvkpZAgW--
