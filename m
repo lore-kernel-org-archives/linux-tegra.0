@@ -1,86 +1,87 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH RESEND] ARM: tegra: set regulator full constraints
-Date: Thu, 14 Nov 2013 11:36:46 +0000
-Message-ID: <20131114113646.GG26614@sirena.org.uk>
-References: <5281C228.3000404@nvidia.com>
- <5282717C.3050502@wwwdotorg.org>
- <20131113122329.GC878@sirena.org.uk>
- <5283B6E3.9070206@wwwdotorg.org>
- <20131113190745.GD878@sirena.org.uk>
- <5283DD52.5050903@wwwdotorg.org>
- <20131113204923.GG878@sirena.org.uk>
- <5283F625.403@wwwdotorg.org>
- <20131113222953.GA26614@sirena.org.uk>
- <52840E23.5080105@wwwdotorg.org>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 3/3] Documentation: dt: hwmon: add OF document for
+ LM90
+Date: Thu, 14 Nov 2013 13:33:20 +0100
+Message-ID: <20131114133320.00ad70c0@endymion.delvare>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+	<1381137940-22608-4-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HB4mHL4PVvkpZAgW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52840E23.5080105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1381137940-22608-4-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Wei,
 
---HB4mHL4PVvkpZAgW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, 7 Oct 2013 17:25:40 +0800, Wei Ni wrote:
+> Add OF document for LM90 in Documentation/devicetree/.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/hwmon/lm90.txt |   44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/lm90.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/lm90.txt b/Documentation/devicetree/bindings/hwmon/lm90.txt
+> new file mode 100644
+> index 0000000..e863248
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/lm90.txt
+> @@ -0,0 +1,44 @@
+> +* LM90 series thermometer.
+> +
+> +Required node properties:
+> +- compatible: manufacturer and chip name, one of
+> +		"adi,adm1032"
+> +		"adi,adt7461"
+> +		"adi,adt7461a"
+> +		"gmt,g781"
+> +		"national,lm90"
+> +		"national,lm86"
+> +		"national,lm89"
+> +		"national,lm99"
+> +		"dallas,max6646"
+> +		"dallas,max6647"
+> +		"dallas,max6649"
+> +		"dallas,max6657"
+> +		"dallas,max6658"
+> +		"dallas,max6659"
+> +		"dallas,max6680"
+> +		"dallas,max6681"
+> +		"dallas,max6695"
+> +		"dallas,max6696"
+> +		"onnn,nct1008"
+> +		"winbond,w83l771"
+> +		"nxp,sa56004"
+> +
+> +- reg: I2C bus address of the device
+> +
+> +- vcc-supply: vcc regulator for the supply voltage.
+> +
+> +Optional properties:
+> +- interrupts: Contains a single interrupt specifier which describes the
+> +              LM90 "-ALERT" pin output.
+> +              See interrupt-controller/interrupts.txt for the format.
+> +
+> +Example LM90 node:
+> +
+> +temp-sensor {
+> +	compatible = "onnn,nct1008";
+> +	reg = <0x4c>;
+> +	vcc-supply = <&palmas_ldo6_reg>;
+> +	interrupt-parent = <&gpio>;
+> +	interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
+> +}
 
-On Wed, Nov 13, 2013 at 04:41:23PM -0700, Stephen Warren wrote:
-> On 11/13/2013 03:29 PM, Mark Brown wrote:
+Looks good to me, just one question: is it OK that interrupt-parent is
+not described in the document? Is it supposed to be a standard property?
 
-> > In theory.  In practice people often add bindings for devices without
-> > including the regulators and then someone comes along and adds the
-> > regulators later, perhaps not even using a system with DT, and renders
-> > all existing DTs buggy.  This is generally miserable for everyone so
-> > it's better if we're liberal in what we accept.
+I'll add this file to the LM90 entry in MAINTAINERS, so that I can pick
+this patch in my tree.
 
-> But that's a per-binding issue. Earlier, you wrote:
-
-No, it's an issue that affects running systems every time a binding gets
-updated.  The binding doesn't care.
-
-> That sounds like a system-global flag, not a per-device/binding flag.
-> Has the conversation shifted topics? And indeed, I've been talking about
-> the system-global has_full_constraints flag all along here.
-
-Yes, this is a behaviour which is implemented by the system in order to
-help keep device trees valid.
-
-> But the regulator code already calls of_have_populated_dt() in order to
-> determine whether to set has_full_constraints = true; The only issue is
-> that it does it too late. If of_have_populated_dt() is the flag that the
-> code should key off, what's wrong with the suggestion I made yesterday
-> to simply move the existing code (that uses of_have_populated_dt()) to
-> an earlier location?
-
-This is a third suggestion which is to check have_populated_dt() at use
-time not at some random point during initialisation which may or may not
-be the right one.  And someone needs to check that this is actually the
-check we want to use earlier on.
-
---HB4mHL4PVvkpZAgW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJShLXLAAoJELSic+t+oim9o50P/2dxwOwRPiE0D7HFrjTconB5
-EJrnNGt163fNqJM525MLhnjyKZOlRb4Jv+Y41qWmmwvrzeV4INJDlZLgwcdY48vG
-AU52siulY6g28WAAxPEYuMNXhnVXSvMm+LwkBBefSNrRg2hzt4ZQFyHAiHkF2GBZ
-qpY4TVRy68ZCU6USSDLfRBFOxwmgmKMbQlBuS1d9A9WfCNST6i/Z0Et5wTuIYHVj
-8vYl9rsmatTTgk4YAWWdcN7tnxBiIJmgzLu/TmISB2az5GWURQNbGCNCSmYSqLy0
-5lBtwYhXmnhXxlIKkObQzx5w5KyD5Ybm7FbP5eTxmBzKCJtheiMhGWHm6Cd6Fbp1
-7Wld0WTdD+rNU8Tr1e8U99TNcFTxxeaLQsk+U0MpQgokNnDtBwMn7qMSvVqtoDYu
-xgEOeKuCDtidHzcVZYqoa72pbGIP7U3i6/e49+hAcrBI0ExifAJUqkkNAD6nnWWR
-/UpwiyRlJVpNkfql3mElkSsNoAapXYzcuh5yES9r1tkQQ8MzXf1n/C/UU3kBgd1D
-WbYIWOhtc3Q1HaqAO/fzuH9EYmTMhWqqeeke8IXNB0NF31xWXBMy/EgdGL3pVBwF
-NhHa3tFi5PCK7WHrkH30TufXh3XNjm9HD/2YXnIzxFBIbRFZIPGBvqHKb8NBjvVM
-f0NmdIco7QXJZxWDxX+B
-=c3VS
------END PGP SIGNATURE-----
-
---HB4mHL4PVvkpZAgW--
+-- 
+Jean Delvare
