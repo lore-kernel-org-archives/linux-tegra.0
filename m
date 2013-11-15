@@ -1,52 +1,29 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 11/31] dma: add channel request API that supports deferred probe
-Date: Fri, 15 Nov 2013 13:54:06 -0700
-Message-ID: <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 07/31] clk: tegra: implement a reset driver
+Date: Fri, 15 Nov 2013 13:54:02 -0700
+Message-ID: <1384548866-13141-8-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-dma_request_slave_channel() simply returns NULL whenever DMA channel
-lookup fails. Lookup could fail for two distinct reasons:
-
-a) No DMA specification exists for the channel name.
-   This includes situations where no DMA specifications exist at all, or
-   other general lookup problems.
-
-b) A DMA specification does exist, yet the driver for that channel is not
-   yet registered.
-
-Case (b) should trigger deferred probe in client drivers. However, since
-they have no way to differentiate the two situations, it cannot.
-
-Implement new function dma_request_slave_channel_or_err(), which performs
-identically to dma_request_slave_channel(), except that it returns an
-error-pointer rather than NULL, which allows callers to detect when
-deferred probe should occur.
-
-Eventually, all drivers should be converted to this new API, the old API
-removed, and the new API renamed to the more desirable name. This patch
-doesn't convert the existing API and all drivers in one go, since some
-drivers call dma_request_slave_channel() then dma_request_channel() if
-that fails. That would require modifying dma_request_channel() in the
-same way, which would then require modifying close to 100 drivers at once,
-rather than just the 15-20 or so that use dma_request_slave_channel(),
-which might be tenable in a single patch.
-
-acpi_dma_request_slave_chan_by_index() doesn't actually implement
-deferred probe. Perhaps it should?
+The Tegra CAR module implements both a clock and reset controller. So
+far, the driver exposes the clock feature via the common clock API and
+the reset feature using a custom API. This patch adds an implementation
+of the common reset framework API (include/linux/reset*.h). The legacy
+reset implementation will be removed once all drivers have been
+converted.
 
 Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 This patch is part of a series with strong internal depdendencies. I'm
@@ -54,242 +31,183 @@ looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- drivers/dma/acpi-dma.c    | 12 ++++++------
- drivers/dma/dmaengine.c   | 44 ++++++++++++++++++++++++++++++++++++++++----
- drivers/dma/of-dma.c      | 12 +++++++-----
- include/linux/dmaengine.h |  7 +++++++
- include/linux/of_dma.h    |  9 ++++++---
- 5 files changed, 66 insertions(+), 18 deletions(-)
+ drivers/clk/tegra/clk-tegra114.c |  3 ++-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  |  3 ++-
+ drivers/clk/tegra/clk-tegra30.c  |  3 ++-
+ drivers/clk/tegra/clk.c          | 55 +++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h          |  2 +-
+ 6 files changed, 62 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/acpi-dma.c b/drivers/dma/acpi-dma.c
-index e69b03c0fa50..c83d40f14467 100644
---- a/drivers/dma/acpi-dma.c
-+++ b/drivers/dma/acpi-dma.c
-@@ -334,7 +334,7 @@ static int acpi_dma_parse_fixed_dma(struct acpi_resource *res, void *data)
-  * @dev:	struct device to get DMA request from
-  * @index:	index of FixedDMA descriptor for @dev
-  *
-- * Returns pointer to appropriate dma channel on success or NULL on error.
-+ * Returns pointer to appropriate dma channel on success or an error pointer.
-  */
- struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
- 		size_t index)
-@@ -349,10 +349,10 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 9036a22ee5aa..207a15ac062f 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1464,7 +1464,8 @@ static void __init tegra114_clock_init(struct device_node *np)
+ 		return;
+ 	}
  
- 	/* Check if the device was enumerated by ACPI */
- 	if (!dev || !ACPI_HANDLE(dev))
--		return NULL;
-+		return ERR_PTR(-ENODEV);
+-	clks = tegra_clk_init(TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA114_CLK_CLK_MAX,
++				TEGRA114_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
  
- 	if (acpi_bus_get_device(ACPI_HANDLE(dev), &adev))
--		return NULL;
-+		return ERR_PTR(-ENODEV);
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 266e80b51d38..9adee736d7fa 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1404,7 +1404,7 @@ static void __init tegra124_clock_init(struct device_node *np)
+ 		return;
+ 	}
  
- 	memset(&pdata, 0, sizeof(pdata));
- 	pdata.index = index;
-@@ -367,7 +367,7 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
- 	acpi_dev_free_resource_list(&resource_list);
+-	clks = tegra_clk_init(TEGRA124_CLK_CLK_MAX, 6);
++	clks = tegra_clk_init(clk_base, TEGRA124_CLK_CLK_MAX, 6);
+ 	if (!clks)
+ 		return;
  
- 	if (dma_spec->slave_id < 0 || dma_spec->chan_id < 0)
--		return NULL;
-+		return ERR_PTR(-ENODEV);
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 58faac5f509e..eeffff6c6778 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1114,7 +1114,8 @@ static void __init tegra20_clock_init(struct device_node *np)
+ 		BUG();
+ 	}
  
- 	mutex_lock(&acpi_dma_lock);
+-	clks = tegra_clk_init(TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA20_CLK_CLK_MAX,
++				TEGRA20_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
  
-@@ -403,7 +403,7 @@ EXPORT_SYMBOL_GPL(acpi_dma_request_slave_chan_by_index);
-  * translate the names "tx" and "rx" here based on the most common case where
-  * the first FixedDMA descriptor is TX and second is RX.
-  *
-- * Returns pointer to appropriate dma channel on success or NULL on error.
-+ * Returns pointer to appropriate dma channel on success or an error pointer.
-  */
- struct dma_chan *acpi_dma_request_slave_chan_by_name(struct device *dev,
- 		const char *name)
-@@ -415,7 +415,7 @@ struct dma_chan *acpi_dma_request_slave_chan_by_name(struct device *dev,
- 	else if (!strcmp(name, "rx"))
- 		index = 1;
- 	else
--		return NULL;
-+		return ERR_PTR(-ENODEV);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 51c093c96657..e9b6a305be92 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1436,7 +1436,8 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 		BUG();
+ 	}
  
- 	return acpi_dma_request_slave_chan_by_index(dev, index);
- }
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index ea806bdc12ef..5e7f8af2f0ec 100644
---- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -540,6 +540,8 @@ EXPORT_SYMBOL_GPL(dma_get_slave_channel);
-  * @mask: capabilities that the channel must satisfy
-  * @fn: optional callback to disposition available channels
-  * @fn_param: opaque parameter to pass to dma_filter_fn
-+ *
-+ * Returns pointer to appropriate dma channel on success or NULL.
-  */
- struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- 				       dma_filter_fn fn, void *fn_param)
-@@ -588,24 +590,58 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- EXPORT_SYMBOL_GPL(__dma_request_channel);
+-	clks = tegra_clk_init(TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA30_CLK_CLK_MAX,
++				TEGRA30_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
  
- /**
-- * dma_request_slave_channel - try to allocate an exclusive slave channel
-+ * __dma_request_slave_channel - try to allocate an exclusive slave
-+ *   channel
-  * @dev:	pointer to client device structure
-  * @name:	slave channel name
-+ *
-+ * Returns pointer to appropriate dma channel on success or an error pointer.
-  */
--struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name)
-+static struct dma_chan *__dma_request_slave_channel(struct device *dev,
-+					const char *name, bool defer)
- {
- 	/* If device-tree is present get slave info from here */
- 	if (dev->of_node)
--		return of_dma_request_slave_channel(dev->of_node, name);
-+		return of_dma_request_slave_channel(dev->of_node, name, defer);
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index a12a5f5107ec..f20199a534bd 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -18,6 +18,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/clk/tegra.h>
++#include <linux/reset-controller.h>
++#include <linux/tegra-soc.h>
  
- 	/* If device was enumerated by ACPI get slave info from here */
- 	if (ACPI_HANDLE(dev))
- 		return acpi_dma_request_slave_chan_by_name(dev, name);
+ #include "clk.h"
  
--	return NULL;
-+	return ERR_PTR(-ENODEV);
+@@ -60,6 +62,11 @@
+ #define RST_DEVICES_SET_X		0x290
+ #define RST_DEVICES_CLR_X		0x294
+ 
++static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
++		unsigned long id);
++static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
++		unsigned long id);
++
+ /* Global data of Tegra CPU CAR ops */
+ static struct tegra_cpu_car_ops dummy_car_ops;
+ struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
+@@ -70,6 +77,17 @@ static struct clk **clks;
+ static int clk_num;
+ static struct clk_onecell_data clk_data;
+ 
++static struct reset_control_ops rst_ops = {
++	.assert = tegra_clk_rst_assert,
++	.deassert = tegra_clk_rst_deassert,
++};
++
++static struct reset_controller_dev rst_ctlr = {
++	.ops = &rst_ops,
++	.owner = THIS_MODULE,
++	.of_reset_n_cells = 1,
++};
++
+ static struct tegra_clk_periph_regs periph_regs[] = {
+ 	[0] = {
+ 		.enb_reg = CLK_OUT_ENB_L,
+@@ -121,6 +139,35 @@ static struct tegra_clk_periph_regs periph_regs[] = {
+ 	},
+ };
+ 
++static void __iomem *clk_base;
++
++static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
++		unsigned long id)
++{
++	/*
++	 * If peripheral is on the APB bus then we must read the APB bus to
++	 * flush the write operation in apb bus. This will avoid peripheral
++	 * access after disabling clock. Since the reset driver has no
++	 * knowledge of which reset IDs represent which devices, simply do
++	 * this all the time.
++	 */
++	tegra_read_chipid();
++
++	writel_relaxed(BIT(id % 32),
++			clk_base + periph_regs[id / 32].rst_set_reg);
++
++	return 0;
 +}
 +
-+/**
-+ * dma_request_slave_channel - try to allocate an exclusive slave channel
-+ * @dev:	pointer to client device structure
-+ * @name:	slave channel name
-+ *
-+ * Returns pointer to appropriate dma channel on success or NULL.
-+ */
-+struct dma_chan *dma_request_slave_channel(struct device *dev,
-+					   const char *name)
++static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
++		unsigned long id)
 +{
-+	struct dma_chan *ch = __dma_request_slave_channel(dev, name, false);
-+	if (IS_ERR(ch))
-+		return NULL;
-+	return ch;
- }
- EXPORT_SYMBOL_GPL(dma_request_slave_channel);
- 
-+/**
-+ * dma_request_slave_channel_or_err - try to allocate an exclusive slave channel
-+ * @dev:	pointer to client device structure
-+ * @name:	slave channel name
-+ *
-+ * Returns pointer to appropriate dma channel on success or an error pointer.
-+ */
-+struct dma_chan *dma_request_slave_channel_or_err(struct device *dev,
-+						  const char *name)
-+{
-+	return __dma_request_slave_channel(dev, name, true);
-+}
-+EXPORT_SYMBOL_GPL(dma_request_slave_channel_or_err);
++	writel_relaxed(BIT(id % 32),
++			clk_base + periph_regs[id / 32].rst_clr_reg);
 +
- void dma_release_channel(struct dma_chan *chan)
- {
- 	mutex_lock(&dma_list_mutex);
-diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
-index 0b88dd3d05f4..928141f6f21b 100644
---- a/drivers/dma/of-dma.c
-+++ b/drivers/dma/of-dma.c
-@@ -143,10 +143,10 @@ static int of_dma_match_channel(struct device_node *np, const char *name,
-  * @np:		device node to get DMA request from
-  * @name:	name of desired channel
-  *
-- * Returns pointer to appropriate dma channel on success or NULL on error.
-+ * Returns pointer to appropriate dma channel on success or an error pointer.
-  */
- struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
--					      const char *name)
-+					      const char *name, bool defer)
- {
- 	struct of_phandle_args	dma_spec;
- 	struct of_dma		*ofdma;
-@@ -155,14 +155,14 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
- 
- 	if (!np || !name) {
- 		pr_err("%s: not enough information provided\n", __func__);
--		return NULL;
-+		return ERR_PTR(-ENODEV);
- 	}
- 
- 	count = of_property_count_strings(np, "dma-names");
- 	if (count < 0) {
- 		pr_err("%s: dma-names property of node '%s' missing or empty\n",
- 			__func__, np->full_name);
--		return NULL;
-+		return ERR_PTR(-ENODEV);
- 	}
- 
- 	for (i = 0; i < count; i++) {
-@@ -181,11 +181,13 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
- 
- 		of_node_put(dma_spec.np);
- 
-+		if (!ofdma && defer)
-+			return ERR_PTR(-EPROBE_DEFER);
- 		if (chan)
- 			return chan;
- 	}
- 
--	return NULL;
-+	return ERR_PTR(-ENODEV);
- }
- 
- /**
-diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-index 41cf0c399288..b908b0fda72b 100644
---- a/include/linux/dmaengine.h
-+++ b/include/linux/dmaengine.h
-@@ -1041,6 +1041,8 @@ void dma_issue_pending_all(void);
- struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
- 					dma_filter_fn fn, void *fn_param);
- struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name);
-+struct dma_chan *dma_request_slave_channel_or_err(struct device *dev,
-+						  const char *name);
- void dma_release_channel(struct dma_chan *chan);
- #else
- static inline struct dma_chan *dma_find_channel(enum dma_transaction_type tx_type)
-@@ -1068,6 +1070,11 @@ static inline struct dma_chan *dma_request_slave_channel(struct device *dev,
- {
- 	return NULL;
- }
-+static inline struct dma_chan *dma_request_slave_channel_or_err(
-+					struct device *dev, const char *name)
-+{
-+	return ERR_PTR(-ENODEV);
++	return 0;
 +}
- static inline void dma_release_channel(struct dma_chan *chan)
++
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
  {
- }
-diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
-index ae36298ba076..0504461574c6 100644
---- a/include/linux/of_dma.h
-+++ b/include/linux/of_dma.h
-@@ -38,7 +38,8 @@ extern int of_dma_controller_register(struct device_node *np,
- 		void *data);
- extern void of_dma_controller_free(struct device_node *np);
- extern struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
--						     const char *name);
-+						     const char *name,
-+						     bool defer);
- extern struct dma_chan *of_dma_simple_xlate(struct of_phandle_args *dma_spec,
- 		struct of_dma *ofdma);
- #else
-@@ -54,8 +55,10 @@ static inline void of_dma_controller_free(struct device_node *np)
- {
+ 	int reg_bank = clkid / 32;
+@@ -133,8 +180,10 @@ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 	}
  }
  
--static inline struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
--						     const char *name)
-+static inline struct dma_chan *of_dma_request_slave_channel(
-+					struct device_node *np,
-+					const char *name,
-+					bool defer)
+-struct clk ** __init tegra_clk_init(int num, int banks)
++struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
  {
- 	return NULL;
++	clk_base = regs;
++
+ 	if (WARN_ON(banks > ARRAY_SIZE(periph_regs)))
+ 		return NULL;
+ 
+@@ -220,6 +269,10 @@ void __init tegra_add_of_provider(struct device_node *np)
+ 	clk_data.clks = clks;
+ 	clk_data.clk_num = clk_num;
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
++
++	rst_ctlr.of_node = np;
++	rst_ctlr.nr_resets = clk_num * 32;
++	reset_controller_register(&rst_ctlr);
  }
+ 
+ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 7f110acfe2a1..39f24959daf7 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -594,7 +594,7 @@ void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
+ 		struct clk *clks[], int clk_max);
+ 
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid);
+-struct clk **tegra_clk_init(int num, int periph_banks);
++struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
+ 
+ struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
+ 
 -- 
 1.8.1.5
