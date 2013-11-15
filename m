@@ -1,29 +1,37 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 07/31] clk: tegra: implement a reset driver
-Date: Fri, 15 Nov 2013 13:54:02 -0700
-Message-ID: <1384548866-13141-8-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 16/31] ASoC: tegra: use reset framework
+Date: Fri, 15 Nov 2013 13:54:11 -0700
+Message-ID: <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra CAR module implements both a clock and reset controller. So
-far, the driver exposes the clock feature via the common clock API and
-the reset feature using a custom API. This patch adds an implementation
-of the common reset framework API (include/linux/reset*.h). The legacy
-reset implementation will be removed once all drivers have been
-converted.
+Tegra's clock driver now provides an implementation of the common
+reset API (include/linux/reset.h). Use this instead of the old Tegra-
+specific API; that will soon be removed.
+
+This change also renames "clock"/"clk" to "modules"/"mod" in symbols
+related to entries in configlink_clocks[], since:
+- We don't care about clock handles any more, but rather reset handles,
+  so the old name isn't applicable.
+- It really is a list of modules on the bus, about which we currently
+  only care about reset handles.
+If we start caring about any other aspect of the modules in the future,
+we won't have to rename all these symbols again.
 
 Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 This patch is part of a series with strong internal depdendencies. I'm
@@ -31,183 +39,159 @@ looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- drivers/clk/tegra/clk-tegra114.c |  3 ++-
- drivers/clk/tegra/clk-tegra124.c |  2 +-
- drivers/clk/tegra/clk-tegra20.c  |  3 ++-
- drivers/clk/tegra/clk-tegra30.c  |  3 ++-
- drivers/clk/tegra/clk.c          | 55 +++++++++++++++++++++++++++++++++++++++-
- drivers/clk/tegra/clk.h          |  2 +-
- 6 files changed, 62 insertions(+), 6 deletions(-)
+ sound/soc/tegra/Kconfig        |  2 ++
+ sound/soc/tegra/tegra30_ahub.c | 70 +++++++++++++++++++++++-------------------
+ sound/soc/tegra/tegra30_ahub.h |  2 +-
+ 3 files changed, 41 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 9036a22ee5aa..207a15ac062f 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1464,7 +1464,8 @@ static void __init tegra114_clock_init(struct device_node *np)
- 		return;
- 	}
- 
--	clks = tegra_clk_init(TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_PERIPH_BANKS);
-+	clks = tegra_clk_init(clk_base, TEGRA114_CLK_CLK_MAX,
-+				TEGRA114_CLK_PERIPH_BANKS);
- 	if (!clks)
- 		return;
- 
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 266e80b51d38..9adee736d7fa 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1404,7 +1404,7 @@ static void __init tegra124_clock_init(struct device_node *np)
- 		return;
- 	}
- 
--	clks = tegra_clk_init(TEGRA124_CLK_CLK_MAX, 6);
-+	clks = tegra_clk_init(clk_base, TEGRA124_CLK_CLK_MAX, 6);
- 	if (!clks)
- 		return;
- 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 58faac5f509e..eeffff6c6778 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1114,7 +1114,8 @@ static void __init tegra20_clock_init(struct device_node *np)
- 		BUG();
- 	}
- 
--	clks = tegra_clk_init(TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_PERIPH_BANKS);
-+	clks = tegra_clk_init(clk_base, TEGRA20_CLK_CLK_MAX,
-+				TEGRA20_CLK_PERIPH_BANKS);
- 	if (!clks)
- 		return;
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 51c093c96657..e9b6a305be92 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1436,7 +1436,8 @@ static void __init tegra30_clock_init(struct device_node *np)
- 		BUG();
- 	}
- 
--	clks = tegra_clk_init(TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_PERIPH_BANKS);
-+	clks = tegra_clk_init(clk_base, TEGRA30_CLK_CLK_MAX,
-+				TEGRA30_CLK_PERIPH_BANKS);
- 	if (!clks)
- 		return;
- 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index a12a5f5107ec..f20199a534bd 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -18,6 +18,8 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
+diff --git a/sound/soc/tegra/Kconfig b/sound/soc/tegra/Kconfig
+index 8fc653ca3ab4..896292bb853f 100644
+--- a/sound/soc/tegra/Kconfig
++++ b/sound/soc/tegra/Kconfig
+@@ -1,6 +1,8 @@
+ config SND_SOC_TEGRA
+ 	tristate "SoC Audio for the Tegra System-on-Chip"
+ 	depends on (ARCH_TEGRA && TEGRA20_APB_DMA) || COMPILE_TEST
++	depends on COMMON_CLK
++	depends on RESET_CONTROLLER
+ 	select REGMAP_MMIO
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+ 	help
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index 31154338c1eb..5ce00dc48c44 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -24,6 +24,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
  #include <linux/clk/tegra.h>
-+#include <linux/reset-controller.h>
-+#include <linux/tegra-soc.h>
+ #include <sound/soc.h>
+@@ -301,27 +302,27 @@ int tegra30_ahub_unset_rx_cif_source(enum tegra30_ahub_rxcif rxcif)
+ }
+ EXPORT_SYMBOL_GPL(tegra30_ahub_unset_rx_cif_source);
  
- #include "clk.h"
+-#define CLK_LIST_MASK_TEGRA30	BIT(0)
+-#define CLK_LIST_MASK_TEGRA114	BIT(1)
++#define MOD_LIST_MASK_TEGRA30	BIT(0)
++#define MOD_LIST_MASK_TEGRA114	BIT(1)
  
-@@ -60,6 +62,11 @@
- #define RST_DEVICES_SET_X		0x290
- #define RST_DEVICES_CLR_X		0x294
+-#define CLK_LIST_MASK_TEGRA30_OR_LATER \
+-		(CLK_LIST_MASK_TEGRA30 | CLK_LIST_MASK_TEGRA114)
++#define MOD_LIST_MASK_TEGRA30_OR_LATER \
++		(MOD_LIST_MASK_TEGRA30 | MOD_LIST_MASK_TEGRA114)
  
-+static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
-+		unsigned long id);
-+static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
-+		unsigned long id);
-+
- /* Global data of Tegra CPU CAR ops */
- static struct tegra_cpu_car_ops dummy_car_ops;
- struct tegra_cpu_car_ops *tegra_cpu_car_ops = &dummy_car_ops;
-@@ -70,6 +77,17 @@ static struct clk **clks;
- static int clk_num;
- static struct clk_onecell_data clk_data;
- 
-+static struct reset_control_ops rst_ops = {
-+	.assert = tegra_clk_rst_assert,
-+	.deassert = tegra_clk_rst_deassert,
-+};
-+
-+static struct reset_controller_dev rst_ctlr = {
-+	.ops = &rst_ops,
-+	.owner = THIS_MODULE,
-+	.of_reset_n_cells = 1,
-+};
-+
- static struct tegra_clk_periph_regs periph_regs[] = {
- 	[0] = {
- 		.enb_reg = CLK_OUT_ENB_L,
-@@ -121,6 +139,35 @@ static struct tegra_clk_periph_regs periph_regs[] = {
- 	},
+ static const struct {
+-	const char *clk_name;
+-	u32 clk_list_mask;
+-} configlink_clocks[] = {
+-	{ "i2s0", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "i2s1", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "i2s2", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "i2s3", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "i2s4", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "dam0", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "dam1", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "dam2", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "spdif_in", CLK_LIST_MASK_TEGRA30_OR_LATER },
+-	{ "amx", CLK_LIST_MASK_TEGRA114 },
+-	{ "adx", CLK_LIST_MASK_TEGRA114 },
++	const char *rst_name;
++	u32 mod_list_mask;
++} configlink_mods[] = {
++	{ "i2s0", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "i2s1", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "i2s2", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "i2s3", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "i2s4", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "dam0", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "dam1", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "dam2", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "spdif", MOD_LIST_MASK_TEGRA30_OR_LATER },
++	{ "amx", MOD_LIST_MASK_TEGRA114 },
++	{ "adx", MOD_LIST_MASK_TEGRA114 },
  };
  
-+static void __iomem *clk_base;
-+
-+static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
-+		unsigned long id)
-+{
-+	/*
-+	 * If peripheral is on the APB bus then we must read the APB bus to
-+	 * flush the write operation in apb bus. This will avoid peripheral
-+	 * access after disabling clock. Since the reset driver has no
-+	 * knowledge of which reset IDs represent which devices, simply do
-+	 * this all the time.
-+	 */
-+	tegra_read_chipid();
-+
-+	writel_relaxed(BIT(id % 32),
-+			clk_base + periph_regs[id / 32].rst_set_reg);
-+
-+	return 0;
-+}
-+
-+static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
-+		unsigned long id)
-+{
-+	writel_relaxed(BIT(id % 32),
-+			clk_base + periph_regs[id / 32].rst_clr_reg);
-+
-+	return 0;
-+}
-+
- struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ #define LAST_REG(name) \
+@@ -450,17 +451,17 @@ static const struct regmap_config tegra30_ahub_ahub_regmap_config = {
+ };
+ 
+ static struct tegra30_ahub_soc_data soc_data_tegra30 = {
+-	.clk_list_mask = CLK_LIST_MASK_TEGRA30,
++	.mod_list_mask = MOD_LIST_MASK_TEGRA30,
+ 	.set_audio_cif = tegra30_ahub_set_cif,
+ };
+ 
+ static struct tegra30_ahub_soc_data soc_data_tegra114 = {
+-	.clk_list_mask = CLK_LIST_MASK_TEGRA114,
++	.mod_list_mask = MOD_LIST_MASK_TEGRA114,
+ 	.set_audio_cif = tegra30_ahub_set_cif,
+ };
+ 
+ static struct tegra30_ahub_soc_data soc_data_tegra124 = {
+-	.clk_list_mask = CLK_LIST_MASK_TEGRA114,
++	.mod_list_mask = MOD_LIST_MASK_TEGRA114,
+ 	.set_audio_cif = tegra124_ahub_set_cif,
+ };
+ 
+@@ -475,7 +476,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
  {
- 	int reg_bank = clkid / 32;
-@@ -133,8 +180,10 @@ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 	const struct of_device_id *match;
+ 	const struct tegra30_ahub_soc_data *soc_data;
+-	struct clk *clk;
++	struct reset_control *rst;
+ 	int i;
+ 	struct resource *res0, *res1, *region;
+ 	u32 of_dma[2];
+@@ -495,19 +496,24 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
+ 	 * operate correctly, all devices on this bus must be out of reset.
+ 	 * Ensure that here.
+ 	 */
+-	for (i = 0; i < ARRAY_SIZE(configlink_clocks); i++) {
+-		if (!(configlink_clocks[i].clk_list_mask &
+-					soc_data->clk_list_mask))
++	for (i = 0; i < ARRAY_SIZE(configlink_mods); i++) {
++		if (!(configlink_mods[i].mod_list_mask &
++					soc_data->mod_list_mask))
+ 			continue;
+-		clk = clk_get(&pdev->dev, configlink_clocks[i].clk_name);
+-		if (IS_ERR(clk)) {
+-			dev_err(&pdev->dev, "Can't get clock %s\n",
+-				configlink_clocks[i].clk_name);
+-			ret = PTR_ERR(clk);
++
++		rst = reset_control_get(&pdev->dev,
++					configlink_mods[i].rst_name);
++		if (IS_ERR(rst)) {
++			dev_err(&pdev->dev, "Can't get reset %s\n",
++				configlink_mods[i].rst_name);
++			ret = PTR_ERR(rst);
+ 			goto err;
+ 		}
+-		tegra_periph_reset_deassert(clk);
+-		clk_put(clk);
++
++		ret = reset_control_deassert(rst);
++		reset_control_put(rst);
++		if (ret)
++			goto err;
  	}
- }
  
--struct clk ** __init tegra_clk_init(int num, int banks)
-+struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- {
-+	clk_base = regs;
-+
- 	if (WARN_ON(banks > ARRAY_SIZE(periph_regs)))
- 		return NULL;
+ 	ahub = devm_kzalloc(&pdev->dev, sizeof(struct tegra30_ahub),
+diff --git a/sound/soc/tegra/tegra30_ahub.h b/sound/soc/tegra/tegra30_ahub.h
+index d67321d90faa..1383f8cd3572 100644
+--- a/sound/soc/tegra/tegra30_ahub.h
++++ b/sound/soc/tegra/tegra30_ahub.h
+@@ -502,7 +502,7 @@ void tegra124_ahub_set_cif(struct regmap *regmap, unsigned int reg,
+ 			   struct tegra30_ahub_cif_conf *conf);
  
-@@ -220,6 +269,10 @@ void __init tegra_add_of_provider(struct device_node *np)
- 	clk_data.clks = clks;
- 	clk_data.clk_num = clk_num;
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-+
-+	rst_ctlr.of_node = np;
-+	rst_ctlr.nr_resets = clk_num * 32;
-+	reset_controller_register(&rst_ctlr);
- }
- 
- void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 7f110acfe2a1..39f24959daf7 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -594,7 +594,7 @@ void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
- 		struct clk *clks[], int clk_max);
- 
- struct tegra_clk_periph_regs *get_reg_bank(int clkid);
--struct clk **tegra_clk_init(int num, int periph_banks);
-+struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
- 
- struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
- 
+ struct tegra30_ahub_soc_data {
+-	u32 clk_list_mask;
++	u32 mod_list_mask;
+ 	void (*set_audio_cif)(struct regmap *regmap,
+ 			      unsigned int reg,
+ 			      struct tegra30_ahub_cif_conf *conf);
 -- 
 1.8.1.5
