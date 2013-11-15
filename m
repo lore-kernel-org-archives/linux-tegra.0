@@ -1,150 +1,129 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 10/31] ARM: tegra: pass reset to tegra_powergate_sequence_power_up()
-Date: Fri, 15 Nov 2013 13:54:05 -0700
-Message-ID: <1384548866-13141-11-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 09/31] drm/tegra: use reset framework
+Date: Fri, 15 Nov 2013 13:54:04 -0700
+Message-ID: <1384548866-13141-10-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
 To: swarren@wwwdotorg.org
-Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Cc: =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, pdeschrijver@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-=46rom: Stephen Warren <swarren@nvidia.com>
-
-Tegra's clock driver now provides an implementation of the common
-reset API (include/linux/reset.h). Use this instead of the old Tegra-
-specific API; that will soon be removed.
-
-Cc: treding@nvidia.com
-Cc: pdeschrijver@nvidia.com
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
-Cc: Terje Bergstr=C3=B6m <tbergstrom@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
----
-This patch is part of a series with strong internal depdendencies. I'm
-looking for an ack so that I can take the entire series through the Teg=
-ra
-and arm-soc trees. The series will be part of a stable branch that can =
-be
-merged into other subsystems if needed to avoid/resolve dependencies.
----
- arch/arm/mach-tegra/powergate.c | 8 +++++---
- drivers/gpu/drm/tegra/gr3d.c    | 6 ++++--
- drivers/pci/host/pci-tegra.c    | 3 ++-
- include/linux/tegra-powergate.h | 4 +++-
- 4 files changed, 14 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm/mach-tegra/powergate.c b/arch/arm/mach-tegra/powe=
-rgate.c
-index 85d28e756bb7..f6f5b54ff95e 100644
---- a/arch/arm/mach-tegra/powergate.c
-+++ b/arch/arm/mach-tegra/powergate.c
-@@ -25,6 +25,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/io.h>
-+#include <linux/reset.h>
- #include <linux/seq_file.h>
- #include <linux/spinlock.h>
- #include <linux/clk/tegra.h>
-@@ -144,11 +145,12 @@ int tegra_powergate_remove_clamping(int id)
- }
-=20
- /* Must be called with clk disabled, and returns with clk enabled */
--int tegra_powergate_sequence_power_up(int id, struct clk *clk)
-+int tegra_powergate_sequence_power_up(int id, struct clk *clk,
-+					struct reset_control *rst)
- {
- 	int ret;
-=20
--	tegra_periph_reset_assert(clk);
-+	reset_control_assert(rst);
-=20
- 	ret =3D tegra_powergate_power_on(id);
- 	if (ret)
-@@ -165,7 +167,7 @@ int tegra_powergate_sequence_power_up(int id, struc=
-t clk *clk)
- 		goto err_clamp;
-=20
- 	udelay(10);
--	tegra_periph_reset_deassert(clk);
-+	reset_control_deassert(rst);
-=20
- 	return 0;
-=20
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.=
-c
-index f629e38b00e4..0cbb24b1ae04 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -279,7 +279,8 @@ static int gr3d_probe(struct platform_device *pdev)
- 		}
- 	}
-=20
--	err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_3D, gr3d->c=
-lk);
-+	err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_3D, gr3d->c=
-lk,
-+						gr3d->rst);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to power up 3D unit\n");
- 		return err;
-@@ -287,7 +288,8 @@ static int gr3d_probe(struct platform_device *pdev)
-=20
- 	if (gr3d->clk_secondary) {
- 		err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_3D1,
--							gr3d->clk_secondary);
-+							gr3d->clk_secondary,
-+							gr3d->rst_secondary);
- 		if (err < 0) {
- 			dev_err(&pdev->dev,
- 				"failed to power up secondary 3D unit\n");
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.=
-c
-index 174a5bc2d993..aace19edc469 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -956,7 +956,8 @@ static int tegra_pcie_power_on(struct tegra_pcie *p=
-cie)
- 	}
-=20
- 	err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
--						pcie->pex_clk);
-+						pcie->pex_clk,
-+						pcie->pex_rst);
- 	if (err) {
- 		dev_err(pcie->dev, "powerup sequence failed: %d\n", err);
- 		return err;
-diff --git a/include/linux/tegra-powergate.h b/include/linux/tegra-powe=
-rgate.h
-index c98cfa406952..b5ad64aca071 100644
---- a/include/linux/tegra-powergate.h
-+++ b/include/linux/tegra-powergate.h
-@@ -19,6 +19,7 @@
- #define _MACH_TEGRA_POWERGATE_H_
-=20
- struct clk;
-+struct reset_control;
-=20
- #define TEGRA_POWERGATE_CPU	0
- #define TEGRA_POWERGATE_3D	1
-@@ -51,6 +52,7 @@ int tegra_powergate_power_off(int id);
- int tegra_powergate_remove_clamping(int id);
-=20
- /* Must be called with clk disabled, and returns with clk enabled */
--int tegra_powergate_sequence_power_up(int id, struct clk *clk);
-+int tegra_powergate_sequence_power_up(int id, struct clk *clk,
-+					struct reset_control *rst);
-=20
- #endif /* _MACH_TEGRA_POWERGATE_H_ */
---=20
-1.8.1.5
+RnJvbTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4KClRlZ3JhJ3MgY2xvY2sg
+ZHJpdmVyIG5vdyBwcm92aWRlcyBhbiBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgY29tbW9uCnJlc2V0
+IEFQSSAoaW5jbHVkZS9saW51eC9yZXNldC5oKS4gVXNlIHRoaXMgaW5zdGVhZCBvZiB0aGUgb2xk
+IFRlZ3JhLQpzcGVjaWZpYyBBUEk7IHRoYXQgd2lsbCBzb29uIGJlIHJlbW92ZWQuCgpDYzogdHJl
+ZGluZ0BudmlkaWEuY29tCkNjOiBwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbQpDYzogbGludXgtdGVn
+cmFAdmdlci5rZXJuZWwub3JnCkNjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKQ2M6IFRlcmplIEJlcmdzdHLDtm0gPHRiZXJnc3Ryb21AbnZpZGlhLmNvbT4KQ2M6IERhdmlk
+IEFpcmxpZSA8YWlybGllZEBsaW51eC5pZT4KQ2M6IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4K
+LS0tClRoaXMgcGF0Y2ggaXMgcGFydCBvZiBhIHNlcmllcyB3aXRoIHN0cm9uZyBpbnRlcm5hbCBk
+ZXBkZW5kZW5jaWVzLiBJJ20KbG9va2luZyBmb3IgYW4gYWNrIHNvIHRoYXQgSSBjYW4gdGFrZSB0
+aGUgZW50aXJlIHNlcmllcyB0aHJvdWdoIHRoZSBUZWdyYQphbmQgYXJtLXNvYyB0cmVlcy4gVGhl
+IHNlcmllcyB3aWxsIGJlIHBhcnQgb2YgYSBzdGFibGUgYnJhbmNoIHRoYXQgY2FuIGJlCm1lcmdl
+ZCBpbnRvIG90aGVyIHN1YnN5c3RlbXMgaWYgbmVlZGVkIHRvIGF2b2lkL3Jlc29sdmUgZGVwZW5k
+ZW5jaWVzLgotLS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnIHwgIDEgKwogZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RjLmMgICAgfCAgOSArKysrKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uaCAgIHwgIDMgKysrCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jICB8IDE2
+ICsrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgIHwgMTQgKysr
+KysrKysrKystLS0KIDUgZmlsZXMgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlv
+bnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZyBiL2RyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnCmluZGV4IDg5NjFiYTZhMzRiOC4uOGRiOWIzYmNlMDAx
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvS2NvbmZpZworKysgYi9kcml2ZXJz
+L2dwdS9kcm0vdGVncmEvS2NvbmZpZwpAQCAtMiw2ICsyLDcgQEAgY29uZmlnIERSTV9URUdSQQog
+CWJvb2wgIk5WSURJQSBUZWdyYSBEUk0iCiAJZGVwZW5kcyBvbiBBUkNIX1RFR1JBIHx8IEFSQ0hf
+TVVMVElQTEFURk9STQogCWRlcGVuZHMgb24gRFJNCisJZGVwZW5kcyBvbiBSRVNFVF9DT05UUk9M
+TEVSCiAJc2VsZWN0IFRFR1JBX0hPU1QxWAogCXNlbGVjdCBEUk1fS01TX0hFTFBFUgogCXNlbGVj
+dCBEUk1fS01TX0ZCX0hFTFBFUgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Rj
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwppbmRleCBhZTFjYjMxZWFkN2UuLmMzYmU5
+Mjg3OWJlYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKKysrIGIvZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMKQEAgLTEwLDYgKzEwLDcgQEAKICNpbmNsdWRlIDxsaW51
+eC9jbGsuaD4KICNpbmNsdWRlIDxsaW51eC9jbGsvdGVncmEuaD4KICNpbmNsdWRlIDxsaW51eC9k
+ZWJ1Z2ZzLmg+CisjaW5jbHVkZSA8bGludXgvcmVzZXQuaD4KIAogI2luY2x1ZGUgImRjLmgiCiAj
+aW5jbHVkZSAiZHJtLmgiCkBAIC03MTIsNyArNzEzLDcgQEAgc3RhdGljIHZvaWQgdGVncmFfY3J0
+Y19wcmVwYXJlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIAl1bnNpZ25lZCBsb25nIHZhbHVlOwog
+CiAJLyogaGFyZHdhcmUgaW5pdGlhbGl6YXRpb24gKi8KLQl0ZWdyYV9wZXJpcGhfcmVzZXRfZGVh
+c3NlcnQoZGMtPmNsayk7CisJcmVzZXRfY29udHJvbF9kZWFzc2VydChkYy0+cnN0KTsKIAl1c2xl
+ZXBfcmFuZ2UoMTAwMDAsIDIwMDAwKTsKIAogCWlmIChkYy0+cGlwZSkKQEAgLTExODcsNiArMTE4
+OCwxMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RjX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYpCiAJCXJldHVybiBQVFJfRVJSKGRjLT5jbGspOwogCX0KIAorCWRjLT5yc3QgPSBkZXZt
+X3Jlc2V0X2NvbnRyb2xfZ2V0KCZwZGV2LT5kZXYsICJkYyIpOworCWlmIChJU19FUlIoZGMtPnJz
+dCkpIHsKKwkJZGV2X2VycigmcGRldi0+ZGV2LCAiZmFpbGVkIHRvIGdldCByZXNldFxuIik7CisJ
+CXJldHVybiBQVFJfRVJSKGRjLT5yc3QpOworCX0KKwogCWVyciA9IGNsa19wcmVwYXJlX2VuYWJs
+ZShkYy0+Y2xrKTsKIAlpZiAoZXJyIDwgMCkKIAkJcmV0dXJuIGVycjsKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaApp
+bmRleCBmZGZlMjU5ZWQ3ZjguLmY3MTdjMThiMjhjMiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL3RlZ3JhL2RybS5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaApAQCAtMTks
+NiArMTksOCBAQAogI2luY2x1ZGUgPGRybS9kcm1fZmJfaGVscGVyLmg+CiAjaW5jbHVkZSA8ZHJt
+L2RybV9maXhlZC5oPgogCitzdHJ1Y3QgcmVzZXRfY29udHJvbDsKKwogc3RydWN0IHRlZ3JhX2Zi
+IHsKIAlzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyIGJhc2U7CiAJc3RydWN0IHRlZ3JhX2JvICoqcGxh
+bmVzOwpAQCAtOTMsNiArOTUsNyBAQCBzdHJ1Y3QgdGVncmFfZGMgewogCWludCBwaXBlOwogCiAJ
+c3RydWN0IGNsayAqY2xrOworCXN0cnVjdCByZXNldF9jb250cm9sICpyc3Q7CiAJdm9pZCBfX2lv
+bWVtICpyZWdzOwogCWludCBpcnE7CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9ncjNkLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5jCmluZGV4IDRjZWM4ZjUyNmFm
+Ny4uZjYyOWUzOGIwMGU0IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ3IzZC5j
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9ncjNkLmMKQEAgLTExLDYgKzExLDcgQEAKICNp
+bmNsdWRlIDxsaW51eC9ob3N0MXguaD4KICNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4KICNpbmNs
+dWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4KKyNpbmNsdWRlIDxsaW51eC9yZXNldC5oPgog
+I2luY2x1ZGUgPGxpbnV4L3RlZ3JhLXBvd2VyZ2F0ZS5oPgogCiAjaW5jbHVkZSAiZHJtLmgiCkBA
+IC0yMiw2ICsyMyw4IEBAIHN0cnVjdCBncjNkIHsKIAlzdHJ1Y3QgaG9zdDF4X2NoYW5uZWwgKmNo
+YW5uZWw7CiAJc3RydWN0IGNsayAqY2xrX3NlY29uZGFyeTsKIAlzdHJ1Y3QgY2xrICpjbGs7CisJ
+c3RydWN0IHJlc2V0X2NvbnRyb2wgKnJzdF9zZWNvbmRhcnk7CisJc3RydWN0IHJlc2V0X2NvbnRy
+b2wgKnJzdDsKIAogCURFQ0xBUkVfQklUTUFQKGFkZHJfcmVncywgR1IzRF9OVU1fUkVHUyk7CiB9
+OwpAQCAtMjU1LDEyICsyNTgsMjUgQEAgc3RhdGljIGludCBncjNkX3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVybiBQVFJfRVJSKGdyM2QtPmNsayk7CiAJfQogCisJ
+Z3IzZC0+cnN0ID0gZGV2bV9yZXNldF9jb250cm9sX2dldCgmcGRldi0+ZGV2LCAiM2QiKTsKKwlp
+ZiAoSVNfRVJSKGdyM2QtPnJzdCkpIHsKKwkJZGV2X2VycigmcGRldi0+ZGV2LCAiY2Fubm90IGdl
+dCByZXNldFxuIik7CisJCXJldHVybiBQVFJfRVJSKGdyM2QtPnJzdCk7CisJfQorCiAJaWYgKG9m
+X2RldmljZV9pc19jb21wYXRpYmxlKG5wLCAibnZpZGlhLHRlZ3JhMzAtZ3IzZCIpKSB7CiAJCWdy
+M2QtPmNsa19zZWNvbmRhcnkgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgIjNkMiIpOwogCQlp
+ZiAoSVNfRVJSKGdyM2QtPmNsaykpIHsKIAkJCWRldl9lcnIoJnBkZXYtPmRldiwgImNhbm5vdCBn
+ZXQgc2Vjb25kYXJ5IGNsb2NrXG4iKTsKIAkJCXJldHVybiBQVFJfRVJSKGdyM2QtPmNsayk7CiAJ
+CX0KKworCQlncjNkLT5yc3Rfc2Vjb25kYXJ5ID0gZGV2bV9yZXNldF9jb250cm9sX2dldCgmcGRl
+di0+ZGV2LAorCQkJCQkJCQkiM2QyIik7CisJCWlmIChJU19FUlIoZ3IzZC0+cnN0X3NlY29uZGFy
+eSkpIHsKKwkJCWRldl9lcnIoJnBkZXYtPmRldiwgImNhbm5vdCBnZXQgc2Vjb25kYXJ5IHJlc2V0
+XG4iKTsKKwkJCXJldHVybiBQVFJfRVJSKGdyM2QtPnJzdF9zZWNvbmRhcnkpOworCQl9CiAJfQog
+CiAJZXJyID0gdGVncmFfcG93ZXJnYXRlX3NlcXVlbmNlX3Bvd2VyX3VwKFRFR1JBX1BPV0VSR0FU
+RV8zRCwgZ3IzZC0+Y2xrKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1p
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCmluZGV4IDBjZDliYzIwNTZlOC4uZjNh
+YWQ0OTYzM2Q2IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jCisrKyBi
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMKQEAgLTEyLDYgKzEyLDcgQEAKICNpbmNsdWRl
+IDxsaW51eC9kZWJ1Z2ZzLmg+CiAjaW5jbHVkZSA8bGludXgvaGRtaS5oPgogI2luY2x1ZGUgPGxp
+bnV4L3JlZ3VsYXRvci9jb25zdW1lci5oPgorI2luY2x1ZGUgPGxpbnV4L3Jlc2V0Lmg+CiAKICNp
+bmNsdWRlICJoZG1pLmgiCiAjaW5jbHVkZSAiZHJtLmgiCkBAIC00OSw2ICs1MCw3IEBAIHN0cnVj
+dCB0ZWdyYV9oZG1pIHsKIAogCXN0cnVjdCBjbGsgKmNsa19wYXJlbnQ7CiAJc3RydWN0IGNsayAq
+Y2xrOworCXN0cnVjdCByZXNldF9jb250cm9sICpyc3Q7CiAKIAljb25zdCBzdHJ1Y3QgdGVncmFf
+aGRtaV9jb25maWcgKmNvbmZpZzsKIApAQCAtNzMxLDkgKzczMyw5IEBAIHN0YXRpYyBpbnQgdGVn
+cmFfb3V0cHV0X2hkbWlfZW5hYmxlKHN0cnVjdCB0ZWdyYV9vdXRwdXQgKm91dHB1dCkKIAkJcmV0
+dXJuIGVycjsKIAl9CiAKLQl0ZWdyYV9wZXJpcGhfcmVzZXRfYXNzZXJ0KGhkbWktPmNsayk7CisJ
+cmVzZXRfY29udHJvbF9hc3NlcnQoaGRtaS0+cnN0KTsKIAl1c2xlZXBfcmFuZ2UoMTAwMCwgMjAw
+MCk7Ci0JdGVncmFfcGVyaXBoX3Jlc2V0X2RlYXNzZXJ0KGhkbWktPmNsayk7CisJcmVzZXRfY29u
+dHJvbF9kZWFzc2VydChoZG1pLT5yc3QpOwogCiAJdGVncmFfZGNfd3JpdGVsKGRjLCBWU1lOQ19I
+X1BPU0lUSU9OKDEpLAogCQkJRENfRElTUF9ESVNQX1RJTUlOR19PUFRJT05TKTsKQEAgLTkxMiw3
+ICs5MTQsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX291dHB1dF9oZG1pX2Rpc2FibGUoc3RydWN0IHRl
+Z3JhX291dHB1dCAqb3V0cHV0KQogewogCXN0cnVjdCB0ZWdyYV9oZG1pICpoZG1pID0gdG9faGRt
+aShvdXRwdXQpOwogCi0JdGVncmFfcGVyaXBoX3Jlc2V0X2Fzc2VydChoZG1pLT5jbGspOworCXJl
+c2V0X2NvbnRyb2xfYXNzZXJ0KGhkbWktPnJzdCk7CiAJY2xrX2Rpc2FibGUoaGRtaS0+Y2xrKTsK
+IAlyZWd1bGF0b3JfZGlzYWJsZShoZG1pLT5wbGwpOwogCkBAIC0xMzM4LDYgKzEzNDAsMTIgQEAg
+c3RhdGljIGludCB0ZWdyYV9oZG1pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+CiAJCXJldHVybiBQVFJfRVJSKGhkbWktPmNsayk7CiAJfQogCisJaGRtaS0+cnN0ID0gZGV2bV9y
+ZXNldF9jb250cm9sX2dldCgmcGRldi0+ZGV2LCAiaGRtaSIpOworCWlmIChJU19FUlIoaGRtaS0+
+cnN0KSkgeworCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gZ2V0IHJlc2V0XG4iKTsK
+KwkJcmV0dXJuIFBUUl9FUlIoaGRtaS0+cnN0KTsKKwl9CisKIAllcnIgPSBjbGtfcHJlcGFyZSho
+ZG1pLT5jbGspOwogCWlmIChlcnIgPCAwKQogCQlyZXR1cm4gZXJyOwotLSAKMS44LjEuNQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
