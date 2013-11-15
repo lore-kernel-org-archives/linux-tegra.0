@@ -1,32 +1,27 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register accesses
-Date: Fri, 15 Nov 2013 13:54:12 -0700
-Message-ID: <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 20/31] i2c: tegra: use reset framework
+Date: Fri, 15 Nov 2013 13:54:15 -0700
+Message-ID: <1384548866-13141-21-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Call pm_runtime_get_sync() before all register accesses; the HW requires
-clocks to be running when accessing registers.
-
-This hasn't been needed to date, since all register IO was performed
-while playback was active, and hence the ASoC core had already called
-pm_runtime_get(). However, an imminent future commit will allocate and
-set up the FIFOs and routing during probe(), when that "protection"
-won't be in place.
+Tegra's clock driver now provides an implementation of the common
+reset API (include/linux/reset.h). Use this instead of the old Tegra-
+specific API; that will soon be removed.
 
 Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 This patch is part of a series with strong internal depdendencies. I'm
@@ -34,146 +29,54 @@ looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- sound/soc/tegra/tegra30_ahub.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/i2c/busses/i2c-tegra.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index 5ce00dc48c44..2f1a566dd9cc 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -115,6 +115,8 @@ int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
- 		   (channel * TEGRA30_AHUB_CHANNEL_RXFIFO_STRIDE);
- 	*reqsel = ahub->dma_sel + channel;
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e661edee4d0c..9704537aee3c 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -27,7 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+-#include <linux/clk/tegra.h>
++#include <linux/reset.h>
  
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
-@@ -141,6 +143,8 @@ int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
- 	      (channel * TEGRA30_AHUB_CIF_RX_CTRL_STRIDE);
- 	ahub->soc_data->set_audio_cif(ahub->regmap_apbif, reg, &cif_conf);
+ #include <asm/unaligned.h>
  
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_allocate_rx_fifo);
-@@ -150,12 +154,16 @@ int tegra30_ahub_enable_rx_fifo(enum tegra30_ahub_rxcif rxcif)
- 	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
- 	int reg, val;
+@@ -160,6 +160,7 @@ struct tegra_i2c_dev {
+ 	struct i2c_adapter adapter;
+ 	struct clk *div_clk;
+ 	struct clk *fast_clk;
++	struct reset_control *rst;
+ 	void __iomem *base;
+ 	int cont_id;
+ 	int irq;
+@@ -415,9 +416,9 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 		return err;
+ 	}
  
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val |= TEGRA30_AHUB_CHANNEL_CTRL_RX_EN;
- 	tegra30_apbif_write(reg, val);
+-	tegra_periph_reset_assert(i2c_dev->div_clk);
++	reset_control_assert(i2c_dev->rst);
+ 	udelay(2);
+-	tegra_periph_reset_deassert(i2c_dev->div_clk);
++	reset_control_deassert(i2c_dev->rst);
  
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_enable_rx_fifo);
-@@ -165,12 +173,16 @@ int tegra30_ahub_disable_rx_fifo(enum tegra30_ahub_rxcif rxcif)
- 	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
- 	int reg, val;
+ 	if (i2c_dev->is_dvc)
+ 		tegra_dvc_init(i2c_dev);
+@@ -743,6 +744,12 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
  
-+	pm_runtime_get_sync(ahub->dev);
++	i2c_dev->rst = devm_reset_control_get(&pdev->dev, "i2c");
++	if (IS_ERR(i2c_dev->rst)) {
++		dev_err(&pdev->dev, "missing controller reset");
++		return PTR_ERR(i2c_dev->rst);
++	}
 +
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val &= ~TEGRA30_AHUB_CHANNEL_CTRL_RX_EN;
- 	tegra30_apbif_write(reg, val);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_disable_rx_fifo);
-@@ -205,6 +217,8 @@ int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
- 		   (channel * TEGRA30_AHUB_CHANNEL_TXFIFO_STRIDE);
- 	*reqsel = ahub->dma_sel + channel;
- 
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
-@@ -231,6 +245,8 @@ int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
- 	      (channel * TEGRA30_AHUB_CIF_TX_CTRL_STRIDE);
- 	ahub->soc_data->set_audio_cif(ahub->regmap_apbif, reg, &cif_conf);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_allocate_tx_fifo);
-@@ -240,12 +256,16 @@ int tegra30_ahub_enable_tx_fifo(enum tegra30_ahub_txcif txcif)
- 	int channel = txcif - TEGRA30_AHUB_TXCIF_APBIF_TX0;
- 	int reg, val;
- 
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val |= TEGRA30_AHUB_CHANNEL_CTRL_TX_EN;
- 	tegra30_apbif_write(reg, val);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_enable_tx_fifo);
-@@ -255,12 +275,16 @@ int tegra30_ahub_disable_tx_fifo(enum tegra30_ahub_txcif txcif)
- 	int channel = txcif - TEGRA30_AHUB_TXCIF_APBIF_TX0;
- 	int reg, val;
- 
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_CHANNEL_CTRL +
- 	      (channel * TEGRA30_AHUB_CHANNEL_CTRL_STRIDE);
- 	val = tegra30_apbif_read(reg);
- 	val &= ~TEGRA30_AHUB_CHANNEL_CTRL_TX_EN;
- 	tegra30_apbif_write(reg, val);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_disable_tx_fifo);
-@@ -281,10 +305,14 @@ int tegra30_ahub_set_rx_cif_source(enum tegra30_ahub_rxcif rxcif,
- 	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
- 	int reg;
- 
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_AUDIO_RX +
- 	      (channel * TEGRA30_AHUB_AUDIO_RX_STRIDE);
- 	tegra30_audio_write(reg, 1 << txcif);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_set_rx_cif_source);
-@@ -294,10 +322,14 @@ int tegra30_ahub_unset_rx_cif_source(enum tegra30_ahub_rxcif rxcif)
- 	int channel = rxcif - TEGRA30_AHUB_RXCIF_APBIF_RX0;
- 	int reg;
- 
-+	pm_runtime_get_sync(ahub->dev);
-+
- 	reg = TEGRA30_AHUB_AUDIO_RX +
- 	      (channel * TEGRA30_AHUB_AUDIO_RX_STRIDE);
- 	tegra30_audio_write(reg, 0);
- 
-+	pm_runtime_put(ahub->dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(tegra30_ahub_unset_rx_cif_source);
+ 	ret = of_property_read_u32(i2c_dev->dev->of_node, "clock-frequency",
+ 					&i2c_dev->bus_clk_rate);
+ 	if (ret)
 -- 
 1.8.1.5
