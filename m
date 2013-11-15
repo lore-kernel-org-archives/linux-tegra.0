@@ -1,194 +1,346 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 00/31] ARM: tegra: use common reset and DMA bindings
-Date: Fri, 15 Nov 2013 13:53:55 -0700
-Message-ID: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org
-Cc: Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Stephen Warren <swarren@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Julian Andres Klode <jak@jak-linux.org>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Mike Turquette <mturquette@linaro.org>, Dan Williams <dan.j.willi>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 19/31] ASoC: tegra: convert to standard DMA DT bindings
+Date: Fri, 15 Nov 2013 13:54:14 -0700
+Message-ID: <1384548866-13141-20-git-send-email-swarren@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4KClRoaXMgc2VyaWVzIGlt
-cGxlbWVudHMgYSBjb21tb24gcmVzZXQgZnJhbWV3b3JrIGRyaXZlciBmb3IgVGVncmEsIGFuZAp1
-cGRhdGVzIGFsbCByZWxldmFudCBUZWdyYSBkcml2ZXJzIHRvIHVzZSBpdC4gSXQgYWxzbyByZW1v
-dmVzIHRoZSBjdXN0b20KRE1BIGJpbmRpbmdzIGFuZCByZXBsYWNlZCB0aGVtIHdpdGggdGhlIHN0
-YW5kYXJkIERNQSBEVCBiaW5kaW5ncy4KCkhpc3RvcmljYWxseSwgdGhlIFRlZ3JhIGNsb2NrIGRy
-aXZlciBoYXMgZXhwb3J0ZWQgYSBjdXN0b20gQVBJIGZvciBtb2R1bGUKcmVzZXQuIFRoaXMgc2Vy
-aWVzIHJlbW92ZXMgdGhhdCBBUEksIGFuZCB0cmFuc2l0aW9ucyBEVCBhbmQgZHJpdmVycyB0bwp0
-aGUgbmV3IHJlc2V0IGZyYW1ld29yay4KClRoZSBjdXN0b20gQVBJIHVzZWQgYSAic3RydWN0IGNs
-ayIgdG8gaWRlbnRpZnkgd2hpY2ggbW9kdWxlIHRvIHJlc2V0LCBhbmQKY29uc2VxdWVudGx5IHNv
-bWUgRFQgYmluZGluZ3MgYW5kIGRyaXZlcnMgcmVxdWlyZWQgY2xvY2tzIHRvIGJlIHByb3ZpZGVk
-CndoZXJlIHRoZXkgcmVhbGx5IG5lZWRlZCBqdXN0IGEgcmVzZXQgaWRlbnRpZmllciBpbnN0ZWFk
-LiBEdWUgdG8gdGhpcwprbm93biBkZWZpY2llbmN5LCBJIGhhdmUgYWx3YXlzIGNvbnNpZGVyZWQg
-bW9zdCBUZWdyYSBiaW5kaW5ncyB0byBiZQp1bnN0YWJsZS4gVGhpcyBzZXJpZXMgcmVtb3ZlcyB0
-aGlzIGV4Y3VzZSBmb3IgaW5zdGFiaWxpdHksIGFsdGhvdWdoIEkKc3RpbGwgY29uc2lkZXIgc29t
-ZSBUZWdyYSBiaW5kaW5ncyB1bnN0YWJsZSBkdWUgdG8gdGhlIG5lZWQgdG8gY29udmVydCB0bwp0
-aGUgY29tbW9uIERNQSBiaW5kaW5ncy4KCkhpc3RvcmljYWxseSwgVGVncmEgRE1BIGNoYW5uZWxz
-IGhhdmUgYmVlbiByZXByZXNlbnRlZCBpbiBEVCB1c2luZyBhCmN1c3RvbSBudmlkaWEsZG1hLXJl
-cXVlc3Qtc2VsZWN0b3IgcHJvcGVydHkuIE5vdyB0aGF0IHN0YW5kYXJkIERNQSBEVApiaW5kaW5n
-cyBleGlzdCwgY29udmVydCBhbGwgVGVncmEgYmluZGluZ3MsIERUcywgYW5kIGRyaXZlcnMgdG8g
-dXNlIHRoZQpzdGFuZGFyZCBpbnN0ZWFkLgoKVGhpcyBzZXJpZXMgbWFrZXMgYSBEVC1BQkktaW5j
-b21wYXRpYmxlIGNoYW5nZSB0bzoKLSBSZXF1aXJlIHJlc2V0IHNwZWNpZmllcnMgaW4gRFQgd2hl
-cmUgcmVsZXZhbnQuCi0gUmVxdWlyZSBzdGFuZGFyZCBETUEgc3BlY2lmaWVycy4KLSBSZW1vdmUg
-Y2xvY2sgc3BlY2lmaWVycyBmcm9tIERUIHdoZXJlIHRoZXkgd2VyZSBvbmx5IG5lZWRlZCBmb3Ig
-cmVzZXQuCi0gUmVtb3ZlIGxlZ2FjeSBETUEgc3BlY2lmaWVyIHByb3BlcnRpZXMuCgpJIGFudGlj
-aXBhdGUgbWVyZ2luZyB0aGlzIHdob2xlIHNlcmllcyBpbnRvIHRoZSBUZWdyYSBhbmQgYXJtLXNv
-YyB0cmVlcwphcyBpdHMgb3duIGJyYW5jaCwgZHVlIHRvIGludGVybmFsIGRlcGVuZGVuY2llcy4g
-VGhpcyBicmFuY2ggd2lsbCBiZQpzdGFibGUgYW5kIGNhbiB0aGVuIGJlIG1lcmdlZCBpbnRvIGFu
-eSBvdGhlciBzdWJzeXN0ZW0gdHJlZXMgc2hvdWxkIGFueQpjb25mbGljdHMgYXJpc2UuCgpUaGlz
-IHNlcmllcyBkZXBlbmRzIG9uIFBldGVyJ3MgVGVncmEgY2xvY2sgZHJpdmVyIHJld29yaywgYXZh
-aWxhYmxlIGF0CmdpdDovL252LXRlZ3JhLm52aWRpYS5jb20vdXNlci9wZGVzY2hyaWp2ZXIvbGlu
-dXggdGVncmEtY2xrLXRlZ3JhMTI0LTAKKG9yIHdoYXRldmVyIHZlcnNpb24gb2YgdGhhdCBnZXRz
-IGluY2x1ZGVkIGluIDMuMTQpCgpDYzogYWMxMDBAbGlzdHMubGF1bmNocGFkLm5ldApDYzogQWxh
-biBTdGVybiA8c3Rlcm5Acm93bGFuZC5oYXJ2YXJkLmVkdT4KQ2M6IGFsc2EtZGV2ZWxAYWxzYS1w
-cm9qZWN0Lm9yZwpDYzogQmpvcm4gSGVsZ2FhcyA8YmhlbGdhYXNAZ29vZ2xlLmNvbT4KQ2M6IERh
-biBXaWxsaWFtcyA8ZGFuLmoud2lsbGlhbXNAaW50ZWwuY29tPgpDYzogRGF2aWQgQWlybGllIDxh
-aXJsaWVkQGxpbnV4LmllPgpDYzogZGV2ZWxAZHJpdmVyZGV2Lm9zdW9zbC5vcmcKQ2M6IGRldmlj
-ZXRyZWVAdmdlci5rZXJuZWwub3JnCkNjOiBEbWl0cnkgVG9yb2tob3YgPGRtaXRyeS50b3Jva2hv
-dkBnbWFpbC5jb20+CkNjOiBEbWl0cnkgVG9yb2tob3YgPGR0b3JAbWFpbC5ydT4KQ2M6IGRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2to
-QGxpbnV4Zm91bmRhdGlvbi5vcmc+CkNjOiBJYW4gQ2FtcGJlbGwgPGlqYytkZXZpY2V0cmVlQGhl
-bGxpb24ub3JnLnVrPgpDYzogSnVsaWFuIEFuZHJlcyBLbG9kZSA8amFrQGphay1saW51eC5vcmc+
-CkNjOiBMaWFtIEdpcmR3b29kIDxsZ2lyZHdvb2RAZ21haWwuY29tPgpDYzogbGludXgtYXJtLWtl
-cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCkNjOiBsaW51eC1pMmNAdmdlci5rZXJuZWwub3JnCkNj
-OiBsaW51eC1pbnB1dEB2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5v
-cmcKQ2M6IGxpbnV4LXNlcmlhbEB2Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbnV4LXNwaUB2Z2VyLmtl
-cm5lbC5vcmcKQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZwpDYzogbGludXgtdXNiQHZn
-ZXIua2VybmVsLm9yZwpDYzogTWFyYyBEaWV0cmljaCA8bWFydmluMjRAZ214LmRlPgpDYzogTWFy
-ayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPgpDYzogTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxh
-bmRAYXJtLmNvbT4KQ2M6IE1pa2UgVHVycXVldHRlIDxtdHVycXVldHRlQGxpbmFyby5vcmc+CkNj
-OiBQYXdlbCBNb2xsIDxwYXdlbC5tb2xsQGFybS5jb20+CkNjOiBwZGVzY2hyaWp2ZXJAbnZpZGlh
-LmNvbQpDYzogUm9iIEhlcnJpbmcgPHJvYi5oZXJyaW5nQGNhbHhlZGEuY29tPgpDYzogVGVyamUg
-QmVyZ3N0csO2bSA8dGJlcmdzdHJvbUBudmlkaWEuY29tPgpDYzogdHJlZGluZ0BudmlkaWEuY29t
-CkNjOiBXb2xmcmFtIFNhbmcgPHdzYUB0aGUtZHJlYW1zLmRlPgoKU3RlcGhlbiBXYXJyZW4gKDMx
-KToKICBBUk06IHRlZ3JhOiBhZGQgbWlzc2luZyBjbG9jayBkb2N1bWVudGF0aW9uIHRvIERUIGJp
-bmRpbmdzCiAgQVJNOiB0ZWdyYTogZG9jdW1lbnQgcmVzZXQgcHJvcGVydGllcyBpbiBEVCBiaW5k
-aW5ncwogIEFSTTogdGVncmE6IGRvY3VtZW50IHVzZSBvZiBzdGFuZGFyZCBETUEgRFQgYmluZGlu
-Z3MKICBBUk06IHRlZ3JhOiB1cGRhdGUgRFQgZmlsZXMgdG8gYWRkIHJlc2V0IHByb3BlcnRpZXMK
-ICBBUk06IHRlZ3JhOiB1cGRhdGUgRFQgZmlsZXMgdG8gYWRkIERNQSBwcm9wZXJ0aWVzCiAgQVJN
-OiB0ZWdyYTogc2VsZWN0IHRoZSByZXNldCBmcmFtZXdvcmsKICBjbGs6IHRlZ3JhOiBpbXBsZW1l
-bnQgYSByZXNldCBkcml2ZXIKICBwY2k6IHRlZ3JhOiB1c2UgcmVzZXQgZnJhbWV3b3JrCiAgZHJt
-L3RlZ3JhOiB1c2UgcmVzZXQgZnJhbWV3b3JrCiAgQVJNOiB0ZWdyYTogcGFzcyByZXNldCB0byB0
-ZWdyYV9wb3dlcmdhdGVfc2VxdWVuY2VfcG93ZXJfdXAoKQogIGRtYTogYWRkIGNoYW5uZWwgcmVx
-dWVzdCBBUEkgdGhhdCBzdXBwb3J0cyBkZWZlcnJlZCBwcm9iZQogIGRtYTogdGVncmE6IHVzZSBy
-ZXNldCBmcmFtZXdvcmsKICBkbWE6IHRlZ3JhOiByZWdpc3RlciBhcyBhbiBPRiBETUEgY29udHJv
-bGxlcgogIEFTb0M6IGRtYWVuZ2luZTogc3VwcG9ydCBkZWZlcnJlZCBwcm9iZSBmb3IgRE1BIGNo
-YW5uZWxzCiAgQVNvQzogZG1hZW5naW5lOiBhZGQgY3VzdG9tIERNQSBjb25maWcgdG8gc25kX2Rt
-YWVuZ2luZV9wY21fY29uZmlnCiAgQVNvQzogdGVncmE6IHVzZSByZXNldCBmcmFtZXdvcmsKICBB
-U29DOiB0ZWdyYTogY2FsbCBwbV9ydW50aW1lIEFQSXMgYXJvdW5kIHJlZ2lzdGVyIGFjY2Vzc2Vz
-CiAgQVNvQzogdGVncmE6IGFsbG9jYXRlIEFIVUIgRklGTyBkdXJpbmcgcHJvYmUoKSBub3Qgc3Rh
-cnR1cCgpCiAgQVNvQzogdGVncmE6IGNvbnZlcnQgdG8gc3RhbmRhcmQgRE1BIERUIGJpbmRpbmdz
-CiAgaTJjOiB0ZWdyYTogdXNlIHJlc2V0IGZyYW1ld29yawogIHN0YWdpbmc6IG52ZWM6IHVzZSBy
-ZXNldCBmcmFtZXdvcmsKICBzcGk6IHRlZ3JhOiB1c2UgcmVzZXQgZnJhbWV3b3JrCiAgc3BpOiB0
-ZWdyYTogY29udmVydCB0byBzdGFuZGFyZCBETUEgRFQgYmluZGluZ3MKICBzZXJpYWw6IHRlZ3Jh
-OiB1c2UgcmVzZXQgZnJhbWV3b3JrCiAgc2VyaWFsOiB0ZWdyYTogY29udmVydCB0byBzdGFuZGFy
-ZCBETUEgRFQgYmluZGluZ3MKICBJbnB1dDogdGVncmEta2JjIC0gdXNlIHJlc2V0IGZyYW1ld29y
-awogIFVTQjogRUhDSTogdGVncmE6IHVzZSByZXNldCBmcmFtZXdvcmsKICBBUk06IHRlZ3JhOiBy
-ZW1vdmUgbGVnYWN5IGNsb2NrIGVudHJpZXMgZnJvbSBEVAogIEFSTTogdGVncmE6IHJlbW92ZSBs
-ZWdhY3kgRE1BIGVudHJpZXMgZnJvbSBEVAogIGNsazogdGVncmE6IHJlbW92ZSBsZWdhY3kgcmVz
-ZXQgQVBJcwogIGNsazogdGVncmE6IHJlbW92ZSBib2d1cyBQQ0lFX1hDTEsKCiAuLi4vYmluZGlu
-Z3MvYXJtL3RlZ3JhL252aWRpYSx0ZWdyYTIwLXBtYy50eHQgICAgICB8ICAgMSArCiAuLi4vYmlu
-ZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMTE0LWNhci50eHQgICAgICAgICB8ICAgNCArCiAuLi4v
-YmluZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMTI0LWNhci50eHQgICAgICAgICB8ICAgNCArCiAu
-Li4vYmluZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMjAtY2FyLnR4dCAgICAgICAgICB8ICAgNCAr
-CiAuLi4vYmluZGluZ3MvY2xvY2svbnZpZGlhLHRlZ3JhMzAtY2FyLnR4dCAgICAgICAgICB8ICAg
-NCArCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9kbWEvdGVncmEyMC1hcGJkbWEudHh0ICAgICB8
-ICAgOSArKwogLi4uL2JpbmRpbmdzL2dwdS9udmlkaWEsdGVncmEyMC1ob3N0MXgudHh0ICAgICAg
-ICAgfCAxMjQgKysrKysrKysrKysrKysrCiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvbnZp
-ZGlhLHRlZ3JhMjAtaTJjLnR4dCB8ICAyNyArKystCiAuLi4vYmluZGluZ3MvaW5wdXQvbnZpZGlh
-LHRlZ3JhMjAta2JjLnR4dCAgICAgICAgICB8ICAgOSArKwogLi4uL2JpbmRpbmdzL21tYy9udmlk
-aWEsdGVncmEyMC1zZGhjaS50eHQgICAgICAgICAgfCAgIDkgKysKIC4uLi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL252ZWMvbnZpZGlhLG52ZWMudHh0ICAgICAgIHwgIDEyICsrCiAuLi4vYmluZGluZ3Mv
-cGNpL252aWRpYSx0ZWdyYTIwLXBjaWUudHh0ICAgICAgICAgICB8ICAyOCArKy0tCiAuLi4vZGV2
-aWNldHJlZS9iaW5kaW5ncy9wd20vbnZpZGlhLHRlZ3JhMjAtcHdtLnR4dCB8ICAgOSArKwogLi4u
-L2RldmljZXRyZWUvYmluZGluZ3MvcnRjL252aWRpYSx0ZWdyYTIwLXJ0Yy50eHQgfCAgIDMgKwog
-Li4uL2JpbmRpbmdzL3NlcmlhbC9udmlkaWEsdGVncmEyMC1oc3VhcnQudHh0ICAgICAgfCAgMTkg
-KystCiAuLi4vYmluZGluZ3Mvc291bmQvbnZpZGlhLHRlZ3JhLWF1ZGlvLWFsYzU2MzIudHh0ICB8
-ICAgNyArLQogLi4uL2JpbmRpbmdzL3NvdW5kL252aWRpYSx0ZWdyYS1hdWRpby1ydDU2NDAudHh0
-ICAgfCAgIDcgKy0KIC4uLi9iaW5kaW5ncy9zb3VuZC9udmlkaWEsdGVncmEtYXVkaW8td204NzUz
-LnR4dCAgIHwgICA3ICstCiAuLi4vYmluZGluZ3Mvc291bmQvbnZpZGlhLHRlZ3JhLWF1ZGlvLXdt
-ODkwMy50eHQgICB8ICAgNyArLQogLi4uL2JpbmRpbmdzL3NvdW5kL252aWRpYSx0ZWdyYS1hdWRp
-by13bTk3MTIudHh0ICAgfCAgIDcgKy0KIC4uLi9iaW5kaW5ncy9zb3VuZC9udmlkaWEsdGVncmEy
-MC1hYzk3LnR4dCAgICAgICAgIHwgIDIwICsrLQogLi4uL2JpbmRpbmdzL3NvdW5kL252aWRpYSx0
-ZWdyYTIwLWkycy50eHQgICAgICAgICAgfCAgMTkgKystCiAuLi4vYmluZGluZ3Mvc291bmQvbnZp
-ZGlhLHRlZ3JhMzAtYWh1Yi50eHQgICAgICAgICB8ICA1NCArKysrKy0tCiAuLi4vYmluZGluZ3Mv
-c291bmQvbnZpZGlhLHRlZ3JhMzAtaTJzLnR4dCAgICAgICAgICB8ICAxMSArLQogLi4uL2JpbmRp
-bmdzL3NwaS9udmlkaWEsdGVncmExMTQtc3BpLnR4dCAgICAgICAgICAgfCAgMjQgKystCiAuLi4v
-YmluZGluZ3Mvc3BpL252aWRpYSx0ZWdyYTIwLXNmbGFzaC50eHQgICAgICAgICB8ICAyMCArKy0K
-IC4uLi9iaW5kaW5ncy9zcGkvbnZpZGlhLHRlZ3JhMjAtc2xpbmsudHh0ICAgICAgICAgIHwgIDIw
-ICsrLQogLi4uL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTIwLXRpbWVyLnR4dCAgICAgICAg
-fCAgIDMgKwogLi4uL2JpbmRpbmdzL3RpbWVyL252aWRpYSx0ZWdyYTMwLXRpbWVyLnR4dCAgICAg
-ICAgfCAgIDMgKwogLi4uL2JpbmRpbmdzL3VzYi9udmlkaWEsdGVncmEyMC1laGNpLnR4dCAgICAg
-ICAgICAgfCAgIDcgKy0KIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTE0LmR0c2kgICAgICAgICAg
-ICAgICAgICAgIHwgMTQyICsrKysrKysrKysrKysrLS0tCiBhcmNoL2FybS9ib290L2R0cy90ZWdy
-YTIwLXBhejAwLmR0cyAgICAgICAgICAgICAgICB8ICAgMiArCiBhcmNoL2FybS9ib290L2R0cy90
-ZWdyYTIwLmR0c2kgICAgICAgICAgICAgICAgICAgICB8IDEzMiArKysrKysrKysrKysrKy0tCiBh
-cmNoL2FybS9ib290L2R0cy90ZWdyYTMwLmR0c2kgICAgICAgICAgICAgICAgICAgICB8IDE3MSAr
-KysrKysrKysrKysrKysrKy0tLS0KIGFyY2gvYXJtL21hY2gtdGVncmEvS2NvbmZpZyAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgICAyICsKIGFyY2gvYXJtL21hY2gtdGVncmEvcG93ZXJnYXRlLmMg
-ICAgICAgICAgICAgICAgICAgIHwgICA4ICstCiBkcml2ZXJzL2Nsay90ZWdyYS9jbGstcGVyaXBo
-LWdhdGUuYyAgICAgICAgICAgICAgICB8ICAyMiAtLS0KIGRyaXZlcnMvY2xrL3RlZ3JhL2Nsay1w
-ZXJpcGguYyAgICAgICAgICAgICAgICAgICAgIHwgIDQwIC0tLS0tCiBkcml2ZXJzL2Nsay90ZWdy
-YS9jbGstdGVncmExMTQuYyAgICAgICAgICAgICAgICAgICB8ICAgMyArLQogZHJpdmVycy9jbGsv
-dGVncmEvY2xrLXRlZ3JhMTI0LmMgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0KIGRyaXZlcnMv
-Y2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMgICAgICAgICAgICAgICAgICAgIHwgICA5ICstCiBkcml2
-ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEzMC5jICAgICAgICAgICAgICAgICAgICB8ICAxMCArLQog
-ZHJpdmVycy9jbGsvdGVncmEvY2xrLmMgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgNTUg
-KysrKysrLQogZHJpdmVycy9jbGsvdGVncmEvY2xrLmggICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAgIDMgKy0KIGRyaXZlcnMvZG1hL2FjcGktZG1hLmMgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHwgIDEyICstCiBkcml2ZXJzL2RtYS9kbWFlbmdpbmUuYyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICB8ICA0NCArKysrKy0KIGRyaXZlcnMvZG1hL29mLWRtYS5jICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHwgIDEyICstCiBkcml2ZXJzL2RtYS90ZWdyYTIwLWFwYi1kbWEu
-YyAgICAgICAgICAgICAgICAgICAgICB8ICA0OSArKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kYy5jICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA5ICstCiBkcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAgMyArCiBkcml2ZXJzL2dw
-dS9kcm0vdGVncmEvZ3IzZC5jICAgICAgICAgICAgICAgICAgICAgICB8ICAyMiArKy0KIGRyaXZl
-cnMvZ3B1L2RybS90ZWdyYS9oZG1pLmMgICAgICAgICAgICAgICAgICAgICAgIHwgIDE0ICstCiBk
-cml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMgICAgICAgICAgICAgICAgICAgICB8ICAxMyAr
-LQogZHJpdmVycy9pbnB1dC9rZXlib2FyZC90ZWdyYS1rYmMuYyAgICAgICAgICAgICAgICAgfCAg
-MTMgKy0KIGRyaXZlcnMvcGNpL2hvc3QvcGNpLXRlZ3JhLmMgICAgICAgICAgICAgICAgICAgICAg
-IHwgIDUyICsrKysrLS0KIGRyaXZlcnMvc3BpL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgICAzICsKIGRyaXZlcnMvc3BpL3NwaS10ZWdyYTExNC5jICAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDY2ICsrKystLS0tCiBkcml2ZXJzL3NwaS9zcGktdGVncmEyMC1zZmxh
-c2guYyAgICAgICAgICAgICAgICAgICB8ICAxOCArKy0KIGRyaXZlcnMvc3BpL3NwaS10ZWdyYTIw
-LXNsaW5rLmMgICAgICAgICAgICAgICAgICAgIHwgIDY2ICsrKystLS0tCiBkcml2ZXJzL3N0YWdp
-bmcvbnZlYy9udmVjLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMSArLQogZHJpdmVycy9z
-dGFnaW5nL252ZWMvbnZlYy5oICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDUgKy0KIGRyaXZl
-cnMvdHR5L3NlcmlhbC9zZXJpYWwtdGVncmEuYyAgICAgICAgICAgICAgICAgIHwgIDg2ICsrKysr
-LS0tLS0tCiBkcml2ZXJzL3VzYi9ob3N0L2VoY2ktdGVncmEuYyAgICAgICAgICAgICAgICAgICAg
-ICB8ICAxNCArLQogaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay90ZWdyYTIwLWNhci5oICAgICAg
-ICAgICAgfCAgIDIgKy0KIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svdGVncmEzMC1jYXIuaCAg
-ICAgICAgICAgIHwgICAyICstCiBpbmNsdWRlL2xpbnV4L2Nsay90ZWdyYS5oICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgNyAtCiBpbmNsdWRlL2xpbnV4L2RtYWVuZ2luZS5oICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8ICAgNyArCiBpbmNsdWRlL2xpbnV4L29mX2RtYS5oICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAgOSArLQogaW5jbHVkZS9saW51eC90ZWdyYS1wb3dlcmdh
-dGUuaCAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0KIGluY2x1ZGUvc291bmQvZG1hZW5naW5l
-X3BjbS5oICAgICAgICAgICAgICAgICAgICAgIHwgICA2ICsKIHNvdW5kL3NvYy9zb2MtZ2VuZXJp
-Yy1kbWFlbmdpbmUtcGNtLmMgICAgICAgICAgICAgIHwgIDgyICsrKysrKystLS0KIHNvdW5kL3Nv
-Yy90ZWdyYS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICsKIHNvdW5k
-L3NvYy90ZWdyYS90ZWdyYTIwX2FjOTcuYyAgICAgICAgICAgICAgICAgICAgIHwgIDExIC0tCiBz
-b3VuZC9zb2MvdGVncmEvdGVncmEyMF9pMnMuYyAgICAgICAgICAgICAgICAgICAgICB8ICAyMCAr
-LS0KIHNvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2FodWIuYyAgICAgICAgICAgICAgICAgICAgIHwg
-MTI1ICsrKysrKysrKy0tLS0tLQogc291bmQvc29jL3RlZ3JhL3RlZ3JhMzBfYWh1Yi5oICAgICAg
-ICAgICAgICAgICAgICAgfCAgMTEgKy0KIHNvdW5kL3NvYy90ZWdyYS90ZWdyYTMwX2kycy5jICAg
-ICAgICAgICAgICAgICAgICAgIHwgIDk3ICsrKysrKy0tLS0tLQogc291bmQvc29jL3RlZ3JhL3Rl
-Z3JhMzBfaTJzLmggICAgICAgICAgICAgICAgICAgICAgfCAgIDMgKwogc291bmQvc29jL3RlZ3Jh
-L3RlZ3JhX3BjbS5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTcgKy0KIHNvdW5kL3NvYy90
-ZWdyYS90ZWdyYV9wY20uaCAgICAgICAgICAgICAgICAgICAgICAgIHwgICA1ICsKIDgxIGZpbGVz
-IGNoYW5nZWQsIDE0NDggaW5zZXJ0aW9ucygrKSwgNTU4IGRlbGV0aW9ucygtKQoKLS0gCjEuOC4x
-LjUKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51
-eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVh
-ZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1h
-cm0ta2VybmVsCg==
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+By passing no flags when calling snd_dmaengine_pcm_register() from
+tegra_pcm.c, we end up using dma_request_slave_channel() rather than
+dmaengine_pcm_compat_request_channel(), and hence rely on the standard
+DMA DT bindings and stashing the DMA slave ID away during channel
+allocation. This means there's no need to use a custom DT property to
+store the slave ID. So, remove all the code that parsed it.
+
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This patch is part of a series with strong internal depdendencies. I'm
+looking for an ack so that I can take the entire series through the Tegra
+and arm-soc trees. The series will be part of a stable branch that can be
+merged into other subsystems if needed to avoid/resolve dependencies.
+---
+ sound/soc/tegra/tegra20_ac97.c | 11 -----------
+ sound/soc/tegra/tegra20_i2s.c  | 20 +-------------------
+ sound/soc/tegra/tegra30_ahub.c | 23 ++++++-----------------
+ sound/soc/tegra/tegra30_ahub.h |  9 ++++-----
+ sound/soc/tegra/tegra30_i2s.c  | 14 +++++++++-----
+ sound/soc/tegra/tegra30_i2s.h  |  3 +++
+ sound/soc/tegra/tegra_pcm.c    | 17 ++++++++++++++---
+ sound/soc/tegra/tegra_pcm.h    |  5 +++++
+ 8 files changed, 42 insertions(+), 60 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
+index ae27bcd586d2..d8b98d70ff41 100644
+--- a/sound/soc/tegra/tegra20_ac97.c
++++ b/sound/soc/tegra/tegra20_ac97.c
+@@ -313,7 +313,6 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ {
+ 	struct tegra20_ac97 *ac97;
+ 	struct resource *mem;
+-	u32 of_dma[2];
+ 	void __iomem *regs;
+ 	int ret = 0;
+ 
+@@ -348,14 +347,6 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 		goto err_clk_put;
+ 	}
+ 
+-	if (of_property_read_u32_array(pdev->dev.of_node,
+-				       "nvidia,dma-request-selector",
+-				       of_dma, 2) < 0) {
+-		dev_err(&pdev->dev, "No DMA resource\n");
+-		ret = -ENODEV;
+-		goto err_clk_put;
+-	}
+-
+ 	ac97->reset_gpio = of_get_named_gpio(pdev->dev.of_node,
+ 					     "nvidia,codec-reset-gpio", 0);
+ 	if (gpio_is_valid(ac97->reset_gpio)) {
+@@ -380,12 +371,10 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ac97->capture_dma_data.addr = mem->start + TEGRA20_AC97_FIFO_RX1;
+ 	ac97->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	ac97->capture_dma_data.maxburst = 4;
+-	ac97->capture_dma_data.slave_id = of_dma[1];
+ 
+ 	ac97->playback_dma_data.addr = mem->start + TEGRA20_AC97_FIFO_TX1;
+ 	ac97->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	ac97->playback_dma_data.maxburst = 4;
+-	ac97->playback_dma_data.slave_id = of_dma[1];
+ 
+ 	ret = tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
+ 	if (ret)
+diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
+index 364bf6a907e1..1dc869c475e7 100644
+--- a/sound/soc/tegra/tegra20_i2s.c
++++ b/sound/soc/tegra/tegra20_i2s.c
+@@ -339,9 +339,7 @@ static const struct regmap_config tegra20_i2s_regmap_config = {
+ static int tegra20_i2s_platform_probe(struct platform_device *pdev)
+ {
+ 	struct tegra20_i2s *i2s;
+-	struct resource *mem, *memregion, *dmareq;
+-	u32 of_dma[2];
+-	u32 dma_ch;
++	struct resource *mem, *memregion;
+ 	void __iomem *regs;
+ 	int ret;
+ 
+@@ -370,20 +368,6 @@ static int tegra20_i2s_platform_probe(struct platform_device *pdev)
+ 		goto err_clk_put;
+ 	}
+ 
+-	dmareq = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+-	if (!dmareq) {
+-		if (of_property_read_u32_array(pdev->dev.of_node,
+-					"nvidia,dma-request-selector",
+-					of_dma, 2) < 0) {
+-			dev_err(&pdev->dev, "No DMA resource\n");
+-			ret = -ENODEV;
+-			goto err_clk_put;
+-		}
+-		dma_ch = of_dma[1];
+-	} else {
+-		dma_ch = dmareq->start;
+-	}
+-
+ 	memregion = devm_request_mem_region(&pdev->dev, mem->start,
+ 					    resource_size(mem), DRV_NAME);
+ 	if (!memregion) {
+@@ -410,12 +394,10 @@ static int tegra20_i2s_platform_probe(struct platform_device *pdev)
+ 	i2s->capture_dma_data.addr = mem->start + TEGRA20_I2S_FIFO2;
+ 	i2s->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	i2s->capture_dma_data.maxburst = 4;
+-	i2s->capture_dma_data.slave_id = dma_ch;
+ 
+ 	i2s->playback_dma_data.addr = mem->start + TEGRA20_I2S_FIFO1;
+ 	i2s->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	i2s->playback_dma_data.maxburst = 4;
+-	i2s->playback_dma_data.slave_id = dma_ch;
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 	if (!pm_runtime_enabled(&pdev->dev)) {
+diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
+index 2f1a566dd9cc..572fab23e75f 100644
+--- a/sound/soc/tegra/tegra30_ahub.c
++++ b/sound/soc/tegra/tegra30_ahub.c
+@@ -96,8 +96,8 @@ static int tegra30_ahub_runtime_resume(struct device *dev)
+ }
+ 
+ int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
+-				  dma_addr_t *fiforeg,
+-				  unsigned int *reqsel)
++				  char *dmachan, int dmachan_len,
++				  dma_addr_t *fiforeg)
+ {
+ 	int channel;
+ 	u32 reg, val;
+@@ -111,9 +111,9 @@ int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
+ 	__set_bit(channel, ahub->rx_usage);
+ 
+ 	*rxcif = TEGRA30_AHUB_RXCIF_APBIF_RX0 + channel;
++	snprintf(dmachan, dmachan_len, "rx%d", channel);
+ 	*fiforeg = ahub->apbif_addr + TEGRA30_AHUB_CHANNEL_RXFIFO +
+ 		   (channel * TEGRA30_AHUB_CHANNEL_RXFIFO_STRIDE);
+-	*reqsel = ahub->dma_sel + channel;
+ 
+ 	pm_runtime_get_sync(ahub->dev);
+ 
+@@ -198,8 +198,8 @@ int tegra30_ahub_free_rx_fifo(enum tegra30_ahub_rxcif rxcif)
+ EXPORT_SYMBOL_GPL(tegra30_ahub_free_rx_fifo);
+ 
+ int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
+-				  dma_addr_t *fiforeg,
+-				  unsigned int *reqsel)
++				  char *dmachan, int dmachan_len,
++				  dma_addr_t *fiforeg)
+ {
+ 	int channel;
+ 	u32 reg, val;
+@@ -213,9 +213,9 @@ int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
+ 	__set_bit(channel, ahub->tx_usage);
+ 
+ 	*txcif = TEGRA30_AHUB_TXCIF_APBIF_TX0 + channel;
++	snprintf(dmachan, dmachan_len, "tx%d", channel);
+ 	*fiforeg = ahub->apbif_addr + TEGRA30_AHUB_CHANNEL_TXFIFO +
+ 		   (channel * TEGRA30_AHUB_CHANNEL_TXFIFO_STRIDE);
+-	*reqsel = ahub->dma_sel + channel;
+ 
+ 	pm_runtime_get_sync(ahub->dev);
+ 
+@@ -511,7 +511,6 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
+ 	struct reset_control *rst;
+ 	int i;
+ 	struct resource *res0, *res1, *region;
+-	u32 of_dma[2];
+ 	void __iomem *regs_apbif, *regs_ahub;
+ 	int ret = 0;
+ 
+@@ -574,16 +573,6 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
+ 		goto err_clk_put_d_audio;
+ 	}
+ 
+-	if (of_property_read_u32_array(pdev->dev.of_node,
+-				"nvidia,dma-request-selector",
+-				of_dma, 2) < 0) {
+-		dev_err(&pdev->dev,
+-			"Missing property nvidia,dma-request-selector\n");
+-		ret = -ENODEV;
+-		goto err_clk_put_d_audio;
+-	}
+-	ahub->dma_sel = of_dma[1];
+-
+ 	res0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res0) {
+ 		dev_err(&pdev->dev, "No apbif memory resource\n");
+diff --git a/sound/soc/tegra/tegra30_ahub.h b/sound/soc/tegra/tegra30_ahub.h
+index 1383f8cd3572..fd7ba75ed814 100644
+--- a/sound/soc/tegra/tegra30_ahub.h
++++ b/sound/soc/tegra/tegra30_ahub.h
+@@ -465,15 +465,15 @@ enum tegra30_ahub_rxcif {
+ };
+ 
+ extern int tegra30_ahub_allocate_rx_fifo(enum tegra30_ahub_rxcif *rxcif,
+-					 dma_addr_t *fiforeg,
+-					 unsigned int *reqsel);
++					 char *dmachan, int dmachan_len,
++					 dma_addr_t *fiforeg);
+ extern int tegra30_ahub_enable_rx_fifo(enum tegra30_ahub_rxcif rxcif);
+ extern int tegra30_ahub_disable_rx_fifo(enum tegra30_ahub_rxcif rxcif);
+ extern int tegra30_ahub_free_rx_fifo(enum tegra30_ahub_rxcif rxcif);
+ 
+ extern int tegra30_ahub_allocate_tx_fifo(enum tegra30_ahub_txcif *txcif,
+-					 dma_addr_t *fiforeg,
+-					 unsigned int *reqsel);
++					 char *dmachan, int dmachan_len,
++					 dma_addr_t *fiforeg);
+ extern int tegra30_ahub_enable_tx_fifo(enum tegra30_ahub_txcif txcif);
+ extern int tegra30_ahub_disable_tx_fifo(enum tegra30_ahub_txcif txcif);
+ extern int tegra30_ahub_free_tx_fifo(enum tegra30_ahub_txcif txcif);
+@@ -524,7 +524,6 @@ struct tegra30_ahub {
+ 	struct device *dev;
+ 	struct clk *clk_d_audio;
+ 	struct clk *clk_apbif;
+-	int dma_sel;
+ 	resource_size_t apbif_addr;
+ 	struct regmap *regmap_apbif;
+ 	struct regmap *regmap_ahub;
+diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
+index 531a1ff2101d..362e8f728ddf 100644
+--- a/sound/soc/tegra/tegra30_i2s.c
++++ b/sound/soc/tegra/tegra30_i2s.c
+@@ -459,8 +459,9 @@ static int tegra30_i2s_platform_probe(struct platform_device *pdev)
+ 	i2s->playback_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	i2s->playback_dma_data.maxburst = 4;
+ 	ret = tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif,
+-					    &i2s->playback_dma_data.addr,
+-					    &i2s->playback_dma_data.slave_id);
++					    i2s->playback_dma_chan,
++					    sizeof(i2s->playback_dma_chan),
++					    &i2s->playback_dma_data.addr);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret);
+ 		goto err_suspend;
+@@ -475,8 +476,9 @@ static int tegra30_i2s_platform_probe(struct platform_device *pdev)
+ 	i2s->capture_dma_data.addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+ 	i2s->capture_dma_data.maxburst = 4;
+ 	ret = tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif,
+-					    &i2s->capture_dma_data.addr,
+-					    &i2s->capture_dma_data.slave_id);
++					    i2s->capture_dma_chan,
++					    sizeof(i2s->capture_dma_chan),
++					    &i2s->capture_dma_data.addr);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret);
+ 		goto err_unroute_tx_fifo;
+@@ -496,7 +498,9 @@ static int tegra30_i2s_platform_probe(struct platform_device *pdev)
+ 		goto err_unroute_rx_fifo;
+ 	}
+ 
+-	ret = tegra_pcm_platform_register(&pdev->dev);
++	ret = tegra_pcm_platform_register_with_chan_names(&pdev->dev,
++				&i2s->dma_config, i2s->playback_dma_chan,
++				i2s->capture_dma_chan);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
+ 		goto err_unregister_component;
+diff --git a/sound/soc/tegra/tegra30_i2s.h b/sound/soc/tegra/tegra30_i2s.h
+index 4d0b0a30dbfb..774fc6ad2026 100644
+--- a/sound/soc/tegra/tegra30_i2s.h
++++ b/sound/soc/tegra/tegra30_i2s.h
+@@ -238,11 +238,14 @@ struct tegra30_i2s {
+ 	struct clk *clk_i2s;
+ 	enum tegra30_ahub_txcif capture_i2s_cif;
+ 	enum tegra30_ahub_rxcif capture_fifo_cif;
++	char capture_dma_chan[8];
+ 	struct snd_dmaengine_dai_dma_data capture_dma_data;
+ 	enum tegra30_ahub_rxcif playback_i2s_cif;
+ 	enum tegra30_ahub_txcif playback_fifo_cif;
++	char playback_dma_chan[8];
+ 	struct snd_dmaengine_dai_dma_data playback_dma_data;
+ 	struct regmap *regmap;
++	struct snd_dmaengine_pcm_config dma_config;
+ };
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra_pcm.c b/sound/soc/tegra/tegra_pcm.c
+index 7b2d23ba69b3..7ce5c334a660 100644
+--- a/sound/soc/tegra/tegra_pcm.c
++++ b/sound/soc/tegra/tegra_pcm.c
+@@ -61,12 +61,23 @@ static const struct snd_dmaengine_pcm_config tegra_dmaengine_pcm_config = {
+ 
+ int tegra_pcm_platform_register(struct device *dev)
+ {
+-	return snd_dmaengine_pcm_register(dev, &tegra_dmaengine_pcm_config,
+-			SND_DMAENGINE_PCM_FLAG_NO_DT |
+-			SND_DMAENGINE_PCM_FLAG_COMPAT);
++	return snd_dmaengine_pcm_register(dev, &tegra_dmaengine_pcm_config, 0);
+ }
+ EXPORT_SYMBOL_GPL(tegra_pcm_platform_register);
+ 
++int tegra_pcm_platform_register_with_chan_names(struct device *dev,
++				struct snd_dmaengine_pcm_config *config,
++				char *txdmachan, char *rxdmachan)
++{
++	*config = tegra_dmaengine_pcm_config;
++	config->dma_dev = dev->parent;
++	config->chan_names[0] = txdmachan;
++	config->chan_names[1] = rxdmachan;
++
++	return snd_dmaengine_pcm_register(dev, config, 0);
++}
++EXPORT_SYMBOL_GPL(tegra_pcm_platform_register_with_chan_names);
++
+ void tegra_pcm_platform_unregister(struct device *dev)
+ {
+ 	return snd_dmaengine_pcm_unregister(dev);
+diff --git a/sound/soc/tegra/tegra_pcm.h b/sound/soc/tegra/tegra_pcm.h
+index 68ad901714a9..7883dec748a3 100644
+--- a/sound/soc/tegra/tegra_pcm.h
++++ b/sound/soc/tegra/tegra_pcm.h
+@@ -31,7 +31,12 @@
+ #ifndef __TEGRA_PCM_H__
+ #define __TEGRA_PCM_H__
+ 
++struct snd_dmaengine_pcm_config;
++
+ int tegra_pcm_platform_register(struct device *dev);
++int tegra_pcm_platform_register_with_chan_names(struct device *dev,
++				struct snd_dmaengine_pcm_config *config,
++				char *txdmachan, char *rxdmachan);
+ void tegra_pcm_platform_unregister(struct device *dev);
+ 
+ #endif
+-- 
+1.8.1.5
