@@ -1,46 +1,75 @@
-From: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv3 01/19] [HACK] of: dev_node has struct device pointer
-Date: Fri, 15 Nov 2013 16:31:06 +0900
-Message-ID: <20131115073106.D1BCEC407C6@trevor.secretlab.ca>
-References: <20131024.122115.1035609747068925560.hdoyu@nvidia.com> <
-	20131025001038.77299C403B6@trevor.secretlab.ca>
-	<20131025075652.GB19622@ ulmo.nvidia.com>
-	<20131025.112549.2040849946958069337.hdoyu@nvidia.com> <
-	20131025091104.GG19622@ulmo.nvidia.com>
-	<52718122.9000206@wwwdotorg.org>
+From: Cedric Le Goater <clg@fr.ibm.com>
+Subject: Re: [PATCH 16/51] DMA-API: ppc: vio.c: replace dma_set_mask()+dma_set_coherent_mask()
+ with new helper
+Date: Fri, 15 Nov 2013 17:16:55 +0100
+Message-ID: <528648F7.20900@fr.ibm.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk> <E1VMly8-0007gy-Ru@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <52718122.9000206-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <E1VMly8-0007gy-Ru@rmk-PC.arm.linux.org.uk>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 30 Oct 2013 15:58:58 -0600, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 10/25/2013 03:11 AM, Thierry Reding wrote:
-> ...
-> > So my proposed solution for the IOMMU case is to treat it the same
-> > as any other resources. Perhaps resource isn't the right word, but
-> > at the core the issue is the same. A device requires the services
-> > of an IOMMU so that it can be put into the correct address space.
-> > If the IOMMU is not available yet it cannot do that, so we simply
-> > return -EPROBE_DEFER and cause the probe to be retried later.
-> 
-> Personally, I view deferred probe as being used when one device
-> requires either a resource /or/ a service provided by another, not
-> /just/ when there's a resource dependency. Hence, I think it fits
-> perfectly here.
+Hi,=20
 
-How are those two things different? :-)
+On 09/19/2013 11:41 PM, Russell King wrote:
+> Replace the following sequence:
+>=20
+> 	dma_set_mask(dev, mask);
+> 	dma_set_coherent_mask(dev, mask);
+>=20
+> with a call to the new helper dma_set_mask_and_coherent().
+>=20
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/powerpc/kernel/vio.c |    3 +--
+>  1 files changed, 1 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
+> index 78a3506..96b6c97 100644
+> --- a/arch/powerpc/kernel/vio.c
+> +++ b/arch/powerpc/kernel/vio.c
+> @@ -1413,8 +1413,7 @@ struct vio_dev *vio_register_device_node(struct=
+ device_node *of_node)
+>=20
+>  		/* needed to ensure proper operation of coherent allocations
+>  		 * later, in case driver doesn't set it explicitly */
+> -		dma_set_mask(&viodev->dev, DMA_BIT_MASK(64));
+> -		dma_set_coherent_mask(&viodev->dev, DMA_BIT_MASK(64));
+> +		dma_set_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
+>  	}
+>=20
+>  	/* register with generic device framework */
+>=20
 
-g.
+The new helper routine dma_set_mask_and_coherent() breaks the=20
+initialization of the pseries vio devices which do not have an=20
+initial dev->dma_mask. I think we need to use dma_coerce_mask_and_coher=
+ent()
+instead.
+
+Signed-off-by: C=E9dric Le Goater <clg@fr.ibm.com>
+---
+ arch/powerpc/kernel/vio.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
+index e7d0c88f..76a6482 100644
+--- a/arch/powerpc/kernel/vio.c
++++ b/arch/powerpc/kernel/vio.c
+@@ -1419,7 +1419,7 @@ struct vio_dev *vio_register_device_node(struct d=
+evice_node *of_node)
+=20
+ 		/* needed to ensure proper operation of coherent allocations
+ 		 * later, in case driver doesn't set it explicitly */
+-		dma_set_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
++		dma_coerce_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
+ 	}
+=20
+ 	/* register with generic device framework */
+--=20
+1.7.10.4
