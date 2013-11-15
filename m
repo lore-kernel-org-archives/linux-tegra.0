@@ -1,58 +1,51 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv4 5/7] iommu/tegra: smmu: Support "mmu-masters" binding
-Date: Thu, 14 Nov 2013 09:59:11 -0700
-Message-ID: <5285015F.4090003@wwwdotorg.org>
-References: <5282C512.5090900@wwwdotorg.org><20131113094517.4608edf4302b61e3c4402a25@nvidia.com><5283BDBF.9020509@wwwdotorg.org> <20131114.084145.998129499909471378.hdoyu@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v5 3/3] Documentation: dt: hwmon: add OF document for
+ LM90
+Date: Fri, 15 Nov 2013 09:21:50 +0800
+Message-ID: <5285772E.2090700@nvidia.com>
+References: <1381137940-22608-1-git-send-email-wni@nvidia.com>
+	<1381137940-22608-4-git-send-email-wni@nvidia.com>
+ <20131114133320.00ad70c0@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131114.084145.998129499909471378.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131114133320.00ad70c0-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org" <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org" <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2013 11:41 PM, Hiroshi Doyu wrote:
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Wed, 13 Nov 2013 18:58:23 +0100:
+On 11/14/2013 08:33 PM, Jean Delvare wrote:
+> Hi Wei,
 > 
->>>  smmu: iommu@xxxxxx {
->>>        #iommu-cells = <3>;
->>>        ^^^^^^^^^^^^^^^^^^
->>>    };
->>>
->>>    host1x {
->>>            compatible = "nvidia,tegra30-host1x", "simple-bus";
->>>            iommu = <&smmu 0x??????? 0x??????? "asid">;
->>> 	   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#######
->>>            gr3d {
->>>                    compatible = "nvidia,tegra30-gr3d";
->>>                    iommu = <&smmu 0x??????? 0x???????>;
->>>            }
->>>
->>> I think that this "asid" part can be set 0 in tegra??.dtsi and the
->>> actual value can be overwritten in tegra??-<boardname>.dts file.
->>
->> The one issue here is that we can only override entire properties, so
->> it's not possible for a board file to *just* replace the ASID, it'd have
->> to duplicate the entire property, just to change the one value.
->>
->> Is the ASID mapping really likely to be board-specific though? To my
->> naive thinking, it seems that the chip design (e.g. number of
->> peripherals, number of available ASIDs) would tend to imply the
->> device->ASID mapping, since it would have been considered as part of
->> chip design. Hence, wouldn't soc.dtsi typically specify the expected
->> ASID mapping, and boards rarely if ever override it?
->>
->> If the ASID mapping really is likely to vary per board, perhaps it makes
->> sense to put it into a separate property somehow so it's easier to override?
+> On Mon, 7 Oct 2013 17:25:40 +0800, Wei Ni wrote:
+>> Add OF document for LM90 in Documentation/devicetree/.
+...
+>> +
+>> +Example LM90 node:
+>> +
+>> +temp-sensor {
+>> +	compatible = "onnn,nct1008";
+>> +	reg = <0x4c>;
+>> +	vcc-supply = <&palmas_ldo6_reg>;
+>> +	interrupt-parent = <&gpio>;
+>> +	interrupts = <TEGRA_GPIO(O, 4) IRQ_TYPE_LEVEL_LOW>;
+>> +}
 > 
->   Older Tegra like T30: swgroups > asid(==4)
->   Newer Tegra         : swgroups < asid
+> Looks good to me, just one question: is it OK that interrupt-parent is
+> not described in the document? Is it supposed to be a standard property?
 
-In that case, I'd vote for hard-coding the mapping in the driver in all
-cases. For older Tegra, we'll have to hard-code some static mapping just
-like you've already done in the driver. For newer Tegra, we would just
-assign a new AS for each swgroup as you say. If we ever need to tweak
-this, we can invent a new DT property to affect the default. That makes
-the DT content quite a bit simpler for now:-)
+As Stephen said in this series v3:
+"I believe it's common not to document this, since it's implicitly
+supported as part of any node that is an interrupt source."
+This is a standard property.
+
+> 
+> I'll add this file to the LM90 entry in MAINTAINERS, so that I can pick
+> this patch in my tree.
+
+Thanks again.
+Wei.
+
+> 
