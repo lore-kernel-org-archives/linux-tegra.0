@@ -1,29 +1,26 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 14/31] ASoC: dmaengine: support deferred probe for DMA channels
-Date: Fri, 15 Nov 2013 13:54:09 -0700
-Message-ID: <1384548866-13141-15-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 12/31] dma: tegra: use reset framework
+Date: Fri, 15 Nov 2013 13:54:07 -0700
+Message-ID: <1384548866-13141-13-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Enhance dmaengine_pcm_request_chan_of() to support deferred probe for
-DMA channels, by using the new dma_request_slave_channel_or_err() API.
-This prevents snd_dmaengine_pcm_register() from succeeding without
-acquiring DMA channels due to the relevant DMA controller not yet being
-registered.
+Tegra's clock driver now provides an implementation of the common
+reset API (include/linux/reset.h). Use this instead of the old Tegra-
+specific API; that will soon be removed.
 
 Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 This patch is part of a series with strong internal depdendencies. I'm
@@ -31,138 +28,55 @@ looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- sound/soc/soc-generic-dmaengine-pcm.c | 77 +++++++++++++++++++++++++----------
- 1 file changed, 55 insertions(+), 22 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index cbc9c96ce1f4..f7e65e1552ef 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -284,24 +284,52 @@ static const char * const dmaengine_pcm_dma_channel_names[] = {
- 	[SNDRV_PCM_STREAM_CAPTURE] = "rx",
- };
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 73654e33f13b..afa5844c9346 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -32,8 +32,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+-#include <linux/clk/tegra.h>
  
--static void dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
--	struct device *dev)
-+static int dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
-+					 struct device *dev)
- {
- 	unsigned int i;
-+	const char *name;
-+	struct dma_chan *chan;
+ #include "dmaengine.h"
  
- 	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
- 			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
- 	    !dev->of_node)
--		return;
-+		return 0;
-+
-+	for (i = SNDRV_PCM_STREAM_PLAYBACK; i <= SNDRV_PCM_STREAM_CAPTURE;
-+	     i++) {
-+		if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX)
-+			name = "rx-tx";
-+		else
-+			name = dmaengine_pcm_dma_channel_names[i];
-+		chan = dma_request_slave_channel_or_err(dev, name);
-+		if (IS_ERR(chan)) {
-+			if (PTR_ERR(pcm->chan[i]) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+			pcm->chan[i] = NULL;
-+		} else
-+			pcm->chan[i] = chan;
-+		if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX)
-+			break;
-+	}
- 
--	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX) {
--		pcm->chan[0] = dma_request_slave_channel(dev, "rx-tx");
-+	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX)
- 		pcm->chan[1] = pcm->chan[0];
--	} else {
--		for (i = SNDRV_PCM_STREAM_PLAYBACK; i <= SNDRV_PCM_STREAM_CAPTURE; i++) {
--			pcm->chan[i] = dma_request_slave_channel(dev,
--					dmaengine_pcm_dma_channel_names[i]);
--		}
-+
-+	return 0;
-+}
-+
-+static void dmaengine_pcm_release_chan(struct dmaengine_pcm *pcm)
-+{
-+	unsigned int i;
-+
-+	for (i = SNDRV_PCM_STREAM_PLAYBACK; i <= SNDRV_PCM_STREAM_CAPTURE;
-+	     i++) {
-+		if (!pcm->chan[i])
-+			continue;
-+		dma_release_channel(pcm->chan[i]);
-+		if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX)
-+			break;
+@@ -208,6 +208,7 @@ struct tegra_dma {
+ 	struct dma_device		dma_dev;
+ 	struct device			*dev;
+ 	struct clk			*dma_clk;
++	struct reset_control		*rst;
+ 	spinlock_t			global_lock;
+ 	void __iomem			*base_addr;
+ 	const struct tegra_dma_chip_data *chip_data;
+@@ -1282,6 +1283,12 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		return PTR_ERR(tdma->dma_clk);
  	}
- }
  
-@@ -315,6 +343,7 @@ int snd_dmaengine_pcm_register(struct device *dev,
- 	const struct snd_dmaengine_pcm_config *config, unsigned int flags)
- {
- 	struct dmaengine_pcm *pcm;
-+	int ret;
- 
- 	pcm = kzalloc(sizeof(*pcm), GFP_KERNEL);
- 	if (!pcm)
-@@ -323,14 +352,26 @@ int snd_dmaengine_pcm_register(struct device *dev,
- 	pcm->config = config;
- 	pcm->flags = flags;
- 
--	dmaengine_pcm_request_chan_of(pcm, dev);
-+	ret = dmaengine_pcm_request_chan_of(pcm, dev);
-+	if (ret)
-+		goto err_free_pcm;
- 
- 	if (flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
--		return snd_soc_add_platform(dev, &pcm->platform,
-+		ret = snd_soc_add_platform(dev, &pcm->platform,
- 				&dmaengine_no_residue_pcm_platform);
- 	else
--		return snd_soc_add_platform(dev, &pcm->platform,
-+		ret = snd_soc_add_platform(dev, &pcm->platform,
- 				&dmaengine_pcm_platform);
-+	if (ret)
-+		goto err_free_dma;
++	tdma->rst = devm_reset_control_get(&pdev->dev, "dma");
++	if (IS_ERR(tdma->rst)) {
++		dev_err(&pdev->dev, "Error: Missing reset\n");
++		return PTR_ERR(tdma->rst);
++	}
 +
-+	return 0;
-+
-+err_free_dma:
-+	dmaengine_pcm_release_chan(pcm);
-+err_free_pcm:
-+	kfree(pcm);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_register);
+ 	spin_lock_init(&tdma->global_lock);
  
-@@ -345,7 +386,6 @@ void snd_dmaengine_pcm_unregister(struct device *dev)
- {
- 	struct snd_soc_platform *platform;
- 	struct dmaengine_pcm *pcm;
--	unsigned int i;
+ 	pm_runtime_enable(&pdev->dev);
+@@ -1302,9 +1309,9 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	}
  
- 	platform = snd_soc_lookup_platform(dev);
- 	if (!platform)
-@@ -353,15 +393,8 @@ void snd_dmaengine_pcm_unregister(struct device *dev)
+ 	/* Reset DMA controller */
+-	tegra_periph_reset_assert(tdma->dma_clk);
++	reset_control_assert(tdma->rst);
+ 	udelay(2);
+-	tegra_periph_reset_deassert(tdma->dma_clk);
++	reset_control_deassert(tdma->rst);
  
- 	pcm = soc_platform_to_pcm(platform);
- 
--	for (i = SNDRV_PCM_STREAM_PLAYBACK; i <= SNDRV_PCM_STREAM_CAPTURE; i++) {
--		if (pcm->chan[i]) {
--			dma_release_channel(pcm->chan[i]);
--			if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX)
--				break;
--		}
--	}
--
- 	snd_soc_remove_platform(platform);
-+	dmaengine_pcm_release_chan(pcm);
- 	kfree(pcm);
- }
- EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_unregister);
+ 	/* Enable global DMA registers */
+ 	tdma_write(tdma, TEGRA_APBDMA_GENERAL, TEGRA_APBDMA_GENERAL_ENABLE);
 -- 
 1.8.1.5
