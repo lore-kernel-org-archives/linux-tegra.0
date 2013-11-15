@@ -1,306 +1,171 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred probe
-Date: Fri, 15 Nov 2013 13:05:45 -0800
-Message-ID: <CAPcyv4i8+AjHfwo0WGyyMC1JR8ty_OUrfDZXcnpUPr5cz2hkoQ@mail.gmail.com>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>
-	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 08/31] pci: tegra: use reset framework
+Date: Fri, 15 Nov 2013 14:16:21 -0700
+Message-ID: <CAErSpo7ZP-1qkBYjdNYRPz3Z3rHL_tUOY3fNi4nvTfFmcdEEOQ@mail.gmail.com>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-9-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1384548866-13141-9-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-arm <linux-arm-kernel@lists.infradead.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-[ Also adding Andy to comment on the acpi-dma.c question ]
-
-On Fri, Nov 15, 2013 at 1:01 PM, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
-> [ adding dmaengine list and Vinod ]
+On Fri, Nov 15, 2013 at 1:54 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 >
-> On Fri, Nov 15, 2013 at 12:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> dma_request_slave_channel() simply returns NULL whenever DMA channel
->> lookup fails. Lookup could fail for two distinct reasons:
->>
->> a) No DMA specification exists for the channel name.
->>    This includes situations where no DMA specifications exist at all, or
->>    other general lookup problems.
->>
->> b) A DMA specification does exist, yet the driver for that channel is not
->>    yet registered.
->>
->> Case (b) should trigger deferred probe in client drivers. However, since
->> they have no way to differentiate the two situations, it cannot.
->>
->> Implement new function dma_request_slave_channel_or_err(), which performs
->> identically to dma_request_slave_channel(), except that it returns an
->> error-pointer rather than NULL, which allows callers to detect when
->> deferred probe should occur.
->>
->> Eventually, all drivers should be converted to this new API, the old API
->> removed, and the new API renamed to the more desirable name. This patch
->> doesn't convert the existing API and all drivers in one go, since some
->> drivers call dma_request_slave_channel() then dma_request_channel() if
->> that fails. That would require modifying dma_request_channel() in the
->> same way, which would then require modifying close to 100 drivers at once,
->> rather than just the 15-20 or so that use dma_request_slave_channel(),
->> which might be tenable in a single patch.
->>
->> acpi_dma_request_slave_chan_by_index() doesn't actually implement
->> deferred probe. Perhaps it should?
->>
->> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
->> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
->> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->> Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> This patch is part of a series with strong internal depdendencies. I'm
->> looking for an ack so that I can take the entire series through the Tegra
->> and arm-soc trees. The series will be part of a stable branch that can be
->> merged into other subsystems if needed to avoid/resolve dependencies.
->> ---
->>  drivers/dma/acpi-dma.c    | 12 ++++++------
->>  drivers/dma/dmaengine.c   | 44 ++++++++++++++++++++++++++++++++++++++++----
->>  drivers/dma/of-dma.c      | 12 +++++++-----
->>  include/linux/dmaengine.h |  7 +++++++
->>  include/linux/of_dma.h    |  9 ++++++---
->>  5 files changed, 66 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/dma/acpi-dma.c b/drivers/dma/acpi-dma.c
->> index e69b03c0fa50..c83d40f14467 100644
->> --- a/drivers/dma/acpi-dma.c
->> +++ b/drivers/dma/acpi-dma.c
->> @@ -334,7 +334,7 @@ static int acpi_dma_parse_fixed_dma(struct acpi_resource *res, void *data)
->>   * @dev:       struct device to get DMA request from
->>   * @index:     index of FixedDMA descriptor for @dev
->>   *
->> - * Returns pointer to appropriate dma channel on success or NULL on error.
->> + * Returns pointer to appropriate dma channel on success or an error pointer.
->>   */
->>  struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
->>                 size_t index)
->> @@ -349,10 +349,10 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
->>
->>         /* Check if the device was enumerated by ACPI */
->>         if (!dev || !ACPI_HANDLE(dev))
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>
->>         if (acpi_bus_get_device(ACPI_HANDLE(dev), &adev))
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>
->>         memset(&pdata, 0, sizeof(pdata));
->>         pdata.index = index;
->> @@ -367,7 +367,7 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
->>         acpi_dev_free_resource_list(&resource_list);
->>
->>         if (dma_spec->slave_id < 0 || dma_spec->chan_id < 0)
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>
->>         mutex_lock(&acpi_dma_lock);
->>
->> @@ -403,7 +403,7 @@ EXPORT_SYMBOL_GPL(acpi_dma_request_slave_chan_by_index);
->>   * translate the names "tx" and "rx" here based on the most common case where
->>   * the first FixedDMA descriptor is TX and second is RX.
->>   *
->> - * Returns pointer to appropriate dma channel on success or NULL on error.
->> + * Returns pointer to appropriate dma channel on success or an error pointer.
->>   */
->>  struct dma_chan *acpi_dma_request_slave_chan_by_name(struct device *dev,
->>                 const char *name)
->> @@ -415,7 +415,7 @@ struct dma_chan *acpi_dma_request_slave_chan_by_name(struct device *dev,
->>         else if (!strcmp(name, "rx"))
->>                 index = 1;
->>         else
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>
->>         return acpi_dma_request_slave_chan_by_index(dev, index);
->>  }
->> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
->> index ea806bdc12ef..5e7f8af2f0ec 100644
->> --- a/drivers/dma/dmaengine.c
->> +++ b/drivers/dma/dmaengine.c
->> @@ -540,6 +540,8 @@ EXPORT_SYMBOL_GPL(dma_get_slave_channel);
->>   * @mask: capabilities that the channel must satisfy
->>   * @fn: optional callback to disposition available channels
->>   * @fn_param: opaque parameter to pass to dma_filter_fn
->> + *
->> + * Returns pointer to appropriate dma channel on success or NULL.
->>   */
->>  struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
->>                                        dma_filter_fn fn, void *fn_param)
->> @@ -588,24 +590,58 @@ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
->>  EXPORT_SYMBOL_GPL(__dma_request_channel);
->>
->>  /**
->> - * dma_request_slave_channel - try to allocate an exclusive slave channel
->> + * __dma_request_slave_channel - try to allocate an exclusive slave
->> + *   channel
->>   * @dev:       pointer to client device structure
->>   * @name:      slave channel name
->> + *
->> + * Returns pointer to appropriate dma channel on success or an error pointer.
->>   */
->> -struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name)
->> +static struct dma_chan *__dma_request_slave_channel(struct device *dev,
->> +                                       const char *name, bool defer)
->>  {
->>         /* If device-tree is present get slave info from here */
->>         if (dev->of_node)
->> -               return of_dma_request_slave_channel(dev->of_node, name);
->> +               return of_dma_request_slave_channel(dev->of_node, name, defer);
->>
->>         /* If device was enumerated by ACPI get slave info from here */
->>         if (ACPI_HANDLE(dev))
->>                 return acpi_dma_request_slave_chan_by_name(dev, name);
->>
->> -       return NULL;
->> +       return ERR_PTR(-ENODEV);
->> +}
->> +
->> +/**
->> + * dma_request_slave_channel - try to allocate an exclusive slave channel
->> + * @dev:       pointer to client device structure
->> + * @name:      slave channel name
->> + *
->> + * Returns pointer to appropriate dma channel on success or NULL.
->> + */
->> +struct dma_chan *dma_request_slave_channel(struct device *dev,
->> +                                          const char *name)
->> +{
->> +       struct dma_chan *ch = __dma_request_slave_channel(dev, name, false);
->> +       if (IS_ERR(ch))
->> +               return NULL;
->> +       return ch;
->>  }
->>  EXPORT_SYMBOL_GPL(dma_request_slave_channel);
->>
->> +/**
->> + * dma_request_slave_channel_or_err - try to allocate an exclusive slave channel
->> + * @dev:       pointer to client device structure
->> + * @name:      slave channel name
->> + *
->> + * Returns pointer to appropriate dma channel on success or an error pointer.
->> + */
->> +struct dma_chan *dma_request_slave_channel_or_err(struct device *dev,
->> +                                                 const char *name)
->> +{
->> +       return __dma_request_slave_channel(dev, name, true);
->> +}
->> +EXPORT_SYMBOL_GPL(dma_request_slave_channel_or_err);
->> +
->>  void dma_release_channel(struct dma_chan *chan)
->>  {
->>         mutex_lock(&dma_list_mutex);
->> diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
->> index 0b88dd3d05f4..928141f6f21b 100644
->> --- a/drivers/dma/of-dma.c
->> +++ b/drivers/dma/of-dma.c
->> @@ -143,10 +143,10 @@ static int of_dma_match_channel(struct device_node *np, const char *name,
->>   * @np:                device node to get DMA request from
->>   * @name:      name of desired channel
->>   *
->> - * Returns pointer to appropriate dma channel on success or NULL on error.
->> + * Returns pointer to appropriate dma channel on success or an error pointer.
->>   */
->>  struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->> -                                             const char *name)
->> +                                             const char *name, bool defer)
->>  {
->>         struct of_phandle_args  dma_spec;
->>         struct of_dma           *ofdma;
->> @@ -155,14 +155,14 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->>
->>         if (!np || !name) {
->>                 pr_err("%s: not enough information provided\n", __func__);
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>         }
->>
->>         count = of_property_count_strings(np, "dma-names");
->>         if (count < 0) {
->>                 pr_err("%s: dma-names property of node '%s' missing or empty\n",
->>                         __func__, np->full_name);
->> -               return NULL;
->> +               return ERR_PTR(-ENODEV);
->>         }
->>
->>         for (i = 0; i < count; i++) {
->> @@ -181,11 +181,13 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->>
->>                 of_node_put(dma_spec.np);
->>
->> +               if (!ofdma && defer)
->> +                       return ERR_PTR(-EPROBE_DEFER);
->>                 if (chan)
->>                         return chan;
->>         }
->>
->> -       return NULL;
->> +       return ERR_PTR(-ENODEV);
->>  }
->>
->>  /**
->> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
->> index 41cf0c399288..b908b0fda72b 100644
->> --- a/include/linux/dmaengine.h
->> +++ b/include/linux/dmaengine.h
->> @@ -1041,6 +1041,8 @@ void dma_issue_pending_all(void);
->>  struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
->>                                         dma_filter_fn fn, void *fn_param);
->>  struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name);
->> +struct dma_chan *dma_request_slave_channel_or_err(struct device *dev,
->> +                                                 const char *name);
->>  void dma_release_channel(struct dma_chan *chan);
->>  #else
->>  static inline struct dma_chan *dma_find_channel(enum dma_transaction_type tx_type)
->> @@ -1068,6 +1070,11 @@ static inline struct dma_chan *dma_request_slave_channel(struct device *dev,
->>  {
->>         return NULL;
->>  }
->> +static inline struct dma_chan *dma_request_slave_channel_or_err(
->> +                                       struct device *dev, const char *name)
->> +{
->> +       return ERR_PTR(-ENODEV);
->> +}
->>  static inline void dma_release_channel(struct dma_chan *chan)
->>  {
->>  }
->> diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
->> index ae36298ba076..0504461574c6 100644
->> --- a/include/linux/of_dma.h
->> +++ b/include/linux/of_dma.h
->> @@ -38,7 +38,8 @@ extern int of_dma_controller_register(struct device_node *np,
->>                 void *data);
->>  extern void of_dma_controller_free(struct device_node *np);
->>  extern struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->> -                                                    const char *name);
->> +                                                    const char *name,
->> +                                                    bool defer);
->>  extern struct dma_chan *of_dma_simple_xlate(struct of_phandle_args *dma_spec,
->>                 struct of_dma *ofdma);
->>  #else
->> @@ -54,8 +55,10 @@ static inline void of_dma_controller_free(struct device_node *np)
->>  {
->>  }
->>
->> -static inline struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->> -                                                    const char *name)
->> +static inline struct dma_chan *of_dma_request_slave_channel(
->> +                                       struct device_node *np,
->> +                                       const char *name,
->> +                                       bool defer)
->>  {
->>         return NULL;
->>  }
->> --
->> 1.8.1.5
->>
+> Tegra's clock driver now provides an implementation of the common
+> reset API (include/linux/reset.h). Use this instead of the old Tegra-
+> specific API; that will soon be removed.
+>
+> The old Tegra-specific API used a struct clock to represent the module
+> to reset. Some of the clocks retrieved during probe() were only used for
+> reset purposes, and indeed aren't even true clocks. So, there's no need
+> to get() them any more.
+>
+> Cc: treding@nvidia.com
+> Cc: pdeschrijver@nvidia.com
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Feel free to merge this through whatever tree is appropriate.  If I
+were applying this, I would be looking for an ack from Thierry in
+addition to mine.
+
+> ---
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/pci/host/pci-tegra.c | 49 ++++++++++++++++++++++++++++++++------------
+>  1 file changed, 36 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 0afbbbc55c81..174a5bc2d993 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -39,6 +39,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/pci.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+>  #include <linux/tegra-cpuidle.h>
+> @@ -259,10 +260,13 @@ struct tegra_pcie {
+>
+>         struct clk *pex_clk;
+>         struct clk *afi_clk;
+> -       struct clk *pcie_xclk;
+>         struct clk *pll_e;
+>         struct clk *cml_clk;
+>
+> +       struct reset_control *pex_rst;
+> +       struct reset_control *afi_rst;
+> +       struct reset_control *pcie_xrst;
+> +
+>         struct tegra_msi msi;
+>
+>         struct list_head ports;
+> @@ -858,7 +862,7 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>         pads_writel(pcie, value, PADS_CTL);
+>
+>         /* take the PCIe interface module out of reset */
+> -       tegra_periph_reset_deassert(pcie->pcie_xclk);
+> +       reset_control_deassert(pcie->pcie_xrst);
+>
+>         /* finally enable PCIe */
+>         value = afi_readl(pcie, AFI_CONFIGURATION);
+> @@ -891,9 +895,9 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+>
+>         /* TODO: disable and unprepare clocks? */
+>
+> -       tegra_periph_reset_assert(pcie->pcie_xclk);
+> -       tegra_periph_reset_assert(pcie->afi_clk);
+> -       tegra_periph_reset_assert(pcie->pex_clk);
+> +       reset_control_assert(pcie->pcie_xrst);
+> +       reset_control_assert(pcie->afi_rst);
+> +       reset_control_assert(pcie->pex_rst);
+>
+>         tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+>
+> @@ -921,9 +925,9 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+>         const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+>         int err;
+>
+> -       tegra_periph_reset_assert(pcie->pcie_xclk);
+> -       tegra_periph_reset_assert(pcie->afi_clk);
+> -       tegra_periph_reset_assert(pcie->pex_clk);
+> +       reset_control_assert(pcie->pcie_xrst);
+> +       reset_control_assert(pcie->afi_rst);
+> +       reset_control_assert(pcie->pex_rst);
+>
+>         tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+>
+> @@ -958,7 +962,7 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+>                 return err;
+>         }
+>
+> -       tegra_periph_reset_deassert(pcie->afi_clk);
+> +       reset_control_deassert(pcie->afi_rst);
+>
+>         err = clk_prepare_enable(pcie->afi_clk);
+>         if (err < 0) {
+> @@ -996,10 +1000,6 @@ static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
+>         if (IS_ERR(pcie->afi_clk))
+>                 return PTR_ERR(pcie->afi_clk);
+>
+> -       pcie->pcie_xclk = devm_clk_get(pcie->dev, "pcie_xclk");
+> -       if (IS_ERR(pcie->pcie_xclk))
+> -               return PTR_ERR(pcie->pcie_xclk);
+> -
+>         pcie->pll_e = devm_clk_get(pcie->dev, "pll_e");
+>         if (IS_ERR(pcie->pll_e))
+>                 return PTR_ERR(pcie->pll_e);
+> @@ -1013,6 +1013,23 @@ static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
+>         return 0;
+>  }
+>
+> +static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
+> +{
+> +       pcie->pex_rst = devm_reset_control_get(pcie->dev, "pex");
+> +       if (IS_ERR(pcie->pex_rst))
+> +               return PTR_ERR(pcie->pex_rst);
+> +
+> +       pcie->afi_rst = devm_reset_control_get(pcie->dev, "afi");
+> +       if (IS_ERR(pcie->afi_rst))
+> +               return PTR_ERR(pcie->afi_rst);
+> +
+> +       pcie->pcie_xrst = devm_reset_control_get(pcie->dev, "pcie_x");
+> +       if (IS_ERR(pcie->pcie_xrst))
+> +               return PTR_ERR(pcie->pcie_xrst);
+> +
+> +       return 0;
+> +}
+> +
+>  static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+>  {
+>         struct platform_device *pdev = to_platform_device(pcie->dev);
+> @@ -1025,6 +1042,12 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+>                 return err;
+>         }
+>
+> +       err = tegra_pcie_resets_get(pcie);
+> +       if (err) {
+> +               dev_err(&pdev->dev, "failed to get resets: %d\n", err);
+> +               return err;
+> +       }
+> +
+>         err = tegra_pcie_power_on(pcie);
+>         if (err) {
+>                 dev_err(&pdev->dev, "failed to power up: %d\n", err);
+> --
+> 1.8.1.5
+>
