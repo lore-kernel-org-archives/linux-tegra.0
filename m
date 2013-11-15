@@ -1,91 +1,218 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH 24/31] serial: tegra: use reset framework
-Date: Fri, 15 Nov 2013 13:54:19 -0700
-Message-ID: <1384548866-13141-25-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 23/31] spi: tegra: convert to standard DMA DT bindings
+Date: Fri, 15 Nov 2013 13:54:18 -0700
+Message-ID: <1384548866-13141-24-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: swarren@wwwdotorg.org
-Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra's clock driver now provides an implementation of the common
-reset API (include/linux/reset.h). Use this instead of the old Tegra-
-specific API; that will soon be removed.
+By using dma_request_slave_channel_or_err(), the DMA slave ID can be
+looked up from standard DT properties, and squirrelled away during
+channel allocation. Hence, there's no need to use a custom DT property
+to store the slave ID.
 
-Cc: treding@nvidia.com
-Cc: pdeschrijver@nvidia.com
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 This patch is part of a series with strong internal depdendencies. I'm
 looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- drivers/tty/serial/serial-tegra.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/spi/spi-tegra114.c      | 48 +++++++++++++++--------------------------
+ drivers/spi/spi-tegra20-slink.c | 48 +++++++++++++++--------------------------
+ 2 files changed, 34 insertions(+), 62 deletions(-)
 
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index dfe79ccc4fb3..4455481a3517 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -34,6 +34,7 @@
- #include <linux/of_device.h>
- #include <linux/pagemap.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- #include <linux/serial.h>
- #include <linux/serial_8250.h>
- #include <linux/serial_core.h>
-@@ -44,8 +45,6 @@
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
+diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
+index f62e6e5e90e3..42b553b72f04 100644
+--- a/drivers/spi/spi-tegra114.c
++++ b/drivers/spi/spi-tegra114.c
+@@ -178,7 +178,6 @@ struct tegra_spi_data {
+ 	void __iomem				*base;
+ 	phys_addr_t				phys;
+ 	unsigned				irq;
+-	int					dma_req_sel;
+ 	u32					spi_max_frequency;
+ 	u32					cur_speed;
  
--#include <linux/clk/tegra.h>
--
- #define TEGRA_UART_TYPE				"TEGRA_UART"
- #define TX_EMPTY_STATUS				(UART_LSR_TEMT | UART_LSR_THRE)
- #define BYTES_TO_ALIGN(x)			((unsigned long)(x) & 0x3)
-@@ -103,6 +102,7 @@ struct tegra_uart_port {
- 	const struct tegra_uart_chip_data	*cdata;
+@@ -601,15 +600,15 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
+ 	dma_addr_t dma_phys;
+ 	int ret;
+ 	struct dma_slave_config dma_sconfig;
+-	dma_cap_mask_t mask;
  
- 	struct clk				*uart_clk;
-+	struct reset_control			*rst;
- 	unsigned int				current_baud;
- 
- 	/* Register shadow */
-@@ -832,9 +832,9 @@ static int tegra_uart_hw_init(struct tegra_uart_port *tup)
- 	clk_prepare_enable(tup->uart_clk);
- 
- 	/* Reset the UART controller to clear all previous status.*/
--	tegra_periph_reset_assert(tup->uart_clk);
-+	reset_control_assert(tup->rst);
- 	udelay(10);
--	tegra_periph_reset_deassert(tup->uart_clk);
-+	reset_control_deassert(tup->rst);
- 
- 	tup->rx_in_progress = 0;
- 	tup->tx_in_progress = 0;
-@@ -1320,6 +1320,12 @@ static int tegra_uart_probe(struct platform_device *pdev)
- 		return PTR_ERR(tup->uart_clk);
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-	dma_chan = dma_request_channel(mask, NULL, NULL);
+-	if (!dma_chan) {
+-		dev_err(tspi->dev,
+-			"Dma channel is not available, will try later\n");
+-		return -EPROBE_DEFER;
++	dma_chan = dma_request_slave_channel_or_err(tspi->dev,
++					dma_to_memory ? "rx" : "tx");
++	if (IS_ERR(dma_chan)) {
++		ret = PTR_ERR(dma_chan);
++		if (ret != -EPROBE_DEFER)
++			dev_err(tspi->dev,
++				"Dma channel is not available: %d\n", ret);
++		return ret;
  	}
  
-+	tup->rst = devm_reset_control_get(&pdev->dev, "serial");
-+	if (IS_ERR(tup->rst)) {
-+		dev_err(&pdev->dev, "Couldn't get the reset\n");
-+		return PTR_ERR(tup->rst);
-+	}
-+
- 	u->iotype = UPIO_MEM32;
- 	u->irq = platform_get_irq(pdev, 0);
- 	u->regshift = 2;
+ 	dma_buf = dma_alloc_coherent(tspi->dev, tspi->dma_buf_size,
+@@ -620,7 +619,6 @@ static int tegra_spi_init_dma_param(struct tegra_spi_data *tspi,
+ 		return -ENOMEM;
+ 	}
+ 
+-	dma_sconfig.slave_id = tspi->dma_req_sel;
+ 	if (dma_to_memory) {
+ 		dma_sconfig.src_addr = tspi->phys + SPI_RX_FIFO;
+ 		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+@@ -1055,11 +1053,6 @@ static void tegra_spi_parse_dt(struct platform_device *pdev,
+ 	struct tegra_spi_data *tspi)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+-	u32 of_dma[2];
+-
+-	if (of_property_read_u32_array(np, "nvidia,dma-request-selector",
+-				of_dma, 2) >= 0)
+-		tspi->dma_req_sel = of_dma[1];
+ 
+ 	if (of_property_read_u32(np, "spi-max-frequency",
+ 				&tspi->spi_max_frequency))
+@@ -1138,22 +1131,15 @@ static int tegra_spi_probe(struct platform_device *pdev)
+ 	tspi->max_buf_size = SPI_FIFO_DEPTH << 2;
+ 	tspi->dma_buf_size = DEFAULT_SPI_DMA_BUF_LEN;
+ 
+-	if (tspi->dma_req_sel) {
+-		ret = tegra_spi_init_dma_param(tspi, true);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "RxDma Init failed, err %d\n", ret);
+-			goto exit_free_irq;
+-		}
+-
+-		ret = tegra_spi_init_dma_param(tspi, false);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "TxDma Init failed, err %d\n", ret);
+-			goto exit_rx_dma_free;
+-		}
+-		tspi->max_buf_size = tspi->dma_buf_size;
+-		init_completion(&tspi->tx_dma_complete);
+-		init_completion(&tspi->rx_dma_complete);
+-	}
++	ret = tegra_spi_init_dma_param(tspi, true);
++	if (ret < 0)
++		goto exit_free_irq;
++	ret = tegra_spi_init_dma_param(tspi, false);
++	if (ret < 0)
++		goto exit_rx_dma_free;
++	tspi->max_buf_size = tspi->dma_buf_size;
++	init_completion(&tspi->tx_dma_complete);
++	init_completion(&tspi->rx_dma_complete);
+ 
+ 	init_completion(&tspi->xfer_completion);
+ 
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 1305b8f933ba..dd6f26c05947 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -171,7 +171,6 @@ struct tegra_slink_data {
+ 	void __iomem				*base;
+ 	phys_addr_t				phys;
+ 	unsigned				irq;
+-	int					dma_req_sel;
+ 	u32					spi_max_frequency;
+ 	u32					cur_speed;
+ 
+@@ -630,15 +629,15 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 	dma_addr_t dma_phys;
+ 	int ret;
+ 	struct dma_slave_config dma_sconfig;
+-	dma_cap_mask_t mask;
+ 
+-	dma_cap_zero(mask);
+-	dma_cap_set(DMA_SLAVE, mask);
+-	dma_chan = dma_request_channel(mask, NULL, NULL);
+-	if (!dma_chan) {
+-		dev_err(tspi->dev,
+-			"Dma channel is not available, will try later\n");
+-		return -EPROBE_DEFER;
++	dma_chan = dma_request_slave_channel(tspi->dev,
++					     dma_to_memory ? "rx" : "tx");
++	if (IS_ERR(dma_chan)) {
++		ret = PTR_ERR(dma_chan);
++		if (ret != -EPROBE_DEFER)
++			dev_err(tspi->dev,
++				"Dma channel is not available: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	dma_buf = dma_alloc_coherent(tspi->dev, tspi->dma_buf_size,
+@@ -649,7 +648,6 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 		return -ENOMEM;
+ 	}
+ 
+-	dma_sconfig.slave_id = tspi->dma_req_sel;
+ 	if (dma_to_memory) {
+ 		dma_sconfig.src_addr = tspi->phys + SLINK_RX_FIFO;
+ 		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+@@ -1021,11 +1019,6 @@ static irqreturn_t tegra_slink_isr(int irq, void *context_data)
+ static void tegra_slink_parse_dt(struct tegra_slink_data *tspi)
+ {
+ 	struct device_node *np = tspi->dev->of_node;
+-	u32 of_dma[2];
+-
+-	if (of_property_read_u32_array(np, "nvidia,dma-request-selector",
+-				of_dma, 2) >= 0)
+-		tspi->dma_req_sel = of_dma[1];
+ 
+ 	if (of_property_read_u32(np, "spi-max-frequency",
+ 					&tspi->spi_max_frequency))
+@@ -1129,22 +1122,15 @@ static int tegra_slink_probe(struct platform_device *pdev)
+ 	tspi->max_buf_size = SLINK_FIFO_DEPTH << 2;
+ 	tspi->dma_buf_size = DEFAULT_SPI_DMA_BUF_LEN;
+ 
+-	if (tspi->dma_req_sel) {
+-		ret = tegra_slink_init_dma_param(tspi, true);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "RxDma Init failed, err %d\n", ret);
+-			goto exit_free_irq;
+-		}
+-
+-		ret = tegra_slink_init_dma_param(tspi, false);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "TxDma Init failed, err %d\n", ret);
+-			goto exit_rx_dma_free;
+-		}
+-		tspi->max_buf_size = tspi->dma_buf_size;
+-		init_completion(&tspi->tx_dma_complete);
+-		init_completion(&tspi->rx_dma_complete);
+-	}
++	ret = tegra_slink_init_dma_param(tspi, true);
++	if (ret < 0)
++		goto exit_free_irq;
++	ret = tegra_slink_init_dma_param(tspi, false);
++	if (ret < 0)
++		goto exit_rx_dma_free;
++	tspi->max_buf_size = tspi->dma_buf_size;
++	init_completion(&tspi->tx_dma_complete);
++	init_completion(&tspi->rx_dma_complete);
+ 
+ 	init_completion(&tspi->xfer_completion);
+ 
 -- 
 1.8.1.5
 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
