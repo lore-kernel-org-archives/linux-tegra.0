@@ -1,346 +1,160 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 03/31] ARM: tegra: document use of standard DMA DT bindings
-Date: Fri, 15 Nov 2013 13:53:58 -0700
-Message-ID: <1384548866-13141-4-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 08/31] pci: tegra: use reset framework
+Date: Fri, 15 Nov 2013 13:54:03 -0700
+Message-ID: <1384548866-13141-9-git-send-email-swarren@wwwdotorg.org>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384548866-13141-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: swarren@wwwdotorg.org
+Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-Update all the Tegra DT bindings to require the standard dmas/dma-names
-properties rather than non-standard nvidia,dma-request-selector property.
+Tegra's clock driver now provides an implementation of the common
+reset API (include/linux/reset.h). Use this instead of the old Tegra-
+specific API; that will soon be removed.
 
-This is a DT-ABI-incompatible change. It is the second of two changes
-required for me to consider the Tegra DT bindings as stable, the other
-being the previous conversion to the common reset bindings.
+The old Tegra-specific API used a struct clock to represent the module
+to reset. Some of the clocks retrieved during probe() were only used for
+reset purposes, and indeed aren't even true clocks. So, there's no need
+to get() them any more.
 
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: treding@nvidia.com
+Cc: pdeschrijver@nvidia.com
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt     |  7 +++++++
- .../bindings/serial/nvidia,tegra20-hsuart.txt          | 10 +++++++---
- .../devicetree/bindings/sound/nvidia,tegra20-ac97.txt  | 14 +++++++++-----
- .../devicetree/bindings/sound/nvidia,tegra20-i2s.txt   | 14 +++++++++-----
- .../devicetree/bindings/sound/nvidia,tegra30-ahub.txt  | 18 +++++++++++++-----
- .../devicetree/bindings/spi/nvidia,tegra114-spi.txt    | 14 +++++++++-----
- .../devicetree/bindings/spi/nvidia,tegra20-sflash.txt  | 10 +++++++---
- .../devicetree/bindings/spi/nvidia,tegra20-slink.txt   | 10 +++++++---
- 8 files changed, 68 insertions(+), 29 deletions(-)
+This patch is part of a series with strong internal depdendencies. I'm
+looking for an ack so that I can take the entire series through the Tegra
+and arm-soc trees. The series will be part of a stable branch that can be
+merged into other subsystems if needed to avoid/resolve dependencies.
+---
+ drivers/pci/host/pci-tegra.c | 49 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 36 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-index 2b3af72dfb9c..13a7f9dc1681 100644
---- a/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-+++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.txt
-@@ -51,6 +51,11 @@ Required properties:
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - i2c
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 0afbbbc55c81..174a5bc2d993 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -39,6 +39,7 @@
+ #include <linux/of_platform.h>
+ #include <linux/pci.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/tegra-cpuidle.h>
+@@ -259,10 +260,13 @@ struct tegra_pcie {
  
- Example:
+ 	struct clk *pex_clk;
+ 	struct clk *afi_clk;
+-	struct clk *pcie_xclk;
+ 	struct clk *pll_e;
+ 	struct clk *cml_clk;
  
-@@ -64,5 +69,7 @@ Example:
- 		clock-names = "div-clk", "fast-clk";
- 		resets = <&tegra_car 12>;
- 		reset-names = "i2c";
-+		dmas = <&apbdma 16>, <&apbdma 16>;
-+		dma-names = "rx", "tx";
- 		status = "disabled";
- 	};
-diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
-index 69ccdbe3760e..e2b18972a674 100644
---- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
-+++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
-@@ -4,14 +4,17 @@ Required properties:
- - compatible : should be "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart".
- - reg: Should contain UART controller registers location and length.
- - interrupts: Should contain UART controller interrupts.
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for this UART controller.
- - clocks : Must contain one entry, for the module clock.
-   See ../clocks/clock-bindings.txt for details.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - serial
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
++	struct reset_control *pex_rst;
++	struct reset_control *afi_rst;
++	struct reset_control *pcie_xrst;
++
+ 	struct tegra_msi msi;
  
- Optional properties:
- - nvidia,enable-modem-interrupt: Enable modem interrupts. Should be enable
-@@ -24,10 +27,11 @@ serial@70006000 {
- 	reg = <0x70006000 0x40>;
- 	reg-shift = <2>;
- 	interrupts = <0 36 0x04>;
--	nvidia,dma-request-selector = <&apbdma 8>;
- 	nvidia,enable-modem-interrupt;
- 	clocks = <&tegra_car 6>;
- 	resets = <&tegra_car 6>;
- 	reset-names = "serial";
-+	dmas = <&apbdma 8>, <&apbdma 8>;
-+	dma-names = "rx", "tx";
- 	status = "disabled";
- };
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-index 2b6817f6e40e..eaf00102d92c 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-@@ -4,14 +4,17 @@ Required properties:
- - compatible : "nvidia,tegra20-ac97"
- - reg : Should contain AC97 controller registers location and length
- - interrupts : Should contain AC97 interrupt
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - ac97
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for the AC97 controller
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
-+- clocks : Must contain one entry, for the module clock.
-+  See ../clocks/clock-bindings.txt for details.
- - nvidia,codec-reset-gpio : The Tegra GPIO controller's phandle and the number
-   of the GPIO used to reset the external AC97 codec
- - nvidia,codec-sync-gpio : The Tegra GPIO controller's phandle and the number
-@@ -23,10 +26,11 @@ ac97@70002000 {
- 	compatible = "nvidia,tegra20-ac97";
- 	reg = <0x70002000 0x200>;
- 	interrupts = <0 81 0x04>;
--	nvidia,dma-request-selector = <&apbdma 12>;
- 	nvidia,codec-reset-gpio = <&gpio 170 0>;
- 	nvidia,codec-sync-gpio = <&gpio 120 0>;
- 	clocks = <&tegra_car 3>;
- 	resets = <&tegra_car 3>;
- 	reset-names = "ac97";
-+	dmas = <&apbdma 12>, <&apbdma 12>;
-+	dma-names = "rx", "tx";
- };
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-index 8b070aeca3db..dc30c6bfbe95 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-@@ -4,14 +4,17 @@ Required properties:
- - compatible : "nvidia,tegra20-i2s"
- - reg : Should contain I2S registers location and length
- - interrupts : Should contain I2S interrupt
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - i2s
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for this I2S controller
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
-+- clocks : Must contain one entry, for the module clock.
-+  See ../clocks/clock-bindings.txt for details.
+ 	struct list_head ports;
+@@ -858,7 +862,7 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 	pads_writel(pcie, value, PADS_CTL);
  
- Example:
+ 	/* take the PCIe interface module out of reset */
+-	tegra_periph_reset_deassert(pcie->pcie_xclk);
++	reset_control_deassert(pcie->pcie_xrst);
  
-@@ -19,8 +22,9 @@ i2s@70002800 {
- 	compatible = "nvidia,tegra20-i2s";
- 	reg = <0x70002800 0x200>;
- 	interrupts = < 45 >;
--	nvidia,dma-request-selector = < &apbdma 2 >;
- 	clocks = <&tegra_car 11>;
- 	resets = <&tegra_car 11>;
- 	reset-names = "i2s";
-+	dmas = <&apbdma 21>, <&apbdma 21>;
-+	dma-names = "rx", "tx";
- };
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-index 60d59a54ca07..3376ba42a209 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-@@ -7,11 +7,6 @@ Required properties:
-   - Tegra30 requires 2 entries, for the APBIF and AHUB/AUDIO register blocks.
-   - Tegra114 requires an additional entry, for the APBIF2 register block.
- - interrupts : Should contain AHUB interrupt
--- nvidia,dma-request-selector : A list of the DMA channel specifiers. Each
--  entry contains the Tegra DMA controller's phandle and request selector.
--  If a single entry is present, the request selectors for the channels are
--  assumed to be contiguous, and increment from this value.
--  If multiple values are given, one value must be given per channel.
- - clocks : Must contain an entry for each entry in clock-names.
-   See ../clocks/clock-bindings.txt for details.
- - clock-names : Must include the following entries:
-@@ -36,6 +31,14 @@ Required properties:
-   - amx
-   - adx
- - ranges : The bus address mapping for the configlink register bus.
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx0 .. rx<n>
-+  - tx0 .. tx<n>
-+  ... where n is:
-+  Tegra30: 3
-+  Tegra114, Tegra124: 9
-   Can be empty since the mapping is 1:1.
- - #address-cells : For the configlink bus. Should be <1>;
- - #size-cells : For the configlink bus. Should be <1>.
-@@ -62,6 +65,11 @@ ahub@70080000 {
- 	reset-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
- 		"i2s3", "i2s4", "dam0", "dam1", "dam2",
- 		"spdif";
-+	dmas = <&apbdma 1>, <&apbdma 1>;
-+	       <&apbdma 2>, <&apbdma 2>;
-+	       <&apbdma 3>, <&apbdma 3>;
-+	       <&apbdma 4>, <&apbdma 4>;
-+	dma-names = "rx0", "tx0", "rx1", "tx1", "rx2", "tx2", "rx3", "tx3";
- 	ranges;
- 	#address-cells = <1>;
- 	#size-cells = <1>;
-diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-index fcd9f67999de..7ea701e07dc2 100644
---- a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-+++ b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-@@ -4,16 +4,19 @@ Required properties:
- - compatible : should be "nvidia,tegra114-spi".
- - reg: Should contain SPI registers location and length.
- - interrupts: Should contain SPI interrupts.
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for this SPI controller.
--- clocks : Must contain an entry for each entry in clock-names.
--  See ../clocks/clock-bindings.txt for details.
- - clock-names : Must include the following entries:
-   - spi
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - spi
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
-+- clocks : Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
+ 	/* finally enable PCIe */
+ 	value = afi_readl(pcie, AFI_CONFIGURATION);
+@@ -891,9 +895,9 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
  
- Recommended properties:
- - spi-max-frequency: Definition as per
-@@ -24,7 +27,6 @@ spi@7000d600 {
- 	compatible = "nvidia,tegra114-spi";
- 	reg = <0x7000d600 0x200>;
- 	interrupts = <0 82 0x04>;
--	nvidia,dma-request-selector = <&apbdma 16>;
- 	spi-max-frequency = <25000000>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -32,5 +34,7 @@ spi@7000d600 {
- 	clock-names = "spi";
- 	resets = <&tegra_car 44>;
- 	reset-names = "spi";
-+	dmas = <&apbdma 16>, <&apbdma 16>;
-+	dma-names = "rx", "tx";
- 	status = "disabled";
- };
-diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-index e144f144717f..bdf08e6dec9b 100644
---- a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-+++ b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-@@ -4,14 +4,17 @@ Required properties:
- - compatible : should be "nvidia,tegra20-sflash".
- - reg: Should contain SFLASH registers location and length.
- - interrupts: Should contain SFLASH interrupts.
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for this SFLASH controller.
- - clocks : Must contain one entry, for the module clock.
-   See ../clocks/clock-bindings.txt for details.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - spi
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
+ 	/* TODO: disable and unprepare clocks? */
  
- Recommended properties:
- - spi-max-frequency: Definition as per
-@@ -23,12 +26,13 @@ spi@7000c380 {
- 	compatible = "nvidia,tegra20-sflash";
- 	reg = <0x7000c380 0x80>;
- 	interrupts = <0 39 0x04>;
--	nvidia,dma-request-selector = <&apbdma 16>;
- 	spi-max-frequency = <25000000>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	clocks = <&tegra_car 43>;
- 	resets = <&tegra_car 43>;
- 	reset-names = "spi";
-+	dmas = <&apbdma 11>, <&apbdma 11>;
-+	dma-names = "rx", "tx";
- 	status = "disabled";
- };
-diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
-index 9393e28f444b..5db9144a33c8 100644
---- a/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
-+++ b/Documentation/devicetree/bindings/spi/nvidia,tegra20-slink.txt
-@@ -4,14 +4,17 @@ Required properties:
- - compatible : should be "nvidia,tegra20-slink", "nvidia,tegra30-slink".
- - reg: Should contain SLINK registers location and length.
- - interrupts: Should contain SLINK interrupts.
--- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
--  request selector for this SLINK controller.
- - clocks : Must contain one entry, for the module clock.
-   See ../clocks/clock-bindings.txt for details.
- - resets : Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
- - reset-names : Must include the following entries:
-   - spi
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
+-	tegra_periph_reset_assert(pcie->pcie_xclk);
+-	tegra_periph_reset_assert(pcie->afi_clk);
+-	tegra_periph_reset_assert(pcie->pex_clk);
++	reset_control_assert(pcie->pcie_xrst);
++	reset_control_assert(pcie->afi_rst);
++	reset_control_assert(pcie->pex_rst);
  
- Recommended properties:
- - spi-max-frequency: Definition as per
-@@ -23,12 +26,13 @@ spi@7000d600 {
- 	compatible = "nvidia,tegra20-slink";
- 	reg = <0x7000d600 0x200>;
- 	interrupts = <0 82 0x04>;
--	nvidia,dma-request-selector = <&apbdma 16>;
- 	spi-max-frequency = <25000000>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- 	clocks = <&tegra_car 44>;
- 	resets = <&tegra_car 44>;
- 	reset-names = "spi";
-+	dmas = <&apbdma 16>, <&apbdma 16>;
-+	dma-names = "rx", "tx";
- 	status = "disabled";
- };
+ 	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+ 
+@@ -921,9 +925,9 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+ 	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+ 	int err;
+ 
+-	tegra_periph_reset_assert(pcie->pcie_xclk);
+-	tegra_periph_reset_assert(pcie->afi_clk);
+-	tegra_periph_reset_assert(pcie->pex_clk);
++	reset_control_assert(pcie->pcie_xrst);
++	reset_control_assert(pcie->afi_rst);
++	reset_control_assert(pcie->pex_rst);
+ 
+ 	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+ 
+@@ -958,7 +962,7 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
+-	tegra_periph_reset_deassert(pcie->afi_clk);
++	reset_control_deassert(pcie->afi_rst);
+ 
+ 	err = clk_prepare_enable(pcie->afi_clk);
+ 	if (err < 0) {
+@@ -996,10 +1000,6 @@ static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
+ 	if (IS_ERR(pcie->afi_clk))
+ 		return PTR_ERR(pcie->afi_clk);
+ 
+-	pcie->pcie_xclk = devm_clk_get(pcie->dev, "pcie_xclk");
+-	if (IS_ERR(pcie->pcie_xclk))
+-		return PTR_ERR(pcie->pcie_xclk);
+-
+ 	pcie->pll_e = devm_clk_get(pcie->dev, "pll_e");
+ 	if (IS_ERR(pcie->pll_e))
+ 		return PTR_ERR(pcie->pll_e);
+@@ -1013,6 +1013,23 @@ static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
+ 	return 0;
+ }
+ 
++static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
++{
++	pcie->pex_rst = devm_reset_control_get(pcie->dev, "pex");
++	if (IS_ERR(pcie->pex_rst))
++		return PTR_ERR(pcie->pex_rst);
++
++	pcie->afi_rst = devm_reset_control_get(pcie->dev, "afi");
++	if (IS_ERR(pcie->afi_rst))
++		return PTR_ERR(pcie->afi_rst);
++
++	pcie->pcie_xrst = devm_reset_control_get(pcie->dev, "pcie_x");
++	if (IS_ERR(pcie->pcie_xrst))
++		return PTR_ERR(pcie->pcie_xrst);
++
++	return 0;
++}
++
+ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ {
+ 	struct platform_device *pdev = to_platform_device(pcie->dev);
+@@ -1025,6 +1042,12 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
++	err = tegra_pcie_resets_get(pcie);
++	if (err) {
++		dev_err(&pdev->dev, "failed to get resets: %d\n", err);
++		return err;
++	}
++
+ 	err = tegra_pcie_power_on(pcie);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to power up: %d\n", err);
 -- 
 1.8.1.5
