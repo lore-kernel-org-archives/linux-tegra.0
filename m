@@ -1,75 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: use clk_disable_unprepare
- instead of clk_disable
-Date: Fri, 15 Nov 2013 17:44:25 +0000
-Message-ID: <20131115174425.GB15393@sirena.org.uk>
-References: <CAPgLHd84PK+6b0OfnRqBppvBk9i3Xy=ZEiPQO8ZCPz+NW9g4Uw@mail.gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 14/31] ASoC: dmaengine: support deferred probe for DMA
+ channels
+Date: Sat, 16 Nov 2013 09:29:44 +0000
+Message-ID: <20131116092944.GC15393@sirena.org.uk>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-15-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5406192521295661911=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAPgLHd84PK+6b0OfnRqBppvBk9i3Xy=ZEiPQO8ZCPz+NW9g4Uw@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: alsa-devel@alsa-project.org, swarren@wwwdotorg.org, tiwai@suse.de, lgirdwood@gmail.com, rob.herring@calxeda.com, linux-tegra@vger.kernel.org, yongjun_wei@trendmicro.com.cn, thierry.reding@gmail.com, grant.likely@linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bKyqfOwhbdpXa4YI"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1384548866-13141-15-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============5406192521295661911==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
-Content-Disposition: inline
-
-
---DKU6Jbt7q3WqK7+M
+--bKyqfOwhbdpXa4YI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2013 at 05:53:45PM +0800, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> clk_prepare_enable() is used so clk_disable_unprepare() should be
-> used instead of clk_disable() in the error handling path.
+On Fri, Nov 15, 2013 at 01:54:09PM -0700, Stephen Warren wrote:
 
-Applied, thanks.
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
 
---DKU6Jbt7q3WqK7+M
+Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+but please do provide the branch (ideally just the ASoC core stuff)
+since other drivers ought to be being enhanced to use this.
+
+--bKyqfOwhbdpXa4YI
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJShl1xAAoJELSic+t+oim9XboP/Ak0jVieWD6Nx+6X+/tGgRtS
-KyJzP6Iz57KVOqTK+54qK3b+Eqv9FZ1uG3x6XbvrNXVhJ5mlTv8UUw7tUBmt1PbV
-SKfHpdRd/3w29LC74z1lFAh7lAcvi7L+0C+amb+BZJp05sqCUnc2pepgG6AIxW52
-ptt2gCOXgTYWh9bVdQdAFW9mj5k8w4GlXEss4YzOldj0tBj92UVbqPH4XYXHP6PC
-0lApkwb0wUK0Q+IDuwI874kMS3UumnbKvd2iQkM+31Ifnyi1RRO+ihJpuGAcsSgs
-C3sUjRHDkvtj/xdZhgye5e3wX0yQOKE0hh4zIA2i2GWny5zwfOIX9iVMbBvtT0oN
-dSJ9lKLSg5OuJNhzyzfe+dn/dKlsinsVjRCm2To482PDXnBCkcic2HGopK5vp+jM
-o78M9KMTvPyVtST5iH9hKonz5w2QjInk0tQ5+QKTiXnsCKwivUqUoSA2ycyHgZ8Z
-h/NJ3Xl2cVLv9R1AhfzU3UYiPbbS6OU3qURryKwFO4rkVNijZ/5QM4uHp/Xdb4QU
-mFnu2DvvAs2nYZHYueVgjypRlL8MCms1Uu0k5mHME67c4R77CYVqsrau7K7Y8TUs
-VQmFrhCAVFKjPfDABj6pX1RX5TWzitqXNDK6BPRSjX8vwXD7Y48HToMGqwMINU9m
-IWr0/wW/32lZRO92Q6tr
-=3OAr
+iQIcBAEBAgAGBQJShzr5AAoJELSic+t+oim9OQkP/jL/dgwNpY+2ET8kAhfQnfxX
+BSD1pNZKxCyyLX/MMEaNBkEkDtHoCS6tGw7KzWM/OQBGgltmpMF78FDY1kuaEJj8
+My0MRagLEdsG9PndlPa8Y4gZBwRkNSxls6t/tWvZgATKrS5iQ4NPEKWYkNaXJTUl
+xLYaFtFz02ftItXn1UceP49atGu5Xtl4iyJFz+1auwYc7goFkpvUvEZ7mm5B6Lt3
+y2r7+wMHxojTvNLQk2qpHhCZEtflN9w6p7iO+Rgyo/YFLv3zZge861Wz8blKzHzU
+XwjtYDfuLOuweagTcbDb1JVIA+LVAzHTMi9z371QjQrp7CWu3woKp8t1UJNBXSCi
+uzuIid9e5PVh19SSGMmeK5h2Z065qdeND2jBkwlfK+9eKRNptVnLILDcngBKJaRc
+kEc0h83+oJ58gO3rRULiyjzqwoyG1Fh4bIIFTW/qY7lQVvERJ+O1rd3M6lB1XIVC
+MhhTdh30ZQOhWy0DkMm3heTe38Cp+2lD0aBJ4MYxBF7lTaUahvvM8G9Vu9otMqOr
+VmqtWGLEzwXZambFmPPBaJNA40h9ThJ/lCpuuJTL+aaiwI/T9Y/UY+qIL3IlDYVo
+AqoClLOrydSQh9vS3k1dg4La2ysOLWi++yX4TM96t7VagCSFW4JrEcpBxiaH42tw
+Oai0phm8BuHKYirv0+76
+=hZXp
 -----END PGP SIGNATURE-----
 
---DKU6Jbt7q3WqK7+M--
-
---===============5406192521295661911==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============5406192521295661911==--
+--bKyqfOwhbdpXa4YI--
