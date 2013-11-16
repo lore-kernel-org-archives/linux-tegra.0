@@ -1,84 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
-Date: Sat, 16 Nov 2013 09:55:29 +0000
-Message-ID: <20131116095529.GF15393@sirena.org.uk>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register
+ accesses
+Date: Sat, 16 Nov 2013 10:02:05 +0000
+Message-ID: <20131116100205.GG15393@sirena.org.uk>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8620690327442544356=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, pdeschrijver@nvidia.com, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="t4apE7yKrX2dGgJC"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1384548866-13141-18-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============8620690327442544356==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NQTVMVnDVuULnIzU"
-Content-Disposition: inline
-
-
---NQTVMVnDVuULnIzU
+--t4apE7yKrX2dGgJC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2013 at 01:54:11PM -0700, Stephen Warren wrote:
+On Fri, Nov 15, 2013 at 01:54:12PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Call pm_runtime_get_sync() before all register accesses; the HW requires
+> clocks to be running when accessing registers.
+>=20
+> This hasn't been needed to date, since all register IO was performed
+> while playback was active, and hence the ASoC core had already called
+> pm_runtime_get(). However, an imminent future commit will allocate and
+> set up the FIFOs and routing during probe(), when that "protection"
+> won't be in place.
 
-> @@ -1,6 +1,8 @@
->  config SND_SOC_TEGRA
->  	tristate "SoC Audio for the Tegra System-on-Chip"
->  	depends on (ARCH_TEGRA && TEGRA20_APB_DMA) || COMPILE_TEST
-> +	depends on COMMON_CLK
-> +	depends on RESET_CONTROLLER
+Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Do you depend on COMMON_CLK here?  I only noticed reset controller API
-dependencies here but perhaps I missed this (or it's fixing a dependency
-that should be there already).
+However should we fix this at the regmap level in the same way that we
+do for clocks?  That would need to be using _put_autosuspend() to avoid
+being horrific.  Or alternatively should the driver be making the device
+cache only when runtime PM is disabled?
 
---NQTVMVnDVuULnIzU
+--t4apE7yKrX2dGgJC
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSh0ENAAoJELSic+t+oim9vZAP/iLttbQfwz9/38ncTDvWtDgN
-NJ+ceB92Hs/v9bIh36pbrK7Vja78Gzl6jmqSkxRimu3lwcF1UPgIu3DwX4yIH/wE
-A7sUNl9BH1fzLLh2IffBXu1e7KbtHC++o7N5L3mqbwO406x/kbMNsUnkuKHjkltA
-IwGP9dsS4InzyfAmVcGYrKCqZH2k9QMKvsbLNOnXSiuGGVusMglX5jdEe/UyZEVl
-4vbtNnOVqDIDuzd/UcGUfn4JOKS3lh+45/yrGVqfexGGu7qeScY2/1L0QBE2YCp5
-HkuvaZIdf7Z6DnDrgBuPqWk1L4D0jBfNsgerTolHfWrUeuadpfKuGrn7+ARxR5Kx
-F69t+odFPRvAIGGCFD9e4thNFB83SbVVZLnCQEdvfGv47tf4VQ3bN6UyAhVJV02I
-3AjUikT9x9al0ltBSaprLvfwyqDKKTOEOc3joovHjv1XLzjBVZLSuG6wc/3o0Zce
-8/aD9uPpwaGaD693xHIVtIOj1y+7E6A9UiX6rvSawqXxshgQI/Bd4T0Wi9l+H2Jq
-veHyGAUj0Eti5MUy5YRdOxTJgPyzLVPUklvJgf6HFAx4wfL6xod8zsgwGfeVBa8A
-2NyiiA6dB9GAcMHBPpQlhUTmifRJ0VtA9h4l1a67sRteIHdK+Yfh+kZzfidoZxV9
-Byq4ZXXMonmpTdUcxX5O
-=4NM6
+iQIcBAEBAgAGBQJSh0KaAAoJELSic+t+oim9yNYP/03HbgxKX7ChIe6rPxpivMEn
+JooJ4Fv2je6opqeimK0YsQq6uS2WLGWHaHSD2TrycjUta2gpujM2WkiacIUL0Xok
+RRXxcPpXl1IYURrvhHfZfabULD/hikpxUd+rPxAhRfeWGZzcc7RJ9elQS2owDgKx
+BZ3nOMpee8fMbHzVe0cTaYB++Wvikn5+BywVv6rN1lPyb3lLHdxGlrdiCzzKDc0G
+4vWD2eIdBGFQIT0h2KGxsoumJgpAzfdJTu/It1+9rcU2f8bJpkUUd/2OAgLswfBG
+PVKgLqQgEbh2VUaGl/1t939qVaJANacE3ANiFokRQqDaudPBROk5H6S9vywc+4Ys
++UDGMkcR6B7Y7fe476lr2GUr1bYGb1LFRIiQ0AVSExSmKg19Hk+Y/4KKmPp/ndZG
+2cBXryiqtDKjWukjfAB0DGTN1W3CSHct4HzfABsqbrj5imuSC9kk3iRQuK2+AR4g
+tz2puHbbT1xpj4dWP2haOCEfPQrFiNQXqYDZhlgMamsc5IQXYSBhlZG3mHeLvxTO
+eigQym2noW/OrfCc0a7881uhqWTS2IksOIpyBXiVtZhkRbkYOrnNB/mSwDJ1HNjI
+xz0bHJeAbgaU2jA+QpcyxvzUB6LHCLaMTVGcTEZ5rQFwyQKjze5f4KuoIsYhVZU6
+FrdPBFnZu1dymhmJCBil
+=pumE
 -----END PGP SIGNATURE-----
 
---NQTVMVnDVuULnIzU--
-
-
---===============8620690327442544356==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============8620690327442544356==--
+--t4apE7yKrX2dGgJC--
