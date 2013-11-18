@@ -1,55 +1,60 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 23/31] spi: tegra: convert to standard DMA DT bindings
-Date: Mon, 18 Nov 2013 10:30:35 -0700
-Message-ID: <528A4EBB.2090800@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-24-git-send-email-swarren@wwwdotorg.org> <20131116101422.GK15393@sirena.org.uk>
+Subject: Re: [PATCH 01/31] ARM: tegra: add missing clock documentation to
+ DT bindings
+Date: Mon, 18 Nov 2013 10:36:19 -0700
+Message-ID: <528A5013.3060006@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-2-git-send-email-swarren@wwwdotorg.org> <9892703.gTmEHyqaYb@ax5200p>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131116101422.GK15393-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <9892703.gTmEHyqaYb@ax5200p>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/16/2013 03:14 AM, Mark Brown wrote:
-> On Fri, Nov 15, 2013 at 01:54:18PM -0700, Stephen Warren wrote:
+On 11/16/2013 03:00 PM, Marc Dietrich wrote:
+> Hi Stephen,
+> 
+> On Friday 15 November 2013 13:53:56 Stephen Warren wrote:
 >> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>
->> By using dma_request_slave_channel_or_err(), the DMA slave ID can be
+>> Many of the Tegra DT binding documents say nothing about the clocks or
+>> clock-names properties, yet those are present and required in DT files.
+>> This patch simply updates the documentation file to match the implicit
+>> definition of the binding, based on real-world DT content.
+>>
+>> All Tegra bindings that mention clocks are updated to have consistent
+>> wording and formatting of the clock-related properties.
+
+>> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
+
+(Thanks for pointing out the duplicate entries; I'll fix those.)
+
+>> +  - clocks : Must contain an entry for each entry in clock-names.
+>> +    See ../clocks/clock-bindings.txt for details.
+>> +  - clock-names : Must include the following entries:
+>> +    (This property may be omitted if the only clock in the list is "3d")
+>> +    - 3d
+>> +      This MUST be the first entry.
 > 
-> Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> 
-> Is this function introduced earlier in the series?
+> why? isn't the purpose of names that the order is irrelevant?
 
-Yes, patch 11/31 introduced this.
+If we used names from the start, then the order would be irrelevant.
 
-> One of the things
-> I'm looking at is trying to factor out some DMA code in the SPI
-> framework so perhaps using this straight off would be good.  But perhaps
-> the channel request stuff will all be in the drivers and it'll just pass
-> a handle to the framework code so there'll be no issue.
+However, this binding didn't use names from the start, and hence the
+order of appearance in "clocks" is part of the original binding.
+"clock-names" only became part of the binding when the second clock was
+introduced.
 
-I think I can make a "core changes" branch that contains:
+We can either: (a) document the existing requirements as I have done, or
+(b) go through all the bindings and drivers and make potentially
+incompatible changes so that all ordering is purely defined by
+"clock-names". I was tempted to do (b) for cleanliness, but didn't want
+to push my luck on too many ABI-incompatible changes. (b) /might/ also
+affect more drivers than this series already does, thus bloating it even
+more:-(
 
-[PATCH 11/31] dma: add channel request API that supports deferred probe
-
-[PATCH 14/31] ASoC: dmaengine: support deferred probe for DMA channels
-
-[PATCH 15/31] ASoC: dmaengine: add custom DMA config to
-snd_dmaengine_pcm_config
-
-That could be merged into relevant subsystems alone, if they only depend
-on the core changes and not any of the Tegra driver changes.
-
-However, I suspect that the Tegra driver changes may need to be merged
-into any subsystem that's doing much other work on the Tegra drivers,
-especially any significant refactoring, so the subsystem would probably
-have to pick up the whole series anyway. Still, I'll make sure I
-re-order the branch to put the core changes first so we have as much
-flexibility as possible.
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+P.S. only quoting the parts of the patch you're replying to makes it a
+lot easier and quicker to find your replies.
