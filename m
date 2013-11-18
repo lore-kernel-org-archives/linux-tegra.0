@@ -1,71 +1,159 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports
- deferred probe
-Date: Mon, 18 Nov 2013 09:18:19 +0000
-Message-ID: <1384766276.14845.155.camel@smile>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>
-	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM: tegra: properly use FUSE clock
+Date: Mon, 18 Nov 2013 19:40:47 +0900
+Message-ID: <1384771247-16547-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Content-ID: <6B367E4533E1FC44AA6347334DD536D6-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCAyMDEzLTExLTE1IGF0IDEzOjAxIC0wODAwLCBEYW4gV2lsbGlhbXMgd3JvdGU6DQo+
-IE9uIEZyaSwgTm92IDE1LCAyMDEzIGF0IDEyOjU0IFBNLCBTdGVwaGVuIFdhcnJlbiA8c3dhcnJl
-bkB3d3dkb3Rvcmcub3JnPiB3cm90ZToNCg0KPiA+IEV2ZW50dWFsbHksIGFsbCBkcml2ZXJzIHNo
-b3VsZCBiZSBjb252ZXJ0ZWQgdG8gdGhpcyBuZXcgQVBJLCB0aGUgb2xkIEFQSQ0KPiA+IHJlbW92
-ZWQsIGFuZCB0aGUgbmV3IEFQSSByZW5hbWVkIHRvIHRoZSBtb3JlIGRlc2lyYWJsZSBuYW1lLiAN
-Cg0KSSByZWFsbHkgd291bGQgbGlrZSB0byBzZWUgbW9yZSBzZW5zaWJsZSBhbmQgc2hvcnRlciBu
-YW1lcyBmb3IgdGhlIEFQSQ0KZnVuY3Rpb25zLg0KDQpbXQ0KDQo+ID4gYWNwaV9kbWFfcmVxdWVz
-dF9zbGF2ZV9jaGFuX2J5X2luZGV4KCkgZG9lc24ndCBhY3R1YWxseSBpbXBsZW1lbnQNCj4gPiBk
-ZWZlcnJlZCBwcm9iZS4gUGVyaGFwcyBpdCBzaG91bGQ/DQoNClllcyBpdCBzaG91bGQsIHRob3Vn
-aCBJIHByb3Bvc2Ugd2Ugd2lsbCBhZGQgdGhpcyBhIGJpdCBsYXRlciBzaW5jZSB3ZQ0Kd2lsbCBz
-dXJ2aXZlIHcvbyBpdC4NCg0KTXkgY29tbWVudHMgcmVnYXJkaW5nIGFjcGktZG1hLmMgYmVsb3cu
-DQoNCltdDQoNCj4gPiAtLS0gYS9kcml2ZXJzL2RtYS9hY3BpLWRtYS5jDQo+ID4gKysrIGIvZHJp
-dmVycy9kbWEvYWNwaS1kbWEuYw0KPiA+IEBAIC0zMzQsNyArMzM0LDcgQEAgc3RhdGljIGludCBh
-Y3BpX2RtYV9wYXJzZV9maXhlZF9kbWEoc3RydWN0IGFjcGlfcmVzb3VyY2UgKnJlcywgdm9pZCAq
-ZGF0YSkNCj4gPiAgICogQGRldjogICAgICAgc3RydWN0IGRldmljZSB0byBnZXQgRE1BIHJlcXVl
-c3QgZnJvbQ0KPiA+ICAgKiBAaW5kZXg6ICAgICBpbmRleCBvZiBGaXhlZERNQSBkZXNjcmlwdG9y
-IGZvciBAZGV2DQo+ID4gICAqDQo+ID4gLSAqIFJldHVybnMgcG9pbnRlciB0byBhcHByb3ByaWF0
-ZSBkbWEgY2hhbm5lbCBvbiBzdWNjZXNzIG9yIE5VTEwgb24gZXJyb3IuDQo+ID4gKyAqIFJldHVy
-bnMgcG9pbnRlciB0byBhcHByb3ByaWF0ZSBkbWEgY2hhbm5lbCBvbiBzdWNjZXNzIG9yIGFuIGVy
-cm9yIHBvaW50ZXIuDQo+ID4gICAqLw0KPiA+ICBzdHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3Jl
-cXVlc3Rfc2xhdmVfY2hhbl9ieV9pbmRleChzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ID4gICAgICAg
-ICAgICAgICAgIHNpemVfdCBpbmRleCkNCj4gPiBAQCAtMzQ5LDEwICszNDksMTAgQEAgc3RydWN0
-IGRtYV9jaGFuICphY3BpX2RtYV9yZXF1ZXN0X3NsYXZlX2NoYW5fYnlfaW5kZXgoc3RydWN0IGRl
-dmljZSAqZGV2LA0KDQpXZSB1c2UgZGVmYXVsdCB2YWx1ZSBvZiBjaGFuIGlmIGl0J3Mgbm90IGZv
-dW5kLiBQZXJoYXBzIHlvdSBoYXZlIHRvDQpjaGFuZ2UgaXQgYXMgd2VsbCB0byBzb21ldGhpbmcg
-bGlrZSBFUlJfUFRSKC1FTk9FTlQpLg0KDQpbXQ0KDQo+ID4gQEAgLTM2Nyw3ICszNjcsNyBAQCBz
-dHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbl9ieV9pbmRleChzdHJ1
-Y3QgZGV2aWNlICpkZXYsDQo+ID4gICAgICAgICBhY3BpX2Rldl9mcmVlX3Jlc291cmNlX2xpc3Qo
-JnJlc291cmNlX2xpc3QpOw0KPiA+DQo+ID4gICAgICAgICBpZiAoZG1hX3NwZWMtPnNsYXZlX2lk
-IDwgMCB8fCBkbWFfc3BlYy0+Y2hhbl9pZCA8IDApDQo+ID4gLSAgICAgICAgICAgICAgIHJldHVy
-biBOVUxMOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUigtRU5PREVWKTsNCg0K
-SW4gdGhpcyBjYXNlIEkgd291bGQgcmF0aGVyIHVzZSAtRU5PREFUQSwgc2luY2UgaXQgbWVhbnMg
-d2UgaGF2ZSBubw0KRml4ZWRETUEgZGVzY3JpcHRvciBmb3IgdGhlIGRldmljZSB1bmRlciBxdWVz
-dGlvbi4NCg0KW10NCg0KPiA+ICBzdHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3JlcXVlc3Rfc2xh
-dmVfY2hhbl9ieV9uYW1lKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAg
-Y29uc3QgY2hhciAqbmFtZSkNCj4gPiBAQCAtNDE1LDcgKzQxNSw3IEBAIHN0cnVjdCBkbWFfY2hh
-biAqYWNwaV9kbWFfcmVxdWVzdF9zbGF2ZV9jaGFuX2J5X25hbWUoc3RydWN0IGRldmljZSAqZGV2
-LA0KPiA+ICAgICAgICAgZWxzZSBpZiAoIXN0cmNtcChuYW1lLCAicngiKSkNCj4gPiAgICAgICAg
-ICAgICAgICAgaW5kZXggPSAxOw0KPiA+ICAgICAgICAgZWxzZQ0KPiA+IC0gICAgICAgICAgICAg
-ICByZXR1cm4gTlVMTDsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0RF
-Vik7DQoNClBlcmhhcHMgLUVJTlZBTCwgc2luY2UgaXQgbWVhbnMgdGhlIGlucHV0IHBhcmFtZXRl
-ciBraW5kYSB3cm9uZy4NCg0KDQotLSANCkFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVu
-a29AaW50ZWwuY29tPg0KSW50ZWwgRmlubGFuZCBPeQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIEZpbmxh
-bmQgT3kKUmVnaXN0ZXJlZCBBZGRyZXNzOiBQTCAyODEsIDAwMTgxIEhlbHNpbmtpIApCdXNpbmVz
-cyBJZGVudGl0eSBDb2RlOiAwMzU3NjA2IC0gNCAKRG9taWNpbGVkIGluIEhlbHNpbmtpIAoKVGhp
-cyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgbWF0
-ZXJpYWwgZm9yCnRoZSBzb2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBBbnkg
-cmV2aWV3IG9yIGRpc3RyaWJ1dGlvbgpieSBvdGhlcnMgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4g
-SWYgeW91IGFyZSBub3QgdGhlIGludGVuZGVkCnJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhl
-IHNlbmRlciBhbmQgZGVsZXRlIGFsbCBjb3BpZXMuCg==
+FUSE clock is enabled by most bootloaders, but we cannot expect it to be
+on in all contexts (e.g. kexec).
+
+This patch adds a FUSE clkdev to all Tegra platforms and makes sure
+it is enabled before touching FUSE registers. tegra_init_fuse() is
+invoked during very early boot and thus cannot rely on the clock
+framework ; therefore the FUSE clock is forcibly enabled using a
+register write in that function, and remains that way until the
+clock framework can be used.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/fuse.c       | 41 +++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk-tegra114.c |  1 +
+ drivers/clk/tegra/clk-tegra124.c |  1 +
+ drivers/clk/tegra/clk-tegra20.c  |  1 +
+ 4 files changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index 9a4e910c3796..3b9191b930b5 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -22,6 +22,7 @@
+ #include <linux/io.h>
+ #include <linux/export.h>
+ #include <linux/random.h>
++#include <linux/clk.h>
+ #include <linux/tegra-soc.h>
+ 
+ #include "fuse.h"
+@@ -54,6 +55,7 @@ int tegra_cpu_speedo_id;		/* only exist in Tegra30 and later */
+ int tegra_soc_speedo_id;
+ enum tegra_revision tegra_revision;
+ 
++static struct clk *fuse_clk;
+ static int tegra_fuse_spare_bit;
+ static void (*tegra_init_speedo_data)(void);
+ 
+@@ -77,6 +79,22 @@ static const char *tegra_revision_name[TEGRA_REVISION_MAX] = {
+ 	[TEGRA_REVISION_A04]     = "A04",
+ };
+ 
++static void tegra_fuse_enable_clk(void)
++{
++	if (IS_ERR(fuse_clk))
++		fuse_clk = clk_get_sys("fuse-tegra", "fuse");
++	if (IS_ERR(fuse_clk))
++		return;
++	clk_prepare_enable(fuse_clk);
++}
++
++static void tegra_fuse_disable_clk(void)
++{
++	if (IS_ERR(fuse_clk))
++		return;
++	clk_disable_unprepare(fuse_clk);
++}
++
+ u32 tegra_fuse_readl(unsigned long offset)
+ {
+ 	return tegra_apb_readl(TEGRA_FUSE_BASE + offset);
+@@ -84,7 +102,15 @@ u32 tegra_fuse_readl(unsigned long offset)
+ 
+ bool tegra_spare_fuse(int bit)
+ {
+-	return tegra_fuse_readl(tegra_fuse_spare_bit + bit * 4);
++	bool ret;
++
++	tegra_fuse_enable_clk();
++
++	ret = tegra_fuse_readl(tegra_fuse_spare_bit + bit * 4);
++
++	tegra_fuse_disable_clk();
++
++	return ret;
+ }
+ 
+ static enum tegra_revision tegra_get_revision(u32 id)
+@@ -113,10 +139,14 @@ static void tegra_get_process_id(void)
+ {
+ 	u32 reg;
+ 
++	tegra_fuse_enable_clk();
++
+ 	reg = tegra_fuse_readl(tegra_fuse_spare_bit);
+ 	tegra_cpu_process_id = (reg >> 6) & 3;
+ 	reg = tegra_fuse_readl(tegra_fuse_spare_bit);
+ 	tegra_core_process_id = (reg >> 12) & 3;
++
++	tegra_fuse_disable_clk();
+ }
+ 
+ u32 tegra_read_chipid(void)
+@@ -159,6 +189,15 @@ void __init tegra_init_fuse(void)
+ 	reg |= 1 << 28;
+ 	writel(reg, IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x48));
+ 
++	/*
++	 * Enable FUSE clock. This needs to be hardcoded because the clock
++	 * subsystem is not active during early boot.
++	 */
++	reg = readl(IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x14));
++	reg |= 1 << 7;
++	writel(reg, IO_ADDRESS(TEGRA_CLK_RESET_BASE + 0x14));
++	fuse_clk = ERR_PTR(-EINVAL);
++
+ 	reg = tegra_fuse_readl(FUSE_SKU_INFO);
+ 	randomness[0] = reg;
+ 	tegra_sku_id = reg & 0xFF;
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index dbab27f773b5..a83fdfd19bfc 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -925,6 +925,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "sclk", .dt_id = TEGRA114_CLK_SCLK },
+ 	{ .con_id = "hclk", .dt_id = TEGRA114_CLK_HCLK },
+ 	{ .con_id = "pclk", .dt_id = TEGRA114_CLK_PCLK },
++	{ .con_id = "fuse", .dev_id = "fuse-tegra", .dt_id = TEGRA114_CLK_FUSE },
+ 	{ .dev_id = "rtc-tegra", .dt_id = TEGRA114_CLK_RTC },
+ 	{ .dev_id = "timer", .dt_id = TEGRA114_CLK_TIMER },
+ };
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 266e80b51d38..0a324a2d7309 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1007,6 +1007,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "sclk", .dt_id = TEGRA124_CLK_SCLK },
+ 	{ .con_id = "hclk", .dt_id = TEGRA124_CLK_HCLK },
+ 	{ .con_id = "pclk", .dt_id = TEGRA124_CLK_PCLK },
++	{ .con_id = "fuse", .dev_id = "fuse-tegra", .dt_id = TEGRA124_CLK_FUSE },
+ 	{ .dev_id = "rtc-tegra", .dt_id = TEGRA124_CLK_RTC },
+ 	{ .dev_id = "timer", .dt_id = TEGRA124_CLK_TIMER },
+ };
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 58faac5f509e..48dca0f4762a 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -452,6 +452,7 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "sclk", .dt_id = TEGRA20_CLK_SCLK },
+ 	{ .con_id = "hclk", .dt_id = TEGRA20_CLK_HCLK },
+ 	{ .con_id = "pclk", .dt_id = TEGRA20_CLK_PCLK },
++	{ .con_id = "fuse", .dev_id = "fuse-tegra", .dt_id = TEGRA20_CLK_FUSE },
+ 	{ .con_id = "twd", .dt_id = TEGRA20_CLK_TWD },
+ 	{ .con_id = "audio", .dt_id = TEGRA20_CLK_AUDIO },
+ 	{ .con_id = "audio_2x", .dt_id = TEGRA20_CLK_AUDIO_2X },
+-- 
+1.8.4.2
