@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/5] clk: tegra: add TEGRA_PERIPH_NO_GATE
-Date: Mon, 18 Nov 2013 16:11:38 +0100
-Message-ID: <1384787499-26994-4-git-send-email-treding@nvidia.com>
+Subject: [PATCH 5/5] clk: tegra: rework sor0 clock for Tegra124
+Date: Mon, 18 Nov 2013 16:11:39 +0100
+Message-ID: <1384787499-26994-5-git-send-email-treding@nvidia.com>
 References: <1384787499-26994-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1384787499-26994-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,83 +12,93 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra124 has a clock which consists of a mux and a fractional divider.
-Add support for this.
+Rework the sor0 clock as 2 clocks: sor0, which comprises the 2nd level
+mux and the gate and sor0_lvds which comprises the 1st level mux and the
+fractional divider.
 
 Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-periph.c       | 18 +++++++++++++++---
- drivers/clk/tegra/clk-tegra-periph.c |  6 ++++++
- drivers/clk/tegra/clk.h              |  1 +
- 3 files changed, 22 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-id.h               |  1 +
+ drivers/clk/tegra/clk-tegra-periph.c     | 10 +++++++++-
+ drivers/clk/tegra/clk-tegra124.c         |  1 +
+ include/dt-bindings/clock/tegra124-car.h |  3 ++-
+ 4 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index b5feccca2f1e..d62b396863c1 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -170,6 +170,14 @@ const struct clk_ops tegra_clk_periph_nodiv_ops = {
- 	.disable = clk_periph_disable,
- };
- 
-+const struct clk_ops tegra_clk_periph_no_gate_ops = {
-+	.get_parent = clk_periph_get_parent,
-+	.set_parent = clk_periph_set_parent,
-+	.recalc_rate = clk_periph_recalc_rate,
-+	.round_rate = clk_periph_round_rate,
-+	.set_rate = clk_periph_set_rate,
-+};
-+
- static struct clk *_tegra_clk_register_periph(const char *name,
- 			const char **parent_names, int num_parents,
- 			struct tegra_clk_periph *periph,
-@@ -181,11 +189,15 @@ static struct clk *_tegra_clk_register_periph(const char *name,
- 	struct tegra_clk_periph_regs *bank;
- 	bool div = !(periph->gate.flags & TEGRA_PERIPH_NO_DIV);
- 
--	flags |= periph->gate.flags & TEGRA_PERIPH_NO_DIV ?
--			CLK_SET_RATE_PARENT : 0;
-+	if (periph->gate.flags & TEGRA_PERIPH_NO_DIV) {
-+		flags |= CLK_SET_RATE_PARENT;
-+		init.ops = &tegra_clk_periph_nodiv_ops;
-+	} else if (periph->gate.flags & TEGRA_PERIPH_NO_GATE)
-+		init.ops = &tegra_clk_periph_no_gate_ops;
-+	else
-+		init.ops = &tegra_clk_periph_ops;
- 
- 	init.name = name;
--	init.ops = div ? &tegra_clk_periph_ops : &tegra_clk_periph_nodiv_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
+diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
+index 836b0545fd17..0273ef43ff6c 100644
+--- a/drivers/clk/tegra/clk-id.h
++++ b/drivers/clk/tegra/clk-id.h
+@@ -186,6 +186,7 @@ enum clk_id {
+ 	tegra_clk_se,
+ 	tegra_clk_soc_therm,
+ 	tegra_clk_sor0,
++	tegra_clk_sor0_lvds,
+ 	tegra_clk_spdif,
+ 	tegra_clk_spdif_2x,
+ 	tegra_clk_spdif_in,
 diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 18509821fdc4..d3978e734ad6 100644
+index d3978e734ad6..4e81df1a0f2a 100644
 --- a/drivers/clk/tegra/clk-tegra-periph.c
 +++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -147,6 +147,12 @@
- 			29, MASK(3), 0, 0, 8, 1, 0, _clk_num,	\
- 			_gate_flags, _clk_id, _parents##_idx, 0, NULL)
+@@ -231,6 +231,7 @@
+ static DEFINE_SPINLOCK(PLLP_OUTA_lock);
+ static DEFINE_SPINLOCK(PLLP_OUTB_lock);
+ static DEFINE_SPINLOCK(PLLP_OUTC_lock);
++static DEFINE_SPINLOCK(sor0_lock);
  
-+#define MUX8_NOGATE_LOCK(_name, _parents, _offset, _clk_id, _lock)	\
-+	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,	\
-+			      29, MASK(3), 0, 0, 8, 1, 0, 0,		\
-+			      TEGRA_PERIPH_NO_GATE, _clk_id,		\
-+			      _parents##_idx, 0, _lock)
+ #define MUX_I2S_SPDIF(_id)						\
+ static const char *mux_pllaout0_##_id##_2x_pllp_clkm[] = { "pll_a_out0", \
+@@ -371,6 +372,12 @@ static u32 mux_pllm_pllc_pllp_plla_pllc2_c3_clkm_idx[] = {
+ 	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6,
+ };
+ 
++static const char *mux_clkm_plldp_sor0lvds[] = {
++	"clk_m", "pll_dp", "sor0_lvds",
++};
 +
- #define INT(_name, _parents, _offset,	\
- 			    _clk_num, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, NULL, NULL, _parents, _offset,\
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index f984ebed9f1f..40fb011233c0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -391,6 +391,7 @@ struct tegra_clk_periph_gate {
- #define TEGRA_PERIPH_ON_APB BIT(2)
- #define TEGRA_PERIPH_WAR_1005168 BIT(3)
- #define TEGRA_PERIPH_NO_DIV BIT(4)
-+#define TEGRA_PERIPH_NO_GATE BIT(5)
++#define mux_clkm_plldp_sor0lvds_idx NULL
++
+ static struct tegra_periph_init_data periph_clks[] = {
+ 	AUDIO("d_audio", CLK_SOURCE_D_AUDIO, 106, TEGRA_PERIPH_ON_APB, tegra_clk_d_audio),
+ 	AUDIO("dam0", CLK_SOURCE_DAM0, 108, TEGRA_PERIPH_ON_APB, tegra_clk_dam0),
+@@ -466,10 +473,11 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 	MUX8("entropy", mux_pllp_clkm1, CLK_SOURCE_ENTROPY, 149,  0, tegra_clk_entropy),
+ 	MUX8("hdmi_audio", mux_pllp3_pllc_clkm, CLK_SOURCE_HDMI_AUDIO, 176, TEGRA_PERIPH_NO_RESET, tegra_clk_hdmi_audio),
+ 	MUX8("clk72mhz", mux_pllp3_pllc_clkm, CLK_SOURCE_CLK72MHZ, 177, TEGRA_PERIPH_NO_RESET, tegra_clk_clk72Mhz),
+-	MUX8("sor0", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_SOR0, 182, 0, tegra_clk_sor0),
++	MUX8_NOGATE_LOCK("sor0_lvds", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_SOR0, tegra_clk_sor0_lvds, &sor0_lock),
+ 	MUX_FLAGS("csite", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_CSITE, 73, TEGRA_PERIPH_ON_APB, tegra_clk_csite, CLK_IGNORE_UNUSED),
+ 	NODIV("disp1", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_DISP1, 29, 7, 27, 0, tegra_clk_disp1, NULL),
+ 	NODIV("disp2", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK_SOURCE_DISP2, 29, 7, 26, 0, tegra_clk_disp2, NULL),
++	NODIV("sor0", mux_clkm_plldp_sor0lvds, CLK_SOURCE_SOR0, 14, 3, 182, 0, tegra_clk_sor0, &sor0_lock),
+ 	UART("uarta", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTA, 6, tegra_clk_uarta),
+ 	UART("uartb", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTB, 7, tegra_clk_uartb),
+ 	UART("uartc", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTC, 55, tegra_clk_uartc),
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 266e80b51d38..97e1eef8c1c7 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -857,6 +857,7 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_adx1] = { .dt_id = TEGRA124_CLK_ADX1, .present = true },
+ 	[tegra_clk_dpaux] = { .dt_id = TEGRA124_CLK_DPAUX, .present = true },
+ 	[tegra_clk_sor0] = { .dt_id = TEGRA124_CLK_SOR0, .present = true },
++	[tegra_clk_sor0_lvds] = { .dt_id = TEGRA124_CLK_SOR0_LVDS, .present = true },
+ 	[tegra_clk_gpu] = { .dt_id = TEGRA124_CLK_GPU, .present = true },
+ 	[tegra_clk_amx1] = { .dt_id = TEGRA124_CLK_AMX1, .present = true },
+ 	[tegra_clk_uartb] = { .dt_id = TEGRA124_CLK_UARTB, .present = true },
+diff --git a/include/dt-bindings/clock/tegra124-car.h b/include/dt-bindings/clock/tegra124-car.h
+index 855d94d18506..a1116a3b54ef 100644
+--- a/include/dt-bindings/clock/tegra124-car.h
++++ b/include/dt-bindings/clock/tegra124-car.h
+@@ -335,6 +335,7 @@
+ #define TEGRA124_CLK_CLK_OUT_3_MUX 308
+ #define TEGRA124_CLK_DSIA_MUX 309
+ #define TEGRA124_CLK_DSIB_MUX 310
+-#define TEGRA124_CLK_CLK_MAX 311
++#define TEGRA124_CLK_SOR0_LVDS 311
++#define TEGRA124_CLK_CLK_MAX 312
  
- void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
- extern const struct clk_ops tegra_clk_periph_gate_ops;
+ #endif	/* _DT_BINDINGS_CLOCK_TEGRA124_CAR_H */
 -- 
 1.8.4.2
