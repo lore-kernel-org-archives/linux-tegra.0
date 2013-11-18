@@ -1,45 +1,46 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
-Date: Mon, 18 Nov 2013 10:21:16 -0700
-Message-ID: <528A4C8C.3030200@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
- <20131116095529.GF15393@sirena.org.uk>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register
+ accesses
+Date: Mon, 18 Nov 2013 10:25:46 -0700
+Message-ID: <528A4D9A.10809@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org> <20131116100205.GG15393@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20131116095529.GF15393@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, pdeschrijver@nvidia.com, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131116100205.GG15393-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/16/2013 02:55 AM, Mark Brown wrote:
-> On Fri, Nov 15, 2013 at 01:54:11PM -0700, Stephen Warren wrote:
+On 11/16/2013 03:02 AM, Mark Brown wrote:
+> On Fri, Nov 15, 2013 at 01:54:12PM -0700, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Call pm_runtime_get_sync() before all register accesses; the HW requires
+>> clocks to be running when accessing registers.
+>>
+>> This hasn't been needed to date, since all register IO was performed
+>> while playback was active, and hence the ASoC core had already called
+>> pm_runtime_get(). However, an imminent future commit will allocate and
+>> set up the FIFOs and routing during probe(), when that "protection"
+>> won't be in place.
 > 
->> @@ -1,6 +1,8 @@ config SND_SOC_TEGRA tristate "SoC Audio for the
->> Tegra System-on-Chip" depends on (ARCH_TEGRA && TEGRA20_APB_DMA)
->> || COMPILE_TEST +	depends on COMMON_CLK +	depends on
->> RESET_CONTROLLER
+> Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 > 
-> Do you depend on COMMON_CLK here?  I only noticed reset controller
-> API dependencies here but perhaps I missed this (or it's fixing a
-> dependency that should be there already).
+> However should we fix this at the regmap level in the same way that we
+> do for clocks?  That would need to be using _put_autosuspend() to avoid
+> being horrific.
 
-It's fixing a dependency that should already be there, in the
-COMPILE_TEST case. In the (ARCH_TEGRA && TEGRA20_APB_DMA) case,
-COMMON_CLOCK is always selected.
+I did wonder about that, but it seemed like rather a lot of overhead?
 
-Do you want me to split this out into a separate patch? If so, I'd
-prefer not to apply that separate patch immediately to 3.13 as a fix,
-since then it'd delay applying this series until after -rc2 is out,
-unless you can get the fix into -rc1 quickly...
+> Or alternatively should the driver be making the device
+> cache only when runtime PM is disabled?
+
+The regmap is already cache-only when runtime-suspended. However the
+registers don't get flushed during resume. I suppose that would require
+only adding one extra call to the PM resume function?
+
+For some reason, my gut prefers this current solution, but I could be
+persuaded.
