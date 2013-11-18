@@ -1,35 +1,19 @@
-From: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] PCI: Disable Gen2 for Tegra20 and Tegra30
-Date: Mon, 18 Nov 2013 14:55:06 -0800
-Message-ID: <1384815306-3149-1-git-send-email-ebrower@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/3] ASOC: tegra: fix matching of AC97 components
+Date: Mon, 18 Nov 2013 16:08:28 -0700
+Message-ID: <528A9DEC.2010106@wwwdotorg.org>
+References: <1384370243-17178-1-git-send-email-dev@lynxeye.de> <1384370243-17178-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1384370243-17178-2-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra20 and Tegra30 do not support gen2 PCIe, so correct the
-register setting to disable it.
+On 11/13/2013 12:17 PM, Lucas Stach wrote:
+> Matching works completely based on the cpu of_node.
 
-Signed-off-by: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pci/host/pci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 0afbbbc..b8ba2f7 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -805,7 +805,7 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- 	afi_writel(pcie, value, AFI_PCIE_CONFIG);
- 
- 	value = afi_readl(pcie, AFI_FUSE);
--	value &= ~AFI_FUSE_PCIE_T0_GEN2_DIS;
-+	value |= AFI_FUSE_PCIE_T0_GEN2_DIS;
- 	afi_writel(pcie, value, AFI_FUSE);
- 
- 	/* initialize internal PHY, enable up to 16 PCIE lanes */
--- 
-1.8.1.5
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
