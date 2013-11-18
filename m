@@ -1,100 +1,72 @@
-From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v10 0/7] ARM: support for Trusted Foundations secure monitor
-Date: Mon, 18 Nov 2013 15:28:14 +0900
-Message-ID: <5289B37E.2030208@nvidia.com>
-References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com> <52828EF5.6090909@wwwdotorg.org> <CAOesGMhatp9ZQr=eTCtQ_9a_E9LXKdTCzJd+P7Sy9Ut9wtvnsA@mail.gmail.com> <5282E068.1070608@nvidia.com> <CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw@mail.gmail.com> <52842553.2080807@nvidia.com> <CAAVeFu+Uh9fi_kGv-g-0fH=p4758sCRONexZN25weS0s3PrvxA@mail.gmail.com>
+From: =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>
+Subject: Re: [PATCH 00/31] ARM: tegra: use common reset and DMA bindings
+Date: Mon, 18 Nov 2013 10:24:26 +0200
+Message-ID: <5289CEBA.3070502@nvidia.com>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFu+Uh9fi_kGv-g-0fH=p4758sCRONexZN25weS0s3PrvxA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Marc Dietrich <marvin24@gmx.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "ac100@lists.launchpad.net" <ac100@lists.launchpad.net>, "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Stephen Warren <swarren@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/17/2013 06:03 PM, Alexandre Courbot wrote:
-> On Thu, Nov 14, 2013 at 10:20 AM, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On 11/14/2013 02:57 AM, Olof Johansson wrote:
->>>
->>> On Tue, Nov 12, 2013 at 6:14 PM, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>
->>>> On 11/13/2013 05:38 AM, Olof Johansson wrote:
->>>>>
->>>>>
->>>>> On Tue, Nov 12, 2013 at 12:26 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> On 11/07/2013 03:11 AM, Alexandre Courbot wrote:
->>>>>>>
->>>>>>>
->>>>>>> Just a set of small fixes to address the concerns expressed on v9 with
->>>>>>> the
->>>>>>> non-prefixed version DT properties. I hope there won't be a need for
->>>>>>> an
->>>>>>> eleventh (!) version. :P
->>>>>>
->>>>>>
->>>>>>
->>>>>> BTW, this version looks fine to me. On IRC, Olof said it looked OK to
->>>>>> him. I'm just waiting to hear back from Olof/Russell whether I should
->>>>>> merge this through the Tegra tree, or whether the first 1-3 patches
->>>>>> should go through Russell's tree.
->>>>>
->>>>>
->>>>>
->>>>> I pinged Russell, and he brought up the fact that there were earlier
->>>>> requests to move it to drivers/firmware. It would make sense to try to
->>>>> get that done before merging, especially if you anticipate someone
->>>>> using TF on 64-bit platforms.
->>>>
->>>>
->>>>
->>>> IIRC when we discussed this point your last comment was as follows:
->>>
->>>
->>> Touche. :) Thanks for the reminder.
->>>
->>>> On Tue, Oct 29, 2013 at 6:55 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->>>>>
->>>>> I think we can probably merge this under arch/arm now, and when we
->>>>> figure out what needs to be common with ARM64 we can move it out to a
->>>>> good location. It might be that mostly just a header file with ABI
->>>>> conventions needs to be shared, not actual implementation, for
->>>>> example.
->>>>
->>>>
->>>> So I thought we agreed on that. If in the end we prefer to move the ARM
->>>> firmware interface into drivers/firmware, I'm fine with that too (Tomasz
->>>> also confirmed he would be ok with it) but I wonder if that would not be
->>>> somehow premature.
->>>>
->>>> Another worry of mine is that this might delay this patchset some more.
->>>> Support for TF is one of the last remaining step towards making NVIDIA
->>>> branded Tegra retail devices (SHIELD and TegraNote at the moment) run
->>>> upstream directly. I missed 3.13, I'd like to make sure I won't miss
->>>> 3.14.
->>>> Would it be acceptable if we move the ARM firmware interface to a common
->>>> place after this patchset is merged?
->>>
->>>
->>> Well, as I already said I'm ok with things going into arch/arm to
->>> start with, as long as Russell is. Once we see 64-bit needs for the
->>> same we'll move it out -- it's not like it's a whole lot of code to
->>> start with. But Russell has veto on the topic. :-)
->>
->>
->> Thanks Olof. Russell, are you ok with the patchset in its current form? I
->> can start moving the firmware interface out of arch/arm if that's what you
->> want (there is no user outside of ARM at the moment, but as Olof pointed out
->> that's not too much code) but I'd really like to see this series secured for
->> 3.14.
->
-> Never mind, I have submitted a patch that moves firmware_ops to
-> drivers/firmware, that will hopefully settle this issue. Then maybe we
-> can finally flush this series as well (I will need to resubmit a new
-> version though).
+On 15.11.2013 22:53, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+> 
+> This series implements a common reset framework driver for Tegra, and
+> updates all relevant Tegra drivers to use it. It also removes the custom
+> DMA bindings and replaced them with the standard DMA DT bindings.
+> 
+> Historically, the Tegra clock driver has exported a custom API for module
+> reset. This series removes that API, and transitions DT and drivers to
+> the new reset framework.
+> 
+> The custom API used a "struct clk" to identify which module to reset, and
+> consequently some DT bindings and drivers required clocks to be provided
+> where they really needed just a reset identifier instead. Due to this
+> known deficiency, I have always considered most Tegra bindings to be
+> unstable. This series removes this excuse for instability, although I
+> still consider some Tegra bindings unstable due to the need to convert to
+> the common DMA bindings.
+> 
+> Historically, Tegra DMA channels have been represented in DT using a
+> custom nvidia,dma-request-selector property. Now that standard DMA DT
+> bindings exist, convert all Tegra bindings, DTs, and drivers to use the
+> standard instead.
+> 
+> This series makes a DT-ABI-incompatible change to:
+> - Require reset specifiers in DT where relevant.
+> - Require standard DMA specifiers.
+> - Remove clock specifiers from DT where they were only needed for reset.
+> - Remove legacy DMA specifier properties.
+> 
+> I anticipate merging this whole series into the Tegra and arm-soc trees
+> as its own branch, due to internal dependencies. This branch will be
+> stable and can then be merged into any other subsystem trees should any
+> conflicts arise.
+> 
+> This series depends on Peter's Tegra clock driver rework, available at
+> git://nv-tegra.nvidia.com/user/pdeschrijver/linux tegra-clk-tegra124-0
+> (or whatever version of that gets included in 3.14)
 
-... and that patch is very likely to not make it, for (I think) valid 
-reasons. Thus I'm not quite sure where we are with this series now.
+Overall, a good change. For host1x part:
+
+Acked-By: Terje Bergstrom <tbergstrom@nvidia.com>
+
+This patch does not change the behavior, but we have in original code
+the problem that we don't flush the MC queue when resetting an engine.
+This can cause some memory writes to not hit memory. There was an
+earlier discussion on that, but we seem to have lost track of the issue.
+
+Terje
