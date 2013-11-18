@@ -1,57 +1,65 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Mon, 18 Nov 2013 10:42:08 -0700
-Message-ID: <528A5170.3090809@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com> <1384766276.14845.155.camel@smile>
+Subject: Re: [alsa-devel] [PATCH 14/31] ASoC: dmaengine: support deferred
+ probe for DMA channels
+Date: Mon, 18 Nov 2013 10:59:32 -0700
+Message-ID: <528A5584.3030805@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-15-git-send-email-swarren@wwwdotorg.org> <52874D9E.1010708@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384766276.14845.155.camel@smile>
+In-Reply-To: <52874D9E.1010708-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2013 02:18 AM, Shevchenko, Andriy wrote:
-> On Fri, 2013-11-15 at 13:01 -0800, Dan Williams wrote:
->> On Fri, Nov 15, 2013 at 12:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On 11/16/2013 03:49 AM, Lars-Peter Clausen wrote:
+> On 11/15/2013 09:54 PM, Stephen Warren wrote:
+>>  
+>> @@ -315,6 +343,7 @@ int snd_dmaengine_pcm_register(struct device *dev,
+>>  	const struct snd_dmaengine_pcm_config *config, unsigned int flags)
+>>  {
+>>  	struct dmaengine_pcm *pcm;
+>> +	int ret;
+>>  
+>>  	pcm = kzalloc(sizeof(*pcm), GFP_KERNEL);
+>>  	if (!pcm)
+>> @@ -323,14 +352,26 @@ int snd_dmaengine_pcm_register(struct device *dev,
+>>  	pcm->config = config;
+>>  	pcm->flags = flags;
+>>  
+>> -	dmaengine_pcm_request_chan_of(pcm, dev);
+>> +	ret = dmaengine_pcm_request_chan_of(pcm, dev);
+>> +	if (ret)
+>> +		goto err_free_pcm;
+>>  
 > 
->>> Eventually, all drivers should be converted to this new API, the old API
->>> removed, and the new API renamed to the more desirable name. 
+> We should still call dmaengine_pcm_release_chan() in case requesting the
+> first channel succeeded, but the second did not.
+
+Oh yes, I'd meant to do that. I'll modify that goto, and remove the
+now-unused err_free_pcm label. Thanks.
+
 > 
-> I really would like to see more sensible and shorter names for the API
-> functions.
-
-I'm not sure if you're suggesting that you:
-
-a) Really want to API renaming I mention above to happen at some time.
-
-b) We need to pick a better name now, for the new API this patch
-introduces. If so, do you have any better suggestion?
-
->>> --- a/drivers/dma/acpi-dma.c
->>> +++ b/drivers/dma/acpi-dma.c
->>> @@ -334,7 +334,7 @@ static int acpi_dma_parse_fixed_dma(struct acpi_resource *res, void *data)
->>>   * @dev:       struct device to get DMA request from
->>>   * @index:     index of FixedDMA descriptor for @dev
->>>   *
->>> - * Returns pointer to appropriate dma channel on success or NULL on error.
->>> + * Returns pointer to appropriate dma channel on success or an error pointer.
->>>   */
->>>  struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
->>>                 size_t index)
->>> @@ -349,10 +349,10 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
-> 
-> We use default value of chan if it's not found. Perhaps you have to
-> change it as well to something like ERR_PTR(-ENOENT).
-
-Ah yes. I think I'll keep the default value of chan = NULL, and just
-change the return statement to something like:
-
-return chan ? chan : ERR_PTR(-ENOENT);
-
-That way, the fact that adma->acpi_dma_xlate() returns
-NULL-or-valid-pointer and the check of chan against NULL inside the
-list_for_each_entry() won't have to change.
+>>  	if (flags & SND_DMAENGINE_PCM_FLAG_NO_RESIDUE)
+>> -		return snd_soc_add_platform(dev, &pcm->platform,
+>> +		ret = snd_soc_add_platform(dev, &pcm->platform,
+>>  				&dmaengine_no_residue_pcm_platform);
+>>  	else
+>> -		return snd_soc_add_platform(dev, &pcm->platform,
+>> +		ret = snd_soc_add_platform(dev, &pcm->platform,
+>>  				&dmaengine_pcm_platform);
+>> +	if (ret)
+>> +		goto err_free_dma;
+>> +
+>> +	return 0;
+>> +
+>> +err_free_dma:
+>> +	dmaengine_pcm_release_chan(pcm);
+>> +err_free_pcm:
+>> +	kfree(pcm);
+>> +	return ret;
+>>  }
+>>  EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_register);
+> [...]
