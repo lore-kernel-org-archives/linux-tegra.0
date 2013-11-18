@@ -1,78 +1,71 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: DRM_TEGRA not buildable as a module
-Date: Mon, 18 Nov 2013 10:10:42 +0100
-Message-ID: <20131118091042.GB13322@ulmo.nvidia.com>
-References: <CA+5PVA7hq9e2twtQ2e24VvF+KHJ_XS4uVskWRQo+g7z3VpmKXw@mail.gmail.com>
+From: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports
+ deferred probe
+Date: Mon, 18 Nov 2013 09:18:19 +0000
+Message-ID: <1384766276.14845.155.camel@smile>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>
+	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CA+5PVA7hq9e2twtQ2e24VvF+KHJ_XS4uVskWRQo+g7z3VpmKXw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
+Content-ID: <6B367E4533E1FC44AA6347334DD536D6-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Josh Boyer <jwboyer-rxtnV0ftBwyoClj4AeEUq9i2O/JbrIOy@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dave Airlie <airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, DRI mailing list <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Nov 16, 2013 at 03:25:09PM +0100, Josh Boyer wrote:
-> Hi All,
->=20
-> The commit below seems to have made the Tegra DRM driver a bool option
-> instead of tristate:
->=20
-> commit dee8268f8fb218c9e9b604a40f7dbdd395e910f9
-> Author: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Date:   Wed Oct 9 10:32:49 2013 +0200
->=20
->     drm/tegra: Move driver to DRM tree
->=20
->     In order to make subsystem-wide changes easier, move the Tegra DRM
->     driver back into the DRM tree.
->=20
->     Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> That means you can't build the driver as a module.  Was this intended?
->  The changelog doesn't mention anything about that and the existing
-> help text on the option seems to imply it should be buildable as a
-> module.
-
-This was intended yes. And it wasn't really a change at all, since prior
-to the commit you mention above the DRM driver was always built into the
-host1x driver. That's why I didn't think it necessary to mention it in
-the commit message.
-
-I have some patches queued for 3.14 to enable the driver to be built as
-a module. There are some dependencies such as symbols that need to be
-exported so that the modules can be linked, so it'll require some amount
-of coordination to make that work out within one release cycle, but I'm
-hopeful that we can do it.
-
-Thierry
-
---Fba/0zbH8Xs+Fj9o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSidmSAAoJEN0jrNd/PrOhDzgQAJqdL6UpeZanE9oe1F6vlFuR
-AP6QtLE0MPRxPZxfftC3ZpnNJXuEx5YaxMmT6X59OKOSw7Z+SzsS4fEXymk92AQa
-WKsW4RKR8/NN34OTRleG+E9bQE0oxHEPU3/Du6wtOhLjgePx3U/J5L7KU8zhlmMq
-Ez/na4jDGo0d1TrCNtEu4xSsQORgdAQAUFPLCRVL6+xzjWXMYcparJ3OIqK9NYbN
-L3K6bdb73QCvuaFXn8tS0ELOwZSMohPOnwcWSP6hmF4q8Mm75Hoi3+3zmP+wA1yo
-9ru4ddvuGppmtukYXQ4hsPJQc79E1nC9oIfNNzNRae+fDLh74/2Pugde2ShlkSCF
-7LBEuc8/af6IG61AfPPtqFtDg7RbEah+u0oyaNG7qabr1+HZYI5sQ8A5ulivG1QV
-g83VeqqShSbC5Od6GIM/xiuWDj96ydfze1LH9eUckaBgHL+Wwi+SdtaXtoNbceQt
-863ek/L1TAEBotZpn5NRUKtv9Op3KI82HaGDDIpXPRiq9PGp73BRiEMwM/aJXAdt
-Y5korjbB41aATS2BywCjARO5gA8nT8iWzNu0UciQ4EBEE7AFDitwU3Gnutng71QK
-o3uCvzbOMjHJlzlNzwzsmQhI2FraKmBm03fcozfa8daj5h18vlkqcByo9LL0INPZ
-cFaG1R4TvfDMQvBiXKLb
-=EvEn
------END PGP SIGNATURE-----
-
---Fba/0zbH8Xs+Fj9o--
+T24gRnJpLCAyMDEzLTExLTE1IGF0IDEzOjAxIC0wODAwLCBEYW4gV2lsbGlhbXMgd3JvdGU6DQo+
+IE9uIEZyaSwgTm92IDE1LCAyMDEzIGF0IDEyOjU0IFBNLCBTdGVwaGVuIFdhcnJlbiA8c3dhcnJl
+bkB3d3dkb3Rvcmcub3JnPiB3cm90ZToNCg0KPiA+IEV2ZW50dWFsbHksIGFsbCBkcml2ZXJzIHNo
+b3VsZCBiZSBjb252ZXJ0ZWQgdG8gdGhpcyBuZXcgQVBJLCB0aGUgb2xkIEFQSQ0KPiA+IHJlbW92
+ZWQsIGFuZCB0aGUgbmV3IEFQSSByZW5hbWVkIHRvIHRoZSBtb3JlIGRlc2lyYWJsZSBuYW1lLiAN
+Cg0KSSByZWFsbHkgd291bGQgbGlrZSB0byBzZWUgbW9yZSBzZW5zaWJsZSBhbmQgc2hvcnRlciBu
+YW1lcyBmb3IgdGhlIEFQSQ0KZnVuY3Rpb25zLg0KDQpbXQ0KDQo+ID4gYWNwaV9kbWFfcmVxdWVz
+dF9zbGF2ZV9jaGFuX2J5X2luZGV4KCkgZG9lc24ndCBhY3R1YWxseSBpbXBsZW1lbnQNCj4gPiBk
+ZWZlcnJlZCBwcm9iZS4gUGVyaGFwcyBpdCBzaG91bGQ/DQoNClllcyBpdCBzaG91bGQsIHRob3Vn
+aCBJIHByb3Bvc2Ugd2Ugd2lsbCBhZGQgdGhpcyBhIGJpdCBsYXRlciBzaW5jZSB3ZQ0Kd2lsbCBz
+dXJ2aXZlIHcvbyBpdC4NCg0KTXkgY29tbWVudHMgcmVnYXJkaW5nIGFjcGktZG1hLmMgYmVsb3cu
+DQoNCltdDQoNCj4gPiAtLS0gYS9kcml2ZXJzL2RtYS9hY3BpLWRtYS5jDQo+ID4gKysrIGIvZHJp
+dmVycy9kbWEvYWNwaS1kbWEuYw0KPiA+IEBAIC0zMzQsNyArMzM0LDcgQEAgc3RhdGljIGludCBh
+Y3BpX2RtYV9wYXJzZV9maXhlZF9kbWEoc3RydWN0IGFjcGlfcmVzb3VyY2UgKnJlcywgdm9pZCAq
+ZGF0YSkNCj4gPiAgICogQGRldjogICAgICAgc3RydWN0IGRldmljZSB0byBnZXQgRE1BIHJlcXVl
+c3QgZnJvbQ0KPiA+ICAgKiBAaW5kZXg6ICAgICBpbmRleCBvZiBGaXhlZERNQSBkZXNjcmlwdG9y
+IGZvciBAZGV2DQo+ID4gICAqDQo+ID4gLSAqIFJldHVybnMgcG9pbnRlciB0byBhcHByb3ByaWF0
+ZSBkbWEgY2hhbm5lbCBvbiBzdWNjZXNzIG9yIE5VTEwgb24gZXJyb3IuDQo+ID4gKyAqIFJldHVy
+bnMgcG9pbnRlciB0byBhcHByb3ByaWF0ZSBkbWEgY2hhbm5lbCBvbiBzdWNjZXNzIG9yIGFuIGVy
+cm9yIHBvaW50ZXIuDQo+ID4gICAqLw0KPiA+ICBzdHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3Jl
+cXVlc3Rfc2xhdmVfY2hhbl9ieV9pbmRleChzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+ID4gICAgICAg
+ICAgICAgICAgIHNpemVfdCBpbmRleCkNCj4gPiBAQCAtMzQ5LDEwICszNDksMTAgQEAgc3RydWN0
+IGRtYV9jaGFuICphY3BpX2RtYV9yZXF1ZXN0X3NsYXZlX2NoYW5fYnlfaW5kZXgoc3RydWN0IGRl
+dmljZSAqZGV2LA0KDQpXZSB1c2UgZGVmYXVsdCB2YWx1ZSBvZiBjaGFuIGlmIGl0J3Mgbm90IGZv
+dW5kLiBQZXJoYXBzIHlvdSBoYXZlIHRvDQpjaGFuZ2UgaXQgYXMgd2VsbCB0byBzb21ldGhpbmcg
+bGlrZSBFUlJfUFRSKC1FTk9FTlQpLg0KDQpbXQ0KDQo+ID4gQEAgLTM2Nyw3ICszNjcsNyBAQCBz
+dHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbl9ieV9pbmRleChzdHJ1
+Y3QgZGV2aWNlICpkZXYsDQo+ID4gICAgICAgICBhY3BpX2Rldl9mcmVlX3Jlc291cmNlX2xpc3Qo
+JnJlc291cmNlX2xpc3QpOw0KPiA+DQo+ID4gICAgICAgICBpZiAoZG1hX3NwZWMtPnNsYXZlX2lk
+IDwgMCB8fCBkbWFfc3BlYy0+Y2hhbl9pZCA8IDApDQo+ID4gLSAgICAgICAgICAgICAgIHJldHVy
+biBOVUxMOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUigtRU5PREVWKTsNCg0K
+SW4gdGhpcyBjYXNlIEkgd291bGQgcmF0aGVyIHVzZSAtRU5PREFUQSwgc2luY2UgaXQgbWVhbnMg
+d2UgaGF2ZSBubw0KRml4ZWRETUEgZGVzY3JpcHRvciBmb3IgdGhlIGRldmljZSB1bmRlciBxdWVz
+dGlvbi4NCg0KW10NCg0KPiA+ICBzdHJ1Y3QgZG1hX2NoYW4gKmFjcGlfZG1hX3JlcXVlc3Rfc2xh
+dmVfY2hhbl9ieV9uYW1lKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAgICAgICAgICAgICAgICAg
+Y29uc3QgY2hhciAqbmFtZSkNCj4gPiBAQCAtNDE1LDcgKzQxNSw3IEBAIHN0cnVjdCBkbWFfY2hh
+biAqYWNwaV9kbWFfcmVxdWVzdF9zbGF2ZV9jaGFuX2J5X25hbWUoc3RydWN0IGRldmljZSAqZGV2
+LA0KPiA+ICAgICAgICAgZWxzZSBpZiAoIXN0cmNtcChuYW1lLCAicngiKSkNCj4gPiAgICAgICAg
+ICAgICAgICAgaW5kZXggPSAxOw0KPiA+ICAgICAgICAgZWxzZQ0KPiA+IC0gICAgICAgICAgICAg
+ICByZXR1cm4gTlVMTDsNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0RF
+Vik7DQoNClBlcmhhcHMgLUVJTlZBTCwgc2luY2UgaXQgbWVhbnMgdGhlIGlucHV0IHBhcmFtZXRl
+ciBraW5kYSB3cm9uZy4NCg0KDQotLSANCkFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVu
+a29AaW50ZWwuY29tPg0KSW50ZWwgRmlubGFuZCBPeQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIEZpbmxh
+bmQgT3kKUmVnaXN0ZXJlZCBBZGRyZXNzOiBQTCAyODEsIDAwMTgxIEhlbHNpbmtpIApCdXNpbmVz
+cyBJZGVudGl0eSBDb2RlOiAwMzU3NjA2IC0gNCAKRG9taWNpbGVkIGluIEhlbHNpbmtpIAoKVGhp
+cyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgbWF0
+ZXJpYWwgZm9yCnRoZSBzb2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBBbnkg
+cmV2aWV3IG9yIGRpc3RyaWJ1dGlvbgpieSBvdGhlcnMgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4g
+SWYgeW91IGFyZSBub3QgdGhlIGludGVuZGVkCnJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhl
+IHNlbmRlciBhbmQgZGVsZXRlIGFsbCBjb3BpZXMuCg==
