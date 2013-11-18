@@ -1,68 +1,75 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] ASOC: tegra: fix AC97 clock handling
-Date: Mon, 18 Nov 2013 16:02:15 +0100
-Message-ID: <20131118150215.GH26046@ulmo.nvidia.com>
-References: <1384370243-17178-1-git-send-email-dev@lynxeye.de>
- <1384370243-17178-3-git-send-email-dev@lynxeye.de>
+Subject: Re: [PATCH] ARM: tegra: add port FF to GPIO ID's
+Date: Mon, 18 Nov 2013 16:05:22 +0100
+Message-ID: <20131118150521.GI26046@ulmo.nvidia.com>
+References: <1384780241-31639-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ewQ5hdP4CtoTt3oD"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="JIpyCmsTxyPLrmrM"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1384370243-17178-3-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+In-Reply-To: <1384780241-31639-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ewQ5hdP4CtoTt3oD
+--JIpyCmsTxyPLrmrM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2013 at 08:17:23PM +0100, Lucas Stach wrote:
-[...]
-> diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac9=
-7.c
-[...]
-> @@ -387,24 +386,18 @@ static int tegra20_ac97_platform_probe(struct platf=
-orm_device *pdev)
->  	ac97->playback_dma_data.maxburst =3D 4;
->  	ac97->playback_dma_data.slave_id =3D of_dma[1];
-> =20
-> -	ret =3D tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
-> -	if (ret)
-> -		goto err_clk_put;
-> -
-> -	ret =3D tegra_asoc_utils_set_ac97_rate(&ac97->util_data);
-> -	if (ret)
-> -		goto err_asoc_utils_fini;
-> +	ret =3D clk_set_rate(ac97->clk_ac97, 24576000);
+On Mon, Nov 18, 2013 at 06:40:41PM +0530, Laxman Dewangan wrote:
+> From: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> NVIDIA Tegra124 supports has the new gpio port as GPIO_FF.
+> Add the macro for this port name.
+>=20
+> Signed-off-by: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/dt-bindings/gpio/tegra-gpio.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 
-I think this needs error checking. Just in case.
+I've had the same patch in my local tree for a week, but was holding
+back on sending it until the merge window closes. Anyway:
+
+	Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+And I suppose I could add:
+
+	Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+depending on who wants to take this patch. Traditionally I think
+Stephen's taken them through the Tegra tree, since these files are
+highly Tegra-specific.
 
 Thierry
 
---ewQ5hdP4CtoTt3oD
+--JIpyCmsTxyPLrmrM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSiiv2AAoJEN0jrNd/PrOh30QQAKGCwSsvXTnf20D7QmHcdb8k
-yyDCx58G/PbTlxD8GHEyYuLavB6jHFyuylfrgOyrEjwQjGiyQa30L8nVRNf/CMee
-h2CV8QeQ06GSVBwy4CkdcNuJfdoJP2uetEoFTVIQzb6w5WSo4O1hf5Mzk0K3KcKo
-JdplGto1+bjvotf8xNZoHdTOXhws6//COBxOb47yRjgHKMGj+UIf5OxQSHIU/7WA
-eV3qGPSE2aH4nppG5g4J0ftauoDDEH+nYVmnRxDx/bg2geMXeGQYmqw+f0FNLibr
-dgrUPXGOtjdmk084XWNCs+bPI9iN6bgEaUs/Tupb0N3A3TkWRNfQmILHcoOk0fUC
-FcRU/YkI1hj6+87OR9mbrYve9p13OPsdAjQhZa2XRCuMQFShhtq0iH+jl+Rh1mbh
-k4mVRHsd0tIB5VvubRqT8zE0RIdTiOuvxvLDxD+6iXJL4ufi422lb56vSp92PXaB
-840exawaFSDrqXjEmJIiLDath+3fCwmSkbmUsnX9fJX9SLW3vlzCtwbwfqmzJmE/
-lOJ6cuTF7ivJOj8p/yMyHYADXkwJkiUI0R3gzQ831DHzwcEJW5bdgZ10+qTffz90
-tuRYf1KV9L0v9DW7KapaqFkSYCEtPX9Dp1/eXkEV2u6qSIb/kI63n8qbNd9Qvd+q
-aCfJMNhj04jMxa+sMNmI
-=QOuP
+iQIcBAEBAgAGBQJSiiyxAAoJEN0jrNd/PrOhV70P/1fS47YpErAt6HqmNVCQTZfK
+OS1rFOQtSSatgboJC8tuMO7TczZQPBvk0EL6Em1/VWUk3W9Udw8e7V7BhElMueir
+Wu5XBm2EKqmRxlJauztXyM7aw6yGC6NxnypbhKwD/96u3jc36M/w+vI1eHoGYFtg
+SnmzujCCYnt1wnKpyi0q44svq8Xf9EWRj4y2d1BUf3ZyV8/fAsnjDiEcz4y1IazG
+P7RPqhr0rXt3oHQiRMWXgX4cSdmxc4SZJtM/Idp8p6MQByT4gI6SkbYF90Qrnd2N
+kIJtl1J8nN45dAR896KD+2TEs54zi9hEFtNyG5oDVmwcXL9iSsGDXx/mXLGGHvwU
+veTo2GhBVco7iGhxD3JQEdDgbhixOTgKlSb3W4bRCgwPuq1uvy/0U61pleoHG896
+3TgNdTiGHlMici2HHvGSzFEJuaCy08m9lylULhSacWkv8sfbCrwb25AmMazIoJpx
+DB3Vj6XgJpEqZMTWvHF0RTB3Y6hloLx04uHxftya90znP06WyteE01yOgreXmm0y
+3ssnd/Iu1LHoEYdSiCK+IDTu9RWtoo2u19nlusT3sM7wcc88moTACZSNk6vJtXgO
+R/UeoHdyX3KIJOJS/YddtcFYLu0uKGXtEQZ6HtxhtHZrAyQSgixTIMjKLTcncbPI
+xIHgpwMx5W4HNvHNnABi
+=CzCy
 -----END PGP SIGNATURE-----
 
---ewQ5hdP4CtoTt3oD--
+--JIpyCmsTxyPLrmrM--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
