@@ -1,60 +1,57 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 01/31] ARM: tegra: add missing clock documentation to
- DT bindings
-Date: Mon, 18 Nov 2013 10:36:19 -0700
-Message-ID: <528A5013.3060006@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-2-git-send-email-swarren@wwwdotorg.org> <9892703.gTmEHyqaYb@ax5200p>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
+ probe
+Date: Mon, 18 Nov 2013 10:42:08 -0700
+Message-ID: <528A5170.3090809@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com> <1384766276.14845.155.camel@smile>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9892703.gTmEHyqaYb@ax5200p>
+In-Reply-To: <1384766276.14845.155.camel@smile>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/16/2013 03:00 PM, Marc Dietrich wrote:
-> Hi Stephen,
+On 11/18/2013 02:18 AM, Shevchenko, Andriy wrote:
+> On Fri, 2013-11-15 at 13:01 -0800, Dan Williams wrote:
+>> On Fri, Nov 15, 2013 at 12:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 > 
-> On Friday 15 November 2013 13:53:56 Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Many of the Tegra DT binding documents say nothing about the clocks or
->> clock-names properties, yet those are present and required in DT files.
->> This patch simply updates the documentation file to match the implicit
->> definition of the binding, based on real-world DT content.
->>
->> All Tegra bindings that mention clocks are updated to have consistent
->> wording and formatting of the clock-related properties.
-
->> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-
-(Thanks for pointing out the duplicate entries; I'll fix those.)
-
->> +  - clocks : Must contain an entry for each entry in clock-names.
->> +    See ../clocks/clock-bindings.txt for details.
->> +  - clock-names : Must include the following entries:
->> +    (This property may be omitted if the only clock in the list is "3d")
->> +    - 3d
->> +      This MUST be the first entry.
+>>> Eventually, all drivers should be converted to this new API, the old API
+>>> removed, and the new API renamed to the more desirable name. 
 > 
-> why? isn't the purpose of names that the order is irrelevant?
+> I really would like to see more sensible and shorter names for the API
+> functions.
 
-If we used names from the start, then the order would be irrelevant.
+I'm not sure if you're suggesting that you:
 
-However, this binding didn't use names from the start, and hence the
-order of appearance in "clocks" is part of the original binding.
-"clock-names" only became part of the binding when the second clock was
-introduced.
+a) Really want to API renaming I mention above to happen at some time.
 
-We can either: (a) document the existing requirements as I have done, or
-(b) go through all the bindings and drivers and make potentially
-incompatible changes so that all ordering is purely defined by
-"clock-names". I was tempted to do (b) for cleanliness, but didn't want
-to push my luck on too many ABI-incompatible changes. (b) /might/ also
-affect more drivers than this series already does, thus bloating it even
-more:-(
+b) We need to pick a better name now, for the new API this patch
+introduces. If so, do you have any better suggestion?
 
-P.S. only quoting the parts of the patch you're replying to makes it a
-lot easier and quicker to find your replies.
+>>> --- a/drivers/dma/acpi-dma.c
+>>> +++ b/drivers/dma/acpi-dma.c
+>>> @@ -334,7 +334,7 @@ static int acpi_dma_parse_fixed_dma(struct acpi_resource *res, void *data)
+>>>   * @dev:       struct device to get DMA request from
+>>>   * @index:     index of FixedDMA descriptor for @dev
+>>>   *
+>>> - * Returns pointer to appropriate dma channel on success or NULL on error.
+>>> + * Returns pointer to appropriate dma channel on success or an error pointer.
+>>>   */
+>>>  struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
+>>>                 size_t index)
+>>> @@ -349,10 +349,10 @@ struct dma_chan *acpi_dma_request_slave_chan_by_index(struct device *dev,
+> 
+> We use default value of chan if it's not found. Perhaps you have to
+> change it as well to something like ERR_PTR(-ENOENT).
+
+Ah yes. I think I'll keep the default value of chan = NULL, and just
+change the return statement to something like:
+
+return chan ? chan : ERR_PTR(-ENOENT);
+
+That way, the fact that adma->acpi_dma_xlate() returns
+NULL-or-valid-pointer and the check of chan against NULL inside the
+list_for_each_entry() won't have to change.
