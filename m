@@ -1,63 +1,68 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
-Date: Mon, 18 Nov 2013 18:37:16 +0000
-Message-ID: <20131118183716.GR2674@sirena.org.uk>
+Subject: Re: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register
+ accesses
+Date: Mon, 18 Nov 2013 18:39:47 +0000
+Message-ID: <20131118183947.GS2674@sirena.org.uk>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
- <20131116095529.GF15393@sirena.org.uk>
- <528A4C8C.3030200@wwwdotorg.org>
+ <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org>
+ <20131116100205.GG15393@sirena.org.uk>
+ <528A4D9A.10809@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="foM9DbudB2CcldhH"
+	protocol="application/pgp-signature"; boundary="H88uUF932U8Oj0a6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <528A4C8C.3030200-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <528A4D9A.10809-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---foM9DbudB2CcldhH
+--H88uUF932U8Oj0a6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Nov 18, 2013 at 10:21:16AM -0700, Stephen Warren wrote:
+On Mon, Nov 18, 2013 at 10:25:46AM -0700, Stephen Warren wrote:
+> On 11/16/2013 03:02 AM, Mark Brown wrote:
 
-> It's fixing a dependency that should already be there, in the
-> COMPILE_TEST case. In the (ARCH_TEGRA && TEGRA20_APB_DMA) case,
-> COMMON_CLOCK is always selected.
+> > Or alternatively should the driver be making the device
+> > cache only when runtime PM is disabled?
 
-> Do you want me to split this out into a separate patch? If so, I'd
-> prefer not to apply that separate patch immediately to 3.13 as a fix,
-> since then it'd delay applying this series until after -rc2 is out,
-> unless you can get the fix into -rc1 quickly...
+> The regmap is already cache-only when runtime-suspended. However the
+> registers don't get flushed during resume. I suppose that would require
+> only adding one extra call to the PM resume function?
 
-I don't really care, it was just that I was looking for something to do
-with clocks in the patch and couldn't find anything.  Perhaps a note in
-the changelog if you need to respin so I don't forget and say the same
-thing again.
+Yup, should probably do that anyway since that's going to bite someone
+otherwise.  We probably want a single operation to flush and enable
+writes now I think about it, it's the common case.
 
---foM9DbudB2CcldhH
+> For some reason, my gut prefers this current solution, but I could be
+> persuaded.
+
+I'm not dead set against doing it this way, it's just that it feels like
+if it's required something's not working as well as it should.
+
+--H88uUF932U8Oj0a6
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSil5ZAAoJELSic+t+oim9VDkQAJpjrtTHmawDJ9UblInFj9Za
-EdZn+sA4jS03nwt086pTL3ImLZt4t1kIjuUmYYw5UEVhcT99CQ1WjlD5VnZkm8iM
-py8CrwDnYXjXQ0qgAv9bD+eO9rtIF6k2HT8Ji3PQpAhkP6zB9ZqUB/MhaCozGc+A
-Kr7R9k3z78ahiqZBAmiX+KQTS8fkCX2o5Ne1pm/r9apwSxyThmdR8vrvRimTl3kV
-KY16xpVyGxOsr9HvGHtnDEACGktX3nvKw8zz4F9BV9o9IVjavAvqkK70fNlrhbsg
-zCG5nsEue3ofO/MyC2/qCpOpqPp2ma2dLbuJPO8Zi51t1SF0RfgUYSXChyKjQR05
-2HVklRdCBGkLF9ThLOmmnZEl/zrvtRNvuvUnAjy3yj5CfWYrWKamMbalmLPmJC/3
-iGCoJ0x3SWcrF3RmVSetfjK44Yg8/d0506ByDrtkiU+EZb1NWjvWGAXR640kdJLl
-UqvlRZNdvVzz7A47+dLrdpayc+CEaTwfch9tzJbvcPC8Qy8BdXYFT2L4ip5Dgk9w
-kBiqukP+bj/Gr4yKHKAtpiWbdfYSNa+TPkO4ENaW1CBp05m3l0Qypjnkg8bcfGCH
-CRGqWw2g88qDeZOht9kaHPMvU7jMVeaciCZ6YbOdeXKAs48uBKOhCSK/zz8EMuCk
-V+cYtfWPxMpjWnW2cIQM
-=4H6Q
+iQIcBAEBAgAGBQJSil7wAAoJELSic+t+oim9yyAP/1V3yQAqbXTbrnQmmdxLW6xh
+uvKUTl3bACiksAZPoFCfMPjWeY7vVtb4zfn0J7lbD7B74sGRIS/s93DAxsjn9KjF
+8Kqq53IwhHbFdFgP1If58RmSlvS450l+pubt+yckGxYgPHJg73KOnkx+9lX9Yiir
+PlU+CrMKL7FlmraU/BASAtCHlmGwcykHNR3xD2RKbYdaCEBPeJnGBY4Oumswk8HL
+xl2ZNuiqL97dP86rYDMBSyPiSPEe4mTM5EGoBmRoC/x0DFR56FD6398HGmnBojhF
+rF9GmhEYSsHqb/h+7RCNlOWUbdfNbh5eD4sPHQLS0KPj4CQDPrl9KVpoVAt5QM7a
+32+i2A8i3dN+DZcJgJkeCOJqhmPyGLZaMUdaqZuoAmfAcFmEbsR+xfEkjOEWD6ro
+klzxkZKMzu5/bDqU2K35ZIRgEHbRZhmA/iF7wNdOAR6OOf+kNPpqS2mFxt//u6KC
+Y0DOjaRbPTQEKWFGeDTtxbOOVb0/SCx5sbFy0mx3cVbeml+0+J9edqPQ3Sh90kWt
+XwNEmHDCtREt/WvZa94pSKKMjsoJfFgo2xUzPwUpjIWzMgjX647zy2Tjh/yYXAs/
+SU2bQq8cxxLN+B3UyBP7QRQ0cK6m3t9/9gUrIwKBV5iC12J4xgXdrd2MDsiM7SGk
+mHUOkZPQqL1C0fQVd9Aa
+=DvO8
 -----END PGP SIGNATURE-----
 
---foM9DbudB2CcldhH--
+--H88uUF932U8Oj0a6--
