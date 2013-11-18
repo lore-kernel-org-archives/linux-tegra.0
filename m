@@ -1,90 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register
- accesses
-Date: Mon, 18 Nov 2013 15:38:36 -0700
-Message-ID: <528A96EC.4040409@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org> <20131116100205.GG15393@sirena.org.uk> <528A4D9A.10809@wwwdotorg.org> <20131118183947.GS2674@sirena.org.uk>
+From: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] PCI: Disable Gen2 for Tegra20 and Tegra30
+Date: Mon, 18 Nov 2013 14:55:06 -0800
+Message-ID: <1384815306-3149-1-git-send-email-ebrower@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131118183947.GS2674-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2013 11:39 AM, Mark Brown wrote:
-> On Mon, Nov 18, 2013 at 10:25:46AM -0700, Stephen Warren wrote:
->> On 11/16/2013 03:02 AM, Mark Brown wrote:
-> 
->>> Or alternatively should the driver be making the device cache
->>> only when runtime PM is disabled?
-> 
->> The regmap is already cache-only when runtime-suspended. However
->> the registers don't get flushed during resume. I suppose that
->> would require only adding one extra call to the PM resume
->> function?
-> 
-> Yup, should probably do that anyway since that's going to bite
-> someone otherwise.  We probably want a single operation to flush
-> and enable writes now I think about it, it's the common case.
-> 
->> For some reason, my gut prefers this current solution, but I
->> could be persuaded.
-> 
-> I'm not dead set against doing it this way, it's just that it feels
-> like if it's required something's not working as well as it
-> should.
+Tegra20 and Tegra30 do not support gen2 PCIe, so correct the
+register setting to disable it.
 
-The problems with the following approach:
+Signed-off-by: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- static int tegra30_ahub_runtime_resume(struct device *dev)
- ...
- 	regcache_cache_only(ahub->regmap_apbif, false);
- 	regcache_cache_only(ahub->regmap_ahub, false);
-+	regcache_sync(ahub->regmap_apbif, false);
-+	regcache_sync(ahub->regmap_ahub, false);
-
-(or an automated variant of it, whereby regmap automatically does the
-sync inside cache_only(false)) are:
-
-1) regcache_sync() doesn't mean "if the cache is dirty, flush the
-dirty registers to HW", but rather, "if the cache is dirty, write any
-registers that don't match HW defaults to HW". If the HW was in
-cache-only mode because simply because clocks were turned off but not
-power, then the register values were retained, and the current HW
-register values may not be "HW defaults", and you may in fact /need/
-to write a value to HW that matches the HW default, yet is different
-from the current retained register content.
-
-2) tegra30_ahub_allocate_tx_fifo() does a read-modify-write of a
-control register, and may execute when cache_only(true). If that
-register was never touched while cache_only(false), which is the case
-the first time the r-m-w happens, then there is no cached value, so
-the regmap_read() for it will fail. This will either cause
-tegra30_ahub_allocate_tx_fifo() to use uninitialized return data from
-regmap_read() (if error-checking is missing, which it is), or fail (if
-the error-checking were present). Neither is a good choice. Possible
-solutions are:
-
-a) Make regmap creation read the initial HW state to use as HW
-defaults when the regmap is created. IIRC, this is done for some
-regmap configurations but not others. That said, this doesn't seem
-correct, since there's no guarantee that the HW state when the regmap
-is created /is/ the default HW state.
-
-b) Add a table of HW register defaults. Aside from this issue, there's
-no need for this, so I'm not really motivated to do this. Besides, the
-number of registers is rather large.
-
-c) Simply put pm_runtime_get()/put() around the body of
-tegra30_ahub_allocate_tx_fifo(), which works fine, and was my original
-patch.
-
-d) Have regmap_read/write do a pm_runtime_get()/put() themselves. I
-know you mentioned this earlier in the thread, but you'd rejected this
-approach when I first upstreamed this AHUB driver, and said to rely on
-cache_only instead.
-
-I think I still prefer option (c).
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 0afbbbc..b8ba2f7 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -805,7 +805,7 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 	afi_writel(pcie, value, AFI_PCIE_CONFIG);
+ 
+ 	value = afi_readl(pcie, AFI_FUSE);
+-	value &= ~AFI_FUSE_PCIE_T0_GEN2_DIS;
++	value |= AFI_FUSE_PCIE_T0_GEN2_DIS;
+ 	afi_writel(pcie, value, AFI_FUSE);
+ 
+ 	/* initialize internal PHY, enable up to 16 PCIE lanes */
+-- 
+1.8.1.5
