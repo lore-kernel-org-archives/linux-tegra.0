@@ -1,119 +1,78 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Report from 2013 ARM kernel summit
-Date: Tue, 19 Nov 2013 10:40:54 +0100
-Message-ID: <20131119.114054.663999769447782808.hdoyu@nvidia.com>
-References: <20131111.114723.1885845500744256130.hdoyu@nvidia.com><20131115070627.6CF65C4079B@trevor.secretlab.ca>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 17/31] ASoC: tegra: call pm_runtime APIs around register
+ accesses
+Date: Tue, 19 Nov 2013 09:53:34 +0000
+Message-ID: <20131119095334.GW2674@sirena.org.uk>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-18-git-send-email-swarren@wwwdotorg.org>
+ <20131116100205.GG15393@sirena.org.uk>
+ <528A4D9A.10809@wwwdotorg.org>
+ <20131118183947.GS2674@sirena.org.uk>
+ <528A96EC.4040409@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131115070627.6CF65C4079B-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "lwn-T1hC0tSOHrs@public.gmane.org" <lwn-T1hC0tSOHrs@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sL7C0a98p/u5aVah"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <528A96EC.4040409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Grant,
 
-Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Fri, 15 Nov 2013 08:06:27 +0100:
+--sL7C0a98p/u5aVah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Mon, 11 Nov 2013 10:47:23 +0100, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Missed some MLs. Resending....
-> > 
-> > Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Fri, 8 Nov 2013 14:20:46 +0100:
-> > 
-> > > Early Init, Deferred Probe and Init Order
-> > ...
-> > > The big problem with deferring to initcalls is that the kernel doesn?t
-> > > have any information about dependencies between devices and so doesn?t
-> > > know what order to call modules in. Right now driver probe order is
-> > > roughly determined by kernel link order first, and registration order
-> > > second for devices populated during or after initcalls. Olof commented
-> > > that the current driver model is based on the assumption that devices
-> > > live in a single hierarchy. There is no easy way to add in dependency
-> > > data with the current structure, and in most cases dependencies aren?t
-> > > specifically on other devices, but rather on the service provided by
-> > > another device (ie, a GPIO line).
-> > 
-> > I think that an IOMMU device is also the service provider for other
-> > devices, where an single IOMMU device resides in the bus to provide
-> > the address translation to the bus children.
-> > 
-> > > Kumar is concerned that deferred probe won?t work in all situations. For
-> > > instance, what about a device that has an optional dependency? Does it
-> > > fail to probe in the hope that the dependency will show up later? It was
-> > 
-> > Other devices don't know if the system has IOMMU or not. IOMMU'able
-> > devices' population can be deferred till IOMMU device is populated,
-> > but they don't know if there's really IOMMU device exists or not at
-> > their population time.
-> 
-> Deferring the population might complicate the common code by changing
-> the time that devices get created. Right now the code is oriented around
-> doing it all at once.
-> 
-> However, it would be possible to cause a probe deferal on devices that
-> requires an IOMMU in a way that it would be triggered by the bus instead
-> of by the individual device drivers.
-> 
-> I don't really know the details well enough to comment intelliently.
-> Craft up the patches and see what it looks like.
+On Mon, Nov 18, 2013 at 03:38:36PM -0700, Stephen Warren wrote:
 
-I have just sent v5 as below:
-  [PATCHv5 0/9] Unifying Tegra IOMMU(SMMU) driver among Tegra SoCs
-  http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007004.html
+> 1) regcache_sync() doesn't mean "if the cache is dirty, flush the
+> dirty registers to HW", but rather, "if the cache is dirty, write any
+> registers that don't match HW defaults to HW". If the HW was in
+> cache-only mode because simply because clocks were turned off but not
+> power, then the register values were retained, and the current HW
+> register values may not be "HW defaults", and you may in fact /need/
+> to write a value to HW that matches the HW default, yet is different
+> from the current retained register content.
 
-Driver core part is:
-  [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
-  http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007003.html
+OK, that's a potential problem in general...  Fortunately most of the
+uses actually cut power.
 
-Any comment would be really appreciated.
+> a) Make regmap creation read the initial HW state to use as HW
+> defaults when the regmap is created. IIRC, this is done for some
+> regmap configurations but not others. That said, this doesn't seem
+> correct, since there's no guarantee that the HW state when the regmap
+> is created /is/ the default HW state.
 
-> > > The suggestion was made that it would be a really nice to have the core
-> > > kernel sort out probe order rather than using deferred probe. Grant
-> > > replied that deferred probe was designed as the simplest possible
-> > > solution to the problem, and by no means is he attached to it if someone
-> > > can come up with a better approach. He did consider other options that
-> > > put dependency resolution into the core, but it ended up pulling all
-> > > kinds of GPIO, IRQ, Clock and DMA details into the core which made it
-> > > quite complex.
-> > 
-> > I have a problem to control the poplution order for IOMMU in Tegra
-> > SoC, and currently I haven't found any framework so that I inserted an
-> > IOMMU hook in the driver core[1] since I discussed with Stephen Warren
-> > and we thought that the number of those subsystem which requires this
-> > kind of control isn't so many. This patch depends on a certain DT
-> > bindings("#stream-id-cells") if a device has an dependency on IOMMU or
-> > not. But at least this doesn't require anything for a client driver
-> > side at all. The exsiting driver can be used as they are. The current
-> > design is:
-> > 
-> > 1, When a device is populated, it checks if that device is IOMMU'able
-> >    or not. This is identified by "#stream-id-cells" in DT. If
-> >    a device is normal(non IOMMU), a device is populated. If a device
-> >    is IOMMU'able, it continues to be checked.
-> > 
-> > 2, When an IOMMU device has been already populated,
-> >    "dev->bus->iommu_ops" is set. If so a device(client) is registered
-> >    as IOMMU'able, and the rest of population process continues. If not
-> >    set yet, a device population would be deferred til
-> >    "dev->bus->iommu_ops" is set.
-> > 
-> > 3, After an IOMMU device has been already populated, deferred
-> >    population will be continued.
-> > 
-> > I'm not so sure if this dependecy on "#stream-id-cells" is acceptable
-> > or not, but I haven't any better idea right now.
-> 
-> It seems a little fragile to me too. I'd rather the IOMMU requirement be
-> described more explicitly.
+Right, this is why we don't initialise the cache by default.
 
-I think that Will Deacon can do better than I.
+> I think I still prefer option (c).
+
+there's also the option of doing an explicit read on that register to
+get it into the cache.  But yeah, like I say I'm not totally against
+this and I did ack it already.
+
+--sL7C0a98p/u5aVah
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSizUbAAoJELSic+t+oim9x90P/18BOVXrSMDdMXlxhpoP7ngI
+4bekf/HAYt8TsGSUR4P1yYCsr6i5OqkKOyhzSh9yUcNGxPjUd+DoBN4Q9nKPVKdp
+eOzPElbL3qjQ2VKrpAGxU/CzC9T7ff4WA8k0k1CzKxsyy0IC1J+KwXVR2t1lXH23
+sq58alCeA9vXJg2fGyfnAvni1I7C3kKfb8oKo8Iy4ZaYrM6lRouUfVefYXM5Mkmt
+bDDxHyKZd5mW5Ub0o85yz+CnNUYZBdG9sPlU1slKWD7eCTj4MQjbzsWDsW4+E4tf
+oa1CbNdiR8Z2cl8ZNtegsJlv3aF7DeN5+6nErnEfjptw3Z2TTxM0mCINdUAG/QIJ
+v2EoBNn3M3TttGmQvafmpSEmbxHSw+EWxyB356uoLmrqqbBIrxc7TwUpG0DNAamX
+NJB/1JCJS9E1q2XgsRvkR6dHSl8BAWb5HZqj0vC95vnigXKxWNDk9xFQLp/DwEG5
+gJIs8kidKomqZOfxuBLy3QFMbJ5GOhH4eI1MwtqaFCyH9VHErRn+yttoZE2+2wxl
+qSnAggIMpip4texksfjx6AIYwx+S4MG3x1rj7dyGuP7QK1mwj+mvCY2FP2LL7oEG
+RojfzVUEwRrOGkw7nKLoN7Ozw6CDaQb12uZlFHsmJYYh/G7xLUH4fxP28brz7UIn
+AmtEWBgAODjTinYhsJ5X
+=2Xor
+-----END PGP SIGNATURE-----
+
+--sL7C0a98p/u5aVah--
