@@ -1,122 +1,46 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: properly use FUSE clock
-Date: Tue, 19 Nov 2013 10:09:36 -0700
-Message-ID: <528B9B50.7020504@wwwdotorg.org>
-References: <1384771247-16547-1-git-send-email-acourbot@nvidia.com> <20131118114330.GD8646@ulmo.nvidia.com> <528AA750.3080201@wwwdotorg.org> <528AEEB6.4070107@nvidia.com>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
+ probe
+Date: Tue, 19 Nov 2013 10:15:26 -0700
+Message-ID: <528B9CAE.3040600@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	 <1384766276.14845.155.camel@smile> <528A5170.3090809@wwwdotorg.org> <1384862421.14845.222.camel@smile>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <528AEEB6.4070107-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1384862421.14845.222.camel@smile>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2013 09:53 PM, Alex Courbot wrote:
-> On 11/19/2013 08:48 AM, Stephen Warren wrote:
->> On 11/18/2013 04:43 AM, Thierry Reding wrote:
->>> On Mon, Nov 18, 2013 at 07:40:47PM +0900, Alexandre Courbot wrote:
->>>> FUSE clock is enabled by most bootloaders, but we cannot expect
->>>> it to be on in all contexts (e.g. kexec).
->>>>
->>>> This patch adds a FUSE clkdev to all Tegra platforms and makes
->>>> sure it is enabled before touching FUSE registers.
->>>> tegra_init_fuse() is invoked during very early boot and thus
->>>> cannot rely on the clock framework ; therefore the FUSE clock is
->>>> forcibly enabled using a register write in that function, and
->>>> remains that way until the clock framework can be used.
->>>>
->>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> ---
->>>> arch/arm/mach-tegra/fuse.c       | 41
->>>> +++++++++++++++++++++++++++++++++++++++-
->>>> drivers/clk/tegra/clk-tegra114.c |  1 +
->>>> drivers/clk/tegra/clk-tegra124.c |  1 +
->>>> drivers/clk/tegra/clk-tegra20.c  |  1 +
+On 11/19/2013 05:00 AM, Andy Shevchenko wrote:
+> On Mon, 2013-11-18 at 10:42 -0700, Stephen Warren wrote:
+>> On 11/18/2013 02:18 AM, Shevchenko, Andriy wrote:
+>>> On Fri, 2013-11-15 at 13:01 -0800, Dan Williams wrote:
+>>>> On Fri, Nov 15, 2013 at 12:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
 >>>
->>> Isn't this missing the clock driver changes for Tegra30? Ah...
->>> Tegra30 already has this clock defined. I wonder why only Tegra30
->>> has it. grep says that fuse-tegra isn't used by any drivers, which
->>> also indicates that perhaps we don't need the .dev_id in the first
->>> place. We should be able to get by with just the .con_id = "fuse".
+>>>>> Eventually, all drivers should be converted to this new API, the old API
+>>>>> removed, and the new API renamed to the more desirable name. 
 >>>
->>> Also are there any reasons to keep this in one single patch? Since
->>> none of the fuse clocks are used yet, I think the clock changes
->>> could be a separate patch that can go in through the clock tree.
->>> And there isn't even a hard runtime dependency, since if the Tegra
->>> changes were to go in without the clock changes, then the fallback
->>> code in this patch should still turn the clock on properly. It just
->>> might not be turned off again, but isn't that something we can live
->>> with for a short period of time? I think perhaps that could even be
->>> improved, see further below.
->>>
->>> I've added Mike on Cc, he'll need to either take the patch in
->>> through his tree or Ack this one, so he needs to see it
->>> eventually.
->>>
->>>> 4 files changed, 43 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/mach-tegra/fuse.c
->>>> b/arch/arm/mach-tegra/fuse.c index 9a4e910c3796..3b9191b930b5
->>>> 100644 --- a/arch/arm/mach-tegra/fuse.c +++
->>>> b/arch/arm/mach-tegra/fuse.c @@ -22,6 +22,7 @@ #include
->>>> <linux/io.h> #include <linux/export.h> #include <linux/random.h>
->>>> +#include <linux/clk.h> #include <linux/tegra-soc.h>
->>>>
->>>> #include "fuse.h" @@ -54,6 +55,7 @@ int tegra_cpu_speedo_id;        /*
->>>> only exist in Tegra30 and later */ int tegra_soc_speedo_id; enum
->>>> tegra_revision tegra_revision;
->>>>
->>>> +static struct clk *fuse_clk; static int tegra_fuse_spare_bit;
->>>> static void (*tegra_init_speedo_data)(void);
->>>>
->>>> @@ -77,6 +79,22 @@ static const char
->>>> *tegra_revision_name[TEGRA_REVISION_MAX] = { [TEGRA_REVISION_A04]
->>>> = "A04", };
->>>>
->>>> +static void tegra_fuse_enable_clk(void) +{ +    if
->>>> (IS_ERR(fuse_clk)) +        fuse_clk = clk_get_sys("fuse-tegra",
->>>> "fuse"); +    if (IS_ERR(fuse_clk)) +        return;
->>>
->>> Perhaps instead of just returning here, this should actually be
->>> where the code to enable the clock should go.
->>>
->>>> +    clk_prepare_enable(fuse_clk); +} + +static void
->>>> tegra_fuse_disable_clk(void) +{ +    if (IS_ERR(fuse_clk)) +
->>>> return;
->>>
->>> And this is where we could disable it again. That way we should
->>> get equal functionality in both cases.
+>>> I really would like to see more sensible and shorter names for the API
+>>> functions.
 >>
->> That would need a shared lock with the clock code; at some point, the
->> clock will be registered, and the clock subsystem in control of the
->> enable bit. I think having a very early tegra_init_fuse() come along
->> and force the clock on, and then having the rest of the fuse code use
->> the clock object as soon as it's available, is the safest approach.
+>> I'm not sure if you're suggesting that you:
 >>
->> Of course, I suppose there's still a window where the following might
->> happen:
+>> a) Really want to API renaming I mention above to happen at some time.
 >>
->> cpu 0:
->> - tegra_fuse_enable_clk entered
->> - fails to clk_get
->>                 cpu 1
->>                 - tegra clk driver is registered
->>                 - clk subsystem initcall disables all
->>                   unused clocks
->> - access a fuse register
->>
->> -> badness
+>> b) We need to pick a better name now, for the new API this patch
+>> introduces. If so, do you have any better suggestion?
 > 
-> It seems to me that both solutions require a shared lock with the clock
-> code in order to be theoretically safe. The situation you described
-> requires a lock to be addressed ; and unless I missed something,
-> anything that could break with Thierry's proposal could also only do so
-> if we "hold" the clock when the tegra clk driver is registered.
+> Sooner better, I think. 
 > 
-> However we can consider ourselves safe for both cases if we know for
-> sure that there is no fuse function in use when this happens. Since
-> of_clk_init() is called very early during boot with SMP and preemption
-> disabled, isn't that always the case?
+> Now only what I can propose is to change
+> dma_slave_request_channel_or_err() to dma_slave_request_chan().
 
-Yes, that's true. So, I think it's safe, in practice, without the lock.
+The one downside I see with the name dma_slave_request_chan() is that
+it's very similar to the existing dma_request_slave_channel(); driver
+authors may well be confused which is which, and end up using the wrong
+one. That's why I added an explicit "_or_err" to the function name.
+Still, I can go for dma_slave_request_chan() if the dmaengine
+maintainers think it's the right choice; just let me know.
