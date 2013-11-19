@@ -1,169 +1,67 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH v2 2/2] ASOC: tegra: fix AC97 clock handling
-Date: Tue, 19 Nov 2013 20:36:48 +0100
-Message-ID: <1384889808-11953-2-git-send-email-dev@lynxeye.de>
-References: <1384889808-11953-1-git-send-email-dev@lynxeye.de>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Report from 2013 ARM kernel summit
+Date: Tue, 19 Nov 2013 14:45:02 -0600
+Message-ID: <528BCDCE.6070006@gmail.com>
+References: <20131111.114723.1885845500744256130.hdoyu@nvidia.com> <20131115070627.6CF65C4079B@trevor.secretlab.ca> <20131119.114054.663999769447782808.hdoyu@nvidia.com> <20131119173524.GK11778@mudshark.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384889808-11953-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <20131119173524.GK11778-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "lwn-T1hC0tSOHrs@public.gmane.org" <lwn-T1hC0tSOHrs@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This corrects the Tegra AC97 clock handling to be in line with
-the devicetree. Audio PLL is controlled by the machine driver, only
-AC97 host controller clock remains to be independent.
+On 11/19/2013 11:35 AM, Will Deacon wrote:
+> On Tue, Nov 19, 2013 at 09:40:54AM +0000, Hiroshi Doyu wrote:
+>> Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Fri, 15 Nov 2013 08:06:27 +0100:
+>>> On Mon, 11 Nov 2013 10:47:23 +0100, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> 1, When a device is populated, it checks if that device is IOMMU'able
+>>>>    or not. This is identified by "#stream-id-cells" in DT. If
+>>>>    a device is normal(non IOMMU), a device is populated. If a device
+>>>>    is IOMMU'able, it continues to be checked.
+> 
+> [...]
+> 
+>>>> I'm not so sure if this dependecy on "#stream-id-cells" is acceptable
+>>>> or not, but I haven't any better idea right now.
+>>>
+>>> It seems a little fragile to me too. I'd rather the IOMMU requirement be
+>>> described more explicitly.
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
---
-v2:
-- remove redundant clock rate setting
-- defer removal of err_clk_put label to avoid conflict with Stephens
-  dma channel cleanup
+I don't see how this can work. Typically you find a property and then
+read the relevant #*-cells to determine the size. Having multiple cell
+properties is asking for errors.
 
-CC: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-CC: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-CC: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+>>
+>> I think that Will Deacon can do better than I.
+> 
+> I already commented briefly here:
+> 
+>   http://www.spinics.net/lists/devicetree/msg11513.html
+> 
+> basically deferring to DT people :)
+> 
+> Anyway, I'm happy to tighten up the IOMMU requirement description but
+> *not* at the expense of breaking what we currently have for the ARM SMMU,
+> which is being used by Calxeda.
+> 
+> Adding Andreas and Rob for input on potential binding additions to the SMMU.
 
-This is basically a v2 of "ASOC: tegra: move AC97 clock defines to the
-controller node" incorporating the feedback I got from both Stephen and Mark.
----
- sound/soc/tegra/tegra20_ac97.c | 19 +++----------------
- sound/soc/tegra/tegra20_ac97.h |  1 -
- sound/soc/tegra/tegra_wm9712.c | 17 ++++++++++++++++-
- 3 files changed, 19 insertions(+), 18 deletions(-)
+The above proposal would be an incompatible change. However, I think we
+could still deal with a change in this binding at this stage.
 
-diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index ae27bcd..297fb17 100644
---- a/sound/soc/tegra/tegra20_ac97.c
-+++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -37,7 +37,6 @@
- #include <sound/soc.h>
- #include <sound/dmaengine_pcm.h>
- 
--#include "tegra_asoc_utils.h"
- #include "tegra20_ac97.h"
- 
- #define DRV_NAME "tegra20-ac97"
-@@ -387,24 +386,16 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 	ac97->playback_dma_data.maxburst = 4;
- 	ac97->playback_dma_data.slave_id = of_dma[1];
- 
--	ret = tegra_asoc_utils_init(&ac97->util_data, &pdev->dev);
--	if (ret)
--		goto err_clk_put;
--
--	ret = tegra_asoc_utils_set_ac97_rate(&ac97->util_data);
--	if (ret)
--		goto err_asoc_utils_fini;
--
- 	ret = clk_prepare_enable(ac97->clk_ac97);
- 	if (ret) {
- 		dev_err(&pdev->dev, "clk_enable failed: %d\n", ret);
--		goto err_asoc_utils_fini;
-+		goto err;
- 	}
- 
- 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to set AC'97 ops: %d\n", ret);
--		goto err_asoc_utils_fini;
-+		goto err;
- 	}
- 
- 	ret = snd_soc_register_component(&pdev->dev, &tegra20_ac97_component,
-@@ -412,7 +403,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
- 		ret = -ENOMEM;
--		goto err_asoc_utils_fini;
-+		goto err;
- 	}
- 
- 	ret = tegra_pcm_platform_register(&pdev->dev);
-@@ -428,8 +419,6 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 
- err_unregister_component:
- 	snd_soc_unregister_component(&pdev->dev);
--err_asoc_utils_fini:
--	tegra_asoc_utils_fini(&ac97->util_data);
- err_clk_put:
- err:
- 	snd_soc_set_ac97_ops(NULL);
-@@ -443,8 +432,6 @@ static int tegra20_ac97_platform_remove(struct platform_device *pdev)
- 	tegra_pcm_platform_unregister(&pdev->dev);
- 	snd_soc_unregister_component(&pdev->dev);
- 
--	tegra_asoc_utils_fini(&ac97->util_data);
--
- 	clk_disable_unprepare(ac97->clk_ac97);
- 
- 	snd_soc_set_ac97_ops(NULL);
-diff --git a/sound/soc/tegra/tegra20_ac97.h b/sound/soc/tegra/tegra20_ac97.h
-index 4acb3aa..0a39d82 100644
---- a/sound/soc/tegra/tegra20_ac97.h
-+++ b/sound/soc/tegra/tegra20_ac97.h
-@@ -90,6 +90,5 @@ struct tegra20_ac97 {
- 	struct regmap *regmap;
- 	int reset_gpio;
- 	int sync_gpio;
--	struct tegra_asoc_utils_data util_data;
- };
- #endif /* __TEGRA20_AC97_H__ */
-diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
-index 45b5789..25a7f82 100644
---- a/sound/soc/tegra/tegra_wm9712.c
-+++ b/sound/soc/tegra/tegra_wm9712.c
-@@ -29,10 +29,13 @@
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- 
-+#include "tegra_asoc_utils.h"
-+
- #define DRV_NAME "tegra-snd-wm9712"
- 
- struct tegra_wm9712 {
- 	struct platform_device *codec;
-+	struct tegra_asoc_utils_data util_data;
- };
- 
- static const struct snd_soc_dapm_widget tegra_wm9712_dapm_widgets[] = {
-@@ -118,15 +121,25 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
- 
- 	tegra_wm9712_dai.platform_of_node = tegra_wm9712_dai.cpu_of_node;
- 
-+	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
-+	if (ret)
-+		goto codec_unregister;
-+
-+	ret = tegra_asoc_utils_set_ac97_rate(&machine->util_data);
-+	if (ret)
-+		goto asoc_utils_fini;
-+
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto codec_unregister;
-+		goto asoc_utils_fini;
- 	}
- 
- 	return 0;
- 
-+asoc_utils_fini:
-+	tegra_asoc_utils_fini(&machine->util_data);
- codec_unregister:
- 	platform_device_del(machine->codec);
- codec_put:
-@@ -141,6 +154,8 @@ static int tegra_wm9712_driver_remove(struct platform_device *pdev)
- 
- 	snd_soc_unregister_card(card);
- 
-+	tegra_asoc_utils_fini(&machine->util_data);
-+
- 	platform_device_unregister(machine->codec);
- 
- 	return 0;
--- 
-1.8.3.1
+One way approach to handle this without changing the binding would be to
+scan the DT for all iommu's up front and create a list of all nodes and
+their iommu parent. The fact that the hierarchy is described in a way
+that doesn't fit Linux well is really a Linux implementation detail.
+
+If changing the binding, a simple approach would be to allow
+'smmu-parent' to be a bus and/or device property and not just for
+chained iommu's. This could be a global or bus property that is
+inherited. Like interrupt-parent, you would have to deal with the parent
+being itself. Also, perhaps iommu-parent would be a better name. In any
+case, I'd like to see this all be a generic iommu binding.
+
+Rob
