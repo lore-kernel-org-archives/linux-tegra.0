@@ -1,87 +1,95 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
-Date: Wed, 20 Nov 2013 15:03:59 +0100
-Message-ID: <20131120.160359.1043627108929095327.hdoyu@nvidia.com>
-References: <528BD6A7.3030908@wwwdotorg.org><20131120.051708.396722414386125310.hdoyu@nvidia.com><20131120131447.GA8279@ulmo.nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 26/31] Input: tegra-kbc - use reset framework
+Date: Tue, 19 Nov 2013 13:17:21 -0800
+Message-ID: <20131119211721.GB14888@core.coreip.homeip.net>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-27-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131120131447.GA8279-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1384548866-13141-27-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Wed, 20 Nov 2013 14:14:48 +0100:
-....
-> > Does the above mean the following?
-> > 
-> > int of_iommu_attach(struct device *dev)
-> > {
-> > 	int i;
-> > 	struct of_phandle_args args;
-> > 
-> > 	of_property_for_each_phandle_with_args(dev->of_node, "iommus",
-> > 					       "#iommu-cells", i, &args)
-> > 		if (!args->np->dev->driver)
-> > 			return -EPROBE_DEFER;
-> > 	return 0;
-> > }
+On Fri, Nov 15, 2013 at 01:54:21PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
-> Not quite. The above would only check that a driver was bound to the
-> device. But if that device isn't an IOMMU then this doesn't help you.
+> Tegra's clock driver now provides an implementation of the common
+> reset API (include/linux/reset.h). Use this instead of the old Tegra-
+> specific API; that will soon be removed.
+> 
+> Cc: treding@nvidia.com
+> Cc: pdeschrijver@nvidia.com
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Dmitry Torokhov <dtor@mail.ru>
+> Cc: linux-input@vger.kernel.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 
-I thought that, as long as a device is a normal one, it's ok to let it
-go to be populated. We only care about that, IOMMU devices comes
-first, and clients should come later than IOMMUs, for population. In
-the above if all IOMMUs are not populated, client devices are always
-deferred. "args->np->dev" always points an IOMMU device in a
-loop. Otherwise(no "iommus=") it goes out from the loop immediately.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-+#define of_property_for_each_phandle_with_args(np, list, cells, i, args) \
-+	 for (i = 0; !of_parse_phandle_with_args(np, list, cells, i, args); i++)
+> ---
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/input/keyboard/tegra-kbc.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> index 8508879f6faf..9757a58bc897 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -31,7 +31,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/slab.h>
+>  #include <linux/input/matrix_keypad.h>
+> -#include <linux/clk/tegra.h>
+> +#include <linux/reset.h>
+>  #include <linux/err.h>
+>  
+>  #define KBC_MAX_KPENT	8
+> @@ -116,6 +116,7 @@ struct tegra_kbc {
+>  	u32 wakeup_key;
+>  	struct timer_list timer;
+>  	struct clk *clk;
+> +	struct reset_control *rst;
+>  	const struct tegra_kbc_hw_support *hw_support;
+>  	int max_keys;
+>  	int num_rows_and_columns;
+> @@ -373,9 +374,9 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
+>  	clk_prepare_enable(kbc->clk);
+>  
+>  	/* Reset the KBC controller to clear all previous status.*/
+> -	tegra_periph_reset_assert(kbc->clk);
+> +	reset_control_assert(kbc->rst);
+>  	udelay(100);
+> -	tegra_periph_reset_deassert(kbc->clk);
+> +	reset_control_assert(kbc->rst);
+>  	udelay(100);
+>  
+>  	tegra_kbc_config_pins(kbc);
+> @@ -663,6 +664,12 @@ static int tegra_kbc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(kbc->clk);
+>  	}
+>  
+> +	kbc->rst = devm_reset_control_get(&pdev->dev, "kbc");
+> +	if (IS_ERR(kbc->rst)) {
+> +		dev_err(&pdev->dev, "failed to get keyboard reset\n");
+> +		return PTR_ERR(kbc->rst);
+> +	}
+> +
+>  	/*
+>  	 * The time delay between two consecutive reads of the FIFO is
+>  	 * the sum of the repeat time and the time taken for scanning
+> -- 
+> 1.8.1.5
+> 
 
-> The standard way to solve this issue is to add the IOMMU to a global
-> list upon registration. Typically subsystems have some way to do that
-> already,
-
-Your implementation has some possibiity that we could construct any
-hierarchy of IOMMUs.
-
-> already, but it seems like IOMMU doesn't. It looks like that's one of
-> the side-effects of the assumption that there will always only be a
-> single IOMMU (per bus).
-
-There's the following case at least we have already had.
-
-"memory controller"---"smmu_a"---bus--+--"smmu_b"--"device_a"
-                                      |
-                                      |
-                                      +--"device_b"
-
-"smmu_b" isn't related to a bus at all.
-
-> There's also no base object that IOMMU drivers implement, which is the
-> way it's usually done in other subsystems. The absence of that makes it
-> more difficult. I suspect the easiest way to do that would be to add a
-> new type, something like this:
-....
-
-> With that you can use of_find_iommu_by_node() in the loop to check
-> whether an IOMMU has really been registered.
-
-Do you think if it's acceptable to see if a device is populated or not
-via "dev->driver"[1]? Grant Likely proposed to use flag[2] instead of
-struct device[2], though.
-
-[1] http://lists.linuxfoundation.org/pipermail/iommu/2013-July/006023.html
-[2] http://lists.linuxfoundation.org/pipermail/iommu/2013-October/006763.html
+-- 
+Dmitry
