@@ -1,216 +1,75 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCHv5 9/9] [FOR TEST] ARM: dt: tegra30: add "iommus" binding
-Date: Tue, 19 Nov 2013 11:33:13 +0200
-Message-ID: <1384853593-32202-10-git-send-email-hdoyu@nvidia.com>
-References: <1384853593-32202-1-git-send-email-hdoyu@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 15/31] ASoC: dmaengine: add custom DMA
+ config to snd_dmaengine_pcm_config
+Date: Tue, 19 Nov 2013 09:35:15 +0000
+Message-ID: <20131119093515.GV2674@sirena.org.uk>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-16-git-send-email-swarren@wwwdotorg.org>
+ <20131116094412.GD15393@sirena.org.uk>
+ <528A603D.2000307@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1384853593-32202-1-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============6674360724626907075=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <528A603D.2000307@wwwdotorg.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-"iommus" binding implies that a device can be attached to IOMMU
-devices. An iommu device needs to set #iommus-cells in it. "iommus"
-can have multiple iommu device phandles as below if needed.
 
-  iommus = <&smmu arg1 arg2>,
-  	   <&gart arg1 arg2>;
+--===============6674360724626907075==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="buDNgeHiu+HCsDEc"
+Content-Disposition: inline
 
-Not yet ready for merge. Need to add iommus for other devices.
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v5:
-Use "iommus=" instead of "mmu-masters".
----
- arch/arm/boot/dts/tegra30.dtsi | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+--buDNgeHiu+HCsDEc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 2bd55cf..03b7887 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -1,6 +1,7 @@
- #include <dt-bindings/clock/tegra30-car.h>
- #include <dt-bindings/gpio/tegra-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/memory/tegra-swgroup.h>
- 
- #include "skeleton.dtsi"
- 
-@@ -92,6 +93,7 @@
- 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>, /* syncpt */
- 			     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>; /* general */
- 		clocks = <&tegra_car TEGRA30_CLK_HOST1X>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(HC)>;
- 
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -103,6 +105,7 @@
- 			reg = <0x54040000 0x00040000>;
- 			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_MPE>;
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(MPE)>;
- 		};
- 
- 		vi {
-@@ -110,6 +113,7 @@
- 			reg = <0x54080000 0x00040000>;
- 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_VI>;
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(VI)>;
- 		};
- 
- 		epp {
-@@ -117,6 +121,7 @@
- 			reg = <0x540c0000 0x00040000>;
- 			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_EPP>;
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(EPP)>;
- 		};
- 
- 		isp {
-@@ -124,6 +129,7 @@
- 			reg = <0x54100000 0x00040000>;
- 			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_ISP>;
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(ISP)>;
- 		};
- 
- 		gr2d {
-@@ -131,6 +137,7 @@
- 			reg = <0x54140000 0x00040000>;
- 			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&tegra_car TEGRA30_CLK_GR2D>;
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(G2)>;
- 		};
- 
- 		gr3d {
-@@ -139,6 +146,8 @@
- 			clocks = <&tegra_car TEGRA30_CLK_GR3D
- 				  &tegra_car TEGRA30_CLK_GR3D2>;
- 			clock-names = "3d", "3d2";
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(NV)
-+						TEGRA_SWGROUP_CELLS(NV2)>;
- 		};
- 
- 		dc@54200000 {
-@@ -148,6 +157,7 @@
- 			clocks = <&tegra_car TEGRA30_CLK_DISP1>,
- 				 <&tegra_car TEGRA30_CLK_PLL_P>;
- 			clock-names = "disp1", "parent";
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(DC)>;
- 
- 			rgb {
- 				status = "disabled";
-@@ -161,6 +171,7 @@
- 			clocks = <&tegra_car TEGRA30_CLK_DISP2>,
- 				 <&tegra_car TEGRA30_CLK_PLL_P>;
- 			clock-names = "disp2", "parent";
-+			iommus = <&smmu TEGRA_SWGROUP_CELLS(DCB)>;
- 
- 			rgb {
- 				status = "disabled";
-@@ -317,6 +328,7 @@
- 		interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,dma-request-selector = <&apbdma 8>;
- 		clocks = <&tegra_car TEGRA30_CLK_UARTA>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -327,6 +339,7 @@
- 		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,dma-request-selector = <&apbdma 9>;
- 		clocks = <&tegra_car TEGRA30_CLK_UARTB>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -337,6 +350,7 @@
- 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,dma-request-selector = <&apbdma 10>;
- 		clocks = <&tegra_car TEGRA30_CLK_UARTC>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -347,6 +361,7 @@
- 		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,dma-request-selector = <&apbdma 19>;
- 		clocks = <&tegra_car TEGRA30_CLK_UARTD>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -357,6 +372,7 @@
- 		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>;
- 		nvidia,dma-request-selector = <&apbdma 20>;
- 		clocks = <&tegra_car TEGRA30_CLK_UARTE>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -525,7 +541,7 @@
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 	};
- 
--	iommu {
-+	smmu: iommu {
- 		compatible = "nvidia,tegra30-smmu";
- 		reg = <0x7000f010 0x02c
- 		       0x7000f1f0 0x010
-@@ -533,6 +549,7 @@
- 		nvidia,#asids = <4>;		/* # of ASIDs */
- 		dma-window = <0 0x40000000>;	/* IOVA start & length */
- 		nvidia,ahb = <&ahb>;
-+		#iommu-cells = <2>;
- 	};
- 
- 	ahub {
-@@ -605,6 +622,7 @@
- 		reg = <0x78000000 0x200>;
- 		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_SDMMC1>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -613,6 +631,7 @@
- 		reg = <0x78000200 0x200>;
- 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_SDMMC2>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -621,6 +640,7 @@
- 		reg = <0x78000400 0x200>;
- 		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_SDMMC3>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
-@@ -629,6 +649,7 @@
- 		reg = <0x78000600 0x200>;
- 		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_SDMMC4>;
-+		iommus = <&smmu TEGRA_SWGROUP_CELLS(PPCS)>;
- 		status = "disabled";
- 	};
- 
--- 
-1.8.1.5
+On Mon, Nov 18, 2013 at 11:45:17AM -0700, Stephen Warren wrote:
+
+> What if I squash the following into that patch:
+
+Looks good.
+
+--buDNgeHiu+HCsDEc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSizDPAAoJELSic+t+oim9gOcP/RGTXVwKfsRoTRbNtn9NNzE9
+8FbOww5/h9ABt3dmanRBkiQZnDjYL5K/bqmAwNzKhJAbgk245VHoWFthCWzw0xeg
+fPQKVD04PynSXLI+G1uX8+MR7YHj8ZsTk/5mPmL7iM2wFSorLthhzSGzChC8ICHn
+mzybw3awXVo2A2eBwpIbuuzNEKswwREmzzLbcVs78ssUsB2f6groiPRfiegrQ4Dv
+Co4CmP/igPRLvJm+WplTe/VlUbuxLm/h+mH+TVQE13CylK9J39P5tuRWk4Cn743+
+H5hxqxTzZ67urL6pAK4+z3xYp6SQLAk1PlwR2dFPBte2CmMi9W6R4sRc3sJGGNWY
+m9x9gOiGyeC+28xZ1jiFZJDO5cuXNwluqIaQoAlgOMN0ScHC33bZTlTiwimHTPsm
+BrWijnQ8cNxMFjhUxQh+wiaET7vFZHlZAa3eYbU8dJMgbB6x+KVzPDGcYBBtKJ4L
+QhaKkwQl4m7VLMBemZHs/vIvV209+xoTB9u28MrGMUPVt0zVaZf8NfBc3J9TA7Jn
+kflAUpeiRjAVsexFv9s+zf0FXqtM6YPIu/VPL9zRgDkUDTyQVB/GMWPV6HPVs/aR
+alMo/prwmlShvpVz6wsmWRB1ocliVFtKvjPu6cnvjAemN7chxDtAUhemvkJBTFYL
+A/iCFKKLfoShQdLGSJYs
+=KKh9
+-----END PGP SIGNATURE-----
+
+--buDNgeHiu+HCsDEc--
+
+--===============6674360724626907075==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============6674360724626907075==--
