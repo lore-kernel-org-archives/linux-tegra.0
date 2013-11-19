@@ -1,46 +1,48 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Tue, 19 Nov 2013 10:15:26 -0700
-Message-ID: <528B9CAE.3040600@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	 <1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	 <CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	 <1384766276.14845.155.camel@smile> <528A5170.3090809@wwwdotorg.org> <1384862421.14845.222.camel@smile>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: Report from 2013 ARM kernel summit
+Date: Tue, 19 Nov 2013 17:35:24 +0000
+Message-ID: <20131119173524.GK11778@mudshark.cambridge.arm.com>
+References: <20131111.114723.1885845500744256130.hdoyu@nvidia.com>
+ <20131115070627.6CF65C4079B@trevor.secretlab.ca>
+ <20131119.114054.663999769447782808.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384862421.14845.222.camel@smile>
+Content-Disposition: inline
+In-Reply-To: <20131119.114054.663999769447782808.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "lwn-T1hC0tSOHrs@public.gmane.org" <lwn-T1hC0tSOHrs@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/19/2013 05:00 AM, Andy Shevchenko wrote:
-> On Mon, 2013-11-18 at 10:42 -0700, Stephen Warren wrote:
->> On 11/18/2013 02:18 AM, Shevchenko, Andriy wrote:
->>> On Fri, 2013-11-15 at 13:01 -0800, Dan Williams wrote:
->>>> On Fri, Nov 15, 2013 at 12:54 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>
->>>>> Eventually, all drivers should be converted to this new API, the old API
->>>>> removed, and the new API renamed to the more desirable name. 
->>>
->>> I really would like to see more sensible and shorter names for the API
->>> functions.
->>
->> I'm not sure if you're suggesting that you:
->>
->> a) Really want to API renaming I mention above to happen at some time.
->>
->> b) We need to pick a better name now, for the new API this patch
->> introduces. If so, do you have any better suggestion?
-> 
-> Sooner better, I think. 
-> 
-> Now only what I can propose is to change
-> dma_slave_request_channel_or_err() to dma_slave_request_chan().
+On Tue, Nov 19, 2013 at 09:40:54AM +0000, Hiroshi Doyu wrote:
+> Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote @ Fri, 15 Nov 2013 08:06:27 +0100:
+> > On Mon, 11 Nov 2013 10:47:23 +0100, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > > 1, When a device is populated, it checks if that device is IOMMU'able
+> > >    or not. This is identified by "#stream-id-cells" in DT. If
+> > >    a device is normal(non IOMMU), a device is populated. If a device
+> > >    is IOMMU'able, it continues to be checked.
 
-The one downside I see with the name dma_slave_request_chan() is that
-it's very similar to the existing dma_request_slave_channel(); driver
-authors may well be confused which is which, and end up using the wrong
-one. That's why I added an explicit "_or_err" to the function name.
-Still, I can go for dma_slave_request_chan() if the dmaengine
-maintainers think it's the right choice; just let me know.
+[...]
+
+> > > I'm not so sure if this dependecy on "#stream-id-cells" is acceptable
+> > > or not, but I haven't any better idea right now.
+> > 
+> > It seems a little fragile to me too. I'd rather the IOMMU requirement be
+> > described more explicitly.
+> 
+> I think that Will Deacon can do better than I.
+
+I already commented briefly here:
+
+  http://www.spinics.net/lists/devicetree/msg11513.html
+
+basically deferring to DT people :)
+
+Anyway, I'm happy to tighten up the IOMMU requirement description but
+*not* at the expense of breaking what we currently have for the ARM SMMU,
+which is being used by Calxeda.
+
+Adding Andreas and Rob for input on potential binding additions to the SMMU.
+
+Will
