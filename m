@@ -1,45 +1,75 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred probe
-Date: Tue, 19 Nov 2013 16:38:29 -0800
-Message-ID: <CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
-	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>
-	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>
-	<1384766276.14845.155.camel@smile>
-	<528A5170.3090809@wwwdotorg.org>
-	<1384862421.14845.222.camel@smile>
-	<528B9CAE.3040600@wwwdotorg.org>
-	<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>
-	<528BFDD0.3090503@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
+Date: Wed, 20 Nov 2013 04:17:08 +0100
+Message-ID: <20131120.051708.396722414386125310.hdoyu@nvidia.com>
+References: <20131119102506.GG31504@ulmo.nvidia.com><20131119.140351.1342214267287135109.hdoyu@nvidia.com><528BD6A7.3030908@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <528BFDD0.3090503-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <528BD6A7.3030908-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 19, 2013 at 4:09 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> Deferred probe certainly isn't the only error that can be returned
-> though,
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Tue, 19 Nov 2013 22:22:47 +0100:
 
-Of course, but do any of those other ones matter?  Certainly not if
-they've all been hidden behind a NULL return from
-dma_request_slave_channel().
+> On 11/19/2013 05:03 AM, Hiroshi Doyu wrote:
+> > Hi Thierry,
+> > 
+> > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Tue, 19 Nov 2013 11:25:07 +0100:
+> > 
+> >> From earlier discussions I thought the goal was to actually defer this
+> >> until all nodes referred to by the iommus property were actually
+> >> registered. The above only checks that the phandles can be resolved to
+> >> valid struct device_node:s. That doesn't mean that an actual IOMMU has
+> >> been registered for it, only that the devices have been created.
+> > 
+> > Currently "bus->iommu_ops" is set at the end of tegra_smmu_probe(). So
+> > if "bus->iommu_ops" is set, it means that an iommu instance is
+> > populated at that time.
+> 
+> Yes, but that's the register bus, upon which the device is a client, not
+> the bus upon which the device is a bus master. They aren't necessarily
+> the same.
+> 
+> There's no getting around the fact that, as Thierry said, you need to
+> search for a registered IOMMU device for each phandle, and defer probe
+> if any aren't registered yet.
+> 
+> If we do that, then you shouldn't need to look at the value of
+> dev->bus->iommu_ops at all; if all IOMMUs in the list were registered,
+> then iommu_ops must have been set when (one of them) was registered, and
+> if not, then it possibly wasn't, so defer probe.
+> 
+> That way, this code won't have to change if the core IOMMU code gets
+> extended to support multiple IOMMUs, devices mastering transactions onto
+> buses other than their register bus, etc.
 
-> so I don't think "defer" in the name makes much sense. The
-> function as I wrote it returns a standard "error pointer" value.
-> Typically, callers would simply propagate *any* error code back to the
-> caller of probe() without even looking at it; it's the driver core that
-> checks for -EPROBE_DEFER vs. other error codes. In some cases, drivers
-> do check in order to avoid printing failure messages in the deferred
-> probe case, but again that's pretty standard, and not something specific
-> to this API.
+Does the above mean the following?
 
-Right, but the only reason to introduce this API is to propagate
-EPROBE_DEFER, right?  It also serves to document drivers that are
-prepared for / depend on deferred probing support.
+int of_iommu_attach(struct device *dev)
+{
+	int i;
+	struct of_phandle_args args;
 
-Good old bike shedding... I only jumped in because I think changing it
-to dma_slave_request_chan() would indeed be confusing .
+	of_property_for_each_phandle_with_args(dev->of_node, "iommus",
+					       "#iommu-cells", i, &args)
+		if (!args->np->dev->driver)
+			return -EPROBE_DEFER;
+	return 0;
+}
+
+
+"args->np->dev->driver" needs the following patch:
+
+  http://lists.linuxfoundation.org/pipermail/iommu/2013-July/006023.html
