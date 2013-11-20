@@ -1,78 +1,59 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
-Date: Wed, 20 Nov 2013 09:30:35 -0700
-Message-ID: <528CE3AB.60806@wwwdotorg.org>
-References: <528BD6A7.3030908@wwwdotorg.org><20131120.051708.396722414386125310.hdoyu@nvidia.com><20131120131447.GA8279@ulmo.nvidia.com> <20131120.160359.1043627108929095327.hdoyu@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 00/31] ARM: tegra: use common reset and DMA bindings
+Date: Wed, 20 Nov 2013 09:45:17 -0700
+Message-ID: <528CE71D.5090300@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <201311201637.36733.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131120.160359.1043627108929095327.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201311201637.36733.arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Bjorn Helgaas <bhelgaas@google.com>, linux-i2c@vger.kernel.org, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Stephen Warren <swarren@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, treding@nvidia.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Julian Andres Klode <jak@jak-linux.org>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2013 07:03 AM, Hiroshi Doyu wrote:
-> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote @ Wed, 20 Nov 2013 14:14:48 +0100:
-
-(Yes, what Thierry said)
-
-> ....
->>> Does the above mean the following?
->>>
->>> int of_iommu_attach(struct device *dev)
->>> {
->>> 	int i;
->>> 	struct of_phandle_args args;
->>>
->>> 	of_property_for_each_phandle_with_args(dev->of_node, "iommus",
->>> 					       "#iommu-cells", i, &args)
->>> 		if (!args->np->dev->driver)
->>> 			return -EPROBE_DEFER;
->>> 	return 0;
->>> }
->>
->> Not quite. The above would only check that a driver was bound to the
->> device. But if that device isn't an IOMMU then this doesn't help you.
+On 11/20/2013 08:37 AM, Arnd Bergmann wrote:
+> On Friday 15 November 2013, Stephen Warren wrote:
+>> This series implements a common reset framework driver for Tegra, and
+>> updates all relevant Tegra drivers to use it. It also removes the custom
+>> DMA bindings and replaced them with the standard DMA DT bindings.
 > 
-> I thought that, as long as a device is a normal one, it's ok to let it
-> go to be populated.
+> The series is rather long, so I may have missed it, but I think you need one
+> more patch to the apbdma binding to document the use of #dma-cells, what
+> value it has, and what the format of the dma specifiers in slave drivers
+> needs to be.
 
-I don't understand what that means.
+Yes, you're right. I will fold the following into "ARM: tegra: document
+use of standard DMA DT bindings":
 
-> We only care about that, IOMMU devices comes
-> first, and clients should come later than IOMMUs, for population. In
-> the above if all IOMMUs are not populated, client devices are always
-> deferred. "args->np->dev" always points an IOMMU device in a
-> loop. Otherwise(no "iommus=") it goes out from the loop immediately.
-
-I'm not sure what that means. Perhaps you're sauying the dev->driver
-isn't set until the driver is probe()d for the device, so if
-dev->driver!=NULL, then we know the driver probed() successfully for it?
-That does go most of the way, but as Thierry pointed out, it doesn't
-guarantee that the dev->driver is an IOMMU driver, just that it's *some*
-driver. Perhaps this won't actually make any difference in practice, but
-AFAIK, all other subsystems do perform the strict check, so I don't see
-why the IOMMU subsystem shouldn't.
-
-...
-> There's the following case at least we have already had.
-> 
-> "memory controller"---"smmu_a"---bus--+--"smmu_b"--"device_a"
->                                       |
->                                       |
->                                       +--"device_b"
-> 
-> "smmu_b" isn't related to a bus at all.
-
-Yes, smmu_b is related to a bus.
-
-Admittedly perhaps not a bus that the CPU can master transactions onto,
-but there's still a (perhaps point-point) bus that device_a masters, and
-smmu_b acts as a slave.
-
-Note that not all buses in the diagram above are represented as bus
-objects in the Linux kernel (or even in DT), since those tend to
-concentrate only on representing buses that the CPU masters, rather than
-additionally representing buses that only HW devices master.
+> diff --git a/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt b/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+> index 0b1e577ab9d3..0b0f9498e265 100644
+> --- a/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+> +++ b/Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
+> @@ -11,6 +11,10 @@ Required properties:
+>    See ../reset/reset.txt for details.
+>  - reset-names : Must include the following entries:
+>    - dma
+> +- #iommu-cells : Must be <1>. This dictates the length of DMA specifiers in
+> +  client nodes' dmas properties. The specifier represents the DMA request
+> +  select value for the peripheral. For more details, consult the Tegra TRM's
+> +  documentation of the APB DMA channel control register REQ_SEL field.
+>  
+>  Examples:
+>  
+> @@ -36,4 +40,5 @@ apbdma: dma@6000a000 {
+>  	clocks = <&tegra_car 34>;
+>  	resets = <&tegra_car 34>;
+>  	reset-names = "dma";
+> +	#iommu-cells = <1>;
+>  };
