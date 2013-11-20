@@ -1,62 +1,94 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Wed, 20 Nov 2013 12:22:46 -0700
-Message-ID: <528D0C06.9080006@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>	<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>	<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>	<528BFDD0.3090503@wwwdotorg.org>	<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>	<528CFE68.6060908@wwwdotorg.org> <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: Report from 2013 ARM kernel summit
+Date: Wed, 20 Nov 2013 13:47:58 -0600
+Message-ID: <CAL_Jsq+js4kzsrdCbFzzxiJhaD9uHz_yhqNFG5HZuW7AgKAfGg@mail.gmail.com>
+References: <20131111.114723.1885845500744256130.hdoyu@nvidia.com>
+	<20131115070627.6CF65C4079B@trevor.secretlab.ca>
+	<20131119.114054.663999769447782808.hdoyu@nvidia.com>
+	<20131119173524.GK11778@mudshark.cambridge.arm.com>
+	<528BCDCE.6070006@gmail.com>
+	<20131120103111.GB19352@mudshark.cambridge.arm.com>
+	<20131120135308.GC8279@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20131120135308.GC8279-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "lwn-T1hC0tSOHrs@public.gmane.org" <lwn-T1hC0tSOHrs@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2013 12:15 PM, Dan Williams wrote:
-> On Wed, Nov 20, 2013 at 10:24 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 11/19/2013 05:38 PM, Dan Williams wrote:
->>> On Tue, Nov 19, 2013 at 4:09 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>>> Deferred probe certainly isn't the only error that can be returned
->>>> though,
->>>
->>> Of course, but do any of those other ones matter?  Certainly not if
->>> they've all been hidden behind a NULL return from
->>> dma_request_slave_channel().
->>>
->>>> so I don't think "defer" in the name makes much sense. The
->>>> function as I wrote it returns a standard "error pointer" value.
->>>> Typically, callers would simply propagate *any* error code back to the
->>>> caller of probe() without even looking at it; it's the driver core that
->>>> checks for -EPROBE_DEFER vs. other error codes. In some cases, drivers
->>>> do check in order to avoid printing failure messages in the deferred
->>>> probe case, but again that's pretty standard, and not something specific
->>>> to this API.
->>>
->>> Right, but the only reason to introduce this API is to propagate
->>> EPROBE_DEFER, right?  It also serves to document drivers that are
->>> prepared for / depend on deferred probing support.
+On Wed, Nov 20, 2013 at 7:53 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Wed, Nov 20, 2013 at 10:31:11AM +0000, Will Deacon wrote:
+>> On Tue, Nov 19, 2013 at 08:45:02PM +0000, Rob Herring wrote:
+>> > On 11/19/2013 11:35 AM, Will Deacon wrote:
+>> > > Adding Andreas and Rob for input on potential binding additions to the SMMU.
+>> >
+>> > The above proposal would be an incompatible change. However, I think we
+>> > could still deal with a change in this binding at this stage.
+>> >
+>> > One way approach to handle this without changing the binding would be to
+>> > scan the DT for all iommu's up front and create a list of all nodes and
+>> > their iommu parent. The fact that the hierarchy is described in a way
+>> > that doesn't fit Linux well is really a Linux implementation detail.
+>> >
+>> > If changing the binding, a simple approach would be to allow
+>> > 'smmu-parent' to be a bus and/or device property and not just for
+>> > chained iommu's. This could be a global or bus property that is
+>> > inherited. Like interrupt-parent, you would have to deal with the parent
+>> > being itself. Also, perhaps iommu-parent would be a better name. In any
+>> > case, I'd like to see this all be a generic iommu binding.
 >>
->> Well, that's the reason I'm introducing the API, but it's not really
->> what the API actually does.
+>> I like that idea. I've recently been toying with removing the chained IOMMU
+>> support, since I don't think anybody is using it who is interested in
+>> mainline. However, making it more general sounds like a better idea.
 >>
-> 
-> True, this is quite a bit of back and forth for something that will be
-> temporary.  How bad would it be to short-circuit this discussion and
-> go straight to converting dma_request_slave_channel().  Leave
-> dma_request_channel() as is and just convert the 20 or so users of
-> dma_request_slave_channel() over?
+>> One potential issue is that I think the nvidia guys want to describe masters
+>> that master via multiple SMMUs (which I believe was the motivation for
+>> moving the stream-ids out into the master nodes, rather than keeping them in
+>> the SMMU). Again, that's not something we can easily add to the arm-smmu,
+>> because the incoming stream-ids are a property of the SMMU node.
+>
+> If I remember correctly, one of the reasons for the proposal was also
+> that the interrupt-parent property turned out to be insufficient for
+> some use-cases, which lead to Grant's proposal of the new interrupts-
+> extended property. Since that comparison has already been drawn, I think
+> we can agree that both are used in similar ways. Therefore we should
+> consider what we've learned from interrupt-parent when designing this
+> generic IOMMU binding to avoid having to introduce iommu-extended at
+> some point.
 
-I had thought about that, but there are drivers that use
-dma_request_slave_channel(), but fall back to dma_request_channel() if
-that fails. I think there were other cases where the two APIs were
-mixed. Drivers would then have a value that sometimes IS_ERR() or is
-valid, and other times ==NULL or is valid. So, the values would have to
-be checked using IS_ERR_OR_NULL() which I believe is now deprecated  -
-certainly Russell will shout at me if I start introducing more usage! So
-that means converting dma_request_channel()'s return value too, and that
-is a /lot/ more to convert. I suppose an alternative might be to have
-the individual affected drivers convert a NULL return from
-dma_request_channel() to an ERR value, but for some reason I forget now,
-even that looked problematic.
+The problem in that case is really the interrupts property not having
+a phandle. This case would be a bit different because there is not an
+analogous property to interrupts.
+
+However, I don't really like connections described via phandles being
+done differently for different bindings. And this one has been a bit
+unusual.
+
+>> So the question is: do we actually need to describe masters that master
+>> through multiple SMMUs as a single node in the devicetree?
+>
+> I would think so, yes. The alternative would be to have several nodes
+> that describe the same device, and that conflicts on a different level.
+>
+> Perhaps it could be done by having separate sub-nodes that each use a
+> different IOMMU, but that sounds like a much grosser solution. That
+> pretty much boils down to interrupt-parent/interrupt-map.
+
+Perhaps not within the DT, but we could have this case with IOMMUs
+within PCIe bus and the PCIe RC itself behind an IOMMU.
+
+I'll reply to Hiroshi's email with more on a variation of his proposal.
+
+Rob
