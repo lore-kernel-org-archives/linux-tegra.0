@@ -1,48 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Wed, 20 Nov 2013 14:24:49 -0700
-Message-ID: <528D28A1.2050307@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>		<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>		<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>		<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>		<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>		<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>		<528BFDD0.3090503@wwwdotorg.org>		<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>		<528CFE68.6060908@wwwdotorg.org>	 <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>	 <528D0C06.9080006@wwwdotorg.org> <1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/5] clk: tegra: fix blink clock rate
+Date: Wed, 20 Nov 2013 16:47:18 -0700
+Message-ID: <1384991242-13596-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384979000.2067.5.camel-p8uTFz9XbKgxhm4521IUFVnYeNYlB/vhral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2013 01:23 PM, Williams, Dan J wrote:
-...
-> Why do the drivers that call dma_request_channel need to convert it to
-> an ERR value?  i.e. what's problematic about the below (not compile
-> tested)?
-...
-> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-...
-> @@ -22,16 +22,20 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
->  				struct samsung_dma_req *param,
->  				struct device *dev, char *ch_name)
-...
-> +	if (dev->of_node) {
-> +		chan = dma_request_slave_channel(dev, ch_name);
-> +		return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
-> +	} else {
->  		return (unsigned)dma_request_channel(mask, pl330_filter,
->  							(void *)dma_ch);
-> +	}
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The argument is that if a function returns errors encoded as an ERR
-pointer, then callers must assume that any non-IS_ERR value that the
-function returns is valid. NULL is one of those values. As such, callers
-can no longer check the value against NULL, but must use IS_ERR().
-Converting any IS_ERR() returns to NULL theoretically is the act of
-converting one valid return value to some other completely random return
-value.
+The blink clock rate needs to be configured, or it will run at ~1Hz
+rather than the desired 32KHz. If it runs at the wrong rate, e.g. the
+SDIO WiFi on Seaboard and Cardhu will fail to be detected.
 
-The converse is true for functions that return errors encoded as NULL;
-callers must check those return results against NULL.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This probably needs to be squashed into commit 32721a734a3d "clk: tegra:
+move PMC, fixed clocks to common files".
+---
+ drivers/clk/tegra/clk-tegra-pmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-There's no intersection between those two sets of legal tests.
+diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+index 00e8275a7178..08b21c1ee867 100644
+--- a/drivers/clk/tegra/clk-tegra-pmc.c
++++ b/drivers/clk/tegra/clk-tegra-pmc.c
+@@ -114,6 +114,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+ 	}
+ 
+ 	/* blink */
++	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
+ 	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
+ 				pmc_base + PMC_DPD_PADS_ORIDE,
+ 				PMC_DPD_PADS_ORIDE_BLINK_ENB, 0, NULL);
+-- 
+1.8.1.5
