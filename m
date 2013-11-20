@@ -1,14 +1,13 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 13/31] dma: tegra: register as an OF DMA controller
-Date: Wed, 20 Nov 2013 16:28:57 +0100
-Message-ID: <201311201628.57951.arnd@arndb.de>
+Subject: Re: [PATCH 00/31] ARM: tegra: use common reset and DMA bindings
+Date: Wed, 20 Nov 2013 16:37:36 +0100
+Message-ID: <201311201637.36733.arnd@arndb.de>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-14-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1384548866-13141-14-git-send-email-swarren@wwwdotorg.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,42 +18,17 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Warren <swarren@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, treding@nvidia.com
+Cc: Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, Marc Dietrich <marvin24@gmx.de>, Bjorn Helgaas <bhelgaas@google.com>, linux-i2c@vger.kernel.org, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Stephen Warren <swarren@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alan Stern <stern@rowland.harvard.edu>, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, treding@nvidia.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Julian Andres Klode <jak@jak-linux.org>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, linux-tegra@vger.kernel.org, Terje
 List-Id: linux-tegra@vger.kernel.org
 
 On Friday 15 November 2013, Stephen Warren wrote:
-> +bool tegra_dma_filter_fn(struct dma_chan *dc, void *param)
-> +{
-> +       u32 slave_id = *(u32 *)param;
-> +       struct tegra_dma_channel *tdc;
-> +
-> +       if (dc->device->dev->driver != &tegra_dmac_driver.driver)
-> +               return false;
-> +
-> +       tdc = to_tegra_dma_chan(dc);
-> +       tdc->slave_id = slave_id;
-> +
-> +       return true;
-> +}
-> +
-> +static struct of_dma_filter_info tegra_dma_info = {
-> +       .filter_fn = tegra_dma_filter_fn,
-> +};
-> +
->  static int tegra_dma_probe(struct platform_device *pdev)
->  {
->         struct resource *res;
-> @@ -1383,6 +1409,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
->                 goto err_irq;
->         }
->  
-> +       tegra_dma_info.dma_cap = tdma->dma_dev.cap_mask;
-> +       ret = of_dma_controller_register(pdev->dev.of_node,
-> +                                        of_dma_simple_xlate, &tegra_dma_info);
-> +
+> This series implements a common reset framework driver for Tegra, and
+> updates all relevant Tegra drivers to use it. It also removes the custom
+> DMA bindings and replaced them with the standard DMA DT bindings.
 
-I would suggest to use a custom xlate() function based on
-dma_get_slave_channel() that was added recently: Iterating through all
-channels is not necessary any more.
+The series is rather long, so I may have missed it, but I think you need one
+more patch to the apbdma binding to document the use of #dma-cells, what
+value it has, and what the format of the dma specifiers in slave drivers
+needs to be.
 
 	Arnd
