@@ -1,95 +1,60 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 26/31] Input: tegra-kbc - use reset framework
-Date: Tue, 19 Nov 2013 13:17:21 -0800
-Message-ID: <20131119211721.GB14888@core.coreip.homeip.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 13/31] dma: tegra: register as an OF DMA controller
+Date: Wed, 20 Nov 2013 16:28:57 +0100
+Message-ID: <201311201628.57951.arnd@arndb.de>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-27-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-14-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1384548866-13141-27-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Stephen Warren <swarren@nvidia.com>, treding@nvidia.com, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1384548866-13141-14-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Warren <swarren@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 15, 2013 at 01:54:21PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
-> 
-> Tegra's clock driver now provides an implementation of the common
-> reset API (include/linux/reset.h). Use this instead of the old Tegra-
-> specific API; that will soon be removed.
-> 
-> Cc: treding@nvidia.com
-> Cc: pdeschrijver@nvidia.com
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Dmitry Torokhov <dtor@mail.ru>
-> Cc: linux-input@vger.kernel.org
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-> ---
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
-> ---
->  drivers/input/keyboard/tegra-kbc.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> index 8508879f6faf..9757a58bc897 100644
-> --- a/drivers/input/keyboard/tegra-kbc.c
-> +++ b/drivers/input/keyboard/tegra-kbc.c
-> @@ -31,7 +31,7 @@
->  #include <linux/clk.h>
->  #include <linux/slab.h>
->  #include <linux/input/matrix_keypad.h>
-> -#include <linux/clk/tegra.h>
-> +#include <linux/reset.h>
->  #include <linux/err.h>
->  
->  #define KBC_MAX_KPENT	8
-> @@ -116,6 +116,7 @@ struct tegra_kbc {
->  	u32 wakeup_key;
->  	struct timer_list timer;
->  	struct clk *clk;
-> +	struct reset_control *rst;
->  	const struct tegra_kbc_hw_support *hw_support;
->  	int max_keys;
->  	int num_rows_and_columns;
-> @@ -373,9 +374,9 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
->  	clk_prepare_enable(kbc->clk);
->  
->  	/* Reset the KBC controller to clear all previous status.*/
-> -	tegra_periph_reset_assert(kbc->clk);
-> +	reset_control_assert(kbc->rst);
->  	udelay(100);
-> -	tegra_periph_reset_deassert(kbc->clk);
-> +	reset_control_assert(kbc->rst);
->  	udelay(100);
->  
->  	tegra_kbc_config_pins(kbc);
-> @@ -663,6 +664,12 @@ static int tegra_kbc_probe(struct platform_device *pdev)
->  		return PTR_ERR(kbc->clk);
->  	}
->  
-> +	kbc->rst = devm_reset_control_get(&pdev->dev, "kbc");
-> +	if (IS_ERR(kbc->rst)) {
-> +		dev_err(&pdev->dev, "failed to get keyboard reset\n");
-> +		return PTR_ERR(kbc->rst);
-> +	}
+On Friday 15 November 2013, Stephen Warren wrote:
+> +bool tegra_dma_filter_fn(struct dma_chan *dc, void *param)
+> +{
+> +       u32 slave_id = *(u32 *)param;
+> +       struct tegra_dma_channel *tdc;
 > +
->  	/*
->  	 * The time delay between two consecutive reads of the FIFO is
->  	 * the sum of the repeat time and the time taken for scanning
-> -- 
-> 1.8.1.5
-> 
+> +       if (dc->device->dev->driver != &tegra_dmac_driver.driver)
+> +               return false;
+> +
+> +       tdc = to_tegra_dma_chan(dc);
+> +       tdc->slave_id = slave_id;
+> +
+> +       return true;
+> +}
+> +
+> +static struct of_dma_filter_info tegra_dma_info = {
+> +       .filter_fn = tegra_dma_filter_fn,
+> +};
+> +
+>  static int tegra_dma_probe(struct platform_device *pdev)
+>  {
+>         struct resource *res;
+> @@ -1383,6 +1409,10 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>                 goto err_irq;
+>         }
+>  
+> +       tegra_dma_info.dma_cap = tdma->dma_dev.cap_mask;
+> +       ret = of_dma_controller_register(pdev->dev.of_node,
+> +                                        of_dma_simple_xlate, &tegra_dma_info);
+> +
 
--- 
-Dmitry
+I would suggest to use a custom xlate() function based on
+dma_get_slave_channel() that was added recently: Iterating through all
+channels is not necessary any more.
+
+	Arnd
