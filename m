@@ -1,57 +1,48 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] cpufreq: tegra: don't error target() when suspended
-Date: Wed, 20 Nov 2013 14:06:22 -0700
-Message-ID: <1384981582-30697-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
+ probe
+Date: Wed, 20 Nov 2013 14:24:49 -0700
+Message-ID: <528D28A1.2050307@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>		<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>		<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>		<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>		<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>		<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>		<528BFDD0.3090503@wwwdotorg.org>		<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>		<528CFE68.6060908@wwwdotorg.org>	 <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>	 <528D0C06.9080006@wwwdotorg.org> <1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1384979000.2067.5.camel-p8uTFz9XbKgxhm4521IUFVnYeNYlB/vhral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 11/20/2013 01:23 PM, Williams, Dan J wrote:
+...
+> Why do the drivers that call dma_request_channel need to convert it to
+> an ERR value?  i.e. what's problematic about the below (not compile
+> tested)?
+...
+> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
+...
+> @@ -22,16 +22,20 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
+>  				struct samsung_dma_req *param,
+>  				struct device *dev, char *ch_name)
+...
+> +	if (dev->of_node) {
+> +		chan = dma_request_slave_channel(dev, ch_name);
+> +		return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
+> +	} else {
+>  		return (unsigned)dma_request_channel(mask, pl330_filter,
+>  							(void *)dma_ch);
+> +	}
 
-d4019f0a92ab "cpufreq: move freq change notifications to cpufreq core"
-added code to the cpufreq core to print an error if a cpufreq driver's
-.target() function returned an error. This exposed the fact that Tegra's
-cpufreq driver returns an error when it is ignoring requests due to the
-system being suspended.
+The argument is that if a function returns errors encoded as an ERR
+pointer, then callers must assume that any non-IS_ERR value that the
+function returns is valid. NULL is one of those values. As such, callers
+can no longer check the value against NULL, but must use IS_ERR().
+Converting any IS_ERR() returns to NULL theoretically is the act of
+converting one valid return value to some other completely random return
+value.
 
-Modify Tegra's .target() function not to return an error in this case;
-this prevents the error prints. The argument is that since the suspend
-hook can't and doesn't inform the cpufreq core when its requests will
-be ignored, there's no way for the cpufreq core to squelch them, so it's
-not an error for the requests to keep coming. This change make the Tegra
-driver consistent with how the Exynos handles the same situation. Note
-that s5pv210-cpufreq.c probably suffers from this same issue though.
+The converse is true for functions that return errors encoded as NULL;
+callers must check those return results against NULL.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This is a fix for 3.13.
-
-Commit d4019f0a92ab also failed to update the Tegra pm_notifier hook to
-emit cpufreq notifications. That hook calls the target() implementation
-directly, which used to emit the notifications. However, now that the
-notifications are made outside of target(), they no longer occur when
-target() is called directly. I'm not sure if this is an issue or not?
----
- drivers/cpufreq/tegra-cpufreq.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
-index f42df7ec03c5..b7309c37033d 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra-cpufreq.c
-@@ -142,10 +142,8 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
- 
- 	mutex_lock(&tegra_cpu_lock);
- 
--	if (is_suspended) {
--		ret = -EBUSY;
-+	if (is_suspended)
- 		goto out;
--	}
- 
- 	freq = freq_table[index].frequency;
- 
--- 
-1.8.1.5
+There's no intersection between those two sets of legal tests.
