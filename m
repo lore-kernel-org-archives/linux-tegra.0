@@ -1,60 +1,122 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5 1/9] of: introduce
-	of_property_for_earch_phandle_with_args()
-Date: Thu, 21 Nov 2013 18:20:51 +0100
-Message-ID: <20131121.192051.747601347584525020.hdoyu@nvidia.com>
-References: <1384853593-32202-1-git-send-email-hdoyu@nvidia.com><20131121151218.befbb483c0cf09cdcd4cd4dd@nvidia.com><20131121155649.48C96C406A3@trevor.secretlab.ca>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
+ probe
+Date: Thu, 21 Nov 2013 11:22:13 -0700
+Message-ID: <528E4F55.9070204@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>	<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>	<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>	<528BFDD0.3090503@wwwdotorg.org>	<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>	<528CFE68.6060908@wwwdotorg.org>	<CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>	<528D0C06.9080006@wwwdotorg.org>	<1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>	<528D28A1.2050307@wwwdotorg.org> <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com
+ >
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131121155649.48C96C406A3-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote @ Thu, 21 Nov 2013 16:56:49 +0100:
-
-> On Thu, 21 Nov 2013 15:12:18 +0200, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > On Thu, 21 Nov 2013 13:43:28 +0100
-> > Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> > 
-> > > On Tue, 19 Nov 2013 11:33:05 +0200, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > > > The following pattern of code is tempting:
-> > > > 
-> > > >   for (i = 0; !of_parse_phandle_with_args(np, list, cells, i, args); i++)
-> > > > 
-> > > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > 
-> > > That's a very minimal commit message. Can you elaborate please.
-> > 
-> > The above can be:
-> > 
-> > "
-> >   The following pattern of code is tempting to add a new member for
-> >   of_property_for_each_*() family as an idiom.
-> >   
-> >     for (i = 0;
-> >         !of_parse_phandle_with_args(np, list, cells, i, args); i++)
-> >                   <do something with "args">;
-> > "
+On 11/20/2013 08:22 PM, Dan Williams wrote:
+> On Wed, Nov 20, 2013 at 1:24 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 11/20/2013 01:23 PM, Williams, Dan J wrote:
+>> ...
+>>> Why do the drivers that call dma_request_channel need to convert it to
+>>> an ERR value?  i.e. what's problematic about the below (not compile
+>>> tested)?
+>> ...
+>>> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
+>> ...
+>>> @@ -22,16 +22,20 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
+>>>                               struct samsung_dma_req *param,
+>>>                               struct device *dev, char *ch_name)
+>> ...
+>>> +     if (dev->of_node) {
+>>> +             chan = dma_request_slave_channel(dev, ch_name);
+>>> +             return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
+>>> +     } else {
+>>>               return (unsigned)dma_request_channel(mask, pl330_filter,
+>>>                                                       (void *)dma_ch);
+>>> +     }
+>>
+>> The argument is that if a function returns errors encoded as an ERR
+>> pointer, then callers must assume that any non-IS_ERR value that the
+>> function returns is valid. NULL is one of those values. As such, callers
+>> can no longer check the value against NULL, but must use IS_ERR().
+>> Converting any IS_ERR() returns to NULL theoretically is the act of
+>> converting one valid return value to some other completely random return
+>> value.
 > 
-> I really do like commit messages to be full enough that a future reader
-> can figure out why a patch was written. ie:
+> You describe how IS_ERR() works, but you didn't address the patch.
+> There's nothing random about the changes to samsung_dmadev_request().
+> It still returns NULL or a valid channel just as before.
 
-Updated as:
+I was addressing the patch. I guess I should have explained as follows.
 
-  [PATCHv6+ 01/13] of: introduce of_property_for_earch_phandle_with_args()
-    http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007063.html
+First, the following code is technically buggy:
 
-This doesn't depend on anything and this can be merged
-independetly. Thanks for your help.
++             chan = dma_request_slave_channel(dev, ch_name);
++             return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
+
+... since it assumes that dma_request_slave_channel() never returns NULL
+as a valid non-error value. This is specifically prohibited by the fact
+that dma_request_slave_channel() returns either an ERR value or a valid
+value; in that case, NULL is not an ERR value, and hence must be
+considered valid.
+
+Also, observe that the following are semantically equivalent:
+
+1)
+
+	/*
+	 * This is a demonstration of using IS_ERR_OR_NULL for error
+	 * checking. We want to remove use of IS_ERR_OR_NULL though.
+	 */
+	chan = dma_request_slave_channel(dev, ch_name);
+	if (IS_ERR_OR_NULL(chan))
+		return -ESOMETHING;
+
+2)
+
+	/* These first 3 lines are part of your patch */
+	chan = dma_request_slave_channel(dev, ch_name);
+	if (IS_ERR(chan)
+		chan = NULL;
+	if (!chan) // This test and the above are IS_ERR_OR_NULL
+		attempt allocation some other way;
+	/*
+	 * This is code elsewhere in a driver where DMA is optional;
+	 * that code must act differently based on whether a DMA
+	 * channel was acquired or not. So, it tests chan against
+	 * NULL.
+	 */
+	if (!chan) // This test and the above IS_ERR are IS_ERR_OR_NULL
+		return -ESOMETHING;
+
+In case (2) above, if the driver /only/ calls a modified
+dma_request_slave_channel(), all the checks could just be if
+(IS_ERR(chan)) instead - then problem solved. However, if the driver
+mixes the new dma_request_slave_channel() and the unconverted
+dma_request_channel(), it has to either (a) convert an ERR return from
+dma_request_slave_channel() to match dma_request_channel()'s NULL error
+return, or (b) convert a NULL return from dma_request_channel() to match
+dma_request_slave_channel()'s ERR return. Without the conversion, all
+tests would have to use the deprecated IS_ERR_OR_NULL. Either of those
+conversion options converts an error value from 1 API into a
+theoretically valid return value from the other API, which is a bug.
+
+Perhaps one can argue that an API that returns either a valid value or
+NULL can never return a value that matches an ERR value? If so, perhaps
+the following would work in practice:
+
+if (dev->of_node) {
+	chan = dma_request_slave_channel(dev, ch_name);
+} else {
+	chan = dma_request_channel(mask, pl330_filter,
+					(void *)dma_ch);
+	if (!chan)
+		chan = ERR_PTR(-ENODEV);
+}
+...
+if (IS_ERR(chan))
+...
+
+... but I'm not sure whether that assumption is acceptable.
