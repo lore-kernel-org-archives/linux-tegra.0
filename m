@@ -1,122 +1,124 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Thu, 21 Nov 2013 11:22:13 -0700
-Message-ID: <528E4F55.9070204@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>	<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>	<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>	<528BFDD0.3090503@wwwdotorg.org>	<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>	<528CFE68.6060908@wwwdotorg.org>	<CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>	<528D0C06.9080006@wwwdotorg.org>	<1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>	<528D28A1.2050307@wwwdotorg.org> <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com
- >
+Subject: Re: Report from 2013 ARM kernel summit
+Date: Thu, 21 Nov 2013 11:40:28 -0700
+Message-ID: <528E539C.8080603@wwwdotorg.org>
+References: <20131119.114054.663999769447782808.hdoyu@nvidia.com> <20131119173524.GK11778@mudshark.cambridge.arm.com> <528BCDCE.6070006@gmail.com> <20131120.083955.1386179068365424976.hdoyu@nvidia.com> <CAL_Jsq+AxEWhkOhxwAZ=+rpzDZ+yC1b3ZV541UhOu9kiwUhUdQ@mail.gmail.com> <20131121110024.GA8395@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20131121110024.GA8395-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org" <ksummit-2013-discuss-cunTk1MwBs98uUxBSJOaYoYkZiVZrdSR2LY78lusg7I@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org" <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "lwn-T1hC0tSOHrs@public.gmane.org" <lwn-T1hC0tSOHrs@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <andreas.herrmann-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2013 08:22 PM, Dan Williams wrote:
-> On Wed, Nov 20, 2013 at 1:24 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 11/20/2013 01:23 PM, Williams, Dan J wrote:
->> ...
->>> Why do the drivers that call dma_request_channel need to convert it to
->>> an ERR value?  i.e. what's problematic about the below (not compile
->>> tested)?
->> ...
->>> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
->> ...
->>> @@ -22,16 +22,20 @@ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
->>>                               struct samsung_dma_req *param,
->>>                               struct device *dev, char *ch_name)
->> ...
->>> +     if (dev->of_node) {
->>> +             chan = dma_request_slave_channel(dev, ch_name);
->>> +             return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
->>> +     } else {
->>>               return (unsigned)dma_request_channel(mask, pl330_filter,
->>>                                                       (void *)dma_ch);
->>> +     }
+On 11/21/2013 04:00 AM, Will Deacon wrote:
+> On Wed, Nov 20, 2013 at 08:02:10PM +0000, Rob Herring wrote:
+>> On Wed, Nov 20, 2013 at 12:39 AM, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>   smmu_a: iommu@xxxxxxxx {
+>>>         #iommu-cells = <2>;
+>>>         ....
+>>>   };
+>>>
+>>>   smmu_b: iommu@xxxxxxxx {
+>>>         #iommu-cells = <3>;
+>>>         ....
+>>>   };
+>>>
+>>>   device_a {
+>>>          iommus = <&smmu_a param1 param2>,
+>>>                   <&smmu_b param1 param2 param3>;
+>>>   };
+>>>
+>>> This can describe the relation between a device and an iommu
+>>> independently. The number of params needed for each IOMMU can be
+>>> sepcified by #iommu-cells in its iommu entry.
+>>>
+>>>   device_a <-> smmu_a, needs 2 params for a device
+>>>   device_a <-> smmu_b, needs 3 params for a device
+>>>
+>>> For example, "smmu_a" can be an bus level global IOMMU where all child
+>>> devices can be an master of "smmu_a", and "smmu_b" is a local IOMMU
+>>> only for "device_a".
+>>>
+>>> "memory controller"---"smmu_a"---bus--+--"smmu_b"--"device_a"
+>>>                                       |
+>>>                                       |
+>>>                                       +--"device_b"
 >>
->> The argument is that if a function returns errors encoded as an ERR
->> pointer, then callers must assume that any non-IS_ERR value that the
->> function returns is valid. NULL is one of those values. As such, callers
->> can no longer check the value against NULL, but must use IS_ERR().
->> Converting any IS_ERR() returns to NULL theoretically is the act of
->> converting one valid return value to some other completely random return
->> value.
+>> I think the above binding would be the correct way to describe things
+>> if you have 1 device connected to 2 IOMMUs (directly rather than
+>> chained). IIUC, that is something you have on tegra?
+>>
+>> For the topology above where you are chaining iommu's, I think
+>> something like this is more accurately describing the hierarchy:
+>>
+>>   smmu_b: iommu@xxxxxxxx {
+>>         #iommu-cells = <3>;
+>>          iommus = <&smmu_a param1 param2>;
+>>        ....
+>>   };
+>>   device_a {
+>>          iommus = <&smmu_b param1 param2 param3>;
+>>   };
+>>
+>> I remember discussing this with Will and seem to recall some issue
+>> with describing things this way. But looking at it now, I don't see
+>> what that was.
 > 
-> You describe how IS_ERR() works, but you didn't address the patch.
-> There's nothing random about the changes to samsung_dmadev_request().
-> It still returns NULL or a valid channel just as before.
+> I think it was the usual issue with StreamID remastering. For example, if
+             ^^^ s/was/had/ I assume
+> you had a device going into two chained IOMMUs, you need a way to relate the
+> StreamIDs of the device to the remastered IDs coming out of the first SMMU.
 
-I was addressing the patch. I guess I should have explained as follows.
-
-First, the following code is technically buggy:
-
-+             chan = dma_request_slave_channel(dev, ch_name);
-+             return IS_ERR(chan) ? (unsigned) NULL : (unsigned) chan;
-
-... since it assumes that dma_request_slave_channel() never returns NULL
-as a valid non-error value. This is specifically prohibited by the fact
-that dma_request_slave_channel() returns either an ERR value or a valid
-value; in that case, NULL is not an ERR value, and hence must be
-considered valid.
-
-Also, observe that the following are semantically equivalent:
+That seems pretty easy to deal with. Am I missing something. Here's how
+I assume that would work:
 
 1)
 
-	/*
-	 * This is a demonstration of using IS_ERR_OR_NULL for error
-	 * checking. We want to remove use of IS_ERR_OR_NULL though.
-	 */
-	chan = dma_request_slave_channel(dev, ch_name);
-	if (IS_ERR_OR_NULL(chan))
-		return -ESOMETHING;
+If the mapping is static in HW, then you simply have a table that
+describes the remapping. A table representation could be in the DT or
+the driver itself. Either way, any static mapping is a property of the
+HW itself, so shouldn't need to leak into the client DT nodes at all, right?
 
-2)
+That might look like:
 
-	/* These first 3 lines are part of your patch */
-	chan = dma_request_slave_channel(dev, ch_name);
-	if (IS_ERR(chan)
-		chan = NULL;
-	if (!chan) // This test and the above are IS_ERR_OR_NULL
-		attempt allocation some other way;
-	/*
-	 * This is code elsewhere in a driver where DMA is optional;
-	 * that code must act differently based on whether a DMA
-	 * channel was acquired or not. So, it tests chan against
-	 * NULL.
-	 */
-	if (!chan) // This test and the above IS_ERR are IS_ERR_OR_NULL
-		return -ESOMETHING;
+smmu_a: iommu@xxxxxxxx {
+	#iommu-cells = <1>;
+};
+smmu_b: iommu@xxxxxxxx {
+	#iommu-cells = <1>;
 
-In case (2) above, if the driver /only/ calls a modified
-dma_request_slave_channel(), all the checks could just be if
-(IS_ERR(chan)) instead - then problem solved. However, if the driver
-mixes the new dma_request_slave_channel() and the unconverted
-dma_request_channel(), it has to either (a) convert an ERR return from
-dma_request_slave_channel() to match dma_request_channel()'s NULL error
-return, or (b) convert a NULL return from dma_request_channel() to match
-dma_request_slave_channel()'s ERR return. Without the conversion, all
-tests would have to use the deprecated IS_ERR_OR_NULL. Either of those
-conversion options converts an error value from 1 API into a
-theoretically valid return value from the other API, which is a bug.
+	// a) All stream IDs squashed down to 1 ID
+	iommus = <&smmu_a SMMU_B's_STREAM_ID_IN_SMMU_A>;
 
-Perhaps one can argue that an API that returns either a valid value or
-NULL can never return a value that matches an ERR value? If so, perhaps
-the following would work in practice:
+	// OR b) stream IDs translated:
+	iommus = <&smmu_a 0>,
+		 <&smmu_a 1>,
+		 <&smmu_a 2> ...;
+	// this table could be in the driver instead
+	iommu-stream-id-map =
+		<DEV_A's_STREAM_ID_IN_SMMU_B 0>,
+		<DEV_B's_STREAM_ID_IN_SMMU_B 1>,
+		<DEV_C's_STREAM_ID_IN_SMMU_B 2>,
+};
+device_a {
+	iommus = <&smmu_b DEV_A's_STREAM_ID_IN_SMMU_B>;
+};
 
-if (dev->of_node) {
-	chan = dma_request_slave_channel(dev, ch_name);
-} else {
-	chan = dma_request_channel(mask, pl330_filter,
-					(void *)dma_ch);
-	if (!chan)
-		chan = ERR_PTR(-ENODEV);
-}
-...
-if (IS_ERR(chan))
-...
+or 2)
 
-... but I'm not sure whether that assumption is acceptable.
+If the remapping is entirely dynamic, then you'd either need a table in
+the DT to describe how to set it up for the particular use-case (similar
+to the above), or a function in the driver to manage the mapping at
+run-time, probably hooked into the of_xlate() of the parent IOMMU, which
+would call into some function of the source IOMMU.
+
+In other words, of_xlate for smmu_a would do both:
+
+a) Parse the SMMU specifier in the client's iommus property
+
+b) If the parse specifier represents a "dynamic stream ID device/IOMMU",
+call some function in the client driver to find out which stream ID(s)
+the parse iommus entry (specifier) represents.
