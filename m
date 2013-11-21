@@ -1,71 +1,79 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v10 0/7] ARM: support for Trusted Foundations secure monitor
-Date: Thu, 21 Nov 2013 10:51:09 -0800
-Message-ID: <CAOesGMgB_FUDkD9=wgZgreaspEyKoSqpkpGZtzuUjb=G6m_nEg@mail.gmail.com>
-References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com>
-	<52828EF5.6090909@wwwdotorg.org>
-	<CAOesGMhatp9ZQr=eTCtQ_9a_E9LXKdTCzJd+P7Sy9Ut9wtvnsA@mail.gmail.com>
-	<5282E068.1070608@nvidia.com>
-	<CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw@mail.gmail.com>
-	<528E5596.7090606@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv6+ 01/13] of: introduce
+	of_property_for_earch_phandle_with_args()
+Date: Thu, 21 Nov 2013 11:57:00 -0700
+Message-ID: <528E577C.2050506@wwwdotorg.org>
+References: <1385041249-7705-1-git-send-email-hdoyu@nvidia.com><1385041249-7705-2-git-send-email-hdoyu@nvidia.com>
+	<20131121.191720.1487772262083864095.hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <528E5596.7090606@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alex Courbot <acourbot@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20131121.191720.1487772262083864095.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 21, 2013 at 10:48 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> (Russell, a question for you at the bottom)
->
-> On 11/13/2013 10:57 AM, Olof Johansson wrote:
->> On Tue, Nov 12, 2013 at 6:14 PM, Alex Courbot <acourbot@nvidia.com> wrote:
->>> On 11/13/2013 05:38 AM, Olof Johansson wrote:
-> ...
->>>> I pinged Russell, and he brought up the fact that there were earlier
->>>> requests to move it to drivers/firmware. It would make sense to try to
->>>> get that done before merging, especially if you anticipate someone
->>>> using TF on 64-bit platforms.
->>>
->>> IIRC when we discussed this point your last comment was as follows:
->>
->> Touche. :) Thanks for the reminder.
->>
->>> On Tue, Oct 29, 2013 at 6:55 AM, Olof Johansson <olof@lixom.net> wrote:
->>>> I think we can probably merge this under arch/arm now, and when we
->>>> figure out what needs to be common with ARM64 we can move it out to a
->>>> good location. It might be that mostly just a header file with ABI
->>>> conventions needs to be shared, not actual implementation, for
->>>> example.
->>>
->>> So I thought we agreed on that. If in the end we prefer to move the ARM
->>> firmware interface into drivers/firmware, I'm fine with that too (Tomasz
->>> also confirmed he would be ok with it) but I wonder if that would not be
->>> somehow premature.
-> ...
->> Well, as I already said I'm ok with things going into arch/arm to
->> start with, as long as Russell is.
-> ...
->
-> Russell, the patch Alex sent to move firmware_ops into drivers/firmware
-> was rejected, so I don't think we can update this series to move the
-> code there instead.
->
-> So, are you OK with merging this series as-is, in arch/arm/firmware? If
-> you could ack the patch/series to indicate that, it would be awesome.
+On 11/21/2013 10:17 AM, Hiroshi Doyu wrote:
+> Iterating over a property containing a list of phandles with arguments
+> is a common operation for device drivers. This patch adds a new
+> of_property_for_each_phandle_with_args() macro to make the iteration
+> simpler.
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v6+:
+> Use the description, which Grant Likely proposed, to be full enough
+> that a future reader can figure out why a patch was written.
+>   http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007062.html
 
-Sorry, this was stuck on my to-read-and-reply list.
+This new version only addresses one of the concerns that Grant had,
+namely the commit message.
 
-I think merging for arch/arm is what makes sense here, even if we end
-up at some point in the future moving it out. Only time will tell if
-that makes sense or not, and it's not going to be a big deal to handle
-at that time.
+> diff --git a/include/linux/of.h b/include/linux/of.h
 
-An ack from Russell would be appreciated, or we'd need to set up a
-shared branch given the Tegra dependencies that would go on top.
-Either is ok with me.
+> +#define of_property_for_each_phandle_with_args(np, list, cells, i, args) \
+> +	for (i = 0; !of_parse_phandle_with_args(np, list, cells, i, args); i++)
+> +
 
+Grant also wanted the actual implementation fixed so that it wasn't so
+inefficient.
 
--Olof
+What this current patch does is basically:
+
+for every entry in the property:
+    for every entry in the property before the current index:
+        parse the phandle+specifier
+
+That's roughly O(n^2). (n is # entries in the property)
+
+Instead, what should happen is:
+
+for every entry in the property:
+    parse the phandle+specifier
+    yield the result
+
+That's roughly O(n).
+
+In other words, an implementation more along the lines of
+include/linux/of.h's:
+
+#define of_property_for_each_u32(np, propname, prop, p, u)      \
+        for (prop = of_find_property(np, propname, NULL),       \
+                p = of_prop_next_u32(prop, NULL, &u);           \
+                p;                                              \
+                p = of_prop_next_u32(prop, p, &u))
+
+... so you'd need functions like of_prop_first_specifier() and
+of_prop_next_specifier(), and perhaps some associated set of state
+variables, perhaps with all the state wrapped into a single struct for
+simplicity.
