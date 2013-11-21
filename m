@@ -1,112 +1,26 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
-Date: Thu, 21 Nov 2013 12:04:18 -0700
-Message-ID: <528E5932.1070105@wwwdotorg.org>
-References: <1384853593-32202-1-git-send-email-hdoyu@nvidia.com> <
-	1384853593-32202-3-git-send-email-hdoyu@nvidia.com>
-	<20131121131558.E5B82C40A2C@trevor.secretlab.ca>
+Subject: Re: [PATCH v10 0/7] ARM: support for Trusted Foundations secure monitor
+Date: Thu, 21 Nov 2013 12:57:13 -0700
+Message-ID: <528E6599.6050302@wwwdotorg.org>
+References: <1383819106-1400-1-git-send-email-acourbot@nvidia.com> <52828EF5.6090909@wwwdotorg.org> <CAOesGMhatp9ZQr=eTCtQ_9a_E9LXKdTCzJd+P7Sy9Ut9wtvnsA@mail.gmail.com> <5282E068.1070608@nvidia.com> <CAOesGMgcvTFD4u9b7T5HNhuJe_PQyV25Ei++v8hG8AsY_rOdyw@mail.gmail.com> <528E5596.7090606@wwwdotorg.org> <CAOesGMgB_FUDkD9=wgZgreaspEyKoSqpkpGZtzuUjb=G6m_nEg@mail.gmail.com> <20131121190051.GY16735@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131121131558.E5B82C40A2C-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131121190051.GY16735-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/21/2013 06:15 AM, Grant Likely wrote:
-> On Tue, 19 Nov 2013 11:33:06 +0200, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> IOMMU devices on the bus need to be poplulated first, then iommu
->> master devices are done later.
->>
->> With CONFIG_OF_IOMMU, "iommus=" DT binding would be used to identify
->> whether a device can be an iommu msater or not. If a device can, we'll
->> defer to populate that device till an iommu device is populated. Once
->> an iommu device is populated, "dev->bus->iommu_ops" is set in the
->> bus. Then, those defered iommu master devices are populated and
->> configured for IOMMU with help of the already populated iommu device
->> via iommu_ops->add_device(). Multiple IOMMUs can be listed on this
->> "iommus" binding so that a device can have multiple IOMMUs attached.
->>
->> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> v5:
->> Use "iommus=" binding instread of arm,smmu's "#stream-id-cells".
->>
->> v4:
->> This is newly added, and the successor of the following RFC:
->>   [RFC][PATCHv3+ 1/2] driver/core: Add of_iommu_attach()
->>   http://lists.linuxfoundation.org/pipermail/iommu/2013-November/006914.html
->> ---
->>  drivers/base/dd.c        |  5 +++++
->>  drivers/iommu/of_iommu.c | 22 ++++++++++++++++++++++
->>  include/linux/of_iommu.h |  7 +++++++
->>  3 files changed, 34 insertions(+)
->>
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index 35fa368..6e892d4 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -25,6 +25,7 @@
->>  #include <linux/async.h>
->>  #include <linux/pm_runtime.h>
->>  #include <linux/pinctrl/devinfo.h>
->> +#include <linux/of_iommu.h>
->>  
->>  #include "base.h"
->>  #include "power/power.h"
->> @@ -273,6 +274,10 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->>  
->>  	dev->driver = drv;
->>  
->> +	ret = of_iommu_attach(dev);
->> +	if (ret)
->> +		goto probe_failed;
->> +
->>  	/* If using pinctrl, bind pins now before probing */
->>  	ret = pinctrl_bind_pins(dev);
->>  	if (ret)
+On 11/21/2013 12:00 PM, Russell King - ARM Linux wrote:
+> On Thu, Nov 21, 2013 at 10:51:09AM -0800, Olof Johansson wrote:
+>> An ack from Russell would be appreciated, or we'd need to set up a
+>> shared branch given the Tegra dependencies that would go on top.
+>> Either is ok with me.
 > 
-> I'm very concerned about this approach. Hooking into the core probe
-> path for things like this is not going to scale well. I'm not thrilled
-> with the pinctrl hook being here either, but that is already merged. :-(
-> Also, hooking in here is going affect every single device device driver
-> probe path, and a large number of them are never, ever, going to have
-> iommu interactions.
-> 
-> There needs to be a less invasive way of doing what you want. I still
-> feel like the individual device drivers themselves need to be aware that
-> they might be hooking through an IOMMU. Or, if they are hooking through
-> a bus like PCIe, then have the PCIe bus defer creating child devices
-> until the IOMMU is configured and in place.
+> Note that I'm *not* looking at anything new until after the merge window
+> has closed, so I'm not acking or reviewing anything at the moment.
 
-I general though, couldn't any MMIO on-SoC device potentially be
-affected by an IOMMU? The point of putting the call to of_iommu_attach()
-here rather than inside individual driver's probe() is to avoid
-requiring "every" driver having to paste more boiler-plate into probe().
-
-Perhaps what we need is a flag in struct device to indicate that the
-driver/device is MMIO, and hence potentially affected by an IOMMU. would
-the following work better for you?
-
-+	if (drv->is_mmio) { // let's bikeshed on the field name:-)
-+		ret = of_iommu_attach(dev);
-+		if (ret)
-+			goto probe_failed;
-+	}
-
-I've often thought that struct device_driver (or similar) should declare
-the set of resources that a device needs (e.g. a list of GPIO names,
-regulator names, etc.), so that the driver core can parse all these
-standard properties from DT/... before calling the custom probe()
-function for all the non-standard stuff. This "is_mmio" flag would fit
-into that model well.
+OK, that's fair. Do we need to ping you again or repost once -rc1 is
+out, or do you have a TODO list that you'll check?
