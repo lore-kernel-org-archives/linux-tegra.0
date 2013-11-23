@@ -1,123 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Fri, 22 Nov 2013 17:17:06 -0700
-Message-ID: <528FF402.6000503@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>	<1384548866-13141-12-git-send-email-swarren@wwwdotorg.org>	<CAPcyv4heN3PFc+n2RDBviA0zvyU4jfi5VLOcQVR6oRPi1woPTA@mail.gmail.com>	<1384766276.14845.155.camel@smile>	<528A5170.3090809@wwwdotorg.org>	<1384862421.14845.222.camel@smile>	<528B9CAE.3040600@wwwdotorg.org>	<CAPcyv4jR2MufF6PqB3cUwNdQZfzGWVdj1UunBkeyMYm-KvkpCQ@mail.gmail.com>	<528BFDD0.3090503@wwwdotorg.org>	<CAPcyv4i7o0RP4ovG1S8RbiV9wqV+VZWX+2vBm3iKnVLCYfrnBQ@mail.gmail.com>	<528CFE68.6060908@wwwdotorg.org>	<CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>	<528D0C06.9080006@wwwdotorg.org>	<1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>	<528D28A1.2050307@wwwdotorg.org>	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com
- >	<528E4F55.9070204@wwwdotorg.org> <CAPcyv4gmo0k3n8==0oEs4NMKbEH4F9xHutRTURE7sVe=M7xwRg@mail.gmail.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports
+	deferred probe
+Date: Sat, 23 Nov 2013 00:34:42 +0000
+Message-ID: <20131123003442.GH16735@n2100.arm.linux.org.uk>
+References: <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com> <528D0C06.9080006@wwwdotorg.org> <1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com> <528D28A1.2050307@wwwdotorg.org> <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com> <528E4F55.9070204@wwwdotorg.org> <CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com> <528F95A9.2050305@wwwdotorg.org> <CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com> <528F9DF9.6080706@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4gmo0k3n8==0oEs4NMKbEH4F9xHutRTURE7sVe=M7xwRg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <528F9DF9.6080706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/22/2013 04:45 PM, Dan Williams wrote:
-> On Thu, Nov 21, 2013 at 10:22 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 11/20/2013 08:22 PM, Dan Williams wrote:
->> 2)
->>
->>         /* These first 3 lines are part of your patch */
->>         chan = dma_request_slave_channel(dev, ch_name);
->>         if (IS_ERR(chan)
->>                 chan = NULL;
->>         if (!chan) // This test and the above are IS_ERR_OR_NULL
->>                 attempt allocation some other way;
+On Fri, Nov 22, 2013 at 11:10:01AM -0700, Stephen Warren wrote:
+> On 11/22/2013 11:04 AM, Dan Williams wrote:
+> > I made that assumption because that is what your original patch proposed:
+> > 
+> > +/**
+> > + * dma_request_slave_channel_or_err - try to allocate an exclusive
+> > slave channel
+> > + * @dev:       pointer to client device structure
+> > + * @name:      slave channel name
+> > + *
+> > + * Returns pointer to appropriate dma channel on success or an error pointer.
+> > + */
+> > 
+> > What's the benefit of leaking NULL values to callers?  If they already
+> > need to check for err, why force them to check for NULL too?
 > 
-> No it isn't.  IS_ERR_OR_NULL means the api returns 3 states (channel,
-> null, error-pointer).  The client converting error-pointer to NULL
-> after the fact is explicit way to say that the client does not care
-> about the error value.  The client is simply throwing away the error
-> code and converting the result back into a pass fail.
+> "Returns pointer to appropriate dma channel on success or an error
+> pointer." means that callers only have to check for an ERR value. If the
+> function returns NULL, then other DMA-related functions must treat that
+> as a valid channel ID. This is case (a) in my previous email.
 
-The client can only translate an ERR value to NULL if it knows that the
-API will never return NULL. If the API could return NULL, then this
-translation uses a valid return value to represent the error case.
-Functions that return an ERR value or a valid value do NOT in general
-say anything either way about a return value of NULL.
+Stephen, Dan,
 
-While this translation isn't *exactly* the same as an API returning 3
-states, it is almost identical; the translation is only possible if the
-set of numerically possible return values from the function are
-segmented into 3 sets:
+My point (which you quoted) is a fine one - read the definition above.
 
-a) Valid
-b) An ERR value
-c) NULL (which is never returned)
+"Returns pointer to appropriate DMA channel on success or an error pointer."
 
-I believe the important point in Russell's argument against
-IS_ERR_OR_NULL is that the segmentation should be limited to two sets
-(a, b) or (a, c) and not 3. I don't /think/ it was relevant whether the
-function segmented the return values into 3 sets just so it could
-guarantee that it didn't return one of those sets.
+This defines the range of values which are considered successful, and
+those which are considered to be errors.  Error pointers are defined
+by IS_ERR(ptr) being true (not by IS_ERR_OR_NULL(ptr) being true.
+Conversely, it defines what are considered to be non-errors.
 
-If that's not the case, the following would indeed solve the problem easily:
+Therefore, users of such a function _must_ check the return value using
+IS_ERR() and not the IS_ERR_OR_NULL() abomination.
 
-> /**
->  * dma_request_slave_channel - try to allocate an exclusive slave channel
-...
->  * Returns pointer to appropriate DMA channel on success or an error pointer.
->  * In order to ease compatibility with other DMA request APIs, this function
->  * guarantees NEVER to return NULL.
->  */
+The question about NULL is unanswered, but with nothing specified, users
+must assume that if a subsystem returns NULL, it's fine to pass that back
+to the subsystem.  If the subsystem didn't intend for NULL to be valid,
+it shouldn't be returning NULL from such a defined function.
 
->>         /*
->>          * This is code elsewhere in a driver where DMA is optional;
->>          * that code must act differently based on whether a DMA
->>          * channel was acquired or not. So, it tests chan against
->>          * NULL.
->>          */
->>         if (!chan) // This test and the above IS_ERR are IS_ERR_OR_NULL
->>                 return -ESOMETHING;
-> 
-> It's not, because at this point chan will never be an error pointer.
+It's not up to the user of the interface to dream up an error code if
+the subsystem happens to return NULL, or do other crap stuff like this:
 
-It's the combination of the two. IS_ERR_OR_NULL is two separate tests in
-one macro. Simply separating the two tests into separate lines of code
-doesn't change what the code is doing.
+	if (IS_ERR_OR_NULL(ptr))
+		return PTR_ERR(ptr);
 
-> Sure you could do follow on cleanups to allow this driver to propagate
-> the dma_request_slave_channel error code up and change this to if
-> (IS_ERR(chan)) return PTR_ERR(chan), but that's incremental to the
-> initial conversion.
-> 
->> In case (2) above, if the driver /only/ calls a modified
->> dma_request_slave_channel(), all the checks could just be if
->> (IS_ERR(chan)) instead - then problem solved.
-> 
-> It's not solved, you would need to audit the rest of the driver to
-> make sure that everywhere it checks a channel is NULL it checks for
-> IS_ERR instead.  That's a deeper / unnecessary rework for driver's
-> that don't care about the reason they did not get a channel.
+which we already see cropping up from time to time.
 
-I was of course assuming that the auditing would be done, and indeed
-when I first started work on this conversion, it's exactly what I was
-doing. That's why I said *all* checks, not just "the first check".
-
->> However, if the driver
->> mixes the new dma_request_slave_channel() and the unconverted
->> dma_request_channel(), it has to either (a) convert an ERR return from
->> dma_request_slave_channel() to match dma_request_channel()'s NULL error
-> 
-> Yes, better to live with this situation and convert existing drivers
-> vs have a subset of drivers call a new
-> dma_request_slave_channel_or_err() API and then *still* need to
-> convert it to NULL.
-> 
->> return, or (b) convert a NULL return from dma_request_channel() to match
->> dma_request_slave_channel()'s ERR return. Without the conversion, all
->> tests would have to use the deprecated IS_ERR_OR_NULL. Either of those
->> conversion options converts an error value from 1 API into a
->> theoretically valid return value from the other API, which is a bug.
-> 
-> Getting an error from dma_request_slave_channel() and converting that
-> value to NULL is a bug because dma_request_channel() would also return
-> NULL if it did not get a channel?  That's normalization, not a bug.
-
-No, it's a bug because if dma_request_slave_channel() is documented to
-return valid-or-ERR, then assuming that it can never return NULL is
-inconsistent with that. The translation is only possible if it's
-documented to return valid-or-ERR-but-never-NULL.
+So, my argument is that if you define an API to be "pointers on success,
+or error pointers" then your API better handle any cookie you return
+which satisfies IS_ERR(ptr) = false - which by definition includes NULL.
