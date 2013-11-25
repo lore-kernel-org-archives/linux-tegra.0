@@ -1,101 +1,50 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 4/4] ARM: tegra: add MMC controllers to Tegra124 DT
-Date: Mon, 25 Nov 2013 15:39:20 -0700
-Message-ID: <1385419160-11511-4-git-send-email-swarren@wwwdotorg.org>
-References: <1385419160-11511-1-git-send-email-swarren@wwwdotorg.org>
+From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
+Date: Mon, 25 Nov 2013 15:09:11 -0800
+Message-ID: <CAPcyv4jLh6cyaP2DmnOkc11xeKsB0QtbXQ9VV3BBmHVVt2iHXA@mail.gmail.com>
+References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org>
+	<2205346.2EJcydzRLA@wuerfel>
+	<5293CF9F.6040305@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385419160-11511-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5293CF9F.6040305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Nov 25, 2013 at 2:30 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 11/25/2013 03:09 PM, Arnd Bergmann wrote:
+>> On Monday 25 November 2013 14:53:36 Stephen Warren wrote:
+>>> v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
+>>>     suggested by Arnd Bergmann.
+>>>
+>>> This patch is part of a series with strong internal depdendencies. I'm
+>>> looking for an ack so that I can take the entire series through the Tegra
+>>> and arm-soc trees. The series will be part of a stable branch that can be
+>>> merged into other subsystems if needed to avoid/resolve dependencies.
+>>
+>> Did I suggest of_dma_slave_xlate()? I don't think I've actually heard
+>> of that function, and I can't find anything in the kernel source or
+>> using google.
+>>
+>> Why not just use an open-coded xlate function?
+>
+> Well, you suggested not using of_dma_simple_xlate() since it wasn't
+> appropriate. I then started to implement an open-coded xlate function,
+> but found that it was 99% identical to the same thing in the mmp driver,
+> and hence created a common of_dma_slave_xlate() so as not to just
+> cut/paste it everywhere. Unfortunately, I only sent that patch to
+> dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and the DMA maintainers, and there's no
+> archive of that list:-(
 
-Tegra124 has 4 MMC controllers just like previous versions of the SoC.
-Note that there are some non-backwards-compatible HW differences, and
-hence a new DT compatible value must be used to describe the HW.
+There is, however, an archive of the patches:
 
-Also enable the relevant controllers in the Venice2 board DT.
+dma: add common of_dma_slave_xlate()
+https://patchwork.kernel.org/patch/3234751/
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-venice2.dts | 11 ++++++++++
- arch/arm/boot/dts/tegra124.dtsi        | 40 ++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+dma: mmp_pdma: use of_dma_slave_xlate()
+https://patchwork.kernel.org/patch/3234761/
 
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index a0b028384658..bc502112eb04 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -25,6 +25,17 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
- 
-+	sdhci@700b0400 {
-+		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-+		status = "okay";
-+		bus-width = <4>;
-+	};
-+
-+	sdhci@700b0600 {
-+		status = "okay";
-+		bus-width = <8>;
-+	};
-+
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 96e051e13f76..200373236aaa 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -190,6 +190,46 @@
- 		clock-names = "pclk", "clk32k_in";
- 	};
- 
-+	sdhci@700b0000 {
-+		compatible = "nvidia,tegra124-sdhci";
-+		reg = <0x700b0000 0x200>;
-+		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_SDMMC1>;
-+		resets = <&tegra_car 14>;
-+		reset-names = "sdhci";
-+		status = "disable";
-+	};
-+
-+	sdhci@700b0200 {
-+		compatible = "nvidia,tegra124-sdhci";
-+		reg = <0x700b0200 0x200>;
-+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_SDMMC2>;
-+		resets = <&tegra_car 9>;
-+		reset-names = "sdhci";
-+		status = "disable";
-+	};
-+
-+	sdhci@700b0400 {
-+		compatible = "nvidia,tegra124-sdhci";
-+		reg = <0x700b0400 0x200>;
-+		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_SDMMC3>;
-+		resets = <&tegra_car 69>;
-+		reset-names = "sdhci";
-+		status = "disable";
-+	};
-+
-+	sdhci@700b0600 {
-+		compatible = "nvidia,tegra124-sdhci";
-+		reg = <0x700b0600 0x200>;
-+		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_SDMMC4>;
-+		resets = <&tegra_car 15>;
-+		reset-names = "sdhci";
-+		status = "disable";
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--- 
-1.8.1.5
+..btw I think we should squash those two together.
