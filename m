@@ -1,43 +1,44 @@
-From: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH V2] serial: tegra: convert to standard DMA DT bindings
-Date: Mon, 25 Nov 2013 14:18:26 -0800
-Message-ID: <20131125221826.GA18981@kroah.com>
-References: <1385416270-3421-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] mmc: tegra: add support for Tegra124
+Date: Mon, 25 Nov 2013 15:19:53 -0700
+Message-ID: <1385417993-7848-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1385416270-3421-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 02:51:10PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> By using dma_request_slave_channel_or_err(), the DMA slave ID can be
-> looked up from standard DT properties, and squirrelled away during
-> channel allocation. Hence, there's no need to use a custom DT property
-> to store the slave ID.
-> 
-> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2:
-> * Don't allocate DMA channels inside probe(); the DMA channel setup
->   relies on some buffers that don't get allocated until startup().
-> 
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
-> 
-> Greg, you'd previously ack'd this, but I had to change the patch to fix
-> some bugs, which was a fair textual change, so I dropped your ack.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Tegra124's MMC controller is very similar to earlier SoC generations,
+and can be supported by the same driver.
+
+However, there are some non-backwards-compatible HW differences, and
+hence a new DT compatible value must be used to describe the HW. This
+patch updates the driver to support that new compatible value.
+
+That said, the HW differences are only relevant when enabling certain
+high-performance transfer modes. Since the driver is currently very
+simple and doesn't enable those modes, we don't actually need to address
+any of these HW differences in the code yet, hence the simple nature of
+this patch.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/mmc/host/sdhci-tegra.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 5b7b2eba8a54..a835898a68dd 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -198,6 +198,7 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+ };
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
++	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
+ 	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
+ 	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
+ 	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
+-- 
+1.8.1.5
