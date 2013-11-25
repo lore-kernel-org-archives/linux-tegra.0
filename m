@@ -1,41 +1,27 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred probe
-Date: Mon, 25 Nov 2013 11:28:39 -0800
-Message-ID: <CAPcyv4hPy_zddiideTk9HNOZnKzkGqKeT4m6wDyckDmbkoMacA@mail.gmail.com>
-References: <528D28A1.2050307@wwwdotorg.org>
-	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>
-	<528E4F55.9070204@wwwdotorg.org>
-	<CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
-	<528F95A9.2050305@wwwdotorg.org>
-	<CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
-	<528F9DF9.6080706@wwwdotorg.org>
-	<20131123003442.GH16735@n2100.arm.linux.org.uk>
-	<5293883A.8050808@wwwdotorg.org>
-	<CAA9_cmfMtp4WjRGVzfTxrwcNWP95+HE7DAYg_GeWfqi=L2K2aw@mail.gmail.com>
-	<20131125180000.GR16735@n2100.arm.linux.org.uk>
-	<CAA9_cmcqO-=7Gf53ygG3oYwC0=fQgF8xPL2Wywgw84Dz1ZKs6g@mail.gmail.com>
-	<52939E67.6040300@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 0/6] cpufreq: suspend early/resume late
+Date: Mon, 25 Nov 2013 12:29:20 -0700
+Message-ID: <5293A510.9090307@wwwdotorg.org>
+References: <cover.1385374819.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52939E67.6040300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, rjw@rjwysocki.net
+Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 11:00 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> I suppose an alternative would be to remove that flag, and have the loop
-> in of_dma_request_slave_channel() initially ignore any unregistered DMA
-> controllers, and still continue to look through the property for any
-> alternative controller, and return a channel from one if it is found.
-> Then, at the very end of the function, we could always return
-> -EPROBE_DEFER if any unregistered DMA controllers were found, otherwise
-> return -ENODEV. That would keep compatible behaviour, but it would mean
-> that device probe order would/could influence which dmas entry provided
-> the channel, since some entries might be ignored based simply on
-> timing/ordering of DMA controller registration. Is that acceptable?
->
+On 11/25/2013 07:11 AM, Viresh Kumar wrote:
+> This patchset adds cpufreq callbacks to dpm_{suspend|resume}() for handling
+> suspend/resume of cpufreq governors and core. This is required for early suspend
+> and late resume of governors and cpufreq core.
 
-Yes, I think this option makes the most sense, and is just as
-susceptible to probe order as the current implementation.
+Patches 1-3,6,
+Tested-by: Stephen Warren <swarren@nvidia.com>
+
+Patch 6,
+Acked-by: Stephen Warren <swarren@nvidia.com>
+
+Thanks.
