@@ -1,39 +1,38 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] ARM: tegra: document use of standard DMA DT bindings
-Date: Mon, 25 Nov 2013 15:25:44 -0700
-Message-ID: <5293CE68.3000801@wwwdotorg.org>
-References: <1385417161-5542-1-git-send-email-swarren@wwwdotorg.org> <1385417161-5542-4-git-send-email-swarren@wwwdotorg.org> <11843948.6MmkNU7Gku@wuerfel>
+Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
+Date: Mon, 25 Nov 2013 15:30:55 -0700
+Message-ID: <5293CF9F.6040305@wwwdotorg.org>
+References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org> <2205346.2EJcydzRLA@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <11843948.6MmkNU7Gku@wuerfel>
+In-Reply-To: <2205346.2EJcydzRLA@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/25/2013 03:07 PM, Arnd Bergmann wrote:
-> On Monday 25 November 2013 15:06:01 Stephen Warren wrote:
->>    See ../reset/reset.txt for details.
->>  - reset-names : Must include the following entries:
->>    - dma
->> +- #iommu-cells : Must be <1>. This dictates the length of DMA specifiers in
->> +  client nodes' dmas properties. The specifier represents the DMA request
->> +  select value for the peripheral. For more details, consult the Tegra TRM's
->> +  documentation of the APB DMA channel control register REQ_SEL field.
->>  
->>  Examples:
->>  
->> @@ -36,4 +40,5 @@ apbdma: dma@6000a000 {
->>         clocks = <&tegra_car 34>;
->>         resets = <&tegra_car 34>;
->>         reset-names = "dma";
->> +       #iommu-cells = <1>;
+On 11/25/2013 03:09 PM, Arnd Bergmann wrote:
+> On Monday 25 November 2013 14:53:36 Stephen Warren wrote:
+>> v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
+>>     suggested by Arnd Bergmann.
+>>
+>> This patch is part of a series with strong internal depdendencies. I'm
+>> looking for an ack so that I can take the entire series through the Tegra
+>> and arm-soc trees. The series will be part of a stable branch that can be
+>> merged into other subsystems if needed to avoid/resolve dependencies.
 > 
-> s/iommu-cells/dma-cells/
+> Did I suggest of_dma_slave_xlate()? I don't think I've actually heard
+> of that function, and I can't find anything in the kernel source or
+> using google.
+> 
+> Why not just use an open-coded xlate function?
 
-Thanks.
-
-Uggh. I know you pointed that out before, and I fixed it. I guess I
-screwed up a rebase somewhere:-(
+Well, you suggested not using of_dma_simple_xlate() since it wasn't
+appropriate. I then started to implement an open-coded xlate function,
+but found that it was 99% identical to the same thing in the mmp driver,
+and hence created a common of_dma_slave_xlate() so as not to just
+cut/paste it everywhere. Unfortunately, I only sent that patch to
+dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and the DMA maintainers, and there's no
+archive of that list:-(
