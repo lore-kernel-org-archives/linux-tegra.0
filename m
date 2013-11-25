@@ -1,60 +1,233 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH V3 0/6] cpufreq: suspend early/resume late
-Date: Mon, 25 Nov 2013 15:37:43 -0600
-Message-ID: <5293C327.2030606@ti.com>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, rjw@rjwysocki.net
-Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V3] dma: add channel request API that supports deferred probe
+Date: Mon, 25 Nov 2013 14:47:19 -0700
+Message-ID: <1385416039-3170-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/25/2013 08:11 AM, Viresh Kumar wrote:
-> This patchset adds cpufreq callbacks to dpm_{suspend|resume}() for handling
-> suspend/resume of cpufreq governors and core. This is required for early suspend
-> and late resume of governors and cpufreq core.
-> 
-> There are multiple problems that are fixed by this patch:
-> - Nishanth Menon (TI) found an interesting problem on his platform, OMAP. His board
->   wasn't working well with suspend/resume as calls for removing non-boot CPUs
->   was turning out into a call to drivers ->target() which then tries to play
->   with regulators. But regulators and their I2C bus were already suspended and
->   this resulted in a failure. Many platforms have such problems, samsung, tegra,
->   etc.. They solved it with driver specific PM notifiers where they used to
->   disable their driver's ->target() routine. Most of these are updated in this
->   patchset to use new infrastructure.
-> 
-> - Lan Tianyu (Intel) & Jinhyuk Choi (Broadcom) found another issue where
->   tunables configuration for clusters/sockets with non-boot CPUs was getting
->   lost after suspend/resume, as we were notifying governors with
->   CPUFREQ_GOV_POLICY_EXIT on removal of the last cpu for that policy and so
->   deallocating memory for tunables. This is also fixed with this patch as don't
->   allow any operation on Governors during suspend/resume now.
-> 
-> 
-> So to solve these issues we introduce early suspend and late resume callbacks
-> which would remove need of cpufreq drivers to implement PM notifiers to disable
-> transition after suspend and before resume.
-> 
-> @Nishanth: Can you please test V2 as well and confirm that suspend_noirq()
-> doesn't work for you. I am sure it will not, but would be better if you confirm
-> that.
-> 
-> Viresh Kumar (6):
->   cpufreq: suspend governors on system suspend/hibernate
->   cpufreq: call driver's suspend/resume for each policy
-patches 1-2,
-Tested-by: Nishanth Menon <nm@ti.com>
-http://pastebin.mozilla.org/3670932
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Prior to these two patches: http://pastebin.mozilla.org/3670933
-cpufreq driver used: cpufreq_cpu0
+dma_request_slave_channel() simply returns NULL whenever DMA channel
+lookup fails. Lookup could fail for two distinct reasons:
 
+a) No DMA specification exists for the channel name.
+   This includes situations where no DMA specifications exist at all, or
+   other general lookup problems.
 
+b) A DMA specification does exist, yet the driver for that channel is not
+   yet registered.
+
+Case (b) should trigger deferred probe in client drivers. However, since
+they have no way to differentiate the two situations, it cannot.
+
+Implement new function dma_request_slave_channel_or_err(), which performs
+identically to dma_request_slave_channel(), except that it returns an
+error-pointer rather than NULL, which allows callers to detect when
+deferred probe should occur.
+
+Eventually, all drivers should be converted to this new API, the old API
+removed, and the new API renamed to the more desirable name. This patch
+doesn't convert the existing API and all drivers in one go, since some
+drivers call dma_request_slave_channel() then dma_request_channel() if
+that fails. That would require either modifying dma_request_channel() in
+the same way, or adding extra error-handling code to all affected
+drivers, and there are close to 100 drivers using the other API, rather
+than just the 15-20 or so that use dma_request_slave_channel(), which
+might be tenable in a single patch.
+
+acpi_dma_request_slave_chan_by_name() doesn't currently implement
+deferred probe. It should, but this will be addressed later.
+
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v3:
+* s/_or_err/_reason/ in the new API name.
+* Simplify changes to of_dma_request_slave_channel() so that the new
+  "bool defer" parameter is not needed.
+* Revert changes to acpi-dma.c and handle the return value conversion
+  in dma_request_slave_channel_reason() instead.
+* Mention that acpi_dma_request_slave_chan_by_name() should implement
+  deferred probe, but that will happen later.
+v2:
+* include <linux/err.h> in <linux/dmaengine.h>
+* Return -ENODATA if slave_id or chan_id out-of-range.
+* Return an error-pointer not NULL if we can't find a matching DMA
+  controller or translate the channel.
+
+This patch is a dependency for:
+* A series that reworks many of the Tegra drivers.
+* A series that enhances ASoC's dmaengine code to support deferred probe.
+
+As such, it needs to go into a topic branch on its own, based directly
+on 3.13-rc1. If the DMA maintainers ack the patches I'm happy to create
+this topic branch myself and send a pull request to the DMA tree. Or the
+patches can be applied to a topic branch by the DMA maintainers and I
+will merge their topic branch into the Tegra rework branch that I
+mentioned.
+---
+ drivers/dma/dmaengine.c   | 35 +++++++++++++++++++++++++++++++----
+ drivers/dma/of-dma.c      | 13 ++++++++-----
+ include/linux/dmaengine.h |  8 ++++++++
+ 3 files changed, 47 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index ea806bdc12ef..e17e9b22d85e 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -540,6 +540,8 @@ EXPORT_SYMBOL_GPL(dma_get_slave_channel);
+  * @mask: capabilities that the channel must satisfy
+  * @fn: optional callback to disposition available channels
+  * @fn_param: opaque parameter to pass to dma_filter_fn
++ *
++ * Returns pointer to appropriate DMA channel on success or NULL.
+  */
+ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
+ 				       dma_filter_fn fn, void *fn_param)
+@@ -591,18 +593,43 @@ EXPORT_SYMBOL_GPL(__dma_request_channel);
+  * dma_request_slave_channel - try to allocate an exclusive slave channel
+  * @dev:	pointer to client device structure
+  * @name:	slave channel name
++ *
++ * Returns pointer to appropriate DMA channel on success or an error pointer.
+  */
+-struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name)
++struct dma_chan *dma_request_slave_channel_reason(struct device *dev,
++						  const char *name)
+ {
++	struct dma_chan *chan;
++
+ 	/* If device-tree is present get slave info from here */
+ 	if (dev->of_node)
+ 		return of_dma_request_slave_channel(dev->of_node, name);
+ 
+ 	/* If device was enumerated by ACPI get slave info from here */
+-	if (ACPI_HANDLE(dev))
+-		return acpi_dma_request_slave_chan_by_name(dev, name);
++	if (ACPI_HANDLE(dev)) {
++		chan = acpi_dma_request_slave_chan_by_name(dev, name);
++		if (chan)
++			return chan;
++	}
+ 
+-	return NULL;
++	return ERR_PTR(-ENODEV);
++}
++EXPORT_SYMBOL_GPL(dma_request_slave_channel_reason);
++
++/**
++ * dma_request_slave_channel - try to allocate an exclusive slave channel
++ * @dev:	pointer to client device structure
++ * @name:	slave channel name
++ *
++ * Returns pointer to appropriate DMA channel on success or NULL.
++ */
++struct dma_chan *dma_request_slave_channel(struct device *dev,
++					   const char *name)
++{
++	struct dma_chan *ch = dma_request_slave_channel_reason(dev, name);
++	if (IS_ERR(ch))
++		return NULL;
++	return ch;
+ }
+ EXPORT_SYMBOL_GPL(dma_request_slave_channel);
+ 
+diff --git a/drivers/dma/of-dma.c b/drivers/dma/of-dma.c
+index 0b88dd3d05f4..f68e25c9af3a 100644
+--- a/drivers/dma/of-dma.c
++++ b/drivers/dma/of-dma.c
+@@ -143,7 +143,7 @@ static int of_dma_match_channel(struct device_node *np, const char *name,
+  * @np:		device node to get DMA request from
+  * @name:	name of desired channel
+  *
+- * Returns pointer to appropriate dma channel on success or NULL on error.
++ * Returns pointer to appropriate DMA channel on success or an error pointer.
+  */
+ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+ 					      const char *name)
+@@ -152,17 +152,18 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+ 	struct of_dma		*ofdma;
+ 	struct dma_chan		*chan;
+ 	int			count, i;
++	int			ret_no_channel = -ENODEV;
+ 
+ 	if (!np || !name) {
+ 		pr_err("%s: not enough information provided\n", __func__);
+-		return NULL;
++		return ERR_PTR(-ENODEV);
+ 	}
+ 
+ 	count = of_property_count_strings(np, "dma-names");
+ 	if (count < 0) {
+ 		pr_err("%s: dma-names property of node '%s' missing or empty\n",
+ 			__func__, np->full_name);
+-		return NULL;
++		return ERR_PTR(-ENODEV);
+ 	}
+ 
+ 	for (i = 0; i < count; i++) {
+@@ -174,8 +175,10 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+ 
+ 		if (ofdma)
+ 			chan = ofdma->of_dma_xlate(&dma_spec, ofdma);
+-		else
++		else {
++			ret_no_channel = -EPROBE_DEFER;
+ 			chan = NULL;
++		}
+ 
+ 		mutex_unlock(&of_dma_lock);
+ 
+@@ -185,7 +188,7 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+ 			return chan;
+ 	}
+ 
+-	return NULL;
++	return ERR_PTR(ret_no_channel);
+ }
+ 
+ /**
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 41cf0c399288..ed92b30a02fd 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -22,6 +22,7 @@
+ #define LINUX_DMAENGINE_H
+ 
+ #include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/uio.h>
+ #include <linux/bug.h>
+ #include <linux/scatterlist.h>
+@@ -1040,6 +1041,8 @@ enum dma_status dma_wait_for_async_tx(struct dma_async_tx_descriptor *tx);
+ void dma_issue_pending_all(void);
+ struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
+ 					dma_filter_fn fn, void *fn_param);
++struct dma_chan *dma_request_slave_channel_reason(struct device *dev,
++						  const char *name);
+ struct dma_chan *dma_request_slave_channel(struct device *dev, const char *name);
+ void dma_release_channel(struct dma_chan *chan);
+ #else
+@@ -1063,6 +1066,11 @@ static inline struct dma_chan *__dma_request_channel(const dma_cap_mask_t *mask,
+ {
+ 	return NULL;
+ }
++static inline struct dma_chan *dma_request_slave_channel_reason(
++					struct device *dev, const char *name)
++{
++	return ERR_PTR(-ENODEV);
++}
+ static inline struct dma_chan *dma_request_slave_channel(struct device *dev,
+ 							 const char *name)
+ {
 -- 
-Regards,
-Nishanth Menon
+1.8.1.5
