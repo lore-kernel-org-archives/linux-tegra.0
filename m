@@ -1,81 +1,83 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: Provide dummy powergate implementation
-Date: Mon, 25 Nov 2013 11:49:47 -0700
-Message-ID: <1385405387-27265-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
+ probe
+Date: Mon, 25 Nov 2013 12:00:55 -0700
+Message-ID: <52939E67.6040300@wwwdotorg.org>
+References: <528D28A1.2050307@wwwdotorg.org>	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>	<528E4F55.9070204@wwwdotorg.org>	<CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>	<528F95A9.2050305@wwwdotorg.org>	<CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>	<528F9DF9.6080706@wwwdotorg.org>	<20131123003442.GH16735@n2100.arm.linux.org.uk>	<5293883A.8050808@wwwdotorg.org>	<CAA9_cmfMtp4WjRGVzfTxrwcNWP95+HE7DAYg_GeWfqi=L2K2aw@mail.gmail.com>	<20131125180000.GR16735@n2100.arm.linux.org.uk> <CAA9_cmcqO-=7Gf53ygG3oYwC0=fQgF8xPL2Wywgw84Dz1ZKs6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAA9_cmcqO-=7Gf53ygG3oYwC0=fQgF8xPL2Wywgw84Dz1ZKs6g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On 11/25/2013 11:42 AM, Dan Williams wrote:
+> On Mon, Nov 25, 2013 at 10:00 AM, Russell King - ARM Linux
+> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>> On Mon, Nov 25, 2013 at 09:45:18AM -0800, Dan Williams wrote:
+>>> Regardless of whether the driver was dma_request_channel as a
+>>> fallback, it will currently use NULL to indicate an allocation
+>>> failure.
+>>
+>> At the moment, dma_request_slave_channel()'s return values are valid
+>> pointer or NULL.  I'd suggest as that's how it's been established,
+>> that function is left alone - changing the return values in this kind
+>> of invisible way is Really Bad(tm) because you can't check that it's
+>> right in any future users - unless you're prepared to review every
+>> single new user of this function for the next few years or more.
+>>
+>> Instead, leaving it as is and introducing a new function name with
+>> the different return error method is the right way to do this.
+> 
+> I was attempting to tap the brakes on the number of request_channel
+> apis in circulation.
+> dma_request_channel
+> dma_request_slave_channel
+> dma_request_slave_channel_compat
+> ... and now dma_request_slave_channel_reason
+> 
+> ...but given we already have things like samsung_dmadev_request() in
+> the wild, tracking correct usage going forward will be an uphill
+> battle.  We can do this the other way round.  Introduce the new api
+> and delete the old one (after some time).
+> 
+> Stephen,
+> 
+> Can we make the new api not pass the 'defer' flag.  You mention it is
+> for compat reasons, but since there are no users I'm not seeing how
+> there can be compatibility concerns.  Can you elaborate?
 
-In order to support increased build test coverage for drivers, implement
-dummies for the powergate implementation. This will allow the drivers to
-be built without requiring support for Tegra to be selected.
+dma_request_slave_channel_or_err() doesn't have a defer flag. Rather,
+__dma_request_slave_channel_or_err() did, which is the shared
+implementation between the existing existing dma_request_slave_channel()
+and the new dma_request_slave_channel_or_err().
 
-This patch solves the following build errors, which can be triggered in
-v3.13-rc1 by selecting DRM_TEGRA without ARCH_TEGRA:
+That flag exists so it can be passed to of_dma_request_slave_channel().
+That function needs it because I didn't want to change the existing
+behaviour of dma_request_slave_channel() at all, yet I wanted slightly
+different behaviour from dma_request_slave_channel_or_err().
 
-drivers/built-in.o: In function `gr3d_remove':
-drivers/gpu/drm/tegra/gr3d.c:321: undefined reference to `tegra_powergate_power_off'
-drivers/gpu/drm/tegra/gr3d.c:325: undefined reference to `tegra_powergate_power_off'
-drivers/built-in.o: In function `gr3d_probe':
-drivers/gpu/drm/tegra/gr3d.c:266: undefined reference to `tegra_powergate_sequence_power_up'
-drivers/gpu/drm/tegra/gr3d.c:273: undefined reference to `tegra_powergate_sequence_power_up'
+Specifically, if of_dma_request_slave_channel() finds an entry in the
+dmas DT property for which there is no registered DMA controller, it
+simply ignores that entry and carries on, hoping to find an alternative
+entry that can satisfy the request (since some controllers can be
+supported by multiple DMA controllers). However, to support deferred
+probe, we really need to bail out from the loop early with -EPROBE_DEFER
+if any DMA controller isn't found, in order to wait for it to be registered.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[swarren, updated commit description]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-This is a fix for 3.13.
+I suppose an alternative would be to remove that flag, and have the loop
+in of_dma_request_slave_channel() initially ignore any unregistered DMA
+controllers, and still continue to look through the property for any
+alternative controller, and return a channel from one if it is found.
+Then, at the very end of the function, we could always return
+-EPROBE_DEFER if any unregistered DMA controllers were found, otherwise
+return -ENODEV. That would keep compatible behaviour, but it would mean
+that device probe order would/could influence which dmas entry provided
+the channel, since some entries might be ignored based simply on
+timing/ordering of DMA controller registration. Is that acceptable?
 
- include/linux/tegra-powergate.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/include/linux/tegra-powergate.h b/include/linux/tegra-powergate.h
-index c98cfa406952..fd4498329c7c 100644
---- a/include/linux/tegra-powergate.h
-+++ b/include/linux/tegra-powergate.h
-@@ -45,6 +45,7 @@ struct clk;
- 
- #define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
- 
-+#ifdef CONFIG_ARCH_TEGRA
- int tegra_powergate_is_powered(int id);
- int tegra_powergate_power_on(int id);
- int tegra_powergate_power_off(int id);
-@@ -52,5 +53,31 @@ int tegra_powergate_remove_clamping(int id);
- 
- /* Must be called with clk disabled, and returns with clk enabled */
- int tegra_powergate_sequence_power_up(int id, struct clk *clk);
-+#else
-+static inline int tegra_powergate_is_powered(int id)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int tegra_powergate_power_on(int id)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int tegra_powergate_power_off(int id)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int tegra_powergate_remove_clamping(int id)
-+{
-+	return -ENOSYS;
-+}
-+
-+static inline int tegra_powergate_sequence_power_up(int id, struct clk *clk)
-+{
-+	return -ENOSYS;
-+}
-+#endif
- 
- #endif /* _MACH_TEGRA_POWERGATE_H_ */
--- 
-1.8.1.5
+Either way, just let me know and I'll adjust the code accordingly; the
+code changes for either option are simple.
