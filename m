@@ -1,38 +1,43 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
-Date: Mon, 25 Nov 2013 15:30:55 -0700
-Message-ID: <5293CF9F.6040305@wwwdotorg.org>
-References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org> <2205346.2EJcydzRLA@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/3] ARM: tegra: fix DEBUG_LL combined with LPAE
+Date: Mon, 25 Nov 2013 15:36:41 -0700
+Message-ID: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2205346.2EJcydzRLA@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/25/2013 03:09 PM, Arnd Bergmann wrote:
-> On Monday 25 November 2013 14:53:36 Stephen Warren wrote:
->> v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
->>     suggested by Arnd Bergmann.
->>
->> This patch is part of a series with strong internal depdendencies. I'm
->> looking for an ack so that I can take the entire series through the Tegra
->> and arm-soc trees. The series will be part of a stable branch that can be
->> merged into other subsystems if needed to avoid/resolve dependencies.
-> 
-> Did I suggest of_dma_slave_xlate()? I don't think I've actually heard
-> of that function, and I can't find anything in the kernel source or
-> using google.
-> 
-> Why not just use an open-coded xlate function?
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Well, you suggested not using of_dma_simple_xlate() since it wasn't
-appropriate. I then started to implement an open-coded xlate function,
-but found that it was 99% identical to the same thing in the mmp driver,
-and hence created a common of_dma_slave_xlate() so as not to just
-cut/paste it everywhere. Unfortunately, I only sent that patch to
-dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and the DMA maintainers, and there's no
-archive of that list:-(
+The DEBUG_LL UART address is mapped as an MMU section, hence, the
+virtual address must be section-aligned. Sections are 1MB without LPAE
+and 2MB with LPAE. Tegra's virtual address was only aligned to 1MB, and
+hence the mapping was set up incorrectly with LPAE enabled, thus causing
+a hang early during boot. Fix this by picking a different virtual address
+that is aligned to 2MB.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/include/debug/tegra.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/include/debug/tegra.S b/arch/arm/include/debug/tegra.S
+index be6a720dd183..a7b7cedef1a6 100644
+--- a/arch/arm/include/debug/tegra.S
++++ b/arch/arm/include/debug/tegra.S
+@@ -46,10 +46,10 @@
+ #define TEGRA_APB_MISC_GP_HIDREV	(TEGRA_APB_MISC_BASE + 0x804)
+ 
+ /*
+- * Must be 1MB-aligned since a 1MB mapping is used early on.
++ * Must be section-aligned since a section mapping is used early on.
+  * Must not overlap with regions in mach-tegra/io.c:tegra_io_desc[].
+  */
+-#define UART_VIRTUAL_BASE		0xfe100000
++#define UART_VIRTUAL_BASE		0xfe800000
+ 
+ #define checkuart(rp, rv, lhu, bit, uart) \
+ 		/* Load address of CLK_RST register */ \
+-- 
+1.8.1.5
