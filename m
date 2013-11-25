@@ -1,77 +1,35 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 3/3] ARM: tegra: use section-sized static mappings for LPAE too
-Date: Mon, 25 Nov 2013 15:36:43 -0700
-Message-ID: <1385419003-11348-3-git-send-email-swarren@wwwdotorg.org>
-References: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH] ARM: tegra: delete nvidia,tegra20-spi.txt binding
+Date: Mon, 25 Nov 2013 15:37:55 -0700
+Message-ID: <1385419075-11414-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385419003-11348-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The static mappings for Tegra's PPSB and APB regions were sized at 1MB
-in order to allow mapping via sections in order to avoid burning RAM for
-PTEs. On LPAE, sections are 2MB, so the static mappings need to be
-larger in order to gain the same benefit. Set IO_{PPSB,APB}_SIZE to
-SECTION_SIZE so this adjusts automatically.
-
-While we're fiddling with iomap.h, compress IO_{IRAM,CPU}_VIRT together
-to save virtual address space in the vmalloc region; these two regions
-are mapped using PTEs.
+This binding shouldn't exist; Tegra20 has two forms of SPI controller
+that are documented separately in nvidia,tegra20-sflash.txt and
+nvidia,tegra20-slink.txt.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/mach-tegra/iomap.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt | 5 -----
+ 1 file changed, 5 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt
 
-diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
-index 26b1c2ad0ceb..ee79808e93a3 100644
---- a/arch/arm/mach-tegra/iomap.h
-+++ b/arch/arm/mach-tegra/iomap.h
-@@ -19,6 +19,7 @@
- #ifndef __MACH_TEGRA_IOMAP_H
- #define __MACH_TEGRA_IOMAP_H
- 
-+#include <asm/pgtable.h>
- #include <asm/sizes.h>
- 
- #define TEGRA_IRAM_BASE			0x40000000
-@@ -115,27 +116,26 @@
-  * two 256MB io windows (that actually only use about 64KB
-  * at the start of each).
-  *
-- * We will just map the first 1MB of each window (to minimize
-+ * We will just map the first MMU section of each window (to minimize
-  * pt entries needed) and provide a macro to transform physical
-  * io addresses to an appropriate void __iomem *.
-- *
-  */
- 
- #define IO_IRAM_PHYS	0x40000000
- #define IO_IRAM_VIRT	IOMEM(0xFE400000)
- #define IO_IRAM_SIZE	SZ_256K
- 
--#define IO_CPU_PHYS     0x50040000
--#define IO_CPU_VIRT     IOMEM(0xFE000000)
-+#define IO_CPU_PHYS	0x50040000
-+#define IO_CPU_VIRT	IOMEM(0xFE440000)
- #define IO_CPU_SIZE	SZ_16K
- 
- #define IO_PPSB_PHYS	0x60000000
- #define IO_PPSB_VIRT	IOMEM(0xFE200000)
--#define IO_PPSB_SIZE	SZ_1M
-+#define IO_PPSB_SIZE	SECTION_SIZE
- 
- #define IO_APB_PHYS	0x70000000
--#define IO_APB_VIRT	IOMEM(0xFE300000)
--#define IO_APB_SIZE	SZ_1M
-+#define IO_APB_VIRT	IOMEM(0xFE000000)
-+#define IO_APB_SIZE	SECTION_SIZE
- 
- #define IO_TO_VIRT_BETWEEN(p, st, sz)	((p) >= (st) && (p) < ((st) + (sz)))
- #define IO_TO_VIRT_XLATE(p, pst, vst)	(((p) - (pst) + (vst)))
+diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt
+deleted file mode 100644
+index 6b9e51896693..000000000000
+--- a/Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt
++++ /dev/null
+@@ -1,5 +0,0 @@
+-NVIDIA Tegra 2 SPI device
+-
+-Required properties:
+-- compatible : should be "nvidia,tegra20-spi".
+-- gpios : should specify GPIOs used for chipselect.
 -- 
 1.8.1.5
