@@ -1,44 +1,39 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] mmc: tegra: add support for Tegra124
-Date: Mon, 25 Nov 2013 15:19:53 -0700
-Message-ID: <1385417993-7848-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 3/3] ARM: tegra: document use of standard DMA DT bindings
+Date: Mon, 25 Nov 2013 15:25:44 -0700
+Message-ID: <5293CE68.3000801@wwwdotorg.org>
+References: <1385417161-5542-1-git-send-email-swarren@wwwdotorg.org> <1385417161-5542-4-git-send-email-swarren@wwwdotorg.org> <11843948.6MmkNU7Gku@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <11843948.6MmkNU7Gku@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 11/25/2013 03:07 PM, Arnd Bergmann wrote:
+> On Monday 25 November 2013 15:06:01 Stephen Warren wrote:
+>>    See ../reset/reset.txt for details.
+>>  - reset-names : Must include the following entries:
+>>    - dma
+>> +- #iommu-cells : Must be <1>. This dictates the length of DMA specifiers in
+>> +  client nodes' dmas properties. The specifier represents the DMA request
+>> +  select value for the peripheral. For more details, consult the Tegra TRM's
+>> +  documentation of the APB DMA channel control register REQ_SEL field.
+>>  
+>>  Examples:
+>>  
+>> @@ -36,4 +40,5 @@ apbdma: dma@6000a000 {
+>>         clocks = <&tegra_car 34>;
+>>         resets = <&tegra_car 34>;
+>>         reset-names = "dma";
+>> +       #iommu-cells = <1>;
+> 
+> s/iommu-cells/dma-cells/
 
-Tegra124's MMC controller is very similar to earlier SoC generations,
-and can be supported by the same driver.
+Thanks.
 
-However, there are some non-backwards-compatible HW differences, and
-hence a new DT compatible value must be used to describe the HW. This
-patch updates the driver to support that new compatible value.
-
-That said, the HW differences are only relevant when enabling certain
-high-performance transfer modes. Since the driver is currently very
-simple and doesn't enable those modes, we don't actually need to address
-any of these HW differences in the code yet, hence the simple nature of
-this patch.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 5b7b2eba8a54..a835898a68dd 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -198,6 +198,7 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
-+	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
- 	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
- 	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
- 	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
--- 
-1.8.1.5
+Uggh. I know you pointed that out before, and I fixed it. I guess I
+screwed up a rebase somewhere:-(
