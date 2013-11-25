@@ -1,34 +1,68 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred
- probe
-Date: Mon, 25 Nov 2013 12:47:30 -0700
-Message-ID: <5293A952.5070602@wwwdotorg.org>
-References: <528D28A1.2050307@wwwdotorg.org>	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>	<528E4F55.9070204@wwwdotorg.org>	<CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>	<528F95A9.2050305@wwwdotorg.org>	<CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>	<528F9DF9.6080706@wwwdotorg.org>	<20131123003442.GH16735@n2100.arm.linux.org.uk>	<5293883A.8050808@wwwdotorg.org>	<CAA9_cmfMtp4WjRGVzfTxrwcNWP95+HE7DAYg_GeWfqi=L2K2aw@mail.gmail.com>	<20131125180000.GR16735@n2100.arm.linux.org.uk>	<CAA9_cmcqO-=7Gf53ygG3oYwC0=fQgF8xPL2Wywgw84Dz1ZKs6g@mail.gmail.com>	<52939E67.6040300@wwwdotorg.org>	<CAPcyv4hPy_zddiideTk9HNOZnKzkGqKeT4m6wDyckDmbkoMacA@mail.gmail.com>	<5293A573.2050704@wwwdotorg.org> <CAPcyv4ijv2=Fnp9mVKoAUGL9DLYh=6ZSsUd_PWxZqxQ7y
- Z61hA@mail.gmail.com>
+From: Gerhard Sittig <gsi-ynQEQJNshbs@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports
+ deferred probe
+Date: Mon, 25 Nov 2013 21:28:08 +0100
+Message-ID: <20131125202808.GN2760@book.gsilab.sittig.org>
+References: <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>
+ <528E4F55.9070204@wwwdotorg.org>
+ <CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
+ <528F95A9.2050305@wwwdotorg.org>
+ <CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
+ <528F9DF9.6080706@wwwdotorg.org>
+ <20131123003442.GH16735@n2100.arm.linux.org.uk>
+ <5293883A.8050808@wwwdotorg.org>
+ <20131125175330.GQ16735@n2100.arm.linux.org.uk>
+ <52938F75.7020108@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPcyv4ijv2=Fnp9mVKoAUGL9DLYh=6ZSsUd_PWxZqxQ7yZ61hA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52938F75.7020108-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/25/2013 12:45 PM, Dan Williams wrote:
-> On Mon, Nov 25, 2013 at 11:30 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-
->> 2) What's the final call on the new API name?
+On Mon, Nov 25, 2013 at 10:57 -0700, Stephen Warren wrote:
 > 
-> What do you think of _reason?  I just read the existence of
-> dma_request_slave_channel_or_err() as an implication that
-> dma_request_slave_channel() may not fail.
-
-OK, _reason makes good sense. Thanks.
-
->> Just let me know on both - the changes are simple. Thanks.
+> As Dan pointed out, there are many drivers where DMA is optional, so
+> there's a lot of this sprinkled through the body of the driver:
 > 
-> Well thanks for hashing this back and forth, we can laugh about it
-> over a drink at the next conference.
+> if (chan) ...
+> if (!chan) ...
+> 
+> If we don't convert IS_ERR() values to NULL like I showed above, then
+> all those tests would need to be converted to something else. Can we
+> please avoid that?
 
-:-)
+Recently I had a similar situation with clocks.  It turned out to
+be cumbersome to call allocation routines to assign the result
+into state tracking variables, and to adjust the pointer to
+become NULL in hindsight upon failure.  And I received feedback
+that this feels dirty and somehow wrong.
+
+What I did instead was to assign the allocation/lookup results to
+local variables, then test them, and only assign to state
+tracking variables when they are not error pointers (or expected
+or acceptable errors which should go silently).
+
+The shutdown logic then only had to check for the state tracking
+variables against NULL, and release what was allocated as these
+never could be errors.  Other references during the driver's
+lifetime would be similar.
+
+See 2771399a "fs_enet: cleanup clock API use" or b3bfce2bc "i2c:
+mpc: cleanup clock API use" for an example.
+
+Does this help in your case?  The "normalization" would be
+concentrated in the acquisition spot, all error situations are
+handled appropriately, and all other references in subsequent
+code paths remain simple, and identical if there already are any.
+
+
+virtually yours
+Gerhard Sittig
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office-ynQEQJNshbs@public.gmane.org
