@@ -1,128 +1,40 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V3 6/6] cpufreq: Tegra: Use cpufreq_generic_suspend()
-Date: Mon, 25 Nov 2013 19:41:46 +0530
-Message-ID: <d6b2668d6326b2279ff36086e2eb6ae1b334f496.1385374822.git.viresh.kumar@linaro.org>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net
-Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/5] clk: tegra: Fix clock rate computation
+Date: Mon, 25 Nov 2013 10:16:04 -0700
+Message-ID: <529385D4.6040901@wwwdotorg.org>
+References: <1384787499-26994-1-git-send-email-treding@nvidia.com> <20131125140910.GI26617@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131125140910.GI26617-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently we have implemented PM notifiers to disable/enable ->target() routines
-functionality during suspend/resume.
+On 11/25/2013 07:09 AM, Peter De Schrijver wrote:
+> On Mon, Nov 18, 2013 at 04:11:35PM +0100, Thierry Reding wrote:
+>> The PLL output frequency is multiplied during the P-divider computation,
+>> so it needs to be divided by the P-divider again before returning.
+>>
+>> This fixes an issue where clk_round_rate() would return the multiplied
+>> frequency instead of the real one after the P-divider.
+>>
+> 
+> Series Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I will squash the Tegra124 fixes in the Tegra124 series.
 
-Now we have support present in cpufreq core, lets use it.
+BTW, as a maintainer of some code, you usually do one of:
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/tegra-cpufreq.c | 54 +++++------------------------------------
- 1 file changed, 6 insertions(+), 48 deletions(-)
+a) Apply the patch yourself.
 
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
-index f42df7e..336368b 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra-cpufreq.c
-@@ -26,7 +26,6 @@
- #include <linux/err.h>
- #include <linux/clk.h>
- #include <linux/io.h>
--#include <linux/suspend.h>
- 
- static struct cpufreq_frequency_table freq_table[] = {
- 	{ .frequency = 216000 },
-@@ -48,8 +47,6 @@ static struct clk *pll_p_clk;
- static struct clk *emc_clk;
- 
- static unsigned long target_cpu_speed[NUM_CPUS];
--static DEFINE_MUTEX(tegra_cpu_lock);
--static bool is_suspended;
- 
- static unsigned int tegra_getspeed(unsigned int cpu)
- {
-@@ -137,50 +134,10 @@ static unsigned long tegra_cpu_highest_speed(void)
- 
- static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
- {
--	unsigned int freq;
--	int ret = 0;
--
--	mutex_lock(&tegra_cpu_lock);
--
--	if (is_suspended) {
--		ret = -EBUSY;
--		goto out;
--	}
--
--	freq = freq_table[index].frequency;
--
--	target_cpu_speed[policy->cpu] = freq;
--
--	ret = tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
--
--out:
--	mutex_unlock(&tegra_cpu_lock);
--	return ret;
-+	target_cpu_speed[policy->cpu] = freq_table[index].frequency;
-+	return tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
- }
- 
--static int tegra_pm_notify(struct notifier_block *nb, unsigned long event,
--	void *dummy)
--{
--	mutex_lock(&tegra_cpu_lock);
--	if (event == PM_SUSPEND_PREPARE) {
--		struct cpufreq_policy *policy = cpufreq_cpu_get(0);
--		is_suspended = true;
--		pr_info("Tegra cpufreq suspend: setting frequency to %d kHz\n",
--			freq_table[0].frequency);
--		tegra_update_cpu_speed(policy, freq_table[0].frequency);
--		cpufreq_cpu_put(policy);
--	} else if (event == PM_POST_SUSPEND) {
--		is_suspended = false;
--	}
--	mutex_unlock(&tegra_cpu_lock);
--
--	return NOTIFY_OK;
--}
--
--static struct notifier_block tegra_cpu_pm_notifier = {
--	.notifier_call = tegra_pm_notify,
--};
--
- static int tegra_cpu_init(struct cpufreq_policy *policy)
- {
- 	int ret;
-@@ -192,6 +149,7 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	clk_prepare_enable(cpu_clk);
- 
- 	target_cpu_speed[policy->cpu] = tegra_getspeed(policy->cpu);
-+	policy->suspend_freq = freq_table[0].frequency;
- 
- 	/* FIXME: what's the actual transition time? */
- 	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
-@@ -201,9 +159,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 		return ret;
- 	}
- 
--	if (policy->cpu == 0)
--		register_pm_notifier(&tegra_cpu_pm_notifier);
--
- 	return 0;
- }
- 
-@@ -223,6 +178,9 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
- 	.exit		= tegra_cpu_exit,
- 	.name		= "tegra",
- 	.attr		= cpufreq_generic_attr,
-+#ifdef CONFIG_PM
-+	.suspend	= cpufreq_generic_suspend,
-+#endif
- };
- 
- static int __init tegra_cpufreq_init(void)
--- 
-1.7.12.rc2.18.g61b472e
+b) Ack the patch for someone else to apply.
+
+It's unusual to do both, unless there's some confusion which tree the
+patch will go through, so you do e.g. (b) first then later find out that
+(a) was more correct, or vice-versa.
+
+Also, in the past I've been asked to make sure that all ARM-related
+patches go to the main ARM list as well as the Tegra-specific list, to
+make sure they get full visibility.
