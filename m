@@ -1,40 +1,104 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
-Date: Mon, 25 Nov 2013 14:56:23 -0700
-Message-ID: <5293C787.1030005@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org> <20131116095529.GF15393@sirena.org.uk> <528A4C8C.3030200@wwwdotorg.org> <20131118183716.GR2674@sirena.org.uk>
+Subject: [PATCH V2 0/3] ARM: tegra: use common reset and DMA bindings
+Date: Mon, 25 Nov 2013 15:05:58 -0700
+Message-ID: <1385417161-5542-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131118183716.GR2674-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2013 11:37 AM, Mark Brown wrote:
-> On Mon, Nov 18, 2013 at 10:21:16AM -0700, Stephen Warren wrote:
-> 
->> It's fixing a dependency that should already be there, in the 
->> COMPILE_TEST case. In the (ARCH_TEGRA && TEGRA20_APB_DMA) case, 
->> COMMON_CLOCK is always selected.
-> 
->> Do you want me to split this out into a separate patch? If so,
->> I'd prefer not to apply that separate patch immediately to 3.13
->> as a fix, since then it'd delay applying this series until after
->> -rc2 is out, unless you can get the fix into -rc1 quickly...
-> 
-> I don't really care, it was just that I was looking for something
-> to do with clocks in the patch and couldn't find anything.  Perhaps
-> a note in the changelog if you need to respin so I don't forget and
-> say the same thing again.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I added the following to the changelog:
+(((
+This is V2 of a small subset of a much larger series. All the driver
+code in the series has been ack'd, so I'm just missing acks for the DT
+bindings changes, which is all I'm reposting here. The changes in V2
+are minor typo-oriented changes. V1 was at:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-November/211699.html
+)))
 
-----------
-Note: The addition of "depends COMMON_CLOCK" is something that was
-missing before, not a new requirement.
-----------
+This series implements a common reset framework driver for Tegra, and
+updates all relevant Tegra drivers to use it. It also removes the custom
+DMA bindings and replaced them with the standard DMA DT bindings.
 
-You didn't ack this one patch; I assume that was just an oversight?
+Historically, the Tegra clock driver has exported a custom API for module
+reset. This series removes that API, and transitions DT and drivers to
+the new reset framework.
+
+The custom API used a "struct clk" to identify which module to reset, and
+consequently some DT bindings and drivers required clocks to be provided
+where they really needed just a reset identifier instead. Due to this
+known deficiency, I have always considered most Tegra bindings to be
+unstable. This series removes this excuse for instability, although I
+still consider some Tegra bindings unstable due to the need to convert to
+the common DMA bindings.
+
+Historically, Tegra DMA channels have been represented in DT using a
+custom nvidia,dma-request-selector property. Now that standard DMA DT
+bindings exist, convert all Tegra bindings, DTs, and drivers to use the
+standard instead.
+
+This series makes a DT-ABI-incompatible change to:
+- Require reset specifiers in DT where relevant.
+- Require standard DMA specifiers.
+- Remove clock specifiers from DT where they were only needed for reset.
+- Remove legacy DMA specifier properties.
+
+I anticipate merging this whole series into the Tegra and arm-soc trees
+as its own branch, due to internal dependencies. This branch will be
+stable and can then be merged into any other subsystem trees should any
+conflicts arise.
+
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+
+Stephen Warren (3):
+  ARM: tegra: add missing clock documentation to DT bindings
+  ARM: tegra: document reset properties in DT bindings
+  ARM: tegra: document use of standard DMA DT bindings
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |   1 +
+ .../bindings/clock/nvidia,tegra114-car.txt         |   4 +
+ .../bindings/clock/nvidia,tegra124-car.txt         |   4 +
+ .../bindings/clock/nvidia,tegra20-car.txt          |   4 +
+ .../bindings/clock/nvidia,tegra30-car.txt          |   4 +
+ .../devicetree/bindings/dma/tegra20-apbdma.txt     |  14 +++
+ .../bindings/gpu/nvidia,tegra20-host1x.txt         | 122 +++++++++++++++++++++
+ .../devicetree/bindings/i2c/nvidia,tegra20-i2c.txt |  27 ++++-
+ .../bindings/input/nvidia,tegra20-kbc.txt          |   9 ++
+ .../bindings/mmc/nvidia,tegra20-sdhci.txt          |   9 ++
+ .../devicetree/bindings/nvec/nvidia,nvec.txt       |  12 ++
+ .../bindings/pci/nvidia,tegra20-pcie.txt           |  28 +++--
+ .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt |   9 ++
+ .../devicetree/bindings/rtc/nvidia,tegra20-rtc.txt |   3 +
+ .../bindings/serial/nvidia,tegra20-hsuart.txt      |  19 +++-
+ .../bindings/sound/nvidia,tegra-audio-alc5632.txt  |   7 +-
+ .../bindings/sound/nvidia,tegra-audio-rt5640.txt   |   7 +-
+ .../bindings/sound/nvidia,tegra-audio-wm8753.txt   |   7 +-
+ .../bindings/sound/nvidia,tegra-audio-wm8903.txt   |   7 +-
+ .../bindings/sound/nvidia,tegra-audio-wm9712.txt   |   7 +-
+ .../bindings/sound/nvidia,tegra20-ac97.txt         |  20 +++-
+ .../bindings/sound/nvidia,tegra20-i2s.txt          |  19 +++-
+ .../bindings/sound/nvidia,tegra30-ahub.txt         |  54 ++++++---
+ .../bindings/sound/nvidia,tegra30-i2s.txt          |  11 +-
+ .../bindings/spi/nvidia,tegra114-spi.txt           |  24 +++-
+ .../bindings/spi/nvidia,tegra20-sflash.txt         |  20 +++-
+ .../bindings/spi/nvidia,tegra20-slink.txt          |  20 +++-
+ .../bindings/timer/nvidia,tegra20-timer.txt        |   3 +
+ .../bindings/timer/nvidia,tegra30-timer.txt        |   3 +
+ .../bindings/usb/nvidia,tegra20-ehci.txt           |   7 +-
+ 30 files changed, 416 insertions(+), 69 deletions(-)
+
+-- 
+1.8.1.5
