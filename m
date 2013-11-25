@@ -1,49 +1,111 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCHv5 2/9] driver/core: populate devices in order for IOMMUs
-Date: Mon, 25 Nov 2013 17:39:00 +0000
-Message-ID: <20131125173900.GB28201@mudshark.cambridge.arm.com>
-References: <1384853593-32202-1-git-send-email-hdoyu@nvidia.com>
-	<1384853593-32202-3-git-send-email-hdoyu@nvidia.com>
-	<20131121131558.E5B82C40A2C@trevor.secretlab.ca>
-	<528E5932.1070105@wwwdotorg.org>
-	<20131122074111.155E2C40753@trevor.secretlab.ca>
-	<528F95FE.7080406@wwwdotorg.org>
+From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred probe
+Date: Mon, 25 Nov 2013 09:45:18 -0800
+Message-ID: <CAA9_cmfMtp4WjRGVzfTxrwcNWP95+HE7DAYg_GeWfqi=L2K2aw@mail.gmail.com>
+References: <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>
+	<528D0C06.9080006@wwwdotorg.org>
+	<1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>
+	<528D28A1.2050307@wwwdotorg.org>
+	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>
+	<528E4F55.9070204@wwwdotorg.org>
+	<CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
+	<528F95A9.2050305@wwwdotorg.org>
+	<CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
+	<528F9DF9.6080706@wwwdotorg.org>
+	<20131123003442.GH16735@n2100.arm.linux.org.uk>
+	<5293883A.8050808@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <528F95FE.7080406-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5293883A.8050808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi-5wv7dgnIgG8@public.gmane.org>, "swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dave.martin-5wv7dgnIgG8@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 22, 2013 at 05:35:58PM +0000, Stephen Warren wrote:
-> On 11/22/2013 12:41 AM, Grant Likely wrote:
-> > It seems more that IOMMU attachment is closer to being a property of the
-> > bus rather than a property of the device itself. In that context it
-> > would make more sense for the bus device to hold off child device
-> > registration or probing until the IOMMU is available. That keeps the
-> > logic out of both the core code and the individual device drivers.
-> 
-> The bus structure that DT and Linux know about is the register bus.
-> There's no reason that devices have to emit their master transactions
-> onto that same bus, or onto only that same bus.
+On Mon, Nov 25, 2013 at 9:26 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 11/22/2013 05:34 PM, Russell King - ARM Linux wrote:
+> [... various discussions re: IS_ERR, IS_ERR_OR_NULL, etc.]
+>
+> Russell, so if we document dma_request_slave_channel() as follows:
+>
+>> /*
+>>  * dma_request_slave_channel - try to allocate an exclusive slave channel
+>> ...
+>>  * Returns pointer to appropriate DMA channel on success or an error pointer.
+>>  * In order to ease compatibility with other DMA request APIs, this function
+>>  * guarantees NEVER to return NULL.
+>>  */
+>
+> Are you then OK with clients doing either of e.g.:
+>
+> chan = dma_request_slave_channel(...);
+> if (IS_ERR(chan))
+>         // This returns NULL or a valid handle/pointer
+>         chan = dma_request_channel()
+> if (!chan)
+>         Here, chan is invalid;
+>         return;
+> Here, chan is valid
+>
 
-Agreed. Dave (CC'd) and I actually had a lot of discussion around the DT bus
-abstractions last week and we ended up with a binding that looked sane enough
-to start a meaningful discussion in this area.
+If the driver falls back to dma_request_channel then this one is cleaner.
 
-Dave -- care to post what we came up with? It certainly has a bunch of
-overlap with the IOMMU problems being discussed here.
+> or:
+>
+> if (xxx) {
+>         chan = dma_request_slave_channel(...);
+>         // Convert to same error value as else{} block generates
+>         if (IS_ERR(chan))
+>                 chan = NULL
+> } else {
+>         // This returns NULL or a valid handle/pointer
+>         chan = dma_request_channel()
+> }
+> if (!chan)
+>         Here, chan is invalid
+>         return;
+> Here, chan is valid
 
-Will
+Regardless of whether the driver was dma_request_channel as a
+fallback, it will currently use NULL to indicate an allocation
+failure.  We could go and audit the driver's usage of the result to
+add more IS_ERR() guards.  In the absence of a later call to
+dma_request_channel() immediately converting to NULL is the least
+error prone conversion.  Of course it's up to the driver, for example:
+
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index aaa22867e656..c0f400c3c954 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -278,7 +278,7 @@ static void pl011_dma_probe_initcall(struct device
+*dev, struct uart_amba_port *
+
+        chan = dma_request_slave_channel(dev, "tx");
+
+-       if (!chan) {
++       if (IS_ERR(chan)) {
+                /* We need platform data */
+                if (!plat || !plat->dma_filter) {
+                        dev_info(uap->port.dev, "no DMA platform data\n");
+
+...does not need to convert it to NULL.
+
+Nor this one...
+diff --git a/drivers/usb/musb/musb_cppi41.c b/drivers/usb/musb/musb_cppi41.c
+index ff9d6de2b746..b71c5f138968 100644
+--- a/drivers/usb/musb/musb_cppi41.c
++++ b/drivers/usb/musb/musb_cppi41.c
+@@ -502,7 +502,7 @@ static int cppi41_dma_controller_start(struct
+cppi41_dma_controller *controller)
+                musb_dma->max_len = SZ_4M;
+
+                dc = dma_request_slave_channel(dev, str);
+-               if (!dc) {
++               if (IS_ERR(dc)) {
+                        dev_err(dev, "Falied to request %s.\n", str);
+                        ret = -EPROBE_DEFER;
+                        goto err;
+
+...but need to go back and see if this can be cleaned up to not invent
+the error code here.
