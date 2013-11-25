@@ -1,77 +1,30 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH 1/2] clk: tegra: fix vi clk for Terga124
-Date: Mon, 25 Nov 2013 15:20:22 +0200
-Message-ID: <1385385623-8952-2-git-send-email-pdeschrijver@nvidia.com>
-References: <1385385623-8952-1-git-send-email-pdeschrijver@nvidia.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: add FUSE clock device
+Date: Mon, 25 Nov 2013 15:42:05 +0200
+Message-ID: <20131125134205.GH26617@tbergstrom-lnx.Nvidia.com>
+References: <1385001490-18927-1-git-send-email-acourbot@nvidia.com>
+ <20131122134140.GE26617@tbergstrom-lnx.Nvidia.com>
+ <528F8462.4010105@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385385623-8952-1-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <528F8462.4010105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The vi clk on Tegra124 has an extra possible parent: pll_c4. Fix the code
-to allow for this.
+On Fri, Nov 22, 2013 at 05:20:50PM +0100, Stephen Warren wrote:
+> On 11/22/2013 06:41 AM, Peter De Schrijver wrote:
+> > On Thu, Nov 21, 2013 at 03:38:10AM +0100, Alexandre Courbot wrote:
+> >> This clock is needed to ensure the FUSE registers can be accessed
+> >> without freezing the system.
+> >>
+> >> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > 
+> > Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Aren't you taking this patch through the clock tree?
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/clk/tegra/clk-id.h           |    1 +
- drivers/clk/tegra/clk-tegra-periph.c |    8 ++++++++
- drivers/clk/tegra/clk-tegra124.c     |    2 +-
- 3 files changed, 10 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-id.h b/drivers/clk/tegra/clk-id.h
-index 836b054..c5aba5c 100644
---- a/drivers/clk/tegra/clk-id.h
-+++ b/drivers/clk/tegra/clk-id.h
-@@ -212,6 +212,7 @@ enum clk_id {
- 	tegra_clk_vfir,
- 	tegra_clk_vi,
- 	tegra_clk_vi_8,
-+	tegra_clk_vi_9,
- 	tegra_clk_vic03,
- 	tegra_clk_vim2_clk,
- 	tegra_clk_vimclk_sync,
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 9125d02..fb84f60 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -359,6 +359,13 @@ static u32 mux_pllm_pllc_pllp_plla_pllc2_c3_clkm_idx[] = {
- 	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6,
- };
- 
-+static const char *mux_pllm_pllc2_c_c3_pllp_plla_pllc4[] = {
-+	"pll_m", "pll_c2", "pll_c", "pll_c3", "pll_p", "pll_a_out0", "pll_c4",
-+};
-+static u32 mux_pllm_pllc2_c_c3_pllp_plla_pllc4_idx[] = {
-+	[0] = 0, [1] = 1, [2] = 2, [3] = 3, [4] = 4, [5] = 6, [6] = 7,
-+};
-+
- static struct tegra_periph_init_data periph_clks[] = {
- 	AUDIO("d_audio", CLK_SOURCE_D_AUDIO, 106, TEGRA_PERIPH_ON_APB, tegra_clk_d_audio),
- 	AUDIO("dam0", CLK_SOURCE_DAM0, 108, TEGRA_PERIPH_ON_APB, tegra_clk_dam0),
-@@ -378,6 +385,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	INT("3d", mux_pllm_pllc_pllp_plla, CLK_SOURCE_3D, 24, 0, tegra_clk_gr3d),
- 	INT8("vde", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_VDE, 61, 0, tegra_clk_vde_8),
- 	INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_VI, 20, 0, tegra_clk_vi_8),
-+	INT8("vi", mux_pllm_pllc2_c_c3_pllp_plla_pllc4, CLK_SOURCE_VI, 20, 0, tegra_clk_vi_9),
- 	INT8("epp", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_EPP, 19, 0, tegra_clk_epp_8),
- 	INT8("msenc", mux_pllm_pllc2_c_c3_pllp_plla, CLK_SOURCE_MSENC, 91, TEGRA_PERIPH_WAR_1005168, tegra_clk_msenc),
- 	INT8("tsec", mux_pllp_pllc2_c_c3_pllm_clkm, CLK_SOURCE_TSEC, 83, 0, tegra_clk_tsec),
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 3584138..54af043 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -861,7 +861,7 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_vfir] = { .dt_id = TEGRA124_CLK_VFIR, .present = true },
- 	[tegra_clk_spdif_in] = { .dt_id = TEGRA124_CLK_SPDIF_IN, .present = true },
- 	[tegra_clk_spdif_out] = { .dt_id = TEGRA124_CLK_SPDIF_OUT, .present = true },
--	[tegra_clk_vi] = { .dt_id = TEGRA124_CLK_VI, .present = true },
-+	[tegra_clk_vi_9] = { .dt_id = TEGRA124_CLK_VI, .present = true },
- 	[tegra_clk_vi_sensor] = { .dt_id = TEGRA124_CLK_VI_SENSOR, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA124_CLK_FUSE, .present = true },
- 	[tegra_clk_fuse_burn] = { .dt_id = TEGRA124_CLK_FUSE_BURN, .present = true },
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+Will do.
