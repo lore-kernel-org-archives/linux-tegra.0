@@ -1,111 +1,70 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/31] dma: add channel request API that supports deferred probe
-Date: Mon, 25 Nov 2013 09:45:18 -0800
-Message-ID: <CAA9_cmfMtp4WjRGVzfTxrwcNWP95+HE7DAYg_GeWfqi=L2K2aw@mail.gmail.com>
-References: <CAPcyv4hjJDOq+qEvuCG32PLQcWeHVyeVDCy=5UM8KX445OxY_w@mail.gmail.com>
-	<528D0C06.9080006@wwwdotorg.org>
-	<1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com>
-	<528D28A1.2050307@wwwdotorg.org>
-	<CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com>
-	<528E4F55.9070204@wwwdotorg.org>
-	<CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
-	<528F95A9.2050305@wwwdotorg.org>
-	<CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
-	<528F9DF9.6080706@wwwdotorg.org>
-	<20131123003442.GH16735@n2100.arm.linux.org.uk>
-	<5293883A.8050808@wwwdotorg.org>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 11/31] dma: add channel request API that supports
+	deferred probe
+Date: Mon, 25 Nov 2013 17:53:30 +0000
+Message-ID: <20131125175330.GQ16735@n2100.arm.linux.org.uk>
+References: <1384979000.2067.5.camel@dwillia2-mobl1.amr.corp.intel.com> <528D28A1.2050307@wwwdotorg.org> <CAPcyv4jRYu7iTOuiXuj9F-t5dpF3ErVHT4X-PKrkJAYfn91a0w@mail.gmail.com> <528E4F55.9070204@wwwdotorg.org> <CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com> <528F95A9.2050305@wwwdotorg.org> <CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com> <528F9DF9.6080706@wwwdotorg.org> <20131123003442.GH16735@n2100.arm.linux.org.uk> <5293883A.8050808@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 In-Reply-To: <5293883A.8050808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 9:26 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+On Mon, Nov 25, 2013 at 10:26:18AM -0700, Stephen Warren wrote:
 > On 11/22/2013 05:34 PM, Russell King - ARM Linux wrote:
 > [... various discussions re: IS_ERR, IS_ERR_OR_NULL, etc.]
->
+> 
 > Russell, so if we document dma_request_slave_channel() as follows:
->
->> /*
->>  * dma_request_slave_channel - try to allocate an exclusive slave channel
->> ...
->>  * Returns pointer to appropriate DMA channel on success or an error pointer.
->>  * In order to ease compatibility with other DMA request APIs, this function
->>  * guarantees NEVER to return NULL.
->>  */
->
+> 
+> > /*
+> >  * dma_request_slave_channel - try to allocate an exclusive slave channel
+> > ...
+> >  * Returns pointer to appropriate DMA channel on success or an error pointer.
+> >  * In order to ease compatibility with other DMA request APIs, this function
+> >  * guarantees NEVER to return NULL.
+> >  */
+> 
 > Are you then OK with clients doing either of e.g.:
->
+> 
 > chan = dma_request_slave_channel(...);
 > if (IS_ERR(chan))
->         // This returns NULL or a valid handle/pointer
->         chan = dma_request_channel()
+> 	// This returns NULL or a valid handle/pointer
+> 	chan = dma_request_channel()
 > if (!chan)
->         Here, chan is invalid;
->         return;
+> 	Here, chan is invalid;
+> 	return;
 > Here, chan is valid
->
-
-If the driver falls back to dma_request_channel then this one is cleaner.
-
+> 
 > or:
->
+> 
 > if (xxx) {
->         chan = dma_request_slave_channel(...);
->         // Convert to same error value as else{} block generates
->         if (IS_ERR(chan))
->                 chan = NULL
+> 	chan = dma_request_slave_channel(...);
+> 	// Convert to same error value as else{} block generates
+> 	if (IS_ERR(chan))
+> 		chan = NULL
 > } else {
->         // This returns NULL or a valid handle/pointer
->         chan = dma_request_channel()
+> 	// This returns NULL or a valid handle/pointer
+> 	chan = dma_request_channel()
 > }
 > if (!chan)
->         Here, chan is invalid
->         return;
+> 	Here, chan is invalid
+> 	return;
 > Here, chan is valid
 
-Regardless of whether the driver was dma_request_channel as a
-fallback, it will currently use NULL to indicate an allocation
-failure.  We could go and audit the driver's usage of the result to
-add more IS_ERR() guards.  In the absence of a later call to
-dma_request_channel() immediately converting to NULL is the least
-error prone conversion.  Of course it's up to the driver, for example:
+The cleaner way to write this is:
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index aaa22867e656..c0f400c3c954 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -278,7 +278,7 @@ static void pl011_dma_probe_initcall(struct device
-*dev, struct uart_amba_port *
+	chan = dma_request_slave_channel(...);
+	if (IS_ERR(chan)) {
+		chan = dma_request_channel();
+		if (!chan)
+			return;
+	}
 
-        chan = dma_request_slave_channel(dev, "tx");
-
--       if (!chan) {
-+       if (IS_ERR(chan)) {
-                /* We need platform data */
-                if (!plat || !plat->dma_filter) {
-                        dev_info(uap->port.dev, "no DMA platform data\n");
-
-...does not need to convert it to NULL.
-
-Nor this one...
-diff --git a/drivers/usb/musb/musb_cppi41.c b/drivers/usb/musb/musb_cppi41.c
-index ff9d6de2b746..b71c5f138968 100644
---- a/drivers/usb/musb/musb_cppi41.c
-+++ b/drivers/usb/musb/musb_cppi41.c
-@@ -502,7 +502,7 @@ static int cppi41_dma_controller_start(struct
-cppi41_dma_controller *controller)
-                musb_dma->max_len = SZ_4M;
-
-                dc = dma_request_slave_channel(dev, str);
--               if (!dc) {
-+               if (IS_ERR(dc)) {
-                        dev_err(dev, "Falied to request %s.\n", str);
-                        ret = -EPROBE_DEFER;
-                        goto err;
-
-...but need to go back and see if this can be cleaned up to not invent
-the error code here.
+So, if you make it to this point, chan must be valid according to the
+conditions on the API - you've applied the test individally to each
+return function according to its documented behaviour.  If it does
+happen to be NULL, that's not *your* problem as a user of the API.
