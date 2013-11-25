@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 1/3] ARM: tegra: fix DEBUG_LL combined with LPAE
-Date: Mon, 25 Nov 2013 15:36:41 -0700
-Message-ID: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH 2/3] ARM: tegra: don't hard-code DEBUG_LL baud rate
+Date: Mon, 25 Nov 2013 15:36:42 -0700
+Message-ID: <1385419003-11348-2-git-send-email-swarren@wwwdotorg.org>
+References: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1385419003-11348-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,34 +12,106 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The DEBUG_LL UART address is mapped as an MMU section, hence, the
-virtual address must be section-aligned. Sections are 1MB without LPAE
-and 2MB with LPAE. Tegra's virtual address was only aligned to 1MB, and
-hence the mapping was set up incorrectly with LPAE enabled, thus causing
-a hang early during boot. Fix this by picking a different virtual address
-that is aligned to 2MB.
+Stop writing to the UART clock divider registers in the Tegra DEBUG_LL
+code. This allows the DEBUG_LL output to use whatever baud rate was set
+up by the bootloader. Some users are using higher rates than 115200.
+
+This removes the only usage of tegra_uart_config[3], so reduce the size
+allocated for that array.
+
+Finally, fix busyuart() so that it only waits for THRE and not TEMT. For
+some reason, TEMT doesn't get asserted (at least on Tegra30 Beaver) at
+9600 baud, even though it does at 115200 baud. This sounds like a HW bug,
+but I haven't investigated. For reference, U-Boot's serial code has
+always only checked THRE, and not checked TEMT.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Tested-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/include/debug/tegra.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/include/debug/tegra.S | 30 +++---------------------------
+ arch/arm/mach-tegra/tegra.c    |  4 +---
+ 2 files changed, 4 insertions(+), 30 deletions(-)
 
 diff --git a/arch/arm/include/debug/tegra.S b/arch/arm/include/debug/tegra.S
-index be6a720dd183..a7b7cedef1a6 100644
+index a7b7cedef1a6..f98763f0bc17 100644
 --- a/arch/arm/include/debug/tegra.S
 +++ b/arch/arm/include/debug/tegra.S
-@@ -46,10 +46,10 @@
- #define TEGRA_APB_MISC_GP_HIDREV	(TEGRA_APB_MISC_BASE + 0x804)
+@@ -156,28 +156,6 @@
+ 92:		and	\rv, \rp, #0xffffff	@ offset within 1MB section
+ 		add	\rv, \rv, #UART_VIRTUAL_BASE
+ 		str	\rv, [\tmp, #8]		@ Store in tegra_uart_virt
+-		movw	\rv, #TEGRA_APB_MISC_GP_HIDREV & 0xffff
+-		movt	\rv, #TEGRA_APB_MISC_GP_HIDREV >> 16
+-		ldr	\rv, [\rv, #0]		@ Load HIDREV
+-		ubfx	\rv, \rv, #8, #8	@ 15:8 are SoC version
+-		cmp	\rv, #0x20		@ Tegra20?
+-		moveq	\rv, #0x75		@ Tegra20 divisor
+-		movne	\rv, #0xdd		@ Tegra30 divisor
+-		str	\rv, [\tmp, #12]	@ Save divisor to scratch
+-		/* uart[UART_LCR] = UART_LCR_WLEN8 | UART_LCR_DLAB; */
+-		mov	\rv, #UART_LCR_WLEN8 | UART_LCR_DLAB
+-		str	\rv, [\rp, #UART_LCR << UART_SHIFT]
+-		/* uart[UART_DLL] = div & 0xff; */
+-		ldr	\rv, [\tmp, #12]
+-		and	\rv, \rv, #0xff
+-		str	\rv, [\rp, #UART_DLL << UART_SHIFT]
+-		/* uart[UART_DLM] = div >> 8; */
+-		ldr	\rv, [\tmp, #12]
+-		lsr	\rv, \rv, #8
+-		str	\rv, [\rp, #UART_DLM << UART_SHIFT]
+-		/* uart[UART_LCR] = UART_LCR_WLEN8; */
+-		mov	\rv, #UART_LCR_WLEN8
+-		str	\rv, [\rp, #UART_LCR << UART_SHIFT]
+ 		b	100f
  
+ 		.align
+@@ -205,8 +183,8 @@
+ 		cmp	\rx, #0
+ 		beq	1002f
+ 1001:		ldrb	\rd, [\rx, #UART_LSR << UART_SHIFT]
+-		and	\rd, \rd, #UART_LSR_TEMT | UART_LSR_THRE
+-		teq	\rd, #UART_LSR_TEMT | UART_LSR_THRE
++		and	\rd, \rd, #UART_LSR_THRE
++		teq	\rd, #UART_LSR_THRE
+ 		bne	1001b
+ 1002:
+ 		.endm
+@@ -225,7 +203,7 @@
  /*
-- * Must be 1MB-aligned since a 1MB mapping is used early on.
-+ * Must be section-aligned since a section mapping is used early on.
-  * Must not overlap with regions in mach-tegra/io.c:tegra_io_desc[].
+  * Storage for the state maintained by the macros above.
+  *
+- * In the kernel proper, this data is located in arch/arm/mach-tegra/common.c.
++ * In the kernel proper, this data is located in arch/arm/mach-tegra/tegra.c.
+  * That's because this header is included from multiple files, and we only
+  * want a single copy of the data. In particular, the UART probing code above
+  * assumes it's running using physical addresses. This is true when this file
+@@ -247,6 +225,4 @@ tegra_uart_config:
+ 	.word 0
+ 	/* Debug UART virtual address */
+ 	.word 0
+-	/* Scratch space for debug macro */
+-	.word 0
+ #endif
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 73368176c6e8..ea14d380fc0c 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -60,15 +60,13 @@
+  * kernel is loaded. The data is declared here rather than debug-macro.S so
+  * that multiple inclusions of debug-macro.S point at the same data.
   */
--#define UART_VIRTUAL_BASE		0xfe100000
-+#define UART_VIRTUAL_BASE		0xfe800000
+-u32 tegra_uart_config[4] = {
++u32 tegra_uart_config[3] = {
+ 	/* Debug UART initialization required */
+ 	1,
+ 	/* Debug UART physical address */
+ 	0,
+ 	/* Debug UART virtual address */
+ 	0,
+-	/* Scratch space for debug macro */
+-	0,
+ };
  
- #define checkuart(rp, rv, lhu, bit, uart) \
- 		/* Load address of CLK_RST register */ \
+ static void __init tegra_init_cache(void)
 -- 
 1.8.1.5
