@@ -1,70 +1,66 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: tegra: don't hard-code DEBUG_LL baud rate
-Date: Tue, 26 Nov 2013 12:08:49 +0100
-Message-ID: <20131126110848.GE27752@ulmo.nvidia.com>
+Subject: Re: [PATCH 3/3] ARM: tegra: use section-sized static mappings for
+ LPAE too
+Date: Tue, 26 Nov 2013 12:13:30 +0100
+Message-ID: <20131126111330.GF27752@ulmo.nvidia.com>
 References: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
- <1385419003-11348-2-git-send-email-swarren@wwwdotorg.org>
+ <1385419003-11348-3-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="fWddYNRDgTk9wQGZ"
+	protocol="application/pgp-signature"; boundary="DO5DiztRLs659m5i"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385419003-11348-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385419003-11348-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---fWddYNRDgTk9wQGZ
+--DO5DiztRLs659m5i
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2013 at 03:36:42PM -0700, Stephen Warren wrote:
+On Mon, Nov 25, 2013 at 03:36:43PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Stop writing to the UART clock divider registers in the Tegra DEBUG_LL
-> code. This allows the DEBUG_LL output to use whatever baud rate was set
-> up by the bootloader. Some users are using higher rates than 115200.
+> The static mappings for Tegra's PPSB and APB regions were sized at 1MB
+> in order to allow mapping via sections in order to avoid burning RAM for
+> PTEs. On LPAE, sections are 2MB, so the static mappings need to be
+> larger in order to gain the same benefit. Set IO_{PPSB,APB}_SIZE to
+> SECTION_SIZE so this adjusts automatically.
 >=20
-> This removes the only usage of tegra_uart_config[3], so reduce the size
-> allocated for that array.
->=20
-> Finally, fix busyuart() so that it only waits for THRE and not TEMT. For
-> some reason, TEMT doesn't get asserted (at least on Tegra30 Beaver) at
-> 9600 baud, even though it does at 115200 baud. This sounds like a HW bug,
-> but I haven't investigated. For reference, U-Boot's serial code has
-> always only checked THRE, and not checked TEMT.
+> While we're fiddling with iomap.h, compress IO_{IRAM,CPU}_VIRT together
+> to save virtual address space in the vmalloc region; these two regions
+> are mapped using PTEs.
 >=20
 > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/include/debug/tegra.S | 30 +++---------------------------
->  arch/arm/mach-tegra/tegra.c    |  4 +---
->  2 files changed, 4 insertions(+), 30 deletions(-)
+>  arch/arm/mach-tegra/iomap.h | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
 Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---fWddYNRDgTk9wQGZ
+--DO5DiztRLs659m5i
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSlIFAAAoJEN0jrNd/PrOh4RwP/jlNDZmXLRGg5l5CrEYXT/qC
-OprKo+1lwe8PzOgu5rL56legvXMndGj2YcYK0qLCJU95p7gDQeVqNc36dVEOgeiv
-latqgkuhAN/f9qPaS7qkyb64RDQn6erG3J2wuycb/VaE8D/q2ASFYI/kGOyvTWsw
-sp6NJ04bA5O2xCcJEiVnE/1GN09LcRB1nJmzBE2r33K8isy9O4aHVIFfSC+hmDAD
-3gn33jzx88HE8oa6l78XY+e08V39C6K4uw1occBkRADfliyTot0kLAFx3+9qLA2V
-hyzcGB2EVQn9R10fC5Y9EQlhxMeSLZZt0xSIOooGBv/dwKqE8utp7zxyP05hFYci
-1IWO25P4EAmBBO2ou9m6MY4Onj47UiLodtGMEMKvF+4Kj3WxnjEoDT8cCdBV2qmu
-zfQIBLIuy4ttb3MTDhC8YGe7w2Mz1qmElwaXVRymokY4jgnjOw3gP8KC9AXF+6j/
-1Es6HZaIGQaA2Z+Dn0eiu87TCXZ5blqqmGPWu4oILK1FlAw/TBWBdviwPr8V03G0
-dQwuCW5XdMzCnajcP/HLgs6KcYUN5VivLgH6aGtPTYBBgMCRoansSs2X0RYwSqzR
-+byFOmjxeoEmP+lYhLAOGy8U0Hgus7/Vg5SLWj7o98I5QGfeSdqscvNQUYS9NiN0
-zkNa0yQwgzVao1VqLC23
-=GoMe
+iQIcBAEBAgAGBQJSlIJZAAoJEN0jrNd/PrOhUecP+waOOfLRYMQMaO8CnxuHHUdA
+QDyd0eYUYXVchjunZYOCiTEaMdq3Q8v2K1cCMDgCa02pouF4NTyBzybJY54fOwo7
+1jUmPMfW9+YUzmNFBaLQiO4g8d71AjPd/YYdwulDEYrlAkNRH4cNujw3qrX2DW89
+qrk+YBAQl+wplC/Mq1e+Cu1BjRpn8EkJ79KX56zaZ9HTZP9d3N2RGzXsS59r2QNA
+AmATAaoXj0WJ6tazVnUNYPJHJHVQZzuGi9JdEJldOvuwW1XU/PLwb9iYDo+cpMAk
+U/C23YnUjfflBoQzXBg/3x98LUaUbizT7n2h0Y1GW5veOAxDVrAUrqI5hwwINX7z
+xS6Ug8bAQ5HLk5T3+8lGOvHG1mvft9oFpktO4F7lN9h9KRLID7Qwgir+dhQwD+/E
+NeDLEQG+orqOHXyOJIRhJQFM2QB+sg7ieegYLr1Fuy/GwCPirtfVST5o1VzAna4G
+tTILePqk14i/HgI3l81a6PCionz+dhtriTGmuvWAmQJR7e2nAc169Z14QfJ29wih
+k10U5jx61uys0m1IeFCkIJ7TCLI0MP7V6v4qUh61/7wq3V+9e9QPPFupgmByBXkV
+SdgWoL+Bf6bo6Pm30hmWRBOpTwmHrlQWbO6tjeBOmH92Y4M5xn04ylsx9G4n+77X
+uD8q3rShNQv1RnaY5dsH
+=FRGC
 -----END PGP SIGNATURE-----
 
---fWddYNRDgTk9wQGZ--
+--DO5DiztRLs659m5i--
