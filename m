@@ -1,68 +1,34 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
-Date: Mon, 25 Nov 2013 17:13:41 -0800
-Message-ID: <CAPcyv4g5jGmk4Kf1nDLxLhKSrYCYwQby31-fyBOGLbNuBFkceg@mail.gmail.com>
-References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org>
-	<2205346.2EJcydzRLA@wuerfel>
-	<5293CF9F.6040305@wwwdotorg.org>
-	<CAPcyv4jLh6cyaP2DmnOkc11xeKsB0QtbXQ9VV3BBmHVVt2iHXA@mail.gmail.com>
-	<5293D9EB.9070900@wwwdotorg.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
+Date: Tue, 26 Nov 2013 10:35:58 +0900
+Message-ID: <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
+ <1385274652-16415-8-git-send-email-acourbot@nvidia.com> <20131126000608.GA21634@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5293D9EB.9070900-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131126000608.GA21634@quad.lixom.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 3:14 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 11/25/2013 04:09 PM, Dan Williams wrote:
->> On Mon, Nov 25, 2013 at 2:30 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>> On 11/25/2013 03:09 PM, Arnd Bergmann wrote:
->>>> On Monday 25 November 2013 14:53:36 Stephen Warren wrote:
->>>>> v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
->>>>>     suggested by Arnd Bergmann.
->>>>>
->>>>> This patch is part of a series with strong internal depdendencies. I'm
->>>>> looking for an ack so that I can take the entire series through the Tegra
->>>>> and arm-soc trees. The series will be part of a stable branch that can be
->>>>> merged into other subsystems if needed to avoid/resolve dependencies.
->>>>
->>>> Did I suggest of_dma_slave_xlate()? I don't think I've actually heard
->>>> of that function, and I can't find anything in the kernel source or
->>>> using google.
->>>>
->>>> Why not just use an open-coded xlate function?
->>>
->>> Well, you suggested not using of_dma_simple_xlate() since it wasn't
->>> appropriate. I then started to implement an open-coded xlate function,
->>> but found that it was 99% identical to the same thing in the mmp driver,
->>> and hence created a common of_dma_slave_xlate() so as not to just
->>> cut/paste it everywhere. Unfortunately, I only sent that patch to
->>> dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and the DMA maintainers, and there's no
->>> archive of that list:-(
+On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
+>> Support for Trusted Foundations is light and allows the kernel to run on
+>> a wider range of devices, so enable it by default.
 >>
->> There is, however, an archive of the patches:
->>
->> dma: add common of_dma_slave_xlate()
->> https://patchwork.kernel.org/patch/3234751/
->>
->> dma: mmp_pdma: use of_dma_slave_xlate()
->> https://patchwork.kernel.org/patch/3234761/
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>> ---
+>>  arch/arm/configs/tegra_defconfig | 1 +
+>>  1 file changed, 1 insertion(+)
 >
-> Ah, that's useful.
->
->> ..btw I think we should squash those two together.
->
-> Isn't it more typical to do core work in one patch, then port each
-> driver individually? That keeps the patches small and logically
-> distinct, which could help bisect in some cases. But I guess I can go
-> either way.
+> I think we want this enabled on multi_v7_defconfig too? Send a separate
+> patch for that once this is merged though.
 
-Including a user conversion in the same patch that introduces the api
-change makes it clear what is going on...  for example a reviewer
-could see that the code comes from mmp_pdma unmolested.  Inevitably
-the first question is always "show me the user".  The bisect case is
-also a good example.  Since the api change by itself dead code if we
-revert the only user we implicitly want to revert the core change.
+Will do.
+
+Thanks,
+Alex.
