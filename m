@@ -1,17 +1,60 @@
-From: "docbrawn" <ohmindustrial-fuDLTLi4t9k6cCvBphWOGw@public.gmane.org>
-Subject: =?windows-1251?B?7/Do6vPv6PLlIO3g+CDv8O7k8+ryIC0g8e/w?=
-	=?windows-1251?B?4OL88uUgMTAwJSDn8OXt6OU=?=
-Date: Tue, 26 Nov 2013 10:57:16 -0500
-Message-ID: <98625155.20131126102246@prodigy.net.mx>
-Reply-To: "docbrawn" <ohmindustrial-fuDLTLi4t9k6cCvBphWOGw@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
+Date: Tue, 26 Nov 2013 09:31:25 -0700
+Message-ID: <5294CCDD.30803@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org> <20131116095529.GF15393@sirena.org.uk> <528A4C8C.3030200@wwwdotorg.org> <20131118183716.GR2674@sirena.org.uk> <5293C787.1030005@wwwdotorg.org> <20131126131410.GK14725@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="windows-1251";
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131126131410.GK14725-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ovsienko-wbqe4Z9zZpab4lGQ4MUIiYdd74u8MsAO@public.gmane.org, expo-hSemOgY+aTM@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rtkorsk6-NyDDCisWj8M@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-6PHv8O7h7uLg7e376SD96vHv8OXx8S3s5fLu5CDi7ufi8OD55e3o/yDn8OXt6P8gaHR0cDovL2dv
-by5nbC9aZGI5UFgNCg==
+On 11/26/2013 06:14 AM, Mark Brown wrote:
+> On Mon, Nov 25, 2013 at 02:56:23PM -0700, Stephen Warren wrote:
+> 
+>> You didn't ack this one patch; I assume that was just an
+>> oversight?
+> 
+> No, it was because it looked incorrect based on the lack of tie in 
+> between the description and the code.
+
+Hmm. You had asked:
+
+>> @@ -1,6 +1,8 @@ config SND_SOC_TEGRA tristate "SoC Audio for the
+>> Tegra System-on-Chip" depends on (ARCH_TEGRA && TEGRA20_APB_DMA)
+>> || COMPILE_TEST +	depends on COMMON_CLK +	depends on
+>> RESET_CONTROLLER
+> 
+> Do you depend on COMMON_CLK here?  I only noticed reset controller
+> API dependencies here but perhaps I missed this (or it's fixing a
+> dependency that should be there already).
+
+I responded:
+
+> It's fixing a dependency that should already be there, in the 
+> COMPILE_TEST case. In the (ARCH_TEGRA && TEGRA20_APB_DMA) case, 
+> COMMON_CLOCK is always selected.
+> 
+> Do you want me to split this out into a separate patch? If so, I'd 
+> prefer not to apply that separate patch immediately to 3.13 as a
+> fix, since then it'd delay applying this series until after -rc2 is
+> out, unless you can get the fix into -rc1 quickly...
+
+(although at this point in time, the DMA patches which this depend on
+aren't likely to be ready soon enough for the delay to matter, so I
+could send the addition of depends COMMON_CLK as a separate patch for
+-rc2 if you want)
+
+and you said:
+
+> I don't really care, it was just that I was looking for something
+> to do with clocks in the patch and couldn't find anything.  Perhaps
+> a note in the changelog if you need to respin so I don't forget and
+> say the same thing again.
+
+... so, I thought you were OK with that one issue. Were there other
+issues you didn't mention before?
