@@ -1,62 +1,89 @@
-From: viresh kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
-Date: Tue, 26 Nov 2013 09:42:43 +0530
-Message-ID: <52941FBB.7070603@linaro.org>
-References: <cover.1385374819.git.viresh.kumar@linaro.org> <55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar@linaro.org>
+From: Lan Tianyu <tianyu.lan@intel.com>
+Subject: Re: [PATCH V3 0/6] cpufreq: suspend early/resume late
+Date: Tue, 26 Nov 2013 14:37:43 +0800
+Message-ID: <529441B7.90505@intel.com>
+References: <cover.1385374819.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org
-Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jinchoi-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sebastian.capella-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jhbird.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday 25 November 2013 07:41 PM, Viresh Kumar wrote:
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index dc196bb..6d93f91 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -255,6 +255,9 @@ struct cpufreq_driver {
->  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
->  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
->  
-> +void cpufreq_suspend(void);
-> +void cpufreq_resume(void);
-> +
->  const char *cpufreq_get_current_driver(void);
->  
->  static inline void cpufreq_verify_within_limits(struct cpufreq_policy *policy,
+On 2013=E5=B9=B411=E6=9C=8825=E6=97=A5 22:11, Viresh Kumar wrote:
+> This patchset adds cpufreq callbacks to dpm_{suspend|resume}() for ha=
+ndling
+> suspend/resume of cpufreq governors and core. This is required for ea=
+rly suspend
+> and late resume of governors and cpufreq core.
+>=20
+> There are multiple problems that are fixed by this patch:
+> - Nishanth Menon (TI) found an interesting problem on his platform, O=
+MAP. His board
+>   wasn't working well with suspend/resume as calls for removing non-b=
+oot CPUs
+>   was turning out into a call to drivers ->target() which then tries =
+to play
+>   with regulators. But regulators and their I2C bus were already susp=
+ended and
+>   this resulted in a failure. Many platforms have such problems, sams=
+ung, tegra,
+>   etc.. They solved it with driver specific PM notifiers where they u=
+sed to
+>   disable their driver's ->target() routine. Most of these are update=
+d in this
+>   patchset to use new infrastructure.
+>=20
+> - Lan Tianyu (Intel) & Jinhyuk Choi (Broadcom) found another issue wh=
+ere
+>   tunables configuration for clusters/sockets with non-boot CPUs was =
+getting
+>   lost after suspend/resume, as we were notifying governors with
+>   CPUFREQ_GOV_POLICY_EXIT on removal of the last cpu for that policy =
+and so
+>   deallocating memory for tunables. This is also fixed with this patc=
+h as don't
+>   allow any operation on Governors during suspend/resume now.
+>=20
+>=20
+> So to solve these issues we introduce early suspend and late resume c=
+allbacks
+> which would remove need of cpufreq drivers to implement PM notifiers =
+to disable
+> transition after suspend and before resume.
+>=20
+> @Nishanth: Can you please test V2 as well and confirm that suspend_no=
+irq()
+> doesn't work for you. I am sure it will not, but would be better if y=
+ou confirm
+> that.
+>=20
+> Viresh Kumar (6):
+>   cpufreq: suspend governors on system suspend/hibernate
+>   cpufreq: call driver's suspend/resume for each policy
+>   cpufreq: Implement cpufreq_generic_suspend()
+>   cpufreq: exynos: Use cpufreq_generic_suspend()
+>   cpufreq: s5pv210: Use cpufreq_generic_suspend()
+>   cpufreq: Tegra: Use cpufreq_generic_suspend()
+>=20
 
-A minor fix here to get kernel compiled without cpufreq support enabled:
+Patch 1-2,
+Tested-by: Lan Tianyu <tianyu.lan@intel.com>
 
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 8d8b2f4..d40809d 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -259,9 +259,6 @@ struct cpufreq_driver {
- int cpufreq_register_driver(struct cpufreq_driver *driver_data);
- int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+>  drivers/base/power/main.c         |   5 ++
+>  drivers/cpufreq/cpufreq.c         | 133 +++++++++++++++++++++-------=
+----------
+>  drivers/cpufreq/exynos-cpufreq.c  |  97 ++-------------------------
+>  drivers/cpufreq/s5pv210-cpufreq.c |  49 +-------------
+>  drivers/cpufreq/tegra-cpufreq.c   |  54 ++--------------
+>  include/linux/cpufreq.h           |   6 ++
+>  6 files changed, 99 insertions(+), 245 deletions(-)
+>=20
 
--void cpufreq_suspend(void);
--void cpufreq_resume(void);
--
- const char *cpufreq_get_current_driver(void);
 
- static inline void cpufreq_verify_within_limits(struct cpufreq_policy *policy,
-@@ -287,6 +284,14 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
-                        policy->cpuinfo.max_freq);
- }
-
-+#ifdef CONFIG_CPU_FREQ
-+void cpufreq_suspend(void);
-+void cpufreq_resume(void);
-+#elif
-+static inline void cpufreq_suspend(void) {}
-+static inline void cpufreq_resume(void) {}
-+#endif
-+
- /*********************************************************************
-  *                     CPUFREQ NOTIFIER INTERFACE                    *
-  *********************************************************************/
+--=20
+Best regards
+Tianyu Lan
