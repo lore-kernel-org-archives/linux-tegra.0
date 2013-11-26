@@ -1,34 +1,52 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
-Date: Tue, 26 Nov 2013 10:35:58 +0900
-Message-ID: <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
-References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
- <1385274652-16415-8-git-send-email-acourbot@nvidia.com> <20131126000608.GA21634@quad.lixom.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
+Date: Tue, 26 Nov 2013 07:56:19 +0530
+Message-ID: <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com>
+References: <cover.1385374819.git.viresh.kumar@linaro.org>
+	<55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar@linaro.org>
+	<40779593.MBXsTetiKz@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131126000608.GA21634@quad.lixom.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <40779593.MBXsTetiKz@vostro.rjw.lan>
+Sender: cpufreq-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
->> Support for Trusted Foundations is light and allows the kernel to run on
->> a wider range of devices, so enable it by default.
+On 26 November 2013 04:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
 >>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->> ---
->>  arch/arm/configs/tegra_defconfig | 1 +
->>  1 file changed, 1 insertion(+)
+>>       might_sleep();
+>>
+>> +     cpufreq_suspend();
+>> +
+>>
+>>       mutex_lock(&dpm_list_mtx);
+>>       pm_transition = state;
+>>       async_error = 0;
 >
-> I think we want this enabled on multi_v7_defconfig too? Send a separate
-> patch for that once this is merged though.
+> Shouldn't it do cpufreq_resume() on errors?
 
-Will do.
+Yes and this is already done I believe. In case dpm_suspend() fails,
+dpm_resume() gets called. Isn't it?
 
-Thanks,
-Alex.
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> +void cpufreq_suspend(void)
+>> +{
+>> +     struct cpufreq_policy *policy;
+>> +
+>> +     if (!has_target())
+>> +             return;
+>> +
+>> +     pr_debug("%s: Suspending Governors\n", __func__);
+>> +
+>> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
+>> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
+>> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
+>> +                                     __func__, policy);
+>
+> This appears to be racy.  Is it really racy, or just seemingly?
+
+Why does it look racy to you? Userspace should be frozen by now,
+policy_list should be stable as well as nobody would touch it.
