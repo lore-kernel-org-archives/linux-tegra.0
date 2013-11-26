@@ -1,66 +1,56 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: tegra: use section-sized static mappings for
- LPAE too
-Date: Tue, 26 Nov 2013 12:13:30 +0100
-Message-ID: <20131126111330.GF27752@ulmo.nvidia.com>
-References: <1385419003-11348-1-git-send-email-swarren@wwwdotorg.org>
- <1385419003-11348-3-git-send-email-swarren@wwwdotorg.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
+Date: Tue, 26 Nov 2013 13:14:10 +0000
+Message-ID: <20131126131410.GK14725@sirena.org.uk>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
+ <20131116095529.GF15393@sirena.org.uk>
+ <528A4C8C.3030200@wwwdotorg.org>
+ <20131118183716.GR2674@sirena.org.uk>
+ <5293C787.1030005@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DO5DiztRLs659m5i"
+	protocol="application/pgp-signature"; boundary="TgMkQZ2qGgUcJEW2"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385419003-11348-3-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5293C787.1030005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---DO5DiztRLs659m5i
+--TgMkQZ2qGgUcJEW2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2013 at 03:36:43PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> The static mappings for Tegra's PPSB and APB regions were sized at 1MB
-> in order to allow mapping via sections in order to avoid burning RAM for
-> PTEs. On LPAE, sections are 2MB, so the static mappings need to be
-> larger in order to gain the same benefit. Set IO_{PPSB,APB}_SIZE to
-> SECTION_SIZE so this adjusts automatically.
->=20
-> While we're fiddling with iomap.h, compress IO_{IRAM,CPU}_VIRT together
-> to save virtual address space in the vmalloc region; these two regions
-> are mapped using PTEs.
->=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/iomap.h | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+On Mon, Nov 25, 2013 at 02:56:23PM -0700, Stephen Warren wrote:
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> You didn't ack this one patch; I assume that was just an oversight?
 
---DO5DiztRLs659m5i
-Content-Type: application/pgp-signature
+No, it was because it looked incorrect based on the lack of tie in
+between the description and the code.
+
+--TgMkQZ2qGgUcJEW2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSlIJZAAoJEN0jrNd/PrOhUecP+waOOfLRYMQMaO8CnxuHHUdA
-QDyd0eYUYXVchjunZYOCiTEaMdq3Q8v2K1cCMDgCa02pouF4NTyBzybJY54fOwo7
-1jUmPMfW9+YUzmNFBaLQiO4g8d71AjPd/YYdwulDEYrlAkNRH4cNujw3qrX2DW89
-qrk+YBAQl+wplC/Mq1e+Cu1BjRpn8EkJ79KX56zaZ9HTZP9d3N2RGzXsS59r2QNA
-AmATAaoXj0WJ6tazVnUNYPJHJHVQZzuGi9JdEJldOvuwW1XU/PLwb9iYDo+cpMAk
-U/C23YnUjfflBoQzXBg/3x98LUaUbizT7n2h0Y1GW5veOAxDVrAUrqI5hwwINX7z
-xS6Ug8bAQ5HLk5T3+8lGOvHG1mvft9oFpktO4F7lN9h9KRLID7Qwgir+dhQwD+/E
-NeDLEQG+orqOHXyOJIRhJQFM2QB+sg7ieegYLr1Fuy/GwCPirtfVST5o1VzAna4G
-tTILePqk14i/HgI3l81a6PCionz+dhtriTGmuvWAmQJR7e2nAc169Z14QfJ29wih
-k10U5jx61uys0m1IeFCkIJ7TCLI0MP7V6v4qUh61/7wq3V+9e9QPPFupgmByBXkV
-SdgWoL+Bf6bo6Pm30hmWRBOpTwmHrlQWbO6tjeBOmH92Y4M5xn04ylsx9G4n+77X
-uD8q3rShNQv1RnaY5dsH
-=FRGC
+iQIcBAEBAgAGBQJSlJ6eAAoJELSic+t+oim9diIP/AkSZVy0d9HJKCtnkTmdpq1c
+j1AVxszF8xSFl+MiX7683cqKVBlYgzJp10HEQ5z3GwwkAklO4RrUxG2eUC7H1E6b
+R68eiaKWzNaShZ47EV2dZkarcDJ4D1iRXhcqWWobIspIPE8NOYWJ+WM1cJMoBUBe
+hT6Zv/txE01fnL+cd0J/kO3/qfIL4PzFfQb3TfvDOIt9OAEODbvXPbFxbteNy6Zz
+k73rQ5ik3D6TSjLC5FX17aCiripdu0zbQHlgq37OasfBekojmdFdJ5o+wu87vvaR
+VGS59EpxaKfwRkxp7XKzCJaVkqWjsXMELNkmJcfBuWy+MtLpkS9Zn0pWI+JoqMcq
+KZtBluv5vdVC8xbSWpfXba/+GhhTv+z7o+Dt4WT02k2DOy6FyCDhNMzDZpnNflrS
+65KLNK6yTb4alUktE1ffgCGKzs5qzEW2kanoJYS3jgijOoAOCYyRYeL0DfCtbItu
+bfuJYSh1Dj2HZE2UpOnEx2ez0PR457JE2P6pLNr7/qa/aUps9x+PkEep4jHIrGC1
+od4U4yOSXK0qfdD67ZpxCwhj63QrifdGh9eEWnoz0G8a2WboeZAWSS+jcxS3bLoC
+4lQXuolvZL+iNl+AwoKyOwv7YM0BnK+3Ds4s1g9T4r/xEzyWfnspMhLjyjNkmkYI
+gV0Gmo5M9oGbabnzWnUr
+=V0gA
 -----END PGP SIGNATURE-----
 
---DO5DiztRLs659m5i--
+--TgMkQZ2qGgUcJEW2--
