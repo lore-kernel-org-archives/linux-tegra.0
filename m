@@ -1,56 +1,81 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
-Date: Tue, 26 Nov 2013 13:14:10 +0000
-Message-ID: <20131126131410.GK14725@sirena.org.uk>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
- <20131116095529.GF15393@sirena.org.uk>
- <528A4C8C.3030200@wwwdotorg.org>
- <20131118183716.GR2674@sirena.org.uk>
- <5293C787.1030005@wwwdotorg.org>
+From: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] dma: add channel request API that supports deferred
+ probe
+Date: Tue, 26 Nov 2013 13:59:53 +0000
+Message-ID: <1385474368.1871.6.camel@smile>
+References: <1385416039-3170-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TgMkQZ2qGgUcJEW2"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5293C787.1030005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385416039-3170-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
+Content-ID: <7195894634AE7949872C15B48B4A82E1-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---TgMkQZ2qGgUcJEW2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Nov 25, 2013 at 02:56:23PM -0700, Stephen Warren wrote:
-
-> You didn't ack this one patch; I assume that was just an oversight?
-
-No, it was because it looked incorrect based on the lack of tie in
-between the description and the code.
-
---TgMkQZ2qGgUcJEW2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSlJ6eAAoJELSic+t+oim9diIP/AkSZVy0d9HJKCtnkTmdpq1c
-j1AVxszF8xSFl+MiX7683cqKVBlYgzJp10HEQ5z3GwwkAklO4RrUxG2eUC7H1E6b
-R68eiaKWzNaShZ47EV2dZkarcDJ4D1iRXhcqWWobIspIPE8NOYWJ+WM1cJMoBUBe
-hT6Zv/txE01fnL+cd0J/kO3/qfIL4PzFfQb3TfvDOIt9OAEODbvXPbFxbteNy6Zz
-k73rQ5ik3D6TSjLC5FX17aCiripdu0zbQHlgq37OasfBekojmdFdJ5o+wu87vvaR
-VGS59EpxaKfwRkxp7XKzCJaVkqWjsXMELNkmJcfBuWy+MtLpkS9Zn0pWI+JoqMcq
-KZtBluv5vdVC8xbSWpfXba/+GhhTv+z7o+Dt4WT02k2DOy6FyCDhNMzDZpnNflrS
-65KLNK6yTb4alUktE1ffgCGKzs5qzEW2kanoJYS3jgijOoAOCYyRYeL0DfCtbItu
-bfuJYSh1Dj2HZE2UpOnEx2ez0PR457JE2P6pLNr7/qa/aUps9x+PkEep4jHIrGC1
-od4U4yOSXK0qfdD67ZpxCwhj63QrifdGh9eEWnoz0G8a2WboeZAWSS+jcxS3bLoC
-4lQXuolvZL+iNl+AwoKyOwv7YM0BnK+3Ds4s1g9T4r/xEzyWfnspMhLjyjNkmkYI
-gV0Gmo5M9oGbabnzWnUr
-=V0gA
------END PGP SIGNATURE-----
-
---TgMkQZ2qGgUcJEW2--
+T24gTW9uLCAyMDEzLTExLTI1IGF0IDE0OjQ3IC0wNzAwLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToN
+Cj4gRnJvbTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4NCj4gDQo+IGRtYV9y
+ZXF1ZXN0X3NsYXZlX2NoYW5uZWwoKSBzaW1wbHkgcmV0dXJucyBOVUxMIHdoZW5ldmVyIERNQSBj
+aGFubmVsDQo+IGxvb2t1cCBmYWlscy4gTG9va3VwIGNvdWxkIGZhaWwgZm9yIHR3byBkaXN0aW5j
+dCByZWFzb25zOg0KPiANCj4gYSkgTm8gRE1BIHNwZWNpZmljYXRpb24gZXhpc3RzIGZvciB0aGUg
+Y2hhbm5lbCBuYW1lLg0KPiAgICBUaGlzIGluY2x1ZGVzIHNpdHVhdGlvbnMgd2hlcmUgbm8gRE1B
+IHNwZWNpZmljYXRpb25zIGV4aXN0IGF0IGFsbCwgb3INCj4gICAgb3RoZXIgZ2VuZXJhbCBsb29r
+dXAgcHJvYmxlbXMuDQo+IA0KPiBiKSBBIERNQSBzcGVjaWZpY2F0aW9uIGRvZXMgZXhpc3QsIHll
+dCB0aGUgZHJpdmVyIGZvciB0aGF0IGNoYW5uZWwgaXMgbm90DQo+ICAgIHlldCByZWdpc3RlcmVk
+Lg0KPiANCj4gQ2FzZSAoYikgc2hvdWxkIHRyaWdnZXIgZGVmZXJyZWQgcHJvYmUgaW4gY2xpZW50
+IGRyaXZlcnMuIEhvd2V2ZXIsIHNpbmNlDQo+IHRoZXkgaGF2ZSBubyB3YXkgdG8gZGlmZmVyZW50
+aWF0ZSB0aGUgdHdvIHNpdHVhdGlvbnMsIGl0IGNhbm5vdC4NCj4gDQo+IEltcGxlbWVudCBuZXcg
+ZnVuY3Rpb24gZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbF9vcl9lcnIoKSwgd2hpY2ggcGVyZm9y
+bXMNCj4gaWRlbnRpY2FsbHkgdG8gZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbCgpLCBleGNlcHQg
+dGhhdCBpdCByZXR1cm5zIGFuDQo+IGVycm9yLXBvaW50ZXIgcmF0aGVyIHRoYW4gTlVMTCwgd2hp
+Y2ggYWxsb3dzIGNhbGxlcnMgdG8gZGV0ZWN0IHdoZW4NCj4gZGVmZXJyZWQgcHJvYmUgc2hvdWxk
+IG9jY3VyLg0KPiANCj4gRXZlbnR1YWxseSwgYWxsIGRyaXZlcnMgc2hvdWxkIGJlIGNvbnZlcnRl
+ZCB0byB0aGlzIG5ldyBBUEksIHRoZSBvbGQgQVBJDQo+IHJlbW92ZWQsIGFuZCB0aGUgbmV3IEFQ
+SSByZW5hbWVkIHRvIHRoZSBtb3JlIGRlc2lyYWJsZSBuYW1lLiBUaGlzIHBhdGNoDQo+IGRvZXNu
+J3QgY29udmVydCB0aGUgZXhpc3RpbmcgQVBJIGFuZCBhbGwgZHJpdmVycyBpbiBvbmUgZ28sIHNp
+bmNlIHNvbWUNCj4gZHJpdmVycyBjYWxsIGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWwoKSB0aGVu
+IGRtYV9yZXF1ZXN0X2NoYW5uZWwoKSBpZg0KPiB0aGF0IGZhaWxzLiBUaGF0IHdvdWxkIHJlcXVp
+cmUgZWl0aGVyIG1vZGlmeWluZyBkbWFfcmVxdWVzdF9jaGFubmVsKCkgaW4NCj4gdGhlIHNhbWUg
+d2F5LCBvciBhZGRpbmcgZXh0cmEgZXJyb3ItaGFuZGxpbmcgY29kZSB0byBhbGwgYWZmZWN0ZWQN
+Cj4gZHJpdmVycywgYW5kIHRoZXJlIGFyZSBjbG9zZSB0byAxMDAgZHJpdmVycyB1c2luZyB0aGUg
+b3RoZXIgQVBJLCByYXRoZXINCj4gdGhhbiBqdXN0IHRoZSAxNS0yMCBvciBzbyB0aGF0IHVzZSBk
+bWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsKCksIHdoaWNoDQo+IG1pZ2h0IGJlIHRlbmFibGUgaW4g
+YSBzaW5nbGUgcGF0Y2guDQo+IA0KPiBhY3BpX2RtYV9yZXF1ZXN0X3NsYXZlX2NoYW5fYnlfbmFt
+ZSgpIGRvZXNuJ3QgY3VycmVudGx5IGltcGxlbWVudA0KPiBkZWZlcnJlZCBwcm9iZS4gSXQgc2hv
+dWxkLCBidXQgdGhpcyB3aWxsIGJlIGFkZHJlc3NlZCBsYXRlci4NCg0KQ291cGxlIG9mIGNvbW1l
+bnRzIGJlbG93Lg0KDQpbXQ0KDQo+IC0tLSBhL2RyaXZlcnMvZG1hL29mLWRtYS5jDQo+ICsrKyBi
+L2RyaXZlcnMvZG1hL29mLWRtYS5jDQoNCltdDQoNCj4gQEAgLTE1MiwxNyArMTUyLDE4IEBAIHN0
+cnVjdCBkbWFfY2hhbiAqb2ZfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbChzdHJ1Y3QgZGV2aWNl
+X25vZGUgKm5wLA0KPiAgCXN0cnVjdCBvZl9kbWEJCSpvZmRtYTsNCj4gIAlzdHJ1Y3QgZG1hX2No
+YW4JCSpjaGFuOw0KPiAgCWludAkJCWNvdW50LCBpOw0KPiArCWludAkJCXJldF9ub19jaGFubmVs
+ID0gLUVOT0RFVjsNCg0KQ291bGQgd2UgcmUtdXNlIGNoYW4gZm9yIHRoZSBlcnJvciBhcyB3ZWxs
+Pw0KDQo+ICAJaWYgKCFucCB8fCAhbmFtZSkgew0KPiAgCQlwcl9lcnIoIiVzOiBub3QgZW5vdWdo
+IGluZm9ybWF0aW9uIHByb3ZpZGVkXG4iLCBfX2Z1bmNfXyk7DQo+IC0JCXJldHVybiBOVUxMOw0K
+PiArCQlyZXR1cm4gRVJSX1BUUigtRU5PREVWKTsNCj4gIAl9DQo+ICANCj4gIAljb3VudCA9IG9m
+X3Byb3BlcnR5X2NvdW50X3N0cmluZ3MobnAsICJkbWEtbmFtZXMiKTsNCj4gIAlpZiAoY291bnQg
+PCAwKSB7DQo+ICAJCXByX2VycigiJXM6IGRtYS1uYW1lcyBwcm9wZXJ0eSBvZiBub2RlICclcycg
+bWlzc2luZyBvciBlbXB0eVxuIiwNCj4gIAkJCV9fZnVuY19fLCBucC0+ZnVsbF9uYW1lKTsNCj4g
+LQkJcmV0dXJuIE5VTEw7DQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9ERVYpOw0KPiAgCX0NCj4g
+IA0KPiAgCWZvciAoaSA9IDA7IGkgPCBjb3VudDsgaSsrKSB7DQo+IEBAIC0xNzQsOCArMTc1LDEw
+IEBAIHN0cnVjdCBkbWFfY2hhbiAqb2ZfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbChzdHJ1Y3Qg
+ZGV2aWNlX25vZGUgKm5wLA0KPiAgDQo+ICAJCWlmIChvZmRtYSkNCg0KaWYgKG9mZG1hKSB7DQou
+Li4NCg0KPiAgCQkJY2hhbiA9IG9mZG1hLT5vZl9kbWFfeGxhdGUoJmRtYV9zcGVjLCBvZmRtYSk7
+DQo+IC0JCWVsc2UNCj4gKwkJZWxzZSB7DQoNCn0gZWxzZSB7DQoNCnRvIGtlZXAgc3R5bGUuDQoN
+Cj4gKwkJCXJldF9ub19jaGFubmVsID0gLUVQUk9CRV9ERUZFUjsNCj4gIAkJCWNoYW4gPSBOVUxM
+Ow0KPiArCQl9DQo+ICANCj4gIAkJbXV0ZXhfdW5sb2NrKCZvZl9kbWFfbG9jayk7DQo+ICANCj4g
+QEAgLTE4NSw3ICsxODgsNyBAQCBzdHJ1Y3QgZG1hX2NoYW4gKm9mX2RtYV9yZXF1ZXN0X3NsYXZl
+X2NoYW5uZWwoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gIAkJCXJldHVybiBjaGFuOw0KPiAg
+CX0NCj4gIA0KPiAtCXJldHVybiBOVUxMOw0KPiArCXJldHVybiBFUlJfUFRSKHJldF9ub19jaGFu
+bmVsKTsNCj4gIH0NCg0KDQotLSANCkFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29A
+aW50ZWwuY29tPg0KSW50ZWwgRmlubGFuZCBPeQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIEZpbmxhbmQg
+T3kKUmVnaXN0ZXJlZCBBZGRyZXNzOiBQTCAyODEsIDAwMTgxIEhlbHNpbmtpIApCdXNpbmVzcyBJ
+ZGVudGl0eSBDb2RlOiAwMzU3NjA2IC0gNCAKRG9taWNpbGVkIGluIEhlbHNpbmtpIAoKVGhpcyBl
+LW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgbWF0ZXJp
+YWwgZm9yCnRoZSBzb2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBBbnkgcmV2
+aWV3IG9yIGRpc3RyaWJ1dGlvbgpieSBvdGhlcnMgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYg
+eW91IGFyZSBub3QgdGhlIGludGVuZGVkCnJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNl
+bmRlciBhbmQgZGVsZXRlIGFsbCBjb3BpZXMuCg==
