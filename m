@@ -1,167 +1,90 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: tegra: add TEGRA_DIVIDER_ROUND_UP for periph clks
-Date: Tue, 26 Nov 2013 18:48:14 +0200
-Message-ID: <1385484495-9835-1-git-send-email-pdeschrijver@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 16/31] ASoC: tegra: use reset framework
+Date: Tue, 26 Nov 2013 18:37:39 +0000
+Message-ID: <20131126183739.GR14725@sirena.org.uk>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-17-git-send-email-swarren@wwwdotorg.org>
+ <20131116095529.GF15393@sirena.org.uk>
+ <528A4C8C.3030200@wwwdotorg.org>
+ <20131118183716.GR2674@sirena.org.uk>
+ <5293C787.1030005@wwwdotorg.org>
+ <20131126131410.GK14725@sirena.org.uk>
+ <5294CCDD.30803@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============0308161566032948908=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <5294CCDD.30803@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, pdeschrijver@nvidia.com, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Perform upwards rounding when calculating dividers for periph clks on Tegra30
-and Tegra114.
 
-Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra114.c |   53 ++++++++++++++++++++-----------------
- drivers/clk/tegra/clk-tegra30.c  |   19 +++++++------
- 2 files changed, 39 insertions(+), 33 deletions(-)
+--===============0308161566032948908==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kPepdeVVZyud5ZkI"
+Content-Disposition: inline
 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 7661128..e390492 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -791,50 +791,53 @@ static unsigned long tegra114_input_freq[] = {
- #define TEGRA_INIT_DATA_MUX(_name, _con_id, _dev_id, _parents, _offset,	\
- 			    _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			30, MASK(2), 0, 0, 8, 1, 0, _regs, _clk_num,	\
--			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
--			_parents##_idx, 0)
-+			30, MASK(2), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, \
-+			_regs, _clk_num, periph_clk_enb_refcnt, _gate_flags,\
-+			_clk_id, _parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_MUX_FLAGS(_name, _con_id, _dev_id, _parents, _offset,\
- 			    _clk_num, _regs, _gate_flags, _clk_id, flags)\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			30, MASK(2), 0, 0, 8, 1, 0, _regs, _clk_num,	\
--			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
--			_parents##_idx, flags)
-+			30, MASK(2), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP,\
-+			_regs, _clk_num, periph_clk_enb_refcnt, _gate_flags,\
-+			_clk_id, _parents##_idx, flags)
- 
- #define TEGRA_INIT_DATA_MUX8(_name, _con_id, _dev_id, _parents, _offset, \
- 			     _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			29, MASK(3), 0, 0, 8, 1, 0, _regs, _clk_num,	\
--			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
--			_parents##_idx, 0)
-+			29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP,\
-+			_regs, _clk_num, periph_clk_enb_refcnt, _gate_flags,\
-+			_clk_id, _parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_INT_FLAGS(_name, _con_id, _dev_id, _parents, _offset,\
- 			    _clk_num, _regs, _gate_flags, _clk_id, flags)\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			30, MASK(2), 0, 0, 8, 1, TEGRA_DIVIDER_INT, _regs,\
--			_clk_num, periph_clk_enb_refcnt, _gate_flags,	\
--			_clk_id, _parents##_idx, flags)
-+			30, MASK(2), 0, 0, 8, 1, TEGRA_DIVIDER_INT |	\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
-+			_parents##_idx, flags)
- 
- #define TEGRA_INIT_DATA_INT8(_name, _con_id, _dev_id, _parents, _offset,\
- 			    _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_INT, _regs,\
--			_clk_num, periph_clk_enb_refcnt, _gate_flags,	\
--			_clk_id, _parents##_idx, 0)
-+			29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_INT |	\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
-+			_parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_UART(_name, _con_id, _dev_id, _parents, _offset,\
- 			     _clk_num, _regs, _clk_id)			\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			30, MASK(2), 0, 0, 16, 1, TEGRA_DIVIDER_UART, _regs,\
--			_clk_num, periph_clk_enb_refcnt, 0, _clk_id,	\
--			_parents##_idx, 0)
-+			30, MASK(2), 0, 0, 16, 1, TEGRA_DIVIDER_UART |	\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, 0, _clk_id, _parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_I2C(_name, _con_id, _dev_id, _parents, _offset,\
- 			     _clk_num, _regs, _clk_id)			\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset,\
--			30, MASK(2), 0, 0, 16, 0, 0, _regs, _clk_num,	\
--			periph_clk_enb_refcnt, 0, _clk_id, _parents##_idx, 0)
-+			30, MASK(2), 0, 0, 16, 0, TEGRA_DIVIDER_ROUND_UP,\
-+			_regs, _clk_num, periph_clk_enb_refcnt, 0, _clk_id,\
-+			_parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_NODIV(_name, _con_id, _dev_id, _parents, _offset, \
- 			      _mux_shift, _mux_mask, _clk_num, _regs,	\
-@@ -847,14 +850,16 @@ static unsigned long tegra114_input_freq[] = {
- #define TEGRA_INIT_DATA_XUSB(_name, _con_id, _dev_id, _parents, _offset, \
- 			     _clk_num, _regs, _gate_flags, _clk_id)	 \
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, _parents, _offset, \
--			29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_INT, _regs, \
--			_clk_num, periph_clk_enb_refcnt, _gate_flags,	 \
--			_clk_id, _parents##_idx, 0)
-+			29, MASK(3), 0, 0, 8, 1, TEGRA_DIVIDER_INT |	\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, _gate_flags, _clk_id,	\
-+			_parents##_idx, 0)
- 
- #define TEGRA_INIT_DATA_AUDIO(_name, _con_id, _dev_id, _offset,  _clk_num,\
- 				 _regs, _gate_flags, _clk_id)		\
- 	TEGRA_INIT_DATA_TABLE(_name, _con_id, _dev_id, mux_d_audio_clk,	\
--			_offset, 16, 0xE01F, 0, 0, 8, 1, 0, _regs, _clk_num, \
-+			_offset, 16, 0xE01F, 0, 0, 8, 1,		\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
- 			periph_clk_enb_refcnt, _gate_flags , _clk_id,	\
- 			mux_d_audio_clk_idx, 0)
- 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index dbe7c80..147f5b9 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -282,8 +282,8 @@ static DEFINE_SPINLOCK(sysrate_lock);
- #define TEGRA_INIT_DATA_MUX(_name, _con_id, _dev_id, _parents, _offset,	\
- 			    _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parents, _offset,	\
--			30, 2, 0, 0, 8, 1, 0, _regs, _clk_num,		\
--			periph_clk_enb_refcnt, _gate_flags, _clk_id)
-+			30, 2, 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, _regs, \
-+			_clk_num, periph_clk_enb_refcnt, _gate_flags, _clk_id)
- 
- #define TEGRA_INIT_DATA_DIV16(_name, _con_id, _dev_id, _parents, _offset, \
- 			    _clk_num, _regs, _gate_flags, _clk_id)	\
-@@ -295,21 +295,22 @@ static DEFINE_SPINLOCK(sysrate_lock);
- #define TEGRA_INIT_DATA_MUX8(_name, _con_id, _dev_id, _parents, _offset, \
- 			     _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parents, _offset,	\
--			29, 3, 0, 0, 8, 1, 0, _regs, _clk_num,		\
--			periph_clk_enb_refcnt, _gate_flags, _clk_id)
-+			29, 3, 0, 0, 8, 1, TEGRA_DIVIDER_ROUND_UP, _regs,\
-+			_clk_num, periph_clk_enb_refcnt, _gate_flags, _clk_id)
- 
- #define TEGRA_INIT_DATA_INT(_name, _con_id, _dev_id, _parents, _offset,	\
- 			    _clk_num, _regs, _gate_flags, _clk_id)	\
- 	TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parents, _offset,	\
--			30, 2, 0, 0, 8, 1, TEGRA_DIVIDER_INT, _regs,	\
--			_clk_num, periph_clk_enb_refcnt, _gate_flags,	\
--			_clk_id)
-+			30, 2, 0, 0, 8, 1, TEGRA_DIVIDER_INT |		\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, _gate_flags, _clk_id)
- 
- #define TEGRA_INIT_DATA_UART(_name, _con_id, _dev_id, _parents, _offset,\
- 			     _clk_num, _regs, _clk_id)			\
- 	TEGRA_INIT_DATA(_name, _con_id, _dev_id, _parents, _offset,	\
--			30, 2, 0, 0, 16, 1, TEGRA_DIVIDER_UART, _regs,	\
--			_clk_num, periph_clk_enb_refcnt, 0, _clk_id)
-+			30, 2, 0, 0, 16, 1, TEGRA_DIVIDER_UART |	\
-+			TEGRA_DIVIDER_ROUND_UP, _regs, _clk_num,	\
-+			periph_clk_enb_refcnt, 0, _clk_id)
- 
- #define TEGRA_INIT_DATA_NODIV(_name, _con_id, _dev_id, _parents, _offset, \
- 			      _mux_shift, _mux_width, _clk_num, _regs,	\
--- 
-1.7.7.rc0.72.g4b5ea.dirty
+
+--kPepdeVVZyud5ZkI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Nov 26, 2013 at 09:31:25AM -0700, Stephen Warren wrote:
+
+> ... so, I thought you were OK with that one issue. Were there other
+> issues you didn't mention before?
+
+Probably not but I'd need to reread it, I don't think I got that much
+further than noticing that there weren't any clock changes (the fact
+that the clock dependency was getting added in a DMA series set off
+alarm bells).  To be honest given the number of revisions that seem to
+be required I'd been expecting to see a respin of the series, the ASoC
+generic DMA changes did need a respin before they can be merged and I do
+want to get them into the ASoC tree.
+
+--kPepdeVVZyud5ZkI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSlOpvAAoJELSic+t+oim9eCsP/3la/QbYFgSjuUOyCNwjsehu
+hzH7NfY3YVdFcC8AxHOudh24DfjEwfoKE6F4vjSVyhYx91w2K97LI5EKoikwiwav
+kmYW+PlHcPhrZaBmMe8imtNOs3ZeNzR1Bd1o9oY7wg4QxgUlHHvDrPBaPVxeLyXW
+F5Zjb6++mlwfYunF8v+g/zG/UNLp4SW6DsYtd9M4Po48NudS/RlBYkTrimiBu1ps
+a9AfYxaJBt+QoDc2SZp3Ve4gsYsSfajWj17sMOslCNf0108kuifwkDYrm3ZJNtBN
+/FMp3wA0cmPW+3s5rEkQHKKj/Gaz4HMCkmGnm9rP9qEsV+1QgE/GoSEj8qRFSWCR
+IyB7B0qWbeD2STdU+VrVrL52T2qF9RixnlyyR3xo+o8fXRckWWJjBhn/8J23DUSu
+Jb7Q6yF7hBj/FcSo9j46ED/RkCzQIRRGDLcUbLQnTYqvqrvduFLBlNq9o939cDDW
+85MkiKNomAWbyCag6XVf2ZwkrxlTi4J+rmitTRMp0ZY6k2AmgG8wMojfowA3DpmR
+1VdYBVQ04fnFIMzFdwjlBftNRLtFzmvA85zgLn/Gh7j1FycO3bRvEuk1kOX8R7F3
+RPoWqS8unmWbJzFz/kzrE2GtTZ/5cJXs0Qkpdw7VEhzWTrMDsMQp2AbLaheMvgkF
+OBnag6UyM68VtWcttspp
+=wo4g
+-----END PGP SIGNATURE-----
+
+--kPepdeVVZyud5ZkI--
+
+
+--===============0308161566032948908==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0308161566032948908==--
