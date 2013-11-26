@@ -1,97 +1,54 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3] dma: add channel request API that supports deferred probe
-Date: Tue, 26 Nov 2013 08:44:48 -0800
-Message-ID: <CAPcyv4hG_ttwACNBWrSdGC8EZpKM=v+Q5opUdLj+R9UUhJd=hA@mail.gmail.com>
-References: <1385416039-3170-1-git-send-email-swarren@wwwdotorg.org>
-	<1385474368.1871.6.camel@smile>
-	<5294CE5C.1090901@wwwdotorg.org>
+From: Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
+Date: Tue, 26 Nov 2013 16:47:30 +0000
+Message-ID: <20131126164730.GE2355@e103592.cambridge.arm.com>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
+ <1385274652-16415-8-git-send-email-acourbot@nvidia.com>
+ <20131126000608.GA21634@quad.lixom.net>
+ <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5294CE5C.1090901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 26, 2013 at 8:37 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 11/26/2013 06:59 AM, Shevchenko, Andriy wrote:
->> On Mon, 2013-11-25 at 14:47 -0700, Stephen Warren wrote:
->>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> dma_request_slave_channel() simply returns NULL whenever DMA channel
->>> lookup fails. Lookup could fail for two distinct reasons:
->>>
->>> a) No DMA specification exists for the channel name.
->>>    This includes situations where no DMA specifications exist at all, or
->>>    other general lookup problems.
->>>
->>> b) A DMA specification does exist, yet the driver for that channel is not
->>>    yet registered.
->>>
->>> Case (b) should trigger deferred probe in client drivers. However, since
->>> they have no way to differentiate the two situations, it cannot.
->>>
->>> Implement new function dma_request_slave_channel_or_err(), which performs
->>> identically to dma_request_slave_channel(), except that it returns an
->>> error-pointer rather than NULL, which allows callers to detect when
->>> deferred probe should occur.
->>>
->>> Eventually, all drivers should be converted to this new API, the old API
->>> removed, and the new API renamed to the more desirable name. This patch
->>> doesn't convert the existing API and all drivers in one go, since some
->>> drivers call dma_request_slave_channel() then dma_request_channel() if
->>> that fails. That would require either modifying dma_request_channel() in
->>> the same way, or adding extra error-handling code to all affected
->>> drivers, and there are close to 100 drivers using the other API, rather
->>> than just the 15-20 or so that use dma_request_slave_channel(), which
->>> might be tenable in a single patch.
->>>
->>> acpi_dma_request_slave_chan_by_name() doesn't currently implement
->>> deferred probe. It should, but this will be addressed later.
->>
->> Couple of comments below.
->>
->> []
->>
->>> --- a/drivers/dma/of-dma.c
->>> +++ b/drivers/dma/of-dma.c
->>
->> []
->>
->>> @@ -152,17 +152,18 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->>>      struct of_dma           *ofdma;
->>>      struct dma_chan         *chan;
->>>      int                     count, i;
->>> +    int                     ret_no_channel = -ENODEV;
->>
->> Could we re-use chan for the error as well?
->
-> No, because that gets over-written each time ofdma->of_dma_xlate() is
-> called, and that could fail and cause the result not to be returned, and
-> then we would have lost any -EPROBE_DEFERRED value that was stored there
-> to be returned in the nothing-found case.
->
->>> @@ -174,8 +175,10 @@ struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
->>>
->>>              if (ofdma)
->>
->> if (ofdma) {
->> ...
->>
->>>                      chan = ofdma->of_dma_xlate(&dma_spec, ofdma);
->>> -            else
->>> +            else {
->>
->> } else {
->>
->> to keep style.
->
-> OK, I've fixed that up locally. I assume it's not worth a repost just
-> for that change, although I will repost if the DMA maintainers want to
-> create the topic branches rather than me, but there's been no word on
-> that yet.
+On Tue, Nov 26, 2013 at 10:35:58AM +0900, Alexandre Courbot wrote:
+> On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
+> > On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
+> >> Support for Trusted Foundations is light and allows the kernel to run on
+> >> a wider range of devices, so enable it by default.
+> >>
+> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> >> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> >> ---
+> >>  arch/arm/configs/tegra_defconfig | 1 +
+> >>  1 file changed, 1 insertion(+)
+> >
+> > I think we want this enabled on multi_v7_defconfig too? Send a separate
+> > patch for that once this is merged though.
+> 
+> Will do.
 
-That might be best and Vinod should be back.  Vinod do you want to
-queue this one up to a topic branch so that the arm-soc tree can pull
-it?
+Should it just be default y if one of the relevant
+CONFIG_ARCH_TEGRA_*_SOC is selected?
+
+That way, it's automatically included if relevant, and automatically
+excluded if not -- regardless of whether the kernel is multiplatform
+or not.
+
+Cheers
+---Dave
