@@ -1,81 +1,62 @@
-From: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3] dma: add channel request API that supports deferred
- probe
-Date: Tue, 26 Nov 2013 13:59:53 +0000
-Message-ID: <1385474368.1871.6.camel@smile>
-References: <1385416039-3170-1-git-send-email-swarren@wwwdotorg.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V3 4/6] cpufreq: exynos: Use cpufreq_generic_suspend()
+Date: Tue, 26 Nov 2013 20:06:22 +0530
+Message-ID: <CAKohpoka9VCi+Siygf6wWF4v=9pZawtO-ZZ5EoFDuJpAyv7VBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385416039-3170-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
-Content-ID: <7195894634AE7949872C15B48B4A82E1-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Williams, Dan J" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDEzLTExLTI1IGF0IDE0OjQ3IC0wNzAwLCBTdGVwaGVuIFdhcnJlbiB3cm90ZToN
-Cj4gRnJvbTogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5AbnZpZGlhLmNvbT4NCj4gDQo+IGRtYV9y
-ZXF1ZXN0X3NsYXZlX2NoYW5uZWwoKSBzaW1wbHkgcmV0dXJucyBOVUxMIHdoZW5ldmVyIERNQSBj
-aGFubmVsDQo+IGxvb2t1cCBmYWlscy4gTG9va3VwIGNvdWxkIGZhaWwgZm9yIHR3byBkaXN0aW5j
-dCByZWFzb25zOg0KPiANCj4gYSkgTm8gRE1BIHNwZWNpZmljYXRpb24gZXhpc3RzIGZvciB0aGUg
-Y2hhbm5lbCBuYW1lLg0KPiAgICBUaGlzIGluY2x1ZGVzIHNpdHVhdGlvbnMgd2hlcmUgbm8gRE1B
-IHNwZWNpZmljYXRpb25zIGV4aXN0IGF0IGFsbCwgb3INCj4gICAgb3RoZXIgZ2VuZXJhbCBsb29r
-dXAgcHJvYmxlbXMuDQo+IA0KPiBiKSBBIERNQSBzcGVjaWZpY2F0aW9uIGRvZXMgZXhpc3QsIHll
-dCB0aGUgZHJpdmVyIGZvciB0aGF0IGNoYW5uZWwgaXMgbm90DQo+ICAgIHlldCByZWdpc3RlcmVk
-Lg0KPiANCj4gQ2FzZSAoYikgc2hvdWxkIHRyaWdnZXIgZGVmZXJyZWQgcHJvYmUgaW4gY2xpZW50
-IGRyaXZlcnMuIEhvd2V2ZXIsIHNpbmNlDQo+IHRoZXkgaGF2ZSBubyB3YXkgdG8gZGlmZmVyZW50
-aWF0ZSB0aGUgdHdvIHNpdHVhdGlvbnMsIGl0IGNhbm5vdC4NCj4gDQo+IEltcGxlbWVudCBuZXcg
-ZnVuY3Rpb24gZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbF9vcl9lcnIoKSwgd2hpY2ggcGVyZm9y
-bXMNCj4gaWRlbnRpY2FsbHkgdG8gZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbCgpLCBleGNlcHQg
-dGhhdCBpdCByZXR1cm5zIGFuDQo+IGVycm9yLXBvaW50ZXIgcmF0aGVyIHRoYW4gTlVMTCwgd2hp
-Y2ggYWxsb3dzIGNhbGxlcnMgdG8gZGV0ZWN0IHdoZW4NCj4gZGVmZXJyZWQgcHJvYmUgc2hvdWxk
-IG9jY3VyLg0KPiANCj4gRXZlbnR1YWxseSwgYWxsIGRyaXZlcnMgc2hvdWxkIGJlIGNvbnZlcnRl
-ZCB0byB0aGlzIG5ldyBBUEksIHRoZSBvbGQgQVBJDQo+IHJlbW92ZWQsIGFuZCB0aGUgbmV3IEFQ
-SSByZW5hbWVkIHRvIHRoZSBtb3JlIGRlc2lyYWJsZSBuYW1lLiBUaGlzIHBhdGNoDQo+IGRvZXNu
-J3QgY29udmVydCB0aGUgZXhpc3RpbmcgQVBJIGFuZCBhbGwgZHJpdmVycyBpbiBvbmUgZ28sIHNp
-bmNlIHNvbWUNCj4gZHJpdmVycyBjYWxsIGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWwoKSB0aGVu
-IGRtYV9yZXF1ZXN0X2NoYW5uZWwoKSBpZg0KPiB0aGF0IGZhaWxzLiBUaGF0IHdvdWxkIHJlcXVp
-cmUgZWl0aGVyIG1vZGlmeWluZyBkbWFfcmVxdWVzdF9jaGFubmVsKCkgaW4NCj4gdGhlIHNhbWUg
-d2F5LCBvciBhZGRpbmcgZXh0cmEgZXJyb3ItaGFuZGxpbmcgY29kZSB0byBhbGwgYWZmZWN0ZWQN
-Cj4gZHJpdmVycywgYW5kIHRoZXJlIGFyZSBjbG9zZSB0byAxMDAgZHJpdmVycyB1c2luZyB0aGUg
-b3RoZXIgQVBJLCByYXRoZXINCj4gdGhhbiBqdXN0IHRoZSAxNS0yMCBvciBzbyB0aGF0IHVzZSBk
-bWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsKCksIHdoaWNoDQo+IG1pZ2h0IGJlIHRlbmFibGUgaW4g
-YSBzaW5nbGUgcGF0Y2guDQo+IA0KPiBhY3BpX2RtYV9yZXF1ZXN0X3NsYXZlX2NoYW5fYnlfbmFt
-ZSgpIGRvZXNuJ3QgY3VycmVudGx5IGltcGxlbWVudA0KPiBkZWZlcnJlZCBwcm9iZS4gSXQgc2hv
-dWxkLCBidXQgdGhpcyB3aWxsIGJlIGFkZHJlc3NlZCBsYXRlci4NCg0KQ291cGxlIG9mIGNvbW1l
-bnRzIGJlbG93Lg0KDQpbXQ0KDQo+IC0tLSBhL2RyaXZlcnMvZG1hL29mLWRtYS5jDQo+ICsrKyBi
-L2RyaXZlcnMvZG1hL29mLWRtYS5jDQoNCltdDQoNCj4gQEAgLTE1MiwxNyArMTUyLDE4IEBAIHN0
-cnVjdCBkbWFfY2hhbiAqb2ZfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbChzdHJ1Y3QgZGV2aWNl
-X25vZGUgKm5wLA0KPiAgCXN0cnVjdCBvZl9kbWEJCSpvZmRtYTsNCj4gIAlzdHJ1Y3QgZG1hX2No
-YW4JCSpjaGFuOw0KPiAgCWludAkJCWNvdW50LCBpOw0KPiArCWludAkJCXJldF9ub19jaGFubmVs
-ID0gLUVOT0RFVjsNCg0KQ291bGQgd2UgcmUtdXNlIGNoYW4gZm9yIHRoZSBlcnJvciBhcyB3ZWxs
-Pw0KDQo+ICAJaWYgKCFucCB8fCAhbmFtZSkgew0KPiAgCQlwcl9lcnIoIiVzOiBub3QgZW5vdWdo
-IGluZm9ybWF0aW9uIHByb3ZpZGVkXG4iLCBfX2Z1bmNfXyk7DQo+IC0JCXJldHVybiBOVUxMOw0K
-PiArCQlyZXR1cm4gRVJSX1BUUigtRU5PREVWKTsNCj4gIAl9DQo+ICANCj4gIAljb3VudCA9IG9m
-X3Byb3BlcnR5X2NvdW50X3N0cmluZ3MobnAsICJkbWEtbmFtZXMiKTsNCj4gIAlpZiAoY291bnQg
-PCAwKSB7DQo+ICAJCXByX2VycigiJXM6IGRtYS1uYW1lcyBwcm9wZXJ0eSBvZiBub2RlICclcycg
-bWlzc2luZyBvciBlbXB0eVxuIiwNCj4gIAkJCV9fZnVuY19fLCBucC0+ZnVsbF9uYW1lKTsNCj4g
-LQkJcmV0dXJuIE5VTEw7DQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9ERVYpOw0KPiAgCX0NCj4g
-IA0KPiAgCWZvciAoaSA9IDA7IGkgPCBjb3VudDsgaSsrKSB7DQo+IEBAIC0xNzQsOCArMTc1LDEw
-IEBAIHN0cnVjdCBkbWFfY2hhbiAqb2ZfZG1hX3JlcXVlc3Rfc2xhdmVfY2hhbm5lbChzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKm5wLA0KPiAgDQo+ICAJCWlmIChvZmRtYSkNCg0KaWYgKG9mZG1hKSB7DQou
-Li4NCg0KPiAgCQkJY2hhbiA9IG9mZG1hLT5vZl9kbWFfeGxhdGUoJmRtYV9zcGVjLCBvZmRtYSk7
-DQo+IC0JCWVsc2UNCj4gKwkJZWxzZSB7DQoNCn0gZWxzZSB7DQoNCnRvIGtlZXAgc3R5bGUuDQoN
-Cj4gKwkJCXJldF9ub19jaGFubmVsID0gLUVQUk9CRV9ERUZFUjsNCj4gIAkJCWNoYW4gPSBOVUxM
-Ow0KPiArCQl9DQo+ICANCj4gIAkJbXV0ZXhfdW5sb2NrKCZvZl9kbWFfbG9jayk7DQo+ICANCj4g
-QEAgLTE4NSw3ICsxODgsNyBAQCBzdHJ1Y3QgZG1hX2NoYW4gKm9mX2RtYV9yZXF1ZXN0X3NsYXZl
-X2NoYW5uZWwoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gIAkJCXJldHVybiBjaGFuOw0KPiAg
-CX0NCj4gIA0KPiAtCXJldHVybiBOVUxMOw0KPiArCXJldHVybiBFUlJfUFRSKHJldF9ub19jaGFu
-bmVsKTsNCj4gIH0NCg0KDQotLSANCkFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29A
-aW50ZWwuY29tPg0KSW50ZWwgRmlubGFuZCBPeQ0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkludGVsIEZpbmxhbmQg
-T3kKUmVnaXN0ZXJlZCBBZGRyZXNzOiBQTCAyODEsIDAwMTgxIEhlbHNpbmtpIApCdXNpbmVzcyBJ
-ZGVudGl0eSBDb2RlOiAwMzU3NjA2IC0gNCAKRG9taWNpbGVkIGluIEhlbHNpbmtpIAoKVGhpcyBl
-LW1haWwgYW5kIGFueSBhdHRhY2htZW50cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgbWF0ZXJp
-YWwgZm9yCnRoZSBzb2xlIHVzZSBvZiB0aGUgaW50ZW5kZWQgcmVjaXBpZW50KHMpLiBBbnkgcmV2
-aWV3IG9yIGRpc3RyaWJ1dGlvbgpieSBvdGhlcnMgaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYg
-eW91IGFyZSBub3QgdGhlIGludGVuZGVkCnJlY2lwaWVudCwgcGxlYXNlIGNvbnRhY3QgdGhlIHNl
-bmRlciBhbmQgZGVsZXRlIGFsbCBjb3BpZXMuCg==
+On 25 November 2013 19:41, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> Currently we have implemented PM notifiers to disable/enable ->target() routines
+> functionality during suspend/resume.
+>
+> Now we have support present in cpufreq core, lets use it.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/exynos-cpufreq.c | 97 +++-------------------------------------
+>  1 file changed, 6 insertions(+), 91 deletions(-)
+
+Jonghwan Choi reported an issue with this patch. He asked me
+to look at: 6e45eb
+
+And so following diff is updated for this patch in my repo.. Will get
+that fixed in V4:
+
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 4b6e6a6..3f216da 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -22,8 +22,8 @@
+ #include "exynos-cpufreq.h"
+
+ static struct exynos_dvfs_info *exynos_info;
+-
+ static struct regulator *arm_regulator;
++static unsigned int locking_frequency;
+
+ static int exynos_cpufreq_get_index(unsigned int freq)
+ {
+@@ -134,7 +134,7 @@ static int exynos_target(struct cpufreq_policy
+*policy, unsigned int index)
+ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
+        policy->clk = exynos_info->cpu_clk;
+-       policy->suspend_freq = clk_get_rate(exynos_info->cpu_clk) / 1000;
++       policy->suspend_freq = locking_frequency;
+        return cpufreq_generic_init(policy, exynos_info->freq_table, 100000);
+ }
+
+@@ -182,6 +182,9 @@ static int __init exynos_cpufreq_init(void)
+                goto err_vdd_arm;
+        }
+
++       /* Done here as we want to capture boot frequency */
++       locking_frequency = clk_get_rate(exynos_info->cpu_clk) / 1000;
++
+        if (!cpufreq_register_driver(&exynos_driver))
+                return 0;
