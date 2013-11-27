@@ -1,228 +1,71 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 2/3] regulator: tps6586x: add voltage table for tps658643
-Date: Wed, 27 Nov 2013 00:45:44 +0100
-Message-ID: <8be2fe8560cc19f03d5be40ad3dc21d5979c8358.1385508112.git.stefan@agner.ch>
-References: <cover.1385508112.git.stefan@agner.ch>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
+Date: Wed, 27 Nov 2013 02:42:27 +0100
+Message-ID: <4787675.sJF8mqYyxv@vostro.rjw.lan>
+References: <cover.1385374819.git.viresh.kumar@linaro.org> <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com> <4253729.doK7ubnxKx@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1385508112.git.stefan@agner.ch>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: swarren@wwwdotorg.org, thierry.reding@gmail.com, sameo@linux.intel.com, dev@lynxeye.de
-Cc: mark.rutland@arm.com, linux-tegra@vger.kernel.org, Stefan Agner <stefan@agner.ch>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4253729.doK7ubnxKx@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Depending on version, the voltage table might be different. Add version
-compatibility to the regulator information in order to select correct
-voltage table.
+On Tuesday, November 26, 2013 09:23:15 PM Rafael J. Wysocki wrote:
+> On Tuesday, November 26, 2013 07:56:19 AM Viresh Kumar wrote:
+> > On 26 November 2013 04:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
+> > >>
+> > >>       might_sleep();
+> > >>
+> > >> +     cpufreq_suspend();
+> > >> +
+> > >>
+> > >>       mutex_lock(&dpm_list_mtx);
+> > >>       pm_transition = state;
+> > >>       async_error = 0;
+> > >
+> > > Shouldn't it do cpufreq_resume() on errors?
+> > 
+> > Yes and this is already done I believe. In case dpm_suspend() fails,
+> > dpm_resume() gets called. Isn't it?
+> 
+> OK
+> 
+> > >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > >> +void cpufreq_suspend(void)
+> > >> +{
+> > >> +     struct cpufreq_policy *policy;
+> > >> +
+> > >> +     if (!has_target())
+> > >> +             return;
+> > >> +
+> > >> +     pr_debug("%s: Suspending Governors\n", __func__);
+> > >> +
+> > >> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
+> > >> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
+> > >> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
+> > >> +                                     __func__, policy);
+> > >
+> > > This appears to be racy.  Is it really racy, or just seemingly?
+> > 
+> > Why does it look racy to you? Userspace should be frozen by now,
+> > policy_list should be stable as well as nobody would touch it.
+> 
+> You're stopping governors while they may be in use in principle.  Do we have
+> suitable synchronization in place for that?
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/regulator/tps6586x-regulator.c | 97 ++++++++++++++++++++++------------
- 1 file changed, 64 insertions(+), 33 deletions(-)
+Anyway, if you did what I asked you to do and put the cpufreq suspend/resume
+into dpm_suspend/resume_noirq(), I'd probably take this for 3.13.  However,
+since you've decided to put those things somewhere else thus making the
+change much more intrusive, I can only queue it up for 3.14.
 
-diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
-index e8e3a8a..4fe844c 100644
---- a/drivers/regulator/tps6586x-regulator.c
-+++ b/drivers/regulator/tps6586x-regulator.c
-@@ -57,6 +57,8 @@
- #define TPS6586X_SMODE2		0x48
- 
- struct tps6586x_regulator {
-+	enum tps6586x_version version;
-+
- 	struct regulator_desc desc;
- 
- 	int enable_bit[2];
-@@ -86,7 +88,7 @@ static const unsigned int tps6586x_ldo0_voltages[] = {
- 	1200000, 1500000, 1800000, 2500000, 2700000, 2850000, 3100000, 3300000,
- };
- 
--static const unsigned int tps6586x_ldo4_voltages[] = {
-+static const unsigned int tps6586x_ldo4_sm2_voltages[] = {
- 	1700000, 1725000, 1750000, 1775000, 1800000, 1825000, 1850000, 1875000,
- 	1900000, 1925000, 1950000, 1975000, 2000000, 2025000, 2050000, 2075000,
- 	2100000, 2125000, 2150000, 2175000, 2200000, 2225000, 2250000, 2275000,
-@@ -104,6 +106,13 @@ static const unsigned int tps6586x_sm2_voltages[] = {
- 	4200000, 4250000, 4300000, 4350000, 4400000, 4450000, 4500000, 4550000,
- };
- 
-+static const unsigned int tps658643_sm2_voltages[] = {
-+	1025000, 1050000, 1075000, 1100000, 1125000, 1150000, 1175000, 1200000,
-+	1225000, 1250000, 1275000, 1300000, 1325000, 1350000, 1375000, 1400000,
-+	1425000, 1450000, 1475000, 1500000, 1525000, 1550000, 1575000, 1600000,
-+	1625000, 1650000, 1675000, 1700000, 1725000, 1750000, 1775000, 1800000,
-+};
-+
- static const unsigned int tps6586x_dvm_voltages[] = {
- 	 725000,  750000,  775000,  800000,  825000,  850000,  875000,  900000,
- 	 925000,  950000,  975000, 1000000, 1025000, 1050000, 1075000, 1100000,
-@@ -111,16 +120,16 @@ static const unsigned int tps6586x_dvm_voltages[] = {
- 	1325000, 1350000, 1375000, 1400000, 1425000, 1450000, 1475000, 1500000,
- };
- 
--#define TPS6586X_REGULATOR(_id, _pin_name, vdata, vreg, shift, nbits,	\
--			   ereg0, ebit0, ereg1, ebit1, goreg, gobit)	\
-+#define TPS6586X_REG(_ver, _id, _pin_name, vdata, vreg, shift,	nbits,	\
-+		     ereg0, ebit0, ereg1, ebit1, goreg, gobit)		\
- 	.desc	= {							\
- 		.supply_name = _pin_name,				\
- 		.name	= "REG-" #_id,					\
- 		.ops	= &tps6586x_regulator_ops,			\
- 		.type	= REGULATOR_VOLTAGE,				\
- 		.id	= TPS6586X_ID_##_id,				\
--		.n_voltages = ARRAY_SIZE(tps6586x_##vdata##_voltages),	\
--		.volt_table = tps6586x_##vdata##_voltages,		\
-+		.n_voltages = ARRAY_SIZE(vdata##_voltages),		\
-+		.volt_table = vdata##_voltages,				\
- 		.owner	= THIS_MODULE,					\
- 		.enable_reg = TPS6586X_SUPPLY##ereg0,			\
- 		.enable_mask = 1 << (ebit0),				\
-@@ -129,23 +138,24 @@ static const unsigned int tps6586x_dvm_voltages[] = {
- 		.apply_reg = (goreg),				\
- 		.apply_bit = (gobit),				\
- 	},								\
-+	.version	= _ver,						\
- 	.enable_reg[0]	= TPS6586X_SUPPLY##ereg0,			\
- 	.enable_bit[0]	= (ebit0),					\
- 	.enable_reg[1]	= TPS6586X_SUPPLY##ereg1,			\
- 	.enable_bit[1]	= (ebit1),
- 
--#define TPS6586X_LDO(_id, _pname, vdata, vreg, shift, nbits,		\
-+#define TPS6586X_LDO(_ver, _id, _pname, vdata, vreg, shift, nbits,	\
- 		     ereg0, ebit0, ereg1, ebit1)			\
- {									\
--	TPS6586X_REGULATOR(_id, _pname, vdata, vreg, shift, nbits,	\
--			   ereg0, ebit0, ereg1, ebit1, 0, 0)		\
-+	TPS6586X_REG(_ver, _id, _pname, vdata, vreg, shift, nbits,	\
-+		     ereg0, ebit0, ereg1, ebit1, 0, 0)	\
- }
- 
--#define TPS6586X_DVM(_id, _pname, vdata, vreg, shift, nbits,		\
-+#define TPS6586X_DVM(_ver, _id, _pname, vdata, vreg, shift, nbits,	\
- 		     ereg0, ebit0, ereg1, ebit1, goreg, gobit)		\
- {									\
--	TPS6586X_REGULATOR(_id, _pname, vdata, vreg, shift, nbits,	\
--			   ereg0, ebit0, ereg1, ebit1, goreg, gobit)	\
-+	TPS6586X_REG(_ver, _id, _pname, vdata, vreg, shift, nbits,	\
-+		     ereg0, ebit0, ereg1, ebit1, goreg, gobit)		\
- }
- 
- #define TPS6586X_SYS_REGULATOR()					\
-@@ -158,29 +168,45 @@ static const unsigned int tps6586x_dvm_voltages[] = {
- 		.id	= TPS6586X_ID_SYS,				\
- 		.owner	= THIS_MODULE,					\
- 	},								\
-+	.version	= TPS6586X_ANY,					\
- }
- 
-+/* Add version specific entries before any */
- static struct tps6586x_regulator tps6586x_regulator[] = {
- 	TPS6586X_SYS_REGULATOR(),
--	TPS6586X_LDO(LDO_0, "vinldo01", ldo0, SUPPLYV1, 5, 3, ENC, 0, END, 0),
--	TPS6586X_LDO(LDO_3, "vinldo23", ldo, SUPPLYV4, 0, 3, ENC, 2, END, 2),
--	TPS6586X_LDO(LDO_5, "REG-SYS", ldo, SUPPLYV6, 0, 3, ENE, 6, ENE, 6),
--	TPS6586X_LDO(LDO_6, "vinldo678", ldo, SUPPLYV3, 0, 3, ENC, 4, END, 4),
--	TPS6586X_LDO(LDO_7, "vinldo678", ldo, SUPPLYV3, 3, 3, ENC, 5, END, 5),
--	TPS6586X_LDO(LDO_8, "vinldo678", ldo, SUPPLYV2, 5, 3, ENC, 6, END, 6),
--	TPS6586X_LDO(LDO_9, "vinldo9", ldo, SUPPLYV6, 3, 3, ENE, 7, ENE, 7),
--	TPS6586X_LDO(LDO_RTC, "REG-SYS", ldo, SUPPLYV4, 3, 3, V4, 7, V4, 7),
--	TPS6586X_LDO(LDO_1, "vinldo01", dvm, SUPPLYV1, 0, 5, ENC, 1, END, 1),
--	TPS6586X_LDO(SM_2, "vin-sm2", sm2, SUPPLYV2, 0, 5, ENC, 7, END, 7),
--
--	TPS6586X_DVM(LDO_2, "vinldo23", dvm, LDO2BV1, 0, 5, ENA, 3,
--					ENB, 3, TPS6586X_VCC2, BIT(6)),
--	TPS6586X_DVM(LDO_4, "vinldo4", ldo4, LDO4V1, 0, 5, ENC, 3,
--					END, 3, TPS6586X_VCC1, BIT(6)),
--	TPS6586X_DVM(SM_0, "vin-sm0", dvm, SM0V1, 0, 5, ENA, 1,
--					ENB, 1, TPS6586X_VCC1, BIT(2)),
--	TPS6586X_DVM(SM_1, "vin-sm1", dvm, SM1V1, 0, 5, ENA, 0,
--					ENB, 0, TPS6586X_VCC1, BIT(0)),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_0, "vinldo01", tps6586x_ldo0, SUPPLYV1,
-+			5, 3, ENC, 0, END, 0),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_3, "vinldo23", tps6586x_ldo, SUPPLYV4,
-+			0, 3, ENC, 2, END, 2),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_5, "REG-SYS", tps6586x_ldo, SUPPLYV6,
-+			0, 3, ENE, 6, ENE, 6),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_6, "vinldo678", tps6586x_ldo, SUPPLYV3,
-+			0, 3, ENC, 4, END, 4),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_7, "vinldo678", tps6586x_ldo, SUPPLYV3,
-+			3, 3, ENC, 5, END, 5),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_8, "vinldo678", tps6586x_ldo, SUPPLYV2,
-+			5, 3, ENC, 6, END, 6),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_9, "vinldo9", tps6586x_ldo, SUPPLYV6,
-+			3, 3, ENE, 7, ENE, 7),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_RTC, "REG-SYS", tps6586x_ldo, SUPPLYV4,
-+			3, 3, V4, 7, V4, 7),
-+	TPS6586X_LDO(TPS6586X_ANY, LDO_1, "vinldo01", tps6586x_dvm, SUPPLYV1,
-+			0, 5, ENC, 1, END, 1),
-+	TPS6586X_LDO(TPS658623, SM_2, "vin-sm2", tps6586x_ldo4_sm2, SUPPLYV2,
-+			0, 5, ENC, 7, END, 7),
-+	TPS6586X_LDO(TPS658643, SM_2, "vin-sm2", tps658643_sm2, SUPPLYV2,
-+			0, 5, ENC, 7, END, 7),
-+	TPS6586X_LDO(TPS6586X_ANY, SM_2, "vin-sm2", tps6586x_sm2, SUPPLYV2,
-+			0, 5, ENC, 7, END, 7),
-+
-+	TPS6586X_DVM(TPS6586X_ANY, LDO_2, "vinldo23", tps6586x_dvm, LDO2BV1,
-+			0, 5, ENA, 3, ENB, 3, TPS6586X_VCC2, BIT(6)),
-+	TPS6586X_DVM(TPS6586X_ANY, LDO_4, "vinldo4", tps6586x_ldo4_sm2, LDO4V1,
-+			0, 5, ENC, 3, END, 3, TPS6586X_VCC1, BIT(6)),
-+	TPS6586X_DVM(TPS6586X_ANY, SM_0, "vin-sm0", tps6586x_dvm, SM0V1,
-+			0, 5, ENA, 1, ENB, 1, TPS6586X_VCC1, BIT(2)),
-+	TPS6586X_DVM(TPS6586X_ANY, SM_1, "vin-sm1", tps6586x_dvm, SM1V1,
-+			0, 5, ENA, 0, ENB, 0, TPS6586X_VCC1, BIT(0)),
- };
- 
- /*
-@@ -254,14 +280,16 @@ static int tps6586x_regulator_set_slew_rate(struct platform_device *pdev,
- 			setting->slew_rate & TPS6586X_SLEW_RATE_MASK);
- }
- 
--static inline struct tps6586x_regulator *find_regulator_info(int id)
-+static inline struct tps6586x_regulator *find_regulator_info(int id,
-+			enum tps6586x_version version)
- {
- 	struct tps6586x_regulator *ri;
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(tps6586x_regulator); i++) {
- 		ri = &tps6586x_regulator[i];
--		if (ri->desc.id == id)
-+		if (ri->desc.id == id && ((ri->version == version) ||
-+					  (ri->version == TPS6586X_ANY)))
- 			return ri;
- 	}
- 	return NULL;
-@@ -351,6 +379,7 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
- 	struct regulator_init_data *reg_data;
- 	struct tps6586x_platform_data *pdata;
- 	struct of_regulator_match *tps6586x_reg_matches = NULL;
-+	enum tps6586x_version reg_version;
- 	int id;
- 	int err;
- 
-@@ -373,10 +402,12 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	reg_version = tps6586x_get_version(pdev->dev.parent);
-+
- 	for (id = 0; id < TPS6586X_ID_MAX_REGULATOR; ++id) {
- 		reg_data = pdata->reg_init_data[id];
- 
--		ri = find_regulator_info(id);
-+		ri = find_regulator_info(id, reg_version);
- 		if (!ri) {
- 			dev_err(&pdev->dev, "invalid regulator ID specified\n");
- 			return -EINVAL;
+This means I'm going to take the Tianyu's patch as a stop gap for 3.13.
+
+Thanks!
+
 -- 
-1.8.4.2
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
