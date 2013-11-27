@@ -1,68 +1,58 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] mfd: tps6586x: add version detection
-Date: Wed, 27 Nov 2013 16:14:15 +0000
-Message-ID: <20131127161415.GT3296@lee--X1>
-References: <ef881d39f78b75b4badeebb5be0264edc3906d86.1385508112.git.stefan@agner.ch>
- <20131127130954.GF3296@lee--X1>
- <cd69295e946b48451f449eacc02efa4a@agner.ch>
- <20131127135547.GK3296@lee--X1>
- <cfb203a896eda67c106794d89e668d56@agner.ch>
- <20131127143429.GN3296@lee--X1>
- <20131127143641.GO3296@lee--X1>
- <c26ecd550e9940ead950f3874d27a5b0@agner.ch>
- <20131127153019.GR3296@lee--X1>
- <89dbf704d8617c77259e04753e4380c9@agner.ch>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: tegra: Do not print errors for clk_round_rate()
+Date: Wed, 27 Nov 2013 17:26:03 +0100
+Message-ID: <1385569563-25408-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <89dbf704d8617c77259e04753e4380c9-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 27 Nov 2013, Stefan Agner wrote:
+clk_round_rate() can be used by drivers to determine whether or not a
+frequency is supported by the clock. The current Tegra clock driver
+outputs an error message and a stacktrace when the requested rate isn't
+supported. That's fine for clk_set_rate(), but it's confusing when all
+the driver does is query whether or not a frequency is supported.
 
-> Am 2013-11-27 16:30, schrieb Lee Jones:
-> > On Wed, 27 Nov 2013, Stefan Agner wrote:
-> >=20
-> >> Am 2013-11-27 15:36, schrieb Lee Jones:
-> >> <snip>
-> >> >> Perhaps I should suggest to make TPS6586X_ANY a positive number=
- then,
-> >> >> as a negative value to me indicates more of an error than a gen=
-eric
-> >> >> parameter.
-> >> I see, its especially confusing since the version is filled using =
-the
-> >> i2c_smbus_read_byte_data functions return value. The version field=
- is a
-> >> 8-Bit value according to the data sheet, I could use 0x100 as
-> >> TPS6586X_ANY identifier.
-> >=20
-> > How far are we away from using 0xFF?
-> >=20
-> > I'd be happy to use that and change it _if_ we ever get close.
-> >=20
-> > If it's likely that it'll be used, then sure 0x100 sounds okay too.
->=20
-> Yes, I thought about 0xFF too. The latest device we support is TPS658=
-643
-> (according to data sheet release dates), which has the smallest versi=
-on
-> number (03). Since it seems to be a CRC (hence VERSIONCRC) the number=
- is
-> quite random. Also, 0xFF sounds like a bitmask which can mask all
-> versions, but the versions can't be used bitwise... So I would prefer=
- to
-> go with 0x100.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-pll.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Deal!
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 7aec773a5ca6..55ece6726108 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -435,9 +435,6 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	if (cfg->m > divm_max(pll) || cfg->n > divn_max(pll) ||
+ 	    (1 << p_div) > divp_max(pll)
+ 	    || cfg->output_rate > pll->params->vco_max) {
+-		pr_err("%s: Failed to set %s rate %lu\n",
+-		       __func__, __clk_get_name(hw->clk), rate);
+-		WARN_ON(1);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -584,6 +581,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
+ 	    _calc_rate(hw, &cfg, rate, parent_rate)) {
++		pr_err("%s: Failed to set %s rate %lu\n", __func__,
++		       __clk_get_name(hw->clk), rate);
+ 		WARN_ON(1);
+ 		return -EINVAL;
+ 	}
+@@ -615,10 +614,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		return __clk_get_rate(hw->clk);
+ 
+ 	if (_get_table_rate(hw, &cfg, rate, *prate) &&
+-	    _calc_rate(hw, &cfg, rate, *prate)) {
+-		WARN_ON(1);
++	    _calc_rate(hw, &cfg, rate, *prate))
+ 		return -EINVAL;
+-	}
+ 
+ 	return cfg.output_rate;
+ }
+-- 
+1.8.4.2
