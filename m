@@ -1,105 +1,67 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
-Date: Wed, 27 Nov 2013 13:09:30 +0530
-Message-ID: <CAKohpomV3xByHbcRtcrF3F6k_Nw=f3G0vX7gU6RqWZ4z+j=a_Q@mail.gmail.com>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
-	<CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com>
-	<4253729.doK7ubnxKx@vostro.rjw.lan>
-	<4787675.sJF8mqYyxv@vostro.rjw.lan>
-	<CAKohpo=iSJSh_x3Xj3h-GRE6S25ptsdHf34MftMuD6JVSZw=rg@mail.gmail.com>
-	<52959A74.70007@intel.com>
+From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: tegra: set SM2 voltage correct
+Date: Wed, 27 Nov 2013 10:59:47 +0100
+Message-ID: <1385546387.4270.11.camel@weser.hi.pengutronix.de>
+References: <cover.1385508112.git.stefan@agner.ch>
+	 <c9ceead9e3df77b5a33ad654db23c241cd624096.1385508112.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52959A74.70007@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lan Tianyu <tianyu.lan@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c9ceead9e3df77b5a33ad654db23c241cd624096.1385508112.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 27 November 2013 12:38, Lan Tianyu <tianyu.lan@intel.com> wrote:
-> Hi Viresh:
+Hi Stefan,
 
-Hey Lan,
+Am Mittwoch, den 27.11.2013, 00:45 +0100 schrieb Stefan Agner:
+> Set the requested SM2 voltage to the correct value of 1.8V. The value
+> before used to work on TPS658623 since the driver applied a wrong
+> voltage table too. However, the TPS658643 used on newer devices uses
+> yet another voltage table and those broke that compatibility. The
+> regulator driver now has the correct voltage table for both regulator
+> versions and those the correct voltage can be used in this device
+> tree.
 
->         First, I agree the new solution you are working on. :)
+This isn't a global Tegra change, but very specific to the Colibri, so
+please reword your commit headline to reflect that.
 
-Thanks :)
+Also there are other issues with the regulator setup on Colibri, I sent
+a patch for this a good while ago, but didn't come around to revise it
+until now. So if you are going to touch things here, please look up that
+patch and fold it into this one.
 
-> But actually I don't totally agree my origin patch have design issue.
-> Because I think governor should have the ability to check whether it has
-> been EXIT when doing INIT and it should return error code at that point.
-> The design is to make governor code stronger to deal with the case that
-> governor is reinitialized before EXIT. Just from my view.
+I'll take a look at the other patches later today.
 
-> Sorry for noise.
+Regards,
+Lucas
 
-Ahh, these are useful discussions. Everyone have their own thoughts and
-its upto all of us to get meaningful stuff out of it..
+> 
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index d5c9bca..cbe89ff 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -268,8 +268,8 @@
+>  					reg = <3>;
+>  					regulator-compatible = "sm2";
+>  					regulator-name = "vdd_sm2,vin_ldo*";
+> -					regulator-min-microvolt = <3700000>;
+> -					regulator-max-microvolt = <3700000>;
+> +					regulator-min-microvolt = <1800000>;
+> +					regulator-max-microvolt = <1800000>;
+>  					regulator-always-on;
+>  				};
+>  
 
-I agree to whatever you wrote above but this isn't exactly what's being
-done in your patch. I was more concerned about this stuff:
-
-On 22 November 2013 13:08, Lan Tianyu <tianyu.lan@intel.com> wrote:
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-
-> +               if (has_target() && !frozen) {
->                         ret = __cpufreq_governor(policy,
->                                         CPUFREQ_GOV_POLICY_EXIT);
-
-> diff --git a/drivers/cpufreq/cpufreq_governor.c b/drivers/cpufreq/cpufreq_governor.c
-> @@ -204,9 +204,20 @@ int cpufreq_governor_dbs(struct cpufreq_policy *policy,
->
->         switch (event) {
->         case CPUFREQ_GOV_POLICY_INIT:
-> +               /*
-> +                * In order to keep governor data across suspend/resume,
-> +                * Governor doesn't exit when suspend and will be
-> +                * reinitialized when resume. Here check policy governor
-> +                * data to determine whether the governor has been exited.
-> +                * If not, return EALREADY.
-> +                */
->                 if (have_governor_per_policy()) {
-> -                       WARN_ON(dbs_data);
-> +                       if (dbs_data)
-> +                               return -EALREADY;
->                 } else if (dbs_data) {
-> +                       if (policy->governor_data == dbs_data)
-> +                               return -EALREADY;
-> +
->                         dbs_data->usage_count++;
->                         policy->governor_data = dbs_data;
->                         return 0;
-
-Here the cpufreq core has skipped the call to governor's EXIT,
-and so it shouldn't pass on the following INIT call to them..
-
-That's a bit wrong. These two calls work in pairs and are exactly
-opposite to each other. And so if some decision has to be taken
-then either that should be done completely at governor level
-or core level. Doing stuff partly in governor and partly in core
-is like giving invitation to new bugs/problems :)
-
-Nothing personal otherwise. Recently there were patches sent
-by people, you, Nishanth, etc, which I have just overridden with
-my versions.. It wasn't about getting my count higher :) but
-getting the solution at right places instead of solving them at
-wrong locations..
-
-I am already having tough time upstreaming patches for cpufreq
-consolidation, as the number of patches is huge. It takes time
-for people to absorb/test them. Though Rafael has taken almost all
-of them in v3.13 finally, but I understand its difficult for him as
-well and he did his job wonderfully :)
-
-And so I don't really want to get any new stuff in which will surely
-get consolidated later. Lets do it now, we had enough of it :)
-
-Even, related to your patch, I was already thinking of getting
-rid of "frozen" variable and parameter to functions, as we already
-know status from a global variable now, cpufreq_suspended. And
-so we don't actually need to pass any additional parameters
-to many routines, which have something like 'frozen' currently.
-
---
-viresh
+-- 
+Pengutronix e.K.                           | Lucas Stach                 |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
