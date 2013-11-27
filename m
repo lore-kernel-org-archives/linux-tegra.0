@@ -1,54 +1,67 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V2] ASoC: tegra: use reset framework
-Date: Wed, 27 Nov 2013 17:14:39 +0000
-Message-ID: <20131127171439.GM14725@sirena.org.uk>
-References: <1385496767-8307-1-git-send-email-swarren@wwwdotorg.org>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Do not print errors for clk_round_rate()
+Date: Wed, 27 Nov 2013 10:17:53 -0800
+Message-ID: <20131127181753.16819.57846@quantum>
+References: <1385569563-25408-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5kKFnMzJ1rlmqP2F"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1385496767-8307-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385569563-25408-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Quoting Thierry Reding (2013-11-27 08:26:03)
+> clk_round_rate() can be used by drivers to determine whether or not a
+> frequency is supported by the clock. The current Tegra clock driver
+> outputs an error message and a stacktrace when the requested rate isn't
+> supported. That's fine for clk_set_rate(), but it's confusing when all
+> the driver does is query whether or not a frequency is supported.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---5kKFnMzJ1rlmqP2F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-On Tue, Nov 26, 2013 at 01:12:47PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Tegra's clock driver now provides an implementation of the common
-> reset API (include/linux/reset.h). Use this instead of the old Tegra-
-> specific API; that will soon be removed.
-
-Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
---5kKFnMzJ1rlmqP2F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSlih8AAoJELSic+t+oim9lkwP/2cZUbBRs1DwyIDCR0bpOCfs
-9hrWGgqhkF4dnXTuojCGOuuYZXy9gwEsymPetjXUbizbf87JmPYn4e8k8LopmFhQ
-asrEfUBqVMD/El6SOFyvsmo8mscWNi80W2mzypW+VGjiH7nMPkwCrOR9HFCnzMjY
-PZ0td+mEBkgtxrdvU3oPCPzcurrcJLb8i/O0sHxo1wQHJGYDS6W5hOPINiGrdfWH
-saq+Fc2wbic8k+d5l+ZBM9tcnUiI3Ls6Z5Cmc6x6lh6qek+9TltGjRrCdFfE0Jfb
-XUVC4nxktFgVQ7Clfs6n+EYI9YHm/I1mA4e+iexG8Ebi2L9qh3gSvm2wSFMkI5j7
-4KIsoZJBo3cGdSBy0ynxeXQc7qa7xdsy68hGYWLNKBt1b0LK0JRn1MNsN3J/XDYQ
-P96sCw289VIO24TFM1BrMLWHF2Y1CeR1OqbIes0T89jr6OH4yqkyKAMgMNbIvMeq
-0HGhbgJyL3iw5jKeJn0RNkmz9PxsWvz0aVzkfgD9lrBqep0Y4igtknDEIj9cGwy4
-WaFFarj+6P7s7MZk10KuzC1vdzSeUCuDFbknyZCZ8eZNIbLlhkrPVCaCFm7JKPtR
-YnE0V9khAMUdutQRGXsG1kr67EfCnzmhtXoZw+0L/XjtxzaWHnAv+PFlImPayPnL
-htIYtznFXFpy60I59IHd
-=vuZo
------END PGP SIGNATURE-----
-
---5kKFnMzJ1rlmqP2F--
+> ---
+>  drivers/clk/tegra/clk-pll.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 7aec773a5ca6..55ece6726108 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -435,9 +435,6 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>         if (cfg->m > divm_max(pll) || cfg->n > divn_max(pll) ||
+>             (1 << p_div) > divp_max(pll)
+>             || cfg->output_rate > pll->params->vco_max) {
+> -               pr_err("%s: Failed to set %s rate %lu\n",
+> -                      __func__, __clk_get_name(hw->clk), rate);
+> -               WARN_ON(1);
+>                 return -EINVAL;
+>         }
+>  
+> @@ -584,6 +581,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>         if (_get_table_rate(hw, &cfg, rate, parent_rate) &&
+>             _calc_rate(hw, &cfg, rate, parent_rate)) {
+> +               pr_err("%s: Failed to set %s rate %lu\n", __func__,
+> +                      __clk_get_name(hw->clk), rate);
+>                 WARN_ON(1);
+>                 return -EINVAL;
+>         }
+> @@ -615,10 +614,8 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>                 return __clk_get_rate(hw->clk);
+>  
+>         if (_get_table_rate(hw, &cfg, rate, *prate) &&
+> -           _calc_rate(hw, &cfg, rate, *prate)) {
+> -               WARN_ON(1);
+> +           _calc_rate(hw, &cfg, rate, *prate))
+>                 return -EINVAL;
+> -       }
+>  
+>         return cfg.output_rate;
+>  }
+> -- 
+> 1.8.4.2
