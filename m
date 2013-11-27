@@ -1,28 +1,50 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH 1/3] mfd: tps6586x: add version detection
-Date: Wed, 27 Nov 2013 16:26:12 +0100
-Message-ID: <c26ecd550e9940ead950f3874d27a5b0@agner.ch>
+Date: Wed, 27 Nov 2013 15:30:19 +0000
+Message-ID: <20131127153019.GR3296@lee--X1>
 References: <cover.1385508112.git.stefan@agner.ch>
  <ef881d39f78b75b4badeebb5be0264edc3906d86.1385508112.git.stefan@agner.ch>
- <20131127130954.GF3296@lee--X1> <cd69295e946b48451f449eacc02efa4a@agner.ch>
- <20131127135547.GK3296@lee--X1> <cfb203a896eda67c106794d89e668d56@agner.ch>
- <20131127143429.GN3296@lee--X1> <20131127143641.GO3296@lee--X1>
+ <20131127130954.GF3296@lee--X1>
+ <cd69295e946b48451f449eacc02efa4a@agner.ch>
+ <20131127135547.GK3296@lee--X1>
+ <cfb203a896eda67c106794d89e668d56@agner.ch>
+ <20131127143429.GN3296@lee--X1>
+ <20131127143641.GO3296@lee--X1>
+ <c26ecd550e9940ead950f3874d27a5b0@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131127143641.GO3296@lee--X1>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <c26ecd550e9940ead950f3874d27a5b0@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, sameo@linux.intel.com, dev@lynxeye.de, mark.rutland@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2013-11-27 15:36, schrieb Lee Jones:
-<snip>
->> Perhaps I should suggest to make TPS6586X_ANY a positive number then,
->> as a negative value to me indicates more of an error than a generic
->> parameter.
-I see, its especially confusing since the version is filled using the
-i2c_smbus_read_byte_data functions return value. The version field is a
-8-Bit value according to the data sheet, I could use 0x100 as
-TPS6586X_ANY identifier.
+On Wed, 27 Nov 2013, Stefan Agner wrote:
+
+> Am 2013-11-27 15:36, schrieb Lee Jones:
+> <snip>
+> >> Perhaps I should suggest to make TPS6586X_ANY a positive number th=
+en,
+> >> as a negative value to me indicates more of an error than a generi=
+c
+> >> parameter.
+> I see, its especially confusing since the version is filled using the
+> i2c_smbus_read_byte_data functions return value. The version field is=
+ a
+> 8-Bit value according to the data sheet, I could use 0x100 as
+> TPS6586X_ANY identifier.
+
+How far are we away from using 0xFF?
+
+I'd be happy to use that and change it _if_ we ever get close.
+
+If it's likely that it'll be used, then sure 0x100 sounds okay too.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
