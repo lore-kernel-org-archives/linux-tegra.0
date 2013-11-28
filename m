@@ -1,50 +1,89 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
-Date: Thu, 28 Nov 2013 21:29:52 +0100
-Message-ID: <1781198.iCUX9ZdW7W@vostro.rjw.lan>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org> <3057132.zHNVNQZ8pP@vostro.rjw.lan> <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
+From: Gerhard Sittig <gsi-ynQEQJNshbs@public.gmane.org>
+Subject: Re: NULL clock items (was: [PATCH 11/31] dma: add channel request
+ API that supports deferred probe)
+Date: Thu, 28 Nov 2013 22:20:20 +0100
+Message-ID: <20131128212020.GE2982@book.gsilab.sittig.org>
+References: <CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
+ <528F95A9.2050305@wwwdotorg.org>
+ <CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
+ <528F9DF9.6080706@wwwdotorg.org>
+ <20131123003442.GH16735@n2100.arm.linux.org.uk>
+ <5293883A.8050808@wwwdotorg.org>
+ <20131125175330.GQ16735@n2100.arm.linux.org.uk>
+ <52938F75.7020108@wwwdotorg.org>
+ <20131125202808.GN2760@book.gsilab.sittig.org>
+ <20131125205224.GT16735@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20131125205224.GT16735-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, November 28, 2013 07:49:29 PM Viresh Kumar wrote:
-> On 28 November 2013 19:53, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > I don't think that the Nishanth's issue is fixed by this particular version of
-> > the patch, so I modified the changelog and removed a the comment above
-> > cpufreq_suspend()
+On Mon, Nov 25, 2013 at 20:52 +0000, Russell King - ARM Linux wrote:
 > 
-> No, it does fix his issue as we are just stopping the governors from
-> dpm_suspend_noirq() and not initiating any new transitions. I said we need
-> these calls from dpm_suspend() instead as platforms like exynos and tegra
-> do need to change frequency before suspending..
-> 
-> See:
-> 
-> https://lkml.org/lkml/2013/11/25/692
-> 
-> > (which should be a proper kerneldoc one if any, BTW).
-> 
-> Okay.. I will add that separately..
-> 
-> > I've also made some minor changes to the conditionals, because I didn't like them
-> > the way they were written originally.
-> >
-> > Please check the result in bleeding-edge.
-> 
-> Everything else is fine..
+> [ ... 2771399a "fs_enet: cleanup clock API use" example ... ]
+> [ ... NULL clocks won't get released, calls might get skipped ... ]
 
-So I'm reading this as "the version of the patch in bleeding-edge is OK".
+I agree that the NULL clock reference is not handled correctly in
+that code.  Part of the issue is that NULL is both an
+initialization value and a valid reference to something that was
+acquired (and quite counter intuitive so).
 
-I hope that really is the case. :-)
+This inability to tell the two reasons for NULL apart only
+vanishes when each clock variable explicitly gets initialized or
+pre-set to some ERR_PTR() value (or when the allocation and
+assignment is unconditional, no code path depends on some other
+condition).  I'm afraid that the source tree currently is not
+there yet, and it may be quite some churn (with a lot of
+potential for conflicts) to touch each driver, if it's at all
+possible to identify all spots where those variables are NULL
+because of
+- static declarations without initializers
+- static declarations with incomplete initializers
+- memory allocation with "zeroes please" flags
+- memset() calls
+- clock acquisition code paths were not taken
 
-Thanks!
 
+Which platform or clock provider or specific clock driver exactly
+is this mysterious instance which returns NULL for a valid clock?
+Is this one or the very few instances easier to adjust and thus
+(re-)gain certainty about correct operation with less effort and
+much less risk of missing something?
+
+
+> This is not very nice.  Better solution:
+> 
+> 	fpi->clk_per = PTR_ERR(-EINVAL);
+> 	clk = devm_clk_get(&ofdev->dev, "per");
+> 	if (!IS_ERR(clk)) {
+> 		err = clk_prepare_enable(clk);
+> 		if (err) {
+> 			ret = err;
+> 			goto out_free_fpi;
+> 		}
+> 		fpi->clk_per = clk;
+> 	}
+> 
+> ...
+> 
+>         of_node_put(fpi->phy_node);
+>         if (!IS_ERR(fpi->clk_per))
+>                 clk_disable_unprepare(fpi->clk_per);
+
+Assume in the above example that the fpi->clk_per assignment
+would be in a conditional code path.  In that case the code is as
+wrong (unpreparing a not acquired NULL reference) as leaking an
+acquired NULL reference is.
+
+
+virtually yours
+Gerhard Sittig
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office-ynQEQJNshbs@public.gmane.org
