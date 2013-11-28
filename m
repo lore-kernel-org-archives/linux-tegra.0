@@ -1,69 +1,50 @@
-From: Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
-Date: Thu, 28 Nov 2013 19:47:51 +0000
-Message-ID: <20131128194751.GD4634@e103592.cambridge.arm.com>
-References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
- <1385274652-16415-8-git-send-email-acourbot@nvidia.com>
- <20131126000608.GA21634@quad.lixom.net>
- <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
- <20131126164730.GE2355@e103592.cambridge.arm.com>
- <CAAVeFuJgqgRnWLD+dyvb7+2fLanHmdDT0YV5r8ETsoqqjW8p7A@mail.gmail.com>
- <52977639.4000308@wwwdotorg.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
+Date: Thu, 28 Nov 2013 21:29:52 +0100
+Message-ID: <1781198.iCUX9ZdW7W@vostro.rjw.lan>
+References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org> <3057132.zHNVNQZ8pP@vostro.rjw.lan> <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <52977639.4000308@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <Pawel.Moll@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 28, 2013 at 04:58:33PM +0000, Stephen Warren wrote:
-> On 11/27/2013 11:02 PM, Alexandre Courbot wrote:
-> > On Wed, Nov 27, 2013 at 1:47 AM, Dave Martin <Dave.Martin@arm.com> wrote:
-> >> On Tue, Nov 26, 2013 at 10:35:58AM +0900, Alexandre Courbot wrote:
-> >>> On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
-> >>>> On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
-> >>>>> Support for Trusted Foundations is light and allows the kernel to run on
-> >>>>> a wider range of devices, so enable it by default.
-> >>>>>
-> >>>>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> >>>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >>>>> Reviewed-by: Stephen Warren <swarren@nvidia.com>
-> >>>>> ---
-> >>>>>  arch/arm/configs/tegra_defconfig | 1 +
-> >>>>>  1 file changed, 1 insertion(+)
-> >>>>
-> >>>> I think we want this enabled on multi_v7_defconfig too? Send a separate
-> >>>> patch for that once this is merged though.
-> >>>
-> >>> Will do.
-> >>
-> >> Should it just be default y if one of the relevant
-> >> CONFIG_ARCH_TEGRA_*_SOC is selected?
-> >>
-> >> That way, it's automatically included if relevant, and automatically
-> >> excluded if not -- regardless of whether the kernel is multiplatform
-> >> or not.
-> > 
-> > So basically, that would mean setting the default to 'y' since the
-> > option is not available unless a supported platform is included?
-> > 
-> > I'm fine this way too, if Stephen also agrees.
+On Thursday, November 28, 2013 07:49:29 PM Viresh Kumar wrote:
+> On 28 November 2013 19:53, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > I don't think that the Nishanth's issue is fixed by this particular version of
+> > the patch, so I modified the changelog and removed a the comment above
+> > cpufreq_suspend()
 > 
-> Fine by me.
+> No, it does fix his issue as we are just stopping the governors from
+> dpm_suspend_noirq() and not initiating any new transitions. I said we need
+> these calls from dpm_suspend() instead as platforms like exynos and tegra
+> do need to change frequency before suspending..
+> 
+> See:
+> 
+> https://lkml.org/lkml/2013/11/25/692
+> 
+> > (which should be a proper kerneldoc one if any, BTW).
+> 
+> Okay.. I will add that separately..
+> 
+> > I've also made some minor changes to the conditionals, because I didn't like them
+> > the way they were written originally.
+> >
+> > Please check the result in bleeding-edge.
+> 
+> Everything else is fine..
 
-Sure, as long as the result is right, that should be fine.
+So I'm reading this as "the version of the patch in bleeding-edge is OK".
 
-Cheers
----Dave
+I hope that really is the case. :-)
+
+Thanks!
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
