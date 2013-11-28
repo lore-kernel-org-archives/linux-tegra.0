@@ -1,31 +1,57 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Do not print errors for clk_round_rate()
-Date: Wed, 27 Nov 2013 23:52:36 +0100
-Message-ID: <20131127225236.GA9255@luegisland.agner.local>
-References: <1385569563-25408-1-git-send-email-treding@nvidia.com>
- <20131127163442.GA25458@ulmo.nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
+Date: Thu, 28 Nov 2013 15:02:44 +0900
+Message-ID: <CAAVeFuJgqgRnWLD+dyvb7+2fLanHmdDT0YV5r8ETsoqqjW8p7A@mail.gmail.com>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
+ <1385274652-16415-8-git-send-email-acourbot@nvidia.com>
+ <20131126000608.GA21634@quad.lixom.net>
+ <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
+ <20131126164730.GE2355@e103592.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131127163442.GA25458-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131126164730.GE2355@e103592.cambridge.arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 27, 2013 at 05:34:43PM +0100, Thierry Reding wrote:
-> Cc'ing Stefan, since he reported this error or IRC. Stefan, can you
-> check whether this fixes the issue you were seeing? In case you're not
-> subscribed, please let me know and I'll resend the patch.
-> 
-> Peter, if you're fine with applying as-is, can you add this:
-> 
-> 	Reported-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-> 
-> to give proper credit?
-> 
+On Wed, Nov 27, 2013 at 1:47 AM, Dave Martin <Dave.Martin@arm.com> wrote:
+> On Tue, Nov 26, 2013 at 10:35:58AM +0900, Alexandre Courbot wrote:
+>> On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
+>> > On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
+>> >> Support for Trusted Foundations is light and allows the kernel to run on
+>> >> a wider range of devices, so enable it by default.
+>> >>
+>> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> >> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>> >> ---
+>> >>  arch/arm/configs/tegra_defconfig | 1 +
+>> >>  1 file changed, 1 insertion(+)
+>> >
+>> > I think we want this enabled on multi_v7_defconfig too? Send a separate
+>> > patch for that once this is merged though.
+>>
+>> Will do.
+>
+> Should it just be default y if one of the relevant
+> CONFIG_ARCH_TEGRA_*_SOC is selected?
+>
+> That way, it's automatically included if relevant, and automatically
+> excluded if not -- regardless of whether the kernel is multiplatform
+> or not.
 
-Looks good to me, no more warning stacktraces on my setup.
+So basically, that would mean setting the default to 'y' since the
+option is not available unless a supported platform is included?
 
-Reported-and-tested-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+I'm fine this way too, if Stephen also agrees.
