@@ -1,57 +1,81 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
-Date: Thu, 28 Nov 2013 15:02:44 +0900
-Message-ID: <CAAVeFuJgqgRnWLD+dyvb7+2fLanHmdDT0YV5r8ETsoqqjW8p7A@mail.gmail.com>
-References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
- <1385274652-16415-8-git-send-email-acourbot@nvidia.com>
- <20131126000608.GA21634@quad.lixom.net>
- <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com>
- <20131126164730.GE2355@e103592.cambridge.arm.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/3] regulator: tps6586x: add version detection and
+ voltage tables
+Date: Thu, 28 Nov 2013 09:13:53 +0100
+Message-ID: <20131128081351.GA26502@ulmo.nvidia.com>
+References: <cover.1385508112.git.stefan@agner.ch>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20131126164730.GE2355@e103592.cambridge.arm.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <cover.1385508112.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kai Poggensee <kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 27, 2013 at 1:47 AM, Dave Martin <Dave.Martin@arm.com> wrote:
-> On Tue, Nov 26, 2013 at 10:35:58AM +0900, Alexandre Courbot wrote:
->> On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof@lixom.net> wrote:
->> > On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
->> >> Support for Trusted Foundations is light and allows the kernel to run on
->> >> a wider range of devices, so enable it by default.
->> >>
->> >> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> >> Reviewed-by: Stephen Warren <swarren@nvidia.com>
->> >> ---
->> >>  arch/arm/configs/tegra_defconfig | 1 +
->> >>  1 file changed, 1 insertion(+)
->> >
->> > I think we want this enabled on multi_v7_defconfig too? Send a separate
->> > patch for that once this is merged though.
->>
->> Will do.
->
-> Should it just be default y if one of the relevant
-> CONFIG_ARCH_TEGRA_*_SOC is selected?
->
-> That way, it's automatically included if relevant, and automatically
-> excluded if not -- regardless of whether the kernel is multiplatform
-> or not.
 
-So basically, that would mean setting the default to 'y' since the
-option is not available unless a supported platform is included?
+--opJtzjQTFsWo+cga
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm fine this way too, if Stephen also agrees.
+On Wed, Nov 27, 2013 at 12:45:42AM +0100, Stefan Agner wrote:
+> This patchset adds version detection for the tps6586x mfd family. This is
+> required because some regulator versions use different voltage tables. The
+> regulator driver now uses the right voltage table according to the
+> version.
+>=20
+> The required voltage for the SM2 converter on the Colibri T20 is 1.8V,
+> however, the device tree states 3.7V right now. Newer versions (>=3DV1.2)=
+ of
+> the Colibri T20 module use the TPS658643, whereas old ones (<V1.2) use the
+> TPS658623. Both of them have a different voltage table for SM2. The
+> current device tree contains a voltage which results in 1.8V for the older
+> TPS658623. Since the regulator driver has correct voltage tables for both
+> regulator versions now, we can request the correct 1.8V from the device
+> tree.
+>=20
+> Tested on Colibri T20 V1.1 and V1.2.
+>=20
+> Stefan Agner (3):
+>   mfd: tps6586x: add version detection
+>   regulator: tps6586x: add voltage table for tps658643
+>   ARM: tegra: set SM2 voltage correct
+>=20
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi |  4 +-
+>  drivers/mfd/tps6586x.c                     | 41 +++++++++++--
+>  drivers/regulator/tps6586x-regulator.c     | 97 ++++++++++++++++++++----=
+------
+>  include/linux/mfd/tps6586x.h               |  9 +++
+>  4 files changed, 110 insertions(+), 41 deletions(-)
+
+Adding Kai Poggensee on Cc. There was a variant of the Tamonten board
+with one of these versions of the chip (or maybe it was even yet another
+one).
+
+Thierry
+
+--opJtzjQTFsWo+cga
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSlvs/AAoJEN0jrNd/PrOhxGoQAILCaV106mkH4E+n3s6k7uBA
+D50v7aWnVyQjKs8SWpiBsy1OtDc0Ji1D0eVUDE4XA0NtIfIaL3WoNXGk+umkhdT0
+xswjdxMChP9UQr/Tm6yVjSrA66C95CjUVQmTVLn7vrnuy9zlmJQdwi5XBjP1WtFN
+ZzX9acVNnBBp0omwbhggIZGE9awD6Gtgja+uElgZT/5FYWrHKOPYbQqWTGZU7jYk
+6q6UtTu9ItYjr2TPi/MkBxwyhGIKBpCDY6EX7ajo/7omUhR43UajKHXNrZ9a+Kim
+Kx6jaPvHR0ymKAT3SIajycMdBuy0ZW/VbkQpPxpvSDHcKaneqmS2sT+6NaR3Cgyy
+o8dB06kSEduKFBOAv6zaM9Io3JAA+W5Xt7nCqpuoQIezpU/tA9uq/LlxwJeLvv0R
+yFpmuc3HZYkgkZXNNA4sGThjnYxY3bqcGiQvfib0zOtugU9PWjJfrUsxtj3uO240
+alBRP7bVdwn+ICcxUwCg1TWLp9CBN+htzxQkV5FJYIGyVNhyiVTqgY0iGoVaZN89
+AyZ6dTjuYEGf/kk6mQaJorkSTS2sWUZc0m+TJMIr69TDE0Ubwl6A2l8ACC831g/K
+FBVDIn4PP+meoN7ZnlvyuyxMglrOYbqWi6mluVPBRwTxFY2nlozRNVeeE9UnAIJ+
+vzXgnaXT6hGA1VdEneUi
+=DGa3
+-----END PGP SIGNATURE-----
+
+--opJtzjQTFsWo+cga--
