@@ -1,89 +1,59 @@
-From: Gerhard Sittig <gsi-ynQEQJNshbs@public.gmane.org>
-Subject: Re: NULL clock items (was: [PATCH 11/31] dma: add channel request
- API that supports deferred probe)
-Date: Thu, 28 Nov 2013 22:20:20 +0100
-Message-ID: <20131128212020.GE2982@book.gsilab.sittig.org>
-References: <CAPcyv4jTUVjhFFXP8RL2jCqFj1MqxSCKQYvfdLHTj+1PRDDL3Q@mail.gmail.com>
- <528F95A9.2050305@wwwdotorg.org>
- <CAPcyv4iXmBmcsHDc7yjxxbH7sO8m1nVoEO6PUibuDeb1Wtge+g@mail.gmail.com>
- <528F9DF9.6080706@wwwdotorg.org>
- <20131123003442.GH16735@n2100.arm.linux.org.uk>
- <5293883A.8050808@wwwdotorg.org>
- <20131125175330.GQ16735@n2100.arm.linux.org.uk>
- <52938F75.7020108@wwwdotorg.org>
- <20131125202808.GN2760@book.gsilab.sittig.org>
- <20131125205224.GT16735@n2100.arm.linux.org.uk>
+From: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v11 7/7] ARM: tegra: support Trusted Foundations by default
+Date: Fri, 29 Nov 2013 10:07:48 +0900
+Message-ID: <5297E8E4.8080401@nvidia.com>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com> <1385274652-16415-8-git-send-email-acourbot@nvidia.com> <20131126000608.GA21634@quad.lixom.net> <CAAVeFu+mMyPhFtVZ09vgYWWCYkPpF3X547ffRAfXXKOOWUUkqg@mail.gmail.com> <20131126164730.GE2355@e103592.cambridge.arm.com> <CAAVeFuJgqgRnWLD+dyvb7+2fLanHmdDT0YV5r8ETsoqqjW8p7A@mail.gmail.com> <52977639.4000308@wwwdotorg.org> <20131128194751.GD4634@e103592.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131125205224.GT16735-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+In-Reply-To: <20131128194751.GD4634-M5GwZQ6tE7x5pKCnmE3YQBJ8xKzm50AiAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 25, 2013 at 20:52 +0000, Russell King - ARM Linux wrote:
-> 
-> [ ... 2771399a "fs_enet: cleanup clock API use" example ... ]
-> [ ... NULL clocks won't get released, calls might get skipped ... ]
+On 11/29/2013 04:47 AM, Dave Martin wrote:
+> On Thu, Nov 28, 2013 at 04:58:33PM +0000, Stephen Warren wrote:
+>> On 11/27/2013 11:02 PM, Alexandre Courbot wrote:
+>>> On Wed, Nov 27, 2013 at 1:47 AM, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org> wrote:
+>>>> On Tue, Nov 26, 2013 at 10:35:58AM +0900, Alexandre Courbot wrote:
+>>>>> On Tue, Nov 26, 2013 at 9:06 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>>>>>> On Sun, Nov 24, 2013 at 03:30:52PM +0900, Alexandre Courbot wrote:
+>>>>>>> Support for Trusted Foundations is light and allows the kernel to run on
+>>>>>>> a wider range of devices, so enable it by default.
+>>>>>>>
+>>>>>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>>> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>>> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>>> ---
+>>>>>>>   arch/arm/configs/tegra_defconfig | 1 +
+>>>>>>>   1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> I think we want this enabled on multi_v7_defconfig too? Send a separate
+>>>>>> patch for that once this is merged though.
+>>>>>
+>>>>> Will do.
+>>>>
+>>>> Should it just be default y if one of the relevant
+>>>> CONFIG_ARCH_TEGRA_*_SOC is selected?
+>>>>
+>>>> That way, it's automatically included if relevant, and automatically
+>>>> excluded if not -- regardless of whether the kernel is multiplatform
+>>>> or not.
+>>>
+>>> So basically, that would mean setting the default to 'y' since the
+>>> option is not available unless a supported platform is included?
+>>>
+>>> I'm fine this way too, if Stephen also agrees.
+>>
+>> Fine by me.
+>
+> Sure, as long as the result is right, that should be fine.
 
-I agree that the NULL clock reference is not handled correctly in
-that code.  Part of the issue is that NULL is both an
-initialization value and a valid reference to something that was
-acquired (and quite counter intuitive so).
+Ok, then please ignore this patch in this series and I will send a new 
+one that changes the CONFIG_TRUSTED_FOUNDATION's default setting once we 
+have confirmation from Russell that this series can be merged.
 
-This inability to tell the two reasons for NULL apart only
-vanishes when each clock variable explicitly gets initialized or
-pre-set to some ERR_PTR() value (or when the allocation and
-assignment is unconditional, no code path depends on some other
-condition).  I'm afraid that the source tree currently is not
-there yet, and it may be quite some churn (with a lot of
-potential for conflicts) to touch each driver, if it's at all
-possible to identify all spots where those variables are NULL
-because of
-- static declarations without initializers
-- static declarations with incomplete initializers
-- memory allocation with "zeroes please" flags
-- memset() calls
-- clock acquisition code paths were not taken
-
-
-Which platform or clock provider or specific clock driver exactly
-is this mysterious instance which returns NULL for a valid clock?
-Is this one or the very few instances easier to adjust and thus
-(re-)gain certainty about correct operation with less effort and
-much less risk of missing something?
-
-
-> This is not very nice.  Better solution:
-> 
-> 	fpi->clk_per = PTR_ERR(-EINVAL);
-> 	clk = devm_clk_get(&ofdev->dev, "per");
-> 	if (!IS_ERR(clk)) {
-> 		err = clk_prepare_enable(clk);
-> 		if (err) {
-> 			ret = err;
-> 			goto out_free_fpi;
-> 		}
-> 		fpi->clk_per = clk;
-> 	}
-> 
-> ...
-> 
->         of_node_put(fpi->phy_node);
->         if (!IS_ERR(fpi->clk_per))
->                 clk_disable_unprepare(fpi->clk_per);
-
-Assume in the above example that the fpi->clk_per assignment
-would be in a conditional code path.  In that case the code is as
-wrong (unpreparing a not acquired NULL reference) as leaking an
-acquired NULL reference is.
-
-
-virtually yours
-Gerhard Sittig
--- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office-ynQEQJNshbs@public.gmane.org
+Thanks,
+Alex.
