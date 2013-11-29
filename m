@@ -1,177 +1,99 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 03/31] ARM: tegra: document use of standard DMA DT
- bindings
-Date: Fri, 29 Nov 2013 13:29:07 +0100
-Message-ID: <20131129122907.GP22771@ulmo.nvidia.com>
+Subject: Re: [PATCH 04/31] ARM: tegra: update DT files to add reset properties
+Date: Fri, 29 Nov 2013 14:00:32 +0100
+Message-ID: <20131129130031.GQ22771@ulmo.nvidia.com>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-4-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-5-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qSHHer9gQ0dtepKr"
+	protocol="application/pgp-signature"; boundary="l8yJEXo8J9fv7OFY"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1384548866-13141-4-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1384548866-13141-5-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qSHHer9gQ0dtepKr
+--l8yJEXo8J9fv7OFY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Nov 15, 2013 at 01:53:58PM -0700, Stephen Warren wrote:
+On Fri, Nov 15, 2013 at 01:53:59PM -0700, Stephen Warren wrote:
 [...]
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-> index 2b6817f6e40e..eaf00102d92c 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-> @@ -4,14 +4,17 @@ Required properties:
->  - compatible : "nvidia,tegra20-ac97"
->  - reg : Should contain AC97 controller registers location and length
->  - interrupts : Should contain AC97 interrupt
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names : Must include the following entries:
->    - ac97
-> -- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
-> -  request selector for the AC97 controller
-> +- dmas : Must contain an entry for each entry in clock-names.
-> +  See ../dma/dma.txt for details.
-> +- dma-names : Must include the following entries:
-> +  - rx
-> +  - tx
-> +- clocks : Must contain one entry, for the module clock.
-> +  See ../clocks/clock-bindings.txt for details.
+> @@ -135,8 +140,10 @@
+>  		reg-shift = <2>;
+>  		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+>  		nvidia,dma-request-selector = <&apbdma 9>;
+> -		status = "disabled";
+>  		clocks = <&tegra_car TEGRA114_CLK_UARTB>;
+> +		resets = <&tegra_car 7>;
 
-Was this unintentionally moved?
+This is confusing. For some reason that escapes me the tegra114-car.h
+file defines TEGRA114_CLK_UARTB as 192. Other reset entries match the
+numerical value of the TEGRA114_CLK_* define, which makes it easy to
+double-check this.
 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-> index 8b070aeca3db..dc30c6bfbe95 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-i2s.txt
-> @@ -4,14 +4,17 @@ Required properties:
->  - compatible : "nvidia,tegra20-i2s"
->  - reg : Should contain I2S registers location and length
->  - interrupts : Should contain I2S interrupt
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names : Must include the following entries:
->    - i2s
-> -- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
-> -  request selector for this I2S controller
-> +- dmas : Must contain an entry for each entry in clock-names.
-> +  See ../dma/dma.txt for details.
-> +- dma-names : Must include the following entries:
-> +  - rx
-> +  - tx
-> +- clocks : Must contain one entry, for the module clock.
-> +  See ../clocks/clock-bindings.txt for details.
+But UARTB is indeed at bit 7, so this looks good.
 
-This too?
+Oh, I think perhaps it's caused by bit 7 being shared by both the UARTB
+and the VFIR controllers for reset, but not for the clocks.
 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-> index 60d59a54ca07..3376ba42a209 100644
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-> @@ -7,11 +7,6 @@ Required properties:
->    - Tegra30 requires 2 entries, for the APBIF and AHUB/AUDIO register blocks.
->    - Tegra114 requires an additional entry, for the APBIF2 register block.
->  - interrupts : Should contain AHUB interrupt
-> -- nvidia,dma-request-selector : A list of the DMA channel specifiers. Each
-> -  entry contains the Tegra DMA controller's phandle and request selector.
-> -  If a single entry is present, the request selectors for the channels are
-> -  assumed to be contiguous, and increment from this value.
-> -  If multiple values are given, one value must be given per channel.
->  - clocks : Must contain an entry for each entry in clock-names.
->    See ../clocks/clock-bindings.txt for details.
->  - clock-names : Must include the following entries:
-> @@ -36,6 +31,14 @@ Required properties:
->    - amx
->    - adx
->  - ranges : The bus address mapping for the configlink register bus.
-> +- dmas : Must contain an entry for each entry in clock-names.
-> +  See ../dma/dma.txt for details.
-> +- dma-names : Must include the following entries:
-> +  - rx0 .. rx<n>
-> +  - tx0 .. tx<n>
-> +  ... where n is:
-> +  Tegra30: 3
-> +  Tegra114, Tegra124: 9
->    Can be empty since the mapping is 1:1.
+>  			reg = <0x70080300 0x100>;
+>  			nvidia,ahub-cif-ids = <4 4>;
+>  			clocks = <&tegra_car TEGRA114_CLK_I2S0>;
 
-I think this line belongs to the description of the "ranges" property.
+The clocks for these i2s devices are already listed in the ahub node. Is
+that on purpose?
 
-> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-> index fcd9f67999de..7ea701e07dc2 100644
-> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
-> @@ -4,16 +4,19 @@ Required properties:
->  - compatible : should be "nvidia,tegra114-spi".
->  - reg: Should contain SPI registers location and length.
->  - interrupts: Should contain SPI interrupts.
-> -- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
-> -  request selector for this SPI controller.
-> -- clocks : Must contain an entry for each entry in clock-names.
-> -  See ../clocks/clock-bindings.txt for details.
->  - clock-names : Must include the following entries:
->    - spi
->  - resets : Must contain an entry for each entry in reset-names.
->    See ../reset/reset.txt for details.
->  - reset-names : Must include the following entries:
->    - spi
-> +- dmas : Must contain an entry for each entry in clock-names.
-> +  See ../dma/dma.txt for details.
-> +- dma-names : Must include the following entries:
-> +  - rx
-> +  - tx
-> +- clocks : Must contain an entry for each entry in clock-names.
-> +  See ../clocks/clock-bindings.txt for details.
+> @@ -110,6 +118,8 @@
+>  			reg = <0x54080000 0x00040000>;
+>  			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&tegra_car TEGRA30_CLK_VI>;
+> +			resets = <&tegra_car 164>;
 
-Another accidental move? I beginning to think there might be a pattern
-to this, but I haven't figured it out yet.
+I think this needs to be 20.
 
-> diff --git a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-> index e144f144717f..bdf08e6dec9b 100644
-> --- a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
-> @@ -4,14 +4,17 @@ Required properties:
->  - compatible : should be "nvidia,tegra20-sflash".
->  - reg: Should contain SFLASH registers location and length.
->  - interrupts: Should contain SFLASH interrupts.
-> -- nvidia,dma-request-selector : The Tegra DMA controller's phandle and
-> -  request selector for this SFLASH controller.
->  - clocks : Must contain one entry, for the module clock.
+> @@ -139,6 +155,9 @@
+>  			clocks = <&tegra_car TEGRA30_CLK_GR3D
+>  				  &tegra_car TEGRA30_CLK_GR3D2>;
+>  			clock-names = "3d", "3d2";
+> +			resets = <&tegra_car 24>,
 
-But then this doesn't move it... perhaps it really is accidental in
-other places. =)
+For some reason bit 24 is missing from the register definition. Given
+that this has worked before I suppose either the documentation is stale
+or it's not necessary to take this module out of reset.
+
+> +			 <&tegra_car 30>,  /* i2s0 */
+> +			 <&tegra_car 11>,  /* i2s1 */
+> +			 <&tegra_car 18>,  /* i2s2 */
+> +			 <&tegra_car 101>, /* i2s3 */
+> +			 <&tegra_car 102>, /* i2s4 */
+
+Some comment for these as for Tegra20.
 
 Thierry
 
---qSHHer9gQ0dtepKr
+--l8yJEXo8J9fv7OFY
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmIiSAAoJEN0jrNd/PrOhOzUQAKZBVcat5HmeJFOSVHCSMQ4b
-jn8QZWA/hl6yD1FdbOY1kXQoffZfO8XoDfxldnwHApjxLHBRwadHWReG7UkAE5ic
-tzzTwzXDHV8vp8DcCPMr4Iz1on/891SQZ3lf/VpD4/swKoySC4a3r5+9LI0YZDNA
-Bau0bR4T8DBo1hftsSgyUfD1oB8/BRUrx+XOWCm5vD1Iv9hVjpOETgYMTSWDeDOn
-59PWQNj67Dajh7O3Uay2zX4c/+0ktq7NDVPpFBCXUUSCgar6LktjmmZk6IJ2ok55
-bvLizuMOsoZqRgXkSJLfkVbhs7ebJlWoR0tysEA3bA45DSs3w6fWk9HV2Xer/ctW
-Qxwsk06XL4mPADQv555IABJL+CN8eNoE1pnP/PDBfukNJIM8sUtQLP7z68ISNLvh
-3PSdGKFQpFkT+0Nb+nIrB12IjPqt+lWWKdEjTAXCXtUeqUwJi1MQV2/6ZQB+Jr/s
-pHeoWF9ra9zQRGvFZkOPx7SLnqk0hyzKjq4bCz2eqjjy45mR87vIXlxrcih71lo5
-nDsxgCRCHe8dkVn3wfEAHbL+oDOEdhbadrOtoyf5MyDMu1KaLf1LDAM2uyVTi7wf
-UfFsGqjULEYqwDxGOF+lS17yifkTV3O7J4bkDWaCdoVxCSgdaPYeKXNK5lqe2MQp
-RAEpNclT8TOtBEW8sO52
-=11sM
+iQIcBAEBAgAGBQJSmI/vAAoJEN0jrNd/PrOhFrEP/A9I9a4VlYmVtlIk9saI27/7
+1DKT3VgjzqWxPH+wh/hYJfqYVbwULTjUxbiQNJLXGpC4A6T/zCbr/iDUqg5setTt
+7G5fW5a0Av4LvgL5tMPnWezBPMQKJcJUUpBwvcdVXCjk+HBCIsKpH91pr69fyZe8
+tMxc0tZR0aqc2rOHHmcoWkDYdd3HV7TEKe8uEnCiT7f0xiSpiAwVrCXtRKXNyEW/
+4TIDtEuncqmqSOi8a7DzWqHySAjzp7HN1xixZk9GhI+1U1K3qzHCRCkvHAScOIn0
+DDbhNa8dhLLZftN7cPqyhWTOxRCIqYHVHmJvzLa194DlMGs6wd/G3MdOe0xnvQEz
+SIQkECDr/yji347FdrlmOVe5jjhQev+5tvO3mLpKAaxoWuzEilAncCRamy6VTLTa
+PCfrWnQnEvr3qKYM4mmQeIBbOmjtMOdAwFFzZNCR9zATA0qztaXmRHxhmqGwQgRu
+jMRWRPVIlNlMamE+t/NZWrmxzpRQSTA7g6p26m9g9P/o3zZTfW8t+GYEawNtK9Kw
+zNWwBJ0Z7tJCvAv6lU/pby2k9efQz0CoTHyXYHYpwiHTGRol39Li87KBRQdHdr6L
+LXGN9Te1giBBjVtqlWAvsNFKSN0th/RLhJJBG6VKmFpk0ka/L2XpOw1uGO+8WnD6
+kF5mZMrtqRk7hbsKnUnM
+=/XNv
 -----END PGP SIGNATURE-----
 
---qSHHer9gQ0dtepKr--
+--l8yJEXo8J9fv7OFY--
