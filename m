@@ -1,61 +1,69 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 10/31] ARM: tegra: pass reset to
- tegra_powergate_sequence_power_up()
-Date: Fri, 29 Nov 2013 14:46:14 +0100
-Message-ID: <20131129134613.GY22771@ulmo.nvidia.com>
+Subject: Re: [PATCH 12/31] dma: tegra: use reset framework
+Date: Fri, 29 Nov 2013 14:47:33 +0100
+Message-ID: <20131129134732.GZ22771@ulmo.nvidia.com>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-11-git-send-email-swarren@wwwdotorg.org>
- <20131129134532.GX22771@ulmo.nvidia.com>
+ <1384548866-13141-13-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XiX5sJQOWZsNRXst"
+	protocol="application/pgp-signature"; boundary="5FDiZl1vRbLRjwwc"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20131129134532.GX22771-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <1384548866-13141-13-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---XiX5sJQOWZsNRXst
+--5FDiZl1vRbLRjwwc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2013 at 02:45:33PM +0100, Thierry Reding wrote:
-> On Fri, Nov 15, 2013 at 01:54:05PM -0700, Stephen Warren wrote:
-> > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Tegra's clock driver now provides an implementation of the common
-> > reset API (include/linux/reset.h). Use this instead of the old Tegra-
-> > specific API; that will soon be removed.
+On Fri, Nov 15, 2013 at 01:54:07PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Ah, there it is!
+> Tegra's clock driver now provides an implementation of the common
+> reset API (include/linux/reset.h). Use this instead of the old Tegra-
+> specific API; that will soon be removed.
 >=20
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 
-And: Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---XiX5sJQOWZsNRXst
+--5FDiZl1vRbLRjwwc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmJqlAAoJEN0jrNd/PrOhwsgP/2blGx75GGw3LcYKlsNINveW
-wUN0o3/SPORSBnhgCe1c+5nzEF+hHcmzgzvE50lWBufmhiTtUaTK6iyeWFVqWgX6
-UDNX93V02AGeWKoDGHCOzzYLgmxg2sZ+WURJLD7FP8H1Onz1ftWH1BiP8wFQvdwY
-7NyOxJZiADrVpi5Fyya79HILmDvbmZ0YWv+bo1t86oIsWXh6bdmhWIQHREx0APyd
-dnF/G2xVuscatl+n4yLhXqZvbalUqfmfV2o7p4r0j814/AjneLP2diE32j7XmdIE
-L2AqRvkUsO5XaAgfkGt30OXSZy4dm89T+2NAeHVlJSjJHvvTN2If22iz+XK9Wv8r
-4igJb0fS3EhYlEtupIlnm4vPLInFKDmw+HcB9NCOk/eTeW6zbTV/rJEoXOL/MFSz
-Z0F5jYRKVvEwLNY4El5n0XkNHaoyOOFhWJ7AYHiYBqV2eXQ2ERgfQdlrhNrQUDl/
-IlyGnMvpAVkbtGGViViPdok+TLhSF5lHGHCzxLwx2Yv+uUYJDYSGWtvuNvNc6uMZ
-FWp+2d/JAdNSVEgzx1+rO2Tj7oJlhBeN5EkTjaKkzGO5IBTLyUrp06zx86p/M5e2
-y6IcGh8BoTXiQ0OWmGfiOLdUuWhqV0Dsa8IPsN/4C/yHWumyE+svlFG/LDAi5IK4
-8GplPEfOqLOR8Tw+bS7X
-=Paae
+iQIcBAEBAgAGBQJSmJr0AAoJEN0jrNd/PrOhr1kP/36MAFHEPNDC1f/ZgbF7yfZJ
+2qHCHyL42v9Vegv0W4lRtgV2TCPV26vQwUQXKLDUBUZDdDTDsPHbKDs1CCBnTNbW
+5kkZYmbwXy0OTDYQWhZh31VRXJn+RSMJM9PXk+z92I4dc6/rw1SqN2ZIP+8sbxMQ
+M7u8fKvbaUC77jwxfUaKuoKI0d+1/qm2n8ZzenP+41jItY7faShIZaz8pgk9dyqB
+pfH1m2zJmKCb7/7HFR9o1VyqI0CGU7LrUgrwjm0ONmP0vYRIe3ivro2ZbjRqmrNk
+G4DZFBzU/pQK8pi9lMS7YPVsAM8Bu2g5XdslYF30wI56rfOvC5r34yIPewnQTUYn
+I9yQHn3kBH65a1CVVzEw20oqdWsNx7mF2ycx5nyTFmN9ep68blw7oaHpzKBxa5xF
+uRVsLC7NAY6puE5NBauTQu+XCBO7KvXjlb2yVHPglKZTa44jclnju15pJUXpjK2J
+0QFqWg/gOb8/pTU25sHeF4K6++GbXjq1Jekx8X/uWtiOdbShFSU8w7nQ6cmtk8qJ
+fp+cihhyAGYkwcEgjxhnaiLKNodWFxxZz9QkuomFOMX825pVOT1caS5Xgmt2ApvD
+WnP/40Wnicev48wPU+egfK7uMxYN7ZEXefDb78WSGZdFUkrLwFKFFPla/oONTVQJ
+v5S/oB/sJjGrx7ILel46
+=ekEm
 -----END PGP SIGNATURE-----
 
---XiX5sJQOWZsNRXst--
+--5FDiZl1vRbLRjwwc--
