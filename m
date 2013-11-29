@@ -1,74 +1,40 @@
-From: Michal Nazarewicz <mpn-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] spi: tegra: avoid unsigned->signed->unsigned promotion
-Date: Fri, 29 Nov 2013 18:12:44 +0100
-Message-ID: <1385745164-10534-1-git-send-email-mpn@google.com>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
+Date: Fri, 29 Nov 2013 22:08:25 +0100
+Message-ID: <201311292208.26215.arnd@arndb.de>
+References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org> <2205346.2EJcydzRLA@wuerfel> <5293CF9F.6040305@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5293CF9F.6040305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
+On Monday 25 November 2013, Stephen Warren wrote:
+> Well, you suggested not using of_dma_simple_xlate() since it wasn't
+> appropriate. I then started to implement an open-coded xlate function,
+> but found that it was 99% identical to the same thing in the mmp driver,
+> and hence created a common of_dma_slave_xlate() so as not to just
+> cut/paste it everywhere. Unfortunately, I only sent that patch to
+> dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org and the DMA maintainers, and there's no
+> archive of that list:-(
 
-u8 type, which is unsigned, is promoted to int, which is singned, when
-doing a binary shift.  Then, on 64-bit machines, it is further promoted
-to unsigned long which may lead to more significant half of the value
-to be all ones.  To avoid this, explicitly promote to an unsigned type.
+Ok, I see. However, I think the need for nontrivial code to be duplicated
+across drivers is not a sign that we are missing a generic xlate function
+and another indirection level, but rather that we got the interface
+for dma_get_slave_channel() wrong (yes, that would be my fault).
 
-Signed-off-by: Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
----
- drivers/spi/spi-tegra114.c      | 4 ++--
- drivers/spi/spi-tegra20-slink.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Can you try coming up with a different method to achieve the same
+where you use a different helper from the driver specific xlate
+function that does not require a callback?
 
-diff --git a/drivers/spi/spi-tegra114.c b/drivers/spi/spi-tegra114.c
-index aaecfb3..2dadc3f 100644
---- a/drivers/spi/spi-tegra114.c
-+++ b/drivers/spi/spi-tegra114.c
-@@ -315,7 +315,7 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 		for (count = 0; count < max_n_32bit; count++) {
- 			x = 0;
- 			for (i = 0; (i < 4) && nbytes; i++, nbytes--)
--				x |= (*tx_buf++) << (i*8);
-+				x |= (unsigned)(*tx_buf++) << (i*8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
- 	} else {
-@@ -326,7 +326,7 @@ static unsigned tegra_spi_fill_tx_fifo_from_client_txbuf(
- 			x = 0;
- 			for (i = 0; nbytes && (i < tspi->bytes_per_word);
- 							i++, nbytes--)
--				x |= ((*tx_buf++) << i*8);
-+				x |= (unsigned)(*tx_buf++) << (i*8);
- 			tegra_spi_writel(tspi, x, SPI_TX_FIFO);
- 		}
- 	}
-diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
-index e66715b..0fc4f7d 100644
---- a/drivers/spi/spi-tegra20-slink.c
-+++ b/drivers/spi/spi-tegra20-slink.c
-@@ -331,7 +331,7 @@ static unsigned tegra_slink_fill_tx_fifo_from_client_txbuf(
- 		for (count = 0; count < max_n_32bit; count++) {
- 			x = 0;
- 			for (i = 0; (i < 4) && nbytes; i++, nbytes--)
--				x |= (*tx_buf++) << (i*8);
-+				x |= (unsigned)(*tx_buf++) << (i*8);
- 			tegra_slink_writel(tspi, x, SLINK_TX_FIFO);
- 		}
- 	} else {
-@@ -342,7 +342,7 @@ static unsigned tegra_slink_fill_tx_fifo_from_client_txbuf(
- 			x = 0;
- 			for (i = 0; nbytes && (i < tspi->bytes_per_word);
- 							i++, nbytes--)
--				x |= ((*tx_buf++) << i*8);
-+				x |= (unsigned)(*tx_buf++) << (i*8);
- 			tegra_slink_writel(tspi, x, SLINK_TX_FIFO);
- 		}
- 	}
--- 
-1.8.4.1
+I think dma_get_slave_channel is great if you have one channel per
+request line and you can directly look up the channel from the
+DT data, but it is not good if you have pick a channel and work
+around the race.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
