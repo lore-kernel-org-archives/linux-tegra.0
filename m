@@ -1,77 +1,67 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: add support for Tegra148/124
-Date: Fri, 29 Nov 2013 16:54:43 +0100
-Message-ID: <20131129155442.GO9712@ulmo.nvidia.com>
-References: <1385417732-7767-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] mmc: tegra: add support for Tegra124
+Date: Fri, 29 Nov 2013 16:55:17 +0100
+Message-ID: <20131129155516.GP9712@ulmo.nvidia.com>
+References: <1385417993-7848-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RHdRtM27np9fZUoh"
+	protocol="application/pgp-signature"; boundary="vzUQzca511KWT6Hk"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385417732-7767-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385417993-7848-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kunal Agrawal <kunala-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---RHdRtM27np9fZUoh
+--vzUQzca511KWT6Hk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2013 at 03:15:32PM -0700, Stephen Warren wrote:
-[...]
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-[...]
-> +/* Tegra148 specific registers */
-> +#define TEGRA_APBDMA_CHAN_WCOUNT		0x20
-> +#define TEGRA_APBDMA_WCOUNT_WCOUNT_SHIFT	2
-> +#define TEGRA_APBDMA_WCOUNT_WCOUNT_MASK		0xfffffffc
+On Mon, Nov 25, 2013 at 03:19:53PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Tegra124's MMC controller is very similar to earlier SoC generations,
+> and can be supported by the same driver.
+>=20
+> However, there are some non-backwards-compatible HW differences, and
+> hence a new DT compatible value must be used to describe the HW. This
+> patch updates the driver to support that new compatible value.
+>=20
+> That said, the HW differences are only relevant when enabling certain
+> high-performance transfer modes. Since the driver is currently very
+> simple and doesn't enable those modes, we don't actually need to address
+> any of these HW differences in the code yet, hence the simple nature of
+> this patch.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-According to the TRM this field spans bits 29:2, so the mask should be
-0x3ffffffc.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +#define TEGRA_APBDMA_CHAN_WORD_TRANSFER		0x24
-> +#define TEGRA_APBDMA_WORD_TRANSFER_WXFER_SHIFT	2
-> +#define TEGRA_APBDMA_WORD_TRANSFER_WXFER_MASK	0xfffc
-
-Comparing to the TRM these should be named:
-
-	TEGRA_APBDMA_CHAN_WORD_TRANSFER_COUNT_SHIFT
-	TEGRA_APBDMA_CHAN_WORD_TRANSFER_COUNT_MASK
-
-Also the COUNT field spans bits 29:2, so the mask should be 0x3ffffffc.
-
-> @@ -719,6 +735,7 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
->  	struct tegra_dma_desc *dma_desc;
->  	unsigned long flags;
->  	unsigned long status;
-> +	unsigned long wcount = 0;
-
-You assign a value to this later on, so I don't think this needs to be
-initialized.
-
-Thierry
-
---RHdRtM27np9fZUoh
+--vzUQzca511KWT6Hk
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmLjCAAoJEN0jrNd/PrOh1HgQAJYhxbJ3Q+ffehYmieYNwGmB
-eMGwrkja4j3iBFMsY3/CJhVLZ5LX96Kd3RR+qOqrLsncZm6aYlNTROKmgQmR4TbO
-AIGDCpVBmpSnoKVJyaw8cMj0ZyB/mwRGiwiBawIBtNBVOQgy7eRiRatOGRz+cemB
-RbbimKlzNzLj8AOXvr9EzL4uOHRLxppcF4hGj3807T+esyOXxpNCfBarcZDZEigf
-oWnzGwJ+m3h/74AgVlY573Kx8IPjM+wafby72ghdT3GcCuCQ7XADxz8SckW0wM5l
-GlbcJ9UF6norSBumvx3vWzDb7Q191k7QTObI6SrrV0yMXckdmO/NWnrscSC3Us0k
-8uRkZk4UFDjgHVz+8m4gcFg6tYO+ngFdDqLIBi3g6VIq9GdO0qV5AJjbPh6zNLYK
-Hu0gauvHKhsHEYwMwaVJyJDElcJ2p115LPrgODvo+vSLI23GBfeu9PcG77VQRfNM
-F7T9IdhC976v0nvlMVCIPKCjfIRieSWEhFU0EXFjcE2cXxfp8NCQw/5jjcnwID4k
-o0J7EhKtc3lACfElwpK2+6tY5CbvYNQ5xRDjhy63BIgEVMRUP5ReNJsKqzYSt730
-H2JyCxBeR46Y7gtmk0n8cnTtT53/gaacqR8QEBbymd3LjwI2gimxXwWOEU0GZ9Y4
-VIpHB0Q+/2QNoOrZCyXn
-=hv+f
+iQIcBAEBAgAGBQJSmLjkAAoJEN0jrNd/PrOhcUMQALqD797ScvWFjBQalIr8zacR
+FIDVM/QVAEckSoEIFp9ZUGSMQTONsAuxTxA5adyKcSqXJPoUAWgPQO9EjQwSk9yV
+1qXqhVciwYoaVeqimOM5gNDJIz/uHS83s0VZz8zM1NFOrUOrihYhh9ChnzRttwmZ
+p/P7hOGw5FWfUlMydqG5FW7yz7rAUoRZ1l5USRnj1Au9rNa/xQBgvtJzjKohdv+o
+MxIdSODny+t+PVix1Dz8yxDVGQo+P5MIamtZXbTV0kg8c79CBJge5fIU+uk1RLRa
+B6DJVpW9tBisTA93mFsfS60nz+I+YMzZEtm0G5XskKowDPqkFRPDoM8xQeiqG8kz
+iwnyEw0d4n0cE0AciT2BkHHsuaZaIvDKgkS/G++uXbkeG+pWdwTZeEbdriNUnWhG
+zKvvM5IZGQwlnWLySeE/lfqhnY/KGUzsopoF2ovlkj8TMGjXaEGaxSpxQq3vT0Xy
+9Fd4NfQ1qZVvHQA0FShhAweMUxGFz4IvZzok9B0MTdmi4XYg5JQrHzr+dQP62Eg1
+ieIKHpC/tLycEVLk5zNujDoHFWwwmUCMvvO4RZItAfz9LSmRdNFhad+m0i8s4w/3
+oAeKJX6KyJR5DHgBm6zE8Hn/IsZpebIJWA+a7z0br7buCxpRQFMZW4jLHTiNcPkT
+ghBIk+keBXqjykYPaYTl
+=JG0e
 -----END PGP SIGNATURE-----
 
---RHdRtM27np9fZUoh--
+--vzUQzca511KWT6Hk--
