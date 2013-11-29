@@ -1,70 +1,158 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/31] pci: tegra: use reset framework
-Date: Fri, 29 Nov 2013 14:33:46 +0100
-Message-ID: <20131129133345.GV22771@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 09/31] drm/tegra: use reset framework
+Date: Fri, 29 Nov 2013 14:42:53 +0100
+Message-ID: <20131129134252.GW22771@ulmo.nvidia.com>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-9-git-send-email-swarren@wwwdotorg.org>
- <20131129132957.GU22771@ulmo.nvidia.com>
+	<1384548866-13141-10-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Avw2VvEbzfULB0h1"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131129132957.GU22771-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============2100078422=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1384548866-13141-10-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Stephen Warren <swarren@nvidia.com>, pdeschrijver@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, treding@nvidia.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Avw2VvEbzfULB0h1
-Content-Type: text/plain; charset=us-ascii
+--===============2100078422==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RMorpr61ug7CvG36"
+Content-Disposition: inline
+
+
+--RMorpr61ug7CvG36
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2013 at 02:29:58PM +0100, Thierry Reding wrote:
-> On Fri, Nov 15, 2013 at 01:54:03PM -0700, Stephen Warren wrote:
-> [...]
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > index 0afbbbc55c81..174a5bc2d993 100644
-> > --- a/drivers/pci/host/pci-tegra.c
-> > +++ b/drivers/pci/host/pci-tegra.c
-> > @@ -39,6 +39,7 @@
-> >  #include <linux/of_platform.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/reset.h>
+On Fri, Nov 15, 2013 at 01:54:04PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 >=20
-> Can't you also remove the linux/clk/tegra.h include now that none of the
-> functions it declares are used anymore?
+> Tegra's clock driver now provides an implementation of the common
+> reset API (include/linux/reset.h). Use this instead of the old Tegra-
+> specific API; that will soon be removed.
 >=20
-> Otherwise looks good to me:
+> Cc: treding@nvidia.com
+> Cc: pdeschrijver@nvidia.com
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Terje Bergstr=C3=B6m <tbergstrom@nvidia.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: dri-devel@lists.freedesktop.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/gpu/drm/tegra/Kconfig |  1 +
+>  drivers/gpu/drm/tegra/dc.c    |  9 ++++++++-
+>  drivers/gpu/drm/tegra/drm.h   |  3 +++
+>  drivers/gpu/drm/tegra/gr3d.c  | 16 ++++++++++++++++
+>  drivers/gpu/drm/tegra/hdmi.c  | 14 +++++++++++---
+>  5 files changed, 39 insertions(+), 4 deletions(-)
 >=20
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
+> index 8961ba6a34b8..8db9b3bce001 100644
+> --- a/drivers/gpu/drm/tegra/Kconfig
+> +++ b/drivers/gpu/drm/tegra/Kconfig
+> @@ -2,6 +2,7 @@ config DRM_TEGRA
+>  	bool "NVIDIA Tegra DRM"
+>  	depends on ARCH_TEGRA || ARCH_MULTIPLATFORM
+>  	depends on DRM
+> +	depends on RESET_CONTROLLER
 
-And I guess also:
+Is this really needed? ARCH_TEGRA already selects RESET_CONTROLLER and
+we depend on ARCH_TEGRA. Or perhaps you need this because it might also
+be that ARCH_MULTIPLATFORM is selected without ARCH_TEGRA support? In
+either case I guess a good thing would be to add dummies for the reset
+API so that we don't have this additional compile-time dependency.
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>  	select TEGRA_HOST1X
+>  	select DRM_KMS_HELPER
+>  	select DRM_KMS_FB_HELPER
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index ae1cb31ead7e..c3be92879bea 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/reset.h>
 
---Avw2VvEbzfULB0h1
+You should be able to drop linux/clk/tegra.h now.
+
+> diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+> index 4cec8f526af7..f629e38b00e4 100644
+> --- a/drivers/gpu/drm/tegra/gr3d.c
+> +++ b/drivers/gpu/drm/tegra/gr3d.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/host1x.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/reset.h>
+
+I was going to say "Same here", but interestingly this driver doesn't
+use the old Tegra-specific reset API. It's actually handled internally
+by the tegra_powergate_sequence_power_up() function and I think that'll
+be handled by a separate patch in your series if I recall correctly.
+
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 0cd9bc2056e8..f3aad49633d6 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/hdmi.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/reset.h>
+
+But here the linux/clk/tegra.h include can again be dropped.
+
+Thierry
+
+--RMorpr61ug7CvG36
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmJe5AAoJEN0jrNd/PrOh/WkP/i7ObJ3TKzZhCcvkhu0q1gI7
-99G6Ovlp8CqlI5nwhzifA4O1d2YUOKmQwCvJpotsoGdSOld69Erq1J4uuh8caik+
-Zz84QNTZInE+VeJFbAm66tv+4qKzB9B1v7qYnSG1WsUDpq9Q7vJayWhg/c5pl4i9
-2S0cXryOhYLgE58eQYmNE/eVXRZatyXHSAXfuG12IUq77ZCmpjMYMRCEPlHRQq1f
-ZcpLEuQyIfKXZvFXIzLEyhZl01x8OUMWr6cn/cPjTIm9nTu3s7wIu8ddkPIkqlUN
-xlOuRfADIJBLybjIsuVpkHrF1eQDxW8JoCX81xwDVQy50XoTlxIF1la05blu5XE2
-6Ai0zywMRpe/isX/KuIFIfNQmu/5cK43Gmz4pXcLUiTM52pJeEJm6UbISncKluj9
-CGsnhnOyJ95WF8MK/SwmLCazvSqiyQnTF7A7uznQsmDj7ElOK0DsrPRwSigPvkrW
-zyMO2hiCt3iRYMm8W+KtU/aBq/qmqemQCcXIw+sTbbi5VtgRDD1Ipc18sCjtYmM0
-x/9/J+dwu7AuRkH0gVu89jbLT5q2r7deM5TWi5DAIE343GtNoaZ20EZaUAI3RsA2
-VnSBVjpW0B8Psr68C+ROJY/f2toZA2NGiBq8ZNJCulaF2Une0GiCeAgq9FdluCGA
-+m6EZupwxX8qYqKqpxQZ
-=zdtS
+iQIcBAEBAgAGBQJSmJncAAoJEN0jrNd/PrOhiL8QAJjfngsNYloQQX065M2r6w80
+ASvYoYMslQRIJ2V61SN/AL0Zo3aHhK249AX5OH7uXqgWBtlObFOTAbdSaWE+REMo
+H8MAYU1FF6sxCwqcKShegn6EZ3l7tSk/3+IKPxNKw1LIbHyItRY+HPHtvaZJvYaG
+4/+lmwmez1mOCKg6UoZIZ/5L35TVPCNoxMwjN7ezddurw2VwUkwcz462OLrqbwoq
+/jgOdvkLBs0WmqU6J1IEpCUTwxAgVTazmp65M95GDDJDB4bWoOGHyf2YCCrZWY+u
+EGW6n2rd7U/TVYzGYKAWr9gMyVuguU7XGaLTWA6xyQ6Eedi36xFK6qbtD9i2xxfb
+M7FkgBU6UFgHJG9xqmBCsB657j/RWFX1qMsttqWALo5wQlWwmSZef5cUmh5UTu4n
+XouAYhNNxHPP39g2diIKQdmTgBtqdSci5DOfhenQ8AoxoKIK5evHTizALntgke7t
+Uh+GFNZahknZdrrJHr0p+4F/DQSuDDyu43xVheRSgDX6zfhwcf7kPMHkQsBpkszz
+Lpbz/VQNR9mJOLnPGOuoK19zaet5hheEQ4sNLxC4LOMzKT8gPK/dYUkFbh+pH1dq
+y58n06sqvTEYBKMAOqZc8ewWZqzvd1K/nEjFrMlc0rMQll2FAidTlpjrsMJVcZA4
++GwUUIxEYJ5YdbMWvsw6
+=mGal
 -----END PGP SIGNATURE-----
 
---Avw2VvEbzfULB0h1--
+--RMorpr61ug7CvG36--
+
+--===============2100078422==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============2100078422==--
