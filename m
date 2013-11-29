@@ -1,67 +1,58 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: add support for Tegra124
-Date: Fri, 29 Nov 2013 16:55:17 +0100
-Message-ID: <20131129155516.GP9712@ulmo.nvidia.com>
-References: <1385417993-7848-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: add reset properties to Tegra124 DTs
+Date: Fri, 29 Nov 2013 16:58:07 +0100
+Message-ID: <20131129155806.GQ9712@ulmo.nvidia.com>
+References: <1385419160-11511-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vzUQzca511KWT6Hk"
+	protocol="application/pgp-signature"; boundary="qd/SZIFVu+MYwfCR"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385417993-7848-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385419160-11511-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---vzUQzca511KWT6Hk
+--qd/SZIFVu+MYwfCR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2013 at 03:19:53PM -0700, Stephen Warren wrote:
+On Mon, Nov 25, 2013 at 03:39:17PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Tegra124's MMC controller is very similar to earlier SoC generations,
-> and can be supported by the same driver.
->=20
-> However, there are some non-backwards-compatible HW differences, and
-> hence a new DT compatible value must be used to describe the HW. This
-> patch updates the driver to support that new compatible value.
->=20
-> That said, the HW differences are only relevant when enabling certain
-> high-performance transfer modes. Since the driver is currently very
-> simple and doesn't enable those modes, we don't actually need to address
-> any of these HW differences in the code yet, hence the simple nature of
-> this patch.
 >=20
 > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/tegra124.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+
+A proper commit message would be nice, but it probably wouldn't be much
+more than a repetition of the subject, so perhaps it's not worth it.
+Either way:
 
 Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---vzUQzca511KWT6Hk
+--qd/SZIFVu+MYwfCR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmLjkAAoJEN0jrNd/PrOhcUMQALqD797ScvWFjBQalIr8zacR
-FIDVM/QVAEckSoEIFp9ZUGSMQTONsAuxTxA5adyKcSqXJPoUAWgPQO9EjQwSk9yV
-1qXqhVciwYoaVeqimOM5gNDJIz/uHS83s0VZz8zM1NFOrUOrihYhh9ChnzRttwmZ
-p/P7hOGw5FWfUlMydqG5FW7yz7rAUoRZ1l5USRnj1Au9rNa/xQBgvtJzjKohdv+o
-MxIdSODny+t+PVix1Dz8yxDVGQo+P5MIamtZXbTV0kg8c79CBJge5fIU+uk1RLRa
-B6DJVpW9tBisTA93mFsfS60nz+I+YMzZEtm0G5XskKowDPqkFRPDoM8xQeiqG8kz
-iwnyEw0d4n0cE0AciT2BkHHsuaZaIvDKgkS/G++uXbkeG+pWdwTZeEbdriNUnWhG
-zKvvM5IZGQwlnWLySeE/lfqhnY/KGUzsopoF2ovlkj8TMGjXaEGaxSpxQq3vT0Xy
-9Fd4NfQ1qZVvHQA0FShhAweMUxGFz4IvZzok9B0MTdmi4XYg5JQrHzr+dQP62Eg1
-ieIKHpC/tLycEVLk5zNujDoHFWwwmUCMvvO4RZItAfz9LSmRdNFhad+m0i8s4w/3
-oAeKJX6KyJR5DHgBm6zE8Hn/IsZpebIJWA+a7z0br7buCxpRQFMZW4jLHTiNcPkT
-ghBIk+keBXqjykYPaYTl
-=JG0e
+iQIcBAEBAgAGBQJSmLmOAAoJEN0jrNd/PrOhKtQP/iPSI4/M97l2Jh7uvpUP9rZ4
+ekOCuoa0QYj27KYnEVq9nKO8m0zOYp2WKQqZkJHcobCr06u8BElB61D/E/fZ54fL
+cSkvecTb663wjhLp8HRYRVn009G6Jb/pKbNAjpXsWRHcZoYyq5UD9eQj8hH+qCwg
+00lgVKFSFbQMbdPiYBn8Naz72ldtEsw8jygOYo7AZmZxlKnxWynPtesYVGhrp5OH
+bEK4DQhZe7EsXbkj+JcTyyzap3pr5L6TTTtpc4b9Ao3VeO9KnX+6OS5N0NMJBDn1
+V88LollrdGxi1n/UNcQVAXaA5F5YmfzQpKm7saSf9vimxIUGB33SobKzhPYAvrDI
+HzitOqi6RTCk+HLJZnrzX6KOu8i3huVxDG0Dtcdgn0jsLi6Pu7OL3Pk/QhzwVuOg
+kkgtm6HlhgHKEzH7TwwJTuds41BFvlJb/JLEPTgddIc4MA3yxTaY0v5cxW0bH2gd
+Lf8aylNKrt2btXM5GwHN7D54rn70AhPawjWn3SqEMpYSayY4YgzkT0JQvcVm6qGQ
+IjyOTVa3DV9mQCif31E0Perlw6VNg9pq+1pHjxPYECyQg8/RyLxxIDdz1XkOq2J4
+MGLVc75z8wx1khohCEaevqmXHWfKg3gpl31cMBfBij87CIXMKpwcOxCq07LiZxQT
+W9kIhDIVEvncUF1o155a
+=Gmrg
 -----END PGP SIGNATURE-----
 
---vzUQzca511KWT6Hk--
+--qd/SZIFVu+MYwfCR--
