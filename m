@@ -1,60 +1,60 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] ASoC: tegra: use reset framework
-Date: Fri, 29 Nov 2013 12:14:46 +0100
-Message-ID: <20131129111444.GL22771@ulmo.nvidia.com>
-References: <1385496767-8307-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: tegra: delete nvidia,tegra20-spi.txt binding
+Date: Fri, 29 Nov 2013 12:16:36 +0100
+Message-ID: <20131129111635.GM22771@ulmo.nvidia.com>
+References: <1385419075-11414-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9JSHP372f+2dzJ8X"
+	protocol="application/pgp-signature"; boundary="sWvRP97dwRHm9fX+"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385496767-8307-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385419075-11414-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---9JSHP372f+2dzJ8X
+--sWvRP97dwRHm9fX+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2013 at 01:12:47PM -0700, Stephen Warren wrote:
-[...]
-> +		rst = reset_control_get(&pdev->dev,
-> +					configlink_mods[i].rst_name);
-> +		if (IS_ERR(rst)) {
-> +			dev_err(&pdev->dev, "Can't get reset %s\n",
-> +				configlink_mods[i].rst_name);
-> +			ret = PTR_ERR(rst);
->  			goto err;
-
-In case where this fails, there's no way to re-assert the resets that
-have already been deasserted. That's not an issue introduced by this
-patch, though, and perhaps something we may not want to care about at
-all, so:
+On Mon, Nov 25, 2013 at 03:37:55PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> This binding shouldn't exist; Tegra20 has two forms of SPI controller
+> that are documented separately in nvidia,tegra20-sflash.txt and
+> nvidia,tegra20-slink.txt.
+>=20
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/spi/nvidia,tegra20-spi.txt | 5 -----
+>  1 file changed, 5 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/spi/nvidia,tegra20-=
+spi.txt
 
 Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---9JSHP372f+2dzJ8X
+--sWvRP97dwRHm9fX+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmHckAAoJEN0jrNd/PrOhRRoP/3byGf+00hl+hzyrEW11H9gY
-aeVd5YvtJoQiEH2IZ5FTYhw6JikkdoGMAniCJBRdez+TMSUjRJd1YQzSnC/VcHtA
-NSfJESr+yz9oEfUTD9HkFc5uSn5kyzBK+eQKjobe7Q1Zd48Ni+OBndCxLgKi83+O
-J+/S25wOTXvKdPFjh0ED9FcNFY4I0CCjVXmS84r79MJJftRykQYF4j+x0zVEBngj
-qDV/cL9KBzhx8kw/nyqu+tz4f8WBl0N17c464lsWPThYFuTf2SQtUSslB4Cwe6Kq
-lRUtJhVzTHD2Mn2mlq6y+fgXlF0OlulDCcLTBR0Yg8iPYnAVXuFfRYt3cishtPG/
-AUbhMNV39ml3jmoaAUEIZeNksZ0ZjDpXuzsHtB8wzweLLAkTN1zw034hpsDuwjkf
-Z5R4CCnn3aeEGpO/k/L+Ybh/IwLPvoqFmQd5cF8yDXcj+1/AAOvRWi3Tjx4Qq3jG
-WlxKruxO/lwpGhvCTXhYLPPyF/BQsWOY0ggKqmVQQNIQIBAIhV2QixaZgqUicUpw
-v6pI9xWBw4v/bEv44q7YFQxwE3ITQvkTW1cJVnKl68lLLl91Kj7RnYjGMGRaMkDB
-od2Et6Csj7TeJDF6upPsCAm1MWKVWbet+Fm60BzDgKnRrrBtUlFmpTfwBKpWeCgV
-OiWdYNzfGbai00TlZOth
-=tx3z
+iQIcBAEBAgAGBQJSmHeTAAoJEN0jrNd/PrOhCecQALVj+e8ruk+OdRAGj0iFf1qg
+ahAMUJDm4JhfVCJGxo0hl/p618X5HOcrd5zrIQi+zpbp84OnumyqjhM6INdW9tj7
+2G7CC8y3YgZhwZlgscnVJ2cEkzM3Twm4wLHRntwdPe6OTk6v1Jqpu3Y5hQlRo/wV
+RnMDp2FmWYUW2AnmYOv21wJbBJkrAjxX4WETKCCTzCrqMvs6XrBvCNSzyrc4Vm1N
+s46UL23eYzaP3450tHnaLEHzEEM6F6YI11dTGlY+jcRDVWfo/OOgFHGodSiSaG0w
+3dXzqfgfBrJcC8zDsAfFheXnLui6TBHitcAfC906SW8Xqg94dj0PDA30/8HOp48Y
+dbgyhSecgtHKwLNY+ska4byflcaScDTm+EJerZFsrg0/BnnCNpRDw9uVSqfK2h1g
+f1A/xsDkzT7CseBAkwz7sIsGaUoonGpKjBjQ60cUfuX7vSRplWXrTWKP42gUg4vV
+eGkKwhUmmdYW5+TmAjhIRkdz8OxJUMi/MjEiZ6zI0HwnXTfJKzaQS3UYNFAzONWv
+z40E40BfsFOASJWxGZCHT2x+ReqhgMRoPWVm0qhLybSzjHwvyWcWfIeB0jq2VLM8
+pJvq8WuxWDVWk9gX5NgjfVDJeEnTeUYgrsCYApQQghbEM4oUSz5i7SCVKA35bEtb
+ouEZuJjY0BwMZw+72Mti
+=91OZ
 -----END PGP SIGNATURE-----
 
---9JSHP372f+2dzJ8X--
+--sWvRP97dwRHm9fX+--
