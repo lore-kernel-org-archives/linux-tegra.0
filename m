@@ -1,103 +1,70 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 18/31] ASoC: tegra: allocate AHUB FIFO during probe() not
- startup()
-Date: Fri, 29 Nov 2013 15:40:27 +0100
-Message-ID: <20131129144025.GA9712@ulmo.nvidia.com>
+Subject: Re: [PATCH 20/31] i2c: tegra: use reset framework
+Date: Fri, 29 Nov 2013 15:46:16 +0100
+Message-ID: <20131129144615.GB9712@ulmo.nvidia.com>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-19-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-21-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+	protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1384548866-13141-19-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1384548866-13141-21-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---/04w6evG8XlLl3ft
+--1UWUbFP1cBYEclgG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2013 at 01:54:13PM -0700, Stephen Warren wrote:
+On Fri, Nov 15, 2013 at 01:54:15PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Teh Tegra30 I2S driver currently allocates DMA FIFOs from the AHUB only
-
-s/Teh/The/
-
-> when an audio stream starts playback. This is theoretically nice for
-> resource sharing, but makes no practical difference for any configuration
-> the drivers currently support. However, this deferral prevents conversion
-> to the standard DMA DT bindings, since conversion requires knowledge of
-> the specific DMA channel to be allocated, which in turn depends on which
-> specific FIFO was allocated.
+> Tegra's clock driver now provides an implementation of the common
+> reset API (include/linux/reset.h). Use this instead of the old Tegra-
+> specific API; that will soon be removed.
 >=20
-> For this reason, move the FIFO allocate into probe() to allow later
+> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+> Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
 
-s/allocate/allocation/?
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-[...]
-> +	i2s->playback_dma_data.addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	i2s->playback_dma_data.maxburst =3D 4;
-> +	ret =3D tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif,
-> +					    &i2s->playback_dma_data.addr,
-> +					    &i2s->playback_dma_data.slave_id);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret);
-> +		goto err_suspend;
-> +	}
-> +	ret =3D tegra30_ahub_set_rx_cif_source(i2s->playback_i2s_cif,
-> +					     i2s->playback_fifo_cif);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Could not route TX FIFO: %d\n", ret);
-> +		goto err_free_tx_fifo;
-> +	}
-> +
-> +	i2s->capture_dma_data.addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
-> +	i2s->capture_dma_data.maxburst =3D 4;
-> +	ret =3D tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif,
-> +					    &i2s->capture_dma_data.addr,
-> +					    &i2s->capture_dma_data.slave_id);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret);
-> +		goto err_unroute_tx_fifo;
-> +	}
-> +	ret =3D tegra30_ahub_set_rx_cif_source(i2s->capture_fifo_cif,
-> +					     i2s->capture_i2s_cif);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Could not route TX FIFO: %d\n", ret);
-> +		goto err_free_rx_fifo;
-> +	}
-> +
-
-It could be useful to have these in a separate function so as not to
-make the .probe() any larger. It's already pretty big as it is.
-
-Thierry
-
---/04w6evG8XlLl3ft
+--1UWUbFP1cBYEclgG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmKdZAAoJEN0jrNd/PrOhENUP/iGKSGTY1gGiV0/ljyTANg9m
-AaR12bP1FbvAfPu4xn6UYzeFRzVNqSivlJ6St/mE1z+Hmf6nGPNS1cysermVarci
-X3cMWB4S1KyMHu+G3Odf21Zi1aun5QofO6A0qlqUUNdHQaLmVXnfJ/DNVvNYd7QX
-rErDhiZGQA0IjKcTs6EJ+V311Dhfyu/vTvEiuGY3E0VVzQviEJ+qbSSL23HFrkCG
-qdAKomHWWog2+ujprb7Ds92WMcyyq37q0iMsR8PXxO9zf++VNOiAIXZtk15qKvDL
-WUoSMRZBwoB/vc1xz2jH4YrxHgCmsEKAutQg9nr7N4XkOhUdi5EG64GeaHRTlKv1
-H0n5rDb5N/XD/XJeV3IhRLHMOQPBiTJ9yZrbcGQRqkYVuoZs7Tt2K5hyBhQmI6ra
-AlWSNStTJRU77V21XjTKzfIIoNuPumMg879e+8VkhGOMTStzmDOSkviHhuVsHOFy
-icaqujxrtx1Lqagk6c3uMlz3xgvTsWBP8ZaJqy7lpeeqiKfhWFAb7H2dJtrQi7R4
-2XYQpIBbfCw6lZVCt2489q7MRPhMamjHktY33HvSu20IAItQXfYalyMPoArAGHyF
-ISg5qD7GxE3UeF052EWyYXEDrGonnFNCu7laBigksAwKoiNy+qINW7hoAyh9wDYo
-lkThyoHIgF+Hy+vu/7dU
-=1cks
+iQIcBAEBAgAGBQJSmKi3AAoJEN0jrNd/PrOhC08QAIDbUMbIlfUW4ViIUMqQ1lTD
+wGvFlNoghomHl8yDP1BuWSfHA0njwOE7M1yjR5C8aErCsHLSE7Zzx9Gbs14JwWdm
+fBLsNJSE8VaRYsNEJKAr1TEON84U00l+4I079+74zDeVGJqh4Z/HkBRtuZMuqdGN
+47vZVVn2PvOgEqKMCieMCCZZuHMLWxZEgHhUfpAMjdqfDfsIk+4DNvrHt1uGdQoO
+wc0RZ2rhEgOb5nfRpQG9TlFEzbnRJLdhjXC3oy8QEgbLXXhEu98H3/huoBAZkTIc
+p6mCC1ENJ5JOOoWsJHldR8mvtqyFh9LRhx0QcM0vuR379v2JXykDIDSYdaf8h1rq
+yt9dcAF7TAYFA2IBrvKwDKXDiOGo1Tu1LnCiinTfi84wjlLiyjrsk2BiY+jWv6pH
+wQUxLKKCLCi/I0vr3slJXfU5eUjmNeilNEJpADzHOvG9zuQd0mkQ7skPF7oOIJdB
+ufdsS0sdhLOaW8EDmk8voUZ2f2rNZtcAobwlPwLCJBN6VI89I7SpURs/T58Hs4B/
+B+sAzpCnknJiUdwsSgw0tMaQzhpeCXLi/xi3cntT+vYVQHSRNx5YX372zJIYpOLn
+mMRBm0C0PeC/8DpWeCJd1NuqIALGxh7cazWd/etreQFT4nVHz1Sk83omlOyB5piN
+gMfOCNazxng8u3GPAVkC
+=PY10
 -----END PGP SIGNATURE-----
 
---/04w6evG8XlLl3ft--
+--1UWUbFP1cBYEclgG--
