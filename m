@@ -1,75 +1,60 @@
-From: Kai Poggensee <kai.poggensee@avionic-design.de>
-Subject: Re: [PATCH 0/3] regulator: tps6586x: add version detection and voltage
- tables
-Date: Fri, 29 Nov 2013 09:20:37 +0100
-Message-ID: <52984E55.10804@avionic-design.de>
-References: <cover.1385508112.git.stefan@agner.ch>
- <20131128081351.GA26502@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] ASoC: tegra: use reset framework
+Date: Fri, 29 Nov 2013 12:14:46 +0100
+Message-ID: <20131129111444.GL22771@ulmo.nvidia.com>
+References: <1385496767-8307-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20131128081351.GA26502@ulmo.nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9JSHP372f+2dzJ8X"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1385496767-8307-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28.11.2013 09:13, Thierry Reding wrote:
-> On Wed, Nov 27, 2013 at 12:45:42AM +0100, Stefan Agner wrote:
->> This patchset adds version detection for the tps6586x mfd family. This is
->> required because some regulator versions use different voltage tables. The
->> regulator driver now uses the right voltage table according to the
->> version.
->> 
->> The required voltage for the SM2 converter on the Colibri T20 is 1.8V,
->> however, the device tree states 3.7V right now. Newer versions (>=V1.2) of
->> the Colibri T20 module use the TPS658643, whereas old ones (<V1.2) use the
->> TPS658623. Both of them have a different voltage table for SM2. The
->> current device tree contains a voltage which results in 1.8V for the older
->> TPS658623. Since the regulator driver has correct voltage tables for both
->> regulator versions now, we can request the correct 1.8V from the device
->> tree.
->> 
->> Tested on Colibri T20 V1.1 and V1.2.
->> 
->> Stefan Agner (3):
->>   mfd: tps6586x: add version detection
->>   regulator: tps6586x: add voltage table for tps658643
->>   ARM: tegra: set SM2 voltage correct
->> 
->>  arch/arm/boot/dts/tegra20-colibri-512.dtsi |  4 +-
->>  drivers/mfd/tps6586x.c                     | 41 +++++++++++--
->>  drivers/regulator/tps6586x-regulator.c     | 97 ++++++++++++++++++++----------
->>  include/linux/mfd/tps6586x.h               |  9 +++
->>  4 files changed, 110 insertions(+), 41 deletions(-)
-> 
-> Adding Kai Poggensee on Cc. There was a variant of the Tamonten board
-> with one of these versions of the chip (or maybe it was even yet another
-> one).
 
-Thanks Thierry,
+--9JSHP372f+2dzJ8X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-we'll be more than happy to support testing once the
-re-spun patch is posted. However, we will probably
-do so by back-porting to L4T 16.3.
+On Tue, Nov 26, 2013 at 01:12:47PM -0700, Stephen Warren wrote:
+[...]
+> +		rst = reset_control_get(&pdev->dev,
+> +					configlink_mods[i].rst_name);
+> +		if (IS_ERR(rst)) {
+> +			dev_err(&pdev->dev, "Can't get reset %s\n",
+> +				configlink_mods[i].rst_name);
+> +			ret = PTR_ERR(rst);
+>  			goto err;
 
-For the records:
-We are using TPS658621C on first variant of Tamonten
-Tegra 2 COM (internally called 1373-111), we are using
-TPS658640 on variant two (1373-121).
+In case where this fails, there's no way to re-assert the resets that
+have already been deasserted. That's not an issue introduced by this
+patch, though, and perhaps something we may not want to care about at
+all, so:
 
-This second variant was created to be 100% compatible
-with our TamontenNG Tegra 3 COM (basically omitting some
-previously unused interfaces), using TPS658640 was an
-opportunistic optimization.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Regards,
-Kai
+--9JSHP372f+2dzJ8X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSmHckAAoJEN0jrNd/PrOhRRoP/3byGf+00hl+hzyrEW11H9gY
+aeVd5YvtJoQiEH2IZ5FTYhw6JikkdoGMAniCJBRdez+TMSUjRJd1YQzSnC/VcHtA
+NSfJESr+yz9oEfUTD9HkFc5uSn5kyzBK+eQKjobe7Q1Zd48Ni+OBndCxLgKi83+O
+J+/S25wOTXvKdPFjh0ED9FcNFY4I0CCjVXmS84r79MJJftRykQYF4j+x0zVEBngj
+qDV/cL9KBzhx8kw/nyqu+tz4f8WBl0N17c464lsWPThYFuTf2SQtUSslB4Cwe6Kq
+lRUtJhVzTHD2Mn2mlq6y+fgXlF0OlulDCcLTBR0Yg8iPYnAVXuFfRYt3cishtPG/
+AUbhMNV39ml3jmoaAUEIZeNksZ0ZjDpXuzsHtB8wzweLLAkTN1zw034hpsDuwjkf
+Z5R4CCnn3aeEGpO/k/L+Ybh/IwLPvoqFmQd5cF8yDXcj+1/AAOvRWi3Tjx4Qq3jG
+WlxKruxO/lwpGhvCTXhYLPPyF/BQsWOY0ggKqmVQQNIQIBAIhV2QixaZgqUicUpw
+v6pI9xWBw4v/bEv44q7YFQxwE3ITQvkTW1cJVnKl68lLLl91Kj7RnYjGMGRaMkDB
+od2Et6Csj7TeJDF6upPsCAm1MWKVWbet+Fm60BzDgKnRrrBtUlFmpTfwBKpWeCgV
+OiWdYNzfGbai00TlZOth
+=tx3z
+-----END PGP SIGNATURE-----
+
+--9JSHP372f+2dzJ8X--
