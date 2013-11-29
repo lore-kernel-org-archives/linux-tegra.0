@@ -1,76 +1,103 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] serial: tegra: convert to standard DMA DT bindings
-Date: Fri, 29 Nov 2013 15:20:33 +0100
-Message-ID: <20131129142032.GB22771@ulmo.nvidia.com>
-References: <1385416270-3421-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH 18/31] ASoC: tegra: allocate AHUB FIFO during probe() not
+ startup()
+Date: Fri, 29 Nov 2013 15:40:27 +0100
+Message-ID: <20131129144025.GA9712@ulmo.nvidia.com>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-19-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/w6WUUxYkubDgwa5"
+	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385416270-3421-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1384548866-13141-19-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---/w6WUUxYkubDgwa5
+--/04w6evG8XlLl3ft
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2013 at 02:51:10PM -0700, Stephen Warren wrote:
+On Fri, Nov 15, 2013 at 01:54:13PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> By using dma_request_slave_channel_or_err(), the DMA slave ID can be
-> looked up from standard DT properties, and squirrelled away during
-> channel allocation. Hence, there's no need to use a custom DT property
-> to store the slave ID.
->=20
-> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v2:
-> * Don't allocate DMA channels inside probe(); the DMA channel setup
->   relies on some buffers that don't get allocated until startup().
->=20
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
->=20
-> Greg, you'd previously ack'd this, but I had to change the patch to fix
-> some bugs, which was a fair textual change, so I dropped your ack.
-> ---
->  drivers/tty/serial/serial-tegra.c | 24 ++++++------------------
->  1 file changed, 6 insertions(+), 18 deletions(-)
+> Teh Tegra30 I2S driver currently allocates DMA FIFOs from the AHUB only
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+s/Teh/The/
 
---/w6WUUxYkubDgwa5
+> when an audio stream starts playback. This is theoretically nice for
+> resource sharing, but makes no practical difference for any configuration
+> the drivers currently support. However, this deferral prevents conversion
+> to the standard DMA DT bindings, since conversion requires knowledge of
+> the specific DMA channel to be allocated, which in turn depends on which
+> specific FIFO was allocated.
+>=20
+> For this reason, move the FIFO allocate into probe() to allow later
+
+s/allocate/allocation/?
+
+[...]
+> +	i2s->playback_dma_data.addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	i2s->playback_dma_data.maxburst =3D 4;
+> +	ret =3D tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif,
+> +					    &i2s->playback_dma_data.addr,
+> +					    &i2s->playback_dma_data.slave_id);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret);
+> +		goto err_suspend;
+> +	}
+> +	ret =3D tegra30_ahub_set_rx_cif_source(i2s->playback_i2s_cif,
+> +					     i2s->playback_fifo_cif);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Could not route TX FIFO: %d\n", ret);
+> +		goto err_free_tx_fifo;
+> +	}
+> +
+> +	i2s->capture_dma_data.addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	i2s->capture_dma_data.maxburst =3D 4;
+> +	ret =3D tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif,
+> +					    &i2s->capture_dma_data.addr,
+> +					    &i2s->capture_dma_data.slave_id);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret);
+> +		goto err_unroute_tx_fifo;
+> +	}
+> +	ret =3D tegra30_ahub_set_rx_cif_source(i2s->capture_fifo_cif,
+> +					     i2s->capture_i2s_cif);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Could not route TX FIFO: %d\n", ret);
+> +		goto err_free_rx_fifo;
+> +	}
+> +
+
+It could be useful to have these in a separate function so as not to
+make the .probe() any larger. It's already pretty big as it is.
+
+Thierry
+
+--/04w6evG8XlLl3ft
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmKKwAAoJEN0jrNd/PrOhooEQAJlO+SpiafNDWoa+2PBeXo+w
-phCkGhTRm/NzXkulO1jrRA9Z9Wb6wZPIHKTsHpEgoUqvryeOgFgKFu4dNtyuq7GR
-b2R6N48zZYrprR9/p6JPkwFSqFm2UkKZL9Yazrjls/bvkS65WfZoGqXMLCKL7ttY
-3r518eWMHK6YIwg2TYlVWcMrEarItCJ9e3IvtnyKre8XnoSGHO0CQtSt9DRIiK+d
-0KA4AhJ3h3ZEOySquQYG0tHzVmb2tTaWqkauEzIPO9gzSKZM+hjqI4/PIETZ3ajg
-Y7HDuQD46Bm2bd6T/hq5/gCRlGXIgrOGXfpiaAIjcvYnWlymwXeNHAh3yNt/bJiV
-0lgAYU+dqms2nCdbWhfQjtQlNNWmd95S6dJHkpUBGPbP9lmrrdUAqMctQBYqZzzl
-1TnAi22ze9ScHK/olQQDAo13Z/RnKhWsE5zENKWWdjcYqvi4/f+sHqQKPZCLwWKr
-EXq45wFdY1hakH5uf2cdCnq3+pgNWcYMVQFJGkRw/UghkxzgzsYOJpMHn5u98krO
-5JWEKGBzr1cLZmbpxnJakhJAtTLKAf+L7ZKrGPfeCI0LMWnZuX+E9HzSRYMpYtuH
-Ce2xN4V9ROZXc0o+fyLOuLgamwLGHEwhWeS2vNHL4kevJJreT4yvNz7BkuZVc7ll
-48RYTtuDOis1vtOXbw8A
-=bw9m
+iQIcBAEBAgAGBQJSmKdZAAoJEN0jrNd/PrOhENUP/iGKSGTY1gGiV0/ljyTANg9m
+AaR12bP1FbvAfPu4xn6UYzeFRzVNqSivlJ6St/mE1z+Hmf6nGPNS1cysermVarci
+X3cMWB4S1KyMHu+G3Odf21Zi1aun5QofO6A0qlqUUNdHQaLmVXnfJ/DNVvNYd7QX
+rErDhiZGQA0IjKcTs6EJ+V311Dhfyu/vTvEiuGY3E0VVzQviEJ+qbSSL23HFrkCG
+qdAKomHWWog2+ujprb7Ds92WMcyyq37q0iMsR8PXxO9zf++VNOiAIXZtk15qKvDL
+WUoSMRZBwoB/vc1xz2jH4YrxHgCmsEKAutQg9nr7N4XkOhUdi5EG64GeaHRTlKv1
+H0n5rDb5N/XD/XJeV3IhRLHMOQPBiTJ9yZrbcGQRqkYVuoZs7Tt2K5hyBhQmI6ra
+AlWSNStTJRU77V21XjTKzfIIoNuPumMg879e+8VkhGOMTStzmDOSkviHhuVsHOFy
+icaqujxrtx1Lqagk6c3uMlz3xgvTsWBP8ZaJqy7lpeeqiKfhWFAb7H2dJtrQi7R4
+2XYQpIBbfCw6lZVCt2489q7MRPhMamjHktY33HvSu20IAItQXfYalyMPoArAGHyF
+ISg5qD7GxE3UeF052EWyYXEDrGonnFNCu7laBigksAwKoiNy+qINW7hoAyh9wDYo
+lkThyoHIgF+Hy+vu/7dU
+=1cks
 -----END PGP SIGNATURE-----
 
---/w6WUUxYkubDgwa5--
+--/04w6evG8XlLl3ft--
