@@ -1,23 +1,75 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
-Date: Fri, 29 Nov 2013 08:56:08 +0530
-Message-ID: <CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org>
-	<3057132.zHNVNQZ8pP@vostro.rjw.lan>
-	<CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
-	<1781198.iCUX9ZdW7W@vostro.rjw.lan>
+From: Kai Poggensee <kai.poggensee@avionic-design.de>
+Subject: Re: [PATCH 0/3] regulator: tps6586x: add version detection and voltage
+ tables
+Date: Fri, 29 Nov 2013 09:20:37 +0100
+Message-ID: <52984E55.10804@avionic-design.de>
+References: <cover.1385508112.git.stefan@agner.ch>
+ <20131128081351.GA26502@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1781198.iCUX9ZdW7W@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131128081351.GA26502@ulmo.nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29 November 2013 01:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> So I'm reading this as "the version of the patch in bleeding-edge is OK".
->
-> I hope that really is the case. :-)
+On 28.11.2013 09:13, Thierry Reding wrote:
+> On Wed, Nov 27, 2013 at 12:45:42AM +0100, Stefan Agner wrote:
+>> This patchset adds version detection for the tps6586x mfd family. This is
+>> required because some regulator versions use different voltage tables. The
+>> regulator driver now uses the right voltage table according to the
+>> version.
+>> 
+>> The required voltage for the SM2 converter on the Colibri T20 is 1.8V,
+>> however, the device tree states 3.7V right now. Newer versions (>=V1.2) of
+>> the Colibri T20 module use the TPS658643, whereas old ones (<V1.2) use the
+>> TPS658623. Both of them have a different voltage table for SM2. The
+>> current device tree contains a voltage which results in 1.8V for the older
+>> TPS658623. Since the regulator driver has correct voltage tables for both
+>> regulator versions now, we can request the correct 1.8V from the device
+>> tree.
+>> 
+>> Tested on Colibri T20 V1.1 and V1.2.
+>> 
+>> Stefan Agner (3):
+>>   mfd: tps6586x: add version detection
+>>   regulator: tps6586x: add voltage table for tps658643
+>>   ARM: tegra: set SM2 voltage correct
+>> 
+>>  arch/arm/boot/dts/tegra20-colibri-512.dtsi |  4 +-
+>>  drivers/mfd/tps6586x.c                     | 41 +++++++++++--
+>>  drivers/regulator/tps6586x-regulator.c     | 97 ++++++++++++++++++++----------
+>>  include/linux/mfd/tps6586x.h               |  9 +++
+>>  4 files changed, 110 insertions(+), 41 deletions(-)
+> 
+> Adding Kai Poggensee on Cc. There was a variant of the Tamonten board
+> with one of these versions of the chip (or maybe it was even yet another
+> one).
 
-Yeah, that's correct.
+Thanks Thierry,
+
+we'll be more than happy to support testing once the
+re-spun patch is posted. However, we will probably
+do so by back-porting to L4T 16.3.
+
+For the records:
+We are using TPS658621C on first variant of Tamonten
+Tegra 2 COM (internally called 1373-111), we are using
+TPS658640 on variant two (1373-121).
+
+This second variant was created to be 100% compatible
+with our TamontenNG Tegra 3 COM (basically omitting some
+previously unused interfaces), using TPS658640 was an
+opportunistic optimization.
+
+Regards,
+Kai
