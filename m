@@ -1,73 +1,74 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 31/31] clk: tegra: remove bogus PCIE_XCLK
-Date: Fri, 29 Nov 2013 15:56:29 +0100
-Message-ID: <20131129145628.GK9712@ulmo.nvidia.com>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-32-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] PCI: Disable Gen2 for Tegra20 and Tegra30
+Date: Fri, 29 Nov 2013 16:00:47 +0100
+Message-ID: <20131129150046.GL9712@ulmo.nvidia.com>
+References: <1384815306-3149-1-git-send-email-ebrower@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VJJoKLVEFXdmHQwR"
+	protocol="application/pgp-signature"; boundary="CqfQkoYPE/jGoa5Q"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1384548866-13141-32-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1384815306-3149-1-git-send-email-ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---VJJoKLVEFXdmHQwR
+--CqfQkoYPE/jGoa5Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2013 at 01:54:26PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Nov 18, 2013 at 02:55:06PM -0800, Eric Brower wrote:
+> Tegra20 and Tegra30 do not support gen2 PCIe, so correct the
+> register setting to disable it.
 >=20
-> The "pcie_xclk" clock is not actually a clock at all, but rather a reset
-> domain. Now that the custom Tegra module reset API has been removed, we
-> can remove the definition of any "clocks" that existed solely to support
-> it.
+> Signed-off-by: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
-> ---
->  drivers/clk/tegra/clk-tegra20.c         | 6 ------
->  drivers/clk/tegra/clk-tegra30.c         | 7 -------
->  include/dt-bindings/clock/tegra20-car.h | 2 +-
->  include/dt-bindings/clock/tegra30-car.h | 2 +-
->  4 files changed, 2 insertions(+), 15 deletions(-)
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 0afbbbc..b8ba2f7 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -805,7 +805,7 @@ static int tegra_pcie_enable_controller(struct tegra_=
+pcie *pcie)
+>  	afi_writel(pcie, value, AFI_PCIE_CONFIG);
+> =20
+>  	value =3D afi_readl(pcie, AFI_FUSE);
+> -	value &=3D ~AFI_FUSE_PCIE_T0_GEN2_DIS;
+> +	value |=3D AFI_FUSE_PCIE_T0_GEN2_DIS;
+>  	afi_writel(pcie, value, AFI_FUSE);
+> =20
+>  	/* initialize internal PHY, enable up to 16 PCIE lanes */
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Bjorn: can you pick this up directly or would you rather have me prepare
+a branch? It's the only one for Tegra so far, so a branch wouldn't be
+all that useful. In case you want to pick it up directly:
 
---VJJoKLVEFXdmHQwR
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--CqfQkoYPE/jGoa5Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSmKscAAoJEN0jrNd/PrOhp9UP/0L+hqIxs3w1SbQG69Ld3BNN
-p1YzlB8S68lsNn8W4vDpq4nRS9hAJYTP/tHuKnAsiIv5goGrX7u3BH3Co1zO9WIz
-mhPU1UhaCCqrqoH1FLhiLgkhOEzJ7f8qTwvg7mtYKo9ktx0toS1TYhC1vUfMrlCM
-lrF2VzOM4tPwuRMgJOF1LPPjpVQgrmYz6Xa72B8XVi400EyaKhf3dluucSMGYa+3
-EAZKr+ekLPgFyOl3Q6JpGm6wU+M8Vi/XmU8LmXsv74gNhQ68ETmRZX4u+Hy+xw2W
-VsGDwREF2jug6JBzDujXy8LWlKTSCyAn0ixH580AG6fdar5sh0y3+U43z60OFR5g
-OPnq+BYwbcFIhRaJCM5T6W+vdkSCRDjK2af0Nq5ipTgjcjcXfEcw8KOUU4DMdAMc
-e7a7k5/KrWKrySxBthBsdJA19H4HK7f6h/OWMNzAzUueVX8fuN2lIpBLrZeMuOml
-gydBP2ESk1XwK+74I2DRsic4rS//QnV3e4PRk89T8WIwZ9jTEHcjNshDfj3sE4Rv
-BUk3Yq7WC/ryGRu35RQI/wXPWSj2U/IRHe6DX2iaV3ojaakiAjD1wJTWhtx9Bj22
-bhNJu3ftBz5qF3E8WDEheTxCpaBX7vomepakGu4vOtgxqyHvLioizix3rR/3dqlA
-g67RVnZ/xioHbIQPOsko
-=SSmW
+iQIcBAEBAgAGBQJSmKweAAoJEN0jrNd/PrOhEsEQAJXHHFNKNHmUfx7ptV8ZWxjV
+UUgsge38AIpPJw61EPcNSlRiCEW2g7UbnEZLGfIoKO4iRMZln7NyZMTpP2KmAXDa
+/FIMcSr3J2L5Iml4gCMNqbdCPsfpEcGB+U5wcP2MlADFYhx8X2kn5tAveHzY0ztX
+4kIynzCEJ0knfruMu4SBZeWBYdh7IjlMGeRw6nZXxzTZBDw6Y77mj4WHIDtcoOOr
+MG0Dlnp2dDgNRGviRbCM/vsQPSEThXoNbAeLXJtlGYJnc9R6aY4u6BnveMM5dOYF
+eGcT4WFuV7via/bBX/iNLN4MBQHQi0+gspt5MzHzap9vpg8bK1ZrL987ljJP/jVp
+5MnkRZ1wpf1L66fHeR7+ax3bbPJ43KsLynQmECNLlEzabzf8YaUQ1qm/vS++3bdZ
+uXP16ctkPzTLvtk06PNkAcJ/BxtQR11CQ48hjnMR78caMzUGBRKO+sSHQ3WH3GRq
+z5KUpJbhno7W08mySwryOv8M0Pvi9OWJ4wCEeH73j04KeByQehApclrJfh7g5HXZ
+Th+kH3GZz4l7Yv34GAHcGyb5rqH+P7BPthY2tKv0HS8XCXWrOLEJMMNjmvS54Aq/
+iSHs71JbMJ7xoRSzFryIDSHtRVT6lsuGbapdtnt3NkJhow+dxeR0Q1j+4wsUr4y4
+g3qXC8lgbSZe593fZI7D
+=Aqts
 -----END PGP SIGNATURE-----
 
---VJJoKLVEFXdmHQwR--
+--CqfQkoYPE/jGoa5Q--
