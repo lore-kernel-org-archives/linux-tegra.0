@@ -1,56 +1,213 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH 3/3] ARM: tegra: set SM2 voltage correct
-Date: Sat, 30 Nov 2013 17:24:14 +0100
-Message-ID: <ab16891b4a6bcfbb1854aa766e4926a7@agner.ch>
-References: <cover.1385508112.git.stefan@agner.ch>
- <c9ceead9e3df77b5a33ad654db23c241cd624096.1385508112.git.stefan@agner.ch>
- <5296281C.1060403@wwwdotorg.org>
- <1385632196.5838.4.camel@weser.hi.pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385632196.5838.4.camel@weser.hi.pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, thierry.reding@gmail.com, sameo@linux.intel.com, dev@lynxeye.de, mark.rutland@arm.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH v2 2/3] regulator: tps6586x: add and use correct voltage table
+Date: Sun,  1 Dec 2013 16:59:14 +0100
+Message-ID: <77c960e6e3a91cf39bc866ccb9cd578ccc5acc95.1385913228.git.stefan@agner.ch>
+References: <cover.1385913227.git.stefan@agner.ch>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1385913227.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2013-11-28 10:49, schrieb Lucas Stach:
-> Am Mittwoch, den 27.11.2013, 10:13 -0700 schrieb Stephen Warren:
->> On 11/26/2013 04:45 PM, Stefan Agner wrote:
->> > Set the requested SM2 voltage to the correct value of 1.8V. The value
->> > before used to work on TPS658623 since the driver applied a wrong
->> > voltage table too. However, the TPS658643 used on newer devices uses
->> > yet another voltage table and those broke that compatibility. The
->> > regulator driver now has the correct voltage table for both regulator
->> > versions and those the correct voltage can be used in this device
->> > tree.
->>
->> One thing you haven't called out explicitly here is that this series is
->> an incompatible change to the DT, since the old buggy driver used to
->> allow old buggy DT content to accidentally work.
->>
-> The current (wrong and potentially dangerous) DT content only worked on
-> the engineering sample models. So this change definitely does improve
-> the situation, even with the risk of breaking a small fraction of
-> working boards.
-On the released modules, the current value ends in a freeze during
-boot-up (since the wrong voltage table results in a too low voltage).
+Depending on the regulator version, the voltage table might be
+different. Use version specific regulator tables in order to select
+correct voltage table. For the following regulator versions different
+voltage tables are now used:
 
-When I use 1.8V in the device tree, the old drivers refuses to set any
-voltage. The regulators default/bootloader settings work then better
-than the wrongfully applied values (tested on a new device). The probe
-just fails:
+  * TPS658623: Use correct voltage table for SM2
+  * TPS658643: New voltage table for SM2
 
-[    0.243864] tps6586x-regulator tps6586x-regulator: failed to register
-regulator REG-SM_2
-[    0.244317] tps6586x-regulator: probe of tps6586x-regulator failed
-with error -22
+Both versions are in use on the Colibri T20 module. Make use of the
+correct tables by requesting the correct SM2 voltage of 1.8V.
 
-So, for newer modules, the incompatible 1.8V DT results in a successful
-boot. Since we don't have a regulator driver at all, likely other things
-are broken at that situation...
+This change is not backward compatible since an old driver is not able
+to correctly set that value. The value 1.8V is out of range for the old
+driver and will refuse to probe the device. The regulator starts with
+default settings and the driver shows appropriate error messages.
 
---
-Stefan
+On Colibri T20, the old value used to work with TPS658623 since the
+driver applied a wrong voltage table too. However, the TPS658643 used
+on V1.2 devices uses yet another voltage table and those broke that
+pseudo-compatibility. The regulator driver now has the correct voltage
+table for both regulator versions and those the correct voltage can be
+used in the device tree.
+
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi |  4 +-
+ drivers/regulator/tps6586x-regulator.c     | 89 +++++++++++++++++++++++-------
+ 2 files changed, 70 insertions(+), 23 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index d5c9bca..cbe89ff 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -268,8 +268,8 @@
+ 					reg = <3>;
+ 					regulator-compatible = "sm2";
+ 					regulator-name = "vdd_sm2,vin_ldo*";
+-					regulator-min-microvolt = <3700000>;
+-					regulator-max-microvolt = <3700000>;
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
+ 					regulator-always-on;
+ 				};
+ 
+diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
+index e8e3a8a..c09cf35 100644
+--- a/drivers/regulator/tps6586x-regulator.c
++++ b/drivers/regulator/tps6586x-regulator.c
+@@ -86,6 +86,7 @@ static const unsigned int tps6586x_ldo0_voltages[] = {
+ 	1200000, 1500000, 1800000, 2500000, 2700000, 2850000, 3100000, 3300000,
+ };
+ 
++#define tps658623_sm2_voltages tps6586x_ldo4_voltages
+ static const unsigned int tps6586x_ldo4_voltages[] = {
+ 	1700000, 1725000, 1750000, 1775000, 1800000, 1825000, 1850000, 1875000,
+ 	1900000, 1925000, 1950000, 1975000, 2000000, 2025000, 2050000, 2075000,
+@@ -104,6 +105,13 @@ static const unsigned int tps6586x_sm2_voltages[] = {
+ 	4200000, 4250000, 4300000, 4350000, 4400000, 4450000, 4500000, 4550000,
+ };
+ 
++static const unsigned int tps658643_sm2_voltages[] = {
++	1025000, 1050000, 1075000, 1100000, 1125000, 1150000, 1175000, 1200000,
++	1225000, 1250000, 1275000, 1300000, 1325000, 1350000, 1375000, 1400000,
++	1425000, 1450000, 1475000, 1500000, 1525000, 1550000, 1575000, 1600000,
++	1625000, 1650000, 1675000, 1700000, 1725000, 1750000, 1775000, 1800000,
++};
++
+ static const unsigned int tps6586x_dvm_voltages[] = {
+ 	 725000,  750000,  775000,  800000,  825000,  850000,  875000,  900000,
+ 	 925000,  950000,  975000, 1000000, 1025000, 1050000, 1075000, 1100000,
+@@ -119,8 +127,8 @@ static const unsigned int tps6586x_dvm_voltages[] = {
+ 		.ops	= &tps6586x_regulator_ops,			\
+ 		.type	= REGULATOR_VOLTAGE,				\
+ 		.id	= TPS6586X_ID_##_id,				\
+-		.n_voltages = ARRAY_SIZE(tps6586x_##vdata##_voltages),	\
+-		.volt_table = tps6586x_##vdata##_voltages,		\
++		.n_voltages = ARRAY_SIZE(vdata##_voltages),		\
++		.volt_table = vdata##_voltages,				\
+ 		.owner	= THIS_MODULE,					\
+ 		.enable_reg = TPS6586X_SUPPLY##ereg0,			\
+ 		.enable_mask = 1 << (ebit0),				\
+@@ -162,27 +170,47 @@ static const unsigned int tps6586x_dvm_voltages[] = {
+ 
+ static struct tps6586x_regulator tps6586x_regulator[] = {
+ 	TPS6586X_SYS_REGULATOR(),
+-	TPS6586X_LDO(LDO_0, "vinldo01", ldo0, SUPPLYV1, 5, 3, ENC, 0, END, 0),
+-	TPS6586X_LDO(LDO_3, "vinldo23", ldo, SUPPLYV4, 0, 3, ENC, 2, END, 2),
+-	TPS6586X_LDO(LDO_5, "REG-SYS", ldo, SUPPLYV6, 0, 3, ENE, 6, ENE, 6),
+-	TPS6586X_LDO(LDO_6, "vinldo678", ldo, SUPPLYV3, 0, 3, ENC, 4, END, 4),
+-	TPS6586X_LDO(LDO_7, "vinldo678", ldo, SUPPLYV3, 3, 3, ENC, 5, END, 5),
+-	TPS6586X_LDO(LDO_8, "vinldo678", ldo, SUPPLYV2, 5, 3, ENC, 6, END, 6),
+-	TPS6586X_LDO(LDO_9, "vinldo9", ldo, SUPPLYV6, 3, 3, ENE, 7, ENE, 7),
+-	TPS6586X_LDO(LDO_RTC, "REG-SYS", ldo, SUPPLYV4, 3, 3, V4, 7, V4, 7),
+-	TPS6586X_LDO(LDO_1, "vinldo01", dvm, SUPPLYV1, 0, 5, ENC, 1, END, 1),
+-	TPS6586X_LDO(SM_2, "vin-sm2", sm2, SUPPLYV2, 0, 5, ENC, 7, END, 7),
+-
+-	TPS6586X_DVM(LDO_2, "vinldo23", dvm, LDO2BV1, 0, 5, ENA, 3,
++	TPS6586X_LDO(LDO_0, "vinldo01", tps6586x_ldo0, SUPPLYV1, 5, 3, ENC, 0,
++					END, 0),
++	TPS6586X_LDO(LDO_3, "vinldo23", tps6586x_ldo, SUPPLYV4, 0, 3, ENC, 2,
++					END, 2),
++	TPS6586X_LDO(LDO_5, "REG-SYS", tps6586x_ldo, SUPPLYV6, 0, 3, ENE, 6,
++					ENE, 6),
++	TPS6586X_LDO(LDO_6, "vinldo678", tps6586x_ldo, SUPPLYV3, 0, 3, ENC, 4,
++					END, 4),
++	TPS6586X_LDO(LDO_7, "vinldo678", tps6586x_ldo, SUPPLYV3, 3, 3, ENC, 5,
++					END, 5),
++	TPS6586X_LDO(LDO_8, "vinldo678", tps6586x_ldo, SUPPLYV2, 5, 3, ENC, 6,
++					END, 6),
++	TPS6586X_LDO(LDO_9, "vinldo9", tps6586x_ldo, SUPPLYV6, 3, 3, ENE, 7,
++					ENE, 7),
++	TPS6586X_LDO(LDO_RTC, "REG-SYS", tps6586x_ldo, SUPPLYV4, 3, 3, V4, 7,
++					V4, 7),
++	TPS6586X_LDO(LDO_1, "vinldo01", tps6586x_dvm, SUPPLYV1, 0, 5, ENC, 1,
++					END, 1),
++	TPS6586X_LDO(SM_2, "vin-sm2", tps6586x_sm2, SUPPLYV2, 0, 5, ENC, 7,
++					END, 7),
++
++	TPS6586X_DVM(LDO_2, "vinldo23", tps6586x_dvm, LDO2BV1, 0, 5, ENA, 3,
+ 					ENB, 3, TPS6586X_VCC2, BIT(6)),
+-	TPS6586X_DVM(LDO_4, "vinldo4", ldo4, LDO4V1, 0, 5, ENC, 3,
++	TPS6586X_DVM(LDO_4, "vinldo4", tps6586x_ldo4, LDO4V1, 0, 5, ENC, 3,
+ 					END, 3, TPS6586X_VCC1, BIT(6)),
+-	TPS6586X_DVM(SM_0, "vin-sm0", dvm, SM0V1, 0, 5, ENA, 1,
++	TPS6586X_DVM(SM_0, "vin-sm0", tps6586x_dvm, SM0V1, 0, 5, ENA, 1,
+ 					ENB, 1, TPS6586X_VCC1, BIT(2)),
+-	TPS6586X_DVM(SM_1, "vin-sm1", dvm, SM1V1, 0, 5, ENA, 0,
++	TPS6586X_DVM(SM_1, "vin-sm1", tps6586x_dvm, SM1V1, 0, 5, ENA, 0,
+ 					ENB, 0, TPS6586X_VCC1, BIT(0)),
+ };
+ 
++static struct tps6586x_regulator tps658623_regulator[] = {
++	TPS6586X_LDO(SM_2, "vin-sm2", tps658623_sm2, SUPPLYV2, 0, 5, ENC, 7,
++					END, 7),
++};
++
++static struct tps6586x_regulator tps658643_regulator[] = {
++	TPS6586X_LDO(SM_2, "vin-sm2", tps658643_sm2, SUPPLYV2, 0, 5, ENC, 7,
++					END, 7),
++};
++
+ /*
+  * TPS6586X has 2 enable bits that are OR'ed to determine the actual
+  * regulator state. Clearing one of this bits allows switching
+@@ -254,13 +282,14 @@ static int tps6586x_regulator_set_slew_rate(struct platform_device *pdev,
+ 			setting->slew_rate & TPS6586X_SLEW_RATE_MASK);
+ }
+ 
+-static inline struct tps6586x_regulator *find_regulator_info(int id)
++static inline struct tps6586x_regulator *find_regulator_info(int id,
++			struct tps6586x_regulator regulator_info[], int num)
+ {
+ 	struct tps6586x_regulator *ri;
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(tps6586x_regulator); i++) {
+-		ri = &tps6586x_regulator[i];
++	for (i = 0; i < num; i++) {
++		ri = &regulator_info[i];
+ 		if (ri->desc.id == id)
+ 			return ri;
+ 	}
+@@ -351,6 +380,7 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_init_data *reg_data;
+ 	struct tps6586x_platform_data *pdata;
+ 	struct of_regulator_match *tps6586x_reg_matches = NULL;
++	int reg_version;
+ 	int id;
+ 	int err;
+ 
+@@ -373,10 +403,27 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
++	reg_version = tps6586x_get_version(pdev->dev.parent);
++
+ 	for (id = 0; id < TPS6586X_ID_MAX_REGULATOR; ++id) {
+ 		reg_data = pdata->reg_init_data[id];
+ 
+-		ri = find_regulator_info(id);
++		switch(reg_version) {
++		case TPS658623:
++			ri = find_regulator_info(id, tps658623_regulator,
++					ARRAY_SIZE(tps658623_regulator));
++			break;
++		case TPS658643:
++			ri = find_regulator_info(id, tps658643_regulator,
++					ARRAY_SIZE(tps658643_regulator));
++			break;
++		}
++
++		/* Search fallback table if necessary */
++		if (!ri)
++			ri = find_regulator_info(id, tps6586x_regulator,
++					ARRAY_SIZE(tps6586x_regulator));
++
+ 		if (!ri) {
+ 			dev_err(&pdev->dev, "invalid regulator ID specified\n");
+ 			return -EINVAL;
+-- 
+1.8.4.2
