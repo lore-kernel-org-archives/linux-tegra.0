@@ -1,86 +1,82 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC][PATCHv6+++ 01/13] of: introduce of_property_for_earch_phandle_with_args()
-Date: Sun, 01 Dec 2013 12:00:09 -0700
-Message-ID: <529B8739.60701@wwwdotorg.org>
-References: <20131121.191720.1487772262083864095.hdoyu@nvidia.com><528E577C.2050506@wwwdotorg.org><20131128.145818.1345100874304396564.hdoyu@nvidia.com> <20131129.134625.431945240074254704.hdoyu@nvidia.com>
+Subject: Re: [PATCH 01/31] ARM: tegra: add missing clock documentation to
+ DT bindings
+Date: Sun, 01 Dec 2013 12:05:44 -0700
+Message-ID: <529B8888.3010801@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-2-git-send-email-swarren@wwwdotorg.org> <20131129114900.GN22771@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131129.134625.431945240074254704.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131129114900.GN22771-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/29/2013 04:46 AM, Hiroshi Doyu wrote:
-...
-> Iterating over a property containing a list of phandles with arguments
-> is a common operation for device drivers. This patch adds a new
-> of_property_for_each_phandle_with_args() macro to make the iteration
-> simpler.
+On 11/29/2013 04:49 AM, Thierry Reding wrote:
+> On Fri, Nov 15, 2013 at 01:53:56PM -0700, Stephen Warren wrote: 
+> [...]
+>> @@ -60,6 +81,12 @@ of the following host1x client modules: -
+>> compatible: "nvidia,tegra<chip>-dc" - reg: Physical base address
+>> and length of the controller's registers. - interrupts: The
+>> interrupt outputs from the controller. +  - clocks : Must contain
+>> an entry for each entry in clock-names. +    See
+>> ../clocks/clock-bindings.txt for details. +  - clock-names : Must
+>> include the following entries: +    - disp1 or disp2 (depending
+>> on the controller instance)
 > 
-> Introduced a new struct "of_phandle_iter" to keep the state when
-> iterating over the list.
+> I'm not sure if this makes sense. The name could be the same
+> independent of which controller uses it. If it isn't then the
+> driver would need additional code to find out which instance it is
+> and construct a dynamic string.
 > 
-> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> v6+++:
+> Any objection to just make this entry "disp", or "dc"?
 
-Surely that's v9; "+++" is rather unusual.
+This patch simply documents the binding that the various drivers
+already require and/or whatever is already in the DT files if there
+are any clocks the drivers don't currently use. I did consider fixing
+up all the current usage to actually be sane, but that would require
+even more driver changes (in addition to those required for the reset
+framework patches).
 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> +  - clock-names : Must include the following entries:
+> 
+> One other thing I noticed here is that you use a space between the 
+> property name and the :. None of the other properties have that, so
+> it looks somewhat out of place. The same is true for other
+> bindings, but there seem to be inconsistencies in some places
+> anyway, so perhaps we don't care? Well, I do care, don't know about
+> you. =)
 
-> +void of_phandle_iter_next(struct of_phandle_iter *iter,
-> +			  struct of_phandle_args *out_args)
-> +{
-> +	phandle phandle;
-> +	struct device_node *dn;
-> +	int i, count = iter->cell_count;
-> +
-> +	iter->err = -EINVAL;
-> +	if (!iter->cells_name && !iter->cell_count)
-> +		return;
+Yes, I simply cut/paste the clock docs from one binding into the other
+to make sure the wording was consistent. I guess I need to go through
+and adjust the pasted format to match the various bindings. It's a
+pity they're plain-text not a schema, so there is no consistency here:-(
 
-Wasn't that already checked in _start()?
+>> diff --git
+>> a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+>> b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt 
+>> index 91ff771c7e77..d4f2d534934b 100644 ---
+>> a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt 
+>> +++
+>> b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt 
+>> @@ -6,8 +6,10 @@ Required properties: - interrupts: Should
+>> contain SPI interrupts. - nvidia,dma-request-selector : The Tegra
+>> DMA controller's phandle and request selector for this SPI
+>> controller. -- This is also require clock named "spi" as per
+>> binding document -
+>> Documentation/devicetree/bindings/clock/clock-bindings.txt +-
+>> clocks : Must contain an entry for each entry in clock-names. +
+>> See ../clocks/clock-bindings.txt for details. +- clock-names :
+>> Must include the following entries: +  - spi
+> 
+> This is inconsistent with other bindings that require only a
+> single clock entry. I suppose that this is required because of the
+> driver requesting a specifically named clock, in which case that's
+> fine.
 
-Why not set err = -EINVAL inside the if, rather than setting it to an
-error value here by default, then having to over-write it at the end of
-the function?
-
-> +static void __of_phandle_iter_set(struct of_phandle_iter *iter,
-
-This is only used in one place; why not simply inline this into
-of_phandle_iter_start()? It would make the code simpler.
-
-> +void of_phandle_iter_start(struct of_phandle_iter *iter,
-
-> +	iter->cells_name = cells_name;
-> +	iter->cell_count = cell_count;
-
-Why not pass these values into of_phandle_iter_next() instead? There's
-no need to pass them just to _start() so they can be read by _next()
-instead.
-
-> diff --git a/include/linux/of.h b/include/linux/of.h
-
-> +/*
-> + * keep the state at iterating a list of phandles with variable number
-> + * of args
-> + */
-> +struct of_phandle_iter {
-> +	int		err;
-> +	const __be32	*cur;		/* current phandle */
-> +	const __be32	*end;		/* end of the last phandle */
-
-Can't you detect an error case by e.g. (cur == NULL) and thus avoid
-requiring an explicit err field?
-
-Together with removing:
-
-> +	const char	*cells_name;
-> +	int		cell_count;
-
-... then you'd only be left with cur/end, so I think you could get away
-without a struct at all, but simply "cur" as the iterator variable, plus
-"end" as the one temp variable.
+This driver does clk_get(dev, "spi") rather than clk_get(dev, NULL),
+so this requires a specific name. Again, I did consider updating all
+drivers to use names, but decided I didn't want to do even more driver
+changes, but instead just document what was currently required.
