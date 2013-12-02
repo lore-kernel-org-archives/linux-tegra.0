@@ -1,57 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 1/3] mfd: tps6586x: add version detection
-Date: Mon, 2 Dec 2013 12:21:13 +0000
-Message-ID: <20131202122113.GY27568@sirena.org.uk>
-References: <cover.1385913227.git.stefan@agner.ch>
- <2d5282f031a16d2ff227694daaabc977440fbd2e.1385913228.git.stefan@agner.ch>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra: Correct clock number for UARTE
+Date: Mon, 2 Dec 2013 14:34:19 +0200
+Message-ID: <20131202123419.GX26617@tbergstrom-lnx.Nvidia.com>
+References: <1385983825-20317-1-git-send-email-treding@nvidia.com>
+ <1385984847.4086.3.camel@weser.hi.pengutronix.de>
+ <20131202121447.GB12793@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O2v8LnVIcZ+EDjcF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <2d5282f031a16d2ff227694daaabc977440fbd2e.1385913228.git.stefan@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, dev@lynxeye.de, lee.jones@linaro.org, lgirdwood@gmail.com, kai.poggensee@avionic-design.de, sameo@linux.intel.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20131202121447.GB12793-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Mon, Dec 02, 2013 at 01:14:48PM +0100, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, Dec 02, 2013 at 12:47:27PM +0100, Lucas Stach wrote:
+> > Am Montag, den 02.12.2013, 12:30 +0100 schrieb Thierry Reding:
+> > > UARTE has clock number 66. Number 65 is the right one for UARTD.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > ---
+> > >  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+> > > index 5c35885f4a7c..3744a6fe589e 100644
+> > > --- a/drivers/clk/tegra/clk-tegra-periph.c
+> > > +++ b/drivers/clk/tegra/clk-tegra-periph.c
+> > > @@ -492,7 +492,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+> > >  	UART("uartb", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTB, 7, tegra_clk_uartb),
+> > >  	UART("uartc", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTC, 55, tegra_clk_uartc),
+> > >  	UART("uartd", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTD, 65, tegra_clk_uartd),
+> > > -	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 65, tegra_clk_uarte),
+> > > +	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 66, tegra_clk_uarte),
+> > >  	XUSB("xusb_host_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_HOST_SRC, 143, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_host_src),
+> > >  	XUSB("xusb_falcon_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_FALCON_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_falcon_src),
+> > >  	XUSB("xusb_fs_src", mux_clkm_48M_pllp_480M, CLK_SOURCE_XUSB_FS_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_fs_src),
+> > 
+> > Is this a stable patch or why are those magic numbers even necessary? I
+> > have to admit I didn't follow the Tegra clk stuff closely, but with all
+> > the churn going on there I would have suspected that those numbers would
+> > have been replaced by the DT include defines by now.
+> 
+> There is no 1:1 mapping between the DT include defines and the hardware
+> clock numbers. For instance, UARTB has DT define 192, but the enable bit
+> is at offset 7.
+> 
 
---O2v8LnVIcZ+EDjcF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Indeed. Some clocks share the enable bit (eg UARTB and VFIR) and hence
+the hardware 'clock number'. The hardware 'clock number' really only tells you
+the bank number and the bit in the clk_enable/disable/state register. The bank
+number is just 'clock number' / 32. bit number is  'clock number' % 32.
 
-On Sun, Dec 01, 2013 at 04:59:13PM +0100, Stefan Agner wrote:
+> I think the main reason for doing was because of the Tegra-specific
+> reset API. Now that that's being converted to the generic API, there may
+> be some room to refactor this. Until then I think we're stuck with
+> having these numbers in this table.
+> 
 
-> +int tps6586x_get_version(struct device *dev)
-> +{
-> +	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-> +
-> +	return tps6586x->version;
-> +}
-> +EXPORT_SYMBOL_GPL(tps6586x_get_version);
+It's still a rather convenient way I think. An alternative would be to specify
+the bit number and the bank ID as 2 separate parameters.
 
-May as well make this a static inline in the header.
+Cheers,
 
---O2v8LnVIcZ+EDjcF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnHs2AAoJELSic+t+oim97FcP+wTzTbJMrzwNnxGbgu0hyLT7
-HwpyhAUmbD+CL1L+l1hYRGpwsztVacrTtX2HfPp9/XEs+5wo5GtlLMSpL+TwWto2
-0NHZAVxYzJO9eMC/3+AjJYyGfXlK8XEYaEt3FoBUB6SOMhxataVLVolAl44M9iBG
-+MF7Zb4EkdfGlIRgHEf4xxiKizCYBmF8LDppDp50fmmNp3DFrCedyb2Vs6NBD2PX
-7rbAEIKWwyNt4DfrXEwrN1oYVe/8o/qmxtTw4cEqYIyw0nuwJOf1l7SZGOkPe63C
-XxAbFBekeW9erTsZviwWMmZYR46Oo/DURygXQdN4PT6UD+sGVVPohgXz9h++U8l7
-QsiON4WPwAY+YjPAFX0g7k1eBLNEUcMqH5emT58rjETdZWNTmbJ4+qAUpbVFDGQr
-bXVJDljSljvt2qB9Wp4FrFjLulHdnTyf9xdkqOK1E9vA9bilWneUxXKMqgRNIzCd
-8YDHUC4ZFj2yJFJRurrTh0xDAOUxpkY83MA64GV/8MTpt3+CHfu+vhmXUbup17og
-J8Fl/pmBi2gdJDcpDhq8nEIUsrSnkDX6zGai+2El73GYP18lrrGxxNRfeYE0FTdU
-wyzH5osNE1GDsuEStJMzv42X9Fm3+7ZxhneG82ugSoRBD9A1jp1EVEQ83r7ggmcS
-TQ3AzCbo1Y2UKtd+w7u6
-=4lxs
------END PGP SIGNATURE-----
-
---O2v8LnVIcZ+EDjcF--
+Peter.
