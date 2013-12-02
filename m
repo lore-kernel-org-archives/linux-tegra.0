@@ -1,32 +1,95 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] clk: tegra: Correct clock number for UARTE
-Date: Mon,  2 Dec 2013 12:30:25 +0100
-Message-ID: <1385983825-20317-1-git-send-email-treding@nvidia.com>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: Re: [PATCH v2 2/3] regulator: tps6586x: add and use correct voltage
+ table
+Date: Mon, 02 Dec 2013 12:38:58 +0100
+Message-ID: <7ec014a74ccbcf975f45e0c517615ae2@agner.ch>
+References: <cover.1385913227.git.stefan@agner.ch>
+ <77c960e6e3a91cf39bc866ccb9cd578ccc5acc95.1385913228.git.stefan@agner.ch>
+ <20131202093622.GF17834@ulmo.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131202093622.GF17834-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-UARTE has clock number 66. Number 65 is the right one for UARTD.
+Am 2013-12-02 10:36, schrieb Thierry Reding:
+> On Sun, Dec 01, 2013 at 04:59:14PM +0100, Stefan Agner wrote:
+> [...]
+> 
+> This looks pretty good generally. A few minor nits below...
+> 
+>> diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
+> [...]
+>> +#define tps658623_sm2_voltages tps6586x_ldo4_voltages
+>>  static const unsigned int tps6586x_ldo4_voltages[] = {
+>>  	1700000, 1725000, 1750000, 1775000, 1800000, 1825000, 1850000, 1875000,
+>>  	1900000, 1925000, 1950000, 1975000, 2000000, 2025000, 2050000, 2075000,
+> 
+> I'd put the #define below the ldo4 table. This doesn't actually matter
+> for the preprocessor, but it makes it easier to read the code. Also an
+> additional blank line would help with readability.
+> 
+>> +	TPS6586X_LDO(LDO_0, "vinldo01", tps6586x_ldo0, SUPPLYV1, 5, 3, ENC, 0,
+>> +					END, 0),
+> 
+> Perhaps reduce the indentation here so there's more room in case this
+> ever needs to be extended?
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The last 4 lines indentation was already that far, so I just adopted
+those lines in order to avoid having to touch them too.
 
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 5c35885f4a7c..3744a6fe589e 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -492,7 +492,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	UART("uartb", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTB, 7, tegra_clk_uartb),
- 	UART("uartc", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTC, 55, tegra_clk_uartc),
- 	UART("uartd", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTD, 65, tegra_clk_uartd),
--	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 65, tegra_clk_uarte),
-+	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 66, tegra_clk_uarte),
- 	XUSB("xusb_host_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_HOST_SRC, 143, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_host_src),
- 	XUSB("xusb_falcon_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_FALCON_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_falcon_src),
- 	XUSB("xusb_fs_src", mux_clkm_48M_pllp_480M, CLK_SOURCE_XUSB_FS_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_fs_src),
--- 
-1.8.4.2
+
+> 
+>> @@ -351,6 +380,7 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
+>>  	struct regulator_init_data *reg_data;
+>>  	struct tps6586x_platform_data *pdata;
+>>  	struct of_regulator_match *tps6586x_reg_matches = NULL;
+>> +	int reg_version;
+> 
+> Why the prefix "reg_"?
+> 
+>> @@ -373,10 +403,27 @@ static int tps6586x_regulator_probe(struct platform_device *pdev)
+>>  		return -ENOMEM;
+>>  	}
+>>
+>> +	reg_version = tps6586x_get_version(pdev->dev.parent);
+>> +
+>>  	for (id = 0; id < TPS6586X_ID_MAX_REGULATOR; ++id) {
+>>  		reg_data = pdata->reg_init_data[id];
+>>
+>> -		ri = find_regulator_info(id);
+>> +		switch(reg_version) {
+>> +		case TPS658623:
+>> +			ri = find_regulator_info(id, tps658623_regulator,
+>> +					ARRAY_SIZE(tps658623_regulator));
+>> +			break;
+>> +		case TPS658643:
+>> +			ri = find_regulator_info(id, tps658643_regulator,
+>> +					ARRAY_SIZE(tps658643_regulator));
+>> +			break;
+>> +		}
+> 
+> Perhaps instead of repeating the function calls this could be:
+> 
+> 		switch (version) {
+> 		case TPS6586XYZ:
+> 			num = ARRAY_SIZE(tps6586xyz_regulator);
+> 			table = tps6586xys_regulator;
+> 			break;
+> 
+> 		...
+> 		}
+> 
+> 		if (table)
+> 			ri = find_regulator_info(id, table, num);
+> 
+> That's slightly longer, but I find that to be more intuitive. Perhaps
+> a bit more future-proof since you only have a single call. But that's
+> perhaps subjective, so I'm fine with your alternative, too.
+
+Sounds reasonable, will change that accordingly in the next patch
+version.
