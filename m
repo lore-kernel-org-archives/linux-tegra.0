@@ -1,65 +1,94 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
-Date: Mon,  2 Dec 2013 14:28:54 +0100
-Message-ID: <1385990934-20809-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 1/2] ARM: dts: tegra: Header file for pinctrl constants
+Date: Mon, 2 Dec 2013 19:25:01 +0530
+Message-ID: <1385992502-12771-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rob.herring@calxeda.com, swarren@wwwdotorg.org
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, thierry.reding@gmail.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Introduce device tree bindings for the MIPI pad calibration controller
-found on Tegra SoCs. The controller can be used to perform calibration
-of pads used for DSI and CSI peripherals.
+Defines pincontrol constants to use from Tegra's DTS file
+for tegra pincontrol properties option.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- .../bindings/misc/nvidia,tegra114-mipi.txt         | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
+ include/dt-bindings/pinctrl/pinctrl-tegra.h |   65 +++++++++++++++++++++++++++
+ 1 files changed, 65 insertions(+), 0 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra.h
 
-diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra.h b/include/dt-bindings/pinctrl/pinctrl-tegra.h
 new file mode 100644
-index 000000000000..beb75ec7f6fc
+index 0000000..c2bfa3f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
-@@ -0,0 +1,37 @@
-+NVIDIA Tegra MIPI pad calibration controller
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra.h
+@@ -0,0 +1,65 @@
++/*
++ * This header provides constants for TEGRA pinctrl bindings.
++ *
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Author: Laxman Dewangan <ldewangan@nvidia.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
 +
-+Required properties:
-+- compatible: "nvidia,tegra<chip>-mipi"
-+- reg: Physical base address and length of the controller's registers.
-+- clocks: The clock consumed by the controller.
-+- #nvidia,mipi-calibrate-cells: Should be 1. The cell is a bitmask of the pads
-+  that need to be calibrated for a given device.
++#ifndef _DT_BINDINGS_PINCTRL_TEGRA_H
++#define _DT_BINDINGS_PINCTRL_TEGRA_H
 +
-+User nodes need to contain an nvidia,mipi-calibrate property that has a
-+phandle to refer to the calibration controller node and a bitmask of the pads
-+that need to be calibrated.
++/* Input/output */
++#define TEGRA_PIN_OUTPUT				0
++#define TEGRA_PIN_INPUT					1
 +
-+Example:
++/* Pull up/down/normal */
++#define TEGRA_PIN_PUPD_NORMAL				0
++#define TEGRA_PIN_PUPD_PULL_DOWN			1
++#define TEGRA_PIN_PUPD_PULL_UP				2
 +
-+	mipi: mipi@700e3000 {
-+		compatible = "nvidia,tegra114-mipi";
-+		reg = <0x700e3000 0x100>;
-+		clocks = <&tegra_car TEGRA114_CLK_MIPI_CAL>;
-+		#nvidia,mipi-calibrate-cells = <1>;
-+	};
++/* Tristate/normal */
++#define TEGRA_PIN_NORMAL				0
++#define TEGRA_PIN_TRISTATE				1
 +
-+	...
++/* Rcv Sel enable/disable */
++#define TEGRA_PIN_RCV_SEL_DISABLE			0
++#define TEGRA_PIN_RCV_SEL_ENABLE			1
 +
-+	host1x@50000000 {
-+		...
++/* Lock enable/disable */
++#define TEGRA_PIN_LOCK_DISABLE				0
++#define TEGRA_PIN_LOCK_ENABLE				1
 +
-+		dsi@54300000 {
-+			...
++/* Open drain enable/disable */
++#define TEGRA_PIN_OPEN_DRAIN_DISABLE			0
++#define TEGRA_PIN_OPEN_DRAIN_ENABLE			1
 +
-+			nvidia,mipi-calibrate = <&mipi 0x060>;
++/* High speed mode */
++#define TEGRA_PIN_DRIVE_HIGH_SPEED_MODE_DISABLE		0
++#define TEGRA_PIN_DRIVE_HIGH_SPEED_MODE_ENABLE		1
 +
-+			...
-+		};
++/* Schmitt enable/disable */
++#define TEGRA_PIN_DRIVE_SCHMITT_DISABLE			0
++#define TEGRA_PIN_DRIVE_SCHMITT_ENABLE			1
 +
-+		...
-+	};
++/* Low power mode */
++#define TEGRA_PIN_LP_DRIVE_DIV_8			0
++#define TEGRA_PIN_LP_DRIVE_DIV_4			1
++#define TEGRA_PIN_LP_DRIVE_DIV_2			2
++#define TEGRA_PIN_LP_DRIVE_DIV_1			3
++
++#define TEGRA_PIN_SLEW_RATE_FASTEST			0
++#define TEGRA_PIN_SLEW_RATE_FAST			1
++#define TEGRA_PIN_SLEW_RATE_SLOW			2
++#define TEGRA_PIN_SLEW_RATE_SLOWEST			3
++
++#endif
 -- 
-1.8.4.2
+1.7.1.1
