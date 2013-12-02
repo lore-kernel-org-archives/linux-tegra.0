@@ -1,70 +1,75 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Correct clock number for UARTE
-Date: Mon, 2 Dec 2013 14:34:19 +0200
-Message-ID: <20131202123419.GX26617@tbergstrom-lnx.Nvidia.com>
-References: <1385983825-20317-1-git-send-email-treding@nvidia.com>
- <1385984847.4086.3.camel@weser.hi.pengutronix.de>
- <20131202121447.GB12793@ulmo.nvidia.com>
+From: Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] spi: tegra: avoid unsigned->signed->unsigned promotion
+Date: Mon, 02 Dec 2013 14:05:35 +0100
+Message-ID: <xa1tli038ktc.fsf@mina86.com>
+References: <1385745164-10534-1-git-send-email-mpn@google.com> <20131129214313.GA18036@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/mixed; boundary="=-=-="
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131202121447.GB12793-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131129214313.GA18036@mithrandir>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 02, 2013 at 01:14:48PM +0100, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Dec 02, 2013 at 12:47:27PM +0100, Lucas Stach wrote:
-> > Am Montag, den 02.12.2013, 12:30 +0100 schrieb Thierry Reding:
-> > > UARTE has clock number 66. Number 65 is the right one for UARTD.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> > > index 5c35885f4a7c..3744a6fe589e 100644
-> > > --- a/drivers/clk/tegra/clk-tegra-periph.c
-> > > +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> > > @@ -492,7 +492,7 @@ static struct tegra_periph_init_data periph_clks[] = {
-> > >  	UART("uartb", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTB, 7, tegra_clk_uartb),
-> > >  	UART("uartc", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTC, 55, tegra_clk_uartc),
-> > >  	UART("uartd", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTD, 65, tegra_clk_uartd),
-> > > -	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 65, tegra_clk_uarte),
-> > > +	UART("uarte", mux_pllp_pllc_pllm_clkm, CLK_SOURCE_UARTE, 66, tegra_clk_uarte),
-> > >  	XUSB("xusb_host_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_HOST_SRC, 143, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_host_src),
-> > >  	XUSB("xusb_falcon_src", mux_clkm_pllp_pllc_pllre, CLK_SOURCE_XUSB_FALCON_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_falcon_src),
-> > >  	XUSB("xusb_fs_src", mux_clkm_48M_pllp_480M, CLK_SOURCE_XUSB_FS_SRC, 143, TEGRA_PERIPH_NO_RESET, tegra_clk_xusb_fs_src),
-> > 
-> > Is this a stable patch or why are those magic numbers even necessary? I
-> > have to admit I didn't follow the Tegra clk stuff closely, but with all
-> > the churn going on there I would have suspected that those numbers would
-> > have been replaced by the DT include defines by now.
-> 
-> There is no 1:1 mapping between the DT include defines and the hardware
-> clock numbers. For instance, UARTB has DT define 192, but the enable bit
-> is at offset 7.
-> 
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Indeed. Some clocks share the enable bit (eg UARTB and VFIR) and hence
-the hardware 'clock number'. The hardware 'clock number' really only tells you
-the bank number and the bit in the clk_enable/disable/state register. The bank
-number is just 'clock number' / 32. bit number is  'clock number' % 32.
+> On Fri, Nov 29, 2013 at 06:12:44PM +0100, Michal Nazarewicz wrote:
+>> u8 type, which is unsigned, is promoted to int, which is singned, when
+>> doing a binary shift.  Then, on 64-bit machines, it is further promoted
+>> to unsigned long which may lead to more significant half of the value
+>> to be all ones.  To avoid this, explicitly promote to an unsigned type.
 
-> I think the main reason for doing was because of the Tegra-specific
-> reset API. Now that that's being converted to the generic API, there may
-> be some room to refactor this. Until then I think we're stuck with
-> having these numbers in this table.
-> 
+On Fri, Nov 29 2013, Thierry Reding wrote:
+> But I don't think there's a real issue here. Even on 64-bit platforms,
+> writel() will only write 32-bit registers, and therefore discard the
+> upper 32 bits.
+>
+> I think in general perhaps a more proper fix would be to use only u32
+> instead of unsigned long for these cases, since then the problem goes
+> away. u32 is also the type of the value used by writel() so it makes
+> perfect sense to use it.
 
-It's still a rather convenient way I think. An alternative would be to specify
-the bit number and the bank ID as 2 separate parameters.
+Yes, you're absolutely right.  I dunno why I missed the fact it's used
+in writel only.  I'll prepare a new patch soon(ish).
 
-Cheers,
+--=20
+Best regards,                                         _     _
+.o. | Liege of Serenely Enlightened Majesty of      o' \,=3D./ `o
+..o | Computer Science,  Micha=C5=82 =E2=80=9Cmina86=E2=80=9D Nazarewicz   =
+ (o o)
+ooo +--<mpn-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>--<xmpp:mina86-/eSpBmjxGS4dnm+yROfE0A@public.gmane.org>--ooO--(_)--Ooo--
 
-Peter.
+--=-=-=
+Content-Type: multipart/signed; boundary="==-=-=";
+	micalg=pgp-sha1; protocol="application/pgp-signature"
+
+--==-=-=
+Content-Type: text/plain
+
+
+--==-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSnIWfAAoJECBgQBJQdR/0N3YQAIY840S8OZ7afX+q9n44AH2R
+7lbWi2kQoaBcl3mTx86MxR4qNKoltcHq+syuCjGyv8SIMw0Sod7giQX6iwB+f1Kn
+fgqQgTw7PYUQQBHwSn/dK1/pudJ4MprcA02MBwS2wQ5yDk9WUnF2k98OkPo4sD8n
+2j3/bmLu+89FmKMNDk1QrliV1Oginv/r8004c2r1btN3gr54rjmcc5k3oP0L+i5c
+GSvjniMvUIC5B6v56p5tKxst+JYblZqZ23vTOK/xTeshtiE8iTYv7msTlu5g2fIs
+9mKAZFc/OYlBYMGaRVsgBjnWfCc1Q9DzGPBkvRnP87K8LC8drmCO8fQtJm0rh1KZ
+D2WO9TT1aRRxTZ7SVkd61VW/jb0xxydZCDkNuat1mPP2q8oZNScWme+akwl4iyk2
+NbaTmr2dTjMz2yaxStbihd1hDyyavlYOptfUINBrOFpRNqFSg44ntXKMbQmWRODy
+Ct41WUBM+1AmGvrr6cgaFp93iqwIe/Dtk6sQL7br8hF0/cTuUt8miM0ddsBWGAOK
+s+NHsD/Cj/9XQktTfMjFJTwblr2IP5t/5YqbjaN70V0bvpLtE5ylkrdTZOJwKw53
+nc/jQynz9b/vZjHrBz1wV7nCjjW/9YuwRuXHoQp7Q2t5RoIiuvMYolinUOaSanVb
+lPEyZIYSxjKq0vX3agd0
+=Zblu
+-----END PGP SIGNATURE-----
+--==-=-=--
+
+--=-=-=--
