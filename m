@@ -1,66 +1,218 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/5] clk: tegra: fix blink clock rate
-Date: Mon, 2 Dec 2013 10:37:56 +0100
-Message-ID: <20131202093755.GA18060@ulmo.nvidia.com>
-References: <1384991242-13596-1-git-send-email-swarren@wwwdotorg.org>
- <20131129152241.GM9712@ulmo.nvidia.com>
- <529B8C2D.3000300@wwwdotorg.org>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC][PATCHv6+++ 01/13] of: introduce
+ of_property_for_earch_phandle_with_args()
+Date: Mon, 2 Dec 2013 12:02:20 +0100
+Message-ID: <20131202.130220.1404999403649937134.hdoyu@nvidia.com>
+References: <20131128.145818.1345100874304396564.hdoyu@nvidia.com><20131129.134625.431945240074254704.hdoyu@nvidia.com><529B8739.60701@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <529B8C2D.3000300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <529B8739.60701-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org" <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote @ Sun, 1 Dec 2013 20:00:09 +0100:
 
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 11/29/2013 04:46 AM, Hiroshi Doyu wrote:
+> ...
+> > Iterating over a property containing a list of phandles with arguments
+> > is a common operation for device drivers. This patch adds a new
+> > of_property_for_each_phandle_with_args() macro to make the iteration
+> > simpler.
+> > 
+> > Introduced a new struct "of_phandle_iter" to keep the state when
+> > iterating over the list.
+> > 
+> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > v6+++:
+> 
+> Surely that's v9; "+++" is rather unusual.
 
-On Sun, Dec 01, 2013 at 12:21:17PM -0700, Stephen Warren wrote:
-> On 11/29/2013 08:22 AM, Thierry Reding wrote:
-> > On Wed, Nov 20, 2013 at 04:47:18PM -0700, Stephen Warren wrote:
-> >> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>=20
-> >> The blink clock rate needs to be configured, or it will run at
-> >> ~1Hz rather than the desired 32KHz. If it runs at the wrong rate,
-> >> e.g. the SDIO WiFi on Seaboard and Cardhu will fail to be
-> >> detected.
-> >=20
-> > How is this related to WiFi?
->=20
-> The "blink" clock output from Tegra is connected to the WiFi module,
-> which then uses it for something; it probably has a PLL connected to
-> it that drives all the internal circuitry.
+My intention was to put this into the next v7 series after I get this
+reviewed as RFC.
+...
+> Together with removing:
+> 
+> > +	const char	*cells_name;
+> > +	int		cell_count;
+> 
+> ... then you'd only be left with cur/end, so I think you could get away
+> without a struct at all, but simply "cur" as the iterator variable, plus
+> "end" as the one temp variable.
 
-Okay, thanks for explaining.
+Although the above proposal would be alsmot same as "[RFC][PATCHv6++
+01/13]"(*1) where I use *list(cur) and rem as remaining count, here's
+the update. I'll put this into v7 series.
 
-Thierry
+---8<------8<------8<------8<------8<------8<------8<------8<------8<---
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---J/dobhs11T7y2rNN
-Content-Type: application/pgp-signature
+Iterating over a property containing a list of phandles with arguments
+is a common operation for device drivers. This patch adds a new
+of_property_for_each_phandle_with_args() macro to make the iteration
+simpler.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v6++++:
+Iterate without intrducing a new struct.
 
-iQIcBAEBAgAGBQJSnFTzAAoJEN0jrNd/PrOheG0QAMMsg5qfeIm+rjF7/z9s/vTj
-UbLCtWAYAH6QfzPk+GFZinbBluV3ftlmRoYvDame8NecKcFDmpL3tHC5mtV/RbDn
-QKV2+JgDaQQBdx7GZOREaM5Hx65hHttyJdYvUJZ4oVlWjB4ENLiXeg1LucXAea7r
-jELeAgJ6rb0ElYndMQhNhZFHC4AtkdVQO0x/dQTJrRg5bEFz+bAq5DrnhJG3aBrZ
-kj+uFTWA0V1TOgiDiAJxpnCU3zS1/6ss48LMaSdGqvpB0uhYH6DXx2u52eT4/2xh
-VhT2C93mS8/3th5nDQWhgIlkXr+SLQEjYWSYz2jaNXRsqLB93z3vry/tt55Jcoa9
-x3Vps6pAVLDFYZax8Yf4XEttBv/kp4ntytiIILkswhK5NiwVyzEklg247PC10mLE
-hIymb80EkidNEt6S3lQvIUmXplwxewsQBWGH9gXMQ3Am9fb2CBHIk1Rw8kA6IbOm
-b73SAXlFPVeTDmMjJHKVXjob8M2X1t4ndC93z3Le/kCb8dR0q/9EpgZse3LX3QOy
-09hOI6UTDSV+pt9giUN7RHXNN3tW8cVLDPJDUPIEsL4l487caS8iFBKC2dSOqwVj
-t0p4nlDwvFr6uE2JDmLPhgRqFkuABdZvBVVMh9WlHWakOGQdNhBCTP6dmUF8HQPC
-OSmoAd/3aBke+0ZG353/
-=iqIZ
------END PGP SIGNATURE-----
+v6+++:
+Introduced a new struct "of_phandle_iter" to keep the state when
+iterating over the list.
 
---J/dobhs11T7y2rNN--
+v6++:
+Optimized to avoid O(n^2), suggested by Stephen Warren.
+http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007066.html
+
+I didn't introduce any struct to hold params and state here.
+
+v6+:
+Use the description, which Grant Likely proposed, to be full enough
+that a future reader can figure out why a patch was written.
+
+v5:
+New patch for v5.
+
+Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/of/base.c  | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of.h | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 87 insertions(+)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index f807d0e..7501f24 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -1201,6 +1201,59 @@ void of_print_phandle_args(const char *msg, const struct of_phandle_args *args)
+ 	printk("\n");
+ }
+ 
++const __be32 *of_phandle_iter_next(const char *cells_name, int cell_count,
++				   const __be32 *cur, const __be32 *end,
++				   struct of_phandle_args *out_args)
++{
++	phandle phandle;
++	struct device_node *dn;
++	int i;
++
++	if (!cells_name && !cell_count)
++		return NULL;
++
++	if (!cur)
++		return NULL;
++
++	if (end - cur <= 0)
++		return NULL;
++
++	phandle = be32_to_cpup(cur++);
++	if (!phandle)
++		return NULL;
++
++	dn = of_find_node_by_phandle(phandle);
++	if (!dn)
++		return NULL;
++
++	if (cells_name)
++		if (of_property_read_u32(dn, cells_name, &cell_count))
++			return NULL;
++
++	out_args->np = dn;
++	out_args->args_count = cell_count;
++	for (i = 0; i < cell_count; i++)
++		out_args->args[i] = be32_to_cpup(cur++);
++
++	return cur;
++}
++EXPORT_SYMBOL_GPL(of_phandle_iter_next);
++
++const __be32 *of_phandle_iter_init(const struct device_node *np,
++				   const char *list_name,
++				   const __be32 **end)
++{
++	size_t bytes;
++	const __be32 *cur;
++
++	cur = of_get_property(np, list_name, &bytes);
++	if (bytes)
++		*end = cur + bytes / sizeof(*cur);
++
++	return cur;
++}
++EXPORT_SYMBOL_GPL(of_phandle_iter_init);
++
+ static int __of_parse_phandle_with_args(const struct device_node *np,
+ 					const char *list_name,
+ 					const char *cells_name,
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 276c546..c23710b 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -303,6 +303,14 @@ extern int of_parse_phandle_with_fixed_args(const struct device_node *np,
+ extern int of_count_phandle_with_args(const struct device_node *np,
+ 	const char *list_name, const char *cells_name);
+ 
++extern const __be32 *of_phandle_iter_init(const struct device_node *np,
++					  const char *list_name,
++					  const __be32 **end);
++extern const __be32 *of_phandle_iter_next(const char *cells_name,
++					  int cell_count,
++					  const __be32 *cur, const __be32 *end,
++					  struct of_phandle_args *out_args);
++
+ extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
+ extern int of_alias_get_id(struct device_node *np, const char *stem);
+ 
+@@ -527,6 +535,24 @@ static inline int of_count_phandle_with_args(struct device_node *np,
+ 	return -ENOSYS;
+ }
+ 
++static inline const __be32 *of_phandle_iter_init(const struct device_node *np,
++						 const char *list_name,
++						 const char *cells_name,
++						 const int cell_count,
++						 struct of_phandle_args *out_args)
++{
++	return NULL;
++}
++
++static inline const __be32 *of_phandle_iter_next(const char *cells_name,
++						 int cell_count,
++						 const __be32 *cur,
++						 const __be32 *end,
++						 struct of_phandle_args *out_args);
++{
++	return NULL;
++}
++
+ static inline int of_alias_get_id(struct device_node *np, const char *stem)
+ {
+ 	return -ENOSYS;
+@@ -613,6 +639,14 @@ static inline int of_property_read_u32(const struct device_node *np,
+ 		s;						\
+ 		s = of_prop_next_string(prop, s))
+ 
++#define of_property_for_each_phandle_with_args(node, list_name,	cells_name, \
++					       cell_count, out_args, cur, end) \
++	for (cur = of_phandle_iter_init(node, list_name, &end),		\
++		     cur = of_phandle_iter_next(cells_name, cell_count, \
++						cur, end, &out_args);	\
++	     cur;							\
++	     cur = of_phandle_iter_next(cells_name, cell_count, cur, end, &out_args))
++
+ #if defined(CONFIG_PROC_FS) && defined(CONFIG_PROC_DEVICETREE)
+ extern void proc_device_tree_add_node(struct device_node *, struct proc_dir_entry *);
+ extern void proc_device_tree_add_prop(struct proc_dir_entry *pde, struct property *prop);
+-- 
+1.8.1.5
+
+
+
+
+
+*1:
+ http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007086.html
