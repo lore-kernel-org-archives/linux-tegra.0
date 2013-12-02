@@ -1,202 +1,136 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V4 2/6] cpufreq: call driver's suspend/resume for each policy
-Date: Mon,  2 Dec 2013 11:22:32 +0530
-Message-ID: <7e336f59970b44b7c999671ed8df5bdf7af73761.1385962528.git.viresh.kumar@linaro.org>
-References: <cover.1385962528.git.viresh.kumar@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1385962528.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1385962528.git.viresh.kumar@linaro.org>
-References: <cover.1385962528.git.viresh.kumar@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net
-Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, tianyu.lan@intel.com, jhbird.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/31] ARM: tegra: add missing clock documentation to DT
+ bindings
+Date: Mon, 2 Dec 2013 09:52:58 +0100
+Message-ID: <20131202085257.GA17834@ulmo.nvidia.com>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+ <1384548866-13141-2-git-send-email-swarren@wwwdotorg.org>
+ <20131129114900.GN22771@ulmo.nvidia.com>
+ <529B8888.3010801@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <529B8888.3010801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Earlier cpufreq suspend/resume callbacks into drivers were getting called only
-for the boot CPU, as by the time callbacks were called non-boot CPUs were
-already removed. Because we might still need driver specific actions on
-suspend/resume, its better to use earlier infrastructure from the early
-suspend/late resume calls.
 
-In effect, we call suspend/resume for each policy. The resume part also takes
-care of synchronising frequency for boot CPU, which might turn out be different
-than what cpufreq core believes.
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hence, the earlier syscore infrastructure is getting removed now.
+On Sun, Dec 01, 2013 at 12:05:44PM -0700, Stephen Warren wrote:
+> On 11/29/2013 04:49 AM, Thierry Reding wrote:
+> > On Fri, Nov 15, 2013 at 01:53:56PM -0700, Stephen Warren wrote:=20
+> > [...]
+> >> @@ -60,6 +81,12 @@ of the following host1x client modules: -
+> >> compatible: "nvidia,tegra<chip>-dc" - reg: Physical base address
+> >> and length of the controller's registers. - interrupts: The
+> >> interrupt outputs from the controller. +  - clocks : Must contain
+> >> an entry for each entry in clock-names. +    See
+> >> ../clocks/clock-bindings.txt for details. +  - clock-names : Must
+> >> include the following entries: +    - disp1 or disp2 (depending
+> >> on the controller instance)
+> >=20
+> > I'm not sure if this makes sense. The name could be the same
+> > independent of which controller uses it. If it isn't then the
+> > driver would need additional code to find out which instance it is
+> > and construct a dynamic string.
+> >=20
+> > Any objection to just make this entry "disp", or "dc"?
+>=20
+> This patch simply documents the binding that the various drivers
+> already require and/or whatever is already in the DT files if there
+> are any clocks the drivers don't currently use. I did consider fixing
+> up all the current usage to actually be sane, but that would require
+> even more driver changes (in addition to those required for the reset
+> framework patches).
 
-Tested-by: Lan Tianyu <tianyu.lan@intel.com>
-Tested-by: Nishanth Menon <nm@ti.com>
-Tested-by: Stephen Warren <swarren@nvidia.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/cpufreq.c | 112 +++++++++++++---------------------------------
- 1 file changed, 32 insertions(+), 80 deletions(-)
+Okay, I understand. I still think we should change the usage for this
+particular use-case subsequently. In retrospect the entry in clock-names
+wasn't thought out very well. It seems like the reason for using disp1
+and disp2 respectively was so that it would match the system-wide clock
+name, rather than the clock's label within the display controller's
+context.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index a7fcb84..443c053 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -27,7 +27,6 @@
- #include <linux/mutex.h>
- #include <linux/slab.h>
- #include <linux/suspend.h>
--#include <linux/syscore_ops.h>
- #include <linux/tick.h>
- #include <trace/events/power.h>
- 
-@@ -1531,6 +1530,14 @@ static struct subsys_interface cpufreq_interface = {
- 	.remove_dev	= cpufreq_remove_dev,
- };
- 
-+/**
-+ * cpufreq_suspend() - Suspend CPUFreq governors
-+ *
-+ * Called during system wide Suspend/Hibernate cycles for suspending governors
-+ * as some platforms can't change frequency after this point in suspend cycle.
-+ * Because some of the devices (like: i2c, regulators, etc) they use for
-+ * changing frequency are suspended quickly after this point.
-+ */
- void cpufreq_suspend(void)
- {
- 	struct cpufreq_policy *policy;
-@@ -1540,14 +1547,25 @@ void cpufreq_suspend(void)
- 
- 	pr_debug("%s: Suspending Governors\n", __func__);
- 
--	list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
-+	list_for_each_entry(policy, &cpufreq_policy_list, policy_list) {
- 		if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
- 			pr_err("%s: Failed to stop governor for policy: %p\n",
- 				__func__, policy);
-+		else if (cpufreq_driver->suspend
-+		    && cpufreq_driver->suspend(policy))
-+			pr_err("%s: Failed to suspend driver: %p\n", __func__,
-+				policy);
-+	}
- 
- 	cpufreq_suspended = true;
- }
- 
-+/**
-+ * cpufreq_resume() - Resume CPUFreq governors
-+ *
-+ * Called during system wide Suspend/Hibernate cycle for resuming governors that
-+ * are suspended with cpufreq_suspend().
-+ */
- void cpufreq_resume(void)
- {
- 	struct cpufreq_policy *policy;
-@@ -1559,91 +1577,26 @@ void cpufreq_resume(void)
- 
- 	cpufreq_suspended = false;
- 
--	list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
-+	list_for_each_entry(policy, &cpufreq_policy_list, policy_list) {
- 		if (__cpufreq_governor(policy, CPUFREQ_GOV_START)
- 		    || __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS))
- 			pr_err("%s: Failed to start governor for policy: %p\n",
- 				__func__, policy);
--}
--
--/**
-- * cpufreq_bp_suspend - Prepare the boot CPU for system suspend.
-- *
-- * This function is only executed for the boot processor.  The other CPUs
-- * have been put offline by means of CPU hotplug.
-- */
--static int cpufreq_bp_suspend(void)
--{
--	int ret = 0;
--
--	int cpu = smp_processor_id();
--	struct cpufreq_policy *policy;
--
--	pr_debug("suspending cpu %u\n", cpu);
--
--	/* If there's no policy for the boot CPU, we have nothing to do. */
--	policy = cpufreq_cpu_get(cpu);
--	if (!policy)
--		return 0;
--
--	if (cpufreq_driver->suspend) {
--		ret = cpufreq_driver->suspend(policy);
--		if (ret)
--			printk(KERN_ERR "cpufreq: suspend failed in ->suspend "
--					"step on CPU %u\n", policy->cpu);
--	}
--
--	cpufreq_cpu_put(policy);
--	return ret;
--}
--
--/**
-- * cpufreq_bp_resume - Restore proper frequency handling of the boot CPU.
-- *
-- *	1.) resume CPUfreq hardware support (cpufreq_driver->resume())
-- *	2.) schedule call cpufreq_update_policy() ASAP as interrupts are
-- *	    restored. It will verify that the current freq is in sync with
-- *	    what we believe it to be. This is a bit later than when it
-- *	    should be, but nonethteless it's better than calling
-- *	    cpufreq_driver->get() here which might re-enable interrupts...
-- *
-- * This function is only executed for the boot CPU.  The other CPUs have not
-- * been turned on yet.
-- */
--static void cpufreq_bp_resume(void)
--{
--	int ret = 0;
--
--	int cpu = smp_processor_id();
--	struct cpufreq_policy *policy;
--
--	pr_debug("resuming cpu %u\n", cpu);
--
--	/* If there's no policy for the boot CPU, we have nothing to do. */
--	policy = cpufreq_cpu_get(cpu);
--	if (!policy)
--		return;
-+		else if (cpufreq_driver->resume
-+		    && cpufreq_driver->resume(policy))
-+			pr_err("%s: Failed to resume driver: %p\n", __func__,
-+				policy);
- 
--	if (cpufreq_driver->resume) {
--		ret = cpufreq_driver->resume(policy);
--		if (ret) {
--			printk(KERN_ERR "cpufreq: resume failed in ->resume "
--					"step on CPU %u\n", policy->cpu);
--			goto fail;
--		}
-+		/*
-+		 * schedule call cpufreq_update_policy() for boot CPU, i.e. last
-+		 * policy in list. It will verify that the current freq is in
-+		 * sync with what we believe it to be.
-+		 */
-+		if (list_is_last(&policy->policy_list, &cpufreq_policy_list))
-+			schedule_work(&policy->update);
- 	}
--
--	schedule_work(&policy->update);
--
--fail:
--	cpufreq_cpu_put(policy);
- }
- 
--static struct syscore_ops cpufreq_syscore_ops = {
--	.suspend	= cpufreq_bp_suspend,
--	.resume		= cpufreq_bp_resume,
--};
--
- /**
-  *	cpufreq_get_current_driver - return current driver's name
-  *
-@@ -2320,7 +2273,6 @@ static int __init cpufreq_core_init(void)
- 
- 	cpufreq_global_kobject = kobject_create();
- 	BUG_ON(!cpufreq_global_kobject);
--	register_syscore_ops(&cpufreq_syscore_ops);
- 
- 	return 0;
- }
--- 
-1.7.12.rc2.18.g61b472e
+Just to clarify what I mean, if we stick to the above, then we'll need
+to add code to the driver along the lines of:
+
+	char clock_name[6];
+
+	if (regs->start =3D=3D 0x54200000)
+		index =3D 1;
+	else
+		index =3D 2;
+
+	sprintf(clock_name, "disp%u", index);
+
+	clk =3D devm_clk_get(&pdev->dev, clock_name);
+
+rather than the much more simple and elegant:
+
+	clk =3D devm_clk_get(&pdev->dev, "disp");
+
+The whole purpose of the clock consumer ID is to be generic and as such
+independent of the specific IP block or instance thereof.
+
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt
+> >> b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt=20
+> >> index 91ff771c7e77..d4f2d534934b 100644 ---
+> >> a/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt=20
+> >> +++
+> >> b/Documentation/devicetree/bindings/spi/nvidia,tegra114-spi.txt=20
+> >> @@ -6,8 +6,10 @@ Required properties: - interrupts: Should
+> >> contain SPI interrupts. - nvidia,dma-request-selector : The Tegra
+> >> DMA controller's phandle and request selector for this SPI
+> >> controller. -- This is also require clock named "spi" as per
+> >> binding document -
+> >> Documentation/devicetree/bindings/clock/clock-bindings.txt +-
+> >> clocks : Must contain an entry for each entry in clock-names. +
+> >> See ../clocks/clock-bindings.txt for details. +- clock-names :
+> >> Must include the following entries: +  - spi
+> >=20
+> > This is inconsistent with other bindings that require only a
+> > single clock entry. I suppose that this is required because of the
+> > driver requesting a specifically named clock, in which case that's
+> > fine.
+>=20
+> This driver does clk_get(dev, "spi") rather than clk_get(dev, NULL),
+> so this requires a specific name. Again, I did consider updating all
+> drivers to use names, but decided I didn't want to do even more driver
+> changes, but instead just document what was currently required.
+
+Yes, I realized that as well. Oh well, I guess that's part of the "pain"
+for not doing it right from the start. Although, admittedly, this really
+isn't a big issue.
+
+Thierry
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSnEppAAoJEN0jrNd/PrOhtbMP/R9Mx90PVhzoDwouqIuwekjO
+7cwFXZdnYDT+5xSa23nBsl4BhbJ/altdBemuYomNpe6/qbJFDozV6lcqEbzKAwaN
+gv2zCbPTVGU+1ZkNxh+KxVbagW8svwpjDqeVKP+YeymNquiJ8RU6p3U4NmDXblcs
+KZ/+rJpzD+nBc8PthLMPFel6NoRZ9bcgCnbnMa6U/AVA1nB7uT/4jjHnpUeliz8Y
+QK+beoibNhpdbTTpSv1+ZYh6LIqYlWQ9Z7JZXzA8lX3yr5it77D8oA6xLIN3HAOV
++NOn0twglu4uLjE3+fLobTW3cRfjGVoWHy8bCpckBCusFz4bvR0eQoFLooG1Bgvb
+eZPzK6nOxoJxi8ux4TKCFNsKWdh9FKsUCCLRC3wtLYk3jC/trDZfHhIoVJAA5k2j
+tZQ1me79G1dtT6R/b8MPA6jnhe2JQUIWEWh62jTFchF3p0nJ5lBOd1NWLmaExBGj
+lespdQsn/lnmqOhBXVl6yoTL5Ss/9x248dIWYnFgKLzU3DYkVokppOMHikqC6lpK
+ZpsZh1xwdcsFXvSoP4Wgquwdb6DckzvnHCfczJl6m6St36fp/MUyEmwPxSZ2QdTR
+DAGmZmZRDo0s1ZLGn0PEQL0m61vTKzUZU3UoJqvt7V9CHBzZIf39jqwmHgERSQEH
+oMBx0czvcoHocHS1th0X
+=MXaT
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
