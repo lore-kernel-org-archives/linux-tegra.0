@@ -1,84 +1,116 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 04/31] ARM: tegra: update DT files to add reset properties
-Date: Mon, 2 Dec 2013 10:01:46 +0100
-Message-ID: <20131202090145.GB17834@ulmo.nvidia.com>
+Subject: Re: [PATCH 03/31] ARM: tegra: document use of standard DMA DT
+ bindings
+Date: Mon, 2 Dec 2013 10:05:27 +0100
+Message-ID: <20131202090526.GC17834@ulmo.nvidia.com>
 References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-5-git-send-email-swarren@wwwdotorg.org>
- <20131129130031.GQ22771@ulmo.nvidia.com>
- <529B8ABB.5040109@wwwdotorg.org>
+ <1384548866-13141-4-git-send-email-swarren@wwwdotorg.org>
+ <20131129122907.GP22771@ulmo.nvidia.com>
+ <529B897F.1010101@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s2ZSL+KKDSLx8OML"
+	protocol="application/pgp-signature"; boundary="kVXhAStRUZ/+rrGn"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <529B8ABB.5040109-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <529B897F.1010101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---s2ZSL+KKDSLx8OML
+--kVXhAStRUZ/+rrGn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 01, 2013 at 12:15:07PM -0700, Stephen Warren wrote:
-> On 11/29/2013 06:00 AM, Thierry Reding wrote:
-> > On Fri, Nov 15, 2013 at 01:53:59PM -0700, Stephen Warren wrote:=20
-[...]
-> >> reg =3D <0x70080300 0x100>; nvidia,ahub-cif-ids =3D <4 4>; clocks =3D
-> >> <&tegra_car TEGRA114_CLK_I2S0>;
+On Sun, Dec 01, 2013 at 12:09:51PM -0700, Stephen Warren wrote:
+> On 11/29/2013 05:29 AM, Thierry Reding wrote:
+> > On Fri, Nov 15, 2013 at 01:53:58PM -0700, Stephen Warren wrote:=20
+> > [...]
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+> >> b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+> >>
+> >>=20
+> index 2b6817f6e40e..eaf00102d92c 100644
+> >> ---
+> >> a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+> >>
+> >>=20
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+> >> @@ -4,14 +4,17 @@ Required properties: - compatible :
+> >> "nvidia,tegra20-ac97" - reg : Should contain AC97 controller
+> >> registers location and length - interrupts : Should contain AC97
+> >> interrupt -- clocks : Must contain one entry, for the module
+> >> clock. -  See ../clocks/clock-bindings.txt for details. - resets
+> >> : Must contain an entry for each entry in reset-names. See
+> >> ../reset/reset.txt for details. - reset-names : Must include the
+> >> following entries: - ac97 -- nvidia,dma-request-selector : The
+> >> Tegra DMA controller's phandle and -  request selector for the
+> >> AC97 controller +- dmas : Must contain an entry for each entry in
+> >> clock-names. +  See ../dma/dma.txt for details. +- dma-names :
+> >> Must include the following entries: +  - rx +  - tx +- clocks :
+> >> Must contain one entry, for the module clock. +  See
+> >> ../clocks/clock-bindings.txt for details.
 > >=20
-> > The clocks for these i2s devices are already listed in the ahub
-> > node. Is that on purpose?
+> > Was this unintentionally moved?
 >=20
-> Yes.
->=20
-> The AHUB driver needs to remove reset from the HW modules, so that the
-> configlink bus works. Reset removal used to require a custom Tegra API
-> that took a clock as a parameter. Hence, the AHUB node needed the
-> clock reference. After this series, the AHUB only needs a reset handle
-> to use the standard reset API. However, the clock references are left
-> in the AHUB node until after the AHUB driver is converted, so the
-> series is bisectable. After the series, only the I2S driver needs to
-> clock references.
-[...]
-> >> +			 <&tegra_car 30>,  /* i2s0 */ +			 <&tegra_car 11>,  /* i2s1
-> >> */ +			 <&tegra_car 18>,  /* i2s2 */ +			 <&tegra_car 101>, /*
-> >> i2s3 */ +			 <&tegra_car 102>, /* i2s4 */
-> >=20
-> > Some comment for these as for Tegra20.
->=20
-> I'm not sure which other comment was "for Tegra20", since none of the
-> filenames were quoted, but I'll try to check when I get back.
+> IIRC, at the end of the series, each binding describes reg,
+> interrupts, clocks, reset, dmas in that order, for consistency.
 
-Indeed. I didn't quote the filenames. =3D( And I typoed Tegra114 as
-Tegra20. I was referring to the "I2S clocks are listed in both the AHUB
-and I2S nodes" comment above for Tegra114. From your earlier reply,
-though this looks good then.
+Okay, that's fine then. I was just making sure this hadn't slipped
+through the cracks.
+
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
+> >> b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
+> >>
+> >>=20
+> index e144f144717f..bdf08e6dec9b 100644
+> >> ---
+> >> a/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
+> >>
+> >>=20
+> +++ b/Documentation/devicetree/bindings/spi/nvidia,tegra20-sflash.txt
+> >> @@ -4,14 +4,17 @@ Required properties: - compatible : should be
+> >> "nvidia,tegra20-sflash". - reg: Should contain SFLASH registers
+> >> location and length. - interrupts: Should contain SFLASH
+> >> interrupts. -- nvidia,dma-request-selector : The Tegra DMA
+> >> controller's phandle and -  request selector for this SFLASH
+> >> controller. - clocks : Must contain one entry, for the module
+> >> clock.
+> >=20
+> > But then this doesn't move it... perhaps it really is accidental
+> > in other places. =3D)
+>=20
+> The patch to that file does move the docs for the dmas property...
+
+My point was that the clocks and clock-names properties didn't move like
+they did for other hunks. But if all those changes end up making the
+bindings documentation more consistent, then I'm all for it.
 
 Thierry
 
---s2ZSL+KKDSLx8OML
+--kVXhAStRUZ/+rrGn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSnEx5AAoJEN0jrNd/PrOh+9EP/jCwrXNbMKmVPS1OB3q3+mHM
-sUNe1Vg+RrP3QS61Q2HpSnDEoLrjjoz0sWCKSQpAQ0rZxDhs/lBE2NaAYUzcuCF0
-bnsshi1eqBZW+IXsQH+HxWO+I2lAfXocUKjVaiTR8wv2Cvt9K7BFZIMmX7PmVLl6
-tO0pXfNShs7Igr0xZN8lMI6zvYEbkQc5goqaEM3D/qlCNM+m5UzwFy9oU01Z8YY+
-/gagiDy9EnzghSSb4IACgbH3tA+nsu7/El93GGk7NoHwhDAGYW9C9nBdtceaxFsg
-cTxBXvveVU3ZaRCdQ3/SDI7VXLuwBicTjR/alXWY4bzj7rMS/GqFsLfiT4Rgp5P6
-4JvKNjMtQXAqGfa09/iwE8BfJhr1SYInSdvuZPlgBV/dQgeqx4LUaRYJPiei8SK+
-zmfS6PGU9lgx7pLavYac7EqWm0yMv62rRObaiay3i0Q4ZRCXwr1gL46E+H9hM0ey
-l/mpBK0PgiqAb/yJiLPFa+3WqCrmdSquf1jHj42wlT6VIkyZ6M6l03QyMkj841tS
-nF/Bx+dIQShsztb10nOgBht7OC+FG1nl2jdsvoSYIs2OelgNO//bsj7gleAIFf6B
-Y76erjSUzQe+AHH/cLhLkQYy6qK1N69w/ACG41VrD+QZJ72eEaV+P2nmNpjzEswZ
-Ts/OaOQF2ZczWOU3ZTlJ
-=ULXE
+iQIcBAEBAgAGBQJSnE1WAAoJEN0jrNd/PrOhcjAQAKfxRJ1dBbq4GUoR4Ily+HPT
+og+Y3KoPOCF1WSms+2VVUnxXqj+7Vx+tmSVkjzUF1lzmNgIUuHedZ1jc6NKPAJAm
+E4eFdwBlkJSyc9WO6nwJ00y5KKypiBOHE7tNxIAnkquWDm8P6HsIBHpFqB1YjcVQ
+nLud/LhwTz8PL4qTKj/XE5ca2tNfkdDb5bcjlVbMAY/w1I8UAltvEETCjd+bNACM
+ghmfGeam5RWRskuecMzp7fZEO0JacJ/AhROpxnyvS+doL/965QOBpvA8uAN4bKS6
+oFSS7aKFb6aJ4ez7kXhWoVAdQcBv61l0JgrobpNATtChST8QH8Lbb7j1wXMwqmvB
+SNwfjbAVn6daB5JYlwYWnpZ/RD+J+YZDmX0MI3jUA5xqyHSuPCIQ4DJkGmbDtOQ6
+s3js8pOUBHKeNls4LTQYin3t8TXwiVPTGy6n+Elz5/taewfVFr49sAsci605YoDS
+PZtylM6y5N5JWMm1LXqcKJOfjBBwxTQ9XfSMTgj+uksPF+KVHX4WlXYAL218vR6w
+MzKNpVpwgS6Vl2UsgoNO9Q1fGT1FF3fO8bmFHkxFnBbDnyC7ml+wGO9Sxy6kSku2
+e2AIF2+qu25izRfhmPzMxQY3Zlle/v9IaVNeMQ9gm9c68R6DpZyTs4ioWtIrivyH
+g9pBVDRbiYeoNZgw+zLy
+=WSTQ
 -----END PGP SIGNATURE-----
 
---s2ZSL+KKDSLx8OML--
+--kVXhAStRUZ/+rrGn--
