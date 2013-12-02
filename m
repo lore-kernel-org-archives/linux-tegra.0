@@ -1,90 +1,155 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 02/31] ARM: tegra: document reset properties in DT
- bindings
-Date: Mon, 2 Dec 2013 10:08:53 +0100
-Message-ID: <20131202090852.GD17834@ulmo.nvidia.com>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-3-git-send-email-swarren@wwwdotorg.org>
- <20131129122348.GO22771@ulmo.nvidia.com>
- <529B88C9.60804@wwwdotorg.org>
+Subject: Re: [PATCH v2 1/3] mfd: tps6586x: add version detection
+Date: Mon, 2 Dec 2013 10:17:29 +0100
+Message-ID: <20131202091728.GE17834@ulmo.nvidia.com>
+References: <cover.1385913227.git.stefan@agner.ch>
+ <2d5282f031a16d2ff227694daaabc977440fbd2e.1385913228.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EY/WZ/HvNxOox07X"
+	protocol="application/pgp-signature"; boundary="zjcmjzIkjQU2rmur"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <529B88C9.60804-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <2d5282f031a16d2ff227694daaabc977440fbd2e.1385913228.git.stefan-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---EY/WZ/HvNxOox07X
+--zjcmjzIkjQU2rmur
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 01, 2013 at 12:06:49PM -0700, Stephen Warren wrote:
-> On 11/29/2013 05:23 AM, Thierry Reding wrote:
-> > On Fri, Nov 15, 2013 at 01:53:57PM -0700, Stephen Warren wrote:=20
-> > [...]
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> >> b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> >
-> >>=20
-> [...]
-> >> +  - resets : Must contain an entry for each entry in
-> >> reset-names. +    See ../reset/reset.txt for details. +  -
-> >> reset-names : Must include the following entries: +    - dc
-> >=20
-> > For consistency with this, the clock-names entry for the first
-> > clock in this node should then be "dc" as well.
+On Sun, Dec 01, 2013 at 04:59:13PM +0100, Stefan Agner wrote:
+> Use the VERSIONCRC to determine the exact device version. According to
+> the datasheet this register can be used as device identifier. The
+> identification is needed since some tps6586x regulators use a different
+> voltage table.
 >=20
-> The dc driver gets the clock by name, so this isn't a requirement.
-
-Right, but like I've said in another reply, I'd very much like for this
-to be fixed up so we don't have to mess around with per-instance names
-for clocks. So instead of naming the first clock in the display
-controller node "disp", we could rename it to "dc" for consistency with
-the reset bindings.
-
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-> >> b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
-> >
-> >>=20
-> [...]
-> >> -  - spdif_in +  - spdif
-> >=20
-> > Why is this renamed?
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+>  drivers/mfd/tps6586x.c       | 47 +++++++++++++++++++++++++++++++++++++-=
+------
+>  include/linux/mfd/tps6586x.h |  7 +++++++
+>  2 files changed, 47 insertions(+), 7 deletions(-)
 >=20
-> There are two separate clocks for the SPDIF input and output modules,
-> but just a single reset.
+> diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+> index ee61fd7..8fc5a68 100644
+> --- a/drivers/mfd/tps6586x.c
+> +++ b/drivers/mfd/tps6586x.c
+> @@ -124,6 +124,7 @@ struct tps6586x {
+>  	struct device		*dev;
+>  	struct i2c_client	*client;
+>  	struct regmap		*regmap;
+> +	int			version;
+> =20
+>  	int			irq;
+>  	struct irq_chip		irq_chip;
+> @@ -208,6 +209,14 @@ int tps6586x_irq_get_virq(struct device *dev, int ir=
+q)
+>  }
+>  EXPORT_SYMBOL_GPL(tps6586x_irq_get_virq);
+> =20
+> +int tps6586x_get_version(struct device *dev)
+> +{
+> +	struct tps6586x *tps6586x =3D dev_get_drvdata(dev);
+> +
+> +	return tps6586x->version;
+> +}
+> +EXPORT_SYMBOL_GPL(tps6586x_get_version);
+> +
+>  static int __remove_subdev(struct device *dev, void *unused)
+>  {
+>  	platform_device_unregister(to_platform_device(dev));
+> @@ -472,6 +481,31 @@ static void tps6586x_power_off(void)
+>  	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
+>  }
+> =20
+> +static void tps6586x_print_version(struct i2c_client *client, int versio=
+n)
+> +{
+> +	const char *name;
+> +
+> +	switch (version) {
+> +	case TPS658621A:
+> +		name =3D "TPS658621A";
+> +		break;
+> +	case TPS658621CD:
+> +		name =3D "TPS658621C/D";
+> +		break;
+> +	case TPS658623:
+> +		name =3D "TPS658623";
+> +		break;
+> +	case TPS658643:
+> +		name =3D "TPS658643";
+> +		break;
+> +	default:
+> +		name =3D "TPS6586X";
+> +		break;
+> +	}
+> +
+> +	dev_info(&client->dev, "Found %s, VERSIONCRC is %02x\n", name, version);
+> +}
+> +
+>  static int tps6586x_i2c_probe(struct i2c_client *client,
+>  					const struct i2c_device_id *id)
+>  {
+> @@ -487,19 +521,18 @@ static int tps6586x_i2c_probe(struct i2c_client *cl=
+ient,
+>  		return -ENOTSUPP;
+>  	}
+> =20
+> +	tps6586x =3D devm_kzalloc(&client->dev, sizeof(*tps6586x), GFP_KERNEL);
+> +	if (!tps6586x)
+> +		return -ENOMEM;
+> +
 
-I also realized that when reviewing one of the subsequent patches.
+This hunk is being needlessly moved around....
+
+>  	ret =3D i2c_smbus_read_byte_data(client, TPS6586X_VERSIONCRC);
+>  	if (ret < 0) {
+>  		dev_err(&client->dev, "Chip ID read failed: %d\n", ret);
+>  		return -EIO;
+>  	}
+> =20
+> -	dev_info(&client->dev, "VERSIONCRC is %02x\n", ret);
+> -
+> -	tps6586x =3D devm_kzalloc(&client->dev, sizeof(*tps6586x), GFP_KERNEL);
+> -	if (tps6586x =3D=3D NULL) {
+> -		dev_err(&client->dev, "memory for tps6586x alloc failed\n");
+> -		return -ENOMEM;
+> -	}
+> +	tps6586x->version =3D ret;
+> +	tps6586x_print_version(client, tps6586x->version);
+
+=2E.. none of this new code overwrites "ret", so you could just keep the
+previous order of operations. It probably doesn't matter all that much,
+but deferring allocation until we're sure that the chip actually exists
+is a minor optimization. Also not moving that hunk around makes the
+patch simpler.
 
 Thierry
 
---EY/WZ/HvNxOox07X
+--zjcmjzIkjQU2rmur
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSnE4kAAoJEN0jrNd/PrOhiXkQAL5iRdTR7uO03WpWT+eTIuMm
-rpJLisgAW8wtlJHbCK/ddIaJ6iGgdWWVJhTZsNy+QaMF2Ufo8OHCSvPRxRMBOuOB
-iAdrcwQrktf52Z7nxdMPjrwi/tsjMa6CCclRsVu5yAPXiqQcELLaBUvoYQZlBAGH
-I5jtWZbF+i1pDsrVN4eykeUBZVzAr19hC0Si3k4fOPF0jGTK6Z72M9qynsT2nGEm
-mKpj/YVTgS4/S4U6d1WGa8q7EqaJ0AWwDJAwnuNFKpzyudJqawfsHx3662uOCfZ9
-xzXm4VhAV8vl2sA4KNGztu7GYpPJ/5gDTPhdH16hnOFcoKUbA55Ek4sPUlGTun64
-IREwEdymoYMsp7xb/xCMVQK3EwF2xa17j4IvkJaniJKB2PrZIm7tEv3nD9ee5p2K
-mEqt9xBSSXwcS8CpdDrmno6fk4YA13owxWrfZEieKVDaPAYmCQ3Z/eEwMkotPlfZ
-3S3CE/zcZ8DlXOoufQvei2IHNYRCIwjyvbqSy4PRQqVpnl/b8/iEoEcRbioCrqFU
-VBohzZJmhSROb83AW7FLbOhnGU/3uRXhtya1CTkbrXle9m76/GgOBJ+4Bf4fFkuF
-5XcPIMzY2EBszt2Jd64rL96zBf5D1IJhOZe3cKyjOaeuZIqOtxbwiwr902m5Ka94
-D4YCxG79obWHh0EPBzDT
-=oC7e
+iQIcBAEBAgAGBQJSnFAoAAoJEN0jrNd/PrOhvzwP/1RImSaO0fYmmsT3HBBpLilE
+9gkimXZ2X1/DX0gTBY9AuAfMqWx3lP5EiY/YZ8O3ywjKO+YKh+fiUXicps4hMtpI
+EHJB99SRHZrhKvxO8f/XcKt15INqsEzylXSzq2uFvkJyxYxJkYLlvtTmMhnAOF3C
+yfOujVL1BIpyQSieCrHiyEbvMbH+MqVlX2a1MmYp28gS5V9/r2LM4d4ifgCZld64
+pHpyoUP9yXLYuUImf5Kb0raUr9/tgVjV1SJ+XRgjtfPl+too+Oxr6sl4t74VjG5x
+GawVhy86CdHwarOYKyNtFYonMX3+CneAEDZZqk4X0HPEZtUARBbP1r7THHvZSQ/d
+U72OhJiJOCd/zw212F4WlEECH1GjPC+qNoask2kX5oGC2pvt8c0l97hnvwF1ZD/w
+EXRk1bFhh74zgdOVLU2RyvC6aK8yWkkrBIVbb5D9H1uAs07ir+z2QuW2KI4zVO98
+g4lARwHByMlUqIenXElW807oDeg6KQqbal9hOsuutRfQteVIxObJGI7YGnheRTGC
+qgoUTjHjjwq4O1pmNEvFdGQaTIKcH+FNsaAAnvmWQX12ig3d+Q9OpaEl7cbqDWj7
+Gu9N34mg/bxP7Sgesnf6yCGWQBN3t7GojE+boJasmRfzvq9VkYfXa6Hk7WohbdgT
+HA3kekAdhEe52t7NAJTB
+=ih0y
 -----END PGP SIGNATURE-----
 
---EY/WZ/HvNxOox07X--
+--zjcmjzIkjQU2rmur--
