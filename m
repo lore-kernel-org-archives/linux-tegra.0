@@ -1,46 +1,36 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 02/31] ARM: tegra: document reset properties in DT bindings
-Date: Tue, 03 Dec 2013 11:48:33 -0700
-Message-ID: <529E2781.5020504@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-3-git-send-email-swarren@wwwdotorg.org> <20131129122348.GO22771@ulmo.nvidia.com> <529B88C9.60804@wwwdotorg.org> <20131202090852.GD17834@ulmo.nvidia.com>
+Subject: Re: [PATCH 03/31] ARM: tegra: document use of standard DMA DT bindings
+Date: Tue, 03 Dec 2013 11:52:23 -0700
+Message-ID: <529E2867.6090209@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-4-git-send-email-swarren@wwwdotorg.org> <20131129122907.GP22771@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131202090852.GD17834-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131129122907.GP22771-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/02/2013 02:08 AM, Thierry Reding wrote:
-> On Sun, Dec 01, 2013 at 12:06:49PM -0700, Stephen Warren wrote:
->> On 11/29/2013 05:23 AM, Thierry Reding wrote:
->>> On Fri, Nov 15, 2013 at 01:53:57PM -0700, Stephen Warren wrote:
->>>  [...]
->>>> diff --git 
->>>> a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
->>>>
->>>> 
-b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
->>> 
->>>> 
->> [...]
->>>> +  - resets : Must contain an entry for each entry in 
->>>> reset-names. +    See ../reset/reset.txt for details. +  - 
->>>> reset-names : Must include the following entries: +    - dc
->>> 
->>> For consistency with this, the clock-names entry for the first 
->>> clock in this node should then be "dc" as well.
->> 
->> The dc driver gets the clock by name, so this isn't a
->> requirement.
-> 
-> Right, but like I've said in another reply, I'd very much like for
-> this to be fixed up so we don't have to mess around with
-> per-instance names for clocks. So instead of naming the first clock
-> in the display controller node "disp", we could rename it to "dc"
-> for consistency with the reset bindings.
+On 11/29/2013 05:29 AM, Thierry Reding wrote:
+> On Fri, Nov 15, 2013 at 01:53:58PM -0700, Stephen Warren wrote:
 
-I assume you're now OK with not changing the clock names, given my
-explanation?
+>> diff --git
+>> a/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
+>> b/Documentation/devicetree/bindings/sound/nvidia,tegra30-ahub.txt
+
+>>
+>> 
+- ranges : The bus address mapping for the configlink register bus.
+>> +- dmas : Must contain an entry for each entry in clock-names. +
+>> See ../dma/dma.txt for details. +- dma-names : Must include the
+>> following entries: +  - rx0 .. rx<n> +  - tx0 .. tx<n> +  ...
+>> where n is: +  Tegra30: 3 +  Tegra114, Tegra124: 9 Can be empty
+>> since the mapping is 1:1.
+> 
+> I think this line belongs to the description of the "ranges"
+> property.
+
+Yes, I've fixed that up locally simply by moving the inserted lines 1
+line lower. I assume you don't want a repost for that?
