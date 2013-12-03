@@ -1,37 +1,204 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
-Date: Tue, 03 Dec 2013 13:17:20 -0700
-Message-ID: <529E3C50.8000801@wwwdotorg.org>
-References: <1385990934-20809-1-git-send-email-treding@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V2] clk: tegra: implement a reset driver
+Date: Tue,  3 Dec 2013 13:28:49 -0700
+Message-ID: <1386102529-20123-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385990934-20809-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/02/2013 06:28 AM, Thierry Reding wrote:
-> Introduce device tree bindings for the MIPI pad calibration controller
-> found on Tegra SoCs. The controller can be used to perform calibration
-> of pads used for DSI and CSI peripherals.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
+The Tegra CAR module implements both a clock and reset controller. So
+far, the driver exposes the clock feature via the common clock API and
+the reset feature using a custom API. This patch adds an implementation
+of the common reset framework API (include/linux/reset*.h). The legacy
+reset implementation will be removed once all drivers have been
+converted.
 
-> +Required properties:
-> +- compatible: "nvidia,tegra<chip>-mipi"
-> +- reg: Physical base address and length of the controller's registers.
-> +- clocks: The clock consumed by the controller.
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: Move the added lines in the file, to avoid the need for function
+    prototypes.
 
-I'd prefer all our new drivers just use clock-names from the start, so
-we never have to specify that certain clocks must be at a certain index
-in the clocks property. How about:
+Peter, Mike,
 
-+  - clocks: Must contain an entry for each entry in clock-names.
-+    See ../clocks/clock-bindings.txt for details.
-+  - clock-names: Must include the following entries:
-+    - mipi
+This patch is part of a series with strong internal depdendencies. I'm
+looking for an ack so that I can take the entire series through the Tegra
+and arm-soc trees. The series will be part of a stable branch that can be
+merged into other subsystems if needed to avoid/resolve dependencies.
+---
+ drivers/clk/tegra/clk-tegra114.c |  3 ++-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  |  3 ++-
+ drivers/clk/tegra/clk-tegra30.c  |  3 ++-
+ drivers/clk/tegra/clk.c          | 50 +++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/tegra/clk.h          |  2 +-
+ 6 files changed, 57 insertions(+), 6 deletions(-)
 
-(or "cal" or whatever makes sense there)
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 70bfefebcca5..84d9003ae816 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -1457,7 +1457,8 @@ static void __init tegra114_clock_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	clks = tegra_clk_init(TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA114_CLK_CLK_MAX,
++				TEGRA114_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
+ 
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+index 623fbf35ee08..6f8b1d99e5b9 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1402,7 +1402,7 @@ static void __init tegra124_clock_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	clks = tegra_clk_init(TEGRA124_CLK_CLK_MAX, 6);
++	clks = tegra_clk_init(clk_base, TEGRA124_CLK_CLK_MAX, 6);
+ 	if (!clks)
+ 		return;
+ 
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index be5bdbab78a6..d438a089354c 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1108,7 +1108,8 @@ static void __init tegra20_clock_init(struct device_node *np)
+ 		BUG();
+ 	}
+ 
+-	clks = tegra_clk_init(TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA20_CLK_CLK_MAX,
++				TEGRA20_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
+ 
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 92c46f1fb5d1..49465529bb09 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1429,7 +1429,8 @@ static void __init tegra30_clock_init(struct device_node *np)
+ 		BUG();
+ 	}
+ 
+-	clks = tegra_clk_init(TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_PERIPH_BANKS);
++	clks = tegra_clk_init(clk_base, TEGRA30_CLK_CLK_MAX,
++				TEGRA30_CLK_PERIPH_BANKS);
+ 	if (!clks)
+ 		return;
+ 
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index a12a5f5107ec..c0a7d7723510 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -18,6 +18,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of.h>
+ #include <linux/clk/tegra.h>
++#include <linux/reset-controller.h>
++#include <linux/tegra-soc.h>
+ 
+ #include "clk.h"
+ 
+@@ -121,6 +123,35 @@ static struct tegra_clk_periph_regs periph_regs[] = {
+ 	},
+ };
+ 
++static void __iomem *clk_base;
++
++static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
++		unsigned long id)
++{
++	/*
++	 * If peripheral is on the APB bus then we must read the APB bus to
++	 * flush the write operation in apb bus. This will avoid peripheral
++	 * access after disabling clock. Since the reset driver has no
++	 * knowledge of which reset IDs represent which devices, simply do
++	 * this all the time.
++	 */
++	tegra_read_chipid();
++
++	writel_relaxed(BIT(id % 32),
++			clk_base + periph_regs[id / 32].rst_set_reg);
++
++	return 0;
++}
++
++static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
++		unsigned long id)
++{
++	writel_relaxed(BIT(id % 32),
++			clk_base + periph_regs[id / 32].rst_clr_reg);
++
++	return 0;
++}
++
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ {
+ 	int reg_bank = clkid / 32;
+@@ -133,8 +164,10 @@ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+ 	}
+ }
+ 
+-struct clk ** __init tegra_clk_init(int num, int banks)
++struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+ {
++	clk_base = regs;
++
+ 	if (WARN_ON(banks > ARRAY_SIZE(periph_regs)))
+ 		return NULL;
+ 
+@@ -203,6 +236,17 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 	}
+ }
+ 
++static struct reset_control_ops rst_ops = {
++	.assert = tegra_clk_rst_assert,
++	.deassert = tegra_clk_rst_deassert,
++};
++
++static struct reset_controller_dev rst_ctlr = {
++	.ops = &rst_ops,
++	.owner = THIS_MODULE,
++	.of_reset_n_cells = 1,
++};
++
+ void __init tegra_add_of_provider(struct device_node *np)
+ {
+ 	int i;
+@@ -220,6 +264,10 @@ void __init tegra_add_of_provider(struct device_node *np)
+ 	clk_data.clks = clks;
+ 	clk_data.clk_num = clk_num;
+ 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
++
++	rst_ctlr.of_node = np;
++	rst_ctlr.nr_resets = clk_num * 32;
++	reset_controller_register(&rst_ctlr);
+ }
+ 
+ void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 7f110acfe2a1..39f24959daf7 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -594,7 +594,7 @@ void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
+ 		struct clk *clks[], int clk_max);
+ 
+ struct tegra_clk_periph_regs *get_reg_bank(int clkid);
+-struct clk **tegra_clk_init(int num, int periph_banks);
++struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
+ 
+ struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
+ 
+-- 
+1.8.1.5
