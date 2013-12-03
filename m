@@ -1,78 +1,229 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
-Date: Tue, 03 Dec 2013 10:59:54 -0700
-Message-ID: <529E1C1A.5000709@wwwdotorg.org>
-References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org> <20131129141725.GA22771@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH V2] dma: tegra: add support for Tegra148/124
+Date: Tue,  3 Dec 2013 11:15:50 -0700
+Message-ID: <1386094550-5011-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131129141725.GA22771-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, kunala-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/29/2013 07:17 AM, Thierry Reding wrote:
-> On Mon, Nov 25, 2013 at 02:53:36PM -0700, Stephen Warren wrote: 
-> [...]
->> memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig)); +	if
->> (!tdc->slave_id) +		tdc->slave_id = sconfig->slave_id; 
->> tdc->config_init = true;
-> 
-> This could use some blank lines to unclutter it a bit.
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-To be honest, I feel the opposite; random blank lines sprinkled in the
-middle of related code make the code structure harder to follow.
+Tegra148 introduces a few changes to the APB DMA HW registers. Update the
+driver to cope with them. Tegra124 inherits these changes.
 
+* The register address stride between DMA channels increases.
 
->> @@ -942,7 +947,7 @@ static struct dma_async_tx_descriptor
->> *tegra_dma_prep_slave_sg( ahb_seq |=
->> TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
->> 
->> csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW; -	csr |=
->> tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT; +
->> csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-> 
-> Perhaps I'm missing something, but couldn't we reuse the .slave_id
-> field of struct dma_slave_config? It seems like it might be
-> overwritten by the DMA engine core or users when they call
-> dmaengine_slave_config().
+* A new per-channel WCOUNT register is introduced.
 
-The slave ID seems channel-specific to me, and hence should be managed
-at the channel level. struct dma_slave_config is the client-specified
-runtime properties. As you mention, I also worry about client drivers
-trampling over the dma_slave_config data, so storing it where they
-can't doesn't seem like a good idea.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Kunal Agrawal <kunala-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[swarren, remove .dts file change, rewrote commit description, removed
+some duplicate/unused code and register IO]
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2:
+* Remove some unused #defines that had incorrect names or values.
+* Remove unnecessary initialization of wcount local variable.
 
-> But wouldn't it be better to have the core take care of all the
-> slave ID management, so we don't have to jump through hoops? Or
-> perhaps the concept isn't general enough to map well to other
-> drivers.
+This can be applied directly to the usual dmaengine branch; I've checked
+it doesn't conflict with the patches going through other trees which
+convert the driver to use the standard reset framework, or implement a
+DT DMA provider.
+---
+ drivers/dma/tegra20-apb-dma.c | 62 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 55 insertions(+), 7 deletions(-)
 
-It's a HW specific detail, I think. At least, the representation of
-the data in a DT binding is, and hence so is the parsing of the data
-from DT. The rest of the code that's in the driver re: slave ID is
-trivial enough it doesn't seem worth sharing. And in fact, once this
-series is done, we can even remove the conditional assignments to
-slave_id and require that it be provided by DT and never from
-dma_slave_config, which simplifies it even further.
-
->> static int tegra_dma_probe(struct platform_device *pdev) { struct
->> resource	*res; @@ -1383,10 +1402,22 @@ static int
->> tegra_dma_probe(struct platform_device *pdev) goto err_irq; }
->> 
->> +	tdma->xlate_info.device = &tdma->dma_dev; +
->> tdma->xlate_info.post_alloc = tegra_dma_of_xlate_post_alloc; +
->> ret = of_dma_controller_register(pdev->dev.of_node, +
->> of_dma_slave_xlate, &tdma->xlate_info); +	if (ret < 0) { +
->> dev_err(&pdev->dev, +			"Tegra20 APB DMA OF registration failed
->> %d\n", ret); +		goto err_unregister_dma_dev; +	}
-> 
-> Would it be useful to move this into the core and have it register
-> the OF parts transparently to the driver? That's of course nothing
-> that should be done in this patch.
-
-That'd probably be possible, yes, given a few extra fields in struct
-dma_device, e.g. for the of_xlate function pointer. As you say, I
-won't address it in this patch though.
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 73654e33f13b..895ffd0bc9bb 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -99,6 +99,11 @@
+ #define TEGRA_APBDMA_APBSEQ_DATA_SWAP		BIT(27)
+ #define TEGRA_APBDMA_APBSEQ_WRAP_WORD_1		(1 << 16)
+ 
++/* Tegra148 specific registers */
++#define TEGRA_APBDMA_CHAN_WCOUNT		0x20
++
++#define TEGRA_APBDMA_CHAN_WORD_TRANSFER		0x24
++
+ /*
+  * If any burst is in flight and DMA paused then this is the time to complete
+  * on-flight burst and update DMA status register.
+@@ -108,21 +113,22 @@
+ /* Channel base address offset from APBDMA base address */
+ #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
+ 
+-/* DMA channel register space size */
+-#define TEGRA_APBDMA_CHANNEL_REGISTER_SIZE	0x20
+-
+ struct tegra_dma;
+ 
+ /*
+  * tegra_dma_chip_data Tegra chip specific DMA data
+  * @nr_channels: Number of channels available in the controller.
++ * @channel_reg_size: Channel register size/stride.
+  * @max_dma_count: Maximum DMA transfer count supported by DMA controller.
+  * @support_channel_pause: Support channel wise pause of dma.
++ * @support_separate_wcount_reg: Support separate word count register.
+  */
+ struct tegra_dma_chip_data {
+ 	int nr_channels;
++	int channel_reg_size;
+ 	int max_dma_count;
+ 	bool support_channel_pause;
++	bool support_separate_wcount_reg;
+ };
+ 
+ /* DMA channel registers */
+@@ -132,6 +138,7 @@ struct tegra_dma_channel_regs {
+ 	unsigned long	apb_ptr;
+ 	unsigned long	ahb_seq;
+ 	unsigned long	apb_seq;
++	unsigned long	wcount;
+ };
+ 
+ /*
+@@ -421,6 +428,8 @@ static void tegra_dma_start(struct tegra_dma_channel *tdc,
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_regs->apb_ptr);
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_regs->ahb_seq);
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, ch_regs->ahb_ptr);
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT, ch_regs->wcount);
+ 
+ 	/* Start DMA */
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+@@ -460,6 +469,9 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
+ 	/* Safe to program new configuration */
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, nsg_req->ch_regs.apb_ptr);
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, nsg_req->ch_regs.ahb_ptr);
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
++						nsg_req->ch_regs.wcount);
+ 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
+ 				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
+ 	nsg_req->configured = true;
+@@ -713,6 +725,7 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
+ 	struct tegra_dma_desc *dma_desc;
+ 	unsigned long flags;
+ 	unsigned long status;
++	unsigned long wcount;
+ 	bool was_busy;
+ 
+ 	spin_lock_irqsave(&tdc->lock, flags);
+@@ -733,6 +746,10 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
+ 		tdc->isr_handler(tdc, true);
+ 		status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
+ 	}
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
++	else
++		wcount = status;
+ 
+ 	was_busy = tdc->busy;
+ 	tegra_dma_stop(tdc);
+@@ -741,7 +758,7 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
+ 		sgreq = list_first_entry(&tdc->pending_sg_req,
+ 					typeof(*sgreq), node);
+ 		sgreq->dma_desc->bytes_transferred +=
+-				get_current_xferred_count(tdc, sgreq, status);
++				get_current_xferred_count(tdc, sgreq, wcount);
+ 	}
+ 	tegra_dma_resume(tdc);
+ 
+@@ -903,6 +920,17 @@ static int get_transfer_param(struct tegra_dma_channel *tdc,
+ 	return -EINVAL;
+ }
+ 
++static void tegra_dma_prep_wcount(struct tegra_dma_channel *tdc,
++	struct tegra_dma_channel_regs *ch_regs, u32 len)
++{
++	u32 len_field = (len - 4) & 0xFFFC;
++
++	if (tdc->tdma->chip_data->support_separate_wcount_reg)
++		ch_regs->wcount = len_field;
++	else
++		ch_regs->csr |= len_field;
++}
++
+ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
+ 	enum dma_transfer_direction direction, unsigned long flags,
+@@ -986,7 +1014,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 
+ 		sg_req->ch_regs.apb_ptr = apb_ptr;
+ 		sg_req->ch_regs.ahb_ptr = mem;
+-		sg_req->ch_regs.csr = csr | ((len - 4) & 0xFFFC);
++		sg_req->ch_regs.csr = csr;
++		tegra_dma_prep_wcount(tdc, &(sg_req->ch_regs), len);
+ 		sg_req->ch_regs.apb_seq = apb_seq;
+ 		sg_req->ch_regs.ahb_seq = ahb_seq;
+ 		sg_req->configured = false;
+@@ -1115,7 +1144,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		ahb_seq |= get_burst_size(tdc, burst_size, slave_bw, len);
+ 		sg_req->ch_regs.apb_ptr = apb_ptr;
+ 		sg_req->ch_regs.ahb_ptr = mem;
+-		sg_req->ch_regs.csr = csr | ((len - 4) & 0xFFFC);
++		sg_req->ch_regs.csr = csr;
++		tegra_dma_prep_wcount(tdc, &(sg_req->ch_regs), len);
+ 		sg_req->ch_regs.apb_seq = apb_seq;
+ 		sg_req->ch_regs.ahb_seq = ahb_seq;
+ 		sg_req->configured = false;
+@@ -1210,27 +1240,45 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+ /* Tegra20 specific DMA controller information */
+ static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
+ 	.nr_channels		= 16,
++	.channel_reg_size	= 0x20,
+ 	.max_dma_count		= 1024UL * 64,
+ 	.support_channel_pause	= false,
++	.support_separate_wcount_reg = false,
+ };
+ 
+ /* Tegra30 specific DMA controller information */
+ static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
+ 	.nr_channels		= 32,
++	.channel_reg_size	= 0x20,
+ 	.max_dma_count		= 1024UL * 64,
+ 	.support_channel_pause	= false,
++	.support_separate_wcount_reg = false,
+ };
+ 
+ /* Tegra114 specific DMA controller information */
+ static const struct tegra_dma_chip_data tegra114_dma_chip_data = {
+ 	.nr_channels		= 32,
++	.channel_reg_size	= 0x20,
+ 	.max_dma_count		= 1024UL * 64,
+ 	.support_channel_pause	= true,
++	.support_separate_wcount_reg = false,
++};
++
++/* Tegra148 specific DMA controller information */
++static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
++	.nr_channels		= 32,
++	.channel_reg_size	= 0x40,
++	.max_dma_count		= 1024UL * 64,
++	.support_channel_pause	= true,
++	.support_separate_wcount_reg = true,
+ };
+ 
+ 
+ static const struct of_device_id tegra_dma_of_match[] = {
+ 	{
++		.compatible = "nvidia,tegra148-apbdma",
++		.data = &tegra148_dma_chip_data,
++	}, {
+ 		.compatible = "nvidia,tegra114-apbdma",
+ 		.data = &tegra114_dma_chip_data,
+ 	}, {
+@@ -1318,7 +1366,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		struct tegra_dma_channel *tdc = &tdma->channels[i];
+ 
+ 		tdc->chan_base_offset = TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET +
+-					i * TEGRA_APBDMA_CHANNEL_REGISTER_SIZE;
++					i * cdata->channel_reg_size;
+ 
+ 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+ 		if (!res) {
+-- 
+1.8.1.5
