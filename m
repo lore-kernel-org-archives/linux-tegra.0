@@ -1,61 +1,66 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
-Date: Tue, 3 Dec 2013 10:52:43 +0100
-Message-ID: <20131203095242.GC21178@ulmo.nvidia.com>
-References: <1385990934-20809-1-git-send-email-treding@nvidia.com>
+Subject: Re: [PATCH] gpu: host1x: Silence a few warnings with LPAE=y
+Date: Tue, 3 Dec 2013 11:09:54 +0100
+Message-ID: <20131203100953.GE21178@ulmo.nvidia.com>
+References: <1384327010-8870-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XMCwj5IQnwKtuyBG"
+	protocol="application/pgp-signature"; boundary="maH1Gajj2nflutpK"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1385990934-20809-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1384327010-8870-1-git-send-email-olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: airlied-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---XMCwj5IQnwKtuyBG
+--maH1Gajj2nflutpK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2013 at 02:28:54PM +0100, Thierry Reding wrote:
-[...]
-> +	host1x@50000000 {
-> +		...
-> +
-> +		dsi@54300000 {
-> +			...
-> +
-> +			nvidia,mipi-calibrate = <&mipi 0x060>;
+On Tue, Nov 12, 2013 at 11:16:50PM -0800, Olof Johansson wrote:
+> When building with LPAE=3Dy (64-bit dma_addr_t), the following warnings a=
+re seen:
+>=20
+> drivers/gpu/host1x/hw/cdma_hw.c:57:3: warning: format '%x' expects
+>   argument of type 'unsigned int', but argument 5 has type 'dma_addr_t'
+>=20
+> drivers/gpu/host1x/hw/debug_hw.c:167:10: warning: format '%x' expects
+>   argument of type 'unsigned int', but argument 3 has type 'dma_addr_t'
+>=20
+> The agreed-to solution for this is upcast to u64 and using %llx.
+>=20
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> ---
+>  drivers/gpu/host1x/hw/cdma_hw.c  |    4 ++--
+>  drivers/gpu/host1x/hw/debug_hw.c |    4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 
-I just occurred to me that perhaps having a list of pad indices here
-would be easier to write and parse than a bitmask. So alternatively this
-could be:
-
-			nvidia,mipi-calibrate = <&mipi 5>, <&mipi 6>;
+Applied, thanks.
 
 Thierry
 
---XMCwj5IQnwKtuyBG
+--maH1Gajj2nflutpK
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSnanqAAoJEN0jrNd/PrOhIbgP/AhphM0uqyjv0tyChre7Q4Wt
-opbURjzkp9q+VrFsMoEXqNT3hhRMkuVUoa3qHyCfXRXJv3SLb1rPt7N0WZSU7PaH
-U/VnCLcWP73VgVFT6uxjxfZjT8lTj8ERHFYRZmKAtLA8q4cZbJwAGEzFx4dglniZ
-zOqu/8LWxi7SpFGqBSDetcTFZ01/a+CSam+RRU3+JNYcsdkAxX774uiX0IOziVQh
-4Nh68BTJE+s3GaSvscUuMPQODeh1ZyAOmWqwvjH22eF7kVEQ3d1gp0YCA+tw9e5u
-9/jS19ZxZw1y4cdPq33TWaaeJJiflK7LFxqfohm4V0ufemkrKJaKIoMdB3VhSx9s
-89D/1gltMQX8vYninRBLO1njrvFxbPA/TZatOZGFPwsfQyWJDH/5wpL0IIx+tFrL
-LMJUqOesKONZugkckzgBoduiuYrA7uMKQxvjrhqh2F+3XC7jr4AgvftF1aPcRSiP
-qWx6KUrr1ryFWVWshT+nSlrFh4vlCIOpf88rEhbS3t60T+MeOgWhAZLVabGCpvRs
-AE8H2x2Uty4DZtMRlG8yvdFsschqPvmHCDB1TD515nWF2uEAawUm73oz4azEp3zE
-LZsQJepGFjEuGg6yM1cyifcU1jfC8S52shw5mMDaJWjYRMEJCw6ALQwBx60/OyMS
-yz4VF45CfTuRceKIzh8y
-=/yak
+iQIcBAEBAgAGBQJSna3xAAoJEN0jrNd/PrOhjP0QAKLjLx9vOi4FoQe+kC3/B/0y
+6CXuSgH2J3hxYehZK77jy320UjgHqn3dS3eFSxcxd1bcQaeqHLB+qBOECEm1+L7T
+iQuNev/+KbEzZZjd7kV6FeZ3l67oIOMYjZB+zk+U/iUG9iRsHRz0EZXDyAKZAl8z
+DcpZSQPnLn8HxFxRGxNwFdYlwN9/QuVG6nP0oC0/BbjCIUtybnft2qmYZxEowuyD
+gW3VxdO/n9NRbHlmvaV4xSpaa62iyqDWBoxwd7+0eE+vIDBJaocRc2fPmsfSm+FA
+46YE7c5YlgYDp8VHc7rxXgjYV5IWwtLgMeahDcEmVjk2a1GQpDWqXGxxlwy0hsgR
+optshTAf5xEDMYWJ5+qylWiS0B7o+c+0aYpGTglKjLmxoTr8brWWmR9N0EzGWNa5
+zCZgFlvMNCS5uTY1Is3q1KdhCMJi5WkawuXb4QPFu/co1mUG406Kwwpze5LXXkFd
+vDWW8XmvaNN5QidK/80OHjkeLpMDhniwhJLKafgOJrgvem/TWe9ZNilR+yqnj9lw
+PA2KY/pn8bxAt6i56UbeasCRK5pXdJLPvMhS+CyPLUsPQMM7kpxKzU7QV+9NUVws
+qhaL2jkzuGELUh7RGwimP3WpCL/trK681XPDqx76mrumacaj1Grw2vO0QTZHObN5
+njusd0MAprxoDavtLX1D
+=DAw9
 -----END PGP SIGNATURE-----
 
---XMCwj5IQnwKtuyBG--
+--maH1Gajj2nflutpK--
