@@ -1,33 +1,49 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: Freeze on Colibri T20 about 5 minutes after boot (3.13-rc1)
-Date: Mon, 02 Dec 2013 23:18:35 +0100
-Message-ID: <72170fe5d82a9fbe3aaa4312ec60c097@agner.ch>
-References: <24ee0eea02f6d60e8f67825061720004@agner.ch>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v11 0/7] ARM: support for the Trusted Foundations secure monitor
+Date: Tue, 3 Dec 2013 09:48:59 +0900
+Message-ID: <CAAVeFuKh7T42AfAud=ZJ-j_7BgeRUFOytD7CNQ_DFdZeQRHj4A@mail.gmail.com>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com> <20131126001033.GB21634@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <24ee0eea02f6d60e8f67825061720004-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: r.sricharan-l0cyMroinI0@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131126001033.GB21634@quad.lixom.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>
+Cc: Olof Johansson <olof@lixom.net>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Dave Martin <Dave.Martin@arm.com>, Kevin Hilman <khilman@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2013-12-02 20:47, schrieb Stefan Agner:
-> Since updating to 3.13-rc1 I experience freezes on my Tegra based module
-> after 2-5 minutes after boot up. There is no stacktrace, the serial
-> console is dead as well as X turns black. 
-> 
-> I did a git bisect and could isolate the offending commit:
-> f52bb722547f43caeaecbcc62db9f3c3b80ead9b
-> ARM: mm: Correct virt_to_phys patching for 64 bit physical addresses
+On Tue, Nov 26, 2013 at 9:10 AM, Olof Johansson <olof@lixom.net> wrote:
+> On Sun, Nov 24, 2013 at 03:30:45PM +0900, Alexandre Courbot wrote:
+>> New rebase that should be ready-to-apply on the latest Tegra tree. The last
+>> remaining blocker is Russell's approval for this series and it is my hope to
+>> obtain it with this version.
+>>
+>> There has been quite some debate around this series, notably about the SMC
+>> calling conventions and whether the firmware interface should be moved out of
+>> arch/arm. I hope that all the questions have been answered and that we can move
+>> forward with this series that enables NVIDIA-branded retail Tegra devices to run
+>> mainline.
+>>
+>> Changes since v10:
+>> - Rebased on top of more recent sources since some files have been renamed in
+>>   mach-tegra.
+>> - Gave a final proof-read and extensive testing.
+>>
+>> Alexandre Courbot (7):
+>>   ARM: add basic support for Trusted Foundations
+>>   of: add vendor prefix for Trusted Logic Mobility
+>>   of: add Trusted Foundations bindings documentation
+>>   ARM: tegra: add support for Trusted Foundations
+>>   ARM: tegra: split setting of CPU reset handler
+>>   ARM: tegra: set CPU reset handler using firmware
+>>   ARM: tegra: support Trusted Foundations by default
+>
+> Ok, this looks good to me. Russell, do you want the first patch in your
+> tree or are you ok with acking that and we can take everything through
+> arm-soc?
+>
+> The alternative is that we can have Stephen provide a stable branch with
+> the first patch on it and we both merge that, then the rest goes on top
+> of that through arm-soc.
 
-Sorry for suspecting this commit, further testing showed I can reproduce
-this on earlier commits too, actually back to 3.12. Bisect was kind of
-hard to do since sometimes it took quite a while until a crash
-happend... Will do testing again.
-
-Sorry
-
---
-Stefan
+Russell, ping?
