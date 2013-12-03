@@ -1,146 +1,123 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3] dma: tegra: register as an OF DMA controller
-Date: Tue,  3 Dec 2013 13:33:07 -0700
-Message-ID: <1386102787-21839-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH REPOST 2/2] clk: tegra: remove bogus PCIE_XCLK
+Date: Tue,  3 Dec 2013 13:36:42 -0700
+Message-ID: <1386103002-21939-2-git-send-email-swarren@wwwdotorg.org>
+References: <1386103002-21939-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386103002-21939-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: arnd-r2nGTMty4D4@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Call of_dma_controller_register() so that DMA clients can look up the
-Tegra DMA controller using standard APIs. This requires the of_xlate()
-function to save off the DMA slave ID, and for tegra_dma_slave_config()
-not to over-write this information; once DMA client drivers are converted
-to dma_request_slave_channel() and DT-based lookups, they won't set this
-field of struct dma_slave_config anymore.
+The "pcie_xclk" clock is not actually a clock at all, but rather a reset
+domain. Now that the custom Tegra module reset API has been removed, we
+can remove the definition of any "clocks" that existed solely to support
+it.
 
-Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v3: Rework of_xlate() to use new dma_get_any_slave_channel().
-
-v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
-    suggested by Arnd Bergmann.
+Peter, Mike,
 
 This patch is part of a series with strong internal depdendencies. I'm
 looking for an ack so that I can take the entire series through the Tegra
 and arm-soc trees. The series will be part of a stable branch that can be
 merged into other subsystems if needed to avoid/resolve dependencies.
 ---
- drivers/dma/tegra20-apb-dma.c | 39 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c         | 6 ------
+ drivers/clk/tegra/clk-tegra30.c         | 7 -------
+ include/dt-bindings/clock/tegra20-car.h | 2 +-
+ include/dt-bindings/clock/tegra30-car.h | 2 +-
+ 4 files changed, 2 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index afa5844c9346..d11bb3620f27 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1,7 +1,7 @@
- /*
-  * DMA driver for Nvidia's Tegra20 APB DMA controller.
-  *
-- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -29,6 +29,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
-+#include <linux/of_dma.h>
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
-@@ -199,6 +200,7 @@ struct tegra_dma_channel {
- 	void			*callback_param;
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index d438a089354c..41bf39544111 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -467,7 +467,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "isp", .dev_id = "tegra_camera", .dt_id = TEGRA20_CLK_ISP },
+ 	{ .con_id = "pex", .dt_id = TEGRA20_CLK_PEX },
+ 	{ .con_id = "afi", .dt_id = TEGRA20_CLK_AFI },
+-	{ .con_id = "pcie_xclk", .dt_id = TEGRA20_CLK_PCIE_XCLK },
+ 	{ .con_id = "cdev1", .dt_id = TEGRA20_CLK_CDEV1 },
+ 	{ .con_id = "cdev2", .dt_id = TEGRA20_CLK_CDEV2 },
+ 	{ .con_id = "clk_32k", .dt_id = TEGRA20_CLK_CLK_32K },
+@@ -833,11 +832,6 @@ static void __init tegra20_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA20_CLK_PEX] = clk;
  
- 	/* Channel-slave specific configuration */
-+	unsigned int slave_id;
- 	struct dma_slave_config dma_sconfig;
- 	struct tegra_dma_channel_regs	channel_reg;
+-	/* pcie_xclk */
+-	clk = tegra_clk_register_periph_gate("pcie_xclk", "clk_m", 0, clk_base,
+-				    0, 74, periph_clk_enb_refcnt);
+-	clks[TEGRA20_CLK_PCIE_XCLK] = clk;
+-
+ 	/* cdev1 */
+ 	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, CLK_IS_ROOT,
+ 				      26000000);
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 49465529bb09..0986eac22cd7 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -651,7 +651,6 @@ static struct tegra_devclk devclks[] __initdata = {
+ 	{ .con_id = "isp", .dev_id = "tegra_camera", .dt_id = TEGRA30_CLK_ISP },
+ 	{ .con_id = "pcie", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_PCIE },
+ 	{ .con_id = "afi", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_AFI },
+-	{ .con_id = "pciex", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_PCIEX },
+ 	{ .con_id = "fuse", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE },
+ 	{ .con_id = "fuse_burn", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE_BURN },
+ 	{ .con_id = "apbif", .dev_id = "tegra30-ahub", .dt_id = TEGRA30_CLK_APBIF },
+@@ -1152,11 +1151,6 @@ static void __init tegra30_periph_clk_init(void)
+ 				    periph_clk_enb_refcnt);
+ 	clks[TEGRA30_CLK_AFI] = clk;
+ 
+-	/* pciex */
+-	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
+-				    74, periph_clk_enb_refcnt);
+-	clks[TEGRA30_CLK_PCIEX] = clk;
+-
+ 	/* emc */
+ 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+ 			       ARRAY_SIZE(mux_pllmcp_clkm),
+@@ -1397,7 +1391,6 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
+ 	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_BSEA, "nvavp", "bsea"),
+ 	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CML1, "tegra_sata_cml", NULL),
+ 	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CML0, "tegra_pcie", "cml"),
+-	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_PCIEX, "tegra_pcie", "pciex"),
+ 	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_VCP, "nvavp", "vcp"),
+ 	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CLK_MAX, NULL, NULL), /* MUST be the last entry */
  };
-@@ -340,6 +342,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
- 
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
-+	if (!tdc->slave_id)
-+		tdc->slave_id = sconfig->slave_id;
- 	tdc->config_init = true;
- 	return 0;
- }
-@@ -942,7 +946,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_BUS_WIDTH_32;
- 
- 	csr |= TEGRA_APBDMA_CSR_ONCE | TEGRA_APBDMA_CSR_FLOW;
--	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
- 
-@@ -1086,7 +1090,7 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 	csr |= TEGRA_APBDMA_CSR_FLOW;
- 	if (flags & DMA_PREP_INTERRUPT)
- 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
--	csr |= tdc->dma_sconfig.slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
-+	csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
- 
- 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
- 
-@@ -1206,6 +1210,25 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 		kfree(sg_req);
- 	}
- 	clk_disable_unprepare(tdma->dma_clk);
-+
-+	tdc->slave_id = 0;
-+}
-+
-+static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
-+					   struct of_dma *ofdma)
-+{
-+	struct tegra_dma *tdma = ofdma->of_dma_data;
-+	struct dma_chan *chan;
-+	struct tegra_dma_channel *tdc;
-+
-+	chan = dma_get_any_slave_channel(&tdma->dma_dev);
-+	if (!chan)
-+		return NULL;
-+
-+	tdc = to_tegra_dma_chan(chan);
-+	tdc->slave_id = dma_spec->args[0];
-+
-+	return chan;
- }
- 
- /* Tegra20 specific DMA controller information */
-@@ -1383,10 +1406,20 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		goto err_irq;
- 	}
- 
-+	ret = of_dma_controller_register(pdev->dev.of_node,
-+					 tegra_dma_of_xlate, tdma);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			"Tegra20 APB DMA OF registration failed %d\n", ret);
-+		goto err_unregister_dma_dev;
-+	}
-+
- 	dev_info(&pdev->dev, "Tegra20 APB DMA driver register %d channels\n",
- 			cdata->nr_channels);
- 	return 0;
- 
-+err_unregister_dma_dev:
-+	dma_async_device_unregister(&tdma->dma_dev);
- err_irq:
- 	while (--i >= 0) {
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
+diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+index a1ae9a8fdd6c..9406207cfac8 100644
+--- a/include/dt-bindings/clock/tegra20-car.h
++++ b/include/dt-bindings/clock/tegra20-car.h
+@@ -92,7 +92,7 @@
+ #define TEGRA20_CLK_OWR 71
+ #define TEGRA20_CLK_AFI 72
+ #define TEGRA20_CLK_CSITE 73
+-#define TEGRA20_CLK_PCIE_XCLK 74
++/* 74 */
+ #define TEGRA20_CLK_AVPUCQ 75
+ #define TEGRA20_CLK_LA 76
+ /* 77 */
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index 22445820a929..889e49ba0aa3 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -92,7 +92,7 @@
+ #define TEGRA30_CLK_OWR 71
+ #define TEGRA30_CLK_AFI 72
+ #define TEGRA30_CLK_CSITE 73
+-#define TEGRA30_CLK_PCIEX 74
++/* 74 */
+ #define TEGRA30_CLK_AVPUCQ 75
+ #define TEGRA30_CLK_LA 76
+ /* 77 */
 -- 
 1.8.1.5
