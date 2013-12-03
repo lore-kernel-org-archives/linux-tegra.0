@@ -1,49 +1,28 @@
-From: Kyle McMartin <kmcmarti-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: tegra on 3.11
-Date: Tue, 3 Dec 2013 11:44:15 -0500
-Message-ID: <20131203164415.GA1557@redacted.bos.redhat.com>
-References: <20130820150418.GI27560@redacted.bos.redhat.com>
- <5213C0F2.9060909@wwwdotorg.org>
- <20130827213445.GI8764@redacted.bos.redhat.com>
- <521D1D7F.7060006@wwwdotorg.org>
- <20130904183815.GC16338@redacted.bos.redhat.com>
- <20131203103043.GI21178@ulmo.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: pull request for clk-tegra-next
+Date: Tue, 03 Dec 2013 10:35:21 -0700
+Message-ID: <529E1659.2070103@wwwdotorg.org>
+References: <20131128141826.GW26617@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20131203103043.GI21178-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20131128141826.GW26617-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 03, 2013 at 11:30:45AM +0100, Thierry Reding wrote:
-> On Wed, Sep 04, 2013 at 02:38:15PM -0400, Kyle McMartin wrote:
-> > > > [   29.198018] PCI: enabling device 0000:01:00.0 (0140 -> 0143)
-> > > > [   29.198180] Unhandled fault: imprecise external abort (0x406) at
-> > > > 0xb6f49000
-> > > > [   29.205136] Internal error: : 406 [#1] SMP ARM
-> > > > 
-> > > > looks to be the first time we touch the HW in rtl_init_one.
-> > > > 
-> > > > Seen anything similar, or should I start debugging further?
-> > > 
-> > > PCIe isn't expected to work usefully until 3.12, unless you've manually
-> > > merged in Thierry's Tegra PCIe driver rewrite. It's probably worth
-> > > disabling it in your .config file.
-> > 
-> > fwiw, the problem was CONFIG_PCIEPORTBUS in our config, I've not had
-> > a chance to track down what the issue actually is, but that driver
-> > busted things in 3.11.
+On 11/28/2013 07:18 AM, Peter De Schrijver wrote:
+> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 > 
-> I came across another occurrence of this only recently and now stumbled
-> across this old email. Did you by any chance find out what the issue is
-> with PCIEPORTBUS?
+>   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
 > 
+> are available in the git repository at:
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next
 
-I think I did -- let me try to dig through my notes next time I'm in the
-office and I'll follow up later this week.
-
-Thanks!
- Kyle
+Mike, this series is a dependency for my patch series that converts
+Tegra drivers to use the standard module reset API rather than a custom
+API (which is implemented in the clock driver). If you could either
+merge this pull request, or at least ack that it's OK for me to merge it
+into the Tegra tree as a dependency, that'd be helpful. Thanks.
