@@ -1,37 +1,58 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for clk-tegra-next
-Date: Tue, 3 Dec 2013 11:47:11 -0800
-Message-ID: <CAPtuhTj4Lfo1_oHj5uvmdJc360Y2C9uXe0nsMnw7ptaCJB=f-A@mail.gmail.com>
-References: <20131128141826.GW26617@tbergstrom-lnx.Nvidia.com> <529E1659.2070103@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 18/31] ASoC: tegra: allocate AHUB FIFO during probe()
+ not startup()
+Date: Tue, 03 Dec 2013 12:55:55 -0700
+Message-ID: <529E374B.8090903@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-19-git-send-email-swarren@wwwdotorg.org> <20131129144025.GA9712@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <529E1659.2070103@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131129144025.GA9712-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 3, 2013 at 9:35 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 11/28/2013 07:18 AM, Peter De Schrijver wrote:
->> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
->>
->>   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
->>
->> are available in the git repository at:
->>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next
->
-> Mike, this series is a dependency for my patch series that converts
-> Tegra drivers to use the standard module reset API rather than a custom
-> API (which is implemented in the clock driver). If you could either
-> merge this pull request, or at least ack that it's OK for me to merge it
-> into the Tegra tree as a dependency, that'd be helpful. Thanks.
+On 11/29/2013 07:40 AM, Thierry Reding wrote:
+> On Fri, Nov 15, 2013 at 01:54:13PM -0700, Stephen Warren wrote:
+>> Teh Tegra30 I2S driver currently allocates DMA FIFOs from the
+>> AHUB only when an audio stream starts playback. This is
+>> theoretically nice for resource sharing, but makes no practical
+>> difference for any configuration the drivers currently support.
+>> However, this deferral prevents conversion to the standard DMA DT
+>> bindings, since conversion requires knowledge of the specific DMA
+>> channel to be allocated, which in turn depends on which specific
+>> FIFO was allocated.
+>> 
+>> For this reason, move the FIFO allocate into probe() to allow
+>> later
+...
+>> +	i2s->playback_dma_data.addr_width =
+>> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->playback_dma_data.maxburst =
+>> 4; +	ret =
+>> tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif, +
+>> &i2s->playback_dma_data.addr, +
+>> &i2s->playback_dma_data.slave_id); +	if (ret) { +
+>> dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret); +
+>> goto err_suspend; +	} +	ret =
+>> tegra30_ahub_set_rx_cif_source(i2s->playback_i2s_cif, +
+>> i2s->playback_fifo_cif); +	if (ret) { +		dev_err(&pdev->dev,
+>> "Could not route TX FIFO: %d\n", ret); +		goto err_free_tx_fifo; 
+>> +	} + +	i2s->capture_dma_data.addr_width =
+>> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->capture_dma_data.maxburst =
+>> 4; +	ret = tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif, 
+>> +					    &i2s->capture_dma_data.addr, +
+>> &i2s->capture_dma_data.slave_id); +	if (ret) { +
+>> dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret); +
+>> goto err_unroute_tx_fifo; +	} +	ret =
+>> tegra30_ahub_set_rx_cif_source(i2s->capture_fifo_cif, +
+>> i2s->capture_i2s_cif); +	if (ret) { +		dev_err(&pdev->dev, "Could
+>> not route TX FIFO: %d\n", ret); +		goto err_free_rx_fifo; +	} +
+> 
+> It could be useful to have these in a separate function so as not
+> to make the .probe() any larger. It's already pretty big as it is.
 
-Hi Stephen,
-
-I'm catching up on pull requests after a week off for Thanksgiving
-holiday in the US. This looks good to me and I'll have it pulled in
-later today.
-
-Regards,
-Mike
+May I ignore this; I personally prefer larger linear functions; it's
+much easier to follow the code-flow without having to jump back/forth
+between a bunch of single-use functions.
