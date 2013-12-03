@@ -1,58 +1,19 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 18/31] ASoC: tegra: allocate AHUB FIFO during probe()
- not startup()
-Date: Tue, 03 Dec 2013 12:55:55 -0700
-Message-ID: <529E374B.8090903@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-19-git-send-email-swarren@wwwdotorg.org> <20131129144025.GA9712@ulmo.nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Correct clock number for UARTE
+Date: Tue, 03 Dec 2013 12:57:53 -0700
+Message-ID: <529E37C1.601@wwwdotorg.org>
+References: <1385983825-20317-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131129144025.GA9712-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <1385983825-20317-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/29/2013 07:40 AM, Thierry Reding wrote:
-> On Fri, Nov 15, 2013 at 01:54:13PM -0700, Stephen Warren wrote:
->> Teh Tegra30 I2S driver currently allocates DMA FIFOs from the
->> AHUB only when an audio stream starts playback. This is
->> theoretically nice for resource sharing, but makes no practical
->> difference for any configuration the drivers currently support.
->> However, this deferral prevents conversion to the standard DMA DT
->> bindings, since conversion requires knowledge of the specific DMA
->> channel to be allocated, which in turn depends on which specific
->> FIFO was allocated.
->> 
->> For this reason, move the FIFO allocate into probe() to allow
->> later
-...
->> +	i2s->playback_dma_data.addr_width =
->> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->playback_dma_data.maxburst =
->> 4; +	ret =
->> tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif, +
->> &i2s->playback_dma_data.addr, +
->> &i2s->playback_dma_data.slave_id); +	if (ret) { +
->> dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret); +
->> goto err_suspend; +	} +	ret =
->> tegra30_ahub_set_rx_cif_source(i2s->playback_i2s_cif, +
->> i2s->playback_fifo_cif); +	if (ret) { +		dev_err(&pdev->dev,
->> "Could not route TX FIFO: %d\n", ret); +		goto err_free_tx_fifo; 
->> +	} + +	i2s->capture_dma_data.addr_width =
->> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->capture_dma_data.maxburst =
->> 4; +	ret = tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif, 
->> +					    &i2s->capture_dma_data.addr, +
->> &i2s->capture_dma_data.slave_id); +	if (ret) { +
->> dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret); +
->> goto err_unroute_tx_fifo; +	} +	ret =
->> tegra30_ahub_set_rx_cif_source(i2s->capture_fifo_cif, +
->> i2s->capture_i2s_cif); +	if (ret) { +		dev_err(&pdev->dev, "Could
->> not route TX FIFO: %d\n", ret); +		goto err_free_rx_fifo; +	} +
-> 
-> It could be useful to have these in a separate function so as not
-> to make the .probe() any larger. It's already pretty big as it is.
+On 12/02/2013 04:30 AM, Thierry Reding wrote:
+> UARTE has clock number 66. Number 65 is the right one for UARTD.
 
-May I ignore this; I personally prefer larger linear functions; it's
-much easier to follow the code-flow without having to jump back/forth
-between a bunch of single-use functions.
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
