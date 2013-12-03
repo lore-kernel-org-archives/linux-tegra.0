@@ -1,229 +1,104 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] dma: tegra: add support for Tegra148/124
-Date: Tue,  3 Dec 2013 11:15:50 -0700
-Message-ID: <1386094550-5011-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [PATCH V2] ARM: tegra: add MMC controllers to Tegra124 DT
+Date: Tue,  3 Dec 2013 11:26:39 -0700
+Message-ID: <1386095199-24336-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, kunala-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra148 introduces a few changes to the APB DMA HW registers. Update the
-driver to cope with them. Tegra124 inherits these changes.
+Tegra124 has 4 MMC controllers just like previous versions of the SoC.
+Note that there are some non-backwards-compatible HW differences, and
+hence a new DT compatible value must be used to describe the HW.
 
-* The register address stride between DMA channels increases.
+Also enable the relevant controllers in the Venice2 board DT.
 
-* A new per-channel WCOUNT register is introduced.
+power-gpios property suggested by Thierry Reding.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Kunal Agrawal <kunala-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[swarren, remove .dts file change, rewrote commit description, removed
-some duplicate/unused code and register IO]
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-v2:
-* Remove some unused #defines that had incorrect names or values.
-* Remove unnecessary initialization of wcount local variable.
-
-This can be applied directly to the usual dmaengine branch; I've checked
-it doesn't conflict with the patches going through other trees which
-convert the driver to use the standard reset framework, or implement a
-DT DMA provider.
+v2: Add power-gpios to SD card node, suggested by Thierry.
 ---
- drivers/dma/tegra20-apb-dma.c | 62 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 55 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/tegra124-venice2.dts | 12 ++++++++++
+ arch/arm/boot/dts/tegra124.dtsi        | 40 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 73654e33f13b..895ffd0bc9bb 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -99,6 +99,11 @@
- #define TEGRA_APBDMA_APBSEQ_DATA_SWAP		BIT(27)
- #define TEGRA_APBDMA_APBSEQ_WRAP_WORD_1		(1 << 16)
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index a0b028384658..098d0b2081bf 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -25,6 +25,18 @@
+ 		nvidia,sys-clock-req-active-high;
+ 	};
  
-+/* Tegra148 specific registers */
-+#define TEGRA_APBDMA_CHAN_WCOUNT		0x20
++	sdhci@700b0400 {
++		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
++		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
++		status = "okay";
++		bus-width = <4>;
++	};
 +
-+#define TEGRA_APBDMA_CHAN_WORD_TRANSFER		0x24
++	sdhci@700b0600 {
++		status = "okay";
++		bus-width = <8>;
++	};
 +
- /*
-  * If any burst is in flight and DMA paused then this is the time to complete
-  * on-flight burst and update DMA status register.
-@@ -108,21 +113,22 @@
- /* Channel base address offset from APBDMA base address */
- #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 96e051e13f76..200373236aaa 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -190,6 +190,46 @@
+ 		clock-names = "pclk", "clk32k_in";
+ 	};
  
--/* DMA channel register space size */
--#define TEGRA_APBDMA_CHANNEL_REGISTER_SIZE	0x20
--
- struct tegra_dma;
- 
- /*
-  * tegra_dma_chip_data Tegra chip specific DMA data
-  * @nr_channels: Number of channels available in the controller.
-+ * @channel_reg_size: Channel register size/stride.
-  * @max_dma_count: Maximum DMA transfer count supported by DMA controller.
-  * @support_channel_pause: Support channel wise pause of dma.
-+ * @support_separate_wcount_reg: Support separate word count register.
-  */
- struct tegra_dma_chip_data {
- 	int nr_channels;
-+	int channel_reg_size;
- 	int max_dma_count;
- 	bool support_channel_pause;
-+	bool support_separate_wcount_reg;
- };
- 
- /* DMA channel registers */
-@@ -132,6 +138,7 @@ struct tegra_dma_channel_regs {
- 	unsigned long	apb_ptr;
- 	unsigned long	ahb_seq;
- 	unsigned long	apb_seq;
-+	unsigned long	wcount;
- };
- 
- /*
-@@ -421,6 +428,8 @@ static void tegra_dma_start(struct tegra_dma_channel *tdc,
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_regs->apb_ptr);
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_regs->ahb_seq);
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, ch_regs->ahb_ptr);
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT, ch_regs->wcount);
- 
- 	/* Start DMA */
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
-@@ -460,6 +469,9 @@ static void tegra_dma_configure_for_next(struct tegra_dma_channel *tdc,
- 	/* Safe to program new configuration */
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, nsg_req->ch_regs.apb_ptr);
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBPTR, nsg_req->ch_regs.ahb_ptr);
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
-+						nsg_req->ch_regs.wcount);
- 	tdc_write(tdc, TEGRA_APBDMA_CHAN_CSR,
- 				nsg_req->ch_regs.csr | TEGRA_APBDMA_CSR_ENB);
- 	nsg_req->configured = true;
-@@ -713,6 +725,7 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
- 	struct tegra_dma_desc *dma_desc;
- 	unsigned long flags;
- 	unsigned long status;
-+	unsigned long wcount;
- 	bool was_busy;
- 
- 	spin_lock_irqsave(&tdc->lock, flags);
-@@ -733,6 +746,10 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
- 		tdc->isr_handler(tdc, true);
- 		status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
- 	}
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
-+	else
-+		wcount = status;
- 
- 	was_busy = tdc->busy;
- 	tegra_dma_stop(tdc);
-@@ -741,7 +758,7 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
- 		sgreq = list_first_entry(&tdc->pending_sg_req,
- 					typeof(*sgreq), node);
- 		sgreq->dma_desc->bytes_transferred +=
--				get_current_xferred_count(tdc, sgreq, status);
-+				get_current_xferred_count(tdc, sgreq, wcount);
- 	}
- 	tegra_dma_resume(tdc);
- 
-@@ -903,6 +920,17 @@ static int get_transfer_param(struct tegra_dma_channel *tdc,
- 	return -EINVAL;
- }
- 
-+static void tegra_dma_prep_wcount(struct tegra_dma_channel *tdc,
-+	struct tegra_dma_channel_regs *ch_regs, u32 len)
-+{
-+	u32 len_field = (len - 4) & 0xFFFC;
++	sdhci@700b0000 {
++		compatible = "nvidia,tegra124-sdhci";
++		reg = <0x700b0000 0x200>;
++		interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_SDMMC1>;
++		resets = <&tegra_car 14>;
++		reset-names = "sdhci";
++		status = "disable";
++	};
 +
-+	if (tdc->tdma->chip_data->support_separate_wcount_reg)
-+		ch_regs->wcount = len_field;
-+	else
-+		ch_regs->csr |= len_field;
-+}
++	sdhci@700b0200 {
++		compatible = "nvidia,tegra124-sdhci";
++		reg = <0x700b0200 0x200>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_SDMMC2>;
++		resets = <&tegra_car 9>;
++		reset-names = "sdhci";
++		status = "disable";
++	};
 +
- static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
- 	enum dma_transfer_direction direction, unsigned long flags,
-@@ -986,7 +1014,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 
- 		sg_req->ch_regs.apb_ptr = apb_ptr;
- 		sg_req->ch_regs.ahb_ptr = mem;
--		sg_req->ch_regs.csr = csr | ((len - 4) & 0xFFFC);
-+		sg_req->ch_regs.csr = csr;
-+		tegra_dma_prep_wcount(tdc, &(sg_req->ch_regs), len);
- 		sg_req->ch_regs.apb_seq = apb_seq;
- 		sg_req->ch_regs.ahb_seq = ahb_seq;
- 		sg_req->configured = false;
-@@ -1115,7 +1144,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		ahb_seq |= get_burst_size(tdc, burst_size, slave_bw, len);
- 		sg_req->ch_regs.apb_ptr = apb_ptr;
- 		sg_req->ch_regs.ahb_ptr = mem;
--		sg_req->ch_regs.csr = csr | ((len - 4) & 0xFFFC);
-+		sg_req->ch_regs.csr = csr;
-+		tegra_dma_prep_wcount(tdc, &(sg_req->ch_regs), len);
- 		sg_req->ch_regs.apb_seq = apb_seq;
- 		sg_req->ch_regs.ahb_seq = ahb_seq;
- 		sg_req->configured = false;
-@@ -1210,27 +1240,45 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- /* Tegra20 specific DMA controller information */
- static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
- 	.nr_channels		= 16,
-+	.channel_reg_size	= 0x20,
- 	.max_dma_count		= 1024UL * 64,
- 	.support_channel_pause	= false,
-+	.support_separate_wcount_reg = false,
- };
- 
- /* Tegra30 specific DMA controller information */
- static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
- 	.nr_channels		= 32,
-+	.channel_reg_size	= 0x20,
- 	.max_dma_count		= 1024UL * 64,
- 	.support_channel_pause	= false,
-+	.support_separate_wcount_reg = false,
- };
- 
- /* Tegra114 specific DMA controller information */
- static const struct tegra_dma_chip_data tegra114_dma_chip_data = {
- 	.nr_channels		= 32,
-+	.channel_reg_size	= 0x20,
- 	.max_dma_count		= 1024UL * 64,
- 	.support_channel_pause	= true,
-+	.support_separate_wcount_reg = false,
-+};
++	sdhci@700b0400 {
++		compatible = "nvidia,tegra124-sdhci";
++		reg = <0x700b0400 0x200>;
++		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_SDMMC3>;
++		resets = <&tegra_car 69>;
++		reset-names = "sdhci";
++		status = "disable";
++	};
 +
-+/* Tegra148 specific DMA controller information */
-+static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
-+	.nr_channels		= 32,
-+	.channel_reg_size	= 0x40,
-+	.max_dma_count		= 1024UL * 64,
-+	.support_channel_pause	= true,
-+	.support_separate_wcount_reg = true,
- };
- 
- 
- static const struct of_device_id tegra_dma_of_match[] = {
- 	{
-+		.compatible = "nvidia,tegra148-apbdma",
-+		.data = &tegra148_dma_chip_data,
-+	}, {
- 		.compatible = "nvidia,tegra114-apbdma",
- 		.data = &tegra114_dma_chip_data,
- 	}, {
-@@ -1318,7 +1366,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 
- 		tdc->chan_base_offset = TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET +
--					i * TEGRA_APBDMA_CHANNEL_REGISTER_SIZE;
-+					i * cdata->channel_reg_size;
- 
- 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
- 		if (!res) {
++	sdhci@700b0600 {
++		compatible = "nvidia,tegra124-sdhci";
++		reg = <0x700b0600 0x200>;
++		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&tegra_car TEGRA124_CLK_SDMMC4>;
++		resets = <&tegra_car 15>;
++		reset-names = "sdhci";
++		status = "disable";
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
 -- 
 1.8.1.5
