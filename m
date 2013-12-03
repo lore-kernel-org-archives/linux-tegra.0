@@ -1,66 +1,37 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC][PATCHv6+++ 01/13] of: introduce
-	of_property_for_earch_phandle_with_args()
-Date: Tue, 03 Dec 2013 13:14:18 -0700
-Message-ID: <529E3B9A.50207@wwwdotorg.org>
-References: <20131128.145818.1345100874304396564.hdoyu@nvidia.com><20131129.134625.431945240074254704.hdoyu@nvidia.com><529B8739.60701@wwwdotorg.org>
-	<20131202.130220.1404999403649937134.hdoyu@nvidia.com>
+Subject: Re: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
+Date: Tue, 03 Dec 2013 13:17:20 -0700
+Message-ID: <529E3C50.8000801@wwwdotorg.org>
+References: <1385990934-20809-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131202.130220.1404999403649937134.hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1385990934-20809-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/02/2013 04:02 AM, Hiroshi Doyu wrote:
-...
-> Iterating over a property containing a list of phandles with arguments
-> is a common operation for device drivers. This patch adds a new
-> of_property_for_each_phandle_with_args() macro to make the iteration
-> simpler.
+On 12/02/2013 06:28 AM, Thierry Reding wrote:
+> Introduce device tree bindings for the MIPI pad calibration controller
+> found on Tegra SoCs. The controller can be used to perform calibration
+> of pads used for DSI and CSI peripherals.
 
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
 
-> +const __be32 *of_phandle_iter_init(const struct device_node *np,
-> +				   const char *list_name,
-> +				   const __be32 **end)
-> +{
-> +	size_t bytes;
-> +	const __be32 *cur;
-> +
-> +	cur = of_get_property(np, list_name, &bytes);
-> +	if (bytes)
-> +		*end = cur + bytes / sizeof(*cur);
-> +
-> +	return cur;
-> +}
+> +Required properties:
+> +- compatible: "nvidia,tegra<chip>-mipi"
+> +- reg: Physical base address and length of the controller's registers.
+> +- clocks: The clock consumed by the controller.
 
-"bytes" doesn't seem like the correct thing to check in that if
-statement. The property might exist but be zero length. Perhaps if (cur)
-would be better, or just initializing *end in all cases (the value won't
-be used if (!cur), so setting *end to a bogus value in that case won't
-matter).
+I'd prefer all our new drivers just use clock-names from the start, so
+we never have to specify that certain clocks must be at a certain index
+in the clocks property. How about:
 
-> +const __be32 *of_phandle_iter_next(const char *cells_name, int cell_count,
-> +				   const __be32 *cur, const __be32 *end,
-> +				   struct of_phandle_args *out_args)
-...
-> +	if (!cur)
-> +		return NULL;
-> +
-> +	if (end - cur <= 0)
-> +		return NULL;
++  - clocks: Must contain an entry for each entry in clock-names.
++    See ../clocks/clock-bindings.txt for details.
++  - clock-names: Must include the following entries:
++    - mipi
 
-Related, don't you want if (cur >= end) there; just compare the pointers
-directly rather than explicitly calculating and testing the difference?
+(or "cal" or whatever makes sense there)
