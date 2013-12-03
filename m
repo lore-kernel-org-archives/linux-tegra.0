@@ -1,158 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST 1/2] clk: tegra: remove legacy reset APIs
-Date: Tue,  3 Dec 2013 13:36:41 -0700
-Message-ID: <1386103002-21939-1-git-send-email-swarren@wwwdotorg.org>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH v4 0/3] regulator: tps6586x: add version detection and voltage tables
+Date: Tue,  3 Dec 2013 23:18:45 +0100
+Message-ID: <cover.1386108712.git.stefan@agner.ch>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This is the 4rd version of this patchset which adds version detection
+for the tps6586x mfd family. Just discovered a missing null reference
+check which did not triggered in my tests, sorry about that.
 
-Now that no code uses the custom Tegra module reset API, we can remove
-its implementation.
+This is required because some regulator versions use different voltage
+tables. The regulator driver now uses the right voltage table according
+to the version.
 
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Peter, Mike,
+While at it, there are a few other incorrect regulator entries in the
+device tree, change them accordingly (this patch is new and grew out
+of a patch with the same name which Lucas Stach posted in July).
 
-This patch is part of a series with strong internal depdendencies. I'm
-looking for an ack so that I can take the entire series through the Tegra
-and arm-soc trees. The series will be part of a stable branch that can be
-merged into other subsystems if needed to avoid/resolve dependencies.
----
- drivers/clk/tegra/clk-periph-gate.c | 22 --------------------
- drivers/clk/tegra/clk-periph.c      | 40 -------------------------------------
- drivers/clk/tegra/clk.h             |  1 -
- include/linux/clk/tegra.h           |  7 -------
- 4 files changed, 70 deletions(-)
+Tested on Colibri T20 V1.1 and V1.2 which makes use of diffent version
+of that regulator.
 
-diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-index f38f33e3c65d..507015314827 100644
---- a/drivers/clk/tegra/clk-periph-gate.c
-+++ b/drivers/clk/tegra/clk-periph-gate.c
-@@ -36,8 +36,6 @@ static DEFINE_SPINLOCK(periph_ref_lock);
- 
- #define read_rst(gate) \
- 	readl_relaxed(gate->clk_base + (gate->regs->rst_reg))
--#define write_rst_set(val, gate) \
--	writel_relaxed(val, gate->clk_base + (gate->regs->rst_set_reg))
- #define write_rst_clr(val, gate) \
- 	writel_relaxed(val, gate->clk_base + (gate->regs->rst_clr_reg))
- 
-@@ -123,26 +121,6 @@ static void clk_periph_disable(struct clk_hw *hw)
- 	spin_unlock_irqrestore(&periph_ref_lock, flags);
- }
- 
--void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert)
--{
--	if (gate->flags & TEGRA_PERIPH_NO_RESET)
--		return;
--
--	if (assert) {
--		/*
--		 * If peripheral is in the APB bus then read the APB bus to
--		 * flush the write operation in apb bus. This will avoid the
--		 * peripheral access after disabling clock
--		 */
--		if (gate->flags & TEGRA_PERIPH_ON_APB)
--			tegra_read_chipid();
--
--		write_rst_set(periph_clk_to_bit(gate), gate);
--	} else {
--		write_rst_clr(periph_clk_to_bit(gate), gate);
--	}
--}
--
- const struct clk_ops tegra_clk_periph_gate_ops = {
- 	.is_enabled = clk_periph_is_enabled,
- 	.enable = clk_periph_enable,
-diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-index b5feccca2f1e..d8ed9f79708b 100644
---- a/drivers/clk/tegra/clk-periph.c
-+++ b/drivers/clk/tegra/clk-periph.c
-@@ -111,46 +111,6 @@ static void clk_periph_disable(struct clk_hw *hw)
- 	gate_ops->disable(gate_hw);
- }
- 
--void tegra_periph_reset_deassert(struct clk *c)
--{
--	struct clk_hw *hw = __clk_get_hw(c);
--	struct tegra_clk_periph *periph = to_clk_periph(hw);
--	struct tegra_clk_periph_gate *gate;
--
--	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
--		gate = to_clk_periph_gate(hw);
--		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
--			WARN_ON(1);
--			return;
--		}
--	} else {
--		gate = &periph->gate;
--	}
--
--	tegra_periph_reset(gate, 0);
--}
--EXPORT_SYMBOL(tegra_periph_reset_deassert);
--
--void tegra_periph_reset_assert(struct clk *c)
--{
--	struct clk_hw *hw = __clk_get_hw(c);
--	struct tegra_clk_periph *periph = to_clk_periph(hw);
--	struct tegra_clk_periph_gate *gate;
--
--	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
--		gate = to_clk_periph_gate(hw);
--		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
--			WARN_ON(1);
--			return;
--		}
--	} else {
--		gate = &periph->gate;
--	}
--
--	tegra_periph_reset(gate, 1);
--}
--EXPORT_SYMBOL(tegra_periph_reset_assert);
--
- const struct clk_ops tegra_clk_periph_ops = {
- 	.get_parent = clk_periph_get_parent,
- 	.set_parent = clk_periph_set_parent,
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 39f24959daf7..57bd0d3090e3 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -392,7 +392,6 @@ struct tegra_clk_periph_gate {
- #define TEGRA_PERIPH_WAR_1005168 BIT(3)
- #define TEGRA_PERIPH_NO_DIV BIT(4)
- 
--void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
- extern const struct clk_ops tegra_clk_periph_gate_ops;
- struct clk *tegra_clk_register_periph_gate(const char *name,
- 		const char *parent_name, u8 gate_flags, void __iomem *clk_base,
-diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-index 23a0ceee831f..3ca9fca827a2 100644
---- a/include/linux/clk/tegra.h
-+++ b/include/linux/clk/tegra.h
-@@ -120,13 +120,6 @@ static inline void tegra_cpu_clock_resume(void)
- }
- #endif
- 
--#ifdef CONFIG_ARCH_TEGRA
--void tegra_periph_reset_deassert(struct clk *c);
--void tegra_periph_reset_assert(struct clk *c);
--#else
--static inline void tegra_periph_reset_deassert(struct clk *c) {}
--static inline void tegra_periph_reset_assert(struct clk *c) {}
--#endif
- void tegra_clocks_apply_init_table(void);
- 
- #endif /* __LINUX_CLK_TEGRA_H_ */
+Changes since v3:
+  - Check if version specific table is necessary
+
+Changes since v2:
+  - Avoid moving devm_kzalloc
+  - Removed reg_ from reg_version
+  - Moved walk through version dependent tables to find_regulator_info,
+    removed the inline definition. This reduces .o size and encapsulates
+    the logic of finding the right regulator into one function. It comes
+    with a slight code duplication, the table search now appears twice.
+
+Changes since v1:
+  - Merged DT and driver change (preserves bisectability)
+  - Use different regulator tables for different regulator version
+    * This also makes the TPS6586X_ANY version needless
+  - Replaced enum with defines
+  - Move version message in a sperate function
+  - Include regulator bugfix, use correct supply voltage
+  - Checked all voltages, fix SM0/SM1 (Core/CPU) and LDO6 voltage (VDAC/VI)
+    in another commit
+  - Rebased on top of v3.13-rc2
+
+
+Stefan Agner (3):
+  mfd: tps6586x: add version detection
+  regulator: tps6586x: add and use correct voltage table
+  ARM: tegra: correct Colibri T20 regulator settings
+
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 34 +++++------
+ drivers/mfd/tps6586x.c                     | 43 ++++++++++++--
+ drivers/regulator/tps6586x-regulator.c     | 93 ++++++++++++++++++++++++------
+ include/linux/mfd/tps6586x.h               |  7 +++
+ 4 files changed, 136 insertions(+), 41 deletions(-)
+
 -- 
-1.8.1.5
+1.8.4.2
