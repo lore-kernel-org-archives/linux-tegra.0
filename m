@@ -1,172 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 01/31] ARM: tegra: add missing clock documentation to
- DT bindings
-Date: Wed, 04 Dec 2013 10:34:17 -0700
-Message-ID: <529F6799.1070609@wwwdotorg.org>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org> <1384548866-13141-2-git-send-email-swarren@wwwdotorg.org> <20131129114900.GN22771@ulmo.nvidia.com> <529B8888.3010801@wwwdotorg.org> <20131202085257.GA17834@ulmo.nvidia.com> <529E2364.6000205@wwwdotorg.org> <20131204084811.GF19943@ulmo.nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for clk-tegra-next
+Date: Wed, 04 Dec 2013 10:38:36 -0800
+Message-ID: <20131204183836.29850.8249@quantum>
+References: <20131128141826.GW26617@tbergstrom-lnx.Nvidia.com>
+ <529E1659.2070103@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131204084811.GF19943-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <529E1659.2070103@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/04/2013 01:48 AM, Thierry Reding wrote:
-> On Tue, Dec 03, 2013 at 11:31:00AM -0700, Stephen Warren wrote:
->> On 12/02/2013 01:52 AM, Thierry Reding wrote:
->>> On Sun, Dec 01, 2013 at 12:05:44PM -0700, Stephen Warren 
->>> wrote:
->>>> On 11/29/2013 04:49 AM, Thierry Reding wrote:
->>>>> On Fri, Nov 15, 2013 at 01:53:56PM -0700, Stephen Warren 
->>>>> wrote: [...]
->>>>>> @@ -60,6 +81,12 @@ of the following host1x client 
->>>>>> modules: - compatible: "nvidia,tegra<chip>-dc" - reg: 
->>>>>> Physical base address and length of the controller's 
->>>>>> registers. - interrupts: The interrupt outputs from the 
->>>>>> controller. +  - clocks : Must contain an entry for each 
->>>>>> entry in clock-names. +    See 
->>>>>> ../clocks/clock-bindings.txt for details. +  - 
->>>>>> clock-names : Must include the following entries: +    -
->>>>>>  disp1 or disp2 (depending on the controller instance)
->>>>> 
->>>>> I'm not sure if this makes sense. The name could be the 
->>>>> same independent of which controller uses it. If it isn't 
->>>>> then the driver would need additional code to find out 
->>>>> which instance it is and construct a dynamic string.
->>>>> 
->>>>> Any objection to just make this entry "disp", or "dc"?
->>>> 
->>>> This patch simply documents the binding that the various 
->>>> drivers already require and/or whatever is already in the DT 
->>>> files if there are any clocks the drivers don't currently 
->>>> use. I did consider fixing up all the current usage to 
->>>> actually be sane, but that would require even more driver 
->>>> changes (in addition to those required for the reset 
->>>> framework patches).
->>> 
->>> Okay, I understand. I still think we should change the usage 
->>> for this particular use-case subsequently. In retrospect the 
->>> entry in clock-names wasn't thought out very well. It seems 
->>> like the reason for using disp1 and disp2 respectively was so 
->>> that it would match the system-wide clock name, rather than
->>> the clock's label within the display controller's context.
->>> 
->>> Just to clarify what I mean, if we stick to the above, then 
->>> we'll need to add code to the driver along the lines of:
->>> 
->>> char clock_name[6];
->>> 
->>> if (regs->start == 0x54200000) index = 1; else index = 2;
->>> 
->>> sprintf(clock_name, "disp%u", index);
->>> 
->>> clk = devm_clk_get(&pdev->dev, clock_name);
->>> 
->>> rather than the much more simple and elegant:
->>> 
->>> clk = devm_clk_get(&pdev->dev, "disp");
->>> 
->>> The whole purpose of the clock consumer ID is to be generic
->>> and as such independent of the specific IP block or instance 
->>> thereof.
->> 
->> I think if the code needs this clock, I'd be tempted to do the 
->> following:
->> 
->> clk = clk_get(dev, "disp1"); if (IS_ERR(clk) && PTR_ERR(clk) != 
->> -EPROBE_DEFERRED) clk = clk_get(dev, "disp2"); if (IS_ERR(clk)) 
->> return PTR_ERR(clk);
->> 
->> That avoids having to hard-code IP block base addresses and 
->> construct clock names at run-time.
+Quoting Stephen Warren (2013-12-03 09:35:21)
+> On 11/28/2013 07:18 AM, Peter De Schrijver wrote:
+> > The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> > 
+> >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+> > 
+> > are available in the git repository at:
+> >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next
 > 
-> I think perhaps we're getting our wires crossed. What I've been 
-> trying to say is that I think the binding should define the first 
-> clock to be named simply "disp".
-> 
-> The reason why I think "disp" is a better choice than "disp1" and 
-> "disp2" is that it merely encodes the purpose of the clock for the
->  display controller, and doesn't contain knowledge about the 
-> particular instance of the display controller. That's analogous to 
-> I2C or SPI nodes where the clock isn't named "i2c1", "i2c2", ...
-> or "spi1", "spi2", ... but simply "i2c" or "spi" respectively.
-> 
-> I know that existing DTS files use "disp1" and "disp2", 
-> respectively, but I think that was a wrong choice back at the time 
-> and therefore I suggest that we change it while we still can (DTS 
-> files are changing in 3.14 anyway because of the reset and DMA 
-> binding updates).
-> 
-> Is that any clearer than what I was saying before?
+> Mike, this series is a dependency for my patch series that converts
+> Tegra drivers to use the standard module reset API rather than a custom
+> API (which is implemented in the clock driver). If you could either
+> merge this pull request, or at least ack that it's OK for me to merge it
+> into the Tegra tree as a dependency, that'd be helpful. Thanks.
 
-No, because I know what you meant before:-)
+Stephen & Peter,
 
-The thing I was missing is that the existing disp1/disp2 naming is
-/only/ something that's in the DT. The driver (and hence the exiting
-as-yet-undocumented ABI) looks up this clock as "index 0" not as "name
-disp1". Hence, we /can/ change the documented name without affecting
-the ABI at all, and not affecting the ABI is something I was trying to
-avoid in this patch.
+Taken into clk-next.
 
-So, how about I fold the following into this patch:
-
-> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> index 42fe3a498e71..ab45c02aa658 100644
-> --- a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> +++ b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> @@ -111,7 +111,7 @@ of the following host1x client modules:
->    - clocks: Must contain an entry for each entry in clock-names.
->      See ../clocks/clock-bindings.txt for details.
->    - clock-names: Must include the following entries:
-> -    - disp1 or disp2 (depending on the controller instance)
-> +    - dc
->        This MUST be the first entry.
->      - parent
->    - resets: Must contain an entry for each entry in reset-names.
-> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-> index 01c20c7dbb51..648c494e927f 100644
-> --- a/arch/arm/boot/dts/tegra20.dtsi
-> +++ b/arch/arm/boot/dts/tegra20.dtsi
-> @@ -89,7 +89,7 @@
->                         interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&tegra_car TEGRA20_CLK_DISP1>,
->                                  <&tegra_car TEGRA20_CLK_PLL_P>;
-> -                       clock-names = "disp1", "parent";
-> +                       clock-names = "dc", "parent";
->                         resets = <&tegra_car 27>;
->                         reset-names = "dc";
->  
-> @@ -104,7 +104,7 @@
->                         interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&tegra_car TEGRA20_CLK_DISP2>,
->                                  <&tegra_car TEGRA20_CLK_PLL_P>;
-> -                       clock-names = "disp2", "parent";
-> +                       clock-names = "dc", "parent";
->                         resets = <&tegra_car 26>;
->                         reset-names = "dc";
->  
-> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-> index 58a3dca24c49..829eb4b5091d 100644
-> --- a/arch/arm/boot/dts/tegra30.dtsi
-> +++ b/arch/arm/boot/dts/tegra30.dtsi
-> @@ -165,7 +165,7 @@
->                         interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&tegra_car TEGRA30_CLK_DISP1>,
->                                  <&tegra_car TEGRA30_CLK_PLL_P>;
-> -                       clock-names = "disp1", "parent";
-> +                       clock-names = "dc", "parent";
->                         resets = <&tegra_car 27>;
->                         reset-names = "dc";
->  
-> @@ -180,7 +180,7 @@
->                         interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
->                         clocks = <&tegra_car TEGRA30_CLK_DISP2>,
->                                  <&tegra_car TEGRA30_CLK_PLL_P>;
-> -                       clock-names = "disp2", "parent";
-> +                       clock-names = "dc", "parent";
->                         resets = <&tegra_car 26>;
->                         reset-names = "dc";
->  
+Thanks!
+Mike
