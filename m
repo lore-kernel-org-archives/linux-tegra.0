@@ -1,78 +1,79 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
-Date: Wed, 4 Dec 2013 10:42:19 +0100
-Message-ID: <20131204094218.GP19943@ulmo.nvidia.com>
-References: <1385990934-20809-1-git-send-email-treding@nvidia.com>
- <529E3C50.8000801@wwwdotorg.org>
+Subject: Re: [PATCH V3] dma: tegra: register as an OF DMA controller
+Date: Wed, 4 Dec 2013 10:45:54 +0100
+Message-ID: <20131204094554.GQ19943@ulmo.nvidia.com>
+References: <1386102787-21839-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rJ8inJ6ig7iY3YX9"
+	protocol="application/pgp-signature"; boundary="GTGEtWEe6jD60dxL"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <529E3C50.8000801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1386102787-21839-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, arnd-r2nGTMty4D4@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---rJ8inJ6ig7iY3YX9
+--GTGEtWEe6jD60dxL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2013 at 01:17:20PM -0700, Stephen Warren wrote:
-> On 12/02/2013 06:28 AM, Thierry Reding wrote:
-> > Introduce device tree bindings for the MIPI pad calibration controller
-> > found on Tegra SoCs. The controller can be used to perform calibration
-> > of pads used for DSI and CSI peripherals.
+On Tue, Dec 03, 2013 at 01:33:07PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> > diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra114-mip=
-i.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
+> Call of_dma_controller_register() so that DMA clients can look up the
+> Tegra DMA controller using standard APIs. This requires the of_xlate()
+> function to save off the DMA slave ID, and for tegra_dma_slave_config()
+> not to over-write this information; once DMA client drivers are converted
+> to dma_request_slave_channel() and DT-based lookups, they won't set this
+> field of struct dma_slave_config anymore.
 >=20
-> > +Required properties:
-> > +- compatible: "nvidia,tegra<chip>-mipi"
-> > +- reg: Physical base address and length of the controller's registers.
-> > +- clocks: The clock consumed by the controller.
+> Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+> Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v3: Rework of_xlate() to use new dma_get_any_slave_channel().
 >=20
-> I'd prefer all our new drivers just use clock-names from the start, so
-> we never have to specify that certain clocks must be at a certain index
-> in the clocks property. How about:
+> v2: Use of_dma_slave_xlate() rather than of_dma_simple_xlate(), as
+>     suggested by Arnd Bergmann.
 >=20
-> +  - clocks: Must contain an entry for each entry in clock-names.
-> +    See ../clocks/clock-bindings.txt for details.
-> +  - clock-names: Must include the following entries:
-> +    - mipi
->=20
-> (or "cal" or whatever makes sense there)
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 39 ++++++++++++++++++++++++++++++++++++-=
+--
+>  1 file changed, 36 insertions(+), 3 deletions(-)
 
-"mipi-cal" sounds like a good name. That's also what the clock is
-called in the TRM.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I'll repost with this fixed up and I'll move this file into the mipi
-subdirectory that I need for the MIPI DSI DT bindings anyway.
-
-Thierry
-
---rJ8inJ6ig7iY3YX9
+--GTGEtWEe6jD60dxL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSnvj6AAoJEN0jrNd/PrOhwhEP/0JyW+4bGZg/1djS4VJn8wjR
-VQbZPa3hvlxVJGwmNY0304Twt/Zh9PoxMW+zWB98GiNahXNRUHaXCWR7R5lsaAnz
-gAh+Wmzvi1jziPoWtck8YwQc+RTND0lUZkup0d6JEPZqfWkYRpQTJCYdr9nCoczV
-/f1NdBg6Y/9GTgH+COTvlr5gJiAtC8N/PvG2Ih2PecIWe/ohkMe/sBw7aWZCvVWK
-0enXX+mTeJoLx0BQ6kQhPmPECxoWmsoeUIJKTsH066z/sFvIeI+eBz/mgzafUH8h
-Swg4Tzjrp6G14oRuPUhRrbPUsRiAEb6Ixa3ioEiGzOvlQza7ZfSBRmYWBgLVGDvZ
-h8agupRakdi7qKyLDYyrgYbOAbsp5Ib1aNQba2/gNBKIVecOTdDXSzImNCs5LaDs
-XLZVj3gl+r9OewpZEpS7qj8E5fsgdIWblHPBxjzSz6JdPPcyKfOLd0V4S2OoFLze
-1jCIVXxnZSZTA4EA+YfnmB3NUqpHPHpOAd0mvfdNyHpm8Ko6zkwawbT/MikVUZa+
-7QfuLcSpryIYe3n0A3JR6EvclHB2FEBqoYLDn7otWpp8ERajv9oRPgGfXbjBXizK
-FSJIGIejSlWY2vI3l0qjMP9i3IZ7oAK8dJmhi0PBrQ9IS+LRUSdKRPX1nBBYwM55
-LsWbuSV/9vEw5330HWby
-=7uqm
+iQIcBAEBAgAGBQJSnvnSAAoJEN0jrNd/PrOhqSEQAK48JH1d8po4yew/bfwCKfOZ
++4IlExllaba9fMcLPOaOWu/I3hz/PfoDUs2C2MgnQqwbzExqW9mtZ5hdepZh60Aq
+6cYzTCrVrxMzf57SxssUddQtQFE6PeLWVY/7/nkGBc3isHeGvmvGoNrbgdSHuLub
+43dCyUMvr7TCoaWg5sHDkhedxdaHzt5M/cfEL8XPGxwFTHO/JYmYrpuEQiLKYX6m
+yJKLGHwR9bg6ozRY835y8yaG5kn1dc1O5XjfAEwxofb81oTGDSE0w+j+r/VjtEPF
+S4QqNb5KuiCKqeowH3iIsH+/YAdD7TmKy8wET3gtNv1UM6v0+Axe3o5uzr/MGKqh
+VmqgyoSqLQkX5nFk5Wvj6auBOO9diSWTLUEtHZ/pE8uSeXRa3JGVZICcYVz4yxwD
+NkNBsQMCIOzRtX8UvNccy2ZC+JtLyNJFgJmf9Hhth35nVX3Dq+o0NrVKc5S+pIyf
+eU73FsY8NgsZcqkiHzHlIM0hPWjTnE57Q2GO++OFZD0kuLj5XKB2AHRyyKMv+9bs
+Ey43Ql70SRxojwv0gzwRNLrxtuyi7/SeZTmSObn4SLksh+A0DiM0V1Ud1PWB9xd/
+VMYDIBA3xee1EJ4HHFhWLBGuFYfd0Spkbt7arz7r2TG4mL+jTbFTM9VJMhMxRhNY
+79HzOgdZShHZ9onBU+lt
+=U4pG
 -----END PGP SIGNATURE-----
 
---rJ8inJ6ig7iY3YX9--
+--GTGEtWEe6jD60dxL--
