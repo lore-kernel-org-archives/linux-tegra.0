@@ -1,49 +1,41 @@
-From: Venu Byravarasu <vbyravarasu@nvidia.com>
-Subject: RE: [PATCH] usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
-Date: Wed, 4 Dec 2013 11:35:52 +0530
-Message-ID: <D958900912E20642BCBC71664EFECE3E6E8C7A8C90@BGMAIL02.nvidia.com>
-References: <1386122564-4246-1-git-send-email-chris.ruehl@gtsys.com.hk>
- <529EA886.8010508@wwwdotorg.org>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: tegra: switch FUSE clock on before usage
+Date: Wed, 4 Dec 2013 16:09:13 +0900
+Message-ID: <CAAVeFuJpHXCANRO=AT5mKGpHzJRpmQoOuX4hjsctEMMAMjgqnQ@mail.gmail.com>
+References: <1385001613-19098-1-git-send-email-acourbot@nvidia.com>
+ <528E6D58.6050503@wwwdotorg.org> <528EB4EE.309@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <529EA886.8010508@wwwdotorg.org>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Chris Ruehl <chris.ruehl@gtsys.com.hk>, "balbi@ti.com" <balbi@ti.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <528EB4EE.309-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 Hi Stephen,
 
-Initially Chris sent this patch to Linux-USB alias alone & there I Acked it.
-Plz check http://marc.info/?l=linux-usb&m=138475663023376&w=1 
+On Fri, Nov 22, 2013 at 10:35 AM, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 11/22/2013 05:30 AM, Stephen Warren wrote:
+>>
+>> On 11/20/2013 07:40 PM, Alexandre Courbot wrote:
+>>>
+>>> FUSE clock is enabled by most bootloaders, but we cannot expect it to be
+>>> on in all contexts (e.g. kexec).
+>>>
+>>> Ensure the FUSE clock is enabled before any of its registers is touched.
+>>> Since FUSE is touched very early during system boot (before the clock
+>>> devices are registered), directly manipulate the clock register bit in
+>>> case the clock device cannot be acquired.
+>>
+>>
+>> This looks reasonable to me. I'll apply it soon after -rc1.
+>
+>
+> Thanks. Be careful as I noticed I misformatted my commit message. The part
+> after the "--" will not be stripped by git am as I intended it to be. I
+> understood what I did wrong and will hopefully not make that mistake again.
+>
+> Sorry for the inconvenience.
 
-Then he resent the patch to linux-kernel alias with my ACK added.
-
-Thanks,
-Venu
-
-
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren@wwwdotorg.org]
-> Sent: Wednesday, December 04, 2013 9:29 AM
-> To: Chris Ruehl; balbi@ti.com
-> Cc: gregkh@linuxfoundation.org; thierry.reding@gmail.com; linux-
-> usb@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Venu Byravarasu
-> Subject: Re: [PATCH] usb: phy-tegra-usb.c: wrong pointer check for remap
-> UTMI
-> 
-> On 12/03/2013 07:02 PM, Chris Ruehl wrote:
-> > usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
-> >
-> > A wrong pointer was used to test the result of devm_ioremap()
-> >
-> > Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-> > Acked-by: Venu Byravarasu <vbyravarasu@nvidia.com>
-> 
-> Out of curiosity, when did that ack happen? I didn't see it. But anyway,
-> 
-> Acked-by: Stephen Warren <swarren@nvidia.com>
+I am not seeing this in your tree, have you applied it somewhere already?
