@@ -1,37 +1,111 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: pull request for clk-tegra-next
-Date: Wed, 04 Dec 2013 10:38:36 -0800
-Message-ID: <20131204183836.29850.8249@quantum>
-References: <20131128141826.GW26617@tbergstrom-lnx.Nvidia.com>
- <529E1659.2070103@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <529E1659.2070103@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2] ARM: tegra: remove legacy clock entries from DT
+Date: Wed,  4 Dec 2013 11:55:08 -0700
+Message-ID: <1386183308-29997-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-12-03 09:35:21)
-> On 11/28/2013 07:18 AM, Peter De Schrijver wrote:
-> > The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> > 
-> >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> > 
-> > are available in the git repository at:
-> >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next
-> 
-> Mike, this series is a dependency for my patch series that converts
-> Tegra drivers to use the standard module reset API rather than a custom
-> API (which is implemented in the clock driver). If you could either
-> merge this pull request, or at least ack that it's OK for me to merge it
-> into the Tegra tree as a dependency, that'd be helpful. Thanks.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Stephen & Peter,
+Now that all Tegra drivers have been converted to use the common reset
+framework, we can remove all the legacy DT clocks/clock-names entries for
+"clocks" that were only used with the old custom Tegra module reset API.
 
-Taken into clk-next.
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: Also update tegra114.dtsi
+---
+ arch/arm/boot/dts/tegra114.dtsi | 17 ++---------------
+ arch/arm/boot/dts/tegra20.dtsi  |  3 +--
+ arch/arm/boot/dts/tegra30.dtsi  | 18 +++---------------
+ 3 files changed, 6 insertions(+), 32 deletions(-)
 
-Thanks!
-Mike
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index b4f2e62909a7..d0da8b7aa4df 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -406,21 +406,8 @@
+ 			<&apbdma 12>, <&apbdma 13>, <&apbdma 14>,
+ 			<&apbdma 29>;
+ 		clocks = <&tegra_car TEGRA114_CLK_D_AUDIO>,
+-			 <&tegra_car TEGRA114_CLK_APBIF>,
+-			 <&tegra_car TEGRA114_CLK_I2S0>,
+-			 <&tegra_car TEGRA114_CLK_I2S1>,
+-			 <&tegra_car TEGRA114_CLK_I2S2>,
+-			 <&tegra_car TEGRA114_CLK_I2S3>,
+-			 <&tegra_car TEGRA114_CLK_I2S4>,
+-			 <&tegra_car TEGRA114_CLK_DAM0>,
+-			 <&tegra_car TEGRA114_CLK_DAM1>,
+-			 <&tegra_car TEGRA114_CLK_DAM2>,
+-			 <&tegra_car TEGRA114_CLK_SPDIF_IN>,
+-			 <&tegra_car TEGRA114_CLK_AMX>,
+-			 <&tegra_car TEGRA114_CLK_ADX>;
+-		clock-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
+-			      "i2s3", "i2s4", "dam0", "dam1", "dam2",
+-			      "spdif_in", "amx", "adx";
++			 <&tegra_car TEGRA114_CLK_APBIF>;
++		clock-names = "d_audio", "apbif";
+ 		resets = <&tegra_car 106>, /* d_audio */
+ 			 <&tegra_car 107>, /* apbif */
+ 			 <&tegra_car 30>,  /* i2s0 */
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 437793067ad3..4d903affa7d0 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -576,9 +576,8 @@
+ 
+ 		clocks = <&tegra_car TEGRA20_CLK_PEX>,
+ 			 <&tegra_car TEGRA20_CLK_AFI>,
+-			 <&tegra_car TEGRA20_CLK_PCIE_XCLK>,
+ 			 <&tegra_car TEGRA20_CLK_PLL_E>;
+-		clock-names = "pex", "afi", "pcie_xclk", "pll_e";
++		clock-names = "pex", "afi", "pll_e";
+ 		resets = <&tegra_car 70>,
+ 		         <&tegra_car 72>,
+ 		         <&tegra_car 74>;
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index bf2602b87a79..cf84edf0f435 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -40,10 +40,9 @@
+ 
+ 		clocks = <&tegra_car TEGRA30_CLK_PCIE>,
+ 			 <&tegra_car TEGRA30_CLK_AFI>,
+-			 <&tegra_car TEGRA30_CLK_PCIEX>,
+ 			 <&tegra_car TEGRA30_CLK_PLL_E>,
+ 			 <&tegra_car TEGRA30_CLK_CML0>;
+-		clock-names = "pex", "afi", "pcie_xclk", "pll_e", "cml";
++		clock-names = "pex", "afi", "pll_e", "cml";
+ 		resets = <&tegra_car 70>,
+ 		         <&tegra_car 72>,
+ 		         <&tegra_car 74>;
+@@ -641,19 +640,8 @@
+ 		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+ 		nvidia,dma-request-selector = <&apbdma 1>;
+ 		clocks = <&tegra_car TEGRA30_CLK_D_AUDIO>,
+-			 <&tegra_car TEGRA30_CLK_APBIF>,
+-			 <&tegra_car TEGRA30_CLK_I2S0>,
+-			 <&tegra_car TEGRA30_CLK_I2S1>,
+-			 <&tegra_car TEGRA30_CLK_I2S2>,
+-			 <&tegra_car TEGRA30_CLK_I2S3>,
+-			 <&tegra_car TEGRA30_CLK_I2S4>,
+-			 <&tegra_car TEGRA30_CLK_DAM0>,
+-			 <&tegra_car TEGRA30_CLK_DAM1>,
+-			 <&tegra_car TEGRA30_CLK_DAM2>,
+-			 <&tegra_car TEGRA30_CLK_SPDIF_IN>;
+-		clock-names = "d_audio", "apbif", "i2s0", "i2s1", "i2s2",
+-			      "i2s3", "i2s4", "dam0", "dam1", "dam2",
+-			      "spdif_in";
++			 <&tegra_car TEGRA30_CLK_APBIF>;
++		clock-names = "d_audio", "apbif";
+ 		resets = <&tegra_car 106>, /* d_audio */
+ 			 <&tegra_car 107>, /* apbif */
+ 			 <&tegra_car 30>,  /* i2s0 */
+-- 
+1.8.1.5
