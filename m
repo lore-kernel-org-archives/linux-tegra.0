@@ -1,96 +1,66 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 18/31] ASoC: tegra: allocate AHUB FIFO during probe() not
- startup()
-Date: Wed, 4 Dec 2013 10:00:13 +0100
-Message-ID: <20131204090012.GJ19943@ulmo.nvidia.com>
-References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
- <1384548866-13141-19-git-send-email-swarren@wwwdotorg.org>
- <20131129144025.GA9712@ulmo.nvidia.com>
- <529E374B.8090903@wwwdotorg.org>
+Subject: Re: [PATCH v3 1/3] mfd: tps6586x: add version detection
+Date: Wed, 4 Dec 2013 10:24:30 +0100
+Message-ID: <20131204092429.GM19943@ulmo.nvidia.com>
+References: <cover.1386100296.git.stefan@agner.ch>
+ <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386100296.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BEa57a89OpeoUzGD"
+	protocol="application/pgp-signature"; boundary="MsEL38XAg4rx1uDx"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <529E374B.8090903-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386100296.git.stefan-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---BEa57a89OpeoUzGD
+--MsEL38XAg4rx1uDx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 03, 2013 at 12:55:55PM -0700, Stephen Warren wrote:
-> On 11/29/2013 07:40 AM, Thierry Reding wrote:
-> > On Fri, Nov 15, 2013 at 01:54:13PM -0700, Stephen Warren wrote:
-> >> Teh Tegra30 I2S driver currently allocates DMA FIFOs from the
-> >> AHUB only when an audio stream starts playback. This is
-> >> theoretically nice for resource sharing, but makes no practical
-> >> difference for any configuration the drivers currently support.
-> >> However, this deferral prevents conversion to the standard DMA DT
-> >> bindings, since conversion requires knowledge of the specific DMA
-> >> channel to be allocated, which in turn depends on which specific
-> >> FIFO was allocated.
-> >>=20
-> >> For this reason, move the FIFO allocate into probe() to allow
-> >> later
-> ...
-> >> +	i2s->playback_dma_data.addr_width =3D
-> >> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->playback_dma_data.maxburst =3D
-> >> 4; +	ret =3D
-> >> tegra30_ahub_allocate_tx_fifo(&i2s->playback_fifo_cif, +
-> >> &i2s->playback_dma_data.addr, +
-> >> &i2s->playback_dma_data.slave_id); +	if (ret) { +
-> >> dev_err(&pdev->dev, "Could not alloc TX FIFO: %d\n", ret); +
-> >> goto err_suspend; +	} +	ret =3D
-> >> tegra30_ahub_set_rx_cif_source(i2s->playback_i2s_cif, +
-> >> i2s->playback_fifo_cif); +	if (ret) { +		dev_err(&pdev->dev,
-> >> "Could not route TX FIFO: %d\n", ret); +		goto err_free_tx_fifo;=20
-> >> +	} + +	i2s->capture_dma_data.addr_width =3D
-> >> DMA_SLAVE_BUSWIDTH_4_BYTES; +	i2s->capture_dma_data.maxburst =3D
-> >> 4; +	ret =3D tegra30_ahub_allocate_rx_fifo(&i2s->capture_fifo_cif,=20
-> >> +					    &i2s->capture_dma_data.addr, +
-> >> &i2s->capture_dma_data.slave_id); +	if (ret) { +
-> >> dev_err(&pdev->dev, "Could not alloc RX FIFO: %d\n", ret); +
-> >> goto err_unroute_tx_fifo; +	} +	ret =3D
-> >> tegra30_ahub_set_rx_cif_source(i2s->capture_fifo_cif, +
-> >> i2s->capture_i2s_cif); +	if (ret) { +		dev_err(&pdev->dev, "Could
-> >> not route TX FIFO: %d\n", ret); +		goto err_free_rx_fifo; +	} +
-> >=20
-> > It could be useful to have these in a separate function so as not
-> > to make the .probe() any larger. It's already pretty big as it is.
+On Tue, Dec 03, 2013 at 08:57:27PM +0100, Stefan Agner wrote:
+> Use the VERSIONCRC to determine the exact device version. According to
+> the datasheet this register can be used as device identifier. The
+> identification is needed since some tps6586x regulators use a different
+> voltage table.
 >=20
-> May I ignore this; I personally prefer larger linear functions; it's
-> much easier to follow the code-flow without having to jump back/forth
-> between a bunch of single-use functions.
+> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+> ---
+> Since the struct tps6586x is inside the c file, I could not easily
+> move the tps6586x_get_version function as inline to the header file.
+>=20
+> Changes since v2:
+>   - Avoid moving devm_kzalloc
+> ---
+>  drivers/mfd/tps6586x.c       | 43 ++++++++++++++++++++++++++++++++++++++=
+-----
+>  include/linux/mfd/tps6586x.h |  7 +++++++
+>  2 files changed, 45 insertions(+), 5 deletions(-)
 
-Alright, I won't lose any sleep over it.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
-
---BEa57a89OpeoUzGD
+--MsEL38XAg4rx1uDx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSnu8cAAoJEN0jrNd/PrOhgk0P/0rmmF8G0gdjOpxUo6zOpoDf
-McI/jVvZbqR74XfAK6VdrJViDvFWhtTolBt3fK8UlFOWVjbPWKS9J5DBzevH1gnL
-tqec1+d2c4LqaykuvgRnzj83FDOcjAfc3LjT246cwV5ge0egNI630JPWCX2xZ6q+
-4f2N5lnTmJdrCbvb88rBzlAyFxrSh6mHxZyNm0fMZpcY1yWgycc5rAt4qkEAurPC
-M9IPDQGq328Snsb+AjwnVFdcmM4KotM5kAvdDb15FKd9TD8Yw2/mHm8WL3dWybaD
-qZAPkd+Tc8Yw4zyymsEludEBt1qkGP8xC4BqluXC6XiThzLNAsuBxrzRVp2Th69p
-ImT2f8PQnmqubugkhlw/4Mg+0ddwANWZqBVhKPUO0C+pvXhfEszJGnixD+6FCHWJ
-SV3uUfX0kUqNigOfiHI7hK8ZbOsjcFvcGy8VtpfZ2tfgvXxAOc3PlreW5146RMEQ
-grFMLrLMrbFeAMT21XnQXe7oYNNX70w1J3PpgmY4zvhfaKzAuHcAR4io7xBgK1u0
-SW7Wvt7xTCN2U7nM4tl4EnH90n2ePsdnhMg4J1v2s/aqnnhPH7vYmIn6BaSMspD2
-5dY2TYB3Itdyu59HJIiDpoVuvNF1oTTpCtENqyXykFC36WluBtM9GTKClP+JwPvY
-NguCAok8QsXBns4oSBIP
-=Bkyi
+iQIcBAEBAgAGBQJSnvTNAAoJEN0jrNd/PrOh/oIP/0XcOss0nYe5k3ns1wrZbitV
+YAD+hhJvhjwZMg7OirwXhbft5jCq5hsRw5E3pQU0pEf9edbgAUGei8fQlg9+mfwu
+i1i9edYSsg5bufkaBc4Iz2yQgMTvJhrs3/B0Z+TDggY5TbYziJMBRz/ES5CD3eL8
+qYaZtfueulqg38AcPLe72HoZ1A80SadZUeaTW8X1O1/8KK2uIgLqpq0HtDvR0wkL
+ttUbkzb1iaukcN+t8/ZyQIDmZLYzJuPzTKl3bZv7+MGG6+QNOwj8tQ6T0A5lzCLY
+9e+/tVccLcZKIlgE5KfTyIXv54xHnwvyd/Lu6Kt46U+GiYLE342nIlvS9o4B26SC
+Kn+DNoccJG6Yad//tJA2Do4feytV4HAVdrnTf6B4q5cDTZ7V4ExMC7Un+p0x92Pb
+uepuE7HSRyExtQnd/iKDz+tQXA4V35oXuxKHJ+Jkg095BZjROe12HXNkZWUPeipi
+Vdl9YwOlkIDHiPBEe+EySqwC0DI5PDHU7ogOWVqUdxlysB+DcEvQMio+lI9MOi8W
+RrJazbHlEq6He+Mip2X5Dy7PDP4xrCxFZ665SO2+WzEtT8J6F6+5sTm0a1SkEI1Q
+93fBbesRv/sw8ChyD5h3v8Yb+Xvpl2pfGiJkdoL0yZLC+cJUQOFXZwA8+RWBXkmb
+9N87gDN076MnvMpI5dXs
+=GX7e
 -----END PGP SIGNATURE-----
 
---BEa57a89OpeoUzGD--
+--MsEL38XAg4rx1uDx--
