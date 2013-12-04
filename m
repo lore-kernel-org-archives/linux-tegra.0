@@ -1,30 +1,75 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra124: add pinctrl driver for NVIDIA's Tegra124
- SoC
-Date: Wed, 04 Dec 2013 12:30:48 -0700
-Message-ID: <529F82E8.3000206@wwwdotorg.org>
-References: <1384191718-16817-1-git-send-email-aghuge@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1384191718-16817-1-git-send-email-aghuge@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Ashwini Ghuge <aghuge@nvidia.com>, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, rob@landley.net, linus.walleij@linaro.org, grant.likely@linaro.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] ASoC: add DT binding document for MAX98090 CODEC
+Date: Wed,  4 Dec 2013 15:19:26 -0700
+Message-ID: <1386195567-24124-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/11/2013 10:41 AM, Ashwini Ghuge wrote:
-> The driver uses the common Tegra pinctrl driver utility functions to
-> implement the majority of the driver. It is based on the similar Tegra114
-> pinctrl
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> +static const struct tegra_function  tegra124_functions[] = {
-...
-> +	FUNCTION(i2c1),
-> +	FUNCTION(i2c2),
-> +	FUNCTION(i2c3),
-> +	FUNCTION(i2c4),
-> +	FUNCTION(i2cpwr),
+This binding mainly serves to document the list of input and output pins
+that may be used in a sound card's audio routing table.
 
-Is that complete? Tegra124 apparently has 6 I2C controllers. Are the
-pins for the new sixth controller (0x7000d100) not affected by the pinmux?
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+This series doesn't depend on anything; it could be applied anywhere in
+the ASoC tree.
+
+ .../devicetree/bindings/sound/max98090.txt         | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/max98090.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/max98090.txt b/Documentation/devicetree/bindings/sound/max98090.txt
+new file mode 100644
+index 000000000000..e4c8b36dcf89
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/max98090.txt
+@@ -0,0 +1,43 @@
++MAX98090 audio CODEC
++
++This device supports I2C only.
++
++Required properties:
++
++- compatible : "maxim,max98090".
++
++- reg : The I2C address of the device.
++
++- interrupts : The CODEC's interrupt output.
++
++Pins on the device (for linking into audio routes):
++
++  * MIC1
++  * MIC2
++  * DMICL
++  * DMICR
++  * IN1
++  * IN2
++  * IN3
++  * IN4
++  * IN5
++  * IN6
++  * IN12
++  * IN34
++  * IN56
++  * HPL
++  * HPR
++  * SPKL
++  * SPKR
++  * RCVL
++  * RCVR
++  * MICBIAS
++
++Example:
++
++audio-codec@10 {
++	compatible = "maxim,max98090";
++	reg = <0x10>;
++	interrupt-parent = <&gpio>;
++	interrupts = <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
++};
+-- 
+1.8.1.5
