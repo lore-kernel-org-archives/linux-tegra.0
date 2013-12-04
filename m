@@ -1,20 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add port FF to GPIO ID's
-Date: Wed, 04 Dec 2013 12:37:25 -0700
-Message-ID: <529F8475.2060507@wwwdotorg.org>
-References: <1384780241-31639-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] pinctrl: tegra124: add pinctrl driver for NVIDIA's Tegra124
+ SoC
+Date: Wed, 04 Dec 2013 12:30:48 -0700
+Message-ID: <529F82E8.3000206@wwwdotorg.org>
+References: <1384191718-16817-1-git-send-email-aghuge@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384780241-31639-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org
-Cc: pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1384191718-16817-1-git-send-email-aghuge@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Ashwini Ghuge <aghuge@nvidia.com>, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, rob@landley.net, linus.walleij@linaro.org, grant.likely@linaro.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/18/2013 06:10 AM, Laxman Dewangan wrote:
-> NVIDIA Tegra124 supports has the new gpio port as GPIO_FF.
-> Add the macro for this port name.
+On 11/11/2013 10:41 AM, Ashwini Ghuge wrote:
+> The driver uses the common Tegra pinctrl driver utility functions to
+> implement the majority of the driver. It is based on the similar Tegra114
+> pinctrl
 
-I've applied this to Tegra's for-3.14/dt branch.
+> +static const struct tegra_function  tegra124_functions[] = {
+...
+> +	FUNCTION(i2c1),
+> +	FUNCTION(i2c2),
+> +	FUNCTION(i2c3),
+> +	FUNCTION(i2c4),
+> +	FUNCTION(i2cpwr),
+
+Is that complete? Tegra124 apparently has 6 I2C controllers. Are the
+pins for the new sixth controller (0x7000d100) not affected by the pinmux?
