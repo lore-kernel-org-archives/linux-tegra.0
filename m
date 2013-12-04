@@ -1,61 +1,50 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
-Date: Wed, 4 Dec 2013 11:02:14 +0100
-Message-ID: <20131204100214.GT19943@ulmo.nvidia.com>
-References: <1386122564-4246-1-git-send-email-chris.ruehl@gtsys.com.hk>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v4 1/3] mfd: tps6586x: add version detection
+Date: Wed, 4 Dec 2013 10:07:28 +0000
+Message-ID: <20131204100728.GA907@lee--X1>
+References: <cover.1386108712.git.stefan@agner.ch>
+ <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386108712.git.stefan@agner.ch>
+ <20131204081021.GB7469@lee--X1>
+ <e2ae7b9602d0c1e11f8e56ced17e9da0@agner.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lzfPtAjrR1KYNfg0"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1386122564-4246-1-git-send-email-chris.ruehl-CR359r9tUDPXPF5Rlphj1Q@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Ruehl <chris.ruehl-CR359r9tUDPXPF5Rlphj1Q@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <e2ae7b9602d0c1e11f8e56ced17e9da0-XLVq0VzYD2Y@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 04 Dec 2013, Stefan Agner wrote:
 
---lzfPtAjrR1KYNfg0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Am 2013-12-04 09:10, schrieb Lee Jones:
+> >> +int tps6586x_get_version(struct device *dev)
+> >> +{
+> >> +	struct tps6586x *tps6586x =3D dev_get_drvdata(dev);
+> >> +
+> >> +	return tps6586x->version;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(tps6586x_get_version);
+> >=20
+> > I thought Mark suggested that this routine was converted to a 'stat=
+ic
+> > inline' and moved into the header? Did you not think this was a goo=
+d
+> > idea?
+> As I pointed out in the comment above, the struct tps6586x is in the =
+C
+> file, so I would need to move that too. That's why I did not made tha=
+t
+> change in the end. What do you think, should I still move (and move t=
+he
+> struct too?)=20
 
-On Wed, Dec 04, 2013 at 10:02:44AM +0800, Chris Ruehl wrote:
-> usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
->=20
-> A wrong pointer was used to test the result of devm_ioremap()
->=20
-> Signed-off-by: Chris Ruehl <chris.ruehl-CR359r9tUDPXPF5Rlphj1Q@public.gmane.org>
-> Acked-by: Venu Byravarasu <vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Why would the struct have to be moved if the function is inline?
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---lzfPtAjrR1KYNfg0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnv2mAAoJEN0jrNd/PrOheQgP/iOJBZYnhUHhM7Vq/KTLMuWB
-qIrTPPIl+gm1a9f8kmuaxLWDVqBDR8ECB9dD2zdjquAoXF4HWj8OJyTLt40bwlke
-PPrvcyHXPHv8Q/A/RZWZvXvt1FnVoQYn0dobc/1ZoViNo7a92SmFCJfaPuQLcA9l
-Q4/SjtizMkVFfVyZ0DJhxQXsPaHrbFuk+s8zTr75KTqjMvt2TGU67oA7DngcrmbV
-nVrnSkKiUIqux3XI8nmoakdt045mM37NOjs17cbHg/R5Gj5DI2rfpHBPSlH4RGz2
-TEhNhDOwhkpQYzO+PjrfYKirIrw79nCYx2i5aLVQF39Epg/mU3GLIff+iWwXCXpc
-D+MASJ/stFxdcDvQwXbh1mzStk7L2p8SipDKSEbjHPjvqlbTCLbPNJel/SRsKuiZ
-jJ/2tsVTULKpFoRAJyAgYs3mhxROEw1jFD1BnPVlhRPPqPbtXaFbTM3Vq37T5bwf
-gq6BHLyL0AyS95Ldrt3+M+hScMphKPv5vvzufYrx+/8OHAv3kDyFHGXSjkWt3vZ+
-CXZdzQsSoPFjkWGEaYwIA21EGnqWxXo9mKRq8GwiJBlS3KdpHBH5jOwXxt+HrC14
-YkzYA2P32opweUrbjNXy1zd7JUSKlFg7l3ICAfX5RU4eaHJkWgYV/TGSJA0Pdyfx
-+nhKm7U45ohXUJz/d2qR
-=wQp6
------END PGP SIGNATURE-----
-
---lzfPtAjrR1KYNfg0--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
