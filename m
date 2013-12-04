@@ -1,172 +1,78 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH REPOST 1/2] clk: tegra: remove legacy reset APIs
-Date: Wed, 4 Dec 2013 11:32:43 +0200
-Message-ID: <20131204093243.GJ26617@tbergstrom-lnx.Nvidia.com>
-References: <1386103002-21939-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: Add MIPI pad calibration DT bindings
+Date: Wed, 4 Dec 2013 10:42:19 +0100
+Message-ID: <20131204094218.GP19943@ulmo.nvidia.com>
+References: <1385990934-20809-1-git-send-email-treding@nvidia.com>
+ <529E3C50.8000801@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rJ8inJ6ig7iY3YX9"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1386103002-21939-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <529E3C50.8000801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 03, 2013 at 09:36:41PM +0100, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Now that no code uses the custom Tegra module reset API, we can remove
-> its implementation.
-> 
-> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--rJ8inJ6ig7iY3YX9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
-> Peter, Mike,
-> 
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
-> ---
->  drivers/clk/tegra/clk-periph-gate.c | 22 --------------------
->  drivers/clk/tegra/clk-periph.c      | 40 -------------------------------------
->  drivers/clk/tegra/clk.h             |  1 -
->  include/linux/clk/tegra.h           |  7 -------
->  4 files changed, 70 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
-> index f38f33e3c65d..507015314827 100644
-> --- a/drivers/clk/tegra/clk-periph-gate.c
-> +++ b/drivers/clk/tegra/clk-periph-gate.c
-> @@ -36,8 +36,6 @@ static DEFINE_SPINLOCK(periph_ref_lock);
->  
->  #define read_rst(gate) \
->  	readl_relaxed(gate->clk_base + (gate->regs->rst_reg))
-> -#define write_rst_set(val, gate) \
-> -	writel_relaxed(val, gate->clk_base + (gate->regs->rst_set_reg))
->  #define write_rst_clr(val, gate) \
->  	writel_relaxed(val, gate->clk_base + (gate->regs->rst_clr_reg))
->  
-> @@ -123,26 +121,6 @@ static void clk_periph_disable(struct clk_hw *hw)
->  	spin_unlock_irqrestore(&periph_ref_lock, flags);
->  }
->  
-> -void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert)
-> -{
-> -	if (gate->flags & TEGRA_PERIPH_NO_RESET)
-> -		return;
-> -
-> -	if (assert) {
-> -		/*
-> -		 * If peripheral is in the APB bus then read the APB bus to
-> -		 * flush the write operation in apb bus. This will avoid the
-> -		 * peripheral access after disabling clock
-> -		 */
-> -		if (gate->flags & TEGRA_PERIPH_ON_APB)
-> -			tegra_read_chipid();
-> -
-> -		write_rst_set(periph_clk_to_bit(gate), gate);
-> -	} else {
-> -		write_rst_clr(periph_clk_to_bit(gate), gate);
-> -	}
-> -}
-> -
->  const struct clk_ops tegra_clk_periph_gate_ops = {
->  	.is_enabled = clk_periph_is_enabled,
->  	.enable = clk_periph_enable,
-> diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
-> index b5feccca2f1e..d8ed9f79708b 100644
-> --- a/drivers/clk/tegra/clk-periph.c
-> +++ b/drivers/clk/tegra/clk-periph.c
-> @@ -111,46 +111,6 @@ static void clk_periph_disable(struct clk_hw *hw)
->  	gate_ops->disable(gate_hw);
->  }
->  
-> -void tegra_periph_reset_deassert(struct clk *c)
-> -{
-> -	struct clk_hw *hw = __clk_get_hw(c);
-> -	struct tegra_clk_periph *periph = to_clk_periph(hw);
-> -	struct tegra_clk_periph_gate *gate;
-> -
-> -	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
-> -		gate = to_clk_periph_gate(hw);
-> -		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
-> -			WARN_ON(1);
-> -			return;
-> -		}
-> -	} else {
-> -		gate = &periph->gate;
-> -	}
-> -
-> -	tegra_periph_reset(gate, 0);
-> -}
-> -EXPORT_SYMBOL(tegra_periph_reset_deassert);
-> -
-> -void tegra_periph_reset_assert(struct clk *c)
-> -{
-> -	struct clk_hw *hw = __clk_get_hw(c);
-> -	struct tegra_clk_periph *periph = to_clk_periph(hw);
-> -	struct tegra_clk_periph_gate *gate;
-> -
-> -	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
-> -		gate = to_clk_periph_gate(hw);
-> -		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
-> -			WARN_ON(1);
-> -			return;
-> -		}
-> -	} else {
-> -		gate = &periph->gate;
-> -	}
-> -
-> -	tegra_periph_reset(gate, 1);
-> -}
-> -EXPORT_SYMBOL(tegra_periph_reset_assert);
-> -
->  const struct clk_ops tegra_clk_periph_ops = {
->  	.get_parent = clk_periph_get_parent,
->  	.set_parent = clk_periph_set_parent,
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 39f24959daf7..57bd0d3090e3 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -392,7 +392,6 @@ struct tegra_clk_periph_gate {
->  #define TEGRA_PERIPH_WAR_1005168 BIT(3)
->  #define TEGRA_PERIPH_NO_DIV BIT(4)
->  
-> -void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
->  extern const struct clk_ops tegra_clk_periph_gate_ops;
->  struct clk *tegra_clk_register_periph_gate(const char *name,
->  		const char *parent_name, u8 gate_flags, void __iomem *clk_base,
-> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
-> index 23a0ceee831f..3ca9fca827a2 100644
-> --- a/include/linux/clk/tegra.h
-> +++ b/include/linux/clk/tegra.h
-> @@ -120,13 +120,6 @@ static inline void tegra_cpu_clock_resume(void)
->  }
->  #endif
->  
-> -#ifdef CONFIG_ARCH_TEGRA
-> -void tegra_periph_reset_deassert(struct clk *c);
-> -void tegra_periph_reset_assert(struct clk *c);
-> -#else
-> -static inline void tegra_periph_reset_deassert(struct clk *c) {}
-> -static inline void tegra_periph_reset_assert(struct clk *c) {}
-> -#endif
->  void tegra_clocks_apply_init_table(void);
->  
->  #endif /* __LINUX_CLK_TEGRA_H_ */
-> -- 
-> 1.8.1.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, Dec 03, 2013 at 01:17:20PM -0700, Stephen Warren wrote:
+> On 12/02/2013 06:28 AM, Thierry Reding wrote:
+> > Introduce device tree bindings for the MIPI pad calibration controller
+> > found on Tegra SoCs. The controller can be used to perform calibration
+> > of pads used for DSI and CSI peripherals.
+>=20
+> > diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra114-mip=
+i.txt b/Documentation/devicetree/bindings/misc/nvidia,tegra114-mipi.txt
+>=20
+> > +Required properties:
+> > +- compatible: "nvidia,tegra<chip>-mipi"
+> > +- reg: Physical base address and length of the controller's registers.
+> > +- clocks: The clock consumed by the controller.
+>=20
+> I'd prefer all our new drivers just use clock-names from the start, so
+> we never have to specify that certain clocks must be at a certain index
+> in the clocks property. How about:
+>=20
+> +  - clocks: Must contain an entry for each entry in clock-names.
+> +    See ../clocks/clock-bindings.txt for details.
+> +  - clock-names: Must include the following entries:
+> +    - mipi
+>=20
+> (or "cal" or whatever makes sense there)
+
+"mipi-cal" sounds like a good name. That's also what the clock is
+called in the TRM.
+
+I'll repost with this fixed up and I'll move this file into the mipi
+subdirectory that I need for the MIPI DSI DT bindings anyway.
+
+Thierry
+
+--rJ8inJ6ig7iY3YX9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSnvj6AAoJEN0jrNd/PrOhwhEP/0JyW+4bGZg/1djS4VJn8wjR
+VQbZPa3hvlxVJGwmNY0304Twt/Zh9PoxMW+zWB98GiNahXNRUHaXCWR7R5lsaAnz
+gAh+Wmzvi1jziPoWtck8YwQc+RTND0lUZkup0d6JEPZqfWkYRpQTJCYdr9nCoczV
+/f1NdBg6Y/9GTgH+COTvlr5gJiAtC8N/PvG2Ih2PecIWe/ohkMe/sBw7aWZCvVWK
+0enXX+mTeJoLx0BQ6kQhPmPECxoWmsoeUIJKTsH066z/sFvIeI+eBz/mgzafUH8h
+Swg4Tzjrp6G14oRuPUhRrbPUsRiAEb6Ixa3ioEiGzOvlQza7ZfSBRmYWBgLVGDvZ
+h8agupRakdi7qKyLDYyrgYbOAbsp5Ib1aNQba2/gNBKIVecOTdDXSzImNCs5LaDs
+XLZVj3gl+r9OewpZEpS7qj8E5fsgdIWblHPBxjzSz6JdPPcyKfOLd0V4S2OoFLze
+1jCIVXxnZSZTA4EA+YfnmB3NUqpHPHpOAd0mvfdNyHpm8Ko6zkwawbT/MikVUZa+
+7QfuLcSpryIYe3n0A3JR6EvclHB2FEBqoYLDn7otWpp8ERajv9oRPgGfXbjBXizK
+FSJIGIejSlWY2vI3l0qjMP9i3IZ7oAK8dJmhi0PBrQ9IS+LRUSdKRPX1nBBYwM55
+LsWbuSV/9vEw5330HWby
+=7uqm
+-----END PGP SIGNATURE-----
+
+--rJ8inJ6ig7iY3YX9--
