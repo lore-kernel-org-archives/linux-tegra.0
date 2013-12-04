@@ -1,65 +1,47 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
-Date: Wed, 04 Dec 2013 18:18:52 +0100
-Message-ID: <529F63FC.7010409@metafoo.de>
-References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org> <201311292208.26215.arnd@arndb.de> <529E1A49.6050808@wwwdotorg.org> <201312040222.03604.arnd@arndb.de> <529F61D3.3030104@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3] dma: tegra: register as an OF DMA controller
+Date: Wed, 04 Dec 2013 10:27:02 -0700
+Message-ID: <529F65E6.9050606@wwwdotorg.org>
+References: <1386102787-21839-1-git-send-email-swarren@wwwdotorg.org> <201312040234.09708.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <529F61D3.3030104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <201312040234.09708.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/04/2013 06:09 PM, Stephen Warren wrote:
-> On 12/03/2013 06:22 PM, Arnd Bergmann wrote:
->> On Tuesday 03 December 2013, Stephen Warren wrote:
->>> On 11/29/2013 02:08 PM, Arnd Bergmann wrote:
+On 12/03/2013 06:34 PM, Arnd Bergmann wrote:
+> On Tuesday 03 December 2013, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>
->>>> Can you try coming up with a different method to achieve the same
->>>> where you use a different helper from the driver specific xlate
->>>> function that does not require a callback?
->>>>
->>>> I think dma_get_slave_channel is great if you have one channel per
->>>> request line and you can directly look up the channel from the
->>>> DT data, but it is not good if you have pick a channel and work
->>>> around the race.
->>>
->>> Hmm. Can you take a look at "[PATCH V4] dma: add
->>> dma_get_any_slave_channel(), for use in of_xlate()" at the link below.
->>> It still implements this via xlate, but I don't see any benefit in
->>> making drivers use a different API to request slave channels based on
->>> how the DMA controller works.
->>>
->>> http://lkml.org/lkml/2013/11/26/408
->>
->> Yes, I think that is good. I can think of a few variations of that
->> that I would prefer slightly over your code, but it's essentially
->> what I had in mind and I'm fine with that version getting merged
->> as well. Here are my ideas for further improvements, I'll leave
->> it up to you and the dmaengine maintainers to decide what to do
->> about them:
->>
->> * Rather than calling private_candidate(), open-code the part you
->>   need and remove the pointless dma_cap_mask comparison:
->>
->> 	err = -EBUSY;
->>         list_for_each_entry(chan, &dev->channels, device_node) {
->>                 if (!chan->client_count) {
->> 			err = dma_chan_get(chan);
->> 			break;
->> 		}
->> 	}
+>> Call of_dma_controller_register() so that DMA clients can look up the
+>> Tegra DMA controller using standard APIs. This requires the of_xlate()
+>> function to save off the DMA slave ID, and for tegra_dma_slave_config()
+>> not to over-write this information; once DMA client drivers are converted
+>> to dma_request_slave_channel() and DT-based lookups, they won't set this
+>> field of struct dma_slave_config anymore.
+...
+> Also, one (long-running, not just for this driver) comment I have is
+> about this snippet:
 > 
-> Lars-Peter had specifically suggested to call private_candidate(). Lars,
-> what do you think about open-coding this? Arnd's suggestion would skip
-> the DMA_PRIVATE checking that private_candidate() does, and I'm not sure
-> what the implications of that would be.
+>> @@ -340,6 +342,8 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
+>>         }
+>>  
+>>         memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
+>> +       if (!tdc->slave_id)
+>> +               tdc->slave_id = sconfig->slave_id;
+>>         tdc->config_init = true;
+>>         return 0;
+>>  }
+> 
+> We really need to be better at having a common set of rules regarding what
+> it actually means to set the slave_id through dma_slave_config(). IMHO
+> we should just treat it as a bug for any dmaengine driver that is configured
+> through DT, or we should get rid of this entirely.
 
-It's not like this is a hot path or that the mask checking is expensive. I'd
-keep it as it is for the sake of not having the same code twice. And the
-DMA_PRIVATE check should probably also stay.
-
-- Lars
+By the end of this series (for the Tegra driver) I can remove those "+"
+lines you quoted above; the slave ID will only come from DT through
+of_xlate, and any slave ID in the slave_config will simply be ignored.
