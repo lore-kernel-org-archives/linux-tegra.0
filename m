@@ -1,32 +1,49 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: convert device tree file of Dalmore to
- use pinctrl defines
-Date: Wed, 4 Dec 2013 11:21:33 +0530
-Message-ID: <529EC2E5.5050909@nvidia.com>
-References: <1385992502-12771-1-git-send-email-ldewangan@nvidia.com> <1385992502-12771-2-git-send-email-ldewangan@nvidia.com> <529E3A6E.1050003@wwwdotorg.org>
+From: Venu Byravarasu <vbyravarasu@nvidia.com>
+Subject: RE: [PATCH] usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
+Date: Wed, 4 Dec 2013 11:35:52 +0530
+Message-ID: <D958900912E20642BCBC71664EFECE3E6E8C7A8C90@BGMAIL02.nvidia.com>
+References: <1386122564-4246-1-git-send-email-chris.ruehl@gtsys.com.hk>
+ <529EA886.8010508@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <529E3A6E.1050003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <529EA886.8010508@wwwdotorg.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Chris Ruehl <chris.ruehl@gtsys.com.hk>, "balbi@ti.com" <balbi@ti.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 04 December 2013 01:39 AM, Stephen Warren wrote:
-> On 12/02/2013 06:55 AM, Laxman Dewangan wrote:
->> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Patch description?
->
-> BTW, did you compile all the Tegra DT files before and after this
-> change, and make sure that there's zero difference between them (i.e.
-> they're identical byte-for-byte when compiled)? I don't feel like
-> manually double-checking this entire patch...
+Hi Stephen,
 
-I just made changes for the Dalmore only. Not touched Tegra30 and 
-Tegra20_ platform dts.
+Initially Chris sent this patch to Linux-USB alias alone & there I Acked it.
+Plz check http://marc.info/?l=linux-usb&m=138475663023376&w=1 
 
-For Dalmore, I compare the binary before and after this change as well 
-dts generated back from dtb using dtc.
-It is same.
+Then he resent the patch to linux-kernel alias with my ACK added.
+
+Thanks,
+Venu
+
+
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren@wwwdotorg.org]
+> Sent: Wednesday, December 04, 2013 9:29 AM
+> To: Chris Ruehl; balbi@ti.com
+> Cc: gregkh@linuxfoundation.org; thierry.reding@gmail.com; linux-
+> usb@vger.kernel.org; linux-tegra@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Venu Byravarasu
+> Subject: Re: [PATCH] usb: phy-tegra-usb.c: wrong pointer check for remap
+> UTMI
+> 
+> On 12/03/2013 07:02 PM, Chris Ruehl wrote:
+> > usb: phy-tegra-usb.c: wrong pointer check for remap UTMI
+> >
+> > A wrong pointer was used to test the result of devm_ioremap()
+> >
+> > Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+> > Acked-by: Venu Byravarasu <vbyravarasu@nvidia.com>
+> 
+> Out of curiosity, when did that ack happen? I didn't see it. But anyway,
+> 
+> Acked-by: Stephen Warren <swarren@nvidia.com>
