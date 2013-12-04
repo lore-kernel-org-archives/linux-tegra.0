@@ -1,66 +1,214 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/3] mfd: tps6586x: add version detection
-Date: Wed, 4 Dec 2013 10:24:30 +0100
-Message-ID: <20131204092429.GM19943@ulmo.nvidia.com>
-References: <cover.1386100296.git.stefan@agner.ch>
- <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386100296.git.stefan@agner.ch>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] clk: tegra: implement a reset driver
+Date: Wed, 4 Dec 2013 11:31:26 +0200
+Message-ID: <20131204093126.GI26617@tbergstrom-lnx.Nvidia.com>
+References: <1386102529-20123-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MsEL38XAg4rx1uDx"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386100296.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+In-Reply-To: <1386102529-20123-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Dec 03, 2013 at 09:28:49PM +0100, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The Tegra CAR module implements both a clock and reset controller. So
+> far, the driver exposes the clock feature via the common clock API and
+> the reset feature using a custom API. This patch adds an implementation
+> of the common reset framework API (include/linux/reset*.h). The legacy
+> reset implementation will be removed once all drivers have been
+> converted.
+> 
+> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---MsEL38XAg4rx1uDx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Tue, Dec 03, 2013 at 08:57:27PM +0100, Stefan Agner wrote:
-> Use the VERSIONCRC to determine the exact device version. According to
-> the datasheet this register can be used as device identifier. The
-> identification is needed since some tps6586x regulators use a different
-> voltage table.
->=20
-> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 > ---
-> Since the struct tps6586x is inside the c file, I could not easily
-> move the tps6586x_get_version function as inline to the header file.
->=20
-> Changes since v2:
->   - Avoid moving devm_kzalloc
+> v2: Move the added lines in the file, to avoid the need for function
+>     prototypes.
+> 
+> Peter, Mike,
+> 
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
 > ---
->  drivers/mfd/tps6586x.c       | 43 ++++++++++++++++++++++++++++++++++++++=
------
->  include/linux/mfd/tps6586x.h |  7 +++++++
->  2 files changed, 45 insertions(+), 5 deletions(-)
-
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---MsEL38XAg4rx1uDx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnvTNAAoJEN0jrNd/PrOh/oIP/0XcOss0nYe5k3ns1wrZbitV
-YAD+hhJvhjwZMg7OirwXhbft5jCq5hsRw5E3pQU0pEf9edbgAUGei8fQlg9+mfwu
-i1i9edYSsg5bufkaBc4Iz2yQgMTvJhrs3/B0Z+TDggY5TbYziJMBRz/ES5CD3eL8
-qYaZtfueulqg38AcPLe72HoZ1A80SadZUeaTW8X1O1/8KK2uIgLqpq0HtDvR0wkL
-ttUbkzb1iaukcN+t8/ZyQIDmZLYzJuPzTKl3bZv7+MGG6+QNOwj8tQ6T0A5lzCLY
-9e+/tVccLcZKIlgE5KfTyIXv54xHnwvyd/Lu6Kt46U+GiYLE342nIlvS9o4B26SC
-Kn+DNoccJG6Yad//tJA2Do4feytV4HAVdrnTf6B4q5cDTZ7V4ExMC7Un+p0x92Pb
-uepuE7HSRyExtQnd/iKDz+tQXA4V35oXuxKHJ+Jkg095BZjROe12HXNkZWUPeipi
-Vdl9YwOlkIDHiPBEe+EySqwC0DI5PDHU7ogOWVqUdxlysB+DcEvQMio+lI9MOi8W
-RrJazbHlEq6He+Mip2X5Dy7PDP4xrCxFZ665SO2+WzEtT8J6F6+5sTm0a1SkEI1Q
-93fBbesRv/sw8ChyD5h3v8Yb+Xvpl2pfGiJkdoL0yZLC+cJUQOFXZwA8+RWBXkmb
-9N87gDN076MnvMpI5dXs
-=GX7e
------END PGP SIGNATURE-----
-
---MsEL38XAg4rx1uDx--
+>  drivers/clk/tegra/clk-tegra114.c |  3 ++-
+>  drivers/clk/tegra/clk-tegra124.c |  2 +-
+>  drivers/clk/tegra/clk-tegra20.c  |  3 ++-
+>  drivers/clk/tegra/clk-tegra30.c  |  3 ++-
+>  drivers/clk/tegra/clk.c          | 50 +++++++++++++++++++++++++++++++++++++++-
+>  drivers/clk/tegra/clk.h          |  2 +-
+>  6 files changed, 57 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index 70bfefebcca5..84d9003ae816 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -1457,7 +1457,8 @@ static void __init tegra114_clock_init(struct device_node *np)
+>  		return;
+>  	}
+>  
+> -	clks = tegra_clk_init(TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_PERIPH_BANKS);
+> +	clks = tegra_clk_init(clk_base, TEGRA114_CLK_CLK_MAX,
+> +				TEGRA114_CLK_PERIPH_BANKS);
+>  	if (!clks)
+>  		return;
+>  
+> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
+> index 623fbf35ee08..6f8b1d99e5b9 100644
+> --- a/drivers/clk/tegra/clk-tegra124.c
+> +++ b/drivers/clk/tegra/clk-tegra124.c
+> @@ -1402,7 +1402,7 @@ static void __init tegra124_clock_init(struct device_node *np)
+>  		return;
+>  	}
+>  
+> -	clks = tegra_clk_init(TEGRA124_CLK_CLK_MAX, 6);
+> +	clks = tegra_clk_init(clk_base, TEGRA124_CLK_CLK_MAX, 6);
+>  	if (!clks)
+>  		return;
+>  
+> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+> index be5bdbab78a6..d438a089354c 100644
+> --- a/drivers/clk/tegra/clk-tegra20.c
+> +++ b/drivers/clk/tegra/clk-tegra20.c
+> @@ -1108,7 +1108,8 @@ static void __init tegra20_clock_init(struct device_node *np)
+>  		BUG();
+>  	}
+>  
+> -	clks = tegra_clk_init(TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_PERIPH_BANKS);
+> +	clks = tegra_clk_init(clk_base, TEGRA20_CLK_CLK_MAX,
+> +				TEGRA20_CLK_PERIPH_BANKS);
+>  	if (!clks)
+>  		return;
+>  
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+> index 92c46f1fb5d1..49465529bb09 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -1429,7 +1429,8 @@ static void __init tegra30_clock_init(struct device_node *np)
+>  		BUG();
+>  	}
+>  
+> -	clks = tegra_clk_init(TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_PERIPH_BANKS);
+> +	clks = tegra_clk_init(clk_base, TEGRA30_CLK_CLK_MAX,
+> +				TEGRA30_CLK_PERIPH_BANKS);
+>  	if (!clks)
+>  		return;
+>  
+> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+> index a12a5f5107ec..c0a7d7723510 100644
+> --- a/drivers/clk/tegra/clk.c
+> +++ b/drivers/clk/tegra/clk.c
+> @@ -18,6 +18,8 @@
+>  #include <linux/clk-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/clk/tegra.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/tegra-soc.h>
+>  
+>  #include "clk.h"
+>  
+> @@ -121,6 +123,35 @@ static struct tegra_clk_periph_regs periph_regs[] = {
+>  	},
+>  };
+>  
+> +static void __iomem *clk_base;
+> +
+> +static int tegra_clk_rst_assert(struct reset_controller_dev *rcdev,
+> +		unsigned long id)
+> +{
+> +	/*
+> +	 * If peripheral is on the APB bus then we must read the APB bus to
+> +	 * flush the write operation in apb bus. This will avoid peripheral
+> +	 * access after disabling clock. Since the reset driver has no
+> +	 * knowledge of which reset IDs represent which devices, simply do
+> +	 * this all the time.
+> +	 */
+> +	tegra_read_chipid();
+> +
+> +	writel_relaxed(BIT(id % 32),
+> +			clk_base + periph_regs[id / 32].rst_set_reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_clk_rst_deassert(struct reset_controller_dev *rcdev,
+> +		unsigned long id)
+> +{
+> +	writel_relaxed(BIT(id % 32),
+> +			clk_base + periph_regs[id / 32].rst_clr_reg);
+> +
+> +	return 0;
+> +}
+> +
+>  struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+>  {
+>  	int reg_bank = clkid / 32;
+> @@ -133,8 +164,10 @@ struct tegra_clk_periph_regs *get_reg_bank(int clkid)
+>  	}
+>  }
+>  
+> -struct clk ** __init tegra_clk_init(int num, int banks)
+> +struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
+>  {
+> +	clk_base = regs;
+> +
+>  	if (WARN_ON(banks > ARRAY_SIZE(periph_regs)))
+>  		return NULL;
+>  
+> @@ -203,6 +236,17 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
+>  	}
+>  }
+>  
+> +static struct reset_control_ops rst_ops = {
+> +	.assert = tegra_clk_rst_assert,
+> +	.deassert = tegra_clk_rst_deassert,
+> +};
+> +
+> +static struct reset_controller_dev rst_ctlr = {
+> +	.ops = &rst_ops,
+> +	.owner = THIS_MODULE,
+> +	.of_reset_n_cells = 1,
+> +};
+> +
+>  void __init tegra_add_of_provider(struct device_node *np)
+>  {
+>  	int i;
+> @@ -220,6 +264,10 @@ void __init tegra_add_of_provider(struct device_node *np)
+>  	clk_data.clks = clks;
+>  	clk_data.clk_num = clk_num;
+>  	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> +
+> +	rst_ctlr.of_node = np;
+> +	rst_ctlr.nr_resets = clk_num * 32;
+> +	reset_controller_register(&rst_ctlr);
+>  }
+>  
+>  void __init tegra_register_devclks(struct tegra_devclk *dev_clks, int num)
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 7f110acfe2a1..39f24959daf7 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -594,7 +594,7 @@ void tegra_init_dup_clks(struct tegra_clk_duplicate *dup_list,
+>  		struct clk *clks[], int clk_max);
+>  
+>  struct tegra_clk_periph_regs *get_reg_bank(int clkid);
+> -struct clk **tegra_clk_init(int num, int periph_banks);
+> +struct clk **tegra_clk_init(void __iomem *clk_base, int num, int periph_banks);
+>  
+>  struct clk **tegra_lookup_dt_id(int clk_id, struct tegra_clk *tegra_clk);
+>  
+> -- 
+> 1.8.1.5
+> 
