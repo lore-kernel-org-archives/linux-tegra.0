@@ -1,101 +1,172 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/3] regulator: tps6586x: add and use correct voltage
- table
-Date: Wed, 4 Dec 2013 10:31:36 +0100
-Message-ID: <20131204093136.GN19943@ulmo.nvidia.com>
-References: <cover.1386100296.git.stefan@agner.ch>
- <c70dc80179c8cfaa18c2665c342ce1bcd827d923.1386100296.git.stefan@agner.ch>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH REPOST 1/2] clk: tegra: remove legacy reset APIs
+Date: Wed, 4 Dec 2013 11:32:43 +0200
+Message-ID: <20131204093243.GJ26617@tbergstrom-lnx.Nvidia.com>
+References: <1386103002-21939-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kK1uqZGE6pgsGNyR"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <c70dc80179c8cfaa18c2665c342ce1bcd827d923.1386100296.git.stefan-XLVq0VzYD2Y@public.gmane.org>
+In-Reply-To: <1386103002-21939-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Dec 03, 2013 at 09:36:41PM +0100, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Now that no code uses the custom Tegra module reset API, we can remove
+> its implementation.
+> 
+> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---kK1uqZGE6pgsGNyR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Dec 03, 2013 at 08:57:28PM +0100, Stefan Agner wrote:
-[...]
-> Changes since v2:
->   - Removed reg_ from reg_version
->   - Moved walk through version dependent tables to find_regulator_info,
->     removed the inline definition. This reduces .o size and encapsulates
->     the logic of finding the right regulator into one function. It comes
->     with a slight code duplication, the table search now appears twice.
-
-Well, the table was searched twice in the original patch, too, so this
-variant isn't any worse, really.
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 > ---
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi |  4 +-
->  drivers/regulator/tps6586x-regulator.c     | 91 +++++++++++++++++++++++-=
-------
->  2 files changed, 74 insertions(+), 21 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/d=
-ts/tegra20-colibri-512.dtsi
-[...]
-> -static inline struct tps6586x_regulator *find_regulator_info(int id)
-> +static struct tps6586x_regulator *find_regulator_info(int id, int versio=
-n)
->  {
->  	struct tps6586x_regulator *ri;
-> +	struct tps6586x_regulator *table =3D NULL;
-> +	int num;
->  	int i;
-> =20
-> +	switch (version) {
-> +	case TPS658623:
-> +		table =3D tps658623_regulator;
-> +		num =3D ARRAY_SIZE(tps658623_regulator);
-> +		break;
-> +	case TPS658643:
-> +		table =3D tps658643_regulator;
-> +		num =3D ARRAY_SIZE(tps658643_regulator);
-> +		break;
-> +	}
-> +
-
-I think you still need to check for table to be valid here. Depending on
-the version it might still be NULL.
-
-> +	/* Search version specific table first */
-> +	for (i =3D 0; i < num; i++) {
-> +		ri =3D &table[i];
-> +		if (ri->desc.id =3D=3D id)
-> +			return ri;
-> +	}
-
-So this would need to be wrapped in an "if (table) { }" block.
-
-
---kK1uqZGE6pgsGNyR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnvZ3AAoJEN0jrNd/PrOhF/kP/jO0dNw7Rf6gY7qLGqHyZvND
-CiZawp7NqwVvtMta5A4pWeK4jCXLe7xz1MZhL88OASMaKWqE+ixgB1qSC6e3rvEK
-3THKBedtybRQUulhUtg4o9FRYKc8IMMNL9cVA1qv7PSt1uuS+Wf6oqArSF/JvSTf
-UF9+xeXGdR8ux/fjEy1J28jDqaJrxoUUaoaTB7czIxbWU1E7NmNdsJ3KNBnHOHX6
-PIzBN5GlAC3978wqJejSTdmxCfZXMSaqjl/NqzPzM6WHWvScC7hlsYEemJoCYbpv
-ybYlKLHc/VRsJMavtSMma+AxVr3buXmzkJDr3Ulba62U3dCSJ1mWw+ICLT9r3ciR
-eCTajh7hH/YL0o3v+aazeFg3WJb3pxNE9/9Cgq0mMDbj1+j2NUxJsc+n/7Lq81CC
-FGJNhqCaz0CwOkYLhKlomxhJUSUNSzEflsMiwErX9EVI6fq0doRrSpRFf63EPHVw
-5yYKlC/Xit7blZt+OKpenS2rrf6S9O91D9mTYnjUi4xBADywl6x4OIXDYsBKSo7b
-WDgTH1AhHZojCfC4xdWFfSLgc59riYqTrrWCKVotyRJPwQll0O73U/Ltbm2qT1Kv
-UpDcsC71shJwX9NZvbdSYOX+Jcwkb/Z90cPiJxaSS4XnAxPowRatLyeh5uQFZ3b5
-lgg4kmeb5sUXFbKOCt+4
-=YUF3
------END PGP SIGNATURE-----
-
---kK1uqZGE6pgsGNyR--
+> Peter, Mike,
+> 
+> This patch is part of a series with strong internal depdendencies. I'm
+> looking for an ack so that I can take the entire series through the Tegra
+> and arm-soc trees. The series will be part of a stable branch that can be
+> merged into other subsystems if needed to avoid/resolve dependencies.
+> ---
+>  drivers/clk/tegra/clk-periph-gate.c | 22 --------------------
+>  drivers/clk/tegra/clk-periph.c      | 40 -------------------------------------
+>  drivers/clk/tegra/clk.h             |  1 -
+>  include/linux/clk/tegra.h           |  7 -------
+>  4 files changed, 70 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-periph-gate.c b/drivers/clk/tegra/clk-periph-gate.c
+> index f38f33e3c65d..507015314827 100644
+> --- a/drivers/clk/tegra/clk-periph-gate.c
+> +++ b/drivers/clk/tegra/clk-periph-gate.c
+> @@ -36,8 +36,6 @@ static DEFINE_SPINLOCK(periph_ref_lock);
+>  
+>  #define read_rst(gate) \
+>  	readl_relaxed(gate->clk_base + (gate->regs->rst_reg))
+> -#define write_rst_set(val, gate) \
+> -	writel_relaxed(val, gate->clk_base + (gate->regs->rst_set_reg))
+>  #define write_rst_clr(val, gate) \
+>  	writel_relaxed(val, gate->clk_base + (gate->regs->rst_clr_reg))
+>  
+> @@ -123,26 +121,6 @@ static void clk_periph_disable(struct clk_hw *hw)
+>  	spin_unlock_irqrestore(&periph_ref_lock, flags);
+>  }
+>  
+> -void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert)
+> -{
+> -	if (gate->flags & TEGRA_PERIPH_NO_RESET)
+> -		return;
+> -
+> -	if (assert) {
+> -		/*
+> -		 * If peripheral is in the APB bus then read the APB bus to
+> -		 * flush the write operation in apb bus. This will avoid the
+> -		 * peripheral access after disabling clock
+> -		 */
+> -		if (gate->flags & TEGRA_PERIPH_ON_APB)
+> -			tegra_read_chipid();
+> -
+> -		write_rst_set(periph_clk_to_bit(gate), gate);
+> -	} else {
+> -		write_rst_clr(periph_clk_to_bit(gate), gate);
+> -	}
+> -}
+> -
+>  const struct clk_ops tegra_clk_periph_gate_ops = {
+>  	.is_enabled = clk_periph_is_enabled,
+>  	.enable = clk_periph_enable,
+> diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
+> index b5feccca2f1e..d8ed9f79708b 100644
+> --- a/drivers/clk/tegra/clk-periph.c
+> +++ b/drivers/clk/tegra/clk-periph.c
+> @@ -111,46 +111,6 @@ static void clk_periph_disable(struct clk_hw *hw)
+>  	gate_ops->disable(gate_hw);
+>  }
+>  
+> -void tegra_periph_reset_deassert(struct clk *c)
+> -{
+> -	struct clk_hw *hw = __clk_get_hw(c);
+> -	struct tegra_clk_periph *periph = to_clk_periph(hw);
+> -	struct tegra_clk_periph_gate *gate;
+> -
+> -	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
+> -		gate = to_clk_periph_gate(hw);
+> -		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
+> -			WARN_ON(1);
+> -			return;
+> -		}
+> -	} else {
+> -		gate = &periph->gate;
+> -	}
+> -
+> -	tegra_periph_reset(gate, 0);
+> -}
+> -EXPORT_SYMBOL(tegra_periph_reset_deassert);
+> -
+> -void tegra_periph_reset_assert(struct clk *c)
+> -{
+> -	struct clk_hw *hw = __clk_get_hw(c);
+> -	struct tegra_clk_periph *periph = to_clk_periph(hw);
+> -	struct tegra_clk_periph_gate *gate;
+> -
+> -	if (periph->magic != TEGRA_CLK_PERIPH_MAGIC) {
+> -		gate = to_clk_periph_gate(hw);
+> -		if (gate->magic != TEGRA_CLK_PERIPH_GATE_MAGIC) {
+> -			WARN_ON(1);
+> -			return;
+> -		}
+> -	} else {
+> -		gate = &periph->gate;
+> -	}
+> -
+> -	tegra_periph_reset(gate, 1);
+> -}
+> -EXPORT_SYMBOL(tegra_periph_reset_assert);
+> -
+>  const struct clk_ops tegra_clk_periph_ops = {
+>  	.get_parent = clk_periph_get_parent,
+>  	.set_parent = clk_periph_set_parent,
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index 39f24959daf7..57bd0d3090e3 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -392,7 +392,6 @@ struct tegra_clk_periph_gate {
+>  #define TEGRA_PERIPH_WAR_1005168 BIT(3)
+>  #define TEGRA_PERIPH_NO_DIV BIT(4)
+>  
+> -void tegra_periph_reset(struct tegra_clk_periph_gate *gate, bool assert);
+>  extern const struct clk_ops tegra_clk_periph_gate_ops;
+>  struct clk *tegra_clk_register_periph_gate(const char *name,
+>  		const char *parent_name, u8 gate_flags, void __iomem *clk_base,
+> diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+> index 23a0ceee831f..3ca9fca827a2 100644
+> --- a/include/linux/clk/tegra.h
+> +++ b/include/linux/clk/tegra.h
+> @@ -120,13 +120,6 @@ static inline void tegra_cpu_clock_resume(void)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_ARCH_TEGRA
+> -void tegra_periph_reset_deassert(struct clk *c);
+> -void tegra_periph_reset_assert(struct clk *c);
+> -#else
+> -static inline void tegra_periph_reset_deassert(struct clk *c) {}
+> -static inline void tegra_periph_reset_assert(struct clk *c) {}
+> -#endif
+>  void tegra_clocks_apply_init_table(void);
+>  
+>  #endif /* __LINUX_CLK_TEGRA_H_ */
+> -- 
+> 1.8.1.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
