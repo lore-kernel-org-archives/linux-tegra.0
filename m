@@ -1,57 +1,32 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Stefan Agner <stefan@agner.ch>
 Subject: Re: [PATCH v4 2/3] regulator: tps6586x: add and use correct voltage
  table
-Date: Wed, 4 Dec 2013 12:14:24 +0000
-Message-ID: <20131204121424.GN29268@sirena.org.uk>
+Date: Wed, 04 Dec 2013 15:17:59 +0100
+Message-ID: <0983a0fa016faa5674834afad4472413@agner.ch>
 References: <cover.1386108712.git.stefan@agner.ch>
  <127fe07e18665f93aa8d7c03e03164f1a049ddb6.1386108712.git.stefan@agner.ch>
+ <20131204121424.GN29268@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NJSRbAqOy4NeGDns"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <127fe07e18665f93aa8d7c03e03164f1a049ddb6.1386108712.git.stefan-XLVq0VzYD2Y@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131204121424.GN29268@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, dev@lynxeye.de, lee.jones@linaro.org, lgirdwood@gmail.com, kai.poggensee@avionic-design.de, sameo@linux.intel.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra-owner@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Am 2013-12-04 13:14, schrieb Mark Brown:
+> On Tue, Dec 03, 2013 at 11:18:47PM +0100, Stefan Agner wrote:
+>> Depending on the regulator version, the voltage table might be
+>> different. Use version specific regulator tables in order to select
+>> correct voltage table. For the following regulator versions different
+>> voltage tables are now used:
+> 
+> Acked-by: Mark Brown <broonie@linaro.org>
+> 
+> I won't apply since I think that patch 3 needs to go along with this,
+> unless people decide the regulator tree is the easiest way to merge.
 
---NJSRbAqOy4NeGDns
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Dec 03, 2013 at 11:18:47PM +0100, Stefan Agner wrote:
-> Depending on the regulator version, the voltage table might be
-> different. Use version specific regulator tables in order to select
-> correct voltage table. For the following regulator versions different
-> voltage tables are now used:
-
-Acked-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-I won't apply since I think that patch 3 needs to go along with this,
-unless people decide the regulator tree is the easiest way to merge.
-
---NJSRbAqOy4NeGDns
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSnxycAAoJELSic+t+oim96Y0P/iwCvQWW+CdW94bDsOQ/cw66
-bancl5w5GKURJkQNdqCf2H/8T1Vkok3ILXomdTgqn0oTCli2TbJ66SAZZfK5ITIa
-Fk/FHriIlEpnSqfHm6k/mq7cMQLFcOgGHFlt7oLAr+tpVh04f1Wtuibnh726w/0g
-KRIlUaj013+ytDVvRjw179fxXyCFGoE0iepiOK8+7OFhmxphb5QMB5xgmtRI+y1C
-Z4gEdU9fzcd738JjTyY+SKGB44CMFTvfvAXIHEB+ms4de7oZtQfEmRBUBK0/+t3T
-sbbWnwJZPU7BsvpXJ23u+LahbtvimY38VO5BrawwJr5MHNLAhT306Ct8WgpD4Lhv
-UOlOJ5+Yv0cHg1fnRhZ5Wyvpb+pEotskOj29K8Ve8AZRFavoU5J2CHdsmPazK77I
-zkzQK0CMeVOX6rMT3OooNcL6XLlxqPUaUXkhkUkp+6+FDPF5GHpIz/RBQDRUroVM
-bnqqXdrZNTjgdRk5zzQUVQU/MB9dT+SnNpQ3UOFl34GxN3/cyXd7QsVoPV9IZOAp
-OY9eIzX6+RImaY3+o3LohBJvcwmvC/i4G6nicAj9okoDbnJNY8mCq6Xx4Laxfsg1
-CgM9OtbS+gXiwGGzEheWMj//XdHkq74RRXicLlwQ6e93HcJBXEtt9NNX8bIM5UhX
-zlqJwS3oIU9Jh5hfDSRE
-=Xss5
------END PGP SIGNATURE-----
-
---NJSRbAqOy4NeGDns--
+I merged the dependent DT changes into that patch, so from my side,
+patch 3 don't needs to go along with this...
