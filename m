@@ -1,60 +1,35 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] ASoC: tegra: add tegra+MAX98090 machine driver
-Date: Thu, 5 Dec 2013 00:37:43 +0000
-Message-ID: <20131205003743.GJ29268@sirena.org.uk>
-References: <1386195567-24124-1-git-send-email-swarren@wwwdotorg.org>
- <1386195567-24124-2-git-send-email-swarren@wwwdotorg.org>
- <20131205000059.GG29268@sirena.org.uk>
- <529FC3B7.5050102@wwwdotorg.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V3] dma: tegra: register as an OF DMA controller
+Date: Thu, 5 Dec 2013 03:46:08 +0100
+Message-ID: <201312050346.09225.arnd@arndb.de>
+References: <1386102787-21839-1-git-send-email-swarren@wwwdotorg.org> <201312040234.09708.arnd@arndb.de> <529F65E6.9050606@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="D+WCZLadiceW8Bs8"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <529FC3B7.5050102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <529F65E6.9050606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wednesday 04 December 2013, Stephen Warren wrote:
+> > 
+> > We really need to be better at having a common set of rules regarding what
+> > it actually means to set the slave_id through dma_slave_config(). IMHO
+> > we should just treat it as a bug for any dmaengine driver that is configured
+> > through DT, or we should get rid of this entirely.
+> 
+> By the end of this series (for the Tegra driver) I can remove those "+"
+> lines you quoted above; the slave ID will only come from DT through
+> of_xlate, and any slave ID in the slave_config will simply be ignored.
 
---D+WCZLadiceW8Bs8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ok, that's certainly a step in the right direction. However, as I said
+my comment wasn't really directed at you and I think it's more important
+to have a clear policy that we can enforce across all dmaengine drivers.
 
-On Wed, Dec 04, 2013 at 05:07:19PM -0700, Stephen Warren wrote:
+It's really up to Vinod and Dan to decide how it should be handled
+in general.
 
-> Patch 1 is:
-
-> http://mailman.alsa-project.org/pipermail/alsa-devel/2013-December/069789.html
-
-> [PATCH 1/2] ASoC: add DT binding document for MAX98090 CODEC
-
-> It seems to have hit the mailing list archive, but I can resend if you
-> need.
-
-It arrived in my inbox now, must've been gummed up somewhere.
-
---D+WCZLadiceW8Bs8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSn8rUAAoJELSic+t+oim9We8P/if7yMZm73Th7uc0CvUhT2kt
-cUWn2BOQ3J59qgHYQIYuTC98A8G6stxQuOLjrk4v/8kirzXzgH9d2k6hQ4vJSGYj
-/7JwKQUti3EL3Pn5OkfAwlrCgYQ+Suj+FmSm/32yUq8u2aviUNjFkF5AiBMx2mpH
-edJ/qczh7MZJP1jhLlG3Yzbi28UCCncn+HPaFQbhce+09YGNKCqW44uSPK41Iv3/
-fGcFRlfrAhkf2exR8DqM6bdOLBOt/HCx+UHFrg0rdL2PgiUcLJs2ylPeBsKYE0Hr
-d6FgC/tS4UDCD2piCG8cOCwCGjr1thOKuWTkdGuWTck5d9WLM2BOd65oeirWHZdh
-du66RWaBO8I0dY0Gdfj+MTPzxPEuS0OhDQhbFXLK/n9d4BxdS1cwck3634wf1E5O
-jY6OOUAuNkGs2Cp4F4JEluAeDzftZcvlRu6HMgUFjwqXolzegMFZDSrcs4YiM/GY
-CNJvkPyOFXHKz/67Y4RfhCBI2g8J3g77tGOzMx1lBn9xvgXGBcHx836GYT/lT707
-+OY7WmEAmhsQdBu9kFLEm08itfSh6EhdwYfRzXazAssZ/WA9aLJcweY0wyOcPi0l
-caXe9Xn4Y+yuLRMmHi4YMRSS4Ox8/TsOPLVk9C7sf3f4LxN9+sYvELJ1DyFugp0i
-UNuniU4UleJYv46hdc+7
-=WZdj
------END PGP SIGNATURE-----
-
---D+WCZLadiceW8Bs8--
+	Arnd
