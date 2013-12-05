@@ -1,34 +1,65 @@
 From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v4 3/3] ARM: tegra: correct Colibri T20 regulator settings
-Date: Thu, 05 Dec 2013 18:33:20 +0100
-Message-ID: <e2fe1d7b546e9f81fdd1ad225676e76e@agner.ch>
+Subject: Re: [PATCH v4 1/3] mfd: tps6586x: add version detection
+Date: Thu, 05 Dec 2013 18:43:38 +0100
+Message-ID: <b2a1db4167d319d355dd2a3a844553bc@agner.ch>
 References: <cover.1386108712.git.stefan@agner.ch>
- <fc7440a2f4bf9ab95e47a911c0e0b3b6a2250356.1386108712.git.stefan@agner.ch>
- <52A0B40B.7040903@wwwdotorg.org>
+ <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386108712.git.stefan@agner.ch>
+ <52A0B2AF.60803@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52A0B40B.7040903@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <52A0B2AF.60803@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: thierry.reding@gmail.com, dev@lynxeye.de, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, kai.poggensee@avionic-design.de, sameo@linux.intel.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: dev@lynxeye.de, sameo@linux.intel.com, kai.poggensee@avionic-design.de, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, broonie@kernel.org, thierry.reding@gmail.com, linux-tegra@vger.kernel.org, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2013-12-05 18:12, schrieb Stephen Warren:
-> On 12/03/2013 03:18 PM, Stefan Agner wrote:
->> Set the parent of the regulators LDO2 to LDO9 according to the
->> schematic. Set the base voltage to 3.3V, there is only 3.3V on the
->> module itself.
+Am 2013-12-05 18:06, schrieb Stephen Warren:
+<snip>
+>> @@ -493,13 +527,12 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
+>>  		return -EIO;
+>>  	}
 >>
->> Set the Core and CPU voltage to the specified voltages of 1.2V and
->> 1.0V respectivly.
->>
->> LDO6 should deliver 2.85V. The attached peripherals were not in
->> use so far.
+>> -	dev_info(&client->dev, "VERSIONCRC is %02x\n", ret);
+>> -
+>>  	tps6586x = devm_kzalloc(&client->dev, sizeof(*tps6586x), GFP_KERNEL);
+>> -	if (tps6586x == NULL) {
+>> -		dev_err(&client->dev, "memory for tps6586x alloc failed\n");
+>> +	if (!tps6586x)
+>>  		return -ENOMEM;
+>> -	}
+>> +
+>> +	tps6586x->version = ret;
 > 
-> Does this depend on patch 1/3 or 2/3, or can I apply it to the Tegra
-> tree which doesn't include those patches?
+> I have to say, I dislike this version of the patch. Separating the
+> reading of the version register from the assignment to tps6586x->version
+> doesn't make any sense, especially given that the version value is
+> stored in a variable named "ret"; that name isn't remotely related to
+> what's stored there. What if someone comes along later and adds more
+> code that assigns to ret between where it's repurposed for the version
+> value and where it's assigned to tps6586x->version? It'd be extremely
+> difficult for a patch reviewer to spot that given the limited context in
+> a diff, and quite non-obvious to the person changing the code too..
 
-This patch is independent from 1/3 and 2/3, so you can apply it to the
-Tegra tree. The relevant DT change for 2/3 is included in 2/3...
+The value comes from the return value of i2c_smbus_read_byte_data. If
+the value is below zero its an EIO error. 
+
+I could add a variable "version", but for me it felt strange because we
+check if version is below zero. This feels like its a wrong version
+rather than a transmit error. So I would prefer ret over version. But I
+agree, when one just reads the patch, its not obvious what exactly
+happens.
+
+In v2, I moved the i2c_smbus_read_byte_data function call after the
+allocation, so it was more obvious for the reader. But then, as Thierry
+Reding pointed out, not moving it is an optimization: In case reading
+fails, we don't allocate memory first.
