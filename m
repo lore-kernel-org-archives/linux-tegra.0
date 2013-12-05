@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 1/4] ARM: tegra: Add header file for pinctrl constants
-Date: Thu, 5 Dec 2013 16:14:06 +0530
-Message-ID: <1386240249-30786-2-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V3 4/4] ARM: tegra: convert dts files of Tegra30 platforms to use pinctrl defines
+Date: Thu, 5 Dec 2013 16:14:09 +0530
+Message-ID: <1386240249-30786-5-git-send-email-ldewangan@nvidia.com>
 References: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,74 +12,217 @@ To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This new header file defines pincontrol constants for Tegra to
-use from Tegra's DTS file for pincontrol properties option.
+Use Tegra pinconrol dt-binding macro to set the values of different pinmux
+properties of Tegra30 platforms.
 
 Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes from V1:
-- Get rid of lots of macro and converge it to TEGRA_PIN_ENABLE/DISABLE.
-- Change macro name for PULL UP/DOWN/NONE.
+- New patch on this series.
 
-Changes from V2:
-- Convert TEGRA -> Tegra.
-- Add comment on ENABLE/DSIABLE and remove from pulls.
+ arch/arm/boot/dts/tegra30-beaver.dts  |   34 ++++++++++++++--------------
+ arch/arm/boot/dts/tegra30-cardhu.dtsi |   40 ++++++++++++++++----------------
+ arch/arm/boot/dts/tegra30.dtsi        |    1 +
+ 3 files changed, 38 insertions(+), 37 deletions(-)
 
- include/dt-bindings/pinctrl/pinctrl-tegra.h |   45 +++++++++++++++++++++++++++
- 1 files changed, 45 insertions(+), 0 deletions(-)
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra.h
-
-diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra.h b/include/dt-bindings/pinctrl/pinctrl-tegra.h
-new file mode 100644
-index 0000000..ebafa49
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/pinctrl-tegra.h
-@@ -0,0 +1,45 @@
-+/*
-+ * This header provides constants for Tegra pinctrl bindings.
-+ *
-+ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Author: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#ifndef _DT_BINDINGS_PINCTRL_TEGRA_H
-+#define _DT_BINDINGS_PINCTRL_TEGRA_H
-+
-+/*
-+ * Enable/disable for diffeent dt properties. This is applicable for
-+ * properties nvidia,enable-input, nvidia,tristate, nvidia,open-drain,
-+ * nvidia,lock, nvidia,rcv-sel, nvidia,high-speed-mode, nvidia,schmitt.
-+ */
-+#define TEGRA_PIN_DISABLE				0
-+#define TEGRA_PIN_ENABLE				1
-+
-+#define TEGRA_PIN_PULL_NONE				0
-+#define TEGRA_PIN_PULL_DOWN				1
-+#define TEGRA_PIN_PULL_UP				2
-+
-+/* Low power mode driver */
-+#define TEGRA_PIN_LP_DRIVE_DIV_8			0
-+#define TEGRA_PIN_LP_DRIVE_DIV_4			1
-+#define TEGRA_PIN_LP_DRIVE_DIV_2			2
-+#define TEGRA_PIN_LP_DRIVE_DIV_1			3
-+
-+/* Rising/Falling slew rate */
-+#define TEGRA_PIN_SLEW_RATE_FASTEST			0
-+#define TEGRA_PIN_SLEW_RATE_FAST			1
-+#define TEGRA_PIN_SLEW_RATE_SLOW			2
-+#define TEGRA_PIN_SLEW_RATE_SLOWEST			3
-+
-+#endif
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 08cad69..48b89a4 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -52,8 +52,8 @@
+ 			sdmmc1_clk_pz0 {
+ 				nvidia,pins = "sdmmc1_clk_pz0";
+ 				nvidia,function = "sdmmc1";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc1_cmd_pz1 {
+ 				nvidia,pins =	"sdmmc1_cmd_pz1",
+@@ -62,14 +62,14 @@
+ 						"sdmmc1_dat2_py5",
+ 						"sdmmc1_dat3_py4";
+ 				nvidia,function = "sdmmc1";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_clk_pa6 {
+ 				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_cmd_pa7 {
+ 				nvidia,pins =	"sdmmc3_cmd_pa7",
+@@ -78,15 +78,15 @@
+ 						"sdmmc3_dat2_pb5",
+ 						"sdmmc3_dat3_pb4";
+ 				nvidia,function = "sdmmc3";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc4_clk_pcc4 {
+ 				nvidia,pins =	"sdmmc4_clk_pcc4",
+ 						"sdmmc4_rst_n_pcc3";
+ 				nvidia,function = "sdmmc4";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc4_dat0_paa0 {
+ 				nvidia,pins =	"sdmmc4_dat0_paa0",
+@@ -98,8 +98,8 @@
+ 						"sdmmc4_dat6_paa6",
+ 						"sdmmc4_dat7_paa7";
+ 				nvidia,function = "sdmmc4";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			dap2_fs_pa2 {
+ 				nvidia,pins =	"dap2_fs_pa2",
+@@ -107,18 +107,18 @@
+ 						"dap2_din_pa4",
+ 						"dap2_dout_pa5";
+ 				nvidia,function = "i2s1";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			pex_l1_prsnt_n_pdd4 {
+ 				nvidia,pins =	"pex_l1_prsnt_n_pdd4",
+ 						"pex_l1_clkreq_n_pdd6";
+-				nvidia,pull = <2>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 			};
+ 			sdio3 {
+ 				nvidia,pins = "drive_sdio3";
+-				nvidia,high-speed-mode = <0>;
+-				nvidia,schmitt = <0>;
++				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+ 				nvidia,pull-down-strength = <46>;
+ 				nvidia,pull-up-strength = <42>;
+ 				nvidia,slew-rate-rising = <1>;
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 5ea7dfa..afe5c6a 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -59,8 +59,8 @@
+ 			sdmmc1_clk_pz0 {
+ 				nvidia,pins = "sdmmc1_clk_pz0";
+ 				nvidia,function = "sdmmc1";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc1_cmd_pz1 {
+ 				nvidia,pins =	"sdmmc1_cmd_pz1",
+@@ -69,14 +69,14 @@
+ 						"sdmmc1_dat2_py5",
+ 						"sdmmc1_dat3_py4";
+ 				nvidia,function = "sdmmc1";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_clk_pa6 {
+ 				nvidia,pins = "sdmmc3_clk_pa6";
+ 				nvidia,function = "sdmmc3";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc3_cmd_pa7 {
+ 				nvidia,pins =	"sdmmc3_cmd_pa7",
+@@ -85,15 +85,15 @@
+ 						"sdmmc3_dat2_pb5",
+ 						"sdmmc3_dat3_pb4";
+ 				nvidia,function = "sdmmc3";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc4_clk_pcc4 {
+ 				nvidia,pins =	"sdmmc4_clk_pcc4",
+ 						"sdmmc4_rst_n_pcc3";
+ 				nvidia,function = "sdmmc4";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdmmc4_dat0_paa0 {
+ 				nvidia,pins =	"sdmmc4_dat0_paa0",
+@@ -105,8 +105,8 @@
+ 						"sdmmc4_dat6_paa6",
+ 						"sdmmc4_dat7_paa7";
+ 				nvidia,function = "sdmmc4";
+-				nvidia,pull = <2>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			dap2_fs_pa2 {
+ 				nvidia,pins =	"dap2_fs_pa2",
+@@ -114,17 +114,17 @@
+ 						"dap2_din_pa4",
+ 						"dap2_dout_pa5";
+ 				nvidia,function = "i2s1";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			sdio3 {
+ 				nvidia,pins = "drive_sdio3";
+-				nvidia,high-speed-mode = <0>;
+-				nvidia,schmitt = <0>;
++				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
+ 				nvidia,pull-down-strength = <46>;
+ 				nvidia,pull-up-strength = <42>;
+-				nvidia,slew-rate-rising = <1>;
+-				nvidia,slew-rate-falling = <1>;
++				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FAST>;
++				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FAST>;
+ 			};
+ 			uart3_txd_pw6 {
+ 				nvidia,pins =	"uart3_txd_pw6",
+@@ -132,8 +132,8 @@
+ 						"uart3_rts_n_pc0",
+ 						"uart3_rxd_pw7";
+ 				nvidia,function = "uartc";
+-				nvidia,pull = <0>;
+-				nvidia,tristate = <0>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 2bd55cf..9a9980f 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -1,5 +1,6 @@
+ #include <dt-bindings/clock/tegra30-car.h>
+ #include <dt-bindings/gpio/tegra-gpio.h>
++#include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+ #include "skeleton.dtsi"
 -- 
 1.7.1.1
