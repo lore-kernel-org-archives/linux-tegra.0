@@ -1,53 +1,83 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] ASoC: add DT binding document for MAX98090 CODEC
-Date: Thu, 5 Dec 2013 13:33:03 +0000
-Message-ID: <20131205133303.GT29268@sirena.org.uk>
-References: <1386195567-24124-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V3] dma: add channel request API that supports deferred
+ probe
+Date: Thu, 05 Dec 2013 09:59:16 -0700
+Message-ID: <52A0B0E4.7000204@wwwdotorg.org>
+References: <1385416039-3170-1-git-send-email-swarren@wwwdotorg.org>	<1385474368.1871.6.camel@smile>	<5294CE5C.1090901@wwwdotorg.org> <CAPcyv4hG_ttwACNBWrSdGC8EZpKM=v+Q5opUdLj+R9UUhJd=hA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kjwfQs4m3ZHLWJuw"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1386195567-24124-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAPcyv4hG_ttwACNBWrSdGC8EZpKM=v+Q5opUdLj+R9UUhJd=hA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Koul, Vinod" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: "Shevchenko, Andriy" <andriy.shevchenko-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/26/2013 09:44 AM, Dan Williams wrote:
+> On Tue, Nov 26, 2013 at 8:37 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 11/26/2013 06:59 AM, Shevchenko, Andriy wrote:
+>>> On Mon, 2013-11-25 at 14:47 -0700, Stephen Warren wrote:
+>>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> dma_request_slave_channel() simply returns NULL whenever DMA channel
+>>>> lookup fails. Lookup could fail for two distinct reasons:
+>>>>
+>>>> a) No DMA specification exists for the channel name.
+>>>>    This includes situations where no DMA specifications exist at all, or
+>>>>    other general lookup problems.
+>>>>
+>>>> b) A DMA specification does exist, yet the driver for that channel is not
+>>>>    yet registered.
+>>>>
+>>>> Case (b) should trigger deferred probe in client drivers. However, since
+>>>> they have no way to differentiate the two situations, it cannot.
+>>>>
+>>>> Implement new function dma_request_slave_channel_or_err(), which performs
+>>>> identically to dma_request_slave_channel(), except that it returns an
+>>>> error-pointer rather than NULL, which allows callers to detect when
+>>>> deferred probe should occur.
+>>>>
+>>>> Eventually, all drivers should be converted to this new API, the old API
+>>>> removed, and the new API renamed to the more desirable name. This patch
+>>>> doesn't convert the existing API and all drivers in one go, since some
+>>>> drivers call dma_request_slave_channel() then dma_request_channel() if
+>>>> that fails. That would require either modifying dma_request_channel() in
+>>>> the same way, or adding extra error-handling code to all affected
+>>>> drivers, and there are close to 100 drivers using the other API, rather
+>>>> than just the 15-20 or so that use dma_request_slave_channel(), which
+>>>> might be tenable in a single patch.
+>>>>
+>>>> acpi_dma_request_slave_chan_by_name() doesn't currently implement
+>>>> deferred probe. It should, but this will be addressed later.
+...
+>> OK, I've fixed that up locally. I assume it's not worth a repost just
+>> for that change, although I will repost if the DMA maintainers want to
+>> create the topic branches rather than me, but there's been no word on
+>> that yet.
+> 
+> That might be best and Vinod should be back.  Vinod do you want to
+> queue this one up to a topic branch so that the arm-soc tree can pull
+> it?
 
---kjwfQs4m3ZHLWJuw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Vinod, V4 of this patch addressed Dan's final minor comments on this
+patch. Does it look OK to you? If you could apply it to a topic
+branch[1] soon, that would be extremely helpful; I'm waiting for this
+patch (and also "dma: add dma_get_any_slave_channel(), for use in
+of_xlate()") in order to apply a lot of others.
 
-On Wed, Dec 04, 2013 at 03:19:26PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> This binding mainly serves to document the list of input and output pins
-> that may be used in a sound card's audio routing table.
+[1] see notes I posted in the patch:
 
-Applied, thanks.
+This patch is a dependency for:
+* A series that reworks many of the Tegra drivers.
+* A series that enhances ASoC's dmaengine code to support deferred
+  probe.
 
---kjwfQs4m3ZHLWJuw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+As such, it needs to go into a topic branch on its own, based directly
+on 3.13-rc1. If the DMA maintainers ack the patches I'm happy to create
+this topic branch myself and send a pull request to the DMA tree. Or the
+patches can be applied to a topic branch by the DMA maintainers and I
+will merge their topic branch into the Tegra rework branch that I
+mentioned.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSoICLAAoJELSic+t+oim9oWMP/1U6TaFA80Sxq13HkdgjjW6l
-iEn4PBMxssefcdKpz2XIsC1UTn/1um0bStosLDETSllpLRIzWJgvl7nIntJqLWwp
-HPY0dlgNM61J2aHWmpbekx9j4fOOR56I7aog1cpccC9PwzjCNRUhVums9aETiJr/
-HQBlrVG5Uquj/j6sWIynLR+OI+OHHOrSPGYjAlXKfUfOcSkgUUe1zuiRtOugMRkR
-9YZAl3ZjLF0+WNXAQ97xOjsZmxbhJbAdAdDj3y99hyCKRYSUGIUJR96ix5T6rKdf
-tdkeLqcxRHJL+bJUGY2dez7SrgsMvSL9GJxva7NCYQhPOrn59P6PBx2jn3PUEqvV
-Gv3YrxpJlzSYBoOT2K0ynv2swj20WJJ/p9WEppsHhiTgZ3cHkNcoCTY2RzZ4rSku
-qjf12e9QRfGCy16OYnmeK3N9chwMDlkWjtoI+TZiy3CHXLaxJf9dv1Zm4j2JTk8n
-4s4zDIZhMT5TLF4ZIp/Ra7Lq/jphXA0b3cEC8sOhL+3B7H1wCPGt9YnKUAW8Ds6P
-yG02rUUZmT9UURI7gY9FL+Qje91T/pd3jE5I8FnsrBDNqt+qk4FAtzdvrZGCddVE
-rq6I66ViZEwj0NGFxSRgGISVjdwjAOztxOXfXvXOpyqnEHGiMjkpQTOmNHX78R7i
-MjmiQOwi7YgZo9l2val/
-=lElI
------END PGP SIGNATURE-----
-
---kjwfQs4m3ZHLWJuw--
+Thanks.
