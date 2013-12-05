@@ -1,87 +1,25 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/4] pinctrl: tegra: add pinmux controller driver for
- Tegra124
-Date: Thu, 05 Dec 2013 16:30:03 -0700
-Message-ID: <52A10C7B.8070406@wwwdotorg.org>
-References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-5-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 0/4] ARM: tegra: convert dts files of all Tegra platforms
+ to use pinctrl defines
+Date: Thu, 05 Dec 2013 16:33:48 -0700
+Message-ID: <52A10D5C.3060002@wwwdotorg.org>
+References: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386241070-4350-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: thierry.reding@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
-> From: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This adds a driver for the Tegra124 pinmux, and required
-> parameterization data for Tegra124.
-> 
-> The driver uses the common Tegra pincontrol driver utility
-> functions to implement the majority of the driver.
-> 
-> This driver is not compatible with the earlier NVIDIA's SoCs,
-> hence add new compatibile as "nvidia,tegra124-pinmux".
-> 
-> Originally written by Ashwini Gguhe.
-> ldewangan:
->         - cleanup the patches,
->         - Fix address issue.
+On 12/05/2013 03:44 AM, Laxman Dewangan wrote:
+> This patch series convert dts files of all Tegra's platforms to use the pinctron
+> dt-binding macro for better readability.
 
-IIRC, Thierry mentioned he had some fixes in his local branch for this
-driver. Thierry, can you please confirm/deny this?
+I think this series looks fine now; I'll apply soon pending what happens
+with the DMA/reset/ binding rework.
 
-I made the following comment on the version Ashwini posted, which hasn't
-been addressed yet:
-
-A day or two ago during upstream review:
-
->> +static const struct tegra_function  tegra124_functions[] = {
-> ...
->> +	FUNCTION(i2c1),
->> +	FUNCTION(i2c2),
->> +	FUNCTION(i2c3),
->> +	FUNCTION(i2c4),
->> +	FUNCTION(i2cpwr),
-> 
-> Is that complete? Tegra124 apparently has 6 I2C controllers. Are the
-> pins for the new sixth controller (0x7000d100) not affected by the pinmux?
-
-That said, if we find things are missing, I suppose we can add them
-later without breaking existing ABI. Breakage would only happen if we
-had to change/remove something.
-
-During downstream review quite a while ago I also said:
-
->> > +static const struct pinctrl_pin_desc  tegra124_pins[] = {
->> 
->> There are two spaces before "tegra124_pins[]".
->> 
->> > +static const char * const gmi_groups[] = {
->> > +	"uart2_cts_n_pj5",
->> > +	"uart2_rts_n_pj6",
->> > +	"uart3_txd_pw6",
->> > +	"uart3_rxd_pw7",
->> > +	"uart3_cts_n_pa1",
->> > +	"uart3_rts_n_pc0",
->> > +
->> > +	"pu0",
->> 
->> It'd be best not to have blank lines in the middle of arrays. The same comment exists elsewhere in the
->> file, so make sure you search the whole file.
-
-Nits:
-
-- There are some cases of multiple blank lines back-to-back.
-- There's a blank line at the end of the file.
-
-Aside from those minor issues, patches 1/4 and 4/4,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-(BTW, those 2 patches would go through the pinctrl tree, and patches 2/4
-and 3/4 would go through the Tegra tree. You generally shouldn't posted
-patches that will be applied to different trees in the same series,
-since there aren't dependencies).
+There are quite a few typos/spelling/capitalization mistakes in the
+commit descriptions, but I'll fix them up when applying.
