@@ -1,132 +1,85 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH REPOST 2/2] clk: tegra: remove bogus PCIE_XCLK
-Date: Thu, 5 Dec 2013 10:41:42 +0200
-Message-ID: <20131205084142.GB17188@tbergstrom-lnx.Nvidia.com>
-References: <1386103002-21939-1-git-send-email-swarren@wwwdotorg.org>
- <1386103002-21939-2-git-send-email-swarren@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 1/4] ARM: tegra: Add header file for pinctrl constants
+Date: Thu, 5 Dec 2013 16:14:06 +0530
+Message-ID: <1386240249-30786-2-git-send-email-ldewangan@nvidia.com>
+References: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1386103002-21939-2-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1386240249-30786-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 03, 2013 at 09:36:42PM +0100, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The "pcie_xclk" clock is not actually a clock at all, but rather a reset
-> domain. Now that the custom Tegra module reset API has been removed, we
-> can remove the definition of any "clocks" that existed solely to support
-> it.
-> 
+This new header file defines pincontrol constants for Tegra to
+use from Tegra's DTS file for pincontrol properties option.
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>                                                                                                         
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes from V1:
+- Get rid of lots of macro and converge it to TEGRA_PIN_ENABLE/DISABLE.
+- Change macro name for PULL UP/DOWN/NONE.
 
-> Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Peter, Mike,
-> 
-> This patch is part of a series with strong internal depdendencies. I'm
-> looking for an ack so that I can take the entire series through the Tegra
-> and arm-soc trees. The series will be part of a stable branch that can be
-> merged into other subsystems if needed to avoid/resolve dependencies.
-> ---
->  drivers/clk/tegra/clk-tegra20.c         | 6 ------
->  drivers/clk/tegra/clk-tegra30.c         | 7 -------
->  include/dt-bindings/clock/tegra20-car.h | 2 +-
->  include/dt-bindings/clock/tegra30-car.h | 2 +-
->  4 files changed, 2 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-> index d438a089354c..41bf39544111 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -467,7 +467,6 @@ static struct tegra_devclk devclks[] __initdata = {
->  	{ .con_id = "isp", .dev_id = "tegra_camera", .dt_id = TEGRA20_CLK_ISP },
->  	{ .con_id = "pex", .dt_id = TEGRA20_CLK_PEX },
->  	{ .con_id = "afi", .dt_id = TEGRA20_CLK_AFI },
-> -	{ .con_id = "pcie_xclk", .dt_id = TEGRA20_CLK_PCIE_XCLK },
->  	{ .con_id = "cdev1", .dt_id = TEGRA20_CLK_CDEV1 },
->  	{ .con_id = "cdev2", .dt_id = TEGRA20_CLK_CDEV2 },
->  	{ .con_id = "clk_32k", .dt_id = TEGRA20_CLK_CLK_32K },
-> @@ -833,11 +832,6 @@ static void __init tegra20_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_PEX] = clk;
->  
-> -	/* pcie_xclk */
-> -	clk = tegra_clk_register_periph_gate("pcie_xclk", "clk_m", 0, clk_base,
-> -				    0, 74, periph_clk_enb_refcnt);
-> -	clks[TEGRA20_CLK_PCIE_XCLK] = clk;
-> -
->  	/* cdev1 */
->  	clk = clk_register_fixed_rate(NULL, "cdev1_fixed", NULL, CLK_IS_ROOT,
->  				      26000000);
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-> index 49465529bb09..0986eac22cd7 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -651,7 +651,6 @@ static struct tegra_devclk devclks[] __initdata = {
->  	{ .con_id = "isp", .dev_id = "tegra_camera", .dt_id = TEGRA30_CLK_ISP },
->  	{ .con_id = "pcie", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_PCIE },
->  	{ .con_id = "afi", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_AFI },
-> -	{ .con_id = "pciex", .dev_id = "tegra-pcie", .dt_id = TEGRA30_CLK_PCIEX },
->  	{ .con_id = "fuse", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE },
->  	{ .con_id = "fuse_burn", .dev_id = "fuse-tegra", .dt_id = TEGRA30_CLK_FUSE_BURN },
->  	{ .con_id = "apbif", .dev_id = "tegra30-ahub", .dt_id = TEGRA30_CLK_APBIF },
-> @@ -1152,11 +1151,6 @@ static void __init tegra30_periph_clk_init(void)
->  				    periph_clk_enb_refcnt);
->  	clks[TEGRA30_CLK_AFI] = clk;
->  
-> -	/* pciex */
-> -	clk = tegra_clk_register_periph_gate("pciex", "pll_e", 0, clk_base, 0,
-> -				    74, periph_clk_enb_refcnt);
-> -	clks[TEGRA30_CLK_PCIEX] = clk;
-> -
->  	/* emc */
->  	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
->  			       ARRAY_SIZE(mux_pllmcp_clkm),
-> @@ -1397,7 +1391,6 @@ static struct tegra_clk_duplicate tegra_clk_duplicates[] = {
->  	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_BSEA, "nvavp", "bsea"),
->  	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CML1, "tegra_sata_cml", NULL),
->  	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CML0, "tegra_pcie", "cml"),
-> -	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_PCIEX, "tegra_pcie", "pciex"),
->  	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_VCP, "nvavp", "vcp"),
->  	TEGRA_CLK_DUPLICATE(TEGRA30_CLK_CLK_MAX, NULL, NULL), /* MUST be the last entry */
->  };
-> diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
-> index a1ae9a8fdd6c..9406207cfac8 100644
-> --- a/include/dt-bindings/clock/tegra20-car.h
-> +++ b/include/dt-bindings/clock/tegra20-car.h
-> @@ -92,7 +92,7 @@
->  #define TEGRA20_CLK_OWR 71
->  #define TEGRA20_CLK_AFI 72
->  #define TEGRA20_CLK_CSITE 73
-> -#define TEGRA20_CLK_PCIE_XCLK 74
-> +/* 74 */
->  #define TEGRA20_CLK_AVPUCQ 75
->  #define TEGRA20_CLK_LA 76
->  /* 77 */
-> diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
-> index 22445820a929..889e49ba0aa3 100644
-> --- a/include/dt-bindings/clock/tegra30-car.h
-> +++ b/include/dt-bindings/clock/tegra30-car.h
-> @@ -92,7 +92,7 @@
->  #define TEGRA30_CLK_OWR 71
->  #define TEGRA30_CLK_AFI 72
->  #define TEGRA30_CLK_CSITE 73
-> -#define TEGRA30_CLK_PCIEX 74
-> +/* 74 */
->  #define TEGRA30_CLK_AVPUCQ 75
->  #define TEGRA30_CLK_LA 76
->  /* 77 */
-> -- 
-> 1.8.1.5
-> 
+Changes from V2:
+- Convert TEGRA -> Tegra.
+- Add comment on ENABLE/DSIABLE and remove from pulls.
+
+ include/dt-bindings/pinctrl/pinctrl-tegra.h |   45 +++++++++++++++++++++++++++
+ 1 files changed, 45 insertions(+), 0 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra.h
+
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra.h b/include/dt-bindings/pinctrl/pinctrl-tegra.h
+new file mode 100644
+index 0000000..ebafa49
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra.h
+@@ -0,0 +1,45 @@
++/*
++ * This header provides constants for Tegra pinctrl bindings.
++ *
++ * Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Author: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#ifndef _DT_BINDINGS_PINCTRL_TEGRA_H
++#define _DT_BINDINGS_PINCTRL_TEGRA_H
++
++/*
++ * Enable/disable for diffeent dt properties. This is applicable for
++ * properties nvidia,enable-input, nvidia,tristate, nvidia,open-drain,
++ * nvidia,lock, nvidia,rcv-sel, nvidia,high-speed-mode, nvidia,schmitt.
++ */
++#define TEGRA_PIN_DISABLE				0
++#define TEGRA_PIN_ENABLE				1
++
++#define TEGRA_PIN_PULL_NONE				0
++#define TEGRA_PIN_PULL_DOWN				1
++#define TEGRA_PIN_PULL_UP				2
++
++/* Low power mode driver */
++#define TEGRA_PIN_LP_DRIVE_DIV_8			0
++#define TEGRA_PIN_LP_DRIVE_DIV_4			1
++#define TEGRA_PIN_LP_DRIVE_DIV_2			2
++#define TEGRA_PIN_LP_DRIVE_DIV_1			3
++
++/* Rising/Falling slew rate */
++#define TEGRA_PIN_SLEW_RATE_FASTEST			0
++#define TEGRA_PIN_SLEW_RATE_FAST			1
++#define TEGRA_PIN_SLEW_RATE_SLOW			2
++#define TEGRA_PIN_SLEW_RATE_SLOWEST			3
++
++#endif
+-- 
+1.7.1.1
