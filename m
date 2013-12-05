@@ -1,55 +1,18 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v4 1/3] mfd: tps6586x: add version detection
-Date: Thu, 05 Dec 2013 10:40:21 -0700
-Message-ID: <52A0BA85.4020201@wwwdotorg.org>
-References: <cover.1386108712.git.stefan@agner.ch> <77384d24810d9a22fc04cad6f7468f54a9cbaafe.1386108712.git.stefan@agner.ch> <52A0B2AF.60803@wwwdotorg.org> <b2a1db4167d319d355dd2a3a844553bc@agner.ch>
+From: "bezopasnost84" <jirost-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Subject: =?iso-8859-5?Q?=BD=DE=D2=D8=DD=DA=D0!_=D8=DD=DD=DE=D2=D0?=
+	=?iso-8859-5?Q?=E6=D8=DE=DD=DD=D0=EF_=DC=D5=E2=DE=D4=DE?=
+	=?iso-8859-5?Q?=DB=DE=D3=D8=EF_=D8=E1=DF=E0=D0=D2=DB=D5?=
+	=?iso-8859-5?Q?=DD=D8=EF_=D7=E0=D5=DD=D8=EF?=
+Date: Thu, 05 Dec 2013 22:31:47 +0100
+Message-ID: <f5e99eedc2959c79b719c2e6a4d12088@mwinf5d17.me-wanadoo.net>
+Reply-To: "bezopasnost84" <jirost-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b2a1db4167d319d355dd2a3a844553bc@agner.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefan Agner <stefan@agner.ch>
-Cc: thierry.reding@gmail.com, dev@lynxeye.de, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, kai.poggensee@avionic-design.de, sameo@linux.intel.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain;
+	charset="iso-8859-5";
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kmic-zA1zp7UvjYFvB0dxzO32fw@public.gmane.org, moszacaz-jDEUglxCAeAox3rIn2DAYQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, science-AlUuULNFvsuHXe+LvDLADg@public.gmane.org, kostil-ajHrmf4UNj80dGpx6LshtQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/2013 10:43 AM, Stefan Agner wrote:
-> Am 2013-12-05 18:06, schrieb Stephen Warren:
-> <snip>
->>> @@ -493,13 +527,12 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
->>>  		return -EIO;
->>>  	}
->>>
->>> -	dev_info(&client->dev, "VERSIONCRC is %02x\n", ret);
->>> -
->>>  	tps6586x = devm_kzalloc(&client->dev, sizeof(*tps6586x), GFP_KERNEL);
->>> -	if (tps6586x == NULL) {
->>> -		dev_err(&client->dev, "memory for tps6586x alloc failed\n");
->>> +	if (!tps6586x)
->>>  		return -ENOMEM;
->>> -	}
->>> +
->>> +	tps6586x->version = ret;
->>
->> I have to say, I dislike this version of the patch. Separating the
->> reading of the version register from the assignment to tps6586x->version
->> doesn't make any sense, especially given that the version value is
->> stored in a variable named "ret"; that name isn't remotely related to
->> what's stored there. What if someone comes along later and adds more
->> code that assigns to ret between where it's repurposed for the version
->> value and where it's assigned to tps6586x->version? It'd be extremely
->> difficult for a patch reviewer to spot that given the limited context in
->> a diff, and quite non-obvious to the person changing the code too..
-> 
-> The value comes from the return value of i2c_smbus_read_byte_data. If
-> the value is below zero its an EIO error. 
-> 
-> I could add a variable "version", but for me it felt strange because we
-> check if version is below zero. This feels like its a wrong version
-> rather than a transmit error. So I would prefer ret over version. But I
-> agree, when one just reads the patch, its not obvious what exactly
-> happens.
-
-In my opinion, using a variable named "version" here would be
-preferable. Testing that against <0 is just the way the I2C API works,
-so the same argument could be applied to any I2C access.
+397U4u/d4+LsINfg1d3Y1SDg0Ncg2CDd0NLh1dPU0CBodHRwOi8vZ29vLmdsLzhPMGNtYQ0K
