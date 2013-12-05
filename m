@@ -1,22 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: tegra: select PINCTRL_TEGRA124 for Tegra124
- SoC
-Date: Thu, 05 Dec 2013 16:17:39 -0700
-Message-ID: <52A10993.2020901@wwwdotorg.org>
-References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-4-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/4] ARM: tegra: add pinmux controller to tegra124.dtsi
+Date: Thu, 05 Dec 2013 16:19:47 -0700
+Message-ID: <52A10A13.2020608@wwwdotorg.org>
+References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-3-git-send-email-ldewangan@nvidia.com> <52A10932.1040903@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386241070-4350-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <52A10932.1040903@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
+Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, thierry.reding@gmail.com, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
-> The pincontrol driver for Tegra124 is build through config
-> PINCTRL_TEGRA124. Select this config option whenever Tegra124
-> SoC is enabled.
+On 12/05/2013 04:16 PM, Stephen Warren wrote:
+> On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
+>> The tegra124 pinmux controller is identical to tegra114 with
+>> removing some of existing pins from T114 and adding new pins.
+> 
+> I already sent this patch.
 
-I already sent this patch too.
+Oh, I do notice one difference between the two patches:
+
+Mine:
+
+> +		reg = <0x70000868 0x148>,	/* Pad control registers */
+> +		      <0x70003000 0x40c>;	/* Mux registers */
+
+Yours:
+
+> +		reg = <0x70000868 0x164		/* Pad control registers */
+> +		       0x70003000 0x434>;	/* PinMux registers */
+
+Are the increase register lengths in your patch correct? If so, I guess
+I'll drop my patch and replace it with yours if you fix up the unit address.
