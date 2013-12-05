@@ -1,35 +1,46 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH V3] dma: tegra: register as an OF DMA controller
-Date: Thu, 5 Dec 2013 03:46:08 +0100
-Message-ID: <201312050346.09225.arnd@arndb.de>
-References: <1386102787-21839-1-git-send-email-swarren@wwwdotorg.org> <201312040234.09708.arnd@arndb.de> <529F65E6.9050606@wwwdotorg.org>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3 0/2] Remodel Tegra cpufreq drivers to support Tegra series SoC
+Date: Thu, 5 Dec 2013 15:44:20 +0800
+Message-ID: <1386229462-3474-1-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <529F65E6.9050606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday 04 December 2013, Stephen Warren wrote:
-> > 
-> > We really need to be better at having a common set of rules regarding what
-> > it actually means to set the slave_id through dma_slave_config(). IMHO
-> > we should just treat it as a bug for any dmaengine driver that is configured
-> > through DT, or we should get rid of this entirely.
-> 
-> By the end of this series (for the Tegra driver) I can remove those "+"
-> lines you quoted above; the slave ID will only come from DT through
-> of_xlate, and any slave ID in the slave_config will simply be ignored.
+This patch series remodel Tegra cpufreq driver to make it more easy to
+add new SoC support, in addition to that, adding probe function in the
+driver to let probe defer can be used to control init sequence when we
+are going to support DVFS.
 
-Ok, that's certainly a step in the right direction. However, as I said
-my comment wasn't really directed at you and I think it's more important
-to have a clear policy that we can enforce across all dmaengine drivers.
+Changes since v2:
 
-It's really up to Vinod and Dan to decide how it should be handled
-in general.
+- Fix Kconfig.
+- Rebase on top of branch 'cpufreq-next' on git://git.linaro.org/people/vireshk/linux.git.
 
-	Arnd
+Changes since v1:
+
+- Split up patches.
+- Split configuration-time data out of structure "tegra_cpufreq_data".
+- Bug fixes.
+
+Bill Huang (2):
+  cpufreq: tegra: Call tegra_cpufreq_init() specifically in machine
+    code
+  cpufreq: tegra: Re-model Tegra cpufreq driver
+
+ arch/arm/mach-tegra/tegra.c       |    2 +
+ drivers/cpufreq/Kconfig.arm       |   12 +++
+ drivers/cpufreq/Makefile          |    1 +
+ drivers/cpufreq/tegra-cpufreq.c   |  188 +++++++++++++++++--------------------
+ drivers/cpufreq/tegra-cpufreq.h   |   40 ++++++++
+ drivers/cpufreq/tegra20-cpufreq.c |  136 +++++++++++++++++++++++++++
+ include/linux/tegra-soc.h         |   11 ++-
+ 7 files changed, 287 insertions(+), 103 deletions(-)
+ create mode 100644 drivers/cpufreq/tegra-cpufreq.h
+ create mode 100644 drivers/cpufreq/tegra20-cpufreq.c
+
+-- 
+1.7.9.5
