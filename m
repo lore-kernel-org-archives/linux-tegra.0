@@ -1,68 +1,60 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ASoC: tegra: fix uninitialized variables in set_fmt
-Date: Fri, 6 Dec 2013 22:07:11 +0100
-Message-ID: <20131206210710.GA1685@mithrandir>
-References: <1386362090-29250-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH] gpio: tegra: add missing error handling to probe
+Date: Fri, 6 Dec 2013 22:08:28 +0100
+Message-ID: <20131206210828.GB1685@mithrandir>
+References: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
-Return-path: <stable-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+Return-path: <linux-gpio-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1386362090-29250-1-git-send-email-swarren@wwwdotorg.org>
-Sender: stable-owner@vger.kernel.org
+In-Reply-To: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---jI8keyz6grp/JLjh
+--ZoaI/ZTpAVc4A5k6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2013 at 01:34:50PM -0700, Stephen Warren wrote:
+On Fri, Dec 06, 2013 at 01:36:11PM -0700, Stephen Warren wrote:
 > From: Stephen Warren <swarren@nvidia.com>
 >=20
-> In tegra*_i2s_set_fmt(), in the (fmt =3D=3D SND_SOC_DAIFMT_CBM_CFM) case,
-> "val" is never assigned to, but left uninitialized. The other case does
-> initialized it. Fix this by initializing val at the start of the
-> function, and only ever ORing into it.
+> The call to gpiochip_add() is not currently error-checked. Add the
+> missing checking.
 >=20
-> Update the handling of "mask" so it works the same way for consistency.
->=20
-> Update tegra20_spdif.c to use the same code-style for consistency, even
-> though it doesn't happen to suffer from the same problem at present.
->=20
-> Cc: <stable@vger.kernel.org>
-> Fixes: 0f163546a772 ("ASoC: tegra: use regmap more directly")
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
->  sound/soc/tegra/tegra20_i2s.c   |  6 +++---
->  sound/soc/tegra/tegra20_spdif.c | 10 +++++-----
->  sound/soc/tegra/tegra30_i2s.c   |  6 +++---
->  3 files changed, 11 insertions(+), 11 deletions(-)
+> Perhaps this should be Cc: stable since Greg wants more stable patches,
+> but it's not a bug that's likely to be hit...
+> ---
+>  drivers/gpio/gpio-tegra.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
 Reviewed-by: Thierry Reding <treding@nvidia.com>
 
---jI8keyz6grp/JLjh
+--ZoaI/ZTpAVc4A5k6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSojx+AAoJEN0jrNd/PrOhALIQAIxBxfbhbD1baWhgKa+OoQZf
-xEeRKf2grsvbB7B3lWb9rEI70UwP8R6KWl0F03XOXGZGsBbTrmvOx9kshTvtdm0g
-PLzg9iLFS4WVarHqdtln0x1/cz4er97N4iwNjOqpJsmsC8hIAsR55SOKqoRmoqLB
-MFoG0B3McgZ0Q9xe8A60500+9gtFfnSgV62bEmqSSSEThV8TbPjB9hW9okdLNexL
-fVzScWFHIeGYzNOmBEw9LCdEVItebDpBP6p+PCgWQRDc6X78kpyQgoUZjMO4Ornq
-zb3UWhxATpXJt2XfykmCRGO0chsJEyZMU3IexNacULH/wxHwsRVkLuM2eqwK4Pm7
-hgQyIEDap3VvnYPfXPp/kXPr/OEQgKz/2OwhXyJmEwRppQRbNxAfDSycj+x//LDW
-4yVL1rvcZy2HhSrNwXO/VMAW2vCa659vYf+eOQN742LVun/BItflHr6b1pNQHs+z
-X5Fj7bosc5XMMUjwUydwAYmawrHz7vy9Vw6XTV692oW/6p5I3Mgf8FjeYBZL/GX+
-g6XZmXDFqtanLT6UZt37yIeLtu2bFHAaAQwHmxEu3zJ0yhEl1fanZ5i3a7XOqvzv
-vFvq0rWdH+MYoo3dajBBr9ov8isYuSFBQuYyNLgDjhoV9odsxmNMeP6C3gTEVi5B
-TENqyngtpk8dpE1g5Ml6
-=gNd2
+iQIcBAEBAgAGBQJSojzLAAoJEN0jrNd/PrOhzBUP/0OdiiGt77GvXcI3rAUxu9sI
+i6C60zBWDM+SAj3MfHO0jpk6ZLrAbBARXp+eV72TcH8TzXQ77fLF/zET6rHMYj88
+h6nvTLzNAZ5eIXj54se2mqLWOHGras43gS3wld4PbLwkFjEfqgqo9h66FnE7ZAul
+1ufjxB6ElLY8QnYUeglHR1PheCyWoNVNUZIpeM9nAqFnKVYruUYJICXu/GdxhHVZ
+FHR2N0WGBbc7zjpHplba9pahDomq2RtFG9cNeX0GCPuuI1Vuf2Pgi3uBdDS7iVSf
+/nmAzXQ9fK/vuO1FKzynPNvNwrWsNIjkpXg9zwt2nJKPfbkMLkv9PVIFu3PkDT6Z
+C8fjhF9OZsforICcCk7L5qljSKO7VbCLe4bcPF3XegQ92Bb8+5Wvu2Xu9Tf5zhYo
+Uoqlx2DB4WpgTDf1Vsiyz6yIqjGkpqxLkSjywhdAxGm6p/nYX3KsY6Vvj52ZkFbb
+KV+v2z0iAz1YkGZAHtexKYYzTAQDzFPi15gXnX752+l8kC0Z1Lxcu/2jx1FTsXs3
+HADBOnk7vNPzk6c9WE9PVVaODb6uexIvQAYV46hsv2RZDOJqxynQTjuZLJpdNz+t
+sffu/WR6nnkXzGdtsNKJbhHMhfUajceYCYDPm8/UD9/6b7SvmdCO5hVtL8epuA+4
+bCgXIfk2/wdgHtLF77vb
+=euee
 -----END PGP SIGNATURE-----
 
---jI8keyz6grp/JLjh--
+--ZoaI/ZTpAVc4A5k6--
