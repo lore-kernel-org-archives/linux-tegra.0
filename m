@@ -1,48 +1,30 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/4] pinctrl: tegra: add pinmux controller driver for
- Tegra124
-Date: Fri, 06 Dec 2013 10:08:00 -0700
-Message-ID: <52A20470.3040700@wwwdotorg.org>
-References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-5-git-send-email-ldewangan@nvidia.com> <52A10C7B.8070406@wwwdotorg.org> <52A16E65.70908@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: Various Tegra124 fixes
+Date: Fri, 06 Dec 2013 10:10:01 -0700
+Message-ID: <52A204E9.4080801@wwwdotorg.org>
+References: <52A10C7B.8070406@wwwdotorg.org> <1386330839-30559-1-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52A16E65.70908@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ashwini Ghuge <aghuge@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386330839-30559-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/2013 11:27 PM, Laxman Dewangan wrote:
-> On Friday 06 December 2013 05:00 AM, Stephen Warren wrote:
->> On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
->>> From: Ashwini Ghuge <aghuge@nvidia.com>
->>>
->>> This adds a driver for the Tegra124 pinmux, and required
->>> parameterization data for Tegra124.
->>>
->>> The driver uses the common Tegra pincontrol driver utility
->>> functions to implement the majority of the driver.
->>>
->>> This driver is not compatible with the earlier NVIDIA's SoCs,
->>> hence add new compatibile as "nvidia,tegra124-pinmux".
->>>
->>> Originally written by Ashwini Gguhe.
->>> ldewangan:
->>>          - cleanup the patches,
->>>          - Fix address issue.
-...
->> (BTW, those 2 patches would go through the pinctrl tree, and patches 2/4
->> and 3/4 would go through the Tegra tree. You generally shouldn't posted
->> patches that will be applied to different trees in the same series,
->> since there aren't dependencies).
->
-> Fine.
-> Should I sent the diff or full change? I think full change as this need
-> to go on pincontrol subsystem, not in Tegra.
+On 12/06/2013 04:53 AM, Thierry Reding wrote:
+> Remove various gratuitous blank lines and other minor whitespace and
+> style cleanups. Add some missing commas within group arrays to prevent
+> the compiler from concatenating the strings. Remove unneeded
+> TEGRA_MUX_SAFE entry from enumeration and drop gratuitous _dt suffix
+> from tegra_mux enumeration type name. Drop an unwarranted FIXME comment
+> and rename gmi_ad8_ph0 pin to ph0 since that's how it's referenced in
+> the DS06472001 datasheet.
 
-Please send complete patches for the new driver. The patch I have in my
-local tree isn't going anywhere; I just have the early version that
-Ashwini posted applied locally for testing. A final complete patch
-should be sent to the pinctrl maintainer in the normal way.
+Thierry, I assume this patch is against the version I have in my local
+development branch?
+
+I'm expecting Laxman to roll this into the patches he posts, and send a
+new complete version to LinusW, so there's no upstream action required
+for this patch series at present, just an action for Laxman.
