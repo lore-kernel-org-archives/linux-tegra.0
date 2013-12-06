@@ -1,69 +1,43 @@
-From: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] dma: tegra: register as an OF DMA controller
-Date: Fri, 6 Dec 2013 13:16:00 -0800
-Message-ID: <CAPcyv4giXy++b6BJi8nNKEEY8PC-_4ATAH0_bN-YSOVH+8CaLw@mail.gmail.com>
-References: <1385416416-3536-1-git-send-email-swarren@wwwdotorg.org>
-	<201311292208.26215.arnd@arndb.de>
-	<529E1A49.6050808@wwwdotorg.org>
-	<201312040222.03604.arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH V2] ARM: tegra: add missing break to fuse initialization code
+Date: Fri,  6 Dec 2013 14:31:02 -0700
+Message-ID: <1386365462-17635-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201312040222.03604.arnd-r2nGTMty4D4@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 3, 2013 at 5:22 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Tuesday 03 December 2013, Stephen Warren wrote:
->> On 11/29/2013 02:08 PM, Arnd Bergmann wrote:
->
->> > Can you try coming up with a different method to achieve the same
->> > where you use a different helper from the driver specific xlate
->> > function that does not require a callback?
->> >
->> > I think dma_get_slave_channel is great if you have one channel per
->> > request line and you can directly look up the channel from the
->> > DT data, but it is not good if you have pick a channel and work
->> > around the race.
->>
->> Hmm. Can you take a look at "[PATCH V4] dma: add
->> dma_get_any_slave_channel(), for use in of_xlate()" at the link below.
->> It still implements this via xlate, but I don't see any benefit in
->> making drivers use a different API to request slave channels based on
->> how the DMA controller works.
->>
->> http://lkml.org/lkml/2013/11/26/408
->>
->
-> Yes, I think that is good. I can think of a few variations of that
-> that I would prefer slightly over your code, but it's essentially
-> what I had in mind and I'm fine with that version getting merged
-> as well. Here are my ideas for further improvements, I'll leave
-> it up to you and the dmaengine maintainers to decide what to do
-> about them:
->
-> * Rather than calling private_candidate(), open-code the part you
->   need and remove the pointless dma_cap_mask comparison:
->
->         err = -EBUSY;
->         list_for_each_entry(chan, &dev->channels, device_node) {
->                 if (!chan->client_count) {
->                         err = dma_chan_get(chan);
->                         break;
->                 }
->         }
->
-> * Merge the new function with dma_get_slave_channel(). They really
->   do different things, but I think it still makes sense as an API
->   to require to always pass the dma_device pointer, and drivers
->   that want to get an arbitrary channel can just pass NULL as the
->   channel pointer.
->
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-* nod.
+Add a missing break to the switch in tegra_init_fuse() which determines
+which SoC the code is running on. This prevents the Tegra30+ fuse
+handling code from running on Tegra20.
 
-I have a similar reaction to dma_request_channel().  There should be
-more than enough use case to find some common ground and reduce the
-need for magic filter routines.
+Fixes: 3bd1ae57f7bb ("ARM: tegra: add fuses as device randomness")
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v2: Add break to all cases
+---
+ arch/arm/mach-tegra/fuse.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+index 9a4e910c3796..3a9c1f1c219d 100644
+--- a/arch/arm/mach-tegra/fuse.c
++++ b/arch/arm/mach-tegra/fuse.c
+@@ -198,10 +198,12 @@ void __init tegra_init_fuse(void)
+ 	switch (tegra_chip_id) {
+ 	case TEGRA20:
+ 		tegra20_fuse_init_randomness();
++		break;
+ 	case TEGRA30:
+ 	case TEGRA114:
+ 	default:
+ 		tegra30_fuse_init_randomness();
++		break;
+ 	}
+ 
+ 	pr_info("Tegra Revision: %s SKU: %d CPU Process: %d Core Process: %d\n",
+-- 
+1.8.1.5
