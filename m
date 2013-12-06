@@ -1,60 +1,78 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] gpio: tegra: add missing error handling to probe
-Date: Fri, 6 Dec 2013 22:08:28 +0100
-Message-ID: <20131206210828.GB1685@mithrandir>
-References: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add missing break to fuse initialization code
+Date: Fri, 6 Dec 2013 22:09:57 +0100
+Message-ID: <20131206210957.GC1685@mithrandir>
+References: <1386362030-29187-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
-Return-path: <linux-gpio-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+In-Reply-To: <1386362030-29187-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZoaI/ZTpAVc4A5k6
+--xo44VMWPx7vlQ2+2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2013 at 01:36:11PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
+On Fri, Dec 06, 2013 at 01:33:50PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> The call to gpiochip_add() is not currently error-checked. Add the
-> missing checking.
+> Add a missing break to the switch in tegra_init_fuse() which determines
+> which SoC the code is running on. This prevents the Tegra30+ fuse
+> handling code from running on Tegra20.
 >=20
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Fixes: 3bd1ae57f7bb ("ARM: tegra: add fuses as device randomness")
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Perhaps this should be Cc: stable since Greg wants more stable patches,
-> but it's not a bug that's likely to be hit...
-> ---
->  drivers/gpio/gpio-tegra.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> This is a fix for 3.13.
+>=20
+>  arch/arm/mach-tegra/fuse.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+> index 9a4e910c3796..13995b0be9d9 100644
+> --- a/arch/arm/mach-tegra/fuse.c
+> +++ b/arch/arm/mach-tegra/fuse.c
+> @@ -198,6 +198,7 @@ void __init tegra_init_fuse(void)
+>  	switch (tegra_chip_id) {
+>  	case TEGRA20:
+>  		tegra20_fuse_init_randomness();
+> +		break;
+>  	case TEGRA30:
+>  	case TEGRA114:
+>  	default:
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+The code that follows here also doesn't have a break. While not strictly
+necessary it might be good to have one for consistency. Either way,
+though:
 
---ZoaI/ZTpAVc4A5k6
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--xo44VMWPx7vlQ2+2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSojzLAAoJEN0jrNd/PrOhzBUP/0OdiiGt77GvXcI3rAUxu9sI
-i6C60zBWDM+SAj3MfHO0jpk6ZLrAbBARXp+eV72TcH8TzXQ77fLF/zET6rHMYj88
-h6nvTLzNAZ5eIXj54se2mqLWOHGras43gS3wld4PbLwkFjEfqgqo9h66FnE7ZAul
-1ufjxB6ElLY8QnYUeglHR1PheCyWoNVNUZIpeM9nAqFnKVYruUYJICXu/GdxhHVZ
-FHR2N0WGBbc7zjpHplba9pahDomq2RtFG9cNeX0GCPuuI1Vuf2Pgi3uBdDS7iVSf
-/nmAzXQ9fK/vuO1FKzynPNvNwrWsNIjkpXg9zwt2nJKPfbkMLkv9PVIFu3PkDT6Z
-C8fjhF9OZsforICcCk7L5qljSKO7VbCLe4bcPF3XegQ92Bb8+5Wvu2Xu9Tf5zhYo
-Uoqlx2DB4WpgTDf1Vsiyz6yIqjGkpqxLkSjywhdAxGm6p/nYX3KsY6Vvj52ZkFbb
-KV+v2z0iAz1YkGZAHtexKYYzTAQDzFPi15gXnX752+l8kC0Z1Lxcu/2jx1FTsXs3
-HADBOnk7vNPzk6c9WE9PVVaODb6uexIvQAYV46hsv2RZDOJqxynQTjuZLJpdNz+t
-sffu/WR6nnkXzGdtsNKJbhHMhfUajceYCYDPm8/UD9/6b7SvmdCO5hVtL8epuA+4
-bCgXIfk2/wdgHtLF77vb
-=euee
+iQIcBAEBAgAGBQJSoj0kAAoJEN0jrNd/PrOhQxMQAKJSwFiPOtgkrNCJCbQP9ixj
+P4jW6+W0auqTp2sLsw4m6uABE14/bIC+ErQFv3+9aJOOtv+Yxb3P2RDKXChpKv48
+L63B5RD9dumrYNbTI8qQ5N/+VFBErP/kNqQ24XcuyvWY4BLQoE3/Nc/fiKzSHBH6
+K6hGH4w6FNjzQL3HRkcFfh0ijTATP0eqkSKTCqgjwjH3k38RWnzqLlmZ7hsrMufj
+8OzSDucGktjvD8unUTF/QYPgR/wzdFRhou3nCOsF/W1VmxVoviQYfp/5E9aMl9jX
+48XAs6PZOCXwMYMFnZcBiu/bESRATK+KulP4bgfH2VbDIqesr3YAyvGY2dQgKQV0
+m7ZjjtT6DR512epQiJERzLbryqD+q6yqS4eEdP1R/KhYd9r0LH3acifFt6BmDSQf
+4wk4jYrp9Xfeq0X974ja05XJNGsd3yx9wokAnrgw2knrQXMUIjrSSBRKnlfzRHv3
+r5K5auV01uLz3hYVL1zyT7v2HlqKFtPBi1y8wu5xRiiuAa73TbrQqW/vKrzLS8dz
+Sm6rQX402hqO88VGkI65H/8SZhTEoXtpEgJGI5xLETmH9rJ8AbmVue5DW3X/nSHU
+aXWqr7bFhcW5kxBw/gmHQUlYPQ8BrJc+mex+1BpWmoTYHp5iTJf4f3UDp754WQvX
+Rv7lv1V5WpcBf1xQJtaB
+=imVc
 -----END PGP SIGNATURE-----
 
---ZoaI/ZTpAVc4A5k6--
+--xo44VMWPx7vlQ2+2--
