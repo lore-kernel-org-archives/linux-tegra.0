@@ -1,110 +1,51 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: fix uninitialized variables in set_fmt
-Date: Fri,  6 Dec 2013 13:34:50 -0700
-Message-ID: <1386362090-29250-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] gpio: tegra: add missing error handling to probe
+Date: Fri,  6 Dec 2013 13:36:11 -0700
+Message-ID: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-In tegra*_i2s_set_fmt(), in the (fmt == SND_SOC_DAIFMT_CBM_CFM) case,
-"val" is never assigned to, but left uninitialized. The other case does
-initialized it. Fix this by initializing val at the start of the
-function, and only ever ORing into it.
+The call to gpiochip_add() is not currently error-checked. Add the
+missing checking.
 
-Update the handling of "mask" so it works the same way for consistency.
-
-Update tegra20_spdif.c to use the same code-style for consistency, even
-though it doesn't happen to suffer from the same problem at present.
-
-Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Fixes: 0f163546a772 ("ASoC: tegra: use regmap more directly")
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
- sound/soc/tegra/tegra20_i2s.c   |  6 +++---
- sound/soc/tegra/tegra20_spdif.c | 10 +++++-----
- sound/soc/tegra/tegra30_i2s.c   |  6 +++---
- 3 files changed, 11 insertions(+), 11 deletions(-)
+Perhaps this should be Cc: stable since Greg wants more stable patches,
+but it's not a bug that's likely to be hit...
+---
+ drivers/gpio/gpio-tegra.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/tegra/tegra20_i2s.c b/sound/soc/tegra/tegra20_i2s.c
-index 364bf6a907e1..8c819f811470 100644
---- a/sound/soc/tegra/tegra20_i2s.c
-+++ b/sound/soc/tegra/tegra20_i2s.c
-@@ -74,7 +74,7 @@ static int tegra20_i2s_set_fmt(struct snd_soc_dai *dai,
- 				unsigned int fmt)
- {
- 	struct tegra20_i2s *i2s = snd_soc_dai_get_drvdata(dai);
--	unsigned int mask, val;
-+	unsigned int mask = 0, val = 0;
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index cfd3b9037bc7..2b49f878b56c 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -425,6 +425,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	struct tegra_gpio_soc_config *config;
+ 	struct resource *res;
+ 	struct tegra_gpio_bank *bank;
++	int ret;
+ 	int gpio;
+ 	int i;
+ 	int j;
+@@ -494,7 +495,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
  
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_NF:
-@@ -83,10 +83,10 @@ static int tegra20_i2s_set_fmt(struct snd_soc_dai *dai,
- 		return -EINVAL;
- 	}
+ 	tegra_gpio_chip.of_node = pdev->dev.of_node;
  
--	mask = TEGRA20_I2S_CTRL_MASTER_ENABLE;
-+	mask |= TEGRA20_I2S_CTRL_MASTER_ENABLE;
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		val = TEGRA20_I2S_CTRL_MASTER_ENABLE;
-+		val |= TEGRA20_I2S_CTRL_MASTER_ENABLE;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFM:
- 		break;
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index 08bc6931c7c7..8c7c1028e579 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -67,15 +67,15 @@ static int tegra20_spdif_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct device *dev = dai->dev;
- 	struct tegra20_spdif *spdif = snd_soc_dai_get_drvdata(dai);
--	unsigned int mask, val;
-+	unsigned int mask = 0, val = 0;
- 	int ret, spdifclock;
+-	gpiochip_add(&tegra_gpio_chip);
++	ret = gpiochip_add(&tegra_gpio_chip);
++	if (ret < 0) {
++		irq_domain_remove(irq_domain);
++		return ret;
++	}
  
--	mask = TEGRA20_SPDIF_CTRL_PACK |
--	       TEGRA20_SPDIF_CTRL_BIT_MODE_MASK;
-+	mask |= TEGRA20_SPDIF_CTRL_PACK |
-+		TEGRA20_SPDIF_CTRL_BIT_MODE_MASK;
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
--		val = TEGRA20_SPDIF_CTRL_PACK |
--		      TEGRA20_SPDIF_CTRL_BIT_MODE_16BIT;
-+		val |= TEGRA20_SPDIF_CTRL_PACK |
-+		       TEGRA20_SPDIF_CTRL_BIT_MODE_16BIT;
- 		break;
- 	default:
- 		return -EINVAL;
-diff --git a/sound/soc/tegra/tegra30_i2s.c b/sound/soc/tegra/tegra30_i2s.c
-index 231a785b3921..02247fee1cf7 100644
---- a/sound/soc/tegra/tegra30_i2s.c
-+++ b/sound/soc/tegra/tegra30_i2s.c
-@@ -118,7 +118,7 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
- 				unsigned int fmt)
- {
- 	struct tegra30_i2s *i2s = snd_soc_dai_get_drvdata(dai);
--	unsigned int mask, val;
-+	unsigned int mask = 0, val = 0;
- 
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_NF:
-@@ -127,10 +127,10 @@ static int tegra30_i2s_set_fmt(struct snd_soc_dai *dai,
- 		return -EINVAL;
- 	}
- 
--	mask = TEGRA30_I2S_CTRL_MASTER_ENABLE;
-+	mask |= TEGRA30_I2S_CTRL_MASTER_ENABLE;
- 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
- 	case SND_SOC_DAIFMT_CBS_CFS:
--		val = TEGRA30_I2S_CTRL_MASTER_ENABLE;
-+		val |= TEGRA30_I2S_CTRL_MASTER_ENABLE;
- 		break;
- 	case SND_SOC_DAIFMT_CBM_CFM:
- 		break;
+ 	for (gpio = 0; gpio < tegra_gpio_chip.ngpio; gpio++) {
+ 		int irq = irq_create_mapping(irq_domain, gpio);
 -- 
 1.8.1.5
+
