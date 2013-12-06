@@ -1,47 +1,59 @@
-From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
-Subject: Re: [PATCH v5 1/3] mfd: tps6586x: add version detection
-Date: Fri, 06 Dec 2013 16:00:26 +0100
-Message-ID: <5e063ab19c8fb9754216189c65d8f670@agner.ch>
-References: <cover.1386333697.git.stefan@agner.ch>
- <7812fb79beac0a6a409090f43d129893f9f93b5b.1386333697.git.stefan@agner.ch>
- <20131206142605.GA32363@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [flasher PATCH 1/4] Add crc32 verification of the flash image
+Date: Fri, 6 Dec 2013 16:09:38 +0100
+Message-ID: <20131206150937.GA32372@ulmo.nvidia.com>
+References: <1386281582-18561-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131206142605.GA32363-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1386281582-18561-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am 2013-12-06 15:26, schrieb Thierry Reding:
-> On Fri, Dec 06, 2013 at 01:51:45PM +0100, Stefan Agner wrote:
->> Use the VERSIONCRC to determine the exact device version. According to
->> the datasheet this register can be used as device identifier. The
->> identification is needed since some tps6586x regulators use a different
->> voltage table.
->>
->> Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
->> ---
->> Changes since v4:
->>   - Use variable named version instead of ret
->>
->> Changes since v2:
->>   - Avoid moving devm_kzalloc
->> ---
->>  drivers/mfd/tps6586x.c       | 50 +++++++++++++++++++++++++++++++++++++-------
->>  include/linux/mfd/tps6586x.h |  7 +++++++
->>  2 files changed, 49 insertions(+), 8 deletions(-)
-> 
-> I think I also already gave my Reviewed-by on both this and 2/3, neither
-> of which changed significantly enough to warrant that to be dropped. In
-> general it's fine to keep Reviewed-by and Acked-by as long as you're
-> only changing minor things.
-> 
-> Thierry
 
-Ok, sorry, didn't realize that is my job to pick them up when doing new
-revisions. Lee, can you add this when you apply this patch?
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Dec 05, 2013 at 03:12:59PM -0700, Stephen Warren wrote:
+[...]
+> diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+[...]
+> @@ -124,6 +128,16 @@ def func_flash():
+>      flash_img_size = os.path.getsize(flash_img)
+>      if args.debug:
+>          print 'flash_img_size %d 0x%x' % (flash_img_size, flash_img_size)
+> +    flash_img_crc32 = subprocess.check_output(['crc32', flash_img]).strip()
+
+Perhaps do this with binascii.crc32(), which is part of Python's
+standard library. That way we don't pull in crc32 as an additional
+dependency.
+
+Thierry
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSoeixAAoJEN0jrNd/PrOhqeYP/1z1lISyb8P8SZP5bBGWjTMM
+xSCqNLxi7rR1g6KCfBXHppj6Dx4PjnvMiofgvFHpm57pLfZSTTlsjl0InDojWEHX
+wr4p4xYufKV7SYAtjpkJcq4QbzuBTQwCPBKdS4xjxEL4MOpE3mQ+QnY0e2NTuc3a
+OPmidvcCYFmyF7Yb4rY5ShR/VhZFVovWDAjZZyVpDbP0Zp0iL0TYwj69gc7ooCXy
+IDsW2NmeBlWBoJRUUbOZ/wyY71eAtxIqyGFfDIcPryzAF0Nkgk5URRw1PPiqdXT0
+3oo5pf8yfmAdraS+tA5x7B6wsmWA93fnEEQbgmRCT2tBw8OrWqubE40Oeitufdw+
+VW0iTZDrOXZ0EJIHjNtThQp8NRPBs5rP5ZiroOTQlL9WP4jiD7/Rdhb6DrvSP/14
+t+8HbzzZ0bL+ksT6Wz/3LpUdQScSbE8xhN2KPEeEJXMbMdGA2lVLUnxZeaUa0aTD
+GKgyT60k01zk8I81yA/B/mwbLUpIYnOplRYkmM+U+/GuHU8lOEOK65TRdIXa6I1n
+RHwlJkwJm1tuwDLIE+WxRv/HLn0dMdMAAt2S41KWugrIFlzHtxZT8hKIh+lvmavB
+lQMshCNXTG5OQtRgA0kf9bnljOgFhDmkHx9QWC9RMlQSI0rSpyltGwE9AFkavMBu
++TheGt6tc7r4S2623aBm
+=B5/E
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
