@@ -1,71 +1,85 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] pinctrl: tegra: Various Tegra124 fixes
-Date: Fri, 6 Dec 2013 20:33:20 +0100
-Message-ID: <20131206193319.GA923@mithrandir>
-References: <52A10C7B.8070406@wwwdotorg.org>
- <1386330839-30559-1-git-send-email-treding@nvidia.com>
- <52A204E9.4080801@wwwdotorg.org>
+Subject: Re: [flasher PATCH V2 1/4] Add crc32 verification of the flash image
+Date: Fri, 6 Dec 2013 20:56:38 +0100
+Message-ID: <20131206195637.GB923@mithrandir>
+References: <1386351334-25766-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+	protocol="application/pgp-signature"; boundary="CUfgB8w4ZwR/yMy5"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <52A204E9.4080801-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1386351334-25766-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---tThc/1wpZn/ma/RB
+--CUfgB8w4ZwR/yMy5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2013 at 10:10:01AM -0700, Stephen Warren wrote:
-> On 12/06/2013 04:53 AM, Thierry Reding wrote:
-> > Remove various gratuitous blank lines and other minor whitespace and
-> > style cleanups. Add some missing commas within group arrays to prevent
-> > the compiler from concatenating the strings. Remove unneeded
-> > TEGRA_MUX_SAFE entry from enumeration and drop gratuitous _dt suffix
-> > from tegra_mux enumeration type name. Drop an unwarranted FIXME comment
-> > and rename gmi_ad8_ph0 pin to ph0 since that's how it's referenced in
-> > the DS06472001 datasheet.
->=20
-> Thierry, I assume this patch is against the version I have in my local
-> development branch?
+On Fri, Dec 06, 2013 at 10:35:33AM -0700, Stephen Warren wrote:
+[...]
+> diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+[...]
+> @@ -125,6 +129,19 @@ def func_flash():
+>      if args.debug:
+>          print 'flash_img_size %d 0x%x' % (flash_img_size, flash_img_size)
+> =20
+> +    imgf =3D file(flash_img, 'rb')
+> +    imgd =3D imgf.read()
+> +    imgf.close()
+> +    flash_img_crc32 =3D binascii.crc32(imgd)
+> +    if args.debug:
+> +        print 'flash_img_crc32 %x' % flash_img_crc32
+> +    flash_img_crc32_bs =3D (
+> +        ((flash_img_crc32 & 0xff) << 24) |
+> +        ((flash_img_crc32 & 0xff00) << 8) |
+> +        ((flash_img_crc32 & 0xff0000) >> 8) |
+> +        ((flash_img_crc32 & 0xff000000) >> 24)
+> +    )
 
-No, those changes were rebased on top of the patches that Laxman sent
-yesterday.
+I would've thought that Python actually supported byteswapping with some
+function, but it seems not (or at least not trivially). One could do
+something like this:
 
-> I'm expecting Laxman to roll this into the patches he posts, and send a
-> new complete version to LinusW, so there's no upstream action required
-> for this patch series at present, just an action for Laxman.
+	a =3D array.array('I', [crc])
+	a.byteswap()
+	crc =3D a[0]
 
-Yes, those were meant for Laxman to squash into his patch and resent. I
-should have said so.
+But with the array module you apparently can't force 32-bit values. 'I'
+will be at least 2, but 4 on 32-bit and 64-bit systems, 'L' will be 64
+bits on 64-bit systems and 32 bits on 32-bit systems it seems. You could
+check a.itemsize to determine the right type code. I suppose we won't be
+running on anything but 32- or 64-bit systems for a while, but it still
+said there's no support for sized types there.
 
-Thierry
+It could possibly be done with the struct module as well, but that would
+likely end up much more verbose too, so:
 
---tThc/1wpZn/ma/RB
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--CUfgB8w4ZwR/yMy5
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSoiZ/AAoJEN0jrNd/PrOhTzoP/RPRjDjS8CBj7S/2abfTf97H
-zf0zJIyiu317jD+8rWuU60hgyy8FxconqUJqVAwt+CSFusBurN9g4C/f/J6WC0Hi
-sbkCLXw/IGSjUxX/C67SJO55Uum6aGegngo/6RQSNs0aRBo2GO1upNgj6670S4F3
-nM3zuZE0nOFxQdN2eg08KqXwTyrk0ZEAhtt6NJ30e7V1f08JOtyo1p+tCQuUThOM
-ib14h1z9S9ksRYoEpJIZ9mZYIhtIYlNmp1L7Kjz9jomy1MsVnL0l96khZQnbd0C4
-DK1vQxBxXlfaMK2AkxtYYzXwFZPZH6MpceNaLoDTha90t4ibGrsxlmqFl+dPkIwn
-KokK6QU5fujpeiVE9gOlJRLbp41D63daud+Z+WZG7FksiOk+6FalhzmBqvYUbtBQ
-1/3AxneQOWX44EmRNBkoWny/EhKrifPW5x84zdfzf/2uMVtMb+kuVKFHI26kD5mN
-7gZeqyM9YOslQO14kQa0y8EJIs+Fs3QYbqh697OZvOsBl6tqemjr3qvFM02sDn3b
-y3GnC6RA6hloNOyhOkOBKo1ZgwTaBOymEn9g138q5f2uAAR0g2iJ7RkPwAwdhTOR
-79ED3fzcoRVNICPrLIvdZlq7oiiDs+V2gtdTMuTJUqrmkMnNwKNmuu/PtFRJzvYV
-cCOHACrFKlbhbKbSK6Jp
-=70mr
+iQIcBAEBAgAGBQJSoiv1AAoJEN0jrNd/PrOhNUoP/343u7WiwOL2hFWjUepHYrqy
+ssu0huW0BVUmLRG2BtsGUjNOHwhhZMY6izQLV11YoeWAWh0TP9LLgGV8Sm32X+LF
+0s8qxlaufnAoXaveOOKc6u0oU8FXlbHCaDDqqvuKIcD+M3xmHVklbvp6JchV2WQ+
+VGeVPs4roPyEondkqrNMkdnKjYsIa4tJtDd8Si8BKGmlZLJMKkR221q9+I4XJBZ7
+MS8eo4g+WoeZ26a9Sqx+MrNzxQY4nkthTvHxA9axUiyUWYhIp4jRYCX481ypoq+x
+VotwljhBBWI0gagJxsGjbjvU13XCj6AbwW6v1dlOhwvde1BiLlTvfle6559JISK1
+bThQ3DloZfxYWf1HqXJR7NVWaFhyQUKklLNKf3VXGsgDC4RdTlR/bOfxFRRScE0d
+jxzjeBLg3KuOjAuyvYNl7heIaPeyip0RArHEWa6XKqlCPB+pANZ6WEiuH85smlay
+VtI6qK3keBY2is87lFNo3hs9ZdfNOXSZ/m8zCv48vrJ/D0xZrRqJjy1eyZgT8KXv
+S969yIMNh5Orka5BYDjkJsUlMbbjnTRKhi8HoeC7yYbBvz7Nwv5wU4boIMwdlW3J
+4/F1RodwosPOjlRsqrEHQEgKpIKLUJDjJdEubSsUdP0c4joEnf8fsqYnheLgWxGM
+vvSwZNsKFB5v2fHmFgsI
+=n4Qw
 -----END PGP SIGNATURE-----
 
---tThc/1wpZn/ma/RB--
+--CUfgB8w4ZwR/yMy5--
