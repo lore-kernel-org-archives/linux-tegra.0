@@ -1,25 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V3 0/4] ARM: tegra: convert dts files of all Tegra platforms
- to use pinctrl defines
-Date: Thu, 05 Dec 2013 16:33:48 -0700
-Message-ID: <52A10D5C.3060002@wwwdotorg.org>
-References: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/4] ARM: tegra: add pinmux controller to tegra124.dtsi
+Date: Fri, 6 Dec 2013 11:35:24 +0530
+Message-ID: <52A16924.6040902@nvidia.com>
+References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-3-git-send-email-ldewangan@nvidia.com> <52A10932.1040903@wwwdotorg.org> <52A10A13.2020608@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386240249-30786-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: thierry.reding@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <52A10A13.2020608@wwwdotorg.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/05/2013 03:44 AM, Laxman Dewangan wrote:
-> This patch series convert dts files of all Tegra's platforms to use the pinctron
-> dt-binding macro for better readability.
+On Friday 06 December 2013 04:49 AM, Stephen Warren wrote:
+> On 12/05/2013 04:16 PM, Stephen Warren wrote:
+>> On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
+>>> The tegra124 pinmux controller is identical to tegra114 with
+>>> removing some of existing pins from T114 and adding new pins.
+>> I already sent this patch.
+> Oh, I do notice one difference between the two patches:
+>
+> Mine:
+>
+>> +		reg = <0x70000868 0x148>,	/* Pad control registers */
+>> +		      <0x70003000 0x40c>;	/* Mux registers */
+> Yours:
+>
+>> +		reg = <0x70000868 0x164		/* Pad control registers */
+>> +		       0x70003000 0x434>;	/* PinMux registers */
+> Are the increase register lengths in your patch correct? If so, I guess
+> I'll drop my patch and replace it with yours if you fix up the unit address.
+Yes, the last entry of the bank 0 and 1 are:
+DRV_PINGROUP(ao4,   0x9c8,  2,  3,  4,  12,  7,  20,  7,  28,  2, 30,  
+2,  Y),
+and
+PINGROUP(dp_hpd_pff0,           DP,             RSVD2, RSVD3,          
+RSVD4,          DP,             0x3430,  N,  N,  N),
 
-I think this series looks fine now; I'll apply soon pending what happens
-with the DMA/reset/ binding rework.
-
-There are quite a few typos/spelling/capitalization mistakes in the
-commit descriptions, but I'll fix them up when applying.
