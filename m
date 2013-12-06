@@ -1,68 +1,71 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: add I2C controllers to Tegra124 DT
-Date: Fri, 6 Dec 2013 15:03:34 +0100
-Message-ID: <20131206140333.GE30960@ulmo.nvidia.com>
-References: <1386196016-25128-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 1/3] mfd: tps6586x: add version detection
+Date: Fri, 6 Dec 2013 15:26:05 +0100
+Message-ID: <20131206142605.GA32363@ulmo.nvidia.com>
+References: <cover.1386333697.git.stefan@agner.ch>
+ <7812fb79beac0a6a409090f43d129893f9f93b5b.1386333697.git.stefan@agner.ch>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KlAEzMkarCnErv5Q"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1386196016-25128-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <7812fb79beac0a6a409090f43d129893f9f93b5b.1386333697.git.stefan@agner.ch>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stefan Agner <stefan@agner.ch>
+Cc: swarren@wwwdotorg.org, dev@lynxeye.de, lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, kai.poggensee@avionic-design.de, sameo@linux.intel.com, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---KlAEzMkarCnErv5Q
+--wac7ysb48OaltWcw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2013 at 03:26:53PM -0700, Stephen Warren wrote:
-[...]
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124=
-=2Edtsi
-[...]
-> @@ -176,6 +176,96 @@
->  		status =3D "disabled";
->  	};
-> =20
-> +	i2c@7000c000 {
-> +		compatible =3D "nvidia,tegra114-i2c";
+On Fri, Dec 06, 2013 at 01:51:45PM +0100, Stefan Agner wrote:
+> Use the VERSIONCRC to determine the exact device version. According to
+> the datasheet this register can be used as device identifier. The
+> identification is needed since some tps6586x regulators use a different
+> voltage table.
+>=20
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Changes since v4:
+>   - Use variable named version instead of ret
+>=20
+> Changes since v2:
+>   - Avoid moving devm_kzalloc
+> ---
+>  drivers/mfd/tps6586x.c       | 50 +++++++++++++++++++++++++++++++++++++-=
+------
+>  include/linux/mfd/tps6586x.h |  7 +++++++
+>  2 files changed, 49 insertions(+), 8 deletions(-)
 
-Aren't we supposed to always list the most specific compatible as well,
-just in case we ever need to implement a specific quirk in the future?
-
-So this would become:
-
-		compatible =3D "nvidia,tegra124-i2c", "nvidia,tegra114-i2c";
-
-Other than that, this is identical to a local patch that I have (minus
-the reset* and dma* properties).
+I think I also already gave my Reviewed-by on both this and 2/3, neither
+of which changed significantly enough to warrant that to be dropped. In
+general it's fine to keep Reviewed-by and Acked-by as long as you're
+only changing minor things.
 
 Thierry
 
---KlAEzMkarCnErv5Q
+--wac7ysb48OaltWcw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSodk1AAoJEN0jrNd/PrOhp9QP/1ASCRzVawqwvKuW+NGBBXvm
-tQ/hOeYkth5ra/igUu3bh0VLy6JNNIt4/LeIPl25EIq1Vezkw6y8ivuZBMdlA3qX
-5lJVTlVDIGaPp6qwPBRbtXaCCu+6vSMYzxJXFMVIlPF2Gud+ZmC8Y6qqrCOuuVAX
-IoJqqEWms4QB28uYVToqWOJpERJywQUpF1g1W1yHiQDWEKetTe010FrfMeCATrpF
-bPNxRl7uOuIyoqmvJfng0mwh9sRl2wedGN0jUud/S2fsdAs9AukHJvUgxApMgNbI
-unJisz7J2mn8Ec5llmoM3MvXmPndyoqTJacTmyJzMEzsfAcFoRvnd/19Q9f5uvXj
-T9j2iL3Re1OZVmhhvg0Icwu3Aq9gSazpDE6I8sxHKMXwyjQwmPr+wghKOtwfWoxI
-fASWeyIB6su161Dx49tJXojODIH6wPberPO8K7YdQsWV7UyTnXe83K6/fJpBj+JJ
-27gauv7yNz8cMzMDAkvf0o+1isKApHtkbfnLtqWPQvzeBOMO+9Bt9y/DnKDSAQUR
-YkvIYOZi47SBSgYEGCvIPthACAEOzjz5yBA+0OiYjPPC+C+2XHA7LlOMXVegnz+j
-9vTmm/Ift9IgJrpdkdb4AyJnWQHYCDjPeByKVLScLErv7RSGHPT+MJ/j45tkJs9D
-8tjUr2hVvn1Jra7PmgQ2
-=sKnW
+iQIcBAEBAgAGBQJSod59AAoJEN0jrNd/PrOhsEUQAKmjMP5uhsTLl3Esvqt19Hvp
+wKUMBdy7whuA6Rqpxwj9UQxLZ/1AV6gixd+CLiBHDOHmiv2CyFe6T9T5iTzHguj6
+0kqicTp0pGgzOZ/dj3shyqI9sttsAjBg1B8+oiU5Eo6twyIAMhHj7JOhdT1/AyI4
+wwB+LanGw3zzjts2eoxbU+HmKH2BUGXRTiuZRAueSAAQ0LbdIUmxC66HCt8eAfMr
+795bBZMWXMms2yYcaWBgdj/PvCSvbuDWDeX/lNsMUj7RWLcJ1bXEDDNKPWBKdKei
+jf/VpQxpTSq/jRaMRj8Y8DHVgOioERCUYegFJXeP/OTAvUkV9Gje9nm2/slUWyiC
+oaX3qV4nFLlnBYVC3A2RuX2mn1rXDXyvYFq7OLsR4BAlcWxiOCAJzWs4U7So5et6
+dQKQcBQ2DKsbi+8fYoDtDAg4aM4RpIXx2vpBB+ZjU8FQGuB64jc8vocmL0SfO6r9
+7ax2qWHqUIvOpXHa8AqB5PO4MNBxFoSGb+fdKDFObcB05Bsga+OENTR0bh/BriCG
+XZAYmYAGsoqpBc/LWe2PnpPALjXKZsK0w5O5sF4FLgKo60/MB2GBQwy0Vs8xzGEk
+n36jVcAkJaPL2yWfDuIydwDOF2aH2l2yk7Z+uIcH1wrId1plyKqkRE5CBDAecP4H
+gJs2esY/3QskK1TO6C43
+=4o3E
 -----END PGP SIGNATURE-----
 
---KlAEzMkarCnErv5Q--
+--wac7ysb48OaltWcw--
