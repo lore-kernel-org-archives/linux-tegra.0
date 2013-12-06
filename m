@@ -1,165 +1,148 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] pinctrl: tegra: Various Tegra124 fixes
-Date: Fri,  6 Dec 2013 12:53:58 +0100
-Message-ID: <1386330839-30559-1-git-send-email-treding@nvidia.com>
-References: <52A10C7B.8070406@wwwdotorg.org>
+From: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
+Subject: [PATCH v5 1/3] mfd: tps6586x: add version detection
+Date: Fri,  6 Dec 2013 13:51:45 +0100
+Message-ID: <7812fb79beac0a6a409090f43d129893f9f93b5b.1386333697.git.stefan@agner.ch>
+References: <cover.1386333697.git.stefan@agner.ch>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52A10C7B.8070406-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <cover.1386333697.git.stefan-XLVq0VzYD2Y@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: kai.poggensee-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove various gratuitous blank lines and other minor whitespace and
-style cleanups. Add some missing commas within group arrays to prevent
-the compiler from concatenating the strings. Remove unneeded
-TEGRA_MUX_SAFE entry from enumeration and drop gratuitous _dt suffix
-from tegra_mux enumeration type name. Drop an unwarranted FIXME comment
-and rename gmi_ad8_ph0 pin to ph0 since that's how it's referenced in
-the DS06472001 datasheet.
+Use the VERSIONCRC to determine the exact device version. According to
+the datasheet this register can be used as device identifier. The
+identification is needed since some tps6586x regulators use a different
+voltage table.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>
 ---
- drivers/pinctrl/pinctrl-tegra124.c | 27 ++++++++-------------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+Changes since v4:
+  - Use variable named version instead of ret
 
-diff --git a/drivers/pinctrl/pinctrl-tegra124.c b/drivers/pinctrl/pinctrl-tegra124.c
-index 592fd6f079b6..632e076115d5 100644
---- a/drivers/pinctrl/pinctrl-tegra124.c
-+++ b/drivers/pinctrl/pinctrl-tegra124.c
-@@ -211,7 +211,6 @@
- #define TEGRA_PIN_USB_VBUS_EN2_PFF1		_GPIO(249)
- #define TEGRA_PIN_PFF2				_GPIO(250)
+Changes since v2:
+  - Avoid moving devm_kzalloc
+---
+ drivers/mfd/tps6586x.c       | 50 +++++++++++++++++++++++++++++++++++++-------
+ include/linux/mfd/tps6586x.h |  7 +++++++
+ 2 files changed, 49 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index ee61fd7..6f2af9c 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -124,6 +124,7 @@ struct tps6586x {
+ 	struct device		*dev;
+ 	struct i2c_client	*client;
+ 	struct regmap		*regmap;
++	int			version;
  
--
- /* All non-GPIO pins follow */
- #define NUM_GPIOS	(TEGRA_PIN_PFF2 + 1)
- #define _PIN(offset)	(NUM_GPIOS + (offset))
-@@ -1183,8 +1182,6 @@ static const unsigned jtag_rtck_pins[] = {
- 	TEGRA_PIN_JTAG_RTCK,
- };
+ 	int			irq;
+ 	struct irq_chip		irq_chip;
+@@ -208,6 +209,14 @@ int tps6586x_irq_get_virq(struct device *dev, int irq)
+ }
+ EXPORT_SYMBOL_GPL(tps6586x_irq_get_virq);
  
--
--/*FIXME */
- static const unsigned drive_ao1_pins[] = {
- 	TEGRA_PIN_KB_ROW0_PR0,
- 	TEGRA_PIN_KB_ROW1_PR1,
-@@ -1242,7 +1239,7 @@ static const unsigned drive_at2_pins[] = {
- 	TEGRA_PIN_PG6,
- 	TEGRA_PIN_PG7,
- 	TEGRA_PIN_PI0,
--	TEGRA_PIN_PI0,
-+	TEGRA_PIN_PI1,
- 	TEGRA_PIN_PI3,
- 	TEGRA_PIN_PI4,
- 	TEGRA_PIN_PI7,
-@@ -1497,8 +1494,7 @@ static const unsigned drive_ao4_pins[] = {
- 	TEGRA_PIN_JTAG_RTCK,
- };
++int tps6586x_get_version(struct device *dev)
++{
++	struct tps6586x *tps6586x = dev_get_drvdata(dev);
++
++	return tps6586x->version;
++}
++EXPORT_SYMBOL_GPL(tps6586x_get_version);
++
+ static int __remove_subdev(struct device *dev, void *unused)
+ {
+ 	platform_device_unregister(to_platform_device(dev));
+@@ -472,12 +481,38 @@ static void tps6586x_power_off(void)
+ 	tps6586x_set_bits(tps6586x_dev, TPS6586X_SUPPLYENE, SLEEP_MODE_BIT);
+ }
  
--enum tegra_mux_dt {
--	TEGRA_MUX_SAFE,
-+enum tegra_mux {
- 	TEGRA_MUX_BLINK,
- 	TEGRA_MUX_CEC,
- 	TEGRA_MUX_CLDVFS,
-@@ -1771,7 +1767,6 @@ static const char * const gmi_groups[] = {
- 	"sdmmc4_clk_pcc4",
- 	"sdmmc4_cmd_pt7",
- 	"gmi_clk_lb",
--	"gpio_x6_aud_px6",
++static void tps6586x_print_version(struct i2c_client *client, int version)
++{
++	const char *name;
++
++	switch (version) {
++	case TPS658621A:
++		name = "TPS658621A";
++		break;
++	case TPS658621CD:
++		name = "TPS658621C/D";
++		break;
++	case TPS658623:
++		name = "TPS658623";
++		break;
++	case TPS658643:
++		name = "TPS658643";
++		break;
++	default:
++		name = "TPS6586X";
++		break;
++	}
++
++	dev_info(&client->dev, "Found %s, VERSIONCRC is %02x\n", name, version);
++}
++
+ static int tps6586x_i2c_probe(struct i2c_client *client,
+ 					const struct i2c_device_id *id)
+ {
+ 	struct tps6586x_platform_data *pdata = dev_get_platdata(&client->dev);
+ 	struct tps6586x *tps6586x;
+ 	int ret;
++	int version;
  
- 	"dap1_fs_pn0",
- 	"dap1_din_pn1",
-@@ -1888,7 +1883,7 @@ static const char * const irda_groups[] = {
- 	"uart2_rxd_pc3",
- 	"uart2_txd_pc2",
- 	"kb_row11_ps3",
--	"kb_row12_ps4"
-+	"kb_row12_ps4",
- };
- 
- static const char * const kbc_groups[] = {
-@@ -1936,7 +1931,7 @@ static const char * const pwm0_groups[] = {
- 	"sdmmc1_dat2_py5",
- 	"uart3_rts_n_pc0",
- 	"pu3",
--	"gmi_ad8_ph0",
-+	"ph0",
- 	"sdmmc3_dat3_pb4",
- };
- 
-@@ -2001,8 +1996,6 @@ static const char * const rsvd1_groups[] = {
- 	"reset_out_n",
- };
- 
--
--
- static const char * const rsvd2_groups[] = {
- 	"pv0",
- 	"pv1",
-@@ -2194,7 +2187,7 @@ static const char * const rsvd4_groups[] = {
- 	"dap3_dout_pp2",
- 	"pv0",
- 	"pv1",
--	"sdmmc1_clk_pz0"
-+	"sdmmc1_clk_pz0",
- 
- 	"clk2_out_pw5",
- 	"clk2_req_pcc5",
-@@ -2305,7 +2298,7 @@ static const char * const rsvd4_groups[] = {
- 	"usb_vbus_en1_pn5",
- 	"sdmmc3_clk_lb_out_pee4",
- 	"sdmmc3_clk_lb_in_pee5",
--	"gmi_clk_lb"
-+	"gmi_clk_lb",
- 
- 	"dp_hpd_pff0",
- 	"usb_vbus_en2_pff1",
-@@ -2313,7 +2306,6 @@ static const char * const rsvd4_groups[] = {
- };
- 
- static const char * const sdmmc1_groups[] = {
--
- 	"sdmmc1_clk_pz0",
- 	"sdmmc1_cmd_pz1",
- 	"sdmmc1_dat3_py4",
-@@ -2700,7 +2692,7 @@ static const char * const tmds_groups[] = {
- 		.ngroups = ARRAY_SIZE(fname##_groups),	\
+ 	if (!pdata && client->dev.of_node)
+ 		pdata = tps6586x_parse_dt(client);
+@@ -487,19 +522,18 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
+ 		return -ENOTSUPP;
  	}
  
--static const struct tegra_function  tegra124_functions[] = {
-+static const struct tegra_function tegra124_functions[] = {
- 	FUNCTION(blink),
- 	FUNCTION(cec),
- 	FUNCTION(cldvfs),
-@@ -3105,7 +3097,6 @@ static const struct tegra_pingroup tegra124_groups[] = {
- 	DRV_PINGROUP(hv0,   0x9b4,  2,  3,  4,  12,  5,  -1,  -1,  28,  2,  -1,  -1,  N),
- 	DRV_PINGROUP(sdio4, 0x9c4,  2,  3,  4,  12,  5,  20,  5,  28,  2,  30,  2,  N),
- 	DRV_PINGROUP(ao4,   0x9c8,  2,  3,  4,  12,  7,  20,  7,  28,  2,  30,  2,  Y),
--
- };
+-	ret = i2c_smbus_read_byte_data(client, TPS6586X_VERSIONCRC);
+-	if (ret < 0) {
+-		dev_err(&client->dev, "Chip ID read failed: %d\n", ret);
++	version = i2c_smbus_read_byte_data(client, TPS6586X_VERSIONCRC);
++	if (version < 0) {
++		dev_err(&client->dev, "Chip ID read failed: %d\n", version);
+ 		return -EIO;
+ 	}
  
- static const struct tegra_pinctrl_soc_data tegra124_pinctrl = {
-@@ -3127,6 +3118,7 @@ static struct of_device_id tegra124_pinctrl_of_match[] = {
- 	{ .compatible = "nvidia,tegra124-pinmux", },
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, tegra124_pinctrl_of_match);
- 
- static struct platform_driver tegra124_pinctrl_driver = {
- 	.driver = {
-@@ -3137,11 +3129,8 @@ static struct platform_driver tegra124_pinctrl_driver = {
- 	.probe = tegra124_pinctrl_probe,
- 	.remove = tegra_pinctrl_remove,
- };
+-	dev_info(&client->dev, "VERSIONCRC is %02x\n", ret);
 -
- module_platform_driver(tegra124_pinctrl_driver);
+ 	tps6586x = devm_kzalloc(&client->dev, sizeof(*tps6586x), GFP_KERNEL);
+-	if (tps6586x == NULL) {
+-		dev_err(&client->dev, "memory for tps6586x alloc failed\n");
++	if (!tps6586x)
+ 		return -ENOMEM;
+-	}
++
++	tps6586x->version = version;
++	tps6586x_print_version(client, tps6586x->version);
  
- MODULE_AUTHOR("Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_DESCRIPTION("NVIDIA Tegra124 pinctrl driver");
- MODULE_LICENSE("GPL v2");
--MODULE_DEVICE_TABLE(of, tegra124_pinctrl_of_match);
--
+ 	tps6586x->client = client;
+ 	tps6586x->dev = &client->dev;
+diff --git a/include/linux/mfd/tps6586x.h b/include/linux/mfd/tps6586x.h
+index 8799454..cbecec2 100644
+--- a/include/linux/mfd/tps6586x.h
++++ b/include/linux/mfd/tps6586x.h
+@@ -13,6 +13,12 @@
+ #define TPS6586X_SLEW_RATE_SET		0x08
+ #define TPS6586X_SLEW_RATE_MASK         0x07
+ 
++/* VERSION CRC */
++#define TPS658621A	0x15
++#define TPS658621CD	0x2c
++#define TPS658623	0x1b
++#define TPS658643	0x03
++
+ enum {
+ 	TPS6586X_ID_SYS,
+ 	TPS6586X_ID_SM_0,
+@@ -97,5 +103,6 @@ extern int tps6586x_clr_bits(struct device *dev, int reg, uint8_t bit_mask);
+ extern int tps6586x_update(struct device *dev, int reg, uint8_t val,
+ 			   uint8_t mask);
+ extern int tps6586x_irq_get_virq(struct device *dev, int irq);
++extern int tps6586x_get_version(struct device *dev);
+ 
+ #endif /*__LINUX_MFD_TPS6586X_H */
 -- 
 1.8.4.2
