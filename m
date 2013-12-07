@@ -1,17 +1,46 @@
-From: "inusha87" <anula.5-wo4oW1Pw1HF3vZ0LZ0W7Rg@public.gmane.org>
-Subject: =?windows-1251?B?0eDs++kg8eru8PvpIO/z8vwgwuXw7fPy/CDn?=
-	=?windows-1251?B?8OXt6OU=?=
-Date: Sat, 7 Dec 2013 06:23:12 +0100
-Message-ID: <201312070554.rB75sM5g024822@pbsg500.nifty.com>
-Reply-To: "inusha87" <Lorenzo-YDxpq3io04c@public.gmane.org>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.13-rc3
+Date: Sat, 7 Dec 2013 00:39:23 -0800
+Message-ID: <52A2DEBB.1000105@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="windows-1251";
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: info-9C47GUrGYegox3rIn2DAYQ@public.gmane.org, soft-Q6xQ7rhLURQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, logovaz-0hg3Own7Yd1HEPdA5IBG1w@public.gmane.org, taylor.lochrane@knights, grigory.akelkin-1eb8PgWX2tg@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-8e7i5fD46PLlIOTw4OPu9uXt7fvpIOTl7+7n6PIgwiDn5O7w7uL86PblIPHi7uj1IOPr4OcgaHR0
-cDovL2dvby5nbC9Rc2lFRUQNCg==
+Here are some basic Tegra test results for Linux v3.13-rc3.
+Logs and other details at:
+
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.13-rc3/20131207002705/
+
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.13-rc2 (dc1ccc48159d63eca5089e507c82c7d22ef60839)):
+    text     data      bss    total  kernel
+  +38076    +1320        0   +39396  multi_v7_defconfig
+    +732       +8        0     +740  tegra_defconfig
+
+  
+Boot-time memory difference
+(delta in bytes from test_v3.13-rc2 (dc1ccc48159d63eca5089e507c82c7d22ef60839))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+      -40k      40k        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+      -40k      40k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
