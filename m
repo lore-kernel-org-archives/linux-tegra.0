@@ -1,55 +1,18 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system
- suspend/hibernate
-Date: Sat, 07 Dec 2013 16:24:09 +0100
-Message-ID: <1386429849.9737.7.camel@x41.thuisdomein>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org>
-	 <3057132.zHNVNQZ8pP@vostro.rjw.lan>
-	 <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
-	 <1781198.iCUX9ZdW7W@vostro.rjw.lan>
-	 <CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
-	 <87vbz0j55p.fsf@nemi.mork.no>
+From: "d.a.n.y.l" <altnthnews-RmSZpvVQGju6c6uEtOJ/EA@public.gmane.org>
+Subject: =?koi8-r?Q?=D0=CF=C4=CB=D5=D0=C9=D4=C5_=CE=C1=DB_=CB=D5?=
+	=?koi8-r?Q?=D2=D3_-_=C4=CF=C2=D5=C4=D8=D4=C5_100%_=DA=D2?=
+	=?koi8-r?Q?=C5=CE=C9=C5?=
+Date: Sat, 7 Dec 2013 11:10:05 -0500
+Message-ID: <4103584.20131207170331@on2k.com.au>
+Reply-To: "d.a.n.y.l" <altnthnews-RmSZpvVQGju6c6uEtOJ/EA@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=koi8-r
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87vbz0j55p.fsf@nemi.mork.no>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: valkm-Q5hNXvyAX9c@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, seohelpmaster-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pobeda-kd+IhfNkMUM7Do+3AWx/eQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, 2013-12-07 at 12:01 +0100, Bj=C3=B8rn Mork wrote:
-> Sorry to be making noise here again, but I was eager to verify that t=
-he
-> fixes in v3.13-rc3 were OK on my system.  Unfortunately it seems this
-> patch completely broke suspend for me.  Hibernete ended up with a bla=
-nk
-> console and no visible activity, without ever writing any image to di=
-sk.
->=20
-> There really weren't that many suspects between v3.13-rc2 and v3.13-r=
-c3,
-> so I went directly to reverting 5a87182aa21d ("cpufreq: suspend
-> governors on system suspend/hibernate") which fixed the problem. I
-> didn't bother debugging it further from there. I don't think there is
-> anything magic about my system which should make this problem specifi=
-c
-> to it.
->=20
-> I am still using the acpi-cpufreq driver on an old x86_64 laptop if t=
-hat
-> matters.
-
-On an x86 (32 bits) laptop hibernate also broke in v3.13-rc3. On that
-machine hibernation itself worked, or at least seemed to work, but the
-machine would basically stop after thawing (directly after loading the
-hibernation image).
-
-And reverting commit 5a87182aa21d ("cpufreq: suspend governors on syste=
-m
-suspend/hibernate"), on top of v3.13-rc3, also lead to a successful
-hibernation/thaw cycle.
-
-
-Paul Bolle
+=E4=C9=C1=C7=CE=CF=DA =CE=C5 =C9=CD=C5=C5=D4 =DA=CE=C1=DE=C5=CE=C9=D1, =
+=D0=D2=C5=CB=D2=C1=D3=CE=D9=CA =DC=C6=C6=C5=CB=D4 =C7=C1=D2=C1=CE=D4=C9=
+=D2=CF=D7=C1=CE http://goo.gl/pgyFlO
