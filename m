@@ -1,32 +1,17 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] gpio: tegra: add missing error handling to probe
-Date: Sat, 7 Dec 2013 14:47:33 +0900
-Message-ID: <CAAVeFu+bK1A39Y24jd2i-8G=YRNCuyjDOQEmm+3Y1_3P5iREAw@mail.gmail.com>
-References: <1386362171-29311-1-git-send-email-swarren@wwwdotorg.org> <20131206210828.GB1685@mithrandir>
+From: "inusha87" <anula.5-wo4oW1Pw1HF3vZ0LZ0W7Rg@public.gmane.org>
+Subject: =?windows-1251?B?0eDs++kg8eru8PvpIO/z8vwgwuXw7fPy/CDn?=
+	=?windows-1251?B?8OXt6OU=?=
+Date: Sat, 7 Dec 2013 06:23:12 +0100
+Message-ID: <201312070554.rB75sM5g024822@pbsg500.nifty.com>
+Reply-To: "inusha87" <Lorenzo-YDxpq3io04c@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20131206210828.GB1685@mithrandir>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain;
+	charset="windows-1251";
+Content-Transfer-Encoding: base64
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: info-9C47GUrGYegox3rIn2DAYQ@public.gmane.org, soft-Q6xQ7rhLURQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, logovaz-0hg3Own7Yd1HEPdA5IBG1w@public.gmane.org, taylor.lochrane@knights, grigory.akelkin-1eb8PgWX2tg@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Dec 7, 2013 at 6:08 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Fri, Dec 06, 2013 at 01:36:11PM -0700, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> The call to gpiochip_add() is not currently error-checked. Add the
->> missing checking.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->> Perhaps this should be Cc: stable since Greg wants more stable patches,
->> but it's not a bug that's likely to be hit...
->> ---
->>  drivers/gpio/gpio-tegra.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-
-Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+8e7i5fD46PLlIOTw4OPu9uXt7fvpIOTl7+7n6PIgwiDn5O7w7uL86PblIPHi7uj1IOPr4OcgaHR0
+cDovL2dvby5nbC9Rc2lFRUQNCg==
