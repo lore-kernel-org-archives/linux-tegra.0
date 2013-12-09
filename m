@@ -1,50 +1,24 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2 2/2] pinctrl: tegra: add pinmux controller driver for
- Tegra124
-Date: Mon, 09 Dec 2013 11:27:38 -0700
-Message-ID: <52A60B9A.7010709@wwwdotorg.org>
-References: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com> <1386585140-1137-2-git-send-email-ldewangan@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Trimslice boards on Amazon for $99
+Date: Mon, 9 Dec 2013 15:49:34 -0800
+Message-ID: <52A6570E.1050109@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1386585140-1137-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
-Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, rob@landley.net, thierry.reding@gmail.com, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Ashwini Ghuge <aghuge@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/09/2013 03:32 AM, Laxman Dewangan wrote:
-> From: Ashwini Ghuge <aghuge@nvidia.com>
-> 
-> This adds a driver for the Tegra124 pinmux, and required
-> parameterization data for Tegra124.
-> 
-> The driver uses the common Tegra pincontrol driver utility
-> functions to implement the majority of the driver.
-> 
-> This driver is not compatible with the earlier NVIDIA's SoCs,
-> hence add new compatibile as "nvidia,tegra124-pinmux".
-> 
-> Originally written by Ashwini Gguhe.
-> Thierry:
-> 	- Cleanups in patches.
-> ldewangan:
->         - Fix some entries for groups.
-> 	- Fix MUX enums and group sequence.
+Hi folks,
 
-> +static const struct pinctrl_pin_desc  tegra124_pins[] = {
+Stephen just noticed that Tegra20 Trimslice boards are selling on 
+amazon.com for $99 each:
 
-Still two spaces there...
+http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Daps&field-keywords=trimslice&sprefix=trimsl%2Caps&rh=i%3Aaps%2Ck%3Atrimslice
 
-BTW, I said the following before for both patches; please make sure you
-add this to the commit description...
+That hardware is pretty long in the tooth but AFAIK it's the cheapest 
+Tegra device out there that boots the mainline kernel easily.
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
-
-Even if I didn't say it before, it's certainly now,
-
-Tested-by: Stephen Warren <swarren@nvidia.com>
-
-(I also tested your patches that add the pinctrl DT entries to the
-Venice2 DT file. Thanks.)
+- Paul
