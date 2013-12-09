@@ -1,103 +1,22 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V2 1/2] pinctrl: tegra: Add devicetree binding document
- for Tegra124
-Date: Mon, 9 Dec 2013 10:51:55 +0000
-Message-ID: <20131209105155.GC29303@e106331-lin.cambridge.arm.com>
-References: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH][RESEND] clocksource: tegra: remove deprecated IRQF_DISABLED
+Date: Mon, 09 Dec 2013 10:06:33 -0700
+Message-ID: <52A5F899.1070706@wwwdotorg.org>
+References: <1381639360-6920-1-git-send-email-michael.opdenacker@free-electrons.com> <1386581745-4559-1-git-send-email-michael.opdenacker@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "rob@landley.net" <rob@landley.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386581745-4559-1-git-send-email-michael.opdenacker-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michael Opdenacker <michael.opdenacker-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 09, 2013 at 10:32:19AM +0000, Laxman Dewangan wrote:
-> This device tree binding document describes the Tegra124 pincontrol
-> DT bindings. This document lists all valid properties, names, mux
-> options of Tegra124 pins.
+On 12/09/2013 02:35 AM, Michael Opdenacker wrote:
+> This patch proposes to remove the use of the IRQF_DISABLED flag
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
-> Changes from V1:
-> - Referred the dt-binding header file on describing the nodes.
-> 
->  .../bindings/pinctrl/nvidia,tegra124-pinmux.txt    |  147 ++++++++++++++++++++
->  1 files changed, 147 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> new file mode 100644
-> index 0000000..12ef772
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
-> @@ -0,0 +1,147 @@
-> +NVIDIA Tegra124 pinmux controller
-> +
-> +The Tegra124 pinctrl binding is very similar to the Tegra20 and Tegra30
-> +pinctrl binding, as described in nvidia,tegra20-pinmux.txt and
-> +nvidia,tegra30-pinmux.txt. In fact, this document assumes that binding as
-> +a baseline, and only documents the differences between the two bindings.
-> +
-> +Required properties:
-> +- compatible: "nvidia,tegra124-pinmux"
-> +- reg: Should contain the register physical address and length for each of
-> +  the pad control and mux registers. The first bank of address must be the
-> +  driver strength pad control register address and second bank address must
-> +  be pinmux register address.
+> It's a NOOP since 2.6.35 and it will be removed one day.
 
-The wording here could be improved. The first sentence implies an entry
-for each individual register but I assume these are actually banks of
-registers (the sizes in the exanple imply this). The second sentence is
-more sepcific.
-
-How about something like:
-
-reg: Should contain a list of base address and size pairs for:
- * first entry - the driver strength and pad control registers
- * second entry - the pinmux registers
-
-Are these banks well defined? Where do they end?
-
-Is there likely to be anything built as an extension of this? Does it
-possibly make sense to use reg-names?
-
-> +
-> +Tegra124 adds the following optional properties for pin configuration subnodes.
-> +The macros for options are defined in the
-> +	include/dt-binding/pinctrl/pinctrl-tegra.h.
-> +- nvidia,enable-input: Integer. Enable the pin's input path.
-> +		enable :TEGRA_PIN_ENABLE0 and
-> +		disable or output only: TEGRA_PIN_DISABLE.
-> +- nvidia,open-drain: Integer.
-> +		enable: TEGRA_PIN_ENABLE.
-> +		disable: TEGRA_PIN_DISABLE.
-> +- nvidia,lock: Integer. Lock the pin configuration against further changes
-> +    until reset.
-> +		enable: TEGRA_PIN_ENABLE.
-> +		disable: TEGRA_PIN_DISABLE.
-> +- nvidia,io-reset: Integer. Reset the IO path.
-> +		enable: TEGRA_PIN_ENABLE.
-> +		disable: TEGRA_PIN_DISABLE.
-> +- nvidia,rcv-sel: Integer. Select VIL/VIH receivers.
-> +		normal: TEGRA_PIN_DISABLE
-> +		high: TEGRA_PIN_ENABLE
-> +- nvidia,drive-type: Integer. Valid range 0...3.
-
-What do the values in this range mean?
-
-[...]
-
-> +Example:
-> +
-> +	pinmux: pinmux {
-> +		compatible = "nvidia,tegra124-pinmux";
-> +		reg = <0x70000868 0x164		/* Pad control registers */
-> +		       0x70003000 0x434>;	/* PinMux registers */
-
-Nit: please bracket these individually.
-
-Thanks,
-Mark.
+I assume that the maintainers for drivers/clocksource/ will apply this.
+If not, let me know, and I can take it through the Tegra tree.
