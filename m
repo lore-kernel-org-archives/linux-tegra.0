@@ -1,53 +1,59 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: fix uninitialized variables in set_fmt
-Date: Mon, 9 Dec 2013 17:15:02 +0000
-Message-ID: <20131209171502.GW29268@sirena.org.uk>
-References: <1386362090-29250-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v11 0/7] ARM: support for the Trusted Foundations secure
+ monitor
+Date: Mon, 09 Dec 2013 10:21:32 -0700
+Message-ID: <52A5FC1C.70400@wwwdotorg.org>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com> <20131126001033.GB21634@quad.lixom.net> <CAAVeFuKh7T42AfAud=ZJ-j_7BgeRUFOytD7CNQ_DFdZeQRHj4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="skgCfLFhCSVZJUH9"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1386362090-29250-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <CAAVeFuKh7T42AfAud=ZJ-j_7BgeRUFOytD7CNQ_DFdZeQRHj4A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/02/2013 05:48 PM, Alexandre Courbot wrote:
+> On Tue, Nov 26, 2013 at 9:10 AM, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+>> On Sun, Nov 24, 2013 at 03:30:45PM +0900, Alexandre Courbot wrote:
+>>> New rebase that should be ready-to-apply on the latest Tegra tree. The last
+>>> remaining blocker is Russell's approval for this series and it is my hope to
+>>> obtain it with this version.
+>>>
+>>> There has been quite some debate around this series, notably about the SMC
+>>> calling conventions and whether the firmware interface should be moved out of
+>>> arch/arm. I hope that all the questions have been answered and that we can move
+>>> forward with this series that enables NVIDIA-branded retail Tegra devices to run
+>>> mainline.
+>>>
+>>> Changes since v10:
+>>> - Rebased on top of more recent sources since some files have been renamed in
+>>>   mach-tegra.
+>>> - Gave a final proof-read and extensive testing.
+>>>
+>>> Alexandre Courbot (7):
+>>>   ARM: add basic support for Trusted Foundations
+>>>   of: add vendor prefix for Trusted Logic Mobility
+>>>   of: add Trusted Foundations bindings documentation
+>>>   ARM: tegra: add support for Trusted Foundations
+>>>   ARM: tegra: split setting of CPU reset handler
+>>>   ARM: tegra: set CPU reset handler using firmware
+>>>   ARM: tegra: support Trusted Foundations by default
+>>
+>> Ok, this looks good to me. Russell, do you want the first patch in your
+>> tree or are you ok with acking that and we can take everything through
+>> arm-soc?
+>>
+>> The alternative is that we can have Stephen provide a stable branch with
+>> the first patch on it and we both merge that, then the rest goes on top
+>> of that through arm-soc.
+> 
+> Russell, ping?
 
---skgCfLFhCSVZJUH9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Russell, are you OK with this series? If you could ack patch 1, that
+would be great.
 
-On Fri, Dec 06, 2013 at 01:34:50PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> In tegra*_i2s_set_fmt(), in the (fmt =3D=3D SND_SOC_DAIFMT_CBM_CFM) case,
-> "val" is never assigned to, but left uninitialized. The other case does
-
-Applied, thanks.
-
---skgCfLFhCSVZJUH9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSpfqTAAoJELSic+t+oim9nHwQAJbTqqoHlRhcGVNYHTeCtfRl
-zapATH5SbZ3m2AGbFPO3Y23iFH9Zr+Rm59KArLKhG/pKaYNCGQvmhWizDvqRrrbc
-a2OWlReU9mHwShPQvLYjBKZbGphBUJPpAC68SLRk4NgjAfFdCe5SThnfrWPMCxzK
-7X2k6xftKbL9lU5ltLGvlzxn07v0GAHtkHDhjVgpiuYDqIrXYXp8lJ8eOSkYXrQA
-Id9ifWwwoDaFL69NXpIswblLRthW7ArS1+yGY0lxAIw9rTkgYnSi/j2Db5PFKUmr
-lklqDwj95cHGsZaa2nuH4BdYbBPJl9EZNCrFJKz+JmFHkUgmG7wGRmEmx2QKoN2Z
-wsRoXZzDiO2D2wORlzvc4t8qPzqV+YfHlS4hiASfoVo6ypTW2EoopZl7ibhvzP4E
-yXp22jXs7ZsxA6ikFsTTAJPWcCgeKMRboX513+48gMsPQU0+xOKFk51OcyN1BjTa
-G23yUs86NJdJ/zkQYvSoqykdF507H/0AAxpkpFkpSGjV/mC+hrD7xXNjqXDlZL2D
-7B7QTAsfflazPqJx2x9WuEl8NdRf5zH1HCpMzA2l/1GNPuxPawPwYY+5wmjPA45W
-H2//F+jcIEYVLJxS7OoB0q9uctCYdyyys6q5KIFhuCJpjHsxXuMJ7/fFRoh4MmP1
-Ih7TFlXHgDphyEZhyzK/
-=V5b8
------END PGP SIGNATURE-----
-
---skgCfLFhCSVZJUH9--
+If I don't hear otherwise by Friday, I think the best thing is to merge
+the whole series through the Tegra tree, although I'll structure it so
+that patch 1 can be merged into other branches separately if needed.
