@@ -1,120 +1,77 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 2/2] cpufreq: tegra: Re-model Tegra cpufreq driver
-Date: Mon, 09 Dec 2013 10:32:31 -0700
-Message-ID: <52A5FEAF.4050001@wwwdotorg.org>
-References: <1386229462-3474-1-git-send-email-bilhuang@nvidia.com> <1386229462-3474-3-git-send-email-bilhuang@nvidia.com> <52A10681.4050906@wwwdotorg.org> <52A58305.3070902@nvidia.com>
+Subject: Re: [PATCH V2 1/2] pinctrl: tegra: Add devicetree binding document
+ for Tegra124
+Date: Mon, 09 Dec 2013 10:39:42 -0700
+Message-ID: <52A6005E.3060506@wwwdotorg.org>
+References: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com> <20131209105155.GC29303@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <52A58305.3070902@nvidia.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: bilhuang <bilhuang@nvidia.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20131209105155.GC29303@e106331-lin.cambridge.arm.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "rob@landley.net" <rob@landley.net>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/09/2013 01:44 AM, bilhuang wrote:
-> On 12/06/2013 07:04 AM, Stephen Warren wrote:
->> On 12/05/2013 12:44 AM, Bill Huang wrote:
->>> Re-model Tegra cpufreq driver to support all Tegra series of SoCs.
->>>
->>> * Make tegra-cpufreq.c a generic Tegra cpufreq driver.
->>> * Move Tegra20 specific codes into tegra20-cpufreq.c.
->>> * Bind Tegra cpufreq dirver with a fake device so defer probe would work
->>>    when we're going to get regulator in the driver to support voltage
->>>    scaling (DVFS).
+On 12/09/2013 03:51 AM, Mark Rutland wrote:
+> On Mon, Dec 09, 2013 at 10:32:19AM +0000, Laxman Dewangan wrote:
+>> This device tree binding document describes the Tegra124 pincontrol
+>> DT bindings. This document lists all valid properties, names, mux
+>> options of Tegra124 pins.
 >>
->>> diff --git a/drivers/cpufreq/tegra-cpufreq.c
->>> b/drivers/cpufreq/tegra-cpufreq.c
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> ---
+>> Changes from V1:
+>> - Referred the dt-binding header file on describing the nodes.
 >>
->>> @@ -91,14 +40,10 @@ static int tegra_update_cpu_speed(struct
->>> cpufreq_policy *policy,
->> ...
->>> +    if (soc_config->vote_emc_on_cpu_rate)
->>> +        soc_config->vote_emc_on_cpu_rate(rate);
->>> +
->>> +    ret = soc_config->cpu_clk_set_rate(rate * 1000);
->>>       if (ret)
->>>           pr_err("cpu-tegra: Failed to set cpu frequency to %lu kHz\n",
->>>               rate);
+>>  .../bindings/pinctrl/nvidia,tegra124-pinmux.txt    |  147 ++++++++++++++++++++
+>>  1 files changed, 147 insertions(+), 0 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
 >>
->> Is there any/much shared code left in this file after this patch? It
->> seems like all this file does now is make each cpufreq callback function
->> call soc_config->the_same_function_name(). If so, wouldn't it be better
->> to simply implement completely separate tegar20-cpufreq and
->> tegra30-cpufreq drivers, and register them each directly with the
->> cpufreq core, to avoid this file doing all the indirection?
->
-> I think this file is needed since we can shared the registration and
-> probe logic for different SoCs.
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+>> new file mode 100644
+>> index 0000000..12ef772
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-pinmux.txt
+>> @@ -0,0 +1,147 @@
+>> +NVIDIA Tegra124 pinmux controller
+>> +
+>> +The Tegra124 pinctrl binding is very similar to the Tegra20 and Tegra30
+>> +pinctrl binding, as described in nvidia,tegra20-pinmux.txt and
+>> +nvidia,tegra30-pinmux.txt. In fact, this document assumes that binding as
+>> +a baseline, and only documents the differences between the two bindings.
+>> +
+>> +Required properties:
+>> +- compatible: "nvidia,tegra124-pinmux"
+>> +- reg: Should contain the register physical address and length for each of
+>> +  the pad control and mux registers. The first bank of address must be the
+>> +  driver strength pad control register address and second bank address must
+>> +  be pinmux register address.
+> 
+> The wording here could be improved. The first sentence implies an entry
+> for each individual register but I assume these are actually banks of
+> registers (the sizes in the exanple imply this). The second sentence is
+> more sepcific.
+> 
+> How about something like:
+> 
+> reg: Should contain a list of base address and size pairs for:
+>  * first entry - the driver strength and pad control registers
 
-But there's basically nothing in probe() already, and if we have a
-separate driver for each SoC, then there's even less code; just a call
-to devm_kzalloc() for the device-specific data (which will be
-SoC-specific in size anyway), and a call to cpufreq_register_driver(). I
-don't think it's worth sharing that if it means that every other
-function needs to be an indirect function call.
+If this patch gets revised, please s/driver/drive/ here.
 
->>> -int __init tegra_cpufreq_init(void)
->>> +static struct {
->>> +    char *compat;
->>> +    int (*init)(struct tegra_cpufreq_data *,
->>> +            const struct tegra_cpufreq_config **);
->>> +} tegra_init_funcs[] = {
->>> +    { "nvidia,tegra20", tegra20_cpufreq_init },
->>> +};
->>> +
->>> +static int tegra_cpufreq_probe(struct platform_device *pdev)
->> ...
->>> +    for (i = 0; i < ARRAY_SIZE(tegra_init_funcs); i++) {
->>> +        if (of_machine_is_compatible(tegra_init_funcs[i].compat)) {
->>> +            ret = tegra_init_funcs[i].init(tegra_data, &soc_config);
->>> +            if (!ret)
->>> +                break;
->>> +            else
->>> +                goto out;
->>> +        }
->>>       }
->>> +    if (i == ARRAY_SIZE(tegra_init_funcs))
->>> +        goto out;
->>
->> I think there are better ways of doing this than open-coding it. Perhaps
->> of_match_device() or the platform-driver equivalent could be made to
->> work?
->
-> Open coding is everywhere in OF helper functions actually. I doubt if we
-> can use of_match_device() if we're not adding node in DT.
-> If we're matching the platform device then we might need open coding, no?
+>  * second entry - the pinmux registers
+> 
+> Are these banks well defined? Where do they end?
 
-For platform devices, you can set up the id_table of struct
-platform_driver, and then simply call platform_get_device_id(pdev)
-inside probe() to find the matching entry. drivers/i2c/busses/i2c-at91.c
-is an example of how this works (just some random driver I found using
-grep).
+Yes, the SoC includes specific banks of registers for those two types of
+configuration. The banks end at whatever address contains the last
+define register of that type.
 
->>> +int __init tegra_cpufreq_init(void)
->>> +{
->>> +    struct platform_device_info devinfo = { .name = "tegra-cpufreq", };
->>> +
->>> +    platform_device_register_full(&devinfo);
->>> +
->>> +    return 0;
->>>   }
->>>   EXPORT_SYMBOL(tegra_cpufreq_init);
->>
->> Perhaps instead of hard-coding the name "tegra-cpufreq" here, you could
->> dynamically construct the device name based on the DT's root compatible
->> value, register "${root_compatible}-cpufreq", e.g.
->> "nvidia,tegra20-cpufreq" or "nvidia,tegra30-cpufreq". That would allow
->> the kernel's standard device/driver matching mechanism to pick the
->> correct driver to instantiate. Perhaps you could even dynamically
->> register an OF device so that you can use of_match_device() in probe, if
->
-> I guess what you meant dynamically register an OF device is registering
-> an fake OF device by calling of_device_add(), no? If yes then what
-> of_node should we give?
+> Is there likely to be anything built as an extension of this? Does it
+> possibly make sense to use reg-names?
 
-Yes. Good question about which node. I guess the root node would be the
-only one that made any sense at all, and admittedly it doesn't make a
-huge amount of sense. Perhaps registers a platform device rather than an
-OF device would make more sense. See platform_device_register() I think.
+Any new SoC would get a new binding, since all the other configuration
+parameters (lists of valid pins, groups, functions) would be different,
+so there's no need for future compatibility here.
