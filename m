@@ -1,24 +1,69 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: Re: [PATCH] gpu: host1x: clk_round_rate() can return a zero upon
- error
-Date: Wed, 11 Dec 2013 11:15:16 -0800
-Message-ID: <alpine.DEB.2.02.1312111113050.1653@tamien>
-References: <alpine.DEB.2.02.1312091746400.4127@tamien> <20131211151908.GC31617@ulmo.nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] dma: tegra: Use runtime_pm for clk enable/disable
+Date: Wed, 11 Dec 2013 13:49:29 -0700
+Message-ID: <52A8CFD9.6030002@wwwdotorg.org>
+References: <1386751756-12583-1-git-send-email-bandik@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"; format=flowed
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131211151908.GC31617@ulmo.nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, Arto Merilainen <amerilainen@nvidia.com>, Terje Bergstrom <tbergstrom@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386751756-12583-1-git-send-email-bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/11/2013 01:49 AM, Chaitanya Bandi wrote:
+> Used runtime_pm APIs for clock enabling/disabling.
+> Made changes such that clock is not enabled during
+> idle. Also moved the usage of clk prepare/unprepare
+> such that they are not called in isr context.
 
-On Wed, 11 Dec 2013, Thierry Reding wrote:
+Hmm. This is going to cause conflicts with the patch I'm taking through
+the Tegra tree which converts the driver to support the standard DMA DT
+bindings. Perhaps this can wait until 3.15, or perhaps we can merge the
+Tegra branch back into the DMA tree to resolve the conflict.
 
-> Perhaps unsigned long long would be a better choice for future
-> compatibility?
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
 
-Yes - at this point am planning to go straight to u64.
+> - * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2012-13, NVIDIA CORPORATION.  All rights reserved.
 
-- Paul
+s/13/2013/
+
+> @@ -580,6 +580,11 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
+>  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
+>  
+>  	/* Do not start DMA if it is going to be terminate */
+> +	if (list_empty(&tdc->pending_sg_req) && (!to_terminate)) {
+> +		clk_disable(tdc->tdma->dma_clk);
+> +		pm_runtime_put(tdc->tdma->dev);
+> +	}
+> +
+>  	if (to_terminate || list_empty(&tdc->pending_sg_req))
+>  		return;
+
+Don't you want to insert the new code before the comment? Otherwise,
+you're separating the existing comment and code.
+
+Here and many other places, both pm_runtime_get/put *and*
+clk_enable/disable are called. Why doesn't the code *just* call
+pm_runtime_get/put, and let the implementation of those APIs perform the
+clock_enable/disable? That'd be a lot more typical.
+
+Most of the new calls to pm_runtime_*()/clk_{en,dis}able() are missing
+error checking.
+
+> @@ -682,12 +687,21 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
+
+> +	pm_runtime_get(tdc->tdma->dev);
+
+I think you need pm_runtime_get_sync() here to make sure the clock gets
+turned on immediately? Perhaps that why...
+
+> +	ret = clk_enable(tdc->tdma->dma_clk);
+
+... there's also direct manipulation of the clock everywhere.
+
+Also, shouldn't the DMA core be calling pm_runtime_get(), rather than
+each individual DMA driver?
