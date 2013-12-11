@@ -1,142 +1,130 @@
-From: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] dma: tegra: Use runtime_pm for clk enable/disable
-Date: Wed, 11 Dec 2013 14:19:16 +0530
-Message-ID: <1386751756-12583-1-git-send-email-bandik@nvidia.com>
+From: bilhuang <bilhuang@nvidia.com>
+Subject: Re: [PATCH v3 2/2] cpufreq: tegra: Re-model Tegra cpufreq driver
+Date: Wed, 11 Dec 2013 19:18:00 +0800
+Message-ID: <52A849E8.30107@nvidia.com>
+References: <1386229462-3474-1-git-send-email-bilhuang@nvidia.com> <1386229462-3474-3-git-send-email-bilhuang@nvidia.com> <52A10681.4050906@wwwdotorg.org> <52A58305.3070902@nvidia.com> <52A5FEAF.4050001@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52A5FEAF.4050001@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Used runtime_pm APIs for clock enabling/disabling.
-Made changes such that clock is not enabled during
-idle. Also moved the usage of clk prepare/unprepare
-such that they are not called in isr context.
+On 12/10/2013 01:32 AM, Stephen Warren wrote:
+> On 12/09/2013 01:44 AM, bilhuang wrote:
+>> On 12/06/2013 07:04 AM, Stephen Warren wrote:
+>>> On 12/05/2013 12:44 AM, Bill Huang wrote:
+>>>> Re-model Tegra cpufreq driver to support all Tegra series of SoCs.
+>>>>
+>>>> * Make tegra-cpufreq.c a generic Tegra cpufreq driver.
+>>>> * Move Tegra20 specific codes into tegra20-cpufreq.c.
+>>>> * Bind Tegra cpufreq dirver with a fake device so defer probe would work
+>>>>     when we're going to get regulator in the driver to support voltage
+>>>>     scaling (DVFS).
+>>>
+>>>> diff --git a/drivers/cpufreq/tegra-cpufreq.c
+>>>> b/drivers/cpufreq/tegra-cpufreq.c
+>>>
+>>>> @@ -91,14 +40,10 @@ static int tegra_update_cpu_speed(struct
+>>>> cpufreq_policy *policy,
+>>> ...
+>>>> +    if (soc_config->vote_emc_on_cpu_rate)
+>>>> +        soc_config->vote_emc_on_cpu_rate(rate);
+>>>> +
+>>>> +    ret = soc_config->cpu_clk_set_rate(rate * 1000);
+>>>>        if (ret)
+>>>>            pr_err("cpu-tegra: Failed to set cpu frequency to %lu kHz\n",
+>>>>                rate);
+>>>
+>>> Is there any/much shared code left in this file after this patch? It
+>>> seems like all this file does now is make each cpufreq callback function
+>>> call soc_config->the_same_function_name(). If so, wouldn't it be better
+>>> to simply implement completely separate tegar20-cpufreq and
+>>> tegra30-cpufreq drivers, and register them each directly with the
+>>> cpufreq core, to avoid this file doing all the indirection?
+>>
+>> I think this file is needed since we can shared the registration and
+>> probe logic for different SoCs.
+>
+> But there's basically nothing in probe() already, and if we have a
+> separate driver for each SoC, then there's even less code; just a call
+> to devm_kzalloc() for the device-specific data (which will be
+> SoC-specific in size anyway), and a call to cpufreq_register_driver(). I
+> don't think it's worth sharing that if it means that every other
+> function needs to be an indirect function call.
+OK that makes sense.
+>
+>>>> -int __init tegra_cpufreq_init(void)
+>>>> +static struct {
+>>>> +    char *compat;
+>>>> +    int (*init)(struct tegra_cpufreq_data *,
+>>>> +            const struct tegra_cpufreq_config **);
+>>>> +} tegra_init_funcs[] = {
+>>>> +    { "nvidia,tegra20", tegra20_cpufreq_init },
+>>>> +};
+>>>> +
+>>>> +static int tegra_cpufreq_probe(struct platform_device *pdev)
+>>> ...
+>>>> +    for (i = 0; i < ARRAY_SIZE(tegra_init_funcs); i++) {
+>>>> +        if (of_machine_is_compatible(tegra_init_funcs[i].compat)) {
+>>>> +            ret = tegra_init_funcs[i].init(tegra_data, &soc_config);
+>>>> +            if (!ret)
+>>>> +                break;
+>>>> +            else
+>>>> +                goto out;
+>>>> +        }
+>>>>        }
+>>>> +    if (i == ARRAY_SIZE(tegra_init_funcs))
+>>>> +        goto out;
+>>>
+>>> I think there are better ways of doing this than open-coding it. Perhaps
+>>> of_match_device() or the platform-driver equivalent could be made to
+>>> work?
+>>
+>> Open coding is everywhere in OF helper functions actually. I doubt if we
+>> can use of_match_device() if we're not adding node in DT.
+>> If we're matching the platform device then we might need open coding, no?
+>
+> For platform devices, you can set up the id_table of struct
+> platform_driver, and then simply call platform_get_device_id(pdev)
+> inside probe() to find the matching entry. drivers/i2c/busses/i2c-at91.c
+> is an example of how this works (just some random driver I found using
+> grep).
+If we're going to have separate driver for each SoC, then we don't need 
+platform_get_device_id(pdev) stuffs...
 
-Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Verified with audio playback on Dalmore and check runtime status.
-
- drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 73654e3..355572d 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1,7 +1,7 @@
- /*
-  * DMA driver for Nvidia's Tegra20 APB DMA controller.
-  *
-- * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (c) 2012-13, NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-@@ -580,6 +580,11 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
- 	list_add_tail(&sgreq->node, &tdc->free_sg_req);
- 
- 	/* Do not start DMA if it is going to be terminate */
-+	if (list_empty(&tdc->pending_sg_req) && (!to_terminate)) {
-+		clk_disable(tdc->tdma->dma_clk);
-+		pm_runtime_put(tdc->tdma->dev);
-+	}
-+
- 	if (to_terminate || list_empty(&tdc->pending_sg_req))
- 		return;
- 
-@@ -682,12 +687,21 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
- 	unsigned long flags;
-+	int ret;
- 
- 	spin_lock_irqsave(&tdc->lock, flags);
- 	if (list_empty(&tdc->pending_sg_req)) {
- 		dev_err(tdc2dev(tdc), "No DMA request\n");
- 		goto end;
- 	}
-+
-+	pm_runtime_get(tdc->tdma->dev);
-+	ret = clk_enable(tdc->tdma->dma_clk);
-+	if (ret < 0) {
-+		dev_err(tdc2dev(tdc), "clk_enable failed: %d\n", ret);
-+		return;
-+	}
-+
- 	if (!tdc->busy) {
- 		tdc_start_head_req(tdc);
- 
-@@ -744,6 +758,8 @@ static void tegra_dma_terminate_all(struct dma_chan *dc)
- 				get_current_xferred_count(tdc, sgreq, status);
- 	}
- 	tegra_dma_resume(tdc);
-+	clk_disable(tdc->tdma->dma_clk);
-+	pm_runtime_put(tdc->tdma->dev);
- 
- skip_dma_stop:
- 	tegra_dma_abort_all(tdc);
-@@ -1153,22 +1169,16 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
--	struct tegra_dma *tdma = tdc->tdma;
--	int ret;
- 
-+	clk_prepare(tdc->tdma->dma_clk);
- 	dma_cookie_init(&tdc->dma_chan);
- 	tdc->config_init = false;
--	ret = clk_prepare_enable(tdma->dma_clk);
--	if (ret < 0)
--		dev_err(tdc2dev(tdc), "clk_prepare_enable failed: %d\n", ret);
--	return ret;
-+	return 0;
- }
- 
- static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- {
- 	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
--	struct tegra_dma *tdma = tdc->tdma;
--
- 	struct tegra_dma_desc *dma_desc;
- 	struct tegra_dma_sg_req *sg_req;
- 	struct list_head dma_desc_list;
-@@ -1182,7 +1192,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 
- 	if (tdc->busy)
- 		tegra_dma_terminate_all(dc);
--
-+	clk_unprepare(tdc->tdma->dma_clk);
- 	spin_lock_irqsave(&tdc->lock, flags);
- 	list_splice_init(&tdc->pending_sg_req, &sg_req_list);
- 	list_splice_init(&tdc->free_sg_req, &sg_req_list);
-@@ -1204,7 +1214,6 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 		list_del(&sg_req->node);
- 		kfree(sg_req);
- 	}
--	clk_disable_unprepare(tdma->dma_clk);
- }
- 
- /* Tegra20 specific DMA controller information */
-@@ -1418,7 +1427,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
- 
--	clk_disable_unprepare(tdma->dma_clk);
-+	clk_disable(tdma->dma_clk);
- 	return 0;
- }
- 
-@@ -1428,7 +1437,7 @@ static int tegra_dma_runtime_resume(struct device *dev)
- 	struct tegra_dma *tdma = platform_get_drvdata(pdev);
- 	int ret;
- 
--	ret = clk_prepare_enable(tdma->dma_clk);
-+	ret = clk_enable(tdma->dma_clk);
- 	if (ret < 0) {
- 		dev_err(dev, "clk_enable failed: %d\n", ret);
- 		return ret;
--- 
-1.8.1.5
+What I would like to do is creating platform cpufreq device with name 
+"${root_compatible}-cpufreq" then each SoC cpufreq driver can bind to 
+it, but the question is, which file is the best place to do this? Create 
+a new file for this or use existing file like arch/arm/mach-tegra/tegra.c?
+>
+>>>> +int __init tegra_cpufreq_init(void)
+>>>> +{
+>>>> +    struct platform_device_info devinfo = { .name = "tegra-cpufreq", };
+>>>> +
+>>>> +    platform_device_register_full(&devinfo);
+>>>> +
+>>>> +    return 0;
+>>>>    }
+>>>>    EXPORT_SYMBOL(tegra_cpufreq_init);
+>>>
+>>> Perhaps instead of hard-coding the name "tegra-cpufreq" here, you could
+>>> dynamically construct the device name based on the DT's root compatible
+>>> value, register "${root_compatible}-cpufreq", e.g.
+>>> "nvidia,tegra20-cpufreq" or "nvidia,tegra30-cpufreq". That would allow
+>>> the kernel's standard device/driver matching mechanism to pick the
+>>> correct driver to instantiate. Perhaps you could even dynamically
+>>> register an OF device so that you can use of_match_device() in probe, if
+>>
+>> I guess what you meant dynamically register an OF device is registering
+>> an fake OF device by calling of_device_add(), no? If yes then what
+>> of_node should we give?
+>
+> Yes. Good question about which node. I guess the root node would be the
+> only one that made any sense at all, and admittedly it doesn't make a
+> huge amount of sense. Perhaps registers a platform device rather than an
+> OF device would make more sense. See platform_device_register() I think.
+>
