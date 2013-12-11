@@ -1,45 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH REPOST] mmc: tegra: add support for Tegra124
-Date: Tue, 10 Dec 2013 11:31:10 -0700
-Message-ID: <1386700270-13829-1-git-send-email-swarren@wwwdotorg.org>
+From: Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: clk_round_rate() can return a zero upon
+ error
+Date: Wed, 11 Dec 2013 08:51:17 +0100
+Message-ID: <20131211075117.GA24559@pengutronix.de>
+References: <alpine.DEB.2.02.1312091746400.4127@tamien>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1312091746400.4127@tamien>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Terje =?iso-8859-15?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Dec 09, 2013 at 06:00:12PM -0800, Paul Walmsley wrote:
+> 
+> Treat both negative and zero return values from clk_round_rate() as
+> errors.  This is needed since subsequent patches will convert
+> clk_round_rate()'s return value to be an unsigned type, rather than a
+> signed type, since some clock sources can generate rates higher than
+> (2^31)-1 Hz.
+> 
+> Eventually, when calling clk_round_rate(), only a return value of zero
+> will be considered a error.  All other values will be considered valid
+> rates.  The comparison against values less than 0 is kept to preserve
+> the correct behavior in the meantime.
 
-Tegra124's MMC controller is very similar to earlier SoC generations,
-and can be supported by the same driver.
+Shouldn't it be an error when the result is not within sensible limits
+instead? What do you do with a rate of 1Hz?
 
-However, there are some non-backwards-compatible HW differences, and
-hence a new DT compatible value must be used to describe the HW. This
-patch updates the driver to support that new compatible value.
+Sascha
 
-That said, the HW differences are only relevant when enabling certain
-high-performance transfer modes. Since the driver is currently very
-simple and doesn't enable those modes, we don't actually need to address
-any of these HW differences in the code yet, hence the simple nature of
-this patch.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 5b7b2eba8a54..a835898a68dd 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -198,6 +198,7 @@ static struct sdhci_tegra_soc_data soc_data_tegra114 = {
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
-+	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
- 	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
- 	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
- 	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
 -- 
-1.8.1.5
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
