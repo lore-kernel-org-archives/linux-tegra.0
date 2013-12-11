@@ -1,209 +1,96 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv6+ 01/13] of: introduce
-	of_property_for_earch_phandle_with_args()
-Date: Wed, 11 Dec 2013 14:33:38 +0100
-Message-ID: <20131211.153338.2186623380643957232.hdoyu@nvidia.com>
-References: <1385041249-7705-1-git-send-email-hdoyu@nvidia.com><528E577C.2050506@wwwdotorg.org><20131211132845.5461FC4061A@trevor.secretlab.ca>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: clk_round_rate() can return a zero upon
+ error
+Date: Wed, 11 Dec 2013 16:19:09 +0100
+Message-ID: <20131211151908.GC31617@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1312091746400.4127@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131211132845.5461FC4061A-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1312091746400.4127@tamien>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Grant,
 
-Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote @ Wed, 11 Dec 2013 14:28:45 +0100:
+--kfjH4zxOES6UT95V
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, 21 Nov 2013 11:57:00 -0700, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> > On 11/21/2013 10:17 AM, Hiroshi Doyu wrote:
-> > > Iterating over a property containing a list of phandles with arguments
-> > > is a common operation for device drivers. This patch adds a new
-> > > of_property_for_each_phandle_with_args() macro to make the iteration
-> > > simpler.
-> > > 
-> > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > > v6+:
-> > > Use the description, which Grant Likely proposed, to be full enough
-> > > that a future reader can figure out why a patch was written.
-> > >   http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007062.html
-...
+On Mon, Dec 09, 2013 at 06:00:12PM -0800, Paul Walmsley wrote:
+>=20
+> Treat both negative and zero return values from clk_round_rate() as
+> errors.  This is needed since subsequent patches will convert
+> clk_round_rate()'s return value to be an unsigned type, rather than a
+> signed type, since some clock sources can generate rates higher than
+> (2^31)-1 Hz.
+>=20
+> Eventually, when calling clk_round_rate(), only a return value of zero
+> will be considered a error.  All other values will be considered valid
+> rates.  The comparison against values less than 0 is kept to preserve
+> the correct behavior in the meantime.
+>=20
+> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Applies on v3.13-rc3.  See also:
+>=20
+> http://marc.info/?l=3Dlinux-arm-kernel&m=3D138542591313620&w=3D2
+>=20
+>  drivers/gpu/drm/tegra/hdmi.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+> index 0cd9bc2056e8..8cf9d3aeb0cd 100644
+> --- a/drivers/gpu/drm/tegra/hdmi.c
+> +++ b/drivers/gpu/drm/tegra/hdmi.c
+> @@ -959,7 +959,7 @@ static int tegra_output_hdmi_check_mode(struct tegra_=
+output *output,
+>  	parent =3D clk_get_parent(hdmi->clk_parent);
+>=20
+>  	err =3D clk_round_rate(parent, pclk * 4);
+> -	if (err < 0)
+> +	if (err <=3D 0)
+>  		*status =3D MODE_NOCLOCK;
+>  	else
+>  		*status =3D MODE_OK;
 
-> That's right, I forgot I said that. Yes please fix the implementation.
+Looks good. Out of curiosity, what are the plans on how to change the
+clk_round_rate() API. I assume that at some point it will be modified
+to return an unsigned long? At that point we'll need to update all
+drivers as well to make sure the signed variables don't overflow.
 
-Here's the latest. I'll include this with the next v7 series.
+Perhaps unsigned long long would be a better choice for future
+compatibility?
 
-Can I get your Acked-by with this?
+Thierry
 
---8<----
+--kfjH4zxOES6UT95V
+Content-Type: application/pgp-signature
 
-From 8f7c0404aa68f0e8dbe0babc240590f6528ecc1f Mon Sep 17 00:00:00 2001
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Date: Fri, 15 Nov 2013 10:52:53 +0200
-Subject: [PATCH] of: introduce of_property_for_each_phandle_with_args()
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Iterating over a property containing a list of phandles with arguments
-is a common operation for device drivers. This patch adds a new
-of_property_for_each_phandle_with_args() macro to make the iteration
-simpler.
+iQIcBAEBAgAGBQJSqIJsAAoJEN0jrNd/PrOhpNsQAJLU511q8MBG79GSUY/guo4x
+12N5PBIZ1/r2AaMhongDGYMzgp8tjY00s1cQkFnM0U0SO8D0HU7Z/n5w8Y8iCS8k
+FMWVe2zryy/anjSfTgNTCdN9LgaVOFiJZfrmnU5ld2dvDR4OCs8t7Ff0VY84oflr
+o8KOhzxb9C4Qrv5cPNzOePtVh/kwncl7YA/4a7pNeBGBKs5v9mj3od5JwP6zEmk0
+7XChM8UAPUM4AfB1025TVavRl1sAcvvMev+Q0T+D1aCef3ry73/GC19IQP2oUB8K
+PWZu5e1+QBub4CBkLbYCzdHAa7/N0erR/BVkqB71mDpguwdMYjMBs6l/Hk2V0t/1
+eqmrgC5uZQiknpK/CHA8fuHULZGa9QMF3d7ly1zC0oA5pwadbIhaPYVSY578sxZc
+emBhAaJ8xqAK/5TpTHxjlZcYoVT9CQmkPlPyr+wZ6nJz/sgipYABRfTcSDU401eK
+M6Z2gsB4pi2McUro8fvTV8Uz9rhdYWKHC8WHtFx5/IEaKAHVNvpq3T798Jhu29Bs
+YYrxTqKVdDbutqHT1FsXPyxk2SpL877unoA3rT4A731sy7c3v+2LuA1OcIjbHjR8
++PnqsGmn0vc4yfZXMjUAml7I4sXHn46AFs30g3H8vvd6C41TVc5QoOWy1Hq+ae58
+EB5CjlJ1OKUB+AgzADSk
+=OXGm
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-v7:
-Fixed some minors pointed by Rob and Stephen.
-
-v6++++:
-Iterate without intrducing a new struct.
-
-v6+++:
-Introduced a new struct "of_phandle_iter" to keep the state when
-iterating over the list.
-
-v6++:
-Optimized to avoid O(n^2), suggested by Stephen Warren.
-http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007066.html
-
-I didn't introduce any struct to hold params and state here.
-
-v6+:
-Use the description, which Grant Likely proposed, to be full enough
-that a future reader can figure out why a patch was written.
-
-v5:
-New patch for v5.
-
-Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/of/base.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of.h | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 78 insertions(+)
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index f807d0e..cd4ab05 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -1201,6 +1201,52 @@ void of_print_phandle_args(const char *msg, const struct of_phandle_args *args)
- 	printk("\n");
- }
- 
-+const __be32 *of_phandle_iter_next(const char *cells_name, int cell_count,
-+				   const __be32 *cur, const __be32 *end,
-+				   struct of_phandle_args *out_args)
-+{
-+	struct device_node *dn;
-+	int i;
-+
-+	if (!cells_name && !cell_count)
-+		return NULL;
-+
-+	if (!cur || (cur >= end))
-+		return NULL;
-+
-+	dn = of_find_node_by_phandle(be32_to_cpup(cur++));
-+	if (!dn)
-+		return NULL;
-+
-+	if (cells_name)
-+		if (of_property_read_u32(dn, cells_name, &cell_count))
-+			return NULL;
-+
-+	out_args->np = dn;
-+	out_args->args_count = cell_count;
-+	for (i = 0; i < cell_count; i++)
-+		out_args->args[i] = be32_to_cpup(cur++);
-+
-+	return cur;
-+}
-+EXPORT_SYMBOL_GPL(of_phandle_iter_next);
-+
-+const __be32 *of_phandle_iter_init(const struct device_node *np,
-+				   const char *list_name,
-+				   const __be32 **end)
-+{
-+	size_t bytes;
-+	const __be32 *cur;
-+
-+	cur = of_get_property(np, list_name, &bytes);
-+	*end = cur;
-+	if (bytes)
-+		*end += bytes / sizeof(*cur);
-+
-+	return cur;
-+}
-+EXPORT_SYMBOL_GPL(of_phandle_iter_init);
-+
- static int __of_parse_phandle_with_args(const struct device_node *np,
- 					const char *list_name,
- 					const char *cells_name,
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 276c546..4345582 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -303,6 +303,14 @@ extern int of_parse_phandle_with_fixed_args(const struct device_node *np,
- extern int of_count_phandle_with_args(const struct device_node *np,
- 	const char *list_name, const char *cells_name);
- 
-+extern const __be32 *of_phandle_iter_init(const struct device_node *np,
-+					  const char *list_name,
-+					  const __be32 **end);
-+extern const __be32 *of_phandle_iter_next(const char *cells_name,
-+					  int cell_count,
-+					  const __be32 *cur, const __be32 *end,
-+					  struct of_phandle_args *out_args);
-+
- extern void of_alias_scan(void * (*dt_alloc)(u64 size, u64 align));
- extern int of_alias_get_id(struct device_node *np, const char *stem);
- 
-@@ -527,6 +535,22 @@ static inline int of_count_phandle_with_args(struct device_node *np,
- 	return -ENOSYS;
- }
- 
-+static inline const __be32 *of_phandle_iter_init(const struct device_node *np,
-+						 const char *list_name,
-+						 const __be32 **end)
-+{
-+	return NULL;
-+}
-+
-+static inline const __be32 *of_phandle_iter_next(const char *cells_name,
-+						 int cell_count,
-+						 const __be32 *cur,
-+						 const __be32 *end,
-+						 struct of_phandle_args *out_args);
-+{
-+	return NULL;
-+}
-+
- static inline int of_alias_get_id(struct device_node *np, const char *stem)
- {
- 	return -ENOSYS;
-@@ -613,6 +637,14 @@ static inline int of_property_read_u32(const struct device_node *np,
- 		s;						\
- 		s = of_prop_next_string(prop, s))
- 
-+#define of_property_for_each_phandle_with_args(node, list_name, cells_name, \
-+					       cell_count, out_args, cur, end) \
-+	for (cur = of_phandle_iter_init(node, list_name, &end),		\
-+		     cur = of_phandle_iter_next(cells_name, cell_count, \
-+						cur, end, &out_args);	\
-+	     cur;							\
-+	     cur = of_phandle_iter_next(cells_name, cell_count, cur, end, &out_args))
-+
- #if defined(CONFIG_PROC_FS) && defined(CONFIG_PROC_DEVICETREE)
- extern void proc_device_tree_add_node(struct device_node *, struct proc_dir_entry *);
- extern void proc_device_tree_add_prop(struct proc_dir_entry *pde, struct property *prop);
--- 
-1.8.1.5
+--kfjH4zxOES6UT95V--
