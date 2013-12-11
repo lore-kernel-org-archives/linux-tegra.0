@@ -1,93 +1,93 @@
-From: Liviu Dudau <liviu-I3yL/QOVVjH10XsdtD+oqA@public.gmane.org>
-Subject: [Solved] Re: Trimslice Barebone fails to detect HDMI connection, no
- DDC i2c channel present
-Date: Wed, 11 Dec 2013 23:02:37 +0000
-Message-ID: <20131211230237.GC24176@bart.dudau.co.uk>
-References: <20131211214911.GA24176@bart.dudau.co.uk>
- <52A8E473.8050502@wwwdotorg.org>
- <20131211225401.GB24176@bart.dudau.co.uk>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 08:51:35 +0900
+Message-ID: <20131211235135.GA11671@verge.net.au>
+References: <20131211183237.GI4699@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20131211225401.GB24176-hOhETlTuV5niMG9XS5x8Mg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20131211183237.GI4699@google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 11, 2013 at 10:54:01PM +0000, Liviu Dudau wrote:
-> On Wed, Dec 11, 2013 at 03:17:23PM -0700, Stephen Warren wrote:
-> > On 12/11/2013 02:49 PM, Liviu Dudau wrote:
-> > > Hello,
-> > > 
-> > > Prompted by a discussion on G+, here is a report of an issue I'm seeing
-> > > with mainline kernel (commit 78fd82238d0e57).
-> > > 
-> > > The kernel fails to detect the DDC i2c interface (on Trimslice that's
-> > > on Tegra2 I2C-0 interface), so I'm getting no output on the HDMI
-> > 
-> > That probably should be I2C-1 for HDMI; I2C-0 is likely the DVI port's
-> > DDC interface. But since you tested all ports, this isn't the cause of
-> > the problem.
+On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
 > 
-> Sorry, I had the Trimslice manual opened on the other screen while I was
-> composing the email and I've read the wrong paragraph. You are correct,
-> it is connected to I2C-1.
+> Bjorn
 > 
-> > 
-> > > U-Boot 2014.01-rc1-dirty (Nov 26 2013 - 22:29:37)
-> > 
-> > Are you using an unmodified upstream U-Boot? The environment you posted
-> > doesn't match upstream's environment, and the "-dirty" implies you have
-> > some local modifications.
 > 
-> Yes, the U-Boot is upstream, the only change being the removal of some
-> artefact from boards.cfg that got commited a while ago. The environment
-> is a streamlined version that I've comed up with as I didn't like the
-> whole scanning for u-boot scripts.
+> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
 > 
-> > 
-> > If you break into U-Boot, can you read the EDID using the "i2c" command?
+> Add entries for PCI host controller drivers in drivers/pci/host/.
 > 
-> Ughh, another one of the ugly, not properly documented set of U-Boot commands.
-> I need to read on the documentation to learn how to use it (what's the muxaddr
-> for tegra2?).
-> 
-> > 
-> > In Linux, can you "i2cget" from bus 1 device 0x50 even if "i2cdetect"
-> > didn't see the EDID?
-> 
-> # i2cget -y 1 0x50
-> Error: Read failed.
-> 
-> > 
-> > Is the monitor you have plugged in known-working without any
-> > EDID-related issues?
-> 
-> I've tried another one as well (an Atrix Lapdock), no success. The current one
-> is connected over an 4-to-1 box and my PC is happy to read the EDID off it
-> using the radeon driver.
-> 
-> Could you send me a log of your kernel booting with i2c being detected? I want
-> to compare with mine just in case there might be some config options that
-> I might have selected as modules and they don't get properly loaded.
-> 
-> Many thanks,
-> Liviu
-> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Hi Warren,
+Renesas R-Car potion:
 
-Just to let you know, I've managed to get output working. Using the Atrix
-Lapdock, I've had to connect the special USB cable as well (data, no power)
-in order for the monitor to work.
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-The strange thing is that on both monitors that I have tested I get the default
-list of modelines that includes 1024x768. The Lapdock disconnects after a few
-seconds, but with USB plugged in it comes back and reports the correct resolutions.
-
-Thanks for your time, and sorry for the noise.
-
-Best regards,
-Liviu
+> ---
+>  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8285ed4676b6..826c722d92ba 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6449,16 +6449,47 @@ F:	drivers/pci/
+>  F:	include/linux/pci*
+>  F:	arch/x86/pci/
+>  
+> +PCI DRIVER FOR DESIGNWARE
+> +M:	Jingoo Han <jg1.han@samsung.com>
+> +L:	linux-pci@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pci/host/*designware*
+> +
+> +PCI DRIVER FOR IMX6
+> +M:	Shawn Guo <shawn.guo@linaro.org>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*imx6*
+> +
+> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> +M:	Jason Cooper <jason@lakedaemon.net>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*mvebu*
+> +
+>  PCI DRIVER FOR NVIDIA TEGRA
+>  M:	Thierry Reding <thierry.reding@gmail.com>
+>  L:	linux-tegra@vger.kernel.org
+> +L:	linux-pci@vger.kernel.org
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+>  F:	drivers/pci/host/pci-tegra.c
+>  
+> +PCI DRIVER FOR RENESAS R-CAR
+> +M:	Simon Horman <horms@verge.net.au>
+> +M:	Magnus Damm <magnus.damm@gmail.com>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-sh@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pci/host/*rcar*
+> +
+>  PCI DRIVER FOR SAMSUNG EXYNOS
+>  M:	Jingoo Han <jg1.han@samsung.com>
+>  L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	drivers/pci/host/pci-exynos.c
+>  
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
