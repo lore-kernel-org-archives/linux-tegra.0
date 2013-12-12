@@ -1,45 +1,75 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada,
- R-Car PCI host maintainers
-Date: Thu, 12 Dec 2013 19:47:02 +0900
-Message-ID: <000001cef727$7da93730$78fba590$%han@samsung.com>
-References: <20131211183237.GI4699@google.com>
- <20131212070045.GO18380@S2101-09.ap.freescale.net>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpu: host1x: clk_round_rate() can return a zero upon
+ error
+Date: Thu, 12 Dec 2013 12:03:44 +0100
+Message-ID: <20131212110343.GA11524@ulmo.nvidia.com>
+References: <alpine.DEB.2.02.1312091746400.4127@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20131212070045.GO18380@S2101-09.ap.freescale.net>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Shawn Guo' <shawn.guo@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Jason Cooper' <jason@lakedaemon.net>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Simon Horman' <horms@verge.net.au>, 'Magnus Damm' <magnus.damm@gmail.com>, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, 'Richard Zhu' <r65037@freescale.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1312091746400.4127@tamien>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, December 12, 2013 4:01 PM, Shawn Guo wrote:
-> On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
-> > +PCI DRIVER FOR IMX6
-> > +M:	Shawn Guo <shawn.guo@linaro.org>
-> 
-> Thanks for the nomination.  But I think a better person for this
-> position would be Richard Zhu <r65037@freescale.com> (copied).  He knows
-> the driver and controller much better than myself, and most importantly
-> he is the driver owner for Freescale kernel and he has the contact to
-> Freescale PCIe hardware people.
 
-I agree with Shawn Guo's opinion. :-)
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Richard Zhu has been maintaining i.MX6 PCIe driver. Also he can contact
-Freescale PCIe hardware engineers. Thus, he is the appropriate person
-for the Maintainer of i.MX PCIe.
+On Mon, Dec 09, 2013 at 06:00:12PM -0800, Paul Walmsley wrote:
+>=20
+> Treat both negative and zero return values from clk_round_rate() as
+> errors.  This is needed since subsequent patches will convert
+> clk_round_rate()'s return value to be an unsigned type, rather than a
+> signed type, since some clock sources can generate rates higher than
+> (2^31)-1 Hz.
+>=20
+> Eventually, when calling clk_round_rate(), only a return value of zero
+> will be considered a error.  All other values will be considered valid
+> rates.  The comparison against values less than 0 is kept to preserve
+> the correct behavior in the meantime.
+>=20
+> Signed-off-by: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Applies on v3.13-rc3.  See also:
+>=20
+> http://marc.info/?l=3Dlinux-arm-kernel&m=3D138542591313620&w=3D2
+>=20
+>  drivers/gpu/drm/tegra/hdmi.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Jingoo Han
+Applied, thanks.
 
-> 
-> Shawn
-> 
-> > +L:	linux-pci@vger.kernel.org
-> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > +S:	Maintained
-> > +F:	drivers/pci/host/*imx6*
+Thierry
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSqZgPAAoJEN0jrNd/PrOhRsUQAL1qjmQyj84K/2XmQCFE5LLe
+VzEAqHtnASOF1rF7pvajnzfy8Hb+LeXgxt/uCmBy9VdDSfR/Baim8vN3F8UHLe0b
+NTCZxEls63pZs97pn6/MNlMs8GmQxv1Ph7l9mUn+Q6B1YC55isdXIm91jnYe5n9I
+hoJndvYlAg3/AjSAmC1uHe3QP2D/W0Ov6D9MtWdIWo13KAv28mn0OZ9Q6zOT7rpJ
+JoNbjqk4ta4Qa+plnKsXP/haK9trRtqufqbewtAW9LHzbJqs9gNFH870Wf1q/G8G
+Oa2lwUjhBPTTsXJR6dGL+GH8QTYwJXksWbONyq+iDVWCL/yZU+kFpjxP1UOfWSFB
+clyxPGS2w+t1V301mBtUxLbAyq22EUkil6/Tb5oFbzh11XKgjqtP95nyJHG17tuE
+FLiU6fYsy3vbtBXlNrzTffxAwlV9+oHhGU7SJN1rZLeuI5NuHbrm2DuMo/mSKveg
+I5wyNSkC5EjsUWEE1DfAOXEnpDGIIDvMTVV0jjO/QOJGBb5yo9e4qIPF99JEojmQ
+tXQzsS6bq81OJ6cPoAKccYpmllz/i6LzqeJf5Zthf0/Cw8cCOSNJEdCWYkvYjyjU
+iVlVVdgHXoVGWUB0y4/1Ujtr6h7Df1eB/pA0NUVn7JoSv8ChKOJGrLBDtqKv1Zdr
+s+znWkydI5kK4Ig/yXoT
+=pd98
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
