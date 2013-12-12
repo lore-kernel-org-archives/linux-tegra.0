@@ -1,77 +1,115 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Thu, 12 Dec 2013 08:40:39 +0100
-Message-ID: <52A96877.90902@free-electrons.com>
-References: <20131211183237.GI4699@google.com>
+From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCHv7 00/12] Unifying SMMU driver among Tegra SoCs
+Date: Thu, 12 Dec 2013 09:57:01 +0200
+Message-ID: <1386835033-4701-1-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20131211183237.GI4699@google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-samsung-soc@vger.kernel.org, Wei Yongjun <weiyj.lk@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Simon Horman <horms@verge.net.au>, linux-sh@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org
+Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Bjorn, ,
+Hi,
 
-On 11/12/2013 19:32, Bjorn Helgaas wrote:
-> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
-> 
-> Bjorn
-> 
-> 
-> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
-> 
-> Add entries for PCI host controller drivers in drivers/pci/host/.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8285ed4676b6..826c722d92ba 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6449,16 +6449,47 @@ F:	drivers/pci/
->  F:	include/linux/pci*
->  F:	arch/x86/pci/
->  
-> +PCI DRIVER FOR DESIGNWARE
-> +M:	Jingoo Han <jg1.han@samsung.com>
-> +L:	linux-pci@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/pci/host/*designware*
-> +
-> +PCI DRIVER FOR IMX6
-> +M:	Shawn Guo <shawn.guo@linaro.org>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*imx6*
-> +
-> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
-> +M:	Jason Cooper <jason@lakedaemon.net>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*mvebu*
+This series provide:
 
-I think that Thomas Petazzoni would be more appropriate, he worked
-on the mvebu PCIe since 6 moths and now know very well the
-subject. Until now all the mvebu PCIe related questions were
-managed by Thomas.
+(0) IOMMU standard DT binding("iommus")
+(1) Unified IOMMU(SMMU) driver among Tegra SoCs
+(2) Multiple Address Space support(MASID) in IOMMU(SMMMU)
+(3) Tegra IOMMU'able devices, most of platform devices are IOMMU'able.
 
-Regards,
+There's been some discussion[1] about device population order. Some
+devices needs to be populated earlier than other devices regardless of
+their bus topology. For the solution I implemented an IOMMU hook in
+driver core:
 
-Gregory
+  [PATCHv7 04/13] driver/core: populate devices in order for IOMMUs
 
+which is based on:
+  http://lists.linuxfoundation.org/pipermail/iommu/2013-November/006933.html
 
+The main problem here is,
+
+IOMMU devices on the bus need to be poplulated first, then iommu
+master devices are done later.
+
+With CONFIG_OF_IOMMU, "iommus=" DT binding would be used to identify
+whether a device can be an iommu msater or not. If a device can, we'll
+defer to populate that device till an iommu device is populated. Then,
+those defered iommu master devices are populated and configured with
+help of the already populated iommu device via a new IOMMU API
+iommu_ops->driver_bound().
+
+This "iommus=" binding is expected used as the global/standard binding.
+
+Tested IOMMU functionality with T30 SD/MMC. Any further testing with
+T114 and/or other devices would be really appreciated.
+
+v6:
+Minior fixes.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-November/213082.html
+
+v5:
+Use "iommus=" DT bindings as a standard IOMMU binding.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-November/212331.html
+
+v4:
+Add a hook in driver core to control device populatin order.
+Introduced arm,smmu "mmu-master" binding instead of tegra own.
+Removed DT patches from this series.
+  http://lists.linuxfoundation.org/pipermail/iommu/2013-November/006931.html
+
+v3:
+Updated based on Stephen Warren's feedback
+  http://lists.linuxfoundation.org/pipermail/iommu/2013-October/006724.html
+
+v2:
+Updated based on Thierry Reding's and Stephen Warren's feedback
+  http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/181888.html
+
+v1:
+  http://lists.infradead.org/pipermail/linux-arm-kernel/2013-June/180267.html
+
+Available in the git repository at:
+
+  git://git-HoETi0wPbwRDw2glCA4ptUEOCMrvLtNR@public.gmane.org/user/hdoyu/linux.git smmu-upstreaming@20131212
+
+Hiroshi Doyu (12):
+  of: introduce of_property_for_each_phandle_with_args()
+  iommu/of: introduce a global iommu device list
+  iommu/of: check if dependee iommu is ready or not
+  driver/core: populate devices in order for IOMMUs
+  iommu/core: add ops->{bound,unbind}_driver()
+  ARM: tegra: create a DT header defining SWGROUP ID
+  iommu/tegra: smmu: register device to iommu dynamically
+  iommu/tegra: smmu: calculate ASID register offset by ID
+  iommu/tegra: smmu: get swgroups from DT "iommus="
+  iommu/tegra: smmu: allow duplicate ASID wirte
+  iommu/tegra: smmu: Rename hwgrp -> swgroups
+  iommu/tegra: smmu: add SMMU to an global iommu list
+
+ .../bindings/iommu/nvidia,tegra30-smmu.txt         |  30 +-
+ drivers/base/dd.c                                  |   5 +
+ drivers/iommu/Kconfig                              |   1 +
+ drivers/iommu/iommu.c                              |  13 +-
+ drivers/iommu/of_iommu.c                           |  51 +++
+ drivers/iommu/tegra-smmu.c                         | 383 +++++++++++++--------
+ drivers/of/base.c                                  |  46 +++
+ include/dt-bindings/memory/tegra-swgroup.h         |  50 +++
+ include/linux/iommu.h                              |   4 +
+ include/linux/of.h                                 |  32 ++
+ include/linux/of_iommu.h                           |  22 ++
+ 11 files changed, 487 insertions(+), 150 deletions(-)
+ create mode 100644 include/dt-bindings/memory/tegra-swgroup.h
 
 -- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+1.8.1.5
+
+[1]
+  "[RFC] early init and DT platform devices allocation/registration"
+    https://lists.ozlabs.org/pipermail/devicetree-discuss/2013-June/thread.html#36542
+  "Report from 2013 ARM kernel summit"
+    http://lists.infradead.org/pipermail/linux-arm-kernel/2013-November/210426.html
+  "[RFC PATCH] Documentation: devicetree: add description for generic bus properties"
+    http://lists.infradead.org/pipermail/linux-arm-kernel/2013-November/215042.html
