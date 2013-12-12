@@ -1,32 +1,26 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 1/2] pinctrl: tegra: Add devicetree binding document
- for Tegra124
-Date: Thu, 12 Dec 2013 19:22:36 +0100
-Message-ID: <CACRpkdagtueyzxRqVDWT+x8Sfrf7qR83aYj8oQfrc7Q5qSCjHg@mail.gmail.com>
-References: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 3/4] ARM: tegra: select PINCTRL_TEGRA124 for Tegra124
+ SoC
+Date: Thu, 12 Dec 2013 11:36:59 -0700
+Message-ID: <52AA024B.20409@wwwdotorg.org>
+References: <1386241070-4350-1-git-send-email-ldewangan@nvidia.com> <1386241070-4350-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1386585140-1137-1-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1386241070-4350-4-git-send-email-ldewangan@nvidia.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Thierry Reding <thierry.reding@gmail.com>, Grant Likely <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
+Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, thierry.reding@gmail.com, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 9, 2013 at 11:32 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+On 12/05/2013 03:57 AM, Laxman Dewangan wrote:
+> The pincontrol driver for Tegra124 is build through config
+> PINCTRL_TEGRA124. Select this config option whenever Tegra124
+> SoC is enabled.
 
-> This device tree binding document describes the Tegra124 pincontrol
-> DT bindings. This document lists all valid properties, names, mux
-> options of Tegra124 pins.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
-> Changes from V1:
-> - Referred the dt-binding header file on describing the nodes.
+Applied to Tegra's for-3.14/soc branch.
 
-I couldn't quite figure out if this is still under discussion or
-not, I'm holding this off until I have an explicit ACK from
-one of the DT binding people.
-
-Yours,
-Linus Walleij
+(I thought I had sent this before myself, but I'd only written the patch
+locally, and had not actually sent it out, hence I took your identical
+patch.)
