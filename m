@@ -1,52 +1,45 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 2/2] pinctrl: tegra: add pinmux controller driver for Tegra124
-Date: Thu, 12 Dec 2013 22:30:30 +0100
-Message-ID: <CACRpkdbv8r68r5Lz19sqVq8g7Yk__DbjLgW9c6P6HGtWNj6M=Q@mail.gmail.com>
-References: <1386659456-16887-1-git-send-email-ldewangan@nvidia.com>
-	<1386659456-16887-2-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: enable ams AS3722 drivers
+Date: Thu, 12 Dec 2013 14:51:13 -0700
+Message-ID: <52AA2FD1.3020000@wwwdotorg.org>
+References: <1386855064-10993-1-git-send-email-ldewangan@nvidia.com> <52AA2891.2020502@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386659456-16887-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <52AA2891.2020502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 10, 2013 at 8:10 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On 12/12/2013 02:20 PM, Stephen Warren wrote:
+> On 12/12/2013 06:31 AM, Laxman Dewangan wrote:
+>> ams AS3722 is the system power manager module IC for the Tegra124 based
+>> Venice2 platform. Enable configs for gpio, pincontrol, rtc, regulator
+>> support from this device.
+> 
+> I've squashed patch 1/2 into Tegra's for-3.14/defconfig branch.
+> 
+> I've applied patch 2/2 to Tegra's for-3.14/dt branch.
 
-> From: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This adds a driver for the Tegra124 pinmux, and required
-> parameterization data for Tegra124.
->
-> The driver uses the common Tegra pincontrol driver utility
-> functions to implement the majority of the driver.
->
-> This driver is not compatible with the earlier NVIDIA's SoCs,
-> hence add new compatibile as "nvidia,tegra124-pinmux".
->
-> Originally written by Ashwini Gguhe.
-> Thierry:
->         - Cleanups in patches.
-> ldewangan:
->         - Fix some entries for groups.
->         - Fix MUX enums and group sequence.
->
-> Signed-off-by: Ashwini Ghuge <aghuge-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> CC: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes from V1:
-> - Lots of cleanups and fixes for string separator by Thierry.
-> - Fixes for some of group entries.
-> Changes from V2:
-> - remove extra space.
-> - Added Ack and Tested by: Stephen and cc to Thierry.
+Actually, I'm dropping patch 2/2 since it causes a whole bunch of error
+spew during boot:
 
-Applied this v3 version, thanks!
+> [    0.628315] tegra124-pinctrl 70000868.pinmux: invalid group "dap2_dout_pp2" for function "rsvd4"
+> [    0.635309] tegra124-pinctrl 70000868.pinmux: does not have pin group dap2_dout_pp2
+> [    0.642999] tegra124-pinctrl 70000868.pinmux: could not map group config for "dap2_dout_pp2"
 
-Yours,
-Linus Walleij
+> [    0.731176] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-regulator
+> [    0.742312] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-regulator) status -22
+> [    0.749526] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
+> [    0.760133] as3722-regulator as3722-regulator: Error applying setting, reverse things back
+
+> [    0.835838] as3722-regulator as3722-regulator: Failed to find supply vin-ldo1-6
+> [    0.843312] as3722-regulator as3722-regulator: regulator 8 register failed -517
+> [    0.852263] platform as3722-regulator: Driver as3722-regulator requests probe deferral
+
+> [    0.984920] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-rtc
+> [    0.995537] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-rtc) status -22
+> [    1.002244] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
+> [    1.012848] as3722-rtc as3722-rtc: Error applying setting, reverse things back
