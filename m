@@ -1,36 +1,92 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: use PULL_NONE for Venice2 UART pins
-Date: Thu, 12 Dec 2013 15:00:38 -0700
-Message-ID: <1386885638-29320-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: [PATCH v2] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car
+ PCI host maintainers
+Date: Thu, 12 Dec 2013 23:11:03 +0100
+Message-ID: <20131212231103.3ceeb3bb@skate>
+References: <20131211183237.GI4699@google.com>
+	<20131212204610.GK4699@google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <20131212204610.GK4699@google.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, Richard Zhu <r65037@freescale.com>, Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Simon Horman <horms@verge.net.au>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Dear Bjorn Helgaas,
 
-Other boards use PULL_NONE for their debug UART pins, and without this
-change, the board doesn't accept any serial input.
+On Thu, 12 Dec 2013 13:46:10 -0700, Bjorn Helgaas wrote:
+> [+cc Thomas]
+> 
+> On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> 
+> OK, here's another try.  I'm not actually trying to nominate anybody; I
+> just tried to write down the list we came up with in an earlier discussion [1].
+> 
+> I'd like confirmation from the following people that they approve of being
+> listed here:
+> 
+>   Richard Zhu (IMX6)
+>   Thomas Petazzoni (MVEBU)
+>   Magnus Damm (R-CAR)
+> 
+> I think everybody else listed has already said they approve.
+> 
+> [1] http://lkml.kernel.org/r/CAErSpo5tN==4nSv2u3SUBe_L4VsWn4P7TN+LtrC172Qj1vhtog@mail.gmail.com
+> 
+> 
+> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
+> 
+> From: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> Add entries for PCI host controller drivers in drivers/pci/host/.
+> 
+> Signed-off-by: Mohit Kumar <mohit.kumar@st.com>		(DesignWare)
+> Signed-off-by: Pratyush Anand <pratyush.anand@st.com>	(DesignWare)
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>	(R-CAR)
+> Acked-by: Jason Cooper <jason@lakedaemon.net>		(MVEBU)
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  MAINTAINERS |   34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8285ed4676b6..1c5dc36ec522 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6449,19 +6449,53 @@ F:	drivers/pci/
+>  F:	include/linux/pci*
+>  F:	arch/x86/pci/
+>  
+> +PCI DRIVER FOR IMX6
+> +M:	Richard Zhu <r65037@freescale.com>
+> +M:	Shawn Guo <shawn.guo@linaro.org>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*imx6*
+> +
+> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> +M:	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> +M:	Jason Cooper <jason@lakedaemon.net>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*mvebu*
 
-Fixes: 605ae5804385 ("ARM: tegra: add default pinctrl nodes for Venice2")
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-venice2.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index 616759c3c7e5..228fe5d05fdc 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -250,7 +250,7 @@
- 					      "pu3";
- 				nvidia,function = "uarta";
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
--				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 			uart2_cts_n_pj5 {
+Thanks for doing this!
+
+Best regards,
+
+Thomas
 -- 
-1.8.1.5
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
