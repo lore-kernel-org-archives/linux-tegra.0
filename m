@@ -1,93 +1,64 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Thu, 12 Dec 2013 08:51:35 +0900
-Message-ID: <20131211235135.GA11671@verge.net.au>
-References: <20131211183237.GI4699@google.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 00/31] ARM: tegra: use common reset and DMA bindings
+Date: Wed, 11 Dec 2013 17:11:44 -0700
+Message-ID: <52A8FF40.6000809@wwwdotorg.org>
+References: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131211183237.GI4699@google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1384548866-13141-1-git-send-email-swarren@wwwdotorg.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: driverdev-devel-bounces@linuxdriverproject.org
+To: swarren@wwwdotorg.org
+Cc: Mark Rutland <mark.rutland@arm.com>, alsa-devel@alsa-project.org, linux-usb@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>, David Airlie <airlied@linux.ie>, linux-pci@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, ac100@lists.launchpad.net, devel@driverdev.osuosl.org, Stephen Warren <swarren@nvidia.com>, Alan Stern <stern@rowland.harvard.edu>, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, =?UTF-8?B?VGVyamUgQmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, Mark Brown <broonie@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Mike Turquette <mturquette@linaro.org>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
-> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+On 11/15/2013 01:53 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 > 
-> Bjorn
+> This series implements a common reset framework driver for Tegra, and
+> updates all relevant Tegra drivers to use it. It also removes the custom
+> DMA bindings and replaced them with the standard DMA DT bindings.
 > 
+> Historically, the Tegra clock driver has exported a custom API for module
+> reset. This series removes that API, and transitions DT and drivers to
+> the new reset framework.
 > 
-> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
+> The custom API used a "struct clk" to identify which module to reset, and
+> consequently some DT bindings and drivers required clocks to be provided
+> where they really needed just a reset identifier instead. Due to this
+> known deficiency, I have always considered most Tegra bindings to be
+> unstable. This series removes this excuse for instability, although I
+> still consider some Tegra bindings unstable due to the need to convert to
+> the common DMA bindings.
 > 
-> Add entries for PCI host controller drivers in drivers/pci/host/.
+> Historically, Tegra DMA channels have been represented in DT using a
+> custom nvidia,dma-request-selector property. Now that standard DMA DT
+> bindings exist, convert all Tegra bindings, DTs, and drivers to use the
+> standard instead.
 > 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> This series makes a DT-ABI-incompatible change to:
+> - Require reset specifiers in DT where relevant.
+> - Require standard DMA specifiers.
+> - Remove clock specifiers from DT where they were only needed for reset.
+> - Remove legacy DMA specifier properties.
+> 
+> I anticipate merging this whole series into the Tegra and arm-soc trees
+> as its own branch, due to internal dependencies. This branch will be
+> stable and can then be merged into any other subsystem trees should any
+> conflicts arise.
+> 
+> This series depends on Peter's Tegra clock driver rework, available at
+> git://nv-tegra.nvidia.com/user/pdeschrijver/linux tegra-clk-tegra124-0
+> (or whatever version of that gets included in 3.14)
 
-Renesas R-Car potion:
-
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
-
-> ---
->  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8285ed4676b6..826c722d92ba 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6449,16 +6449,47 @@ F:	drivers/pci/
->  F:	include/linux/pci*
->  F:	arch/x86/pci/
->  
-> +PCI DRIVER FOR DESIGNWARE
-> +M:	Jingoo Han <jg1.han@samsung.com>
-> +L:	linux-pci@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/pci/host/*designware*
-> +
-> +PCI DRIVER FOR IMX6
-> +M:	Shawn Guo <shawn.guo@linaro.org>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*imx6*
-> +
-> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
-> +M:	Jason Cooper <jason@lakedaemon.net>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*mvebu*
-> +
->  PCI DRIVER FOR NVIDIA TEGRA
->  M:	Thierry Reding <thierry.reding@gmail.com>
->  L:	linux-tegra@vger.kernel.org
-> +L:	linux-pci@vger.kernel.org
->  S:	Supported
->  F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
->  F:	drivers/pci/host/pci-tegra.c
->  
-> +PCI DRIVER FOR RENESAS R-CAR
-> +M:	Simon Horman <horms@verge.net.au>
-> +M:	Magnus Damm <magnus.damm@gmail.com>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-sh@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/pci/host/*rcar*
-> +
->  PCI DRIVER FOR SAMSUNG EXYNOS
->  M:	Jingoo Han <jg1.han@samsung.com>
->  L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->  S:	Maintained
->  F:	drivers/pci/host/pci-exynos.c
->  
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+I've applied this series (and pulled in the DMA/ASoC/clk dependencies
+required) to Tegra's for-3.14/dmas-resets-rework branch.
