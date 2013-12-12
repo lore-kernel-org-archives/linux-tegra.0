@@ -1,141 +1,53 @@
-From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv6+ 01/13] of: introduce
-	of_property_for_earch_phandle_with_args()
-Date: Thu, 12 Dec 2013 13:14:04 +0100
-Message-ID: <20131212.141404.684884000513445038.hdoyu@nvidia.com>
-References: <20131211132845.5461FC4061A@trevor.secretlab.ca><20131211.153338.2186623380643957232.hdoyu@nvidia.com><20131212113417.BDCD0C40637@trevor.secretlab.ca>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 07:38:59 -0500
+Message-ID: <20131212123859.GH10053@titan.lakedaemon.net>
+References: <20131211183237.GI4699@google.com>
+ <52A96877.90902@free-electrons.com>
+ <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131212113417.BDCD0C40637-WNowdnHR2B42iJbIjFUEsiwD8/FfD2ys@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org" <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Gregory CLEMENT' <gregory.clement@free-electrons.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, linux-samsung-soc@vger.kernel.org, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Simon Horman' <horms@verge.net.au>, linux-sh@vger.kernel.org, 'Magnus Damm' <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote @ Thu, 12 Dec 2013 12:34:17 +0100:
-
-> On Wed, 11 Dec 2013 14:33:38 +0100, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > Hi Grant,
-> >
-> > Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote @ Wed, 11 Dec 2013 14:28:45 +0100:
-> >
-> > > On Thu, 21 Nov 2013 11:57:00 -0700, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> > > > On 11/21/2013 10:17 AM, Hiroshi Doyu wrote:
-> > > > > Iterating over a property containing a list of phandles with arguments
-> > > > > is a common operation for device drivers. This patch adds a new
-> > > > > of_property_for_each_phandle_with_args() macro to make the iteration
-> > > > > simpler.
-> > > > >
-> > > > > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > ---
-> > > > > v6+:
-> > > > > Use the description, which Grant Likely proposed, to be full enough
-> > > > > that a future reader can figure out why a patch was written.
-> > > > >   http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007062.html
-> > ...
-> >
-> > > That's right, I forgot I said that. Yes please fix the implementation.
-> >
-> > Here's the latest. I'll include this with the next v7 series.
-> >
-> > Can I get your Acked-by with this?
-> >
-> > --8<----
-> >
-> > From 8f7c0404aa68f0e8dbe0babc240590f6528ecc1f Mon Sep 17 00:00:00 2001
-> > From: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Date: Fri, 15 Nov 2013 10:52:53 +0200
-> > Subject: [PATCH] of: introduce of_property_for_each_phandle_with_args()
-> >
-> > Iterating over a property containing a list of phandles with arguments
-> > is a common operation for device drivers. This patch adds a new
-> > of_property_for_each_phandle_with_args() macro to make the iteration
-> > simpler.
-> >
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> > v7:
-> > Fixed some minors pointed by Rob and Stephen.
-> >
-> > v6++++:
-> > Iterate without intrducing a new struct.
-> >
-> > v6+++:
-> > Introduced a new struct "of_phandle_iter" to keep the state when
-> > iterating over the list.
-> >
-> > v6++:
-> > Optimized to avoid O(n^2), suggested by Stephen Warren.
-> > http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007066.html
-> >
-> > I didn't introduce any struct to hold params and state here.
-> >
-> > v6+:
-> > Use the description, which Grant Likely proposed, to be full enough
-> > that a future reader can figure out why a patch was written.
-> >
-> > v5:
-> > New patch for v5.
-> >
-> > Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/of/base.c  | 46 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/of.h | 32 ++++++++++++++++++++++++++++++++
-> >  2 files changed, 78 insertions(+)
-> >
-> > diff --git a/drivers/of/base.c b/drivers/of/base.c
-> > index f807d0e..cd4ab05 100644
-> > --- a/drivers/of/base.c
-> > +++ b/drivers/of/base.c
-> > @@ -1201,6 +1201,52 @@ void of_print_phandle_args(const char *msg, const struct of_phandle_args *args)
-> >       printk("\n");
-> >  }
-> >
-> > +const __be32 *of_phandle_iter_next(const char *cells_name, int cell_count,
-> > +                                const __be32 *cur, const __be32 *end,
-> > +                                struct of_phandle_args *out_args)
+On Thu, Dec 12, 2013 at 06:12:18PM +0900, Jingoo Han wrote:
+> On Thursday, December 12, 2013 4:41 PM, Gregory CLEMENT wrote:
+> > On 11/12/2013 19:32, Bjorn Helgaas wrote:
+> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> > >
+> > > Bjorn
 > 
-> Having to pass in cells_name, cell_count, cur and end each time seems a
-> little odd. Can a state structure be used instead?
+> [.....]
 > 
-> struct of_phandle_iter_state {
->         const char *cells_name;
->         int cells_count;
->         const __be32 *cur;
->         const __be32 *end;
->         struct of_phandle_args out_args;
-> }
+> > > +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> > > +M:	Jason Cooper <jason@lakedaemon.net>
+> > > +L:	linux-pci@vger.kernel.org
+> > > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > > +S:	Maintained
+> > > +F:	drivers/pci/host/*mvebu*
+> > 
+> > I think that Thomas Petazzoni would be more appropriate, he worked
+> > on the mvebu PCIe since 6 moths and now know very well the
+> > subject. Until now all the mvebu PCIe related questions were
+> > managed by Thomas.
 > 
-> Make the caller provide one of those and fill it in with the init
-> function.
+> I think so, too. :-)
+> 
+> Thomas Petazzoni is the author of the  mvebu PCIe. Also, he did
+> The basic foundation of PCIe Host with Thierry Reding.  I think
+> That he is the best person for the Maintainer of the mvebu PCIe.
 
-I rewrote this a few times and so now I have a few version of this
-implementations :-) The above proposal is similar to the version v6+++
-mentioned in the above patch note:
+100% Ack.  Thanks for the nomination, but Thomas is the person best
+suited to review patches and maintain the driver.  If you want some
+patch wrangling, I don't mind helping out, but I'd prefer Thomas be the
+maintainer here.
 
-> > v6+++:
-> > Introduced a new struct "of_phandle_iter" to keep the state when
-> > iterating over the list.
+thx,
 
-which is:
-
-  [RFC][PATCHv6+++ 01/13] of: introduce of_property_for_earch_phandle_with_args()
-    http://lists.linuxfoundation.org/pipermail/iommu/2013-November/007087.html
-
-Stephen seemed to prefer the version without state struct. I like the
-idea to not pass the same arguments repeatly. Instead, wrapping them
-in a struct with state may look better.
-
-So if Stephen agrees, I'll rewrite the version with state struct
-again.
+Jason.
