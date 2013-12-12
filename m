@@ -1,45 +1,36 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: tegra: enable ams AS3722 drivers
-Date: Thu, 12 Dec 2013 14:51:13 -0700
-Message-ID: <52AA2FD1.3020000@wwwdotorg.org>
-References: <1386855064-10993-1-git-send-email-ldewangan@nvidia.com> <52AA2891.2020502@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: use PULL_NONE for Venice2 UART pins
+Date: Thu, 12 Dec 2013 15:00:38 -0700
+Message-ID: <1386885638-29320-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52AA2891.2020502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/12/2013 02:20 PM, Stephen Warren wrote:
-> On 12/12/2013 06:31 AM, Laxman Dewangan wrote:
->> ams AS3722 is the system power manager module IC for the Tegra124 based
->> Venice2 platform. Enable configs for gpio, pincontrol, rtc, regulator
->> support from this device.
-> 
-> I've squashed patch 1/2 into Tegra's for-3.14/defconfig branch.
-> 
-> I've applied patch 2/2 to Tegra's for-3.14/dt branch.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Actually, I'm dropping patch 2/2 since it causes a whole bunch of error
-spew during boot:
+Other boards use PULL_NONE for their debug UART pins, and without this
+change, the board doesn't accept any serial input.
 
-> [    0.628315] tegra124-pinctrl 70000868.pinmux: invalid group "dap2_dout_pp2" for function "rsvd4"
-> [    0.635309] tegra124-pinctrl 70000868.pinmux: does not have pin group dap2_dout_pp2
-> [    0.642999] tegra124-pinctrl 70000868.pinmux: could not map group config for "dap2_dout_pp2"
+Fixes: 605ae5804385 ("ARM: tegra: add default pinctrl nodes for Venice2")
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124-venice2.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> [    0.731176] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-regulator
-> [    0.742312] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-regulator) status -22
-> [    0.749526] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
-> [    0.760133] as3722-regulator as3722-regulator: Error applying setting, reverse things back
-
-> [    0.835838] as3722-regulator as3722-regulator: Failed to find supply vin-ldo1-6
-> [    0.843312] as3722-regulator as3722-regulator: regulator 8 register failed -517
-> [    0.852263] platform as3722-regulator: Driver as3722-regulator requests probe deferral
-
-> [    0.984920] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-rtc
-> [    0.995537] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-rtc) status -22
-> [    1.002244] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
-> [    1.012848] as3722-rtc as3722-rtc: Error applying setting, reverse things back
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 616759c3c7e5..228fe5d05fdc 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -250,7 +250,7 @@
+ 					      "pu3";
+ 				nvidia,function = "uarta";
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+-				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+ 			uart2_cts_n_pj5 {
+-- 
+1.8.1.5
