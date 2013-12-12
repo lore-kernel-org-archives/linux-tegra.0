@@ -1,53 +1,59 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Thu, 12 Dec 2013 07:38:59 -0500
-Message-ID: <20131212123859.GH10053@titan.lakedaemon.net>
-References: <20131211183237.GI4699@google.com>
- <52A96877.90902@free-electrons.com>
- <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/2] ARM: tegra: enable ams AS3722 drivers
+Date: Thu, 12 Dec 2013 19:01:03 +0530
+Message-ID: <1386855064-10993-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Gregory CLEMENT' <gregory.clement@free-electrons.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, linux-samsung-soc@vger.kernel.org, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Simon Horman' <horms@verge.net.au>, linux-sh@vger.kernel.org, 'Magnus Damm' <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 12, 2013 at 06:12:18PM +0900, Jingoo Han wrote:
-> On Thursday, December 12, 2013 4:41 PM, Gregory CLEMENT wrote:
-> > On 11/12/2013 19:32, Bjorn Helgaas wrote:
-> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
-> > >
-> > > Bjorn
-> 
-> [.....]
-> 
-> > > +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
-> > > +M:	Jason Cooper <jason@lakedaemon.net>
-> > > +L:	linux-pci@vger.kernel.org
-> > > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > > +S:	Maintained
-> > > +F:	drivers/pci/host/*mvebu*
-> > 
-> > I think that Thomas Petazzoni would be more appropriate, he worked
-> > on the mvebu PCIe since 6 moths and now know very well the
-> > subject. Until now all the mvebu PCIe related questions were
-> > managed by Thomas.
-> 
-> I think so, too. :-)
-> 
-> Thomas Petazzoni is the author of the  mvebu PCIe. Also, he did
-> The basic foundation of PCIe Host with Thierry Reding.  I think
-> That he is the best person for the Maintainer of the mvebu PCIe.
+ams AS3722 is the system power manager module IC for the Tegra124 based
+Venice2 platform. Enable configs for gpio, pincontrol, rtc, regulator
+support from this device.
 
-100% Ack.  Thanks for the nomination, but Thomas is the person best
-suited to review patches and maintain the driver.  If you want some
-patch wrangling, I don't mind helping out, but I'd prefer Thomas be the
-maintainer here.
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-thx,
-
-Jason.
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 4461185..5cf4a48 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -137,6 +137,7 @@ CONFIG_SPI=y
+ CONFIG_SPI_TEGRA114=y
+ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
++CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
+ CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+@@ -149,6 +150,7 @@ CONFIG_CHARGER_TPS65090=y
+ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_GPIO=y
+ CONFIG_SENSORS_LM90=y
++CONFIG_MFD_AS3722=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+@@ -157,6 +159,7 @@ CONFIG_MFD_TPS65910=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
++CONFIG_REGULATOR_AS3722=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_MAX8907=y
+ CONFIG_REGULATOR_PALMAS=y
+@@ -218,6 +221,7 @@ CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+ CONFIG_LEDS_TRIGGER_TRANSIENT=y
+ CONFIG_LEDS_TRIGGER_CAMERA=y
+ CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_AS3722=y
+ CONFIG_RTC_DRV_MAX8907=y
+ CONFIG_RTC_DRV_PALMAS=y
+ CONFIG_RTC_DRV_TPS6586X=y
+-- 
+1.7.1.1
