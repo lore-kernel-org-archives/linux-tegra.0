@@ -1,92 +1,57 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
-Date: Thu, 12 Dec 2013 02:50:13 +0100
-Message-ID: <2173296.zTKqhC7Obn@vostro.rjw.lan>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org> <3466098.C5M665z3nb@vostro.rjw.lan> <20131208124108.GA4286@pd.tnic>
+From: Mohit KUMAR DCG <Mohit.KUMAR@st.com>
+Subject: RE: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 13:06:16 +0800
+Message-ID: <2CC2A0A4A178534D93D5159BF3BCB66189F95F642F@EAPEX1MAIL1.st.com>
+References: <20131211183237.GI4699@google.com>
+ <20131211184321.GJ4699@google.com>
+ <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20131208124108.GA4286@pd.tnic>
-Sender: cpufreq-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: Paul Bolle <pebolle@tiscali.nl>, =?ISO-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, Viresh Kumar <viresh.kumar@linaro.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Jason Cooper' <jason@lakedaemon.net>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Simon Horman' <horms@verge.net.au>, 'Magnus Damm' <magnus.damm@gmail.com>, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, Pratyush ANAND <pratyush.anand@st.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sunday, December 08, 2013 01:41:08 PM Borislav Petkov wrote:
-> On Sun, Dec 08, 2013 at 01:34:36AM +0100, Rafael J. Wysocki wrote:
-> > On Saturday, December 07, 2013 04:24:09 PM Paul Bolle wrote:
-> > > On Sat, 2013-12-07 at 12:01 +0100, Bj=C3=B8rn Mork wrote:
-> > > > Sorry to be making noise here again, but I was eager to verify =
-that the
-> > > > fixes in v3.13-rc3 were OK on my system.  Unfortunately it seem=
-s this
-> > > > patch completely broke suspend for me.  Hibernete ended up with=
- a blank
-> > > > console and no visible activity, without ever writing any image=
- to disk.
-> > > >=20
-> > > > There really weren't that many suspects between v3.13-rc2 and v=
-3.13-rc3,
-> > > > so I went directly to reverting 5a87182aa21d ("cpufreq: suspend
-> > > > governors on system suspend/hibernate") which fixed the problem=
-=2E I
-> > > > didn't bother debugging it further from there. I don't think th=
-ere is
-> > > > anything magic about my system which should make this problem s=
-pecific
-> > > > to it.
-> > > >=20
-> > > > I am still using the acpi-cpufreq driver on an old x86_64 lapto=
-p if that
-> > > > matters.
-> > >=20
-> > > On an x86 (32 bits) laptop hibernate also broke in v3.13-rc3. On =
-that
-> > > machine hibernation itself worked, or at least seemed to work, bu=
-t the
-> > > machine would basically stop after thawing (directly after loadin=
-g the
-> > > hibernation image).
-> > >=20
-> > > And reverting commit 5a87182aa21d ("cpufreq: suspend governors on=
- system
-> > > suspend/hibernate"), on top of v3.13-rc3, also lead to a successf=
-ul
-> > > hibernation/thaw cycle.
-> >=20
-> > OK, reverted.
->=20
-> +1.
->=20
-> Grrr, I just wasted a whole morning bisecting the same issue as repor=
-ted
-> above and can confirm the revert is the right thing to do.
->=20
-> Well, almost: the box almost suspends until I hear the clicking sound=
- of
-> the mainboard trying to turn stuff off but then the fan remains on. W=
-hen
-> I hit a button on the keyboard, it then turns off completely. This is
-> probably some nasty BIOS SMI crap which we don't have control over an=
-d
-> I'd guess unrelated to the issue at hand.
->=20
-> Anyway, Rafael, I was wondering: I have a couple of boxes here and it
-> would probably make a good sense to help out with testing this stuff
-> more - I just can't have suspend breakages.
->=20
-> Maybe you'd like me to give a run of your tree now and then to check
-> whether someone has sent you a quickly rushed brownpaper bag of
-> questionable nature and we can fish it out before it hits Linus. :)
->=20
-> So let me know.
+> -----Original Message-----
+> From: Jingoo Han [mailto:jg1.han@samsung.com]
+> Sent: Thursday, December 12, 2013 3:55 AM
+> To: 'Bjorn Helgaas'; linux-pci@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> linux-tegra@vger.kernel.org; linux-sh@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; 'Shawn Guo'; 'Jason Cooper'; 'Thierry Reding'; 'Simon
+> Horman'; 'Magnus Damm'; 'Valentine Barshak'; 'Wei Yongjun'; 'Wei Yongjun';
+> 'Kuninori Morimoto'; Mohit KUMAR DCG; Pratyush ANAND; 'Jingoo Han'
+> Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car
+> PCI host maintainers
+> 
+> On Thursday, December 12, 2013 3:43 AM, Bjorn Helgaas wrote:
+> > On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> >
+> > And I see Mohit's patch [1] to update the DesignWare entry:
+> >
+> > +PCIE DRIVER FOR SYNOPSIS DESIGNWARE CONTROLLER
+> > +M:	Mohit Kumar <mohit.kumar@st.com>
+> > +M:	Jingoo Han <jg1.han@samsung.com>
+> > +L:	linux-pci@vger.kernel.org
+> > +S:	Maintained
+> > +F:	drivers/pci/host/pcie-designware.c
+> >
+> > I can fold in that update too if Jingoo acks it.
+> >
+> > [1] http://patchwork.ozlabs.org/patch/299905/
+> 
+> Hi Bjorn,
+> 
+> I agree with this. :-)
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> 
+- Thanks Bjorn and Jingoo. I will remove this patch from my v2 patches.
 
-That would be great, thanks!
-
-My tree is not too interesting at the moment from the cpufreq testing
-perspective, but I'll let you know when there's more stuff in there.
-
-Thanks,
-Rafael
-
+Regards
+Mohit
