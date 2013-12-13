@@ -1,50 +1,31 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2] ARM: tegra: fix pinctrl misconfiguration on Venic2
-Date: Fri, 13 Dec 2013 20:55:02 +0100
-Message-ID: <20131213195502.GC7924@ulmo.nvidia.com>
-References: <1386886322-2700-1-git-send-email-swarren@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v11 0/7] ARM: support for the Trusted Foundations secure
+ monitor
+Date: Fri, 13 Dec 2013 12:57:24 -0700
+Message-ID: <52AB66A4.9080209@wwwdotorg.org>
+References: <1385274652-16415-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Bu8it7iiRSEf40bY"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1386886322-2700-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1385274652-16415-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 11/23/2013 11:30 PM, Alexandre Courbot wrote:
+> New rebase that should be ready-to-apply on the latest Tegra tree. The last
+> remaining blocker is Russell's approval for this series and it is my hope to
+> obtain it with this version.
+> 
+> There has been quite some debate around this series, notably about the SMC
+> calling conventions and whether the firmware interface should be moved out of
+> arch/arm. I hope that all the questions have been answered and that we can move
+> forward with this series that enables NVIDIA-branded retail Tegra devices to run
+> mainline.
 
---Bu8it7iiRSEf40bY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Dec 12, 2013 at 03:12:02PM -0700, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Just in case you ever wanted to rebase this: s/Venic2/Venice2/
-
-Thierry
-
---Bu8it7iiRSEf40bY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSq2YWAAoJEN0jrNd/PrOh/4IP/2q6USKCQatNgK7zJB3TJ0O7
-VDl2QAJZQVcgDhJhou2nZXQkiraEnjOoBojIOTSG5+3MZOBVQ8uY8CZXzZCnW/iS
-BFKUBDITy87k5Qgq3u8Rq78zkB0IjuhNP3I7Ymfuw5/QPEG3aHi1JiZPKn5VHoxo
-oR33NwjS63I2+2pz3uTYVJ85Hv4cblNk37tdXwZplmaX8z5Ze0YyANz4NE3ndwhK
-t4jDGsYhlJNE/H2vthLty/FKEWDMLW5F57vGP5qYtwStOlvz/raukuMRCgHK6+HV
-BHnO4bIh8Uy6ns6VHN01IPWtPyiDv/kc//XvuolNnVLDu5oHOKtwsiQfatj0IInR
-MvRVFt/XihUD77JOScI9gSSPzwQnYrGFgkEYHKOguPaUb5o2cR6RWSgkdHNckCFY
-TanSIcEZf/uo5EGYqBmZ139NVm3agwRLNSQ2ycwiQhIucn7XALtxX0SWaIH4qtyG
-WyoYv7GIRHd4QgoDtYhKMZiegIWT/spy390VA9PjaxtKD4czB1S3hadOROdefEJF
-MBiyEAtAPDX8WspJxNi2qNaQ2tzGOqp4TTN96ECb8otSLs+Gyj6rhMjcEZd/eeT7
-RThcIXUwOjQViM+gpw4vCn8wpQJOV8RFAGYwEyx9MFU/nFRTDJL52aE9fbokRq8I
-kvTmVqEfYhYhJ221Fz81
-=Db8I
------END PGP SIGNATURE-----
-
---Bu8it7iiRSEf40bY--
+I have applied this series to Tegra's for-3.14/trusted-foundations
+branch. This is based directly on v3.13-rc1, so that if anyone needs to
+merge patch 1 anywhere else to resolve conflicts, it'll be easy. I can
+create a signed tag for that purpose if required.
