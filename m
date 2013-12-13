@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/3] ARM: tegra: Enable Venice2 keyboard
-Date: Fri, 13 Dec 2013 17:24:06 +0100
-Message-ID: <1386951847-6490-2-git-send-email-treding@nvidia.com>
+Subject: [PATCH 3/3] ARM: tegra: Enable ChromeOS embedded controller
+Date: Fri, 13 Dec 2013 17:24:07 +0100
+Message-ID: <1386951847-6490-3-git-send-email-treding@nvidia.com>
 References: <1386951847-6490-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1386951847-6490-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,123 +12,29 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-venice2.dts | 104 +++++++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
+ arch/arm/configs/tegra_defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index 8e2bac2068bc..f6d1f95b6223 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -586,6 +586,110 @@
- 		};
- 	};
- 
-+	spi@7000d400 {
-+		status = "okay";
-+
-+		cros-ec@0 {
-+			compatible = "google,cros-ec-spi";
-+			spi-max-frequency = <4000000>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
-+			reg = <0>;
-+
-+			google,cros-ec-spi-msg-delay = <2000>;
-+
-+			cros-ec-keyb {
-+				compatible = "google,cros-ec-keyb";
-+				keypad,num-rows = <8>;
-+				keypad,num-columns = <13>;
-+				google,needs-ghost-filter;
-+
-+				linux,keymap = <0x0001007d	/* L_META */
-+						0x0002003b	/* F1 */
-+						0x00030030	/* B */
-+						0x00040044	/* F10 */
-+						0x00060031	/* N */
-+						0x0008000d	/* = */
-+						0x000a0064	/* R_ALT */
-+
-+						0x01010001	/* ESC */
-+						0x0102003e	/* F4 */
-+						0x01030022	/* G */
-+						0x01040041	/* F7 */
-+						0x01060023	/* H */
-+						0x01080028	/* ' */
-+						0x01090043	/* F9 */
-+						0x010b000e	/* BKSPACE */
-+
-+						0x0200001d	/* L_CTRL */
-+						0x0201000f	/* TAB */
-+						0x0202003d	/* F3 */
-+						0x02030014	/* T */
-+						0x02040040	/* F6 */
-+						0x0205001b	/* ] */
-+						0x02060015	/* Y */
-+						0x02070056	/* 102ND */
-+						0x0208001a	/* [ */
-+						0x02090042	/* F8 */
-+
-+						0x03010029	/* GRAVE */
-+						0x0302003c	/* F2 */
-+						0x03030006	/* 5 */
-+						0x0304003f	/* F5 */
-+						0x03060007	/* 6 */
-+						0x0308000c	/* - */
-+						0x030b002b	/* \ */
-+
-+						0x04000061	/* R_CTRL */
-+						0x0401001e	/* A */
-+						0x04020020	/* D */
-+						0x04030021	/* F */
-+						0x0404001f	/* S */
-+						0x04050025	/* K */
-+						0x04060024	/* J */
-+						0x04080027	/* ; */
-+						0x04090026	/* L */
-+						0x040a002b	/* \ */
-+						0x040b001c	/* ENTER */
-+
-+						0x0501002c	/* Z */
-+						0x0502002e	/* C */
-+						0x0503002f	/* V */
-+						0x0504002d	/* X */
-+						0x05050033	/* , */
-+						0x05060032	/* M */
-+						0x0507002a	/* L_SHIFT */
-+						0x05080035	/* / */
-+						0x05090034	/* . */
-+						0x050B0039	/* SPACE */
-+
-+						0x06010002	/* 1 */
-+						0x06020004	/* 3 */
-+						0x06030005	/* 4 */
-+						0x06040003	/* 2 */
-+						0x06050009	/* 8 */
-+						0x06060008	/* 7 */
-+						0x0608000b	/* 0 */
-+						0x0609000a	/* 9 */
-+						0x060a0038	/* L_ALT */
-+						0x060b006c	/* DOWN */
-+						0x060c006a	/* RIGHT */
-+
-+						0x07010010	/* Q */
-+						0x07020012	/* E */
-+						0x07030013	/* R */
-+						0x07040011	/* W */
-+						0x07050017	/* I */
-+						0x07060016	/* U */
-+						0x07070036	/* R_SHIFT */
-+						0x07080019	/* P */
-+						0x07090018	/* O */
-+						0x070b0067	/* UP */
-+						0x070c0069>;	/* LEFT */
-+			};
-+		};
-+	};
-+
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
- 		nvidia,suspend-mode = <1>;
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index f9edd629d402..c1e219eb29e5 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -112,6 +112,7 @@ CONFIG_RT2800USB=m
+ CONFIG_INPUT_EVDEV=y
+ CONFIG_KEYBOARD_GPIO=y
+ CONFIG_KEYBOARD_TEGRA=y
++CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
+@@ -145,6 +146,8 @@ CONFIG_POWER_RESET=y
+ CONFIG_POWER_RESET_GPIO=y
+ CONFIG_SENSORS_LM90=y
+ CONFIG_MFD_AS3722=y
++CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_SPI=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
 -- 
 1.8.4.2
