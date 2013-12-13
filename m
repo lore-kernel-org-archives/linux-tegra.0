@@ -1,85 +1,120 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: max_discard anomaly on certain Sandisk eMMC
-Date: Fri, 13 Dec 2013 15:43:46 -0700
-Message-ID: <52AB8DA2.9000001@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v4 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
+Date: Fri, 13 Dec 2013 16:21:35 -0700
+Message-ID: <52AB967F.9030900@wwwdotorg.org>
+References: <1386840835-28751-1-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386840835-28751-1-git-send-email-bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On one of my eMMC devices, I see the following results from calling
-mmc_do_calc_max_discard() with various parameters:
+On 12/12/2013 02:33 AM, Bill Huang wrote:
+> Re-model Tegra20 cpufreq driver as below.
+> 
+> * Rename tegra-cpufreq.c to tegra20-cpufreq.c since this file supports
+>   only Tegra20.
+> * Add probe function so defer probe can be used when we're going to
+>   support DVFS.
+> * Create a fake cpufreq platform device with its name being
+>   "${root_compatible}-cpufreq" so SoC cpufreq driver can bind to it
+>   accordingly.
 
-[    3.057263] MMC_DISCARD_ARG max_discard 1
-[    3.057266] MMC_ERASE_ARG   max_discard 4096
-[    3.057267] MMC_TRIM_ARG    max_discard 1
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
 
-This causes mmc_calc_max_discard() to return 1, which makes the discard
-IOCTL extremely slow.
+> +config ARM_TEGRA20_CPUFREQ
+> +	bool "NVIDIA TEGRA20"
+> +	depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
+> +	default y
+> +	help
+> +	  This enables Tegra20 cpufreq functionality, it adds
+> +	  Tegra20 CPU frequency ladder and the call back functions
+> +	  to set CPU rate. All the non-SoC dependant codes are
+> +	  controlled by the config ARM_TEGRA20_CPUFREQ.
 
-For almost all my other eMMC devices, either:
+I think that last sentence is no longer true in this patch version. Or,
+did you mean to write ARM_TEGRA_CPUFREQ rather than ARM_TEGRA20_CPUFREQ?
 
-* Both arguments to mmc_do_calc_max_discard() yield zero. Hence, the
-discard IOCTL is not supported.
+> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
 
-* Both arguments to mmc_do_calc_max_discard() yield some reasonable
-large value. Hence, the discard IOCTL executes reasonably quickly.
+> +static const char * const tegra_soc_compat[] = {
+> +	"nvidia,tegra124",
+> +	"nvidia,tegra114",
+> +	"nvidia,tegra30",
+> +	"nvidia,tegra20",
+> +	NULL
+>  };
 
-Do you think that TRIM_ARG result is expected, or is the eMMC firmware
-simply buggy?
+That table will need editing for each chip. I wonder if you can do
+something like always use the very last entry in /compatible. That would
+assume a particular ordering of the compatible entries, but they should
+be in the order $board, $soc anyway...
 
-If I modify mmc_calc_max_discard() to simply ignore the TRIM_ARG result
-and always use the ERASE_ARG result, I see no errors when executing
-discard operations from either mke2fs, or from the blkdiscard utility. I
-have no idea if the discard operation is doing anything useful though.
+> +int __init tegra_cpufreq_init(void)
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tegra_soc_compat); i++) {
+> +		if (of_machine_is_compatible(tegra_soc_compat[i])) {
+> +			struct platform_device_info devinfo;
+> +			char buf[40];
+> +
+> +			memset(&devinfo, 0, sizeof(devinfo));
+> +			strcpy(buf, tegra_soc_compat[i]);
+> +			strcat(buf, "-cpufreq");
 
-As an aside, another eMMC device (with same manfid/oemid/name) I have
-returns the same 1 for TRIM_ARG, but returns 0 for ERASE_ARG, and hence
-discard is disabled, so I don't see this problem:
+kasprintf() might be simpler, and would avoid the arbitrary 39-character
+string limit and possibility of overflow.
 
-[    1.835747] MMC_DISCARD_ARG max_discard 1
-[    1.839779] MMC_ERASE_ARG   max_discard 0
-[    1.843791] MMC_TRIM_ARG    max_discard 1
+> +			devinfo.name = buf;
+> +			platform_device_register_full(&devinfo);
 
-To solve my slow discard operations, I'm tempted to modify
-mmc_calc_max_discard() as follows:
+Does the devinfo struct need to stick around, i.e. does
+platform_device_register_full keep the pointer, or take a copy of the
+struct? If it keeps the pointer, it'd be best to make devinfo a static
+global variable.
 
-if (max_discard == 1)
-	max_discard = 0;
+> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
 
-... but I'm not sure if that would be seen as a regression, since it'd
-disable the discard operation completely on theoretically working (but
-perhaps practically useless) systems.
+Please pass the "-C" option to "git format-patch"; I assume that almost
+all the code in this file is simply cut/paste verbatim from
+tegra-cpufreq.c where it was deleted.
 
-Alternatively, perhaps I should replace:
+> + * Copyright (C) 2010 Google, Inc.
 
-	if (mmc_can_trim(card)) {
-		max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
-		if (max_trim < max_discard)
-			max_discard = max_trim;
+It's worth adding NV (c) here too.
 
-with:
+> +static int tegra20_cpufreq_remove(struct platform_device *pdev)
+> +{
+> +	cpufreq_unregister_driver(&tegra20_cpufreq_driver);
+> +	return 0;
+> +}
 
-	if (mmc_can_trim(card)) {
-		max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
-		if (max_trim > 1 && max_trim < max_discard)
-			max_discard = max_trim;
+That leaks all the clk_get_sys() calls. Does building this as a module
+work OK?
 
-Alternatively, should I install a quirk for the specific eMMC device,
-which guards one of the changes above, or completely ignores the
-TRIM_ARG result?
+> +MODULE_LICENSE("GPL");
 
-The eMMC device is question is:
+That should be "GPL v2".
 
-manfid = 0x45
-oemid = 0x100
-name = SEM16G
+> diff --git a/include/linux/tegra-cpufreq.h b/include/linux/tegra-cpufreq.h
 
-Strangely, this is apparently a Sandisk eMMC device, yet there already
-exist some quirks for a set of similarly named Sandisk devices, yet they
-are triggered by manfid == 2, not 0x45. I'm not sure why Sandisk uses
-two separate manufacturer IDs...
+> +#ifdef CONFIG_ARM_TEGRA_CPUFREQ
+> +int tegra_cpufreq_init(void);
+> +#else
+> +static inline int tegra_cpufreq_init(void)
+> +{ return; }
+> +#endif
+
+If you're going to wrap the { } onto one line, then I think it'd be best
+to wrap the whole thing (prototype and body) onto one line. Otherwise,
+write:
+
+{
+	return;
+}
+
+Oh, and you need "return 0" not just "return".
