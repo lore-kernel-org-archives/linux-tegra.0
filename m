@@ -1,40 +1,38 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 3/3] ARM: tegra: Enable ChromeOS embedded controller
-Date: Fri, 13 Dec 2013 17:24:07 +0100
-Message-ID: <1386951847-6490-3-git-send-email-treding@nvidia.com>
-References: <1386951847-6490-1-git-send-email-treding@nvidia.com>
+Subject: [PATCH] ARM: tegra: Fix misconfiguration of pin PH2 on Venice2
+Date: Fri, 13 Dec 2013 17:25:04 +0100
+Message-ID: <1386951904-6564-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386951847-6490-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+This pin needs to be configured in pull-down, non-tristate mode in order
+for the backlight to work correctly.
+
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/configs/tegra_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/tegra124-venice2.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index f9edd629d402..c1e219eb29e5 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -112,6 +112,7 @@ CONFIG_RT2800USB=m
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_TEGRA=y
-+CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_ATMEL_MXT=y
-@@ -145,6 +146,8 @@ CONFIG_POWER_RESET=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_SENSORS_LM90=y
- CONFIG_MFD_AS3722=y
-+CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index d027c48bbd67..8dbe49835c91 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -111,6 +111,13 @@
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
++			ph2 {
++				nvidia,pins = "ph2";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
+ 			sdmmc1_clk_pz0 {
+ 				nvidia,pins = "sdmmc1_clk_pz0",
+ 					      "sdmmc1_cmd_pz1",
 -- 
 1.8.4.2
