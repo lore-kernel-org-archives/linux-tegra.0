@@ -1,7 +1,8 @@
 From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] ASoC: tegra20-ac97: fix error return code in tegra20_ac97_platform_probe()
-Date: Sat, 14 Dec 2013 13:15:45 +0800
-Message-ID: <CAPgLHd8W+vo9FD7tAT3eBM_-akXStB8ib93xTk6oS8+5TTYNAQ@mail.gmail.com>
+Subject: [PATCH -next] ASoC: tegra20-ac97: add missing clk_disable_unprepare()
+ on error path
+Date: Sat, 14 Dec 2013 13:29:11 +0800
+Message-ID: <CAPgLHd8f20ryuiZwUqAHfWb4Uujp6=XyNosVWxjD5E9e7kBdow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -12,31 +13,42 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-Fix to return -ENODEV instead of 0 when no GPIO supplied in
-tegra20_ac97_platform_probe().
+Add the missing clk_disable_unprepare() before return from
+tegra20_ac97_platform_probe() in the error handling case.
 
 Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 ---
- sound/soc/tegra/tegra20_ac97.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/tegra/tegra20_ac97.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/tegra/tegra20_ac97.c b/sound/soc/tegra/tegra20_ac97.c
-index d8b98d7..3ea9738 100644
+index d8b98d7..cf5e1cf 100644
 --- a/sound/soc/tegra/tegra20_ac97.c
 +++ b/sound/soc/tegra/tegra20_ac97.c
-@@ -358,6 +358,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 		}
- 	} else {
- 		dev_err(&pdev->dev, "no codec-reset GPIO supplied\n");
-+		ret = -ENODEV;
- 		goto err_clk_put;
+@@ -393,7 +393,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	ret = snd_soc_set_ac97_ops(&tegra20_ac97_ops);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to set AC'97 ops: %d\n", ret);
+-		goto err_asoc_utils_fini;
++		goto err_clk_disable_unprepare;
  	}
  
-@@ -365,6 +366,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
- 					    "nvidia,codec-sync-gpio", 0);
- 	if (!gpio_is_valid(ac97->sync_gpio)) {
- 		dev_err(&pdev->dev, "no codec-sync GPIO supplied\n");
-+		ret = -ENODEV;
- 		goto err_clk_put;
+ 	ret = snd_soc_register_component(&pdev->dev, &tegra20_ac97_component,
+@@ -401,7 +401,7 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
+ 		ret = -ENOMEM;
+-		goto err_asoc_utils_fini;
++		goto err_clk_disable_unprepare;
  	}
  
+ 	ret = tegra_pcm_platform_register(&pdev->dev);
+@@ -417,6 +417,8 @@ static int tegra20_ac97_platform_probe(struct platform_device *pdev)
+ 
+ err_unregister_component:
+ 	snd_soc_unregister_component(&pdev->dev);
++err_clk_disable_unprepare:
++	clk_disable_unprepare(ac97->clk_ac97);
+ err_asoc_utils_fini:
+ 	tegra_asoc_utils_fini(&ac97->util_data);
+ err_clk_put:
