@@ -1,64 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCHv7 10/12] iommu/tegra: smmu: allow duplicate ASID wirte
-Date: Mon, 16 Dec 2013 12:19:37 -0700
-Message-ID: <52AF5249.6050802@wwwdotorg.org>
-References: <1386835033-4701-1-git-send-email-hdoyu@nvidia.com>
-	<1386835033-4701-11-git-send-email-hdoyu@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.13-rc4
+Date: Mon, 16 Dec 2013 12:10:55 -0800
+Message-ID: <52AF5E4F.1000906@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1386835033-4701-11-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
-Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/12/2013 12:57 AM, Hiroshi Doyu wrote:
-> The device, which belongs to the same ASID, can try to enable the same
-> ASID as the other swgroup devices. This should be allowed but just
-> skip the actual register write. If the write value is different, it
-> will return -EINVAL.
+Here are some basic Tegra test results for Linux v3.13-rc4.
+Logs and other details at:
 
-I guess this simplifies the body of the code a lot. Given this, I would
-revise the code I suggested in response to a previous patch, to
-something more like:
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.13-rc4/20131215130135/
 
-		offs = HWGRP_ASID_REG(i);
-		val = smmu_read(smmu, offs);
-		if (on) {
-			if (WARN_ON(val && val != new_val))
-				return -ENODEV;
-			memcpy(c->hwgrp, map, sizeof(u64));
-		} else {
-			WARN_ON(val);
-		}
-		smmu_write(smmu, val, offs);
 
-> +			if (val) {
-> +				if (WARN_ON(val != mask))
-> +					return -EINVAL;
-> +				goto skip;
+Test summary
+------------
 
-That means that:
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-a) No error is returned when the ASIDs don't match. Surely you still
-want to return an error?
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
 
-b) "skip" skips setting up all HWGRP IDs for the device, whereas perhaps
-only 1 was shared yet the rest still need to be set up. If you really do
-want to ignore the error, then surely you want "continue;" here not
-"goto skip;"?
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
 
-> +			}
-...
-> +skip:
->  	return 0;
+
+vmlinux object size
+(delta in bytes from test_v3.13-rc3 (374b105797c3d4f29c685f3be535c35f5689b30e)):
+    text     data      bss    total  kernel
+   +2352     +256        0    +2608  multi_v7_defconfig
+  -10722      +64        0   -10658  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.13-rc3 (374b105797c3d4f29c685f3be535c35f5689b30e))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+        8k      -8k        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        8k      -8k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
