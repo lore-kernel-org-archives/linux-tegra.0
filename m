@@ -1,37 +1,70 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 10/10] ARM: tegra: defconfig changes
-Date: Mon, 16 Dec 2013 15:10:12 -0700
-Message-ID: <1387231812-5701-10-git-send-email-swarren@wwwdotorg.org>
-References: <1387231812-5701-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387231812-5701-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: max_discard anomaly on certain Sandisk eMMC
+Date: Mon, 16 Dec 2013 16:18:08 -0700
+Message-ID: <52AF8A30.9050700@wwwdotorg.org>
+References: <52AB8DA2.9000001@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <52AB8DA2.9000001@wwwdotorg.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable new features required by the Venice2 board.
+On 12/13/2013 03:43 PM, Stephen Warren wrote:
+> On one of my eMMC devices, I see the following results from calling
+> mmc_do_calc_max_discard() with various parameters:
+> 
+> [    3.057263] MMC_DISCARD_ARG max_discard 1
+> [    3.057266] MMC_ERASE_ARG   max_discard 4096
+> [    3.057267] MMC_TRIM_ARG    max_discard 1
+> 
+> This causes mmc_calc_max_discard() to return 1, which makes the discard
+> IOCTL extremely slow.
 
-This branch is based on v3.13-rc1, and shouldn't cause any conflicts.
+Further investigation shows that if I make a few hacks that essentially
+revert e056a1b5b67b "mmc: queue: let host controllers specify maximum
+discard timeout":
 
-----------------------------------------------------------------
+diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
+index 357bbc54fe4b..e66af930d0e3 100644
+--- a/drivers/mmc/card/queue.c
++++ b/drivers/mmc/card/queue.c
+@@ -167,13 +167,15 @@ static void mmc_queue_setup_discard(struct
+request_queue *q,
+ 		return;
 
-The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+ 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
+-	q->limits.max_discard_sectors = max_discard;
++	q->limits.max_discard_sectors = UINT_MAX;
+ 	if (card->erased_byte == 0 && !mmc_can_discard(card))
+ 		q->limits.discard_zeroes_data = 1;
+ 	q->limits.discard_granularity = card->pref_erase << 9;
+ 	/* granularity must not be greater than max. discard */
++#if 0
+ 	if (card->pref_erase > max_discard)
+ 		q->limits.discard_granularity = 0;
++#endif
+ 	if (mmc_can_secure_erase_trim(card))
+ 		queue_flag_set_unlocked(QUEUE_FLAG_SECDISCARD, q);
+ }
 
-  Linux 3.13-rc1
+I end up with:
 
-are available in the git repository at:
+$ cat /sys/.../block/mmcblk1/queue# cat discard_granularity
+2097152
+$ cat /sys/.../block/mmcblk1/queue# cat discard_max_bytes
+2199023255040
+$ cat /sys/.../block/mmcblk1/queue# cat discard_zeroes_data
+1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.14-defconfig
+With those values, mke2fs is fast, and I validated that "blkdiscard"
+works; I filled a large partition with /dev/urandom, executed
+"blkdiscard" on the 4M at the start, and saw zeroes when reading the
+discarded part back.
 
-for you to fetch changes up to 0d8c67218cef8af259e4d12221434a1d7b0f3bbc:
-
-  ARM: tegra: tegra_defconfig updates
-
-----------------------------------------------------------------
-
-Stephen Warren (1):
-      ARM: tegra: tegra_defconfig updates
-
- arch/arm/configs/tegra_defconfig | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+This implies that the issue is simply the operation of
+mmc_calc_max_discard(), rather than the eMMC device mis-reporting its
+discard abilities, doesn't it?
