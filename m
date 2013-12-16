@@ -1,146 +1,39 @@
-From: bilhuang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v4 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Mon, 16 Dec 2013 18:52:26 +0800
-Message-ID: <52AEDB6A.2080501@nvidia.com>
-References: <1386840835-28751-1-git-send-email-bilhuang@nvidia.com> <52AB967F.9030900@wwwdotorg.org>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [patch] spi: tegra: checking for ERR_PTR instead of NULL
+Date: Mon, 16 Dec 2013 17:02:10 +0300
+Message-ID: <20131216140210.GA32033@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <52AB967F.9030900@wwwdotorg.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/14/2013 07:21 AM, Stephen Warren wrote:
-> On 12/12/2013 02:33 AM, Bill Huang wrote:
->> Re-model Tegra20 cpufreq driver as below.
->>
->> * Rename tegra-cpufreq.c to tegra20-cpufreq.c since this file supports
->>    only Tegra20.
->> * Add probe function so defer probe can be used when we're going to
->>    support DVFS.
->> * Create a fake cpufreq platform device with its name being
->>    "${root_compatible}-cpufreq" so SoC cpufreq driver can bind to it
->>    accordingly.
->
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->
->> +config ARM_TEGRA20_CPUFREQ
->> +	bool "NVIDIA TEGRA20"
->> +	depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
->> +	default y
->> +	help
->> +	  This enables Tegra20 cpufreq functionality, it adds
->> +	  Tegra20 CPU frequency ladder and the call back functions
->> +	  to set CPU rate. All the non-SoC dependant codes are
->> +	  controlled by the config ARM_TEGRA20_CPUFREQ.
->
-> I think that last sentence is no longer true in this patch version. Or,
-> did you mean to write ARM_TEGRA_CPUFREQ rather than ARM_TEGRA20_CPUFREQ?
+dma_request_slave_channel() returns NULL on error and not ERR_PTRs.
+I've fixed this by using dma_request_slave_channel_reason() which does
+return ERR_PTRs.
 
-Right, should be ARM_TEGRA_CPUFREQ, thanks for catching this.
->
->> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
->
->> +static const char * const tegra_soc_compat[] = {
->> +	"nvidia,tegra124",
->> +	"nvidia,tegra114",
->> +	"nvidia,tegra30",
->> +	"nvidia,tegra20",
->> +	NULL
->>   };
->
-> That table will need editing for each chip. I wonder if you can do
-> something like always use the very last entry in /compatible. That would
-> assume a particular ordering of the compatible entries, but they should
-> be in the order $board, $soc anyway...
+Fixes: a915d150f68d ('spi: tegra: convert to standard DMA DT bindings')
+Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-How do we get subset of a string and making sure it is the last? There 
-must be some assumptions here (though they will possibly be true) I 
-guess, for example, they should be in the order $board, $soc... and the 
-last "nvidia" should be the start of the last compatible id we would 
-like to get.
->
->> +int __init tegra_cpufreq_init(void)
->> +	int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(tegra_soc_compat); i++) {
->> +		if (of_machine_is_compatible(tegra_soc_compat[i])) {
->> +			struct platform_device_info devinfo;
->> +			char buf[40];
->> +
->> +			memset(&devinfo, 0, sizeof(devinfo));
->> +			strcpy(buf, tegra_soc_compat[i]);
->> +			strcat(buf, "-cpufreq");
->
-> kasprintf() might be simpler, and would avoid the arbitrary 39-character
-> string limit and possibility of overflow.
-
-Ah yeah, thanks.
->
->> +			devinfo.name = buf;
->> +			platform_device_register_full(&devinfo);
->
-> Does the devinfo struct need to stick around, i.e. does
-> platform_device_register_full keep the pointer, or take a copy of the
-> struct? If it keeps the pointer, it'd be best to make devinfo a static
-> global variable.
-
-devinfo is used to provide dev info to create platform device structure, 
-so I think it is OK here.
->
->> diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
->
-> Please pass the "-C" option to "git format-patch"; I assume that almost
-> all the code in this file is simply cut/paste verbatim from
-> tegra-cpufreq.c where it was deleted.
-
-OK, thanks.
->
->> + * Copyright (C) 2010 Google, Inc.
->
-> It's worth adding NV (c) here too.
-
-OK.
->
->> +static int tegra20_cpufreq_remove(struct platform_device *pdev)
->> +{
->> +	cpufreq_unregister_driver(&tegra20_cpufreq_driver);
->> +	return 0;
->> +}
->
-> That leaks all the clk_get_sys() calls. Does building this as a module
-> work OK?
-
-I should add back those clk_put here.
->
->> +MODULE_LICENSE("GPL");
->
-> That should be "GPL v2".
-
-OK.
->
->> diff --git a/include/linux/tegra-cpufreq.h b/include/linux/tegra-cpufreq.h
->
->> +#ifdef CONFIG_ARM_TEGRA_CPUFREQ
->> +int tegra_cpufreq_init(void);
->> +#else
->> +static inline int tegra_cpufreq_init(void)
->> +{ return; }
->> +#endif
->
-> If you're going to wrap the { } onto one line, then I think it'd be best
-> to wrap the whole thing (prototype and body) onto one line. Otherwise,
-> write:
->
-> {
-> 	return;
-> }
->
-> Oh, and you need "return 0" not just "return".
-
-Thanks for catching.
->
-
+diff --git a/drivers/spi/spi-tegra20-slink.c b/drivers/spi/spi-tegra20-slink.c
+index 1e61e9854064..be3a069879c3 100644
+--- a/drivers/spi/spi-tegra20-slink.c
++++ b/drivers/spi/spi-tegra20-slink.c
+@@ -612,8 +612,8 @@ static int tegra_slink_init_dma_param(struct tegra_slink_data *tspi,
+ 	int ret;
+ 	struct dma_slave_config dma_sconfig;
+ 
+-	dma_chan = dma_request_slave_channel(tspi->dev,
+-					     dma_to_memory ? "rx" : "tx");
++	dma_chan = dma_request_slave_channel_reason(tspi->dev,
++						dma_to_memory ? "rx" : "tx");
+ 	if (IS_ERR(dma_chan)) {
+ 		ret = PTR_ERR(dma_chan);
+ 		if (ret != -EPROBE_DEFER)
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
