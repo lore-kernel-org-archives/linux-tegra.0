@@ -1,20 +1,48 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Add IO rail support
-Date: Mon, 16 Dec 2013 14:11:51 -0700
-Message-ID: <52AF6C97.7090505@wwwdotorg.org>
-References: <1387226548-11631-1-git-send-email-treding@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [GIT PULL 01/10] ARM: tegra: dependency 1 from the DMA tree
+Date: Mon, 16 Dec 2013 15:10:03 -0700
+Message-ID: <1387231812-5701-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387226548-11631-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/16/2013 01:42 PM, Thierry Reding wrote:
-> Add tegra_io_rail_power_off() and tegra_io_rail_power_on() functions to
-> put IO rails into or out of deep powerdown mode, respectively.
+This branch introduces the dma_request_slave_channel_reason() API, and
+is a dependency for Tegra's conversion to use the common/standard DMA
+DT bindings.
 
-Applied to Tegra's for-3.14/powergate branch.
+Note that Vinod didn't create a signed tag for this branch, but has
+certainly given his OK in email for me to pull this branch into the
+Tegra tree. Mark has also pulled it into the ASoC tree.
+
+Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+
+----------------------------------------------------------------
+
+The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+
+  Linux 3.13-rc1
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/vkoul/slave-dma.git topic/defer_probe
+
+or:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-3.14/deps-from-dma-defer_probe
+
+for you to fetch changes up to 0ad7c00057dc1640647c1dc81ccbd009de17a767:
+
+  dma: add channel request API that supports deferred probe
+
+----------------------------------------------------------------
+
+Stephen Warren (1):
+      dma: add channel request API that supports deferred probe
+
+ drivers/dma/dmaengine.c   | 35 +++++++++++++++++++++++++++++++----
+ drivers/dma/of-dma.c      | 15 +++++++++------
+ include/linux/dmaengine.h |  8 ++++++++
+ 3 files changed, 48 insertions(+), 10 deletions(-)
