@@ -1,75 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH -next] ASoC: tegra20-ac97: add missing
- clk_disable_unprepare() on error path
-Date: Mon, 16 Dec 2013 18:37:53 +0000
-Message-ID: <20131216183753.GL3185@sirena.org.uk>
-References: <CAPgLHd8f20ryuiZwUqAHfWb4Uujp6=XyNosVWxjD5E9e7kBdow@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv7 05/12] iommu/core: add ops->{bound,unbind}_driver()
+Date: Mon, 16 Dec 2013 11:42:27 -0700
+Message-ID: <52AF4993.80406@wwwdotorg.org>
+References: <1386835033-4701-1-git-send-email-hdoyu@nvidia.com> <1386835033-4701-6-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3543754978073341705=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAPgLHd8f20ryuiZwUqAHfWb4Uujp6=XyNosVWxjD5E9e7kBdow@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: alsa-devel@alsa-project.org, swarren@wwwdotorg.org, tiwai@suse.de, lgirdwood@gmail.com, robh+dt@kernel.org, linux-tegra@vger.kernel.org, yongjun_wei@trendmicro.com.cn, thierry.reding@gmail.com, grant.likely@linaro.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1386835033-4701-6-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 12/12/2013 12:57 AM, Hiroshi Doyu wrote:
+> ops->{bound,unbind}_driver() functions are called at
+> BUS_NOTIFY_{BOUND,UNBIND}_DRIVER respectively.
 
---===============3543754978073341705==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AGBBLMjITsWHeOTZ"
-Content-Disposition: inline
+Some explanation re: why the existing {add,remove}_device hooks aren't
+enough would be useful. I didn't really get that from the current commit
+description. What actions would an IOMMU driver take in these new
+callbacks that could not be taken in {add,remove}_device? Surely the
+IOMMU could set up any internal data structures, AS, or page tables,
+etc. within add_device, rather than deferring to bound_driver, which
+presumably happens after the device's probe(), yet the driver might want
+to make the HW do bus-master accesses within probe(), or at least map
+stuff into the page table...
 
+> This is necessary to control the device population order. IOMMU master
+> devices depend on an IOMMU device instanciation. IOMMU master devices
 
---AGBBLMjITsWHeOTZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Dec 14, 2013 at 01:29:11PM +0800, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> Add the missing clk_disable_unprepare() before return from
-> tegra20_ac97_platform_probe() in the error handling case.
-
-Applied, thanks.
-
---AGBBLMjITsWHeOTZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSr0h+AAoJELSic+t+oim9uY8P/2nw1grUKrq7i0kVqMT31TVe
-QNmqrwJ6RBiyiSnK8B2ENUy0CqDoSZyXk9vQ5xEzcaWo4SpNc/B/xQy7u0szEwfD
-+riL6UjJb8hDdAYSWK4nA2oglaedakGRQ/rdsAPfoaFXbKv8OWl/lQkW9k4xOAiQ
-8ng/okFkBUDeHfRaFusS5625iLNOF3gaHFuvr9W1qK1tBzKWGDkFzDB01UNiPok+
-jnSDwdN//mJmWk4vA/dczOLL3xgnEBtOpg10g02vmT+oI5x2j2Z991HO+12QoB5b
-kEjlba4JWsI6PL4mOD1VrmEsmvz3eFtXfjIgOwv2JGI8oWWdlKndtGg4/RLzKKHY
-WdbvcyMbAi3oxstbaUrq6L4LqrxBnL3erpak4T2JDT972SNkERqruw1Sditp1CAF
-shafTBpodMR4qRmfvekS1q9FZcOcozMXVCDrKxLOv/kk6tpRz1SlwUN4Z81jxnqE
-xAvVBSi4ZO7GiSjpNTESKehOoyx6YCr9XUsfTb6wbA4DZhVpt2TI/v4ISzXjqHdL
-DYXahomPJAbONVC02/3gVCRm9SV9lP0LvvqiatRul9/399ionM76z1QeOFAgS2nQ
-nAGpJR0QL7SgYj2NvXNZcGxsbZ1jQt3XAn7Ug1xyEWNImq1pphcJj1/z9eo5gsEk
-0+6QNEHW4jR3YWQ00vkY
-=CrX+
------END PGP SIGNATURE-----
-
---AGBBLMjITsWHeOTZ--
-
---===============3543754978073341705==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============3543754978073341705==--
+Is an "IOMMU master device" the device that issues transactions on the
+bus, which are affected by the IOMMU? The more common term for this is
+"bus master"; "IOMMU master device" sounds too similar to the "IOMMU"
+itself.
