@@ -1,23 +1,23 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [GIT PULL 01/10] ARM: tegra: dependency 1 from the DMA tree
-Date: Mon, 16 Dec 2013 15:10:03 -0700
-Message-ID: <1387231812-5701-1-git-send-email-swarren@wwwdotorg.org>
+Subject: [GIT PULL 02/10] ARM: tegra: dependency from the ASoC tree
+Date: Mon, 16 Dec 2013 15:10:04 -0700
+Message-ID: <1387231812-5701-2-git-send-email-swarren@wwwdotorg.org>
+References: <1387231812-5701-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1387231812-5701-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This branch introduces the dma_request_slave_channel_reason() API, and
-is a dependency for Tegra's conversion to use the common/standard DMA
-DT bindings.
+This is the work so far on dmaengine for v3.14, it is being cross merged
+into the Tegra tree to support a large DMA overhaul there.  The main
+additions are a change in the DMA request API which allows better
+interaction at system startup using deferred probes and methods for
+overriding the default device and channel names used to request DMA.
 
-Note that Vinod didn't create a signed tag for this branch, but has
-certainly given his OK in email for me to pull this branch into the
-Tegra tree. Mark has also pulled it into the ASoC tree.
-
-Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
 ----------------------------------------------------------------
 
@@ -27,22 +27,38 @@ The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
 
 are available in the git repository at:
 
-  git://git.infradead.org/users/vkoul/slave-dma.git topic/defer_probe
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git asoc-dma-v3.14
 
 or:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-3.14/deps-from-dma-defer_probe
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git asoc-dma-v3.14
 
-for you to fetch changes up to 0ad7c00057dc1640647c1dc81ccbd009de17a767:
+for you to fetch changes up to e9036c2a60f368b8ddc349fbbcde918ed32ab597:
 
-  dma: add channel request API that supports deferred probe
+  ASoC: dmaengine: fix deferred probe detection
 
 ----------------------------------------------------------------
 
-Stephen Warren (1):
-      dma: add channel request API that supports deferred probe
+Lars-Peter Clausen (2):
+      ASoC: Add resource managed snd_dmaengine_pcm_register()
+      ASoC: generic-dmaengine-pcm: Set BATCH flag when residue reporting is not supported
 
- drivers/dma/dmaengine.c   | 35 +++++++++++++++++++++++++++++++----
- drivers/dma/of-dma.c      | 15 +++++++++------
- include/linux/dmaengine.h |  8 ++++++++
- 3 files changed, 48 insertions(+), 10 deletions(-)
+Mark Brown (2):
+      Merge remote-tracking branch 'asoc/fix/dma' into asoc-dma
+      Merge branch 'topic/defer_probe' of git://git.infradead.org/users/vkoul/slave-dma into asoc-dma
+
+Stephen Warren (6):
+      ASoC: restructure dmaengine_pcm_request_chan_of()
+      ASoC: don't leak on error in snd_dmaengine_pcm_register
+      ASoC: dmaengine: add custom DMA config to snd_dmaengine_pcm_config
+      dma: add channel request API that supports deferred probe
+      ASoC: dmaengine: support deferred probe for DMA channels
+      ASoC: dmaengine: fix deferred probe detection
+
+ drivers/dma/dmaengine.c               | 35 +++++++++--
+ drivers/dma/of-dma.c                  | 15 +++--
+ include/linux/dmaengine.h             |  8 +++
+ include/sound/dmaengine_pcm.h         | 10 ++++
+ sound/soc/soc-devres.c                | 41 +++++++++++++
+ sound/soc/soc-generic-dmaengine-pcm.c | 94 +++++++++++++++++++++++-------
+ 6 files changed, 171 insertions(+), 32 deletions(-)
