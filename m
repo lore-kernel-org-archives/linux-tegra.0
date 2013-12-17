@@ -1,22 +1,20 @@
-From: Dong Aisheng <dongas86@gmail.com>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Tue, 17 Dec 2013 19:05:20 +0800
-Message-ID: <CAA+hA=RL6f5-Z1T0ahWMn6TNtKvjQhy6CiHORYEUn6KXSC2oXg@mail.gmail.com>
-References: <52AB8DA2.9000001@wwwdotorg.org>
-	<52AF8A30.9050700@wwwdotorg.org>
-	<52B008AB.7060909@intel.com>
-	<CAPDyKFooKY7nyOdLxQS-u9oC_pZL3V8pH5kixLgQpUkPG=kqKw@mail.gmail.com>
+Date: Tue, 17 Dec 2013 13:20:19 +0200
+Message-ID: <52B03373.3000505@intel.com>
+References: <52AB8DA2.9000001@wwwdotorg.org> <52AF8A30.9050700@wwwdotorg.org> <52B008AB.7060909@intel.com> <CAPDyKFooKY7nyOdLxQS-u9oC_pZL3V8pH5kixLgQpUkPG=kqKw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFooKY7nyOdLxQS-u9oC_pZL3V8pH5kixLgQpUkPG=kqKw@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPDyKFooKY7nyOdLxQS-u9oC_pZL3V8pH5kixLgQpUkPG=kqKw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 17, 2013 at 6:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 17 December 2013 09:17, Adrian Hunter <adrian.hunter@intel.com> wrote:
+On 17/12/13 12:04, Ulf Hansson wrote:
+> On 17 December 2013 09:17, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
 >> On 17/12/13 01:18, Stephen Warren wrote:
 >>> On 12/13/2013 03:43 PM, Stephen Warren wrote:
 >>>> On one of my eMMC devices, I see the following results from calling
@@ -94,59 +92,37 @@ On Tue, Dec 17, 2013 at 6:04 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >> The best solution is to change the hardware to use the lowest possible
 >> frequency timeout clock e.g. a 1KHz timeout clock could support timeouts of
 >> up to 36 hours.
->
+> 
 > Don't know the details about the limitations for SDHCI, but I guess
 > similar exists for other controllers as well.
->
+
+Not necessarily.  For example omap_hsmmc just disables the timeout for erase
+operations.
+
+> 
 > I do get the impression that we have got a problem in the mmc
 > core/block layer for how erase/trim/discard timeouts are being
 > handled.
->
+> 
 > I don't think the mmc hw-controller should be waiting for the R1B
 > response from the CMD38 as long as this "timeout" we are discussing
 > here. According to the spec, at least how I interpret it, the card
 > should respond rather quickly to CMD38, then it will assert the DAT0
 > line to indicate busy.
->
-
-For IMX, CMD38 responds very quick since it does not wait for TC interrupt
-when DAT0 de-assertion due to IP limitation.
-
+> 
 > The total time the card is allowed to stay busy, that is what the
 > timeout specifies. We may either use a mmc hw-controller busy
 > detection mechanism or send CMD13 to poll for status. The latter is
 > somewhat already being handled in mmc_do_erase(), but we are using
 > "MMC_CORE_TIMEOUT_MS" instead of the correct timeout.
->
-
-Maybe one better way may be using polling for status if erase timeout
-is bigger than
-host capability, else still prefer to use hw timeout mechanism instead
-to save CPU.
-However, then we have two issues:
-1) not waiting for R1B seems a bit violation with standard spec.
-Also it increase complexity on handling the R1B of the same command
-for two different
-cases: using hw timeout or polling status for CMD38.
-
-2) In current implementation, the data size to erase will not exceed
-the max_discard_bytes
-which is calculated based on max_discard_to of host.
-Then how do we specify max_discard_to if want to use polling? UNIT_MAX?
-Will it be too long to affect other activities in the same system?
-
-Regards
-Dong Aisheng
-
+> 
 > Kind regards
 > Ulf Hansson
->
+> 
 >>
 >> --
 >> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
