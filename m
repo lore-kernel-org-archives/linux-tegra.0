@@ -1,106 +1,46 @@
-From: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Tue, 17 Dec 2013 17:25:41 +0800
-Message-ID: <CAA+hA=R3wnbuJrJQhfG9PQEHrwE9nrwg_+xSpyXryOeM2Wtwcw@mail.gmail.com>
-References: <52AB8DA2.9000001@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] ARM: tegra: re-enable EMC scaling function for Tegra20
+Date: Tue, 17 Dec 2013 17:26:36 +0800
+Message-ID: <1387272400-4689-1-git-send-email-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52AB8DA2.9000001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+The EMC scaling function was lost after Tegra deprecated the legacy
+clock driver and switched to CCF driver. In this series, we add the EMC
+clock driver in the Tegra CCF driver. And re-register the EMC driver to
+the EMC clock driver to support EMC scaling again.
 
-On Sat, Dec 14, 2013 at 6:43 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On one of my eMMC devices, I see the following results from calling
-> mmc_do_calc_max_discard() with various parameters:
->
-> [    3.057263] MMC_DISCARD_ARG max_discard 1
-> [    3.057266] MMC_ERASE_ARG   max_discard 4096
-> [    3.057267] MMC_TRIM_ARG    max_discard 1
->
-> This causes mmc_calc_max_discard() to return 1, which makes the discard
-> IOCTL extremely slow.
->
+Verified on Seaboard.
 
-IMX met the similar issue.
-http://www.spinics.net/lists/linux-mmc/msg23375.html
-It's caused by the max_discard_to supported by host is too small.
+Joseph Lo (4):
+  ARM: tegra: moving tegra_bct_strapping to tegra-soc.h for global
+    visibility
+  clk: tegra: add EMC clock driver
+  memory: tegra20-emc: move out Tegra20 EMC driver from mach-tegra
+  clk: tegra20: enable EMC clock driver
 
-I submitted the fix patches:
-http://www.spinics.net/lists/arm-kernel/msg294924.html
-Please see if it helps for you, especially patch #5.
-It could increase the max_discard_to if Tegra has same problem.
+ arch/arm/mach-tegra/Makefile                       |   1 -
+ arch/arm/mach-tegra/fuse.h                         |   2 -
+ arch/arm/mach-tegra/tegra20_speedo.c               |   1 +
+ arch/arm/mach-tegra/tegra2_emc.h                   |  24 ---
+ drivers/clk/tegra/Makefile                         |   1 +
+ drivers/clk/tegra/clk-emc.c                        | 183 +++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |  25 +--
+ drivers/clk/tegra/clk.h                            |  19 +++
+ drivers/memory/Kconfig                             |  10 ++
+ drivers/memory/Makefile                            |   1 +
+ .../tegra2_emc.c => drivers/memory/tegra20-emc.c   |  16 +-
+ include/linux/platform_data/tegra_emc.h            |   7 +
+ include/linux/tegra-soc.h                          |   2 +
+ 13 files changed, 250 insertions(+), 42 deletions(-)
+ delete mode 100644 arch/arm/mach-tegra/tegra2_emc.h
+ create mode 100644 drivers/clk/tegra/clk-emc.c
+ rename arch/arm/mach-tegra/tegra2_emc.c => drivers/memory/tegra20-emc.c (95%)
 
-Regards
-Dong Aisheng
-
-> For almost all my other eMMC devices, either:
->
-> * Both arguments to mmc_do_calc_max_discard() yield zero. Hence, the
-> discard IOCTL is not supported.
->
-> * Both arguments to mmc_do_calc_max_discard() yield some reasonable
-> large value. Hence, the discard IOCTL executes reasonably quickly.
->
-> Do you think that TRIM_ARG result is expected, or is the eMMC firmware
-> simply buggy?
->
-> If I modify mmc_calc_max_discard() to simply ignore the TRIM_ARG result
-> and always use the ERASE_ARG result, I see no errors when executing
-> discard operations from either mke2fs, or from the blkdiscard utility. I
-> have no idea if the discard operation is doing anything useful though.
->
-> As an aside, another eMMC device (with same manfid/oemid/name) I have
-> returns the same 1 for TRIM_ARG, but returns 0 for ERASE_ARG, and hence
-> discard is disabled, so I don't see this problem:
->
-> [    1.835747] MMC_DISCARD_ARG max_discard 1
-> [    1.839779] MMC_ERASE_ARG   max_discard 0
-> [    1.843791] MMC_TRIM_ARG    max_discard 1
->
-> To solve my slow discard operations, I'm tempted to modify
-> mmc_calc_max_discard() as follows:
->
-> if (max_discard == 1)
->         max_discard = 0;
->
-> ... but I'm not sure if that would be seen as a regression, since it'd
-> disable the discard operation completely on theoretically working (but
-> perhaps practically useless) systems.
->
-> Alternatively, perhaps I should replace:
->
->         if (mmc_can_trim(card)) {
->                 max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
->                 if (max_trim < max_discard)
->                         max_discard = max_trim;
->
-> with:
->
->         if (mmc_can_trim(card)) {
->                 max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
->                 if (max_trim > 1 && max_trim < max_discard)
->                         max_discard = max_trim;
->
-> Alternatively, should I install a quirk for the specific eMMC device,
-> which guards one of the changes above, or completely ignores the
-> TRIM_ARG result?
->
-> The eMMC device is question is:
->
-> manfid = 0x45
-> oemid = 0x100
-> name = SEM16G
->
-> Strangely, this is apparently a Sandisk eMMC device, yet there already
-> exist some quirks for a set of similarly named Sandisk devices, yet they
-> are triggered by manfid == 2, not 0x45. I'm not sure why Sandisk uses
-> two separate manufacturer IDs...
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.8.5
