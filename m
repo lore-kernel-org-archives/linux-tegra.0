@@ -1,7 +1,7 @@
 From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] gpu: ion: use module_platform_driver to simplify the code
-Date: Tue, 17 Dec 2013 11:16:41 +0800
-Message-ID: <CAPgLHd9V2FR8sfEG_Q4SQoXgjVP9oRzC14LVZKqC8Lz+VHBjjQ@mail.gmail.com>
+Subject: [PATCH -next] gpu: ion: fix sparse non static symbol warnings
+Date: Tue, 17 Dec 2013 11:20:22 +0800
+Message-ID: <CAPgLHd--f=-3mRqezqwxi7QjWVW2cVY4CmJJvZYsZRoLyXZ95w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
@@ -12,33 +12,53 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-module_platform_driver() makes the code simpler by eliminating
-boilerplate code.
+Fixes the following sparse warnings:
+
+drivers/staging/android/ion/tegra/tegra_ion.c:23:19: warning:
+ symbol 'idev' was not declared. Should it be static?
+drivers/staging/android/ion/tegra/tegra_ion.c:24:19: warning:
+ symbol 'tegra_user_mapper' was not declared. Should it be static?
+drivers/staging/android/ion/tegra/tegra_ion.c:25:5: warning:
+ symbol 'num_heaps' was not declared. Should it be static?
+drivers/staging/android/ion/tegra/tegra_ion.c:26:17: warning:
+ symbol 'heaps' was not declared. Should it be static?
+drivers/staging/android/ion/tegra/tegra_ion.c:28:5: warning:
+ symbol 'tegra_ion_probe' was not declared. Should it be static?
+drivers/staging/android/ion/tegra/tegra_ion.c:66:5: warning:
+ symbol 'tegra_ion_remove' was not declared. Should it be static?
 
 Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 ---
- drivers/staging/android/ion/tegra/tegra_ion.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+ drivers/staging/android/ion/tegra/tegra_ion.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/android/ion/tegra/tegra_ion.c b/drivers/staging/android/ion/tegra/tegra_ion.c
-index 0849600..4b3d93f 100644
+index 0849600..b3c4707 100644
 --- a/drivers/staging/android/ion/tegra/tegra_ion.c
 +++ b/drivers/staging/android/ion/tegra/tegra_ion.c
-@@ -81,16 +81,5 @@ static struct platform_driver ion_driver = {
- 	.driver = { .name = "ion-tegra" }
- };
+@@ -20,12 +20,11 @@
+ #include "../ion.h"
+ #include "../ion_priv.h"
  
--static int __init ion_init(void)
--{
--	return platform_driver_register(&ion_driver);
--}
--
--static void __exit ion_exit(void)
--{
--	platform_driver_unregister(&ion_driver);
--}
--
--module_init(ion_init);
--module_exit(ion_exit);
-+module_platform_driver(ion_driver);
+-struct ion_device *idev;
+-struct ion_mapper *tegra_user_mapper;
+-int num_heaps;
+-struct ion_heap **heaps;
++static struct ion_device *idev;
++static int num_heaps;
++static struct ion_heap **heaps;
  
+-int tegra_ion_probe(struct platform_device *pdev)
++static int tegra_ion_probe(struct platform_device *pdev)
+ {
+ 	struct ion_platform_data *pdata = pdev->dev.platform_data;
+ 	int err;
+@@ -63,7 +62,7 @@ err:
+ 	return err;
+ }
+ 
+-int tegra_ion_remove(struct platform_device *pdev)
++static int tegra_ion_remove(struct platform_device *pdev)
+ {
+ 	struct ion_device *idev = platform_get_drvdata(pdev);
+ 	int i;
