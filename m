@@ -1,122 +1,76 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Tue, 17 Dec 2013 11:04:43 +0100
-Message-ID: <CAPDyKFooKY7nyOdLxQS-u9oC_pZL3V8pH5kixLgQpUkPG=kqKw@mail.gmail.com>
-References: <52AB8DA2.9000001@wwwdotorg.org>
-	<52AF8A30.9050700@wwwdotorg.org>
-	<52B008AB.7060909@intel.com>
+From: bilhuang <bilhuang@nvidia.com>
+Subject: Re: [PATCH v4 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
+Date: Tue, 17 Dec 2013 18:46:27 +0800
+Message-ID: <52B02B83.7@nvidia.com>
+References: <1386840835-28751-1-git-send-email-bilhuang@nvidia.com> <52AB967F.9030900@wwwdotorg.org> <52AEDB6A.2080501@nvidia.com> <52AF3126.6090000@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B008AB.7060909-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <52AF3126.6090000@wwwdotorg.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17 December 2013 09:17, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
-> On 17/12/13 01:18, Stephen Warren wrote:
->> On 12/13/2013 03:43 PM, Stephen Warren wrote:
->>> On one of my eMMC devices, I see the following results from calling
->>> mmc_do_calc_max_discard() with various parameters:
+On 12/17/2013 12:58 AM, Stephen Warren wrote:
+> On 12/16/2013 03:52 AM, bilhuang wrote:
+>> On 12/14/2013 07:21 AM, Stephen Warren wrote:
+>>> On 12/12/2013 02:33 AM, Bill Huang wrote:
+>>>> Re-model Tegra20 cpufreq driver as below.
+>>>>
+>>>> * Rename tegra-cpufreq.c to tegra20-cpufreq.c since this file supports
+>>>>     only Tegra20.
+>>>> * Add probe function so defer probe can be used when we're going to
+>>>>     support DVFS.
+>>>> * Create a fake cpufreq platform device with its name being
+>>>>     "${root_compatible}-cpufreq" so SoC cpufreq driver can bind to it
+>>>>     accordingly.
 >>>
->>> [    3.057263] MMC_DISCARD_ARG max_discard 1
->>> [    3.057266] MMC_ERASE_ARG   max_discard 4096
->>> [    3.057267] MMC_TRIM_ARG    max_discard 1
+>>>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
 >>>
->>> This causes mmc_calc_max_discard() to return 1, which makes the discard
->>> IOCTL extremely slow.
+>>>> +config ARM_TEGRA20_CPUFREQ
+>>>> +    bool "NVIDIA TEGRA20"
+>>>> +    depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
+>>>> +    default y
+>>>> +    help
+>>>> +      This enables Tegra20 cpufreq functionality, it adds
+>>>> +      Tegra20 CPU frequency ladder and the call back functions
+>>>> +      to set CPU rate. All the non-SoC dependant codes are
+>>>> +      controlled by the config ARM_TEGRA20_CPUFREQ.
+>>>
+>>> I think that last sentence is no longer true in this patch version. Or,
+>>> did you mean to write ARM_TEGRA_CPUFREQ rather than ARM_TEGRA20_CPUFREQ?
 >>
->> Further investigation shows that if I make a few hacks that essentially
->> revert e056a1b5b67b "mmc: queue: let host controllers specify maximum
->> discard timeout":
+>> Right, should be ARM_TEGRA_CPUFREQ, thanks for catching this.
+>>>
+>>>> diff --git a/drivers/cpufreq/tegra-cpufreq.c
+>>>> b/drivers/cpufreq/tegra-cpufreq.c
+>>>
+>>>> +static const char * const tegra_soc_compat[] = {
+>>>> +    "nvidia,tegra124",
+>>>> +    "nvidia,tegra114",
+>>>> +    "nvidia,tegra30",
+>>>> +    "nvidia,tegra20",
+>>>> +    NULL
+>>>>    };
+>>>
+>>> That table will need editing for each chip. I wonder if you can do
+>>> something like always use the very last entry in /compatible. That would
+>>> assume a particular ordering of the compatible entries, but they should
+>>> be in the order $board, $soc anyway...
 >>
->> diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
->> index 357bbc54fe4b..e66af930d0e3 100644
->> --- a/drivers/mmc/card/queue.c
->> +++ b/drivers/mmc/card/queue.c
->> @@ -167,13 +167,15 @@ static void mmc_queue_setup_discard(struct
->> request_queue *q,
->>               return;
->>
->>       queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
->> -     q->limits.max_discard_sectors = max_discard;
->> +     q->limits.max_discard_sectors = UINT_MAX;
->>       if (card->erased_byte == 0 && !mmc_can_discard(card))
->>               q->limits.discard_zeroes_data = 1;
->>       q->limits.discard_granularity = card->pref_erase << 9;
->>       /* granularity must not be greater than max. discard */
->> +#if 0
->>       if (card->pref_erase > max_discard)
->>               q->limits.discard_granularity = 0;
->> +#endif
->>       if (mmc_can_secure_erase_trim(card))
->>               queue_flag_set_unlocked(QUEUE_FLAG_SECDISCARD, q);
->>  }
->>
->> I end up with:
->>
->> $ cat /sys/.../block/mmcblk1/queue# cat discard_granularity
->> 2097152
->> $ cat /sys/.../block/mmcblk1/queue# cat discard_max_bytes
->> 2199023255040
->> $ cat /sys/.../block/mmcblk1/queue# cat discard_zeroes_data
->> 1
->>
->> With those values, mke2fs is fast, and I validated that "blkdiscard"
->> works; I filled a large partition with /dev/urandom, executed
->> "blkdiscard" on the 4M at the start, and saw zeroes when reading the
->> discarded part back.
->>
->> This implies that the issue is simply the operation of
->> mmc_calc_max_discard(), rather than the eMMC device mis-reporting its
->> discard abilities, doesn't it?
+>> How do we get subset of a string and making sure it is the last? There
+>> must be some assumptions here (though they will possibly be true) I
+>> guess, for example, they should be in the order $board, $soc... and the
+>> last "nvidia" should be the start of the last compatible id we would
+>> like to get.
 >
-> No.
+> The compatible property is an array of strings, rather than one big
+> string, so you can just keep getting index 0, 1, 2, ... until you find
+> there aren't any more entries. I think it's reasonable to assume that
+> the SoC compatible value must be last, and it should be in practice,
+> although perhaps that is fragile. If you want, we can leave this as-is
+> for now, and modify it later if it becomes a problem.
 >
-> The underlying problem is a combination of:
->         a) JEDEC specified very large timeouts for erase operations e.g. can be
-> minutes for large erases
->         b) SDHCI controllers have been implemented with high frequency timeout
-> clocks which limit the maximum timeout to a few seconds
->         c) It is not possible to disable the timeout on SDHCI
->
-> What a) means is that you can get away with much larger erases than you can
-> specify the timeout for - which is what you have discovered.
->
-> To understand the timeouts, you should manually do the calculations.
->
-> Also note, that using HC Erase Size may help (MMC_CAP2_HC_ERASE_SZ), but
-> beware of the partitioning implications of changing that.
->
-> The best solution is to change the hardware to use the lowest possible
-> frequency timeout clock e.g. a 1KHz timeout clock could support timeouts of
-> up to 36 hours.
-
-Don't know the details about the limitations for SDHCI, but I guess
-similar exists for other controllers as well.
-
-I do get the impression that we have got a problem in the mmc
-core/block layer for how erase/trim/discard timeouts are being
-handled.
-
-I don't think the mmc hw-controller should be waiting for the R1B
-response from the CMD38 as long as this "timeout" we are discussing
-here. According to the spec, at least how I interpret it, the card
-should respond rather quickly to CMD38, then it will assert the DAT0
-line to indicate busy.
-
-The total time the card is allowed to stay busy, that is what the
-timeout specifies. We may either use a mmc hw-controller busy
-detection mechanism or send CMD13 to poll for status. The latter is
-somewhat already being handled in mmc_do_erase(), but we are using
-"MMC_CORE_TIMEOUT_MS" instead of the correct timeout.
-
-Kind regards
-Ulf Hansson
-
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Right, thanks.
