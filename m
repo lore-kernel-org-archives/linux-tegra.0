@@ -1,93 +1,211 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 RESEND 2/2] ASOC: tegra: fix AC97 clock
-	handling
-Date: Tue, 17 Dec 2013 22:39:57 +0000
-Message-ID: <20131217223957.GO28455@sirena.org.uk>
-References: <1387277564-4774-1-git-send-email-dev@lynxeye.de>
- <1387277564-4774-2-git-send-email-dev@lynxeye.de>
- <20131217140017.GI3185@sirena.org.uk>
- <1387291793.1783.3.camel@tellur>
- <20131217214352.GF28455@sirena.org.uk>
- <52B0CE33.7080605@wwwdotorg.org>
- <20131217222847.GK28455@sirena.org.uk>
- <52B0D152.2060504@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8123354323237342573=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <52B0D152.2060504@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, alsa-devel@alsa-project.org, Lucas Stach <dev@lynxeye.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: set up /aliases entries for RTCs
+Date: Tue, 17 Dec 2013 15:40:07 -0700
+Message-ID: <1387320007-24263-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---===============8123354323237342573==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="68uOmRXIw+u8y5pO"
-Content-Disposition: inline
+This ensures that the PMIC RTC provides the system time, rather than
+the on-SoC RTC, which is not battery-backed.
 
+tegra124-venice2.dts isn't touched yet since we haven't added any off-
+SoC RTC device to its device tree.
 
---68uOmRXIw+u8y5pO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts     | 5 +++++
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi | 5 +++++
+ arch/arm/boot/dts/tegra20-harmony.dts      | 5 +++++
+ arch/arm/boot/dts/tegra20-paz00.dts        | 5 +++++
+ arch/arm/boot/dts/tegra20-seaboard.dts     | 5 +++++
+ arch/arm/boot/dts/tegra20-tamonten.dtsi    | 5 +++++
+ arch/arm/boot/dts/tegra20-trimslice.dts    | 5 +++++
+ arch/arm/boot/dts/tegra20-ventana.dts      | 5 +++++
+ arch/arm/boot/dts/tegra20-whistler.dts     | 5 +++++
+ arch/arm/boot/dts/tegra30-beaver.dts       | 5 +++++
+ arch/arm/boot/dts/tegra30-cardhu.dtsi      | 5 +++++
+ 11 files changed, 55 insertions(+)
 
-On Tue, Dec 17, 2013 at 03:33:54PM -0700, Stephen Warren wrote:
-> On 12/17/2013 03:28 PM, Mark Brown wrote:
-
-> > How does doing this in the machine driver help here?  The machine driver
-> > isn't going to be any more coordinated with other machine drivers than
-> > the controller is.
-
-> There would only be one machine driver loaded at a time. It should
-> provide top-level control over all the audio paths in the Tegra audio
-> subsystem.
-
-OK, so that's not how everyone else has done these isolated
-controllers...  to be honest I'm not convinced that this is something
-worth worrying about for AC'97 - the clocking is fixed in the spec
-unless you're being fancy and the chances of anyone being fancy are
-minimal these days.  It's probably more likely to make life miserable
-for people trying to get AC'97 working than anything else.
-
-But like I say the big thing is a comprehensible changelog.
-
---68uOmRXIw+u8y5pO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSsNK6AAoJELSic+t+oim9+uMQAJ0lVMfoNniUiLQnz7zR2xgy
-pOfAjCCXums97KZwpPNEc4hrvijt0sJ7xK7ewjKcT+2TH8z1SDJXftlcjuplhh/F
-o/POUyQR03Ot7oi2PgEdULILl1zGYfeND7e9QLLY2B3weDo67+/1FUapDs29P9Iy
-274Ucc6RY8gUF7i9lFatQ/zvy+wUEz7TYB6flr6C1E0woxgHtqsZReowmge8Evud
-s/NqfN99cpZwkmbYdikOlBI327/8q+ryJxeIlZ1UII/UIbyMndpUKPztC4vvO7Dw
-pEQRqIgdrykuESmG7JtbiFAcsiclcrRmnxAKqtvI8r9fxVTq/T6x6TI898g6SXya
-l8Cy7fNQvi43v0vCfaDCyawzXfMiqDVAUYEwC6m9jQhYEx+XflocHAfb6W0DrFUY
-vxOtlf77qXO3nQ4z691kyev3md5r4B98zTxh5Vh1e0xAXHfCgTiLHvDXUjGkqLw5
-fY/bLK5UXBk6rsjF9Il+M2yJAu46nLqYGbh0KpHT5IWaDgILOFhD1NpGVWkmOFt4
-529Y7rYHlhpuz4WvkHGzMrh4m2pGPrbgv11q9YBzWi8BNOK0d5HOgsU7k4TEGhsi
-sMDewPTqEF+9AsIl58ZQy3Fb8PH9TU+KRCNgzjA4J7QLLXov8xModupqPNETCDb+
-UCemw4roguOPKCxyqK2F
-=02uB
------END PGP SIGNATURE-----
-
---68uOmRXIw+u8y5pO--
-
---===============8123354323237342573==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8123354323237342573==--
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 88be40cf8845..ca4485903b9d 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -7,6 +7,11 @@
+ 	model = "NVIDIA Tegra114 Dalmore evaluation board";
+ 	compatible = "nvidia,dalmore", "nvidia,tegra114";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps65913@58";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 4bfd18bc01d6..8e0066ad9628 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -4,6 +4,11 @@
+ 	model = "Toradex Colibri T20 512MB";
+ 	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index b02653da8bd7..6145f26a0ec5 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -7,6 +7,11 @@
+ 	model = "NVIDIA Tegra20 Harmony evaluation board";
+ 	compatible = "nvidia,harmony", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 02923fb96fed..c7cd8e6802d7 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -7,6 +7,11 @@
+ 	model = "Toshiba AC100 / Dynabook AZ";
+ 	compatible = "compal,paz00", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 1204738dbf29..a11b6e7b4759 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -7,6 +7,11 @@
+ 	model = "NVIDIA Seaboard";
+ 	compatible = "nvidia,seaboard", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index eb2f9aa211a2..a1b0d965757f 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -4,6 +4,11 @@
+ 	model = "Avionic Design Tamonten SOM";
+ 	compatible = "ad,tamonten", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index ec36fafb0f90..216fa6d50c65 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -7,6 +7,11 @@
+ 	model = "Compulab TrimSlice board";
+ 	compatible = "compulab,trimslice", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000c500/rtc@56";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index 0d83062b9be4..571d12e6ac2d 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -7,6 +7,11 @@
+ 	model = "NVIDIA Tegra20 Ventana evaluation board";
+ 	compatible = "nvidia,ventana", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra20-whistler.dts b/arch/arm/boot/dts/tegra20-whistler.dts
+index 813b04ef8717..1843725785c9 100644
+--- a/arch/arm/boot/dts/tegra20-whistler.dts
++++ b/arch/arm/boot/dts/tegra20-whistler.dts
+@@ -7,6 +7,11 @@
+ 	model = "NVIDIA Tegra20 Whistler evaluation board";
+ 	compatible = "nvidia,whistler", "nvidia,tegra20";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/max8907@3c";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 7e8562a8507d..d36c8212dcbf 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -6,6 +6,11 @@
+ 	model = "NVIDIA Tegra30 Beaver evaluation board";
+ 	compatible = "nvidia,beaver", "nvidia,tegra30";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps65911@2d";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x80000000 0x7ff00000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index f3aab9eb6453..dfcc18adcfd7 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -27,6 +27,11 @@
+ 	model = "NVIDIA Tegra30 Cardhu evaluation board";
+ 	compatible = "nvidia,cardhu", "nvidia,tegra30";
+ 
++	aliases {
++		rtc0 = "/i2c@7000d000/tps6586x@34";
++		rtc1 = "/rtc@7000e000";
++	};
++
+ 	memory {
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+-- 
+1.8.1.5
