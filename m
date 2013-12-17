@@ -1,70 +1,44 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Mon, 16 Dec 2013 16:18:08 -0700
-Message-ID: <52AF8A30.9050700@wwwdotorg.org>
-References: <52AB8DA2.9000001@wwwdotorg.org>
+From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH -next] gpu: ion: use module_platform_driver to simplify the code
+Date: Tue, 17 Dec 2013 11:16:41 +0800
+Message-ID: <CAPgLHd9V2FR8sfEG_Q4SQoXgjVP9oRzC14LVZKqC8Lz+VHBjjQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <52AB8DA2.9000001@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rebecca-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org, john.stultz-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/13/2013 03:43 PM, Stephen Warren wrote:
-> On one of my eMMC devices, I see the following results from calling
-> mmc_do_calc_max_discard() with various parameters:
-> 
-> [    3.057263] MMC_DISCARD_ARG max_discard 1
-> [    3.057266] MMC_ERASE_ARG   max_discard 4096
-> [    3.057267] MMC_TRIM_ARG    max_discard 1
-> 
-> This causes mmc_calc_max_discard() to return 1, which makes the discard
-> IOCTL extremely slow.
+From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-Further investigation shows that if I make a few hacks that essentially
-revert e056a1b5b67b "mmc: queue: let host controllers specify maximum
-discard timeout":
+module_platform_driver() makes the code simpler by eliminating
+boilerplate code.
 
-diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
-index 357bbc54fe4b..e66af930d0e3 100644
---- a/drivers/mmc/card/queue.c
-+++ b/drivers/mmc/card/queue.c
-@@ -167,13 +167,15 @@ static void mmc_queue_setup_discard(struct
-request_queue *q,
- 		return;
+Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+---
+ drivers/staging/android/ion/tegra/tegra_ion.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
- 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
--	q->limits.max_discard_sectors = max_discard;
-+	q->limits.max_discard_sectors = UINT_MAX;
- 	if (card->erased_byte == 0 && !mmc_can_discard(card))
- 		q->limits.discard_zeroes_data = 1;
- 	q->limits.discard_granularity = card->pref_erase << 9;
- 	/* granularity must not be greater than max. discard */
-+#if 0
- 	if (card->pref_erase > max_discard)
- 		q->limits.discard_granularity = 0;
-+#endif
- 	if (mmc_can_secure_erase_trim(card))
- 		queue_flag_set_unlocked(QUEUE_FLAG_SECDISCARD, q);
- }
-
-I end up with:
-
-$ cat /sys/.../block/mmcblk1/queue# cat discard_granularity
-2097152
-$ cat /sys/.../block/mmcblk1/queue# cat discard_max_bytes
-2199023255040
-$ cat /sys/.../block/mmcblk1/queue# cat discard_zeroes_data
-1
-
-With those values, mke2fs is fast, and I validated that "blkdiscard"
-works; I filled a large partition with /dev/urandom, executed
-"blkdiscard" on the 4M at the start, and saw zeroes when reading the
-discarded part back.
-
-This implies that the issue is simply the operation of
-mmc_calc_max_discard(), rather than the eMMC device mis-reporting its
-discard abilities, doesn't it?
+diff --git a/drivers/staging/android/ion/tegra/tegra_ion.c b/drivers/staging/android/ion/tegra/tegra_ion.c
+index 0849600..4b3d93f 100644
+--- a/drivers/staging/android/ion/tegra/tegra_ion.c
++++ b/drivers/staging/android/ion/tegra/tegra_ion.c
+@@ -81,16 +81,5 @@ static struct platform_driver ion_driver = {
+ 	.driver = { .name = "ion-tegra" }
+ };
+ 
+-static int __init ion_init(void)
+-{
+-	return platform_driver_register(&ion_driver);
+-}
+-
+-static void __exit ion_exit(void)
+-{
+-	platform_driver_unregister(&ion_driver);
+-}
+-
+-module_init(ion_init);
+-module_exit(ion_exit);
++module_platform_driver(ion_driver);
+ 
