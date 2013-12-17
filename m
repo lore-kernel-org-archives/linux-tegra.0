@@ -1,93 +1,106 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Tue, 17 Dec 2013 10:17:47 +0200
-Message-ID: <52B008AB.7060909@intel.com>
-References: <52AB8DA2.9000001@wwwdotorg.org> <52AF8A30.9050700@wwwdotorg.org>
+Date: Tue, 17 Dec 2013 17:25:41 +0800
+Message-ID: <CAA+hA=R3wnbuJrJQhfG9PQEHrwE9nrwg_+xSpyXryOeM2Wtwcw@mail.gmail.com>
+References: <52AB8DA2.9000001@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <52AF8A30.9050700@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52AB8DA2.9000001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17/12/13 01:18, Stephen Warren wrote:
-> On 12/13/2013 03:43 PM, Stephen Warren wrote:
->> On one of my eMMC devices, I see the following results from calling
->> mmc_do_calc_max_discard() with various parameters:
->>
->> [    3.057263] MMC_DISCARD_ARG max_discard 1
->> [    3.057266] MMC_ERASE_ARG   max_discard 4096
->> [    3.057267] MMC_TRIM_ARG    max_discard 1
->>
->> This causes mmc_calc_max_discard() to return 1, which makes the discard
->> IOCTL extremely slow.
-> 
-> Further investigation shows that if I make a few hacks that essentially
-> revert e056a1b5b67b "mmc: queue: let host controllers specify maximum
-> discard timeout":
-> 
-> diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
-> index 357bbc54fe4b..e66af930d0e3 100644
-> --- a/drivers/mmc/card/queue.c
-> +++ b/drivers/mmc/card/queue.c
-> @@ -167,13 +167,15 @@ static void mmc_queue_setup_discard(struct
-> request_queue *q,
->  		return;
-> 
->  	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, q);
-> -	q->limits.max_discard_sectors = max_discard;
-> +	q->limits.max_discard_sectors = UINT_MAX;
->  	if (card->erased_byte == 0 && !mmc_can_discard(card))
->  		q->limits.discard_zeroes_data = 1;
->  	q->limits.discard_granularity = card->pref_erase << 9;
->  	/* granularity must not be greater than max. discard */
-> +#if 0
->  	if (card->pref_erase > max_discard)
->  		q->limits.discard_granularity = 0;
-> +#endif
->  	if (mmc_can_secure_erase_trim(card))
->  		queue_flag_set_unlocked(QUEUE_FLAG_SECDISCARD, q);
->  }
-> 
-> I end up with:
-> 
-> $ cat /sys/.../block/mmcblk1/queue# cat discard_granularity
-> 2097152
-> $ cat /sys/.../block/mmcblk1/queue# cat discard_max_bytes
-> 2199023255040
-> $ cat /sys/.../block/mmcblk1/queue# cat discard_zeroes_data
-> 1
-> 
-> With those values, mke2fs is fast, and I validated that "blkdiscard"
-> works; I filled a large partition with /dev/urandom, executed
-> "blkdiscard" on the 4M at the start, and saw zeroes when reading the
-> discarded part back.
-> 
-> This implies that the issue is simply the operation of
-> mmc_calc_max_discard(), rather than the eMMC device mis-reporting its
-> discard abilities, doesn't it?
+Hi Stephen,
 
-No.
+On Sat, Dec 14, 2013 at 6:43 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On one of my eMMC devices, I see the following results from calling
+> mmc_do_calc_max_discard() with various parameters:
+>
+> [    3.057263] MMC_DISCARD_ARG max_discard 1
+> [    3.057266] MMC_ERASE_ARG   max_discard 4096
+> [    3.057267] MMC_TRIM_ARG    max_discard 1
+>
+> This causes mmc_calc_max_discard() to return 1, which makes the discard
+> IOCTL extremely slow.
+>
 
-The underlying problem is a combination of:
-	a) JEDEC specified very large timeouts for erase operations e.g. can be
-minutes for large erases
-	b) SDHCI controllers have been implemented with high frequency timeout
-clocks which limit the maximum timeout to a few seconds
-	c) It is not possible to disable the timeout on SDHCI
+IMX met the similar issue.
+http://www.spinics.net/lists/linux-mmc/msg23375.html
+It's caused by the max_discard_to supported by host is too small.
 
-What a) means is that you can get away with much larger erases than you can
-specify the timeout for - which is what you have discovered.
+I submitted the fix patches:
+http://www.spinics.net/lists/arm-kernel/msg294924.html
+Please see if it helps for you, especially patch #5.
+It could increase the max_discard_to if Tegra has same problem.
 
-To understand the timeouts, you should manually do the calculations.
+Regards
+Dong Aisheng
 
-Also note, that using HC Erase Size may help (MMC_CAP2_HC_ERASE_SZ), but
-beware of the partitioning implications of changing that.
-
-The best solution is to change the hardware to use the lowest possible
-frequency timeout clock e.g. a 1KHz timeout clock could support timeouts of
-up to 36 hours.
-
+> For almost all my other eMMC devices, either:
+>
+> * Both arguments to mmc_do_calc_max_discard() yield zero. Hence, the
+> discard IOCTL is not supported.
+>
+> * Both arguments to mmc_do_calc_max_discard() yield some reasonable
+> large value. Hence, the discard IOCTL executes reasonably quickly.
+>
+> Do you think that TRIM_ARG result is expected, or is the eMMC firmware
+> simply buggy?
+>
+> If I modify mmc_calc_max_discard() to simply ignore the TRIM_ARG result
+> and always use the ERASE_ARG result, I see no errors when executing
+> discard operations from either mke2fs, or from the blkdiscard utility. I
+> have no idea if the discard operation is doing anything useful though.
+>
+> As an aside, another eMMC device (with same manfid/oemid/name) I have
+> returns the same 1 for TRIM_ARG, but returns 0 for ERASE_ARG, and hence
+> discard is disabled, so I don't see this problem:
+>
+> [    1.835747] MMC_DISCARD_ARG max_discard 1
+> [    1.839779] MMC_ERASE_ARG   max_discard 0
+> [    1.843791] MMC_TRIM_ARG    max_discard 1
+>
+> To solve my slow discard operations, I'm tempted to modify
+> mmc_calc_max_discard() as follows:
+>
+> if (max_discard == 1)
+>         max_discard = 0;
+>
+> ... but I'm not sure if that would be seen as a regression, since it'd
+> disable the discard operation completely on theoretically working (but
+> perhaps practically useless) systems.
+>
+> Alternatively, perhaps I should replace:
+>
+>         if (mmc_can_trim(card)) {
+>                 max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
+>                 if (max_trim < max_discard)
+>                         max_discard = max_trim;
+>
+> with:
+>
+>         if (mmc_can_trim(card)) {
+>                 max_trim = mmc_do_calc_max_discard(card, MMC_TRIM_ARG);
+>                 if (max_trim > 1 && max_trim < max_discard)
+>                         max_discard = max_trim;
+>
+> Alternatively, should I install a quirk for the specific eMMC device,
+> which guards one of the changes above, or completely ignores the
+> TRIM_ARG result?
+>
+> The eMMC device is question is:
+>
+> manfid = 0x45
+> oemid = 0x100
+> name = SEM16G
+>
+> Strangely, this is apparently a Sandisk eMMC device, yet there already
+> exist some quirks for a set of similarly named Sandisk devices, yet they
+> are triggered by manfid == 2, not 0x45. I'm not sure why Sandisk uses
+> two separate manufacturer IDs...
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
