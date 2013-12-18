@@ -1,99 +1,47 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
-Date: Wed, 18 Dec 2013 11:30:36 -0800
-Message-ID: <20131218193036.23538.99285@quantum>
-References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>
- <1387272400-4689-3-git-send-email-josephl@nvidia.com>
- <52B0D6FA.2060101@wwwdotorg.org>
- <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
- <52B1E950.1040001@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] drm/tegra: fix compile w/ CONFIG_DYNAMIC_DEBUG
+Date: Wed, 18 Dec 2013 13:53:33 -0700
+Message-ID: <1387400013-9237-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B1E950.1040001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Stephen Warren (2013-12-18 10:28:32)
-> On 12/18/2013 02:42 AM, Joseph Lo wrote:
-> > On Wed, 2013-12-18 at 06:58 +0800, Stephen Warren wrote:
-> >> On 12/17/2013 02:26 AM, Joseph Lo wrote:
-> >>> Add External Memory Controller (EMC) clock interface for the Tegra CCF
-> >>> driver to support EMC scaling.
-> >>
-> >>> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-> >>
-> >>> +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
-> >>> +                          unsigned long *prate)
-> >>> +{
-> >>> +   struct tegra_clk_emc *emc = to_clk_emc(hw);
-> >>> +   struct clk *parent_clk = __clk_get_parent(hw->clk);
-> >>> +   unsigned long parent_rate = __clk_get_rate(parent_clk);
-> >>> +   unsigned long ret;
-> >>> +
-> >>> +   if (!emc->emc_ops)
-> >>> +           return parent_rate;
-> >>> +
-> >>> +   ret = emc->emc_ops->emc_round_rate(rate);
-> >>> +   if (!ret)
-> >>> +           return parent_rate;
-> >>> +
-> >>> +   return ret;
-> >>> +}
-> >>
-> >> Rather than implementing this custom "emc_ops" feature, isn't there a
-> >> standard clock notifier feature that the EMC driver can use?
-> >>
-> >> Isn't the EMC driver the only thing that will be changing the EMC clock
-> >> rate? If so, why not just have the EMC driver perform the appropriate
-> >> pre-/post-rate-change actions before/after calling clk_set_rate()?
-> > 
-> > We have two HW components needs to be updated when EMC rate change. One
-> > is the EMC clock for tuning the frequency, the other is the EMC for
-> > updating the timing and configuration for external memory (DRAM). So
-> > this question looks like to me is that can we separate the operation of
-> > the two components when rate changing?
-> > 
-> > We have two modes that depend on what memory type (DDR2, LPDDR2,
-> > DDR3/LP) we used on the platform to support EMC scaling.
-> > 1. power down mode (Tegra20 used this mode only.)
-> > In this mode, we update the EMC timing and configurations to EMC shadow
-> > registers. Then updating the rate in the EMC clock register. The HW will
-> > trigger the rate changing and timing/configurations updating for EMC.
-> > 2. self-refresh mode (Tegra30/114/124 if DDR3)
-> > More complicate in this mode. Putting DRAM in self-refresh, updating EMC
-> > settings, updating EMC clock, then we still need auto calibration before
-> > restores DRAM from the self-refresh mode. So the difference was the EMC
-> > clock operation was part of EMC scaling procedures.
-> > 
-> > I guess using the clk_notifier may be OK for the 1st case.
-> 
-> In both cases, isn't the overall operation something like:
-> 
-> a) Do some work before changing the EMC clock
-> b) Change the EMC clock
-> c) Do some work after changing the EMC clock
-> 
-> Admittedly, the exact definition of "some work" is different for your
-> cases (1) and (2) above, but the overall structure is the same. As such,
-> can't the EMC scaling driver do (a), then do (b) i.e. call
-> clk_set_rate(), then do (c)? Or, in your case (2), do we need to do
-> funny tricks like running from IRAM since we can't access SDRAM during
-> the clock change? If so, I'm not sure how having the EMC clock changing
-> code is going to help your case (2) anyway, since we'll presumably have
-> to code up a custom stub in assembly for the part of the code that runs
-> from IRAM...
+=46rom: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Joseph,
+With CONFIG_DYNAMIC_DEBUG=3Dy, the followin compile error occurs:
 
-Just as a reference, check out how the smp_twd stuff is updated based on
-a clock rate-change notifier in arch/arm/kernel/smp_twd.c, lines
-103-142.
+drivers/gpu/drm/tegra/mipi-phy.c: In function =E2=80=98mipi_dphy_timing=
+_validate=E2=80=99:
+drivers/gpu/drm/tegra/mipi-phy.c:69:11: error: =E2=80=98EINVAL=E2=80=99=
+ undeclared (first use in this function)
+drivers/gpu/drm/tegra/mipi-phy.c:69:11: note: each undeclared identifie=
+r is reported only once for each function it appears in
 
-Regards,
-Mike
+=46ix this by directly including the header that defines EINVAL.
 
-> 
+=46ixes: 39aa0a4f3be5 ("drm/tegra: Add DSI support")
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/mipi-phy.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/tegra/mipi-phy.c b/drivers/gpu/drm/tegra/m=
+ipi-phy.c
+index 1d2ad267cfce..e2c4aedaee78 100644
+--- a/drivers/gpu/drm/tegra/mipi-phy.c
++++ b/drivers/gpu/drm/tegra/mipi-phy.c
+@@ -20,6 +20,7 @@
+  * OF THIS SOFTWARE.
+  */
+=20
++#include <linux/errno.h>
+ #include <linux/kernel.h>
+=20
+ #include "mipi-phy.h"
+--=20
+1.8.1.5
