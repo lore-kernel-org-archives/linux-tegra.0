@@ -1,87 +1,114 @@
-From: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: max_discard anomaly on certain Sandisk eMMC
-Date: Wed, 18 Dec 2013 11:32:03 +0800
-Message-ID: <CAA+hA=Rm1b_ah1uTyps71BLjturJXDHKyWTgiU+z2ELYZKSAWw@mail.gmail.com>
-References: <52AB8DA2.9000001@wwwdotorg.org>
-	<CAA+hA=R3wnbuJrJQhfG9PQEHrwE9nrwg_+xSpyXryOeM2Wtwcw@mail.gmail.com>
-	<52B0897B.5010700@wwwdotorg.org>
+From: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv7 06/12] ARM: tegra: create a DT header defining SWGROUP
+ ID
+Date: Wed, 18 Dec 2013 16:02:23 +0800
+Message-ID: <52B1568F.1050305@gmail.com>
+References: <1386835033-4701-1-git-send-email-hdoyu@nvidia.com> <1386835033-4701-7-git-send-email-hdoyu@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B0897B.5010700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1386835033-4701-7-git-send-email-hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org
+Cc: mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 18, 2013 at 1:27 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 12/17/2013 02:25 AM, Dong Aisheng wrote:
->> Hi Stephen,
->>
->> On Sat, Dec 14, 2013 at 6:43 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->>> On one of my eMMC devices, I see the following results from calling
->>> mmc_do_calc_max_discard() with various parameters:
->>>
->>> [    3.057263] MMC_DISCARD_ARG max_discard 1
->>> [    3.057266] MMC_ERASE_ARG   max_discard 4096
->>> [    3.057267] MMC_TRIM_ARG    max_discard 1
->>>
->>> This causes mmc_calc_max_discard() to return 1, which makes the discard
->>> IOCTL extremely slow.
->>>
->>
->> IMX met the similar issue.
->> http://www.spinics.net/lists/linux-mmc/msg23375.html
->> It's caused by the max_discard_to supported by host is too small.
->>
->> I submitted the fix patches:
->> http://www.spinics.net/lists/arm-kernel/msg294924.html
->> Please see if it helps for you, especially patch #5.
->> It could increase the max_discard_to if Tegra has same problem.
->
-> Thanks for the pointer!
->
-> Yes, Tegra has SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK set, and has a max
-> clock of 208MHz specified in HW, yet we only run the HW at 48MHz
-> upstream, since we haven't actually implemented any of the
-> advanced/faster transfer rates yet. Hence that patch does avoid/solve
-> the issue on 2 of my boards.
->
-> However, the patch doesn't solve the problem on 2 other boards, since
-> the eMMC device on those boards specifies a much larger timeout, which
-> still causes max_discard to be set to 0. It sounds like the real
-> solution is what was discussed elsewhere in this thread; to use command
-> polling for erases?
->
-> Even on the boards where your patch solves the problem, isn't it just a
-> temporary measure; as soon as we upstream the changes to enable the
-> faster transfer modes, we'll have a faster SDCLK, and hence again be
-> limited in the discard size, perhaps down to a single sector again.
->
+On 12/12/2013 03:57 PM, Hiroshi Doyu wrote:
+> Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
+> binding. "swgroup" is a group of H/W clients which a Tegra SoC
+> supports. This unique ID can be used to calculate MC_SMMU_<swgroup
+> name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
+> register bit. This will allow the same header to be used by both
+> device tree files, and drivers implementing this binding, which
+> guarantees that the two stay in sync. This also makes device trees
+> more readable by using names instead of magic numbers. For HOTRESET
+> bit shifting we need another conversion table, which will come later.
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v6:
+> Use 0xffffffff instead of ~0UL since dtc expand this to ~0ULL.
+> 
+> v5:
+> Added new macro TEGRA_SWGROUP_CELLS() and WO_U32_OF_U64().
+> 
+> v4:
+> This is almost same as the previous v3. Just TEGRA_SWGROUP_MAX is
+> added.
+>   [PATCHv3 15/19] ARM: tegra: Create a DT header defining SWGROUP ID
+> 
+> Signed-off-by: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/dt-bindings/memory/tegra-swgroup.h | 50 ++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 include/dt-bindings/memory/tegra-swgroup.h
+> 
+> diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
+> new file mode 100644
+> index 0000000..9c279f1
+> --- /dev/null
+> +++ b/include/dt-bindings/memory/tegra-swgroup.h
+> @@ -0,0 +1,50 @@
+> +/*
+> + * This header provides constants for binding nvidia,swgroup ID
+> + */
+> +
+> +#ifndef _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
+> +#define _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H
+> +
+> +#define TEGRA_SWGROUP_AFI	0	/* 0x238 */
+> +#define TEGRA_SWGROUP_AVPC	1	/* 0x23c */
+> +#define TEGRA_SWGROUP_DC	2	/* 0x240 */
+> +#define TEGRA_SWGROUP_DCB	3	/* 0x244 */
+> +#define TEGRA_SWGROUP_EPP	4	/* 0x248 */
+> +#define TEGRA_SWGROUP_G2	5	/* 0x24c */
+> +#define TEGRA_SWGROUP_HC	6	/* 0x250 */
+> +#define TEGRA_SWGROUP_HDA	7	/* 0x254 */
+> +#define TEGRA_SWGROUP_ISP	8	/* 0x258 */
+> +#define TEGRA_SWGROUP_ISP2	SWGROUP_ISP
+> +#define TEGRA_SWGROUP_DC14	9	/* 0x490 *//* Exceptional non-linear */
+> +#define TEGRA_SWGROUP_DC12	10	/* 0xa88 *//* Exceptional non-linear */
+> +#define TEGRA_SWGROUP_MPE	11	/* 0x264 */
+> +#define TEGRA_SWGROUP_MSENC	SWGROUP_MPE
 
-Actually my patch is intend to fix 1) IMX incorrect max timeout issue
-2) should not use max_clock
-to calculate max_discard_to issue for using SDCLK as timeout clock.
-The issue discussed here is a different issue that the card timeout
-may still be bigger than
-the host capability and how to use discard for such case.
-So your problem may exist if you meet some more big timeout cards.
-For IMX, when running at 50Mhz, the max timeout is more than 5s.
-It looks bigger enough currently and i tested many eMMC cards(Samsung,
-Toshiba, Sandisk, Hynix)
-and all they worked well with discard after fix.
-I don't know which eMMC cards you meet the issue and don't know what
-is Tegra max timeout.
-Just for SD3.0 cards working on 200Mhz, i observed one Toshiba
-SDHC U1 card could not do discard, since its AU erase timeout is 2s+
-which exceeds the host
-capability 1335ms. Thus discard is automatically disabled.
-But another Sandisk SDXC can still work well since it has small
-ERASE_OFFSET as 1s.
+Need to change this to:
 
-Regards
-Dong Aisheng
+#define TEGRA_SWGROUP_MSENC	11
 
-> (Incidentally, I think the code should be limiting to a single erase
-> block, not a single sector. I'll send a separate patch to fix that, and
-> Cc everyone here).
+The reason is that, this makes "TEGRA_SWGROUP_BIT" doesn't work. So if I
+write "TEGRA_SWGROUP_CELLS(MSENC)" in dt, that causes a dt compiling error.
+
+"TEGRA_SWGROUP_ISP2" has the same issue.
+
+Mark
+> +#define TEGRA_SWGROUP_NV	12	/* 0x268 */
+> +#define TEGRA_SWGROUP_NV2	13	/* 0x26c */
+> +#define TEGRA_SWGROUP_PPCS	14	/* 0x270 */
+> +#define TEGRA_SWGROUP_SATA2	15	/* 0x274 */
+> +#define TEGRA_SWGROUP_SATA	16	/* 0x278 */
+> +#define TEGRA_SWGROUP_VDE	17	/* 0x27c */
+> +#define TEGRA_SWGROUP_VI	18	/* 0x280 */
+> +#define TEGRA_SWGROUP_VIC	19	/* 0x284 */
+> +#define TEGRA_SWGROUP_XUSB_HOST	20	/* 0x288 */
+> +#define TEGRA_SWGROUP_XUSB_DEV	21	/* 0x28c */
+> +#define TEGRA_SWGROUP_A9AVP	22	/* 0x290 */
+> +#define TEGRA_SWGROUP_TSEC	23	/* 0x294 */
+> +#define TEGRA_SWGROUP_PPCS1	24	/* 0x298 */
+> +#define TEGRA_SWGROUP_SDMMC1A	25	/* 0xa94 *//* Linear shift again */
+> +#define TEGRA_SWGROUP_SDMMC2A	26	/* 0xa98 */
+> +#define TEGRA_SWGROUP_SDMMC3A	27	/* 0xa9c */
+> +#define TEGRA_SWGROUP_SDMMC4A	28	/* 0xaa0 */
+> +#define TEGRA_SWGROUP_ISP2B	29	/* 0xaa4 */
+> +#define TEGRA_SWGROUP_GPU	30	/* 0xaa8 */
+> +#define TEGRA_SWGROUP_GPUB	31	/* 0xaac */
+> +#define TEGRA_SWGROUP_PPCS2	32	/* 0xab0 */
+> +
+> +#define TWO_U32_OF_U64(x)	((x) & 0xffffffff) ((x) >> 32)
+> +#define TEGRA_SWGROUP_BIT(x)	(1ULL << TEGRA_SWGROUP_##x)
+> +#define TEGRA_SWGROUP_CELLS(x)	TWO_U32_OF_U64(TEGRA_SWGROUP_BIT(x))
+> +
+> +#define TEGRA_SWGROUP_MAX	64
+> +
+> +#endif /* _DT_BINDINGS_MEMORY_TEGRA_SWGROUP_H */
+> 
