@@ -1,47 +1,25 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] drm/tegra: fix compile w/ CONFIG_DYNAMIC_DEBUG
-Date: Wed, 18 Dec 2013 13:53:33 -0700
-Message-ID: <1387400013-9237-1-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 2/2] ARM: tegra: add ams AS3722 device to Venice2 DT
+Date: Wed, 18 Dec 2013 13:55:16 -0700
+Message-ID: <52B20BB4.50506@wwwdotorg.org>
+References: <1387371179-16725-1-git-send-email-ldewangan@nvidia.com> <1387371179-16725-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1387371179-16725-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-=46rom: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 12/18/2013 05:52 AM, Laxman Dewangan wrote:
+> Add ams AS3722 entry for gpio/pincontrol and regulators
+> to venice2 DT.
 
-With CONFIG_DYNAMIC_DEBUG=3Dy, the followin compile error occurs:
+This patch still causes:
 
-drivers/gpu/drm/tegra/mipi-phy.c: In function =E2=80=98mipi_dphy_timing=
-_validate=E2=80=99:
-drivers/gpu/drm/tegra/mipi-phy.c:69:11: error: =E2=80=98EINVAL=E2=80=99=
- undeclared (first use in this function)
-drivers/gpu/drm/tegra/mipi-phy.c:69:11: note: each undeclared identifie=
-r is reported only once for each function it appears in
-
-=46ix this by directly including the header that defines EINVAL.
-
-=46ixes: 39aa0a4f3be5 ("drm/tegra: Add DSI support")
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/mipi-phy.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/tegra/mipi-phy.c b/drivers/gpu/drm/tegra/m=
-ipi-phy.c
-index 1d2ad267cfce..e2c4aedaee78 100644
---- a/drivers/gpu/drm/tegra/mipi-phy.c
-+++ b/drivers/gpu/drm/tegra/mipi-phy.c
-@@ -20,6 +20,7 @@
-  * OF THIS SOFTWARE.
-  */
-=20
-+#include <linux/errno.h>
- #include <linux/kernel.h>
-=20
- #include "mipi-phy.h"
---=20
-1.8.1.5
+> [    0.726545] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-regulator
+> [    0.737681] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-regulator) status -22
+> [    0.744895] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
+> [    0.755500] as3722-regulator as3722-regulator: Error applying setting, reverse things back
