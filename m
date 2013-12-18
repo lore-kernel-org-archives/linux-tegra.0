@@ -1,39 +1,87 @@
 From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: moving tegra_bct_strapping to
- tegra-soc.h for global visibility
-Date: Wed, 18 Dec 2013 16:20:52 +0800
-Message-ID: <1387354852.2576.4.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
+Date: Wed, 18 Dec 2013 17:42:38 +0800
+Message-ID: <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
 References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>
-	 <1387272400-4689-2-git-send-email-josephl@nvidia.com>
-	 <52B0D5EF.5090703@wwwdotorg.org>
+	 <1387272400-4689-3-git-send-email-josephl@nvidia.com>
+	 <52B0D6FA.2060101@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B0D5EF.5090703-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52B0D6FA.2060101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2013-12-18 at 06:53 +0800, Stephen Warren wrote:
+On Wed, 2013-12-18 at 06:58 +0800, Stephen Warren wrote:
 > On 12/17/2013 02:26 AM, Joseph Lo wrote:
-> > This patch moves the tegra_btc_strapping variable to the tegra-soc.h for
-> > the global visibility that the other Tegra device driver can access it.
-> > It also a preparation that we can move out the Tegra20 EMC driver from
-> > mach-tegra to the drivers folder.
+> > Add External Memory Controller (EMC) clock interface for the Tegra CCF
+> > driver to support EMC scaling.
 > 
-> Rather than introduce yet more dependencies between the Tegra tree and
-> other trees for 3.14, I'd like to see the two clock changes in this
-> series taken into the clock tree for 3.14, and the other 2 patches
-> deferred for 3.15.
+> > diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
 > 
-OK, sounds fine to me. So I will just update 2/4 in this series after
-squashing 2/4 and 4/4 into one patch. And resend the other two patches
-when 3.14-rc1 shows up.
+> > +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +			       unsigned long *prate)
+> > +{
+> > +	struct tegra_clk_emc *emc = to_clk_emc(hw);
+> > +	struct clk *parent_clk = __clk_get_parent(hw->clk);
+> > +	unsigned long parent_rate = __clk_get_rate(parent_clk);
+> > +	unsigned long ret;
+> > +
+> > +	if (!emc->emc_ops)
+> > +		return parent_rate;
+> > +
+> > +	ret = emc->emc_ops->emc_round_rate(rate);
+> > +	if (!ret)
+> > +		return parent_rate;
+> > +
+> > +	return ret;
+> > +}
+> 
+> Rather than implementing this custom "emc_ops" feature, isn't there a
+> standard clock notifier feature that the EMC driver can use?
+> 
+> Isn't the EMC driver the only thing that will be changing the EMC clock
+> rate? If so, why not just have the EMC driver perform the appropriate
+> pre-/post-rate-change actions before/after calling clk_set_rate()?
 
-> Joseph, I assume that if patches 2/4 and 4/4 are applied without patches
-> 1/4 and 3/4, there will be no issues?
-Yes. It's OK.
+We have two HW components needs to be updated when EMC rate change. One
+is the EMC clock for tuning the frequency, the other is the EMC for
+updating the timing and configuration for external memory (DRAM). So
+this question looks like to me is that can we separate the operation of
+the two components when rate changing?
+
+We have two modes that depend on what memory type (DDR2, LPDDR2,
+DDR3/LP) we used on the platform to support EMC scaling.
+1. power down mode (Tegra20 used this mode only.)
+In this mode, we update the EMC timing and configurations to EMC shadow
+registers. Then updating the rate in the EMC clock register. The HW will
+trigger the rate changing and timing/configurations updating for EMC.
+2. self-refresh mode (Tegra30/114/124 if DDR3)
+More complicate in this mode. Putting DRAM in self-refresh, updating EMC
+settings, updating EMC clock, then we still need auto calibration before
+restores DRAM from the self-refresh mode. So the difference was the EMC
+clock operation was part of EMC scaling procedures.
+
+I guess using the clk_notifier may be OK for the 1st case.
+
+I suggest create a EMC clock driver to work closely with EMC driver.
+That would help us to represent fully clock function of EMC clock.
+
 > 
-> This patch looks fine, I think ...
+> > +void tegra_register_emc_clk_ops(struct clk *emc_clk,
+> > +				const struct emc_clk_ops *emc_ops)
+> > +{
+> > +	struct clk_hw *hw;
+> > +	struct tegra_clk_emc *emc;
+> > +
+> > +	if (IS_ERR_OR_NULL(emc_clk))
+> > +		return;
+> 
+> IS_ERROR_OR_NULL() shouldn't be used. "struct clk *" is either IS_ERR()
+> on error, or it's NULL on error, not both. The body of clk_get() implies
+> you need to use IS_ERR().
+
+True, will fix.
