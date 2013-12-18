@@ -1,81 +1,83 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] dma: tegra: Use runtime_pm for clk enable/disable
-Date: Wed, 18 Dec 2013 22:13:28 +0530
-Message-ID: <20131218164328.GQ16227@intel.com>
-References: <1386751756-12583-1-git-send-email-bandik@nvidia.com>
- <52A8CFD9.6030002@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
+Date: Wed, 18 Dec 2013 11:28:32 -0700
+Message-ID: <52B1E950.1040001@wwwdotorg.org>
+References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>	 <1387272400-4689-3-git-send-email-josephl@nvidia.com>	 <52B0D6FA.2060101@wwwdotorg.org> <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52A8CFD9.6030002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1387359758.2576.38.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 11, 2013 at 01:49:29PM -0700, Stephen Warren wrote:
-> On 12/11/2013 01:49 AM, Chaitanya Bandi wrote:
-> > Used runtime_pm APIs for clock enabling/disabling.
-> > Made changes such that clock is not enabled during
-> > idle. Also moved the usage of clk prepare/unprepare
-> > such that they are not called in isr context.
+On 12/18/2013 02:42 AM, Joseph Lo wrote:
+> On Wed, 2013-12-18 at 06:58 +0800, Stephen Warren wrote:
+>> On 12/17/2013 02:26 AM, Joseph Lo wrote:
+>>> Add External Memory Controller (EMC) clock interface for the Tegra CCF
+>>> driver to support EMC scaling.
+>>
+>>> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+>>
+>>> +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
+>>> +			       unsigned long *prate)
+>>> +{
+>>> +	struct tegra_clk_emc *emc = to_clk_emc(hw);
+>>> +	struct clk *parent_clk = __clk_get_parent(hw->clk);
+>>> +	unsigned long parent_rate = __clk_get_rate(parent_clk);
+>>> +	unsigned long ret;
+>>> +
+>>> +	if (!emc->emc_ops)
+>>> +		return parent_rate;
+>>> +
+>>> +	ret = emc->emc_ops->emc_round_rate(rate);
+>>> +	if (!ret)
+>>> +		return parent_rate;
+>>> +
+>>> +	return ret;
+>>> +}
+>>
+>> Rather than implementing this custom "emc_ops" feature, isn't there a
+>> standard clock notifier feature that the EMC driver can use?
+>>
+>> Isn't the EMC driver the only thing that will be changing the EMC clock
+>> rate? If so, why not just have the EMC driver perform the appropriate
+>> pre-/post-rate-change actions before/after calling clk_set_rate()?
 > 
-> Hmm. This is going to cause conflicts with the patch I'm taking through
-> the Tegra tree which converts the driver to support the standard DMA DT
-> bindings. Perhaps this can wait until 3.15, or perhaps we can merge the
-> Tegra branch back into the DMA tree to resolve the conflict.
-Ok pls do resubmit once your stuff is sorted out!
+> We have two HW components needs to be updated when EMC rate change. One
+> is the EMC clock for tuning the frequency, the other is the EMC for
+> updating the timing and configuration for external memory (DRAM). So
+> this question looks like to me is that can we separate the operation of
+> the two components when rate changing?
+> 
+> We have two modes that depend on what memory type (DDR2, LPDDR2,
+> DDR3/LP) we used on the platform to support EMC scaling.
+> 1. power down mode (Tegra20 used this mode only.)
+> In this mode, we update the EMC timing and configurations to EMC shadow
+> registers. Then updating the rate in the EMC clock register. The HW will
+> trigger the rate changing and timing/configurations updating for EMC.
+> 2. self-refresh mode (Tegra30/114/124 if DDR3)
+> More complicate in this mode. Putting DRAM in self-refresh, updating EMC
+> settings, updating EMC clock, then we still need auto calibration before
+> restores DRAM from the self-refresh mode. So the difference was the EMC
+> clock operation was part of EMC scaling procedures.
+> 
+> I guess using the clk_notifier may be OK for the 1st case.
 
-> 
-> > diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> 
-> > - * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> > + * Copyright (c) 2012-13, NVIDIA CORPORATION.  All rights reserved.
-> 
-> s/13/2013/
-> 
-> > @@ -580,6 +580,11 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
-> >  	list_add_tail(&sgreq->node, &tdc->free_sg_req);
-> >  
-> >  	/* Do not start DMA if it is going to be terminate */
-> > +	if (list_empty(&tdc->pending_sg_req) && (!to_terminate)) {
-> > +		clk_disable(tdc->tdma->dma_clk);
-> > +		pm_runtime_put(tdc->tdma->dev);
-> > +	}
-> > +
-> >  	if (to_terminate || list_empty(&tdc->pending_sg_req))
-> >  		return;
-> 
-> Don't you want to insert the new code before the comment? Otherwise,
-> you're separating the existing comment and code.
-> 
-> Here and many other places, both pm_runtime_get/put *and*
-> clk_enable/disable are called. Why doesn't the code *just* call
-> pm_runtime_get/put, and let the implementation of those APIs perform the
-> clock_enable/disable? That'd be a lot more typical.
-And that's what I was thinking too. Why dont we rely on runtime calls for doing
-the ref counting and then in runtime suspend & resume handlers disable and
-enable clock
+In both cases, isn't the overall operation something like:
 
-> 
-> Most of the new calls to pm_runtime_*()/clk_{en,dis}able() are missing
-> error checking.
-> 
-> > @@ -682,12 +687,21 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
-> 
-> > +	pm_runtime_get(tdc->tdma->dev);
-> 
-> I think you need pm_runtime_get_sync() here to make sure the clock gets
-> turned on immediately? Perhaps that why...
-> 
-> > +	ret = clk_enable(tdc->tdma->dma_clk);
-> 
-> ... there's also direct manipulation of the clock everywhere.
-> 
-> Also, shouldn't the DMA core be calling pm_runtime_get(), rather than
-> each individual DMA driver?
-Yes i have been keen on that, not getting priortized yet!
+a) Do some work before changing the EMC clock
+b) Change the EMC clock
+c) Do some work after changing the EMC clock
 
---
-~Vinod
+Admittedly, the exact definition of "some work" is different for your
+cases (1) and (2) above, but the overall structure is the same. As such,
+can't the EMC scaling driver do (a), then do (b) i.e. call
+clk_set_rate(), then do (c)? Or, in your case (2), do we need to do
+funny tricks like running from IRAM since we can't access SDRAM during
+the clock change? If so, I'm not sure how having the EMC clock changing
+code is going to help your case (2) anyway, since we'll presumably have
+to code up a custom stub in assembly for the part of the code that runs
+from IRAM...
