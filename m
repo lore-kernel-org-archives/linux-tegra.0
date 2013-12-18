@@ -1,83 +1,71 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
-Date: Wed, 18 Dec 2013 11:28:32 -0700
-Message-ID: <52B1E950.1040001@wwwdotorg.org>
-References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>	 <1387272400-4689-3-git-send-email-josephl@nvidia.com>	 <52B0D6FA.2060101@wwwdotorg.org> <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
+Subject: Re: max_discard anomaly on certain Sandisk eMMC
+Date: Wed, 18 Dec 2013 11:42:29 -0700
+Message-ID: <52B1EC95.7070008@wwwdotorg.org>
+References: <52AB8DA2.9000001@wwwdotorg.org>	<CAA+hA=R3wnbuJrJQhfG9PQEHrwE9nrwg_+xSpyXryOeM2Wtwcw@mail.gmail.com>	<52B0897B.5010700@wwwdotorg.org> <CAA+hA=Rm1b_ah1uTyps71BLjturJXDHKyWTgiU+z2ELYZKSAWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387359758.2576.38.camel-yx3yKKdKkHfc7b1ADBJPm0n48jw8i0AO@public.gmane.org>
+In-Reply-To: <CAA+hA=Rm1b_ah1uTyps71BLjturJXDHKyWTgiU+z2ELYZKSAWw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/2013 02:42 AM, Joseph Lo wrote:
-> On Wed, 2013-12-18 at 06:58 +0800, Stephen Warren wrote:
->> On 12/17/2013 02:26 AM, Joseph Lo wrote:
->>> Add External Memory Controller (EMC) clock interface for the Tegra CCF
->>> driver to support EMC scaling.
+On 12/17/2013 08:32 PM, Dong Aisheng wrote:
+> On Wed, Dec 18, 2013 at 1:27 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 12/17/2013 02:25 AM, Dong Aisheng wrote:
+>>> Hi Stephen,
+>>>
+>>> On Sat, Dec 14, 2013 at 6:43 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>> On one of my eMMC devices, I see the following results from calling
+>>>> mmc_do_calc_max_discard() with various parameters:
+>>>>
+>>>> [    3.057263] MMC_DISCARD_ARG max_discard 1
+>>>> [    3.057266] MMC_ERASE_ARG   max_discard 4096
+>>>> [    3.057267] MMC_TRIM_ARG    max_discard 1
+>>>>
+>>>> This causes mmc_calc_max_discard() to return 1, which makes the discard
+>>>> IOCTL extremely slow.
+>>>>
+>>>
+>>> IMX met the similar issue.
+>>> http://www.spinics.net/lists/linux-mmc/msg23375.html
+>>> It's caused by the max_discard_to supported by host is too small.
+>>>
+>>> I submitted the fix patches:
+>>> http://www.spinics.net/lists/arm-kernel/msg294924.html
+>>> Please see if it helps for you, especially patch #5.
+>>> It could increase the max_discard_to if Tegra has same problem.
 >>
->>> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
->>
->>> +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
->>> +			       unsigned long *prate)
->>> +{
->>> +	struct tegra_clk_emc *emc = to_clk_emc(hw);
->>> +	struct clk *parent_clk = __clk_get_parent(hw->clk);
->>> +	unsigned long parent_rate = __clk_get_rate(parent_clk);
->>> +	unsigned long ret;
->>> +
->>> +	if (!emc->emc_ops)
->>> +		return parent_rate;
->>> +
->>> +	ret = emc->emc_ops->emc_round_rate(rate);
->>> +	if (!ret)
->>> +		return parent_rate;
->>> +
->>> +	return ret;
->>> +}
->>
->> Rather than implementing this custom "emc_ops" feature, isn't there a
->> standard clock notifier feature that the EMC driver can use?
->>
->> Isn't the EMC driver the only thing that will be changing the EMC clock
->> rate? If so, why not just have the EMC driver perform the appropriate
->> pre-/post-rate-change actions before/after calling clk_set_rate()?
+...
+>> Even on the boards where your patch solves the problem, isn't it just a
+>> temporary measure; as soon as we upstream the changes to enable the
+>> faster transfer modes, we'll have a faster SDCLK, and hence again be
+>> limited in the discard size, perhaps down to a single sector again.
 > 
-> We have two HW components needs to be updated when EMC rate change. One
-> is the EMC clock for tuning the frequency, the other is the EMC for
-> updating the timing and configuration for external memory (DRAM). So
-> this question looks like to me is that can we separate the operation of
-> the two components when rate changing?
-> 
-> We have two modes that depend on what memory type (DDR2, LPDDR2,
-> DDR3/LP) we used on the platform to support EMC scaling.
-> 1. power down mode (Tegra20 used this mode only.)
-> In this mode, we update the EMC timing and configurations to EMC shadow
-> registers. Then updating the rate in the EMC clock register. The HW will
-> trigger the rate changing and timing/configurations updating for EMC.
-> 2. self-refresh mode (Tegra30/114/124 if DDR3)
-> More complicate in this mode. Putting DRAM in self-refresh, updating EMC
-> settings, updating EMC clock, then we still need auto calibration before
-> restores DRAM from the self-refresh mode. So the difference was the EMC
-> clock operation was part of EMC scaling procedures.
-> 
-> I guess using the clk_notifier may be OK for the 1st case.
+> Actually my patch is intend to fix 1) IMX incorrect max timeout issue
+> 2) should not use max_clock
+> to calculate max_discard_to issue for using SDCLK as timeout clock.
+> The issue discussed here is a different issue that the card timeout
+> may still be bigger than
+> the host capability and how to use discard for such case.
+> So your problem may exist if you meet some more big timeout cards.
+> For IMX, when running at 50Mhz, the max timeout is more than 5s.
+> It looks bigger enough currently and i tested many eMMC cards(Samsung,
+> Toshiba, Sandisk, Hynix)
+> and all they worked well with discard after fix.
+> I don't know which eMMC cards you meet the issue and don't know what
+> is Tegra max timeout.
+> Just for SD3.0 cards working on 200Mhz, i observed one Toshiba
+> SDHC U1 card could not do discard, since its AU erase timeout is 2s+
+> which exceeds the host
+> capability 1335ms. Thus discard is automatically disabled.
+> But another Sandisk SDXC can still work well since it has small
+> ERASE_OFFSET as 1s.
 
-In both cases, isn't the overall operation something like:
-
-a) Do some work before changing the EMC clock
-b) Change the EMC clock
-c) Do some work after changing the EMC clock
-
-Admittedly, the exact definition of "some work" is different for your
-cases (1) and (2) above, but the overall structure is the same. As such,
-can't the EMC scaling driver do (a), then do (b) i.e. call
-clk_set_rate(), then do (c)? Or, in your case (2), do we need to do
-funny tricks like running from IRAM since we can't access SDRAM during
-the clock change? If so, I'm not sure how having the EMC clock changing
-code is going to help your case (2) anyway, since we'll presumably have
-to code up a custom stub in assembly for the part of the code that runs
-from IRAM...
+On the more recent Tegra boards, the eMMC devices appear to have an
+erase timeout of 4200ms for a single erase block! That's more than the
+~2600ms max controller timeout at 48MHz on Tegra:-( (that is unless
+Tegra also supports more than 27 bits of timeout register)
