@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 07/10] ARM: tegra: Add Tegra114 gr3d support
-Date: Thu, 19 Dec 2013 16:59:31 +0100
-Message-ID: <1387468774-14216-8-git-send-email-treding@nvidia.com>
+Subject: [PATCH 08/10] ARM: tegra: Enable DSI support on Dalmore
+Date: Thu, 19 Dec 2013 16:59:32 +0100
+Message-ID: <1387468774-14216-9-git-send-email-treding@nvidia.com>
 References: <1387468774-14216-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1387468774-14216-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,35 +10,110 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the gr3d device tree node. The gr3d block on Tegra114 is backwards-
-compatible with the one on Tegra20.
+Dalmore has a 10.1" WUXGA panel connected to one of the DSI outputs of
+the Tegra114.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
+Changes in v3:
+- make panel a peripheral on the DSI bus
+
 Changes in v2:
-- add reset and reset-names properties
+- remove backlight-boot-off property for now
+- don't renumber all regulators
 
- arch/arm/boot/dts/tegra114.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/tegra114-dalmore.dts | 44 ++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 3dd7b50d8f93..bac5b231ff42 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -39,6 +39,14 @@
- 			reset-names = "2d";
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index ca4485903b9d..512922f049c3 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -16,6 +16,21 @@
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
++	host1x@50000000 {
++		dsi@54300000 {
++			status = "okay";
++
++			panel@0 {
++				compatible = "panasonic,vvx10f004b00",
++					     "simple-panel";
++				reg = <0>;
++
++				power-supply = <&avdd_lcd_reg>;
++				backlight = <&backlight>;
++			};
++		};
++	};
++
+ 	pinmux@70000868 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&state_default>;
+@@ -723,6 +738,10 @@
+ 		status = "okay";
+ 	};
+ 
++	pwm@7000a000 {
++		status = "okay";
++	};
++
+ 	i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <100000>;
+@@ -811,7 +830,7 @@
+ 					regulator-boot-on;
+ 				};
+ 
+-				fet1 {
++				vdd_bl_reg: fet1 {
+ 					regulator-name = "vdd-lcd-bl";
+ 				};
+ 
+@@ -819,7 +838,7 @@
+ 					regulator-name = "vdd-modem-3v3";
+ 				};
+ 
+-				fet4 {
++				avdd_lcd_reg: fet4 {
+ 					regulator-name = "avdd-lcd";
+ 				};
+ 
+@@ -1089,6 +1108,17 @@
+ 		vbus-supply = <&usb3_vbus_reg>;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++
++		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
++		power-supply = <&vdd_bl_reg>;
++		pwms = <&pwm 1 1000000>;
++
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++	};
++
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -1155,16 +1185,6 @@
+ 			gpio = <&gpio TEGRA_GPIO(H, 5) GPIO_ACTIVE_HIGH>;
  		};
  
-+		gr3d@54180000 {
-+			compatible = "nvidia,tegra114-gr3d", "nvidia,tegra20-gr3d";
-+			reg = <0x54180000 0x00040000>;
-+			clocks = <&tegra_car TEGRA114_CLK_GR3D>;
-+			resets = <&tegra_car 24>;
-+			reset-names = "3d";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra114-dc", "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
+-		lcd_bl_en_reg: regulator@2 {
+-			compatible = "regulator-fixed";
+-			reg = <2>;
+-			regulator-name = "lcd_bl_en";
+-			regulator-min-microvolt = <5000000>;
+-			regulator-max-microvolt = <5000000>;
+-			enable-active-high;
+-			gpio = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+-		};
+-
+ 		usb1_vbus_reg: regulator@3 {
+ 			compatible = "regulator-fixed";
+ 			reg = <3>;
 -- 
 1.8.4.2
