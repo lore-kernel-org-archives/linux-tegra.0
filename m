@@ -1,85 +1,99 @@
-From: Dong Aisheng <dongas86@gmail.com>
-Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
-Date: Thu, 19 Dec 2013 16:39:47 +0800
-Message-ID: <CAA+hA=StHAna46_356Gfpaa+4Y3yt6KO15W6E7dS8uoz8TPqxg@mail.gmail.com>
-References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
+Date: Thu, 19 Dec 2013 16:57:23 +0800
+Message-ID: <1387443443.13057.0.camel@jlo-ubuntu-64.nvidia.com>
+References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>
+	 <1387272400-4689-3-git-send-email-josephl@nvidia.com>
+	 <52B0D6FA.2060101@wwwdotorg.org>
+	 <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
+	 <52B1E950.1040001@wwwdotorg.org> <20131218193036.23538.99285@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Vladimir Zapolskiy <vz@mleia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131218193036.23538.99285@quantum>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 19, 2013 at 6:27 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->
-> In mmc_do_calc_max_discard(), if only a single erase block can be
-> discarded within the host controller's timeout, don't allow discard
-> operations at all.
->
-> Previously, the code allowed sector-at-a-time discard (rather than
-> erase-block-at-a-time), which was chronically slow.
->
-> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
-> in qty == 1, which is immediately returned. This causes discard to
-> operate a single sector at a time, which is chronically slow. With this
-> patch in place, discard operates a single erase block at a time, which
-> is reasonably fast.
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Dong Aisheng <dongas86@gmail.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Vladimir Zapolskiy <vz@mleia.com>
-> Fixes: e056a1b5b67b "(mmc: queue: let host controllers specify maximum discard timeout")
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
-> ---
->  drivers/mmc/core/core.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 57a2b403bf8e..eb952ca634ea 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -2150,8 +2150,25 @@ static unsigned int mmc_do_calc_max_discard(struct mmc_card *card,
->         if (!qty)
->                 return 0;
->
-> -       if (qty == 1)
-> -               return 1;
-> +       /*
-> +        * Discard operations may not be aligned to an erase block. In an
-> +        * unaligned case, we need to issue 1 more discard operation to HW
-> +        * than strictly calculated by:
-> +        *     sectors_to_erase / sectors_per_discard_operation
-> +        *
-> +        * To account for this in the timeout calculations, we assume we can
-> +        * actually discard one less erase block than fits into the HW
-> +        * timeout. This explains the --qty below.
-> +        *
-> +        * When only a single discard block operation fits into the timeout,
-> +        * disallow any discard operations at all. For example, discarding one
-> +        * sector at a time is so chronically slow as to be useless. However,
-> +        * make an exception for SD cards without an erase shift, since qty
-> +        * isn't multiplied up by an erase block size in the code below for
-> +        * that case.
-> +        */
-> +       if (qty == 1 && !(!card->erase_shift && mmc_card_sd(card)))
-> +               return 0;
->
+On Thu, 2013-12-19 at 03:30 +0800, Mike Turquette wrote:
+> Quoting Stephen Warren (2013-12-18 10:28:32)
+> > On 12/18/2013 02:42 AM, Joseph Lo wrote:
+> > > On Wed, 2013-12-18 at 06:58 +0800, Stephen Warren wrote:
+> > >> On 12/17/2013 02:26 AM, Joseph Lo wrote:
+> > >>> Add External Memory Controller (EMC) clock interface for the Tegra CCF
+> > >>> driver to support EMC scaling.
+> > >>
+> > >>> diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+> > >>
+> > >>> +static long clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
+> > >>> +                          unsigned long *prate)
+> > >>> +{
+> > >>> +   struct tegra_clk_emc *emc = to_clk_emc(hw);
+> > >>> +   struct clk *parent_clk = __clk_get_parent(hw->clk);
+> > >>> +   unsigned long parent_rate = __clk_get_rate(parent_clk);
+> > >>> +   unsigned long ret;
+> > >>> +
+> > >>> +   if (!emc->emc_ops)
+> > >>> +           return parent_rate;
+> > >>> +
+> > >>> +   ret = emc->emc_ops->emc_round_rate(rate);
+> > >>> +   if (!ret)
+> > >>> +           return parent_rate;
+> > >>> +
+> > >>> +   return ret;
+> > >>> +}
+> > >>
+> > >> Rather than implementing this custom "emc_ops" feature, isn't there a
+> > >> standard clock notifier feature that the EMC driver can use?
+> > >>
+> > >> Isn't the EMC driver the only thing that will be changing the EMC clock
+> > >> rate? If so, why not just have the EMC driver perform the appropriate
+> > >> pre-/post-rate-change actions before/after calling clk_set_rate()?
+> > > 
+> > > We have two HW components needs to be updated when EMC rate change. One
+> > > is the EMC clock for tuning the frequency, the other is the EMC for
+> > > updating the timing and configuration for external memory (DRAM). So
+> > > this question looks like to me is that can we separate the operation of
+> > > the two components when rate changing?
+> > > 
+> > > We have two modes that depend on what memory type (DDR2, LPDDR2,
+> > > DDR3/LP) we used on the platform to support EMC scaling.
+> > > 1. power down mode (Tegra20 used this mode only.)
+> > > In this mode, we update the EMC timing and configurations to EMC shadow
+> > > registers. Then updating the rate in the EMC clock register. The HW will
+> > > trigger the rate changing and timing/configurations updating for EMC.
+> > > 2. self-refresh mode (Tegra30/114/124 if DDR3)
+> > > More complicate in this mode. Putting DRAM in self-refresh, updating EMC
+> > > settings, updating EMC clock, then we still need auto calibration before
+> > > restores DRAM from the self-refresh mode. So the difference was the EMC
+> > > clock operation was part of EMC scaling procedures.
+> > > 
+> > > I guess using the clk_notifier may be OK for the 1st case.
+> > 
+> > In both cases, isn't the overall operation something like:
+> > 
+> > a) Do some work before changing the EMC clock
+> > b) Change the EMC clock
+> > c) Do some work after changing the EMC clock
+> > 
+> > Admittedly, the exact definition of "some work" is different for your
+> > cases (1) and (2) above, but the overall structure is the same. As such,
+> > can't the EMC scaling driver do (a), then do (b) i.e. call
+> > clk_set_rate(), then do (c)? Or, in your case (2), do we need to do
+> > funny tricks like running from IRAM since we can't access SDRAM during
+> > the clock change? If so, I'm not sure how having the EMC clock changing
+> > code is going to help your case (2) anyway, since we'll presumably have
+> > to code up a custom stub in assembly for the part of the code that runs
+> > from IRAM...
+> 
+> Joseph,
+> 
+> Just as a reference, check out how the smp_twd stuff is updated based on
+> a clock rate-change notifier in arch/arm/kernel/smp_twd.c, lines
+> 103-142.
+> 
+Thanks.
 
-How about when qty == 2?
-Erase 2 sectors may have no much difference from 1 sector per one time
-for a SD card,
-it may still chronically slow, i guess.
-So i wonder it may not sovle the issues totally.
-
-Regards
-Dong Aisheng
-
->         /* Convert qty to sectors */
->         if (card->erase_shift)
-> --
-> 1.8.1.5
->
+Joseph
