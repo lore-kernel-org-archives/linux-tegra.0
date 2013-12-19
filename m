@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 09/10] ARM: tegra: Add Tegra124 USB support
-Date: Thu, 19 Dec 2013 17:06:21 +0100
-Message-ID: <1387469182-14398-10-git-send-email-treding@nvidia.com>
+Subject: [PATCH 04/10] ARM: tegra: Add Tegra124 eDP support
+Date: Thu, 19 Dec 2013 17:06:16 +0100
+Message-ID: <1387469182-14398-5-git-send-email-treding@nvidia.com>
 References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1387469182-14398-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,123 +10,47 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The USB controllers on Tegra124 are backwards-compatible with those
-found on Tegra30.
-
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 99 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+ arch/arm/boot/dts/tegra124.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index cf4558257e8c..a2ebe8972ea0 100644
+index 0a4e5271b5f9..39d77aa936f9 100644
 --- a/arch/arm/boot/dts/tegra124.dtsi
 +++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -677,6 +677,105 @@
+@@ -44,6 +44,32 @@
+ 			resets = <&tegra_car 26>;
+ 			reset-names = "dc";
  		};
++
++		sor@54540000 {
++			compatible = "nvidia,tegra124-sor";
++			reg = <0x54540000 0x00040000>;
++			interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&tegra_car TEGRA124_CLK_SOR0>,
++				 <&tegra_car TEGRA124_CLK_PLL_D_OUT0>,
++				 <&tegra_car TEGRA124_CLK_PLL_DP>,
++				 <&tegra_car TEGRA124_CLK_CLK_M>;
++			clock-names = "sor", "parent", "dp", "safe";
++			resets = <&tegra_car 182>;
++			reset-names = "sor";
++			status = "disabled";
++		};
++
++		dpaux@545c0000 {
++			compatible = "nvidia,tegra124-dpaux";
++			reg = <0x545c0000 0x00040000>;
++			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
++				 <&tegra_car TEGRA124_CLK_PLL_DP>;
++			clock-names = "dpaux", "parent";
++			resets = <&tegra_car 181>;
++			reset-names = "dpaux";
++			status = "disabled";
++		};
  	};
  
-+	usb@7d000000 {
-+		compatible = "nvidia,tegra30-ehci", "usb-ehci";
-+		reg = <0x7d000000 0x4000>;
-+		interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USBD>;
-+		resets = <&tegra_car 22>;
-+		reset-names = "usb";
-+		nvidia,phy = <&phy1>;
-+		status = "disabled";
-+	};
-+
-+	phy1: usb-phy@7d000000 {
-+		compatible = "nvidia,tegra30-usb-phy";
-+		reg = <0x7d000000 0x4000 0x7d000000 0x4000>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USBD>,
-+			 <&tegra_car TEGRA124_CLK_PLL_U>,
-+			 <&tegra_car TEGRA124_CLK_USBD>;
-+		clock-names = "reg", "pll_u", "utmi-pads";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <0>;
-+		nvidia,xcvr-lsrslew = <3>;
-+		nvidia,hssquelch-level = <2>;
-+		nvidia,hsdiscon-level = <5>;
-+		nvidia,xcvr-hsslew = <12>;
-+		status = "disabled";
-+	};
-+
-+	usb@7d004000 {
-+		compatible = "nvidia,tegra30-ehci", "usb-ehci";
-+		reg = <0x7d004000 0x4000>;
-+		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USB2>;
-+		resets = <&tegra_car 58>;
-+		reset-names = "usb";
-+		nvidia,phy = <&phy2>;
-+		status = "disabled";
-+	};
-+
-+	phy2: usb-phy@7d004000 {
-+		compatible = "nvidia,tegra30-usb-phy";
-+		reg = <0x7d004000 0x4000 0x7d000000 0x4000>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USB2>,
-+			 <&tegra_car TEGRA124_CLK_PLL_U>,
-+			 <&tegra_car TEGRA124_CLK_USBD>;
-+		clock-names = "reg", "pll_u", "utmi-pads";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <0>;
-+		nvidia,xcvr-lsrslew = <3>;
-+		nvidia,hssquelch-level = <2>;
-+		nvidia,hsdiscon-level = <5>;
-+		nvidia,xcvr-hsslew = <12>;
-+		status = "disabled";
-+	};
-+
-+	usb@7d008000 {
-+		compatible = "nvidia,tegra30-ehci", "usb-ehci";
-+		reg = <0x7d008000 0x4000>;
-+		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USB3>;
-+		resets = <&tegra_car 59>;
-+		reset-names = "usb";
-+		nvidia,phy = <&phy3>;
-+		status = "disabled";
-+	};
-+
-+	phy3: usb-phy@7d008000 {
-+		compatible = "nvidia,tegra30-usb-phy";
-+		reg = <0x7d008000 0x4000 0x7d000000 0x4000>;
-+		phy_type = "utmi";
-+		clocks = <&tegra_car TEGRA124_CLK_USB3>,
-+			 <&tegra_car TEGRA124_CLK_PLL_U>,
-+			 <&tegra_car TEGRA124_CLK_USBD>;
-+		clock-names = "reg", "pll_u", "utmi-pads";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,idle-wait-delay = <17>;
-+		nvidia,elastic-limit = <16>;
-+		nvidia,term-range-adj = <6>;
-+		nvidia,xcvr-setup = <9>;
-+		nvidia,xcvr-lsfslew = <0>;
-+		nvidia,xcvr-lsrslew = <3>;
-+		nvidia,hssquelch-level = <2>;
-+		nvidia,hsdiscon-level = <5>;
-+		nvidia,xcvr-hsslew = <12>;
-+		status = "disabled";
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+ 	gic: interrupt-controller@50041000 {
 -- 
 1.8.4.2
