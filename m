@@ -1,126 +1,79 @@
-From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
-Date: Thu, 19 Dec 2013 14:28:46 +0200
-Message-ID: <52B2E67E.2000607@intel.com>
-References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org> <52B22906.4010704@wwwdotorg.org> <52B2B5DF.1020702@intel.com> <52B2B8F7.1000905@mentor.com> <52B2BF95.302@intel.com> <CAPDyKFoiGzspgrtRwXruPqOODxbfKA4AAZHj_VF8H7rpwm7eTQ@mail.gmail.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/6] clk: tegra: add basic support for the DFLL clocksource
+Date: Thu, 19 Dec 2013 04:36:33 -0800
+Message-ID: <20131219122857.3226.42830.stgit@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFoiGzspgrtRwXruPqOODxbfKA4AAZHj_VF8H7rpwm7eTQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19/12/13 12:26, Ulf Hansson wrote:
-> On 19 December 2013 10:42, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
->> On 19/12/13 11:14, Vladimir Zapolskiy wrote:
->>> On 12/19/13 10:01, Adrian Hunter wrote:
->>>> On 19/12/13 01:00, Stephen Warren wrote:
->>>>> On 12/18/2013 03:27 PM, Stephen Warren wrote:
->>>>>> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>>
->>>>>> In mmc_do_calc_max_discard(), if only a single erase block can be
->>>>>> discarded within the host controller's timeout, don't allow discard
->>>>>> operations at all.
->>>>>>
->>>>>> Previously, the code allowed sector-at-a-time discard (rather than
->>>>>> erase-block-at-a-time), which was chronically slow.
->>>>>>
->>>>>> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
->>>>>> in qty == 1, which is immediately returned. This causes discard to
->>>>>> operate a single sector at a time, which is chronically slow. With this
->>>>>> patch in place, discard operates a single erase block at a time, which
->>>>>> is reasonably fast.
->>>>>
->>>>> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
->>>>> host controllers specify maximum discard timeout", followed by:
->>>>>
->>>>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->>>>>> index 050eb262485c..35c5b5d86c99 100644
->>>>>> --- a/drivers/mmc/core/core.c
->>>>>> +++ b/drivers/mmc/core/core.c
->>>>>> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card,
->>>>>> unsigned int from,
->>>>>>          cmd.opcode = MMC_ERASE;
->>>>>>          cmd.arg = arg;
->>>>>>          cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
->>>>>> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
->>>>>>          err = mmc_wait_for_cmd(card->host,&cmd, 0);
->>>>>>          if (err) {
->>>>>>                  pr_err("mmc_erase: erase error %d, status %#x\n",
->>>>>> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card,
->>>>>> unsigned int from,
->>>>>>          if (mmc_host_is_spi(card->host))
->>>>>>                  goto out;
->>>>>>
->>>>>> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
->>>>>> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card,
->>>>>> arg, qty));
->>>>>>          do {
->>>>>>                  memset(&cmd, 0, sizeof(struct mmc_command));
->>>>>>                  cmd.opcode = MMC_SEND_STATUS;
->>>>>
->>>>> That certainly also seems to solve the problem on my board...
->>>>
->>>> But large erases will timeout when they should have been split into smaller
->>>> chunks.
->>>>
->>>> A generic solution needs to be able to explain what happens when the host
->>>> controller *does* timeout.
->>>
->>> Please correct me, but if Data Timeout Error is disabled, then this is not
->>> an issue for most of the host controllers.
->>
->> That is a very good point.  My experience with SDHCI was that masking the
->> "Data Timeout Error Status Enable" and "Data Timeout Error Signal Enable
->> " bits did not disable the timeout i.e. the host controller would not
->> deliver a TC interrupt if the erase exceeded the timeout.
->>
->> What happens on your board?
->>
-> 
-> I posted a response yesterday for "[PATCH] mmc: core: don't decrement
-> qty when calculating max_discard", related to this. Please have a
-> look.
-> 
-> I think the interesting case to consider here is how we can handle
-> busy detection timeouts that is bigger than what the host hw can
-> support.
-> 
-> Option 1)
-> Should we tell the host to disable the timeout in this case? That
-> potentially means hanging forever - if the card misbehaves. Like
-> omap_hsmmc does for erase commands. Maybe that is an okay limitation?
+Hello,
 
-sdhci anyway has a 10 second timer to catch unresponsive host controllers.
-I recently sent a patch to use the cmd_timeout_ms if it is bigger than 10
-seconds.
+This patch series adds support for the open-loop mode of the
+Tegra DFLL root clock source.  The DFLL can be used to provide an
+energy-efficient and reliable clock signal for the Tegra114 fast
+CPU cluster.
 
-	http://permalink.gmane.org/gmane.linux.kernel.mmc/23557
+The core DFLL code requires some SoC-specific integration and
+characterization data to function.  For the time being, this has
+been implemented via small shim drivers that are probed from DT
+data and which pass per-SoC information to the DFLL core code.
+Future patches will add board tuning data to the DT files.
 
-> 
-> Option 2)
-> Use a R1 response instead if R1B to prevent the host from doing busy
-> detection. Then rely on the CMD13 to poll for completion instead.
-> Obviously we can then stop polling after some selected timeout is the
-> card don't complete it's operations.
+This series isn't sufficient for the DFLL to be usable as the
+fast CPU clock source.  Further software support is needed to
+switch the CPU cluster's clock from the default PLLX to the DFLL.
 
-It would be nice to avoid polling when the timeout can be supported. Also
-the polling should be periodic.
+To test the basic functionality of the DFLL driver, something
+like the following can be executed:
 
-> 
-> Would be very interesting to know what option you prefer!?
+mount -t debugfs none /debug
+cd /debug/tegra_dfll_fcpu/
+echo 0 > enable
+cat output_rate   # ensure that it is 0
+echo 1 > enable
+cat output_rate   # ensure that it is greater than 0
 
-At least 1 of the host controllers I have seen does not support disabling
-the timeout - so option 1) might not work in all cases.  Although it is the
-nicer option i.e. replace the hardware timeout with a software timeout.
+Future DFLL patches are planned to include reset controller
+support, Tegra124 support, and closed-loop mode support.
 
-So I would probably allow both options to co-exist.
 
-> 
-> Kind regards
-> Uffe
-> 
-> 
+- Paul
+
+---
+
+Danny Huang (1):
+      ARM: tegra: fuse: add functions to read speedo ID and process ID
+
+Paul Walmsley (5):
+      ARM: tegra114: fuse: add DFLL FCPU minimum voltage override test function
+      clk: tegra: add library for the DFLL clocksource (open-loop mode)
+      ARM: DTS: tegra: add the DFLL IP block to the T114 SoC file
+      ARM: DTS: tegra: add DFLL integration to the Dalmore DTS file
+      clk: tegra: add Tegra114 FCPU DFLL clocksource platform driver
+
+
+ .../bindings/clock/nvidia,tegra114-dfll.txt        |   59 +
+ arch/arm/boot/dts/tegra114-dalmore.dts             |    4 
+ arch/arm/boot/dts/tegra114.dtsi                    |   10 
+ arch/arm/mach-tegra/fuse.c                         |   41 +
+ drivers/clk/Kconfig                                |    2 
+ drivers/clk/tegra/Kconfig                          |   18 
+ drivers/clk/tegra/Makefile                         |   11 
+ drivers/clk/tegra/clk-dfll.c                       | 1229 ++++++++++++++++++++
+ drivers/clk/tegra/clk-dfll.h                       |   54 +
+ drivers/clk/tegra/clk-tegra114-dfll-fcpu.c         |  169 +++
+ include/linux/tegra-soc.h                          |    6 
+ 11 files changed, 1602 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
+ create mode 100644 drivers/clk/tegra/Kconfig
+ create mode 100644 drivers/clk/tegra/clk-dfll.c
+ create mode 100644 drivers/clk/tegra/clk-dfll.h
+ create mode 100644 drivers/clk/tegra/clk-tegra114-dfll-fcpu.c
+
+   text    data     bss     dec     hex filename
+8010955  394200  352064 8757219  859fe3 vmlinux.next-20131218
+8014811  395096  352064 8761971  85b273 vmlinux.next-20131218-dfll
