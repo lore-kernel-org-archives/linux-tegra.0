@@ -1,25 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Add missing Tegra20 fuse clks
-Date: Thu, 19 Dec 2013 12:22:50 -0700
-Message-ID: <52B3478A.2030405@wwwdotorg.org>
-References: <1387469676-17693-1-git-send-email-pdeschrijver@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
+Date: Thu, 19 Dec 2013 12:33:35 -0700
+Message-ID: <52B34A0F.5080901@wwwdotorg.org>
+References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387469676-17693-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Bill Huang <bilhuang@nvidia.com>, rjw@rjwysocki.net, viresh.kumar@linaro.org, thierry.reding@gmail.com
+Cc: linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/2013 09:14 AM, Peter De Schrijver wrote:
+On 12/19/2013 04:18 AM, Bill Huang wrote:
+> Re-model Tegra20 cpufreq driver as below.
+> 
+> * Rename tegra-cpufreq.c to tegra20-cpufreq.c since this file supports
+>   only Tegra20.
+> * Add probe function so defer probe can be used when we're going to
+>   support DVFS.
+> * Create a fake cpufreq platform device with its name being
+>   "${root_compatible}-cpufreq" so SoC cpufreq driver can bind to it
+>   accordingly.
 
-A patch description would be nice.
+Tested-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+It should be fine to merge the arch/arm/mach-tegra/ changes in this
+patch through the cpufreq tree, since I don't think they'll conflict at
+all with anything in other trees this kernel cycle.
 
-I assume this is going through the clock tree, and there aren't any
-dependencies between this patch and the other series touching fuses that
-showed up today? (or the dependencies will be resolved by deferring
-dependant patches to 3.15...)
+> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
+
+> -#define NUM_CPUS	2
+> +#define MAX_CPUS	2
+
+Nit: Given this driver is explicitly for a 2-CPU SoC, I don't think
+there's any need to s/NUM/MAX/ here. But I don't care that much.
+
