@@ -1,32 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
-Date: Thu, 19 Dec 2013 14:47:09 -0700
-Message-ID: <52B3695D.70601@wwwdotorg.org>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Unhandled LM90 irq 308 on Dalmore?
+Date: Thu, 19 Dec 2013 14:36:20 -0800
+Message-ID: <alpine.DEB.2.02.1312191423090.30198@tamien>
+References: <52B2C5AD.5080405@nvidia.com> <20131219114500.1b1ea0b7@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="US-ASCII"; format=flowed
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1387469182-14398-2-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20131219114500.1b1ea0b7-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/2013 09:06 AM, Thierry Reding wrote:
-> This also adds the vmmc-supply property to the SDMMC node on Venice2.
-> Otherwise the core will turn the regulator off automatically because it
-> is unused.
+Hi Jean,
 
-Note: If I revert Laxman's "" and apply your patches 01/10 and 02/10 in
-its place, then I see the following during boot, and audio playback
-doesn't work any more:
+On Thu, 19 Dec 2013, Jean Delvare wrote:
 
-> [   14.768649] max98090 0-0010: ASoC: Right Receiver Mixer DAPM update failed: -121
-> [   14.776715] max98090 0-0010: ASoC: Left Receiver Mixer DAPM update failed: -121
-> [   14.784601] max98090 0-0010: ASoC: Right Speaker Mixer DAPM update failed: -121
-> [   14.792602] max98090 0-0010: ASoC: Left Speaker Mixer DAPM update failed: -121
-> [   14.800423] max98090 0-0010: ASoC: Right Headphone Mixer DAPM update failed: -121
-> [   14.808655] max98090 0-0010: ASoC: Left Headphone Mixer DAPM update failed: -121
-> [   14.817628] max98090 0-0010: ASoC: Right ADC Mixer DAPM update failed: -121
-> [   14.825582] max98090 0-0010: ASoC: Left ADC Mixer DAPM update failed: -121
+> Adding Wei who added interrupt support to the lm90 driver, and moving
+> to the appropriate list.
+
+Thanks for the speedy response and list correction.
+
+> On Thu, 19 Dec 2013 02:08:45 -0800, Paul Walmsley wrote:
+>> Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about
+>> two minutes after boot:
+>>
+>> [  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
+
+...
+
+>> [  121.019825] handlers:
+>> [  121.022117] [<c0064408>] irq_default_primary_handler threaded
+>> [<c0384764>] lm90_irq_thread
+>> [  121.030418] Disabling IRQ #308
+>>
+>> This is on next-20131218.
+>
+> Which temperature chip is the Tegra114 Dalmore board using?
+
+It's an NCT72.
+
+> Is the interrupt shared with something else?
+
+Doesn't look like it.  From /proc/interrupts:
+
+308:      74181          0          0          0      GPIO 116  lm90
+
+That's from shortly after boot.  From successive 'cat's of 
+/proc/interrupts, I see that the interrupt count is increasing very 
+quickly.  So something is definitely not right.
+
+> Is there any monitoring script, application or daemon polling for
+> temperatures on this system?
+
+This is a totally quiet system, booted with 'init=/bin/bash' on the kernel 
+command line - nothing else running at all.
+
+regards
+
+- Paul
