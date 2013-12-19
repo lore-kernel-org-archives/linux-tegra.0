@@ -1,66 +1,69 @@
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
-Date: Thu, 19 Dec 2013 09:22:02 +0100
-Message-ID: <52B2ACAA.3000101@mentor.com>
-References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org> <52B22906.4010704@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: fix compile w/ CONFIG_DYNAMIC_DEBUG
+Date: Thu, 19 Dec 2013 09:32:41 +0100
+Message-ID: <20131219083239.GA2494@ulmo.nvidia.com>
+References: <1387400013-9237-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <52B22906.4010704@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Dong Aisheng <dongas86@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1bOJ3K7DJ5YkBrT"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1387400013-9237-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/13 00:00, Stephen Warren wrote:
-> On 12/18/2013 03:27 PM, Stephen Warren wrote:
->> From: Stephen Warren<swarren@nvidia.com>
->>
->> In mmc_do_calc_max_discard(), if only a single erase block can be
->> discarded within the host controller's timeout, don't allow discard
->> operations at all.
->>
->> Previously, the code allowed sector-at-a-time discard (rather than
->> erase-block-at-a-time), which was chronically slow.
->>
->> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
->> in qty == 1, which is immediately returned. This causes discard to
->> operate a single sector at a time, which is chronically slow. With this
->> patch in place, discard operates a single erase block at a time, which
->> is reasonably fast.
->
-> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
-> host controllers specify maximum discard timeout", followed by:
->
->> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->> index 050eb262485c..35c5b5d86c99 100644
->> --- a/drivers/mmc/core/core.c
->> +++ b/drivers/mmc/core/core.c
->> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
->>          cmd.opcode = MMC_ERASE;
->>          cmd.arg = arg;
->>          cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
->> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
->>          err = mmc_wait_for_cmd(card->host,&cmd, 0);
->>          if (err) {
->>                  pr_err("mmc_erase: erase error %d, status %#x\n",
->> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
->>          if (mmc_host_is_spi(card->host))
->>                  goto out;
->>
->> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
->> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card, arg, qty));
->>          do {
->>                  memset(&cmd, 0, sizeof(struct mmc_command));
->>                  cmd.opcode = MMC_SEND_STATUS;
->
-> That certainly also seems to solve the problem on my board...
 
-Personally I'd prefer this change.
+--X1bOJ3K7DJ5YkBrT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Out of curiosity have you tried the approach I proposed as RFC with set
-mmc_core.limit_erase_groups=0?
+On Wed, Dec 18, 2013 at 01:53:33PM -0700, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> With CONFIG_DYNAMIC_DEBUG=3Dy, the followin compile error occurs:
+>=20
+> drivers/gpu/drm/tegra/mipi-phy.c: In function =E2=80=98mipi_dphy_timing_v=
+alidate=E2=80=99:
+> drivers/gpu/drm/tegra/mipi-phy.c:69:11: error: =E2=80=98EINVAL=E2=80=99 u=
+ndeclared (first use in this function)
+> drivers/gpu/drm/tegra/mipi-phy.c:69:11: note: each undeclared identifier =
+is reported only once for each function it appears in
+>=20
+> Fix this by directly including the header that defines EINVAL.
+>=20
+> Fixes: 39aa0a4f3be5 ("drm/tegra: Add DSI support")
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/mipi-phy.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-With best wishes,
-Vladimir
+Applied, thanks. I've fixed up the "Fixes:" tag since the commit hash
+was no longer valid.
+
+Thierry
+
+--X1bOJ3K7DJ5YkBrT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSsq8nAAoJEN0jrNd/PrOhIF8P/2dWsvdQQjMCzscw8aVMGcjm
+faekRqXvIelk5W7H648lxOUaHhqDwu7Kfamy6rUjTO5FRIMqvAOjhe31efjPgewS
+mRycakFpFCl3Xd4eWqzI71cMQEI9WtfI/glwk39h7CN77uzwk606qjaNi+4REZzo
+dD9EuUk+srDw/y1alocLHfdCaigrda9k9jTnoAmvf59HZphN9mIrp7QR6lcw9Nl2
+pjvvOf1dSzv7/2aixJVtFLzeopZ9cl8JAonmiZHv06wVIlfKjYK0STh3UBqLCZT2
+1tIAscW+bSvvw6DoNsXeM0/orOQLcILDN6r0qBcO03pemTEkKrIJwIAfWAEo/QW5
+dbz+PArtMMX2k4AaU26mGH/ahrp5aseaeD+03lvXByo24fwn/I6ULgZ2A+rLcxBd
+n8ZK2B12kSYtcU2AYYUq6Nr6Fdhqt23IieHnQb6gxykGc+gGN9vdAohngcOZJjXq
+puv3S4n9todCreZBXThY9mE/R2/+bq63a38cMEWYM+0o9OdEe1uXS4jYMN7PwV30
+EFA6AMzBqFs+sdtRtauuuvq1xz+1NoOtbaQVfH3fAZf7w+R8gjOzcuclETDRAc39
+KPtd2w17YmdAtfqxH8LiG/XXOFAL/YahUqN8/WigjjgOt1q/6Ox9OxeNMQNGpLKT
+kr3+OJVnPGD7d6dzxtam
+=1GEA
+-----END PGP SIGNATURE-----
+
+--X1bOJ3K7DJ5YkBrT--
