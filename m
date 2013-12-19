@@ -1,148 +1,42 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 07/10] ARM: tegra: Enable Venice2 keyboard
-Date: Thu, 19 Dec 2013 17:06:19 +0100
-Message-ID: <1387469182-14398-8-git-send-email-treding@nvidia.com>
+Subject: [PATCH 02/10] ARM: tegra: Hook up SDMMC3 power-supply on Venice2
+Date: Thu, 19 Dec 2013 17:06:14 +0100
+Message-ID: <1387469182-14398-3-git-send-email-treding@nvidia.com>
 References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1387469182-14398-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The keyboard on Venice2 is attached to the ChromeOS embedded controller.
-Add the corresponding device tree nodes and use the MATRIX_KEY define to
-encode keycodes.
+The SDMMC3 interface is supplied with 1.8V by the PMICs LDO6.
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-venice2.dts | 107 +++++++++++++++++++++++++++++++++
- 1 file changed, 107 insertions(+)
+ arch/arm/boot/dts/tegra124-venice2.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index b435cb5ec664..0f6ff681b14b 100644
+index 5dc0c64b7682..7a4d5e23ddf4 100644
 --- a/arch/arm/boot/dts/tegra124-venice2.dts
 +++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -1,5 +1,6 @@
- /dts-v1/;
+@@ -531,7 +531,7 @@
+ 					regulator-max-microvolt = <1200000>;
+ 				};
  
-+#include <dt-bindings/input/input.h>
- #include "tegra124.dtsi"
- 
- / {
-@@ -578,6 +579,112 @@
- 		};
+-				ldo6 {
++				vddio_sdmmc3: ldo6 {
+ 					regulator-name = "vddio_sdmmc";
+ 					regulator-min-microvolt = <3300000>;
+ 					regulator-max-microvolt = <3300000>;
+@@ -580,6 +580,7 @@
+ 		power-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
+ 		status = "okay";
+ 		bus-width = <4>;
++		vmmc-supply = <&vddio_sdmmc3>;
  	};
  
-+	spi@7000d400 {
-+		status = "okay";
-+
-+		cros-ec@0 {
-+			compatible = "google,cros-ec-spi";
-+			spi-max-frequency = <4000000>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
-+			reg = <0>;
-+
-+			google,cros-ec-spi-msg-delay = <2000>;
-+
-+			cros-ec-keyb {
-+				compatible = "google,cros-ec-keyb";
-+				keypad,num-rows = <8>;
-+				keypad,num-columns = <13>;
-+				google,needs-ghost-filter;
-+
-+				linux,keymap = <
-+					MATRIX_KEY(0x00, 0x01, KEY_LEFTMETA)
-+					MATRIX_KEY(0x00, 0x02, KEY_F1)
-+					MATRIX_KEY(0x00, 0x03, KEY_B)
-+					MATRIX_KEY(0x00, 0x04, KEY_F10)
-+					MATRIX_KEY(0x00, 0x06, KEY_N)
-+					MATRIX_KEY(0x00, 0x08, KEY_EQUAL)
-+					MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)
-+
-+					MATRIX_KEY(0x01, 0x01, KEY_ESC)
-+					MATRIX_KEY(0x01, 0x02, KEY_F4)
-+					MATRIX_KEY(0x01, 0x03, KEY_G)
-+					MATRIX_KEY(0x01, 0x04, KEY_F7)
-+					MATRIX_KEY(0x01, 0x06, KEY_H)
-+					MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)
-+					MATRIX_KEY(0x01, 0x09, KEY_F9)
-+					MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)
-+
-+					MATRIX_KEY(0x02, 0x00, KEY_LEFTCTRL)
-+					MATRIX_KEY(0x02, 0x01, KEY_TAB)
-+					MATRIX_KEY(0x02, 0x02, KEY_F3)
-+					MATRIX_KEY(0x02, 0x03, KEY_T)
-+					MATRIX_KEY(0x02, 0x04, KEY_F6)
-+					MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)
-+					MATRIX_KEY(0x02, 0x06, KEY_Y)
-+					MATRIX_KEY(0x02, 0x07, KEY_102ND)
-+					MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)
-+					MATRIX_KEY(0x02, 0x09, KEY_F8)
-+
-+					MATRIX_KEY(0x03, 0x01, KEY_GRAVE)
-+					MATRIX_KEY(0x03, 0x02, KEY_F2)
-+					MATRIX_KEY(0x03, 0x03, KEY_5)
-+					MATRIX_KEY(0x03, 0x04, KEY_F5)
-+					MATRIX_KEY(0x03, 0x06, KEY_6)
-+					MATRIX_KEY(0x03, 0x08, KEY_MINUS)
-+					MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)
-+
-+					MATRIX_KEY(0x04, 0x00, KEY_RIGHTCTRL)
-+					MATRIX_KEY(0x04, 0x01, KEY_A)
-+					MATRIX_KEY(0x04, 0x02, KEY_D)
-+					MATRIX_KEY(0x04, 0x03, KEY_F)
-+					MATRIX_KEY(0x04, 0x04, KEY_S)
-+					MATRIX_KEY(0x04, 0x05, KEY_K)
-+					MATRIX_KEY(0x04, 0x06, KEY_J)
-+					MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)
-+					MATRIX_KEY(0x04, 0x09, KEY_L)
-+					MATRIX_KEY(0x04, 0x0a, KEY_BACKSLASH)
-+					MATRIX_KEY(0x04, 0x0b, KEY_ENTER)
-+
-+					MATRIX_KEY(0x05, 0x01, KEY_Z)
-+					MATRIX_KEY(0x05, 0x02, KEY_C)
-+					MATRIX_KEY(0x05, 0x03, KEY_V)
-+					MATRIX_KEY(0x05, 0x04, KEY_X)
-+					MATRIX_KEY(0x05, 0x05, KEY_COMMA)
-+					MATRIX_KEY(0x05, 0x06, KEY_M)
-+					MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)
-+					MATRIX_KEY(0x05, 0x08, KEY_SLASH)
-+					MATRIX_KEY(0x05, 0x09, KEY_DOT)
-+					MATRIX_KEY(0x05, 0x0b, KEY_SPACE)
-+
-+					MATRIX_KEY(0x06, 0x01, KEY_1)
-+					MATRIX_KEY(0x06, 0x02, KEY_3)
-+					MATRIX_KEY(0x06, 0x03, KEY_4)
-+					MATRIX_KEY(0x06, 0x04, KEY_2)
-+					MATRIX_KEY(0x06, 0x05, KEY_8)
-+					MATRIX_KEY(0x06, 0x06, KEY_7)
-+					MATRIX_KEY(0x06, 0x08, KEY_0)
-+					MATRIX_KEY(0x06, 0x09, KEY_9)
-+					MATRIX_KEY(0x06, 0x0a, KEY_LEFTALT)
-+					MATRIX_KEY(0x06, 0x0b, KEY_DOWN)
-+					MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)
-+
-+					MATRIX_KEY(0x07, 0x01, KEY_Q)
-+					MATRIX_KEY(0x07, 0x02, KEY_E)
-+					MATRIX_KEY(0x07, 0x03, KEY_R)
-+					MATRIX_KEY(0x07, 0x04, KEY_W)
-+					MATRIX_KEY(0x07, 0x05, KEY_I)
-+					MATRIX_KEY(0x07, 0x06, KEY_U)
-+					MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)
-+					MATRIX_KEY(0x07, 0x08, KEY_P)
-+					MATRIX_KEY(0x07, 0x09, KEY_O)
-+					MATRIX_KEY(0x07, 0x0b, KEY_UP)
-+					MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
-+				>;
-+			};
-+		};
-+	};
-+
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
- 		nvidia,suspend-mode = <1>;
+ 	sdhci@700b0600 {
 -- 
 1.8.4.2
