@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 06/10] ARM: tegra: Add Tegra114 gr2d support
-Date: Thu, 19 Dec 2013 16:59:30 +0100
-Message-ID: <1387468774-14216-7-git-send-email-treding@nvidia.com>
+Subject: [PATCH 10/10] ARM: tegra: Enable DRM panel support
+Date: Thu, 19 Dec 2013 16:59:34 +0100
+Message-ID: <1387468774-14216-11-git-send-email-treding@nvidia.com>
 References: <1387468774-14216-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1387468774-14216-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,38 +10,26 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the device tree for the gr2d hardware found on Tegra114 SoCs.
+Enable DRM panel core support along with support for various simple
+panels.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v3:
-- add resets and reset-names properties
+ arch/arm/configs/tegra_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes in v2:
-- mark as backwards-compatible with Tegra20
-
- arch/arm/boot/dts/tegra114.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index 28d2eea46b52..3dd7b50d8f93 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -30,6 +30,15 @@
- 
- 		ranges = <0x54000000 0x54000000 0x01000000>;
- 
-+		gr2d@54140000 {
-+			compatible = "nvidia,tegra114-gr2d", "nvidia,tegra20-gr2d";
-+			reg = <0x54140000 0x00040000>;
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA114_CLK_GR2D>;
-+			resets = <&tegra_car 21>;
-+			reset-names = "2d";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra114-dc", "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index f5050fd75dda..5fdc9a09d339 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -169,6 +169,8 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+ CONFIG_USB_VIDEO_CLASS=m
+ CONFIG_DRM=y
++CONFIG_DRM_PANEL=y
++CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_DRM_TEGRA=y
+ CONFIG_BACKLIGHT_LCD_SUPPORT=y
+ # CONFIG_LCD_CLASS_DEVICE is not set
 -- 
 1.8.4.2
