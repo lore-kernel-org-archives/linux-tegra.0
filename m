@@ -1,698 +1,135 @@
-From: Bill Huang <bilhuang@nvidia.com>
-Subject: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Thu, 19 Dec 2013 19:18:46 +0800
-Message-ID: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
+From: Dong Aisheng <dongas86@gmail.com>
+Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
+Date: Thu, 19 Dec 2013 19:18:55 +0800
+Message-ID: <CAA+hA=RBy=3zn-yBJ8SRbmZXZL5X-eUag9+kJ7JODbLYn+rVbQ@mail.gmail.com>
+References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org>
+	<52B22906.4010704@wwwdotorg.org>
+	<52B2B5DF.1020702@intel.com>
+	<52B2B8F7.1000905@mentor.com>
+	<52B2BF95.302@intel.com>
+	<CAPDyKFoiGzspgrtRwXruPqOODxbfKA4AAZHj_VF8H7rpwm7eTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <cpufreq-owner@vger.kernel.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: rjw@rjwysocki.net, viresh.kumar@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-kernel@vger.kernel.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFoiGzspgrtRwXruPqOODxbfKA4AAZHj_VF8H7rpwm7eTQ@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>, Stephen Warren <swarren@wwwdotorg.org>, Chris Ball <cjb@laptop.org>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Vladimir Zapolskiy <vz@mleia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Re-model Tegra20 cpufreq driver as below.
+On Thu, Dec 19, 2013 at 6:26 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 19 December 2013 10:42, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>> On 19/12/13 11:14, Vladimir Zapolskiy wrote:
+>>> On 12/19/13 10:01, Adrian Hunter wrote:
+>>>> On 19/12/13 01:00, Stephen Warren wrote:
+>>>>> On 12/18/2013 03:27 PM, Stephen Warren wrote:
+>>>>>> From: Stephen Warren<swarren@nvidia.com>
+>>>>>>
+>>>>>> In mmc_do_calc_max_discard(), if only a single erase block can be
+>>>>>> discarded within the host controller's timeout, don't allow discard
+>>>>>> operations at all.
+>>>>>>
+>>>>>> Previously, the code allowed sector-at-a-time discard (rather than
+>>>>>> erase-block-at-a-time), which was chronically slow.
+>>>>>>
+>>>>>> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
+>>>>>> in qty == 1, which is immediately returned. This causes discard to
+>>>>>> operate a single sector at a time, which is chronically slow. With this
+>>>>>> patch in place, discard operates a single erase block at a time, which
+>>>>>> is reasonably fast.
+>>>>>
+>>>>> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
+>>>>> host controllers specify maximum discard timeout", followed by:
+>>>>>
+>>>>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>>>>>> index 050eb262485c..35c5b5d86c99 100644
+>>>>>> --- a/drivers/mmc/core/core.c
+>>>>>> +++ b/drivers/mmc/core/core.c
+>>>>>> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card,
+>>>>>> unsigned int from,
+>>>>>>          cmd.opcode = MMC_ERASE;
+>>>>>>          cmd.arg = arg;
+>>>>>>          cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+>>>>>> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
+>>>>>>          err = mmc_wait_for_cmd(card->host,&cmd, 0);
+>>>>>>          if (err) {
+>>>>>>                  pr_err("mmc_erase: erase error %d, status %#x\n",
+>>>>>> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card,
+>>>>>> unsigned int from,
+>>>>>>          if (mmc_host_is_spi(card->host))
+>>>>>>                  goto out;
+>>>>>>
+>>>>>> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
+>>>>>> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card,
+>>>>>> arg, qty));
+>>>>>>          do {
+>>>>>>                  memset(&cmd, 0, sizeof(struct mmc_command));
+>>>>>>                  cmd.opcode = MMC_SEND_STATUS;
+>>>>>
+>>>>> That certainly also seems to solve the problem on my board...
+>>>>
+>>>> But large erases will timeout when they should have been split into smaller
+>>>> chunks.
+>>>>
+>>>> A generic solution needs to be able to explain what happens when the host
+>>>> controller *does* timeout.
+>>>
+>>> Please correct me, but if Data Timeout Error is disabled, then this is not
+>>> an issue for most of the host controllers.
+>>
+>> That is a very good point.  My experience with SDHCI was that masking the
+>> "Data Timeout Error Status Enable" and "Data Timeout Error Signal Enable
+>> " bits did not disable the timeout i.e. the host controller would not
+>> deliver a TC interrupt if the erase exceeded the timeout.
+>>
+>> What happens on your board?
+>>
+>
+> I posted a response yesterday for "[PATCH] mmc: core: don't decrement
+> qty when calculating max_discard", related to this. Please have a
+> look.
+>
+> I think the interesting case to consider here is how we can handle
+> busy detection timeouts that is bigger than what the host hw can
+> support.
+>
+> Option 1)
+> Should we tell the host to disable the timeout in this case? That
+> potentially means hanging forever - if the card misbehaves. Like
+> omap_hsmmc does for erase commands. Maybe that is an okay limitation?
+>
+> Option 2)
+> Use a R1 response instead if R1B to prevent the host from doing busy
+> detection. Then rely on the CMD13 to poll for completion instead.
+> Obviously we can then stop polling after some selected timeout is the
+> card don't complete it's operations.
+>
 
-* Rename tegra-cpufreq.c to tegra20-cpufreq.c since this file supports
-  only Tegra20.
-* Add probe function so defer probe can be used when we're going to
-  support DVFS.
-* Create a fake cpufreq platform device with its name being
-  "${root_compatible}-cpufreq" so SoC cpufreq driver can bind to it
-  accordingly.
+I proposed the same way before:
+https://www.mail-archive.com/linux-mmc@vger.kernel.org/msg23757.html
+Two concerns remain:
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
----
+"1) not waiting for R1B seems a bit violation with standard spec.
+Also it increase complexity on handling the R1B of the same command
+for two different
+cases: using hw timeout or polling status for CMD38.
 
-This patch remodel Tegra cpufreq driver to make it more easy to add new
-SoC support, in addition to that, adding probe function in the driver to
-let probe defer can be used to control init sequence when we are going
-to support DVFS.
+2) In current implementation, the data size to erase will not exceed
+the max_discard_bytes
+which is calculated based on max_discard_to of host.
+Then how do we specify max_discard_to if want to use polling? UNIT_MAX?
+Will it be too long to affect other activities in the same system?"
 
-Changes since v4:
+That means we should erase a proper size of data in case it affects the system
+a lot(e.g. two partitions on the same card, discard one partition may
+cause the code
+on another partition has no chance to run, it may be serious if the
+file system is in it.).
 
-- Remove module driver keyword since we'll not be built as a module driver
-- Read SoC compatible Id from DT root instead of statically define it.
-- Rebased on linux-next branch of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+Regards
+Dong Aisheng
 
-Changes since v3:
-
-- Create separate driver for each SoCs instead of a central driver indirect
-  call to different SoC functions.
-
-Changes since v2:
-
-- Fix Kconfig.
-- Rebase on top of branch 'cpufreq-next' on git://git.linaro.org/people/vireshk/linux.git.
-
-Changes since v1:
-
-- Split up patches.
-- Split configuration-time data out of structure "tegra_cpufreq_data".
-- Bug fixes.
-
----
- arch/arm/mach-tegra/tegra.c                        |    2 +
- drivers/cpufreq/Kconfig.arm                        |   12 +
- drivers/cpufreq/Makefile                           |    1 +
- drivers/cpufreq/tegra-cpufreq.c                    |  283 +++-----------------
- .../cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} |   96 +++----
- include/linux/tegra-cpufreq.h                      |   23 ++
- 6 files changed, 119 insertions(+), 298 deletions(-)
- copy drivers/cpufreq/{tegra-cpufreq.c => tegra20-cpufreq.c} (66%)
- create mode 100644 include/linux/tegra-cpufreq.h
-
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 7336817..a9b23e9 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -34,6 +34,7 @@
- #include <linux/usb/tegra_usb_phy.h>
- #include <linux/clk/tegra.h>
- #include <linux/irqchip.h>
-+#include <linux/tegra-cpufreq.h>
- 
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/mach-types.h>
-@@ -160,6 +161,7 @@ static void __init tegra_dt_init_late(void)
- {
- 	int i;
- 
-+	tegra_cpufreq_init();
- 	tegra_init_suspend();
- 	tegra_cpuidle_init();
- 	tegra_powergate_debugfs_init();
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index ce52ed9..22dfc43 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -225,6 +225,18 @@ config ARM_TEGRA_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver support for TEGRA SOCs.
- 
-+config ARM_TEGRA20_CPUFREQ
-+	bool "NVIDIA TEGRA20"
-+	depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
-+	default y
-+	help
-+	  This enables Tegra20 cpufreq functionality, it adds
-+	  Tegra20 CPU frequency ladder and the call back functions
-+	  to set CPU rate. All the non-SoC dependant codes are
-+	  controlled by the config ARM_TEGRA_CPUFREQ.
-+
-+	  If in doubt, say N.
-+
- config ARM_VEXPRESS_SPC_CPUFREQ
-         tristate "Versatile Express SPC based CPUfreq driver"
-         select ARM_BIG_LITTLE_CPUFREQ
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 7494565..331964b 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -74,6 +74,7 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
- obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
- obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
- obj-$(CONFIG_ARM_TEGRA_CPUFREQ)		+= tegra-cpufreq.o
-+obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
- obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
- 
- ##################################################################################
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
-index b7309c3..1ff8025 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra-cpufreq.c
-@@ -1,261 +1,42 @@
- /*
-- * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
-  *
-- * Author:
-- *	Colin Cross <ccross@google.com>
-- *	Based on arch/arm/plat-omap/cpu-omap.c, (C) 2005 Nokia Corporation
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-  *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-  */
- 
- #include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/types.h>
--#include <linux/sched.h>
--#include <linux/cpufreq.h>
--#include <linux/delay.h>
--#include <linux/init.h>
--#include <linux/err.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--#include <linux/suspend.h>
--
--static struct cpufreq_frequency_table freq_table[] = {
--	{ .frequency = 216000 },
--	{ .frequency = 312000 },
--	{ .frequency = 456000 },
--	{ .frequency = 608000 },
--	{ .frequency = 760000 },
--	{ .frequency = 816000 },
--	{ .frequency = 912000 },
--	{ .frequency = 1000000 },
--	{ .frequency = CPUFREQ_TABLE_END },
--};
--
--#define NUM_CPUS	2
--
--static struct clk *cpu_clk;
--static struct clk *pll_x_clk;
--static struct clk *pll_p_clk;
--static struct clk *emc_clk;
--
--static unsigned long target_cpu_speed[NUM_CPUS];
--static DEFINE_MUTEX(tegra_cpu_lock);
--static bool is_suspended;
--
--static unsigned int tegra_getspeed(unsigned int cpu)
--{
--	unsigned long rate;
--
--	if (cpu >= NUM_CPUS)
--		return 0;
--
--	rate = clk_get_rate(cpu_clk) / 1000;
--	return rate;
--}
--
--static int tegra_cpu_clk_set_rate(unsigned long rate)
--{
--	int ret;
--
--	/*
--	 * Take an extra reference to the main pll so it doesn't turn
--	 * off when we move the cpu off of it
--	 */
--	clk_prepare_enable(pll_x_clk);
--
--	ret = clk_set_parent(cpu_clk, pll_p_clk);
--	if (ret) {
--		pr_err("Failed to switch cpu to clock pll_p\n");
--		goto out;
--	}
--
--	if (rate == clk_get_rate(pll_p_clk))
--		goto out;
--
--	ret = clk_set_rate(pll_x_clk, rate);
--	if (ret) {
--		pr_err("Failed to change pll_x to %lu\n", rate);
--		goto out;
--	}
--
--	ret = clk_set_parent(cpu_clk, pll_x_clk);
--	if (ret) {
--		pr_err("Failed to switch cpu to clock pll_x\n");
--		goto out;
--	}
--
--out:
--	clk_disable_unprepare(pll_x_clk);
--	return ret;
--}
--
--static int tegra_update_cpu_speed(struct cpufreq_policy *policy,
--		unsigned long rate)
--{
--	int ret = 0;
--
--	if (tegra_getspeed(0) == rate)
--		return ret;
--
--	/*
--	 * Vote on memory bus frequency based on cpu frequency
--	 * This sets the minimum frequency, display or avp may request higher
--	 */
--	if (rate >= 816000)
--		clk_set_rate(emc_clk, 600000000); /* cpu 816 MHz, emc max */
--	else if (rate >= 456000)
--		clk_set_rate(emc_clk, 300000000); /* cpu 456 MHz, emc 150Mhz */
--	else
--		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
--
--	ret = tegra_cpu_clk_set_rate(rate * 1000);
--	if (ret)
--		pr_err("cpu-tegra: Failed to set cpu frequency to %lu kHz\n",
--			rate);
--
--	return ret;
--}
--
--static unsigned long tegra_cpu_highest_speed(void)
--{
--	unsigned long rate = 0;
--	int i;
--
--	for_each_online_cpu(i)
--		rate = max(rate, target_cpu_speed[i]);
--	return rate;
--}
--
--static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
--{
--	unsigned int freq;
--	int ret = 0;
--
--	mutex_lock(&tegra_cpu_lock);
--
--	if (is_suspended)
--		goto out;
--
--	freq = freq_table[index].frequency;
--
--	target_cpu_speed[policy->cpu] = freq;
--
--	ret = tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
--
--out:
--	mutex_unlock(&tegra_cpu_lock);
--	return ret;
--}
--
--static int tegra_pm_notify(struct notifier_block *nb, unsigned long event,
--	void *dummy)
--{
--	mutex_lock(&tegra_cpu_lock);
--	if (event == PM_SUSPEND_PREPARE) {
--		struct cpufreq_policy *policy = cpufreq_cpu_get(0);
--		is_suspended = true;
--		pr_info("Tegra cpufreq suspend: setting frequency to %d kHz\n",
--			freq_table[0].frequency);
--		tegra_update_cpu_speed(policy, freq_table[0].frequency);
--		cpufreq_cpu_put(policy);
--	} else if (event == PM_POST_SUSPEND) {
--		is_suspended = false;
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/tegra-cpufreq.h>
-+
-+int __init tegra_cpufreq_init(void)
-+{
-+	struct device_node *root;
-+
-+	root = of_find_node_by_path("/");
-+	if (root) {
-+		struct platform_device_info devinfo;
-+		const char *compat;
-+		int i;
-+
-+		memset(&devinfo, 0, sizeof(devinfo));
-+		i = of_property_count_strings(root, "compatible");
-+		if (i > 0) {
-+			of_property_read_string_index(
-+				root, "compatible", i - 1, &compat);
-+			devinfo.name = kasprintf(
-+					GFP_KERNEL, "%s-cpufreq", compat);
-+			platform_device_register_full(&devinfo);
-+		}
- 	}
--	mutex_unlock(&tegra_cpu_lock);
--
--	return NOTIFY_OK;
--}
--
--static struct notifier_block tegra_cpu_pm_notifier = {
--	.notifier_call = tegra_pm_notify,
--};
--
--static int tegra_cpu_init(struct cpufreq_policy *policy)
--{
--	int ret;
--
--	if (policy->cpu >= NUM_CPUS)
--		return -EINVAL;
--
--	clk_prepare_enable(emc_clk);
--	clk_prepare_enable(cpu_clk);
--
--	target_cpu_speed[policy->cpu] = tegra_getspeed(policy->cpu);
--
--	/* FIXME: what's the actual transition time? */
--	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
--	if (ret) {
--		clk_disable_unprepare(cpu_clk);
--		clk_disable_unprepare(emc_clk);
--		return ret;
--	}
--
--	if (policy->cpu == 0)
--		register_pm_notifier(&tegra_cpu_pm_notifier);
- 
- 	return 0;
- }
--
--static int tegra_cpu_exit(struct cpufreq_policy *policy)
--{
--	cpufreq_frequency_table_put_attr(policy->cpu);
--	clk_disable_unprepare(cpu_clk);
--	clk_disable_unprepare(emc_clk);
--	return 0;
--}
--
--static struct cpufreq_driver tegra_cpufreq_driver = {
--	.verify		= cpufreq_generic_frequency_table_verify,
--	.target_index	= tegra_target,
--	.get		= tegra_getspeed,
--	.init		= tegra_cpu_init,
--	.exit		= tegra_cpu_exit,
--	.name		= "tegra",
--	.attr		= cpufreq_generic_attr,
--};
--
--static int __init tegra_cpufreq_init(void)
--{
--	cpu_clk = clk_get_sys(NULL, "cclk");
--	if (IS_ERR(cpu_clk))
--		return PTR_ERR(cpu_clk);
--
--	pll_x_clk = clk_get_sys(NULL, "pll_x");
--	if (IS_ERR(pll_x_clk))
--		return PTR_ERR(pll_x_clk);
--
--	pll_p_clk = clk_get_sys(NULL, "pll_p");
--	if (IS_ERR(pll_p_clk))
--		return PTR_ERR(pll_p_clk);
--
--	emc_clk = clk_get_sys("cpu", "emc");
--	if (IS_ERR(emc_clk)) {
--		clk_put(cpu_clk);
--		return PTR_ERR(emc_clk);
--	}
--
--	return cpufreq_register_driver(&tegra_cpufreq_driver);
--}
--
--static void __exit tegra_cpufreq_exit(void)
--{
--        cpufreq_unregister_driver(&tegra_cpufreq_driver);
--	clk_put(emc_clk);
--	clk_put(cpu_clk);
--}
--
--
--MODULE_AUTHOR("Colin Cross <ccross@android.com>");
--MODULE_DESCRIPTION("cpufreq driver for Nvidia Tegra2");
--MODULE_LICENSE("GPL");
--module_init(tegra_cpufreq_init);
--module_exit(tegra_cpufreq_exit);
-+EXPORT_SYMBOL(tegra_cpufreq_init);
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-similarity index 66%
-copy from drivers/cpufreq/tegra-cpufreq.c
-copy to drivers/cpufreq/tegra20-cpufreq.c
-index b7309c3..dc8279d 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra20-cpufreq.c
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (C) 2010 Google, Inc.
-+ * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
-  *
-  * Author:
-  *	Colin Cross <ccross@google.com>
-@@ -17,16 +18,14 @@
-  */
- 
- #include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/types.h>
--#include <linux/sched.h>
- #include <linux/cpufreq.h>
- #include <linux/delay.h>
--#include <linux/init.h>
- #include <linux/err.h>
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/suspend.h>
-+#include <linux/cpu.h>
-+#include <linux/platform_device.h>
- 
- static struct cpufreq_frequency_table freq_table[] = {
- 	{ .frequency = 216000 },
-@@ -40,29 +39,26 @@ static struct cpufreq_frequency_table freq_table[] = {
- 	{ .frequency = CPUFREQ_TABLE_END },
- };
- 
--#define NUM_CPUS	2
-+#define MAX_CPUS	2
- 
- static struct clk *cpu_clk;
- static struct clk *pll_x_clk;
- static struct clk *pll_p_clk;
- static struct clk *emc_clk;
- 
--static unsigned long target_cpu_speed[NUM_CPUS];
--static DEFINE_MUTEX(tegra_cpu_lock);
-+static unsigned long target_cpu_speed[MAX_CPUS];
-+static DEFINE_MUTEX(tegra20_cpu_lock);
- static bool is_suspended;
- 
--static unsigned int tegra_getspeed(unsigned int cpu)
-+static unsigned int tegra20_getspeed(unsigned int cpu)
- {
- 	unsigned long rate;
- 
--	if (cpu >= NUM_CPUS)
--		return 0;
--
- 	rate = clk_get_rate(cpu_clk) / 1000;
- 	return rate;
- }
- 
--static int tegra_cpu_clk_set_rate(unsigned long rate)
-+static int tegra20_cpu_clk_set_rate(unsigned long rate)
- {
- 	int ret;
- 
-@@ -98,12 +94,12 @@ out:
- 	return ret;
- }
- 
--static int tegra_update_cpu_speed(struct cpufreq_policy *policy,
-+static int tegra20_update_cpu_speed(struct cpufreq_policy *policy,
- 		unsigned long rate)
- {
- 	int ret = 0;
- 
--	if (tegra_getspeed(0) == rate)
-+	if (tegra20_getspeed(0) == rate)
- 		return ret;
- 
- 	/*
-@@ -117,7 +113,7 @@ static int tegra_update_cpu_speed(struct cpufreq_policy *policy,
- 	else
- 		clk_set_rate(emc_clk, 100000000);  /* emc 50Mhz */
- 
--	ret = tegra_cpu_clk_set_rate(rate * 1000);
-+	ret = tegra20_cpu_clk_set_rate(rate * 1000);
- 	if (ret)
- 		pr_err("cpu-tegra: Failed to set cpu frequency to %lu kHz\n",
- 			rate);
-@@ -125,7 +121,7 @@ static int tegra_update_cpu_speed(struct cpufreq_policy *policy,
- 	return ret;
- }
- 
--static unsigned long tegra_cpu_highest_speed(void)
-+static unsigned long tegra20_cpu_highest_speed(void)
- {
- 	unsigned long rate = 0;
- 	int i;
-@@ -135,12 +131,12 @@ static unsigned long tegra_cpu_highest_speed(void)
- 	return rate;
- }
- 
--static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
-+static int tegra20_target(struct cpufreq_policy *policy, unsigned int index)
- {
- 	unsigned int freq;
- 	int ret = 0;
- 
--	mutex_lock(&tegra_cpu_lock);
-+	mutex_lock(&tegra20_cpu_lock);
- 
- 	if (is_suspended)
- 		goto out;
-@@ -149,47 +145,44 @@ static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
- 
- 	target_cpu_speed[policy->cpu] = freq;
- 
--	ret = tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
-+	ret = tegra20_update_cpu_speed(policy, tegra20_cpu_highest_speed());
- 
- out:
--	mutex_unlock(&tegra_cpu_lock);
-+	mutex_unlock(&tegra20_cpu_lock);
- 	return ret;
- }
- 
--static int tegra_pm_notify(struct notifier_block *nb, unsigned long event,
-+static int tegra20_pm_notify(struct notifier_block *nb, unsigned long event,
- 	void *dummy)
- {
--	mutex_lock(&tegra_cpu_lock);
-+	mutex_lock(&tegra20_cpu_lock);
- 	if (event == PM_SUSPEND_PREPARE) {
- 		struct cpufreq_policy *policy = cpufreq_cpu_get(0);
- 		is_suspended = true;
- 		pr_info("Tegra cpufreq suspend: setting frequency to %d kHz\n",
- 			freq_table[0].frequency);
--		tegra_update_cpu_speed(policy, freq_table[0].frequency);
-+		tegra20_update_cpu_speed(policy, freq_table[0].frequency);
- 		cpufreq_cpu_put(policy);
- 	} else if (event == PM_POST_SUSPEND) {
- 		is_suspended = false;
- 	}
--	mutex_unlock(&tegra_cpu_lock);
-+	mutex_unlock(&tegra20_cpu_lock);
- 
- 	return NOTIFY_OK;
- }
- 
--static struct notifier_block tegra_cpu_pm_notifier = {
--	.notifier_call = tegra_pm_notify,
-+static struct notifier_block tegra20_cpu_pm_notifier = {
-+	.notifier_call = tegra20_pm_notify,
- };
- 
--static int tegra_cpu_init(struct cpufreq_policy *policy)
-+static int tegra20_cpu_init(struct cpufreq_policy *policy)
- {
- 	int ret;
- 
--	if (policy->cpu >= NUM_CPUS)
--		return -EINVAL;
--
- 	clk_prepare_enable(emc_clk);
- 	clk_prepare_enable(cpu_clk);
- 
--	target_cpu_speed[policy->cpu] = tegra_getspeed(policy->cpu);
-+	target_cpu_speed[policy->cpu] = tegra20_getspeed(policy->cpu);
- 
- 	/* FIXME: what's the actual transition time? */
- 	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
-@@ -200,12 +193,12 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	}
- 
- 	if (policy->cpu == 0)
--		register_pm_notifier(&tegra_cpu_pm_notifier);
-+		register_pm_notifier(&tegra20_cpu_pm_notifier);
- 
- 	return 0;
- }
- 
--static int tegra_cpu_exit(struct cpufreq_policy *policy)
-+static int tegra20_cpu_exit(struct cpufreq_policy *policy)
- {
- 	cpufreq_frequency_table_put_attr(policy->cpu);
- 	clk_disable_unprepare(cpu_clk);
-@@ -213,17 +206,17 @@ static int tegra_cpu_exit(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static struct cpufreq_driver tegra_cpufreq_driver = {
-+static struct cpufreq_driver tegra20_cpufreq_driver = {
- 	.verify		= cpufreq_generic_frequency_table_verify,
--	.target_index	= tegra_target,
--	.get		= tegra_getspeed,
--	.init		= tegra_cpu_init,
--	.exit		= tegra_cpu_exit,
-+	.target_index	= tegra20_target,
-+	.get		= tegra20_getspeed,
-+	.init		= tegra20_cpu_init,
-+	.exit		= tegra20_cpu_exit,
- 	.name		= "tegra",
- 	.attr		= cpufreq_generic_attr,
- };
- 
--static int __init tegra_cpufreq_init(void)
-+static int tegra20_cpufreq_probe(struct platform_device *pdev)
- {
- 	cpu_clk = clk_get_sys(NULL, "cclk");
- 	if (IS_ERR(cpu_clk))
-@@ -243,19 +236,28 @@ static int __init tegra_cpufreq_init(void)
- 		return PTR_ERR(emc_clk);
- 	}
- 
--	return cpufreq_register_driver(&tegra_cpufreq_driver);
-+	return cpufreq_register_driver(&tegra20_cpufreq_driver);
- }
- 
--static void __exit tegra_cpufreq_exit(void)
-+static int tegra20_cpufreq_remove(struct platform_device *pdev)
- {
--        cpufreq_unregister_driver(&tegra_cpufreq_driver);
-+	cpufreq_unregister_driver(&tegra20_cpufreq_driver);
- 	clk_put(emc_clk);
- 	clk_put(cpu_clk);
-+	return 0;
- }
- 
-+static struct platform_driver tegra20_cpufreq_platdrv = {
-+	.driver = {
-+		.name	= "nvidia,tegra20-cpufreq",
-+		.owner	= THIS_MODULE,
-+	},
-+	.probe		= tegra20_cpufreq_probe,
-+	.remove		= tegra20_cpufreq_remove,
-+};
- 
--MODULE_AUTHOR("Colin Cross <ccross@android.com>");
--MODULE_DESCRIPTION("cpufreq driver for Nvidia Tegra2");
--MODULE_LICENSE("GPL");
--module_init(tegra_cpufreq_init);
--module_exit(tegra_cpufreq_exit);
-+static int __init tegra20_cpufreq_register(void)
-+{
-+	return platform_driver_register(&tegra20_cpufreq_platdrv);
-+}
-+device_initcall(tegra20_cpufreq_register);
-diff --git a/include/linux/tegra-cpufreq.h b/include/linux/tegra-cpufreq.h
-new file mode 100644
-index 0000000..2373d10
---- /dev/null
-+++ b/include/linux/tegra-cpufreq.h
-@@ -0,0 +1,23 @@
-+/*
-+ * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#ifndef __LINUX_TEGRA_CPUFREQ_H
-+#define __LINUX_TEGRA_CPUFREQ_H
-+
-+#ifdef CONFIG_ARM_TEGRA_CPUFREQ
-+int tegra_cpufreq_init(void);
-+#else
-+static inline int tegra_cpufreq_init(void) { return 0; }
-+#endif
-+
-+#endif /* __LINUX_TEGRA_CPUFREQ_H_ */
--- 
-1.7.9.5
-
+> Would be very interesting to know what option you prefer!?
+>
+> Kind regards
+> Uffe
