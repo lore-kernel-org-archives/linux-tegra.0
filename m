@@ -1,41 +1,108 @@
-From: Paul Walmsley <pwalmsley@nvidia.com>
-Subject: Unhandled LM90 irq 308 on Dalmore?
-Date: Thu, 19 Dec 2013 02:08:45 -0800
-Message-ID: <52B2C5AD.5080405@nvidia.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
+Date: Thu, 19 Dec 2013 11:26:49 +0100
+Message-ID: <CAPDyKFoiGzspgrtRwXruPqOODxbfKA4AAZHj_VF8H7rpwm7eTQ@mail.gmail.com>
+References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org>
+	<52B22906.4010704@wwwdotorg.org>
+	<52B2B5DF.1020702@intel.com>
+	<52B2B8F7.1000905@mentor.com>
+	<52B2BF95.302@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean Delvare <khali@linux-fr.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52B2BF95.302-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about 
-two minutes after boot:
+On 19 December 2013 10:42, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
+> On 19/12/13 11:14, Vladimir Zapolskiy wrote:
+>> On 12/19/13 10:01, Adrian Hunter wrote:
+>>> On 19/12/13 01:00, Stephen Warren wrote:
+>>>> On 12/18/2013 03:27 PM, Stephen Warren wrote:
+>>>>> From: Stephen Warren<swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>>
+>>>>> In mmc_do_calc_max_discard(), if only a single erase block can be
+>>>>> discarded within the host controller's timeout, don't allow discard
+>>>>> operations at all.
+>>>>>
+>>>>> Previously, the code allowed sector-at-a-time discard (rather than
+>>>>> erase-block-at-a-time), which was chronically slow.
+>>>>>
+>>>>> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
+>>>>> in qty == 1, which is immediately returned. This causes discard to
+>>>>> operate a single sector at a time, which is chronically slow. With this
+>>>>> patch in place, discard operates a single erase block at a time, which
+>>>>> is reasonably fast.
+>>>>
+>>>> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
+>>>> host controllers specify maximum discard timeout", followed by:
+>>>>
+>>>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>>>>> index 050eb262485c..35c5b5d86c99 100644
+>>>>> --- a/drivers/mmc/core/core.c
+>>>>> +++ b/drivers/mmc/core/core.c
+>>>>> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card,
+>>>>> unsigned int from,
+>>>>>          cmd.opcode = MMC_ERASE;
+>>>>>          cmd.arg = arg;
+>>>>>          cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+>>>>> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
+>>>>>          err = mmc_wait_for_cmd(card->host,&cmd, 0);
+>>>>>          if (err) {
+>>>>>                  pr_err("mmc_erase: erase error %d, status %#x\n",
+>>>>> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card,
+>>>>> unsigned int from,
+>>>>>          if (mmc_host_is_spi(card->host))
+>>>>>                  goto out;
+>>>>>
+>>>>> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
+>>>>> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card,
+>>>>> arg, qty));
+>>>>>          do {
+>>>>>                  memset(&cmd, 0, sizeof(struct mmc_command));
+>>>>>                  cmd.opcode = MMC_SEND_STATUS;
+>>>>
+>>>> That certainly also seems to solve the problem on my board...
+>>>
+>>> But large erases will timeout when they should have been split into smaller
+>>> chunks.
+>>>
+>>> A generic solution needs to be able to explain what happens when the host
+>>> controller *does* timeout.
+>>
+>> Please correct me, but if Data Timeout Error is disabled, then this is not
+>> an issue for most of the host controllers.
+>
+> That is a very good point.  My experience with SDHCI was that masking the
+> "Data Timeout Error Status Enable" and "Data Timeout Error Signal Enable
+> " bits did not disable the timeout i.e. the host controller would not
+> deliver a TC interrupt if the erase exceeded the timeout.
+>
+> What happens on your board?
+>
 
-[  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
-[  120.957654] CPU: 1 PID: 74 Comm: irq/308-lm90 Not tainted 
-3.13.0-rc4-next-20131218-30442-g28522bc #1
-[  120.966816] [<c0015c44>] (unwind_backtrace) from [<c0011898>] 
-(show_stack+0x10/0x14)
-[  120.974571] [<c0011898>] (show_stack) from [<c0565370>] 
-(dump_stack+0x80/0xcc)
-[  120.981804] [<c0565370>] (dump_stack) from [<c0066030>] 
-(__report_bad_irq+0x20/0xc0)
-[  120.989543] [<c0066030>] (__report_bad_irq) from [<c0066550>] 
-(note_interrupt+0x1f8/0x254)
-[  120.997811] [<c0066550>] (note_interrupt) from [<c0064fc0>] 
-(irq_thread+0x12c/0x158)
-[  121.005613] [<c0064fc0>] (irq_thread) from [<c003fcac>] 
-(kthread+0xc4/0xe0)
-[  121.012614] [<c003fcac>] (kthread) from [<c000e738>] 
-(ret_from_fork+0x14/0x3c)
-[  121.019825] handlers:
-[  121.022117] [<c0064408>] irq_default_primary_handler threaded 
-[<c0384764>] lm90_irq_thread
-[  121.030418] Disabling IRQ #308
+I posted a response yesterday for "[PATCH] mmc: core: don't decrement
+qty when calculating max_discard", related to this. Please have a
+look.
 
-This is on next-20131218.
+I think the interesting case to consider here is how we can handle
+busy detection timeouts that is bigger than what the host hw can
+support.
 
-- Paul
+Option 1)
+Should we tell the host to disable the timeout in this case? That
+potentially means hanging forever - if the card misbehaves. Like
+omap_hsmmc does for erase commands. Maybe that is an okay limitation?
+
+Option 2)
+Use a R1 response instead if R1B to prevent the host from doing busy
+detection. Then rely on the CMD13 to poll for completion instead.
+Obviously we can then stop polling after some selected timeout is the
+card don't complete it's operations.
+
+Would be very interesting to know what option you prefer!?
+
+Kind regards
+Uffe
