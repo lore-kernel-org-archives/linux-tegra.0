@@ -1,61 +1,41 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Unhandled LM90 irq 308 on Dalmore?
-Date: Thu, 19 Dec 2013 14:36:20 -0800
-Message-ID: <alpine.DEB.2.02.1312191423090.30198@tamien>
-References: <52B2C5AD.5080405@nvidia.com> <20131219114500.1b1ea0b7@endymion.delvare>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/6] ARM: tegra: fuse: add functions to read speedo ID
+ and process ID
+Date: Thu, 19 Dec 2013 16:09:09 -0700
+Message-ID: <52B37C95.6030904@wwwdotorg.org>
+References: <20131219122857.3226.42830.stgit@tamien> <20131219123639.3226.75285.stgit@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131219114500.1b1ea0b7-R0o5gVi9kd7kN2dkZ6Wm7A@public.gmane.org>
+In-Reply-To: <20131219123639.3226.75285.stgit@tamien>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jean,
+On 12/19/2013 05:36 AM, Paul Walmsley wrote:
+> From: Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Add functions to read the speedo and process id of both the CPU and the SoC.
+> There might be some drivers need the information as well.
 
-On Thu, 19 Dec 2013, Jean Delvare wrote:
+> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
 
-> Adding Wei who added interrupt support to the lm90 driver, and moving
-> to the appropriate list.
+> +int tegra_get_cpu_process_id(void)
+> +{
+> +	return tegra_cpu_process_id;
+> +}
+> +EXPORT_SYMBOL(tegra_get_cpu_process_id);
+> +
+> +int tegra_get_cpu_speedo_id(void)
+> +{
+> +	if (tegra_chip_id == TEGRA20)
+> +		return -EINVAL;
+> +
+> +	return tegra_cpu_speedo_id;
+> +}
 
-Thanks for the speedy response and list correction.
-
-> On Thu, 19 Dec 2013 02:08:45 -0800, Paul Walmsley wrote:
->> Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about
->> two minutes after boot:
->>
->> [  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
-
-...
-
->> [  121.019825] handlers:
->> [  121.022117] [<c0064408>] irq_default_primary_handler threaded
->> [<c0384764>] lm90_irq_thread
->> [  121.030418] Disabling IRQ #308
->>
->> This is on next-20131218.
->
-> Which temperature chip is the Tegra114 Dalmore board using?
-
-It's an NCT72.
-
-> Is the interrupt shared with something else?
-
-Doesn't look like it.  From /proc/interrupts:
-
-308:      74181          0          0          0      GPIO 116  lm90
-
-That's from shortly after boot.  From successive 'cat's of 
-/proc/interrupts, I see that the interrupt count is increasing very 
-quickly.  So something is definitely not right.
-
-> Is there any monitoring script, application or daemon polling for
-> temperatures on this system?
-
-This is a totally quiet system, booted with 'init=/bin/bash' on the kernel 
-command line - nothing else running at all.
-
-regards
-
-- Paul
+Olof specifically went through the code and removed such functions in
+the past. He argued that consumers of this data should just read those
+tegra_cpu_process_id/... variables directly instead.
