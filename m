@@ -1,55 +1,66 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] ARM: tegra: add ams AS3722 device to Venice2 DT
-Date: Thu, 19 Dec 2013 12:58:29 +0530
-Message-ID: <52B2A01D.2000207@nvidia.com>
-References: <1387371179-16725-1-git-send-email-ldewangan@nvidia.com> <1387371179-16725-2-git-send-email-ldewangan@nvidia.com> <52B20BB4.50506@wwwdotorg.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
+Date: Thu, 19 Dec 2013 09:22:02 +0100
+Message-ID: <52B2ACAA.3000101@mentor.com>
+References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org> <52B22906.4010704@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B20BB4.50506-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <52B22906.4010704@wwwdotorg.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Adrian Hunter <adrian.hunter@intel.com>, Dong Aisheng <dongas86@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 19 December 2013 02:25 AM, Stephen Warren wrote:
-> On 12/18/2013 05:52 AM, Laxman Dewangan wrote:
->> Add ams AS3722 entry for gpio/pincontrol and regulators
->> to venice2 DT.
-> This patch still causes:
+On 12/19/13 00:00, Stephen Warren wrote:
+> On 12/18/2013 03:27 PM, Stephen Warren wrote:
+>> From: Stephen Warren<swarren@nvidia.com>
+>>
+>> In mmc_do_calc_max_discard(), if only a single erase block can be
+>> discarded within the host controller's timeout, don't allow discard
+>> operations at all.
+>>
+>> Previously, the code allowed sector-at-a-time discard (rather than
+>> erase-block-at-a-time), which was chronically slow.
+>>
+>> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
+>> in qty == 1, which is immediately returned. This causes discard to
+>> operate a single sector at a time, which is chronically slow. With this
+>> patch in place, discard operates a single erase block at a time, which
+>> is reasonably fast.
 >
->> [    0.726545] as3722-pinctrl as3722-pinctrl: pin gpio0 already requested by as3722-pinctrl; cannot claim for as3722-regulator
->> [    0.737681] as3722-pinctrl as3722-pinctrl: pin-0 (as3722-regulator) status -22
->> [    0.744895] as3722-pinctrl as3722-pinctrl: could not request pin 0 (gpio0) from group gpio0  on device as3722-pinctrl
->> [    0.755500] as3722-regulator as3722-regulator: Error applying setting, reverse things back
+> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
+> host controllers specify maximum discard timeout", followed by:
+>
+>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>> index 050eb262485c..35c5b5d86c99 100644
+>> --- a/drivers/mmc/core/core.c
+>> +++ b/drivers/mmc/core/core.c
+>> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+>>          cmd.opcode = MMC_ERASE;
+>>          cmd.arg = arg;
+>>          cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+>> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
+>>          err = mmc_wait_for_cmd(card->host,&cmd, 0);
+>>          if (err) {
+>>                  pr_err("mmc_erase: erase error %d, status %#x\n",
+>> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+>>          if (mmc_host_is_spi(card->host))
+>>                  goto out;
+>>
+>> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
+>> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card, arg, qty));
+>>          do {
+>>                  memset(&cmd, 0, sizeof(struct mmc_command));
+>>                  cmd.opcode = MMC_SEND_STATUS;
+>
+> That certainly also seems to solve the problem on my board...
 
-This error is nothing related to the ams dt or driver. This came from 
-the framework from the driver/base for adding pinmux call before calling 
-any diver's probe.
-Here is my finding:
-Frameworks calls the pinctrl_bind_pins() before calls the driver's probe 
-(drivers/base/dd.c) and pinctrl_bind_pins() calls the pinmux mapping and 
-try to set the default (drvers/base/pinctrl.c).
+Personally I'd prefer this change.
 
-AMS AS3722 DT is flat type on which all sub devices of AS3722 have the 
-property on parent node only, there is no subnode for each sub driver 
-like palmas. In this case all sub drivers of_node is initialized as 
-parent->of_node in mfd-core.c (mfd_add_devices).
+Out of curiosity have you tried the approach I proposed as RFC with set
+mmc_core.limit_erase_groups=0?
 
-mfd-core.c: mfd_add_device()
-        if (!pdev->dev.of_node)
-                 pdev->dev.of_node = parent->of_node;
-
-So all sub devices of AS3722 has the parent node.
-This node has the default pinmux configuration and so it tries to set 
-the default pinmux before sud-driver's probe get called.
-The first one (for pinmux driver) it is success but for regulator and 
-rtc, it is failed as pins are owned by the pinmux drivers.
-
-This does not have any side impact as currently, pinctrl_bind_pins() 
-only return the success or ERPOBE_DEFER
-
-I was testing the patch with linux-next-common of your branch and 
-chrome-os/kernel-next with linux-next's pinctrl/regulator/mfd and not 
-able to repro this because driver/base changes was not there.
+With best wishes,
+Vladimir
