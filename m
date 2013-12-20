@@ -1,77 +1,56 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Unhandled LM90 irq 308 on Dalmore?
-Date: Fri, 20 Dec 2013 11:16:09 +0800
-Message-ID: <52B3B679.20206@nvidia.com>
-References: <52B2C5AD.5080405@nvidia.com>
- <20131219114500.1b1ea0b7@endymion.delvare>
- <alpine.DEB.2.02.1312191423090.30198@tamien>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/2] ARM: tegra: add ams AS3722 device to Venice2 DT
+Date: Fri, 20 Dec 2013 12:02:30 +0530
+Message-ID: <52B3E47E.7070508@nvidia.com>
+References: <1387371179-16725-1-git-send-email-ldewangan@nvidia.com> <1387371179-16725-2-git-send-email-ldewangan@nvidia.com> <52B20BB4.50506@wwwdotorg.org> <52B2A01D.2000207@nvidia.com> <52B33986.5020508@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.02.1312191423090.30198@tamien>
+In-Reply-To: <52B33986.5020508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2013 06:36 AM, Paul Walmsley wrote:
-> Hi Jean,
-> 
-> On Thu, 19 Dec 2013, Jean Delvare wrote:
-> 
->> Adding Wei who added interrupt support to the lm90 driver, and moving
->> to the appropriate list.
-> 
-> Thanks for the speedy response and list correction.
-> 
->> On Thu, 19 Dec 2013 02:08:45 -0800, Paul Walmsley wrote:
->>> Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about
->>> two minutes after boot:
+On Thursday 19 December 2013 11:53 PM, Stephen Warren wrote:
+> On 12/19/2013 12:28 AM, Laxman Dewangan wrote:
+>> On Thursday 19 December 2013 02:25 AM, Stephen Warren wrote:
+>>> On 12/18/2013 05:52 AM, Laxman Dewangan wrote:
+>>>> Add ams AS3722 entry for gpio/pincontrol and regulators
+>>>> to venice2 DT.
+>>> This patch still causes:
 >>>
->>> [  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
-> 
-> ...
-> 
->>> [  121.019825] handlers:
->>> [  121.022117] [<c0064408>] irq_default_primary_handler threaded
->>> [<c0384764>] lm90_irq_thread
->>> [  121.030418] Disabling IRQ #308
->>>
->>> This is on next-20131218.
->>
->> Which temperature chip is the Tegra114 Dalmore board using?
-> 
-> It's an NCT72.
-> 
->> Is the interrupt shared with something else?
-> 
-> Doesn't look like it.  From /proc/interrupts:
-> 
-> 308:      74181          0          0          0      GPIO 116  lm90
+>>>> [    0.726545] as3722-pinctrl as3722-pinctrl: pin gpio0 already
+>>>> requested by as3722-pinctrl; cannot claim for as3722-regulator
+>>>> [    0.737681] as3722-pinctrl as3722-pinctrl: pin-0
+>>>> (as3722-regulator) status -22
+>>>> [    0.744895] as3722-pinctrl as3722-pinctrl: could not request pin 0
+>>>> (gpio0) from group gpio0  on device as3722-pinctrl
+>>>> [    0.755500] as3722-regulator as3722-regulator: Error applying
+>>>> setting, reverse things back
+>> This error is nothing related to the ams dt or driver. This came from
+>> the framework from the driver/base for adding pinmux call before calling
+>> any diver's probe.
+> OK, after reverting the problematic MFD commit (which I assume will
+> happen upstream too), I see no errors caused by this patch.
+>
+> As such, I've applied the series to Tegra's for-3.14/dt branch.
+Thanks for taking care.
 
-Hi, Paul
-When I developed it, my Dalmore board used GPIO 116 (GPIO_PO4) as
-interrupt line, but according to our downsttream kernel, there also have
-other Dalmore board used GPIO 190 (GPIO_PX6). So I think your
-problems was caused by it. Please try to change the interrupt line in
-dts file.
+>
+> Note that I couldn't verify if the pinctrl setup in patch 1/2 matched
+> the ChromeOS kernel, since the node order is different there, and the
+> property values don't use named constants there. I'll have to trust you.
+> I'll be annoyed if it turns out we need to churn the pinctrl
+> configuration in the future...
 
-Thanks.
-Wei.
+I referred the configuration from chrome branch. I assume that good 
+amount of testing has already been done on this configuration.
+I manually check all configuration and run chrome on this change which 
+works properly. Did not see any abnormal behavior.
+So if something missed then it is just human error which did not catch 
+on 2 level of self review.
 
-> 
-> That's from shortly after boot.  From successive 'cat's of 
-> /proc/interrupts, I see that the interrupt count is increasing very 
-> quickly.  So something is definitely not right.
-> 
->> Is there any monitoring script, application or daemon polling for
->> temperatures on this system?
-> 
-> This is a totally quiet system, booted with 'init=/bin/bash' on the kernel 
-> command line - nothing else running at all.
-> 
-> regards
-> 
-> - Paul
-> 
+Again  any change on this configuration can be expected based on new 
+testing or bringung new modules.
