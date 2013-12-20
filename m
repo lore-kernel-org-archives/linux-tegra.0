@@ -1,81 +1,72 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 05/10] ARM: tegra: Add Tegra114 DSI support
-Date: Fri, 20 Dec 2013 12:54:26 +0100
-Message-ID: <20131220115426.GO27787@ulmo.nvidia.com>
+Subject: Re: [PATCH 03/10] ARM: tegra: Add MIPI calibration DT entries for
+ Tegra114
+Date: Fri, 20 Dec 2013 12:56:13 +0100
+Message-ID: <20131220115613.GP27787@ulmo.nvidia.com>
 References: <1387468774-14216-1-git-send-email-treding@nvidia.com>
- <1387468774-14216-6-git-send-email-treding@nvidia.com>
- <52B34FC2.5010409@wwwdotorg.org>
+ <1387468774-14216-4-git-send-email-treding@nvidia.com>
+ <52B38B14.8080605@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lCFQJunhLz1tFGpX"
+	protocol="application/pgp-signature"; boundary="kOdvwer/5gjFgNo6"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <52B34FC2.5010409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52B38B14.8080605-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---lCFQJunhLz1tFGpX
+--kOdvwer/5gjFgNo6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 19, 2013 at 12:57:54PM -0700, Stephen Warren wrote:
+On Thu, Dec 19, 2013 at 05:11:00PM -0700, Stephen Warren wrote:
 > On 12/19/2013 08:59 AM, Thierry Reding wrote:
-> > Add device tree nodes for the DSI controllers found on Tegra114 SoCs.
+> > Add a device node for the MIPI calibration block on Tegra114. There is
+> > no need to disable it by default because it only enables the clock while
+> > performing calibration and therefore shouldn't be consuming any power
+> > when unused.
 >=20
 > > diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra1=
 14.dtsi
 >=20
-> > +		dsi@54300000 {
-> > +			compatible =3D "nvidia,tegra114-dsi";
-> > +			reg =3D <0x54300000 0x00040000>;
-> > +			clocks =3D <&tegra_car TEGRA114_CLK_DSIA>,
-> > +				 <&tegra_car TEGRA114_CLK_DSIALP>,
-> > +				 <&tegra_car TEGRA114_CLK_PLL_D_OUT0>;
-> > +			clock-names =3D "dsi", "lp", "parent";
+> > +	mipi: mipi {
 >=20
-> The binding document
-> Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt doesn't
-> mention an "lp" clock:
+> That should be:
 >=20
->   - clock-names: Must include the following entries:
->     - dsi
->       This MUST be the first entry.
->     - parent
+> 	mipi: mipi@700e3000 {
 >=20
-> I assume this is simply an oversight, since this is an obvious extension
-> of the binding, and that the DT binding will be updated to include that
-> clock in the list, and hence won't block applying the series because of
-> this.
+> I fixed it up for you.
 
-Yes, that was merely an oversight. I've updated the DT binding to
-include the lp clock.
+Right. Many of the patches I'm carrying locally predate the unit number
+requirement change. I did make a pass to update all, but this must have
+slipped through the cracks.
 
 Thanks,
 Thierry
 
---lCFQJunhLz1tFGpX
+--kOdvwer/5gjFgNo6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJStC/xAAoJEN0jrNd/PrOh0o8P+QG+5qoR1PlNznQH+8+epGvQ
-SCF3Fi6uzSUEE7aIzmljPVA+yJTCQCQEQDvp+B8aEOCXI0gZVuD2Ys3MfinIOX8H
-N35kqc3ep8QJMe/t2h0nRQzsnhF7qZ+gKOlfkzKIhJqyPr2r9WLjRC9qW3Z/jCxz
-dfV4kHBD1jQdcHvXVYQvo3jpRHOnTVvRUwxQ4Dn3D/4cXZUuyCJAkHmSR2BTji/v
-RRWD8tNyMM5epkvYgLsALE0iaU26cDGE6/VcJfrkEGNFKXSAm46KuSy1suLHGrN9
-6kyY2un5FU8+8q241wfZmWdi8M7NZccDKJuNzb7cO4hmtDhb8RpOxyrmCllM602l
-x+8cMCNEgDXBqLSsAFjA9T3pNAANFUYWCifoGWnlnzgn3XA+ydGtqZ72XIt55UR4
-I6oQbZwvSY/BIJR/G+GaQOqIOFilIvGYV/hct84fqWIufv7dt83rBbdb6a1klBhq
-MpiPVZKgQlHMWkmL+HQbe0trHihDleOZxSbUCuW1XUBPA1hHiD7q92NHh4iUH/ff
-GwGfYCMnE1O67/GfgNoBkVY9+TFBWVIZXrWPItfJR0AeY95zdp8vv9qV6ctU5Nrh
-G6ulyVt1RFg01PqkEaXU8AUkdHgvIUdlN+ndH5RPxRKydm78t8NNq9LceQHj+i6h
-JYJ8+kPUg1kkovkAmToN
-=qL6V
+iQIcBAEBAgAGBQJStDBdAAoJEN0jrNd/PrOhhRQQAJhhzKuEpZp3qQzOezhKyY4x
+DclJ1ByukKZWcB/qHItZBiQwkPPLClIE+CAOjLX2ujjdy9KZocryc0TU3+RngXeV
+epxVKiAKKks5htzab1xO0NDMgJ61ByTikCW12Qsd1RFCndoeFowkllOSGEBz8mdi
+rs3qiJDzWxwV9NXRQNcEFELcMye5c8M+uGEy9FKyGEHTQEDaHj+56x+JTtCug4gi
+V/w8mGaLdVRTcwz8x0M6iB/Pwt3owCcVuLa6uPfLVaJbRqozMvhpIdt3+54txLgD
+FH9pbc2ubEoFYO5h982HDyrKV3glzHvvmeXg0mEaavg03aTmZ9PzX2S03Zx3KdE9
+IlA5MDdKJyB+d5XPwqkjtqHYtwNGrDV9eq3AEScDhK2XTMuoPaISFu2O8ZLAVMd0
+e/SOy4VJD5qWl2Lfc/DrVqwbCqU0mNNimrXRFDpeqH05/KbpgIWmzD8nKxwfpuGj
+y6rM5oOhKa9beEKOsnXgrfccvosq0hUuv0vuSFXkiUxORVrFOb09mnOC/aDgg3+M
+S7cmBtjl1+9oHPKWMBMk7XjS/908BdCc3RJzJqxnq+CODdF0GtoM2P4bFV19rTac
+iAsULgInwoSTtPGU/WpjkPHc+YtC1ciiZ8HAhUNos0tmmUEdf55KjSx/ZfYUiMp8
+YPcu532j/L7WmOURxoYh
+=Eftt
 -----END PGP SIGNATURE-----
 
---lCFQJunhLz1tFGpX--
+--kOdvwer/5gjFgNo6--
