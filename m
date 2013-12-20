@@ -1,80 +1,77 @@
-From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 10/10] ARM: tegra: Enable USB on Venice2
-Date: Fri, 20 Dec 2013 10:59:44 +0800
-Message-ID: <1387508384.26603.42.camel@jilin-desktop>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
-	 <1387469182-14398-11-git-send-email-treding@nvidia.com>
-	 <52B36720.8080205@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Unhandled LM90 irq 308 on Dalmore?
+Date: Fri, 20 Dec 2013 11:16:09 +0800
+Message-ID: <52B3B679.20206@nvidia.com>
+References: <52B2C5AD.5080405@nvidia.com>
+ <20131219114500.1b1ea0b7@endymion.delvare>
+ <alpine.DEB.2.02.1312191423090.30198@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B36720.8080205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.02.1312191423090.30198@tamien>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-About USB1 issue, for chips after Tegra30 (including Tegra30), BIASPD is
-controlled by USB1 controller.
-In ehci-tegra.c probe phase, we assert reset and deassert reset on
-controller clock.
-If initializing sequence follows USB1 and then USB2, we are safe.
-If initializing sequence follows USB2 and then USB1, then in
-phy-tegra-usb.c a counter utmip_pad_count which has been increased for
-USB2 will prevent UTMIP_BIASPD from being cleared while initializing for
-USB1 controller (UTMIP_BIASPD will be set again after asserting and
-deasserting reset on USB1 controller clock in ehci-tegra.c probe for
-USB1 controller).
-
-There are several ways to fix.
-The local workaround I use is as following in phy-tegra-usb.c.
-
-static void utmip_pad_power_on(struct tegra_usb_phy *phy)
-{
-	unsigned long val, flags;
-	void __iomem *base = phy->pad_regs;
-	struct tegra_utmip_config *config = phy->config;
-
-	clk_prepare_enable(phy->pad_clk);
-
-	spin_lock_irqsave(&utmip_pad_lock, flags);
-
-	val = readl(base + UTMIP_BIAS_CFG0);
-	if ((utmip_pad_count++ == 0) || (val & UTMIP_BIASPD)) {
-		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD)
-
-On Fri, 2013-12-20 at 05:37 +0800, Stephen Warren wrote:
-> On 12/19/2013 09:06 AM, Thierry Reding wrote:
-> > USB1 and USB3 are routed to two external connectors, while USB2 is used
-> > for the integrated webcam.
-> > 
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Note: connecting a USB mouse to USB3 works properly and lsusb also detects
-> > the integrated webcam, though I haven't tested whether the camera actually
-> > works.
-> > 
-> > USB1 doesn't seem to work, but I suspect that might just be because it's
-> > used for recovery mode and we can't switch it around at runtime yet.
+On 12/20/2013 06:36 AM, Paul Walmsley wrote:
+> Hi Jean,
 > 
-> The two regulators you added don't actually hook up to any GPIOs for
-> control of VBUS, so perhaps this isn't surprising. The regulators added
-> for VBUS control by Laxman's patch (which I already applied) *do* have
-> some gpio properties. However, testing indicates:
+> On Thu, 19 Dec 2013, Jean Delvare wrote:
 > 
-> * With Laxman's patch applied, and your patch 1/10 not applied since
-> it's a duplicate, this patch doesn't work, i.e. I see no USB devices.
+>> Adding Wei who added interrupt support to the lm90 driver, and moving
+>> to the appropriate list.
 > 
-> * With Laxman's patch reverted and your patch 1/10 replacing it, I do
-> see USB devices, and they work. However, then we're not actually
-> controlling VBUS, so USB1 doesn't work.
+> Thanks for the speedy response and list correction.
 > 
-> Can you please rebase this whole series on the latest Tegra for-3.14/dt
-> and sort out the issues? Thanks.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> On Thu, 19 Dec 2013 02:08:45 -0800, Paul Walmsley wrote:
+>>> Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about
+>>> two minutes after boot:
+>>>
+>>> [  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
+> 
+> ...
+> 
+>>> [  121.019825] handlers:
+>>> [  121.022117] [<c0064408>] irq_default_primary_handler threaded
+>>> [<c0384764>] lm90_irq_thread
+>>> [  121.030418] Disabling IRQ #308
+>>>
+>>> This is on next-20131218.
+>>
+>> Which temperature chip is the Tegra114 Dalmore board using?
+> 
+> It's an NCT72.
+> 
+>> Is the interrupt shared with something else?
+> 
+> Doesn't look like it.  From /proc/interrupts:
+> 
+> 308:      74181          0          0          0      GPIO 116  lm90
 
---nvpublic 
+Hi, Paul
+When I developed it, my Dalmore board used GPIO 116 (GPIO_PO4) as
+interrupt line, but according to our downsttream kernel, there also have
+other Dalmore board used GPIO 190 (GPIO_PX6). So I think your
+problems was caused by it. Please try to change the interrupt line in
+dts file.
+
+Thanks.
+Wei.
+
+> 
+> That's from shortly after boot.  From successive 'cat's of 
+> /proc/interrupts, I see that the interrupt count is increasing very 
+> quickly.  So something is definitely not right.
+> 
+>> Is there any monitoring script, application or daemon polling for
+>> temperatures on this system?
+> 
+> This is a totally quiet system, booted with 'init=/bin/bash' on the kernel 
+> command line - nothing else running at all.
+> 
+> regards
+> 
+> - Paul
+> 
