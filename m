@@ -1,98 +1,84 @@
-From: bilhuang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Fri, 20 Dec 2013 18:25:28 +0800
-Message-ID: <52B41B18.30302@nvidia.com>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com> <CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
+Date: Fri, 20 Dec 2013 11:25:43 +0100
+Message-ID: <20131220102542.GJ27787@ulmo.nvidia.com>
+References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
+ <1387469182-14398-2-git-send-email-treding@nvidia.com>
+ <52B355EC.9040306@wwwdotorg.org>
+ <52B3E968.8090906@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6J7GEvtanOfV9oXA"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52B3E968.8090906-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2013 05:31 PM, Viresh Kumar wrote:
-> On 19 December 2013 16:48, Bill Huang <bilhuang@nvidia.com> wrote:
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index ce52ed9..22dfc43 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -225,6 +225,18 @@ config ARM_TEGRA_CPUFREQ
->>          help
->>            This adds the CPUFreq driver support for TEGRA SOCs.
->>
->> +config ARM_TEGRA20_CPUFREQ
->> +       bool "NVIDIA TEGRA20"
->> +       depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
->
-> Probably just in case you agree to my next comment:
->
->              depends on ARCH_TEGRA_2x_SOC
->
->
->> +       default y
->> +       help
->> +         This enables Tegra20 cpufreq functionality, it adds
->> +         Tegra20 CPU frequency ladder and the call back functions
->> +         to set CPU rate. All the non-SoC dependant codes are
->> +         controlled by the config ARM_TEGRA_CPUFREQ.
->> +
->> +         If in doubt, say N.
->
->
->> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
->>   /*
->> + * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
->>    *
->> + * This program is free software; you can redistribute it and/or modify it
->> + * under the terms and conditions of the GNU General Public License,
->> + * version 2, as published by the Free Software Foundation.
->>    *
->> + * This program is distributed in the hope it will be useful, but WITHOUT
->> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->> + * more details.
->>    */
->>
->>   #include <linux/kernel.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/of.h>
->> +#include <linux/tegra-cpufreq.h>
->> +
->> +int __init tegra_cpufreq_init(void)
->> +{
->> +       struct device_node *root;
->> +
->> +       root = of_find_node_by_path("/");
->> +       if (root) {
->> +               struct platform_device_info devinfo;
->> +               const char *compat;
->> +               int i;
->> +
->> +               memset(&devinfo, 0, sizeof(devinfo));
->> +               i = of_property_count_strings(root, "compatible");
->> +               if (i > 0) {
->> +                       of_property_read_string_index(
->> +                               root, "compatible", i - 1, &compat);
->> +                       devinfo.name = kasprintf(
->> +                                       GFP_KERNEL, "%s-cpufreq", compat);
->> +                       platform_device_register_full(&devinfo);
->> +               }
->>          }
->> +EXPORT_SYMBOL(tegra_cpufreq_init);
->
-> Probably above is all that is present in this file. This is just about adding
-> the right cpufreq device so that right driver can get probed.
->
-> I don't think this code is present at the right place. We don't need a file
-> in cpufreq/ which is there just to add a device :) ..
->
-> Probably move this piece of code to arch/mach-tegra where you are calling
-> init.
->
-> And so remove ARM_TEGRA_CPUFREQ config option completely.
->
-Don't you think it worth creating a file here so this can be shared to 
-arm64?
+
+--6J7GEvtanOfV9oXA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 20, 2013 at 12:23:28PM +0530, Laxman Dewangan wrote:
+> On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
+> >On 12/19/2013 09:06 AM, Thierry Reding wrote:
+>=20
+> >(Laxman, as an aside, I'm not sure why you're upstreaming patches that
+> >don't exactly match the existing kernel support for this board...)
+>=20
+> I did not get this based on what context it is. Can you please elaborate
+> where I am missing the stuff?
+>=20
+>=20
+> >
+> >>diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts=
+/tegra124-venice2.dts
+> >>+				sd0 {
+> >>+					regulator-name =3D "vdd_cpu";
+> >>+					regulator-min-microvolt =3D <700000>;
+> >>+					regulator-max-microvolt =3D <1350000>;
+> >Laxman's patch has:
+> >
+> >  					regulator-max-microvolt =3D <1400000>;
+>=20
+> We have the Laguna platform on which Android and L4T is running fine. This
+> is based on same PMIC used for Venice2. As we are running the more cpu
+> stress on Laguna, I took this parameter from the Laguna Power tree where =
+it
+> is maximum 1.4V. Chrome have maximum as 1.35mV.
+
+Whether this is used on Android, ChromeOS or L4T doesn't matter at all.
+It specifies hardware constraints and thus must be agnostic of the OS
+and workload.
+
+Also this file describes the power tree for Venice2, so using values
+=66rom Laguna is wrong, no matter how similar they are.
+
+Thierry
+
+--6J7GEvtanOfV9oXA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJStBsmAAoJEN0jrNd/PrOhJsYP/A0kWKPa5idr2PnMvzGlFDEA
+CeH/DrRkA9GMYpW5LOArNo+OSryHBPcH7BgYjnXSrwQ8aOYos6PX57VNWXQwhCv4
+KO+s/i3MVT6KhdESK7UsgPUqwZDv7Dqb620GzXskwh3gT+vjT/doGxhsXD77/6EX
+sfzthZiN16qABeLsqjkB9JMuQX1Y85il7bx5yQ/woTE8Oe1vPkGVFAfG3GxLITGF
+iGpp9F75cD3Nc3Ei9SYc243WvlPTkZz3gf8FLBwoO+zSW8X3eS8CKHRv/luL+T2A
+8Hhy4rjSJ4/Ix0c1QPTH28lekR1nUbcYPaiMwiMAlZo9zzMmemnvz1wFZDgZLakR
+PfcrJObFCrpCBwaEDdEThxL/lLcJm8A+JN5kzPQPUptO8Jq0PWM5PF5pPKG0kwDv
+uFE6vIMIDogH+jPzErB0DsKNHNWMt1yX9nHUaNkaAvXUXCwUbdpdcVWt5zaz14Ri
+cxqI0tjWd5IMSQwBKTxrMSB70leBaFcd7QAR/gNHYNiySGVpMtWpHwU7VpN/MPms
++QHd3RK0Rvewm3/7vh8Txhudio1tx0QOP2uW/bhQ+bcYWFFhhPnb56V2lJ0Gg21J
+2Q4xQ6/AYsCeXnpH5DFtSQHQ0z5FZc+3XSjocMq01vDPEdFPOCNPrxii6rPeZZr/
+GYzW2sz+JTDadACnKPqI
+=WFJD
+-----END PGP SIGNATURE-----
+
+--6J7GEvtanOfV9oXA--
