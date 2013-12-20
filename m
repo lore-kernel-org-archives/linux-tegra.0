@@ -1,103 +1,86 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
-Date: Fri, 20 Dec 2013 12:23:28 +0530
-Message-ID: <52B3E968.8090906@nvidia.com>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B355EC.9040306@wwwdotorg.org>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] mmc: core: don't return 1 for max_discard
+Date: Fri, 20 Dec 2013 09:17:39 +0200
+Message-ID: <52B3EF13.8060806@intel.com>
+References: <1387405663-14253-1-git-send-email-swarren@wwwdotorg.org> <52B22906.4010704@wwwdotorg.org> <52B2B5DF.1020702@intel.com> <52B344E0.5080009@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B355EC.9040306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52B344E0.5080009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vladimir Zapolskiy <vz-ChpfBGZJDbMAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
-> On 12/19/2013 09:06 AM, Thierry Reding wrote:
+On 19/12/13 21:11, Stephen Warren wrote:
+> On 12/19/2013 02:01 AM, Adrian Hunter wrote:
+>> On 19/12/13 01:00, Stephen Warren wrote:
+>>> On 12/18/2013 03:27 PM, Stephen Warren wrote:
+>>>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> In mmc_do_calc_max_discard(), if only a single erase block can be
+>>>> discarded within the host controller's timeout, don't allow discard
+>>>> operations at all.
+>>>>
+>>>> Previously, the code allowed sector-at-a-time discard (rather than
+>>>> erase-block-at-a-time), which was chronically slow.
+>>>>
+>>>> Without this patch, on the NVIDIA Tegra Cardhu board, the loops result
+>>>> in qty == 1, which is immediately returned. This causes discard to
+>>>> operate a single sector at a time, which is chronically slow. With this
+>>>> patch in place, discard operates a single erase block at a time, which
+>>>> is reasonably fast.
+>>>
+>>> Alternatively, is the real fix a revert of e056a1b5b67b "mmc: queue: let
+>>> host controllers specify maximum discard timeout", followed by:
+>>>
+>>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>>>> index 050eb262485c..35c5b5d86c99 100644
+>>>> --- a/drivers/mmc/core/core.c
+>>>> +++ b/drivers/mmc/core/core.c
+>>>> @@ -1950,7 +1950,6 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+>>>>         cmd.opcode = MMC_ERASE;
+>>>>         cmd.arg = arg;
+>>>>         cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+>>>> -       cmd.cmd_timeout_ms = mmc_erase_timeout(card, arg, qty);
+>>>>         err = mmc_wait_for_cmd(card->host, &cmd, 0);
+>>>>         if (err) {
+>>>>                 pr_err("mmc_erase: erase error %d, status %#x\n",
+>>>> @@ -1962,7 +1961,7 @@ static int mmc_do_erase(struct mmc_card *card, unsigned int from,
+>>>>         if (mmc_host_is_spi(card->host))
+>>>>                 goto out;
+>>>>  
+>>>> -       timeout = jiffies + msecs_to_jiffies(MMC_CORE_TIMEOUT_MS);
+>>>> +       timeout = jiffies + msecs_to_jiffies(mmc_erase_timeout(card, arg, qty));
+>>>>         do {
+>>>>                 memset(&cmd, 0, sizeof(struct mmc_command));
+>>>>                 cmd.opcode = MMC_SEND_STATUS;
+>>>
+>>> That certainly also seems to solve the problem on my board...
+>>
+>> But large erases will timeout when they should have been split into smaller
+>> chunks.
+>>
+>> A generic solution needs to be able to explain what happens when the host
+>> controller *does* timeout.
+> 
+> I thought the whole point of this discussion was that the timeout in the
+> first code segment above only applies to command submission, whereas
+> completion of the erase operation itself was determined by polling using
+> CMD13, which still uses mmc_erase_timeout(). As such, I don't /think/
+> that "large erases will timeout" here, unless I'm significantly
+> misunderstanding something?
 
-> (Laxman, as an aside, I'm not sure why you're upstreaming patches that
-> don't exactly match the existing kernel support for this board...)
+Setting cmd_timeout_ms to zero just makes the sdhci driver choose the
+highest timeout.
 
-I did not get this based on what context it is. Can you please elaborate 
-where I am missing the stuff?
+Currently the sdhci driver does not have a facility to disable the timeout,
+and, as I noted in another thread, masking the "Data Timeout Error Status
+Enable" and "Data Timeout Error Signal Enable" bits did not work for me.
+What Ulf is suggesting is to change the response type from R1B to R1.
 
+But there is also a need to avoid polling when it is not necessary and to
+make it periodic.
 
->
->> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
->> +				sd0 {
->> +					regulator-name = "vdd_cpu";
->> +					regulator-min-microvolt = <700000>;
->> +					regulator-max-microvolt = <1350000>;
-> Laxman's patch has:
->
->   					regulator-max-microvolt = <1400000>;
-
-We have the Laguna platform on which Android and L4T is running fine. 
-This is based on same PMIC used for Venice2. As we are running the more 
-cpu stress on Laguna, I took this parameter from the Laguna Power tree 
-where it is maximum 1.4V. Chrome have maximum as 1.35mV.
-
-
-
->
->> +					regulator-always-on;
->> +					ams,ext-control = <2>;
->> +				};
-> Laxman's patch adds:
->
->   					regulator-min-microamp = <3500000>;
->   					regulator-max-microamp = <3500000>;
->   					regulator-boot-on;
->
-> Those properties (with various values) are added to quite a few nodes; I
-> won't bother pointing them out elsewhere.
-
-
-All rails does not support the current configuration. SD0, SD1 and SD6 
-supports this. We have configured these value on Laguna as per system 
-eng recommendation for this rails. As the power tree s almost same, I 
-configured same here for Venice2. SD0 and SD6 on 3500mA and SD1 is on 
-2500mA.
-
-
-
->
->> +				sd1 {
-> ...
->> +					regulator-max-microamp = <3500000>;
-> Laxman's patch has:
->
->   					regulator-max-microamp = <2500000>;
->
-> Laxman's patch adds the following node:
->
->   				sd3 {
->   					regulator-name = "vddio-ddr-2phase";
->   					regulator-min-microvolt = <1350000>;
->   					regulator-max-microvolt = <1350000>;
->   					regulator-always-on;
->   					regulator-boot-on;
->   				};
-As per schematic, SD2 and SD3 make 2 phase supply for the DDR. I added 
-SD3 so that it should not get disabled at time of unused regulator 
-disabled by regulator framework.
->
->> +				sd6 {
-> ...
->> +					regulator-min-microvolt = <800000>;
-> Laxman's patch has:
->
->   					regulator-min-microvolt = <650000>;
-
-Again from downstream Laguna platform.
-
->
->> +				ldo6 {
-> ...
->> +					regulator-min-microvolt = <3300000>;
-> Laxman's patch has:
->
->   					regulator-min-microvolt = <1800000>;
-VDDIO SDMMC and I think it is for SD3.0 (UHS) which switches voltage 
-from 3.3 to 1.8 on UHS mode by sdmmc driver.
+Ulf said he is working on a patch to doing something similar with mmc_switch.
