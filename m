@@ -1,97 +1,53 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 6/6] clk: tegra: add Tegra114 FCPU DFLL clocksource platform
- driver
-Date: Thu, 19 Dec 2013 17:18:57 -0700
-Message-ID: <52B38CF1.20508@wwwdotorg.org>
-References: <20131219122857.3226.42830.stgit@tamien> <20131219124949.3226.94812.stgit@tamien>
+From: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] ARM: tegra: modify Tegra30 USB2 default phy_type
+ to UTMI
+Date: Thu, 19 Dec 2013 18:03:21 -0800
+Message-ID: <52B3A569.7090106@nvidia.com>
+References: <1387331565-3994-1-git-send-email-ebrower@nvidia.com> <52B21079.6030201@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131219124949.3226.94812.stgit@tamien>
+In-Reply-To: <52B21079.6030201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/2013 05:49 AM, Paul Walmsley wrote:
-> Add basic platform driver support for the fast CPU cluster DFLL
-> clocksource found on Tegra114 SoCs.  This small driver selects the
-> appropriate Tegra114-specific characterization data and integration
-> code.  It relies on the DFLL common code to do most of the work.
+On 12/18/2013 01:15 PM, Stephen Warren wrote:
+> On 12/17/2013 06:52 PM, Eric Brower wrote:
+>> Modify Tegra30 default USB2 phy_type to UTMI; this matches
+>> power-on-reset defaults and is expected to be the common case.
+>>
+>> The current implementation is likely an incorrect
+>> carry-over from Tegra20, where USB2 does default to ULPI.
+>
+>> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+>
+>>   	phy2: usb-phy@7d004000 {
+>>   		compatible = "nvidia,tegra30-usb-phy";
+>> -		reg = <0x7d004000 0x4000>;
+>> -		phy_type = "ulpi";
+>> +		reg = <0x7d004000 0x4000 0x7d004000 0x4000>;
+>
+> Are you sure the second entry in the reg property is correct here? In
+> Tegra20, the UTMI pad registers are in the USB1 (USBD) register space
+> for both USB controllers, and I would guess the same applies for all 3
+> controllers on Tegra30, since both USB1 and USB3 on Tegra30 already
+> point this reg entry at USBD's reg space, plus you've listed USBD as the
+> clock entry for utmi-pads, rather than USB2, which would be consistent
+> with the reg value.
+>
+> Still, this patch does seem to work for me...
+>
 
-> diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
+The second entry in the reg property is indeed incorrect-- I'll send a 
+new version of the series.
 
-> +config CLK_TEGRA114_DFLL_FCPU
-> +	tristate "Clock driver for the Tegra T114 DFLL FCPU"
+Though each controller has UTMIP BIAS pad registers, bias pad settings 
+must be configured via USB1 only; the USB2 and USB3 BIAS pad registers 
+are a no-connect-- this explains why it works as-is (USB1 configures 
+bias pad settings), but is not correct for the dtsi.
 
-depends ARCH_TEGRA_114_SOC?
-
-> +CFLAGS_clk-tegra114-dfll-fcpu.o		+= -Wall -Wextra -Wno-unused-parameter \
-> +					   -Wno-missing-field-initializers \
-> +					   -Wno-sign-compare
-
-I'd drop this too.
-
-> diff --git a/drivers/clk/tegra/clk-tegra114-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra114-dfll-fcpu.c
-
-> + * clk-tegra114-dfll-fcpu.c - Tegra114 DFLL FCPU clock source driver
-
-I'd drop the filename.
-
-> + * Copyright (C) 2012-2013 NVIDIA Corporation.  All rights reserved.
-
-This is 2012-2013 whereas the other files were only 2013?
-
-> +#define DROOP_RATE_MIN			1000000
-> +
-> +
-
-Double blank line.
-
-> +static int tegra114_dfll_fcpu_probe(struct platform_device *pdev)
-> +{
-> +	struct tegra_dfll_soc_data soc;
-
-Since most of the data in that struct is static, why not just make it a
-static global, and initialize the constant fields. That would avoid the
-need to copy it inside tegra_dfll_register(), and avoid the need to
-assign the fields later in this function.
-
-> +	int r, speedo_id, process_id;
-> +
-> +	speedo_id = tegra_get_cpu_speedo_id();
-> +	process_id = tegra_get_cpu_process_id();
-> +
-> +	memset(&soc, 0, sizeof(soc));
-> +	soc.driver_name = DRIVER_NAME;
-
-Why is that needed? Shouldn't the library code be using
-dev_name(&pdev->dev) or similar?
-
-> +	r = tegra_dfll_register(pdev, &soc);
-> +	if (!r)
-> +		return r;
-> +
-> +	return 0;
-
-if (!r) means if (r == 0) so this always returns 0. I assume that meant
-if (r), but even simpler would be:
-
-	return tegra_dfll_register(...);
-
-> +static struct platform_driver tegra114_dfll_fcpu_driver = {
-...
-> +};
-> +
-> +module_platform_driver(tegra114_dfll_fcpu_driver);
-
-The blank line before module_platform_driver() is customarily omitted.
-
-> +MODULE_LICENSE("GPL");
-
-"GPL v2"
-
-> +MODULE_ALIAS("platform:" DRIVER_NAME);
-
-That isn't needed since we only probe using DT now.
+Thanks for the catch!
+Eric
