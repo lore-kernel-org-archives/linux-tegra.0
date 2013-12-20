@@ -1,38 +1,24 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Fri, 20 Dec 2013 09:29:51 -0700
-Message-ID: <52B4707F.4040303@wwwdotorg.org>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>	<CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>	<52B41B18.30302@nvidia.com> <CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com> <52B41F1B.3030005@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] ARM: tegra: modify Tegra30 USB2 default phy_type
+ to UTMI
+Date: Fri, 20 Dec 2013 09:52:30 -0700
+Message-ID: <52B475CE.1000402@wwwdotorg.org>
+References: <1387505333-3767-1-git-send-email-ebrower@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <52B41F1B.3030005@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: bilhuang <bilhuang@nvidia.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1387505333-3767-1-git-send-email-ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2013 03:42 AM, bilhuang wrote:
-> On 12/20/2013 06:33 PM, Viresh Kumar wrote:
->> On 20 December 2013 15:55, bilhuang <bilhuang@nvidia.com> wrote:
->>> Don't you think it worth creating a file here so this can be shared to
->>> arm64?
->>
->> We will see how to handle virtual devices when we will start getting
->> arm64 SoCs. Probably we might end up writing a single file in cpufreq,
->> if required, that will create virtual devices for every arm64 platform..
->>
->> So, some people might use it and others wouldn't.. But no platform
->> specific files for such stuff. So, the best we can do for now is to move
->> these to platform code as we are talking about arm32 SoC's for now
->> which do have a mach-* directory..
->>
-> OK thanks, this is suggested by Stephen earlier, I'll let him comment in
-> case he might think otherwise.
+On 12/19/2013 07:08 PM, Eric Brower wrote:
+> Modify Tegra30 default USB2 phy_type to UTMI; this matches
+> power-on-reset defaults and is expected to be the common case.
+> 
+> The current implementation is likely an incorrect
+> carry-over from Tegra20, where USB2 does default to ULPI.
 
-No, I definitely don't agree here. The rules for arch/arm64 are: no
-platform-specific code. We should immediately start planning for that.
-If this means renaming the file that creates the virtual device from
-tegra-cpufreq.c to something else, so be it, but we shouldn't go
-backwards and push stuff into the arch directories.
+The series, applied to Tegra's for-3.14/dt branch.
