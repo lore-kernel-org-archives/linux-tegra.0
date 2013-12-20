@@ -1,321 +1,211 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] ARM: multi_v7: copy most options from tegra_defconfig
-Date: Fri, 20 Dec 2013 13:41:32 -0700
-Message-ID: <1387572092-432-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PULL] drm/tegra: Changes for v3.14-rc1
+Date: Fri, 20 Dec 2013 23:12:11 +0100
+Message-ID: <20131220221209.GA4641@ulmo.nvidia.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-multi_v7_defconfig was missing a large number of options that were in
-tegra_defconfig. This patch adds them. The changes fall into the
-following categories:
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-* Enable more Tegra SoC options/drivers.
-* Enable more drivers for Tegra boards.
-* Enable more options that are useful for running distros.
+Hi Dave,
 
-The patch removes a few lines as well, simply because those options are
-now selected by something else, and "make savedefconfig" removes them. I
-verified that the options appear in .config after
-"make multi_v7_defconfig".
+The following changes since commit a4d86e5e42f5ceea2a076735c887cc49a885a043:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2: Don't enable EXT2_FS/EXT3_FS; EXT4_FS is already enabled, and
-    EXT4_USE_FOR_EXT23 is default y and so handles those filesystems too.
----
- arch/arm/configs/multi_v7_defconfig | 156 +++++++++++++++++++++++++++++++++---
- 1 file changed, 143 insertions(+), 13 deletions(-)
+  Merge tag 'tegra-for-3.14-powergate' into drm/for-next (2013-12-17 18:09:23 +0100)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 687e4e811b2a..400c7613509a 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1,7 +1,12 @@
-+CONFIG_SYSVIPC=y
- CONFIG_IRQ_DOMAIN_DEBUG=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_BLK_DEV_INITRD=y
-+CONFIG_EMBEDDED=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_MVEBU=y
- CONFIG_MACH_ARMADA_370=y
- CONFIG_MACH_ARMADA_XP=y
-@@ -11,8 +16,8 @@ CONFIG_ARCH_BERLIN=y
- CONFIG_MACH_BERLIN_BG2=y
- CONFIG_MACH_BERLIN_BG2CD=y
- CONFIG_GPIO_PCA953X=y
--CONFIG_ARCH_HIGHBANK=y
- CONFIG_ARCH_HI3xxx=y
-+CONFIG_ARCH_HIGHBANK=y
- CONFIG_ARCH_KEYSTONE=y
- CONFIG_ARCH_MXC=y
- CONFIG_MACH_IMX51_DT=y
-@@ -38,7 +43,7 @@ CONFIG_ARCH_TEGRA=y
- CONFIG_ARCH_TEGRA_2x_SOC=y
- CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
--CONFIG_TEGRA_PCI=y
-+CONFIG_ARCH_TEGRA_124_SOC=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
- CONFIG_ARCH_U8500=y
- CONFIG_MACH_HREFV60=y
-@@ -49,19 +54,53 @@ CONFIG_ARCH_VEXPRESS_CA9X4=y
- CONFIG_ARCH_VIRT=y
- CONFIG_ARCH_WM8850=y
- CONFIG_ARCH_ZYNQ=y
--CONFIG_SMP=y
-+CONFIG_TRUSTED_FOUNDATIONS=y
-+CONFIG_PCI=y
-+CONFIG_PCI_MSI=y
-+CONFIG_PCI_TEGRA=y
- CONFIG_HIGHPTE=y
-+CONFIG_CMA=y
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_ARM_ATAG_DTB_COMPAT=y
-+CONFIG_KEXEC=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_STAT_DETAILS=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_IDLE=y
- CONFIG_NET=y
-+CONFIG_PACKET=y
- CONFIG_UNIX=y
- CONFIG_INET=y
- CONFIG_IP_PNP=y
- CONFIG_IP_PNP_DHCP=y
-+CONFIG_IP_PNP_BOOTP=y
-+CONFIG_IP_PNP_RARP=y
-+CONFIG_IPV6_ROUTER_PREF=y
-+CONFIG_IPV6_OPTIMISTIC_DAD=y
-+CONFIG_INET6_AH=m
-+CONFIG_INET6_ESP=m
-+CONFIG_INET6_IPCOMP=m
-+CONFIG_IPV6_MIP6=m
-+CONFIG_IPV6_TUNNEL=m
-+CONFIG_IPV6_MULTIPLE_TABLES=y
-+CONFIG_CFG80211=m
-+CONFIG_MAC80211=m
-+CONFIG_RFKILL=y
-+CONFIG_RFKILL_INPUT=y
-+CONFIG_RFKILL_GPIO=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_DMA_CMA=y
- CONFIG_OMAP_OCP2SCP=y
-+CONFIG_MTD=y
-+CONFIG_MTD_M25P80=y
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_ICS932S401=y
-+CONFIG_APDS9802ALS=y
-+CONFIG_ISL29003=y
- CONFIG_BLK_DEV_SD=y
-+CONFIG_BLK_DEV_SR=y
-+CONFIG_SCSI_MULTI_LUN=y
- CONFIG_ATA=y
- CONFIG_SATA_AHCI_PLATFORM=y
- CONFIG_SATA_HIGHBANK=y
-@@ -70,12 +109,26 @@ CONFIG_NETDEVICES=y
- CONFIG_SUN4I_EMAC=y
- CONFIG_NET_CALXEDA_XGMAC=y
- CONFIG_KS8851=y
-+CONFIG_R8169=y
- CONFIG_SMSC911X=y
- CONFIG_STMMAC_ETH=y
--CONFIG_ICPLUS_PHY=y
--CONFIG_MDIO_SUN4I=y
- CONFIG_TI_CPSW=y
-+CONFIG_ICPLUS_PHY=y
-+CONFIG_USB_PEGASUS=y
-+CONFIG_USB_USBNET=y
-+CONFIG_USB_NET_SMSC75XX=y
-+CONFIG_USB_NET_SMSC95XX=y
-+CONFIG_BRCMFMAC=m
-+CONFIG_RT2X00=m
-+CONFIG_RT2800USB=m
-+CONFIG_INPUT_EVDEV=y
-+CONFIG_KEYBOARD_GPIO=y
-+CONFIG_KEYBOARD_TEGRA=y
- CONFIG_KEYBOARD_SPEAR=y
-+CONFIG_KEYBOARD_CROS_EC=y
-+CONFIG_MOUSE_PS2_ELANTECH=y
-+CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_MPU3050=y
- CONFIG_SERIO_AMBAKMI=y
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
-@@ -98,6 +151,9 @@ CONFIG_SERIAL_FSL_LPUART=y
- CONFIG_SERIAL_FSL_LPUART_CONSOLE=y
- CONFIG_SERIAL_ST_ASC=y
- CONFIG_SERIAL_ST_ASC_CONSOLE=y
-+CONFIG_I2C_CHARDEV=y
-+CONFIG_I2C_MUX=y
-+CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_DESIGNWARE_PLATFORM=y
- CONFIG_I2C_SIRF=y
- CONFIG_I2C_TEGRA=y
-@@ -106,22 +162,66 @@ CONFIG_SPI_OMAP24XX=y
- CONFIG_SPI_PL022=y
- CONFIG_SPI_SIRF=y
- CONFIG_SPI_TEGRA114=y
-+CONFIG_SPI_TEGRA20_SFLASH=y
- CONFIG_SPI_TEGRA20_SLINK=y
--CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_AS3722=y
-+CONFIG_PINCTRL_PALMAS=y
-+CONFIG_GPIO_SYSFS=y
- CONFIG_GPIO_GENERIC_PLATFORM=y
-+CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_TWL4030=y
--CONFIG_REGULATOR_GPIO=y
-+CONFIG_GPIO_PALMAS=y
-+CONFIG_GPIO_TPS6586X=y
-+CONFIG_GPIO_TPS65910=y
-+CONFIG_BATTERY_SBS=y
-+CONFIG_CHARGER_TPS65090=y
-+CONFIG_POWER_RESET_AS3722=y
-+CONFIG_POWER_RESET_GPIO=y
-+CONFIG_SENSORS_LM90=y
-+CONFIG_MFD_AS3722=y
-+CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_SPI=y
-+CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_PALMAS=y
-+CONFIG_MFD_TPS65090=y
-+CONFIG_MFD_TPS6586X=y
-+CONFIG_MFD_TPS65910=y
-+CONFIG_REGULATOR_VIRTUAL_CONSUMER=y
- CONFIG_REGULATOR_AB8500=y
-+CONFIG_REGULATOR_AS3722=y
-+CONFIG_REGULATOR_GPIO=y
-+CONFIG_REGULATOR_MAX8907=y
-+CONFIG_REGULATOR_PALMAS=y
- CONFIG_REGULATOR_TPS51632=y
- CONFIG_REGULATOR_TPS62360=y
-+CONFIG_REGULATOR_TPS65090=y
-+CONFIG_REGULATOR_TPS6586X=y
-+CONFIG_REGULATOR_TPS65910=y
- CONFIG_REGULATOR_TWL4030=y
- CONFIG_REGULATOR_VEXPRESS=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_USB_SUPPORT=y
- CONFIG_DRM=y
--CONFIG_TEGRA_HOST1X=y
- CONFIG_DRM_TEGRA=y
-+CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_FB_ARMCLCD=y
- CONFIG_FB_WM8505=y
- CONFIG_FB_SIMPLE=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+CONFIG_BACKLIGHT_PWM=y
-+CONFIG_FRAMEBUFFER_CONSOLE=y
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+CONFIG_SND_SOC=y
-+CONFIG_SND_SOC_TEGRA=y
-+CONFIG_SND_SOC_TEGRA_RT5640=y
-+CONFIG_SND_SOC_TEGRA_WM8753=y
-+CONFIG_SND_SOC_TEGRA_WM8903=y
-+CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
-+CONFIG_SND_SOC_TEGRA_ALC5632=y
-+CONFIG_SND_SOC_TEGRA_MAX98090=y
- CONFIG_USB=y
- CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
-@@ -132,8 +232,6 @@ CONFIG_USB_STORAGE=y
- CONFIG_USB_CHIPIDEA=y
- CONFIG_USB_CHIPIDEA_HOST=y
- CONFIG_AB8500_USB=y
--CONFIG_NOP_USB_XCEIV=y
--CONFIG_OMAP_USB2=y
- CONFIG_OMAP_USB3=y
- CONFIG_SAMSUNG_USB2PHY=y
- CONFIG_SAMSUNG_USB3PHY=y
-@@ -144,19 +242,32 @@ CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_ARMMMCI=y
- CONFIG_MMC_SDHCI=y
--CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SDHCI_ESDHC_IMX=y
- CONFIG_MMC_SDHCI_TEGRA=y
- CONFIG_MMC_SDHCI_SPEAR=y
- CONFIG_MMC_SDHCI_BCM_KONA=y
- CONFIG_MMC_OMAP=y
- CONFIG_MMC_OMAP_HS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_ONESHOT=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_GPIO=y
-+CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
-+CONFIG_LEDS_TRIGGER_TRANSIENT=y
-+CONFIG_LEDS_TRIGGER_CAMERA=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
- CONFIG_EDAC_HIGHBANK_L2=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_AS3722=y
-+CONFIG_RTC_DRV_MAX8907=y
-+CONFIG_RTC_DRV_PALMAS=y
- CONFIG_RTC_DRV_TWL4030=y
-+CONFIG_RTC_DRV_TPS6586X=y
-+CONFIG_RTC_DRV_TPS65910=y
-+CONFIG_RTC_DRV_EM3027=y
- CONFIG_RTC_DRV_PL031=y
- CONFIG_RTC_DRV_VT8500=y
- CONFIG_RTC_DRV_TEGRA=y
-@@ -165,21 +276,40 @@ CONFIG_DW_DMAC=y
- CONFIG_TEGRA20_APB_DMA=y
- CONFIG_STE_DMA40=y
- CONFIG_SIRF_DMA=y
--CONFIG_TI_EDMA=y
- CONFIG_PL330_DMA=y
- CONFIG_IMX_SDMA=y
- CONFIG_IMX_DMA=y
- CONFIG_MXS_DMA=y
- CONFIG_DMA_OMAP=y
-+CONFIG_STAGING=y
-+CONFIG_SENSORS_ISL29018=y
-+CONFIG_SENSORS_ISL29028=y
-+CONFIG_MFD_NVEC=y
-+CONFIG_KEYBOARD_NVEC=y
-+CONFIG_SERIO_NVEC_PS2=y
-+CONFIG_NVEC_POWER=y
-+CONFIG_NVEC_PAZ00=y
-+CONFIG_TEGRA_IOMMU_GART=y
-+CONFIG_TEGRA_IOMMU_SMMU=y
-+CONFIG_MEMORY=y
-+CONFIG_IIO=y
-+CONFIG_AK8975=y
- CONFIG_PWM=y
-+CONFIG_PWM_TEGRA=y
- CONFIG_PWM_VT8500=y
-+CONFIG_OMAP_USB2=y
- CONFIG_EXT4_FS=y
-+CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
-+CONFIG_SQUASHFS=y
-+CONFIG_SQUASHFS_LZO=y
-+CONFIG_SQUASHFS_XZ=y
- CONFIG_NFS_FS=y
- CONFIG_NFS_V3_ACL=y
- CONFIG_NFS_V4=y
- CONFIG_ROOT_NFS=y
- CONFIG_PRINTK_TIME=y
- CONFIG_DEBUG_FS=y
--CONFIG_DEBUG_KERNEL=y
-+CONFIG_MAGIC_SYSRQ=y
- CONFIG_LOCKUP_DETECTOR=y
-+CONFIG_CRYPTO_DEV_TEGRA_AES=y
--- 
-1.8.1.5
+are available in the git repository at:
+
+  git://anongit.freedesktop.org/tegra/linux tags/drm/for-3.14-rc1
+
+for you to fetch changes up to 81239c6f7972d4909a6862d08ed1d2943983ffd4:
+
+  drm/tegra: fix compile w/ CONFIG_DYNAMIC_DEBUG (2013-12-20 15:56:33 +0100)
+
+As previously discussed on IRC, this is based on two dependency branches
+that Stephen published. I've furthermore pulled in v3.13-rc4 to avoid
+conflicts with some fixes that went into 3.13-rc4. The diffstat below is
+just the DRM changes, though. I hope that's fine, but if you'd rather
+see the whole list of changes that this pulls in I can regenerate the
+pull request.
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+drm/tegra: Changes for v3.14-rc1
+
+This series of changes brings DRM panel support as well as initial code
+to register DSI hosts and peripherals and bind them to DSI drivers. The
+panel and DSI code are both used by the simple panel driver.
+
+The Tegra-specific changes build on top of this work to add support for
+various panels found on Tegra boards. New drivers enable the DSI host
+found on Tegra114 and a special hardware block that calibrates the pads
+used for DSI and CSI. The host1x and the display controller drivers gain
+basic Tegra124 support. To round of the new features, the DRM driver now
+sports a very simple PRIME implementation.
+
+In addition there are various improvements such as the host1x API being
+exported so that client drivers (like the Tegra DRM driver) can be built
+as modules. HDMI now does better power management and legacy FBDEV can
+now be disabled via Kconfig (though it's still enabled by default). A
+few sparse warnings have been squashed and various parts of the code
+have become more robust.
+
+----------------------------------------------------------------
+Andrzej Hajda (1):
+      drm: Add MIPI DSI bus support
+
+Dan Carpenter (1):
+      drm/tegra: Fix small leak on error in tegra_fb_alloc()
+
+Paul Walmsley (1):
+      gpu: host1x: clk_round_rate() can return a zero upon error
+
+Stephen Warren (1):
+      drm/tegra: fix compile w/ CONFIG_DYNAMIC_DEBUG
+
+Thierry Reding (28):
+      of: Add MIPI DSI bus device tree bindings
+      of: Add simple panel device tree binding
+      drm: Add panel support
+      drm/panel: Add simple panel support
+      drm/panel: Add support for Panasonic VVX10F004B0
+      drm/tegra: Implement panel support
+      gpu: host1x: Update host1x device tree example
+      gpu: host1x: Add MIPI pad calibration DT bindings
+      gpu: host1x: Add MIPI pad calibration support
+      gpu: host1x: Export public API
+      gpu: host1x: Use the correct HW headers for host1x02
+      gpu: host1x: Fix more sparse warnings
+      gpu: host1x: Increase compile test coverage
+      gpu: host1x: Fix build warnings
+      gpu: host1x: Add Tegra124 support
+      drm/tegra: Allow the driver to be built as a module
+      drm/tegra: Increase compile test coverage
+      drm/tegra: Remove spurious blank line
+      drm/tegra: Do not export tegra_bo_ops
+      drm/tegra: Fix HDMI audio frequency typo
+      drm/tegra: Track HDMI enable state
+      drm/tegra: Disable outputs for power-saving
+      drm/tegra: Add DSI support
+      drm/tegra: Sort reverse-dependencies alphabetically
+      drm/tegra: Make legacy fbdev support optional
+      drm/tegra: Add Tegra124 DC support
+      drm/tegra: Relocate some output-specific code
+      drm/tegra: Add PRIME support
+
+Wei Yongjun (1):
+      drm/tegra: Fix return value check
+
+ .../bindings/gpu/nvidia,tegra20-host1x.txt         |  16 +-
+ .../devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt  |  98 +++
+ .../bindings/mipi/nvidia,tegra114-mipi.txt         |  41 +
+ .../devicetree/bindings/panel/auo,b101aw03.txt     |   7 +
+ .../bindings/panel/chunghwa,claa101wb03.txt        |   7 +
+ .../bindings/panel/panasonic,vvx10f004b00.txt      |   7 +
+ .../devicetree/bindings/panel/simple-panel.txt     |  21 +
+ drivers/gpu/drm/Kconfig                            |   6 +
+ drivers/gpu/drm/Makefile                           |   3 +
+ drivers/gpu/drm/drm_mipi_dsi.c                     | 315 +++++++
+ drivers/gpu/drm/drm_panel.c                        | 100 +++
+ drivers/gpu/drm/panel/Kconfig                      |  19 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-simple.c               | 497 +++++++++++
+ drivers/gpu/drm/tegra/Kconfig                      |  24 +-
+ drivers/gpu/drm/tegra/Makefile                     |   2 +
+ drivers/gpu/drm/tegra/dc.c                         |  66 +-
+ drivers/gpu/drm/tegra/dc.h                         |   9 +
+ drivers/gpu/drm/tegra/drm.c                        |  21 +-
+ drivers/gpu/drm/tegra/drm.h                        |  12 +
+ drivers/gpu/drm/tegra/dsi.c                        | 971 +++++++++++++++++++++
+ drivers/gpu/drm/tegra/dsi.h                        | 134 +++
+ drivers/gpu/drm/tegra/fb.c                         |  45 +-
+ drivers/gpu/drm/tegra/gem.c                        | 183 +++-
+ drivers/gpu/drm/tegra/gem.h                        |   9 +-
+ drivers/gpu/drm/tegra/hdmi.c                       |  60 +-
+ drivers/gpu/drm/tegra/mipi-phy.c                   | 138 +++
+ drivers/gpu/drm/tegra/mipi-phy.h                   |  65 ++
+ drivers/gpu/drm/tegra/output.c                     |  44 +-
+ drivers/gpu/drm/tegra/rgb.c                        |  45 +
+ drivers/gpu/host1x/Kconfig                         |   2 +-
+ drivers/gpu/host1x/Makefile                        |   4 +-
+ drivers/gpu/host1x/bus.c                           |   2 +
+ drivers/gpu/host1x/channel.c                       |   5 +
+ drivers/gpu/host1x/debug.c                         |  13 +-
+ drivers/gpu/host1x/dev.c                           |  28 +-
+ drivers/gpu/host1x/dev.h                           |   2 +
+ drivers/gpu/host1x/hw/host1x02.c                   |   4 +-
+ drivers/gpu/host1x/hw/host1x02_hardware.h          | 142 +++
+ drivers/gpu/host1x/hw/host1x04.c                   |  42 +
+ drivers/gpu/host1x/hw/host1x04.h                   |  26 +
+ drivers/gpu/host1x/hw/host1x04_hardware.h          | 142 +++
+ drivers/gpu/host1x/hw/hw_host1x02_uclass.h         |   6 +
+ drivers/gpu/host1x/hw/hw_host1x04_channel.h        | 121 +++
+ drivers/gpu/host1x/hw/hw_host1x04_sync.h           | 243 ++++++
+ drivers/gpu/host1x/hw/hw_host1x04_uclass.h         | 181 ++++
+ drivers/gpu/host1x/job.c                           |   6 +
+ drivers/gpu/host1x/mipi.c                          | 275 ++++++
+ drivers/gpu/host1x/syncpt.c                        |   9 +
+ include/drm/drm_mipi_dsi.h                         | 158 ++++
+ include/drm/drm_panel.h                            |  82 ++
+ include/linux/host1x.h                             |   6 +
+ 52 files changed, 4380 insertions(+), 85 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mipi/dsi/mipi-dsi-bus.txt
+ create mode 100644 Documentation/devicetree/bindings/mipi/nvidia,tegra114-mipi.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/auo,b101aw03.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/chunghwa,claa101wb03.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/panasonic,vvx10f004b00.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/simple-panel.txt
+ create mode 100644 drivers/gpu/drm/drm_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/drm_panel.c
+ create mode 100644 drivers/gpu/drm/panel/Kconfig
+ create mode 100644 drivers/gpu/drm/panel/Makefile
+ create mode 100644 drivers/gpu/drm/panel/panel-simple.c
+ create mode 100644 drivers/gpu/drm/tegra/dsi.c
+ create mode 100644 drivers/gpu/drm/tegra/dsi.h
+ create mode 100644 drivers/gpu/drm/tegra/mipi-phy.c
+ create mode 100644 drivers/gpu/drm/tegra/mipi-phy.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x02_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x04.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x04.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x04_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x04_channel.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x04_sync.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x04_uclass.h
+ create mode 100644 drivers/gpu/host1x/mipi.c
+ create mode 100644 include/drm/drm_mipi_dsi.h
+ create mode 100644 include/drm/drm_panel.h
+
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJStMC5AAoJEN0jrNd/PrOhsYgQAIo/1W2nP3XJ7wQYYRLdsJAP
+qzeM8kJnVCt38RF7i/Zio6JXfOql/sSa2PzVFs7ErfluvgiQeut6p1jXU0fSWuRk
+W1XoCIf/uFWhXpLvJ3tYDEL79uJgRqwLu4CwBPtv+32Cnn2K1pX2aaC5Nmww9HzP
+fVhFhrbLA44A6ebqT2G0REQfGvd+jpFyT6PSe4LwCM8iOo+uyrdwh7oSSgh8HRG/
+3t3Jy+UoJRymp0o1I5GR9as0QuByIYFDBJhx5IfZaCbYzedCMjtG8q6cELC0GWpV
+wUknaj147FnUEzr2UfDcGqjKirP1yV5jou5m66nFNNuZ1FHw33kdm1Li2UZrCE96
+Br3KJ2NGeeTSakPiI7PaiXEotGuTMRdUYfpwZ1nk3Bze4L4TKDD62fj7RblcMPQL
+X+4lLmP5Gtd1mGXAXkZ0J5cUdW4DOsFuwbp+wvWsvGPX3T8p+ATirKPXB7r17Ncm
+4zmXseIoH5sDZIwG5TFa3gTvnKoVAgX+s4aFjvcUgMzRaPS+x6C0p0iP7t/vzWZt
+Cic5e2IHSqQi1nakWJgfiJjMHnFK0eRGt/o9J54kfq/oNUwBcAPCo6fw28gvTHhM
+O1wFTzIwBhF2/2wF4ZLJTocm+Yb4613axBlqxW7iNp/cXJw2/U0sIFCCjAeN2gzR
+Ywn7QLpuZAXh5mRb4qyK
+=USHe
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
