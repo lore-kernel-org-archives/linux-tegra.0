@@ -1,31 +1,56 @@
-From: bilhuang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Fri, 20 Dec 2013 18:42:35 +0800
-Message-ID: <52B41F1B.3030005@nvidia.com>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>	<CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>	<52B41B18.30302@nvidia.com> <CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
+Date: Fri, 20 Dec 2013 16:16:02 +0530
+Message-ID: <52B41FEA.7020608@nvidia.com>
+References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B355EC.9040306@wwwdotorg.org> <52B3E968.8090906@nvidia.com> <20131220102542.GJ27787@ulmo.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131220102542.GJ27787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2013 06:33 PM, Viresh Kumar wrote:
-> On 20 December 2013 15:55, bilhuang <bilhuang@nvidia.com> wrote:
->> Don't you think it worth creating a file here so this can be shared to
->> arm64?
+On Friday 20 December 2013 03:55 PM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 >
-> We will see how to handle virtual devices when we will start getting
-> arm64 SoCs. Probably we might end up writing a single file in cpufreq,
-> if required, that will create virtual devices for every arm64 platform..
+> On Fri, Dec 20, 2013 at 12:23:28PM +0530, Laxman Dewangan wrote:
+>> On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
+>>> On 12/19/2013 09:06 AM, Thierry Reding wrote:
+>>> (Laxman, as an aside, I'm not sure why you're upstreaming patches that
+>>> don't exactly match the existing kernel support for this board...)
+>> I did not get this based on what context it is. Can you please elaborate
+>> where I am missing the stuff?
+>>
+>>
+>>>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+>>>> +				sd0 {
+>>>> +					regulator-name = "vdd_cpu";
+>>>> +					regulator-min-microvolt = <700000>;
+>>>> +					regulator-max-microvolt = <1350000>;
+>>> Laxman's patch has:
+>>>
+>>>   					regulator-max-microvolt = <1400000>;
+>> We have the Laguna platform on which Android and L4T is running fine. This
+>> is based on same PMIC used for Venice2. As we are running the more cpu
+>> stress on Laguna, I took this parameter from the Laguna Power tree where it
+>> is maximum 1.4V. Chrome have maximum as 1.35mV.
+> Whether this is used on Android, ChromeOS or L4T doesn't matter at all.
+> It specifies hardware constraints and thus must be agnostic of the OS
+> and workload.
 >
-> So, some people might use it and others wouldn't.. But no platform
-> specific files for such stuff. So, the best we can do for now is to move
-> these to platform code as we are talking about arm32 SoC's for now
-> which do have a mach-* directory..
+> Also this file describes the power tree for Venice2, so using values
+> from Laguna is wrong, no matter how similar they are.
 >
-OK thanks, this is suggested by Stephen earlier, I'll let him comment in 
-case he might think otherwise.
+
+Here, I used term "similar" means the which rail is feeding to Tegra's 
+which vdd?
+So by this, if AMS SD0 is feeding to Tegra vdd-cpu then it should be 
+same for Laguna.
+This is maximum possible for Tegra cpu  from PMIC. Tegra can use desired 
+voltage limited to this max based on their sku for going to maximum 
+frequency.
+If we program less voltage as maximum then Tegra will not go to higher 
+frequency assuming PMIC limitation which is not correct.
