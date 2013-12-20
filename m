@@ -1,93 +1,38 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Fri, 20 Dec 2013 15:01:40 +0530
-Message-ID: <CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 00/10] ARM: tegra: DSI and panel support
+Date: Fri, 20 Dec 2013 11:16:23 +0100
+Message-ID: <1462944.fRZN5UYlz3@fb07-iapwap2>
+References: <1387468774-14216-1-git-send-email-treding@nvidia.com> <52B35346.1070202@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bill Huang <bilhuang@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52B35346.1070202-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 19 December 2013 16:48, Bill Huang <bilhuang@nvidia.com> wrote:
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index ce52ed9..22dfc43 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -225,6 +225,18 @@ config ARM_TEGRA_CPUFREQ
->         help
->           This adds the CPUFreq driver support for TEGRA SOCs.
->
-> +config ARM_TEGRA20_CPUFREQ
-> +       bool "NVIDIA TEGRA20"
-> +       depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
+Hi,
 
-Probably just in case you agree to my next comment:
+Am Donnerstag, 19. Dezember 2013, 13:12:54 schrieb Stephen Warren:
+> On 12/19/2013 08:59 AM, Thierry Reding wrote:
+> > This series of patches add support for Tegra114 display, DSI, HDMI, gr2d
+> > and gr3d. Both DSI and HDMI outputs are enabled on Dalmore.
+> > 
+> > The LVDS panels on Harmony and Cardhu are added to the corresponding DTS
+> > files and support for panels is enabled in the Tegra defconfig.
+> 
+> Very nice, and it all works and applies without conflicts:-) :-) :-)
+> 
+> Now I must run off and do the panels for Seaboard, Ventana, and the
+> AC100 sometime.
 
-            depends on ARCH_TEGRA_2x_SOC
+no need for AC100, I'll submit a patch for it soon. They are already in one of 
+my testing branches [1].
 
+Thanks
 
-> +       default y
-> +       help
-> +         This enables Tegra20 cpufreq functionality, it adds
-> +         Tegra20 CPU frequency ladder and the call back functions
-> +         to set CPU rate. All the non-SoC dependant codes are
-> +         controlled by the config ARM_TEGRA_CPUFREQ.
-> +
-> +         If in doubt, say N.
+Marc
 
-
-> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
->  /*
-> + * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
->   *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
->   *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
->   */
->
->  #include <linux/kernel.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/tegra-cpufreq.h>
-> +
-> +int __init tegra_cpufreq_init(void)
-> +{
-> +       struct device_node *root;
-> +
-> +       root = of_find_node_by_path("/");
-> +       if (root) {
-> +               struct platform_device_info devinfo;
-> +               const char *compat;
-> +               int i;
-> +
-> +               memset(&devinfo, 0, sizeof(devinfo));
-> +               i = of_property_count_strings(root, "compatible");
-> +               if (i > 0) {
-> +                       of_property_read_string_index(
-> +                               root, "compatible", i - 1, &compat);
-> +                       devinfo.name = kasprintf(
-> +                                       GFP_KERNEL, "%s-cpufreq", compat);
-> +                       platform_device_register_full(&devinfo);
-> +               }
->         }
-> +EXPORT_SYMBOL(tegra_cpufreq_init);
-
-Probably above is all that is present in this file. This is just about adding
-the right cpufreq device so that right driver can get probed.
-
-I don't think this code is present at the right place. We don't need a file
-in cpufreq/ which is there just to add a device :) ..
-
-Probably move this piece of code to arch/mach-tegra where you are calling
-init.
-
-And so remove ARM_TEGRA_CPUFREQ config option completely.
+[1] https://gitorious.org/ac100/marvin24s-kernel/commits/eab9a9a58b23d317c8cef9ba9b0a6ff2d7e25136
