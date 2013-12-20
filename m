@@ -1,71 +1,63 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
-Date: Fri, 20 Dec 2013 22:55:52 +0530
-Message-ID: <52B47DA0.6040708@nvidia.com>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B355EC.9040306@wwwdotorg.org> <52B3E968.8090906@nvidia.com> <20131220102542.GJ27787@ulmo.nvidia.com> <52B41FEA.7020608@nvidia.com> <52B476EA.2040401@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCHv7 06/12] ARM: tegra: create a DT header defining SWGROUP
+ ID
+Date: Fri, 20 Dec 2013 10:36:07 -0700
+Message-ID: <52B48007.7050002@wwwdotorg.org>
+References: <1386835033-4701-1-git-send-email-hdoyu@nvidia.com> <1386835033-4701-7-git-send-email-hdoyu@nvidia.com> <52B1568F.1050305@gmail.com> <52B1CCF1.2040907@wwwdotorg.org> <20131220123554.GQ27787@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B476EA.2040401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20131220123554.GQ27787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Zhang <nvmarkzhang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 20 December 2013 10:27 PM, Stephen Warren wrote:
-> On 12/20/2013 03:46 AM, Laxman Dewangan wrote:
->> On Friday 20 December 2013 03:55 PM, Thierry Reding wrote:
->>> * PGP Signed by an unknown key
+On 12/20/2013 05:35 AM, Thierry Reding wrote:
+> On Wed, Dec 18, 2013 at 09:27:29AM -0700, Stephen Warren wrote:
+>> On 12/18/2013 01:02 AM, Mark Zhang wrote:
+>>> On 12/12/2013 03:57 PM, Hiroshi Doyu wrote:
+>>>> Create a header file to define the swgroup IDs used by the IOMMU(SMMU)
+>>>> binding. "swgroup" is a group of H/W clients which a Tegra SoC
+>>>> supports. This unique ID can be used to calculate MC_SMMU_<swgroup
+>>>> name>_ASID_0 register offset and MC_<swgroup name>_HOTRESET_*_0
+>>>> register bit. This will allow the same header to be used by both
+>>>> device tree files, and drivers implementing this binding, which
+>>>> guarantees that the two stay in sync. This also makes device trees
+>>>> more readable by using names instead of magic numbers. For HOTRESET
+>>>> bit shifting we need another conversion table, which will come later.
+>>
+>>>> diff --git a/include/dt-bindings/memory/tegra-swgroup.h b/include/dt-bindings/memory/tegra-swgroup.h
+>>
+>>>> +#define TEGRA_SWGROUP_MPE	11	/* 0x264 */
+>>>> +#define TEGRA_SWGROUP_MSENC	SWGROUP_MPE
 >>>
->>> On Fri, Dec 20, 2013 at 12:23:28PM +0530, Laxman Dewangan wrote:
->>>> On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
->>>>> On 12/19/2013 09:06 AM, Thierry Reding wrote:
->>>>> (Laxman, as an aside, I'm not sure why you're upstreaming patches that
->>>>> don't exactly match the existing kernel support for this board...)
->>>> I did not get this based on what context it is. Can you please elaborate
->>>> where I am missing the stuff?
->>>>
->>>>
->>>>>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
->>>>>> b/arch/arm/boot/dts/tegra124-venice2.dts
->>>>>> +                sd0 {
->>>>>> +                    regulator-name = "vdd_cpu";
->>>>>> +                    regulator-min-microvolt = <700000>;
->>>>>> +                    regulator-max-microvolt = <1350000>;
->>>>> Laxman's patch has:
->>>>>
->>>>>                        regulator-max-microvolt = <1400000>;
->>>> We have the Laguna platform on which Android and L4T is running fine.
->>>> This
->>>> is based on same PMIC used for Venice2. As we are running the more cpu
->>>> stress on Laguna, I took this parameter from the Laguna Power tree
->>>> where it
->>>> is maximum 1.4V. Chrome have maximum as 1.35mV.
->>> Whether this is used on Android, ChromeOS or L4T doesn't matter at all.
->>> It specifies hardware constraints and thus must be agnostic of the OS
->>> and workload.
+>>> Need to change this to:
 >>>
->>> Also this file describes the power tree for Venice2, so using values
->>> from Laguna is wrong, no matter how similar they are.
+>>> #define TEGRA_SWGROUP_MSENC	11
 >>>
->> Here, I used term "similar" means the which rail is feeding to Tegra's
->> which vdd?
->> So by this, if AMS SD0 is feeding to Tegra vdd-cpu then it should be
->> same for Laguna.
-> Look, this situation is very simple. This file describe Venice2. It
-> doesn't matter whether Laguna "should be" similar to Venice2 or not, the
-> file needs to describe Venice2 and not Laguna.
->
-> Equally, we have a downstream kernel that fully supports Venice2. There
-> is therefore absolutely ZERO reason why we should use the downstream
-> Laguna board support to create the upstream Venice2 board support,
-> rather than using the downstream Venice2 board support to create the
-> upstream Venice2 board support.
->
-> Please do let me know that you fully understand this issue. If not,
-> future patches from you are going to need a heck of a lot more detailed
-> review and manual checking, rather than my trusting you got it right.
+>>> The reason is that, this makes "TEGRA_SWGROUP_BIT" doesn't work. So if I
+>>> write "TEGRA_SWGROUP_CELLS(MSENC)" in dt, that causes a dt compiling error.
+>>
+>> I guess it's because TEGRA_SWGROUP_BIT needs to expand its argument
+>> twice, which can be done.
+>>
+>> That all said, just defining all the names directly to constants is
+>> probably the most direct fix.
+> 
+> Erm... isn't this simply a typo, where:
+> 
+> 	#define TEGRA_SWGROUP_MSENC	SWGROUP_MPE
+> 
+> should simply be
+> 
+> 	#define TEGRA_SWGROUP_MSENC	TEGRA_SWGROUP_MPE
+> 
+> ?
+> 
+> That certainly works for me.
 
-I like to continue this discussion internally so that we can have proper 
-expectations before sending patches.
+You're right. I guess ## is defined to re-expand its result, so
+TEGRA_SWGROUP_BIT(ISP2) -> TEGRA_SWGROUP_##ISP2 -> TEGRA_SWGROUP_ISP2 ->
+TEGRA_SWGROUP_ISP -> 8.
