@@ -1,34 +1,31 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 5/6] ARM: DTS: tegra: add DFLL integration to the Dalmore
- DTS file
-Date: Thu, 19 Dec 2013 17:10:17 -0700
-Message-ID: <52B38AE9.2030209@wwwdotorg.org>
-References: <20131219122857.3226.42830.stgit@tamien> <20131219124929.3226.79335.stgit@tamien>
+Subject: Re: [PATCH 03/10] ARM: tegra: Add MIPI calibration DT entries for
+ Tegra114
+Date: Thu, 19 Dec 2013 17:11:00 -0700
+Message-ID: <52B38B14.8080605@wwwdotorg.org>
+References: <1387468774-14216-1-git-send-email-treding@nvidia.com> <1387468774-14216-4-git-send-email-treding@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131219124929.3226.79335.stgit@tamien>
+In-Reply-To: <1387468774-14216-4-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthew Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/2013 05:49 AM, Paul Walmsley wrote:
-> Expose the DFLL device on the NVIDIA Tegra114 Dalmore board, and connect
-> the DFLL (and FCPU cluster) voltage regulator.
+On 12/19/2013 08:59 AM, Thierry Reding wrote:
+> Add a device node for the MIPI calibration block on Tegra114. There is
+> no need to disable it by default because it only enables the clock while
+> performing calibration and therefore shouldn't be consuming any power
+> when unused.
 
-> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
 
-> +NVIDIA Tegra114 DFLL clocksource data in the board DTS file
-> +
-> +Optional properties:
-> +
-> +- status : device availability -- managed by the DT integration code, not
-> +           the DFLL driver.  Should be set to "okay" if the DFLL is to be
-> +           used on this board type.
+> +	mipi: mipi {
 
-There's certainly no need to document the same DT property twice. The DT
-docs are about documenting the schema. If the DT author decides to split
-the properties between a .dtsi and a .dts file, that's irrelevant to the
-schema.
+That should be:
+
+	mipi: mipi@700e3000 {
+
+I fixed it up for you.
