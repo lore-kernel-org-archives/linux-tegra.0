@@ -1,51 +1,71 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
-Date: Fri, 20 Dec 2013 10:02:38 -0700
-Message-ID: <52B4782E.8060904@wwwdotorg.org>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B3695D.70601@wwwdotorg.org> <20131220111442.GK27787@ulmo.nvidia.com>
+Date: Fri, 20 Dec 2013 22:55:52 +0530
+Message-ID: <52B47DA0.6040708@nvidia.com>
+References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B355EC.9040306@wwwdotorg.org> <52B3E968.8090906@nvidia.com> <20131220102542.GJ27787@ulmo.nvidia.com> <52B41FEA.7020608@nvidia.com> <52B476EA.2040401@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131220111442.GK27787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <52B476EA.2040401-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/20/2013 04:14 AM, Thierry Reding wrote:
-> On Thu, Dec 19, 2013 at 02:47:09PM -0700, Stephen Warren wrote:
->> On 12/19/2013 09:06 AM, Thierry Reding wrote:
->>> This also adds the vmmc-supply property to the SDMMC node on Venice2.
->>> Otherwise the core will turn the regulator off automatically because it
->>> is unused.
->>
->> Note: If I revert Laxman's "" and apply your patches 01/10 and 02/10 in
->> its place, then I see the following during boot, and audio playback
->> doesn't work any more:
->>
->>> [   14.768649] max98090 0-0010: ASoC: Right Receiver Mixer DAPM update failed: -121
->>> [   14.776715] max98090 0-0010: ASoC: Left Receiver Mixer DAPM update failed: -121
->>> [   14.784601] max98090 0-0010: ASoC: Right Speaker Mixer DAPM update failed: -121
->>> [   14.792602] max98090 0-0010: ASoC: Left Speaker Mixer DAPM update failed: -121
->>> [   14.800423] max98090 0-0010: ASoC: Right Headphone Mixer DAPM update failed: -121
->>> [   14.808655] max98090 0-0010: ASoC: Left Headphone Mixer DAPM update failed: -121
->>> [   14.817628] max98090 0-0010: ASoC: Right ADC Mixer DAPM update failed: -121
->>> [   14.825582] max98090 0-0010: ASoC: Left ADC Mixer DAPM update failed: -121
-> 
-> That's odd, I don't those errors in my local tree. When I try to play
-> back audio I do get this one:
-> 
-> 	[  380.093679] max98090 0-0010: No audio clocks configured
+On Friday 20 December 2013 10:27 PM, Stephen Warren wrote:
+> On 12/20/2013 03:46 AM, Laxman Dewangan wrote:
+>> On Friday 20 December 2013 03:55 PM, Thierry Reding wrote:
+>>> * PGP Signed by an unknown key
+>>>
+>>> On Fri, Dec 20, 2013 at 12:23:28PM +0530, Laxman Dewangan wrote:
+>>>> On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
+>>>>> On 12/19/2013 09:06 AM, Thierry Reding wrote:
+>>>>> (Laxman, as an aside, I'm not sure why you're upstreaming patches that
+>>>>> don't exactly match the existing kernel support for this board...)
+>>>> I did not get this based on what context it is. Can you please elaborate
+>>>> where I am missing the stuff?
+>>>>
+>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts
+>>>>>> b/arch/arm/boot/dts/tegra124-venice2.dts
+>>>>>> +                sd0 {
+>>>>>> +                    regulator-name = "vdd_cpu";
+>>>>>> +                    regulator-min-microvolt = <700000>;
+>>>>>> +                    regulator-max-microvolt = <1350000>;
+>>>>> Laxman's patch has:
+>>>>>
+>>>>>                        regulator-max-microvolt = <1400000>;
+>>>> We have the Laguna platform on which Android and L4T is running fine.
+>>>> This
+>>>> is based on same PMIC used for Venice2. As we are running the more cpu
+>>>> stress on Laguna, I took this parameter from the Laguna Power tree
+>>>> where it
+>>>> is maximum 1.4V. Chrome have maximum as 1.35mV.
+>>> Whether this is used on Android, ChromeOS or L4T doesn't matter at all.
+>>> It specifies hardware constraints and thus must be agnostic of the OS
+>>> and workload.
+>>>
+>>> Also this file describes the power tree for Venice2, so using values
+>>> from Laguna is wrong, no matter how similar they are.
+>>>
+>> Here, I used term "similar" means the which rail is feeding to Tegra's
+>> which vdd?
+>> So by this, if AMS SD0 is feeding to Tegra vdd-cpu then it should be
+>> same for Laguna.
+> Look, this situation is very simple. This file describe Venice2. It
+> doesn't matter whether Laguna "should be" similar to Venice2 or not, the
+> file needs to describe Venice2 and not Laguna.
+>
+> Equally, we have a downstream kernel that fully supports Venice2. There
+> is therefore absolutely ZERO reason why we should use the downstream
+> Laguna board support to create the upstream Venice2 board support,
+> rather than using the downstream Venice2 board support to create the
+> upstream Venice2 board support.
+>
+> Please do let me know that you fully understand this issue. If not,
+> future patches from you are going to need a heck of a lot more detailed
+> review and manual checking, rather than my trusting you got it right.
 
-I do see that too. In practice it's harmless since audio does work, and
-I /think/ it's really a false startup-condition error from the CODEC
-driver, but I need to investigate it sometime.
-
-> But other than that everything seems to work fine. I don't hear anything
-> on the speakers or the headphones, but I'm likely missing the proper
-> mixer settings. Can you provide an asound.conf that works for you?
-
-Yes, you will need to configure the mixer. Our internal kernel testing
-wiki page has asound.state attached. I'll send you a link to that
-internally.
+I like to continue this discussion internally so that we can have proper 
+expectations before sending patches.
