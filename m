@@ -1,147 +1,80 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] drm/tegra: Fix the error handling in tegra_dsi_probe()
-Date: Fri, 20 Dec 2013 10:50:53 +0800
-Message-ID: <CAPgLHd-FVD8fOrQFexWDMcr7RSkuuxQDRgbQeJbfQMvg4DpM7g@mail.gmail.com>
+From: Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 10/10] ARM: tegra: Enable USB on Venice2
+Date: Fri, 20 Dec 2013 10:59:44 +0800
+Message-ID: <1387508384.26603.42.camel@jilin-desktop>
+References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
+	 <1387469182-14398-11-git-send-email-treding@nvidia.com>
+	 <52B36720.8080205@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52B36720.8080205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+About USB1 issue, for chips after Tegra30 (including Tegra30), BIASPD is
+controlled by USB1 controller.
+In ehci-tegra.c probe phase, we assert reset and deassert reset on
+controller clock.
+If initializing sequence follows USB1 and then USB2, we are safe.
+If initializing sequence follows USB2 and then USB1, then in
+phy-tegra-usb.c a counter utmip_pad_count which has been increased for
+USB2 will prevent UTMIP_BIASPD from being cleared while initializing for
+USB1 controller (UTMIP_BIASPD will be set again after asserting and
+deasserting reset on USB1 controller clock in ehci-tegra.c probe for
+USB1 controller).
 
-Fix the error handling to release all alloced resources before
-return from tegra_dsi_probe() in the error handling case.
+There are several ways to fix.
+The local workaround I use is as following in phy-tegra-usb.c.
 
-Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
----
- drivers/gpu/drm/tegra/dsi.c | 53 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+static void utmip_pad_power_on(struct tegra_usb_phy *phy)
+{
+	unsigned long val, flags;
+	void __iomem *base = phy->pad_regs;
+	struct tegra_utmip_config *config = phy->config;
 
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index d452faab..677ebca 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -847,61 +847,70 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 	dsi->lanes = 4;
- 
- 	dsi->rst = devm_reset_control_get(&pdev->dev, "dsi");
--	if (IS_ERR(dsi->rst))
--		return PTR_ERR(dsi->rst);
-+	if (IS_ERR(dsi->rst)) {
-+		err = PTR_ERR(dsi->rst);
-+		goto err_reset_control_get;
-+	}
- 
- 	dsi->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(dsi->clk)) {
- 		dev_err(&pdev->dev, "cannot get DSI clock\n");
--		return PTR_ERR(dsi->clk);
-+		err = PTR_ERR(dsi->clk);
-+		goto err_reset_control_get;
- 	}
- 
- 	err = clk_prepare_enable(dsi->clk);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "cannot enable DSI clock\n");
--		return err;
-+		goto err_reset_control_get;
- 	}
- 
- 	dsi->clk_lp = devm_clk_get(&pdev->dev, "lp");
- 	if (IS_ERR(dsi->clk_lp)) {
- 		dev_err(&pdev->dev, "cannot get low-power clock\n");
--		return PTR_ERR(dsi->clk_lp);
-+		err = PTR_ERR(dsi->clk_lp);
-+		goto err_clk_get_lp;
- 	}
- 
- 	err = clk_prepare_enable(dsi->clk_lp);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "cannot enable low-power clock\n");
--		return err;
-+		goto err_clk_get_lp;
- 	}
- 
- 	dsi->clk_parent = devm_clk_get(&pdev->dev, "parent");
- 	if (IS_ERR(dsi->clk_parent)) {
- 		dev_err(&pdev->dev, "cannot get parent clock\n");
--		return PTR_ERR(dsi->clk_parent);
-+		err = PTR_ERR(dsi->clk_parent);
-+		goto err_clk_get_parent;
- 	}
- 
- 	err = clk_prepare_enable(dsi->clk_parent);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "cannot enable parent clock\n");
--		return err;
-+		goto err_clk_get_parent;
- 	}
- 
- 	err = tegra_dsi_setup_clocks(dsi);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "cannot setup clocks\n");
--		return err;
-+		goto err_setup_clocks;
- 	}
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	dsi->regs = devm_ioremap_resource(&pdev->dev, regs);
--	if (IS_ERR(dsi->regs))
--		return PTR_ERR(dsi->regs);
-+	if (IS_ERR(dsi->regs)) {
-+		err = PTR_ERR(dsi->regs);
-+		goto err_setup_clocks;
-+	}
- 
- 	tegra_dsi_initialize(dsi);
- 
- 	dsi->mipi = tegra_mipi_request(&pdev->dev);
--	if (IS_ERR(dsi->mipi))
--		return PTR_ERR(dsi->mipi);
-+	if (IS_ERR(dsi->mipi)) {
-+		err = PTR_ERR(dsi->mipi);
-+		goto err_setup_clocks;
-+	}
- 
- 	dsi->host.ops = &tegra_dsi_host_ops;
- 	dsi->host.dev = &pdev->dev;
-@@ -909,7 +918,7 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 	err = mipi_dsi_host_register(&dsi->host);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register DSI host: %d\n", err);
--		return err;
-+		goto err_host_register;
- 	}
- 
- 	INIT_LIST_HEAD(&dsi->client.list);
-@@ -920,12 +929,26 @@ static int tegra_dsi_probe(struct platform_device *pdev)
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
- 			err);
--		return err;
-+		goto err_client_register;
- 	}
- 
- 	platform_set_drvdata(pdev, dsi);
- 
- 	return 0;
-+
-+err_client_register:
-+	mipi_dsi_host_unregister(&dsi->host);
-+err_host_register:
-+	tegra_mipi_free(dsi->mipi);
-+err_setup_clocks:
-+	clk_disable_unprepare(dsi->clk_parent);
-+err_clk_get_parent:
-+	clk_disable_unprepare(dsi->clk_lp);
-+err_clk_get_lp:
-+	clk_disable_unprepare(dsi->clk);
-+err_reset_control_get:
-+	tegra_output_remove(&dsi->output);
-+	return err;
- }
- 
- static int tegra_dsi_remove(struct platform_device *pdev)
+	clk_prepare_enable(phy->pad_clk);
+
+	spin_lock_irqsave(&utmip_pad_lock, flags);
+
+	val = readl(base + UTMIP_BIAS_CFG0);
+	if ((utmip_pad_count++ == 0) || (val & UTMIP_BIASPD)) {
+		val &= ~(UTMIP_OTGPD | UTMIP_BIASPD)
+
+On Fri, 2013-12-20 at 05:37 +0800, Stephen Warren wrote:
+> On 12/19/2013 09:06 AM, Thierry Reding wrote:
+> > USB1 and USB3 are routed to two external connectors, while USB2 is used
+> > for the integrated webcam.
+> > 
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Note: connecting a USB mouse to USB3 works properly and lsusb also detects
+> > the integrated webcam, though I haven't tested whether the camera actually
+> > works.
+> > 
+> > USB1 doesn't seem to work, but I suspect that might just be because it's
+> > used for recovery mode and we can't switch it around at runtime yet.
+> 
+> The two regulators you added don't actually hook up to any GPIOs for
+> control of VBUS, so perhaps this isn't surprising. The regulators added
+> for VBUS control by Laxman's patch (which I already applied) *do* have
+> some gpio properties. However, testing indicates:
+> 
+> * With Laxman's patch applied, and your patch 1/10 not applied since
+> it's a duplicate, this patch doesn't work, i.e. I see no USB devices.
+> 
+> * With Laxman's patch reverted and your patch 1/10 replacing it, I do
+> see USB devices, and they work. However, then we're not actually
+> controlling VBUS, so USB1 doesn't work.
+> 
+> Can you please rebase this whole series on the latest Tegra for-3.14/dt
+> and sort out the issues? Thanks.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--nvpublic 
