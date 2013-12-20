@@ -1,84 +1,81 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 10/10] ARM: tegra: Enable USB on Venice2
-Date: Fri, 20 Dec 2013 12:53:03 +0100
-Message-ID: <20131220115302.GN27787@ulmo.nvidia.com>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
- <1387469182-14398-11-git-send-email-treding@nvidia.com>
- <52B36720.8080205@wwwdotorg.org>
+Subject: Re: [PATCH 05/10] ARM: tegra: Add Tegra114 DSI support
+Date: Fri, 20 Dec 2013 12:54:26 +0100
+Message-ID: <20131220115426.GO27787@ulmo.nvidia.com>
+References: <1387468774-14216-1-git-send-email-treding@nvidia.com>
+ <1387468774-14216-6-git-send-email-treding@nvidia.com>
+ <52B34FC2.5010409@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dPW7zu3hTOhZvCDO"
+	protocol="application/pgp-signature"; boundary="lCFQJunhLz1tFGpX"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <52B36720.8080205-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52B34FC2.5010409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---dPW7zu3hTOhZvCDO
+--lCFQJunhLz1tFGpX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 19, 2013 at 02:37:36PM -0700, Stephen Warren wrote:
-> On 12/19/2013 09:06 AM, Thierry Reding wrote:
-> > USB1 and USB3 are routed to two external connectors, while USB2 is used
-> > for the integrated webcam.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Note: connecting a USB mouse to USB3 works properly and lsusb also dete=
-cts
-> > the integrated webcam, though I haven't tested whether the camera actua=
-lly
-> > works.
-> >=20
-> > USB1 doesn't seem to work, but I suspect that might just be because it's
-> > used for recovery mode and we can't switch it around at runtime yet.
+On Thu, Dec 19, 2013 at 12:57:54PM -0700, Stephen Warren wrote:
+> On 12/19/2013 08:59 AM, Thierry Reding wrote:
+> > Add device tree nodes for the DSI controllers found on Tegra114 SoCs.
 >=20
-> The two regulators you added don't actually hook up to any GPIOs for
-> control of VBUS, so perhaps this isn't surprising. The regulators added
-> for VBUS control by Laxman's patch (which I already applied) *do* have
-> some gpio properties. However, testing indicates:
+> > diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra1=
+14.dtsi
 >=20
-> * With Laxman's patch applied, and your patch 1/10 not applied since
-> it's a duplicate, this patch doesn't work, i.e. I see no USB devices.
+> > +		dsi@54300000 {
+> > +			compatible =3D "nvidia,tegra114-dsi";
+> > +			reg =3D <0x54300000 0x00040000>;
+> > +			clocks =3D <&tegra_car TEGRA114_CLK_DSIA>,
+> > +				 <&tegra_car TEGRA114_CLK_DSIALP>,
+> > +				 <&tegra_car TEGRA114_CLK_PLL_D_OUT0>;
+> > +			clock-names =3D "dsi", "lp", "parent";
 >=20
-> * With Laxman's patch reverted and your patch 1/10 replacing it, I do
-> see USB devices, and they work. However, then we're not actually
-> controlling VBUS, so USB1 doesn't work.
+> The binding document
+> Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt doesn't
+> mention an "lp" clock:
 >=20
-> Can you please rebase this whole series on the latest Tegra for-3.14/dt
-> and sort out the issues? Thanks.
+>   - clock-names: Must include the following entries:
+>     - dsi
+>       This MUST be the first entry.
+>     - parent
+>=20
+> I assume this is simply an oversight, since this is an obvious extension
+> of the binding, and that the DT binding will be updated to include that
+> clock in the list, and hence won't block applying the series because of
+> this.
 
-I've looked into this a bit, but I don't see why it isn't working. The
-PN4 and PN5 are the correct GPIOs for USB1 and USB3 VBUS, but hooking
-them up indeed breaks things. For some reason adding those even causes
-the camera on USB2 to not work properly.
+Yes, that was merely an oversight. I've updated the DT binding to
+include the lp clock.
 
+Thanks,
 Thierry
 
---dPW7zu3hTOhZvCDO
+--lCFQJunhLz1tFGpX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJStC+eAAoJEN0jrNd/PrOhZSIP/0orIHn6kQjPIqqSjHmZyLI/
-t0IM1LlrS+UUhXtcY+bgs+XolEoEav7FBL/nSVvXR99wXgtDrFcpL1JvbTPRjPjW
-EUkCodACBqXPt8cHrWi3Jqc9YezANtxU3cYkSw2L/ClL+ZBiRUFnWJzmD91Namzj
-6dhXCvrlFfLYrmS8p5pjezjpFK+FZcGeqV8oBTdKdHgLbq/SuaKsiry+9sPksLz/
-uN3VfnYBAKf30tkNr8QfgxCnvFRG8mHCSpvzHYVzwW95iljcqewjgEstEP3hhTun
-P1cQw8Y5684OJcYAIc/iNnYdEDq5IWfCAjHpskcbM/iOUmYBztdJqx49aNLmwiNh
-tkcoiTuf+n94JFBcrfAVznbvVLZ2UO5QrPPUUbF3mf7HyfoVS92eZoEbmWP4UIG1
-7RDMoKTeL2BGm5zUdvS5HUGiSRi4ybdOM9U4dMuvxAOhCGKaN7T61J7hrgktWY7m
-wvTNS/PpLveFey2xOc/+g/XF4gqz5AV1FeAdV/T6Vdca2/kxp6D2S17/hMjAhqWi
-nQLyfpacse/zyKyJA269tlWOJcl8a+FaR0lXFi0WRxi8Uc2kDNFKy53KfRI98oJD
-X+r+v3xiPIdFJYOlbrTMpXiL6Wsn7XXAJd5zsVDMXMbIMzhUO7Ha0vx0BIzy6N7s
-GnAKv2fI84P+nuv3+sYo
-=xIrv
+iQIcBAEBAgAGBQJStC/xAAoJEN0jrNd/PrOh0o8P+QG+5qoR1PlNznQH+8+epGvQ
+SCF3Fi6uzSUEE7aIzmljPVA+yJTCQCQEQDvp+B8aEOCXI0gZVuD2Ys3MfinIOX8H
+N35kqc3ep8QJMe/t2h0nRQzsnhF7qZ+gKOlfkzKIhJqyPr2r9WLjRC9qW3Z/jCxz
+dfV4kHBD1jQdcHvXVYQvo3jpRHOnTVvRUwxQ4Dn3D/4cXZUuyCJAkHmSR2BTji/v
+RRWD8tNyMM5epkvYgLsALE0iaU26cDGE6/VcJfrkEGNFKXSAm46KuSy1suLHGrN9
+6kyY2un5FU8+8q241wfZmWdi8M7NZccDKJuNzb7cO4hmtDhb8RpOxyrmCllM602l
+x+8cMCNEgDXBqLSsAFjA9T3pNAANFUYWCifoGWnlnzgn3XA+ydGtqZ72XIt55UR4
+I6oQbZwvSY/BIJR/G+GaQOqIOFilIvGYV/hct84fqWIufv7dt83rBbdb6a1klBhq
+MpiPVZKgQlHMWkmL+HQbe0trHihDleOZxSbUCuW1XUBPA1hHiD7q92NHh4iUH/ff
+GwGfYCMnE1O67/GfgNoBkVY9+TFBWVIZXrWPItfJR0AeY95zdp8vv9qV6ctU5Nrh
+G6ulyVt1RFg01PqkEaXU8AUkdHgvIUdlN+ndH5RPxRKydm78t8NNq9LceQHj+i6h
+JYJ8+kPUg1kkovkAmToN
+=qL6V
 -----END PGP SIGNATURE-----
 
---dPW7zu3hTOhZvCDO--
+--lCFQJunhLz1tFGpX--
