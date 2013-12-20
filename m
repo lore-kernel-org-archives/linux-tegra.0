@@ -1,56 +1,103 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] ARM: tegra: add ams AS3722 device to Venice2 DT
-Date: Fri, 20 Dec 2013 12:02:30 +0530
-Message-ID: <52B3E47E.7070508@nvidia.com>
-References: <1387371179-16725-1-git-send-email-ldewangan@nvidia.com> <1387371179-16725-2-git-send-email-ldewangan@nvidia.com> <52B20BB4.50506@wwwdotorg.org> <52B2A01D.2000207@nvidia.com> <52B33986.5020508@wwwdotorg.org>
+Subject: Re: [PATCH 01/10] ARM: tegra: Add AS3722 PMIC on Venice2
+Date: Fri, 20 Dec 2013 12:23:28 +0530
+Message-ID: <52B3E968.8090906@nvidia.com>
+References: <1387469182-14398-1-git-send-email-treding@nvidia.com> <1387469182-14398-2-git-send-email-treding@nvidia.com> <52B355EC.9040306@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B33986.5020508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52B355EC.9040306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 19 December 2013 11:53 PM, Stephen Warren wrote:
-> On 12/19/2013 12:28 AM, Laxman Dewangan wrote:
->> On Thursday 19 December 2013 02:25 AM, Stephen Warren wrote:
->>> On 12/18/2013 05:52 AM, Laxman Dewangan wrote:
->>>> Add ams AS3722 entry for gpio/pincontrol and regulators
->>>> to venice2 DT.
->>> This patch still causes:
->>>
->>>> [    0.726545] as3722-pinctrl as3722-pinctrl: pin gpio0 already
->>>> requested by as3722-pinctrl; cannot claim for as3722-regulator
->>>> [    0.737681] as3722-pinctrl as3722-pinctrl: pin-0
->>>> (as3722-regulator) status -22
->>>> [    0.744895] as3722-pinctrl as3722-pinctrl: could not request pin 0
->>>> (gpio0) from group gpio0  on device as3722-pinctrl
->>>> [    0.755500] as3722-regulator as3722-regulator: Error applying
->>>> setting, reverse things back
->> This error is nothing related to the ams dt or driver. This came from
->> the framework from the driver/base for adding pinmux call before calling
->> any diver's probe.
-> OK, after reverting the problematic MFD commit (which I assume will
-> happen upstream too), I see no errors caused by this patch.
->
-> As such, I've applied the series to Tegra's for-3.14/dt branch.
-Thanks for taking care.
+On Friday 20 December 2013 01:54 AM, Stephen Warren wrote:
+> On 12/19/2013 09:06 AM, Thierry Reding wrote:
+
+> (Laxman, as an aside, I'm not sure why you're upstreaming patches that
+> don't exactly match the existing kernel support for this board...)
+
+I did not get this based on what context it is. Can you please elaborate 
+where I am missing the stuff?
+
 
 >
-> Note that I couldn't verify if the pinctrl setup in patch 1/2 matched
-> the ChromeOS kernel, since the node order is different there, and the
-> property values don't use named constants there. I'll have to trust you.
-> I'll be annoyed if it turns out we need to churn the pinctrl
-> configuration in the future...
+>> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+>> +				sd0 {
+>> +					regulator-name = "vdd_cpu";
+>> +					regulator-min-microvolt = <700000>;
+>> +					regulator-max-microvolt = <1350000>;
+> Laxman's patch has:
+>
+>   					regulator-max-microvolt = <1400000>;
 
-I referred the configuration from chrome branch. I assume that good 
-amount of testing has already been done on this configuration.
-I manually check all configuration and run chrome on this change which 
-works properly. Did not see any abnormal behavior.
-So if something missed then it is just human error which did not catch 
-on 2 level of self review.
+We have the Laguna platform on which Android and L4T is running fine. 
+This is based on same PMIC used for Venice2. As we are running the more 
+cpu stress on Laguna, I took this parameter from the Laguna Power tree 
+where it is maximum 1.4V. Chrome have maximum as 1.35mV.
 
-Again  any change on this configuration can be expected based on new 
-testing or bringung new modules.
+
+
+>
+>> +					regulator-always-on;
+>> +					ams,ext-control = <2>;
+>> +				};
+> Laxman's patch adds:
+>
+>   					regulator-min-microamp = <3500000>;
+>   					regulator-max-microamp = <3500000>;
+>   					regulator-boot-on;
+>
+> Those properties (with various values) are added to quite a few nodes; I
+> won't bother pointing them out elsewhere.
+
+
+All rails does not support the current configuration. SD0, SD1 and SD6 
+supports this. We have configured these value on Laguna as per system 
+eng recommendation for this rails. As the power tree s almost same, I 
+configured same here for Venice2. SD0 and SD6 on 3500mA and SD1 is on 
+2500mA.
+
+
+
+>
+>> +				sd1 {
+> ...
+>> +					regulator-max-microamp = <3500000>;
+> Laxman's patch has:
+>
+>   					regulator-max-microamp = <2500000>;
+>
+> Laxman's patch adds the following node:
+>
+>   				sd3 {
+>   					regulator-name = "vddio-ddr-2phase";
+>   					regulator-min-microvolt = <1350000>;
+>   					regulator-max-microvolt = <1350000>;
+>   					regulator-always-on;
+>   					regulator-boot-on;
+>   				};
+As per schematic, SD2 and SD3 make 2 phase supply for the DDR. I added 
+SD3 so that it should not get disabled at time of unused regulator 
+disabled by regulator framework.
+>
+>> +				sd6 {
+> ...
+>> +					regulator-min-microvolt = <800000>;
+> Laxman's patch has:
+>
+>   					regulator-min-microvolt = <650000>;
+
+Again from downstream Laguna platform.
+
+>
+>> +				ldo6 {
+> ...
+>> +					regulator-min-microvolt = <3300000>;
+> Laxman's patch has:
+>
+>   					regulator-min-microvolt = <1800000>;
+VDDIO SDMMC and I think it is for SD3.0 (UHS) which switches voltage 
+from 3.3 to 1.8 on UHS mode by sdmmc driver.
