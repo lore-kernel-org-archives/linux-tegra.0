@@ -1,89 +1,98 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 05/10] ARM: tegra: Enable eDP for Venice2
-Date: Fri, 20 Dec 2013 11:20:25 +0100
-Message-ID: <20131220102024.GI27787@ulmo.nvidia.com>
-References: <1387469182-14398-1-git-send-email-treding@nvidia.com>
- <1387469182-14398-6-git-send-email-treding@nvidia.com>
- <52B367C7.9010301@wwwdotorg.org>
+From: bilhuang <bilhuang@nvidia.com>
+Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
+Date: Fri, 20 Dec 2013 18:25:28 +0800
+Message-ID: <52B41B18.30302@nvidia.com>
+References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com> <CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gTY1JhLGodeuSBqf"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52B367C7.9010301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---gTY1JhLGodeuSBqf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Dec 19, 2013 at 02:40:23PM -0700, Stephen Warren wrote:
-> On 12/19/2013 09:06 AM, Thierry Reding wrote:
-> > Venice2 has a 12.9" (2560x1700) panel connected to the eDP output of the
-> > Tegra124. The panel has an EDID to describe the video timings but needs
-> > a few extra nodes to get the backlight to come up.
->=20
-> I started with next-20131219, merged your latest drm/for-next branch,
-> and this doesn't seem to work.
->=20
-> With Laxman's regulator patch applied and your 1/10 dropped since it's a
-> duplicate, the LCD backlight doesn't light up. I extracted the following
-> from this patch to fix Laxman's regulator definitions:
->=20
->                         gpio =3D <&gpio TEGRA_GPIO(P, 2) GPIO_ACTIVE_LOW>;
-> +                       enable-active-high;
->                 };
->=20
-> and the backlight does light up, but that's all.
->=20
-> With Laxman's regulator patch reverted and your patch 1/10 applied to
-> replace it, I see the backlight working without having to manually fix
-> up the device tree. However, that's still all; nothing is actually
-> displayed.
-
-Nothing's displayed because the driver isn't actually there yet. It's
-still stuck in internal review for some reason.
-
-I should've probably been explicit about that.
-
-> Again, can you please rebase this whole series on the latest Tegra
-> for-3.14/dt and sort out the issues? Thanks.
-
-Grmpf... yes, I suppose I'll go do that then. That's exactly the reason
-why I said the other day that we shouldn't be adding regulators
-willy-nilly without any means of actually testing.
-
-We've seen this happen on Dalmore before, and it's now happening with
-Venice2. The same applies to pinmux. If we keep having to correct the
-DTS files because it was all applied at once "to avoid churn" we're not
-actually gaining anything.
-
-Thierry
-
---gTY1JhLGodeuSBqf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJStBnoAAoJEN0jrNd/PrOhisoP/3DnjjgMob+JzscK/rPAUqXZ
-1UPW2wmclVOtCLdDhndajFRQ9GB+rdXpAKBuGABS5qM/51x/KfU6npdTnojm0eGY
-GxU3yJFcaNzrLWFoptrzrtzn4xEjyRjCVNoga/LcWrnSaP+pE3oqw7pwlztJ2bBi
-6I7MhJPEcnDaK6dD8Feb+Ul9/vEf6xvMWLrKFOJ7cWHi069cYN0tqiheCIap+Ye6
-gBZjAfazZbkr4CVP7eG2svyZvUgDKaZe2AxRs+Y2WeYvSTKZIKGb5na+S/Us7IMY
-9/zZ9FS3C+i9jddlCrSR5lMpXAP0wKRHXbpnytynOpjRvJQgGumchVAKfXtINkCt
-uCUX8vcq0oWW0VMV3mrTUpMBhruTyfxXVeNMalNLSAruGju8uoe1whTAyCNM3+cb
-vnrL9Wo61XAOA0LeqmDv83VmJV1ukmISwxXlbyLdPKittAxjImQk3L8v8FfRu9W6
-cmvsGlmhAX7Rwds0fkDewYasCo5u1VDpLhAsKGxtu/+FTxIw5ZZTwyL3r1TWlEqT
-YM+tNMm/vsQjjELx+PZGPCzIV9dlc+aYUYepAu6GPtpnc6OuOB+gssqxzgiI0e8v
-hP36TQLyjAsi+/nUdUyq9dzhOPBYQMzi+pjUSutCM1YMV6AtLiyJ94jyvr2fD5GW
-cWWagHQmMLPVIfiKNHvf
-=WEtb
------END PGP SIGNATURE-----
-
---gTY1JhLGodeuSBqf--
+On 12/20/2013 05:31 PM, Viresh Kumar wrote:
+> On 19 December 2013 16:48, Bill Huang <bilhuang@nvidia.com> wrote:
+>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+>> index ce52ed9..22dfc43 100644
+>> --- a/drivers/cpufreq/Kconfig.arm
+>> +++ b/drivers/cpufreq/Kconfig.arm
+>> @@ -225,6 +225,18 @@ config ARM_TEGRA_CPUFREQ
+>>          help
+>>            This adds the CPUFreq driver support for TEGRA SOCs.
+>>
+>> +config ARM_TEGRA20_CPUFREQ
+>> +       bool "NVIDIA TEGRA20"
+>> +       depends on ARM_TEGRA_CPUFREQ && ARCH_TEGRA_2x_SOC
+>
+> Probably just in case you agree to my next comment:
+>
+>              depends on ARCH_TEGRA_2x_SOC
+>
+>
+>> +       default y
+>> +       help
+>> +         This enables Tegra20 cpufreq functionality, it adds
+>> +         Tegra20 CPU frequency ladder and the call back functions
+>> +         to set CPU rate. All the non-SoC dependant codes are
+>> +         controlled by the config ARM_TEGRA_CPUFREQ.
+>> +
+>> +         If in doubt, say N.
+>
+>
+>> diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
+>>   /*
+>> + * Copyright (c) 2013, NVIDIA Corporation. All rights reserved.
+>>    *
+>> + * This program is free software; you can redistribute it and/or modify it
+>> + * under the terms and conditions of the GNU General Public License,
+>> + * version 2, as published by the Free Software Foundation.
+>>    *
+>> + * This program is distributed in the hope it will be useful, but WITHOUT
+>> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+>> + * more details.
+>>    */
+>>
+>>   #include <linux/kernel.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/of.h>
+>> +#include <linux/tegra-cpufreq.h>
+>> +
+>> +int __init tegra_cpufreq_init(void)
+>> +{
+>> +       struct device_node *root;
+>> +
+>> +       root = of_find_node_by_path("/");
+>> +       if (root) {
+>> +               struct platform_device_info devinfo;
+>> +               const char *compat;
+>> +               int i;
+>> +
+>> +               memset(&devinfo, 0, sizeof(devinfo));
+>> +               i = of_property_count_strings(root, "compatible");
+>> +               if (i > 0) {
+>> +                       of_property_read_string_index(
+>> +                               root, "compatible", i - 1, &compat);
+>> +                       devinfo.name = kasprintf(
+>> +                                       GFP_KERNEL, "%s-cpufreq", compat);
+>> +                       platform_device_register_full(&devinfo);
+>> +               }
+>>          }
+>> +EXPORT_SYMBOL(tegra_cpufreq_init);
+>
+> Probably above is all that is present in this file. This is just about adding
+> the right cpufreq device so that right driver can get probed.
+>
+> I don't think this code is present at the right place. We don't need a file
+> in cpufreq/ which is there just to add a device :) ..
+>
+> Probably move this piece of code to arch/mach-tegra where you are calling
+> init.
+>
+> And so remove ARM_TEGRA_CPUFREQ config option completely.
+>
+Don't you think it worth creating a file here so this can be shared to 
+arm64?
