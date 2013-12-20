@@ -1,69 +1,38 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Unhandled LM90 irq 308 on Dalmore?
-Date: Fri, 20 Dec 2013 09:26:58 -0700
-Message-ID: <52B46FD2.1030409@wwwdotorg.org>
-References: <52B2C5AD.5080405@nvidia.com> <20131219114500.1b1ea0b7@endymion.delvare> <alpine.DEB.2.02.1312191423090.30198@tamien> <52B3B679.20206@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
+Date: Fri, 20 Dec 2013 09:29:51 -0700
+Message-ID: <52B4707F.4040303@wwwdotorg.org>
+References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>	<CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>	<52B41B18.30302@nvidia.com> <CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com> <52B41F1B.3030005@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B3B679.20206-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52B41F1B.3030005@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: bilhuang <bilhuang@nvidia.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/19/2013 08:16 PM, Wei Ni wrote:
-> On 12/20/2013 06:36 AM, Paul Walmsley wrote:
->> Hi Jean,
+On 12/20/2013 03:42 AM, bilhuang wrote:
+> On 12/20/2013 06:33 PM, Viresh Kumar wrote:
+>> On 20 December 2013 15:55, bilhuang <bilhuang@nvidia.com> wrote:
+>>> Don't you think it worth creating a file here so this can be shared to
+>>> arm64?
 >>
->> On Thu, 19 Dec 2013, Jean Delvare wrote:
+>> We will see how to handle virtual devices when we will start getting
+>> arm64 SoCs. Probably we might end up writing a single file in cpufreq,
+>> if required, that will create virtual devices for every arm64 platform..
 >>
->>> Adding Wei who added interrupt support to the lm90 driver, and moving
->>> to the appropriate list.
+>> So, some people might use it and others wouldn't.. But no platform
+>> specific files for such stuff. So, the best we can do for now is to move
+>> these to platform code as we are talking about arm32 SoC's for now
+>> which do have a mach-* directory..
 >>
->> Thanks for the speedy response and list correction.
->>
->>> On Thu, 19 Dec 2013 02:08:45 -0800, Paul Walmsley wrote:
->>>> Just FYI, the Tegra114 Dalmore board here reports an unhandled IRQ about
->>>> two minutes after boot:
->>>>
->>>> [  120.950839] irq 308: nobody cared (try booting with the "irqpoll" option)
->>
->> ...
->>
->>>> [  121.019825] handlers:
->>>> [  121.022117] [<c0064408>] irq_default_primary_handler threaded
->>>> [<c0384764>] lm90_irq_thread
->>>> [  121.030418] Disabling IRQ #308
->>>>
->>>> This is on next-20131218.
->>>
->>> Which temperature chip is the Tegra114 Dalmore board using?
->>
->> It's an NCT72.
->>
->>> Is the interrupt shared with something else?
->>
->> Doesn't look like it.  From /proc/interrupts:
->>
->> 308:      74181          0          0          0      GPIO 116  lm90
-> 
-> Hi, Paul
-> When I developed it, my Dalmore board used GPIO 116 (GPIO_PO4) as
-> interrupt line, but according to our downsttream kernel, there also have
-> other Dalmore board used GPIO 190 (GPIO_PX6). So I think your
-> problems was caused by it. Please try to change the interrupt line in
-> dts file.
+> OK thanks, this is suggested by Stephen earlier, I'll let him comment in
+> case he might think otherwise.
 
-Paul, which board revision of Dalmore do you have?
-
-According to the schematics, Dalmore A02 and A03 had TEMP_ALERT routed
-to GPIO PX6, and that was the only option. Dalmore A04 and A05 can route
-TEMP_ALERT to either GPIO PO4, or GPIO PX6 using 0-Ohm resistors, with
-GPIO PO4 being the default stuffing option.
-
-Note that upstream Linux *only* supports Dalmore A04, and no other
-version. If you have a different board revision, it's not expected to
-work with upstream. IIRC, Eric Brower volunteered to track down the
-correct board revision for people working on upstream.
+No, I definitely don't agree here. The rules for arch/arm64 are: no
+platform-specific code. We should immediately start planning for that.
+If this means renaming the file that creates the virtual device from
+tegra-cpufreq.c to something else, so be it, but we shouldn't go
+backwards and push stuff into the arch directories.
