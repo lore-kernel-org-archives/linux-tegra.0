@@ -1,47 +1,83 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Unhandled LM90 irq 308 on Dalmore?
-Date: Fri, 20 Dec 2013 21:47:16 -0800
-Message-ID: <52B52B64.5020304@nvidia.com>
-References: <52B2C5AD.5080405@nvidia.com> <20131219114500.1b1ea0b7@endymion.delvare> <alpine.DEB.2.02.1312191423090.30198@tamien> <52B3B679.20206@nvidia.com> <52B46FD2.1030409@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH 1/2] drm/panel: Add support for Samsung LTN101NT05 panel
+Date: Sat, 21 Dec 2013 21:38:12 +0100
+Message-ID: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B46FD2.1030409-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The Samsung LNT101NT05 10.1" WXVGA panel can be supported by the simple panel
+driver.
 
-On 12/20/2013 08:26 AM, Stephen Warren wrote:
-> On 12/19/2013 08:16 PM, Wei Ni wrote:
->>> Hi, Paul
->>> When I developed it, my Dalmore board used GPIO 116 (GPIO_PO4) as
->>> interrupt line, but according to our downsttream kernel, there also have
->>> other Dalmore board used GPIO 190 (GPIO_PX6). So I think your
->>> problems was caused by it. Please try to change the interrupt line in
->>> dts file.
-> Paul, which board revision of Dalmore do you have?
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+This isn't strickly required to get the panel up, but Thierry suggested on IRC to
+include it anyway, in case someone else has some use for it.
 
-Looks like an A03.
+ .../bindings/panel/samsung,ltn101nt05.txt          |    7 +++++
+ drivers/gpu/drm/panel/panel-simple.c               |   27 +++++++++++++++++++-
+ 2 files changed, 33 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
 
-> According to the schematics, Dalmore A02 and A03 had TEMP_ALERT routed
-> to GPIO PX6, and that was the only option. Dalmore A04 and A05 can route
-> TEMP_ALERT to either GPIO PO4, or GPIO PX6 using 0-Ohm resistors, with
-> GPIO PO4 being the default stuffing option.
->
-> Note that upstream Linux *only* supports Dalmore A04, and no other
-> version. If you have a different board revision, it's not expected to
-> work with upstream. IIRC, Eric Brower volunteered to track down the
-> correct board revision for people working on upstream.
-
-Indeed, that's probably the problem, then
-
-It would be good if this was documented somewhere in the upstream kernel 
-tree.  And even better if the kernel was able to read the Dalmore EEPROM 
-and print out a warning upon kernel boot...
-
-thanks,
-
-- Paul
+diff --git a/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt b/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
+new file mode 100644
+index 0000000..ef522c6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
+@@ -0,0 +1,7 @@
++Samsung Electronics 10.1" WSVGA TFT LCD panel
++
++Required properties:
++- compatible: should be "samsung,ltn101nt05"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 3e611af..7f9ddb5 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -338,6 +338,28 @@ static const struct panel_desc chunghwa_claa101wb01 = {
+ 	},
+ };
+ 
++static const struct drm_display_mode samsung_ltn101nt05_mode = {
++	.clock = 54030,
++	.hdisplay = 1024,
++	.hsync_start = 1024 + 24,
++	.hsync_end = 1024 + 24 + 136,
++	.htotal = 1024 + 24 + 136 + 160,
++	.vdisplay = 600,
++	.vsync_start = 600 + 3,
++	.vsync_end = 600 + 3 + 6,
++	.vtotal = 600 + 3 + 6 + 61,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc samsung_ltn101nt05 = {
++	.modes = &samsung_ltn101nt05_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 1024,
++		.height = 600,
++	},
++};
++
+ static const struct of_device_id platform_of_match[] = {
+ 	{
+ 		.compatible = "auo,b101aw03",
+@@ -346,6 +368,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "chunghwa,claa101wb01",
+ 		.data = &chunghwa_claa101wb01
+ 	}, {
++		.compatible = "samsung,ltn101nt05",
++		.data = &samsung_ltn101nt05,
++	}, {
+ 		.compatible = "simple-panel",
+ 	}, {
+ 		/* sentinel */
+-- 
+1.7.9.5
