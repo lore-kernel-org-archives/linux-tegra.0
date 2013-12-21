@@ -1,83 +1,112 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: [PATCH 1/2] drm/panel: Add support for Samsung LTN101NT05 panel
-Date: Sat, 21 Dec 2013 21:38:12 +0100
-Message-ID: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de>
+Subject: [PATCH 2/2] ARM: tegra: paz00: Add LVDS support to device tree
+Date: Sat, 21 Dec 2013 21:38:13 +0100
+Message-ID: <bcf12ecec69ef4e38e74a9be9c45e8bd2bd9ffcc.1387656959.git.marvin24@gmx.de>
+References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+In-Reply-To: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Samsung LNT101NT05 10.1" WXVGA panel can be supported by the simple panel
-driver.
+Add backlight and panel nodes for the PAZ00 TFT LCD panel.
 
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
 Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 ---
-This isn't strickly required to get the panel up, but Thierry suggested on IRC to
-include it anyway, in case someone else has some use for it.
+This should enable everything needed. Unfortunately, in my tests it only switches on the
+backlight, but the display controller blocks in some infinit loop, so we get no output
+(and no working system). I post it here in case I missed something obvious...
 
- .../bindings/panel/samsung,ltn101nt05.txt          |    7 +++++
- drivers/gpu/drm/panel/panel-simple.c               |   27 +++++++++++++++++++-
- 2 files changed, 33 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt b/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
-new file mode 100644
-index 0000000..ef522c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung,ltn101nt05.txt
-@@ -0,0 +1,7 @@
-+Samsung Electronics 10.1" WSVGA TFT LCD panel
-+
-+Required properties:
-+- compatible: should be "samsung,ltn101nt05"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 3e611af..7f9ddb5 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -338,6 +338,28 @@ static const struct panel_desc chunghwa_claa101wb01 = {
- 	},
- };
+ arch/arm/boot/dts/tegra20-paz00.dts |   46 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index c7cd8e6..9a39a80 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -17,6 +17,14 @@
+ 	};
  
-+static const struct drm_display_mode samsung_ltn101nt05_mode = {
-+	.clock = 54030,
-+	.hdisplay = 1024,
-+	.hsync_start = 1024 + 24,
-+	.hsync_end = 1024 + 24 + 136,
-+	.htotal = 1024 + 24 + 136 + 160,
-+	.vdisplay = 600,
-+	.vsync_start = 600 + 3,
-+	.vsync_end = 600 + 3 + 6,
-+	.vtotal = 600 + 3 + 6 + 61,
-+	.vrefresh = 60,
-+};
+ 	host1x@50000000 {
++		dc@54200000 {
++			rgb {
++				status = "okay";
 +
-+static const struct panel_desc samsung_ltn101nt05 = {
-+	.modes = &samsung_ltn101nt05_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 1024,
-+		.height = 600,
-+	},
-+};
++				nvidia,panel = <&panel>;
++			};
++		};
 +
- static const struct of_device_id platform_of_match[] = {
- 	{
- 		.compatible = "auo,b101aw03",
-@@ -346,6 +368,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "chunghwa,claa101wb01",
- 		.data = &chunghwa_claa101wb01
- 	}, {
-+		.compatible = "samsung,ltn101nt05",
-+		.data = &samsung_ltn101nt05,
-+	}, {
- 		.compatible = "simple-panel",
- 	}, {
- 		/* sentinel */
+ 		hdmi@54280000 {
+ 			status = "okay";
+ 
+@@ -257,7 +265,11 @@
+ 		status = "okay";
+ 	};
+ 
+-	i2c@7000c000 {
++	pwm: pwm@7000a000 {
++		status = "okay";
++	};
++
++	lvds_ddc: i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+ 
+@@ -475,6 +487,18 @@
+ 		non-removable;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++
++		enable-gpios = <&gpio TEGRA_GPIO(U, 4) GPIO_ACTIVE_HIGH>;
++		pwms = <&pwm 0 5000000>;
++
++		brightness-levels = <0 16 32 48 64 80 96 112 128 144 160 176 192 208 224 240 255>;
++		default-brightness-level = <10>;
++
++		backlight-boot-off;
++	};
++
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -509,6 +533,16 @@
+ 		};
+ 	};
+ 
++	panel: panel {
++		compatible = "samsung,ltn101nt05", "simple-panel";
++
++		ddc-i2c-bus = <&lvds_ddc>;
++		power-supply = <&vdd_pnl_reg>;
++		enable-gpios = <&gpio TEGRA_GPIO(M, 6) GPIO_ACTIVE_HIGH>;
++
++		backlight = <&backlight>;
++	};
++
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -522,6 +556,16 @@
+ 			regulator-max-microvolt = <5000000>;
+ 			regulator-always-on;
+ 		};
++
++		vdd_pnl_reg: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "+3VS,vdd_pnl";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			gpio = <&gpio TEGRA_GPIO(A, 4) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
+ 	};
+ 
+ 	sound {
 -- 
 1.7.9.5
