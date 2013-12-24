@@ -1,86 +1,43 @@
 From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [PATCH v2 0/6] efuse driver for Tegra
-Date: Tue, 24 Dec 2013 15:32:05 +0200
-Message-ID: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
+Subject: [PATCH v2 6/6] misc: enable fuse drivers
+Date: Tue, 24 Dec 2013 15:32:11 +0200
+Message-ID: <1387891931-9854-7-git-send-email-pdeschrijver@nvidia.com>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This driver allows userspace to read the raw efuse data. Its userspace
-interface is modelled after the sunxi_sid driver which provides similar
-functionality for some Allwinner SoCs. It has been tested on
-Tegra20 (ventana), Tegra30 (beaverboard) and Tegra114 (dalmore).
+Enable building the fuse drivers.
 
-Changes since v1:
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/misc/Kconfig  |    1 +
+ drivers/misc/Makefile |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-* Add documentation for sysfs interface
-* Cleanup messages
-
-TODO:
-* test on Tegra124 (venice2) 
-
-Peter De Schrijver (6):
-  ARM: tegra: export apb dma readl/writel
-  misc: fuse: Add efuse driver for Tegra
-  ARM: tegra: Add efuse bindings
-  ARM: tegra: rework fuse.c
-  ARM: Tegra: remove speedo files
-  misc: enable fuse drivers
-
- Documentation/ABI/testing/sysfs-driver-tegra-fuse |    8 +
- arch/arm/boot/dts/tegra114.dtsi                   |    6 +
- arch/arm/boot/dts/tegra124.dtsi                   |    6 +
- arch/arm/boot/dts/tegra20.dtsi                    |    6 +
- arch/arm/boot/dts/tegra30.dtsi                    |    6 +
- arch/arm/mach-tegra/Makefile                      |    3 -
- arch/arm/mach-tegra/apbio.c                       |   51 +++--
- arch/arm/mach-tegra/fuse.c                        |  147 +----------
- arch/arm/mach-tegra/tegra114_speedo.c             |  104 --------
- arch/arm/mach-tegra/tegra20_speedo.c              |  109 --------
- arch/arm/mach-tegra/tegra30_speedo.c              |  292 --------------------
- drivers/misc/Kconfig                              |    1 +
- drivers/misc/Makefile                             |    1 +
- drivers/misc/fuse/Kconfig                         |   12 +
- drivers/misc/fuse/Makefile                        |    1 +
- drivers/misc/fuse/tegra/Makefile                  |    7 +
- drivers/misc/fuse/tegra/fuse-tegra.c              |   97 +++++++
- drivers/misc/fuse/tegra/fuse-tegra20.c            |  154 +++++++++++
- drivers/misc/fuse/tegra/fuse-tegra30.c            |  196 ++++++++++++++
- drivers/misc/fuse/tegra/fuse.h                    |   87 ++++++
- drivers/misc/fuse/tegra/tegra114_speedo.c         |  109 ++++++++
- drivers/misc/fuse/tegra/tegra124_speedo.c         |  164 ++++++++++++
- drivers/misc/fuse/tegra/tegra20_speedo.c          |  109 ++++++++
- drivers/misc/fuse/tegra/tegra30_speedo.c          |  293 +++++++++++++++++++++
- include/linux/tegra-soc.h                         |   17 ++
- 25 files changed, 1317 insertions(+), 669 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-tegra-fuse
- delete mode 100644 arch/arm/mach-tegra/tegra114_speedo.c
- delete mode 100644 arch/arm/mach-tegra/tegra20_speedo.c
- delete mode 100644 arch/arm/mach-tegra/tegra30_speedo.c
- create mode 100644 drivers/misc/fuse/Kconfig
- create mode 100644 drivers/misc/fuse/Makefile
- create mode 100644 drivers/misc/fuse/tegra/Makefile
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra.c
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra20.c
- create mode 100644 drivers/misc/fuse/tegra/fuse-tegra30.c
- create mode 100644 drivers/misc/fuse/tegra/fuse.h
- create mode 100644 drivers/misc/fuse/tegra/tegra114_speedo.c
- create mode 100644 drivers/misc/fuse/tegra/tegra124_speedo.c
- create mode 100644 drivers/misc/fuse/tegra/tegra20_speedo.c
- create mode 100644 drivers/misc/fuse/tegra/tegra30_speedo.c
-
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 6cb388e..45560dc 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -526,4 +526,5 @@ source "drivers/misc/mei/Kconfig"
+ source "drivers/misc/vmw_vmci/Kconfig"
+ source "drivers/misc/mic/Kconfig"
+ source "drivers/misc/genwqe/Kconfig"
++source "drivers/misc/fuse/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 99b9424..e243a8b 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -54,3 +54,4 @@ obj-$(CONFIG_LATTICE_ECP3_CONFIG)	+= lattice-ecp3-config.o
+ obj-$(CONFIG_SRAM)		+= sram.o
+ obj-y				+= mic/
+ obj-$(CONFIG_GENWQE)		+= genwqe/
++obj-y				+= fuse/
 -- 
 1.7.7.rc0.72.g4b5ea.dirty
