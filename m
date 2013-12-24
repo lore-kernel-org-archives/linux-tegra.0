@@ -1,87 +1,161 @@
 From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/4] clk: tegra: add EMC clock driver
-Date: Fri, 20 Dec 2013 13:34:43 +0200
-Message-ID: <20131220113443.GB3378@tbergstrom-lnx.Nvidia.com>
-References: <1387272400-4689-1-git-send-email-josephl@nvidia.com>
- <1387272400-4689-3-git-send-email-josephl@nvidia.com>
- <52B0D6FA.2060101@wwwdotorg.org>
- <1387359758.2576.38.camel@jlo-ubuntu-64.nvidia.com>
- <52B1E950.1040001@wwwdotorg.org>
- <20131219100557.GE17188@tbergstrom-lnx.Nvidia.com>
- <52B34CAB.5060705@wwwdotorg.org>
+Subject: [PATCH v2 1/6] ARM: tegra: export apb dma readl/writel
+Date: Tue, 24 Dec 2013 15:32:06 +0200
+Message-ID: <1387891931-9854-2-git-send-email-pdeschrijver@nvidia.com>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52B34CAB.5060705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1387891931-9854-1-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 19, 2013 at 08:44:43PM +0100, Stephen Warren wrote:
-> On 12/19/2013 03:05 AM, Peter De Schrijver wrote:
-> >>> I guess using the clk_notifier may be OK for the 1st case.
-> >>
-> >> In both cases, isn't the overall operation something like:
-> >>
-> >> a) Do some work before changing the EMC clock
-> >> b) Change the EMC clock
-> >> c) Do some work after changing the EMC clock
-> >>
-> > 
-> > There is hw interaction between the EMC controller and the CAR module.
-> > Writing to the EMC clock source register in CAR will trigger a state machine
-> > in the EMC controller to handle the change of memory clock. The details
-> > of the state machine and how it needs to be setup are different for
-> > each Tegra variant. This means we need to be sure of the exact sequence
-> > of CAR and EMC register accesses for this to work. In theory this could
-> > be done with pre and post rate change notifiers, but I'm afraid this would
-> > be quite fragile.
-> 
-> Isn't the state machine setup something that the EMC driver does through
-> EMC registers (or perhaps also using flow controller registers?). If all
-> the clock driver does for this clock is program the requested rate,
-> which triggers the HW state machine, then I think we can isolate
-> everything else into the EMC driver.
-> 
-> In such a case, we don't need to use pre-/post-rate change notifiers at
-> all; just have the EMC driver call into the clock driver at the
-> appropriate step in the process where the clock registers should be written.
-> 
-> > 
-> >> Admittedly, the exact definition of "some work" is different for your
-> >> cases (1) and (2) above, but the overall structure is the same. As such,
-> >> can't the EMC scaling driver do (a), then do (b) i.e. call
-> >> clk_set_rate(), then do (c)? Or, in your case (2), do we need to do
-> > 
-> > We would need to be very sure clk_set_rate() doesn't access any other register
-> > besides the EMC clock source register before returning to the EMC scaling
-> > driver.
-> 
-> Well, we can certainly make that happen. We're writing the code behind
-> clk_set_rate() for the EMC clock after all...
-> 
+Export APB DMA readl and writel. These are needed because we can't access
+the fuses directly on Tegra20 without potentially causing a system hang.
 
-CCF propagates clock changes if you do a set_rate. In this case, I think it
-will work out, but in general clk_set_rate() does a lot more then just calling
-the clock's set_rate method.
+Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/mach-tegra/apbio.c |   51 ++++++++++++++++++++++++++----------------
+ include/linux/tegra-soc.h   |   16 +++++++++++++
+ 2 files changed, 47 insertions(+), 20 deletions(-)
 
-> But I'm not sure why that is a requirement. If it is, we're pretty
-> screwed, because surely there's nothing stopping some other driver
-> that's running on a different CPU from coming along and changing some
-> completely unrelated clock, which will then touch "some other register".
-> 
-
-It's unlikely any other CPU will execute much code, because as soon as it does
-an SDRAM access, it will be stuck until the EMC has finalized its rate change.
-I think the requirement is more like 'do not touch any EMC register and possibly
-also the EMC divider register before the EMC state machine has finished'. At
-the moment this ensured by locks to prevent other CPUs from doing an EMC rate
-change and by a 'barrier read' of a EMC register which will only complete once
-the state machine has finished. On Tegra30 and later, some more work needs to
-be done before the entire rate change is finished.
-
-Cheers,
-
-Peter.
+diff --git a/arch/arm/mach-tegra/apbio.c b/arch/arm/mach-tegra/apbio.c
+index bc47197..e0bf49d 100644
+--- a/arch/arm/mach-tegra/apbio.c
++++ b/arch/arm/mach-tegra/apbio.c
+@@ -32,8 +32,8 @@ static u32 *tegra_apb_bb;
+ static dma_addr_t tegra_apb_bb_phys;
+ static DECLARE_COMPLETION(tegra_apb_wait);
+ 
+-static u32 tegra_apb_readl_direct(unsigned long offset);
+-static void tegra_apb_writel_direct(u32 value, unsigned long offset);
++static int tegra_apb_readl_direct(unsigned long offset, u32 *value);
++static int tegra_apb_writel_direct(u32 value, unsigned long offset);
+ 
+ static struct dma_chan *tegra_apb_dma_chan;
+ static struct dma_slave_config dma_sconfig;
+@@ -128,58 +128,64 @@ static int do_dma_transfer(unsigned long apb_add,
+ 	return 0;
+ }
+ 
+-static u32 tegra_apb_readl_using_dma(unsigned long offset)
++int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
+ {
+ 	int ret;
+ 
+ 	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
+-		return tegra_apb_readl_direct(offset);
++		return tegra_apb_readl_direct(offset, value);
+ 
+ 	mutex_lock(&tegra_apb_dma_lock);
+ 	ret = do_dma_transfer(offset, DMA_DEV_TO_MEM);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		pr_err("error in reading offset 0x%08lx using dma\n", offset);
+-		*(u32 *)tegra_apb_bb = 0;
+-	}
++	else
++		*value = *tegra_apb_bb;
++
+ 	mutex_unlock(&tegra_apb_dma_lock);
+-	return *((u32 *)tegra_apb_bb);
++
++	return ret;
+ }
+ 
+-static void tegra_apb_writel_using_dma(u32 value, unsigned long offset)
++int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
+ {
+ 	int ret;
+ 
+-	if (!tegra_apb_dma_chan && !tegra_apb_dma_init()) {
+-		tegra_apb_writel_direct(value, offset);
+-		return;
+-	}
++	if (!tegra_apb_dma_chan && !tegra_apb_dma_init())
++		return tegra_apb_writel_direct(value, offset);
+ 
+ 	mutex_lock(&tegra_apb_dma_lock);
+ 	*((u32 *)tegra_apb_bb) = value;
+ 	ret = do_dma_transfer(offset, DMA_MEM_TO_DEV);
++	mutex_unlock(&tegra_apb_dma_lock);
+ 	if (ret < 0)
+ 		pr_err("error in writing offset 0x%08lx using dma\n", offset);
+-	mutex_unlock(&tegra_apb_dma_lock);
++
++	return ret;
+ }
+ #else
+ #define tegra_apb_readl_using_dma tegra_apb_readl_direct
+ #define tegra_apb_writel_using_dma tegra_apb_writel_direct
+ #endif
+ 
+-typedef u32 (*apbio_read_fptr)(unsigned long offset);
+-typedef void (*apbio_write_fptr)(u32 value, unsigned long offset);
++typedef int (*apbio_read_fptr)(unsigned long offset, u32 *value);
++typedef int (*apbio_write_fptr)(u32 value, unsigned long offset);
+ 
+ static apbio_read_fptr apbio_read;
+ static apbio_write_fptr apbio_write;
+ 
+-static u32 tegra_apb_readl_direct(unsigned long offset)
++static int tegra_apb_readl_direct(unsigned long offset, u32 *value)
+ {
+-	return readl(IO_ADDRESS(offset));
++	*value = readl(IO_ADDRESS(offset));
++
++	return 0;
+ }
+ 
+-static void tegra_apb_writel_direct(u32 value, unsigned long offset)
++static int tegra_apb_writel_direct(u32 value, unsigned long offset)
+ {
+ 	writel(value, IO_ADDRESS(offset));
++
++	return 0;
+ }
+ 
+ void tegra_apb_io_init(void)
+@@ -197,7 +203,12 @@ void tegra_apb_io_init(void)
+ 
+ u32 tegra_apb_readl(unsigned long offset)
+ {
+-	return apbio_read(offset);
++	u32 val;
++
++	if (apbio_read(offset, &val) < 0)
++		return 0;
++	else
++		return val;
+ }
+ 
+ void tegra_apb_writel(u32 value, unsigned long offset)
+diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
+index 95f611d..f53fe9c 100644
+--- a/include/linux/tegra-soc.h
++++ b/include/linux/tegra-soc.h
+@@ -19,4 +19,20 @@
+ 
+ u32 tegra_read_chipid(void);
+ 
++
++#if defined(CONFIG_TEGRA20_APB_DMA)
++void tegra_apb_io_init(void);
++int tegra_apb_readl_using_dma(unsigned long offset, u32 *value);
++int tegra_apb_writel_using_dma(u32 value, unsigned long offset);
++#else
++static inline void tegra_apb_io_init(void) {}
++static inline int tegra_apb_readl_using_dma(unsigned long offset, u32 *value)
++{
++	return -EINVAL;
++}
++static inline int tegra_apb_writel_using_dma(u32 value, unsigned long offset)
++{
++	return -EINVAL;
++}
++#endif
+ #endif /* __LINUX_TEGRA_SOC_H_ */
+-- 
+1.7.7.rc0.72.g4b5ea.dirty
