@@ -1,39 +1,58 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 4/7] clk: tegra: fix host1x clock on Tegra124
-Date: Thu, 26 Dec 2013 16:44:24 -0800
-Message-ID: <1388105067-24438-5-git-send-email-abrestic@chromium.org>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH 3/7] clk: tegra: PLLD2 fixes for hdmi
+Date: Thu, 26 Dec 2013 16:44:23 -0800
+Message-ID: <1388105067-24438-4-git-send-email-abrestic@chromium.org>
 References: <1388105067-24438-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1388105067-24438-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1388105067-24438-1-git-send-email-abrestic@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, David Ung <davidu@nvidia.com>, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: David Ung <davidu@nvidia.com>
 
-The host1x clock on Tegra124 is a 3-bit wide mux with 6 parents.
-Change thte id to tegra_clk_host1x_8 so that the correct clock gets
-registered.
+Set correct pll_d2_out0 divider and correct the p div values for pll_d2.
 
-Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: David Ung <davidu@nvidia.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
- drivers/clk/tegra/clk-tegra124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/tegra/clk-tegra124.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 0fc9126..743ccb4 100644
+index 14c3f2f..0fc9126 100644
 --- a/drivers/clk/tegra/clk-tegra124.c
 +++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -775,7 +775,7 @@ static struct tegra_clk tegra124_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_gr3d] = { .dt_id = TEGRA124_CLK_GR_3D, .present = true },
- 	[tegra_clk_disp2] = { .dt_id = TEGRA124_CLK_DISP2, .present = true },
- 	[tegra_clk_disp1] = { .dt_id = TEGRA124_CLK_DISP1, .present = true },
--	[tegra_clk_host1x] = { .dt_id = TEGRA124_CLK_HOST1X, .present = true },
-+	[tegra_clk_host1x_8] = { .dt_id = TEGRA124_CLK_HOST1X, .present = true },
- 	[tegra_clk_vcp] = { .dt_id = TEGRA124_CLK_VCP, .present = true },
- 	[tegra_clk_i2s0] = { .dt_id = TEGRA124_CLK_I2S0, .present = true },
- 	[tegra_clk_apbdma] = { .dt_id = TEGRA124_CLK_APBDMA, .present = true },
+@@ -619,12 +619,11 @@ static struct tegra_clk_pll_params pll_d_params = {
+ };
+ 
+ static struct tegra_clk_pll_freq_table tegra124_pll_d2_freq_table[] = {
+-	{ 12000000, 148500000,  99, 1, 8},
+-	{ 12000000, 594000000,  99, 1, 1},
+-	{ 13000000, 594000000,  91, 1, 1},      /* actual: 591.5 MHz */
+-	{ 16800000, 594000000,  71, 1, 1},      /* actual: 596.4 MHz */
+-	{ 19200000, 594000000,  62, 1, 1},      /* actual: 595.2 MHz */
+-	{ 26000000, 594000000,  91, 2, 1},      /* actual: 591.5 MHz */
++	{ 12000000, 594000000,  99, 1, 2},
++	{ 13000000, 594000000,  91, 1, 2},      /* actual: 591.5 MHz */
++	{ 16800000, 594000000,  71, 1, 2},      /* actual: 596.4 MHz */
++	{ 19200000, 594000000,  62, 1, 2},      /* actual: 595.2 MHz */
++	{ 26000000, 594000000,  91, 2, 2},      /* actual: 591.5 MHz */
+ 	{ 0, 0, 0, 0, 0, 0 },
+ };
+ 
+@@ -1295,9 +1294,9 @@ static void __init tegra124_pll_init(void __iomem *clk_base,
+ 	clk_register_clkdev(clk, "pll_d2", NULL);
+ 	clks[TEGRA124_CLK_PLL_D2] = clk;
+ 
+-	/* PLLD2_OUT0 ?? */
++	/* PLLD2_OUT0 */
+ 	clk = clk_register_fixed_factor(NULL, "pll_d2_out0", "pll_d2",
+-					CLK_SET_RATE_PARENT, 1, 2);
++					CLK_SET_RATE_PARENT, 1, 1);
+ 	clk_register_clkdev(clk, "pll_d2_out0", NULL);
+ 	clks[TEGRA124_CLK_PLL_D2_OUT0] = clk;
+ 
 -- 
 1.8.5.1
