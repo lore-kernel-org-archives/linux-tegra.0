@@ -1,39 +1,48 @@
 From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 10/10] ARM: tegra: defconfig changes
-Date: Thu, 26 Dec 2013 19:53:28 -0800
-Message-ID: <20131227035328.GA25848@quad.lixom.net>
-References: <1387231812-5701-1-git-send-email-swarren@wwwdotorg.org>
- <1387231812-5701-10-git-send-email-swarren@wwwdotorg.org>
+Subject: Re: [GIT PULL 1/2] ARM: tegra: second set of device tree changes
+Date: Fri, 27 Dec 2013 13:11:01 -0800
+Message-ID: <20131227211101.GA17637@quad.lixom.net>
+References: <1387562844-32497-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1387231812-5701-10-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1387562844-32497-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Dec 16, 2013 at 03:10:12PM -0700, Stephen Warren wrote:
-> Enable new features required by the Venice2 board.
+On Fri, Dec 20, 2013 at 11:07:23AM -0700, Stephen Warren wrote:
+> This branch contains changes to Tegra's device tree that came in after
+> I sent the previous pull-request/tag tegra-for-3.14-dt. Changes are:
 > 
-> This branch is based on v3.13-rc1, and shouldn't cause any conflicts.
+> * Set up aliases for RTCs, so that the correct RTC is chosen to
+>   initialize the system date/time.
+> * Venice2 pinctrl and regulator configuration.
+> * Built-in panel enablement for Harmony, Cardhu, Dalmore.
+> * HDMI enablement for Dalmore.
+> * USB2 port enablement for Beaver.
+> * Keyboard and power key enablement for Venice2.
+> 
+> This branch is based on tag tegra-for-3.14-dt, for which I sent a
+> previous pull request.
 > 
 > ----------------------------------------------------------------
 > 
-> The following changes since commit 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> The following changes since commit 9f1ac5606a008f4849208ebfe818f979619dced0:
 > 
->   Linux 3.13-rc1
+>   ARM: tegra: Add SPI controller nodes for Tegra124
 > 
 > are available in the git repository at:
 > 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.14-defconfig
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tegra-for-3.14-dt-2
 > 
-> for you to fetch changes up to 0d8c67218cef8af259e4d12221434a1d7b0f3bbc:
+> for you to fetch changes up to 3f748d44503bd7ead26acf938f5a0bf845cea515:
 > 
->   ARM: tegra: tegra_defconfig updates
+>   ARM: tegra: Enable power key on Venice2
 
-1-10 has been pulled into arm-soc. Thanks!
+Merged into next/dt. Thanks.
 
 
 -Olof
