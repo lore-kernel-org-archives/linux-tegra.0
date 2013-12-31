@@ -1,20 +1,46 @@
-From: nkoffi396-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Subject: Advise to invest in your Country
-Date: Mon, 30 Dec 2013 10:06:54 -0800
-Message-ID: <EMAILkz4eR0YPXB3kP500017e63@email.bec.local>
-Reply-To: norkoffi-CZK690njTpI@public.gmane.org
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.13-rc6
+Date: Mon, 30 Dec 2013 23:14:51 -0800
+Message-ID: <52C26EEB.4020708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: linux-arm-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Friend,
+Here are some basic Tegra test results for Linux v3.13-rc6.
+Logs and other details at:
 
-I need someone in your Country I want to invest 30MillionEuros. For more info send me your telephone number for conversation to enable us have a concrete discussion and meeting.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.13-rc6/20131229163106/
 
-Best Regards
-Mr.Norbert Koffi 
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.13-rc5 (413541dd66d51f791a0b169d9b9014e4f56be13c))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.13-rc5 (413541dd66d51f791a0b169d9b9014e4f56be13c)):
+    text     data      bss    total  kernel
+    +880      +40        0     +920  multi_v7_defconfig
+    +852        0        0     +852  tegra_defconfig
