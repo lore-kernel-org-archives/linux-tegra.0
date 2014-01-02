@@ -1,49 +1,56 @@
-From: bilhuang <bilhuang@nvidia.com>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Thu, 2 Jan 2014 19:08:38 +0800
-Message-ID: <52C548B6.60902@nvidia.com>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>	<CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>	<52B41B18.30302@nvidia.com>	<CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com>	<52B41F1B.3030005@nvidia.com>	<52B4707F.4040303@wwwdotorg.org> <CAKohpokwO3BgXr9Le02bNo=771saWuDe2H=fgQzcboRWxwVzOg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: tegra: rework fuse.c
+Date: Thu, 2 Jan 2014 13:37:43 +0100
+Message-ID: <CACRpkdbXc_yH-=WgpQyVwHC_TSPfbfx=tHwziNhmB6t0HuSfRw@mail.gmail.com>
+References: <1387468474-26521-1-git-send-email-pdeschrijver@nvidia.com>
+	<1387468474-26521-5-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAKohpokwO3BgXr9Le02bNo=771saWuDe2H=fgQzcboRWxwVzOg@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robherring2@gmail.com>, Grant Likely <grant.likely@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1387468474-26521-5-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/23/2013 01:06 PM, Viresh Kumar wrote:
-> Ccc'ing Grant and Rob as well.
->
-> On 20 December 2013 21:59, Stephen Warren <swarren@wwwdotorg.org> wrote:
->> No, I definitely don't agree here. The rules for arch/arm64 are: no
->> platform-specific code. We should immediately start planning for that.
->> If this means renaming the file that creates the virtual device from
->> tegra-cpufreq.c to something else, so be it, but we shouldn't go
->> backwards and push stuff into the arch directories.
->
-> I don't mind doing this now as well if it is generic enough. I wasn't sure
-> if you guys wanted to take it on now..
->
-> @Bill: So, please create a separate commit for creating such file which
-> would create a virtual device for probing cpufreq drivers with name picked
-> from root-node. Compilation of such a file should be configurable but if
-> it is compiled, then it shouldn't cause any problems if that device isn't
-> used, for multiplatform kernels specially..
->
-> Probably then you can widen the scope of your patchset by modifying
-> some of the existing drivers which require a device to get cpufreq
-> driver probed. Currently they are all making such a device from
-> their arch/ stuff.
-Actually, I don't have plan or resource on doing this, would it be 
-better that you help to do that instead? Thanks.
->
-> I am not sure about the location of such file. Should this be placed in DT
-> code somewhere or kept in cpufreq? Rob/Grant ??
->
-Do we have consensus on where to create such file?
-> --
-> viresh
->
+On Thu, Dec 19, 2013 at 4:54 PM, Peter De Schrijver
+<pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
+> Reduce fuse.c to the minimum functionality required for the early bootstages.
+> Also export tegra_read_straps() for use by the fuse driver.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Aha, but why?
+
+> -static void __init tegra20_fuse_init_randomness(void)
+> -{
+> -       u32 randomness[2];
+> -
+> -       randomness[0] = tegra_fuse_readl(FUSE_UID_LOW);
+> -       randomness[1] = tegra_fuse_readl(FUSE_UID_HIGH);
+> -
+> -       add_device_randomness(randomness, sizeof(randomness));
+> -}
+> -
+> -/* Applies to Tegra30 or later */
+> -static void __init tegra30_fuse_init_randomness(void)
+> -{
+> -       u32 randomness[7];
+> -
+> -       randomness[0] = tegra_fuse_readl(FUSE_VENDOR_CODE);
+> -       randomness[1] = tegra_fuse_readl(FUSE_FAB_CODE);
+> -       randomness[2] = tegra_fuse_readl(FUSE_LOT_CODE_0);
+> -       randomness[3] = tegra_fuse_readl(FUSE_LOT_CODE_1);
+> -       randomness[4] = tegra_fuse_readl(FUSE_WAFER_ID);
+> -       randomness[5] = tegra_fuse_readl(FUSE_X_COORDINATE);
+> -       randomness[6] = tegra_fuse_readl(FUSE_Y_COORDINATE);
+> -
+> -       add_device_randomness(randomness, sizeof(randomness));
+> -}
+
+We still want to get this into the random pool right? Can it not simply
+be moved to a later initcall then?
+
+Yours,
+Linus Walleij
