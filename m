@@ -1,37 +1,34 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 1/1] cpufreq: tegra: Re-model Tegra20 cpufreq driver
-Date: Fri, 3 Jan 2014 11:17:00 +0530
-Message-ID: <CAKohpokQXb_w2VZStwvj-icm4KPayZgLqGZb-DYZddbj_3Dk=A@mail.gmail.com>
-References: <1387451926-21373-1-git-send-email-bilhuang@nvidia.com>
-	<CAKohpomCPJYd+d_NnM9gxwQ7bH6C6=iLxbiWZbfNcjZ8Bi+2wA@mail.gmail.com>
-	<52B41B18.30302@nvidia.com>
-	<CAKohpontQwTc4KP7XMvtkvS2sQTyF+ngXnXfbJ1ev+MLEp-H0g@mail.gmail.com>
-	<52B41F1B.3030005@nvidia.com>
-	<52B4707F.4040303@wwwdotorg.org>
-	<CAKohpokwO3BgXr9Le02bNo=771saWuDe2H=fgQzcboRWxwVzOg@mail.gmail.com>
-	<52C548B6.60902@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH v2 4/6] ARM: tegra: rework fuse.c
+Date: Fri, 3 Jan 2014 20:19:12 +0900
+Message-ID: <CAAVeFuJ2i6N-=bGqjTZNmgD3iT-7vSxaWze+QFLbf4jjhU7dNA@mail.gmail.com>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
+ <1387891931-9854-5-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <52C548B6.60902@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: bilhuang <bilhuang@nvidia.com>, Rob Herring <robherring2@gmail.com>, Grant Likely <grant.likely@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <thierry.reding@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1387891931-9854-5-git-send-email-pdeschrijver@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Herbert Xu <herbert@gondor.apana.org.au>, Stephen Warren <swarren@wwwdotorg.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Danny Huang <dahuang@nvidia.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2 January 2014 16:38, bilhuang <bilhuang@nvidia.com> wrote:
-> Actually, I don't have plan or resource on doing this, would it be better
-> that you help to do that instead? Thanks.
+On Tue, Dec 24, 2013 at 10:32 PM, Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+> Reduce fuse.c to the minimum functionality required for the early bootstages.
+> Also export tegra_read_straps() for use by the fuse driver.
+>
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Point taken. I am there to help if required. So, initially you can just make
-Tegra work according to the new file we were talking about. I will fix
-others later.
+Fine with this since the fuse clock is still explicitly enabled during init.
 
->> I am not sure about the location of such file. Should this be placed in DT
->> code somewhere or kept in cpufreq? Rob/Grant ??
->>
-> Do we have consensus on where to create such file?
-
-Not yet, probably people were on leaves.
-
-@Grant/Rob: Any inputs here?
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
