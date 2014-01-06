@@ -1,51 +1,31 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Unhandled LM90 irq 308 on Dalmore?
-Date: Mon, 06 Jan 2014 12:42:24 -0700
-Message-ID: <52CB0720.1030900@wwwdotorg.org>
-References: <52B2C5AD.5080405@nvidia.com> <20131219114500.1b1ea0b7@endymion.delvare> <alpine.DEB.2.02.1312191423090.30198@tamien> <52B3B679.20206@nvidia.com> <52B46FD2.1030409@wwwdotorg.org> <52B52B64.5020304@nvidia.com> <52CB0048.5040304@wwwdotorg.org> <20140106194052.GA27078@roeck-us.net>
+Subject: Re: [PATCH v2 1/6] ARM: tegra: export apb dma readl/writel
+Date: Mon, 06 Jan 2014 13:07:26 -0700
+Message-ID: <52CB0CFE.4070901@wwwdotorg.org>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com> <1387891931-9854-2-git-send-email-pdeschrijver@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140106194052.GA27078-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+In-Reply-To: <1387891931-9854-2-git-send-email-pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/06/2014 12:40 PM, Guenter Roeck wrote:
-> On Mon, Jan 06, 2014 at 12:13:12PM -0700, Stephen Warren wrote:
->> On 12/20/2013 10:47 PM, Paul Walmsley wrote:
->>>
->>> On 12/20/2013 08:26 AM, Stephen Warren wrote:
->> ...
->>>> Note that upstream Linux *only* supports Dalmore A04, and no other
->>>> version. If you have a different board revision, it's not expected to
->>>> work with upstream. IIRC, Eric Brower volunteered to track down the
->>>> correct board revision for people working on upstream.
->>>
->>> Indeed, that's probably the problem, then
->>>
->>> It would be good if this was documented somewhere in the upstream kernel
->>> tree.
->>
->> I'll send a patch to document that in the DTS file.
->>
->>> And even better if the kernel was able to read the Dalmore EEPROM
->>> and print out a warning upon kernel boot...
->>
->> That would be painful, since it'd be board-specific code that isn't
->> really coupled with a specific piece of HW for which there's a driver.
->> I'd rather avoid that kind of thing.
->>
-> Another option might be for someone to add support for other board revisions,
-> and create appropriate dts files.
+On 12/24/2013 06:32 AM, Peter De Schrijver wrote:
+> Export APB DMA readl and writel. These are needed because we can't access
+> the fuses directly on Tegra20 without potentially causing a system hang.
 
-We specifically decided not to support other board revisions to reduce
-the support load.
+This does a lot more than just export the functions; it also changes the
+prototypes. I'm not sure why the prototype change was required/useful.
+This needs to be mentioned in the commit description/subject, and the
+reasoning explained too.
 
-> On a side note, if the board revisions are incompatible to each other,
-> shouldn't the 'compatible' property be different ? Just wondering ...
+> diff --git a/include/linux/tegra-soc.h b/include/linux/tegra-soc.h
 
-Yes, if we did end up supporting other board revisions, we'd use
-different compatible properties to differentiate them.
+> +#if defined(CONFIG_TEGRA20_APB_DMA)
+> +void tegra_apb_io_init(void);
+
+This seems to be an internal function; why is this one publicly
+prototyped and/or stubbed?
