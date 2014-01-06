@@ -1,58 +1,49 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: [PATCH] drm/tegra: Fix Kconfig dependencies
-Date: Sun,  5 Jan 2014 10:22:51 -0800
-Message-ID: <1388946171-29459-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for some small fixes
+Date: Sun, 05 Jan 2014 21:43:22 -0800
+Message-ID: <20140106054322.26907.37296@quantum>
+References: <20131223162705.GE3378@tbergstrom-lnx.Nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131223162705.GE3378@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-arm:allmodconfig fails to build with several undefined drm and host1x symbols.
+Quoting Peter De Schrijver (2013-12-23 08:27:05)
+> The following changes since commit 62ce7cd62f534023224912dc9b909963f26a38da:
+> 
+>   clk: tegra: fix __clk_lookup() return value checks (2013-11-28 15:09:22 +0200)
+> 
+> are available in the git repository at:
+>   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next-1
 
-drivers/gpu/drm/tegra/bus.c:52: undefined reference to `drm_dev_alloc'
-drivers/gpu/drm/tegra/bus.c:56: undefined reference to `drm_dev_register'
-drivers/gpu/drm/tegra/bus.c:67: undefined reference to `drm_dev_free'
-drivers/gpu/drm/tegra/bus.c:75: undefined reference to `drm_put_dev'
-drivers/gpu/drm/tegra/drm.c:445: undefined reference to `host1x_syncpt_get_base'
-drivers/gpu/drm/tegra/drm.c:449: undefined reference to `host1x_syncpt_base_id'
+Hi Peter,
 
-and so on.
+Do you intend for this to go as fixes for 3.13-rc8? The fixes are based
+off of a commit from my clk-next branch.
 
-This is caused by DRM=m but DRM_TEGRA=y. DRM_TEGRA is bool while DRM is
-tristate. DRM_TEGRA can not be set to tristate because it depends on unexported
-host1x symbols (and possibly others). Fix by updating DRM_TEGRA dependency.
+Regards,
+Mike
 
-Also, the DRM_TEGRA help text states that it can be built as module.
-Remove that text since it is not (or no longer) correct.
-
-Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
----
- drivers/gpu/drm/tegra/Kconfig |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/Kconfig b/drivers/gpu/drm/tegra/Kconfig
-index 8961ba6..9966547 100644
---- a/drivers/gpu/drm/tegra/Kconfig
-+++ b/drivers/gpu/drm/tegra/Kconfig
-@@ -1,7 +1,7 @@
- config DRM_TEGRA
- 	bool "NVIDIA Tegra DRM"
- 	depends on ARCH_TEGRA || ARCH_MULTIPLATFORM
--	depends on DRM
-+	depends on DRM=y
- 	select TEGRA_HOST1X
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_FB_HELPER
-@@ -11,9 +11,6 @@ config DRM_TEGRA
- 	help
- 	  Choose this option if you have an NVIDIA Tegra SoC.
- 
--	  To compile this driver as a module, choose M here: the module
--	  will be called tegra-drm.
--
- if DRM_TEGRA
- 
- config DRM_TEGRA_DEBUG
--- 
-1.7.9.7
+> 
+> Peter De Schrijver (1):
+>       clk: tegra: Add missing Tegra20 fuse clks
+> 
+> Thierry Reding (1):
+>       clk: tegra: Correct clock number for UARTE
+> 
+>  drivers/clk/tegra/clk-tegra-periph.c |    2 +-
+>  drivers/clk/tegra/clk-tegra20.c      |    2 ++
+>  2 files changed, 3 insertions(+), 1 deletions(-)
