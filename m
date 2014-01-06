@@ -1,63 +1,30 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Remove 3.3V supply and modem regulators
-Date: Mon, 06 Jan 2014 13:59:27 -0700
-Message-ID: <52CB192F.2020700@wwwdotorg.org>
-References: <1389021933-6675-1-git-send-email-treding@nvidia.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 2/2] ARM: tegra: paz00: Add LVDS support to device tree
+Date: Mon, 06 Jan 2014 23:21:30 +0100
+Message-ID: <2030639.dhgZbyhUvO@fb07-iapwap2>
+References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de> <bcf12ecec69ef4e38e74a9be9c45e8bd2bd9ffcc.1387656959.git.marvin24@gmx.de> <52CB062C.50802@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1389021933-6675-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <52CB062C.50802-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/06/2014 08:25 AM, Thierry Reding wrote:
-> GPIO 1 and 2 of the PMIC are not used for the described purpose, so
-> remove them.
+Am Montag, 6. Januar 2014, 12:38:20 schrieb Stephen Warren:
+> On 12/21/2013 01:38 PM, Marc Dietrich wrote:
+> > Add backlight and panel nodes for the PAZ00 TFT LCD panel.
+> > 
+> > Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> > ---
+> > This should enable everything needed. Unfortunately, in my tests it only
+> > switches on the backlight, but the display controller blocks in some
+> > infinit loop, so we get no output (and no working system). I post it here
+> > in case I missed something obvious...
+> As mentioned later on, this works fine with U-Boot (and tests fine here
+> too), so I plan to apply this for 3.15, once I can.
 
-As far as I can tell, this patch is correct, since those GPIOs are in
-fact used to discharge the rails after disabling them, rather than to
-enable/disable the rails.
-
-Equally, these GPIOs affect multiple rails at once, so listing the GPIO
-as a property of a single regulator seems wrong either way.
-
-However, PMU_REGEN1 does seem to feed the "EN" pin of U13C1, a DC/DC
-switcher for power rail 3.3v_modem, so perhaps there's more going on
-here than I see?
-
-In summary, I need Laxman to comment on this and ack the change, and
-explain why these GPIOs were listed as regulator enables when it doesn't
-seem that they are.
-
-> Note: Removing these makes the work-in-progress eDP support work again.
-
-> diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-
-> -		vdd_3v3_reg: regulator@1 {
-> -			compatible = "regulator-fixed";
-> -			reg = <1>;
-> -			regulator-name = "vdd_3v3";
-> -			regulator-min-microvolt = <3300000>;
-> -			regulator-max-microvolt = <3300000>;
-> -			regulator-always-on;
-> -			regulator-boot-on;
-> -			enable-active-high;
-> -			gpio = <&as3722 1 GPIO_ACTIVE_HIGH>;
-> -		};
-> -
-> -		vdd_3v3_modem_reg: regulator@2 {
-> -			compatible = "regulator-fixed";
-> -			reg = <2>;
-> -			regulator-name = "vdd-modem-3v3";
-> -			regulator-min-microvolt = <3300000>;
-> -			regulator-max-microvolt = <3300000>;
-> -			enable-active-high;
-> -			gpio = <&as3722 2 GPIO_ACTIVE_HIGH>;
-> -		};
-
-Don't you want to simply remove the "enable-active-high" and "gpio"
-properties, but leave the regulator definitions present, in case
-something wants to reference these fixed(?) rails as their supply?
+huh? I thought this can go into 3.14 if possible. Patch is harmless and the 
+merge window still weeks away.
