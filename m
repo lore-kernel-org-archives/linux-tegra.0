@@ -1,26 +1,53 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: paz00: Add LVDS support to device tree
-Date: Mon, 06 Jan 2014 12:38:20 -0700
-Message-ID: <52CB062C.50802@wwwdotorg.org>
-References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de> <bcf12ecec69ef4e38e74a9be9c45e8bd2bd9ffcc.1387656959.git.marvin24@gmx.de>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: Unhandled LM90 irq 308 on Dalmore?
+Date: Mon, 6 Jan 2014 11:40:52 -0800
+Message-ID: <20140106194052.GA27078@roeck-us.net>
+References: <52B2C5AD.5080405@nvidia.com>
+ <20131219114500.1b1ea0b7@endymion.delvare>
+ <alpine.DEB.2.02.1312191423090.30198@tamien>
+ <52B3B679.20206@nvidia.com>
+ <52B46FD2.1030409@wwwdotorg.org>
+ <52B52B64.5020304@nvidia.com>
+ <52CB0048.5040304@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <bcf12ecec69ef4e38e74a9be9c45e8bd2bd9ffcc.1387656959.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52CB0048.5040304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LM Sensors <lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/21/2013 01:38 PM, Marc Dietrich wrote:
-> Add backlight and panel nodes for the PAZ00 TFT LCD panel.
+On Mon, Jan 06, 2014 at 12:13:12PM -0700, Stephen Warren wrote:
+> On 12/20/2013 10:47 PM, Paul Walmsley wrote:
+> > 
+> > On 12/20/2013 08:26 AM, Stephen Warren wrote:
+> ...
+> >> Note that upstream Linux *only* supports Dalmore A04, and no other
+> >> version. If you have a different board revision, it's not expected to
+> >> work with upstream. IIRC, Eric Brower volunteered to track down the
+> >> correct board revision for people working on upstream.
+> > 
+> > Indeed, that's probably the problem, then
+> > 
+> > It would be good if this was documented somewhere in the upstream kernel
+> > tree.
 > 
-> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> ---
-> This should enable everything needed. Unfortunately, in my tests it only switches on the
-> backlight, but the display controller blocks in some infinit loop, so we get no output
-> (and no working system). I post it here in case I missed something obvious...
+> I'll send a patch to document that in the DTS file.
+> 
+> > And even better if the kernel was able to read the Dalmore EEPROM
+> > and print out a warning upon kernel boot...
+> 
+> That would be painful, since it'd be board-specific code that isn't
+> really coupled with a specific piece of HW for which there's a driver.
+> I'd rather avoid that kind of thing.
+> 
+Another option might be for someone to add support for other board revisions,
+and create appropriate dts files.
 
-As mentioned later on, this works fine with U-Boot (and tests fine here
-too), so I plan to apply this for 3.15, once I can.
+On a side note, if the board revisions are incompatible to each other,
+shouldn't the 'compatible' property be different ? Just wondering ...
+
+Thanks,
+Guenter
