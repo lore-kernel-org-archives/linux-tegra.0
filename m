@@ -1,75 +1,41 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 4/6] ARM: tegra: rework fuse.c
-Date: Tue, 7 Jan 2014 16:10:04 +0200
-Message-ID: <20140107141004.GF26588@tbergstrom-lnx.Nvidia.com>
-References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
- <1387891931-9854-5-git-send-email-pdeschrijver@nvidia.com>
- <52CB1722.70306@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Remove 3.3V supply and modem regulators
+Date: Tue, 07 Jan 2014 09:43:43 -0700
+Message-ID: <52CC2EBF.60106@wwwdotorg.org>
+References: <1389021933-6675-1-git-send-email-treding@nvidia.com> <52CB192F.2020700@wwwdotorg.org> <52CBEF89.6090901@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52CB1722.70306-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52CBEF89.6090901-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 06, 2014 at 09:50:42PM +0100, Stephen Warren wrote:
-> On 12/24/2013 06:32 AM, Peter De Schrijver wrote:
-> > Reduce fuse.c to the minimum functionality required for the early bootstages.
-> >
-> > Also export tegra_read_straps() for use by the fuse driver.
-> 
-> Since the fuse driver is tristate, it could be a module. Doesn't it
-> literally need to be EXPORT_SYMBOL'd, not simply not static?
-> 
+On 01/07/2014 05:14 AM, Laxman Dewangan wrote:
+> On Tuesday 07 January 2014 02:29 AM, Stephen Warren wrote:
+>> On 01/06/2014 08:25 AM, Thierry Reding wrote:
+>>> GPIO 1 and 2 of the PMIC are not used for the described purpose, so
+>>> remove them.
+>> As far as I can tell, this patch is correct, since those GPIOs are in
+>> fact used to discharge the rails after disabling them, rather than to
+>> enable/disable the rails.
+>>
+>> Equally, these GPIOs affect multiple rails at once, so listing the GPIO
+>> as a property of a single regulator seems wrong either way.
+>>
+>> However, PMU_REGEN1 does seem to feed the "EN" pin of U13C1, a DC/DC
+>> switcher for power rail 3.3v_modem, so perhaps there's more going on
+>> here than I see?
+>>
+>> In summary, I need Laxman to comment on this and ack the change, and
+>> explain why these GPIOs were listed as regulator enables when it doesn't
+>> seem that they are.
+>>
+> PMU_REGEN1 is going to U13C1 (DCDC switcher). So if EN is 0, the output
+> will be 0 and when it is 1, the output will be 3.3V.
+> Because this is coming from GPIO, it is added as the fixed regulator.
 
-Good point.
-
-> I'm rather worried that this series isn't bisectable, since this patch
-> removes a bunch of code that's replaced by code in the fuse driver which
-> can't be built/linked at this point in the series. I'm also worried
-> about initialization ordering, since a lot of the fuse code could be a
-> module...
-> 
-
-Maybe it should indeed never be a module...
-
-> > diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
-> 
-> > -/* Tegra20 only */
-> >  #define FUSE_UID_LOW		0x108
-> >  #define FUSE_UID_HIGH		0x10c
-> 
-> Why remove that comment but leave the two defines it applies to?
-> 
-> >  #define TEGRA20_FUSE_SPARE_BIT		0x200
-> 
-> That define, and tegra_spare_fuse() which uses it, are no longer used
-> after patch 5/6, but aren't removed in patch 5/6. Perhaps it'd be better
-> to squash or re-order the two patches, so this dead code can be removed?
-> 
-> > -int tegra_sku_id;
-> > -int tegra_cpu_process_id;
-> > -int tegra_core_process_id;
-> >  int tegra_chip_id;
-> > -int tegra_cpu_speedo_id;		/* only exist in Tegra30 and later */
-> > -int tegra_soc_speedo_id;
-> >  enum tegra_revision tegra_revision;
-> 
-> It's a bit odd to remove most of this, but leave a few parts hanging
-> around. Wouldn't it be better to the drivers/misc/fuse code to export
-> this, so that /all/ the fuse logic was there, rather than part of it
-> being left over in arch/arm/? We'll need to fix that up anyway when we
-> start using these globals on ARMv8, so may as well get it right now.
-> Also, I rather think that the new drivers/misc/fuse code shouldn't be a
-> module or driver, so that we can guarantee it's always there to provide
-> the globals and that they are initialized early enough...
-
-tegra_revision is used in tegra_dt_init() to initialize soc_dev_attr->revision
-Hence this needs to be available before the fuse driver is initialized.
-
-Cheers,
-
-Peter.
+What about PMU_REGEN3, for which that isn't the case, and what about the
+fact that PMU_REGEN1 does a lot more than just enable that DC/DC switcher?
