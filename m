@@ -1,72 +1,123 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: [PATCH] serial: 8250: enable UART_BUG_NOMSR for Tegra
-Date: Tue,  7 Jan 2014 15:00:12 -0700
-Message-ID: <1389132012-2257-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-serial-owner@vger.kernel.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, olof@lixom.net, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] ARM: tegra: enable LCD panel on Seaboard
+Date: Tue,  7 Jan 2014 16:47:16 -0700
+Message-ID: <1389138437-4686-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra chips have 4 or 5 identical UART modules embedded. UARTs C..E have
-their MODEM-control signals tied off to a static state. However UARTs A
-and B can optionally route those signals to/from package pins, depending
-on the exact pinmux configuration.
+Seaboard uses a CLAA101WA01A LCD panel. Enable the relevant display
+controller, backlight, and regulators.
 
-When these signals are not routed to package pins, false interrupts may
-trigger either temporarily, or permanently, all while not showing up in
-the IIR; it will read as NO_INT. This will eventually lead to the UART
-IRQ being disabled due to unhandled interrupts. When this happens, the
-kernel may print e.g.:
-
-    irq 68: nobody cared (try booting with the "irqpoll" option)
-
-In order to prevent this, enable UART_BUG_NOMSR. This prevents
-UART_IER_MSI from being enabled, which prevents the false interrupts
-from triggering.
-
-In practice, this is not needed under any of the following conditions:
-
-* On Tegra chips after Tegra30, since the HW bug has apparently been
-  fixed.
-
-* On UARTs C..E since their MODEM control signals are tied to the correct
-  static state which doesn't trigger the issue.
-
-* On UARTs A..B if the MODEM control signals are routed out to package
-  pins, since they will then carry valid signals.
-
-However, we ignore these exceptions for now, since they are only relevant
-if a board actually hooks up more than a 4-wire UART, and no currently
-supported board does this. If we ever support a board that does, we can
-refine the algorithm that enables UART_BUG_NOMSR to take those exceptions
-into account, and/or read a flag from DT/... that indicates that the
-board has hooked up and pinmux'd more than a 4-wire UART.
-
-Reported-by: Olof Johansson <olof@lixom.net> # autotester
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/tty/serial/8250/8250_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/tegra20-seaboard.dts | 55 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index e33d38cb170f..61ecd709a722 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -2670,6 +2670,10 @@ static void serial8250_config_port(struct uart_port *port, int flags)
- 	if (port->type == PORT_16550A && port->iotype == UPIO_AU)
- 		up->bugs |= UART_BUG_NOMSR;
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index a11b6e7b4759..f4443c1eaba7 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -17,6 +17,14 @@
+ 	};
  
-+	/* HW bugs may trigger IRQ while IIR == NO_INT */
-+	if (port->type == PORT_TEGRA)
-+		up->bugs |= UART_BUG_NOMSR;
+ 	host1x@50000000 {
++		dc@54200000 {
++			rgb {
++				status = "okay";
 +
- 	if (port->type != PORT_UNKNOWN && flags & UART_CONFIG_IRQ)
- 		autoconfig_irq(up);
++				nvidia,panel = <&panel>;
++			};
++		};
++
+ 		hdmi@54280000 {
+ 			status = "okay";
  
+@@ -312,6 +320,10 @@
+ 		status = "okay";
+ 	};
+ 
++	pwm: pwm@7000a000 {
++		status = "okay";
++	};
++
+ 	i2c@7000c000 {
+ 		status = "okay";
+ 		clock-frequency = <400000>;
+@@ -369,7 +381,7 @@
+ 			#size-cells = <0>;
+ 		};
+ 
+-		i2c@1 {
++		lvds_ddc: i2c@1 {
+ 			reg = <1>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -762,6 +774,17 @@
+ 		non-removable;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++
++		enable-gpios = <&gpio TEGRA_GPIO(D, 4) GPIO_ACTIVE_HIGH>;
++		power-supply = <&vdd_bl_reg>;
++		pwms = <&pwm 0 5000000>;
++
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++	};
++
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -795,6 +818,16 @@
+ 		};
+ 	};
+ 
++	panel: panel {
++		compatible = "chungwa,claa101wa01a", "simple-panel";
++
++		power-supply = <&vdd_pnl_reg>;
++		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
++
++		backlight = <&backlight>;
++		ddc-i2c-bus = <&lvds_ddc>;
++	};
++
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -839,6 +872,26 @@
+ 			regulator-always-on;
+ 			regulator-boot-on;
+ 		};
++
++		vdd_pnl_reg: regulator@4 {
++			compatible = "regulator-fixed";
++			reg = <4>;
++			regulator-name = "vdd_pnl";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpio TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
++
++		vdd_bl_reg: regulator@5 {
++			compatible = "regulator-fixed";
++			reg = <5>;
++			regulator-name = "vdd_bl";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpio TEGRA_GPIO(W, 0) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++		};
+ 	};
+ 
+ 	sound {
 -- 
 1.8.1.5
-
