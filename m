@@ -1,54 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 4/6] ARM: tegra: rework fuse.c
-Date: Tue, 07 Jan 2014 13:47:05 -0700
-Message-ID: <52CC67C9.9000704@wwwdotorg.org>
-References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com> <1387891931-9854-5-git-send-email-pdeschrijver@nvidia.com> <52CB1722.70306@wwwdotorg.org> <20140107141004.GF26588@tbergstrom-lnx.Nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140107141004.GF26588-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] serial: 8250: enable UART_BUG_NOMSR for Tegra
+Date: Tue,  7 Jan 2014 15:00:12 -0700
+Message-ID: <1389132012-2257-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, olof@lixom.net, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/07/2014 07:10 AM, Peter De Schrijver wrote:
-> On Mon, Jan 06, 2014 at 09:50:42PM +0100, Stephen Warren wrote:
->> On 12/24/2013 06:32 AM, Peter De Schrijver wrote:
->>> Reduce fuse.c to the minimum functionality required for the early bootstages.
->>>
->>> Also export tegra_read_straps() for use by the fuse driver.
+From: Stephen Warren <swarren@nvidia.com>
 
->>> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+Tegra chips have 4 or 5 identical UART modules embedded. UARTs C..E have
+their MODEM-control signals tied off to a static state. However UARTs A
+and B can optionally route those signals to/from package pins, depending
+on the exact pinmux configuration.
 
->>> -int tegra_sku_id;
->>> -int tegra_cpu_process_id;
->>> -int tegra_core_process_id;
->>>  int tegra_chip_id;
->>> -int tegra_cpu_speedo_id;		/* only exist in Tegra30 and later */
->>> -int tegra_soc_speedo_id;
->>>  enum tegra_revision tegra_revision;
->>
->> It's a bit odd to remove most of this, but leave a few parts hanging
->> around. Wouldn't it be better to the drivers/misc/fuse code to export
->> this, so that /all/ the fuse logic was there, rather than part of it
->> being left over in arch/arm/? We'll need to fix that up anyway when we
->> start using these globals on ARMv8, so may as well get it right now.
->> Also, I rather think that the new drivers/misc/fuse code shouldn't be a
->> module or driver, so that we can guarantee it's always there to provide
->> the globals and that they are initialized early enough...
-> 
-> tegra_revision is used in tegra_dt_init() to initialize soc_dev_attr->revision
-> Hence this needs to be available before the fuse driver is initialized.
+When these signals are not routed to package pins, false interrupts may
+trigger either temporarily, or permanently, all while not showing up in
+the IIR; it will read as NO_INT. This will eventually lead to the UART
+IRQ being disabled due to unhandled interrupts. When this happens, the
+kernel may print e.g.:
 
-Yes, the same for tegra_chip_id too.
+    irq 68: nobody cared (try booting with the "irqpoll" option)
 
-My point is: Why not move all the globals into the fuse driver, and make
-an early call to that fuse driver to initialize all these globals.
-Basically, rework this patch series to simply move the code to
-drivers/misc/fuse/, and keep initializing it by function call rather
-than as a driver probe(). The code can still scan DT to get the required
-reg/clock/... resources, in a similar fashion to e.g. the Tegra timer or
-cpufreq drivers IIRC. Perhaps the sysfs exports could be associated with
-a driver still though - just initialize the globals early?
+In order to prevent this, enable UART_BUG_NOMSR. This prevents
+UART_IER_MSI from being enabled, which prevents the false interrupts
+from triggering.
+
+In practice, this is not needed under any of the following conditions:
+
+* On Tegra chips after Tegra30, since the HW bug has apparently been
+  fixed.
+
+* On UARTs C..E since their MODEM control signals are tied to the correct
+  static state which doesn't trigger the issue.
+
+* On UARTs A..B if the MODEM control signals are routed out to package
+  pins, since they will then carry valid signals.
+
+However, we ignore these exceptions for now, since they are only relevant
+if a board actually hooks up more than a 4-wire UART, and no currently
+supported board does this. If we ever support a board that does, we can
+refine the algorithm that enables UART_BUG_NOMSR to take those exceptions
+into account, and/or read a flag from DT/... that indicates that the
+board has hooked up and pinmux'd more than a 4-wire UART.
+
+Reported-by: Olof Johansson <olof@lixom.net> # autotester
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ drivers/tty/serial/8250/8250_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index e33d38cb170f..61ecd709a722 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -2670,6 +2670,10 @@ static void serial8250_config_port(struct uart_port *port, int flags)
+ 	if (port->type == PORT_16550A && port->iotype == UPIO_AU)
+ 		up->bugs |= UART_BUG_NOMSR;
+ 
++	/* HW bugs may trigger IRQ while IIR == NO_INT */
++	if (port->type == PORT_TEGRA)
++		up->bugs |= UART_BUG_NOMSR;
++
+ 	if (port->type != PORT_UNKNOWN && flags & UART_CONFIG_IRQ)
+ 		autoconfig_irq(up);
+ 
+-- 
+1.8.1.5
+
