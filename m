@@ -1,41 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Remove 3.3V supply and modem regulators
-Date: Tue, 07 Jan 2014 09:43:43 -0700
-Message-ID: <52CC2EBF.60106@wwwdotorg.org>
-References: <1389021933-6675-1-git-send-email-treding@nvidia.com> <52CB192F.2020700@wwwdotorg.org> <52CBEF89.6090901@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] gpu: host1x: do not check previously handled gathers
+Date: Tue,  7 Jan 2014 21:03:06 +0100
+Message-ID: <1389124986-32501-1-git-send-email-kusmabite@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52CBEF89.6090901-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/07/2014 05:14 AM, Laxman Dewangan wrote:
-> On Tuesday 07 January 2014 02:29 AM, Stephen Warren wrote:
->> On 01/06/2014 08:25 AM, Thierry Reding wrote:
->>> GPIO 1 and 2 of the PMIC are not used for the described purpose, so
->>> remove them.
->> As far as I can tell, this patch is correct, since those GPIOs are in
->> fact used to discharge the rails after disabling them, rather than to
->> enable/disable the rails.
->>
->> Equally, these GPIOs affect multiple rails at once, so listing the GPIO
->> as a property of a single regulator seems wrong either way.
->>
->> However, PMU_REGEN1 does seem to feed the "EN" pin of U13C1, a DC/DC
->> switcher for power rail 3.3v_modem, so perhaps there's more going on
->> here than I see?
->>
->> In summary, I need Laxman to comment on this and ack the change, and
->> explain why these GPIOs were listed as regulator enables when it doesn't
->> seem that they are.
->>
-> PMU_REGEN1 is going to U13C1 (DCDC switcher). So if EN is 0, the output
-> will be 0 and when it is 1, the output will be 3.3V.
-> Because this is coming from GPIO, it is added as the fixed regulator.
+When patching gathers, we don't need to check against
+gathers with lower indices than the current one, as
+they are guaranteed to already have been handled.
 
-What about PMU_REGEN3, for which that isn't the case, and what about the
-fact that PMU_REGEN1 does a lot more than just enable that DC/DC switcher?
+Signed-off-by: Erik Faye-Lund <kusmabite-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+
+Here's a trivial optimization I have been running with for a while.
+
+ drivers/gpu/host1x/job.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index de5ec33..e965805 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -534,7 +534,7 @@ int host1x_job_pin(struct host1x_job *job, struct device *dev)
+ 
+ 		g->base = job->gather_addr_phys[i];
+ 
+-		for (j = 0; j < job->num_gathers; j++)
++		for (j = i + 1; j < job->num_gathers; j++)
+ 			if (job->gathers[j].bo == g->bo)
+ 				job->gathers[j].handled = true;
+ 
+-- 
+1.8.1.2
