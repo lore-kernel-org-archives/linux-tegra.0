@@ -1,43 +1,41 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: paz00: Add LVDS support to device tree
-Date: Mon, 06 Jan 2014 23:55:34 +0100
-Message-ID: <1452780.T4ijKNnhdY@fb07-iapwap2>
-References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de> <2030639.dhgZbyhUvO@fb07-iapwap2> <52CB2F59.3060901@wwwdotorg.org>
+From: Chris Ball <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH REPOST3] mmc: tegra: add support for Tegra124
+Date: Tue, 07 Jan 2014 03:05:44 +0000
+Message-ID: <86lhys7apj.fsf@void.printf.net>
+References: <1389032267-2567-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52CB2F59.3060901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1389032267-2567-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> (Stephen
+	Warren's message of "Mon, 6 Jan 2014 11:17:47 -0700")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, 6. Januar 2014, 15:34:01 schrieb Stephen Warren:
-> On 01/06/2014 03:21 PM, Marc Dietrich wrote:
-> > Am Montag, 6. Januar 2014, 12:38:20 schrieb Stephen Warren:
-> >> On 12/21/2013 01:38 PM, Marc Dietrich wrote:
-> >>> Add backlight and panel nodes for the PAZ00 TFT LCD panel.
-> >>> 
-> >>> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-> >>> ---
-> >>> This should enable everything needed. Unfortunately, in my tests it only
-> >>> switches on the backlight, but the display controller blocks in some
-> >>> infinit loop, so we get no output (and no working system). I post it
-> >>> here
-> >>> in case I missed something obvious...
-> >> 
-> >> As mentioned later on, this works fine with U-Boot (and tests fine here
-> >> too), so I plan to apply this for 3.15, once I can.
-> > 
-> > huh? I thought this can go into 3.14 if possible. Patch is harmless and
-> > the
-> > merge window still weeks away.
-> 
-> The cut-off for new features was at least a week ago. I expect the merge
-> window will open this weekend.
+Hi Stephen,
 
-AFAIK, there will be an rc8 (and maybe also an rc9 due to the xmas vacations). 
-I submitted the patchset two days after the LVDS support for the other boards 
-was sent. Ok, there needs to be some deadline and I may have missed it, but it 
-would be really unfortune to miss 3.14 because that's the last missing piece.
+On Mon, Jan 06 2014, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Tegra124's MMC controller is very similar to earlier SoC generations,
+> and can be supported by the same driver.
+>
+> However, there are some non-backwards-compatible HW differences, and
+> hence a new DT compatible value must be used to describe the HW. This
+> patch updates the driver to support that new compatible value.
+>
+> That said, the HW differences are only relevant when enabling certain
+> high-performance transfer modes. Since the driver is currently very
+> simple and doesn't enable those modes, we don't actually need to address
+> any of these HW differences in the code yet, hence the simple nature of
+> this patch.
+>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks, pushed to mmc-next for 3.14; sorry for the delay.
+
+- Chris.
+-- 
+Chris Ball   <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>   <http://printf.net/>
