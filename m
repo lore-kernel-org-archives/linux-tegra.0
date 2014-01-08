@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH v2 3/6] ARM: tegra: Add efuse bindings
-Date: Wed, 8 Jan 2014 21:05:05 +0100
-Message-ID: <20140108200504.GD1298@ulmo.nvidia.com>
+Date: Wed, 8 Jan 2014 21:09:48 +0100
+Message-ID: <20140108200946.GE1298@ulmo.nvidia.com>
 References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
  <1387891931-9854-4-git-send-email-pdeschrijver@nvidia.com>
  <52CB14D3.2060904@wwwdotorg.org>
@@ -9,7 +9,7 @@ References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
  <52CD9DFB.9010007@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u65IjBhB3TIa72Vp"
+	protocol="application/pgp-signature"; boundary="dFWYt1i2NyOo1oI9"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
 In-Reply-To: <52CD9DFB.9010007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -19,7 +19,7 @@ Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, l
 List-Id: linux-tegra@vger.kernel.org
 
 
---u65IjBhB3TIa72Vp
+--dFWYt1i2NyOo1oI9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -43,29 +43,51 @@ On Wed, Jan 08, 2014 at 11:50:35AM -0700, Stephen Warren wrote:
 >=20
 > Yes, we should fix that. Care to send a patch?
 
-Will do.
+Ugh... I've just been going through some of the other DTS files and see
+that quite a lot of other places aren't following this rule either. The
+Beaver DTS has things like:
+
+		rt5640: rt5640@1c {
+			...
+		};
+
+which I guess "should have been"
+
+		rt5640: codec@1c { /* or even audio-codec@1c */
+			...
+		};
+
+and
+
+		pmic: tps65911@2d {
+			...
+		};
+>
+which would be another candidate for pmic@2d.
+
+Perhaps it isn't worth fixing them all up after all?
 
 Thierry
 
---u65IjBhB3TIa72Vp
+--dFWYt1i2NyOo1oI9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSza9wAAoJEN0jrNd/PrOhB84QAK1ZPKj6gFYAJFaabDtwZz9y
-yWMnI+N0c3Sz/6Ps/1hGgzJAZLm4x4DUOy6k4UjP8j6azfIKhGSUMfk7NewLOIUr
-7OwNvRqFlIB9n3rKEXiAp18zIhpO8OK5KpKDYeDKCw7JdfHdQz+HhkQmd3Q45a+r
-ZYVXjCRbeaR641XcjfDiipscn1xyRnOXEviDBeUVh6d5T2JpwOynT5yNU/MPtPZI
-CTp+r8WuGmiHjavjh3bG3b1oTw2U/be9v7AV5B55f5uU7sxdsCAmA4feakZhPEdG
-TKPT9B8D0WYFymras9sqZTEM+FlFR9FYu27kqGPbvnADH+lRX9d3N/GkHzxc6Vi0
-c/NDKBW3GUqa8JHcNp8ZDwsnSoS/Z77vlD7sBmuWDKOfvt0F9S5EXDYhjXw/Y7qL
-Zv3Q2BLozL92BeJ2oQBFiPYldxEu6sf9GwBfSp+ZWWCosABT4vwuppYfwrvzT4rx
-YQy3MIMO+yJ5e0nMYY/YN9qeu+GC+IhZDvOYpaeUVx1WdxLmkRou6V9BPNd40OCz
-NigIAJsoi8eyG8QvjGbRRe33gf8o9VqhG50V4mlGfZSk8fW+TCiZlxlNz/9Qc/Er
-CRKnXTDTCB/98UGYsFXDG3/MCkwNYwKVNV3pFE9SLsmNat+BpjxfpP6ckz5tcY6X
-AxepF0hrfInZ5Cx5DXSv
-=SWyH
+iQIcBAEBAgAGBQJSzbCKAAoJEN0jrNd/PrOhK6EP/RYFt4xDK/5hdp4EPLPOJtNf
+Ecw5kpV/DClLaYh72xvzOplIE47gEedCHJyzv0CG6+bf/JEaTJ9uDj2Kq0UIYxqt
+gJTlzHZ3qzOOME80XP0hRSmzznGKqLxgGXGKmvHaKgvM0VSyjXm1lGqz1wzgVDjA
+5b+lAVXJPaXW5pV2uCDacBxXHtpWb3b98tBman6khjI77zuDUPpXcdCzqMKqGxoz
+sMT+nA179raHHy06xNR70OsvzPsZqkkPC1fnsdmonLTHrkYsfjjR8BYqehP30fiX
+fE16Ty6Fqxn3HsWd1msE4nyUzXhxB2rJUVKExKavXpYzjAaocLooUGXnad8ptUeu
+3BkCHqaDmfqB0aN3gFb/odJZXpN9mAnrEjLft6FBKOP3SQkPLoLllKdRfEHTDzJ/
+grES4xodoZE0wHw3uqe+2WQfQ6klRRdl8+WYOnw6CWQc9CICXX11AXl32bYGH+dB
+xE4oRuSZWTBv6nwO7u93o6Mow8XHy7G225z+WB0UeFWfZ7Nc6cvKD7OICI/HhZVD
+OQLq1hRnostBrPzfzlRpG4WokB2yJdDlCyNxuqR/xwQH2qz5+IanFWecJYeGqRRU
+1S2bsMTlmIj0ODArNA8+roImmGvghAOLkdyLPGjuXTpZ7h7G6KS2S9CQt7Fj32z7
+8iZERIaCEwWmyvOR91nn
+=qana
 -----END PGP SIGNATURE-----
 
---u65IjBhB3TIa72Vp--
+--dFWYt1i2NyOo1oI9--
