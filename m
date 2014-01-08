@@ -1,92 +1,109 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] drm/panel: Add support for Samsung LTN101NT05 panel
-Date: Wed, 8 Jan 2014 16:24:30 +0100
-Message-ID: <20140108152429.GG21974@ulmo.nvidia.com>
-References: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de>
+From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Subject: Re: [PATCH] drm/tegra: Fix Kconfig dependencies
+Date: Wed, 8 Jan 2014 08:24:02 -0800
+Message-ID: <20140108162402.GA6928@roeck-us.net>
+References: <1388946171-29459-1-git-send-email-linux@roeck-us.net>
+ <20140106153945.GA6721@ulmo.nvidia.com>
+ <20140106162055.GA18726@roeck-us.net>
+ <20140108132924.GA1592@ulmo.nvidia.com>
+ <52CD573C.4020501@roeck-us.net>
+ <20140108140137.GA21974@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1437480128=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <f03a644deb858f10affb7b039f9982bac81b02c9.1387656959.git.marvin24@gmx.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140108140137.GA21974-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Jan 08, 2014 at 03:01:39PM +0100, Thierry Reding wrote:
+> On Wed, Jan 08, 2014 at 05:48:44AM -0800, Guenter Roeck wrote:
+> > On 01/08/2014 05:29 AM, Thierry Reding wrote:
+> > >On Mon, Jan 06, 2014 at 08:20:55AM -0800, Guenter Roeck wrote:
+> > >>On Mon, Jan 06, 2014 at 04:39:47PM +0100, Thierry Reding wrote:
+> > >>>On Sun, Jan 05, 2014 at 10:22:51AM -0800, Guenter Roeck wrote:
+> > >>>>arm:allmodconfig fails to build with several undefined drm and host1x symbols.
+> > >>>>
+> > >>>>drivers/gpu/drm/tegra/bus.c:52: undefined reference to `drm_dev_alloc'
+> > >>>>drivers/gpu/drm/tegra/bus.c:56: undefined reference to `drm_dev_register'
+> > >>>>drivers/gpu/drm/tegra/bus.c:67: undefined reference to `drm_dev_free'
+> > >>>>drivers/gpu/drm/tegra/bus.c:75: undefined reference to `drm_put_dev'
+> > >>>>drivers/gpu/drm/tegra/drm.c:445: undefined reference to `host1x_syncpt_get_base'
+> > >>>>drivers/gpu/drm/tegra/drm.c:449: undefined reference to `host1x_syncpt_base_id'
+> > >>>>
+> > >>>>and so on.
+> > >>>>
+> > >>>>This is caused by DRM=m but DRM_TEGRA=y. DRM_TEGRA is bool while DRM is
+> > >>>>tristate. DRM_TEGRA can not be set to tristate because it depends on unexported
+> > >>>>host1x symbols (and possibly others). Fix by updating DRM_TEGRA dependency.
+> > >>>>
+> > >>>>Also, the DRM_TEGRA help text states that it can be built as module.
+> > >>>>Remove that text since it is not (or no longer) correct.
+> > >>>>
+> > >>>>Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> > >>>>---
+> > >>>>  drivers/gpu/drm/tegra/Kconfig |    5 +----
+> > >>>>  1 file changed, 1 insertion(+), 4 deletions(-)
+> > >>>
+> > >>>Hi Guenter,
+> > >>>
+> > >>>I think this should be fixed in latest next, where it is now possible to
+> > >>>build the Tegra DRM driver as a module. All needed host1x symbols are
+> > >>>exported as well.
+> > >>>
+> > >>>One thing that strikes me as odd, though, is that I've always thought
+> > >>>Kconfig would warn if a symbol selected as =y depended on a symbol
+> > >>>selected as =m, precisely because of what you describe above. menuconfig
+> > >>>complains about it pretty loudly as well.
+> > >>>
+> > >>>Oh, but I see that if I change DRM_TEGRA back to be bool, then Kconfig
+> > >>>doesn't complain anymore, even if DRM_TEGRA=y and DRM=m. Should that
+> > >>>perhaps be considered a bug?
+> > >>>
+> > >>No idea. All I know is that it causes a build failure ;-).
+> > >>
+> > >>Anyway, are there plans to push the patches changing DRM_TEGRA to tristate
+> > >>into 3.13 ? This is one of the reasons for arm:allmodconfig to fail. If there
+> > >>are no plans to push the patches into 3.13, I think it would make sense
+> > >>to send my patch to Linus and apply the tristate changes on top of it.
+> > >
+> > >The patches to change DRM_TEGRA to tristate are part of what is queued
+> > >for 3.14. While I agree that having allmodconfig working is a worthwhile
+> > >goal in itself for build testing, I'm not sure it warrants a patch this
+> > >late in the release cycle that will cause conflicts during the merge
+> > >window.
+> > >
+> > >It also seems like there are other issues that prevent allmodconfig to
+> > >build successfully on ARM not all of them being as easy to fix as this
+> > >one.
+> > >
+> > 
+> > All other problems are being addressed.
+> 
+> Okay, if this is indeed the only remaining issue then I think it makes
+> sense indeed to go through the trouble of fixing it right away rather
+> than waiting for 3.14.
+> 
+> > If arm:allmodconfig is not pursued as buildable, trying to build it is worthless,
+> > and I'll drop it from my list of test builds for -stable. Thanks for letting me know.
+> 
+> Right, I hadn't considered -stable builds and this is an issue that's
+> new in 3.13, isn't it? In that case, and since this is the only
+> remaining issue, the above patch:
+> 
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Dave, since this is a single patch for 3.13 it might be easier for you
+> to pick it up directly rather than have me send out a pull request.
+> Either way is fine with me, though.
+> 
 
---===============1437480128==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ulDeV4rPMk/y39in"
-Content-Disposition: inline
+For now I have dropped arm:allmodconfig from my list of build tests and replaced
+it with a number of additional individual target builds. As I had this or
+similar discussions ever since I started testing -stable builds, my conclusion
+is that the arm community isn't much interested in keeping arm:allmodconfig
+buildable. If that ever changes, I'll be happy to add it back in.
 
-
---ulDeV4rPMk/y39in
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Dec 21, 2013 at 09:38:12PM +0100, Marc Dietrich wrote:
-> The Samsung LNT101NT05 10.1" WXVGA panel can be supported by the simple p=
-anel
-> driver.
->=20
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: David Airlie <airlied@linux.ie>
-> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-> ---
-> This isn't strickly required to get the panel up, but Thierry suggested o=
-n IRC to
-> include it anyway, in case someone else has some use for it.
-
-For the record: the reason this isn't strictly needed is because there's
-an EDID that can be probed to get the video timings. But the panel still
-can be supported using the timings from the datasheet. One example where
-this would be useful is when the EDID isn't connected or simply broken.
-
-That said: applied, thanks!
-
-Thierry
-
---ulDeV4rPMk/y39in
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSzW2tAAoJEN0jrNd/PrOhXaMP/38NU0fvKjjQV0AFLuZakbMo
-b5oIduYQlcwJ2BdtCC5i9Q4sxV1TjS1n5EO5tSQTJfqs2139G/MK1BfkgfNeuOVU
-VCBdPgT6Ds+csRwmbs6rIJgCWzAiLSBJJkyR8hYF23l8Pk2tRtB6sayuUDXVefGW
-dNBIRcKSruM2qllW8RtB3ptyoJBhCXfym2Q7BALw0ELaPdKyVp18P4gv31BCGv7T
-FLvy7X54Y55K4/9l2HTas+Xi/n+R7qks49+YpdTcxWbMqWqpjPDqUGSgTXkwwJgb
-u0QnKnaONAQh41WfxMJhKaBTm3ii/RquC69A1FtxQ3DDoE/+/YP15TPOQiO7mczy
-zDGhDdE1Se87U/shH2oG7q4X3/RqfddmAQOyV1shScF8vfcYu46dACu/MgTrpxJC
-epwFn25r240aIj5I5ZCesHl8Ge+3cs9ei6FI9FzdDBa5uEZYGL8m+JE/uFgaHKG4
-9qcIoJbiLpkdhLPJ+ysoH5DkfT84fTNvfB1Df4yjMc3et2kBenLOCY5AuefKGREB
-l/QQ7f/z+rGR7JgrOzL2tVLtZT+LmXuitQ8s7j1sKUdlESJhY88EliNVFhcAi/Uj
-vc0T8nmvbZ3O7j9ELRgfVk/S+9X5zD8TDpGIYiwGA/XYudjVQoIraTCm4BaG1QXw
-gX4uU+DczBNEi+rsQGoC
-=ZPIr
------END PGP SIGNATURE-----
-
---ulDeV4rPMk/y39in--
-
---===============1437480128==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1437480128==--
+Guenter
