@@ -1,109 +1,54 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: Fix Kconfig dependencies
-Date: Wed, 8 Jan 2014 08:24:02 -0800
-Message-ID: <20140108162402.GA6928@roeck-us.net>
-References: <1388946171-29459-1-git-send-email-linux@roeck-us.net>
- <20140106153945.GA6721@ulmo.nvidia.com>
- <20140106162055.GA18726@roeck-us.net>
- <20140108132924.GA1592@ulmo.nvidia.com>
- <52CD573C.4020501@roeck-us.net>
- <20140108140137.GA21974@ulmo.nvidia.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: pull request for some small fixes
+Date: Wed, 08 Jan 2014 08:27:57 -0800
+Message-ID: <20140108162757.27803.23767@quantum>
+References: <20131223162705.GE3378@tbergstrom-lnx.Nvidia.com>
+ <20140106054322.26907.37296@quantum>
+ <20140107125122.GC26588@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140108140137.GA21974-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140107125122.GC26588@tbergstrom-lnx.Nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 08, 2014 at 03:01:39PM +0100, Thierry Reding wrote:
-> On Wed, Jan 08, 2014 at 05:48:44AM -0800, Guenter Roeck wrote:
-> > On 01/08/2014 05:29 AM, Thierry Reding wrote:
-> > >On Mon, Jan 06, 2014 at 08:20:55AM -0800, Guenter Roeck wrote:
-> > >>On Mon, Jan 06, 2014 at 04:39:47PM +0100, Thierry Reding wrote:
-> > >>>On Sun, Jan 05, 2014 at 10:22:51AM -0800, Guenter Roeck wrote:
-> > >>>>arm:allmodconfig fails to build with several undefined drm and host1x symbols.
-> > >>>>
-> > >>>>drivers/gpu/drm/tegra/bus.c:52: undefined reference to `drm_dev_alloc'
-> > >>>>drivers/gpu/drm/tegra/bus.c:56: undefined reference to `drm_dev_register'
-> > >>>>drivers/gpu/drm/tegra/bus.c:67: undefined reference to `drm_dev_free'
-> > >>>>drivers/gpu/drm/tegra/bus.c:75: undefined reference to `drm_put_dev'
-> > >>>>drivers/gpu/drm/tegra/drm.c:445: undefined reference to `host1x_syncpt_get_base'
-> > >>>>drivers/gpu/drm/tegra/drm.c:449: undefined reference to `host1x_syncpt_base_id'
-> > >>>>
-> > >>>>and so on.
-> > >>>>
-> > >>>>This is caused by DRM=m but DRM_TEGRA=y. DRM_TEGRA is bool while DRM is
-> > >>>>tristate. DRM_TEGRA can not be set to tristate because it depends on unexported
-> > >>>>host1x symbols (and possibly others). Fix by updating DRM_TEGRA dependency.
-> > >>>>
-> > >>>>Also, the DRM_TEGRA help text states that it can be built as module.
-> > >>>>Remove that text since it is not (or no longer) correct.
-> > >>>>
-> > >>>>Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-> > >>>>---
-> > >>>>  drivers/gpu/drm/tegra/Kconfig |    5 +----
-> > >>>>  1 file changed, 1 insertion(+), 4 deletions(-)
-> > >>>
-> > >>>Hi Guenter,
-> > >>>
-> > >>>I think this should be fixed in latest next, where it is now possible to
-> > >>>build the Tegra DRM driver as a module. All needed host1x symbols are
-> > >>>exported as well.
-> > >>>
-> > >>>One thing that strikes me as odd, though, is that I've always thought
-> > >>>Kconfig would warn if a symbol selected as =y depended on a symbol
-> > >>>selected as =m, precisely because of what you describe above. menuconfig
-> > >>>complains about it pretty loudly as well.
-> > >>>
-> > >>>Oh, but I see that if I change DRM_TEGRA back to be bool, then Kconfig
-> > >>>doesn't complain anymore, even if DRM_TEGRA=y and DRM=m. Should that
-> > >>>perhaps be considered a bug?
-> > >>>
-> > >>No idea. All I know is that it causes a build failure ;-).
-> > >>
-> > >>Anyway, are there plans to push the patches changing DRM_TEGRA to tristate
-> > >>into 3.13 ? This is one of the reasons for arm:allmodconfig to fail. If there
-> > >>are no plans to push the patches into 3.13, I think it would make sense
-> > >>to send my patch to Linus and apply the tristate changes on top of it.
-> > >
-> > >The patches to change DRM_TEGRA to tristate are part of what is queued
-> > >for 3.14. While I agree that having allmodconfig working is a worthwhile
-> > >goal in itself for build testing, I'm not sure it warrants a patch this
-> > >late in the release cycle that will cause conflicts during the merge
-> > >window.
-> > >
-> > >It also seems like there are other issues that prevent allmodconfig to
-> > >build successfully on ARM not all of them being as easy to fix as this
-> > >one.
-> > >
+Quoting Peter De Schrijver (2014-01-07 04:51:22)
+> On Mon, Jan 06, 2014 at 06:43:22AM +0100, Mike Turquette wrote:
+> > Quoting Peter De Schrijver (2013-12-23 08:27:05)
+> > > The following changes since commit 62ce7cd62f534023224912dc9b909963f26a38da:
+> > > 
+> > >   clk: tegra: fix __clk_lookup() return value checks (2013-11-28 15:09:22 +0200)
+> > > 
+> > > are available in the git repository at:
+> > >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next-1
 > > 
-> > All other problems are being addressed.
+> > Hi Peter,
+> > 
+> > Do you intend for this to go as fixes for 3.13-rc8? The fixes are based
 > 
-> Okay, if this is indeed the only remaining issue then I think it makes
-> sense indeed to go through the trouble of fixing it right away rather
-> than waiting for 3.14.
+> Yes.
 > 
-> > If arm:allmodconfig is not pursued as buildable, trying to build it is worthless,
-> > and I'll drop it from my list of test builds for -stable. Thanks for letting me know.
-> 
-> Right, I hadn't considered -stable builds and this is an issue that's
-> new in 3.13, isn't it? In that case, and since this is the only
-> remaining issue, the above patch:
-> 
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Dave, since this is a single patch for 3.13 it might be easier for you
-> to pick it up directly rather than have me send out a pull request.
-> Either way is fine with me, though.
-> 
+> > off of a commit from my clk-next branch.
+> > 
+> Do you want me to rebase them on 3.13-rc7?
 
-For now I have dropped arm:allmodconfig from my list of build tests and replaced
-it with a number of additional individual target builds. As I had this or
-similar discussions ever since I started testing -stable builds, my conclusion
-is that the arm community isn't much interested in keeping arm:allmodconfig
-buildable. If that ever changes, I'll be happy to add it back in.
+Please do. I hope to send off a pull request today.
 
-Guenter
+Thanks,
+Mike
+
+> 
+> Cheers,
+> 
+> Peter.
