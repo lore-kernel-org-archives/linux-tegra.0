@@ -1,25 +1,41 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 0/7] misc Tegra clock fixes
-Date: Wed, 08 Jan 2014 15:41:02 -0700
-Message-ID: <52CDD3FE.1070404@wwwdotorg.org>
-References: <1388105067-24438-1-git-send-email-abrestic@chromium.org> <CAL1qeaG0Y4__viWsZeoFdf8XFN3Wk7CO2abeEjzRZg+wNRV56w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] ARM: tegra: Add efuse bindings
+Date: Wed, 08 Jan 2014 15:41:52 -0700
+Message-ID: <52CDD430.3010508@wwwdotorg.org>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com> <1387891931-9854-4-git-send-email-pdeschrijver@nvidia.com> <52CB14D3.2060904@wwwdotorg.org> <20140108133951.GD1592@ulmo.nvidia.com> <52CD9DFB.9010007@wwwdotorg.org> <20140108200946.GE1298@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaG0Y4__viWsZeoFdf8XFN3Wk7CO2abeEjzRZg+wNRV56w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20140108200946.GE1298-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/08/2014 03:28 PM, Andrew Bresticker wrote:
-> Hi Stephen, Peter,
+On 01/08/2014 01:09 PM, Thierry Reding wrote:
+> On Wed, Jan 08, 2014 at 11:50:35AM -0700, Stephen Warren wrote:
+>> On 01/08/2014 06:39 AM, Thierry Reding wrote:
+>>> On Mon, Jan 06, 2014 at 01:40:51PM -0700, Stephen Warren wrote:
+>>>> On 12/24/2013 06:32 AM, Peter De Schrijver wrote:
+>>> [...]
+>>>>> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+>>>>
+>>>>> +	efuse@7000F800 {
+>>>>
+>>>> "fuse" might be a better node name; "efuse" is presumably the name of
+>>>> the instance, not the type of object.
+>>>
+>>> There's another occurrence I noticed recently where we haven't followed
+>>> that rule. The PMIC node on Venice2 for instance is called as3722.
+>>> Perhaps that should also be renamed.
+>>
+>> Yes, we should fix that. Care to send a patch?
 > 
->> Fixes for various clock-related issues found during bringup of
->> Tegra124-based Venice2 and Norrin boards.
+> Ugh... I've just been going through some of the other DTS files and see
+> that quite a lot of other places aren't following this rule either. The
 ...
-> Any comments on this series?
+> Perhaps it isn't worth fixing them all up after all?
 
-Peter owns drivers/clk/tegra/, so I assume he'll handle these patches. I
-briefly looked at them when they were posted and didn't see any issues.
+I guess that just means the patch will be a little bigger; it doesn't
+seem like that's a good reason not to fix the issue.
