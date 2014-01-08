@@ -1,45 +1,48 @@
-From: "Dr. Musa Hamed" <drmusahamed01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: I have a very lucrative Business
-Date: Wed, 8 Jan 2014 21:47:31 +0100
-Message-ID: <CALS90i9nMs6jMoH2O5S68sPF=juYOV2sfMAwaBekL8ccz3eSOQ__12752.5135213093$1389215625$gmane$org@mail.gmail.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 0/7] misc Tegra clock fixes
+Date: Wed, 8 Jan 2014 14:28:37 -0800
+Message-ID: <CAL1qeaG0Y4__viWsZeoFdf8XFN3Wk7CO2abeEjzRZg+wNRV56w@mail.gmail.com>
+References: <1388105067-24438-1-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1388105067-24438-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-ATTN: Dear,
+Hi Stephen, Peter,
 
-I am Dr. Musa Hamed Executive Director of the Bank of Africa
-Plc B.O.A,Cotonou Benin Rep. I have a very lucrative Business proposal
-worth of 21,500,000.00 USD.
+> Fixes for various clock-related issues found during bringup of
+> Tegra124-based Venice2 and Norrin boards.
+>
+> Andrew Bresticker (3):
+>   clk: tegra: fix sdmmc clks on Tegra1x4
+>   clk: tegra: cclk_lp has a pllx/2 divider
+>   clk: tegra: use max divider if divider overflows
+>
+> David Ung (1):
+>   clk: tegra: PLLD2 fixes for hdmi
+>
+> Gabe Black (1):
+>   clk: tegra: Fix PLLP rate table
+>
+> Mark Zhang (1):
+>   clk: tegra: fix host1x clock on Tegra124
+>
+> Rhyland Klein (1):
+>   clk: tegra: Fix PLLD mnp table
+>
+>  drivers/clk/tegra/clk-divider.c          |  2 +-
+>  drivers/clk/tegra/clk-id.h               |  4 +++
+>  drivers/clk/tegra/clk-tegra-periph.c     |  4 +++
+>  drivers/clk/tegra/clk-tegra-super-gen4.c |  2 +-
+>  drivers/clk/tegra/clk-tegra114.c         |  8 +++---
+>  drivers/clk/tegra/clk-tegra124.c         | 46 +++++++++++++++++++-------------
+>  6 files changed, 41 insertions(+), 25 deletions(-)
 
-An Iraqi named Hamadi Hashem a business man made a fixed deposit of
-21,500,000.00 USD . Upon maturity several notices was sent to him,
-even during the war,eleven years ago (2003) up till this date. Again
-after the war another notification was sent and still no response came
-from him. it has been found out that Hamadi Hashem and his family had
-been killed during the war in bomb blast that hit their home at
-Mukaradeeb where his personal oil well was. I am prepared to split the
-funds with you 50%:50%.By placing you as the NEXT OF KIN to his
-deposit.
+Any comments on this series?
 
-Should you be interested in doing this deal with me, please send me
-the following information:
-
-(1) Your Name
-(2) Resident Address
-(3) Your Occupation
-(4) Your Phone Number
-(5) Date of Birth
-(6) Resident Country
-
-And I will prefer you to reach me privately and securely on my personal
-email address: dr.musahamed30-Qt13gs6zZMY@public.gmane.org
-Tel: +229-988-400-97
-
-I will provide you with further information as soon as I hear
-positively from you.
-
-Regards,
-Dr. Musa Hamed
+Thanks!
+Andrew
