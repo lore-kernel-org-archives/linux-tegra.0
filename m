@@ -1,116 +1,65 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: enable LCD panel on Ventana
-Date: Tue,  7 Jan 2014 16:47:17 -0700
-Message-ID: <1389138437-4686-2-git-send-email-swarren@wwwdotorg.org>
-References: <1389138437-4686-1-git-send-email-swarren@wwwdotorg.org>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 4/6] ARM: tegra: rework fuse.c
+Date: Wed, 8 Jan 2014 10:31:33 +0200
+Message-ID: <20140108083133.GK26588@tbergstrom-lnx.Nvidia.com>
+References: <1387891931-9854-1-git-send-email-pdeschrijver@nvidia.com>
+ <1387891931-9854-5-git-send-email-pdeschrijver@nvidia.com>
+ <52CB1722.70306@wwwdotorg.org>
+ <20140107141004.GF26588@tbergstrom-lnx.Nvidia.com>
+ <52CC67C9.9000704@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1389138437-4686-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52CC67C9.9000704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Herbert Xu <herbert-lOAM2aK0SrRLBo1qDEOMRrpzq4S04n8Q@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Danny Huang <dahuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Jan 07, 2014 at 09:47:05PM +0100, Stephen Warren wrote:
+> On 01/07/2014 07:10 AM, Peter De Schrijver wrote:
+> > On Mon, Jan 06, 2014 at 09:50:42PM +0100, Stephen Warren wrote:
+> >> On 12/24/2013 06:32 AM, Peter De Schrijver wrote:
+> >>> Reduce fuse.c to the minimum functionality required for the early bootstages.
+> >>>
+> >>> Also export tegra_read_straps() for use by the fuse driver.
+> 
+> >>> diff --git a/arch/arm/mach-tegra/fuse.c b/arch/arm/mach-tegra/fuse.c
+> 
+> >>> -int tegra_sku_id;
+> >>> -int tegra_cpu_process_id;
+> >>> -int tegra_core_process_id;
+> >>>  int tegra_chip_id;
+> >>> -int tegra_cpu_speedo_id;		/* only exist in Tegra30 and later */
+> >>> -int tegra_soc_speedo_id;
+> >>>  enum tegra_revision tegra_revision;
+> >>
+> >> It's a bit odd to remove most of this, but leave a few parts hanging
+> >> around. Wouldn't it be better to the drivers/misc/fuse code to export
+> >> this, so that /all/ the fuse logic was there, rather than part of it
+> >> being left over in arch/arm/? We'll need to fix that up anyway when we
+> >> start using these globals on ARMv8, so may as well get it right now.
+> >> Also, I rather think that the new drivers/misc/fuse code shouldn't be a
+> >> module or driver, so that we can guarantee it's always there to provide
+> >> the globals and that they are initialized early enough...
+> > 
+> > tegra_revision is used in tegra_dt_init() to initialize soc_dev_attr->revision
+> > Hence this needs to be available before the fuse driver is initialized.
+> 
+> Yes, the same for tegra_chip_id too.
+> 
+> My point is: Why not move all the globals into the fuse driver, and make
+> an early call to that fuse driver to initialize all these globals.
+> Basically, rework this patch series to simply move the code to
+> drivers/misc/fuse/, and keep initializing it by function call rather
+> than as a driver probe(). The code can still scan DT to get the required
+> reg/clock/... resources, in a similar fashion to e.g. the Tegra timer or
+> cpufreq drivers IIRC. Perhaps the sysfs exports could be associated with
+> a driver still though - just initialize the globals early?
 
-Ventana uses a CLAA101WA01A LCD panel. Enable the relevant display
-controller, backlight, and regulators.
+That's probably better indeed... Will look into that.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra20-ventana.dts | 39 ++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
+Cheers,
 
-diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
-index 571d12e6ac2d..93cbb9928e1d 100644
---- a/arch/arm/boot/dts/tegra20-ventana.dts
-+++ b/arch/arm/boot/dts/tegra20-ventana.dts
-@@ -17,6 +17,14 @@
- 	};
- 
- 	host1x@50000000 {
-+		dc@54200000 {
-+			rgb {
-+				status = "okay";
-+
-+				nvidia,panel = <&panel>;
-+			};
-+		};
-+
- 		hdmi@54280000 {
- 			status = "okay";
- 
-@@ -309,6 +317,10 @@
- 		status = "okay";
- 	};
- 
-+	pwm: pwm@7000a000 {
-+		status = "okay";
-+	};
-+
- 	i2c@7000c000 {
- 		status = "okay";
- 		clock-frequency = <400000>;
-@@ -359,7 +371,7 @@
- 			#size-cells = <0>;
- 		};
- 
--		i2c@1 {
-+		lvds_ddc: i2c@1 {
- 			reg = <1>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -557,6 +569,17 @@
- 		non-removable;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+
-+		enable-gpios = <&gpio TEGRA_GPIO(D, 4) GPIO_ACTIVE_HIGH>;
-+		power-supply = <&vdd_bl_reg>;
-+		pwms = <&pwm 0 5000000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+	};
-+
- 	clocks {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -581,6 +604,16 @@
- 		};
- 	};
- 
-+	panel: panel {
-+		compatible = "chungwa,claa101wa01a", "simple-panel";
-+
-+		power-supply = <&vdd_pnl_reg>;
-+		enable-gpios = <&gpio TEGRA_GPIO(B, 2) GPIO_ACTIVE_HIGH>;
-+
-+		backlight = <&backlight>;
-+		ddc-i2c-bus = <&lvds_ddc>;
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -614,7 +647,7 @@
- 			enable-active-high;
- 		};
- 
--		regulator@3 {
-+		vdd_pnl_reg: regulator@3 {
- 			compatible = "regulator-fixed";
- 			reg = <3>;
- 			regulator-name = "vdd_pnl";
-@@ -624,7 +657,7 @@
- 			enable-active-high;
- 		};
- 
--		regulator@4 {
-+		vdd_bl_reg: regulator@4 {
- 			compatible = "regulator-fixed";
- 			reg = <4>;
- 			regulator-name = "vdd_bl";
--- 
-1.8.1.5
+Peter.
