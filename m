@@ -1,35 +1,26 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add system-power-controller property for PMIC node
-Date: Thu, 9 Jan 2014 16:31:48 +0530
-Message-ID: <1389265308-26405-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] ARM: config: enable ams AS3722 power reset driver
+Date: Thu, 9 Jan 2014 16:33:59 +0530
+Message-ID: <52CE821F.6030908@nvidia.com>
+References: <1389084000-17033-1-git-send-email-ldewangan@nvidia.com> <52CDA181.4030005@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <52CDA181.4030005-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add system-power-controller property to system PMIC, ams AS3722,
-node to enable power off functionality through PMIC.
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-venice2.dts |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
-index c6dcef5..1ad3f33 100644
---- a/arch/arm/boot/dts/tegra124-venice2.dts
-+++ b/arch/arm/boot/dts/tegra124-venice2.dts
-@@ -616,6 +616,8 @@
- 			reg = <0x40>;
- 			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
- 
-+			ams,system-power-controller;
-+
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
- 
--- 
-1.7.9.5
+On Thursday 09 January 2014 12:35 AM, Stephen Warren wrote:
+> On 01/07/2014 01:39 AM, Laxman Dewangan wrote:
+>> ams AS3722 is used as system PMIC for Tegra124 based Venice2.
+>> Enable ams AS3722 power reset driver for enabling power off
+>> system using PMIC.
+> I assume you'll also send a patch to add the following to DT:
+>
+> 			ams,system-power-controller;
+>
+Oops, I missed it.
+Sent it.
