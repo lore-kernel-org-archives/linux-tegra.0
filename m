@@ -1,47 +1,46 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: pull request for some small fixes
-Date: Thu, 9 Jan 2014 14:53:54 +0200
-Message-ID: <20140109125354.GU26588@tbergstrom-lnx.Nvidia.com>
-References: <20131223162705.GE3378@tbergstrom-lnx.Nvidia.com>
- <20140106054322.26907.37296@quantum>
- <20140107125122.GC26588@tbergstrom-lnx.Nvidia.com>
- <20140108162757.27803.23767@quantum>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.13-rc7
+Date: Fri, 10 Jan 2014 00:06:17 -0800
+Message-ID: <52CFA9F9.4090900@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140108162757.27803.23767@quantum>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "pawel.moll@arm.com" <pawel.moll@arm.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jan 08, 2014 at 05:27:57PM +0100, Mike Turquette wrote:
-> Quoting Peter De Schrijver (2014-01-07 04:51:22)
-> > On Mon, Jan 06, 2014 at 06:43:22AM +0100, Mike Turquette wrote:
-> > > Quoting Peter De Schrijver (2013-12-23 08:27:05)
-> > > > The following changes since commit 62ce7cd62f534023224912dc9b909963f26a38da:
-> > > > 
-> > > >   clk: tegra: fix __clk_lookup() return value checks (2013-11-28 15:09:22 +0200)
-> > > > 
-> > > > are available in the git repository at:
-> > > >   git://nv-tegra.nvidia.com/user/pdeschrijver/linux.git clk-tegra-next-1
-> > > 
-> > > Hi Peter,
-> > > 
-> > > Do you intend for this to go as fixes for 3.13-rc8? The fixes are based
-> > 
-> > Yes.
-> > 
-> > > off of a commit from my clk-next branch.
-> > > 
-> > Do you want me to rebase them on 3.13-rc7?
-> 
-> Please do. I hope to send off a pull request today.
-> 
+Here are some basic Tegra test results for Linux v3.13-rc7.
+Logs and other details at:
 
-The fixes are on top of the clk-tegra-for-3.14, so I can't apply them on 3.13-rc7 directly.
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.13-rc7/20140104153107/
 
-Cheers,
 
-Peter.
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.13-rc6 (802eee95bde72fd0cd0f3a5b2098375a487d1eda)):
+    text     data      bss    total  kernel
+    +256       +8        0     +264  multi_v7_defconfig
+    +216       +8        0     +224  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.13-rc6 (802eee95bde72fd0cd0f3a5b2098375a487d1eda))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
