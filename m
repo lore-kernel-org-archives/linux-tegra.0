@@ -1,51 +1,72 @@
-From: franklinbuthelezi1-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
-Subject: =?UTF-8?Q?DiePresse.com_Mein_Freund,_der_Fahrradh=C3=A4ndler?=
-Date: Fri, 10 Jan 2014 13:29:50 +0100 (CET)
-Message-ID: <453937973.1389356990081.JavaMail.root@dpoportal4.diepresse.apa.net>
-Reply-To: franklinbuthelezi1-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH] pinctrl: tegra1x4: initialize at arch_initcall time
+Date: Fri, 10 Jan 2014 16:50:16 -0800
+Message-ID: <1389401416-29892-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-=46olgender Artikel auf http://diepresse.com wird Ihnen von Franklin Bu=
-thelezi empfohlen:
+Many devices rely on pinctrl/pinmux settings being applied
+before probing and some of these may probe before device_initcall
+time (e.g. i2c at subsys_initcall).  Move Tegra1x4 pinctrl driver
+registration to arch_initcall time so that proper pin settings
+can be applied earlier.
 
-Mein Freund, der Fahrradh=C3=A4ndler
-Manche Dinge ver=C3=A4ndern sich =C3=BCber die langen Wintermonate hinw=
-eg.=20
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+---
+ drivers/pinctrl/pinctrl-tegra114.c | 13 ++++++++++++-
+ drivers/pinctrl/pinctrl-tegra124.c | 13 ++++++++++++-
+ 2 files changed, 24 insertions(+), 2 deletions(-)
 
-http://diepresse.com/home/leben/mode/kolumnezumtag/548717/index.do
-
-Notiz:
-Dear friend,
-=20
-I am the international operations manager of ABSA bank South Africa. My=
- name is Franklin Buthelezi. I have a sensitive and private offer from =
-the top executive to seek your partnership in re-profiling some offshor=
-e investment funds worth 11.5M U.S.D (Eleven Million five hundred thous=
-and United States Dollars) I am constrained however to withhold most of=
- the details for now. This is a legitimate transaction.=20
-=20
-If we agree on the terms you will be given 15% of the total funds, if y=
-ou are interested please write back via email providing me your persona=
-l details and phone number for further directives.
-=20
-If you are interested and willing to render your assistance please resp=
-ond via my private email address stated below.
-=20
-I look forward to your response.
-=20
-Best regards
-=46ranklin Buthelezi
-Email: franklinbuthelezi1-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
-
-
-------------------------------------
-DiePresse.com =C3=BCbernimmt keine Haftung f=C3=BCr den Inhalt der pers=
-=C3=B6nlichen Nachricht.
-
-=C2=A9 DiePresse.com - http://diepresse.com
+diff --git a/drivers/pinctrl/pinctrl-tegra114.c b/drivers/pinctrl/pinctrl-tegra114.c
+index 93c9e38..5d0c950 100644
+--- a/drivers/pinctrl/pinctrl-tegra114.c
++++ b/drivers/pinctrl/pinctrl-tegra114.c
+@@ -2761,7 +2761,18 @@ static struct platform_driver tegra114_pinctrl_driver = {
+ 	.probe = tegra114_pinctrl_probe,
+ 	.remove = tegra_pinctrl_remove,
+ };
+-module_platform_driver(tegra114_pinctrl_driver);
++
++static int __init tegra114_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra114_pinctrl_driver);
++}
++arch_initcall(tegra114_pinctrl_init);
++
++static void __exit tegra114_pinctrl_exit(void)
++{
++	platform_driver_unregister(&tegra114_pinctrl_driver);
++}
++module_exit(tegra114_pinctrl_exit);
+ 
+ MODULE_AUTHOR("Pritesh Raithatha <praithatha@nvidia.com>");
+ MODULE_DESCRIPTION("NVIDIA Tegra114 pinctrl driver");
+diff --git a/drivers/pinctrl/pinctrl-tegra124.c b/drivers/pinctrl/pinctrl-tegra124.c
+index c20e0e1..02ac976 100644
+--- a/drivers/pinctrl/pinctrl-tegra124.c
++++ b/drivers/pinctrl/pinctrl-tegra124.c
+@@ -3130,7 +3130,18 @@ static struct platform_driver tegra124_pinctrl_driver = {
+ 	.probe = tegra124_pinctrl_probe,
+ 	.remove = tegra_pinctrl_remove,
+ };
+-module_platform_driver(tegra124_pinctrl_driver);
++
++static int __init tegra124_pinctrl_init(void)
++{
++	return platform_driver_register(&tegra124_pinctrl_driver);
++}
++arch_initcall(tegra124_pinctrl_init);
++
++static void __exit tegra124_pinctrl_exit(void)
++{
++	platform_driver_unregister(&tegra124_pinctrl_driver);
++}
++module_exit(tegra124_pinctrl_exit);
+ 
+ MODULE_AUTHOR("Ashwini Ghuge <aghuge@nvidia.com>");
+ MODULE_DESCRIPTION("NVIDIA Tegra124 pinctrl driver");
+-- 
+1.8.5.1
