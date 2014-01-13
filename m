@@ -1,35 +1,37 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 0/2] Support to tune governor in run time
-Date: Mon, 13 Jan 2014 19:17:41 +0800
-Message-ID: <1389611863-7812-1-git-send-email-wni@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/2] drm/tegra: Fix CRTC associated with outputs
+Date: Mon, 13 Jan 2014 15:21:32 +0100
+Message-ID: <1389622894-9574-1-git-send-email-treding@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: eduardo.valentin-l0cyMroinI0@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This serie can support to turn governor for thermal zone in
-run time.
-Adds avaiable_policies attribute, so the user can get available
-governor policies and change te governor to a new one.
-Adds thermal_update_governor() function, so the thermal platform
-driver can use it to update governor.
+The Tegra DRM driver assumes that CRTCs are probed in the order listed
+in the DT. While DT makes no such guarantees in the first place, this
+used to work fine. With the introduction of the panel support, however,
+more often than not one of the CRTCs will defer probing (caused by the
+panel not having been registered yet) and the assumptions are broken.
 
-Changes from v1:
-1. split avaiable_policies part to the "patch 1/2", and add document
-for it.
-2. add document for the thermal_update_governor.
+To fix this, we use the new drm_crtc_mask() function to obtain the mask
+of the display controller that an RGB output can be associated with,
+thereby making it resistant to changes in probe order.
 
-Wei Ni (2):
-  thermal: add available policies attribut
-  thermal: add interface to support tune governor in run-time
+A second patch is required to obtain the number of the head from the
+device tree, since we can no longer rely on the probe order providing us
+with the right one.
 
- Documentation/thermal/sysfs-api.txt |   11 ++++
- drivers/thermal/thermal_core.c      |  105 ++++++++++++++++++++++++++++++++---
- include/linux/thermal.h             |   12 ++++
- 3 files changed, 119 insertions(+), 9 deletions(-)
+Thierry
+
+Thierry Reding (2):
+  drm/tegra: Fix possible CRTC mask for RGB outputs
+  drm/tegra: Obtain head number from DT
+
+ .../bindings/gpu/nvidia,tegra20-host1x.txt           |  3 +++
+ drivers/gpu/drm/tegra/dc.c                           | 20 ++++++++++++++++++--
+ drivers/gpu/drm/tegra/rgb.c                          |  2 +-
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
 -- 
-1.7.9.5
+1.8.4.2
