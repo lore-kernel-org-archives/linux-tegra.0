@@ -1,96 +1,38 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH v2 0/2] Support to tune governor in run time
-Date: Mon, 13 Jan 2014 17:33:43 -0400
-Message-ID: <52D45BB7.1090002@ti.com>
-References: <1389611863-7812-1-git-send-email-wni@nvidia.com> <52D4095C.205@ti.com> <52D43810.6030801@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="NGQPhjewLxrQWEFwcMVF9Nm7aGjhrDgQX"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <52D43810.6030801@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Matthew Longnecker <mlongnecker@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, eduardo.valentin@ti.com
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] ARM: tegra: fix tegra_powergate_sequence_power_up() inline
+Date: Mon, 13 Jan 2014 15:01:42 -0700
+Message-ID: <1389650502-30017-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---NGQPhjewLxrQWEFwcMVF9Nm7aGjhrDgQX
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 13-01-2014 15:01, Matthew Longnecker wrote:
-> On 1/13/2014 7:42 AM, Eduardo Valentin wrote:
->>> This serie can support to turn governor for thermal zone in
->>> run time.
->>
->> Can you please explain why this is needed? Are you facing troubles wit=
-h
->> current way to switch governors? If yes, can you please report them?
+Remove an invalid semicolon from the inline dummy, thus solving:
+In file included from drivers/gpu/drm/tegra/gr3d.c:15:0:
+include/linux/tegra-powergate.h:119:1: error: expected identifier or '(' before '{' token
 
-Looks like there is a need to switch governors from within kernel code,
-but not explanation of use cases is provided.
+Fixes: 80b28791ff04 ("ARM: tegra: pass reset to tegra_powergate_sequence_power_up()")
+Reported-by: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ include/linux/tegra-powergate.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>
->=20
-> ....
->=20
->>> Adds thermal_update_governor() function, so the thermal platform
->>> driver can use it to update governor.
->>
->> Here I cannot see why the platform driver would need to update a
->> governor, instead of a zone. Platform drivers are not supposed to be
->> aware of governors. For updating a zone we already have an API for tha=
-t,
->> please check documentation.
->>
->=20
-> I think we have a miscommunication. The purpose of
-> thermal_update_governor is to *switch* governors at runtime (from withi=
-n
-> the kernel).
->=20
-> Wei has used the term "update" in the sense of switch rather than
-> "update" in the sense used by thermal_zone_device_update.
-
-Fine, but why do you need it?
-
->=20
-> Eduardo, what is your recommended technique for setting the governor of=
-
-> a thermal zone device created via device tree?
-
-So far the recommended (and existing) way is by user(land) decision.
-
->=20
-> thanks,
-> Matt
->=20
-> --=20
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
---NGQPhjewLxrQWEFwcMVF9Nm7aGjhrDgQX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlLUW7cACgkQCXcVR3XQvP0C2wEA5zOlB2FcMGdMrzomdiLhbzJV
-eN/sVX/lf917NLoNiecBAMEyMTb0AFLXYPX1MigLi4Zl3q7z82438cQrazTa1O8P
-=rZAw
------END PGP SIGNATURE-----
-
---NGQPhjewLxrQWEFwcMVF9Nm7aGjhrDgQX--
+diff --git a/include/linux/tegra-powergate.h b/include/linux/tegra-powergate.h
+index e6f2ab3014a7..46f0a07812b4 100644
+--- a/include/linux/tegra-powergate.h
++++ b/include/linux/tegra-powergate.h
+@@ -115,7 +115,7 @@ static inline int tegra_powergate_remove_clamping(int id)
+ }
+ 
+ static inline int tegra_powergate_sequence_power_up(int id, struct clk *clk,
+-						    struct reset_control *rst);
++						    struct reset_control *rst)
+ {
+ 	return -ENOSYS;
+ }
+-- 
+1.8.1.5
