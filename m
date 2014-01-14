@@ -1,45 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] drm/tegra: Obtain head number from DT
-Date: Tue, 14 Jan 2014 09:54:10 -0700
-Message-ID: <52D56BB2.9020901@wwwdotorg.org>
-References: <1389622894-9574-1-git-send-email-treding@nvidia.com> <1389622894-9574-3-git-send-email-treding@nvidia.com> <52D42685.1040603@wwwdotorg.org> <20140114141416.GE10936@ulmo.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] thermal: use device node to get thermal zone
+Date: Tue, 14 Jan 2014 10:33:44 -0700
+Message-ID: <52D574F8.7020100@wwwdotorg.org>
+References: <1389172011-32107-1-git-send-email-wni@nvidia.com> <4D68720C2E767A4AA6A8796D42C8EB59E09ED1@BGSMSX101.gar.corp.intel.com> <52CD452D.3080508@ti.com> <52CE5615.8040204@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140114141416.GE10936-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52CE5615.8040204@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>, Eduardo Valentin <eduardo.valentin@ti.com>, "R, Durgadoss" <durgadoss.r@intel.com>
+Cc: "Zhang, Rui" <rui.zhang@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/14/2014 07:14 AM, Thierry Reding wrote:
-> On Mon, Jan 13, 2014 at 10:46:45AM -0700, Stephen Warren wrote:
->> On 01/13/2014 07:21 AM, Thierry Reding wrote:
->>> The head number of a given display controller is fixed in hardware and
->>> required to program outputs appropriately. Relying on the driver probe
->>> order to determine this number will not work, since that could yield a
->>> situation where the second head was probed first and would be assigned
->>> head number 0 instead of 1.
->>
->> This change makes the new properties mandatory, yet they aren't part of
->> the DT files yet. So, won't this patch break all display on Tegra?
+On 01/09/2014 12:56 AM, Wei Ni wrote:
+...
+> On the tegra board, it will use two or more sensors to estimate the skin
+> temperature by reading temps from these sensors and calculate them.
+> For example, we have two sensors: sensor1 and sensor2. We can register
+> them to thermal framework by using DT, something like:
+> thermal-zones {
+>                 sensor1: lm90-local {
+> 			...
+>                         thermal-sensors = <&lm90 0>;
+>                 };
 > 
-> I don't think it'll make anything worse than it currently is, since both
-> display controllers can't run at the same time with the current code.
+>                 sensor2: lm90-remote {
+> 			...
+>                         thermal-sensors = <&lm90 1>;
+>                 };
+> }
+> 
+> Then I will add a device node for my skin temperature driver, something
+> like:
+> skin_temp {
+> 	...
+> 	#thermal-sensor-cells = <0>;
+> 
+> 	sub-devs {
+> 		dev@0 {
+> 			dev = <&sensor1>;
+> 		};
+> 
+> 		dev@1 {
+> 			dev = <&sensor2>;
+> 		};
+> 	};
+> };
 
-Sure it will; it will prevent any dc device from probing at all:
+I haven't read the rest of the thread, but surely that last chunk of DT
+would be far simpler as:
 
-> +static int tegra_dc_parse_dt(struct tegra_dc *dc)
-...
-> +	err = of_property_read_u32(dc->dev->of_node, "nvidia,head", &value);
-> +	if (err < 0)
- +		return err;
-                ^^^^^^^^^^^
-...
-> @@ -1207,6 +1219,10 @@ static int tegra_dc_probe(struct platform_device *pdev)
-...
-> +	err = tegra_dc_parse_dt(dc);
-> +	if (err < 0)
-> +		return err;
-                ^^^^^^^^^^^
+skin_temp {
+	sub-devs = <&sensor1 &sensor2>;
+};
+
+or:
+
+skin_temp {
+	sensors = <&sensor1 &sensor2>;
+	sensor-names = "local", "remote";
+};
+
+> So I can parse the DT in the skin temperature driver to get the nodes of
+> the sensor1 and sensor2, and can use .*get_by_node to get thermal zone
+> device, then use .get_temp() and other callbacks to get temperature and
+> other information. If use the *.get_by_name, it may not get the uniqu
+> one, because I don't know if there has the same name thermal zone,
+> because some other driver may not use DT to register thermal zone, it
+> can define any name by itself.
+
