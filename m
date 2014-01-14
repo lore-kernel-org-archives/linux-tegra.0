@@ -1,74 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] drm/tegra: Obtain head number from DT
-Date: Tue, 14 Jan 2014 10:53:19 -0700
-Message-ID: <52D5798F.1020500@wwwdotorg.org>
-References: <1389710758-29444-1-git-send-email-treding@nvidia.com> <1389710758-29444-3-git-send-email-treding@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 2/7] drivers/amba: don't check resource with
+ devm_ioremap_resource
+Date: Tue, 14 Jan 2014 19:30:34 +0100
+Message-ID: <20140114183034.GA10340@katana>
+References: <1389700739-3696-1-git-send-email-wsa@the-dreams.de>
+ <1389700739-3696-2-git-send-email-wsa@the-dreams.de>
+ <52D57688.8070105@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1389710758-29444-3-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52D57688.8070105-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/14/2014 07:45 AM, Thierry Reding wrote:
-> The head number of a given display controller is fixed in hardware and
-> required to program outputs appropriately. Relying on the driver probe
-> order to determine this number will not work, since that could yield a
-> situation where the second head was probed first and would be assigned
-> head number 0 instead of 1.
-> 
-> By explicitly specifying the head number in the device tree, it is no
-> longer necessary to rely on these assumptions. As a fallback, if the
-> property isn't available, derive the head number from the display
-> controller node's position in the device tree. That's somewhat more
-> reliable than the previous default but not a proper solution.
 
-The series,
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch should really have been sent to the DT maintainers and list
-since it changes a DT binding...
 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> This looks fine. I expect to apply it for 3.15 after the 3.14 merge
+> window, unless it's urgent to get it into 3.14 for some reason?
 
-> +static int tegra_dc_parse_dt(struct tegra_dc *dc)
-> +{
-> +	struct device_node *np;
-> +	u32 value = 0;
-> +	int err;
-> +
-> +	err = of_property_read_u32(dc->dev->of_node, "nvidia,head", &value);
+Nope, it is not. I wasn't aiming for 3.14, it was simply in my queue.
 
-If of_property_read_u32() returns an error, does it guarantee that value
-is left unchanged? I suspect it'd be safer to add ...
 
-> +	if (err < 0) {
-> +		dev_err(dc->dev, "missing \"nvidia,head\" property\n");
-> +
-> +		/*
-> +		 * If the nvidia,head property isn't present, try to find the
-> +		 * correct head number by looking up the position of this
-> +		 * display controller's node within the device tree. Assuming
-> +		 * that the nodes are ordered properly in the DTS file and
-> +		 * that the translation into a flattened device tree blob
-> +		 * preserves that ordering this will actually yield the right
-> +		 * head number.
-> +		 *
-> +		 * If those assumptions don't hold, this will still work for
-> +		 * cases where only a single display controller is used.
-> +		 */
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-... "value = 0;" here?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
 
-> +		for_each_matching_node(np, tegra_dc_of_match) {
-> +			if (np == dc->dev->of_node)
-> +				break;
-> +
-> +			value++;
-> +		}
-> +	}
-> +
-> +	dc->pipe = value;
+iQIcBAEBAgAGBQJS1YJKAAoJEBQN5MwUoCm2KlsQAKz/uNzJh5VmCSYB3XN/4gOE
+kXEM5LmVOoRlXHFl66szL3TFyTQ9Q7qD691dfSLQCDbelQhYA5WEe4abMF1Gqr69
+int+Z4h7sjFjXyzMr1CnhvoH7a42x5gjq0ORQs6M9F10f32ziEMH8xX2skN75vL3
+9XsOWvnBZ3bKC4pTVSXN09FhrEzLZB91bSx5qamcLC3R/seRMlin1SZylLQa/AfE
+4el1U1A4psTntgRs8gDDIJOoan6dN/8/FjW5MVuKnw2reQpLt+BvJKgEVi9yvjKv
+Gw/XJxwx5j+Tut/kkxrw7CXtE4q/xk4PFoEQiVvivBKgmdP7s8s9Ech4jvMhPp6f
+hgLbDnq0DnG0ogaiAcDqA7Yepa9a7mzwPu8Qo4XVheFXk4sbbwsIDDp2JRB72Iwk
+VCUgE36JITPBPSVUztl60v1X5SCD24Ii1wc99djnN4gLRpED52kJZzlFm826QoPe
+wGDcWsSlQ97S+9H9WmWzHRMv3cbJELEUCzbk71hGV+oSDQxiv4dfZT/GDok7MxJ9
+03YSmV0PkNIlHV7soVAz8jS/l6qpuUQBqboRmWtG3bD+DMVNXoZria4/MrASeTND
+jrH5fDY7BRlJ49g6g5SNm8qS6CfwOqJLVLjXHG8PR5M135qerQO4xjNDp8FTs8ul
+XKrNvp7p63YoYsqKuDzu
+=gNUN
+-----END PGP SIGNATURE-----
+
+--ZPt4rx8FFjLCG7dd--
