@@ -1,67 +1,161 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 4/6] ARM: DTS: tegra: add the DFLL IP block to the T114
- SoC file
-Date: Tue, 14 Jan 2014 10:43:58 -0700
-Message-ID: <52D5775E.9080209@wwwdotorg.org>
-References: <20131219122857.3226.42830.stgit@tamien> <20131219123719.3226.44864.stgit@tamien> <52B389CD.8010004@wwwdotorg.org> <52D4D314.3000208@nvidia.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH v2 0/2] Support to tune governor in run time
+Date: Tue, 14 Jan 2014 13:44:02 -0400
+Message-ID: <52D57762.8070609@ti.com>
+References: <1389611863-7812-1-git-send-email-wni@nvidia.com> <52D4095C.205@ti.com> <52D43810.6030801@nvidia.com> <52D45BB7.1090002@ti.com> <52D4BA76.4040003@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52D4D314.3000208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="NTkiNBbS0uHoFLWPaHtcjemnKhBaoGSKM"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52D4BA76.4040003@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/13/2014 11:03 PM, Paul Walmsley wrote:
-> On 12/19/2013 04:05 PM, Stephen Warren wrote:
->> On 12/19/2013 05:49 AM, Paul Walmsley wrote:
->>> Add basic DT bindings for the DFLL IP block for the NVIDIA Tegra114 SoC.
->>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
+--NTkiNBbS0uHoFLWPaHtcjemnKhBaoGSKM
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
->>> +- clock-names : Must contain an array of strings, one per 'clocks'
->>> +                two-cell array.  The position in the array of these
->> clock-names defines the set of entries in clocks, not the other way around.
-> 
-> Hmm.  If one refers to the DT clock binding documentation, it lists the
-> 'clock-names' property as optional, and the 'clocks' property as mandatory:
-> 
-> -----
-> 
-> |==Clock consumers==
-> 
-> Required properties:
-> clocks:		List of phandle and clock specifier pairs, one pair
-> 		for each clock input to the device.  Note: if the
-> 		clock provider specifies '0' for #clock-cells, then
-> 		only the phandle portion of the pair will appear.
-> 
-> Optional properties:
-> clock-names:	List of clock input name strings sorted in the same
-> 		order as the clocks property.  Consumers drivers
-> 		will use clock-names to match clock input names
-> 		with clocks specifiers.
-> 
-> -----
-> |
-> 
-> 
->  https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n47
-> 
-> Considering that of_clk_get() doesn't require names, it certainly
-> appears to be the way that the original patch described it (modulo the
-> bit about 'cells'; which has been fixed.)
+Hello Wei,
 
-If the binding defines that clock must exist at certain indices in the
-clock property, and clock-names isn't used, then the clocks property
-defines which clocks must exist.
+On 14-01-2014 00:17, Wei Ni wrote:
+> On 01/14/2014 05:33 AM, Eduardo Valentin wrote:
+>> * PGP Signed by an unknown key
+>>
+>> On 13-01-2014 15:01, Matthew Longnecker wrote:
+>>> On 1/13/2014 7:42 AM, Eduardo Valentin wrote:
+>>>>> This serie can support to turn governor for thermal zone in
+>>>>> run time.
+>>>>
+>>>> Can you please explain why this is needed? Are you facing troubles w=
+ith
+>>>> current way to switch governors? If yes, can you please report them?=
 
-However, if the binding is defining clock names, then the clock-names
-property is the master that defines which clocks exist. In this case,
-the index of entries in the clocks property is undefined by the binding;
-it must simply match the clock-names property, which can be arbitrarily
-ordered by the user.
+>>
+>> Looks like there is a need to switch governors from within kernel code=
+,
+>> but not explanation of use cases is provided.
+>=20
+> In fact, with the of-thermal framework, the driver can't initialize to
+> any governor, even default governor, it may be a bug. As we discussed i=
+n
 
-Since this is a new binding, we should use the clock-names style to
-ensure easy future backwards-compatible changes.
+I see. Using default governor is not a bug. The thermal zone shall not
+be defined in way that it is specific to a policy. We must remember that
+DT is not used for specifying policies, but only describing hardware.
+
+> other mail list, we should not set governor in DT, and I think the
+> platform driver should be able to set to any governors which it want, s=
+o
+
+OK. But still, because you believe the platform driver has to set the
+governor, this is not a bug. Defining which policy is used to control a
+zone can be a later decision in the boot process. Specially because the
+critical requirements are not dealt by the governors anyway.
+
+> I this patch, the driver can call the thermal_update_governor() to
+> switch to new governor in kernel space.
+
+I see.
+
+> For example, there have two thermal driver, using of-thermal to registe=
+r
+> thermal zone device. One want to set to step_wise governor, another wan=
+t
+> fair_share, how can we do? I think after they calling the
+> thermal_zone_of_sensor_register(), they can call the
+> thermal_update_governor() to set the governor which they want.
+
+OK. Now I get a better view of what you are trying to achieve with this
+series. However, why can't you hand this decision off to userland,
+during, say very early boot sequence?
+
+
+>=20
+>>
+>>>>
+>>>
+>>> ....
+>>>
+>>>>> Adds thermal_update_governor() function, so the thermal platform
+>>>>> driver can use it to update governor.
+>>>>
+>>>> Here I cannot see why the platform driver would need to update a
+>>>> governor, instead of a zone. Platform drivers are not supposed to be=
+
+>>>> aware of governors. For updating a zone we already have an API for t=
+hat,
+>>>> please check documentation.
+>>>>
+>>>
+>>> I think we have a miscommunication. The purpose of
+>>> thermal_update_governor is to *switch* governors at runtime (from wit=
+hin
+>>> the kernel).
+>>>
+>>> Wei has used the term "update" in the sense of switch rather than
+>>> "update" in the sense used by thermal_zone_device_update.
+>>
+>> Fine, but why do you need it?
+>=20
+> Yes, I have consider to use "switch", but As my commit in the patch, in=
+
+> the future, the governor may be more complex, it may need governor
+> parameter/configuration, and need to be tuned in run-time or in
+> initialization.
+> In fact we develop a new governor, based on PID logic. It will need som=
+e
+> parameters, such as proportional, integral and derivative. these value
+> will be initialized in different values for different thermal zone, so
+> we want to use the thermal_zone_device_update() to switch governor or
+> update the governor's parameters for different thermal zone.
+>=20
+>>
+>>>
+>>> Eduardo, what is your recommended technique for setting the governor =
+of
+>>> a thermal zone device created via device tree?
+>>
+>> So far the recommended (and existing) way is by user(land) decision.
+>>
+>>>
+>>> thanks,
+>>> Matt
+>>>
+>>> --=20
+>>> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
+n
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>
+>>
+>=20
+>=20
+>=20
+
+
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+--NTkiNBbS0uHoFLWPaHtcjemnKhBaoGSKM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlLVd2IACgkQCXcVR3XQvP3vDgEAnSn6jm0DqIYKc2buuF5gzwLj
+Ax6puLIaiglKohSSGckA/jp54bUII1B8BQP8zIEB67zrS7MOcEQEOXK5s23ecHCC
+=gcmR
+-----END PGP SIGNATURE-----
+
+--NTkiNBbS0uHoFLWPaHtcjemnKhBaoGSKM--
