@@ -1,21 +1,67 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/7] drivers/amba: don't check resource with devm_ioremap_resource
-Date: Tue, 14 Jan 2014 10:40:24 -0700
-Message-ID: <52D57688.8070105@wwwdotorg.org>
-References: <1389700739-3696-1-git-send-email-wsa@the-dreams.de> <1389700739-3696-2-git-send-email-wsa@the-dreams.de>
+Subject: Re: [PATCH 4/6] ARM: DTS: tegra: add the DFLL IP block to the T114
+ SoC file
+Date: Tue, 14 Jan 2014 10:43:58 -0700
+Message-ID: <52D5775E.9080209@wwwdotorg.org>
+References: <20131219122857.3226.42830.stgit@tamien> <20131219123719.3226.44864.stgit@tamien> <52B389CD.8010004@wwwdotorg.org> <52D4D314.3000208@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1389700739-3696-2-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+In-Reply-To: <52D4D314.3000208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/14/2014 04:58 AM, Wolfram Sang wrote:
-> devm_ioremap_resource does sanity checks on the given resource. No need to
-> duplicate this in the driver.
+On 01/13/2014 11:03 PM, Paul Walmsley wrote:
+> On 12/19/2013 04:05 PM, Stephen Warren wrote:
+>> On 12/19/2013 05:49 AM, Paul Walmsley wrote:
+>>> Add basic DT bindings for the DFLL IP block for the NVIDIA Tegra114 SoC.
+>>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
 
-This looks fine. I expect to apply it for 3.15 after the 3.14 merge
-window, unless it's urgent to get it into 3.14 for some reason?
+>>> +- clock-names : Must contain an array of strings, one per 'clocks'
+>>> +                two-cell array.  The position in the array of these
+>> clock-names defines the set of entries in clocks, not the other way around.
+> 
+> Hmm.  If one refers to the DT clock binding documentation, it lists the
+> 'clock-names' property as optional, and the 'clocks' property as mandatory:
+> 
+> -----
+> 
+> |==Clock consumers==
+> 
+> Required properties:
+> clocks:		List of phandle and clock specifier pairs, one pair
+> 		for each clock input to the device.  Note: if the
+> 		clock provider specifies '0' for #clock-cells, then
+> 		only the phandle portion of the pair will appear.
+> 
+> Optional properties:
+> clock-names:	List of clock input name strings sorted in the same
+> 		order as the clocks property.  Consumers drivers
+> 		will use clock-names to match clock input names
+> 		with clocks specifiers.
+> 
+> -----
+> |
+> 
+> 
+>  https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n47
+> 
+> Considering that of_clk_get() doesn't require names, it certainly
+> appears to be the way that the original patch described it (modulo the
+> bit about 'cells'; which has been fixed.)
+
+If the binding defines that clock must exist at certain indices in the
+clock property, and clock-names isn't used, then the clocks property
+defines which clocks must exist.
+
+However, if the binding is defining clock names, then the clock-names
+property is the master that defines which clocks exist. In this case,
+the index of entries in the clocks property is undefined by the binding;
+it must simply match the clock-names property, which can be arbitrarily
+ordered by the user.
+
+Since this is a new binding, we should use the clock-names style to
+ensure easy future backwards-compatible changes.
