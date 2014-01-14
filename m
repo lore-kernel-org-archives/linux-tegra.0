@@ -1,157 +1,192 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/6] ARM: DTS: tegra: add the DFLL IP block to the T114
- SoC file
-Date: Mon, 13 Jan 2014 22:27:33 -0800
-Message-ID: <alpine.DEB.2.02.1401132219150.11672@tamien>
-References: <20131219122857.3226.42830.stgit@tamien> <20131219123719.3226.44864.stgit@tamien> <52B389CD.8010004@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] thermal: introduce thermal_zone_get_zone_by_node
+ helper function
+Date: Tue, 14 Jan 2014 18:35:29 +0800
+Message-ID: <52D512F1.1090008@nvidia.com>
+References: <1389263879-10483-1-git-send-email-wni@nvidia.com>
+ <1389263879-10483-2-git-send-email-wni@nvidia.com> <52D40EC6.6050509@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52B389CD.8010004-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <52D40EC6.6050509-l0cyMroinI0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>
+Cc: "rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 01/14/2014 12:05 AM, Eduardo Valentin wrote:
+> * PGP Signed by an unknown key
+> 
+> On 09-01-2014 06:37, Wei Ni wrote:
+>> The thermal framework start to support device tree, this
+>> patch adds a helper function to get a reference of a
+>> thermal zone, based on the zone's device node.
+> 
+> I would prefer if you could provide a better justification why we need
+> this API. Think of the scope of this API: would it be used only by the
+> of-thermal code? only by the drivers/thermal code? or any driver?
 
-(Resending, and revising - the original wasn't fully baked in several 
-regards..)
+I have talked it in the previous patch "Re: [PATCH] thermal: use device
+node to get thermal zone".
+So let me copy to here again:
 
-Hello Stephen,
+On the tegra board, it will use two or more sensors to estimate the skin
+temperature by reading temps from these sensors and calculate them.
+For example, we have two sensors: sensor1 and sensor2. We can register
+them to thermal framework by using DT, something like:
+thermal-zones {
+                sensor1: lm90-local {
+			...
+                        thermal-sensors = <&lm90 0>;
+                };
 
-thanks for your review.
+                sensor2: lm90-remote {
+			...
+                        thermal-sensors = <&lm90 1>;
+                };
+}
 
-On Thu, 19 Dec 2013, Stephen Warren wrote:
+Then I will add a device node for my skin temperature driver, something
+like:
+skin_temp {
+	...
+	#thermal-sensor-cells = <0>;
 
-> On 12/19/2013 05:49 AM, Paul Walmsley wrote:
->> Add basic DT bindings for the DFLL IP block for the NVIDIA Tegra114 SoC.
->
->> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
->
->> +- clocks : Must contain an array of two-cell arrays, one per clock.
->> +           DFLL source clocks.  At minimum this should include the
->> +           reference clock source and the IP block's main clock
->> +           source.  Also it should contain the DFLL's I2C controller
->> +           clock source.  The format is <&clock-provider-phandle
->> +           clock-id>.
->
-> Entries in "clocks" aren't two cells, they're a phandle plus as many
-> cells as the node referenced by the phandle specifies.
+	sub-devs {
+		dev@0 {
+			dev = <&sensor1>;
+		};
 
-It's worth noting that the clock binding documentation itself refers to 
-pairs:
+		dev@1 {
+			dev = <&sensor2>;
+		};
+	};
+};
+So I can parse the DT in the skin temperature driver to get the nodes of
+the sensor1 and sensor2, and can use .*get_by_node to get thermal zone
+device, then use .get_temp() and other callbacks to get temperature and
+other information.
 
-----
+> 
+> So far you have provided only one user, and that user can already work
+> with existing APIs. As I mention, DT does not support name duplications.
 
-clocks:		List of phandle and clock specifier pairs, one pair
- 		for each clock input to the device.  Note: if the
- 		clock provider specifies '0' for #clock-cells, then
- 		only the phandle portion of the pair will appear.
+If the system only have the DT, then there will not have name
+duplications. But some drivers will call the
+thermal_zone_device_register directly with any thermal zone type, and at
+same time, other drivers may use of-thermal to register, and set the
+same name in the DT. Then if use the *.get_by_name, it can't get the
+uniqu one.
 
-----
+> 
+> Unless you enlighten  me with better uses of this API, I would prefer
+> not to have it.
+> 
+> 
+>>
+>> It will add a device_node *np member in the struct
+>> thermal_zone_device, and initialize it when create a thermal
+>> zone. This funciton perform a zone device node lookup and
+>> return a reference to a thermal zone device that matches
+>> the device node requested.
+>> In case the zone is not found or if the required parameters
+>> are invalid, it will return the corresponding error code (ERR_PTR).
+>>
+>> Change-Id: I4d65f849e84425dddd387f70886a9c7c4c2002f2
+> 
+> For your next patches, please done include gerrit change IDs. Linux
+> Kernel does not need to be linked to your inhouse development history
+> via gerrit IDs.
 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n50
+It's so sorry, I forgot to remove it.
 
-But given the ambiguity of that documentation, I basically agree, so have 
-changed it to:
-
-- clocks : Must contain an array of clock specifiers, one per clock.
-            DFLL source clocks.  At minimum this should include the
-            reference clock source and the IP block's main clock
-            source.  Also it should contain the DFLL's I2C controller
-            clock source.  The format is <&clock-provider-phandle
-            clock-id>.
-
+> 
+>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/thermal/of-thermal.c   |    2 ++
+>>  drivers/thermal/thermal_core.c |   33 +++++++++++++++++++++++++++++++++
+>>  include/linux/thermal.h        |    3 +++
+>>  3 files changed, 38 insertions(+)
+>>
+>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+>> index 04b1be7..53f2d3a 100644
+>> --- a/drivers/thermal/of-thermal.c
+>> +++ b/drivers/thermal/of-thermal.c
+>> @@ -804,6 +804,8 @@ int __init of_parse_thermal_zones(void)
+>>  			of_thermal_free_zone(tz);
+>>  			/* attempting to build remaining zones still */
+>>  		}
 >> +
->> +- clock-names : Must contain an array of strings, one per 'clocks'
->> +                two-cell array.  The position in the array of these
->
-> clock-names defines the set of entries in clocks, not the other way around.
-
-Hmm.  Referring to the DT clock binding documentation, it lists the 
-'clock-names' property as optional, and the 'clocks' property as 
-mandatory:
-
------
-
-==Clock consumers==
-
-Required properties:
-clocks:		List of phandle and clock specifier pairs, one pair
- 		for each clock input to the device.  Note: if the
- 		clock provider specifies '0' for #clock-cells, then
- 		only the phandle portion of the pair will appear.
-
-Optional properties:
-clock-names:	List of clock input name strings sorted in the same
- 		order as the clocks property.  Consumers drivers
- 		will use clock-names to match clock input names
- 		with clocks specifiers.
-
------
-
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n47
-
-Considering that of_clk_get() doesn't require names, the situation appears 
-to be the way that the original patch described it (modulo the part about 
-"two cells.")
-
->> +                strings must correspond to the position in the 'clocks'
->> +                array (see above).  The DFLL driver currently requires
->> +                the "soc", "ref", and "i2c" clock names to be populated.
->
-> The standard wording used by all the Tegra clock client bindings is now:
->
-> - clocks : Must contain an entry for each entry in clock-names.
->  See clock-bindings.txt for details.
-> - clock-names : Must include the following entries:
->  - soc
->  - ref
->  - i2c
->
-> For consistency, it'd be nice to adopt the same style here.
-
-I've altered the 'clock-names' format along the lines of what you've 
-suggested, but have not changed the 'clocks' format, per the above 
-discussion:
-
------
-
-- clocks : Must contain an array of clock specifiers, one per clock.
-            DFLL source clocks.  At minimum this should include the
-            reference clock source and the IP block's main clock
-            source.  Also it should contain the DFLL's I2C controller
-            clock source.  The format is <&clock-provider-phandle
-            clock-id>.
-
-- clock-names : Must contain an array of strings, one per 'clocks'
-                 cell.  The position in the array of these strings must
-                 correspond to the position in the 'clocks' array (see
-                 above).
-   - soc
-   - ref
-   - i2c
-
------
-
-
->> +Optional properties:
+>> +		zone->np = child;
+>>  	}
+>>  
+>>  	return 0;
+>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+>> index 338a88b..eeddb94 100644
+>> --- a/drivers/thermal/thermal_core.c
+>> +++ b/drivers/thermal/thermal_core.c
+>> @@ -1672,6 +1672,39 @@ exit:
+>>  }
+>>  EXPORT_SYMBOL_GPL(thermal_zone_get_zone_by_name);
+>>  
+>> +/**
+>> +* thermal_zone_get_zone_by_node() - search for a zone and returns its ref
+>> +* @node: device node of the thermal zone
+>> +*
+>> +* When thermal zone is found with the passed device node, returns a reference
+>> +* to it.
+>> +*
+>> +* Return: On success returns a reference to an unique thermal zone with
+>> +* matching device node, an ERR_PTR otherwise (-EINVAL for invalid
+>> +* paramenters, -ENODEV for not found).
+>> +*/
+>> +struct thermal_zone_device *
+>> +thermal_zone_get_zone_by_node(struct device_node *node)
+>> +{
+>> +	struct thermal_zone_device *pos = NULL, *ref = ERR_PTR(-ENODEV);
+>> +	bool found = false;
 >> +
->> +- status : device availability -- managed by the DT integration code, not
->> +           the DFLL driver.  Should be set to "disabled" in the SoC
->> +           DTS file.
->
-> That's such a core property that it's not worth documenting in every
-> single binding.
-
-That's fine.  Removed.
-
->
+>> +	if (!node)
+>> +		return ERR_PTR(-EINVAL);
 >> +
->
-> Blank line at EOF.
-
-
-Hehe.  Removed.
-
-- Paul
+>> +	mutex_lock(&thermal_list_lock);
+>> +	list_for_each_entry(pos, &thermal_tz_list, node)
+>> +		if (node == pos->np) {
+>> +			ref = pos;
+>> +			found = true;
+>> +			break;
+>> +		}
+>> +	mutex_unlock(&thermal_list_lock);
+>> +
+>> +	return ref;
+>> +}
+>> +EXPORT_SYMBOL_GPL(thermal_zone_get_zone_by_node);
+>> +
+>>  #ifdef CONFIG_NET
+>>  static const struct genl_multicast_group thermal_event_mcgrps[] = {
+>>  	{ .name = THERMAL_GENL_MCAST_GROUP_NAME, },
+>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+>> index f7e11c7..288d272 100644
+>> --- a/include/linux/thermal.h
+>> +++ b/include/linux/thermal.h
+>> @@ -162,6 +162,7 @@ struct thermal_zone_device {
+>>  	int id;
+>>  	char type[THERMAL_NAME_LENGTH];
+>>  	struct device device;
+>> +	struct device_node *np;
+>>  	struct thermal_attr *trip_temp_attrs;
+>>  	struct thermal_attr *trip_type_attrs;
+>>  	struct thermal_attr *trip_hyst_attrs;
+>> @@ -286,6 +287,8 @@ thermal_of_cooling_device_register(struct device_node *np, char *, void *,
+>>  				   const struct thermal_cooling_device_ops *);
+>>  void thermal_cooling_device_unregister(struct thermal_cooling_device *);
+>>  struct thermal_zone_device *thermal_zone_get_zone_by_name(const char *name);
+>> +struct thermal_zone_device *
+>> +thermal_zone_get_zone_by_node(struct device_node *node);
+>>  int thermal_zone_get_temp(struct thermal_zone_device *tz, unsigned long *temp);
+>>  
+>>  int get_tz_trend(struct thermal_zone_device *, int);
+>>
+> 
+> 
