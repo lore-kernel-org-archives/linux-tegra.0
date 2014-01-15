@@ -1,41 +1,78 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] serial: 8250: enable UART_BUG_NOMSR for Tegra
-Date: Wed, 15 Jan 2014 10:30:05 -0700
-Message-ID: <52D6C59D.4070402@wwwdotorg.org>
-References: <1389132012-2257-1-git-send-email-swarren@wwwdotorg.org> <20140115111205.GA11732@xps8300>
+From: Gerhard Sittig <gsi-ynQEQJNshbs@public.gmane.org>
+Subject: Re: [PATCH 4/6] ARM: DTS: tegra: add the DFLL IP block to the T114
+ SoC file
+Date: Wed, 15 Jan 2014 20:50:25 +0100
+Message-ID: <20140115195025.GU20094@book.gsilab.sittig.org>
+References: <20131219122857.3226.42830.stgit@tamien>
+ <20131219123719.3226.44864.stgit@tamien>
+ <52B389CD.8010004@wwwdotorg.org>
+ <alpine.DEB.2.02.1401132219150.11672@tamien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <20140115111205.GA11732@xps8300>
-Sender: stable-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org, olof@lixom.net, Stephen Warren <swarren@nvidia.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.02.1401132219150.11672@tamien>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/15/2014 04:12 AM, Heikki Krogerus wrote:
-> Hi,
+On Mon, Jan 13, 2014 at 22:27 -0800, Paul Walmsley wrote:
 > 
-> On Tue, Jan 07, 2014 at 03:00:12PM -0700, Stephen Warren wrote:
->> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
->> index e33d38cb170f..61ecd709a722 100644
->> --- a/drivers/tty/serial/8250/8250_core.c
->> +++ b/drivers/tty/serial/8250/8250_core.c
->> @@ -2670,6 +2670,10 @@ static void serial8250_config_port(struct uart_port *port, int flags)
->>  	if (port->type == PORT_16550A && port->iotype == UPIO_AU)
->>  		up->bugs |= UART_BUG_NOMSR;
->>  
->> +	/* HW bugs may trigger IRQ while IIR == NO_INT */
->> +	if (port->type == PORT_TEGRA)
->> +		up->bugs |= UART_BUG_NOMSR;
->> +
+> On Thu, 19 Dec 2013, Stephen Warren wrote:
 > 
-> Is there any reason this needs to be in 8250_core.c? Why not set it in
-> drivers/tty/serial/of_serial.c?
+> >On 12/19/2013 05:49 AM, Paul Walmsley wrote:
+> >>Add basic DT bindings for the DFLL IP block for the NVIDIA Tegra114 SoC.
+> >
+> >>diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra114-dfll.txt
+> >
+> >>+- clocks : Must contain an array of two-cell arrays, one per clock.
+> >>+           DFLL source clocks.  At minimum this should include the
+> >>+           reference clock source and the IP block's main clock
+> >>+           source.  Also it should contain the DFLL's I2C controller
+> >>+           clock source.  The format is <&clock-provider-phandle
+> >>+           clock-id>.
+> >
+> >Entries in "clocks" aren't two cells, they're a phandle plus as many
+> >cells as the node referenced by the phandle specifies.
+> 
+> It's worth noting that the clock binding documentation itself refers
+> to pairs:
+> 
+> ----
+> 
+> clocks:		List of phandle and clock specifier pairs, one pair
+> 		for each clock input to the device.  Note: if the
+> 		clock provider specifies '0' for #clock-cells, then
+> 		only the phandle portion of the pair will appear.
+> 
+> ----
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/clock-bindings.txt#n50
+> 
+> But given the ambiguity of that documentation, I basically agree, so
+> have changed it to:
 
-I imagine the code could go in either place.
+Please note that there neither is an ambiguity nor a conflict
+here, and that you actually acknowledge what Stephen said:
 
-I don't see any advantage moving it to of_serial.c, and it'd actively be
-a disadvantage as far as I'm concerned; PORT_TEGRA is defined in 8250.c,
-and other code which enable the same UART_BUG_NOMSR flag is in exactly
-the same place, which keeps similar code co-located.
+Clocks get referenced by a pair which consists of a phandle for
+the clock provider and a clock specifier.  The clock specifier is
+made of as many cells as the clock provider's #clock-cells
+property defines (including none, or any other number than 1).
+
+This is exactly what Stephen said:  A "clocks" item does not need
+to have two cells.  The pair of phandle and clock specifier don't
+necessarily translate into two cells, instead the number of cells
+depends on the clock provider.
+
+Also note that the phandle is specifically _not_ part of the
+clock specifier.
+
+
+virtually yours
+Gerhard Sittig
+-- 
+DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
+HRB 165235 Munich, Office: Kirchenstr. 5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-0 Fax: +49-8142-66989-80  Email: office-ynQEQJNshbs@public.gmane.org
