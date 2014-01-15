@@ -1,188 +1,164 @@
-From: Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] thermal: add available policies attribut
-Date: Wed, 15 Jan 2014 10:00:55 -0400
-Message-ID: <52D69497.1030903@ti.com>
-References: <1389611863-7812-1-git-send-email-wni@nvidia.com> <1389611863-7812-2-git-send-email-wni@nvidia.com> <52D40D36.9060702@ti.com> <52D67066.8010403@nvidia.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH v2 0/2] Support to tune governor in run time
+Date: Wed, 15 Jan 2014 10:04:29 -0400
+Message-ID: <52D6956D.4080001@ti.com>
+References: <1389611863-7812-1-git-send-email-wni@nvidia.com> <52D4095C.205@ti.com> <52D43810.6030801@nvidia.com> <52D45BB7.1090002@ti.com> <52D4BA76.4040003@nvidia.com> <52D57901.5050300@ti.com> <52D67448.9020102@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
 	protocol="application/pgp-signature";
-	boundary="Emwgp4cxH6x8tGd0WmMV3FADlGWa7WOal"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52D67066.8010403-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>, "rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <durgadoss.r-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	boundary="dToWcOn7kcopSEA4B1Ob2s6leTMhEdSr6"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <52D67448.9020102@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
---Emwgp4cxH6x8tGd0WmMV3FADlGWa7WOal
+--dToWcOn7kcopSEA4B1Ob2s6leTMhEdSr6
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-On 15-01-2014 07:26, Wei Ni wrote:
-> On 01/13/2014 11:58 PM, Eduardo Valentin wrote:
+On 15-01-2014 07:43, Wei Ni wrote:
+> On 01/15/2014 01:50 AM, Eduardo Valentin wrote:
 >> * PGP Signed by an unknown key
 >>
->> On 13-01-2014 07:17, Wei Ni wrote:
->>> The Linux thermal framework support to change governor policy
->>> in run time, but it can't show what available policies supported.
+>> On 14-01-2014 00:17, Wei Ni wrote:
+>>> On 01/14/2014 05:33 AM, Eduardo Valentin wrote:
+>>>>> Old Signed by an unknown key
+>>>>
+>>>> On 13-01-2014 15:01, Matthew Longnecker wrote:
+>>>>> On 1/13/2014 7:42 AM, Eduardo Valentin wrote:
+>>>>>>> This serie can support to turn governor for thermal zone in
+>>>>>>> run time.
+>>>>>>
+>>>>>> Can you please explain why this is needed? Are you facing troubles=
+ with
+>>>>>> current way to switch governors? If yes, can you please report the=
+m?
+>>>>
+>>>> Looks like there is a need to switch governors from within kernel co=
+de,
+>>>> but not explanation of use cases is provided.
 >>>
->>> This patch adds available_policies attribut to the thermal
->>
->> s/attribut/attribute/g
->=20
-> oh, thanks, I will fix it.
->=20
->>
->>> framework, it can list the thermal governors which can be
->>> used for a particular zone. This attribut is read only.
+>>> In fact, with the of-thermal framework, the driver can't initialize t=
+o
+>>> any governor, even default governor, it may be a bug. As we discussed=
+ in
+>>> other mail list, we should not set governor in DT, and I think the
+>>> platform driver should be able to set to any governors which it want,=
+ so
+>>> I this patch, the driver can call the thermal_update_governor() to
+>>> switch to new governor in kernel space.
+>>> For example, there have two thermal driver, using of-thermal to regis=
+ter
+>>> thermal zone device. One want to set to step_wise governor, another w=
+ant
+>>> fair_share, how can we do? I think after they calling the
+>>> thermal_zone_of_sensor_register(), they can call the
+>>> thermal_update_governor() to set the governor which they want.
 >>>
->>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  Documentation/thermal/sysfs-api.txt |    6 ++++++
->>>  drivers/thermal/thermal_core.c      |   25 +++++++++++++++++++++++++=
-
->>>  2 files changed, 31 insertions(+)
+>>>>
+>>>>>>
+>>>>>
+>>>>> ....
+>>>>>
+>>>>>>> Adds thermal_update_governor() function, so the thermal platform
+>>>>>>> driver can use it to update governor.
+>>>>>>
+>>>>>> Here I cannot see why the platform driver would need to update a
+>>>>>> governor, instead of a zone. Platform drivers are not supposed to =
+be
+>>>>>> aware of governors. For updating a zone we already have an API for=
+ that,
+>>>>>> please check documentation.
+>>>>>>
+>>>>>
+>>>>> I think we have a miscommunication. The purpose of
+>>>>> thermal_update_governor is to *switch* governors at runtime (from w=
+ithin
+>>>>> the kernel).
+>>>>>
+>>>>> Wei has used the term "update" in the sense of switch rather than
+>>>>> "update" in the sense used by thermal_zone_device_update.
+>>>>
+>>>> Fine, but why do you need it?
 >>>
->>> diff --git a/Documentation/thermal/sysfs-api.txt b/Documentation/ther=
-mal/sysfs-api.txt
->>> index 87519cb..6a70b55c 100644
->>> --- a/Documentation/thermal/sysfs-api.txt
->>> +++ b/Documentation/thermal/sysfs-api.txt
->>> @@ -172,6 +172,7 @@ Thermal zone device sys I/F, created once it's re=
-gistered:
->>>      |---temp:			Current temperature
->>>      |---mode:			Working mode of the thermal zone
->>>      |---policy:			Thermal governor used for this zone
->>> +    |---available_policies	Available governors for this zone
+>>> Yes, I have consider to use "switch", but As my commit in the patch, =
+in
+>>> the future, the governor may be more complex, it may need governor
+>>> parameter/configuration, and need to be tuned in run-time or in
+>>> initialization.
 >>
->> I would prefer:
->> "Available thermal governors for this zone"
+>> OK, I see you have a very complex governor coming. But you know,
+>> prediction is very difficult, especially if it's about the future. :-)=
+
 >=20
-> Ok.
+> Yes, absolutely agree.
 >=20
 >>
->>>      |---trip_point_[0-*]_temp:	Trip point temperature
->>>      |---trip_point_[0-*]_type:	Trip point type
->>>      |---trip_point_[0-*]_hyst:	Hysteresis value for this trip point
->>> @@ -238,6 +239,10 @@ policy
->>>  	One of the various thermal governors used for a particular zone.
->>>  	RW, Required
->>> =20
->>> +available_policies
->>> +	Availabe thermal governors which can be used for a particular zone.=
+>> It would be very constructive if you could share the governor together=
 
->>> +	RO, Required
->>> +
->>>  trip_point_[0-*]_temp
->>>  	The temperature above which trip point will be fired.
->>>  	Unit: millidegree Celsius
->>> @@ -330,6 +335,7 @@ method, the sys I/F structure will be built like =
-this:
->>>      |---temp:			37000
->>>      |---mode:			enabled
->>>      |---policy:			step_wise
->>> +    |---available_policies:	step_wise fair_share
->>>      |---trip_point_0_temp:	100000
->>>      |---trip_point_0_type:	critical
->>>      |---trip_point_1_temp:	80000
->>> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal=
-_core.c
->>> index 338a88b..aab1df8 100644
->>> --- a/drivers/thermal/thermal_core.c
->>> +++ b/drivers/thermal/thermal_core.c
->>> @@ -761,6 +761,24 @@ policy_show(struct device *dev, struct device_at=
-tribute *devattr, char *buf)
->>>  	return sprintf(buf, "%s\n", tz->governor->name);
->>>  }
->>> =20
->>> +static ssize_t
->>> +available_policies_show(struct device *dev, struct device_attribute =
-*devattr,
->>> +			char *buf)
->>> +{
->>> +	struct thermal_governor *pos;
->>> +	ssize_t count =3D 0;
->>> +
->>> +	mutex_lock(&thermal_governor_lock);
->>> +
->>> +	list_for_each_entry(pos, &thermal_governor_list, governor_list)
->>> +		count +=3D sprintf(buf + count, "%s ", pos->name);
+>> with the proposed change. It is not fair to introduce a new API for a
+>> non-existing user, don't you agree?
 >>
->> I would prefer if you'd used scnprintf
+>>> In fact we develop a new governor, based on PID logic. It will need s=
+ome
+>>> parameters, such as proportional, integral and derivative. these valu=
+e
+>>> will be initialized in different values for different thermal zone, s=
+o
+>>> we want to use the thermal_zone_device_update() to switch governor or=
+
+>>> update the governor's parameters for different thermal zone.
 >>
->>> +	count +=3D sprintf(buf + count, "\n");
->>
->> ditto.
->>
->>
->> It is unlikely, but What if count if greater than PAGE_SIZE?
+>> The parameters are a zone specific data right? Why should it be bound =
+to
+>> governor switch? The governor should be able to fetch the zone data wh=
+en
+>> needed.
 >=20
-> hmm, I checked the sysfs driver, in funciton sysfs_kf_seq_show(), it
-> seems it can handle the count greater than PAGE_SIZE.
-> Or we can return error here directly.
-> What do you think about it?
+> Let me consider it carefully again.
 
-Just to be aware that it will truncate your buffer:
-	/*
-	 * The code works fine with PAGE_SIZE return but it's likely to
-	 * indicate truncated result or overflow in normal use cases.
-	 */
-	if (count >=3D (ssize_t)PAGE_SIZE) {
-		print_symbol("fill_read_buffer: %s returned bad count\n",
-			(unsigned long)ops->show);
-		/* Try to struggle along */
-		count =3D PAGE_SIZE - 1;
-	}
-
-
-So, you either truncate here or leave to sysfs_seq_show(). Leave at
-least a comment in case you leave to sysfs layer.
+Let me make clear, I am not against your proposal for change, as long as
+you provide enough info so that we can design the API properly. For new
+APIs, it is hard to design it, see its benefits and understand why
+existing APIs are not enough if we do not see at least one user of the
+new API. In other words, yes, I am open to changes, as long as I can
+properly understand it.
 
 >=20
 >>
->>> +
->>> +	mutex_unlock(&thermal_governor_lock);
->>> +
->>> +	return count;
->>> +}
->>> +
->>>  #ifdef CONFIG_THERMAL_EMULATION
->>>  static ssize_t
->>>  emul_temp_store(struct device *dev, struct device_attribute *attr,
->>> @@ -794,6 +812,7 @@ static DEVICE_ATTR(temp, 0444, temp_show, NULL);
->>>  static DEVICE_ATTR(mode, 0644, mode_show, mode_store);
->>>  static DEVICE_ATTR(passive, S_IRUGO | S_IWUSR, passive_show, passive=
-_store);
->>>  static DEVICE_ATTR(policy, S_IRUGO | S_IWUSR, policy_show, policy_st=
-ore);
->>> +static DEVICE_ATTR(available_policies, S_IRUGO, available_policies_s=
-how, NULL);
->>> =20
->>>  /* sys I/F for cooling device */
->>>  #define to_cooling_device(_dev)	\
->>> @@ -1527,6 +1546,11 @@ struct thermal_zone_device *thermal_zone_devic=
-e_register(const char *type,
->>>  	if (result)
->>>  		goto unregister;
->>> =20
->>> +	/* Create available_policies attribute */
->>> +	result =3D device_create_file(&tz->device, &dev_attr_available_poli=
-cies);
->>> +	if (result)
->>> +		goto unregister;
->>> +
->>>  	/* Update 'this' zone's governor information */
->>>  	mutex_lock(&thermal_governor_lock);
->>> =20
->>> @@ -1622,6 +1646,7 @@ void thermal_zone_device_unregister(struct ther=
-mal_zone_device *tz)
->>>  	if (tz->ops->get_mode)
->>>  		device_remove_file(&tz->device, &dev_attr_mode);
->>>  	device_remove_file(&tz->device, &dev_attr_policy);
->>> +	device_remove_file(&tz->device, &dev_attr_available_policies);
->>>  	remove_trip_attrs(tz);
->>>  	tz->governor =3D NULL;
->>> =20
+>> Again, if you share the user of the API you are proposing we can work
+>> together to make a better fit between API and users.
+>>
+>> For the existing governors, I don't see a need to have the stop and
+>> start callbacks.
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Eduardo, what is your recommended technique for setting the governo=
+r of
+>>>>> a thermal zone device created via device tree?
+>>>>
+>>>> So far the recommended (and existing) way is by user(land) decision.=
+
+>>>>
+>>>>>
+>>>>> thanks,
+>>>>> Matt
+>>>>>
+>>>>> --=20
+>>>>> To unsubscribe from this list: send the line "unsubscribe linux-pm"=
+ in
+>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>>>
+>>>>>
+>>>>
+>>>>
+>>>
+>>>
 >>>
 >>
 >>
@@ -197,7 +173,7 @@ You have got to be excited about what you are doing. (L. Lamport)
 Eduardo Valentin
 
 
---Emwgp4cxH6x8tGd0WmMV3FADlGWa7WOal
+--dToWcOn7kcopSEA4B1Ob2s6leTMhEdSr6
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -206,9 +182,9 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v1.4.12 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iF4EAREIAAYFAlLWlJcACgkQCXcVR3XQvP27EAEA/BtrYIJeTh6od2NAZ4nMgT8G
-qIat+4mDXACiGgGzUPkBAICVxhuBhLMLny3XF3nW6Au97zFvrIyjt/5Xa0DtVi9R
-=rirf
+iF4EAREIAAYFAlLWlW0ACgkQCXcVR3XQvP3XwAD/RZ5jIEzAQsaQrajrTj6bP2+L
+f9khhXizjdBxA+iGLiYA/1C01W8ZPAiI2m0X6CvxrtLbZKISzBdTYj6zwzH5ZuhW
+=aHrt
 -----END PGP SIGNATURE-----
 
---Emwgp4cxH6x8tGd0WmMV3FADlGWa7WOal--
+--dToWcOn7kcopSEA4B1Ob2s6leTMhEdSr6--
