@@ -1,246 +1,171 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v4 1/5] drm/dp: Add AUX channel infrastructure
-Date: Tue, 21 Jan 2014 20:24:19 +0100
-Message-ID: <1390332263-11974-2-git-send-email-treding@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v4 3/5] drm/dp: Add DisplayPort link helpers
+Date: Tue, 21 Jan 2014 20:24:21 +0100
+Message-ID: <1390332263-11974-4-git-send-email-treding@nvidia.com>
 References: <1390332263-11974-1-git-send-email-treding@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1390332263-11974-1-git-send-email-treding@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
-	<mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Sender: intel-gfx-bounces@lists.freedesktop.org
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-To: dri-devel@lists.freedesktop.org
-Cc: Alex Deucher <alexander.deucher@amd.com>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1390332263-11974-1-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This is a superset of the current i2c_dp_aux bus functionality and can
-be used to transfer native AUX in addition to I2C-over-AUX messages.
+Add a helper to probe a DP link (read out the supported DPCD revision,
+maximum rate, link count and capabilities) as well as power up the DP
+link and configure it accordingly.
 
-Helpers are provided to read and write the DPCD, either blockwise or
-byte-wise. Many of the existing helpers for DisplayPort take a copy of a
-portion of the DPCD and operate on that, without a way to write data
-back to the DPCD (e.g. for configuration of the link).
-
-Subsequent patches will build upon this infrastructure to provide common
-functionality in a generic way.
-
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>
+Reviewed-by: Jani Nikula <jani.nikula-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Changes in v4:
-- fix a typo in a comment
+- fix a couple of typos in comments as pointed out by Alex Deucher
 
 Changes in v3:
-- reorder drm_dp_dpcd_writeb() arguments to be more intuitive
-- return number of bytes transferred in drm_dp_dpcd_write()
-- factor out drm_dp_dpcd_access()
-- describe error codes
+- split into drm_dp_link_power_up() and drm_dp_link_configure()
+- do not change sink state for DPCD versions earlier than 1.1
+- sleep for 1-2 ms after setting local sink to D0 state
+- read and write consecutive registers where possible
+- read DPCD revision when link is probed
+- remove duplicate kerneldoc
 
- drivers/gpu/drm/drm_dp_helper.c | 110 ++++++++++++++++++++++++++++++++++++++++
- include/drm/drm_dp_helper.h     |  67 ++++++++++++++++++++++++
- 2 files changed, 177 insertions(+)
+ drivers/gpu/drm/drm_dp_helper.c | 94 +++++++++++++++++++++++++++++++++++++++++
+ include/drm/drm_dp_helper.h     | 17 ++++++++
+ 2 files changed, 111 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index 9e978aae8972..3e74ed93b19f 100644
+index b26d46b00b05..eea15b1414ed 100644
 --- a/drivers/gpu/drm/drm_dp_helper.c
 +++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -346,3 +346,113 @@ int drm_dp_bw_code_to_link_rate(u8 link_bw)
- 	}
+@@ -472,3 +472,97 @@ int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
+ 				DP_LINK_STATUS_SIZE);
  }
- EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
+ EXPORT_SYMBOL(drm_dp_dpcd_read_link_status);
 +
 +/**
-+ * DOC: dp helpers
++ * drm_dp_link_probe() - probe a DisplayPort link for capabilities
++ * @aux: DisplayPort AUX channel
++ * @link: pointer to structure in which to return link capabilities
 + *
-+ * The DisplayPort AUX channel is an abstraction to allow generic, driver-
-+ * independent access to AUX functionality. Drivers can take advantage of
-+ * this by filling in the fields of the drm_dp_aux structure.
++ * The structure filled in by this function can usually be passed directly
++ * into drm_dp_link_power_up() and drm_dp_link_configure() to power up and
++ * configure the link based on the link's capabilities.
 + *
-+ * The .transfer() function is the hardware-specific implementation of how
-+ * a transaction is executed on the AUX channel. A pointer to a struct
-+ * drm_dp_aux_msg describing the transaction is passed into this function.
-+ * Upon success, the implementation should return the number of bytes that
-+ * were transferred, or a negative error-code on failure. Helpers propagate
-+ * errors from the .transfer() function, with the exception of the -EBUSY
-+ * error, which causes a transaction to be retried.
-+ *
-+ * The .dev field should be set to a pointer to the device that implements
-+ * the AUX channel.
++ * Returns 0 on success or a negative error code on failure.
 + */
-+
-+static int drm_dp_dpcd_access(struct drm_dp_aux *aux, u8 request,
-+			      unsigned int offset, void *buffer, size_t size)
++int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link)
 +{
-+	struct drm_dp_aux_msg msg;
-+	unsigned int retry;
++	u8 values[3];
 +	int err;
 +
-+	memset(&msg, 0, sizeof(msg));
-+	msg.address = offset;
-+	msg.request = request;
-+	msg.buffer = buffer;
-+	msg.size = size;
++	memset(link, 0, sizeof(*link));
++
++	err = drm_dp_dpcd_read(aux, DP_DPCD_REV, values, sizeof(values));
++	if (err < 0)
++		return err;
++
++	link->revision = values[0];
++	link->rate = drm_dp_bw_code_to_link_rate(values[1]);
++	link->num_lanes = values[2] & DP_MAX_LANE_COUNT_MASK;
++
++	if (values[2] & DP_ENHANCED_FRAME_CAP)
++		link->capabilities |= DP_LINK_CAP_ENHANCED_FRAMING;
++
++	return 0;
++}
++
++/**
++ * drm_dp_link_power_up() - power up a DisplayPort link
++ * @aux: DisplayPort AUX channel
++ * @link: pointer to a structure containing the link configuration
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int drm_dp_link_power_up(struct drm_dp_aux *aux, struct drm_dp_link *link)
++{
++	u8 value;
++	int err;
++
++	/* DP_SET_POWER register is only available on DPCD v1.1 and later */
++	if (link->revision < 0x11)
++		return 0;
++
++	err = drm_dp_dpcd_readb(aux, DP_SET_POWER, &value);
++	if (err < 0)
++		return err;
++
++	value &= ~DP_SET_POWER_MASK;
++	value |= DP_SET_POWER_D0;
++
++	err = drm_dp_dpcd_writeb(aux, DP_SET_POWER, value);
++	if (err < 0)
++		return err;
 +
 +	/*
-+	 * The specification doesn't give any recommendation on how often to
-+	 * retry native transactions, so retry 7 times like for I2C-over-AUX
-+	 * transactions.
++	 * According to the DP 1.1 specification, a "Sink Device must exit the
++	 * power saving state within 1 ms" (Section 2.5.3.1, Table 5-52, "Sink
++	 * Control Field" (register 0x600).
 +	 */
-+	for (retry = 0; retry < 7; retry++) {
-+		err = aux->transfer(aux, &msg);
-+		if (err < 0) {
-+			if (err == -EBUSY)
-+				continue;
++	usleep_range(1000, 2000);
 +
-+			return err;
-+		}
-+
-+		if (err == 0)
-+			return -EPROTO;
-+
-+		switch (msg.reply & DP_AUX_NATIVE_REPLY_MASK) {
-+		case DP_AUX_NATIVE_REPLY_ACK:
-+			return err;
-+
-+		case DP_AUX_NATIVE_REPLY_NACK:
-+			return -EIO;
-+
-+		case DP_AUX_NATIVE_REPLY_DEFER:
-+			usleep_range(400, 500);
-+			break;
-+		}
-+	}
-+
-+	DRM_ERROR("too many retries, giving up\n");
-+	return -EIO;
++	return 0;
 +}
 +
 +/**
-+ * drm_dp_dpcd_read() - read a series of bytes from the DPCD
++ * drm_dp_link_configure() - configure a DisplayPort link
 + * @aux: DisplayPort AUX channel
-+ * @offset: address of the (first) register to read
-+ * @buffer: buffer to store the register values
-+ * @size: number of bytes in @buffer
++ * @link: pointer to a structure containing the link configuration
 + *
-+ * Returns the number of bytes transferred on success, or a negative error
-+ * code on failure. -EIO is returned if the request was NAKed by the sink or
-+ * if the retry count was exceeded. If no bytes were transferred, -EPROTO is
-+ * returned. Errors from the underlying AUX channel transfer function, with
-+ * the exception of -EBUSY (upon which the transaction will be retried), are
-+ * propagated to the caller.
++ * Returns 0 on success or a negative error code on failure.
 + */
-+ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
-+			 void *buffer, size_t size)
++int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link)
 +{
-+	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
-+				  size);
-+}
-+EXPORT_SYMBOL(drm_dp_dpcd_read);
++	u8 values[2];
++	int err;
 +
-+/**
-+ * drm_dp_dpcd_write() - write a series of bytes to the DPCD
-+ * @aux: DisplayPort AUX channel
-+ * @offset: address of the (first) register to write
-+ * @buffer: buffer containing the values to write
-+ * @size: number of bytes in @buffer
-+ *
-+ * Returns the number of bytes transferred on success, or a negative error
-+ * code on failure. -EIO is returned if the request was NAKed by the sink or
-+ * if the retry count was exceeded. If no bytes were transferred, -EPROTO is
-+ * returned. Errors from the underlying AUX channel transfer function, with
-+ * the exception of -EBUSY (upon which the transaction will be retried), are
-+ * propagated to the caller.
-+ */
-+ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
-+			  void *buffer, size_t size)
-+{
-+	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
-+				  size);
++	values[0] = drm_dp_link_rate_to_bw_code(link->rate);
++	values[1] = link->num_lanes;
++
++	if (link->capabilities & DP_LINK_CAP_ENHANCED_FRAMING)
++		values[1] |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
++
++	err = drm_dp_dpcd_write(aux, DP_LINK_BW_SET, values, sizeof(values));
++	if (err < 0)
++		return err;
++
++	return 0;
 +}
-+EXPORT_SYMBOL(drm_dp_dpcd_write);
 diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index 1d09050a8c00..c69c1dc1b741 100644
+index 8af695277a84..c7b3c736c40a 100644
 --- a/include/drm/drm_dp_helper.h
 +++ b/include/drm/drm_dp_helper.h
-@@ -398,4 +398,71 @@ drm_dp_enhanced_frame_cap(const u8 dpcd[DP_RECEIVER_CAP_SIZE])
- 		(dpcd[DP_MAX_LANE_COUNT] & DP_ENHANCED_FRAME_CAP);
- }
+@@ -291,6 +291,7 @@
+ #define DP_SET_POWER                        0x600
+ # define DP_SET_POWER_D0                    0x1
+ # define DP_SET_POWER_D3                    0x2
++# define DP_SET_POWER_MASK                  0x3
+ 
+ #define DP_PSR_ERROR_STATUS                 0x2006  /* XXX 1.2? */
+ # define DP_PSR_LINK_CRC_ERROR              (1 << 0)
+@@ -468,4 +469,20 @@ static inline ssize_t drm_dp_dpcd_writeb(struct drm_dp_aux *aux,
+ int drm_dp_dpcd_read_link_status(struct drm_dp_aux *aux,
+ 				 u8 status[DP_LINK_STATUS_SIZE]);
  
 +/*
-+ * DisplayPort AUX channel
++ * DisplayPort link
 + */
++#define DP_LINK_CAP_ENHANCED_FRAMING (1 << 0)
 +
-+/**
-+ * struct drm_dp_aux_msg - DisplayPort AUX channel transaction
-+ * @address: address of the (first) register to access
-+ * @request: contains the type of transaction (see DP_AUX_* macros)
-+ * @reply: upon completion, contains the reply type of the transaction
-+ * @buffer: pointer to a transmission or reception buffer
-+ * @size: size of @buffer
-+ */
-+struct drm_dp_aux_msg {
-+	unsigned int address;
-+	u8 request;
-+	u8 reply;
-+	void *buffer;
-+	size_t size;
++struct drm_dp_link {
++	unsigned char revision;
++	unsigned int rate;
++	unsigned int num_lanes;
++	unsigned long capabilities;
 +};
 +
-+/**
-+ * struct drm_dp_aux - DisplayPort AUX channel
-+ * @dev: pointer to struct device that is the parent for this AUX channel
-+ * @transfer: transfers a message representing a single AUX transaction
-+ */
-+struct drm_dp_aux {
-+	struct device *dev;
-+
-+	ssize_t (*transfer)(struct drm_dp_aux *aux,
-+			    struct drm_dp_aux_msg *msg);
-+};
-+
-+ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
-+			 void *buffer, size_t size);
-+ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
-+			  void *buffer, size_t size);
-+
-+/**
-+ * drm_dp_dpcd_readb() - read a single byte from the DPCD
-+ * @aux: DisplayPort AUX channel
-+ * @offset: address of the register to read
-+ * @valuep: location where the value of the register will be stored
-+ *
-+ * Returns the number of bytes transferred (1) on success, or a negative
-+ * error code on failure.
-+ */
-+static inline ssize_t drm_dp_dpcd_readb(struct drm_dp_aux *aux,
-+					unsigned int offset, u8 *valuep)
-+{
-+	return drm_dp_dpcd_read(aux, offset, valuep, 1);
-+}
-+
-+/**
-+ * drm_dp_dpcd_writeb() - write a single byte to the DPCD
-+ * @aux: DisplayPort AUX channel
-+ * @offset: address of the register to write
-+ * @value: value to write to the register
-+ *
-+ * Returns the number of bytes transferred (1) on success, or a negative
-+ * error code on failure.
-+ */
-+static inline ssize_t drm_dp_dpcd_writeb(struct drm_dp_aux *aux,
-+					 unsigned int offset, u8 value)
-+{
-+	return drm_dp_dpcd_write(aux, offset, &value, 1);
-+}
++int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link);
++int drm_dp_link_power_up(struct drm_dp_aux *aux, struct drm_dp_link *link);
++int drm_dp_link_configure(struct drm_dp_aux *aux, struct drm_dp_link *link);
 +
  #endif /* _DRM_DP_HELPER_H_ */
 -- 
