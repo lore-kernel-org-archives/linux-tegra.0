@@ -1,108 +1,32 @@
-From: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: A question about DT support for soc_camera
-Date: Wed, 22 Jan 2014 08:15:21 +0100 (CET)
-Message-ID: <Pine.LNX.4.64.1401220754490.2996@axis700.grange>
-References: <CAK5ve-LbvQACmaZC4gFBf=Ca_nwp7KvvT+dLBhbipxRdLFYonw@mail.gmail.com>
- <Pine.LNX.4.64.1401162337210.11956@axis700.grange>
- <CAK5ve-KXEFr+bTmC=4Pubo7++R=uSsqRFLgAOvka0L5ikksujw@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/5] ARM: firmware: enable Trusted Foundations by default
+Date: Wed, 22 Jan 2014 13:42:40 -0700
+Message-ID: <52E02D40.3090803@wwwdotorg.org>
+References: <1390299016-14105-1-git-send-email-acourbot@nvidia.com> <1390299016-14105-4-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5ve-KXEFr+bTmC=4Pubo7++R=uSsqRFLgAOvka0L5ikksujw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1390299016-14105-4-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Bryan,
-
-On Tue, 21 Jan 2014, Bryan Wu wrote:
-
-> On Thu, Jan 16, 2014 at 3:04 PM, Guennadi Liakhovetski
-> <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org> wrote:
-> > Hi Bryan,
-> >
-> > On Wed, 15 Jan 2014, Bryan Wu wrote:
-> >
-> >> Hi Guennadi,
-> >>
-> >> I'm working on upstream our Tegra soc_camera host driver. But found
-> >> the soc_camera framework is not fully supporting Device Tree probing,
-> >> am I wrong about that?
-> >
-> > Mostly correct, yes, currently soc-camera doesn't support device-tree
-> > probing.
-> >
-> >> While in upstream Tegra kernel, we only support
-> >> DT probing and there is no board files.
-> >>
-> >> Current soc_camera framework needs to put soc_camera_link information
-> >> in a board file and build up soc-camera-pdrv platform_device, then
-> >> finally register this soc-camera-pdrv platform_device.
-> >>
-> >> For the host driver, we can do DT probing but for i2c soc_camera
-> >> sensor driver I failed to find any DT probing in upstream kernel. So
-> >> how to do that without an board file but use DT for this whole thing?
-> >>
-> >> Can we use DT like this?
-> >> DTB file will pass those I2C, clock, regulator, GPIO information to
-> >> host driver. During host driver DT probing, we dynamically create
-> >> soc-camera-pdrv platform_device and soc_camera_link then register
-> >> them. Then the rest of the thing should be the same as None-DT
-> >> probing.
-> >
-> > I've worked on soc-camera DT in the past, this might be the last published
-> > version
-> >
-> > http://marc.info/?l=linux-sh&m=134875489304837&w=1
-> >
-> > As you see, it's quite old. Since then a few things happened. Device tree
-> > support has been added to V4L2 (see
-> > Documentation/devicetree/bindings/media/video-interfaces.txt and other
-> > files in that directory for examples), it is based on asynchronous
-> > probing, which is also supported by the soc-camera core and some its
-> > host drivers (e.g.
-> >
-> > commit 4dbfd040757b8bf22f4ac17e80b39c068061a16c
-> > Author: Guennadi Liakhovetski <g.liakhovetski-Mmb7MZpHnFY@public.gmane.org>
-> > Date:   Tue Jul 30 02:59:49 2013 -0300
-> >
-> >     [media] V4L2: mx3_camera: add support for asynchronous subdevice registration
-> >
-> > ). So, what you should do, is add asynchronous probing support to your
-> > driver, add DT support to the soc-camera core, add it to your drivers.
-> > Also see drivers/media/v4l2-core/v4l2-of.c for helper functions, you
-> > should be using.
-> >
+On 01/21/2014 03:10 AM, Alexandre Courbot wrote:
+> As discussed previously (https://lkml.org/lkml/2013/11/26/289), enable
+> Trusted Foundation support by default since it already depends on a
+> supporting architecture being selected.
 > 
-> Great, Guennadi. I will start to help to add DT for soc-camera.
-> 
-> But one more question is how to add DT support for soc-camera sensor
-> driver? For sensor driver, we need pass those regulator/gpio/clock
-> information for power on/off operations. If we add I2C device node in
-> DTS file to pass those settings to driver, driver will be
-> automatically loaded and start to probing. But I think loading
-> soc_camera sensor driver should be done by soc_camera core code during
-> host driver registering. Any suggestions to solve this problem?
+> Doing so allows us to remove it from tegra_defconfig.
 
-As I mentioned above, DT support in V4L2 is based on asynchronous probing 
-patches, which allow exactly this - probing (I2C) sensors and (platform) 
-hosts independently and asynchronously. If such a sensor is probed and 
-some of its dependencies are missing (e.g. a master clock, normally 
-provided by the camera host interface), the driver can return 
--EPROBE_DEFER and will be reprobed later, hopefully when resources are 
-already there. After a successful probing such a sensor driver, supporting 
-asynchronous probing, calls v4l2_async_register_subdev(). After the 
-respective host registers with the async framework, its notifier will be 
-called to inform it of your sensor presence. See drivers, listed by
+>  arch/arm/configs/tegra_defconfig | 1 -
+>  arch/arm/firmware/Kconfig        | 1 +
 
-grep -rl v4l2_async_register_subdev drivers/media/i2c/
+Can we split out the defconfig and code changes into separate patches?
+They need to go through seperate branches, possibly even separate repos.
 
-for examples.
-
-Thanks
-Guennadi
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+The defconfig change might not even be necessary; at some point I'll
+just rebuild it via "make tegra_defconfig; make savedefconfig" on top of
+some linux-next that includes the Kconfig change, and it'll happen
+automatically. Still, I guess there's no harm explicitly sending the patch.
