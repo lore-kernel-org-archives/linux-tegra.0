@@ -1,35 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v4 5/5] drm/tegra: Add eDP support
-Date: Wed, 22 Jan 2014 14:14:07 -0700
-Message-ID: <52E0349F.2050607@wwwdotorg.org>
-References: <1390332263-11974-1-git-send-email-treding@nvidia.com> <1390332263-11974-6-git-send-email-treding@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 3/5] ARM: firmware: enable Trusted Foundations by default
+Date: Thu, 23 Jan 2014 16:38:15 +0900
+Message-ID: <CAAVeFu+Eca6WGEL02nYskNQfB9=36_faZyGnQeSRrQEiXZx25A@mail.gmail.com>
+References: <1390299016-14105-1-git-send-email-acourbot@nvidia.com>
+ <1390299016-14105-4-git-send-email-acourbot@nvidia.com> <52E02D40.3090803@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1390332263-11974-6-git-send-email-treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Alex Deucher <alexander.deucher-5C7GfCeVMHo@public.gmane.org>, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <52E02D40.3090803@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/21/2014 12:24 PM, Thierry Reding wrote:
-> Add support for eDP functionality found on Tegra124 and later SoCs. Only
-> fast link training is currently supported.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../bindings/gpu/nvidia,tegra20-host1x.txt         |   42 +
+On Thu, Jan 23, 2014 at 5:42 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 01/21/2014 03:10 AM, Alexandre Courbot wrote:
+>> As discussed previously (https://lkml.org/lkml/2013/11/26/289), enable
+>> Trusted Foundation support by default since it already depends on a
+>> supporting architecture being selected.
+>>
+>> Doing so allows us to remove it from tegra_defconfig.
+>
+>>  arch/arm/configs/tegra_defconfig | 1 -
+>>  arch/arm/firmware/Kconfig        | 1 +
+>
+> Can we split out the defconfig and code changes into separate patches?
+> They need to go through seperate branches, possibly even separate repos.
+>
+> The defconfig change might not even be necessary; at some point I'll
+> just rebuild it via "make tegra_defconfig; make savedefconfig" on top of
+> some linux-next that includes the Kconfig change, and it'll happen
+> automatically. Still, I guess there's no harm explicitly sending the patch.
 
-This part should go to the DT mailing list, although it looks fine to me.
-
-> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-
-> + * Copyright (C) 2013 NVIDIA Corporation
-
-2014? Perhaps elsewhere too?
-
-> +static void tegra_dpaux_write_fifo(struct tegra_dpaux *dpaux, const u8 *buffer,
-
-Is that anything like writesl(); similar for
-tegra_dpaux_read_fifo()/readsl()?
+If we can do without the defconfig change then I will just omit it in
+the next version - I don't like sending too many oneliners. :P
