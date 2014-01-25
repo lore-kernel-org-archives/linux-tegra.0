@@ -1,55 +1,98 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: Fwd: mainline build: 15 warnings 1 failures (mainline/v3.13-5617-g3aacd62)
-Date: Fri, 24 Jan 2014 19:51:15 -0700
-Message-ID: <52E326A3.3070703@wwwdotorg.org>
-References: <52e1e955.c1db440a.3b7c.38e6@mx.google.com> <CAOesGMgP2ny--8eKSuSQGz0j=yv36suvpUX-xcwTu2jePr01CQ@mail.gmail.com> <20140124104101.GA31943@ulmo.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: tegra: rebuild tegra_defconfig to add DEBUG_FS
+Date: Fri, 24 Jan 2014 20:13:28 -0700
+Message-ID: <1390619608-8397-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140124104101.GA31943-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/24/2014 03:41 AM, Thierry Reding wrote:
-> On Thu, Jan 23, 2014 at 10:10:47PM -0800, Olof Johansson wrote:
->> Hmm, DRM build failures? I didn't see this pre-merge so
->> something recent has changed.
-> 
-> Indeed. This is caused by the interaction between two things. The
-> root proble is that the prototypes for the DRM debugfs helpers are
-> #ifdef'ed in the header file, but the Tegra DRM using them within
-> IS_ENABLED() protected blocks of code and therefore expects at
-> least prototypes to exist.
-> 
-> This used to work fine because tegra_defconfig enabled DEBUG_FS,
-> but it seems like that was dropped in
-> 0d8c67218cef8af259e4d12221434a1d7b0f3bbc (ARM: tegra:
-> tegra_defconfig updates). I had assumed that it was being dropped
-> from the defconfig because something else selected it, but that is
-> apparently not what happened.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Sometime after 3.13-rc1 came out, I checked it out and did the
-following to update tegra_defconfig:
+DEBUG_FS used to be selected by COMMON_CLK_DEBUG, which was enabled
+by tegra_defconfig. However, this config option no longer exists, so
+no longer selects DEBUG_FS, and nothing else selects it either. So,
+"make tegra_defconfig" no longer enables DEBUG_FS in .config.
 
-make tegra_defconfig; make savedefconfig; \
-	mv defconfig arch/arm/configs/tegra_defconfig
+Rebuild tegra_defconfig on top of next-20140424, while manually
+re-enabling DEBUG_FS.
 
-This removed CONFIG_DEBUG_FS=y from tegra_defconfig, because
-drivers/clk/Kconfig contained:
+Reasons for removed entries are:
+- I2C_MUX: selected by MEDIA_SUBDRV_AUTOSELECT
+- DRM_PANEL: selected by DRM_TEGRA
+- NEW_LEDS: selected by many things; at least VT
+- LEDS_CLASS: selected by many things; at least VT
+- LEDS_TRIGGERS: selected by many things; at least VT
+- COMMON_CLK_DEBUG: no longer exists
 
-> config COMMON_CLK_DEBUG bool "DebugFS representation of clock
-> tree" select DEBUG_FS
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-... and tegra_defconfig contains CONFIG_COMMON_CLK_DEBUG=y.
-
-However, sometime during 3.14 development, that Kconfig variable was
-deleted, and instead drivers/clk/clk.c now builds its debugfs code
-conditionally upon CONFIG_DEBUG_FS directly. Hence, CONFIG_DEBUG_FS no
-longer gets selected.
-
-I guess the best thing is to rebuild tegra_defconfig to add back
-CONFIG_DEBUG_FS and remove the non non-existant
-CONFIG_COMMON_CLK_DEBUG. I'll check for any other unexpected changes
-relative to 3.13 too.
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 5fdc9a0..00fe9e9 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -29,11 +29,11 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
+ CONFIG_ARCH_TEGRA_114_SOC=y
+ CONFIG_ARCH_TEGRA_124_SOC=y
+ CONFIG_TEGRA_EMC_SCALING_ENABLE=y
++CONFIG_TRUSTED_FOUNDATIONS=y
+ CONFIG_PCI=y
+ CONFIG_PCI_MSI=y
+ CONFIG_PCI_TEGRA=y
+ CONFIG_PCIEPORTBUS=y
+-CONFIG_TRUSTED_FOUNDATIONS=y
+ CONFIG_SMP=y
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+@@ -125,7 +125,6 @@ CONFIG_SERIAL_TEGRA=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ # CONFIG_HW_RANDOM is not set
+ # CONFIG_I2C_COMPAT is not set
+-CONFIG_I2C_MUX=y
+ CONFIG_I2C_MUX_PINCTRL=y
+ CONFIG_I2C_TEGRA=y
+ CONFIG_SPI=y
+@@ -169,9 +168,8 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
+ CONFIG_MEDIA_USB_SUPPORT=y
+ CONFIG_USB_VIDEO_CLASS=m
+ CONFIG_DRM=y
+-CONFIG_DRM_PANEL=y
+-CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_DRM_TEGRA=y
++CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_BACKLIGHT_LCD_SUPPORT=y
+ # CONFIG_LCD_CLASS_DEVICE is not set
+ CONFIG_BACKLIGHT_CLASS_DEVICE=y
+@@ -206,10 +204,7 @@ CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_SDHCI_TEGRA=y
+-CONFIG_NEW_LEDS=y
+-CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+-CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_TIMER=y
+ CONFIG_LEDS_TRIGGER_ONESHOT=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+@@ -235,7 +230,6 @@ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
+-CONFIG_COMMON_CLK_DEBUG=y
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_MEMORY=y
+@@ -265,6 +259,7 @@ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_INFO=y
++CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_SLAB=y
+ CONFIG_DEBUG_VM=y
+-- 
+1.8.3.2
