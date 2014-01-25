@@ -1,98 +1,43 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: rebuild tegra_defconfig to add DEBUG_FS
-Date: Fri, 24 Jan 2014 20:13:28 -0700
-Message-ID: <1390619608-8397-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: [PATCH] regulator: fixed: Use devm_regulator_register
+Date: Sat, 25 Jan 2014 23:35:54 +0530
+Message-ID: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: broonie@kernel.org, lgirdwood@gmail.com, badarkhe.manish@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Use "devm_regulator_register" instead of "regulator_register"
+which simplifies the code.
 
-DEBUG_FS used to be selected by COMMON_CLK_DEBUG, which was enabled
-by tegra_defconfig. However, this config option no longer exists, so
-no longer selects DEBUG_FS, and nothing else selects it either. So,
-"make tegra_defconfig" no longer enables DEBUG_FS in .config.
-
-Rebuild tegra_defconfig on top of next-20140424, while manually
-re-enabling DEBUG_FS.
-
-Reasons for removed entries are:
-- I2C_MUX: selected by MEDIA_SUBDRV_AUTOSELECT
-- DRM_PANEL: selected by DRM_TEGRA
-- NEW_LEDS: selected by many things; at least VT
-- LEDS_CLASS: selected by many things; at least VT
-- LEDS_TRIGGERS: selected by many things; at least VT
-- COMMON_CLK_DEBUG: no longer exists
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
 ---
- arch/arm/configs/tegra_defconfig | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+:100644 100644 5ea64b9... 6d32341... M	drivers/regulator/fixed.c
+ drivers/regulator/fixed.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 5fdc9a0..00fe9e9 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -29,11 +29,11 @@ CONFIG_ARCH_TEGRA_3x_SOC=y
- CONFIG_ARCH_TEGRA_114_SOC=y
- CONFIG_ARCH_TEGRA_124_SOC=y
- CONFIG_TEGRA_EMC_SCALING_ENABLE=y
-+CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_PCI=y
- CONFIG_PCI_MSI=y
- CONFIG_PCI_TEGRA=y
- CONFIG_PCIEPORTBUS=y
--CONFIG_TRUSTED_FOUNDATIONS=y
- CONFIG_SMP=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
-@@ -125,7 +125,6 @@ CONFIG_SERIAL_TEGRA=y
- CONFIG_SERIAL_OF_PLATFORM=y
- # CONFIG_HW_RANDOM is not set
- # CONFIG_I2C_COMPAT is not set
--CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_TEGRA=y
- CONFIG_SPI=y
-@@ -169,9 +168,8 @@ CONFIG_MEDIA_CAMERA_SUPPORT=y
- CONFIG_MEDIA_USB_SUPPORT=y
- CONFIG_USB_VIDEO_CLASS=m
- CONFIG_DRM=y
--CONFIG_DRM_PANEL=y
--CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_TEGRA=y
-+CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_BACKLIGHT_LCD_SUPPORT=y
- # CONFIG_LCD_CLASS_DEVICE is not set
- CONFIG_BACKLIGHT_CLASS_DEVICE=y
-@@ -206,10 +204,7 @@ CONFIG_MMC_BLOCK_MINORS=16
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_SDHCI_TEGRA=y
--CONFIG_NEW_LEDS=y
--CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
--CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_TIMER=y
- CONFIG_LEDS_TRIGGER_ONESHOT=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-@@ -235,7 +230,6 @@ CONFIG_KEYBOARD_NVEC=y
- CONFIG_SERIO_NVEC_PS2=y
- CONFIG_NVEC_POWER=y
- CONFIG_NVEC_PAZ00=y
--CONFIG_COMMON_CLK_DEBUG=y
- CONFIG_TEGRA_IOMMU_GART=y
- CONFIG_TEGRA_IOMMU_SMMU=y
- CONFIG_MEMORY=y
-@@ -265,6 +259,7 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
- CONFIG_DEBUG_INFO=y
-+CONFIG_DEBUG_FS=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_SLAB=y
- CONFIG_DEBUG_VM=y
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 5ea64b9..6d32341 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -186,7 +186,8 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = pdev->dev.of_node;
+ 
+-	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
++	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
++					       &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+@@ -212,7 +213,6 @@ static int reg_fixed_voltage_remove(struct platform_device *pdev)
+ {
+ 	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
+ 
+-	regulator_unregister(drvdata->dev);
+ 	kfree(drvdata->desc.supply_name);
+ 	kfree(drvdata->desc.name);
+ 
 -- 
-1.8.3.2
+1.7.10.4
