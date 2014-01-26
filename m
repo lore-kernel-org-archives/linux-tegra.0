@@ -1,7 +1,7 @@
 From: Abdul Nasser <abdulnas500-TIpE5U3ByZhUD6l512u9tw@public.gmane.org>
 Subject: Kind Regards
-Date: Sun, 26 Jan 2014 21:53:13 +0000
-Message-ID: <SECEXCHANGEk3dc0zz900004184@mail.standardelectronics.com>
+Date: Sun, 26 Jan 2014 22:31:44 +0000
+Message-ID: <SECEXCHANGEEJCtwZHH00006379@mail.standardelectronics.com>
 Reply-To: s.abdulnasser-/E1597aS9LTXPF5Rlphj1Q@public.gmane.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
