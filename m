@@ -1,59 +1,21 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
-Date: Sun, 26 Jan 2014 13:36:53 -0800
-Message-ID: <20140126213653.GB18840@core.coreip.homeip.net>
-References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+From: Abdul Nasser <nasser500-TIpE5U3ByZhUD6l512u9tw@public.gmane.org>
+Subject: Kind Regards
+Date: Sun, 26 Jan 2014 21:31:54 +0000
+Message-ID: <SECEXCHANGEPQIWDO3h00003a4d@mail.standardelectronics.com>
+Reply-To: s.abdulnasser-/E1597aS9LTXPF5Rlphj1Q@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Manish Badarkhe <badarkhe.manish@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@kernel.org, lgirdwood@gmail.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Description: Mail message body
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <nasser500-TIpE5U3ByZhUD6l512u9tw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Manish,
+Greetings,
+My name is Abdul Nasser Sokariah and I am writing you from Syria, I choose to contact you directly as I need a reliable person to trust who can help me handle my huge deposit  with a vault company in EUROPE, and based on my present situation in Syria, I need you urgently to take possession of everything and further modalities/directives will follow.Please reply to my private  Email: nasserabdul190-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
 
-On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
-> Use "devm_regulator_register" instead of "regulator_register"
-> which simplifies the code.
+I wait for your response.
 
-... and also breaks the driver: now you are freeing desc->name and
-desc->supply_name while regulator structures are still alive and can be
-referenced from its sysfs attributes, etc.
-
-> 
-> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
-> ---
-> :100644 100644 5ea64b9... 6d32341... M	drivers/regulator/fixed.c
->  drivers/regulator/fixed.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-> index 5ea64b9..6d32341 100644
-> --- a/drivers/regulator/fixed.c
-> +++ b/drivers/regulator/fixed.c
-> @@ -186,7 +186,8 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
->  	cfg.driver_data = drvdata;
->  	cfg.of_node = pdev->dev.of_node;
->  
-> -	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
-> +	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
-> +					       &cfg);
->  	if (IS_ERR(drvdata->dev)) {
->  		ret = PTR_ERR(drvdata->dev);
->  		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
-> @@ -212,7 +213,6 @@ static int reg_fixed_voltage_remove(struct platform_device *pdev)
->  {
->  	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
->  
-> -	regulator_unregister(drvdata->dev);
->  	kfree(drvdata->desc.supply_name);
->  	kfree(drvdata->desc.name);
->  
-
-Thanks.
-
--- 
-Dmitry
+Yours truly,
+Abdul Nasser Sokariah
