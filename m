@@ -1,21 +1,59 @@
-From: Abdul Nasser <abdulnas500-TIpE5U3ByZhUD6l512u9tw@public.gmane.org>
-Subject: Kind Regards
-Date: Sun, 26 Jan 2014 22:31:44 +0000
-Message-ID: <SECEXCHANGEEJCtwZHH00006379@mail.standardelectronics.com>
-Reply-To: s.abdulnasser-/E1597aS9LTXPF5Rlphj1Q@public.gmane.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: fixed: Use devm_regulator_register
+Date: Mon, 27 Jan 2014 00:03:00 +0000
+Message-ID: <20140127000300.GR11727@sirena.org.uk>
+References: <1390673154-15839-1-git-send-email-badarkhe.manish@gmail.com>
+ <20140126213653.GB18840@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Description: Mail message body
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Recipients <abdulnas500-TIpE5U3ByZhUD6l512u9tw@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="X1pyOwMoA9G3DWfK"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20140126213653.GB18840@core.coreip.homeip.net>
+Sender: linux-omap-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Manish Badarkhe <badarkhe.manish@gmail.com>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, lgirdwood@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-Greetings,
-My name is Abdul Nasser Sokariah and I am writing you from Syria, I choose to contact you directly as I need a reliable person to trust who can help me handle my huge deposit  with a vault company in EUROPE, and based on my present situation in Syria, I need you urgently to take possession of everything and further modalities/directives will follow.Please reply to my private  Email: nasserabdul190-/E1597aS9LQAvxtiuMwx3w@public.gmane.org
 
-I wait for your response.
+--X1pyOwMoA9G3DWfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yours truly,
-Abdul Nasser Sokariah
+On Sun, Jan 26, 2014 at 01:36:53PM -0800, Dmitry Torokhov wrote:
+> On Sat, Jan 25, 2014 at 11:35:54PM +0530, Manish Badarkhe wrote:
+
+> > Use "devm_regulator_register" instead of "regulator_register"
+> > which simplifies the code.
+
+> ... and also breaks the driver: now you are freeing desc->name and
+> desc->supply_name while regulator structures are still alive and can be
+> referenced from its sysfs attributes, etc.
+
+Yup, they need to be converted to managed allocations too if the
+regulator_register() is going to be converted (see previous discussions
+on similar patches).  It would be good to do so.
+
+--X1pyOwMoA9G3DWfK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJS5aIxAAoJELSic+t+oim92QsP/0NPhMMAgwoVcy4afvg8XV10
+J/PWI+Kc/vOpJVjP5hMYZmijtKA/YvaD8tOuZ0afKXehdt8oOOzXpK8zlSV3FDsm
+W0ZnS6ojtEjJ5t2teVexrBpGaA/kUK9hsQ12nu6aBEDU9Lup/aSn6BKMglEw+zzw
+Y9YqkiqOLczpsjvUx6zV/gFuRhW4NOWTJwWfHlwJlCpqMM1aA70AYwGTvRVoRoBM
+yjy5I5mc7mbeEjXCNi6Uoh+SldBMGeGskF8DhcKlIod1oUh2HjMR6HemD5YDtrDb
+uQdbTXqvCIohbytEvE8vX55BbDQB8Hf9FBNGn5qV1FQ3ZIAMcZJaIpl7ZZ/pGbzp
+40CIYZU3y8MqWpk7ePr62fkJj5USylxCytKpjSSFpkNCYW6/eC08rJUd0DO73FbE
+E+lm+32nIUArgsp6I8Hrh/NZkBqZjLLAegwNH0fkBgIwBdynGMJyvm0HZcUv7jZE
+ZJcxEKL6BqjO54APojRoyL/Qw0vkrkdwahX1/n4t566s+0/uBachRYOkbMYzh+Yi
+YTyxYQxUsYjzLlXsAztNpCvWucVuQZKo5HGCiz+IfK4oA73FxRUM/JPssMUXSvey
+m7Dx2+pJMsQMEtcXMaqHXGO4x6IZA7qNYUH+MuY3lbmFfYGbNxkO0JLC6nfiNxTA
+Z50ZbRQceqBSSN6Pb3d6
+=2z/J
+-----END PGP SIGNATURE-----
+
+--X1pyOwMoA9G3DWfK--
