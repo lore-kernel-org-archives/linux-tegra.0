@@ -1,33 +1,29 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH 3/3] Implement the utility gen_sdram_array
-Date: Tue, 28 Jan 2014 10:04:12 -0700
-Message-ID: <52E7E30C.1040100@wwwdotorg.org>
-References: <1390893857-18716-1-git-send-email-vinceh@nvidia.com> <1390893857-18716-3-git-send-email-vinceh@nvidia.com>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: Re: [PATCH V2] regulator: fixed: update to devm_* API
+Date: Tue, 28 Jan 2014 22:36:42 +0530
+Message-ID: <CAKDJKT53m=CmM2pafS9p-XJeg4LBrhSEJoFn_V-wnniNSQ7x7w@mail.gmail.com>
+References: <1390878720-8676-1-git-send-email-badarkhe.manish@gmail.com>
+	<52E7DDAD.1030309@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1390893857-18716-3-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <52E7DDAD.1030309@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-omap@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/28/2014 12:24 AM, Vince Hsu wrote:
-> This patch implemtns the ubility to generate a header file from
-> multiple sdram config files which each has one set of sdram
-> parameters inside only.
+Hi Stephan,
 
-I have no idea what this patch is meant to do. What kind of header file,
-what are the input and output formats *exactly*, is there an example
-somewhere?
+On Tue, Jan 28, 2014 at 10:11 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 01/27/2014 08:12 PM, Manish Badarkhe wrote:
+>> Update the code to use devm_* API so that driver core will manage
+>> resources.
+>
+> I'm not sure why this patch is sent to linux-tegra@vger.kernel.org; it
+> seems nothing to do with Tegra (or Samsung or OMAP for that matter).
 
-Reading the code doesn't give me much more of a clue. but I /think/ the
-following might do the same thing?
+Sorry, for the noise. I sent it to have review comments from community.
 
-cat all_the_input_files | sed -e 's/SDRAM[\d+]//'
-
-?
-
-If so, then I'm not sure it's worth even putting this feature into
-cbootimage at all, and if it is, a shell script might be a better idea.
+Regards
+Manish Badarkhe
