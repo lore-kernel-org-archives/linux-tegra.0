@@ -1,44 +1,118 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [u-boot scripts PATCH] Use $fdtfile as the DT filename, if it's set
-Date: Mon, 27 Jan 2014 14:26:29 -0700
-Message-ID: <1390857989-25656-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: [PATCH V2] regulator: fixed: update to devm_* API
+Date: Tue, 28 Jan 2014 08:42:00 +0530
+Message-ID: <1390878720-8676-1-git-send-email-badarkhe.manish@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: broonie@kernel.org, lgirdwood@gmail.com, badarkhe.manish@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Update the code to use devm_* API so that driver core will manage
+resources.
 
-This makes the generated boot.scr use the same mechanism to determine
-the DT filename as U-Boot's pxe or sysboot commands, which parse an
-extlinux.conf file.
-
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
 ---
- gen-uboot-script.py | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Changes since V1:
+1. Updated driver to use "devm_kzalloc" to "kstrdup".
+2. Updated commit message.
 
-diff --git a/gen-uboot-script.py b/gen-uboot-script.py
-index 7c55b2594e07..46847e50834a 100755
---- a/gen-uboot-script.py
-+++ b/gen-uboot-script.py
-@@ -119,7 +119,15 @@ if args.initrd:
- else:
-     ramdisk = '-'
+Not tested on any board.
+
+:100644 100644 5ea64b9... e9763a4... M	drivers/regulator/fixed.c
+ drivers/regulator/fixed.c |   42 ++++++++++++------------------------------
+ 1 file changed, 12 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index 5ea64b9..e9763a4 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -132,15 +132,15 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 			       GFP_KERNEL);
+ 	if (drvdata == NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate device data\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
  
--f.write(load + ' ${fdt_addr_r} ${prefix}${soc}-${board}${boardver}.dtb\n')
-+f.write('''\
-+if test -n "${fdtfile}"; then
-+    set _fdt ${fdtfile};
-+else
-+    set _fdt ${soc}-${board}${boardver}.dtb;
-+fi
-+''')
-+f.write(load + ' ${fdt_addr_r} ' + prefix + '${_fdt}\n')
-+f.write('set _fdt\n')
+-	drvdata->desc.name = kstrdup(config->supply_name, GFP_KERNEL);
++	drvdata->desc.name = devm_kzalloc(&pdev->dev,
++					  strlen(config->supply_name) + 1,
++					  GFP_KERNEL);
+ 	if (drvdata->desc.name == NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate supply name\n");
+-		ret = -ENOMEM;
+-		goto err;
++		return -ENOMEM;
+ 	}
+ 	drvdata->desc.type = REGULATOR_VOLTAGE;
+ 	drvdata->desc.owner = THIS_MODULE;
+@@ -149,13 +149,13 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	drvdata->desc.enable_time = config->startup_delay;
  
- bootargs = ''
- if not args.no_con_ttyS0:
+ 	if (config->input_supply) {
+-		drvdata->desc.supply_name = kstrdup(config->input_supply,
+-							GFP_KERNEL);
++		drvdata->desc.supply_name = devm_kzalloc(&pdev->dev,
++					    strlen(config->input_supply) + 1,
++					    GFP_KERNEL);
+ 		if (!drvdata->desc.supply_name) {
+ 			dev_err(&pdev->dev,
+ 				"Failed to allocate input supply\n");
+-			ret = -ENOMEM;
+-			goto err_name;
++			return -ENOMEM;
+ 		}
+ 	}
+ 
+@@ -186,11 +186,12 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = pdev->dev.of_node;
+ 
+-	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
++	drvdata->dev = devm_regulator_register(&pdev->dev, &drvdata->desc,
++					       &cfg);
+ 	if (IS_ERR(drvdata->dev)) {
+ 		ret = PTR_ERR(drvdata->dev);
+ 		dev_err(&pdev->dev, "Failed to register regulator: %d\n", ret);
+-		goto err_input;
++		return ret;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, drvdata);
+@@ -199,24 +200,6 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 		drvdata->desc.fixed_uV);
+ 
+ 	return 0;
+-
+-err_input:
+-	kfree(drvdata->desc.supply_name);
+-err_name:
+-	kfree(drvdata->desc.name);
+-err:
+-	return ret;
+-}
+-
+-static int reg_fixed_voltage_remove(struct platform_device *pdev)
+-{
+-	struct fixed_voltage_data *drvdata = platform_get_drvdata(pdev);
+-
+-	regulator_unregister(drvdata->dev);
+-	kfree(drvdata->desc.supply_name);
+-	kfree(drvdata->desc.name);
+-
+-	return 0;
+ }
+ 
+ #if defined(CONFIG_OF)
+@@ -229,7 +212,6 @@ MODULE_DEVICE_TABLE(of, fixed_of_match);
+ 
+ static struct platform_driver regulator_fixed_voltage_driver = {
+ 	.probe		= reg_fixed_voltage_probe,
+-	.remove		= reg_fixed_voltage_remove,
+ 	.driver		= {
+ 		.name		= "reg-fixed-voltage",
+ 		.owner		= THIS_MODULE,
 -- 
-1.8.1.5
+1.7.10.4
