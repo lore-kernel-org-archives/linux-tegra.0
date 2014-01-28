@@ -1,29 +1,74 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH V2] regulator: fixed: update to devm_* API
-Date: Tue, 28 Jan 2014 22:36:42 +0530
-Message-ID: <CAKDJKT53m=CmM2pafS9p-XJeg4LBrhSEJoFn_V-wnniNSQ7x7w@mail.gmail.com>
-References: <1390878720-8676-1-git-send-email-badarkhe.manish@gmail.com>
-	<52E7DDAD.1030309@wwwdotorg.org>
+From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] arm, pm, vmpressure: add missing slab.h includes
+Date: Tue, 28 Jan 2014 17:19:22 -0500
+Message-ID: <20140128221922.GC16060@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <52E7DDAD.1030309@wwwdotorg.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-omap@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: cgroups-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Johannes Weiner <hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org>, Michal Hocko <mhocko-AlSwsSmVLrQ@public.gmane.org>, Balbir Singh <bsingharora-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu-+CUm20s59erQFUHtdCDX3A@public.gmane.org>, cgroups-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephan,
+arch/arm/mach-tegra/pm.c, kernel/power/console.c and mm/vmpressure.c
+were somehow getting slab.h indirectly through cgroup.h which in turn
+was getting it indirectly through xattr.h.  A scheduled cgroup change
+drops xattr.h inclusion from cgroup.h and breaks compilation of these
+three files.  Add explicit slab.h includes to the three files.
 
-On Tue, Jan 28, 2014 at 10:11 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 01/27/2014 08:12 PM, Manish Badarkhe wrote:
->> Update the code to use devm_* API so that driver core will manage
->> resources.
->
-> I'm not sure why this patch is sent to linux-tegra@vger.kernel.org; it
-> seems nothing to do with Tegra (or Samsung or OMAP for that matter).
+A pending cgroup patch depends on this change and it'd be great if
+this can be routed through cgroup/for-3.14-fixes branch.
 
-Sorry, for the noise. I sent it to have review comments from community.
+Signed-off-by: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Johannes Weiner <hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org>
+Cc: Michal Hocko <mhocko-AlSwsSmVLrQ@public.gmane.org>
+Cc: Balbir Singh <bsingharora-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: KAMEZAWA Hiroyuki <kamezawa.hiroyu-+CUm20s59erQFUHtdCDX3A@public.gmane.org>
+Cc: cgroups-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+If you guys are okay with this going through cgroup/for-3.14-fixes,
+can you please ack it?
 
-Regards
-Manish Badarkhe
+Thanks!
+
+ arch/arm/mach-tegra/pm.c |    1 +
+ kernel/power/console.c   |    1 +
+ mm/vmpressure.c          |    1 +
+ 3 files changed, 3 insertions(+)
+
+--- a/arch/arm/mach-tegra/pm.c
++++ b/arch/arm/mach-tegra/pm.c
+@@ -24,6 +24,7 @@
+ #include <linux/cpu_pm.h>
+ #include <linux/suspend.h>
+ #include <linux/err.h>
++#include <linux/slab.h>
+ #include <linux/clk/tegra.h>
+ 
+ #include <asm/smp_plat.h>
+--- a/kernel/power/console.c
++++ b/kernel/power/console.c
+@@ -9,6 +9,7 @@
+ #include <linux/kbd_kern.h>
+ #include <linux/vt.h>
+ #include <linux/module.h>
++#include <linux/slab.h>
+ #include "power.h"
+ 
+ #define SUSPEND_CONSOLE	(MAX_NR_CONSOLES-1)
+--- a/mm/vmpressure.c
++++ b/mm/vmpressure.c
+@@ -19,6 +19,7 @@
+ #include <linux/mm.h>
+ #include <linux/vmstat.h>
+ #include <linux/eventfd.h>
++#include <linux/slab.h>
+ #include <linux/swap.h>
+ #include <linux/printk.h>
+ #include <linux/vmpressure.h>
