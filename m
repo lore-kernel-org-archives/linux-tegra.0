@@ -1,10 +1,12 @@
 From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH 1/3] Allow users to specify the handler to process special configuration
-Date: Tue, 28 Jan 2014 15:24:15 +0800
-Message-ID: <1390893857-18716-1-git-send-email-vinceh@nvidia.com>
+Subject: [cbootimage PATCH 2/3] Export several parsing functions for external use
+Date: Tue, 28 Jan 2014 15:24:16 +0800
+Message-ID: <1390893857-18716-2-git-send-email-vinceh@nvidia.com>
+References: <1390893857-18716-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1390893857-18716-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,85 +14,77 @@ List-Id: linux-tegra@vger.kernel.org
 
 Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/cbootimage.c |  4 ++--
- src/parse.c      | 13 +++++++++----
- src/parse.h      |  3 ++-
- 3 files changed, 13 insertions(+), 7 deletions(-)
+ src/parse.c | 14 +++-----------
+ src/parse.h |  7 +++++++
+ 2 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/src/cbootimage.c b/src/cbootimage.c
-index 1332c5f118b5..0fe164fa5421 100644
---- a/src/cbootimage.c
-+++ b/src/cbootimage.c
-@@ -200,14 +200,14 @@ main(int argc, char *argv[])
- 
- 	/* first, if we aren't generating the bct, read in config file */
- 	if (context.generate_bct == 0) {
--		process_config_file(&context, 1);
-+		process_config_file(&context, 1, NULL);
- 	}
- 	/* Generate the new bct file */
- 	else {
- 		/* Initialize the bct memory */
- 		init_bct(&context);
- 		/* Parse & process the contents of the config file. */
--		process_config_file(&context, 0);
-+		process_config_file(&context, 0, NULL);
- 		/* Update the BCT */
- 		begin_update(&context);
- 		/* Signing the bct. */
 diff --git a/src/parse.c b/src/parse.c
-index 464ee8ff40e4..92490b8c5768 100644
+index 92490b8c5768..ac2c183595f1 100644
 --- a/src/parse.c
 +++ b/src/parse.c
-@@ -698,7 +698,8 @@ process_statement(build_image_context *context,
-  * @param context     	The main context pointer
-  * @param simple_parse	Simple parse flag
+@@ -43,20 +43,12 @@ set_array(build_image_context *context,
+ 			u_int32_t index,
+ 			parse_token token,
+ 			u_int32_t value);
+-static char *parse_u32(char *str, u_int32_t *val);
+ static char *parse_u8(char *str, u_int32_t *val);
+ static char *parse_filename(char *str, char *name, int chars_remaining);
+ static char *parse_enum(build_image_context *context,
+ 			char *str,
+ 			enum_item *table,
+ 			u_int32_t *val);
+-static char
+-*parse_field_name(char *rest, field_item *field_table, field_item **field);
+-static char
+-*parse_field_value(build_image_context *context,
+-			char *rest,
+-			field_item *field,
+-			u_int32_t *value);
+ static int
+ parse_array(build_image_context *context, parse_token token, char *rest);
+ static int
+@@ -115,7 +107,7 @@ static parse_item s_top_level_items[] = {
+  * @param val	Returns value that was parsed
+  * @return the remainder of the string after the number was parsed
   */
--void process_config_file(build_image_context *context, u_int8_t simple_parse)
-+void process_config_file(build_image_context *context, u_int8_t simple_parse,
-+		int (*special_handler)(build_image_context *context, char *buffer))
+-static char *
++char *
+ parse_u32(char *str, u_int32_t *val)
  {
- 	char buffer[MAX_BUFFER];
- 	int  space = 0;
-@@ -707,6 +708,7 @@ void process_config_file(build_image_context *context, u_int8_t simple_parse)
- 	u_int8_t comment = 0;
- 	u_int8_t string = 0;
- 	u_int8_t equal_encounter = 0;
-+	int e;
- 
- 	assert(context != NULL);
- 	assert(context->config_file != NULL);
-@@ -737,11 +739,14 @@ void process_config_file(build_image_context *context, u_int8_t simple_parse)
- 		case ';':
- 			if (!string && !comment) {
- 				buffer[space++] = '\0';
-+				if (special_handler)
-+					e = special_handler(context, buffer);
-+				else
-+					e = process_statement(context, buffer, simple_parse);
- 
--				if (process_statement(context,
--							buffer,
--							simple_parse))
-+				if (e)
- 					goto error;
-+
- 				space = 0;
- 				equal_encounter = 0;
- 			} else if (string)
+ 	u_int32_t value = 0;
+@@ -206,7 +198,7 @@ parse_filename(char *str, char *name, int chars_remaining)
+  * @param field      	Returns the field item that was parsed
+  * @return NULL or the remainder of the string after the field item was parsed
+  */
+-static char
++char
+ *parse_field_name(char *rest, field_item *field_table, field_item **field)
+ {
+ 	u_int32_t i;
+@@ -245,7 +237,7 @@ static char
+  * @param value	Returns the value that was parsed
+  * @return the remainder of the string after the value was parsed
+  */
+-static char
++char
+ *parse_field_value(build_image_context *context,
+ 			char *rest,
+ 			field_item *field,
 diff --git a/src/parse.h b/src/parse.h
-index 80f42c4269b1..239946c7fa7a 100644
+index 239946c7fa7a..17bb3b90781b 100644
 --- a/src/parse.h
 +++ b/src/parse.h
-@@ -763,7 +763,8 @@ typedef struct cbootimage_soc_config_rec {
- 	parse_subfield_item *device_type_table;
- } cbootimage_soc_config;
+@@ -921,4 +921,11 @@ extern parse_subfield_item s_device_type_table_t30[];
+ extern parse_subfield_item s_device_type_table_t114[];
+ extern parse_subfield_item s_device_type_table_t124[];
  
--void process_config_file(build_image_context *context, u_int8_t simple_parse);
-+void process_config_file(build_image_context *context, u_int8_t simple_parse,
-+		int (*special_handler)(build_image_context *context, char *buffer));
- 
- void t124_get_soc_config(build_image_context *context,
- 	cbootimage_soc_config **soc_config);
++char *parse_u32(char *str, u_int32_t *val);
++char *parse_field_name(char *rest, field_item *field_table, field_item **field);
++char *parse_field_value(build_image_context *context,
++			char *rest,
++			field_item *field,
++			u_int32_t *value);
++
+ #endif /* #ifndef INCLUDED_PARSE_H */
 -- 
 1.8.1.5
