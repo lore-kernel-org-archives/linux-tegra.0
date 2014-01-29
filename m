@@ -1,35 +1,46 @@
-From: Jim Lin <jilin@nvidia.com>
-Subject: Re: [PATCH v3 3/6] misc: fuse: Add efuse driver for Tegra
-Date: Wed, 29 Jan 2014 10:26:18 +0800
-Message-ID: <1390962378.2398.11.camel@jilin-desktop>
-References: <1390952176-30402-1-git-send-email-pdeschrijver@nvidia.com>
-	 <1390952176-30402-4-git-send-email-pdeschrijver@nvidia.com>
+From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v3.13
+Date: Tue, 28 Jan 2014 20:29:33 -0800
+Message-ID: <52E883AD.1000401@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1390952176-30402-4-git-send-email-pdeschrijver@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Danny Huang <dahuang@nvidia.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2014-01-29 at 07:36 +0800, Peter De Schrijver wrote:
-> Implement fuse driver for Tegra20, Tegra30, Tegra114 and Tegra124.
-> 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  Documentation/ABI/testing/sysfs-driver-tegra-fuse |    8 +
->  drivers/misc/fuse/Makefile                        |    1 +
->  drivers/misc/fuse/tegra/Makefile                  |    7 +
->  drivers/misc/fuse/tegra/fuse-tegra.c              |  228 ++++++++++++++++
->  drivers/misc/fuse/tegra/fuse-tegra20.c            |  136 ++++++++++
->  drivers/misc/fuse/tegra/fuse-tegra30.c            |  178 +++++++++++++
->  drivers/misc/fuse/tegra/fuse.h                    |   82 ++++++
-Could we move this fuse.h to other folder under /include/linux
-(like /include/linux/platform_data)
-for other driver to include?
-So other driver can invoke function to read fuse data if needed.
+Here are some basic Tegra test results for Linux v3.13.
+Logs and other details at:
 
---nvpublic
+     http://nvt.pwsan.com/pub/linux/testlogs/test_v3.13/20140119190136/
 
+
+Test summary
+------------
+
+Build: zImage:
+     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Boot to userspace: multi_v7_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+     Pass: ( 2/ 2): tegra114-dalmore-headless, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v3.13-rc8 (7e22e91102c6b9df7c4ae2168910e19d2bb14cd6)):
+    text     data      bss    total  kernel
+     +28      -24        0       +4  multi_v7_defconfig
+    +380        0        0     +380  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v3.13-rc8 (7e22e91102c6b9df7c4ae2168910e19d2bb14cd6))
+     avail    rsrvd     high    freed                board              kconfig                  dtb
+         .        .        .        . tegra114-dalmore-hea   multi_v7_defconfig     tegra114-dalmore
+         .        .        .        . tegra114-dalmore-hea      tegra_defconfig     tegra114-dalmore
+         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
