@@ -1,121 +1,63 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 05/16] drm/nouveau/bar: support platform devices
-Date: Sat,  1 Feb 2014 12:16:47 +0900
-Message-ID: <1391224618-3794-6-git-send-email-acourbot@nvidia.com>
+Subject: [RFC 16/16] drm/nouveau: support for probing GK20A
+Date: Sat,  1 Feb 2014 12:16:58 +0900
+Message-ID: <1391224618-3794-17-git-send-email-acourbot@nvidia.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
 To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Eric Brower <ebrower@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove PCI-dependent code so the BAR core can also handle platform
-devices.
+Set the correct subdev/engine classes when GK20A (0xea) is probed.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/core/subdev/bar/base.c |  4 ++--
- drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c |  4 ++--
- drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c | 15 +++++++--------
- 3 files changed, 11 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/nouveau/core/engine/device/nve0.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-index 7098ddd..bdf5941 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-@@ -118,8 +118,8 @@ nouveau_bar_create_(struct nouveau_object *parent,
- 	if (ret)
- 		return ret;
- 
--	bar->iomem = ioremap(pci_resource_start(device->pdev, 3),
--			     pci_resource_len(device->pdev, 3));
-+	bar->iomem = ioremap(nv_device_resource_start(device, 3),
-+			     nv_device_resource_len(device, 3));
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c
-index 090d594..baa2b62 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nv50.c
-@@ -139,7 +139,7 @@ nv50_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 
- 	/* BAR3 */
- 	start = 0x0100000000ULL;
--	limit = start + pci_resource_len(device->pdev, 3);
-+	limit = start + nv_device_resource_len(device, 3);
- 
- 	ret = nouveau_vm_new(device, start, limit, start, &vm);
- 	if (ret)
-@@ -173,7 +173,7 @@ nv50_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 
- 	/* BAR1 */
- 	start = 0x0000000000ULL;
--	limit = start + pci_resource_len(device->pdev, 1);
-+	limit = start + nv_device_resource_len(device, 1);
- 
- 	ret = nouveau_vm_new(device, start, limit--, start, &vm);
- 	if (ret)
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-index bac5e75..3f30db6 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-@@ -84,7 +84,6 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	      struct nouveau_object **pobject)
- {
- 	struct nouveau_device *device = nv_device(parent);
--	struct pci_dev *pdev = device->pdev;
- 	struct nvc0_bar_priv *priv;
- 	struct nouveau_gpuobj *mem;
- 	struct nouveau_vm *vm;
-@@ -107,14 +106,14 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	if (ret)
- 		return ret;
- 
--	ret = nouveau_vm_new(device, 0, pci_resource_len(pdev, 3), 0, &vm);
-+	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 3), 0, &vm);
- 	if (ret)
- 		return ret;
- 
- 	atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
- 
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL,
--				 (pci_resource_len(pdev, 3) >> 12) * 8,
-+				 (nv_device_resource_len(device, 3) >> 12) * 8,
- 				 0x1000, NVOBJ_FLAG_ZERO_ALLOC,
- 				 &vm->pgt[0].obj[0]);
- 	vm->pgt[0].refcount[0] = 1;
-@@ -128,8 +127,8 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 
- 	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[0].pgd->addr));
- 	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[0].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(pci_resource_len(pdev, 3) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(pci_resource_len(pdev, 3) - 1));
-+	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 3) - 1));
-+	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 3) - 1));
- 
- 	/* BAR1 */
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
-@@ -143,7 +142,7 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 	if (ret)
- 		return ret;
- 
--	ret = nouveau_vm_new(device, 0, pci_resource_len(pdev, 1), 0, &vm);
-+	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 1), 0, &vm);
- 	if (ret)
- 		return ret;
- 
-@@ -156,8 +155,8 @@ nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
- 
- 	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[1].pgd->addr));
- 	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[1].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(pci_resource_len(pdev, 1) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(pci_resource_len(pdev, 1) - 1));
-+	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 1) - 1));
-+	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 1) - 1));
- 
- 	priv->base.alloc = nouveau_bar_alloc;
- 	priv->base.kmap = nvc0_bar_kmap;
+diff --git a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+index 987edbc..30d652e 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
++++ b/drivers/gpu/drm/nouveau/core/engine/device/nve0.c
+@@ -156,6 +156,26 @@ nve0_identify(struct nouveau_device *device)
+ 		device->oclass[NVDEV_ENGINE_PPP    ] = &nvc0_ppp_oclass;
+ 		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
+ 		break;
++	case 0xea:
++		device->cname = "GK20A";
++		device->oclass[NVDEV_SUBDEV_MC     ] =  nvc3_mc_oclass;
++		device->oclass[NVDEV_SUBDEV_BUS    ] =  nvc0_bus_oclass;
++		device->oclass[NVDEV_SUBDEV_TIMER  ] = &nv04_timer_oclass;
++		device->oclass[NVDEV_SUBDEV_FB     ] =  nvea_fb_oclass;
++		device->oclass[NVDEV_SUBDEV_IBUS   ] = &nvea_ibus_oclass;
++		device->oclass[NVDEV_SUBDEV_INSTMEM] = nv50_instmem_oclass;
++		device->oclass[NVDEV_SUBDEV_VM     ] = &nvc0_vmmgr_oclass;
++		device->oclass[NVDEV_SUBDEV_BAR    ] = &nvc0_bar_oclass;
++		device->oclass[NVDEV_ENGINE_DMAOBJ ] = &nvd0_dmaeng_oclass;
++		device->oclass[NVDEV_ENGINE_FIFO   ] =  nvea_fifo_oclass;
++		/* TODO will need an implementation for this at some point... */
++#if 0
++		device->oclass[NVDEV_ENGINE_SW     ] =  nvc0_software_oclass;
++#endif
++		device->oclass[NVDEV_ENGINE_GR     ] =  nve4_graph_oclass;
++		device->oclass[NVDEV_ENGINE_COPY2  ] = &nve0_copy2_oclass;
++		device->oclass[NVDEV_ENGINE_PERFMON] = &nve0_perfmon_oclass;
++		break;
+ 	case 0xf0:
+ 		device->cname = "GK110";
+ 		device->oclass[NVDEV_SUBDEV_VBIOS  ] = &nouveau_bios_oclass;
 -- 
 1.8.5.3
