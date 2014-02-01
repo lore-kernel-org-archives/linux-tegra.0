@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 14/16] drm/nouveau/fb: add GK20A support
-Date: Sat,  1 Feb 2014 12:16:56 +0900
-Message-ID: <1391224618-3794-15-git-send-email-acourbot@nvidia.com>
+Subject: [RFC 09/16] drm/nouveau/fb: support platform devices
+Date: Sat,  1 Feb 2014 12:16:51 +0900
+Message-ID: <1391224618-3794-10-git-send-email-acourbot@nvidia.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,175 +21,40 @@ To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@li
 Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a clumsy-but-working FB support for GK20A. This chip only uses system
-memory, so we allocate a big chunk using CMA and let the existing memory
-managers work on it.
-
-A better future design would be to allocate objects directly from system
-memory without having to suffer from the limitations of a large,
-contiguous pool.
+Use abstracted resource query functions to allow FB core to handle
+both PCI and platform devices.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/Makefile                 |  2 +
- drivers/gpu/drm/nouveau/core/include/subdev/fb.h |  1 +
- drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c    | 28 ++++++++++
- drivers/gpu/drm/nouveau/core/subdev/fb/priv.h    |  1 +
- drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c | 67 ++++++++++++++++++++++++
- 5 files changed, 99 insertions(+)
- create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
- create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
+ drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-index 3548fcd..d9fe3e6 100644
---- a/drivers/gpu/drm/nouveau/Makefile
-+++ b/drivers/gpu/drm/nouveau/Makefile
-@@ -100,6 +100,7 @@ nouveau-y += core/subdev/fb/nvaa.o
- nouveau-y += core/subdev/fb/nvaf.o
- nouveau-y += core/subdev/fb/nvc0.o
- nouveau-y += core/subdev/fb/nve0.o
-+nouveau-y += core/subdev/fb/nvea.o
- nouveau-y += core/subdev/fb/ramnv04.o
- nouveau-y += core/subdev/fb/ramnv10.o
- nouveau-y += core/subdev/fb/ramnv1a.o
-@@ -114,6 +115,7 @@ nouveau-y += core/subdev/fb/ramnva3.o
- nouveau-y += core/subdev/fb/ramnvaa.o
- nouveau-y += core/subdev/fb/ramnvc0.o
- nouveau-y += core/subdev/fb/ramnve0.o
-+nouveau-y += core/subdev/fb/ramnvea.o
- nouveau-y += core/subdev/fb/sddr3.o
- nouveau-y += core/subdev/fb/gddr5.o
- nouveau-y += core/subdev/gpio/base.o
-diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-index d7ecafb..3905816 100644
---- a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-+++ b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-@@ -105,6 +105,7 @@ extern struct nouveau_oclass *nvaa_fb_oclass;
- extern struct nouveau_oclass *nvaf_fb_oclass;
- extern struct nouveau_oclass *nvc0_fb_oclass;
- extern struct nouveau_oclass *nve0_fb_oclass;
-+extern struct nouveau_oclass *nvea_fb_oclass;
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c
+index 45470e1..0670ae3 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/fb/nvc0.c
+@@ -70,8 +70,7 @@ nvc0_fb_dtor(struct nouveau_object *object)
+ 	struct nvc0_fb_priv *priv = (void *)object;
  
- #include <subdev/bios/ramcfg.h>
+ 	if (priv->r100c10_page) {
+-		pci_unmap_page(device->pdev, priv->r100c10, PAGE_SIZE,
+-			       PCI_DMA_BIDIRECTIONAL);
++		nv_device_unmap_page(device, priv->r100c10);
+ 		__free_page(priv->r100c10_page);
+ 	}
  
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
-new file mode 100644
-index 0000000..5ff6029
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ */
-+
-+#include "nvc0.h"
-+
-+struct nouveau_oclass *
-+nvea_fb_oclass = &(struct nouveau_fb_impl) {
-+	.base.handle = NV_SUBDEV(FB, 0xea),
-+	.base.ofuncs = &(struct nouveau_ofuncs) {
-+		.ctor = nvc0_fb_ctor,
-+		.dtor = nvc0_fb_dtor,
-+		.init = nvc0_fb_init,
-+		.fini = _nouveau_fb_fini,
-+	},
-+	.memtype = nvc0_fb_memtype_valid,
-+	.ram = &nvea_ram_oclass,
-+}.base;
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-index edaf95d..0b95a25 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-+++ b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-@@ -32,6 +32,7 @@ extern struct nouveau_oclass nva3_ram_oclass;
- extern struct nouveau_oclass nvaa_ram_oclass;
- extern struct nouveau_oclass nvc0_ram_oclass;
- extern struct nouveau_oclass nve0_ram_oclass;
-+extern struct nouveau_oclass nvea_ram_oclass;
+@@ -94,10 +93,8 @@ nvc0_fb_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
  
- int nouveau_sddr3_calc(struct nouveau_ram *ram);
- int nouveau_gddr5_calc(struct nouveau_ram *ram, bool nuts);
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
-new file mode 100644
-index 0000000..3038e08
---- /dev/null
-+++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
-@@ -0,0 +1,67 @@
-+/*
-+ * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ */
-+
-+/*
-+ * TODO replace this CMA-requiring horror with a proper allocator for GPU
-+ * objects in main memory. But for the moment it does the job and can reuse some
-+ * of the nvc0 functions.
-+ */
-+
-+#include "nvc0.h"
-+
-+#include <linux/dma-mapping.h>
-+
-+static int
-+nvea_ram_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-+	      struct nouveau_oclass *oclass, void *data, u32 datasize,
-+	      struct nouveau_object **pobject)
-+{
-+	struct nouveau_fb *pfb = nouveau_fb(parent);
-+	struct nouveau_ram *ram;
-+	void *vram;
-+	dma_addr_t dma_handle;
-+	int ret;
-+
-+	ret = nouveau_ram_create(parent, engine, oclass, &ram);
-+	*pobject = nv_object(ram);
-+	if (ret)
-+		return ret;
-+
-+	ram->type   = NV_MEM_TYPE_STOLEN;
-+	/* Use a fixed size of 64MB for now */
-+	ram->size = 0x4000000;
-+	ram->stolen = (u64)0x00000000;
-+	vram = dma_alloc_coherent(nv_device_base(nv_device(parent)), ram->size,
-+				  &dma_handle, GFP_KERNEL);
-+	if (!vram)
-+		return -ENOMEM;
-+
-+	ret = nouveau_mm_init(&pfb->vram, dma_handle >> 12, ram->size >> 12, 1);
-+	if (ret)
-+		return ret;
-+
-+	ram->get = nvc0_ram_get;
-+	ram->put = nvc0_ram_put;
-+	return 0;
-+}
-+
-+struct nouveau_oclass
-+nvea_ram_oclass = {
-+	.ofuncs = &(struct nouveau_ofuncs) {
-+		.ctor = nvea_ram_ctor,
-+		.dtor = _nouveau_ram_dtor,
-+		.init = _nouveau_ram_init,
-+		.fini = _nouveau_ram_fini,
-+	},
-+};
+ 	priv->r100c10_page = alloc_page(GFP_KERNEL | __GFP_ZERO);
+ 	if (priv->r100c10_page) {
+-		priv->r100c10 = pci_map_page(device->pdev, priv->r100c10_page,
+-					     0, PAGE_SIZE,
+-					     PCI_DMA_BIDIRECTIONAL);
+-		if (pci_dma_mapping_error(device->pdev, priv->r100c10))
++		priv->r100c10 = nv_device_map_page(device, priv->r100c10_page);
++		if (!priv->r100c10)
+ 			return -EFAULT;
+ 	}
+ 
 -- 
 1.8.5.3
