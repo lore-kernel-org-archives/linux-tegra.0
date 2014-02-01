@@ -1,209 +1,192 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 07/16] drm/nouveau/bar/nvc0: support chips without BAR3
-Date: Sat,  1 Feb 2014 12:16:49 +0900
-Message-ID: <1391224618-3794-8-git-send-email-acourbot@nvidia.com>
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: Re: [RFC 14/16] drm/nouveau/fb: add GK20A support
+Date: Sat, 01 Feb 2014 14:40:57 +0100
+Message-ID: <1391262057.2035.7.camel@antimon.intern.lynxeye.de>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
+	 <1391224618-3794-15-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1391224618-3794-15-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Adapt the NVC0 BAR driver to make it able to support chips that do not
-expose a BAR3. When this happens, BAR1 is then used for USERD mapping
-and the BAR alloc() functions is disabled, making GPU objects unable
-to rely on BAR for data access and falling back to PRAMIN.
+Am Samstag, den 01.02.2014, 12:16 +0900 schrieb Alexandre Courbot:
+> Add a clumsy-but-working FB support for GK20A. This chip only uses system
+> memory, so we allocate a big chunk using CMA and let the existing memory
+> managers work on it.
+> 
+> A better future design would be to allocate objects directly from system
+> memory without having to suffer from the limitations of a large,
+> contiguous pool.
+> 
+I don't know if Tegra124 is similar to 114 in this regard [hint: get the
+TRM out :)], but if you go for a dedicated VRAM allocator, wouldn't it
+make sense to take a chunk of the MMIO overlaid memory for this when
+possible, rather than carving this out of CPU accessible mem?
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c | 115 +++++++++++++------------
- 1 file changed, 61 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-index 3f30db6..c2bb0e5 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/nvc0.c
-@@ -79,87 +79,88 @@ nvc0_bar_unmap(struct nouveau_bar *bar, struct nouveau_vma *vma)
- }
- 
- static int
--nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
--	      struct nouveau_oclass *oclass, void *data, u32 size,
--	      struct nouveau_object **pobject)
-+nvc0_bar_init_vm(struct nvc0_bar_priv *priv, int nr, int bar)
- {
--	struct nouveau_device *device = nv_device(parent);
--	struct nvc0_bar_priv *priv;
-+	struct nouveau_device *device = nv_device(&priv->base);
- 	struct nouveau_gpuobj *mem;
- 	struct nouveau_vm *vm;
-+	resource_size_t bar_len;
- 	int ret;
- 
--	ret = nouveau_bar_create(parent, engine, oclass, &priv);
--	*pobject = nv_object(priv);
--	if (ret)
--		return ret;
--
--	/* BAR3 */
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
--				&priv->bar[0].mem);
--	mem = priv->bar[0].mem;
-+				&priv->bar[nr].mem);
-+	mem = priv->bar[nr].mem;
- 	if (ret)
- 		return ret;
- 
- 	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
--				&priv->bar[0].pgd);
-+				&priv->bar[nr].pgd);
- 	if (ret)
- 		return ret;
- 
--	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 3), 0, &vm);
-+	bar_len = nv_device_resource_len(device, bar);
-+
-+	ret = nouveau_vm_new(device, 0, bar_len, 0, &vm);
- 	if (ret)
- 		return ret;
- 
- 	atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
- 
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL,
--				 (nv_device_resource_len(device, 3) >> 12) * 8,
--				 0x1000, NVOBJ_FLAG_ZERO_ALLOC,
--				 &vm->pgt[0].obj[0]);
--	vm->pgt[0].refcount[0] = 1;
--	if (ret)
--		return ret;
-+	/*
-+	 * Bootstrap page table lookup.
-+	 */
-+	if (bar == 3) {
-+		ret = nouveau_gpuobj_new(nv_object(priv), NULL,
-+					 (bar_len >> 12) * 8, 0x1000,
-+					 NVOBJ_FLAG_ZERO_ALLOC,
-+					&vm->pgt[0].obj[0]);
-+		vm->pgt[0].refcount[0] = 1;
-+		if (ret)
-+			return ret;
-+	}
- 
--	ret = nouveau_vm_ref(vm, &priv->bar[0].vm, priv->bar[0].pgd);
-+	ret = nouveau_vm_ref(vm, &priv->bar[nr].vm, priv->bar[nr].pgd);
- 	nouveau_vm_ref(NULL, &vm, NULL);
- 	if (ret)
- 		return ret;
- 
--	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[0].pgd->addr));
--	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[0].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 3) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 3) - 1));
-+	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[nr].pgd->addr));
-+	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[nr].pgd->addr));
-+	nv_wo32(mem, 0x0208, lower_32_bits(bar_len - 1));
-+	nv_wo32(mem, 0x020c, upper_32_bits(bar_len - 1));
- 
--	/* BAR1 */
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x1000, 0, 0,
--				&priv->bar[1].mem);
--	mem = priv->bar[1].mem;
--	if (ret)
--		return ret;
-+	return 0;
-+}
- 
--	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 0x8000, 0, 0,
--				&priv->bar[1].pgd);
--	if (ret)
--		return ret;
-+static int
-+nvc0_bar_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-+	      struct nouveau_oclass *oclass, void *data, u32 size,
-+	      struct nouveau_object **pobject)
-+{
-+	struct nouveau_device *device = nv_device(parent);
-+	struct nvc0_bar_priv *priv;
-+	bool has_bar3 = nv_device_resource_len(device, 3) != 0;
-+	int ret;
- 
--	ret = nouveau_vm_new(device, 0, nv_device_resource_len(device, 1), 0, &vm);
-+	ret = nouveau_bar_create(parent, engine, oclass, &priv);
-+	*pobject = nv_object(priv);
- 	if (ret)
- 		return ret;
- 
--	atomic_inc(&vm->engref[NVDEV_SUBDEV_BAR]);
-+	/* BAR3 */
-+	if (has_bar3) {
-+		ret = nvc0_bar_init_vm(priv, 0, 3);
-+		if (ret)
-+			return ret;
-+		priv->base.alloc = nouveau_bar_alloc;
-+		priv->base.kmap = nvc0_bar_kmap;
-+	}
- 
--	ret = nouveau_vm_ref(vm, &priv->bar[1].vm, priv->bar[1].pgd);
--	nouveau_vm_ref(NULL, &vm, NULL);
-+	/* BAR1 */
-+	ret = nvc0_bar_init_vm(priv, 1, 1);
- 	if (ret)
- 		return ret;
- 
--	nv_wo32(mem, 0x0200, lower_32_bits(priv->bar[1].pgd->addr));
--	nv_wo32(mem, 0x0204, upper_32_bits(priv->bar[1].pgd->addr));
--	nv_wo32(mem, 0x0208, lower_32_bits(nv_device_resource_len(device, 1) - 1));
--	nv_wo32(mem, 0x020c, upper_32_bits(nv_device_resource_len(device, 1) - 1));
--
--	priv->base.alloc = nouveau_bar_alloc;
--	priv->base.kmap = nvc0_bar_kmap;
- 	priv->base.umap = nvc0_bar_umap;
- 	priv->base.unmap = nvc0_bar_unmap;
- 	priv->base.flush = nv84_bar_flush;
-@@ -176,12 +177,16 @@ nvc0_bar_dtor(struct nouveau_object *object)
- 	nouveau_gpuobj_ref(NULL, &priv->bar[1].pgd);
- 	nouveau_gpuobj_ref(NULL, &priv->bar[1].mem);
- 
--	if (priv->bar[0].vm) {
--		nouveau_gpuobj_ref(NULL, &priv->bar[0].vm->pgt[0].obj[0]);
--		nouveau_vm_ref(NULL, &priv->bar[0].vm, priv->bar[0].pgd);
-+	if (priv->bar[0].mem) {
-+		if (priv->bar[0].vm) {
-+			nouveau_gpuobj_ref(NULL,
-+					   &priv->bar[0].vm->pgt[0].obj[0]);
-+			nouveau_vm_ref(NULL, &priv->bar[0].vm,
-+				       priv->bar[0].pgd);
-+		}
-+		nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
-+		nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
- 	}
--	nouveau_gpuobj_ref(NULL, &priv->bar[0].pgd);
--	nouveau_gpuobj_ref(NULL, &priv->bar[0].mem);
- 
- 	nouveau_bar_destroy(&priv->base);
- }
-@@ -201,7 +206,9 @@ nvc0_bar_init(struct nouveau_object *object)
- 	nv_mask(priv, 0x100c80, 0x00000001, 0x00000000);
- 
- 	nv_wr32(priv, 0x001704, 0x80000000 | priv->bar[1].mem->addr >> 12);
--	nv_wr32(priv, 0x001714, 0xc0000000 | priv->bar[0].mem->addr >> 12);
-+	if (priv->bar[0].mem)
-+		nv_wr32(priv, 0x001714,
-+			0xc0000000 | priv->bar[0].mem->addr >> 12);
- 	return 0;
- }
- 
--- 
-1.8.5.3
+> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/nouveau/Makefile                 |  2 +
+>  drivers/gpu/drm/nouveau/core/include/subdev/fb.h |  1 +
+>  drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c    | 28 ++++++++++
+>  drivers/gpu/drm/nouveau/core/subdev/fb/priv.h    |  1 +
+>  drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c | 67 ++++++++++++++++++++++++
+>  5 files changed, 99 insertions(+)
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
+> 
+> diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
+> index 3548fcd..d9fe3e6 100644
+> --- a/drivers/gpu/drm/nouveau/Makefile
+> +++ b/drivers/gpu/drm/nouveau/Makefile
+> @@ -100,6 +100,7 @@ nouveau-y += core/subdev/fb/nvaa.o
+>  nouveau-y += core/subdev/fb/nvaf.o
+>  nouveau-y += core/subdev/fb/nvc0.o
+>  nouveau-y += core/subdev/fb/nve0.o
+> +nouveau-y += core/subdev/fb/nvea.o
+>  nouveau-y += core/subdev/fb/ramnv04.o
+>  nouveau-y += core/subdev/fb/ramnv10.o
+>  nouveau-y += core/subdev/fb/ramnv1a.o
+> @@ -114,6 +115,7 @@ nouveau-y += core/subdev/fb/ramnva3.o
+>  nouveau-y += core/subdev/fb/ramnvaa.o
+>  nouveau-y += core/subdev/fb/ramnvc0.o
+>  nouveau-y += core/subdev/fb/ramnve0.o
+> +nouveau-y += core/subdev/fb/ramnvea.o
+>  nouveau-y += core/subdev/fb/sddr3.o
+>  nouveau-y += core/subdev/fb/gddr5.o
+>  nouveau-y += core/subdev/gpio/base.o
+> diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
+> index d7ecafb..3905816 100644
+> --- a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
+> +++ b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
+> @@ -105,6 +105,7 @@ extern struct nouveau_oclass *nvaa_fb_oclass;
+>  extern struct nouveau_oclass *nvaf_fb_oclass;
+>  extern struct nouveau_oclass *nvc0_fb_oclass;
+>  extern struct nouveau_oclass *nve0_fb_oclass;
+> +extern struct nouveau_oclass *nvea_fb_oclass;
+>  
+>  #include <subdev/bios/ramcfg.h>
+>  
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
+> new file mode 100644
+> index 0000000..5ff6029
+> --- /dev/null
+> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
+> @@ -0,0 +1,28 @@
+> +/*
+> + * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + */
+> +
+> +#include "nvc0.h"
+> +
+> +struct nouveau_oclass *
+> +nvea_fb_oclass = &(struct nouveau_fb_impl) {
+> +	.base.handle = NV_SUBDEV(FB, 0xea),
+> +	.base.ofuncs = &(struct nouveau_ofuncs) {
+> +		.ctor = nvc0_fb_ctor,
+> +		.dtor = nvc0_fb_dtor,
+> +		.init = nvc0_fb_init,
+> +		.fini = _nouveau_fb_fini,
+> +	},
+> +	.memtype = nvc0_fb_memtype_valid,
+> +	.ram = &nvea_ram_oclass,
+> +}.base;
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
+> index edaf95d..0b95a25 100644
+> --- a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
+> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
+> @@ -32,6 +32,7 @@ extern struct nouveau_oclass nva3_ram_oclass;
+>  extern struct nouveau_oclass nvaa_ram_oclass;
+>  extern struct nouveau_oclass nvc0_ram_oclass;
+>  extern struct nouveau_oclass nve0_ram_oclass;
+> +extern struct nouveau_oclass nvea_ram_oclass;
+>  
+>  int nouveau_sddr3_calc(struct nouveau_ram *ram);
+>  int nouveau_gddr5_calc(struct nouveau_ram *ram, bool nuts);
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
+> new file mode 100644
+> index 0000000..3038e08
+> --- /dev/null
+> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
+> @@ -0,0 +1,67 @@
+> +/*
+> + * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + */
+> +
+> +/*
+> + * TODO replace this CMA-requiring horror with a proper allocator for GPU
+> + * objects in main memory. But for the moment it does the job and can reuse some
+> + * of the nvc0 functions.
+> + */
+> +
+> +#include "nvc0.h"
+> +
+> +#include <linux/dma-mapping.h>
+> +
+> +static int
+> +nvea_ram_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+> +	      struct nouveau_oclass *oclass, void *data, u32 datasize,
+> +	      struct nouveau_object **pobject)
+> +{
+> +	struct nouveau_fb *pfb = nouveau_fb(parent);
+> +	struct nouveau_ram *ram;
+> +	void *vram;
+> +	dma_addr_t dma_handle;
+> +	int ret;
+> +
+> +	ret = nouveau_ram_create(parent, engine, oclass, &ram);
+> +	*pobject = nv_object(ram);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ram->type   = NV_MEM_TYPE_STOLEN;
+> +	/* Use a fixed size of 64MB for now */
+> +	ram->size = 0x4000000;
+> +	ram->stolen = (u64)0x00000000;
+> +	vram = dma_alloc_coherent(nv_device_base(nv_device(parent)), ram->size,
+> +				  &dma_handle, GFP_KERNEL);
+> +	if (!vram)
+> +		return -ENOMEM;
+> +
+> +	ret = nouveau_mm_init(&pfb->vram, dma_handle >> 12, ram->size >> 12, 1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ram->get = nvc0_ram_get;
+> +	ram->put = nvc0_ram_put;
+> +	return 0;
+> +}
+> +
+> +struct nouveau_oclass
+> +nvea_ram_oclass = {
+> +	.ofuncs = &(struct nouveau_ofuncs) {
+> +		.ctor = nvea_ram_ctor,
+> +		.dtor = _nouveau_ram_dtor,
+> +		.init = _nouveau_ram_init,
+> +		.fini = _nouveau_ram_fini,
+> +	},
+> +};
