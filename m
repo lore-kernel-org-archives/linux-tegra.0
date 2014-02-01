@@ -1,59 +1,37 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 06/16] drm/nouveau/bar: only ioremap BAR3 if it exists
-Date: Sat,  1 Feb 2014 12:16:48 +0900
-Message-ID: <1391224618-3794-7-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC 11/16] drm/nouveau/fifo: allocate usermem as needed
+Date: Sat,  1 Feb 2014 12:16:53 +0900
+Message-ID: <1391224618-3794-12-git-send-email-acourbot@nvidia.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Some chips that use system memory exclusively (e.g. GK20A) do not
-expose 2 BAR regions. For them only BAR1 exists, and it should be used
-for USERD mapping. Do not map BAR3 if its resource does not exist.
+Memory was always allocated for 4096 channels. Change this to allocate
+what we actually need according to the number of channels we use.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/core/subdev/bar/base.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-index bdf5941..d713eeb 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/bar/base.c
-@@ -110,6 +110,7 @@ nouveau_bar_create_(struct nouveau_object *parent,
- {
- 	struct nouveau_device *device = nv_device(parent);
- 	struct nouveau_bar *bar;
-+	bool has_bar3 = nv_device_resource_len(device, 3) != 0;
- 	int ret;
+diff --git a/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c b/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c
+index 54c1b5b..dbc3ff6 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c
++++ b/drivers/gpu/drm/nouveau/core/engine/fifo/nve0.c
+@@ -852,8 +852,8 @@ nve0_fifo_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+ 			return ret;
+ 	}
  
- 	ret = nouveau_subdev_create_(parent, engine, oclass, 0, "BARCTL",
-@@ -118,8 +119,10 @@ nouveau_bar_create_(struct nouveau_object *parent,
+-	ret = nouveau_gpuobj_new(nv_object(priv), NULL, 4096 * 0x200, 0x1000,
+-				 NVOBJ_FLAG_ZERO_ALLOC, &priv->user.mem);
++	ret = nouveau_gpuobj_new(nv_object(priv), NULL, impl->channels * 0x200,
++				0x1000, NVOBJ_FLAG_ZERO_ALLOC, &priv->user.mem);
  	if (ret)
  		return ret;
- 
--	bar->iomem = ioremap(nv_device_resource_start(device, 3),
--			     nv_device_resource_len(device, 3));
-+	if (has_bar3)
-+		bar->iomem = ioremap(nv_device_resource_start(device, 3),
-+				     nv_device_resource_len(device, 3));
-+
- 	return 0;
- }
  
 -- 
 1.8.5.3
