@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 10/16] drm/nouveau/timer: skip calibration on GK20A
-Date: Sat,  1 Feb 2014 12:16:52 +0900
-Message-ID: <1391224618-3794-11-git-send-email-acourbot@nvidia.com>
+Subject: [RFC 08/16] drm/nouveau/mc: support platform devices
+Date: Sat,  1 Feb 2014 12:16:50 +0900
+Message-ID: <1391224618-3794-9-git-send-email-acourbot@nvidia.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,59 +21,99 @@ To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@li
 Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A's timer is directly attached to the system timer and cannot be
-calibrated. Skip the calibration phase on that chip since the
-corresponding registers do not exist.
+Use abstracted resource query functions, and obtain the IRQ from the
+correct bus.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/nouveau/core/include/subdev/mc.h |  1 +
+ drivers/gpu/drm/nouveau/core/subdev/mc/base.c    | 43 +++++++++++++++---------
+ 2 files changed, 29 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-index c0bdd10..822fe0d 100644
---- a/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-+++ b/drivers/gpu/drm/nouveau/core/subdev/timer/nv04.c
-@@ -185,6 +185,10 @@ nv04_timer_init(struct nouveau_object *object)
+diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/mc.h b/drivers/gpu/drm/nouveau/core/include/subdev/mc.h
+index adc88b7..7c551b5 100644
+--- a/drivers/gpu/drm/nouveau/core/include/subdev/mc.h
++++ b/drivers/gpu/drm/nouveau/core/include/subdev/mc.h
+@@ -12,6 +12,7 @@ struct nouveau_mc_intr {
+ struct nouveau_mc {
+ 	struct nouveau_subdev base;
+ 	bool use_msi;
++	unsigned int irq;
+ };
+ 
+ static inline struct nouveau_mc *
+diff --git a/drivers/gpu/drm/nouveau/core/subdev/mc/base.c b/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
+index b4b9943..081fd96 100644
+--- a/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
++++ b/drivers/gpu/drm/nouveau/core/subdev/mc/base.c
+@@ -93,8 +93,8 @@ _nouveau_mc_dtor(struct nouveau_object *object)
+ {
+ 	struct nouveau_device *device = nv_device(object);
+ 	struct nouveau_mc *pmc = (void *)object;
+-	free_irq(device->pdev->irq, pmc);
+-	if (pmc->use_msi)
++	free_irq(pmc->irq, pmc);
++	if (nv_device_is_pci(device) && pmc->use_msi)
+ 		pci_disable_msi(device->pdev);
+ 	nouveau_subdev_destroy(&pmc->base);
+ }
+@@ -114,22 +114,25 @@ nouveau_mc_create_(struct nouveau_object *parent, struct nouveau_object *engine,
  	if (ret)
  		return ret;
  
-+	/* gk20a does not have the calibration registers */
-+	if (device->chipset == 0xea)
-+		goto skip_clk_init;
-+
- 	/* aim for 31.25MHz, which gives us nanosecond timestamps */
- 	d = 1000000 / 32;
- 
-@@ -235,20 +239,23 @@ nv04_timer_init(struct nouveau_object *object)
- 		d >>= 1;
+-	switch (device->pdev->device & 0x0ff0) {
+-	case 0x00f0:
+-	case 0x02e0:
+-		/* BR02? NFI how these would be handled yet exactly */
+-		break;
+-	default:
+-		switch (device->chipset) {
+-		case 0xaa: break; /* reported broken, nv also disable it */
+-		default:
+-			pmc->use_msi = true;
++	if (nv_device_is_pci(device))
++		switch (device->pdev->device & 0x0ff0) {
++		case 0x00f0:
++		case 0x02e0:
++			/* BR02? NFI how these would be handled yet exactly */
+ 			break;
++		default:
++			switch (device->chipset) {
++			case 0xaa:
++				/* reported broken, nv also disable it */
++				break;
++			default:
++				pmc->use_msi = true;
++				break;
+ 		}
  	}
  
--	/* restore the time before suspend */
--	lo = priv->suspend_time;
--	hi = (priv->suspend_time >> 32);
--
- 	nv_debug(priv, "input frequency : %dHz\n", f);
- 	nv_debug(priv, "input multiplier: %d\n", m);
- 	nv_debug(priv, "numerator       : 0x%08x\n", n);
- 	nv_debug(priv, "denominator     : 0x%08x\n", d);
- 	nv_debug(priv, "timer frequency : %dHz\n", (f * m) * d / n);
--	nv_debug(priv, "time low        : 0x%08x\n", lo);
--	nv_debug(priv, "time high       : 0x%08x\n", hi);
+ 	pmc->use_msi = nouveau_boolopt(device->cfgopt, "NvMSI", pmc->use_msi);
+-	if (pmc->use_msi && oclass->msi_rearm) {
++	if (nv_device_is_pci(device) && pmc->use_msi && oclass->msi_rearm) {
+ 		pmc->use_msi = pci_enable_msi(device->pdev) == 0;
+ 		if (pmc->use_msi) {
+ 			nv_info(pmc, "MSI interrupts enabled\n");
+@@ -139,8 +142,18 @@ nouveau_mc_create_(struct nouveau_object *parent, struct nouveau_object *engine,
+ 		pmc->use_msi = false;
+ 	}
  
- 	nv_wr32(priv, NV04_PTIMER_NUMERATOR, n);
- 	nv_wr32(priv, NV04_PTIMER_DENOMINATOR, d);
+-	ret = request_irq(device->pdev->irq, nouveau_mc_intr,
+-			  IRQF_SHARED, "nouveau", pmc);
++	if (nv_device_is_pci(device)) {
++		pmc->irq = device->pdev->irq;
++	} else {
++		int irq = platform_get_irq_byname(device->platformdev, "stall");
++		if (irq < 0)
++			return irq;
++		pmc->irq = irq;
++	}
 +
-+skip_clk_init:
-+	/* restore the time before suspend */
-+	lo = priv->suspend_time;
-+	hi = (priv->suspend_time >> 32);
++	ret = request_irq(pmc->irq, nouveau_mc_intr, IRQF_SHARED, "nouveau",
++			  pmc);
 +
-+	nv_debug(priv, "time low        : 0x%08x\n", lo);
-+	nv_debug(priv, "time high       : 0x%08x\n", hi);
-+
- 	nv_wr32(priv, NV04_PTIMER_INTR_0, 0xffffffff);
- 	nv_wr32(priv, NV04_PTIMER_INTR_EN_0, 0x00000000);
- 	nv_wr32(priv, NV04_PTIMER_TIME_1, hi);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
 1.8.5.3
