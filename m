@@ -1,85 +1,35 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [RFC 01/16] drm/nouveau: handle -EACCES runtime PM return code
-Date: Sat,  1 Feb 2014 12:16:43 +0900
-Message-ID: <1391224618-3794-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC 04/16] drm/nouveau/fifo: support platform devices
+Date: Sat,  1 Feb 2014 12:16:46 +0900
+Message-ID: <1391224618-3794-5-git-send-email-acourbot@nvidia.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces@lists.freedesktop.org
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: gnurou@gmail.com, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-pm_runtime_get*() may return -EACCESS to indicate a device does not have
-runtime PM enabled. This is the case when the nouveau.runpm parameter is
-set to 0, and is not an error in that context. Handle this case without
-failure.
+Remove PCI-dependent code so the FIFO engine can also handle platform
+devices.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/nouveau/dispnv04/crtc.c     | 2 +-
- drivers/gpu/drm/nouveau/nouveau_connector.c | 2 +-
- drivers/gpu/drm/nouveau/nouveau_drm.c       | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/nouveau/core/engine/fifo/base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/crtc.c b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-index 0e3270c..1caef1f 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-@@ -1048,7 +1048,7 @@ nouveau_crtc_set_config(struct drm_mode_set *set)
- 
- 	/* get a pm reference here */
- 	ret = pm_runtime_get_sync(dev->dev);
--	if (ret < 0)
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
- 
- 	ret = drm_crtc_helper_set_config(set);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 1674882..cddef54 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -255,7 +255,7 @@ nouveau_connector_detect(struct drm_connector *connector, bool force)
+diff --git a/drivers/gpu/drm/nouveau/core/engine/fifo/base.c b/drivers/gpu/drm/nouveau/core/engine/fifo/base.c
+index d3ec436d9..6f9041c 100644
+--- a/drivers/gpu/drm/nouveau/core/engine/fifo/base.c
++++ b/drivers/gpu/drm/nouveau/core/engine/fifo/base.c
+@@ -86,7 +86,7 @@ nouveau_fifo_channel_create_(struct nouveau_object *parent,
  	}
  
- 	ret = pm_runtime_get_sync(connector->dev->dev);
--	if (ret < 0)
-+	if (ret < 0 && ret != -EACCES)
- 		return conn_status;
- 
- 	i2c = nouveau_connector_ddc_detect(connector, &nv_encoder);
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 98a22e6..23299ca 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -670,7 +670,7 @@ nouveau_drm_open(struct drm_device *dev, struct drm_file *fpriv)
- 
- 	/* need to bring up power immediately if opening device */
- 	ret = pm_runtime_get_sync(dev->dev);
--	if (ret < 0)
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
- 
- 	get_task_comm(tmpname, current);
-@@ -753,7 +753,7 @@ long nouveau_drm_ioctl(struct file *filp,
- 	dev = file_priv->minor->dev;
- 
- 	ret = pm_runtime_get_sync(dev->dev);
--	if (ret < 0)
-+	if (ret < 0 && ret != -EACCES)
- 		return ret;
- 
- 	ret = drm_ioctl(filp, cmd, arg);
+ 	/* map fifo control registers */
+-	chan->user = ioremap(pci_resource_start(device->pdev, bar) + addr +
++	chan->user = ioremap(nv_device_resource_start(device, bar) + addr +
+ 			     (chan->chid * size), size);
+ 	if (!chan->user)
+ 		return -EFAULT;
 -- 
 1.8.5.3
