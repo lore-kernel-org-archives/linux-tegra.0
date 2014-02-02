@@ -1,225 +1,192 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [RFC 14/16] drm/nouveau/fb: add GK20A support
-Date: Sun, 02 Feb 2014 00:58:26 +0100
-Message-ID: <1391299106.2985.3.camel@antimon.intern.lynxeye.de>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Subject: Re: [RFC 13/16] drm/nouveau/ibus: add GK20A support
+Date: Sun, 2 Feb 2014 01:35:22 -0500
+Message-ID: <CAKb7Uvh7QTn1m0N6ynVxVup9VdA9y7fKJ66nwUDMiy6aHz+_Uw@mail.gmail.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-	 <1391224618-3794-15-git-send-email-acourbot@nvidia.com>
-	 <1391262057.2035.7.camel@antimon.intern.lynxeye.de>
-	 <CAKb7UvhJWOtxzYMViuoV6fHU4UR_+j1QTKHw1PoQT_+ykenfYw@mail.gmail.com>
+	<1391224618-3794-14-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKb7UvhJWOtxzYMViuoV6fHU4UR_+j1QTKHw1PoQT_+ykenfYw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1391224618-3794-14-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: gnurou@gmail.com, Terje Bergstrom <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, linux-tegra@vger.kernel.org, Eric Brower <ebrower@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Samstag, den 01.02.2014, 18:28 -0500 schrieb Ilia Mirkin:
-> On Sat, Feb 1, 2014 at 8:40 AM, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
-> > Am Samstag, den 01.02.2014, 12:16 +0900 schrieb Alexandre Courbot:
-> >> Add a clumsy-but-working FB support for GK20A. This chip only uses system
-> >> memory, so we allocate a big chunk using CMA and let the existing memory
-> >> managers work on it.
-> >>
-> >> A better future design would be to allocate objects directly from system
-> >> memory without having to suffer from the limitations of a large,
-> >> contiguous pool.
-> >>
-> > I don't know if Tegra124 is similar to 114 in this regard [hint: get the
-> > TRM out :)], but if you go for a dedicated VRAM allocator, wouldn't it
-> > make sense to take a chunk of the MMIO overlaid memory for this when
-> > possible, rather than carving this out of CPU accessible mem?
-> 
-> This is probably a stupid question... what do you need VRAM for
-> anyways? In _theory_ it's an abstraction to talk about memory that's
-> not accessible by the CPU. This is obviously not the case here, and
-> presumably the GPU can access all the memory in the system, so it can
-> be all treated as "GART" memory... AFAIK all accesses are behind the
-> in-GPU MMU, so contiguous physical memory isn't an issue either. In
-> practice, I suspect nouveau automatically sticks certain things into
-> vram (gpuobj's), but it should be feasible to make them optionally use
-> GART memory when VRAM is not available. I haven't really looked at the
-> details though, perhaps that's a major undertaking.
-> 
->   -ilia
-> 
-If it's similar to the Tegar114 there actually is memory that isn't
-accessible from the CPU. About 2GB of the address space is overlaid with
-MMIO for the devices, so in a 4GB system you potentially have 2GB of RAM
-that's only visible for the devices.
+Some very trivial comments below:
 
-But yes in general nouveau should just fall back to a GART placement if
-VRAM isn't available.
+On Fri, Jan 31, 2014 at 10:16 PM, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> Add support for initializing the priv ring of GK20A. This is done by the
+> BIOS on desktop GPUs, but needs to be done by hand on Tegra.
+>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+>  drivers/gpu/drm/nouveau/Makefile                   |   1 +
+>  drivers/gpu/drm/nouveau/core/include/subdev/ibus.h |   1 +
+>  drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c    | 108 +++++++++++++++++++++
+>  3 files changed, 110 insertions(+)
+>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
+>
+> diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
+> index 6c4b76d..3548fcd 100644
+> --- a/drivers/gpu/drm/nouveau/Makefile
+> +++ b/drivers/gpu/drm/nouveau/Makefile
+> @@ -132,6 +132,7 @@ nouveau-y += core/subdev/i2c/nv94.o
+>  nouveau-y += core/subdev/i2c/nvd0.o
+>  nouveau-y += core/subdev/ibus/nvc0.o
+>  nouveau-y += core/subdev/ibus/nve0.o
+> +nouveau-y += core/subdev/ibus/nvea.o
+>  nouveau-y += core/subdev/instmem/base.o
+>  nouveau-y += core/subdev/instmem/nv04.o
+>  nouveau-y += core/subdev/instmem/nv40.o
+> diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/ibus.h b/drivers/gpu/drm/nouveau/core/include/subdev/ibus.h
+> index 88814f1..056a42f 100644
+> --- a/drivers/gpu/drm/nouveau/core/include/subdev/ibus.h
+> +++ b/drivers/gpu/drm/nouveau/core/include/subdev/ibus.h
+> @@ -30,5 +30,6 @@ nouveau_ibus(void *obj)
+>
+>  extern struct nouveau_oclass nvc0_ibus_oclass;
+>  extern struct nouveau_oclass nve0_ibus_oclass;
+> +extern struct nouveau_oclass nvea_ibus_oclass;
+>
+>  #endif
+> diff --git a/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
+> new file mode 100644
+> index 0000000..0bcd281
+> --- /dev/null
+> +++ b/drivers/gpu/drm/nouveau/core/subdev/ibus/nvea.c
+> @@ -0,0 +1,108 @@
+> +/*
+> + * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + *
+> + */
+> +
+> +#include <subdev/ibus.h>
+> +
+> +struct nvea_ibus_priv {
+> +       struct nouveau_ibus base;
+> +};
+> +
+> +static void
+> +nvea_ibus_init_priv_ring(struct nvea_ibus_priv *priv)
+> +{
+> +       u32 data;
+> +
+> +       data = nv_rd32(priv, 0x137250);
+> +       data &= (~0x3f);
+> +       nv_wr32(priv, 0x137250, data);
 
-> >
-> >> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
-> >>  drivers/gpu/drm/nouveau/Makefile                 |  2 +
-> >>  drivers/gpu/drm/nouveau/core/include/subdev/fb.h |  1 +
-> >>  drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c    | 28 ++++++++++
-> >>  drivers/gpu/drm/nouveau/core/subdev/fb/priv.h    |  1 +
-> >>  drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c | 67 ++++++++++++++++++++++++
-> >>  5 files changed, 99 insertions(+)
-> >>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
-> >>  create mode 100644 drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
-> >>
-> >> diff --git a/drivers/gpu/drm/nouveau/Makefile b/drivers/gpu/drm/nouveau/Makefile
-> >> index 3548fcd..d9fe3e6 100644
-> >> --- a/drivers/gpu/drm/nouveau/Makefile
-> >> +++ b/drivers/gpu/drm/nouveau/Makefile
-> >> @@ -100,6 +100,7 @@ nouveau-y += core/subdev/fb/nvaa.o
-> >>  nouveau-y += core/subdev/fb/nvaf.o
-> >>  nouveau-y += core/subdev/fb/nvc0.o
-> >>  nouveau-y += core/subdev/fb/nve0.o
-> >> +nouveau-y += core/subdev/fb/nvea.o
-> >>  nouveau-y += core/subdev/fb/ramnv04.o
-> >>  nouveau-y += core/subdev/fb/ramnv10.o
-> >>  nouveau-y += core/subdev/fb/ramnv1a.o
-> >> @@ -114,6 +115,7 @@ nouveau-y += core/subdev/fb/ramnva3.o
-> >>  nouveau-y += core/subdev/fb/ramnvaa.o
-> >>  nouveau-y += core/subdev/fb/ramnvc0.o
-> >>  nouveau-y += core/subdev/fb/ramnve0.o
-> >> +nouveau-y += core/subdev/fb/ramnvea.o
-> >>  nouveau-y += core/subdev/fb/sddr3.o
-> >>  nouveau-y += core/subdev/fb/gddr5.o
-> >>  nouveau-y += core/subdev/gpio/base.o
-> >> diff --git a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-> >> index d7ecafb..3905816 100644
-> >> --- a/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-> >> +++ b/drivers/gpu/drm/nouveau/core/include/subdev/fb.h
-> >> @@ -105,6 +105,7 @@ extern struct nouveau_oclass *nvaa_fb_oclass;
-> >>  extern struct nouveau_oclass *nvaf_fb_oclass;
-> >>  extern struct nouveau_oclass *nvc0_fb_oclass;
-> >>  extern struct nouveau_oclass *nve0_fb_oclass;
-> >> +extern struct nouveau_oclass *nvea_fb_oclass;
-> >>
-> >>  #include <subdev/bios/ramcfg.h>
-> >>
-> >> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
-> >> new file mode 100644
-> >> index 0000000..5ff6029
-> >> --- /dev/null
-> >> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/nvea.c
-> >> @@ -0,0 +1,28 @@
-> >> +/*
-> >> + * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modify it
-> >> + * under the terms and conditions of the GNU General Public License,
-> >> + * version 2, as published by the Free Software Foundation.
-> >> + *
-> >> + * This program is distributed in the hope it will be useful, but WITHOUT
-> >> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> >> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> >> + * more details.
-> >> + *
-> >> + */
-> >> +
-> >> +#include "nvc0.h"
-> >> +
-> >> +struct nouveau_oclass *
-> >> +nvea_fb_oclass = &(struct nouveau_fb_impl) {
-> >> +     .base.handle = NV_SUBDEV(FB, 0xea),
-> >> +     .base.ofuncs = &(struct nouveau_ofuncs) {
-> >> +             .ctor = nvc0_fb_ctor,
-> >> +             .dtor = nvc0_fb_dtor,
-> >> +             .init = nvc0_fb_init,
-> >> +             .fini = _nouveau_fb_fini,
-> >> +     },
-> >> +     .memtype = nvc0_fb_memtype_valid,
-> >> +     .ram = &nvea_ram_oclass,
-> >> +}.base;
-> >> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-> >> index edaf95d..0b95a25 100644
-> >> --- a/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-> >> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/priv.h
-> >> @@ -32,6 +32,7 @@ extern struct nouveau_oclass nva3_ram_oclass;
-> >>  extern struct nouveau_oclass nvaa_ram_oclass;
-> >>  extern struct nouveau_oclass nvc0_ram_oclass;
-> >>  extern struct nouveau_oclass nve0_ram_oclass;
-> >> +extern struct nouveau_oclass nvea_ram_oclass;
-> >>
-> >>  int nouveau_sddr3_calc(struct nouveau_ram *ram);
-> >>  int nouveau_gddr5_calc(struct nouveau_ram *ram, bool nuts);
-> >> diff --git a/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
-> >> new file mode 100644
-> >> index 0000000..3038e08
-> >> --- /dev/null
-> >> +++ b/drivers/gpu/drm/nouveau/core/subdev/fb/ramnvea.c
-> >> @@ -0,0 +1,67 @@
-> >> +/*
-> >> + * Copyright (c) 2014, NVIDIA Corporation. All rights reserved.
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or modify it
-> >> + * under the terms and conditions of the GNU General Public License,
-> >> + * version 2, as published by the Free Software Foundation.
-> >> + *
-> >> + * This program is distributed in the hope it will be useful, but WITHOUT
-> >> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> >> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> >> + * more details.
-> >> + *
-> >> + */
-> >> +
-> >> +/*
-> >> + * TODO replace this CMA-requiring horror with a proper allocator for GPU
-> >> + * objects in main memory. But for the moment it does the job and can reuse some
-> >> + * of the nvc0 functions.
-> >> + */
-> >> +
-> >> +#include "nvc0.h"
-> >> +
-> >> +#include <linux/dma-mapping.h>
-> >> +
-> >> +static int
-> >> +nvea_ram_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
-> >> +           struct nouveau_oclass *oclass, void *data, u32 datasize,
-> >> +           struct nouveau_object **pobject)
-> >> +{
-> >> +     struct nouveau_fb *pfb = nouveau_fb(parent);
-> >> +     struct nouveau_ram *ram;
-> >> +     void *vram;
-> >> +     dma_addr_t dma_handle;
-> >> +     int ret;
-> >> +
-> >> +     ret = nouveau_ram_create(parent, engine, oclass, &ram);
-> >> +     *pobject = nv_object(ram);
-> >> +     if (ret)
-> >> +             return ret;
-> >> +
-> >> +     ram->type   = NV_MEM_TYPE_STOLEN;
-> >> +     /* Use a fixed size of 64MB for now */
-> >> +     ram->size = 0x4000000;
-> >> +     ram->stolen = (u64)0x00000000;
-> >> +     vram = dma_alloc_coherent(nv_device_base(nv_device(parent)), ram->size,
-> >> +                               &dma_handle, GFP_KERNEL);
-> >> +     if (!vram)
-> >> +             return -ENOMEM;
-> >> +
-> >> +     ret = nouveau_mm_init(&pfb->vram, dma_handle >> 12, ram->size >> 12, 1);
-> >> +     if (ret)
-> >> +             return ret;
-> >> +
-> >> +     ram->get = nvc0_ram_get;
-> >> +     ram->put = nvc0_ram_put;
-> >> +     return 0;
-> >> +}
-> >> +
-> >> +struct nouveau_oclass
-> >> +nvea_ram_oclass = {
-> >> +     .ofuncs = &(struct nouveau_ofuncs) {
-> >> +             .ctor = nvea_ram_ctor,
-> >> +             .dtor = _nouveau_ram_dtor,
-> >> +             .init = _nouveau_ram_init,
-> >> +             .fini = _nouveau_ram_fini,
-> >> +     },
-> >> +};
-> >
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > Please read the FAQ at  http://www.tux.org/lkml/
+nv_mask(priv, 0x137250, 0x3f, 0) should do this, right?
+
+> +
+> +       nv_mask(priv, 0x000200, 0x20, 0);
+> +       udelay(20);
+> +       nv_mask(priv, 0x000200, 0x20, 0x20);
+> +
+> +       nv_wr32(priv, 0x12004c, 0x4);
+> +       nv_wr32(priv, 0x122204, 0x2);
+> +       nv_rd32(priv, 0x122204);
+> +}
+> +
+> +static void
+> +nvea_ibus_intr(struct nouveau_subdev *subdev)
+> +{
+> +       struct nvea_ibus_priv *priv = (void *)subdev;
+> +       u32 status0 = nv_rd32(priv, 0x120058);
+> +       s32 retry = 100;
+> +       u32 command;
+> +
+> +       if (status0 & 0x7) {
+> +               nv_debug(priv, "resetting priv ring\n");
+> +               nvea_ibus_init_priv_ring(priv);
+> +       }
+> +
+> +       /* Acknowledge interrupt */
+> +       command = nv_rd32(priv, 0x0012004c);
+> +       command |= 0x2;
+> +       nv_wr32(priv, 0x0012004c, command);
+
+nv_mask(priv, 0x12004c, 0x2, 0x2)
+
+> +
+> +       while (--retry >= 0) {
+> +               command = nv_rd32(priv, 0x12004c) & 0x3f;
+> +               if (command == 0)
+> +                       break;
+> +       }
+> +
+> +       if (retry < 0)
+> +               nv_debug(priv, "timeout waiting for ringmaster ack\n");
+
+this sounds kinda bad, no? perhaps a nv_warn?
+
+> +}
+> +
+> +static int
+> +nvea_ibus_init(struct nouveau_object *object)
+> +{
+> +       struct nvea_ibus_priv *priv = (void *)object;
+> +       int ret;
+> +
+> +       ret = _nouveau_ibus_init(object);
+> +       if (ret)
+> +               return ret;
+> +
+> +       nvea_ibus_init_priv_ring(priv);
+> +
+> +       return 0;
+> +}
+> +
+> +static int
+> +nvea_ibus_ctor(struct nouveau_object *parent, struct nouveau_object *engine,
+> +              struct nouveau_oclass *oclass, void *data, u32 size,
+> +              struct nouveau_object **pobject)
+> +{
+> +       struct nvea_ibus_priv *priv;
+> +       int ret;
+> +
+> +       ret = nouveau_ibus_create(parent, engine, oclass, &priv);
+> +       *pobject = nv_object(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       nv_subdev(priv)->intr = nvea_ibus_intr;
+> +       return 0;
+> +}
+> +
+> +struct nouveau_oclass
+> +nvea_ibus_oclass = {
+> +       .handle = NV_SUBDEV(IBUS, 0xea),
+> +       .ofuncs = &(struct nouveau_ofuncs) {
+> +               .ctor = nvea_ibus_ctor,
+> +               .dtor = _nouveau_ibus_dtor,
+> +               .init = nvea_ibus_init,
+> +               .fini = _nouveau_ibus_fini,
+> +       },
+> +};
+> --
+> 1.8.5.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
