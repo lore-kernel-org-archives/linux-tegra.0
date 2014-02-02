@@ -1,80 +1,49 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 14/16] drm/nouveau/fb: add GK20A support
-Date: Sun, 2 Feb 2014 22:43:57 +0900
-Message-ID: <CAAVeFuLdwoKXsFtcMQ07ozFQXckki86zuB3xNMNk+QbEOtoG0A@mail.gmail.com>
+From: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
+Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
+Date: Sun, 2 Feb 2014 14:10:56 -0500
+Message-ID: <CAKb7Uvg4Bqy1tHetVZBe=aekFDbgrGygc-evnSXxsoGqgoTA8A@mail.gmail.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
- <1391224618-3794-15-git-send-email-acourbot@nvidia.com> <1391262057.2035.7.camel@antimon.intern.lynxeye.de>
- <CAKb7UvhJWOtxzYMViuoV6fHU4UR_+j1QTKHw1PoQT_+ykenfYw@mail.gmail.com> <1391299106.2985.3.camel@antimon.intern.lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1391299106.2985.3.camel-6fNNZcyRN10Uz2mrYu7PvxC15K8ycFmQs0AfqQuZ5sE@public.gmane.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, Feb 2, 2014 at 8:58 AM, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
-> Am Samstag, den 01.02.2014, 18:28 -0500 schrieb Ilia Mirkin:
->> On Sat, Feb 1, 2014 at 8:40 AM, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
->> > Am Samstag, den 01.02.2014, 12:16 +0900 schrieb Alexandre Courbot:
->> >> Add a clumsy-but-working FB support for GK20A. This chip only uses system
->> >> memory, so we allocate a big chunk using CMA and let the existing memory
->> >> managers work on it.
->> >>
->> >> A better future design would be to allocate objects directly from system
->> >> memory without having to suffer from the limitations of a large,
->> >> contiguous pool.
->> >>
->> > I don't know if Tegra124 is similar to 114 in this regard [hint: get the
->> > TRM out :)], but if you go for a dedicated VRAM allocator, wouldn't it
->> > make sense to take a chunk of the MMIO overlaid memory for this when
->> > possible, rather than carving this out of CPU accessible mem?
->>
->> This is probably a stupid question... what do you need VRAM for
->> anyways? In _theory_ it's an abstraction to talk about memory that's
->> not accessible by the CPU. This is obviously not the case here, and
->> presumably the GPU can access all the memory in the system, so it can
->> be all treated as "GART" memory... AFAIK all accesses are behind the
->> in-GPU MMU, so contiguous physical memory isn't an issue either. In
->> practice, I suspect nouveau automatically sticks certain things into
->> vram (gpuobj's), but it should be feasible to make them optionally use
->> GART memory when VRAM is not available. I haven't really looked at the
->> details though, perhaps that's a major undertaking.
->>
->>   -ilia
->>
-> If it's similar to the Tegar114 there actually is memory that isn't
-> accessible from the CPU. About 2GB of the address space is overlaid with
-> MMIO for the devices, so in a 4GB system you potentially have 2GB of RAM
-> that's only visible for the devices.
+Hi Alexandre,
+
+On Fri, Jan 31, 2014 at 10:16 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> I guess my email address might surprise some of you, so let me anticipate some
+> questions you might have. :P Yes, this work is endorsed by NVIDIA. Several other
+> NVIDIAns (CC'd), including core GPU experts, have provided significant technical
+> guidance and will continue their involvement. Special thanks go to Terje
+> Bergstrom and Ken Adams for their invaluable GPU expertise, and Thierry Reding
+> (at FOSDEM this weekend) for help with debugging and user-space testing.
 >
-> But yes in general nouveau should just fall back to a GART placement if
-> VRAM isn't available.
+> Let me also stress that although very exciting, this effort is still
+> experimental, so I would like to make sure that nobody makes excessive
+> expectations based on these few patches. The scope of this work is strictly
+> limited to Tegra (although given the similarities desktop GPU support will
+> certainly benefit from it indirectly), and we do not have any plan to work on
+> user-space support. So do not uninstall that proprietary driver just yet. ;)
+>
+> With this being clarified, we are looking forward to getting your feedback and
+> working with you guys to bring and improve Tegra K1 support into Nouveau! :)
 
-With the limited time I spent studying it, it seems to me that Nouveau
-has a strong dependency on VRAM. For gpuobjects indeed (that one could
-be workarounded with a new instmem driver I suppose), and also for
-TTM: objects placed in TTM_PL_VRAM are handled by the VRAM manager,
-which requires a nouveau_ram instance in the FB. Actually the FB also
-seems to assume the presence of a dedicated video RAM.
+I've sent a couple of fairly trivial comments, as you saw, and I
+suspect that others with a better understanding of the guts will have
+more substantial architectural feedback, esp after the weekend/FOSDEM.
+However, since no one's said it already -- welcome to Nouveau!
 
-So while I agree that getting rid of VRAM altogether would be the most
-logical solution, I have not found a way to do so for the moment.
+From the looks of it, you could bring up a full open-source stack with
+your patches (i.e. Xorg + nouveau DDX + mesa) and use PRIME to render
+stuff (assuming the actual display hw has an X ddx). Although I
+suspect that you're going to want to use your own drivers. Still a
+little curious if you've tried the open-source stack and whether it
+worked. [Not sure what the status is of render-node support is in
+mesa, but perhaps it's enough to try running piglit tests, if you
+can't get X going with the display HW.]
 
-T124's GPU actually sees the same physical address space as the CPU,
-so memory management should be simplified thanks to that (you could
-enable the SMMU and make things more interesting/complex, but for now
-it seems untimely to even consider doing so). Actually even the
-concept of a GART is not needed here: all your memory management needs
-could be fulfilled by getting pages with alloc_page() and arranging
-them using the GMMU. No GART, no BAR (at least for the purpose of
-mapping objects for CPU access), no PRAMIN.
-
-I really wonder how that picture would fit within Nouveau, and it is
-quite likely that there is an elegant solution to this problem already
-that my lack of understanding of Nouveau prevents me from seeing.
-That's why your thoughts on this matter would be greatly appreciated.
-
-Thanks,
-Alex.
+  -ilia
