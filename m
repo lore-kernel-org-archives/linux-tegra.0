@@ -1,40 +1,45 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: David Herrmann <dh.herrmann@gmail.com>
 Subject: Re: [RFC 00/16] drm/nouveau: initial support for GK20A (Tegra K1)
-Date: Mon, 3 Feb 2014 13:41:27 +1000
-Message-ID: <CACAvsv6TpyWsKfg0Y9Mjn_TDOWw6yzD_5vfCfycgLnPwU5_ccA@mail.gmail.com>
+Date: Mon, 3 Feb 2014 12:25:00 +0100
+Message-ID: <CANq1E4R=DWp2WBWWBbLHE2FG9HWWP=bM4wvE8etoEr1PAp0+JA@mail.gmail.com>
 References: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
-	<CAKb7Uvg4Bqy1tHetVZBe=aekFDbgrGygc-evnSXxsoGqgoTA8A@mail.gmail.com>
-	<52EF0294.2090103@nvidia.com>
-	<CAKb7UvgSpy7wwpg+Fb8V678DvkrqGdcuciTF136VcktJb9-Wiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKb7UvgSpy7wwpg+Fb8V678DvkrqGdcuciTF136VcktJb9-Wiw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Brower <ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1391224618-3794-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>, Eric Brower <ebrower@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Terje Bergstrom <tbergstrom@nvidia.com>, Ken Adams <KAdams@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Feb 3, 2014 at 1:14 PM, Ilia Mirkin <imirkin-FrUbXkNCsVf2fBVCVOL8/A@public.gmane.org> wrote:
-> On Sun, Feb 2, 2014 at 9:44 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> One beginner question: is it appropriate to send kernel patches to the
->> nouveau list in addition to dri-devel? The moderation messages I receive
->> make me think that this list might rather be intended for general
->> discussion.
->
-> I usually do. The main thing is to make sure that they're To: Ben,
-> since he's the one who will be ultimately be picking them up. I think
-> that if you're not subscribed, all the lists.freedesktop.org lists
-> moderate you, but dri-devel is configured not to tell you about it.
-> Also I've been getting bounce messages from nouveau@ complaining of
-> too many cc's and so it's getting auto-moderated -- not sure who, if
-> anyone, is an admin of the nouveau list. Hopefully someone :)
-The Nouveau list seems the most appropriate.  There's not really any
-need to explicitly CC me either, I do watch the list :)
+Hi
 
->
->   -ilia
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+[..snip..]
+> Finally, support for probing GK20A is added in the last 2 patches. It should be
+> noted that contrary to what Nouveau currently expects, GK20A does not embed any
+> display hardware (that part being handled by tegradrm). So this driver should
+> really be only used through DRM render-nodes and collaborate with the display
+> driver using PRIME. I have not yet figured out how to turn GK20A's instantiation
+> of Nouveau into a render-node only driver without breaking support for existing
+> desktop GPUs, and consequently the driver spawns a /dev/dri/cardX node which we
+> should try to get rid of.
+
+You cannot get rid of cardX currently. It is implied by DRIVER_MODESET
+and that flag should actually be called NOT_A_LEGACY_DRIVER. So you
+cannot remove it. I did try to replace DRIVER_MODESET by an inverted
+DRIVER_LEGACY flag some time ago, but I thought it's not worth it.
+
+Anyhow, you can easily add a new flag to make
+drm_dev_register()/drm_dev_alloc() not create the drm_minor for
+DRM_MINOR_LEGACY, which would prevent the card0 node from showing up.
+But people started using the cardX interface as base interface so mesa
+might not be able to open render-nodes if the related card-node is not
+available (which is a bug in their code, so no reason to support that
+by not adding stand-alone render-nodes).
+
+Long story short: If you want to do it properly, just add a flag to
+DRM core that prevents DRM_MINOR_LEGACY from showing up. If you just
+want it to work, simply keep a dummy card0.
+
+Thanks
+David
